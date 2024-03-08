@@ -406,7 +406,6 @@ void RPC3::OnRPCRemoteIndex(SystemAddress systemAddress, unsigned char *data, un
 
 void RPC3::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
-	(void) peer;
 	if (remoteFunctions.Has(systemAddress))
 	{
 		DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, RPC3::RemoteRPCFunctionComp> *theList = remoteFunctions.Get(systemAddress);
@@ -417,7 +416,6 @@ void RPC3::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID
 
 void RPC3::OnShutdown(void)
 {
-	(void) peer;
 	Clear();
 }
 

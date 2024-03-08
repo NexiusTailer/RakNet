@@ -1,19 +1,10 @@
 /// \file
 /// \brief SocketLayer class implementation
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 
 #ifndef __SOCKET_LAYER_H
@@ -127,7 +118,7 @@ public:
 	/// Returns the local port, useful when passing 0 as the startup port.
 	/// \param[in] s The socket whose port we are referring to
 	/// \return The local port
-	unsigned short GetLocalPort ( SOCKET s );
+	static unsigned short GetLocalPort ( SOCKET s );
 
 private:
 

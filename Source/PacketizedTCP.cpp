@@ -160,8 +160,14 @@ Packet* PacketizedTCP::Receive( void )
 	if (packet==0)
 		return 0;
 
+	if (connections.Has(packet->systemAddress)==false)
+	{
+		DeallocatePacket(packet);
+		return 0;
+	}
+
 	unsigned int index = connections.GetIndexAtKey(packet->systemAddress);
-	RakAssert(index!=-1);
+	//RakAssert(index!=-1);
 	if (index!=(unsigned int)-1)
 	{
 		if (packet->deleteData==true)

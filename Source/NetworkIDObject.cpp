@@ -1,18 +1,9 @@
 /// \file
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #include "NetworkIDObject.h"
 #include "NetworkIDManager.h"
@@ -20,7 +11,7 @@
 
 #include "RakAlloca.h"
 
-unsigned int NetworkIDObject::nextAllocationNumber=0;
+uint32_t NetworkIDObject::nextAllocationNumber=0;
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -188,7 +179,7 @@ void* NetworkIDObject::GetParent( void ) const
 	return parent;
 }
 //-------------------------------------------------------------------------------------
-unsigned int NetworkIDObject::GetAllocationNumber(void) const
+uint32_t NetworkIDObject::GetAllocationNumber(void) const
 {
 	return allocationNumber;
 }
@@ -214,6 +205,7 @@ void NetworkIDObject::GenerateID(void)
 	do
 	{
 		networkID.localSystemAddress=networkIDManager->sharedNetworkID++;
+#ifdef NETWORK_ID_SUPPORTS_PEER_TO_PEER
 		if (NetworkID::IsPeerToPeerMode())
 		{
 			if (networkIDManager->GetGuid()==UNASSIGNED_RAKNET_GUID)
@@ -228,6 +220,7 @@ void NetworkIDObject::GenerateID(void)
 				networkID.systemAddress=networkIDManager->externalSystemAddress;
 			}
 		}
+#endif
 		collision = networkIDManager->IDTree.GetPointerToNode( NetworkIDNode( ( networkID ), 0 ) );
 	}
 	while ( collision );

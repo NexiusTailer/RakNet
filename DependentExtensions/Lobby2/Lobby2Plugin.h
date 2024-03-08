@@ -39,7 +39,7 @@ public:
 	void SetMessageFactory(Lobby2MessageFactory *f);
 	Lobby2MessageFactory* GetMessageFactory(void) const;
 
-	/// Set the callback to receive the results of operations via SendMessage()
+	/// Set the callback to receive the results of operations via SendMsg()
 	virtual void SetCallbackInterface(Lobby2Callbacks *cb);	
 	virtual void AddCallbackInterface(Lobby2Callbacks *cb);	
 	virtual void RemoveCallbackInterface(Lobby2Callbacks *cb);

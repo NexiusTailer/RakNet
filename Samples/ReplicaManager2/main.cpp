@@ -46,12 +46,14 @@ int main(void)
 	Soldier::mySoldier=0;
 	User::myUser=0;
 
+	
 	printf("Demonstration of ReplicaManager2.\n");
 	printf("1. Demonstrates creating objects created by the server and client.\n");
 	printf("2. Demonstrates automatic serialization of pointers and data members\n");
 	printf("3. Demonstrates serialization visibility scoping.\n");
 	printf("This sample uses client/server.\nPeer to peer and clustered servers are also supported.\n");
 	printf("Difficulty: Intermediate\n\n");
+	printf("\nDEPRECIATED\nUse ReplicaManager3\n");
 
 	printf("Start as (c)lient or (s)erver? ");
 	ch=getche();

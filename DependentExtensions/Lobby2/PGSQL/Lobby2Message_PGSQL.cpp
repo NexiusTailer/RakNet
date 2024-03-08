@@ -249,6 +249,7 @@ void RakNet::OutputFriendsNotification(RakNet::Notification_Friends_StatusChange
 void RakNet::GetFriendHandlesByStatus(unsigned int callerUserId, RakNet::RakString status, PostgreSQLInterface *pgsql, DataStructures::List<RakNet::RakString> &output, bool callerIsUserOne)
 {
 	RakNet::RakString query;
+	/*
 	if (callerIsUserOne)
 	{
 		query = "SELECT handle from lobby2.users WHERE userId_pk ="
@@ -264,6 +265,19 @@ void RakNet::GetFriendHandlesByStatus(unsigned int callerUserId, RakNet::RakStri
 	
 	query+=status;
 	query+="'));";
+	*/
+
+	if (callerIsUserOne)
+	{
+		query = "SELECT handle from lobby2.friends,lobby2.users WHERE userId_pk=userTwo_fk AND userOne_fk=%i";
+	}
+	else
+	{
+		query = "SELECT handle from lobby2.friends,lobby2.users WHERE userId_pk=userOne_fk AND userTwo_fk=%i";
+	}
+	query+=" AND actionId_fk=(SELECT actionId_pk FROM lobby2.friendActions where description='";
+	query+=status;
+	query+="');"; 
 
 	PGresult *result = pgsql->QueryVaridic( query.C_String(), callerUserId );
 	RakAssert(result);

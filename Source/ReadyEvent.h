@@ -1,19 +1,10 @@
 /// \file
 /// \brief Ready event plugin.  This enables a set of systems to create a signal event, set this signal as ready or unready, and to trigger the event when all systems are ready
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #ifndef __READY_EVENT_H
 #define __READY_EVENT_H
@@ -46,8 +37,10 @@ enum ReadyEventSystemStatus
 };
 
 /// Ready event plugin
-/// Used to signal event completion when a set of systems all set a signal flag to true.
-/// This is usually used for lobby systems, or peer to peer turn based environments.
+/// For peer to peer networks in a fully connected mesh
+/// Solves the problem of how to tell if all peers, relative to all other peers, are in a certain ready state.
+/// For example, if A is connected to B and C, A may see that B and C are ready, but does not know if B is ready to C, or vice-versa.
+/// This plugin uses two stages to solve that problem, first, everyone I know about is ready. Second, everyone I know about is ready to everyone they know about.
 /// The user will get ID_READY_EVENT_SET and ID_READY_EVENT_UNSET as the signal flag is set or unset
 /// The user will get ID_READY_EVENT_ALL_SET when all systems are done waiting for all other systems, in which case the event is considered complete, and no longer tracked.
 /// \ingroup READY_EVENT_GROUP

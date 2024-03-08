@@ -1,19 +1,10 @@
 /// \file
 /// \brief \b [Internal] A queue used by RakNet.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #ifndef __QUEUE_H
 #define __QUEUE_H
@@ -83,9 +74,10 @@ namespace DataStructures
 	template <class queue_type>
 		Queue<queue_type>::Queue()
 	{
-		allocation_size = 16;
-		//array = RakNet::PLACEMENT_NEW<queue_type>(allocation_size);
-		array = RakNet::OP_NEW_ARRAY<queue_type>(allocation_size, __FILE__, __LINE__ );
+		//allocation_size = 16;
+		//array = RakNet::OP_NEW_ARRAY<queue_type>(allocation_size, __FILE__, __LINE__ );
+		allocation_size = 0;
+		array=0;
 		head = 0;
 		tail = 0;
 	}

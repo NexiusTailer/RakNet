@@ -2,19 +2,10 @@
 /// \file
 /// \brief Contains the NAT-punchthrough plugin for the client.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #ifndef __NAT_PUNCHTHROUGH_CLIENT_H
 #define __NAT_PUNCHTHROUGH_CLIENT_H
@@ -40,14 +31,20 @@ class PacketLogger;
 	
 struct RAK_DLL_EXPORT PunchthroughConfiguration
 {
+	// internal: (15 ms * 2 tries + 30 wait) * 5 ports * 8 players = 2.4 seconds
+	// external: (50 ms * 10 sends + 200 wait) * 1 port * 8 players = 5.6 seconds
+	// Total: 8 seconds
 	PunchthroughConfiguration() {
-		TIME_BETWEEN_PUNCH_ATTEMPTS_INTERNAL=50;
-		TIME_BETWEEN_PUNCH_ATTEMPTS_EXTERNAL=125;
-		UDP_SENDS_PER_PORT=5;
-		INTERNAL_IP_WAIT_AFTER_ATTEMPTS=250;
-		MAX_PREDICTIVE_PORT_RANGE=6;
-		EXTERNAL_IP_WAIT_BETWEEN_PORTS=1000;
+		TIME_BETWEEN_PUNCH_ATTEMPTS_INTERNAL=15;
+		TIME_BETWEEN_PUNCH_ATTEMPTS_EXTERNAL=50;
+		UDP_SENDS_PER_PORT_INTERNAL=2;
+		UDP_SENDS_PER_PORT_EXTERNAL=10;
+		INTERNAL_IP_WAIT_AFTER_ATTEMPTS=30;
+		MAXIMUM_NUMBER_OF_INTERNAL_IDS_TO_CHECK=5;
+		MAX_PREDICTIVE_PORT_RANGE=1;
+		EXTERNAL_IP_WAIT_BETWEEN_PORTS=200;
 		EXTERNAL_IP_WAIT_AFTER_ALL_ATTEMPTS=EXTERNAL_IP_WAIT_BETWEEN_PORTS;
+		retryOnFailure=false;
 	}
 
 	// How much time between each UDP send
@@ -55,7 +52,8 @@ struct RAK_DLL_EXPORT PunchthroughConfiguration
 	RakNetTimeMS TIME_BETWEEN_PUNCH_ATTEMPTS_EXTERNAL;
 
 	// How many tries for one port before giving up and going to the next port
-	int UDP_SENDS_PER_PORT;
+	int UDP_SENDS_PER_PORT_INTERNAL;
+	int UDP_SENDS_PER_PORT_EXTERNAL;
 
 	// After giving up on one internal port, how long to wait before trying the next port
 	int INTERNAL_IP_WAIT_AFTER_ATTEMPTS;
@@ -68,10 +66,21 @@ struct RAK_DLL_EXPORT PunchthroughConfiguration
 
 	// After trying all external ports, how long to wait before returning ID_NAT_PUNCHTHROUGH_FAILED
 	int EXTERNAL_IP_WAIT_AFTER_ALL_ATTEMPTS;
+
+	// Maximum number of internal IP address to try to connect to.
+	// Cannot be greater than MAXIMUM_NUMBER_OF_INTERNAL_IDS
+	// Should be high enough to try all internal IP addresses on the majority of computers
+	int MAXIMUM_NUMBER_OF_INTERNAL_IDS_TO_CHECK;
+
+	// If the first punchthrough attempt fails, try again
+	// This sometimes works because the remote router was looking for an incoming message on a higher numbered port before responding to a lower numbered port from the other system
+	bool retryOnFailure;
 };
 
 struct NatPunchthroughDebugInterface
 {
+	NatPunchthroughDebugInterface() {}
+	virtual ~NatPunchthroughDebugInterface() {}
 	virtual void OnClientMessage(const char *msg)=0;
 };
 

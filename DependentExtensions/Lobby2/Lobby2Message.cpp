@@ -140,6 +140,9 @@ void Lobby2Callbacks::MessageResult(Notification_Console_RoomMemberConnectivityU
 void Lobby2Callbacks::MessageResult(Notification_Console_ChatEvent *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_MuteListChanged *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_Local_Users_Changed *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Notification_Console_Signaling_Result *message) {ExecuteDefaultResult(message);}
+
+
 
 
 Lobby2Message::Lobby2Message() {refCount=1; requestId=(unsigned int)-1; callbackId=(unsigned char)-1;

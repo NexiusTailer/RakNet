@@ -38,6 +38,8 @@ void FCMHost::AddParticipant(RakNetGUID guid, FCMHostGroupID groupId)
 		if (fcmGroup->GetParticipantByGuid(guid))
 			return;
 		participant = AddParticipantToGroup(fcmGroup,guid);
+		if (participant==0)
+			return;
 		if (hostState==FCMHS_WE_ARE_HOST)
 		{
 			SendHostNotification(groupId, GetLocalPriority(groupId), rakPeerInterface->GetSystemAddressFromGuid(participant->guid));
@@ -467,6 +469,9 @@ FCMHost::Participant* FCMHost::AddParticipantToGroup(FCMGroup* group,RakNetGUID 
 {
 //	if (rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS,0).port==60002)
 //		int a=5;
+	for (unsigned int i=0; i < group->participants.Size(); i++)
+		if (group->participants[i]->guid==guid)
+			return 0;
 
 	Participant *participant = RakNet::OP_NEW<Participant>(__FILE__,__LINE__);
 	participant->guid=guid;
@@ -520,6 +525,7 @@ void FCMHost::FCMGroup::WriteParticipantGUIDsToBitstream(RakNet::BitStream *bs)
 }
 void FCMHost::FCMGroup::ReadParticipantGUIDsFromBitstream(RakNet::BitStream *bs, DataStructures::List<RakNetGUID> &guids)
 {
+	guids.Clear();
 	unsigned short count;
 	bs->Read(count);
 	Participant participant;
@@ -554,6 +560,11 @@ void FCMHost::FCMGroup::SendParticipantList(FCMHostGroupID groupId, RakPeerInter
 	Participant *participant;
 	unsigned int i;
 	RakNet::BitStream bs;
+	bs.Write((MessageID)ID_FCM_HOST_PARTICIPANT_LIST_TRANSMIT);
+	bs.Write(groupId);
+	bs.Write(localPriority);
+	WriteParticipantGUIDsToBitstream(&bs);
+
 	// Restart the process by clearing the participants states and transmitting the participant list
 	for (i=0; i < participants.Size(); i++)
 	{
@@ -561,10 +572,6 @@ void FCMHost::FCMGroup::SendParticipantList(FCMHostGroupID groupId, RakPeerInter
 		participant->participantState=FCMHost::Participant::PARTICIPANT_LIST_TRANSMITTED;
 		participant->remoteGuids.Clear();
 
-		bs.Write((MessageID)ID_FCM_HOST_PARTICIPANT_LIST_TRANSMIT);
-		bs.Write(groupId);
-		bs.Write(localPriority);
-		WriteParticipantGUIDsToBitstream(&bs);
 		rakPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, rakPeer->GetSystemAddressFromGuid(participant->guid), false);
 	}
 }

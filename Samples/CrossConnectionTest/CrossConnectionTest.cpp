@@ -1,19 +1,10 @@
 /// \file
 /// \brief Tests connecting two peers at the same time with the internet simulator running.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #include "RakPeerInterface.h"
 #include "RakNetworkFactory.h"
@@ -21,54 +12,147 @@
 #include "Rand.h"
 #include "Kbhit.h"
 #include <stdio.h> // Printf
-#include "WindowsIncludes.h" // Sleep
+#include "RakSleep.h"
 #include "MessageIdentifiers.h"
+#include "BitStream.h"
+#include "GetTime.h"
 
 void main(void)
 {
 	printf("An internal test to test two peers connecting to each other\n");
 	printf("at the same time.  This causes bugs so I fix them here\n");
 	printf("Difficulty: Beginner\n\n");
+	printf("(S)erver or (c)lient?: ");
+	static const unsigned short SERVER_PORT=1234;
+	char serverMode[32];
+	bool isServer;
+	char serverIP[64];
+	gets(serverMode);
+	if (serverMode[0]=='s' || serverMode[0]=='S')
+	{
+		isServer=true;
+	}
+	else
+	{
+		isServer=false;
 
-	PacketLogger pl1, pl2;
-	RakPeerInterface *peer1, *peer2;
-	peer1=RakNetworkFactory::GetRakPeerInterface();
-	peer2=RakNetworkFactory::GetRakPeerInterface();
-	peer1->AttachPlugin(&pl1);
-	peer2->AttachPlugin(&pl2);
-	peer1->ApplyNetworkSimulator(128000, 0, 100);
-	peer2->ApplyNetworkSimulator(128000, 0, 100);
-	SocketDescriptor socketDescriptor(1234,0);
-	peer1->Startup(1,0,&socketDescriptor, 1);
-	socketDescriptor.port=1235;
-	peer2->Startup(1,0,&socketDescriptor, 1);
-	peer1->SetMaximumIncomingConnections(1);
-	peer2->SetMaximumIncomingConnections(1);
-	seedMT(0);
-	pl1.LogHeader();
-	peer1->Connect("127.0.0.1", 1235, 0, 0);
-	peer2->Connect("127.0.0.1", 1234, 0, 0);
-	Sleep(2000);
-	Packet *p;
-	for (p=peer1->Receive(); p; peer1->DeallocatePacket(p), p=peer1->Receive())
-	{
-		if (p->data[0]==ID_NEW_INCOMING_CONNECTION)
-			printf("Peer1: ID_NEW_INCOMING_CONNECTION\n");
-		else if (p->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
-			printf("Peer1: ID_CONNECTION_REQUEST_ACCEPTED\n");
+		printf("Enter server IP: ");
+		gets(serverIP);
+		if (serverIP[0]==0)
+			strcpy(serverIP,"216.224.123.180");	
 	}
-	for (p=peer2->Receive(); p; peer2->DeallocatePacket(p), p=peer2->Receive())
+	char clientIP[64];
+	RakPeerInterface *rakPeer;
+	unsigned short clientPort;
+	bool gotNotification;
+	rakPeer=RakNetworkFactory::GetRakPeerInterface();
+	if (isServer)
 	{
-		if (p->data[0]==ID_NEW_INCOMING_CONNECTION)
-			printf("Peer2: ID_NEW_INCOMING_CONNECTION\n");
-		else if (p->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
-			printf("Peer2: ID_CONNECTION_REQUEST_ACCEPTED\n");
+		SocketDescriptor socketDescriptor(SERVER_PORT,0);
+		rakPeer->Startup(1,0,&socketDescriptor, 1);
+		rakPeer->SetMaximumIncomingConnections(1);
 	}
-	peer1->Shutdown(1000);
-	peer2->Shutdown(1000);
-	Sleep(1000);
-	printf("Press any key to quit\n");
-	getch();
-	RakNetworkFactory::DestroyRakPeerInterface(peer1);
-	RakNetworkFactory::DestroyRakPeerInterface(peer2);
+	else
+	{
+		SocketDescriptor socketDescriptor(0,0);
+		rakPeer->Startup(1,0,&socketDescriptor, 1);
+	}
+
+	printf("RakPeer started\n");
+	if (isServer==false)
+		rakPeer->Ping(serverIP,SERVER_PORT,false);
+
+	//	PacketLogger pl;
+	//	pl.LogHeader();
+	//	rakPeer->AttachPlugin(&pl);
+
+	RakNetTime connectionAttemptTime=0,connectionResultDeterminationTime=0,nextTestStartTime=0;
+	while(1)
+	{
+		Packet *p;
+		for (p=rakPeer->Receive(); p; rakPeer->DeallocatePacket(p), p=rakPeer->Receive())
+		{
+			if (p->data[0]==ID_NEW_INCOMING_CONNECTION)
+			{
+				printf("ID_NEW_INCOMING_CONNECTION\n");
+				gotNotification=true;
+			}
+			else if (p->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
+			{
+				printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
+				gotNotification=true;
+			}
+			else if (p->data[0]==ID_PING)
+			{
+				printf("ID_PING\n");
+				connectionAttemptTime=RakNet::GetTime()+1000;
+				p->systemAddress.ToString(false,clientIP);
+				clientPort=p->systemAddress.port;
+				gotNotification=false;
+			}
+			else if (p->data[0]==ID_PONG)
+			{
+				printf("ID_PONG\n");
+				RakNetTime sendPingTime;
+				RakNet::BitStream bs(p->data,p->length,false);
+				bs.IgnoreBytes(1);
+				bs.Read(sendPingTime);
+				RakNetTime rtt = RakNet::GetTime() - sendPingTime;
+				if (rtt/2<=500)
+					connectionAttemptTime=RakNet::GetTime()+1000-rtt/2;
+				else
+					connectionAttemptTime=RakNet::GetTime();
+				gotNotification=false;
+			}
+		}
+		if (connectionAttemptTime!=0 && RakNet::GetTime()>=connectionAttemptTime)
+		{
+			printf("Attemping connection\n");
+			connectionAttemptTime=0;
+			if (isServer)
+				rakPeer->Connect(clientIP,clientPort,0,0);
+			else
+				rakPeer->Connect(serverIP,SERVER_PORT,0,0);
+			connectionResultDeterminationTime=RakNet::GetTime()+2000;
+		}
+		if (connectionResultDeterminationTime!=0 && RakNet::GetTime()>=connectionResultDeterminationTime)
+		{
+			connectionResultDeterminationTime=0;
+			if (gotNotification==false)
+			{
+				printf("Test failed.\n");
+			}
+			else
+			{
+				printf("Test succeeded.\n");
+			}
+			if (isServer==false)
+			{
+				SystemAddress sa;
+				sa.SetBinaryAddress(serverIP);
+				sa.port=SERVER_PORT;
+				rakPeer->CancelConnectionAttempt(sa);
+			}
+			else
+			{
+				SystemAddress sa;
+				sa.SetBinaryAddress(clientIP);
+				sa.port=clientPort;
+				rakPeer->CancelConnectionAttempt(sa);
+			}
+			rakPeer->CloseConnection(rakPeer->GetSystemAddressFromIndex(0),true,0);
+			if (isServer==false)
+				nextTestStartTime=RakNet::GetTime()+1000;
+
+		}
+		if (nextTestStartTime!=0 && RakNet::GetTime()>=nextTestStartTime)
+		{
+			rakPeer->Ping(serverIP,SERVER_PORT,false);
+			nextTestStartTime=0;
+		}
+		RakSleep(0);
+
+	}
+
+	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
 }

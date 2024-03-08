@@ -1,7 +1,7 @@
 /// \file
 /// \brief \b [Internal] Datagram reliable, ordered, unordered and sequenced sends.  Flow control.  Message splitting, reassembly, and coalescence.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 /// Creative Commons Licensees are subject to the
@@ -354,7 +354,8 @@ private:
 	bool freeThreadedMemoryOnNextUpdate;
 
 	// If we backoff due to packetloss, don't remeasure until all waiting resends have gone out or else we overcount
-	bool packetlossThisSample, backoffThisSample;
+	bool packetlossThisSample;
+	int backoffThisSample;
 	unsigned packetlossThisSampleResendCount;
 	RakNetTimeUS lastPacketlossTime;
 

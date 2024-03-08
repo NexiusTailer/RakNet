@@ -1,19 +1,10 @@
 /// \file
 /// \brief A plugin to provide a simple way to compress and incrementally send the files in the FileList structure.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #ifndef __FILE_LIST_TRANFER_H
 #define __FILE_LIST_TRANFER_H
@@ -68,7 +59,7 @@ public:
 	/// \param[in] compressData Depreciated, unsupported
 	/// \param[in] _incrementalReadInterface If a file in \a fileList has no data, filePullInterface will be used to read the file in chunks of size \a chunkSize
 	/// \param[in] _chunkSize How large of a block of a file to send at once
-	void Send(FileList *fileList, RakPeerInterface *rakPeer, SystemAddress recipient, unsigned short setID, PacketPriority priority, char orderingChannel, bool compressData, IncrementalReadInterface *_incrementalReadInterface=0, unsigned int _chunkSize=8388608);
+	void Send(FileList *fileList, RakPeerInterface *rakPeer, SystemAddress recipient, unsigned short setID, PacketPriority priority, char orderingChannel, bool compressData, IncrementalReadInterface *_incrementalReadInterface=0, unsigned int _chunkSize=262144);
 
 	/// Stop a download.
 	void CancelReceive(unsigned short setId);
@@ -82,6 +73,7 @@ public:
 	/// Set a callback to get progress reports about what the file list instances do
 	/// \param[in] cb A pointer to an externally defined instance of FileListProgress. This pointer is held internally, so should remain valid as long as this class is valid.
 	void SetCallback(FileListProgress *cb);
+
 
 	/// \returns what was sent to SetCallback
 	/// \return What was sent to SetCallback

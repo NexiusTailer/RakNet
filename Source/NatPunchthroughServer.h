@@ -1,19 +1,10 @@
 /// \file
 /// \brief Contains the NAT-punchthrough plugin for the server.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #ifndef __NAT_PUNCHTHROUGH_SERVER_H
 #define __NAT_PUNCHTHROUGH_SERVER_H
@@ -55,21 +46,10 @@ public:
 	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 
 	// Each connected user has a ready state. Ready means ready for nat punchthrough.
-	struct User
-	{
-		RakNetGUID guid;
-		bool isReady;
-		unsigned short mostRecentPort;
-	};
-	static int NatPunchthroughUserComp( const RakNetGUID &key, User * const &data );
-protected:
-	void OnNATPunchthroughRequest(Packet *packet);	
-
-	//DataStructures::List<User*> users;
-	DataStructures::OrderedList<RakNetGUID, User*, NatPunchthroughServer::NatPunchthroughUserComp> users;
-
+	struct User;
 	struct ConnectionAttempt
 	{
+		ConnectionAttempt() {sender=0; recipient=0; startTime=0; inProgress=false; attemptPhase=NAT_ATTEMPT_PHASE_NOT_STARTED;}
 		User *sender, *recipient;
 		RakNetTime startTime;
 		bool inProgress;
@@ -79,14 +59,30 @@ protected:
 			NAT_ATTEMPT_PHASE_GETTING_RECENT_PORTS,
 		} attemptPhase;
 	};
-	DataStructures::List<ConnectionAttempt> connectionAttempts;
-	unsigned int GetConnectionAttemptIndex(RakNetGUID g1, RakNetGUID g2);
+	struct User
+	{
+		RakNetGUID guid;
+		SystemAddress systemAddress;
+		unsigned short mostRecentPort;
+		bool isReady;
+
+		DataStructures::List<ConnectionAttempt *> connectionAttempts;
+		bool HasConnectionAttemptToUser(User *user);
+		void DerefConnectionAttempt(ConnectionAttempt *ca);
+		void DeleteConnectionAttempt(ConnectionAttempt *ca);
+	};
+	RakNetTime lastUpdate;
+	static int NatPunchthroughUserComp( const RakNetGUID &key, User * const &data );
+protected:
+	void OnNATPunchthroughRequest(Packet *packet);
+	DataStructures::OrderedList<RakNetGUID, User*, NatPunchthroughServer::NatPunchthroughUserComp> users;
+
 	void OnGetMostRecentPort(Packet *packet);
 	void OnClientReady(Packet *packet);
 
 	void SendTimestamps(void);
-	void CloseUnresponsiveAttempts(void);
 	void StartPendingPunchthrough(void);
+	void StartPunchthroughForUser(User*user);
 
 };
 

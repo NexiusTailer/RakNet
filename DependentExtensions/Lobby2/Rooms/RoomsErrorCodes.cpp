@@ -147,10 +147,10 @@ static RoomsErrorCodeDescription errorCodeDescriptions[ROOMS_ERROR_CODES_COUNT] 
 	{REC_GET_BAN_REASON_NOT_BANNED, "This user is not banned."},
 	{REC_CHANGE_HANDLE_NEW_HANDLE_IN_USE, "The handle you are changing to is already in use."},
 	{REC_CHANGE_HANDLE_CONTAINS_PROFANITY, "The handle you are changing to contains profanity."},
-	{REC_ROOM_CHAT_USER_NOT_IN_ROOM, "You must be in a room to send room chat messages."},
-	{REC_ROOM_CHAT_RECIPIENT_NOT_ONLINE, "Room chat recipient is not online."},
-	{REC_ROOM_CHAT_RECIPIENT_NOT_IN_ANY_ROOM, "Room chat recipient is not in a room."},
-	{REC_ROOM_CHAT_RECIPIENT_NOT_IN_YOUR_ROOM, "Room chat recipient is not in your room."},
+	{REC_CHAT_USER_NOT_IN_ROOM, "You must be in a room to send room chat messages."},
+	{REC_CHAT_RECIPIENT_NOT_ONLINE, "Chat recipient is not online."},
+	{REC_CHAT_RECIPIENT_NOT_IN_ANY_ROOM, "Chat recipient is not in a room."},
+	{REC_CHAT_RECIPIENT_NOT_IN_YOUR_ROOM, "Chat recipient is not in your room."},
 };
 
 const char *RoomsErrorCodeDescription::ToEnglish(RoomsErrorCode result)

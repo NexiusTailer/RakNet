@@ -1,4 +1,4 @@
-#if !defined(_XBOX) && !defined(X360) && !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
+#if !defined(_XBOX) && !defined(X360)
 
 #include "BigInt.h"
 #include <ctype.h>

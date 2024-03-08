@@ -205,39 +205,32 @@ _USE_RAK_MEMORY_OVERRIDE will now work for all allocations, via placement new.
 Throughput will now backoff globally on unresponsive remote systems, rather than for specific messages. 
 AutopatcherServer will no longer crash when sending to multiple connections (fixed bug introduced in 3.26). 
 SimpleMutex and RakString can now be instantiated globally.<BR>
-3.4 (2/10/09)
-Thread Safety: randomMT calls in RakNet update thread. SystemAddress::ToString() in NAT punchthrough. GetStatistics() now has an optional output parameter, rather than returning a static.
-RakPeer: Fixed crash on deallocation when using ban lists. Added UseUserSocket() and RakPeer::RebindSocketAddress(). Statistics fixed with global compression. Fixed secure connections when using a pregenerated key. Packet::guid is now returned during the connection phase, not only after the connection completes.
-NAT punchthrough: improved success rate. Now supports multiple internal IP addresses.
-ReplicaManager2: Fixed to call BroadcastConstruction consistently, not only for previously unreferenced objects.
-FileListTransfer: OnFilePush will now be called when a file is sent. FileListTransferCBInterface::OnDownloadComplete is now called if there are no files to download.
-Lobby2: Further clans functionality implemented. Lobby2Client SendMessage was renamed to SendMsg to avoid conflicts with Windows SendMessage. Fixed Linux crash when using boolean arguments in the varadic parameter list on the server. Fixed memory leak where messages from the server were not deallocated.
-RoomsPlugin: Numerous fixes related to room properties and table serialization.
-NetworkID: operator < fixed in peer to peer mode.
-DataStructures::Table: Now has assignment operator. Cell::i is now a double, rather than an integer.
-New plugin: FCMHost, for a fully connected mesh topology to determine which system should act as a host.
-Compatibility: Windows CE compile fixes.
-Other: Packet::bitSize field was returning bytes, now fixed. Thanks to Antze Kaynier.<BR>
-3.401 (2/17/09)
-Add RakPeer::CancelConnectionAttempt. 
-Fix NatPunchthrough to use CancelConnectionAttempt. 
-If available bandwidth drops, but later has no packetloss for 5 seconds, bandwidth utilization increases much faster. 
-DeltaDirectoryTransfer plugin now supports IncrementalReadInterface, to reduce concurrent memory utilization for large files if desired. 
-Fix missing RakNet::OP_New in DS_WeightedGraph. Add extern "C" to RakMemoryOverride.<BR>
-3.5 (3/31/09)
-Fix delta directory transfer not able to read file contents on incremental reads because only the relative path was stored
-NAT punchthrough rewritten, tested with nearly every manufacturer.
-LightweightDatabaseServer will no longer incorrectly remove a row if you do not call RakPeer::Update() for a long time.
-Various ReplicaManager2 fixes for non-authoritative client created objects.
-Packet logger now shows acks and RakPeer::PushBackPacket commands. Also, now shows the correct messageID for regular sends.
-Add DS_Multilist for use in future data structures, to replace DS_List, DS_Queue, DS_OrderedList.
-Fixed Bitstream type mismatch in RakVoice, causing plugin to not work at all.
-The RakVoice sample with Portaudio now supports NAT Punchthrough.
-ReliabilityLayer now uses fast backoff on real or anticipated packetloss, reducing packetloss from about 16% to 2% for large data transfers.
-Fixed returning the wrong emailId with Lobby2 GetEmail function for PostgreSQL
-Switch plugins to use PluginInterface2, replacing PluginInterface, in order to support TCP.
-Add PacketizedTCP class, sending discrete messages through TCP.
-Support PacketizedTCP with the Autopatcher and FileListTransfer. Using TCP, the autopatcher can self-update even when RakNet's protocol changes.<BR>
+3.4 (02/17/09) Add RakPeer::CancelConnectionAttempt.
+ Fix NatPunchthrough to use CancelConnectionAttempt.
+  If available bandwidth drops, but later has no packetloss for 5 seconds, bandwidth utilization increases much faster.
+  DeltaDirectoryTransfer plugin now supports IncrementalReadInterface, to reduce concurrent memory utilization for large files if desired.
+  Fix missing RakNet::OP_New in DS_WeightedGraph.
+  Add extern "C" to RakMemoryOverride.<BR>
+3.5 (04/01/09) Fix delta directory transfer not able to read file contents on incremental reads because only the relative path was stored on the sender
+    NAT punchthrough rewritten, tested with nearly every manufacturer.
+    LightweightDatabaseServer will no longer incorrectly remove a row if you do not call RakPeer::Update() for a long time.
+    Various ReplicaManager2 fixes for non-authoritative client created objects.
+    Packet logger now shows acks and RakPeer::PushBackPacket commands. Also, now shows the correct messageID for regular sends.
+    Add DS_Multilist for use in future data structures, to replace DS_List, DS_Queue, DS_OrderedList.
+    Fixed Bitstream type mismatch in RakVoice, causing plugin to not work at all.
+    The RakVoice sample with Portaudio now supports NAT Punchthrough.
+    ReliabilityLayer now uses fast backoff on real or anticipated packetloss, reducing packetloss from about 16% to 2% for large data transfers.
+    Fixed returning the wrong emailId with Lobby2 GetEmail function for PostgreSQL
+    Switch plugins to use PluginInterface2, replacing PluginInterface, in order to support TCP.
+    Add PacketizedTCP class, sending discrete messages through TCP.
+    Support PacketizedTCP with the Autopatcher and FileListTransfer. Using TCP, the autopatcher can self-update even when RakNet's protocol changes.<BR>
+3.51 (04/17/09) Added UDPProxy feature, to forward datagrams in case of NATPunchthrough failure.
+Added ReplicaManager3 plugin. ReplicaManager2 is now depreciated.
+Minor fixes in RoomsPlugin. Added RakNetGUID support to rooms and Lobby2.
+Allow updating automatic system address and GUID fields if onlyUpdateOwnRows is false for LightweightDatabaseServer.
+Improve flow control for poor quality connections.
+Fix denial of service exploit caused by sending many connection attempts to use up all connection slots. Now, only 10 connections can be made from an identical IP address per second.<BR>
+
 
 </TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">

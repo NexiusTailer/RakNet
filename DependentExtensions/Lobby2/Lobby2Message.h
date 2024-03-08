@@ -164,6 +164,7 @@ enum Lobby2MessageID
 	L2MID_Notification_Console_ChatEvent,
 	L2MID_Notification_Console_MuteListChanged,
 	L2MID_Notification_Console_Local_Users_Changed,
+	L2MID_Notification_Console_Signaling_Result,
 
 
 	L2MID_COUNT,
@@ -181,7 +182,7 @@ enum ClanMemberState
 // --------------------------------------------- Base class for all messages (functions and notifications --------------------------------------------
 
 /// A Lobby2Message encapsulates a networked function call from the client.
-/// The client should fill in the input parameters, call Lobby2Client::SendMessage(), and wait for the reply in the callback passed to Lobby2Client::SetCallbackInterface()
+/// The client should fill in the input parameters, call Lobby2Client::SendMsg(), and wait for the reply in the callback passed to Lobby2Client::SetCallbackInterface()
 /// The input parameters are always serialized back from the server.
 /// See resultCode for the result of the operation. L2RC_SUCCESS means success. Anything else means failure.
 /// Any message may return between L2RC_NOT_LOGGED_IN and L2RC_EMAIL_ADDRESS_IS_INVALID, which indices formatting errors in the input.
@@ -276,7 +277,11 @@ struct Lobby2Message
 
 	/// Just a number, uniquely identifying each allocation of Lobby2Message.
 	/// Use it if you need to lookup queries on the callback reply
-	unsigned int requestId;
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+	uint32_t requestId;
+#else
+	uint64_t requestId;
+#endif
 
 	/// Just a number, representing which instance of Lobby2Callbacks should process the result of this operation
 	/// -1 means all
@@ -430,10 +435,11 @@ struct Notification_Console_RoomMemberConnectivityUpdate;
 struct Notification_Console_ChatEvent;
 struct Notification_Console_MuteListChanged;
 struct Notification_Console_Local_Users_Changed;
+struct Notification_Console_Signaling_Result;
 
 // --------------------------------------------- Callback interface for all messages, notifies the user --------------------------------------------
 
-/// Every Lobby2Message processed with Lobby2Client::SendMessage() while connected will call the callback registered with Lobby2Client::SetCallbackInterface().
+/// Every Lobby2Message processed with Lobby2Client::SendMsg() while connected will call the callback registered with Lobby2Client::SetCallbackInterface().
 struct Lobby2Callbacks
 {
 	Lobby2Callbacks() {callbackId=nextCallbackId++;}
@@ -573,6 +579,7 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Notification_Console_ChatEvent *message);
 	virtual void MessageResult(Notification_Console_MuteListChanged *message);
 	virtual void MessageResult(Notification_Console_Local_Users_Changed *message);
+	virtual void MessageResult(Notification_Console_Signaling_Result *message);
 
 	virtual void ExecuteDefaultResult(Lobby2Message *message) {}
 
@@ -2828,7 +2835,7 @@ struct Notification_Console_KickedOutOfRoom : public Lobby2Message
 
 struct Notification_Console_RoomWasDestroyed : public Lobby2Message
 {
-	__L2_MSG_BASE_IMPL(Notification_Console_LobbyGotRoomInvitation)
+	__L2_MSG_BASE_IMPL(Notification_Console_RoomWasDestroyed)
 		virtual bool RequiresAdmin(void) const {return true;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
@@ -2837,7 +2844,7 @@ struct Notification_Console_RoomWasDestroyed : public Lobby2Message
 
 struct Notification_Console_RoomOwnerChanged : public Lobby2Message
 {
-	__L2_MSG_BASE_IMPL(Notification_Console_LobbyGotRoomInvitation)
+	__L2_MSG_BASE_IMPL(Notification_Console_RoomOwnerChanged)
 		virtual bool RequiresAdmin(void) const {return true;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
@@ -2846,7 +2853,7 @@ struct Notification_Console_RoomOwnerChanged : public Lobby2Message
 
 struct Notification_Console_RoomStateChanged : public Lobby2Message
 {
-	__L2_MSG_BASE_IMPL(Notification_Console_LobbyGotRoomInvitation)
+	__L2_MSG_BASE_IMPL(Notification_Console_RoomStateChanged)
 		virtual bool RequiresAdmin(void) const {return true;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
@@ -2855,7 +2862,7 @@ struct Notification_Console_RoomStateChanged : public Lobby2Message
 
 struct Notification_Console_RoomChatMessage : public Lobby2Message
 {
-	__L2_MSG_BASE_IMPL(Notification_Console_LobbyGotRoomInvitation)
+	__L2_MSG_BASE_IMPL(Notification_Console_RoomChatMessage)
 		virtual bool RequiresAdmin(void) const {return true;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
@@ -2867,7 +2874,7 @@ struct Notification_Console_RoomChatMessage : public Lobby2Message
 
 struct Notification_Console_RoomMessage : public Lobby2Message
 {
-	__L2_MSG_BASE_IMPL(Notification_Console_LobbyGotRoomInvitation)
+	__L2_MSG_BASE_IMPL(Notification_Console_RoomMessage)
 		virtual bool RequiresAdmin(void) const {return true;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
@@ -2917,6 +2924,14 @@ struct Notification_Console_Local_Users_Changed : public Lobby2Message
 	virtual bool RequiresLogin(void) const {return false;}
 };
 
+struct Notification_Console_Signaling_Result : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Notification_Console_Signaling_Result)
+		virtual bool RequiresAdmin(void) const {return true;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return false;}
+	virtual bool RequiresLogin(void) const {return false;}
+};
 
 // --------------------------------------------- Base interface of factory class for all messages --------------------------------------------
 #define __L2_MSG_FACTORY_BASE(__NAME__) {case L2MID_##__NAME__ : Lobby2Message *m = RakNet::OP_NEW< __NAME__ >( __FILE__, __LINE__ ) ; RakAssert(m->GetID()==L2MID_##__NAME__ ); m->requestId=nextRequestId++; return m;}
@@ -3061,6 +3076,7 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Notification_Console_ChatEvent);
 			__L2_MSG_FACTORY_BASE(Notification_Console_MuteListChanged);
 			__L2_MSG_FACTORY_BASE(Notification_Console_Local_Users_Changed);
+			__L2_MSG_FACTORY_BASE(Notification_Console_Signaling_Result);
 
 		default:
 			return 0;

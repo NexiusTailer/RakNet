@@ -1,19 +1,10 @@
 /// \file
 /// \brief Types used by RakNet, most of which involve user code.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #ifndef __NETWORK_TYPES_H
 #define __NETWORK_TYPES_H
@@ -46,7 +37,7 @@ const int UNDEFINED_RPC_INDEX=((RPCIndex)-1);
 /// First byte of a network message
 typedef unsigned char MessageID;
 
-typedef unsigned int BitSize_t;
+typedef uint32_t BitSize_t;
 
 #if defined(_MSC_VER) && _MSC_VER > 0
 #define PRINTF_TIME_MODIFIER "I64"
@@ -76,13 +67,16 @@ struct RAK_DLL_EXPORT SocketDescriptor
 	// Type of the socket. Defaults to UDP.
 	SocketType socketType;
 };
-
 /// \brief Network address for a system
 /// Corresponds to a network address
 /// This is not necessarily a unique identifier. For example, if a system has both LAN and internet connections, the system may be identified by either one, depending on who is communicating
 /// Use RakNetGUID for a unique per-instance of RakPeer to identify systems
 struct RAK_DLL_EXPORT SystemAddress
 {
+	SystemAddress();
+	explicit SystemAddress(const char *a, unsigned short b);
+	explicit SystemAddress(unsigned int a, unsigned short b);
+
 	///The peer address from inet_addr.
 	unsigned int binaryAddress;
 	///The port number
@@ -182,11 +176,11 @@ struct RAK_DLL_EXPORT RakNetGUID
 };
 
 /// Index of an invalid SystemAddress
-const SystemAddress UNASSIGNED_SYSTEM_ADDRESS =
-{
-	0xFFFFFFFF, 0xFFFF
-};
-
+//const SystemAddress UNASSIGNED_SYSTEM_ADDRESS =
+//{
+//	0xFFFFFFFF, 0xFFFF
+//};
+const SystemAddress UNASSIGNED_SYSTEM_ADDRESS(0xFFFFFFFF, 0xFFFF);
 const RakNetGUID UNASSIGNED_RAKNET_GUID = 
 {
 	{0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF}

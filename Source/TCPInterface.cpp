@@ -1,19 +1,10 @@
 /// \file
 /// \brief A simple TCP based server allowing sends and receives.  Can be connected to by a telnet client.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #include "TCPInterface.h"
 #ifdef _WIN32
@@ -36,11 +27,6 @@ typedef int socklen_t;
 
 #ifdef _WIN32
 #include "WSAStartupSingleton.h"
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-#define closesocket socketclose
-#else
-#define closesocket close
-#include <unistd.h>
 #endif
 
 RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop);
@@ -549,8 +535,10 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 {
 	TCPInterface * sts = ( TCPInterface * ) arguments;
 	RemoteClient *remoteClient;
-	const int BUFF_SIZE=8096;
-	char data[ BUFF_SIZE ];
+//	const int BUFF_SIZE=8096;
+	const int BUFF_SIZE=1048576;
+	//char data[ BUFF_SIZE ];
+	char * data = (char*) rakMalloc_Ex(BUFF_SIZE,__FILE__,__LINE__);
 	TCPInterface::OutgoingMessage *outgoingMessage;
 	Packet *incomingMessage;
 	SystemAddress *systemAddress;
@@ -802,6 +790,8 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 
 	}
 	sts->threadRunning=false;
+
+	rakFree_Ex(data,__FILE__,__LINE__);
 
 	return 0;
 }

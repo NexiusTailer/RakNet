@@ -39,12 +39,15 @@ public:
 	void SetName(const char *str) {name = str;}
 	void SetSystemAddress(SystemAddress sa) {systemAddress=sa;}
 	SystemAddress GetSystemAddress(void) const {return systemAddress;}
+	void SetGUID(RakNetGUID g) {guid=g;}
+	RakNetGUID GetGUID(void) const {return guid;}
 
 	PerGameRoomsContainer *GetPerGameRoomsContainer(void) const {return perGameRoomsContainer;}
 	bool GetInQuickJoin(void) const {return inQuickJoin;}
 protected:
 	RakNet::RakString name;
 	SystemAddress systemAddress;
+	RakNetGUID guid;
 	Room *room;
 	bool inQuickJoin;
 	PerGameRoomsContainer *perGameRoomsContainer;
@@ -111,9 +114,12 @@ struct RemoveUserResult
 	RemoveUserResult();
 	~RemoveUserResult();
 
-	RoomsParticipant *removedUser;
+	// Why return a deleted pointer?
+//	RoomsParticipant *removedUser;
 	bool removedFromQuickJoin;
 	bool removedFromRoom;
+	SystemAddress removedUserAddress;
+	RakNet::RakString removedUserName;
 
 	// Following members only apply if removedFromRoom==true
 	Room *room;
@@ -134,6 +140,7 @@ struct RoomMemberDescriptor
 	bool isReady;
 	// Filled externally
 	SystemAddress systemAddress;
+	RakNetGUID guid;
 
 	void FromRoomMember(RoomMember *roomMember);
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);

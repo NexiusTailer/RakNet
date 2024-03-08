@@ -128,6 +128,7 @@ void RoomMemberDescriptor::FromRoomMember(RoomMember *roomMember)
 	roomMemberMode=roomMember->roomMemberMode;
 	isReady=roomMember->isReady;
 	systemAddress=roomMember->roomsParticipant->GetSystemAddress();
+	guid=roomMember->roomsParticipant->GetGUID();
 }
 void RoomMemberDescriptor::Serialize(bool writeToBitstream, RakNet::BitStream *bitStream)
 {
@@ -135,6 +136,7 @@ void RoomMemberDescriptor::Serialize(bool writeToBitstream, RakNet::BitStream *b
 	bitStream->Serialize(writeToBitstream, roomMemberMode);
 	bitStream->Serialize(writeToBitstream, isReady);
 	bitStream->Serialize(writeToBitstream, systemAddress);
+	bitStream->Serialize(writeToBitstream, guid);
 }
 // ----------------------------  RemoveUserResult  ----------------------------
 
@@ -143,7 +145,6 @@ RemoveUserResult::RemoveUserResult()
 	removedFromQuickJoin=false;
 	removedFromRoom=false;
 	room=0;
-	removedUser=0;
 	gotNewModerator=false;
 	roomDestroyed=false;
 }
@@ -160,6 +161,8 @@ void RemoveUserResult::Serialize(bool writeToBitstream, RakNet::BitStream *bitSt
 	if (room)
 		roomId=room->GetID();
 	bitStream->Serialize(writeToBitstream,roomId);
+	bitStream->Serialize(writeToBitstream,removedUserName);
+	bitStream->Serialize(writeToBitstream,removedUserAddress);
 	bitStream->Serialize(writeToBitstream,gotNewModerator);
 	bitStream->Serialize(writeToBitstream,roomDestroyed);
 	unsigned int clearedInvitationsSize=clearedInvitations.Size();
@@ -196,6 +199,9 @@ void JoinedRoomResult::Serialize(bool writeToBitstream, RakNet::BitStream *bitSt
 	bitStream->Serialize(writeToBitstream, joiningMemberAddress);
 	roomDescriptor.FromRoom(roomOutput, agrc);
 	roomDescriptor.Serialize(writeToBitstream, bitStream);
+
+//	if (writeToBitstream)
+//		RakAssert(roomOutput->GetNumericProperty(DefaultRoomColumns::TC_USED_SLOTS)==roomOutput->roomMemberList.Size()-1);
 }
 // ----------------------------  RoomDescriptor  ----------------------------
 void RoomDescriptor::FromRoom(Room *room, AllGamesRoomsContainer *agrc)
@@ -428,15 +434,22 @@ RoomsErrorCode AllGamesRoomsContainer::EnterRoom(RoomCreationParameters *roomCre
 		return REC_ENTER_ROOM_UNKNOWN_TITLE;
 	PerGameRoomsContainer *perGameRoomsContainer = perGamesRoomsContainers.Get(roomCreationParameters->gameIdentifier);
 	RoomsErrorCode roomsErrorCode = perGameRoomsContainer->JoinByFilter(roomMemberMode, roomCreationParameters->firstUser, -1, query, joinRoomResult);
+
+	// Redundant, rooms plugin does this anyway
 //	if (roomsErrorCode==REC_SUCCESS)
 //		joinRoomResult->roomDescriptor.FromRoom(joinRoomResult->roomOutput, this);
+
 	if (roomsErrorCode != REC_JOIN_BY_FILTER_NO_ROOMS || roomsErrorCode==REC_SUCCESS)
 		return roomsErrorCode;
 	roomsErrorCode = perGameRoomsContainer->CreateRoom(roomCreationParameters,profanityFilter,++nextRoomId, true);
 	if (roomsErrorCode!=REC_SUCCESS)
+	{
 		nextRoomId--;
+	}
 	else
+	{
 		roomCreationParameters->createdRoom=true;
+	}
 	return roomsErrorCode;
 }
 RoomsErrorCode AllGamesRoomsContainer::JoinByFilter(GameIdentifier gameIdentifier, RoomMemberMode roomMemberMode, RoomsParticipant* roomsParticipant, RoomID lastRoomJoined, RoomQuery *query, JoinedRoomResult *joinRoomResult)
@@ -453,7 +466,9 @@ RoomsErrorCode AllGamesRoomsContainer::JoinByFilter(GameIdentifier gameIdentifie
 	}
 	PerGameRoomsContainer *perGameRoomsContainer = perGamesRoomsContainers.Get(gameIdentifier);
 	joinRoomResult->agrc=this;
-	return perGameRoomsContainer->JoinByFilter(roomMemberMode, roomsParticipant, -1, query, joinRoomResult);
+	RoomsErrorCode rec = perGameRoomsContainer->JoinByFilter(roomMemberMode, roomsParticipant, -1, query, joinRoomResult);
+	joinRoomResult->roomDescriptor.FromRoom(joinRoomResult->roomOutput, this);
+	return rec;
 }
 RoomsErrorCode AllGamesRoomsContainer::LeaveRoom(RoomsParticipant* roomsParticipant, RemoveUserResult *removeUserResult)
 {
@@ -907,7 +922,7 @@ int PerGameRoomsContainer::RoomsSortByTimeThenTotalSlots( Room* const &key, Room
 {
 	double keyCreationTime = key->GetNumericProperty(DefaultRoomColumns::TC_CREATION_TIME);
 	double dataCreationTime = data->GetNumericProperty(DefaultRoomColumns::TC_CREATION_TIME);
-	int diff = abs(keyCreationTime-dataCreationTime);
+	int diff = (int) abs(keyCreationTime-dataCreationTime);
 	if (diff < 30 * 1000)
 	{
 		double keyTotalSlots = key->GetNumericProperty(DefaultRoomColumns::TC_USED_PUBLIC_PLUS_RESERVED_SLOTS);
@@ -1881,7 +1896,7 @@ RoomsErrorCode Room::JoinByFilter(RoomsParticipant* roomsParticipant, RoomMember
 	rm->roomMemberMode=roomMemberMode;
 	roomMemberList.Insert(rm);
 	roomsParticipant->SetRoom(this);
-
+	
 	if (firstInviteIndex!=-1)
 	{
 		joinRoomResult->acceptedInvitor=roomMemberList[firstInviteIndex]->roomsParticipant;
@@ -1889,6 +1904,10 @@ RoomsErrorCode Room::JoinByFilter(RoomsParticipant* roomsParticipant, RoomMember
 	}
 	else
 		joinRoomResult->acceptedInvitor=0;
+
+	// Moderator does not count towards a slot
+	UpdateUsedSlots();
+	RakAssert(GetNumericProperty(DefaultRoomColumns::TC_USED_SLOTS)==roomMemberList.Size()-1);
 
 	joinRoomResult->joiningMember=roomsParticipant;
 	return REC_SUCCESS;
@@ -1904,6 +1923,12 @@ RoomsErrorCode Room::JoinByQuickJoin(RoomsParticipant* roomsParticipant, RoomMem
 		int val = (int) roomsErrorCode;
 		val += (int)REC_JOIN_BY_QUICK_JOIN_CANNOT_JOIN_AS_MODERATOR-(int)REC_JOIN_BY_FILTER_CANNOT_JOIN_AS_MODERATOR;
 		roomsErrorCode=(RoomsErrorCode)val;
+	}
+	else
+	{
+		// Moderator does not count towards a slot
+		UpdateUsedSlots();
+		RakAssert(GetNumericProperty(DefaultRoomColumns::TC_USED_SLOTS)==roomMemberList.Size()-1);
 	}
 	return roomsErrorCode;
 }
@@ -2006,13 +2031,14 @@ RoomsErrorCode Room::RemoveUser(RoomsParticipant* roomsParticipant,RemoveUserRes
 {
 	RakAssert(roomDestroyed==false);
 
-	removeUserResult->removedUser=roomsParticipant;
 	removeUserResult->gotNewModerator=false;
 	removeUserResult->removedFromRoom=false;
 	removeUserResult->room=this;
 	unsigned int roomsParticipantIndex = GetRoomIndex(roomsParticipant);
 	if (roomsParticipantIndex==-1) return REC_REMOVE_USER_NOT_IN_ROOM;
 	removeUserResult->removedFromRoom=true;
+	removeUserResult->removedUserAddress=roomsParticipant->GetSystemAddress();
+	removeUserResult->removedUserName=roomsParticipant->GetName();
 
 	if (roomMemberList[roomsParticipantIndex]->roomMemberMode==RMM_MODERATOR)
 	{

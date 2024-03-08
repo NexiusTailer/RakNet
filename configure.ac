@@ -47,7 +47,7 @@ AC_SUBST(distcheck_args)
 AC_SUBST(pkgconfig_add_data)
 
 # Files where we want to substitude variables (as version)
-# AC_CONFIG_FILES(readme.txt autotools/RakNet.pc)
++AC_CONFIG_FILES(autotools/RakNet.pc)
 
 AC_CONFIG_FILES(Makefile Source/Makefile DependentExtensions/Makefile)
 

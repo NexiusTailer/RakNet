@@ -1,19 +1,10 @@
 /// \file
 /// \brief Contains the second iteration of the ReplicaManager class.  This system automatically creates and destroys objects, downloads the world to new players, manages players, and automatically serializes as needed.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #ifndef __REPLICA_MANAGER_2_H
 #define __REPLICA_MANAGER_2_H
@@ -675,7 +666,6 @@ public:
 	/// \param[in] timestamp timestamp sent with Replica2::SerializeConstruction(), 0 for none.
 	/// \param[in] networkId NetworkID that will be assigned automatically to the new object after this function returns
 	/// \param[in] networkIDCollision True if the network ID that should be assigned to this object is already in use. Usuallly this is because the object already exists, and you should just read your data and return 0.
-	/// \return Return 0 to signal that construction failed or was refused for this object. Otherwise return the object that was created. A reference will be held to this object, and SetNetworkID() and SetReplicaManager() will be called automatically.
 	virtual void OnConstructionComplete(RakNet::BitStream *replicaData, SystemAddress sender, SerializationType type, ReplicaManager2 *replicaManager, RakNetTime timestamp, NetworkID networkId, bool networkIDCollision);
 
 protected:

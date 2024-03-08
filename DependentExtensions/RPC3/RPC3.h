@@ -1,19 +1,10 @@
 /// \file
 /// \brief Automatically serializing and deserializing RPC system. Third generation of RPC.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #ifndef __RPC_3_H
 #define __RPC_3_H
@@ -259,7 +250,6 @@ public:
 	template <class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9>
 	bool Call(const char *uniqueIdentifier, P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6, P7 &p7, P8 &p8, P9 &p9)	{
 		RakNet::BitStream bitStream;
-		bool b = boost::is_array<boost::remove_pointer< boost::remove_reference<P2> > >::value;
 		_RPC3::SerializeCallParameterBranch<P1>::type::apply(bitStream, p1);
 		_RPC3::SerializeCallParameterBranch<P2>::type::apply(bitStream, p2);
 		_RPC3::SerializeCallParameterBranch<P3>::type::apply(bitStream, p3);

@@ -17,34 +17,78 @@
   <TR>
     <TD>
 	
-	 <span class="RakNetBlueHeader">NAT overview</span>	 <BR>
-      <BR>
-      NAT, or network address translation is a technique used to map one IP, known publicly, to one or more IPs, known privately.
-	  This is used to provide more IP addresses when they are scarce behind a LAN, for security, and/or to share internet connections.
-	  With a NAT, all packets go to the NAT server.  The NAT server has a routing table which will then relay that packet to the correct machine.
-	  When a system behind the NAT sends a packet to a system outside the NAT, the NAT will record the sending machine outgoing destination in the table.
-	  When a return packet is sent it will do a reverse lookup on this table.
-      <P> The problem with this for games is that it requires the machine behind the NAT to first send a packet to all machines it wants to get a packet from.  This makes it impossible to accept unknown incoming connections, which is a problem for a public game server.
-      <P> This can be avoided if one computer is behind a NAT and another is not.  The player behind the NAT must initiate the connection (the client) while the player not behind the NAT acts as the server. 
-      <P> <span class="RakNetBlueHeader">NAT Punchthrough</span> <BR>
+	  <p><span class="RakNetBlueHeader">What is NAT?</span>	 <BR>
+	    <BR>
+      NAT is short for network address translation. It is used by routers to map addresses behind the router to a single destination address, using different ports. For example, if you have two computers behind a router, but only one ISP, then both computers will use the same IP address, but with different source ports than what the application actually assigned. The router keeps a lookup table of what mappings it provides, so when a remote computer replies it is routed to the correct local computer behind the NAT.</p>
+	  <p>The problem with NAT is that remote computers cannot initiate sends to local computers because no mapping yet exists. Therefore, if two computers both behind NAT try to connect, neither will be able to do so. This is a problem with voice communication, peer to peer games, or games where your users host and the host is behind a NAT. In the old days your users would have to go to their router configuration screen and setup a mapping. However, in modern applications users are not usually required to do this, thanks to NatPunchthrough.</p>
+	  <p><span class="RakNetBlueHeader">NAT Punchthrough</span> </p>
+	  <p>	    The NatPunchthroughClient.cpp plugin requires a server, not behind NAT, running NatPunchthroughServer.cpp that both clients can connect to. The server will find the external IP address of each client, and tell both clients to connect to that address at the same time. If that fails, each client will attempt to estimate the ports used by the other. If that fails, the process repeats once again, in case later port estimation opened a prior port. If that also fails, the plugin returns ID_NAT_PUNCHTHROUGH_FAILED.      </p>
+	  <p><span class="RakNetBlueHeader">Client Implementation</span></p>
+	  <ol>
+	    <li>Create an instance of the plugin: <span class="RakNetCode">NatPunchthroughClient natPunchthroughClient;</span></li>
+	    <li>Attach the plugin to an instance of RakPeerInterface: <span class="RakNetCode">rakPeer-&gt;AttachPlugin(&amp;natPunchthroughClient);</span></li>
+	    <li>Connect to the server, and wait for ID_CONNECTION_REQUEST_ACCEPTED. Use the following line to use the free server provided by RakNet: <span class="RakNetCode">rakPeer-&gt;Connect(&quot;216.224.123.180&quot;, 60481, 0, 0);</span></li>
+	    <li>Call OpenNAT with the GUID (globally unique identifier) of the remote system that you want to connect to. In order to get the GUID, you would either have to transmit it with your own code on the server, upload it to the <A HREF="phpdirectoryserver.html">PHPDirectoryServer</A>, or use a plugin that stores it, such as <A HREF="lightweightdatabase.html">LightweightDatabase</A>: <span class="RakNetCode">natPunchthroughClient.OpenNAT(remoteGuid, serverSystemAddress);</span>. In order to read your own guid, use <span class="RakNetCode">RakPeerInterface::GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);</span></li>
+	    <li>Wait a while. It may take over 10 seconds to try every possible port twice, although it often works within a couple of seconds. If you want to get text messages on what is happening, you can use <span class="RakNetCode">NatPunchthroughClient::SetDebugInterface()</span></li>
+	    <li>ID_NAT_PUNCHTHROUGH_SUCCEEDED means the punchthrough succeeded, and you should be able to connect or send other messages to the remote system. Packet::SystemAddress is the address of the system you can now connect to. Any other ID_NAT_* means the punchthrough failed. See MessageIdentifiers.h for the list of codes and comments on each. </li>
+      </ol>
+	  <p><span class="RakNetBlueHeader">Server Implementation</span></p>
+	  <ol>
+	    <li>Host a server somewhere, not using NAT / e.g. behind a firewall. (RakNet provides a free one at 216.224.123.180:60481, however  you may wish to host your own for consistent uptime).</li>
+	    <li>Create an instance of the plugin: <span class="RakNetCode">NatPunchthroughServer natPunchthroughServer;</span></li>
+	    <li>Attach the plugin: <span class="RakNetCode">rakPeer-&gt;AttachPlugin(&amp;natPunchthroughServer);</span></li>
+	    <li>Don't forget to call <span class="RakNetCode">RakPeerInterface::Startup()</span> and <span class="RakNetCode">RakPeerInterface::SetMaximumIncomingConnections(MAX_CONNECTIONS);</span></li>
+      </ol>
+<P><span class="RakNetBlueHeader">Using the NatPunchthrough class </span><BR>
         <BR>
 		
-        If both machines are behind a NAT (router), it is impossible for them to connect to each other unless they know each others public IPs and ports in advance and they happen to try to communicate at the same time.
-		This technique is called NAT punchthrough.
-		One way to know each other's public IPs and ports in advance and how they know to connect at the same time is through a third non-NAT intermediary system. This system could also double as a <a href="lobby.html">lobby server</a>, or a <a href="lightweightdatabase.html">lightweight database</a> / directory server.<BR>
-      <P><span class="RakNetBlueHeader">Using the NatPunchthrough class </span><BR>
-        <BR>
-		
-        The NatPunchthrough class implements the NAT punch through technique, allowing two systems that are behind NATs to connect to each other.<br>
-        The third system needed, called a facilitator, is the system that is not behind a NAT and that both systems are already connected to.<br>
-        It will synchronize a send between both NAT systems such that the routers will both consider themselves as handling a reply to a message, when in
-        fact they are handing an initial message. As replies are allowed, both systems get their corresponding messages and the connection takes place.<br>
-      To use the NatPunchthrough class, you need to consider those 3 involved systems.       
-      <P>        Sender= system that wants to connect<br>
-        Facilitator = the system that is not behind a NAT, to which the other systems connect to. <br>
-      Recipent = system to get the connection request.      
-      <P>        See the sample <em>\Samples\NATPunchtrough</em><br>
-      <table width="100%" border="0">
+      See the sample <em>\Samples\NATPunchtrough</em>
+<P>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">UDP Proxy</td>
+  </tr>
+</table>
+<P>With some poor quality or homemade routers, it is possible that NAT punchthrough will not work. For example, a router that picks a new random port for each outgoing connection, and will only allow incoming connections to this port, will never work. This happens about 5% of the time. To handle this case, RakNet provides the UDPProxy system. Essentially, it uses a server that you run to route messages between the source and destination client transparently. This even works to route datagrams from games not using RakNet (though you need RakNet to setup the forwarding). The combination of NATPunchthrough and UDPProxy should enable any system to connect to any other system with a 100% success rate, provided you are willing to host enough proxy servers to forward all the traffic.
+<P>The UDP Proxy system uses 3 main classes:
+<ul>
+  <li><strong>UDPProxyClient</strong>: Makes requests of UDPProxyCoordinator to setup forwarding. This is the class the client runs.</li>
+  <li><strong>UDPProxyCoordinator</strong>: Runs on the server that will get all requests from UDPProxyClient. Also, gets all logins from UDPProxyServer</li>
+  <li><strong>UDPProxyServer</strong>: Actually does the UDP datagram forwarding, via a composite instance of UDPForwarder.cpp<br>
+  </li>
+  </ul>
+<p><span class="RakNetBlueHeader">Client Implementation</span>:</p>
+<ol>
+  <li>Create an instance of the plugin: <span class="RakNetCode">UDPProxyClient udpProxyClient;</span></li>
+  <li>Derive a class from <span class="RakNetCode">RakNet::UDPProxyClientResultHandler</span> to get event notifications for the system.</li>
+  <li>Attach the plugin to an instance of RakPeerInterface: <span class="RakNetCode">rakPeer-&gt;AttachPlugin(&amp;udpProxyClient);</span></li>
+  <li>Call UDPProxyClient::SetResultHandler() on the class created in step 2.</li>
+  <li>Try NATPunchthrough first. If you get ID_NAT_PUNCHTHROUGH_FAILED for the system that initiated NATPunchthrough, go to step 6. Both systems will return ID_NAT_PUNCHTHROUGH_FAILED, however, only one system needs to start the proxy system.</li>
+  <li>Call UDPProxyClient::RequestForwarding with the address of the coordinator, the address you want to forward from (UNASSIGNED_SYSTEM_ADDRESS for your own), the address you want to forward to, and how long to keep the forwarding active on no data. For example:<BR>
+    <span class="RakNetCode">SystemAddress coordinatorAddress;<BR>
+  coordinatorAddress.SetBinaryAddress("216.224.123.180");<BR>
+  coordinatorAddress.port=60481;<BR>
+   udpProxyClient.RequestForwarding(coordinatorAddress, UNASSIGNED_SYSTEM_ADDRESS, p-&gt;systemAddress, 7000);</span></li>
+  <li>Assuming you are connected to the coordinator, and the coordinator is running the plugin, your event handler class created in step 2 should get a callback within a second or two. <span class="RakNetCode">UDPProxyClientResultHandler::OnForwardingSuccess</span> will be returned if a UDPProxyServer has been assigned to forward datagrams from the source system specified in step 6, to the target system specified in step 6. For example, to connect to the remote system use: <span class="RakNetCode">rakPeer-&gt;Connect(proxyIPAddress, proxyPort, 0, 0);</span></li>
+  </ol>
+<p><span class="RakNetBlueHeader">Coordinator Implementation</span>:</p>
+<ol>
+  <li>Create an instance of the plugin: <span class="RakNetCode">UDPProxyCoordinator udpProxyCoordinator;</span></li>
+  <li>Attach the plugin to an instance of RakPeerInterface: <span class="RakNetCode">rakPeer-&gt;AttachPlugin(&amp;udpProxyCoordinator);</span></li>
+  <li>Set the password on the coordinator for the servers to use <span class="RakNetCode">udpProxyCoordinator.SetRemoteLoginPassword(COORDINATOR_PASSWORD);</span></li>
+  <li>Don't forget to call <span class="RakNetCode">RakPeerInterface::Startup()</span> and <span class="RakNetCode">RakPeerInterface::SetMaximumIncomingConnections(MAX_CONNECTIONS);</span></li>
+  </ol>
+<p><span class="RakNetBlueHeader">Server Implementation</span>:</p>
+<ol>
+  <li>Create an instance of the plugin: <span class="RakNetCode">UDPProxyServer udpProxyServer;</span></li>
+  <li>Attach the plugin to an instance of RakPeerInterface: <span class="RakNetCode">rakPeer-&gt;AttachPlugin(&amp;udpProxyServer);</span></li>
+  <li>Login to the coordinator. This can be done at runtime, so you can dynamically add more forwarding servers as your game is more popular.<BR>
+    <span class="RakNetCode">udpProxyServer.LoginToCoordinator(COORDINATOR_PASSWORD, coordinatorSystemAddress);</span><BR>
+  If the coordinator plugin is on the same system as the server plugin, use:<BR>  
+  <span class="RakNetCode">udpProxyServer.LoginToCoordinator(COORDINATOR_PASSWORD, rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS));</span></li>
+  <li>If you want to get callbacks as events occur (especially login failure) derive from <span class="RakNetCode">RakNet::UDPProxyServerResultHandler</span> and register your derived class with <span class="RakNetCode">UDPProxyServer::SetResultHandler()</span></li>
+</ol>
+<table width="100%" border="0">
         <tr>
           <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">See Also</td>
         </tr>

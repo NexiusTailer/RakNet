@@ -49,24 +49,33 @@ void NatPunchthroughClient::Update(void)
 	RakNetTimeMS time = RakNet::GetTimeMS();
 	if (sp.nextActionTime && sp.nextActionTime < time)
 	{
+		RakNetTimeMS delta = time - sp.nextActionTime;
 		if (sp.testMode==SendPing::TESTING_INTERNAL_IPS)
 		{
-			SendOutOfBand(sp.internalIds[sp.attemptCount],ID_NAT_ESTABLISH_UNIDIRECTIONAL);
+		//	SendOutOfBand(sp.internalIds[sp.attemptCount],ID_NAT_ESTABLISH_UNIDIRECTIONAL);
 
-			if (++sp.retryCount>=pc.UDP_SENDS_PER_PORT)
+			if (++sp.retryCount>=pc.UDP_SENDS_PER_PORT_INTERNAL)
 			{
 				++sp.attemptCount;
 				sp.retryCount=0;
 			}
 
-			if (sp.attemptCount>=MAXIMUM_NUMBER_OF_INTERNAL_IDS)
+			if (sp.attemptCount>=pc.MAXIMUM_NUMBER_OF_INTERNAL_IDS_TO_CHECK)
 			{
 				sp.testMode=SendPing::WAITING_FOR_INTERNAL_IPS_RESPONSE;
-				sp.nextActionTime=time+pc.INTERNAL_IP_WAIT_AFTER_ATTEMPTS;
+				if (pc.INTERNAL_IP_WAIT_AFTER_ATTEMPTS>0)
+				{
+					sp.nextActionTime=time+pc.INTERNAL_IP_WAIT_AFTER_ATTEMPTS-delta;
+				}
+				else
+				{
+					sp.testMode=SendPing::TESTING_EXTERNAL_IPS_FROM_FACILITATOR_PORT;
+					sp.attemptCount=0;
+				}
 			}
 			else
 			{
-				sp.nextActionTime=time+pc.TIME_BETWEEN_PUNCH_ATTEMPTS_INTERNAL;
+				sp.nextActionTime=time+pc.TIME_BETWEEN_PUNCH_ATTEMPTS_INTERNAL-delta;
 			}
 		}
 		else if (sp.testMode==SendPing::WAITING_FOR_INTERNAL_IPS_RESPONSE)
@@ -83,21 +92,24 @@ void NatPunchthroughClient::Update(void)
 			sa.port=(unsigned short) port;
 			SendOutOfBand(sa,ID_NAT_ESTABLISH_UNIDIRECTIONAL);
 			
-			if (++sp.retryCount>=pc.UDP_SENDS_PER_PORT)
+			if (++sp.retryCount>=pc.UDP_SENDS_PER_PORT_EXTERNAL)
 			{
 				++sp.attemptCount;
 				sp.retryCount=0;
-				sp.nextActionTime=time+pc.EXTERNAL_IP_WAIT_BETWEEN_PORTS;				
+				sp.nextActionTime=time+pc.EXTERNAL_IP_WAIT_BETWEEN_PORTS-delta;				
 			}
 			else
 			{
-				sp.nextActionTime=time+pc.TIME_BETWEEN_PUNCH_ATTEMPTS_EXTERNAL;
+				sp.nextActionTime=time+pc.TIME_BETWEEN_PUNCH_ATTEMPTS_EXTERNAL-delta;
 			}
 
 			if (sp.attemptCount>=pc.MAX_PREDICTIVE_PORT_RANGE)
 			{
-				sp.testMode=SendPing::TESTING_EXTERNAL_IPS_FROM_1024;
-				sp.attemptCount=0;
+				// From 1024 disabled, never helps as I've seen, but slows down the process by half
+				//sp.testMode=SendPing::TESTING_EXTERNAL_IPS_FROM_1024;
+				//sp.attemptCount=0;
+				sp.testMode=SendPing::WAITING_AFTER_ALL_ATTEMPTS;
+				sp.nextActionTime=time+pc.EXTERNAL_IP_WAIT_AFTER_ALL_ATTEMPTS-delta;
 			}
 		}
 		else if (sp.testMode==SendPing::TESTING_EXTERNAL_IPS_FROM_1024)
@@ -108,15 +120,15 @@ void NatPunchthroughClient::Update(void)
 			sa.port=(unsigned short) port;
 			SendOutOfBand(sa,ID_NAT_ESTABLISH_UNIDIRECTIONAL);
 
-			if (++sp.retryCount>=pc.UDP_SENDS_PER_PORT)
+			if (++sp.retryCount>=pc.UDP_SENDS_PER_PORT_EXTERNAL)
 			{
 				++sp.attemptCount;
 				sp.retryCount=0;
-				sp.nextActionTime=time+pc.EXTERNAL_IP_WAIT_BETWEEN_PORTS;				
+				sp.nextActionTime=time+pc.EXTERNAL_IP_WAIT_BETWEEN_PORTS-delta;		
 			}
 			else
 			{
-				sp.nextActionTime=time+pc.TIME_BETWEEN_PUNCH_ATTEMPTS_EXTERNAL;
+				sp.nextActionTime=time+pc.TIME_BETWEEN_PUNCH_ATTEMPTS_EXTERNAL-delta;
 			}
 
 			if (sp.attemptCount>=pc.MAX_PREDICTIVE_PORT_RANGE)
@@ -131,7 +143,7 @@ void NatPunchthroughClient::Update(void)
 				}
 
 				sp.testMode=SendPing::WAITING_AFTER_ALL_ATTEMPTS;
-				sp.nextActionTime=time+pc.EXTERNAL_IP_WAIT_AFTER_ALL_ATTEMPTS;
+				sp.nextActionTime=time+pc.EXTERNAL_IP_WAIT_AFTER_ALL_ATTEMPTS-delta;
 			}
 		}
 		else if (sp.testMode==SendPing::WAITING_AFTER_ALL_ATTEMPTS)
@@ -155,14 +167,14 @@ void NatPunchthroughClient::Update(void)
 				}
 
 				sp.testMode=SendPing::WAITING_AFTER_ALL_ATTEMPTS;
-				sp.nextActionTime=time+pc.EXTERNAL_IP_WAIT_AFTER_ALL_ATTEMPTS;
+				sp.nextActionTime=time+pc.EXTERNAL_IP_WAIT_AFTER_ALL_ATTEMPTS-delta;
 			}
 			else
 			{
-				if ((sp.retryCount%pc.UDP_SENDS_PER_PORT)==0)
-					sp.nextActionTime=time+pc.EXTERNAL_IP_WAIT_BETWEEN_PORTS;
+				if ((sp.retryCount%pc.UDP_SENDS_PER_PORT_EXTERNAL)==0)
+					sp.nextActionTime=time+pc.EXTERNAL_IP_WAIT_BETWEEN_PORTS-delta;
 				else
-					sp.nextActionTime=time+pc.TIME_BETWEEN_PUNCH_ATTEMPTS_EXTERNAL;
+					sp.nextActionTime=time+pc.TIME_BETWEEN_PUNCH_ATTEMPTS_EXTERNAL-delta;
 			}
 		}
 	}
@@ -178,6 +190,22 @@ void NatPunchthroughClient::PushFailure(void)
 }
 void NatPunchthroughClient::OnPunchthroughFailure(void)
 {
+	if (pc.retryOnFailure==false)
+	{
+		if (natPunchthroughDebugInterface)
+		{
+			char ipAddressString[32];
+			sp.targetAddress.ToString(true, ipAddressString);
+			char guidString[64];
+			sp.targetGuid.ToString(guidString);
+			natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString("Failed punchthrough once. Returning failure to guid %s, system address %s to user.", guidString, ipAddressString));
+		}
+
+		PushFailure();
+		OnReadyForNextPunchthrough();
+		return;
+	}
+
 	unsigned int i;
 	for (i=0; i < failedAttemptList.Size(); i++)
 	{
@@ -266,14 +294,13 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 				if (sp.testMode!=SendPing::PUNCHING_FIXED_PORT)
 				{
 					sp.testMode=SendPing::PUNCHING_FIXED_PORT;	
-					sp.retryCount+=sp.attemptCount*pc.UDP_SENDS_PER_PORT;
+					sp.retryCount+=sp.attemptCount*pc.UDP_SENDS_PER_PORT_EXTERNAL;
 					sp.targetAddress=packet->systemAddress;
 					// Keeps trying until the other side gives up too, in case it is unidirectional
-					// The *2 is because there are two TESTING_EXTERNAL_IPS_FROM_*
-					sp.punchingFixedPortAttempts=pc.UDP_SENDS_PER_PORT*pc.MAX_PREDICTIVE_PORT_RANGE*2;
+					sp.punchingFixedPortAttempts=pc.UDP_SENDS_PER_PORT_EXTERNAL*pc.MAX_PREDICTIVE_PORT_RANGE;
 				}
 
-				//SendOutOfBand(sp.targetAddress,ID_NAT_ESTABLISH_BIDIRECTIONAL);
+				SendOutOfBand(sp.targetAddress,ID_NAT_ESTABLISH_BIDIRECTIONAL);
 			}
 			else if (packet->data[1]==ID_NAT_ESTABLISH_BIDIRECTIONAL && sp.targetGuid==packet->guid && sp.nextActionTime!=0)
 			{
@@ -283,11 +310,15 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 				SendOutOfBand(packet->systemAddress,ID_NAT_ESTABLISH_BIDIRECTIONAL);
 
 				// Tell the user about the success
-				Packet *p = rakPeerInterface->AllocatePacket(sizeof(MessageID));
+				Packet *p = rakPeerInterface->AllocatePacket(sizeof(MessageID)+sizeof(unsigned char));
 				p->data[0]=ID_NAT_PUNCHTHROUGH_SUCCEEDED;
 				p->systemAddress=packet->systemAddress;
 				p->systemIndex=(SystemIndex)-1;
 				p->guid=packet->guid;
+				if (sp.weAreSender)
+					p->data[1]=1;
+				else
+					p->data[1]=0;
 				rakPeerInterface->PushBackPacket(p, false);
 
 				OnReadyForNextPunchthrough();
@@ -478,7 +509,7 @@ void NatPunchthroughClient::SendOutOfBand(SystemAddress sa, MessageID oobId)
 		oob.Write(sa.port);
 	char ipAddressString[32];
 	sa.ToString(false, ipAddressString);
-	rakPeerInterface->SendOutOfBand(ipAddressString,sa.port,ID_OUT_OF_BAND_INTERNAL,(const char*) oob.GetData(),oob.GetNumberOfBytesUsed());
+	rakPeerInterface->SendOutOfBand((const char*) ipAddressString,sa.port,(MessageID) ID_OUT_OF_BAND_INTERNAL,(const char*) oob.GetData(),oob.GetNumberOfBytesUsed());
 	
 	if (natPunchthroughDebugInterface)
 	{

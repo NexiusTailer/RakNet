@@ -1,19 +1,10 @@
 /// \file
 /// \brief The main class used for data transmission and most of RakNet's functionality.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #ifndef __RAK_PEER_H
 #define __RAK_PEER_H
@@ -228,12 +219,14 @@ public:
 	unsigned short GetMaximumNumberOfPeers( void ) const;
 
 	// --------------------------------------------------------------------------------------------Remote Procedure Call Functions - Functions to initialize and perform RPC--------------------------------------------------------------------------------------------
+	/// \depreciated
 	/// \ingroup RAKNET_RPC
 	/// Register a C or static member function as available for calling as a remote procedure call
 	/// \param[in] uniqueID A null-terminated unique string to identify this procedure.  See RegisterClassMemberRPC() for class member functions.
 	/// \param[in] functionPointer(...) The name of the function to be used as a function pointer. This can be called whether active or not, and registered functions stay registered unless unregistered
 	void RegisterAsRemoteProcedureCall( const char* uniqueID, void ( *functionPointer ) ( RPCParameters *rpcParms ) );
 
+	/// \depreciated
 	/// \ingroup RAKNET_RPC
 	/// Register a C++ member function as available for calling as a remote procedure call.
 	/// \param[in] uniqueID A null terminated string to identify this procedure. Recommended you use the macro REGISTER_CLASS_MEMBER_RPC to create the string.  Use RegisterAsRemoteProcedureCall() for static functions.
@@ -241,6 +234,7 @@ public:
 	/// \sa The sample ObjectMemberRPC.cpp
 	void RegisterClassMemberRPC( const char* uniqueID, void *functionPointer );
 
+	/// \depreciated
 	/// \ingroup RAKNET_RPC
 	/// Unregisters a C function as available for calling as a remote procedure call that was formerly registered with RegisterAsRemoteProcedureCall. Only call offline.
 	/// \param[in] uniqueID A string of only letters to identify this procedure.  Recommended you use the macro CLASS_MEMBER_ID for class member functions.
@@ -255,6 +249,7 @@ public:
 	/// \return Returns the value passed to SetNetworkIDManager or 0 if never called.
 	NetworkIDManager *GetNetworkIDManager(void) const;
 
+	/// \depreciated
 	/// \ingroup RAKNET_RPC
 	/// Calls a C function on the remote system that was already registered using RegisterAsRemoteProcedureCall().
 	/// \pre To use object member RPC (networkID!=UNASSIGNED_OBJECT_ID), The recipient must have called SetNetworkIDManager so the system can handle the object lookups
@@ -272,6 +267,7 @@ public:
 	/// \return True on a successful packet send (this does not indicate the recipient performed the call), false on failure
 	bool RPC( const char* uniqueID, const char *data, BitSize_t bitLength, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget );
 
+	/// \depreciated
 	/// \ingroup RAKNET_RPC
 	/// Calls a C function on the remote system that was already registered using RegisterAsRemoteProcedureCall.
 	/// If you want that function to return data you should call RPC from that system in the same wayReturns true on a successful packet
@@ -687,7 +683,7 @@ protected:
 	///Returns how many remote systems initiated a connection to us
 	unsigned short GetNumberOfRemoteInitiatedConnections( void ) const;
 	///Get a free remote system from the list and assign our systemAddress to it.  Should only be called from the update thread - not the user thread
-	RemoteSystemStruct * AssignSystemAddressToRemoteSystemList( const SystemAddress systemAddress, RemoteSystemStruct::ConnectMode connectionMode, unsigned connectionSocketIndex );
+	RemoteSystemStruct * AssignSystemAddressToRemoteSystemList( const SystemAddress systemAddress, RemoteSystemStruct::ConnectMode connectionMode, unsigned connectionSocketIndex, bool *thisIPConnectedRecently );
 	///An incoming packet has a timestamp, so adjust it to be relative to this system
 	void ShiftIncomingTimestamp( unsigned char *data, SystemAddress systemAddress ) const;
 	///Get the most probably accurate clock differential for a certain player
@@ -706,6 +702,9 @@ protected:
 	/// \param[in] length The size of the packet data 
 	/// \param[in] systemAddress The sender of the packet 
 	void HandleRPCReplyPacket( const char *data, int length, SystemAddress systemAddress );
+
+	bool IsLoopbackAddress(SystemAddress sa) const;
+	SystemAddress GetLoopbackAddress(void) const;
 
 	///Set this to true to terminate the Peer thread execution 
 	volatile bool endThreads;

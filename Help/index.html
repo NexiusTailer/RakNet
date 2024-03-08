@@ -17,7 +17,7 @@
 </tr></table>
 <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
   <TD>  <p><span class="RakNetBlueHeader">Manual Last Updated
-    05/04/2008.  See readme.txt for the current version number.</span></p>
+    04/13/2009.  See readme.txt for the current version number.</span></p>
     <p>RakNet is a free to low cost C++ UDP based network library designed to allow programmers to 
       add response time-critical network capabilities to their applications. It is 
       mostly used for games, but is application independent.   RakNet is designed 
@@ -42,13 +42,14 @@
   <TD><p><A HREF="http://www.jenkinssoftware.com/raknet/manual/RakNetMajorFeatures.html">Introduction:Major Features</A><br>
     <A HREF="http://www.jenkinssoftware.com/raknet/manual/helloworldvideo.html">Tutorial 1: Hello World</A><br>
       <A HREF="http://www.jenkinssoftware.com/raknet/manual/RPC3Video.htm">Tutorial 2: RPC3</A><BR>
-      <A HREF="http://www.jenkinssoftware.com/raknet/manual/ReplicaManager2Video.html">Tutorial 3: Replica Manager 2</A><BR>
       </p>
     </TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="2c5d92">
 <img src="spacer.gif" width="8" height="1"><span class="RakNetWhiteHeader">The Basics</span></td>
 </tr></table>
 <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+  <p><a href="startup.html">Startup</a> <BR>
+- Starting up RakPeerInterface, and the thread sleep timer explained</p>
   <p><a href="connecting.html">Connecting</a> <BR>
     - How to find and connect to other systems, and what to do if there are problems  </p>
   <p><A HREF="creatingpackets.html">Creating Packets</A><BR>
@@ -124,19 +125,20 @@
   - Prevent unwanted network messages based on sender for added security.<br>
   <BR>
   <A HREF="natpunchthrough.html">NAT punch-through</A><BR>
-- How to use the master server and master client for NAT Punch-through.<BR>
-</p>
+- Required for peer to peer, voice communication, or to allow players to host their own servers.</p>
 <p><a href="packetlogger.html">Packet Logger</a><br>
 - Print network traffic to the screen, file, or elsewhere.</p>
 <p><A HREF="rakvoice.html">RakVoice</A><BR>
   - Overview of RakVoice.  Refer to RakVoice.h for full implementation and function details. </p>
 <p><a href="readyevent.html">Ready Event</a><br>
   - Synchronize when a group of systems are all ready on a common identifier, useful in peer to peer enviroments to start games at the same time, or progress turns in a turn based game.</p>
-<p><A HREF="replicamanager.html">Replica Manager 2</A><BR>
+<p><A HREF="replicamanager2.html">Replica Manager 2</A> (Depreciated)<BR>
+- A depreciated plug-in that provides management for your game objects and players to make serialization, scoping, and object creation and destruction easier.</p>
+<p><A HREF="replicamanager3.html">Replica Manager 3</A><BR>
   - A plug-in that provides management for your game objects and players to make serialization, scoping, and object creation and destruction easier.<BR>
   <BR>
   <a href="router.html">Router</a><br>
-- Send network messages to one or more remote systems we are not directly connected to.</p>
+  - Send network messages to one or more remote systems we are not directly connected to.</p>
 </TD></TR></TABLE>
 <table width="100%" border="0"><tr>
   <td bgcolor="#2c5d92">&nbsp;<strong><span class="RakNetWhiteHeader">Utilities</span></strong></td>
@@ -150,8 +152,7 @@
     <p><a href="emailsender.html">Email Sender</a><br>
       - Used by the crash reporter to send emails via TCP</p>
     <p><a href="stringcompressor.html">String Compressor / String Table</a><br>
-      - Used to encode strings with less bandwidth and more security.<br>
-    </p>
+      - Used to encode strings with less bandwidth and more security.
     <p><a href="tcpinterface.html">TCP Interface</a><br>
     - Wrapper class for TCP connections</p>
     <p><a href="phpdirectoryserver.html">PHP Directory Server</a><br>
@@ -180,7 +181,8 @@
       DS_LinkedList.h - Standard <a href="http://en.wikipedia.org/wiki/Linked_list">linked list</a>.<br>
       DS_List.h - Dynamic <a href="http://en.wikipedia.org/wiki/Array">array</a> (sometimes improperly called a vector). Also doubles as a <a href="http://en.wikipedia.org/wiki/Stack_%28data_structure%29">stack</a>.<br>
       DS_Map.h - (<a href="http://en.wikipedia.org/wiki/Associative_array">Associative array</a>) Ordered list with an per-element sort key.<br>
-      DS_MemoryPool.h - Allocate and free reused instances of a fixed size structure, used to reduce memory fragmentation.<br>
+      DS_MemoryPool.h - Allocate and free reused instances of a fixed size structure, used to reduce memory fragmentation.<BR>
+      DS_Multilist_h - (Added 4/8/2009) Combines a list, stack, queue, and ordered list into one class with a common interface.<BR>
       DS_OrderedChannelHeap.h - Maxheap which returns a node based on the relative weight of the node's associated channel. Used for task scheduling with priorities.<br>
       DS_OrderedList.h - List ordered by an arbitrary key via <a href="http://en.wikipedia.org/wiki/Quicksort">quicksort</a>.<br>
       DS_Queue.h - Standard <a href="http://en.wikipedia.org/wiki/Queue_%28data_structure%29">queue</a> implemented with an array<br>
@@ -189,8 +191,7 @@
       DS_Table.h - <a href="http://en.wikipedia.org/wiki/Table_%28database%29">Table</a> with columns and rows, and operations on that table.<br>
       DS_Tree.h - Noncyclic <a href="http://en.wikipedia.org/wiki/Graph_%28data_structure%29">graph</a><br>
       DS_WeightedGraph.h - Graph with weighted edges, used for routing via <a href="http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm">Dijkstra's algorithm</a><br>
-      RakString - String implementation, up to 4.5 times faster than std::string</p>
-    </TD>
+      RakString - String implementation, up to 4.5 times faster than std::string</p></TD>
 </TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader"><font color="#FFFFFF" size="3" face="Arial, Helvetica, sans-serif" class="RakNetWhiteHeader">&nbsp;Support</td>
 </tr></table>

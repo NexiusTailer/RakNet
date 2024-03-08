@@ -1,19 +1,10 @@
 /// \file
 /// \brief \b RakNet's plugin functionality system, version 2.  You can derive from this to create your own plugins.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #ifndef __PLUGIN_INTERFACE_2_H
 #define __PLUGIN_INTERFACE_2_H
@@ -140,6 +131,8 @@ public:
 	/// \param[in] bitsUsed How many bits long \a data is
 	/// \param[in] remoteSystemAddress The player we sent or got this packet from
 	virtual void OnPushBackPacket(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress) {(void) data; (void) bitsUsed; (void) remoteSystemAddress;}
+
+	RakPeerInterface *GetRakPeerInterface(void) const {return rakPeerInterface;}
 
 	/// \internal
 	void SetRakPeerInterface( RakPeerInterface *ptr );

@@ -38,7 +38,7 @@ struct SampleCallbacks : public RakNet::RoomsCallback
 	virtual void IsInQuickJoin_Callback( SystemAddress senderAddress, RakNet::IsInQuickJoin_Func *callResult) {callResult->PrintResult();}
 	virtual void SearchByFilter_Callback( SystemAddress senderAddress, RakNet::SearchByFilter_Func *callResult) {callResult->PrintResult();}
 	virtual void ChangeHandle_Callback( SystemAddress senderAddress, RakNet::ChangeHandle_Func *callResult) {callResult->PrintResult();}
-	virtual void RoomChat_Callback( SystemAddress senderAddress, RakNet::RoomChat_Func *callResult) {callResult->PrintResult();}
+	virtual void Chat_Callback( SystemAddress senderAddress, RakNet::Chat_Func *callResult) {callResult->PrintResult();}
 	// Notifications due to other room members
 	virtual void QuickJoinExpired_Callback( SystemAddress senderAddress, RakNet::QuickJoinExpired_Notification *notification) {notification->PrintResult();}
 	virtual void QuickJoinEnteredRoom_Callback( SystemAddress senderAddress, RakNet::QuickJoinEnteredRoom_Notification *notification) {notification->PrintResult();}
@@ -58,7 +58,7 @@ struct SampleCallbacks : public RakNet::RoomsCallback
 	virtual void RoomInvitationSent_Callback( SystemAddress senderAddress, RakNet::RoomInvitationSent_Notification *notification) {notification->PrintResult();}
 	virtual void RoomInvitationWithdrawn_Callback( SystemAddress senderAddress, RakNet::RoomInvitationWithdrawn_Notification *notification) {notification->PrintResult();}
 	virtual void RoomDestroyedOnModeratorLeft_Callback( SystemAddress senderAddress, RakNet::RoomDestroyedOnModeratorLeft_Notification *notification) {notification->PrintResult();}
-	virtual void RoomChat_Callback( SystemAddress senderAddress, RakNet::RoomChat_Notification *notification) {notification->PrintResult(); printf("Chat=%s\nFiltered=%s\n", notification->chatMessage.C_String(), notification->filteredChatMessage.C_String());}
+	virtual void Chat_Callback( SystemAddress senderAddress, RakNet::Chat_Notification *notification) {notification->PrintResult(); printf("Chat=%s\nFiltered=%s\n", notification->chatMessage.C_String(), notification->filteredChatMessage.C_String());}
 };
 
 static const char *GAME_IDENTIFIER="My Game";
@@ -178,9 +178,9 @@ void main(void)
 		{
 			if (p->data[0]==ID_NEW_INCOMING_CONNECTION)
 			{
-				roomsPluginServer.LoginRoomsParticipant("User1", p->systemAddress, UNASSIGNED_SYSTEM_ADDRESS);
-				roomsPluginServer.LoginRoomsParticipant("User2", p->systemAddress, UNASSIGNED_SYSTEM_ADDRESS);
-				roomsPluginServer.LoginRoomsParticipant("User3", p->systemAddress, UNASSIGNED_SYSTEM_ADDRESS);
+				roomsPluginServer.LoginRoomsParticipant("User1", p->systemAddress, p->guid, UNASSIGNED_SYSTEM_ADDRESS);
+				roomsPluginServer.LoginRoomsParticipant("User2", p->systemAddress, p->guid, UNASSIGNED_SYSTEM_ADDRESS);
+				roomsPluginServer.LoginRoomsParticipant("User3", p->systemAddress, p->guid, UNASSIGNED_SYSTEM_ADDRESS);
 			}
 			server->DeallocatePacket(p);
 		}
@@ -471,7 +471,7 @@ void main(void)
 			case '3':
 				{
 					printf("RoomChat\n");
-					RakNet::RoomChat_Func func;
+					RakNet::Chat_Func func;
 					GetUserName(&func);
 					func.chatMessage="Hello world. This is Crapola";
 					roomsPluginClient.ExecuteFunc(&func);

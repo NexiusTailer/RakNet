@@ -422,6 +422,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\ReplicaManager3.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\rijndael.cpp"
 				>
 			</File>
@@ -479,6 +483,22 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\ThreadsafePacketLogger.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\UDPForwarder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\UDPProxyClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\UDPProxyCoordinator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\UDPProxyServer.cpp"
 				>
 			</File>
 			<File
@@ -920,6 +940,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\ReplicaManager3.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\Rijndael-Boxes.h"
 				>
 			</File>
@@ -1009,6 +1033,26 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\TransportInterface.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\UDPForwarder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\UDPProxyClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\UDPProxyCommon.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\UDPProxyCoordinator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\UDPProxyServer.h"
 				>
 			</File>
 			<File

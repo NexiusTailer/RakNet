@@ -63,7 +63,6 @@ public:
 } transferCallback;
 
 #define USE_TCP
-#define LISTEN_PORT 60001
 #define MAX_INCOMING_CONNECTIONS 8
 
 int main(int argc, char **argv)
@@ -79,7 +78,7 @@ int main(int argc, char **argv)
 	autopatcherClient.SetFileListTransferPlugin(&fileListTransfer);
 #ifdef USE_TCP
 	PacketizedTCP packetizedTCP;
-	if (packetizedTCP.Start(LISTEN_PORT,MAX_INCOMING_CONNECTIONS)==false)
+	if (packetizedTCP.Start(0,MAX_INCOMING_CONNECTIONS)==false)
 	{
 		printf("Failed to start TCP. Is the port already in use?");
 		return 1;
@@ -101,7 +100,7 @@ int main(int argc, char **argv)
 	printf("Enter server IP: ");
 	gets(buff);
 	if (buff[0]==0)
-		strcpy(buff, "127.0.0.1");
+		strcpy(buff, "216.224.123.180");
 #ifdef USE_TCP
 	packetizedTCP.Connect(buff,60000,false);
 #else
@@ -141,6 +140,7 @@ int main(int argc, char **argv)
 		notificationAddress=packetizedTCP.HasLostConnection();
 		if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
 			printf("ID_CONNECTION_LOST\n");
+
 
 		p=packetizedTCP.Receive();
 		while (p)

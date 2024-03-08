@@ -1,18 +1,9 @@
 /// \file
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #include "RakNetTypes.h"
 #include "RakAssert.h"
@@ -91,9 +82,19 @@ void SystemAddress::ToString(bool writePort, char *dest) const
 	}
 
 #if defined(_XBOX) || defined(X360)
+	// Don't do this, can't use ToString() to call Connect()
+//	if (writePort)
+//		sprintf( dest, "%016I64X:%d", binaryAddress, port );
+//	else
+//		sprintf( dest, "%016I64X", binaryAddress );
+
 	Itoa(binaryAddress, dest, 10);
-	strcat(dest, ":");
-	Itoa(port, dest+strlen(dest), 10);
+	if (writePort)
+	{
+		strcat(dest, ":");
+		Itoa(port, dest+strlen(dest), 10);
+	}
+
 #else
 	in_addr in;
 	in.s_addr = binaryAddress;
@@ -104,8 +105,10 @@ void SystemAddress::ToString(bool writePort, char *dest) const
 		Itoa(port, dest+strlen(dest), 10);
 	}
 #endif
-
 }
+SystemAddress::SystemAddress() {*this=UNASSIGNED_SYSTEM_ADDRESS;}
+SystemAddress::SystemAddress(const char *a, unsigned short b) {SetBinaryAddress(a); port=b;};
+SystemAddress::SystemAddress(unsigned int a, unsigned short b) {binaryAddress=a; port=b;};
 #ifdef _MSC_VER
 #pragma warning( disable : 4996 )  // The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strnicmp. See online help for details.
 #endif
@@ -113,9 +116,22 @@ void SystemAddress::SetBinaryAddress(const char *str)
 {
 	if (str[0]<'0' || str[0]>'9')
 	{
+
 #if defined(_XBOX) || defined(X360)
 		return;
 #else
+	#if defined(_WIN32)
+		if (_strnicmp(str,"localhost", 9)==0)
+	#else
+		if (strncasecmp(str,"localhost", 9)==0)
+	#endif
+		{
+			binaryAddress=inet_addr("127.0.0.1");
+			if (str[9])
+				port=(unsigned short) atoi(str+9);
+			return;
+		}
+
 		const char *ip = ( char* ) SocketLayer::Instance()->DomainNameToIP( str );
 		if (ip)
 		{
@@ -152,13 +168,7 @@ void SystemAddress::SetBinaryAddress(const char *str)
 #if defined(_XBOX) || defined(X360)
 		binaryAddress=atoi(IPPart);
 #else
-	#if defined(_WIN32)
-		if (_strnicmp(str,"localhost", 9)==0)
-	#else
-		if (strncasecmp(str,"localhost", 9)==0)
-	#endif
-			binaryAddress=inet_addr("127.0.0.1");
-		else if (IPPart[0])
+		if (IPPart[0])
 			binaryAddress=inet_addr(IPPart);
 
 #endif

@@ -1,39 +1,13 @@
 /// \file
 /// \brief A simple TCP based server allowing sends and receives.  Can be connected by any TCP client, including telnet.
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #ifndef __SIMPLE_TCP_SERVER
 #define __SIMPLE_TCP_SERVER
-
-#if defined(_XBOX) || defined(X360)
-#elif defined(_WIN32)
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#else
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/select.h> // fd_set
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <pthread.h>
-/// Unix/Linux uses ints for sockets
-typedef unsigned int SOCKET;
-#endif
 
 #include "RakMemoryOverride.h"
 #include "DS_List.h"
@@ -44,6 +18,7 @@ typedef unsigned int SOCKET;
 #include "DS_Queue.h"
 #include "SimpleMutex.h"
 #include "RakNetDefines.h"
+#include "SocketIncludes.h"
 
 struct RemoteClient;
 

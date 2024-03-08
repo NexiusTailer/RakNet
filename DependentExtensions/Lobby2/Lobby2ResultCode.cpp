@@ -141,6 +141,8 @@ static Lobby2ResultCodeDescription resultCodeDescriptions[L2RC_COUNT] =
 	{L2RC_Clans_SetMemberRank_NOT_IN_CLAN, "Clans_SetMemberRank_NOT_IN_CLAN"},
 	{L2RC_Clans_SetMemberRank_UNKNOWN_TARGET_HANDLE, "Clans_SetMemberRank_UNKNOWN_TARGET_HANDLE"},
 	{L2RC_Clans_SetMemberRank_MUST_BE_LEADER, "Clans_SetMemberRank_MUST_BE_LEADER"},
+	{L2RC_Clans_SetMemberRank_CANNOT_PERFORM_ON_SELF, "Clans_SetMemberRank_CANNOT_PERFORM_ON_SELF"},
+	{L2RC_Clans_SetMemberRank_TARGET_NOT_IN_CLAN, "Clans_SetMemberRank_TARGET_NOT_IN_CLAN"},
 	{L2RC_Clans_GetMemberProperties_UNKNOWN_CLAN, "Clans_GetMemberProperties_UNKNOWN_CLAN"},
 	{L2RC_Clans_GetMemberProperties_UNKNOWN_TARGET_HANDLE, "Clans_GetMemberProperties_UNKNOWN_TARGET_HANDLE"},
 	{L2RC_Clans_ChangeHandle_UNKNOWN_CLAN, "Clans_ChangeHandle_UNKNOWN_CLAN"},

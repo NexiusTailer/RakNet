@@ -27,6 +27,10 @@
 #include "FormatString.h"
 #include "LinuxStrings.h"
 
+#if defined ( __FreeBSD__ )
+#include <stdarg.h>
+#endif
+
 #define PQEXECPARAM_FORMAT_TEXT		0
 #define PQEXECPARAM_FORMAT_BINARY	1
 

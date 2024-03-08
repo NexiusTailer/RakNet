@@ -1,26 +1,16 @@
 /// \file
 /// \brief SocketLayer class implementation
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #include "SocketLayer.h"
 #include "RakAssert.h"
 #include "MTUSize.h"
 
 #ifdef _WIN32
-typedef int socklen_t;
 #elif !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
 #include <string.h> // memcpy
 #include <unistd.h>
@@ -496,8 +486,9 @@ int SocketLayer::RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode, uns
 		RakAssert( 0 );
 #endif
 
-		*errorCode = -1;
-		return -1;
+		// 4/13/09 Changed from returning -1 to 0, to prevent attackers from sending 0 byte messages to shutdown the server
+		*errorCode = 0;
+		return 0;
 	}
 
 	if ( len > 0 )

@@ -1,19 +1,10 @@
 /// \file
 /// \brief Tests the NAT-punchthrough plugin
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #include "RakPeerInterface.h"
 #include "RakSleep.h"
@@ -34,10 +25,15 @@
 #include "NatPunchthroughServer.h"
 #include "SocketLayer.h"
 #include "RakString.h"
+#include "UDPProxyServer.h"
+#include "UDPProxyCoordinator.h"
+#include "UDPProxyClient.h"
 
-#define NAT_PUNCHTHROUGH_FACILITATOR_PORT 60481
-#define NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD ""
-#define DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP "216.224.123.180"
+static const unsigned short NAT_PUNCHTHROUGH_FACILITATOR_PORT=60481;
+static const char *NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD="";
+static const char *DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP="216.224.123.180";
+static const char *COORDINATOR_PASSWORD="Dummy Coordinator Password";
+
 
 struct NatPunchthroughDebugInterface_PacketFileLogger : public NatPunchthroughDebugInterface
 {
@@ -56,20 +52,67 @@ struct NatPunchthroughDebugInterface_PacketFileLogger : public NatPunchthroughDe
 	
 };
 
+struct UDPProxyClientResultHandler_Test : public RakNet::UDPProxyClientResultHandler
+{
+	virtual void OnForwardingSuccess(const char *proxyIPAddress, unsigned short proxyPort, unsigned short reverseProxyPort,
+		SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
+	{
+		printf("Datagrams forwarded successfully by proxy %s:%i to target %s.\n", proxyIPAddress, proxyPort, targetAddress.ToString(false));
+		printf("Connecting to proxy, which will be received by target.\n");
+		rakPeer->Connect(proxyIPAddress, proxyPort, 0, 0);
+	}
+	virtual void OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort, unsigned short reverseProxyPort,
+		SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
+	{
+		printf("Source %s has setup forwarding to us through proxy %s:%i.\n", sourceAddress.ToString(false), proxyIPAddress, reverseProxyPort);
+	}
+	virtual void OnNoServersOnline(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
+	{
+		printf("Failure: No servers logged into coordinator.\n");
+	}
+	virtual void OnAllServersBusy(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
+	{
+		printf("Failure: No servers have available forwarding ports.\n");
+	}
+	virtual void OnForwardingInProgress(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
+	{
+		printf("Notification: Forwarding already in progress.\n");
+	}
+
+	RakPeerInterface *rakPeer;
+};
 
 void VerboseTest()
 {
-	// Another program to test this is http://midcom-p2p.sourceforge.net/
-
 	RakPeerInterface *rakPeer=RakNetworkFactory::GetRakPeerInterface();
+
+	// Base systems, try to connect through the router
+	// NAT punchthrough plugin for the client
 	NatPunchthroughClient natPunchthroughClient;
-	NatPunchthroughServer natPunchthroughServer;
-	ConnectionGraph connectionGraph;
+	// Prints messages to the screen, for debugging the client
 	NatPunchthroughDebugInterface_Printf debugInterface;
+	// NAT punchthrough plugin for the server
+	NatPunchthroughServer natPunchthroughServer;
+
+	// Fallback systems - if NAT punchthrough fails, we route messages through a server
+	// Maintains a list of running UDPProxyServer
+	RakNet::UDPProxyCoordinator udpProxyCoordinator;
+	// Routes messages between two systems that cannot connect through NAT punchthrough
+	RakNet::UDPProxyServer udpProxyServer;
+	// Connects to UDPProxyCoordinator
+	RakNet::UDPProxyClient udpProxyClient;
+	// Handles progress notifications for udpProxyClient
+	UDPProxyClientResultHandler_Test udpProxyClientResultHandler;
+	udpProxyClientResultHandler.rakPeer=rakPeer;
+	// Coordinator requires logon to use, to prevent sending to non-servers
+	udpProxyCoordinator.SetRemoteLoginPassword(COORDINATOR_PASSWORD);
+
+	// Helps with the sample, to connect systems that join
+	ConnectionGraph connectionGraph;
 	natPunchthroughClient.SetDebugInterface(&debugInterface);
-	char mode[64], facilitatorIP[64];
 	rakPeer->AttachPlugin(&connectionGraph);
 
+	char mode[64], facilitatorIP[64];
 	printf("Tests the NAT Punchthrough plugin\n");
 	printf("Difficulty: Intermediate\n\n");
 
@@ -113,6 +156,7 @@ void VerboseTest()
 
 	printf("Act as (S)ender, (R)ecipient, or (F)acilitator?\n");
 	gets(mode);
+	SystemAddress facilitatorSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
 	if (mode[0]=='s' || mode[0]=='S' || mode[0]=='r' || mode[0]=='R')
 	{
 		PunchthroughConfiguration *pc = natPunchthroughClient.GetPunchthroughConfiguration();
@@ -129,7 +173,7 @@ void VerboseTest()
 		printf("Modify UDP_SENDS_PER_PORT?\n");
 		gets(str);
 		if (str[0]!=0)
-			pc->UDP_SENDS_PER_PORT=atoi(str);
+			pc->UDP_SENDS_PER_PORT_EXTERNAL=atoi(str);
 
 		printf("Modify INTERNAL_IP_WAIT_AFTER_ATTEMPTS?\n");
 		gets(str);
@@ -159,8 +203,15 @@ void VerboseTest()
 			strcpy(facilitatorIP, DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP);
 
 		rakPeer->AttachPlugin(&natPunchthroughClient);
+		rakPeer->AttachPlugin(&udpProxyClient);
+		// Set the C++ class to get the result of our proxy operation
+		udpProxyClient.SetResultHandler(&udpProxyClientResultHandler);
+
 		printf("Connecting to facilitator.\n");
 		rakPeer->Connect(facilitatorIP, NAT_PUNCHTHROUGH_FACILITATOR_PORT, NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD, (int) strlen(NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD));
+
+		facilitatorSystemAddress.SetBinaryAddress(facilitatorIP);
+		facilitatorSystemAddress.port=NAT_PUNCHTHROUGH_FACILITATOR_PORT;
 	}
 	else
 	{
@@ -168,6 +219,12 @@ void VerboseTest()
 		rakPeer->Startup(1024,0,&socketDescriptor, 1);
 		rakPeer->SetMaximumIncomingConnections(32);
 		rakPeer->AttachPlugin(&natPunchthroughServer);
+		rakPeer->AttachPlugin(&udpProxyServer);
+		rakPeer->AttachPlugin(&udpProxyCoordinator);
+
+		// Login proxy server to proxy coordinator
+		// Normally the proxy server is on a different computer. Here, we login to our own IP address since the plugin is on the same system
+		udpProxyServer.LoginToCoordinator(COORDINATOR_PASSWORD, rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS));
 
 		printf("Ready.\n");
 	}
@@ -294,6 +351,16 @@ void VerboseTest()
 			else if (p->data[0]==ID_NAT_PUNCHTHROUGH_FAILED)
 			{
 				printf("ID_NAT_PUNCHTHROUGH_FAILED for %s\n", p->guid.ToString());
+
+				// Fallback to use the proxy
+				// Only one system needs to do this, so just have the sender do it
+				if (mode[0]=='s' || mode[0]=='S')
+				{
+					printf("Attemping proxy connection.\n");
+					udpProxyClient.RequestForwarding(facilitatorSystemAddress, UNASSIGNED_SYSTEM_ADDRESS, p->systemAddress, 7000);
+				}
+				else
+					printf("Waiting for proxy connection.\n");
 			}
 			else if (p->data[0]==ID_NAT_PUNCHTHROUGH_SUCCEEDED)
 			{
@@ -351,146 +418,7 @@ void VerboseTest()
 	rakPeer->Shutdown(100,0);
 	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
 }
-void SimpleClientTest()
-{
-	RakPeerInterface *rakPeer=RakNetworkFactory::GetRakPeerInterface();
-	NatPunchthroughClient natPunchthroughClient;
-	ConnectionGraph connectionGraph;
-	rakPeer->AttachPlugin(&connectionGraph);
-	rakPeer->Startup(1024,0,&SocketDescriptor(), 1);
-	rakPeer->SetMaximumIncomingConnections(32);
-	rakPeer->AttachPlugin(&natPunchthroughClient);
-	printf("Connecting to facilitator.\n");
-	rakPeer->Connect(DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP, NAT_PUNCHTHROUGH_FACILITATOR_PORT, NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD, (int) strlen(NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD));
-	PacketFileLogger packetFileLogger;
-	rakPeer->AttachPlugin(&packetFileLogger);
-	NatPunchthroughDebugInterface_PacketFileLogger pfl;
-	natPunchthroughClient.SetDebugInterface(&pfl);
-	pfl.pl=&packetFileLogger;
-	packetFileLogger.StartLog("NatPunchTest");
 
-	printf("'c'lear the screen.\n'q'uit.\n");
-	Packet *p;
-	while (1)
-	{
-		p=rakPeer->Receive();
-		while (p)
-		{
-			if (p->data[0]==ID_REMOTE_NEW_INCOMING_CONNECTION)
-			{
-				RakNet::BitStream bsIn(p->data, p->length, false);
-				ConnectionGraphGroupID group1, group2;
-				SystemAddress node1, node2, remoteAddress, serverAddress;
-				RakNetGUID guid1, guid2, remoteGuid, serverGuid;
-				bsIn.IgnoreBytes(1);
-				bsIn.Read(node1);
-				bsIn.Read(group1);
-				bsIn.Read(guid1);
-				bsIn.Read(node2);
-				bsIn.Read(group2);
-				bsIn.Read(guid2);
-				if (rakPeer->GetSystemAddressFromGuid(guid1)==UNASSIGNED_SYSTEM_ADDRESS)
-				{
-					remoteAddress=node1;
-					remoteGuid=guid1;
-					serverAddress=node2;
-					serverGuid=guid2;
-				}
-				else
-				{
-					remoteAddress=node2;
-					remoteGuid=guid2;
-					serverAddress=node1;
-					serverGuid=guid1;
-				}
-
-//				printf("Remote address is %s\n", remoteAddress.ToString(true));
-//				printf("Remote guid is %s\n", remoteGuid.ToString());
-//				printf("Server address is %s\n", serverAddress.ToString(true));
-//				printf("Server guid is %s\n", serverGuid.ToString());
-
-				printf("Connecting to %s.\n", remoteAddress.ToString(true));
-				natPunchthroughClient.OpenNAT(remoteGuid, rakPeer->GetSystemAddressFromIndex(0));
-			}
-			if (p->data[0]==ID_DISCONNECTION_NOTIFICATION)
-				printf("%s disconnected\n", p->systemAddress.ToString(true));
-			else if (p->data[0]==ID_CONNECTION_LOST)
-				printf("Lost connection to %s\n", p->systemAddress.ToString(true));
-			else if (p->data[0]==ID_NO_FREE_INCOMING_CONNECTIONS)
-				printf("%s is has no free connections.\n", p->systemAddress.ToString(true));
-			else if (p->data[0]==ID_NEW_INCOMING_CONNECTION)
-				printf("%s connected to us\n", p->systemAddress.ToString(true));
-			else if (p->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
-			{
-				if (strcmp(p->systemAddress.ToString(false),DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP)==0)
-					printf("Connected to the facilitator.\n");
-				else
-					printf("Connected to %s\n", p->systemAddress.ToString(true));
-			}
-			else if (p->data[0]==ID_CONNECTION_ATTEMPT_FAILED)
-				printf("Failed to connect to %s\n", p->systemAddress.ToString(true));
-			else if (p->data[0]==ID_NAT_TARGET_NOT_CONNECTED)
-			{
-				RakNetGUID g;
-				RakNet::BitStream b(p->data, p->length, false);
-				b.IgnoreBits(8); // Ignore the ID_...
-				b.Read(g);
-				printf("ID_NAT_TARGET_NOT_CONNECTED for %s\n", g.ToString());
-			}
-			else if (p->data[0]==ID_NAT_TARGET_UNRESPONSIVE)
-			{
-				RakNetGUID g;
-				RakNet::BitStream b(p->data, p->length, false);
-				b.IgnoreBits(8); // Ignore the ID_...
-				b.Read(g);
-				printf("ID_NAT_TARGET_UNRESPONSIVE for %s\n", g.ToString());
-			}
-			else if (p->data[0]==ID_NAT_CONNECTION_TO_TARGET_LOST)
-			{
-				RakNetGUID g;
-				RakNet::BitStream b(p->data, p->length, false);
-				b.IgnoreBits(8); // Ignore the ID_...
-				b.Read(g);
-				printf("ID_NAT_CONNECTION_TO_TARGET_LOST for %s\n", g.ToString());
-			}
-			else if (p->data[0]==ID_NAT_ALREADY_IN_PROGRESS)
-			{
-				RakNetGUID g;
-				RakNet::BitStream b(p->data, p->length, false);
-				b.IgnoreBits(8); // Ignore the ID_...
-				b.Read(g);
-			//	printf("ID_NAT_ALREADY_IN_PROGRESS for %s\n", g.ToString());
-			}
-			else if (p->data[0]==ID_NAT_PUNCHTHROUGH_FAILED)
-				printf("Failed NAT punch to %s\n", p->guid.ToString());
-			else if (p->data[0]==ID_NAT_PUNCHTHROUGH_SUCCEEDED)
-				printf("Succeeded NAT punch to %s\n", p->systemAddress.ToString());
-
-			rakPeer->DeallocatePacket(p);
-			p=rakPeer->Receive();
-		}
-
-		if (kbhit())
-		{
-			char ch = getch();
-			if (ch=='q' || ch=='Q')
-				break;
-			if (ch=='c' || ch=='C')
-			{
-#ifdef _WIN32
-				system("cls");
-#else
-				printf("Unsupported on this OS\n");
-#endif
-			}
-		}
-
-		RakSleep(30);
-	}
-
-	rakPeer->Shutdown(100,0);
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
-}
 
 
 // This sample starts one of three systems: A facilitator, a recipient, and a sender.  The sender wants to connect to the recipient but
@@ -503,11 +431,6 @@ void SimpleClientTest()
 // That plugin will cause the lobby server to send ID_REMOTE_* system notifications to its connected systems.
 int main(void)
 {
-#ifdef _DEBUG
-	// Use to start the facilitator
 	VerboseTest();
-#else
-	SimpleClientTest();
-#endif
 	return 1;
 }

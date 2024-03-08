@@ -1,19 +1,10 @@
 /// \file
 /// \brief If _USE_RAK_MEMORY_OVERRIDE is defined, memory allocations go through rakMalloc, rakRealloc, and rakFree
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #ifndef __RAK_MEMORY_H
 #define __RAK_MEMORY_H
@@ -89,6 +80,9 @@ namespace RakNet
 	template <class Type>
 	RAK_DLL_EXPORT Type* OP_NEW_ARRAY(const int count, const char *file, unsigned int line)
 	{
+		if (count==0)
+			return 0;
+
 #if defined(_USE_RAK_MEMORY_OVERRIDE)
 		Type *t;
 		char *buffer = (char *) (GetMalloc_Ex())(sizeof(int)+sizeof(Type)*count, file, line);
@@ -125,7 +119,9 @@ namespace RakNet
 	RAK_DLL_EXPORT void OP_DELETE_ARRAY(Type *buff, const char *file, unsigned int line)
 	{
 #if defined(_USE_RAK_MEMORY_OVERRIDE)
-		if (buff==0) return;
+		if (buff==0)
+			return;
+
 		int count = ((int*)((char*)buff-sizeof(int)))[0];
 		Type *t;
 		for (int i=0; i<count; i++)

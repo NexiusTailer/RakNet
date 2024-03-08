@@ -1,19 +1,10 @@
 /// \file
 /// \brief Adds networking to AllGamesRoomsContainer. Lets you create, join, search, and destroy matchmaking rooms for players
 ///
-/// This file is part of RakNet Copyright 2003 Kevin Jenkins.
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
-/// Creative Commons Licensees are subject to the
-/// license found at
-/// http://creativecommons.org/licenses/by-nc/2.5/
-/// Single application licensees are subject to the license found at
-/// http://www.jenkinssoftware.com/SingleApplicationLicense.html
-/// Custom license users are subject to the terms therein.
-/// GPL license users are subject to the GNU General Public
-/// License as published by the Free
-/// Software Foundation; either version 2 of the License, or (at your
-/// option) any later version.
+
 
 #ifndef __ROOMS_PLUGIN_H
 #define __ROOMS_PLUGIN_H
@@ -102,7 +93,9 @@ struct JoinByFilter_Func : public RoomsPluginFunc {
 			printf("Result for user %s: %s\n", userName.C_String(), RoomsErrorCodeDescription::ToEnglish(resultCode));
 		else
 		{
-			printf("Joined room %s with id %i\n", joinedRoomResult.roomDescriptor.GetProperty(DefaultRoomColumns::TC_ROOM_NAME)->c, joinedRoomResult.roomDescriptor.lobbyRoomId);
+			printf("Joined room %s with id %i and %.0f used slots\n",
+				joinedRoomResult.roomDescriptor.GetProperty(DefaultRoomColumns::TC_ROOM_NAME)->c, joinedRoomResult.roomDescriptor.lobbyRoomId,
+				joinedRoomResult.roomDescriptor.GetProperty(DefaultRoomColumns::TC_USED_SLOTS)->i);
 			for (unsigned int i=0; i < joinedRoomResult.roomDescriptor.roomMemberList.Size(); i++)
 			{
 				printf("%i. %s (%s)\n", i+1, joinedRoomResult.roomDescriptor.roomMemberList[i].name.C_String(), joinedRoomResult.roomDescriptor.roomMemberList[i].systemAddress.ToString());
@@ -223,7 +216,9 @@ struct GetRoomProperties_Func : public RoomsPluginFunc {
 		else
 		{
 //			char out[8096];
-			printf("room %s has %i columns and %i members\n", roomName.C_String(), roomDescriptor.roomProperties.GetColumnCount(), roomDescriptor.roomMemberList.Size());
+			printf("room %s has %i columns and %.0f used slots\n", roomName.C_String(),
+				roomDescriptor.roomProperties.GetColumnCount(), roomDescriptor.roomMemberList.Size());
+			RakAssert(roomDescriptor.GetProperty(DefaultRoomColumns::TC_USED_SLOTS)->i==roomDescriptor.roomMemberList.Size());
 	//		roomDescriptor.roomProperties.PrintColumnHeaders(out,8096,',');
 	//		printf(out);
 	//		roomDescriptor.roomProperties.PrintRow(out,8096,',',false,roomDescriptor.roomProperties.GetRowByIndex(0,0));
@@ -451,11 +446,15 @@ struct ChangeHandle_Func : public RoomsPluginFunc {
 	virtual void SerializeIn(bool writeToBitstream, RakNet::BitStream *bitStream);
 	virtual void SerializeOut(bool writeToBitstream, RakNet::BitStream *bitStream);
 };
-struct RoomChat_Func : public RoomsPluginFunc {
+struct Chat_Func : public RoomsPluginFunc {
 	// Input parameters
 	RakNet::RakString chatMessage;
 	// Leave recipient blank for all in room
 	RakNet::RakString privateMessageRecipient;
+	/// If true, only sends the chat message if the user is in the same room.
+	/// If false, privateMessageRecipient must also be filled out
+	bool chatDirectedToRoom;
+
 	// Output parameters
 
 	virtual void SerializeIn(bool writeToBitstream, RakNet::BitStream *bitStream);
@@ -619,7 +618,7 @@ struct RoomDestroyedOnModeratorLeft_Notification : public RoomsPluginNotificatio
 };
 /// You got a chat message from another user.
 /// If you want to support ignoring chat messages from specific users, use Lobby2Client_PC::IsInIgnoreList
-struct RoomChat_Notification : public RoomsPluginNotification {
+struct Chat_Notification : public RoomsPluginNotification {
 	RakNet::RakString sender;
 	// If filled in, this was directed to you. Otherwise it was directed to the room
 	RakNet::RakString privateMessageRecipient;
@@ -628,7 +627,7 @@ struct RoomChat_Notification : public RoomsPluginNotification {
 	// The chat message with profanity filtered, if you want that instead
 	RakNet::RakString filteredChatMessage;
 	virtual void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
-	virtual void PrintResult(void) {printf("RoomChat_Notification to %s\n", recipient.C_String());}
+	virtual void PrintResult(void) {printf("Chat_Notification to %s\n", recipient.C_String());}
 };
 struct RoomsCallback
 {
@@ -662,7 +661,7 @@ struct RoomsCallback
 	virtual void IsInQuickJoin_Callback( SystemAddress senderAddress, IsInQuickJoin_Func *callResult) {}
 	virtual void SearchByFilter_Callback( SystemAddress senderAddress, SearchByFilter_Func *callResult) {}
 	virtual void ChangeHandle_Callback( SystemAddress senderAddress, ChangeHandle_Func *callResult) {}
-	virtual void RoomChat_Callback( SystemAddress senderAddress, RoomChat_Func *callResult) {}
+	virtual void Chat_Callback( SystemAddress senderAddress, Chat_Func *callResult) {}
 	// Notifications due to other room members
 	virtual void QuickJoinExpired_Callback( SystemAddress senderAddress, QuickJoinExpired_Notification *notification) {}
 	virtual void QuickJoinEnteredRoom_Callback( SystemAddress senderAddress, QuickJoinEnteredRoom_Notification *notification) {}
@@ -682,7 +681,7 @@ struct RoomsCallback
 	virtual void RoomInvitationSent_Callback( SystemAddress senderAddress, RoomInvitationSent_Notification *notification) {}
 	virtual void RoomInvitationWithdrawn_Callback( SystemAddress senderAddress, RoomInvitationWithdrawn_Notification *notification) {}
 	virtual void RoomDestroyedOnModeratorLeft_Callback( SystemAddress senderAddress, RoomDestroyedOnModeratorLeft_Notification *notification) {}
-	virtual void RoomChat_Callback( SystemAddress senderAddress, RoomChat_Notification *notification) {}
+	virtual void Chat_Callback( SystemAddress senderAddress, Chat_Notification *notification) {}
 };
 
 /// \ingroup ROOMS_GROUP
@@ -745,8 +744,9 @@ public:
 	/// Only participants can perform operations
 	/// \param[in] userName A unique string identifying the user
 	/// \param[in] roomsParticipantAddress The address of the user
+	/// \param[in] guid The guid of the user
 	/// \param[in] loginServerAddress The server adding this user. Use UNASSIGNED_SYSTEM_ADDRESS for not applicable. Otherwise, the address must previously have been added using AddLoginServerAddress() or the function will fail.
-	bool LoginRoomsParticipant(RakNet::RakString userName, SystemAddress roomsParticipantAddress, SystemAddress loginServerAddress);
+	bool LoginRoomsParticipant(RakNet::RakString userName, SystemAddress roomsParticipantAddress, RakNetGUID guid, SystemAddress loginServerAddress);
 
 	/// Removes a participant from the system
 	/// \param[in] userName A unique string identifying the user
@@ -756,7 +756,7 @@ public:
 	/// Clear all users
 	void ClearRoomMembers();
 
-	static void SerializeLogin(RakNet::RakString userName, SystemAddress userAddress, RakNet::BitStream *bs);
+	static void SerializeLogin(RakNet::RakString userName, SystemAddress userAddress, RakNetGUID guid, RakNet::BitStream *bs);
 	static void SerializeLogoff(RakNet::RakString userName, RakNet::BitStream *bs);
 
 	static void SerializeChangeHandle(RakNet::RakString oldHandle, RakNet::RakString newHandle, RakNet::BitStream *bs);
@@ -855,7 +855,7 @@ protected:
 	virtual void IsInQuickJoin_Callback( SystemAddress senderAddress, IsInQuickJoin_Func *callResult);
 	virtual void SearchByFilter_Callback( SystemAddress senderAddress, SearchByFilter_Func *callResult);
 	virtual void ChangeHandle_Callback( SystemAddress senderAddress, ChangeHandle_Func *callResult);
-	virtual void RoomChat_Callback( SystemAddress senderAddress, RoomChat_Func *callResult);
+	virtual void Chat_Callback( SystemAddress senderAddress, Chat_Func *callResult);
 
 	void ExecuteNotification(RoomsPluginNotification *func, RoomsPluginParticipant *recipient);
 	void ExecuteNotificationToOtherRoomMembers(Room *room, RoomsPluginParticipant* roomsPluginParticipant, RoomsPluginNotification *notification);
@@ -893,7 +893,7 @@ enum RoomsPluginOperations
 	RPO_IS_IN_QUICK_JOIN,
 	RPO_SEARCH_BY_FILTER,
 	RPO_CHANGE_HANDLE,
-	RPO_ROOM_CHAT,
+	RPO_CHAT,
 	RPN_QUICK_JOIN_EXPIRED,
 	RPN_QUICK_JOIN_ENTERED_ROOM,
 	RPN_ROOM_MEMBER_STARTED_SPECTATING,
@@ -912,7 +912,7 @@ enum RoomsPluginOperations
 	RPN_ROOM_INVITATION_SENT,
 	RPN_ROOM_INVITATION_WITHDRAWN,
 	RPN_ROOM_DESTROYED_ON_MODERATOR_LEFT,
-	RPN_ROOM_CHAT_NOTIFICATION,
+	RPN_CHAT_NOTIFICATION,
 };
 
 } // namespace RakNet

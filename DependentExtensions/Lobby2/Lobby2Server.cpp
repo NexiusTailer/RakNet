@@ -85,6 +85,7 @@ void Lobby2Server::Update(void)
 						if (users[i]->callerUserId==c.callerUserId)
 						{
 							c.callerSystemAddress=users[i]->systemAddress;
+							c.callerGuid=users[i]->guid;
 							break;
 						}
 					}
@@ -96,9 +97,23 @@ void Lobby2Server::Update(void)
 						if (users[i]->userName==c.callingUserName)
 						{
 							c.callerSystemAddress=users[i]->systemAddress;
+							c.callerGuid=users[i]->guid;
 							break;
 						}
 					}
+				}
+			}
+			else
+			{
+				bool objectExists;
+				unsigned int idx;
+				idx = users.GetIndexFromKey(c.callerSystemAddress,&objectExists);
+				if (objectExists && users[idx]->userName!=c.callingUserName)
+				{
+					// Different user, same IP address. Abort the send.
+					if (c.deallocMsgWhenDone)
+						RakNet::OP_DELETE(c.lobby2Message, __FILE__, __LINE__);
+					return;
 				}
 			}
 			SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, c.callerSystemAddress, false);
@@ -171,6 +186,7 @@ void Lobby2Server::OnMessage(Packet *packet)
 			command.callerUserId=0;
 		}
 		command.callerSystemAddress=packet->systemAddress;
+		command.callerGuid=packet->guid;
 		command.server=this;
 		ExecuteCommand(&command);
 	}
@@ -323,6 +339,7 @@ void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 	User *user = RakNet::OP_NEW<User>( __FILE__, __LINE__ );
 	user->userName=command->callingUserName;
 	user->systemAddress=command->callerSystemAddress;
+	user->guid=command->callerGuid;
 	user->callerUserId=command->callerUserId;
 	users.InsertAtIndex(user, insertionIndex);
 
@@ -330,12 +347,12 @@ void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 	// Tell the rooms plugin about the login event
 	if (roomsPlugin)
 	{
-		roomsPlugin->LoginRoomsParticipant(user->userName, user->systemAddress, UNASSIGNED_SYSTEM_ADDRESS);
+		roomsPlugin->LoginRoomsParticipant(user->userName, user->systemAddress, user->guid, UNASSIGNED_SYSTEM_ADDRESS);
 	}
 	else if (roomsPluginAddress!=UNASSIGNED_SYSTEM_ADDRESS)
 	{
 		RakNet::BitStream bs;
-		RoomsPlugin::SerializeLogin(user->userName,user->systemAddress, &bs);
+		RoomsPlugin::SerializeLogin(user->userName,user->systemAddress, user->guid, &bs);
 		SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, roomsPluginAddress, false);
 	}
 #endif
@@ -413,11 +430,12 @@ void Lobby2Server::RemoveUser(unsigned int index)
 	notification->op=Notification_Friends_StatusChange::FRIEND_LOGGED_OFF;
 	notification->resultCode=L2RC_SUCCESS;
 	command.callerSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
+	command.callerGuid=UNASSIGNED_RAKNET_GUID;
 	command.server=this;
 	command.deallocMsgWhenDone=true;
 	command.lobby2Message=notification;
-	command.callerUserId=users[index]->callerUserId;
-	command.callingUserName=users[index]->userName;
+	command.callerUserId=user->callerUserId;
+	command.callingUserName=user->userName;
 	ExecuteCommand(&command);
 
 	unsigned i;

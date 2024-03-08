@@ -25,6 +25,7 @@ struct Lobby2ServerCommand
 	unsigned int callerUserId;
 	RakNet::RakString callingUserName;
 	SystemAddress callerSystemAddress;
+	RakNetGUID callerGuid;
 	Lobby2Server *server;
 };
 
@@ -118,6 +119,7 @@ public:
 	struct User
 	{
 		SystemAddress systemAddress;
+		RakNetGUID guid;
 		unsigned int callerUserId;
 		RakNet::RakString userName;
 	};

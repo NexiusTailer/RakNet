@@ -366,29 +366,29 @@ void LightweightDatabaseServer::OnUpdateRow(Packet *packet)
 		}
 
 	if ((RowUpdateMode)updateMode==RUM_UPDATE_EXISTING_ROW)
-		{
+	{
 		if (hasRowId==false)
-			{
+		{
 			unsigned rowKey;
 			row = GetRowFromIP(databaseTable, packet->systemAddress, &rowKey);
 			if (row==0)
 				printf("ERROR: LightweightDatabaseServer::OnUpdateRow updateMode==RUM_UPDATE_EXISTING_ROW hasRowId==false");
-			}
+		}
 		else
-			{
+		{
 
 			row = databaseTable->table.GetRowByID(rowId);
 			if (row==0 || (databaseTable->onlyUpdateOwnRows && RowHasIP(row, packet->systemAddress, databaseTable->SystemAddressColumnIndex)==false))
-				{
+			{
 				if (row==0)
 					printf("ERROR: LightweightDatabaseServer::OnUpdateRow row = databaseTable->table.GetRowByID(rowId); row==0\n");
 				else
 					printf("ERROR: LightweightDatabaseServer::OnUpdateRow row = databaseTable->table.GetRowByID(rowId); databaseTable->onlyUpdateOwnRows && RowHasIP\n");
 
 				return; // You can't update some other system's row
-				}
 			}
 		}
+	}
 	else if ((RowUpdateMode)updateMode==RUM_UPDATE_OR_ADD_ROW)
 		{
 		if (hasRowId)
@@ -443,7 +443,12 @@ void LightweightDatabaseServer::OnUpdateRow(Packet *packet)
 		{
 		columnIndex=databaseTable->table.ColumnIndex(cellUpdates[i].columnName);
 		RakAssert(columnIndex!=(unsigned)-1); // Unknown column name
-		if (columnIndex!=(unsigned)-1 && columnIndex!=databaseTable->lastPingResponseColumnIndex && columnIndex!=databaseTable->nextPingSendColumnIndex && columnIndex!=databaseTable->SystemAddressColumnIndex && columnIndex!=databaseTable->SystemGuidColumnIndex)
+		if (columnIndex!=(unsigned)-1 &&
+			(databaseTable->onlyUpdateOwnRows==false ||
+			(columnIndex!=databaseTable->lastPingResponseColumnIndex &&
+			columnIndex!=databaseTable->nextPingSendColumnIndex &&
+			columnIndex!=databaseTable->SystemAddressColumnIndex &&
+			columnIndex!=databaseTable->SystemGuidColumnIndex)))
 			{
 			if (cellUpdates[i].cellValue.isEmpty)
 				row->cells[columnIndex]->Clear();
