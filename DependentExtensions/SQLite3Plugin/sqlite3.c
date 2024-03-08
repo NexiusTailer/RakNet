@@ -534,8 +534,8 @@ SQLITE_PRIVATE   int sqlite3Assert(void);
 **
 ** @(#) $Id: sqlite.h.in,v 1.440 2009/04/06 15:55:04 drh Exp $
 */
-#ifndef _SQLITE3_H_
-#define _SQLITE3_H_
+#ifndef _SQLite3_H_
+#define _SQLite3_H_
 #include <stdarg.h>     /* Needed for the definition of va_list */
 
 /*
@@ -3297,7 +3297,7 @@ SQLITE_API int sqlite3_data_count(sqlite3_stmt *pStmt);
 **
 ** Note that the SQLITE_TEXT constant was also used in SQLite version 2
 ** for a completely different meaning.  Software that links against both
-** SQLite version 2 and SQLite version 3 should use SQLITE3_TEXT, not
+** SQLite version 2 and SQLite version 3 should use SQLite3_TEXT, not
 ** SQLITE_TEXT.
 */
 #define SQLITE_INTEGER  1
@@ -3309,7 +3309,7 @@ SQLITE_API int sqlite3_data_count(sqlite3_stmt *pStmt);
 #else
 # define SQLITE_TEXT     3
 #endif
-#define SQLITE3_TEXT     3
+#define SQLite3_TEXT     3
 
 /*
 ** CAPI3REF: Result Values From A Query {H13800} <S10700>
@@ -6503,7 +6503,7 @@ struct BusyHandler {
 #ifdef SQLITE_OMIT_WSD
   #define SQLITE_WSD const
   #define GLOBAL(t,v) (*(t*)sqlite3_wsd_find((void*)&(v), sizeof(v)))
-  #define sqlite3GlobalConfig GLOBAL(struct Sqlite3Config, sqlite3Config)
+  #define sqlite3GlobalConfig GLOBAL(struct SQLite3Config, sqlite3Config)
 SQLITE_API   int sqlite3_wsd_init(int N, int J);
 SQLITE_API   void *sqlite3_wsd_find(void *K, int L);
 #else
@@ -9458,7 +9458,7 @@ typedef struct {
 **
 ** This structure also contains some state information.
 */
-struct Sqlite3Config {
+struct SQLite3Config {
   int bMemstat;                     /* True to enable memory status */
   int bCoreMutex;                   /* True to enable core mutexing */
   int bFullMutex;                   /* True to enable full mutexing */
@@ -9923,7 +9923,7 @@ SQLITE_PRIVATE void sqlite3ValueApplyAffinity(sqlite3_value *, u8, u8);
 #ifndef SQLITE_AMALGAMATION
 SQLITE_PRIVATE const unsigned char sqlite3UpperToLower[];
 SQLITE_PRIVATE const unsigned char sqlite3CtypeMap[];
-SQLITE_PRIVATE SQLITE_WSD struct Sqlite3Config sqlite3Config;
+SQLITE_PRIVATE SQLITE_WSD struct SQLite3Config sqlite3Config;
 SQLITE_PRIVATE SQLITE_WSD FuncDefHash sqlite3GlobalFunctions;
 SQLITE_PRIVATE int sqlite3PendingByte;
 #endif
@@ -10250,7 +10250,7 @@ SQLITE_PRIVATE const unsigned char sqlite3CtypeMap[256] = {
 ** The following singleton contains the global configuration for
 ** the SQLite library.
 */
-SQLITE_PRIVATE SQLITE_WSD struct Sqlite3Config sqlite3Config = {
+SQLITE_PRIVATE SQLITE_WSD struct SQLite3Config sqlite3Config = {
    SQLITE_DEFAULT_MEMSTATUS,  /* bMemstat */
    1,                         /* bCoreMutex */
    SQLITE_THREADSAFE==1,      /* bFullMutex */
@@ -14406,9 +14406,9 @@ struct sqlite3_mutex {
 #endif
 };
 #ifdef SQLITE_DEBUG
-#define SQLITE3_MUTEX_INITIALIZER { PTHREAD_MUTEX_INITIALIZER, 0, 0, (pthread_t)0, 0 }
+#define SQLite3_MUTEX_INITIALIZER { PTHREAD_MUTEX_INITIALIZER, 0, 0, (pthread_t)0, 0 }
 #else
-#define SQLITE3_MUTEX_INITIALIZER { PTHREAD_MUTEX_INITIALIZER, 0, 0, (pthread_t)0 }
+#define SQLite3_MUTEX_INITIALIZER { PTHREAD_MUTEX_INITIALIZER, 0, 0, (pthread_t)0 }
 #endif
 
 /*
@@ -14485,12 +14485,12 @@ static int pthreadMutexEnd(void){ return SQLITE_OK; }
 */
 static sqlite3_mutex *pthreadMutexAlloc(int iType){
   static sqlite3_mutex staticMutexes[] = {
-    SQLITE3_MUTEX_INITIALIZER,
-    SQLITE3_MUTEX_INITIALIZER,
-    SQLITE3_MUTEX_INITIALIZER,
-    SQLITE3_MUTEX_INITIALIZER,
-    SQLITE3_MUTEX_INITIALIZER,
-    SQLITE3_MUTEX_INITIALIZER
+    SQLite3_MUTEX_INITIALIZER,
+    SQLite3_MUTEX_INITIALIZER,
+    SQLite3_MUTEX_INITIALIZER,
+    SQLite3_MUTEX_INITIALIZER,
+    SQLite3_MUTEX_INITIALIZER,
+    SQLite3_MUTEX_INITIALIZER
   };
   sqlite3_mutex *p;
   switch( iType ){
@@ -70457,8 +70457,8 @@ exec_out:
 **
 ** @(#) $Id: sqlite3ext.h,v 1.25 2008/10/12 00:27:54 shane Exp $
 */
-#ifndef _SQLITE3EXT_H_
-#define _SQLITE3EXT_H_
+#ifndef _SQLite3EXT_H_
+#define _SQLite3EXT_H_
 
 typedef struct sqlite3_api_routines sqlite3_api_routines;
 
@@ -70816,7 +70816,7 @@ struct sqlite3_api_routines {
 #define SQLITE_EXTENSION_INIT1     const sqlite3_api_routines *sqlite3_api = 0;
 #define SQLITE_EXTENSION_INIT2(v)  sqlite3_api = v;
 
-#endif /* _SQLITE3EXT_H_ */
+#endif /* _SQLite3EXT_H_ */
 
 /************** End of sqlite3ext.h ******************************************/
 /************** Continuing where we left off in loadext.c ********************/

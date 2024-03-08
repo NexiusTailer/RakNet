@@ -1,4 +1,4 @@
-/// \file
+/// \file ConnectionGraph2.h
 /// \brief Connection graph plugin, version 2. Tells new systems about existing and new connections
 ///
 /// This file is part of RakNet Copyright 2003 Jenkins Software LLC
@@ -18,10 +18,10 @@ class RakPeerInterface;
 #include "GetTime.h"
 #include "Export.h"
 
-/// \ingroup CONNECTION_GRAPH_GROUP
 /// \brief A one hop connection graph.
-/// Sends ID_CONNECTION_GRAPH_DISCONNECTION_NOTIFICATION, ID_CONNECTION_GRAPH_CONNECTION_LOST, ID_CONNECTION_GRAPH_NEW_CONNECTION
+/// \details Sends ID_CONNECTION_GRAPH_DISCONNECTION_NOTIFICATION, ID_CONNECTION_GRAPH_CONNECTION_LOST, ID_CONNECTION_GRAPH_NEW_CONNECTION<BR>
 /// All identifiers are followed by SystemAddress, then RakNetGUID
+/// \ingroup CONNECTION_GRAPH_GROUP
 class RAK_DLL_EXPORT ConnectionGraph2 : public PluginInterface2
 {
 public:

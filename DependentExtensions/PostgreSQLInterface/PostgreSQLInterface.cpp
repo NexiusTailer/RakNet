@@ -1,4 +1,5 @@
 #include "PostgreSQLInterface.h"
+#include "VariadicSQLParser.h"
 
 // libpq-fe.h is part of PostgreSQL which must be installed on this computer to use the PostgreRepository
 #include "libpq-fe.h"
@@ -26,10 +27,6 @@
 #include "BitStream.h"
 #include "FormatString.h"
 #include "LinuxStrings.h"
-
-#if defined ( __FreeBSD__ )
-#include <stdarg.h>
-#endif
 
 #define PQEXECPARAM_FORMAT_TEXT		0
 #define PQEXECPARAM_FORMAT_BINARY	1
@@ -261,7 +258,7 @@ bool PostgreSQLInterface::PQGetValueFromBinary(char **output, int *outputLength,
 		}
 		else
 		{
-			*output = new char[*outputLength];
+			*output = (char*) rakMalloc_Ex(*outputLength,__FILE__,__LINE__);
 			memcpy(*output, PQgetvalue(result, rowIndex, columnIndex), *outputLength);
 			return true;
 		}
@@ -312,7 +309,7 @@ long long PostgreSQLInterface::GetEpoch(void)
 {
 	PGresult *result;
 	long long out;
-	result = QueryVaridic("EXTRACT(EPOCH FROM current_timestamp) as out);");
+	result = QueryVariadic("EXTRACT(EPOCH FROM current_timestamp) as out);");
 	PostgreSQLInterface::PQGetValueFromBinary(&out, result, 0, "out");
 	PQclear(result);
 	return out;
@@ -539,71 +536,21 @@ void PostgreSQLInterface::EncodeQueryUpdate(const char *colName, const RakNet::R
 RakNet::RakString PostgreSQLInterface::GetEscapedString(const char *input) const
 {
 	unsigned long len = (unsigned long) strlen(input);
-	char *fn = new char [len*2+1];
+	char *fn = (char*) rakMalloc_Ex(len*2+1,__FILE__,__LINE__);
 	int error;
 	PQescapeStringConn(pgConn, fn, input, len, &error);
 	RakNet::RakString output;
 	// Use assignment so it doesn't parse printf escape strings
 	output = fn;
-	delete [] fn;
+	rakFree_Ex(fn,__FILE__,__LINE__);
 	return output;
 }
-struct TypeMapping
-{
-	char inputType;
-	const char *type;
-};
-static const int NUM_TYPE_MAPPINGS=7;
-static TypeMapping typeMappings[NUM_TYPE_MAPPINGS] =
-{
-	{'i', "int"},
-	{'d', "int"},
-	{'s', "text"},
-	{'b', "bool"},
-	{'f', "real"},
-	{'g', "double"},
-	{'a', "bytea"},
-};
-unsigned int GetTypeMappingIndex(char c)
-{
-	unsigned int i;
-	for (i=0; i < NUM_TYPE_MAPPINGS; i++ )
-		if (typeMappings[i].inputType==c)
-			return i;
-	return (unsigned int)-1;
-}
-void PostgreSQLInterface::GetTypeMappingIndices( const char *format, DataStructures::List<PostgreSQLInterface::IndexAndType> &indices )
-{
-	bool previousCharWasPercentSign;
-	unsigned int i;
-	unsigned int typeMappingIndex;
-	indices.Clear();
-	unsigned int len = (unsigned int) strlen(format);
-	previousCharWasPercentSign=false;
-	for (i=0; i < len; i++)
-	{
-		if (previousCharWasPercentSign==true &&
-			GetTypeMappingIndex(format[i])!=-1)
-		{
-			typeMappingIndex = GetTypeMappingIndex(format[i]);
-			if (typeMappingIndex!=-1)
-			{
-				IndexAndType iat;
-				iat.strIndex=i-1;
-				iat.typeMappingIndex=typeMappingIndex;
-				indices.Insert(iat);
-			}
-		}
 
-		previousCharWasPercentSign=format[i]=='%';
-	}
-}
-PGresult * PostgreSQLInterface::QueryVaridic( const char * input, ... )
+PGresult * PostgreSQLInterface::QueryVariadic( const char * input, ... )
 {
 	RakNet::RakString query;
 	PGresult *result;
-	unsigned int i;
-	DataStructures::List<IndexAndType> indices;
+	DataStructures::List<VariadicSQLParser::IndexAndType> indices;
 	if ( input==0 || input[0]==0 )
 		return 0;
 
@@ -636,7 +583,7 @@ PGresult * PostgreSQLInterface::QueryVaridic( const char * input, ... )
 //			if (i < 9)
 //				formatCopy.SetChar(indices[i].strIndex+1, i+1+'0');
 //			else
-			insertion=RakNet::RakString("%i::%s", i+1, typeMappings[indices[i].typeMappingIndex].type);
+			insertion=RakNet::RakString("%i::%s", i+1, VariadicSQLParser::GetTypeMappingAtIndex(indices[i].typeMappingIndex));
 			formatCopy.SetChar(indices[i].strIndex+1+indexOffset, insertion);
 			indexOffset+=(unsigned int) insertion.GetLength()-1;
 		}
@@ -646,7 +593,7 @@ PGresult * PostgreSQLInterface::QueryVaridic( const char * input, ... )
 		query += formatCopy;
 	//	query += ";\n";
 		formatCopy+= ";\n";
-		result = PQprepare(pgConn, RakNet::RakString("PGSQL_ExecuteVaridic_%i", preparedQueries.Size()), formatCopy.C_String(), indices.Size(), NULL);
+		result = PQprepare(pgConn, RakNet::RakString("PGSQL_ExecuteVariadic_%i", preparedQueries.Size()), formatCopy.C_String(), indices.Size(), NULL);
 		if (IsResultSuccessful(result, false))
 		{
 			PQclear(result);
@@ -663,93 +610,28 @@ PGresult * PostgreSQLInterface::QueryVaridic( const char * input, ... )
 		}
 	}
 
+//	char *paramData[512];
+//	int paramLength[512];
+//	int paramFormat[512];
+
 	// Find out how many params there are
 	// Find out the type of each param (%f, %s)
 	GetTypeMappingIndices( input, indices );
 
-	char *paramData[512];
-	int paramLength[512];
-	int paramFormat[512];
-
 	va_list argptr;
-	int varidicArgIndex;
 	va_start(argptr, input);
-	for (varidicArgIndex=0, i=0; i < indices.Size(); i++, varidicArgIndex++)
-	{
-		if (typeMappings[indices[i].typeMappingIndex].inputType=='i' ||
-			typeMappings[indices[i].typeMappingIndex].inputType=='d')
-		{
-			int val = va_arg( argptr, int );
-			paramLength[i]=sizeof(val);
-			paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
-			memcpy(paramData[i], &val, paramLength[i]);
-			if (RakNet::BitStream::IsNetworkOrder()==false) RakNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
-		}
-		else if (typeMappings[indices[i].typeMappingIndex].inputType=='s')
-		{
-			char* val = va_arg( argptr, char* );
-			paramLength[i]=(int) strlen(val);
-			paramData[i]=(char*) rakMalloc_Ex(paramLength[i]+1, __FILE__, __LINE__);
-			memcpy(paramData[i], val, paramLength[i]+1);
-		}
-		else if (typeMappings[indices[i].typeMappingIndex].inputType=='b')
-		{
-			bool val = (va_arg( argptr, int )!=0);
-			paramLength[i]=sizeof(val);
-			paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
-			memcpy(paramData[i], &val, paramLength[i]);
-			if (RakNet::BitStream::IsNetworkOrder()==false) RakNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
-		}
-		else if (typeMappings[indices[i].typeMappingIndex].inputType=='f')
-		{
-			// On MSVC at least, this only works with double as the 2nd param
-			float val = (float) va_arg( argptr, double );
-			//float val = va_arg( argptr, float );
-			paramLength[i]=sizeof(val);
-			paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
-			memcpy(paramData[i], &val, paramLength[i]);
-			if (RakNet::BitStream::IsNetworkOrder()==false) RakNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
-		}
-		else if (typeMappings[indices[i].typeMappingIndex].inputType=='g')
-		{
-			double val = va_arg( argptr, double );
-			paramLength[i]=sizeof(val);
-			paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
-			memcpy(paramData[i], &val, paramLength[i]);
-			if (RakNet::BitStream::IsNetworkOrder()==false) RakNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
-		}
-		else if (typeMappings[indices[i].typeMappingIndex].inputType=='a')
-		{
-			char* val = va_arg( argptr, char* );
-			paramLength[i]=va_arg( argptr, unsigned int );
-			paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
-			memcpy(paramData[i], val, paramLength[i]);
-		}
+	char **paramData;
+	int *paramLength;
+	int *paramFormat;
+	ExtractArguments(argptr, indices, &paramData, &paramLength);
+	paramFormat=RakNet::OP_NEW_ARRAY<int>(indices.Size(),__FILE__,__LINE__);
+	for (unsigned int i=0; i < indices.Size(); i++)
 		paramFormat[i]=PQEXECPARAM_FORMAT_BINARY;
-	}
+	result = PQexecPrepared(pgConn, RakNet::RakString("PGSQL_ExecuteVariadic_%i", preparedQueryIndex), indices.Size(), paramData, paramLength, paramFormat, PQEXECPARAM_FORMAT_BINARY );
+	VariadicSQLParser::FreeArguments(indices, paramData, paramLength);
+	RakNet::OP_DELETE_ARRAY(paramFormat,__FILE__,__LINE__);
+	va_end(argptr);
 
-	result = PQexecPrepared(pgConn, RakNet::RakString("PGSQL_ExecuteVaridic_%i", preparedQueryIndex), indices.Size(), paramData, paramLength, paramFormat, PQEXECPARAM_FORMAT_BINARY );
-
-	for (i=0; i < indices.Size(); i++)
-		rakFree_Ex(paramData[i], __FILE__, __LINE__ );
-
-	/*
-	query.Set("EXECUTE PGSQL_ExecuteVaridic_%i", preparedQueryIndex);
-	if (indices.Size())
-		query+="(";
-	for (i=0; i < indices.Size(); i++)
-	{
-		query+=RakNet::RakString("$%i::",i+1);
-		query+=typeMappings[indices[i].typeMappingIndex].type;
-		if (i<indices.Size()-1)
-			query += ", ";
-	}
-	if (indices.Size())
-		query+=")";
-	query += ";\n";
-
-	result = PQexecParams(pgConn, query.C_String(),indices.Size(),0,paramData,paramLength,paramFormat,PQEXECPARAM_FORMAT_BINARY);
-	*/
 	if (IsResultSuccessful(result, false)==false)
 	{
 		printf(lastError);
@@ -759,7 +641,7 @@ PGresult * PostgreSQLInterface::QueryVaridic( const char * input, ... )
 	return result;
 }
 /*
-PGresult * PostgreSQLInterface::QueryVaridic( const char * input, ... )
+PGresult * PostgreSQLInterface::QueryVariadic( const char * input, ... )
 {
 	RakNet::RakString query;
 	PGresult *result;
@@ -777,9 +659,9 @@ PGresult * PostgreSQLInterface::QueryVaridic( const char * input, ... )
 	int paramFormat[512];
 
 	va_list argptr;
-	int varidicArgIndex;
+	int variadicArgIndex;
 	va_start(argptr, input);
-	for (varidicArgIndex=0, i=0; i < indices.Size(); i++, varidicArgIndex++)
+	for (variadicArgIndex=0, i=0; i < indices.Size(); i++, variadicArgIndex++)
 	{
 		if (typeMappings[indices[i].typeMappingIndex].inputType=='i' ||
 			typeMappings[indices[i].typeMappingIndex].inputType=='d')
@@ -820,7 +702,7 @@ PGresult * PostgreSQLInterface::QueryVaridic( const char * input, ... )
 		{
 			char* val = va_arg( argptr, char* );
 			paramData[i]=val;
-			varidicArgIndex++;
+			variadicArgIndex++;
 			paramLength[i]=va_arg( argptr, unsigned int );
 		}
 		paramFormat[i]=PQEXECPARAM_FORMAT_BINARY;

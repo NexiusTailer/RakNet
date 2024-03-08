@@ -66,7 +66,7 @@ public:
 	static void EncodeQueryUpdate(const char *colName, const RakNet::RakString &str, RakNet::RakString &valueStr, int &numParams, char **paramData, int *paramLength, int *paramFormat, const char *type = "text");
 
 	// Standard query
-	PGresult * QueryVaridic( const char *input, ... );
+	PGresult * QueryVariadic( const char *input, ... );
 	static void ClearResult(PGresult *result);
 
 	// Pass queries to the server
@@ -83,12 +83,6 @@ protected:
 	char lastError[1024];
 
 	//	DataStructures::List<RakNet::RakString> preparedStatements;
-	struct IndexAndType
-	{
-		unsigned int strIndex;
-		unsigned int typeMappingIndex;
-	};
-	static void GetTypeMappingIndices( const char *format, DataStructures::List<IndexAndType> &indices );
 	DataStructures::List<RakNet::RakString> preparedQueries;
 };
 

@@ -615,6 +615,30 @@ WITH (OIDS=FALSE);
 
 ---------------------------------------------
 
+CREATE TABLE lobby2.perTitlePerUserIntegerStorage
+(
+titleName_fk character varying(64) NOT NULL REFERENCES lobby2.titles (titleName_pk) ON DELETE CASCADE,
+slotIndex integer,
+userId_fk integer NOT NULL REFERENCES lobby2.users (userId_pk) ON DELETE CASCADE,
+value double precision,
+CONSTRAINT ptpuis_pk PRIMARY KEY (titleName_fk, userId_fk, slotIndex)
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.perTitlePerUserBinaryStorage
+(
+titleName_fk character varying(64) NOT NULL REFERENCES lobby2.titles (titleName_pk) ON DELETE CASCADE,
+slotIndex integer,
+userId_fk integer NOT NULL REFERENCES lobby2.users (userId_pk) ON DELETE CASCADE,
+binaryData bytea,
+CONSTRAINT ptpubs_pk PRIMARY KEY (titleName_fk, userId_fk, slotIndex)
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
 CREATE TABLE lobby2.profanity
 (
 word character varying(32) NOT NULL UNIQUE PRIMARY KEY,

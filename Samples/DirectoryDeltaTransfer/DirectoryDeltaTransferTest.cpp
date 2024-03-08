@@ -29,16 +29,16 @@ public:
 	bool OnFile(
 		OnFileStruct *onFileStruct)
 	{
-        printf("%i. (100%%) %i/%i %s %ib->%ib / %ib->%ib\n", onFileStruct->setID, onFileStruct->fileIndex+1, onFileStruct->setCount, onFileStruct->fileName, onFileStruct->compressedTransmissionLength, onFileStruct->finalDataLength, onFileStruct->setTotalCompressedTransmissionLength, onFileStruct->setTotalFinalLength);
+        printf("%i. (100%%) %i/%i %s %ib->%ib / %ib->%ib\n", onFileStruct->setID, onFileStruct->fileIndex+1, onFileStruct->numberOfFilesInThisSet, onFileStruct->fileName, onFileStruct->compressedTransmissionLength, onFileStruct->byteLengthOfThisFile, onFileStruct->setTotalCompressedTransmissionLength, onFileStruct->byteLengthOfThisSet);
 
 		// Return true to have RakNet delete the memory allocated to hold this file.
 		// False if you hold onto the memory, and plan to delete it yourself later
 		return true;
 	}
 
-	virtual void OnFileProgress(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int partLength, char *firstDataChunk)
+	virtual void OnFileProgress(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int dataChunkLength, char *firstDataChunk)
 	{
-		printf("%i (%i%%) %i/%i %s %ib->%ib / %ib->%ib\n", onFileStruct->setID, (int) (100.0*(double)partCount/(double)partTotal), onFileStruct->fileIndex+1, onFileStruct->setCount, onFileStruct->fileName, onFileStruct->compressedTransmissionLength, onFileStruct->finalDataLength, onFileStruct->setTotalCompressedTransmissionLength, onFileStruct->setTotalFinalLength, firstDataChunk);
+		printf("%i (%i%%) %i/%i %s %ib->%ib / %ib->%ib\n", onFileStruct->setID, (int) (100.0*(double)partCount/(double)partTotal), onFileStruct->fileIndex+1, onFileStruct->numberOfFilesInThisSet, onFileStruct->fileName, onFileStruct->compressedTransmissionLength, onFileStruct->byteLengthOfThisFile, onFileStruct->setTotalCompressedTransmissionLength, onFileStruct->byteLengthOfThisSet, firstDataChunk);
 	}
 
 	virtual bool OnDownloadComplete(void)

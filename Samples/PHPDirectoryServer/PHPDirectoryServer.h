@@ -32,10 +32,10 @@ enum HTTPReadResult
 {
 	HTTP_RESULT_DELETED,
 	HTTP_RESULT_GOT_TABLE,
-	HTTP_RESULT_GOT_CONFIGURATION,
 	HTTP_RESULT_ERROR,
 };
 
+/// \deprecated See PHPDirectoryServer2
 /// \brief Use PHPDirectoryServer as a C++ client to DirectoryServer.php
 ///
 /// Initialize with the constructor, associating an instance of HTTPConnection with this class. HTTPConnection itself should be associated with TCPInterface.

@@ -9,7 +9,7 @@
 #include "UDPProxyClient.h"
 #include "TCPInterface.h"
 #include "HTTPConnection.h"
-#include "../Samples/PHPDirectoryServer/PHPDirectoryServer.h"
+#include "../Samples/PHPDirectoryServer2/PHPDirectoryServer2.h"
 #include "vector3d.h"
 #include "IAnimatedMeshSceneNode.h"
 #include "MessageIdentifiers.h"
@@ -28,12 +28,12 @@ extern NatPunchthroughClient *natPunchthroughClient; // Connect peer to peer thr
 extern RakNet::UDPProxyClient *udpProxyClient; // Use a proxy if natPunchthroughClient fails
 extern TCPInterface *tcpInterface; // Connect to a webserver to list and get the list of players
 extern HTTPConnection *httpConnection; /// Connect to a webserver to list and get the list of players
-extern PHPDirectoryServer *phpDirectoryServer; // Connect to a webserver to list and get the list of players
+extern PHPDirectoryServer2 *phpDirectoryServer2; // Connect to a webserver to list and get the list of players
 extern PlayerReplica *playerReplica; // Network object that represents the player
 
 // A NAT punchthrough and proxy server Jenkins Software is hosting for free, should usually be online
 #define DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_PORT 60481
-#define DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP "216.224.123.180"
+#define DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP "8.17.250.34"
 
 void InstantiateRakNetClasses(void);
 void DeinitializeRakNetClasses(void);
@@ -47,13 +47,14 @@ public:
 	virtual RakNet::RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, RakNet::ReplicaManager3 *replicaManager3) {return QueryConstruction_PeerToPeer(destinationConnection);}
 	virtual bool QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection) {return QueryRemoteConstruction_PeerToPeer(sourceConnection);}
 	virtual void DeallocReplica(RakNet::Connection_RM3 *sourceConnection) {delete this;}
-	virtual bool QuerySerialization(RakNet::Connection_RM3 *destinationConnection) {return QuerySerialization_PeerToPeer(destinationConnection);}
+	virtual RakNet::RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3 *destinationConnection) {return QuerySerialization_PeerToPeer(destinationConnection);}
 	virtual void SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection);
 	virtual bool DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection);
 	virtual RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters *serializeParameters);
-	virtual void Deserialize(RakNet::BitStream *serializationBitstream, RakNetTime timeStamp, RakNet::Connection_RM3 *sourceConnection);
+	virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters);
 	virtual void SerializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *destinationConnection) {}
 	virtual bool DeserializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *sourceConnection) {return true;}
+	virtual RakNet::RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3 *droppedConnection) const {return QueryActionOnPopConnection_PeerToPeer(droppedConnection);}
 
 	/// This function is not derived from Replica3, it's specific to this app
 	/// Called from CDemo::UpdateRakNet
@@ -77,7 +78,7 @@ public:
 	virtual void SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection);
 	virtual bool DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection);
 	virtual RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters *serializeParameters);
-	virtual void Deserialize(RakNet::BitStream *serializationBitstream, RakNetTime timeStamp, RakNet::Connection_RM3 *sourceConnection);
+	virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters);
 	virtual void PostDeserializeConstruction(RakNet::Connection_RM3 *sourceConnection);
 	virtual void PreDestruction(RakNet::Connection_RM3 *sourceConnection);
 
@@ -123,7 +124,7 @@ public:
 	virtual void SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection);
 	virtual bool DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection);
 	virtual RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters *serializeParameters);
-	virtual void Deserialize(RakNet::BitStream *serializationBitstream, RakNetTime timeStamp, RakNet::Connection_RM3 *sourceConnection);
+	virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters);
 	virtual void PostDeserializeConstruction(RakNet::Connection_RM3 *sourceConnection);
 	virtual void PreDestruction(RakNet::Connection_RM3 *sourceConnection);
 

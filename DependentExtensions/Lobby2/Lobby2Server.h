@@ -147,12 +147,15 @@ protected:
 	void Clear(void);
 	void ClearUsers(void);
 	unsigned int GetUserIndexBySystemAddress(SystemAddress systemAddress);
+	unsigned int GetUserIndexByGUID(RakNetGUID guid);
+	unsigned int GetUserIndexByUsername(RakNet::RakString userName);
 	void StopThreads(void);
 
 	/// \internal
 	void RemoveUser(SystemAddress address);
 	/// \internal
 	void RemoveUser(unsigned int index);
+	void LogoffFromRooms(User *user);
 
 	virtual void* PerThreadFactory(void *context)=0;
 	virtual void PerThreadDestructor(void* factoryResult, void *context)=0;

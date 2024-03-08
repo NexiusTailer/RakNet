@@ -32,8 +32,8 @@
 **
 ** @(#) $Id: sqlite.h.in,v 1.440 2009/04/06 15:55:04 drh Exp $
 */
-#ifndef _SQLITE3_H_
-#define _SQLITE3_H_
+#ifndef _SQLite3_H_
+#define _SQLite3_H_
 #include <stdarg.h>     /* Needed for the definition of va_list */
 
 /*
@@ -2795,7 +2795,7 @@ int sqlite3_data_count(sqlite3_stmt *pStmt);
 **
 ** Note that the SQLITE_TEXT constant was also used in SQLite version 2
 ** for a completely different meaning.  Software that links against both
-** SQLite version 2 and SQLite version 3 should use SQLITE3_TEXT, not
+** SQLite version 2 and SQLite version 3 should use SQLite3_TEXT, not
 ** SQLITE_TEXT.
 */
 #define SQLITE_INTEGER  1
@@ -2807,7 +2807,7 @@ int sqlite3_data_count(sqlite3_stmt *pStmt);
 #else
 # define SQLITE_TEXT     3
 #endif
-#define SQLITE3_TEXT     3
+#define SQLite3_TEXT     3
 
 /*
 ** CAPI3REF: Result Values From A Query {H13800} <S10700>

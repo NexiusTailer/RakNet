@@ -194,15 +194,31 @@
 			>
 		</File>
 		<File
-			RelativePath=".\SQLite3Plugin.cpp"
+			RelativePath=".\SQLite3ClientPlugin.cpp"
 			>
 		</File>
 		<File
-			RelativePath=".\SQLite3Plugin.h"
+			RelativePath=".\SQLite3ClientPlugin.h"
+			>
+		</File>
+		<File
+			RelativePath=".\SQLite3PluginCommon.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\SQLite3PluginCommon.h"
 			>
 		</File>
 		<File
 			RelativePath=".\SQLite3Sample.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\SQLite3ServerPlugin.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\SQLite3ServerPlugin.h"
 			>
 		</File>
 	</Files>

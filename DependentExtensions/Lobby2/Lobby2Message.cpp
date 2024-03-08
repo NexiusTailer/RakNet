@@ -35,6 +35,8 @@ void Lobby2Callbacks::MessageResult(Client_UpdateAccount *message) {ExecuteDefau
 void Lobby2Callbacks::MessageResult(Client_StartIgnore *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Client_StopIgnore *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Client_GetIgnoreList *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Client_PerTitleIntegerStorage *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Client_PerTitleBinaryStorage *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Friends_SendInvite *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Friends_AcceptInvite *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Friends_RejectInvite *message) {ExecuteDefaultResult(message);}
@@ -83,6 +85,7 @@ void Lobby2Callbacks::MessageResult(Clans_KickAndBlacklistUser *message) {Execut
 void Lobby2Callbacks::MessageResult(Clans_UnblacklistUser *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Clans_GetBlacklist *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Clans_GetMembers *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Clans_GetList *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Clans_CreateBoard *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Clans_DestroyBoard *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Clans_CreateNewTopic *message) {ExecuteDefaultResult(message);}
@@ -104,7 +107,9 @@ void Lobby2Callbacks::MessageResult(Console_CreateRoom *message) {ExecuteDefault
 void Lobby2Callbacks::MessageResult(Console_JoinRoom *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_LeaveRoom *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_SendLobbyInvitationToRoom *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Console_SendDataMessageToUser *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_SendRoomChatMessage *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Console_SetPresence *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Client_IgnoreStatus *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Friends_StatusChange *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_User_ChangedHandle *message) {ExecuteDefaultResult(message);}
@@ -140,7 +145,7 @@ void Lobby2Callbacks::MessageResult(Notification_Console_RoomMemberConnectivityU
 void Lobby2Callbacks::MessageResult(Notification_Console_ChatEvent *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_MuteListChanged *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_Local_Users_Changed *message) {ExecuteDefaultResult(message);}
-void Lobby2Callbacks::MessageResult(Notification_Console_Signaling_Result *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Notification_ReceivedDataMessageFromUser *message) {ExecuteDefaultResult(message);}
 
 
 
@@ -158,7 +163,7 @@ void Lobby2Message::SerializeBase(bool writeToBitstream, bool serializeOutput, B
 		bitStream->Serialize(writeToBitstream, resultCode);
 }
 void Lobby2Message::Serialize( bool writeToBitstream, bool serializeOutput, BitStream *bitStream ) { SerializeBase(writeToBitstream, serializeOutput, bitStream); }
-bool Lobby2Message::ValidateBinary( BinaryDataBlock *binaryDataBlock)
+bool Lobby2Message::ValidateBinary( RakNetSmartPtr<BinaryDataBlock>binaryDataBlock)
 {
 	if (binaryDataBlock->binaryDataLength>L2_MAX_BINARY_DATA_LENGTH)
 	{
@@ -166,7 +171,7 @@ bool Lobby2Message::ValidateBinary( BinaryDataBlock *binaryDataBlock)
 		return false;
 	}
 
-	if (binaryDataBlock->binaryDataLength>0 && binaryDataBlock->binaryData!=0)
+	if (binaryDataBlock->binaryDataLength>0 && binaryDataBlock->binaryData==0)
 	{
 		resultCode=L2RC_BINARY_DATA_NULL_POINTER;
 		return false;
@@ -290,7 +295,7 @@ void CreateAccountParameters::Serialize(bool writeToBitstream, BitStream *bitStr
 	bitStream->Serialize(writeToBitstream, caption1);
 	bitStream->Serialize(writeToBitstream, caption2);
 	bitStream->Serialize(writeToBitstream, ageInDays);
-	binaryData.Serialize(writeToBitstream,bitStream);
+	binaryData->Serialize(writeToBitstream,bitStream);
 }
 void BinaryDataBlock::Serialize(bool writeToBitstream, BitStream *bitStream)
 {
@@ -319,7 +324,7 @@ void PendingInvite::Serialize(bool writeToBitstream, BitStream *bitStream)
 	bitStream->Serialize(writeToBitstream, sender);
 	bitStream->Serialize(writeToBitstream, subject);
 	bitStream->Serialize(writeToBitstream, body);
-	binaryData.Serialize(writeToBitstream, bitStream);		
+	binaryData->Serialize(writeToBitstream, bitStream);		
 }
 void EmailResult::Serialize(bool writeToBitstream, BitStream *bitStream)
 {
@@ -332,7 +337,7 @@ void EmailResult::Serialize(bool writeToBitstream, BitStream *bitStream)
 	bitStream->Serialize(writeToBitstream, wasReadByMe);
 	bitStream->Serialize(writeToBitstream, subject);
 	bitStream->Serialize(writeToBitstream, emailID);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 	bitStream->Serialize(writeToBitstream, creationDate);
 }
 void MatchParticipant::Serialize(bool writeToBitstream, BitStream *bitStream)
@@ -345,7 +350,7 @@ void SubmittedMatch::Serialize(bool writeToBitstream, BitStream *bitStream)
 	bitStream->Serialize(writeToBitstream, matchNote);
 	bitStream->Serialize(writeToBitstream, whenSubmittedDate);
 	bitStream->Serialize(writeToBitstream, matchID);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 	unsigned short listSize = (unsigned short) matchParticipants.Size();
 	bitStream->SerializeCompressed(writeToBitstream, listSize);
 	for (unsigned int i=0; i < listSize; i++)
@@ -367,7 +372,7 @@ void ClanInfo::Serialize(bool writeToBitstream, BitStream *bitStream)
 	bitStream->Serialize(writeToBitstream, clanName);
 	bitStream->Serialize(writeToBitstream, description);
 	bitStream->Serialize(writeToBitstream, clanLeader);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 	unsigned short listSize = (unsigned short) clanMembersOtherThanLeader.Size();
 	bitStream->SerializeCompressed(writeToBitstream, listSize);
 	for (unsigned int i=0; i < listSize; i++)
@@ -407,14 +412,14 @@ void System_CreateTitle::Serialize( bool writeToBitstream, bool serializeOutput,
 	bitStream->Serialize(writeToBitstream, titleName);
 	bitStream->Serialize(writeToBitstream, titleSecretKey);
 	bitStream->Serialize(writeToBitstream, requiredAge);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 }
 bool System_CreateTitle::PrevalidateInput(void)
 {
 	//
 	if (!ValidateRequiredText(&titleName)) return false;
 	if (!ValidatePassword(&titleSecretKey)) return false;
-	if (!ValidateBinary(&binaryData)) return false;
+	if (!ValidateBinary(binaryData)) return false;
 	return true;
 }
 
@@ -437,7 +442,7 @@ void System_GetTitleBinaryData::Serialize( bool writeToBitstream, bool serialize
 	SerializeBase(writeToBitstream, serializeOutput, bitStream);
 	bitStream->Serialize(writeToBitstream, titleName);
 	if (serializeOutput)
-		binaryData.Serialize(writeToBitstream,bitStream);
+		binaryData->Serialize(writeToBitstream,bitStream);
 }
 
 void System_RegisterProfanity::Serialize( bool writeToBitstream, bool serializeOutput, BitStream *bitStream )
@@ -791,7 +796,53 @@ void Client_GetIgnoreList::Serialize( bool writeToBitstream, bool serializeOutpu
 		}
 	}
 }
-
+bool Client_PerTitleIntegerStorage::PrevalidateInput(void)
+{
+	if (!ValidateRequiredText(&titleName)) return false;
+	return true;
+}
+void Client_PerTitleIntegerStorage::Serialize( bool writeToBitstream, bool serializeOutput, BitStream *bitStream )
+{
+	SerializeBase(writeToBitstream, serializeOutput, bitStream);
+	bitStream->Serialize(writeToBitstream,titleName);
+	bitStream->Serialize(writeToBitstream,slotIndex);
+	if (operationToPerform!=PTISC_NOT_EQUAL)
+		bitStream->Serialize(writeToBitstream,conditionValue);
+	unsigned char c;
+	c = conditionForOperation;
+	bitStream->Serialize(writeToBitstream,c);
+	conditionForOperation = (PTIS_Condition) c;
+	c = operationToPerform;
+	bitStream->Serialize(writeToBitstream,c);
+	operationToPerform = (PTIS_Operation) c;
+	if (operationToPerform!=PTISO_DELETE)
+	{
+		if (operationToPerform==PTISO_WRITE || operationToPerform==PTISO_ADD)
+			bitStream->Serialize(writeToBitstream,inputValue);
+		if (serializeOutput)
+		{
+			if (operationToPerform==PTISO_WRITE)
+				outputValue=inputValue;
+			else if (operationToPerform==PTISO_READ ||
+				operationToPerform==PTISO_ADD)
+				bitStream->Serialize(writeToBitstream,outputValue);
+		}
+	}
+}
+bool Client_PerTitleBinaryStorage::PrevalidateInput(void)
+{
+	if (!ValidateRequiredText(&titleName)) return false;
+	if (!ValidateBinary(binaryData)) return false;
+	return true;
+}
+void Client_PerTitleBinaryStorage::Serialize( bool writeToBitstream, bool serializeOutput, BitStream *bitStream )
+{
+	SerializeBase(writeToBitstream, serializeOutput, bitStream);
+	bitStream->Serialize(writeToBitstream,titleName);
+	bitStream->Serialize(writeToBitstream,slotIndex);
+	if (operationToPerform!=PTISO_DELETE)
+		binaryData->Serialize(writeToBitstream, bitStream);
+}
 void Friends_SendInvite::Serialize( bool writeToBitstream, bool serializeOutput, BitStream *bitStream )
 {
 	SerializeBase(writeToBitstream, serializeOutput, bitStream);
@@ -799,14 +850,14 @@ void Friends_SendInvite::Serialize( bool writeToBitstream, bool serializeOutput,
 	bitStream->Serialize(writeToBitstream,subject);
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,emailStatus);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 }
 
 bool Friends_SendInvite::PrevalidateInput( void )
 {
 	if (!ValidateHandle(&targetHandle)) return false;
 	if (!ValidateRequiredText(&subject) && !ValidateRequiredText(&body)) return false;
-	if (!ValidateBinary(&binaryData)) return false;
+	if (!ValidateBinary(binaryData)) return false;
 	return true;
 }
 
@@ -817,14 +868,14 @@ void Friends_AcceptInvite::Serialize( bool writeToBitstream, bool serializeOutpu
 	bitStream->Serialize(writeToBitstream,subject);
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,emailStatus);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 }
 
 bool Friends_AcceptInvite::PrevalidateInput( void )
 {
 	if (!ValidateHandle(&targetHandle)) return false;
 	if (!ValidateRequiredText(&subject) && !ValidateRequiredText(&body)) return false;
-	if (!ValidateBinary(&binaryData)) return false;
+	if (!ValidateBinary(binaryData)) return false;
 	return true;
 }
 
@@ -835,14 +886,14 @@ void Friends_RejectInvite::Serialize( bool writeToBitstream, bool serializeOutpu
 	bitStream->Serialize(writeToBitstream,subject);
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,emailStatus);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 }
 
 bool Friends_RejectInvite::PrevalidateInput( void )
 {
 	if (!ValidateHandle(&targetHandle)) return false;
 	if (!ValidateRequiredText(&subject) && !ValidateRequiredText(&body)) return false;
-	if (!ValidateBinary(&binaryData)) return false;
+	if (!ValidateBinary(binaryData)) return false;
 	return true;
 }
 
@@ -914,14 +965,14 @@ void Friends_Remove::Serialize( bool writeToBitstream, bool serializeOutput, Bit
 	bitStream->Serialize(writeToBitstream,subject);
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,emailStatus);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 }
 
 bool Friends_Remove::PrevalidateInput( void )
 {
 	if (!ValidateHandle(&targetHandle)) return false;
 	if (!ValidateRequiredText(&subject) && !ValidateRequiredText(&body)) return false;
-	if (!ValidateBinary(&binaryData)) return false;
+	if (!ValidateBinary(binaryData)) return false;
 	return true;
 }
 
@@ -979,7 +1030,7 @@ void Emails_Send::Serialize( bool writeToBitstream, bool serializeOutput, BitStr
 	bitStream->Serialize(writeToBitstream,subject);
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,status);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 	unsigned short listSize = (unsigned short) recipients.Size();
 	bitStream->SerializeCompressed(writeToBitstream, listSize);
 	for (unsigned int i=0; i < listSize; i++)
@@ -1002,7 +1053,7 @@ bool Emails_Send::PrevalidateInput( void )
 	for (unsigned int i=0; i < recipients.Size(); i++)
 		if (!ValidateHandle(&recipients[i])) return false;
 	if (!ValidateRequiredText(&subject) && !ValidateRequiredText(&body)) return false;
-	if (!ValidateBinary(&binaryData)) return false;
+	if (!ValidateBinary(binaryData)) return false;
 	if (recipients.Size()==0)
 	{
 		resultCode=L2RC_Emails_Send_NO_RECIPIENTS;
@@ -1070,7 +1121,7 @@ bool Ranking_SubmitMatch::PrevalidateInput( void )
 {
 	if (!ValidateRequiredText(&titleName)) return false;
 	if (!ValidateRequiredText(&gameType)) return false;
-	if (!ValidateBinary(&submittedMatch.binaryData)) return false;
+	if (!ValidateBinary(submittedMatch.binaryData)) return false;
 	if (submittedMatch.matchParticipants.Size()==0)
 	{
 		resultCode=L2RC_Ranking_SubmitMatch_NO_PARTICIPANTS;
@@ -1119,7 +1170,7 @@ void Ranking_GetMatchBinaryData::Serialize( bool writeToBitstream, bool serializ
 	bitStream->Serialize(writeToBitstream,matchID);
 	if (serializeOutput)
 	{
-		binaryData.Serialize(writeToBitstream,bitStream);
+		binaryData->Serialize(writeToBitstream,bitStream);
 	}
 }
 
@@ -1239,7 +1290,7 @@ void Clans_Create::Serialize( bool writeToBitstream, bool serializeOutput, BitSt
 	bitStream->Serialize(writeToBitstream,failIfAlreadyInClan);
 	bitStream->Serialize(writeToBitstream,requiresInvitationsToJoin);
 	bitStream->Serialize(writeToBitstream,description);
-	binaryData.Serialize(writeToBitstream,bitStream);
+	binaryData->Serialize(writeToBitstream,bitStream);
 }
 
 bool Clans_Create::PrevalidateInput( void )
@@ -1254,14 +1305,14 @@ void Clans_SetProperties::Serialize( bool writeToBitstream, bool serializeOutput
 	SerializeBase(writeToBitstream, serializeOutput, bitStream);
 	bitStream->Serialize(writeToBitstream,clanHandle);
 	bitStream->Serialize(writeToBitstream,description);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 }
 
 bool Clans_SetProperties::PrevalidateInput( void )
 {
 	
 	if (!ValidateHandle(&clanHandle)) return false;
-	if (!ValidateBinary(&binaryData)) return false;
+	if (!ValidateBinary(binaryData)) return false;
 	return true;
 }
 
@@ -1272,7 +1323,7 @@ void Clans_GetProperties::Serialize( bool writeToBitstream, bool serializeOutput
 	if (serializeOutput)
 	{
 		bitStream->Serialize(writeToBitstream,description);
-		binaryData.Serialize(writeToBitstream, bitStream);
+		binaryData->Serialize(writeToBitstream, bitStream);
 	}
 }
 
@@ -1288,14 +1339,14 @@ void Clans_SetMyMemberProperties::Serialize( bool writeToBitstream, bool seriali
 	SerializeBase(writeToBitstream, serializeOutput, bitStream);
 	bitStream->Serialize(writeToBitstream,clanHandle);
 	bitStream->Serialize(writeToBitstream,description);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 }
 
 bool Clans_SetMyMemberProperties::PrevalidateInput( void )
 {
 	
 	if (!ValidateHandle(&clanHandle)) return false;
-	if (!ValidateBinary(&binaryData)) return false;
+	if (!ValidateBinary(binaryData)) return false;
 	return true;
 }
 
@@ -1355,7 +1406,7 @@ void Clans_GetMemberProperties::Serialize( bool writeToBitstream, bool serialize
 	{
 		bitStream->Serialize(writeToBitstream,description);
 		bitStream->Serialize(writeToBitstream,rank);
-		binaryData.Serialize(writeToBitstream,bitStream);
+		binaryData->Serialize(writeToBitstream,bitStream);
 		bitStream->Serialize(writeToBitstream,isSubleader);
 		bitStream->Serialize(writeToBitstream,clanMemberState);
 		bitStream->Serialize(writeToBitstream,banReason);
@@ -1396,7 +1447,7 @@ void Clans_Leave::Serialize( bool writeToBitstream, bool serializeOutput, BitStr
 	bitStream->Serialize(writeToBitstream,dissolveIfClanLeader);
 	bitStream->Serialize(writeToBitstream,subject);
 	bitStream->Serialize(writeToBitstream,body);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 	if (serializeOutput)
 	{
 		bitStream->Serialize(writeToBitstream,wasDissolved);
@@ -1441,7 +1492,7 @@ void Clans_SendJoinInvitation::Serialize( bool writeToBitstream, bool serializeO
 	bitStream->Serialize(writeToBitstream,subject);
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,emailStatus);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 }
 
 bool Clans_SendJoinInvitation::PrevalidateInput( void )
@@ -1461,7 +1512,7 @@ void Clans_WithdrawJoinInvitation::Serialize( bool writeToBitstream, bool serial
 	bitStream->Serialize(writeToBitstream,subject);
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,emailStatus);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 }
 
 bool Clans_WithdrawJoinInvitation::PrevalidateInput( void )
@@ -1480,9 +1531,9 @@ void Clans_AcceptJoinInvitation::Serialize( bool writeToBitstream, bool serializ
 	bitStream->Serialize(writeToBitstream,subject);
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,emailStatus);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 	bitStream->Serialize(writeToBitstream,failIfAlreadyInClan);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 }
 
 bool Clans_AcceptJoinInvitation::PrevalidateInput( void )
@@ -1499,7 +1550,7 @@ void Clans_RejectJoinInvitation::Serialize( bool writeToBitstream, bool serializ
 	bitStream->Serialize(writeToBitstream,subject);
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,emailStatus);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 	bitStream->Serialize(writeToBitstream,clanHandle);
 }
 
@@ -1541,7 +1592,7 @@ void Clans_SendJoinRequest::Serialize( bool writeToBitstream, bool serializeOutp
 	bitStream->Serialize(writeToBitstream,subject);
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,emailStatus);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 	if (serializeOutput)
 	{
 		bitStream->Serialize(writeToBitstream,clanJoined);
@@ -1563,7 +1614,7 @@ void Clans_WithdrawJoinRequest::Serialize( bool writeToBitstream, bool serialize
 	bitStream->Serialize(writeToBitstream,subject);
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,emailStatus);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 }
 
 bool Clans_WithdrawJoinRequest::PrevalidateInput( void )
@@ -1581,7 +1632,7 @@ void Clans_AcceptJoinRequest::Serialize( bool writeToBitstream, bool serializeOu
 	bitStream->Serialize(writeToBitstream,subject);
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,emailStatus);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 	bitStream->Serialize(writeToBitstream,requestingUserHandle);
 	bitStream->Serialize(writeToBitstream,failIfAlreadyInClan);
 }
@@ -1601,7 +1652,7 @@ void Clans_RejectJoinRequest::Serialize( bool writeToBitstream, bool serializeOu
 	bitStream->Serialize(writeToBitstream,subject);
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,emailStatus);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 	bitStream->Serialize(writeToBitstream,requestingUserHandle);
 }
 
@@ -1664,7 +1715,7 @@ void Clans_KickAndBlacklistUser::Serialize( bool writeToBitstream, bool serializ
 	bitStream->Serialize(writeToBitstream,blacklist);
 	bitStream->Serialize(writeToBitstream,reason);
 	bitStream->Serialize(writeToBitstream,emailStatus);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 }
 
 bool Clans_KickAndBlacklistUser::PrevalidateInput( void )
@@ -1685,7 +1736,7 @@ void Clans_UnblacklistUser::Serialize( bool writeToBitstream, bool serializeOutp
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,targetHandle);
 	bitStream->Serialize(writeToBitstream,emailStatus);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 }
 
 bool Clans_UnblacklistUser::PrevalidateInput( void )
@@ -1762,6 +1813,29 @@ bool Clans_GetMembers::PrevalidateInput( void )
 	return true;
 }
 
+void Clans_GetList::Serialize( bool writeToBitstream, bool serializeOutput, BitStream *bitStream )
+{
+	SerializeBase(writeToBitstream, serializeOutput, bitStream);
+	if (serializeOutput)
+	{
+		unsigned short listSize = (unsigned short) clanNames.Size();
+		bitStream->SerializeCompressed(writeToBitstream, listSize);
+		for (unsigned int i=0; i < listSize; i++)
+		{
+			RakString obj;
+			if (writeToBitstream)
+			{
+				bitStream->Serialize(writeToBitstream, clanNames[i]);
+			}
+			else
+			{
+				bitStream->Serialize(writeToBitstream, obj);
+				clanNames.Insert(obj);
+			}
+		}
+	}
+}
+
 void Clans_CreateBoard::Serialize( bool writeToBitstream, bool serializeOutput, BitStream *bitStream )
 {
 	SerializeBase(writeToBitstream, serializeOutput, bitStream);
@@ -1770,7 +1844,7 @@ void Clans_CreateBoard::Serialize( bool writeToBitstream, bool serializeOutput, 
 	bitStream->Serialize(writeToBitstream,allowPublicReads);
 	bitStream->Serialize(writeToBitstream,allowPublicWrites);
 	bitStream->Serialize(writeToBitstream,description);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 }
 
 bool Clans_CreateBoard::PrevalidateInput( void )
@@ -1802,7 +1876,7 @@ void Clans_CreateNewTopic::Serialize( bool writeToBitstream, bool serializeOutpu
 	bitStream->Serialize(writeToBitstream,clanBoardName);
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,subject);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 
 	if (serializeOutput)
 	{
@@ -1816,7 +1890,7 @@ bool Clans_CreateNewTopic::PrevalidateInput( void )
 	if (!ValidateHandle(&clanHandle)) return false;
 	if (!ValidateHandle(&clanBoardName)) return false;
 	if (!ValidateRequiredText(&subject) && !ValidateRequiredText(&body)) return false;
-	if (!ValidateBinary(&binaryData)) return false;
+	if (!ValidateBinary(binaryData)) return false;
 	return true;
 }
 
@@ -1826,14 +1900,14 @@ void Clans_ReplyToTopic::Serialize( bool writeToBitstream, bool serializeOutput,
 	bitStream->Serialize(writeToBitstream,postId);
 	bitStream->Serialize(writeToBitstream,body);
 	bitStream->Serialize(writeToBitstream,subject);
-	binaryData.Serialize(writeToBitstream, bitStream);
+	binaryData->Serialize(writeToBitstream, bitStream);
 }
 
 bool Clans_ReplyToTopic::PrevalidateInput( void )
 {
 	
 	if (!ValidateRequiredText(&subject) && !ValidateRequiredText(&body)) return false;
-	if (!ValidateBinary(&binaryData)) return false;
+	if (!ValidateBinary(binaryData)) return false;
 	return true;
 }
 

@@ -15,6 +15,8 @@ class RakPeerInterface;
 #include "Export.h"
 
 /// \defgroup PACKETLOGGER_GROUP PacketLogger
+/// \brief Print out incoming messages to a target destination
+/// \details
 /// \ingroup PLUGINS_GROUP
 
 /// \brief Writes incoming and outgoing messages to the screen.

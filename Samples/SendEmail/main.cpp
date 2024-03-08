@@ -35,9 +35,16 @@ void main(void)
 	if (password[0]==0)
 		strcpy(password, "mygmailpassword");
 
+	// http://mail.google.com/support/bin/answer.py?hl=en&answer=13287
+	unsigned short hostPort;
+	if (strcmp(mailServer,"smtp.gmail.com")==0)
+		hostPort=465;
+	else
+		hostPort=25;
+
 	fileList.AddFile("quote.txt", "quote.txt", quote, (const unsigned int) strlen(quote), (const unsigned int) strlen(quote), FileListNodeContext(0,0), false);
 	const char *sendResult=emailSender.Send(mailServer,
-		25,
+		hostPort,
 		senderUsername,
 		receiver,
 		senderUsername,

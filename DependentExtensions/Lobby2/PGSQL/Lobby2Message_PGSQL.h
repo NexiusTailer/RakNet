@@ -44,9 +44,9 @@ void GetClanMateIDs(unsigned int callerUserId, bool excludeIfIgnored, PostgreSQL
 bool IsIgnoredByTarget(unsigned int callerUserId, unsigned int targetUserId, PostgreSQLInterface *pgsql);
 void OutputFriendsNotification(RakNet::Notification_Friends_StatusChange::Status notificationType, Lobby2ServerCommand *command, PostgreSQLInterface *pgsql);
 void GetFriendHandlesByStatus(unsigned int callerUserId, RakNet::RakString status, PostgreSQLInterface *pgsql, DataStructures::List<RakNet::RakString> &output, bool callerIsUserOne);
-void SendEmail(DataStructures::List<RakNet::RakString> &recipientNames, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, BinaryDataBlock *binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql);
-void SendEmail(DataStructures::List<unsigned int> &targetUserIds, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, BinaryDataBlock *binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql);
-void SendEmail(unsigned int targetUserId, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, BinaryDataBlock *binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql);
+void SendEmail(DataStructures::List<RakNet::RakString> &recipientNames, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, RakNetSmartPtr<BinaryDataBlock>binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql);
+void SendEmail(DataStructures::List<unsigned int> &targetUserIds, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, RakNetSmartPtr<BinaryDataBlock>binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql);
+void SendEmail(unsigned int targetUserId, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, RakNetSmartPtr<BinaryDataBlock>binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql);
 int GetActiveClanCount(unsigned int userId, PostgreSQLInterface *pgsql);
 bool CreateAccountParametersFailed( CreateAccountParameters &createAccountParameters, RakNet::Lobby2ResultCode &resultCode, Lobby2ServerCommand *command, PostgreSQLInterface *pgsql);
 void UpdateAccountFromMissingCreationParameters(CreateAccountParameters &createAccountParameters, unsigned int userPrimaryKey, Lobby2ServerCommand *command, PostgreSQLInterface *pgsql);
@@ -81,6 +81,14 @@ __L2_MSG_DB_HEADER(Client_UpdateAccount, PGSQL){virtual bool ServerDBImpl( Lobby
 __L2_MSG_DB_HEADER(Client_StartIgnore, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Client_StopIgnore, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Client_GetIgnoreList, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Client_PerTitleIntegerStorage, PGSQL){
+	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );
+	virtual bool Write( Lobby2ServerCommand *command, void *databaseInterface );
+	virtual bool Read( Lobby2ServerCommand *command, void *databaseInterface );
+	virtual bool Delete( Lobby2ServerCommand *command, void *databaseInterface );
+	virtual bool Add( Lobby2ServerCommand *command, void *databaseInterface );
+};
+__L2_MSG_DB_HEADER(Client_PerTitleBinaryStorage, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Friends_SendInvite, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Friends_AcceptInvite, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Friends_RejectInvite, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
@@ -129,6 +137,7 @@ __L2_MSG_DB_HEADER(Clans_KickAndBlacklistUser, PGSQL){virtual bool ServerDBImpl(
 __L2_MSG_DB_HEADER(Clans_UnblacklistUser, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Clans_GetBlacklist, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Clans_GetMembers, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_GetList, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 
 __L2_MSG_DB_HEADER(Clans_CreateBoard, PGSQL)
 {
@@ -137,7 +146,7 @@ __L2_MSG_DB_HEADER(Clans_CreateBoard, PGSQL)
 		(void)command;
 
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result = pgsql->QueryVaridic("");
+		PGresult *result = pgsql->QueryVariadic("");
 		if (result!=0)
 		{
 			PQclear(result);
@@ -158,7 +167,7 @@ __L2_MSG_DB_HEADER(Clans_DestroyBoard, PGSQL)
 		(void)command;
 
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result = pgsql->QueryVaridic("");
+		PGresult *result = pgsql->QueryVariadic("");
 		if (result!=0)
 		{
 			PQclear(result);
@@ -179,7 +188,7 @@ __L2_MSG_DB_HEADER(Clans_CreateNewTopic, PGSQL)
 		(void)command;
 
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result = pgsql->QueryVaridic("");
+		PGresult *result = pgsql->QueryVariadic("");
 		if (result!=0)
 		{
 			PQclear(result);
@@ -200,7 +209,7 @@ __L2_MSG_DB_HEADER(Clans_ReplyToTopic, PGSQL)
 		(void)command;
 
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result = pgsql->QueryVaridic("");
+		PGresult *result = pgsql->QueryVariadic("");
 		if (result!=0)
 		{
 			PQclear(result);
@@ -221,7 +230,7 @@ __L2_MSG_DB_HEADER(Clans_RemovePost, PGSQL)
 		(void)command;
 
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result = pgsql->QueryVaridic("");
+		PGresult *result = pgsql->QueryVariadic("");
 		if (result!=0)
 		{
 			PQclear(result);
@@ -242,7 +251,7 @@ __L2_MSG_DB_HEADER(Clans_GetBoards, PGSQL)
 		(void)command;
 
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result = pgsql->QueryVaridic("");
+		PGresult *result = pgsql->QueryVariadic("");
 		if (result!=0)
 		{
 			PQclear(result);
@@ -263,7 +272,7 @@ __L2_MSG_DB_HEADER(Clans_GetTopics, PGSQL)
 		(void)command;
 
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result = pgsql->QueryVaridic("");
+		PGresult *result = pgsql->QueryVariadic("");
 		if (result!=0)
 		{
 			PQclear(result);
@@ -284,7 +293,7 @@ __L2_MSG_DB_HEADER(Clans_GetPosts, PGSQL)
 		(void)command;
 
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result = pgsql->QueryVaridic("");
+		PGresult *result = pgsql->QueryVariadic("");
 		if (result!=0)
 		{
 			PQclear(result);
@@ -355,6 +364,8 @@ struct Lobby2MessageFactory_PGSQL : public Lobby2MessageFactory
 			__L2_MSG_FACTORY_IMPL(Client_StartIgnore, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Client_StopIgnore, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Client_GetIgnoreList, PGSQL);
+			__L2_MSG_FACTORY_IMPL(Client_PerTitleIntegerStorage, PGSQL);
+			__L2_MSG_FACTORY_IMPL(Client_PerTitleBinaryStorage, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Friends_SendInvite, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Friends_AcceptInvite, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Friends_RejectInvite, PGSQL);
@@ -403,6 +414,7 @@ struct Lobby2MessageFactory_PGSQL : public Lobby2MessageFactory
 			__L2_MSG_FACTORY_IMPL(Clans_UnblacklistUser, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Clans_GetBlacklist, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Clans_GetMembers, PGSQL);
+			__L2_MSG_FACTORY_IMPL(Clans_GetList, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Clans_CreateBoard, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Clans_DestroyBoard, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Clans_CreateNewTopic, PGSQL);

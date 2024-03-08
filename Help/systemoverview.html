@@ -21,15 +21,14 @@ functionality for all of RakNet.&nbsp; On start, RakPeer starts a thread that
 will process all incoming datagrams and send most outgoing datagrams.&nbsp; A 
 shared memory array of RemoteSystem structures is shared between the user thread 
 and the network thread.&nbsp; Messages are sent between these two threads using 
-a fast single producer single consumer object.&nbsp; Each player has one entry 
+a fast single producer single consumer object.&nbsp; Each connection has one entry 
 in the array of RemoteSystem structures.&nbsp; Each element in the array has an 
 instance of the ReliabilityLayer class, which handles reliable sends, ordering, 
 and integrates with the message security classes.&nbsp; As user messages arrive, 
 they are stored a single producer single consumer queue.&nbsp; When a user wants 
 a message, by calling Receive(), this will return a pointer to one element of 
 the queue.&nbsp; When a user is done with a message, by calling DeallocatePacket(), 
-this will increment the write pointer of the queue.&nbsp; This is why you have 
-to return messages in the same order as you get them.</p>
+this will increment the write pointer of the queue.</p>
 <p>Calling Receive() also does any 
 user-thread based processing.&nbsp; One case of this is <b>RakNet's plugin 
 system.</b>&nbsp; The plugin system is just an interface (PluginInterface.h) 
@@ -49,15 +48,8 @@ want to extend this system can start their own enumerations starting at the
 highest enumeration in MessageIdentifiers.h + 1.&nbsp; Users would then check 
 the first byte of messages that are returned to them and call a function to 
 handle the rest of the data in the message.&nbsp; To make this easier, RakNet 
-supports <b>remote function calls</b>.&nbsp; Essentially, remote function calls 
-perform this mapping for you by registering a string with a function pointer.&nbsp; 
-You then call RakPeer::RPC with the name of the function and if the other side 
-has that function registered, it will call the function pointer along with a 
-structure containing data such as encoded parameters and who sent the message.&nbsp; 
-This system has two further extensions.&nbsp; First, it supports return values 
-by blocking in the Receive() call until a message is returned or until a timeout 
-elapses.&nbsp; Second, it supports calling into object member functions, not 
-just static C functions.</p>
+supports <b>remote procedure calls</b> with the RPC3 plugin.&nbsp; Essentially, remote function calls 
+perform this mapping for you by registering a string with a function pointer.</p>
 <p>The <b>NetworkIDObject</b> 
 class provides the ability for systems to refer to common objects and is used by 
 object member remote function calls.&nbsp; It is a fairly simple system that has 
@@ -70,11 +62,8 @@ addresses would probably not be the same.&nbsp; The easiest way to use this
 system is to derive from it.&nbsp; However, you can also include it as a member 
 variable of your base class and call SetParent(parentClassPointer).&nbsp; The 
 disadvantage of this architecture is that it relies on a single system being 
-present to assign network IDs.&nbsp; This can be addressed by having <b>
-NetworkID</b>s be a <b>SystemAddress / NetworkID </b>pair instead of a simple number.&nbsp; 
-However, that takes more bandwidth which would be wasted in server/client 
-topology, which happens to be the most common case.&nbsp; It is currently 
-implemented using a single number.</p>
+present to assign network IDs.&nbsp; This is addressed by having <b>
+NetworkID</b>s be a <b>RakNetGUID / NetworkID </b>pair instead of a simple number by default.</p>
 <p>The <b>
 <a href="systemaddresses.html">SystemAddress</a></b> structure is what RakNet uses to 
 represent remote systems.&nbsp; It is the binary encoding of the IP address 

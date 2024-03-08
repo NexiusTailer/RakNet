@@ -103,6 +103,8 @@ void main(void)
 		if (kbhit())
 		{
 		}
+
+		//printf("%i ", lobby2Server.GetUsers().Size());
 	}
 
 	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);

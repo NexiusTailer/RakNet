@@ -4,7 +4,7 @@ using namespace RakNet;
 
 unsigned int RakNet::GetUserRowFromHandle(RakNet::RakString userName, PostgreSQLInterface *pgsql)
 {
-	PGresult *result = pgsql->QueryVaridic("SELECT (userId_pk) from lobby2.users WHERE handleLower=lower(%s)", userName.C_String());
+	PGresult *result = pgsql->QueryVariadic("SELECT (userId_pk) from lobby2.users WHERE handleLower=lower(%s)", userName.C_String());
 	if (result)
 	{
 		unsigned int primaryKey;
@@ -22,7 +22,7 @@ unsigned int RakNet::GetUserRowFromHandle(RakNet::RakString userName, PostgreSQL
 }
 unsigned int RakNet::GetClanIdFromHandle(RakNet::RakString clanName, PostgreSQLInterface *pgsql)
 {
-	PGresult *result = pgsql->QueryVaridic("SELECT (clanId_pk) from lobby2.clans WHERE clanHandleLower=lower(%s)", clanName.C_String());
+	PGresult *result = pgsql->QueryVariadic("SELECT (clanId_pk) from lobby2.clans WHERE clanHandleLower=lower(%s)", clanName.C_String());
 	if (result)
 	{
 		unsigned int primaryKey;
@@ -47,7 +47,7 @@ bool RakNet::IsClanLeader(RakNet::RakString clanName, unsigned int userId, Postg
 }
 unsigned int RakNet::GetClanLeaderId(unsigned int clanId, PostgreSQLInterface *pgsql)
 {
-	PGresult *result = pgsql->QueryVaridic("SELECT leaderUserId_fk FROM lobby2.clans WHERE clanId_pk=%i", clanId);
+	PGresult *result = pgsql->QueryVariadic("SELECT leaderUserId_fk FROM lobby2.clans WHERE clanId_pk=%i", clanId);
 	if (result==0)
 		return 0;
 	int numRowsReturned = PQntuples(result);
@@ -67,7 +67,7 @@ bool RakNet::IsClanLeader(unsigned int clanId, unsigned int userId, PostgreSQLIn
 }
 RakNet::ClanMemberState RakNet::GetClanMemberState(unsigned int clanId, unsigned int userId, bool *isSubleader, PostgreSQLInterface *pgsql)
 {
-	PGresult *result = pgsql->QueryVaridic("SELECT memberState_fk FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", userId, clanId);
+	PGresult *result = pgsql->QueryVariadic("SELECT memberState_fk FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", userId, clanId);
 	if (result==0)
 		return CMD_UNDEFINED;
 	int numRowsReturned = PQntuples(result);
@@ -86,7 +86,7 @@ void RakNet::GetClanMembers(unsigned int clanId, DataStructures::List<ClanMember
 {
 	ClanMemberDescriptor cmd;
 
-	PGresult *result = pgsql->QueryVaridic(
+	PGresult *result = pgsql->QueryVariadic(
 		"SELECT M.userId_fk, M.isSubleader, M.memberState_fk, M.banReason, U.handle "
 		"FROM lobby2.clanMembers AS M, lobby2.users AS U WHERE M.clanId_fk=%i AND U.userId_pk=M.userId_fk", clanId);
 	if (result==0)
@@ -108,7 +108,7 @@ void RakNet::GetClanMembers(unsigned int clanId, DataStructures::List<ClanMember
 }
 bool RakNet::IsTitleInUse(RakNet::RakString titleName, PostgreSQLInterface *pgsql)
 {
-	PGresult *result = pgsql->QueryVaridic("SELECT titleName_pk FROM lobby2.titles where titleName_pk=%s", titleName.C_String());
+	PGresult *result = pgsql->QueryVariadic("SELECT titleName_pk FROM lobby2.titles where titleName_pk=%s", titleName.C_String());
 	if (result==0)
 		return false;
 	int numRowsReturned = PQntuples(result);
@@ -127,7 +127,7 @@ bool RakNet::StringContainsProfanity(RakNet::RakString string, PostgreSQLInterfa
 	strLower2.ToLower();
 	strLower3.ToLower();
 	strLower4.ToLower();
-	PGresult *result = pgsql->QueryVaridic("SELECT wordLower FROM lobby2.profanity WHERE "
+	PGresult *result = pgsql->QueryVariadic("SELECT wordLower FROM lobby2.profanity WHERE "
 		"wordLower LIKE %s OR wordLower LIKE %s OR wordLower LIKE %s OR wordLower LIKE %s"
 		, strLower1.C_String(), strLower2.C_String(), strLower3.C_String(), strLower4.C_String());
 	if (result==0)
@@ -140,7 +140,7 @@ bool RakNet::StringContainsProfanity(RakNet::RakString string, PostgreSQLInterfa
 }
 bool RakNet::IsValidCountry(RakNet::RakString string, bool *countryHasStates, PostgreSQLInterface *pgsql)
 {
-	PGresult *result = pgsql->QueryVaridic("SELECT country_name,country_has_states FROM lobby2.country where lower(country_name)=lower(%s)", string.C_String());
+	PGresult *result = pgsql->QueryVariadic("SELECT country_name,country_has_states FROM lobby2.country where lower(country_name)=lower(%s)", string.C_String());
 	if (result==0)
 		return false;
 	int numRowsReturned = PQntuples(result);
@@ -153,7 +153,7 @@ bool RakNet::IsValidCountry(RakNet::RakString string, bool *countryHasStates, Po
 }
 bool RakNet::IsValidState(RakNet::RakString string, PostgreSQLInterface *pgsql)
 {
-	PGresult *result = pgsql->QueryVaridic("SELECT state_name FROM lobby2.state WHERE lower(state_name)=lower(%s)", string.C_String());
+	PGresult *result = pgsql->QueryVariadic("SELECT state_name FROM lobby2.state WHERE lower(state_name)=lower(%s)", string.C_String());
 		if (result==0)
 			return false;
 	if (result==0)
@@ -166,7 +166,7 @@ bool RakNet::IsValidState(RakNet::RakString string, PostgreSQLInterface *pgsql)
 }
 bool RakNet::IsValidRace(RakNet::RakString string, PostgreSQLInterface *pgsql)
 {
-	PGresult *result = pgsql->QueryVaridic("SELECT race_text FROM lobby2.race WHERE lower(race_text)=lower(%s)", string.C_String());
+	PGresult *result = pgsql->QueryVariadic("SELECT race_text FROM lobby2.race WHERE lower(race_text)=lower(%s)", string.C_String());
 		if (result==0)
 			return false;
 	if (result==0)
@@ -179,7 +179,7 @@ bool RakNet::IsValidRace(RakNet::RakString string, PostgreSQLInterface *pgsql)
 }
 void RakNet::GetFriendIDs(unsigned int callerUserId, bool excludeIfIgnored, PostgreSQLInterface *pgsql, DataStructures::List<unsigned int> &output)
 {
-	PGresult *result = pgsql->QueryVaridic("SELECT userTwo_fk from lobby2.friends WHERE userOne_fk=%i AND "
+	PGresult *result = pgsql->QueryVariadic("SELECT userTwo_fk from lobby2.friends WHERE userOne_fk=%i AND "
 		"actionId_fk=(SELECT actionId_pk from lobby2.friendActions WHERE description='isFriends');", callerUserId);
 	if (result==0)
 		return;
@@ -196,7 +196,7 @@ void RakNet::GetFriendIDs(unsigned int callerUserId, bool excludeIfIgnored, Post
 }
 void RakNet::GetClanMateIDs(unsigned int callerUserId, bool excludeIfIgnored, PostgreSQLInterface *pgsql, DataStructures::List<unsigned int> &output)
 {
-	PGresult *result = pgsql->QueryVaridic(
+	PGresult *result = pgsql->QueryVariadic(
 		"select userId_fk from lobby2.clanMembers where clanId_fk="
 		"(select clanId_fk from lobby2.clanMembers where userId_fk=%i)"
 		"AND userId_fk !=%i;"
@@ -217,7 +217,7 @@ void RakNet::GetClanMateIDs(unsigned int callerUserId, bool excludeIfIgnored, Po
 
 bool RakNet::IsIgnoredByTarget(unsigned int callerUserId, unsigned int targetUserId, PostgreSQLInterface *pgsql)
 {
-	PGresult *result = pgsql->QueryVaridic(
+	PGresult *result = pgsql->QueryVariadic(
 		"select userMe_fk from lobby2.ignore where userMe_fk=%i AND userOther_fk=%i"
 		, callerUserId, targetUserId);
 	if (result==0)
@@ -279,7 +279,7 @@ void RakNet::GetFriendHandlesByStatus(unsigned int callerUserId, RakNet::RakStri
 	query+=status;
 	query+="');"; 
 
-	PGresult *result = pgsql->QueryVaridic( query.C_String(), callerUserId );
+	PGresult *result = pgsql->QueryVariadic( query.C_String(), callerUserId );
 	RakAssert(result);
 
 	int numRowsReturned = PQntuples(result);
@@ -294,7 +294,7 @@ void RakNet::GetFriendHandlesByStatus(unsigned int callerUserId, RakNet::RakStri
 	PQclear(result);
 }
 
-void RakNet::SendEmail(DataStructures::List<RakNet::RakString> &recipientNames, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, BinaryDataBlock *binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql)
+void RakNet::SendEmail(DataStructures::List<RakNet::RakString> &recipientNames, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, RakNetSmartPtr<BinaryDataBlock>binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql)
 {
 	DataStructures::List<unsigned int> targetUserIds;
 	unsigned int targetUserId;
@@ -306,21 +306,21 @@ void RakNet::SendEmail(DataStructures::List<RakNet::RakString> &recipientNames, 
 	}
 	SendEmail(targetUserIds, senderUserId, senderUserName, server, subject, body, binaryData, status, triggerString, pgsql);
 }
-void RakNet::SendEmail(unsigned int targetUserId, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, BinaryDataBlock *binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql)
+void RakNet::SendEmail(unsigned int targetUserId, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, RakNetSmartPtr<BinaryDataBlock>binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql)
 {
 	DataStructures::List<unsigned int> targetUserIds;
 	targetUserIds.Insert(targetUserId);
 	SendEmail(targetUserIds, senderUserId, senderUserName, server, subject, body, binaryData, status, triggerString, pgsql);
 }
-void RakNet::SendEmail(DataStructures::List<unsigned int> &targetUserIds, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, BinaryDataBlock *binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql)
+void RakNet::SendEmail(DataStructures::List<unsigned int> &targetUserIds, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, RakNetSmartPtr<BinaryDataBlock>binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql)
 {
 	if (targetUserIds.Size()==0)
 		return;
 
 	PGresult *result;
-	if (binaryData)
+	if (binaryData.IsNull()==false)
 	{
-		result = pgsql->QueryVaridic(
+		result = pgsql->QueryVariadic(
 			"INSERT INTO lobby2.emails (subject, body, binaryData, triggerId_fk) VALUES "
 			"(%s, %s, %a, (SELECT triggerId_pk FROM lobby2.emailTriggers WHERE description=%s) ) RETURNING emailId_pk;"
 			,subject.C_String(), body.C_String(), binaryData->binaryData, binaryData->binaryDataLength, triggerString.C_String()
@@ -328,7 +328,7 @@ void RakNet::SendEmail(DataStructures::List<unsigned int> &targetUserIds, unsign
 	}
 	else
 	{
-		result = pgsql->QueryVaridic(
+		result = pgsql->QueryVariadic(
 			"INSERT INTO lobby2.emails (subject, body, triggerId_fk) VALUES "
 			"(%s, %s, %a, (SELECT triggerId_pk FROM lobby2.emailTriggers WHERE description=%s) ) RETURNING emailId_pk;"
 			,subject.C_String(), body.C_String(), triggerString.C_String()
@@ -344,14 +344,14 @@ void RakNet::SendEmail(DataStructures::List<unsigned int> &targetUserIds, unsign
 	for (i=0; i < targetUserIds.Size(); i++)
 	{
 		// Once in my inbox
-		result = pgsql->QueryVaridic(
+		result = pgsql->QueryVariadic(
 			"INSERT INTO lobby2.emailTargets (emailId_fk, userMe_fk, userOther_fk, status, wasRead, ISentThisEmail) VALUES "
 			"(%i, %i, %i, %i, %b, %b);", emailId_pk, senderUserId, targetUserIds[i], status, true, true);
 		RakAssert(result);
 		PQclear(result);
 
 		// Once in the destination inbox
-		result = pgsql->QueryVaridic(
+		result = pgsql->QueryVariadic(
 			"INSERT INTO lobby2.emailTargets (emailId_fk, userMe_fk, userOther_fk, status, wasRead, ISentThisEmail) VALUES "
 			"(%i, %i, %i, %i, %b, %b) RETURNING emailTarget_pk;", emailId_pk, targetUserIds[i], senderUserId, status, false, false);
 		RakAssert(result);
@@ -370,7 +370,7 @@ void RakNet::SendEmail(DataStructures::List<unsigned int> &targetUserIds, unsign
 }
 int RakNet::GetActiveClanCount(unsigned int userId, PostgreSQLInterface *pgsql)
 {
-	PGresult *result = pgsql->QueryVaridic("SELECT clanMemberId_pk FROM lobby2.clanMembers WHERE userId_fk=%i AND memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active')", userId);
+	PGresult *result = pgsql->QueryVariadic("SELECT clanMemberId_pk FROM lobby2.clanMembers WHERE userId_fk=%i AND memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active')", userId);
 	int numRowsReturned = PQntuples(result);
 	PQclear(result);
 	return numRowsReturned;
@@ -443,65 +443,65 @@ void RakNet::UpdateAccountFromMissingCreationParameters(CreateAccountParameters 
 
 	if (createAccountParameters.homeState.IsEmpty()==false)
 	{
-		result = pgsql->QueryVaridic("SELECT state_id FROM lobby2.state where lower(state_name)=lower(%s)", createAccountParameters.homeState.C_String());
+		result = pgsql->QueryVariadic("SELECT state_id FROM lobby2.state where lower(state_name)=lower(%s)", createAccountParameters.homeState.C_String());
 		if (result)
 		{
 			if (PQntuples(result))
 			{
 				PostgreSQLInterface::PQGetValueFromBinary(&key, result, 0, "state_id");
-				PQclear( pgsql->QueryVaridic("UPDATE lobby2.users SET homeStateId_fk=%i WHERE userId_pk=%i", key, userPrimaryKey ));
+				PQclear( pgsql->QueryVariadic("UPDATE lobby2.users SET homeStateId_fk=%i WHERE userId_pk=%i", key, userPrimaryKey ));
 			}
 			PQclear(result);
 		}
 	}
 	if (createAccountParameters.homeCountry.IsEmpty()==false)
 	{
-		result = pgsql->QueryVaridic("SELECT country_id FROM lobby2.country where lower(country_name)=lower(%s)", createAccountParameters.homeCountry.C_String());
+		result = pgsql->QueryVariadic("SELECT country_id FROM lobby2.country where lower(country_name)=lower(%s)", createAccountParameters.homeCountry.C_String());
 		if (result)
 		{
 			if (PQntuples(result))
 			{
 				PostgreSQLInterface::PQGetValueFromBinary(&key, result, 0, "country_id");
-				PQclear( pgsql->QueryVaridic("UPDATE lobby2.users SET homeCountryId_fk=%i WHERE userId_pk=%i", key, userPrimaryKey ));
+				PQclear( pgsql->QueryVariadic("UPDATE lobby2.users SET homeCountryId_fk=%i WHERE userId_pk=%i", key, userPrimaryKey ));
 			}
 			PQclear(result);
 		}
 	}
 	if (createAccountParameters.billingState.IsEmpty()==false)
 	{
-		result = pgsql->QueryVaridic("SELECT state_id FROM lobby2.state where lower(state_name)=lower(%s)", createAccountParameters.billingState.C_String());
+		result = pgsql->QueryVariadic("SELECT state_id FROM lobby2.state where lower(state_name)=lower(%s)", createAccountParameters.billingState.C_String());
 		if (result)
 		{
 			if (PQntuples(result))
 			{
 				PostgreSQLInterface::PQGetValueFromBinary(&key, result, 0, "state_id");
-				PQclear( pgsql->QueryVaridic("UPDATE lobby2.users SET billingStateId_fk=%i WHERE userId_pk=%i", key, userPrimaryKey ));
+				PQclear( pgsql->QueryVariadic("UPDATE lobby2.users SET billingStateId_fk=%i WHERE userId_pk=%i", key, userPrimaryKey ));
 			}
 			PQclear(result);
 		}
 	}
 	if (createAccountParameters.billingCountry.IsEmpty()==false)
 	{
-		result = pgsql->QueryVaridic("SELECT country_id FROM lobby2.country where lower(country_name)=lower(%s)", createAccountParameters.billingCountry.C_String());
+		result = pgsql->QueryVariadic("SELECT country_id FROM lobby2.country where lower(country_name)=lower(%s)", createAccountParameters.billingCountry.C_String());
 		if (result)
 		{
 			if (PQntuples(result))
 			{
 				PostgreSQLInterface::PQGetValueFromBinary(&key, result, 0, "country_id");
-				PQclear( pgsql->QueryVaridic("UPDATE lobby2.users SET billingCountryId_fk=%i WHERE userId_pk=%i", key, userPrimaryKey ));
+				PQclear( pgsql->QueryVariadic("UPDATE lobby2.users SET billingCountryId_fk=%i WHERE userId_pk=%i", key, userPrimaryKey ));
 			}
 			PQclear(result);
 		}
 	}
 	if (createAccountParameters.race.IsEmpty()==false)
 	{
-		result = pgsql->QueryVaridic("SELECT race_id FROM lobby2.race where lower(race_text)=lower(%s)", createAccountParameters.race.C_String());
+		result = pgsql->QueryVariadic("SELECT race_id FROM lobby2.race where lower(race_text)=lower(%s)", createAccountParameters.race.C_String());
 		if (result)
 		{
 			if (PQntuples(result))
 			{
 				PostgreSQLInterface::PQGetValueFromBinary(&key, result, 0, "race_id");
-				PQclear( pgsql->QueryVaridic("UPDATE lobby2.users SET raceId_fk=%i WHERE userId_pk=%i", key, userPrimaryKey ));
+				PQclear( pgsql->QueryVariadic("UPDATE lobby2.users SET raceId_fk=%i WHERE userId_pk=%i", key, userPrimaryKey ));
 			}
 			PQclear(result);
 		}
@@ -564,12 +564,12 @@ bool RakNet::System_CreateTitle_PGSQL::ServerDBImpl( Lobby2ServerCommand *comman
 	(void)command;
 
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-	PGresult *result = pgsql->QueryVaridic("INSERT INTO lobby2.titles (titleName_pk, titleSecretKey, requiredAge, binaryData) VALUES (%s,%s,%i,%a)",
+	PGresult *result = pgsql->QueryVariadic("INSERT INTO lobby2.titles (titleName_pk, titleSecretKey, requiredAge, binaryData) VALUES (%s,%s,%i,%a)",
 		titleName.C_String(),
 		titleSecretKey.C_String(),
 		requiredAge,
-		binaryData.binaryData,
-		binaryData.binaryDataLength);
+		binaryData->binaryData,
+		binaryData->binaryDataLength);
 	if (result!=0)
 	{
 		PQclear(result);		
@@ -588,7 +588,7 @@ bool RakNet::System_DestroyTitle_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
 	PGresult *result;
-	result = pgsql->QueryVaridic("DELETE FROM lobby2.titles WHERE titlename_pk=%s", titleName.C_String());
+	result = pgsql->QueryVariadic("DELETE FROM lobby2.titles WHERE titlename_pk=%s", titleName.C_String());
 	if (result!=0)
 	{
 		PQclear(result);		
@@ -606,7 +606,7 @@ bool RakNet::System_GetTitleRequiredAge_PGSQL::ServerDBImpl( Lobby2ServerCommand
 	(void)command;
 
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-	PGresult *result = pgsql->QueryVaridic("SELECT requiredAge FROM lobby2.titles where titlename_pk=%s", titleName.C_String());
+	PGresult *result = pgsql->QueryVariadic("SELECT requiredAge FROM lobby2.titles where titlename_pk=%s", titleName.C_String());
 	if (result!=0)
 	{
 		PostgreSQLInterface::PQGetValueFromBinary(&requiredAge, result, 0, "requiredAge");
@@ -625,10 +625,10 @@ bool RakNet::System_GetTitleBinaryData_PGSQL::ServerDBImpl( Lobby2ServerCommand 
 	(void)command;
 
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-	PGresult *result = pgsql->QueryVaridic("SELECT binaryData FROM lobby2.titles where titlename_pk=%s", titleName.C_String());
+	PGresult *result = pgsql->QueryVariadic("SELECT binaryData FROM lobby2.titles where titlename_pk=%s", titleName.C_String());
 	if (result!=0)
 	{
-		PostgreSQLInterface::PQGetValueFromBinary(&binaryData.binaryData, &binaryData.binaryDataLength, result, 0, "binaryData");
+		PostgreSQLInterface::PQGetValueFromBinary(&binaryData->binaryData, &binaryData->binaryDataLength, result, 0, "binaryData");
 		PQclear(result);
 		resultCode=L2RC_SUCCESS;
 	}
@@ -644,15 +644,15 @@ bool RakNet::System_RegisterProfanity_PGSQL::ServerDBImpl( Lobby2ServerCommand *
 	(void)command;
 
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-	//		pgsql->PrepareVaridic("INSERT INTO lobby2.profanity (word) VALUES (%s)");
+	//		pgsql->PrepareVariadic("INSERT INTO lobby2.profanity (word) VALUES (%s)");
 	//		for (unsigned int i=0; i < profanityWords.Size(); i++)
-	//			pgsql->PrepareVaridicArgs(0, profanityWords[i].C_String());
+	//			pgsql->PrepareVariadicArgs(0, profanityWords[i].C_String());
 	//		PGresult *result = pgsql->ExecutePreparedStatement();
 	PGresult *result;
 	resultCode=L2RC_SUCCESS;
 	for (unsigned int i=0; i < profanityWords.Size(); i++)
 	{
-		result = pgsql->QueryVaridic("INSERT INTO lobby2.profanity (word) VALUES (%s)", profanityWords[i].C_String());
+		result = pgsql->QueryVariadic("INSERT INTO lobby2.profanity (word) VALUES (%s)", profanityWords[i].C_String());
 		if (result==0)
 			resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
 		PQclear(result);
@@ -673,11 +673,11 @@ bool RakNet::System_BanUser_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, v
 		resultCode=L2RC_UNKNOWN_USER;
 		return true;
 	}
-	PGresult *result = pgsql->QueryVaridic("INSERT INTO lobby2.bannedUsers (userId_fk, description, timeout) VALUES (%i, %s, now () + %i * interval '1 hours')", userRow, banReason.C_String(), durationHours);
+	PGresult *result = pgsql->QueryVariadic("INSERT INTO lobby2.bannedUsers (userId_fk, description, timeout) VALUES (%i, %s, now () + %i * interval '1 hours')", userRow, banReason.C_String(), durationHours);
 	if (result!=0)
 	{
 		PQclear(result);
-		result = pgsql->QueryVaridic("INSERT INTO lobby2.userHistory (userId_fk, description, triggerId_fk) "
+		result = pgsql->QueryVariadic("INSERT INTO lobby2.userHistory (userId_fk, description, triggerId_fk) "
 			"VALUES (%i, %s, (SELECT triggerId_pk FROM lobby2.userHistoryTriggers WHERE description='Banned'))", userRow, banReason.C_String());
 		RakAssert(result);
 		PQclear(result);
@@ -703,11 +703,11 @@ bool RakNet::System_UnbanUser_PGSQL::ServerDBImpl( Lobby2ServerCommand *command,
 		resultCode=L2RC_UNKNOWN_USER;
 		return true;
 	}
-	PGresult *result = pgsql->QueryVaridic("DELETE FROM lobby2.bannedUsers WHERE userId_fk=%i", userRow);
+	PGresult *result = pgsql->QueryVariadic("DELETE FROM lobby2.bannedUsers WHERE userId_fk=%i", userRow);
 	if (result!=0)
 	{
 		PQclear(result);
-		result = pgsql->QueryVaridic("INSERT INTO lobby2.userHistory (userId_fk, description, triggerId_fk) "
+		result = pgsql->QueryVariadic("INSERT INTO lobby2.userHistory (userId_fk, description, triggerId_fk) "
 			"VALUES (%i, %s, (SELECT triggerId_pk FROM lobby2.userHistoryTriggers WHERE description='Unbanned'))", userRow, reason.C_String());
 		RakAssert(result);
 		PQclear(result);
@@ -734,7 +734,7 @@ bool RakNet::CDKey_Add_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *
 	unsigned int i;
 	for (i=0; i < cdKeys.Size(); i++)
 	{
-		result = pgsql->QueryVaridic("INSERT INTO lobby2.cdkeys (cdKey, usable, stolen, titleName_fk) VALUES (%s, true, false, %s);", cdKeys[i].C_String(), titleName.C_String());
+		result = pgsql->QueryVariadic("INSERT INTO lobby2.cdkeys (cdKey, usable, stolen, titleName_fk) VALUES (%s, true, false, %s);", cdKeys[i].C_String(), titleName.C_String());
 		RakAssert(result);
 		PQclear(result);
 	}
@@ -754,7 +754,7 @@ bool RakNet::CDKey_GetStatus_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, 
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("SELECT (lobby2.cdkeys.usable, lobby2.cdkeys.stolen, lobby2.cdkeys.activationDate, lobby2.users.handle) "
+	result = pgsql->QueryVariadic("SELECT (lobby2.cdkeys.usable, lobby2.cdkeys.stolen, lobby2.cdkeys.activationDate, lobby2.users.handle) "
 		"FROM lobby2.cdkeys, lobby2.users WHERE lobby2.cdkeys.cdKey=%s AND lobby2.cdkeys.titleName_fk=%s AND lobby2.users.userId_pk=lobby2.cdkeys.userId_fk",
 		cdKey.C_String(), titleName.C_String());
 	int numRowsReturned = PQntuples(result);
@@ -787,7 +787,7 @@ bool RakNet::CDKey_Use_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("SELECT (lobby2.cdkeys.usable, lobby2.cdkeys.stolen, lobby2.cdkeys.userId_fk) "
+	result = pgsql->QueryVariadic("SELECT (lobby2.cdkeys.usable, lobby2.cdkeys.stolen, lobby2.cdkeys.userId_fk) "
 		"FROM lobby2.cdkeys, lobby2.users WHERE lobby2.cdkeys.cdKey=%s AND lobby2.cdkeys.titleName_fk=%s",
 		cdKey.C_String(), titleName.C_String());
 	int numRowsReturned = PQntuples(result);
@@ -818,7 +818,7 @@ bool RakNet::CDKey_Use_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *
 			resultCode=L2RC_UNKNOWN_USER;
 			return true;
 		}
-		result = pgsql->QueryVaridic("UPDATE lobby2.cdKeys SET activationDate=now(),"
+		result = pgsql->QueryVariadic("UPDATE lobby2.cdKeys SET activationDate=now(),"
 			"userId_fk=%i WHERE lobby2.cdkeys.cdKey=%s AND lobby2.cdkeys.titleName_fk=%s", userRow, cdKey.C_String(), titleName.C_String());
 		if (result==0)
 		{
@@ -843,7 +843,7 @@ bool RakNet::CDKey_FlagStolen_PGSQL::ServerDBImpl( Lobby2ServerCommand *command,
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("SELECT lobby2.cdkeys.cdKey, lobby2.cdkeys.userId_fk FROM lobby2.cdkeys WHERE lobby2.cdkeys.cdKey=%s AND lobby2.cdkeys.titleName_fk=%s",
+	result = pgsql->QueryVariadic("SELECT lobby2.cdkeys.cdKey, lobby2.cdkeys.userId_fk FROM lobby2.cdkeys WHERE lobby2.cdkeys.cdKey=%s AND lobby2.cdkeys.titleName_fk=%s",
 		cdKey.C_String(), titleName.C_String());
 	if (result==0)
 	{
@@ -861,7 +861,7 @@ bool RakNet::CDKey_FlagStolen_PGSQL::ServerDBImpl( Lobby2ServerCommand *command,
 	if (PostgreSQLInterface::PQGetValueFromBinary(&userId_fk, result, 0, "userId_fk"))
 	{
 		PQclear(result);
-		result = pgsql->QueryVaridic("SELECT handle from lobby2.users WHERE userId_pk=%i", userId_fk);
+		result = pgsql->QueryVariadic("SELECT handle from lobby2.users WHERE userId_pk=%i", userId_fk);
 		PostgreSQLInterface::PQGetValueFromBinary(&userUsingThisKey, result, 0, "handle");
 		PQclear(result);
 
@@ -869,7 +869,7 @@ bool RakNet::CDKey_FlagStolen_PGSQL::ServerDBImpl( Lobby2ServerCommand *command,
 	else
 		PQclear(result);
 
-	result = pgsql->QueryVaridic("UPDATE lobby2.cdKeys SET stolen=%b WHERE lobby2.cdkeys.cdKey=%s AND lobby2.cdkeys.titleName_fk=%s", wasStolen, cdKey.C_String(), titleName.C_String());
+	result = pgsql->QueryVariadic("UPDATE lobby2.cdKeys SET stolen=%b WHERE lobby2.cdkeys.cdKey=%s AND lobby2.cdkeys.titleName_fk=%s", wasStolen, cdKey.C_String(), titleName.C_String());
 	if (result==0)
 	{
 		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
@@ -891,7 +891,7 @@ bool RakNet::Client_Login_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, voi
 		resultCode=L2RC_Client_Login_HANDLE_NOT_IN_USE_OR_BAD_SECRET_KEY;
 		return true;
 	}
-	result = pgsql->QueryVaridic("SELECT (password) FROM lobby2.users WHERE userId_pk=%i", userRow);
+	result = pgsql->QueryVariadic("SELECT (password) FROM lobby2.users WHERE userId_pk=%i", userRow);
 	RakNet::RakString password;
 	PostgreSQLInterface::PQGetValueFromBinary(&password, result, 0, "password");
 	PQclear(result);
@@ -902,7 +902,7 @@ bool RakNet::Client_Login_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, voi
 	}
 	if (command->server->GetConfigurationProperties()->requiresEmailAddressValidationToLogin)
 	{
-		result = pgsql->QueryVaridic("SELECT (emailAddressValidated) FROM lobby2.users WHERE userId_pk=%i", userRow);
+		result = pgsql->QueryVariadic("SELECT (emailAddressValidated) FROM lobby2.users WHERE userId_pk=%i", userRow);
 		bool emailAddressValidated;
 		PostgreSQLInterface::PQGetValueFromBinary(&emailAddressValidated, result, 0, "emailAddressValidated");
 		PQclear(result);
@@ -915,7 +915,7 @@ bool RakNet::Client_Login_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, voi
 	if (command->server->GetConfigurationProperties()->requiresTitleToLogin)
 	{
 		RakNet::RakString titleDBSecretKey;
-		result = pgsql->QueryVaridic("SELECT titleSecretKey FROM lobby2.titles where titleName_pk=%s", titleName.C_String());
+		result = pgsql->QueryVariadic("SELECT titleSecretKey FROM lobby2.titles where titleName_pk=%s", titleName.C_String());
 		int numRowsReturned = PQntuples(result);
 		if (numRowsReturned==0)
 		{
@@ -934,7 +934,7 @@ bool RakNet::Client_Login_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, voi
 	}
 
 	// Does this user have any stolen CD keys?
-	result = pgsql->QueryVaridic("SELECT stolen FROM lobby2.cdkeys WHERE userId_fk=%i AND stolen=TRUE",	userRow);
+	result = pgsql->QueryVariadic("SELECT stolen FROM lobby2.cdkeys WHERE userId_fk=%i AND stolen=TRUE",	userRow);
 	int numRowsReturned = PQntuples(result);
 	PQclear(result);
 	if (numRowsReturned!=0)
@@ -943,7 +943,7 @@ bool RakNet::Client_Login_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, voi
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("SELECT description, timeout, creationDate from lobby2.bannedUsers WHERE userId_fk=%i AND now() < timeout", userRow);
+	result = pgsql->QueryVariadic("SELECT description, timeout, creationDate from lobby2.bannedUsers WHERE userId_fk=%i AND now() < timeout", userRow);
 	numRowsReturned = PQntuples(result);
 	if (numRowsReturned!=0)
 	{
@@ -956,7 +956,7 @@ bool RakNet::Client_Login_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, voi
 	}
 	PQclear(result);
 
-	result = pgsql->QueryVaridic("INSERT INTO lobby2.userHistory (userId_fk, triggerId_fk) "
+	result = pgsql->QueryVariadic("INSERT INTO lobby2.userHistory (userId_fk, triggerId_fk) "
 		"VALUES "
 		"(%i,"
 		"(SELECT triggerId_pk FROM lobby2.userHistoryTriggers WHERE description='Login'))", userRow);
@@ -989,7 +989,7 @@ bool RakNet::Client_Logoff_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, vo
 
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
 	PGresult *result;
-	result = pgsql->QueryVaridic("INSERT INTO lobby2.userHistory (userId_fk, triggerId_fk) "
+	result = pgsql->QueryVariadic("INSERT INTO lobby2.userHistory (userId_fk, triggerId_fk) "
 		"VALUES "
 		"(%i,"
 		"(SELECT triggerId_pk FROM lobby2.userHistoryTriggers WHERE description='Logoff'));", command->callerUserId);
@@ -1037,7 +1037,7 @@ bool RakNet::Client_RegisterAccount_PGSQL::ServerDBImpl( Lobby2ServerCommand *co
 			resultCode=L2RC_Client_RegisterAccount_REQUIRES_CD_KEY;
 			return true;
 		}
-		result = pgsql->QueryVaridic("SELECT usable, stolen "
+		result = pgsql->QueryVariadic("SELECT usable, stolen "
 			"FROM lobby2.cdkeys WHERE lobby2.cdkeys.cdKey=%s AND lobby2.cdkeys.titleName_fk=%s",
 			cdKey.C_String(), titleName.C_String());
 
@@ -1075,7 +1075,7 @@ bool RakNet::Client_RegisterAccount_PGSQL::ServerDBImpl( Lobby2ServerCommand *co
 		}
 	}
 
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"INSERT INTO lobby2.users ("
 		"handle, firstname, middlename, lastname,"
 		"sex_male, homeaddress1, homeaddress2, homecity, "
@@ -1093,7 +1093,7 @@ bool RakNet::Client_RegisterAccount_PGSQL::ServerDBImpl( Lobby2ServerCommand *co
 		createAccountParameters.homeZipCode.C_String(), createAccountParameters.billingAddress1.C_String(),	createAccountParameters.billingAddress2.C_String(), createAccountParameters.billingCity.C_String(),
 		createAccountParameters.billingZipCode.C_String(), createAccountParameters.emailAddress.C_String(), createAccountParameters.password.C_String(), createAccountParameters.passwordRecoveryQuestion.C_String(),
 		createAccountParameters.passwordRecoveryAnswer.C_String(), createAccountParameters.caption1.C_String(),createAccountParameters.caption2.C_String(),
-		createAccountParameters.ageInDays, createAccountParameters.binaryData.binaryData, createAccountParameters.binaryData.binaryDataLength);
+		createAccountParameters.ageInDays, createAccountParameters.binaryData->binaryData, createAccountParameters.binaryData->binaryDataLength);
 	if (result==0)
 	{
 		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
@@ -1107,7 +1107,7 @@ bool RakNet::Client_RegisterAccount_PGSQL::ServerDBImpl( Lobby2ServerCommand *co
 	// Assign the cd key, already validated earlier
 	if (command->server->GetConfigurationProperties()->accountRegistrationRequiresCDKey)
 	{
-		PQclear(pgsql->QueryVaridic("UPDATE lobby2.cdKeys SET activationDate=now(),"
+		PQclear(pgsql->QueryVariadic("UPDATE lobby2.cdKeys SET activationDate=now(),"
 			"userId_fk=%i WHERE lobby2.cdkeys.cdKey=%s AND lobby2.cdkeys.titleName_fk=%s", userPrimaryKey, cdKey.C_String(), titleName.C_String()));
 	}
 
@@ -1128,7 +1128,7 @@ bool RakNet::System_SetEmailAddressValidated_PGSQL::ServerDBImpl( Lobby2ServerCo
 		resultCode=L2RC_UNKNOWN_USER;
 		return true;
 	}
-	PGresult *result = pgsql->QueryVaridic("UPDATE lobby2.users SET emailAddressValidated=%b WHERE userId_pk=%i", validated, userRow);
+	PGresult *result = pgsql->QueryVariadic("UPDATE lobby2.users SET emailAddressValidated=%b WHERE userId_pk=%i", validated, userRow);
 	PQclear(result);
 	if (result!=0)
 		resultCode=L2RC_SUCCESS;
@@ -1178,7 +1178,7 @@ bool RakNet::System_DeleteAccount_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 	command->server->AddOutputFromThread(logoffRequest, userRow, userName);
 
 	// Delete the account
-	PGresult *result = pgsql->QueryVaridic("DELETE FROM lobby2.users WHERE userId_pk=%i", userRow);
+	PGresult *result = pgsql->QueryVariadic("DELETE FROM lobby2.users WHERE userId_pk=%i", userRow);
 	PQclear(result);
 	if (result!=0)
 		resultCode=L2RC_SUCCESS;
@@ -1190,7 +1190,7 @@ bool RakNet::System_DeleteAccount_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 bool RakNet::System_PruneAccounts_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 {
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-	PGresult *result = pgsql->QueryVaridic(
+	PGresult *result = pgsql->QueryVariadic(
 		"SELECT handle from lobby2.users WHERE userId_pk ="
 		"(SELECT userId_fk FROM lobby2.userHistory WHERE creationDate < now() - %i * interval '1 day' ORDER by creationDate DESC LIMIT 1 AND triggerid_fk="
 		"(SELECT triggerId_pk from lobby2.userHistoryTriggers where description='Login')"
@@ -1238,7 +1238,7 @@ bool RakNet::Client_GetEmailAddress_PGSQL::ServerDBImpl( Lobby2ServerCommand *co
 		return true;
 	}
 
-	PGresult *result = pgsql->QueryVaridic(
+	PGresult *result = pgsql->QueryVariadic(
 		"SELECT emailaddress, emailAddressValidated from lobby2.users WHERE userId_pk = %i", userRow);
 
 	if (result==0)
@@ -1267,7 +1267,7 @@ bool RakNet::Client_GetPasswordRecoveryQuestionByHandle_PGSQL::ServerDBImpl( Lob
 		return true;
 	}
 
-	PGresult *result = pgsql->QueryVaridic(
+	PGresult *result = pgsql->QueryVariadic(
 		"SELECT passwordRecoveryQuestion from lobby2.users WHERE userId_pk = %i", userRow);
 
 	if (result==0)
@@ -1304,7 +1304,7 @@ bool RakNet::Client_GetPasswordByPasswordRecoveryAnswer_PGSQL::ServerDBImpl( Lob
 		return true;
 	}
 
-	PGresult *result = pgsql->QueryVaridic(
+	PGresult *result = pgsql->QueryVariadic(
 		"SELECT password from lobby2.users WHERE lower(passwordrecoveryanswer) = lower(%s) AND userId_pk = %i", passwordRecoveryAnswer.C_String(), userRow);
 
 	if (result==0)
@@ -1351,7 +1351,7 @@ bool RakNet::Client_ChangeHandle_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 		return true;
 	}
 
-	PGresult *result = pgsql->QueryVaridic(
+	PGresult *result = pgsql->QueryVariadic(
 		"UPDATE lobby2.users SET handle=%s WHERE userId_pk=%i", newHandle.C_String(), userRow);
 	PQclear(result);
 
@@ -1384,9 +1384,9 @@ bool RakNet::Client_UpdateAccount_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 	if (CreateAccountParametersFailed(createAccountParameters, resultCode, command, pgsql))
 		return true;
 	
-	// PQclear( pgsql->QueryVaridic("UPDATE lobby2.users SET homeCountryId_fk=%i WHERE userId_pk=%i", key, userPrimaryKey ));
+	// PQclear( pgsql->QueryVariadic("UPDATE lobby2.users SET homeCountryId_fk=%i WHERE userId_pk=%i", key, userPrimaryKey ));
 
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"UPDATE lobby2.users SET ("
 		"firstname=%s, middlename=%s, lastname=%s,"
 		"sex_male=%b, homeaddress1=%s, homeaddress2=%s, homecity=%s, "
@@ -1399,7 +1399,7 @@ bool RakNet::Client_UpdateAccount_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 		createAccountParameters.homeZipCode.C_String(), createAccountParameters.billingAddress1.C_String(),	createAccountParameters.billingAddress2.C_String(), createAccountParameters.billingCity.C_String(),
 		createAccountParameters.billingZipCode.C_String(), createAccountParameters.emailAddress.C_String(), createAccountParameters.password.C_String(), createAccountParameters.passwordRecoveryQuestion.C_String(),
 		createAccountParameters.passwordRecoveryAnswer.C_String(), createAccountParameters.caption1.C_String(),createAccountParameters.caption2.C_String(),
-		createAccountParameters.ageInDays, createAccountParameters.binaryData.binaryData, createAccountParameters.binaryData.binaryDataLength,
+		createAccountParameters.ageInDays, createAccountParameters.binaryData->binaryData, createAccountParameters.binaryData->binaryDataLength,
 		command->callerUserId);
 	if (result==0)
 	{
@@ -1429,7 +1429,7 @@ bool RakNet::Client_StartIgnore_PGSQL::ServerDBImpl( Lobby2ServerCommand *comman
 		return true;
 	}
 
-	PGresult *result = pgsql->QueryVaridic(
+	PGresult *result = pgsql->QueryVariadic(
 		"INSERT INTO lobby2.ignore (userMe_fk, userOther_fk) VALUES (%i, %i)", command->callerUserId, targetUserId);
 
 	if (result==0)
@@ -1452,7 +1452,7 @@ bool RakNet::Client_StartIgnore_PGSQL::ServerDBImpl( Lobby2ServerCommand *comman
 bool RakNet::Client_GetIgnoreList_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 {
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-	PGresult *result = pgsql->QueryVaridic("SELECT handle FROM lobby2.users WHERE userId_pk="
+	PGresult *result = pgsql->QueryVariadic("SELECT handle FROM lobby2.users WHERE userId_pk="
 	"(SELECT userOther_fk FROM lobby2.ignore WHERE userMe_fk=%i);", command->callerUserId);
 
 	if (result==0)
@@ -1475,6 +1475,240 @@ bool RakNet::Client_GetIgnoreList_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 	resultCode=L2RC_SUCCESS;
 	return true;
 }
+bool RakNet::Client_PerTitleIntegerStorage_PGSQL::Write( Lobby2ServerCommand *command, void *databaseInterface )
+{
+	PGresult *result;
+	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
+	switch (conditionForOperation)
+	{
+	case PTISC_EQUAL:
+		result = pgsql->QueryVariadic(
+			"INSERT INTO lobby2.perTitlePerUserIntegerStorage (titleName_fk,slotIndex,userId_fk,value) VALUES (%s,%i,%i,%g) WHERE value=%g RETURNING value;",
+			titleName.C_String(), slotIndex, command->callerUserId, inputValue, conditionValue);
+		break;
+	case PTISC_NOT_EQUAL:
+		result = pgsql->QueryVariadic(
+			"INSERT INTO lobby2.perTitlePerUserIntegerStorage (titleName_fk,slotIndex,userId_fk,value) VALUES (%s,%i,%i,%g) RETURNING value;",
+			titleName.C_String(), slotIndex, command->callerUserId, inputValue);
+		break;
+	case PTISC_GREATER_THAN:
+		result = pgsql->QueryVariadic(
+			"INSERT INTO lobby2.perTitlePerUserIntegerStorage (titleName_fk,slotIndex,userId_fk,value) VALUES (%s,%i,%i,%g) WHERE value<%g RETURNING value;",
+			titleName.C_String(), slotIndex, command->callerUserId, inputValue, conditionValue);
+		break;
+	case PTISC_GREATER_OR_EQUAL:
+		result = pgsql->QueryVariadic(
+			"INSERT INTO lobby2.perTitlePerUserIntegerStorage (titleName_fk,slotIndex,userId_fk,value) VALUES (%s,%i,%i,%g) WHERE value<=%g RETURNING value;",
+			titleName.C_String(), slotIndex, command->callerUserId, inputValue, conditionValue);
+		break;
+	case PTISC_LESS_THAN:
+		result = pgsql->QueryVariadic(
+			"INSERT INTO lobby2.perTitlePerUserIntegerStorage (titleName_fk,slotIndex,userId_fk,value) VALUES (%s,%i,%i,%g) WHERE value>%g RETURNING value;",
+			titleName.C_String(), slotIndex, command->callerUserId, inputValue, conditionValue);
+		break;
+	case PTISC_LESS_OR_EQUAL:
+		result = pgsql->QueryVariadic(
+			"INSERT INTO lobby2.perTitlePerUserIntegerStorage (titleName_fk,slotIndex,userId_fk,value) VALUES (%s,%i,%i,%g) WHERE value>=%g RETURNING value;",
+			titleName.C_String(), slotIndex, command->callerUserId, inputValue, conditionValue);
+		break;
+	}
+
+	int numRowsReturned = PQntuples(result);
+	if (numRowsReturned==0)
+	{
+		PQclear(result);
+		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
+		return true;
+	}
+	PostgreSQLInterface::PQGetValueFromBinary(&outputValue, result, 0, "value");
+	PQclear(result);
+
+	resultCode=L2RC_SUCCESS;
+	return true;
+}
+bool RakNet::Client_PerTitleIntegerStorage_PGSQL::Read( Lobby2ServerCommand *command, void *databaseInterface )
+{
+	PGresult *result;
+	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
+
+	result = pgsql->QueryVariadic("SELECT value FROM lobby2.perTitlePerUserIntegerStorage WHERE titleName_fk='%s' AND slotIndex=%i AND userId_fk=%i", titleName.C_String(), slotIndex, command->callerUserId);
+	int numRowsReturned = PQntuples(result);
+	if (numRowsReturned==0)
+	{
+		PQclear(result);
+		resultCode=L2RC_Client_PerTitleIntegerStorage_ROW_EMPTY;
+		return true;
+	}
+
+	PostgreSQLInterface::PQGetValueFromBinary(&outputValue, result, 0, "value");
+	PQclear(result);
+
+	resultCode=L2RC_SUCCESS;
+	return true;
+}
+bool RakNet::Client_PerTitleIntegerStorage_PGSQL::Delete( Lobby2ServerCommand *command, void *databaseInterface )
+{
+	PGresult *result;
+	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
+	result = pgsql->QueryVariadic("DELETE FROM lobby2.perTitlePerUserIntegerStorage WHERE titleName_fk='%s' AND slotIndex=%i AND userId_fk=%i", titleName.C_String(), slotIndex, command->callerUserId);
+	PQclear(result);
+
+	resultCode=L2RC_SUCCESS;
+	return true;
+}
+bool RakNet::Client_PerTitleIntegerStorage_PGSQL::Add( Lobby2ServerCommand *command, void *databaseInterface )
+{
+	// In MySQL I think you can do this:
+	// INSERT INTO lobby2.perTitlePerUserIntegerStorage (titleName_fk,slotIndex,value) VALUES ('tn',1,2) ON DUPLICATE KEY UPDATE titleName_fk='tn2', slotIndex=2, value=3;
+	// But not in PostgreSQL
+
+	Read(command, databaseInterface);
+	if (resultCode==L2RC_Client_PerTitleIntegerStorage_ROW_EMPTY)
+		return Write(command, databaseInterface);
+	
+	outputValue+=inputValue;
+
+	PGresult *result;
+	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
+	switch (conditionForOperation)
+	{
+	case PTISC_EQUAL:
+		result = pgsql->QueryVariadic(
+			"UPDATE lobby2.perTitlePerUserIntegerStorage SET value=%g WHERE titleName_fk=%s AND slotIndex=%i AND userId_fk=%i AND value=%g RETURNING value;",
+			titleName.C_String(), slotIndex, command->callerUserId, outputValue, conditionValue);
+		break;
+	case PTISC_NOT_EQUAL:
+		result = pgsql->QueryVariadic(
+			"UPDATE lobby2.perTitlePerUserIntegerStorage SET value=%g WHERE titleName_fk=%s AND slotIndex=%i AND userId_fk=%i AND value!=%g RETURNING value;",
+			titleName.C_String(), slotIndex, command->callerUserId, outputValue);
+		break;
+	case PTISC_GREATER_THAN:
+		result = pgsql->QueryVariadic(
+			"UPDATE lobby2.perTitlePerUserIntegerStorage SET value=%g WHERE titleName_fk=%s AND slotIndex=%i AND userId_fk=%i AND value<%g RETURNING value;",
+			titleName.C_String(), slotIndex, command->callerUserId, outputValue, conditionValue);
+		break;
+	case PTISC_GREATER_OR_EQUAL:
+		result = pgsql->QueryVariadic(
+			"UPDATE lobby2.perTitlePerUserIntegerStorage SET value=%g WHERE titleName_fk=%s AND slotIndex=%i AND userId_fk=%i AND value<=%g RETURNING value;",
+			titleName.C_String(), slotIndex, command->callerUserId, outputValue, conditionValue);
+		break;
+	case PTISC_LESS_THAN:
+		result = pgsql->QueryVariadic(
+			"UPDATE lobby2.perTitlePerUserIntegerStorage SET value=%g WHERE titleName_fk=%s AND slotIndex=%i AND userId_fk=%i AND value>%g RETURNING value;",
+			titleName.C_String(), slotIndex, command->callerUserId, outputValue, conditionValue);
+		break;
+	case PTISC_LESS_OR_EQUAL:
+		result = pgsql->QueryVariadic(
+			"UPDATE lobby2.perTitlePerUserIntegerStorage SET value=%g WHERE titleName_fk=%s AND slotIndex=%i AND userId_fk=%i AND value>=%g RETURNING value;",
+			titleName.C_String(), slotIndex, command->callerUserId, outputValue, conditionValue);
+		break;
+	}
+
+	int numRowsReturned = PQntuples(result);
+	if (numRowsReturned==0)
+	{
+		PQclear(result);
+		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
+		return true;
+	}
+	PostgreSQLInterface::PQGetValueFromBinary(&outputValue, result, 0, "value");
+	PQclear(result);
+
+	resultCode=L2RC_SUCCESS;
+	return true;
+
+}
+bool RakNet::Client_PerTitleIntegerStorage_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
+{
+	(void)command;
+
+	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
+	// Verify title name
+	if (IsTitleInUse(titleName, pgsql)==false)
+	{
+		resultCode=L2RC_Client_PerTitleIntegerStorage_TITLE_NOT_IN_USE;
+		return true;
+	}
+
+	switch (operationToPerform)
+	{
+	case PTISO_WRITE:
+		return Write(command,databaseInterface);
+		break;
+	case PTISO_READ:
+		return Read(command,databaseInterface);
+		break;
+	case PTISO_DELETE:
+		return Delete(command,databaseInterface);
+		break;
+	case PTISO_ADD:
+		return Add(command,databaseInterface);
+		break;
+	}
+	
+	return true;
+}
+bool RakNet::Client_PerTitleBinaryStorage_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
+{
+	(void)command;
+
+	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
+	PGresult *result;
+	// Verify title name
+	if (IsTitleInUse(titleName, pgsql)==false)
+	{
+		resultCode=L2RC_Client_PerTitleBinaryStorage_TITLE_NOT_IN_USE;
+		return true;
+	}
+
+	int numRowsReturned;
+	switch (operationToPerform)
+	{
+	case PTISO_WRITE:
+		result = pgsql->QueryVariadic(
+			"INSERT INTO lobby2.perTitlePerUserBinaryStorage (titleName_fk,slotIndex,userId_fk,binaryData) VALUES (%s,%i,%i,%a);",
+			titleName.C_String(), slotIndex, command->callerUserId, binaryData->binaryData,
+			binaryData->binaryDataLength);
+
+		if (result==0)
+		{
+			resultCode=L2RC_GENERAL_ERROR;
+			return true;
+		}
+
+		break;
+	case PTISO_READ:
+		result = pgsql->QueryVariadic(
+			"SELECT binaryData FROM lobby2.perTitlePerUserBinaryStorage WHERE titleName_fk=%s AND slotIndex=%i AND userId_fk=%i;",
+			titleName.C_String(), slotIndex, command->callerUserId);
+
+		if (result==0)
+		{
+			resultCode=L2RC_GENERAL_ERROR;
+			return true;
+		}
+
+		numRowsReturned = PQntuples(result);
+		if (numRowsReturned==0)
+		{
+			resultCode=L2RC_Client_PerTitleBinaryStorage_ROW_EMPTY;
+			return true;
+		}
+
+		PostgreSQLInterface::PQGetValueFromBinary(&binaryData->binaryData, &binaryData->binaryDataLength, result, 0, "binaryData");
+
+		break;
+	case PTISO_DELETE:
+		result = pgsql->QueryVariadic("DELETE FROM lobby2.perTitlePerUserBinaryStorage WHERE titleName_fk=%s AND slotIndex=%i AND userId_fk=%i;",
+			titleName.C_String(), slotIndex, command->callerUserId);
+		break;
+	}
+
+	PQclear(result);
+
+	resultCode=L2RC_SUCCESS;
+	return true;
+}
 
 bool RakNet::Client_StopIgnore_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 {
@@ -1492,7 +1726,7 @@ bool RakNet::Client_StopIgnore_PGSQL::ServerDBImpl( Lobby2ServerCommand *command
 		return true;
 	}
 
-	PGresult *result = pgsql->QueryVaridic(
+	PGresult *result = pgsql->QueryVariadic(
 		"DELETE FROM lobby2.ignore WHERE userMe_fk=%i AND userOther_fk=%i", command->callerUserId, targetUserId);
 	PQclear(result);
 
@@ -1524,7 +1758,7 @@ bool RakNet::Friends_SendInvite_PGSQL::ServerDBImpl( Lobby2ServerCommand *comman
 	}
 
 	// Don't do if already in friends table (already friends, or already has an invite)
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"SELECT description FROM lobby2.friendActions WHERE actionId_pk="
 		"(SELECT actionId_fk from lobby2.friends WHERE userOne_fk=%i AND userTwo_fk=%i);"
 	, command->callerUserId, targetUserId);
@@ -1551,7 +1785,7 @@ bool RakNet::Friends_SendInvite_PGSQL::ServerDBImpl( Lobby2ServerCommand *comman
 	PQclear(result);
 
 	// Add friend invite
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"INSERT INTO lobby2.friends (userOne_fk, userTwo_fk, actionId_fk) VALUES "
 		"(%i, %i, (SELECT actionId_pk FROM lobby2.friendActions WHERE description='sentInvite'));"
 		, command->callerUserId, targetUserId);
@@ -1563,7 +1797,7 @@ bool RakNet::Friends_SendInvite_PGSQL::ServerDBImpl( Lobby2ServerCommand *comman
 	PQclear(result);
 
 	// Notify by email
-	SendEmail(targetUserId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Friends_SendInvite", pgsql);
+	SendEmail(targetUserId, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Friends_SendInvite", pgsql);
 
 	// Tell the other system the invitation was sent
 	Notification_Friends_StatusChange *notification = (Notification_Friends_StatusChange *) command->server->GetMessageFactory()->Alloc(L2MID_Notification_Friends_StatusChange);
@@ -1596,7 +1830,7 @@ bool RakNet::Friends_AcceptInvite_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 	}
 
 	// Make sure we have an invite from the other user
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"SELECT description FROM lobby2.friendActions WHERE actionId_pk="
 		"(SELECT actionId_fk from lobby2.friends WHERE userOne_fk=%i AND userTwo_fk=%i);"
 		, targetUserId, command->callerUserId );
@@ -1627,26 +1861,26 @@ bool RakNet::Friends_AcceptInvite_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 	}
 
 	// Change from invited to friends, insert twice
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"UPDATE lobby2.friends SET actionId_fk=(SELECT actionId_pk from lobby2.friendActions WHERE description='isFriends') WHERE userOne_fk=%i AND userTwo_fk=%i;"
 		, targetUserId, command->callerUserId );
 	RakAssert(result);
 	PQclear(result);
 
 	// Delete any existing invites, etc. if there are any
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"DELETE FROM lobby2.friends WHERE userOne_fk=%i AND userTwo_fk=%i;"
 		, command->callerUserId, targetUserId );
 	PQclear(result);
 
 	// Insert as a friend
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"INSERT INTO lobby2.friends (userOne_fk, userTwo_fk, actionId_fk) VALUES (%i, %i, (SELECT actionId_pk from lobby2.friendActions WHERE description='isFriends'));"
 		,command->callerUserId, targetUserId);
 	RakAssert(result);
 	PQclear(result);
 
-	SendEmail(targetUserId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Friends_AcceptInvite", (PostgreSQLInterface *) databaseInterface);
+	SendEmail(targetUserId, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Friends_AcceptInvite", (PostgreSQLInterface *) databaseInterface);
 
 	// Tell the other system the invitation was accepted
 	Notification_Friends_StatusChange *notification = (Notification_Friends_StatusChange *) command->server->GetMessageFactory()->Alloc(L2MID_Notification_Friends_StatusChange);
@@ -1679,7 +1913,7 @@ bool RakNet::Friends_RejectInvite_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 	}
 
 	// Make sure we have an invite from the other user
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"SELECT description FROM lobby2.friendActions WHERE actionId_pk="
 		"(SELECT actionId_fk from lobby2.friends WHERE userOne_fk=%i AND userTwo_fk=%i);"
 		, targetUserId, command->callerUserId );
@@ -1710,16 +1944,16 @@ bool RakNet::Friends_RejectInvite_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 	}
 
 	// Delete friend invite (both ways)
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"DELETE FROM lobby2.friends WHERE userOne_fk=%i AND userTwo_fk=%i;"
 		, targetUserId, command->callerUserId );
 	PQclear(result);
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"DELETE FROM lobby2.friends WHERE userOne_fk=%i AND userTwo_fk=%i;"
 		, command->callerUserId, targetUserId );
 	PQclear(result);
 
-	SendEmail(targetUserId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Friends_RejectInvite", (PostgreSQLInterface *) databaseInterface);
+	SendEmail(targetUserId, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Friends_RejectInvite", (PostgreSQLInterface *) databaseInterface);
 
 	// Tell the other system the invitation was rejected
 	Notification_Friends_StatusChange *notification = (Notification_Friends_StatusChange *) command->server->GetMessageFactory()->Alloc(L2MID_Notification_Friends_StatusChange);
@@ -1767,7 +2001,7 @@ bool RakNet::Friends_Remove_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, v
 		return true;
 	}
 
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"SELECT userOne_fk FROM lobby2.friends WHERE userOne_fk=%i AND userTwo_fk=%i;"
 		, command->callerUserId, targetUserId );
 	if (result==0)
@@ -1784,12 +2018,12 @@ bool RakNet::Friends_Remove_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, v
 	}
 
 	// Bidirectional delete
-	result = pgsql->QueryVaridic("DELETE FROM lobby2.friends WHERE (userOne_fk=%i AND userTwo_fk=%i) OR (userOne_fk=%i AND userTwo_fk=%i)", 
+	result = pgsql->QueryVariadic("DELETE FROM lobby2.friends WHERE (userOne_fk=%i AND userTwo_fk=%i) OR (userOne_fk=%i AND userTwo_fk=%i)", 
 		command->callerUserId, targetUserId, targetUserId, command->callerUserId);
 	RakAssert(result);
 	PQclear(result);
 
-	SendEmail(targetUserId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Friends_Remove", (PostgreSQLInterface *) databaseInterface);
+	SendEmail(targetUserId, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Friends_Remove", (PostgreSQLInterface *) databaseInterface);
 
 	Notification_Friends_StatusChange *notification = (Notification_Friends_StatusChange *) command->server->GetMessageFactory()->Alloc(L2MID_Notification_Friends_StatusChange);
 	RakAssert(command->callingUserName.IsEmpty()==false);
@@ -1819,7 +2053,7 @@ bool RakNet::BookmarkedUsers_Add_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 		return true;
 	}
 
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"INSERT INTO lobby2.bookmarkedUsers (userMe_fk, userOther_fk, type, description) VALUES (%i, %i, %i, %s)",
 		command->callerUserId, targetUserId, type, description.C_String() );
 	if (result==0)
@@ -1850,7 +2084,7 @@ bool RakNet::BookmarkedUsers_Remove_PGSQL::ServerDBImpl( Lobby2ServerCommand *co
 		return true;
 	}
 
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"DELETE FROM lobby2.bookmarkedUsers WHERE userOther_fk=%i AND type=%i",
 		targetUserId, type);
 	if (result==0)
@@ -1868,7 +2102,7 @@ bool RakNet::BookmarkedUsers_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 {
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
 	PGresult *result;
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"SELECT (SELECT handle FROM lobby2.users where userId_pk=userOther_fk) as handle, *"
 		"FROM (SELECT userOther_fk, type, description, creationDate from lobby2.bookmarkedUsers WHERE userMe_fk=%i) as bm ORDER BY type, creationDate ASC;",
 		command->callerUserId);
@@ -1897,7 +2131,7 @@ bool RakNet::BookmarkedUsers_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 
 bool RakNet::Emails_Send_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 {
-	SendEmail(recipients, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, status, "Emails_Send", (PostgreSQLInterface *) databaseInterface);
+	SendEmail(recipients, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, status, "Emails_Send", (PostgreSQLInterface *) databaseInterface);
 	resultCode=L2RC_SUCCESS;
 	return true;
 }
@@ -1905,7 +2139,7 @@ bool RakNet::Emails_Send_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void
 bool RakNet::Emails_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 {
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-	PGresult *result = pgsql->QueryVaridic(
+	PGresult *result = pgsql->QueryVariadic(
 		"SELECT handle, tbl2.* from lobby2.users, ("
 		"SELECT tbl1.*, lobby2.emails.subject, lobby2.emails.body, lobby2.emails.binaryData, lobby2.emails.creationDate FROM"
 		"(SELECT emailId_fk, emailTarget_pk, userMe_fk, userOther_fk, status, wasRead, ISentThisEmail, isDeleted FROM lobby2.emailTargets) as tbl1, lobby2.emails "
@@ -1932,7 +2166,7 @@ bool RakNet::Emails_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void 
 		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.wasSendByMe, result, i, "ISentThisEmail");
 		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.subject, result, i, "subject");
 		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.body, result, i, "body");
-		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.binaryData.binaryData, &emailResult.binaryData.binaryDataLength, result, i, "binaryData");
+		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.binaryData->binaryData, &emailResult.binaryData->binaryDataLength, result, i, "binaryData");
 		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.creationDate, result, i, "creationDate");
 		if (emailResult.wasSendByMe)
 		{
@@ -1957,7 +2191,7 @@ bool RakNet::Emails_Delete_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, vo
 	(void)command;
 
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-	PGresult *result = pgsql->QueryVaridic("SELECT isDeleted FROM lobby2.emailTargets WHERE emailTarget_pk = %i", emailId);
+	PGresult *result = pgsql->QueryVariadic("SELECT isDeleted FROM lobby2.emailTargets WHERE emailTarget_pk = %i", emailId);
 	if (result==0)
 	{
 		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
@@ -1979,7 +2213,7 @@ bool RakNet::Emails_Delete_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, vo
 		return true;
 	}
 	// Don't actually delete, just flag as deleted. This is so the admin can investigate reports of abuse.
-	result = pgsql->QueryVaridic("UPDATE lobby2.emailTargets SET isDeleted=TRUE WHERE emailTarget_pk = %i", emailId);
+	result = pgsql->QueryVariadic("UPDATE lobby2.emailTargets SET isDeleted=TRUE WHERE emailTarget_pk = %i", emailId);
 	if (result==0)
 	{
 		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
@@ -1996,7 +2230,7 @@ bool RakNet::Emails_SetStatus_PGSQL::ServerDBImpl( Lobby2ServerCommand *command,
 	(void)command;
 
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-	PGresult *result = pgsql->QueryVaridic("SELECT isDeleted FROM lobby2.emailTargets WHERE emailTarget_pk = %i", emailId);
+	PGresult *result = pgsql->QueryVariadic("SELECT isDeleted FROM lobby2.emailTargets WHERE emailTarget_pk = %i", emailId);
 	if (result==0)
 	{
 		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
@@ -2019,7 +2253,7 @@ bool RakNet::Emails_SetStatus_PGSQL::ServerDBImpl( Lobby2ServerCommand *command,
 	}
 	if (updateStatusFlag)
 	{
-		result = pgsql->QueryVaridic("UPDATE lobby2.emailTargets SET status=%i WHERE emailTarget_pk = %i", newStatusFlag, emailId);
+		result = pgsql->QueryVariadic("UPDATE lobby2.emailTargets SET status=%i WHERE emailTarget_pk = %i", newStatusFlag, emailId);
 		if (result==0)
 		{
 			resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
@@ -2029,7 +2263,7 @@ bool RakNet::Emails_SetStatus_PGSQL::ServerDBImpl( Lobby2ServerCommand *command,
 	PQclear(result);
 	if (updateMarkedRead)
 	{
-		result = pgsql->QueryVaridic("UPDATE lobby2.emailTargets SET wasRead=%b WHERE emailTarget_pk = %i", isNowMarkedRead, emailId);
+		result = pgsql->QueryVariadic("UPDATE lobby2.emailTargets SET wasRead=%b WHERE emailTarget_pk = %i", isNowMarkedRead, emailId);
 		if (result==0)
 		{
 			resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
@@ -2057,9 +2291,9 @@ bool RakNet::Ranking_SubmitMatch_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 	}
 
 	// Insert
-	result = pgsql->QueryVaridic("INSERT INTO lobby2.matches (gameTypeName, titleName_fk, matchNote, binaryData) VALUES "
+	result = pgsql->QueryVariadic("INSERT INTO lobby2.matches (gameTypeName, titleName_fk, matchNote, binaryData) VALUES "
 		"(%s, %s, %s, %a) RETURNING matchId_pk;",
-		gameType.C_String(), titleName.C_String(), submittedMatch.matchNote.C_String(), submittedMatch.binaryData.binaryData, submittedMatch.binaryData.binaryDataLength );
+		gameType.C_String(), titleName.C_String(), submittedMatch.matchNote.C_String(), submittedMatch.binaryData->binaryData, submittedMatch.binaryData->binaryDataLength );
 
 	int numRowsReturned = PQntuples(result);
 	if (numRowsReturned==0)
@@ -2075,7 +2309,7 @@ bool RakNet::Ranking_SubmitMatch_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 	unsigned int i;
 	for (i=0; i < submittedMatch.matchParticipants.Size(); i++)
 	{
-		result = pgsql->QueryVaridic("INSERT INTO lobby2.matchParticipants (matchId_fk, userId_fk, score) VALUES "
+		result = pgsql->QueryVariadic("INSERT INTO lobby2.matchParticipants (matchId_fk, userId_fk, score) VALUES "
 			"(%i, (SELECT userId_pk FROM lobby2.users WHERE handleLower=lower(%s)), %f);",
 			submittedMatch.matchID, submittedMatch.matchParticipants[i].handle.C_String(), submittedMatch.matchParticipants[i].score);
 		// May fail if a user is deleted at the same time this is running
@@ -2083,7 +2317,7 @@ bool RakNet::Ranking_SubmitMatch_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 			PQclear(result);
 	}
 
-	result = pgsql->QueryVaridic("SELECT EXTRACT(EPOCH FROM now()) as whenSubmittedDate;");
+	result = pgsql->QueryVariadic("SELECT EXTRACT(EPOCH FROM now()) as whenSubmittedDate;");
 	PostgreSQLInterface::PQGetValueFromBinary(&submittedMatch.whenSubmittedDate, result, 0, "whenSubmittedDate");
 	PQclear(result);
 
@@ -2105,7 +2339,7 @@ bool RakNet::Ranking_GetMatches_PGSQL::ServerDBImpl( Lobby2ServerCommand *comman
 		return true;
 	}
 
-	result1 = pgsql->QueryVaridic("SELECT matchId_pk, matchNote, binaryData, EXTRACT(EPOCH FROM creationDate) as creationDate from lobby2.matches WHERE gameTypeName=%s AND titleName_fk=%s;", gameType.C_String(), titleName.C_String());
+	result1 = pgsql->QueryVariadic("SELECT matchId_pk, matchNote, binaryData, EXTRACT(EPOCH FROM creationDate) as creationDate from lobby2.matches WHERE gameTypeName=%s AND titleName_fk=%s;", gameType.C_String(), titleName.C_String());
 	if (result1==0)
 	{
 		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
@@ -2119,11 +2353,11 @@ bool RakNet::Ranking_GetMatches_PGSQL::ServerDBImpl( Lobby2ServerCommand *comman
 	{
 		PostgreSQLInterface::PQGetValueFromBinary(&submittedMatch.matchID, result1, i, "matchId_pk");
 		PostgreSQLInterface::PQGetValueFromBinary(&submittedMatch.matchNote, result1, i, "matchNote");
-		//	PostgreSQLInterface::PQGetValueFromBinary(&submittedMatch.binaryData.binaryData, &submittedMatch.binaryData.binaryDataLength, result1, i, "binaryData");
+		//	PostgreSQLInterface::PQGetValueFromBinary(&submittedMatch.binaryData->binaryData, &submittedMatch.binaryData->binaryDataLength, result1, i, "binaryData");
 		PostgreSQLInterface::PQGetValueFromBinary(&submittedMatch.whenSubmittedDate, result1, i, "creationDate");
 		PostgreSQLInterface::PQGetValueFromBinary(&submittedMatch.matchID, result1, i, "matchId_pk");
 
-		result2=pgsql->QueryVaridic("SELECT (SELECT handle FROM lobby2.users where userId_pk=userId_fk) as handle, score from lobby2.matchParticipants where matchId_fk=%i;", submittedMatch.matchID);
+		result2=pgsql->QueryVariadic("SELECT (SELECT handle FROM lobby2.users where userId_pk=userId_fk) as handle, score from lobby2.matchParticipants where matchId_fk=%i;", submittedMatch.matchID);
 		int numParticipants = PQntuples(result2);
 		for (int j=0; j < numParticipants; j++)
 		{
@@ -2148,7 +2382,7 @@ bool RakNet::Ranking_GetMatchBinaryData_PGSQL::ServerDBImpl( Lobby2ServerCommand
 
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
 	PGresult *result;
-	result = pgsql->QueryVaridic("SELECT binaryData from lobby2.matches WHERE matchId_pk=%i", matchID);
+	result = pgsql->QueryVariadic("SELECT binaryData from lobby2.matches WHERE matchId_pk=%i", matchID);
 	if (result==0)
 	{
 		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
@@ -2162,7 +2396,7 @@ bool RakNet::Ranking_GetMatchBinaryData_PGSQL::ServerDBImpl( Lobby2ServerCommand
 		return false;
 	}
 
-	PostgreSQLInterface::PQGetValueFromBinary(&binaryData.binaryData, &binaryData.binaryDataLength, result, 0, "binaryData");
+	PostgreSQLInterface::PQGetValueFromBinary(&binaryData->binaryData, &binaryData->binaryDataLength, result, 0, "binaryData");
 	PQclear(result);
 	resultCode=L2RC_SUCCESS;
 	return true;
@@ -2189,7 +2423,7 @@ bool RakNet::Ranking_GetTotalScore_PGSQL::ServerDBImpl( Lobby2ServerCommand *com
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("SELECT COUNT(score) as count, sum(score) as sum from lobby2.matchParticipants WHERE userId_fk=%i AND matchId_fk IN"
+	result = pgsql->QueryVariadic("SELECT COUNT(score) as count, sum(score) as sum from lobby2.matchParticipants WHERE userId_fk=%i AND matchId_fk IN"
 		"(SELECT matchId_pk from lobby2.matches WHERE gameTypeName=%s AND titleName_fk=%s);", userRow, gameType.C_String(), titleName.C_String());
 
 	if (result==0)
@@ -2231,7 +2465,7 @@ bool RakNet::Ranking_WipeScoresForPlayer_PGSQL::ServerDBImpl( Lobby2ServerComman
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("DELETE FROM lobby2.matchParticipants WHERE userId_fk=%i AND matchId_fk IN"
+	result = pgsql->QueryVariadic("DELETE FROM lobby2.matchParticipants WHERE userId_fk=%i AND matchId_fk IN"
 		"(SELECT matchId_pk from lobby2.matches WHERE gameTypeName=%s AND titleName_fk=%s);", userRow, gameType.C_String(), titleName.C_String());
 
 	if (result==0)
@@ -2258,7 +2492,7 @@ bool RakNet::Ranking_WipeMatches_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("DELETE FROM lobby2.matches WHERE gameTypeName=%s AND titleName_fk=%s;", gameType.C_String(), titleName.C_String());
+	result = pgsql->QueryVariadic("DELETE FROM lobby2.matches WHERE gameTypeName=%s AND titleName_fk=%s;", gameType.C_String(), titleName.C_String());
 
 	if (result==0)
 	{
@@ -2276,7 +2510,7 @@ bool RakNet::Ranking_PruneMatches_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
 	PGresult *result;
-	result = pgsql->QueryVaridic("DELETE FROM lobby2.matches WHERE creationDate < (select now() - %i * interval '1 day')", pruneTimeDays);
+	result = pgsql->QueryVariadic("DELETE FROM lobby2.matches WHERE creationDate < (select now() - %i * interval '1 day')", pruneTimeDays);
 
 	if (result==0)
 	{
@@ -2308,7 +2542,7 @@ bool RakNet::Ranking_UpdateRating_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("INSERT INTO lobby2.ratings (userId_fk, gameTypeName, titleName_fk, userRating) VALUES (%i, %s, %s, %f)", targetUserId, gameType.C_String(), titleName.C_String(), targetRating);
+	result = pgsql->QueryVariadic("INSERT INTO lobby2.ratings (userId_fk, gameTypeName, titleName_fk, userRating) VALUES (%i, %s, %s, %f)", targetUserId, gameType.C_String(), titleName.C_String(), targetRating);
 
 	if (result==0)
 	{
@@ -2334,7 +2568,7 @@ bool RakNet::Ranking_WipeRatings_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("DELETE FROM lobby2.ratings WHERE gameTypeName=%s AND titleName_fk=%s;", gameType.C_String(), titleName.C_String());
+	result = pgsql->QueryVariadic("DELETE FROM lobby2.ratings WHERE gameTypeName=%s AND titleName_fk=%s;", gameType.C_String(), titleName.C_String());
 
 	if (result==0)
 	{
@@ -2366,7 +2600,7 @@ bool RakNet::Ranking_GetRating_PGSQL::ServerDBImpl( Lobby2ServerCommand *command
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("SELECT userRating, creationDate FROM lobby2.ratings WHERE gameTypeName=%s AND titleName_fk=%s and userId_fk=%i ORDER by creationDate LIMIT 1;", gameType.C_String(), titleName.C_String(), targetUserId);
+	result = pgsql->QueryVariadic("SELECT userRating, creationDate FROM lobby2.ratings WHERE gameTypeName=%s AND titleName_fk=%s and userId_fk=%i ORDER by creationDate LIMIT 1;", gameType.C_String(), titleName.C_String(), targetUserId);
 	if (result==0)
 	{
 		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
@@ -2406,9 +2640,9 @@ bool RakNet::Clans_Create_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, voi
 		return true;
 	}
 
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"INSERT INTO lobby2.clans (leaderUserId_fk, clanHandle, requiresInvitationsToJoin, description, binaryData) VALUES "
-		"(%i, %s, %b, %s, %a) RETURNING clanId_pk;", command->callerUserId, clanHandle.C_String(), requiresInvitationsToJoin, description.C_String(), binaryData.binaryData, binaryData.binaryDataLength );
+		"(%i, %s, %b, %s, %a) RETURNING clanId_pk;", command->callerUserId, clanHandle.C_String(), requiresInvitationsToJoin, description.C_String(), binaryData->binaryData, binaryData->binaryDataLength );
 
 	if (result==0)
 	{
@@ -2422,13 +2656,13 @@ bool RakNet::Clans_Create_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, voi
 	if (failIfAlreadyInClan)
 	{
 		// Checking after rather than before in case this user creates a clan in another thread at the same time
-		result = pgsql->QueryVaridic("SELECT COUNT(*) as count from lobby2.clans WHERE leaderUserId_fk=%i", command->callerUserId);
+		result = pgsql->QueryVariadic("SELECT COUNT(*) as count from lobby2.clans WHERE leaderUserId_fk=%i", command->callerUserId);
 		long long count;
 		PostgreSQLInterface::PQGetValueFromBinary(&count, result, 0, "count");
 		PQclear(result);
 		if (count>1)
 		{
-			result = pgsql->QueryVaridic("DELETE FROM lobby2.clans WHERE (clanId_pk=%i);", clanId_pk);
+			result = pgsql->QueryVariadic("DELETE FROM lobby2.clans WHERE (clanId_pk=%i);", clanId_pk);
 			PQclear(result);
 			resultCode=L2RC_Clans_Create_ALREADY_IN_A_CLAN;
 			return true;
@@ -2436,7 +2670,7 @@ bool RakNet::Clans_Create_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, voi
 	}
 
 	// Add yourself as a clan member
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"INSERT INTO lobby2.clanMembers (userId_fk, clanId_fk, isSubleader, memberState_fk) VALUES "
 		"(%i, %i, false, (SELECT stateId_Pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active'));", command->callerUserId, clanId_pk );
 
@@ -2483,7 +2717,7 @@ bool RakNet::Clans_SetProperties_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("UPDATE lobby2.clans SET description=%s, binaryData=%a WHERE clanId_pk=%i", description.C_String(), binaryData.binaryData, binaryData.binaryDataLength, clanId);
+	result = pgsql->QueryVariadic("UPDATE lobby2.clans SET description=%s, binaryData=%a WHERE clanId_pk=%i", description.C_String(), binaryData->binaryData, binaryData->binaryDataLength, clanId);
 
 	if (result==0)
 	{
@@ -2510,7 +2744,7 @@ bool RakNet::Clans_GetProperties_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("SELECT description, binaryData FROM lobby2.clans WHERE clanId_pk=%i", clanId);
+	result = pgsql->QueryVariadic("SELECT description, binaryData FROM lobby2.clans WHERE clanId_pk=%i", clanId);
 
 	if (result==0)
 	{
@@ -2518,7 +2752,7 @@ bool RakNet::Clans_GetProperties_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 		return true;
 	}
 	PostgreSQLInterface::PQGetValueFromBinary(&description, result, 0, "description");
-	PostgreSQLInterface::PQGetValueFromBinary(&binaryData.binaryData, &binaryData.binaryDataLength, result, 0, "binaryData");
+	PostgreSQLInterface::PQGetValueFromBinary(&binaryData->binaryData, &binaryData->binaryDataLength, result, 0, "binaryData");
 	PQclear(result);
 
 	resultCode=L2RC_SUCCESS;
@@ -2545,7 +2779,7 @@ bool RakNet::Clans_SetMyMemberProperties_PGSQL::ServerDBImpl( Lobby2ServerComman
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("UPDATE lobby2.clanMembers SET description=%s, binaryData=%a WHERE userId_fk=%i AND clanId_fk=%i", description.C_String(), binaryData.binaryData, binaryData.binaryDataLength, command->callerUserId, clanId);
+	result = pgsql->QueryVariadic("UPDATE lobby2.clanMembers SET description=%s, binaryData=%a WHERE userId_fk=%i AND clanId_fk=%i", description.C_String(), binaryData->binaryData, binaryData->binaryDataLength, command->callerUserId, clanId);
 
 	if (result==0)
 	{
@@ -2562,7 +2796,7 @@ bool RakNet::Clans_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
 
 	// Gets all clans that I am in, as active
-	PGresult *result = pgsql->QueryVaridic(
+	PGresult *result = pgsql->QueryVariadic(
 		"SELECT U.handle, C.clanHandle, C.description, C.binaryData, C.clanId_fk, C.leaderUserId_fk "
 		"FROM lobby2.users AS U, (SELECT clanHandle, description, binaryData, leaderUserId_fk, myClans.* FROM lobby2.clans, "
 		"(SELECT clanId_fk FROM lobby2.clanMembers WHERE userId_fk=%i "
@@ -2591,12 +2825,12 @@ bool RakNet::Clans_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *
 		PostgreSQLInterface::PQGetValueFromBinary(&ci.clanName, result, i, "clanHandle");
 		PostgreSQLInterface::PQGetValueFromBinary(&ci.description, result, i, "description");
 		PostgreSQLInterface::PQGetValueFromBinary(&ci.clanLeader, result, i, "handle");
-		PostgreSQLInterface::PQGetValueFromBinary(&ci.binaryData.binaryData, &ci.binaryData.binaryDataLength, result, i, "binaryData");
+		PostgreSQLInterface::PQGetValueFromBinary(&ci.binaryData->binaryData, &ci.binaryData->binaryDataLength, result, i, "binaryData");
 		PostgreSQLInterface::PQGetValueFromBinary(&clanId, result, i, "clanId_fk");
 		PostgreSQLInterface::PQGetValueFromBinary(&leaderId, result, i, "leaderUserId_fk");
 
 		// Get the names of all other active members in this clan
-		PGresult *result2 = pgsql->QueryVaridic(
+		PGresult *result2 = pgsql->QueryVariadic(
 			"SELECT U.handle FROM lobby2.clanMembers AS M, lobby2.users AS U "
 			"WHERE M.clanId_fk=%i AND M.userId_fk!=%i AND U.userId_pk=M.userId_fk "
 			"AND M.memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active');",
@@ -2660,7 +2894,7 @@ bool RakNet::Clans_GrantLeader_PGSQL::ServerDBImpl( Lobby2ServerCommand *command
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("UPDATE lobby2.clans SET leaderUserId_fk=%i WHERE clanId_pk=%i;",targetUserId, clanId);
+	result = pgsql->QueryVariadic("UPDATE lobby2.clans SET leaderUserId_fk=%i WHERE clanId_pk=%i;",targetUserId, clanId);
 
 	if (result==0)
 	{
@@ -2730,7 +2964,7 @@ bool RakNet::Clans_SetSubleaderStatus_PGSQL::ServerDBImpl( Lobby2ServerCommand *
 		resultCode=L2RC_Clans_SetSubleaderStatus_TARGET_NOT_IN_CLAN;
 		return true;
 	}
-	result = pgsql->QueryVaridic("UPDATE lobby2.clanMembers SET isSubleader=%b WHERE clanId_fk=%i AND userId_fk=%i;",setToSubleader,clanId,targetUserId);
+	result = pgsql->QueryVariadic("UPDATE lobby2.clanMembers SET isSubleader=%b WHERE clanId_fk=%i AND userId_fk=%i;",setToSubleader,clanId,targetUserId);
 
 	if (result==0)
 	{
@@ -2802,7 +3036,7 @@ bool RakNet::Clans_SetMemberRank_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 		resultCode=L2RC_Clans_SetMemberRank_TARGET_NOT_IN_CLAN;
 		return true;
 	}
-	result = pgsql->QueryVaridic("UPDATE lobby2.clanMembers SET rank=%i WHERE clanId_fk=%i AND userId_fk=%i;",newRank,clanId,targetUserId);
+	result = pgsql->QueryVariadic("UPDATE lobby2.clanMembers SET rank=%i WHERE clanId_fk=%i AND userId_fk=%i;",newRank,clanId,targetUserId);
 
 	if (result==0)
 	{
@@ -2860,7 +3094,7 @@ bool RakNet::Clans_GetMemberProperties_PGSQL::ServerDBImpl( Lobby2ServerCommand 
 		resultCode=L2RC_Clans_SetMemberRank_TARGET_NOT_IN_CLAN;
 		return true;
 	}
-	result = pgsql->QueryVaridic("SELECT description, binaryData, isSubleader, rank, memberState_fk, banReason FROM lobby2.clanMembers where userId_fk=%i AND clanId_fk=%i",
+	result = pgsql->QueryVariadic("SELECT description, binaryData, isSubleader, rank, memberState_fk, banReason FROM lobby2.clanMembers where userId_fk=%i AND clanId_fk=%i",
 		targetUserId, clanId);
 
 	if (result==0)
@@ -2870,7 +3104,7 @@ bool RakNet::Clans_GetMemberProperties_PGSQL::ServerDBImpl( Lobby2ServerCommand 
 	}
 
 	PostgreSQLInterface::PQGetValueFromBinary(&description, result, 0, "description");
-	PostgreSQLInterface::PQGetValueFromBinary(&binaryData.binaryData, &binaryData.binaryDataLength, result, 0, "binaryData");
+	PostgreSQLInterface::PQGetValueFromBinary(&binaryData->binaryData, &binaryData->binaryDataLength, result, 0, "binaryData");
 	PostgreSQLInterface::PQGetValueFromBinary(&isSubleader, result, 0, "isSubleader");
 	PostgreSQLInterface::PQGetValueFromBinary(&rank, result, 0, "rank");
 	int cms;
@@ -2901,7 +3135,7 @@ bool RakNet::Clans_ChangeHandle_PGSQL::ServerDBImpl( Lobby2ServerCommand *comman
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("UPDATE lobby2.clans SET clanHandle=%s WHERE clanId_pk=%i;", newClanHandle.C_String(), clanId);
+	result = pgsql->QueryVariadic("UPDATE lobby2.clans SET clanHandle=%s WHERE clanId_pk=%i;", newClanHandle.C_String(), clanId);
 
 	if (result==0)
 	{
@@ -2956,7 +3190,7 @@ bool RakNet::Clans_Leave_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void
 	bool isClanLeader = IsClanLeader(clanId, command->callerUserId, pgsql);
 
 	// Remove from the clanMembers table
-	result = pgsql->QueryVaridic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", command->callerUserId, clanId);
+	result = pgsql->QueryVariadic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", command->callerUserId, clanId);
 
 	if (result==0)
 	{
@@ -2979,7 +3213,7 @@ bool RakNet::Clans_Leave_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void
 			if (clanMembers[i].memberState==CMD_ACTIVE)
 				targetUserIds.Insert(clanMembers[i].userId);
 		}
-		SendEmail(targetUserIds, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_Leave", pgsql);
+		SendEmail(targetUserIds, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Clans_Leave", pgsql);
 	}
 
 	unsigned int validUserCount=0;
@@ -3019,7 +3253,7 @@ bool RakNet::Clans_Leave_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void
 			command->server->AddOutputFromThread(notification, command->callerUserId, command->callingUserName);
 
 			// Destroy the clan
-			result = pgsql->QueryVaridic("DELETE FROM lobby2.clans WHERE clanId_pk=%i", clanId);
+			result = pgsql->QueryVariadic("DELETE FROM lobby2.clans WHERE clanId_pk=%i", clanId);
 			PQclear(result);
 
 			resultCode=L2RC_SUCCESS;
@@ -3028,7 +3262,7 @@ bool RakNet::Clans_Leave_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void
 		else
 		{
 			// Choose the oldest subleader to lead, or if no subleaders, the oldest member
-			result = pgsql->QueryVaridic("SELECT handle, userId_pk FROM lobby2.users WHERE userId_pk=(SELECT userId_fk FROM lobby2.clanMembers WHERE clanId_fk=%i ORDER BY isSubleader, creationDate DESC LIMIT 1)",
+			result = pgsql->QueryVariadic("SELECT handle, userId_pk FROM lobby2.users WHERE userId_pk=(SELECT userId_fk FROM lobby2.clanMembers WHERE clanId_fk=%i ORDER BY isSubleader, creationDate DESC LIMIT 1)",
 				clanId);
 
 			int numRowsReturned = PQntuples(result);
@@ -3037,7 +3271,7 @@ bool RakNet::Clans_Leave_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void
 				// Destroy the clan if no possible leader (due to asynch)
 				wasDissolved = true;
 				PQclear(result);
-				result = pgsql->QueryVaridic("DELETE FROM lobby2.clans WHERE clanId_pk=%i", clanId);
+				result = pgsql->QueryVariadic("DELETE FROM lobby2.clans WHERE clanId_pk=%i", clanId);
 				PQclear(result);
 				resultCode=L2RC_SUCCESS;
 				return true;
@@ -3050,10 +3284,10 @@ bool RakNet::Clans_Leave_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void
 			PQclear(result);
 
 			// Promote this member to the leader
-			result = pgsql->QueryVaridic("UPDATE lobby2.clans SET leaderUserId_fk=%i WHERE clanId_pk = %i", newLeaderId, clanId);
+			result = pgsql->QueryVariadic("UPDATE lobby2.clans SET leaderUserId_fk=%i WHERE clanId_pk = %i", newLeaderId, clanId);
 			PQclear(result);
 
-			result = pgsql->QueryVaridic("UPDATE lobby2.clanMembers SET isSubleader=FALSE WHERE userId_fk = %i AND clanId_fk = %i", newLeaderId, clanId);
+			result = pgsql->QueryVariadic("UPDATE lobby2.clanMembers SET isSubleader=FALSE WHERE userId_fk = %i AND clanId_fk = %i", newLeaderId, clanId);
 			PQclear(result);
 
 			// Notify users of new leader
@@ -3167,14 +3401,14 @@ bool RakNet::Clans_SendJoinInvitation_PGSQL::ServerDBImpl( Lobby2ServerCommand *
 	}
 
 	// Add row to lobby2.clanMembers
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"INSERT INTO lobby2.clanMembers (userId_fk, clanId_fk, isSubleader, memberState_fk) VALUES "
 		"(%i, %i, false, (SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_JoinInvited') );"
 		,targetId, clanId);
 	PQclear(result);
 
 	// Send email to target
-	SendEmail(targetId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_SendJoinInvitation", pgsql);
+	SendEmail(targetId, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Clans_SendJoinInvitation", pgsql);
 
 	// Send notification to target, leader, subleaders about this invite
 	Notification_Clans_PendingJoinStatus *notification;
@@ -3249,11 +3483,11 @@ bool RakNet::Clans_WithdrawJoinInvitation_PGSQL::ServerDBImpl( Lobby2ServerComma
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", targetId, clanId);
+	result = pgsql->QueryVariadic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", targetId, clanId);
 	PQclear(result);
 
 	// Send email to target
-	SendEmail(targetId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_WithdrawJoinInvitation", pgsql);
+	SendEmail(targetId, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Clans_WithdrawJoinInvitation", pgsql);
 
 	// Send notification to target, leader, subleaders
 	Notification_Clans_PendingJoinStatus *notification;
@@ -3312,7 +3546,7 @@ bool RakNet::Clans_AcceptJoinInvitation_PGSQL::ServerDBImpl( Lobby2ServerCommand
 	}
 
 	// Change status from invited to clan member
-	result = pgsql->QueryVaridic("UPDATE lobby2.clanMembers SET memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active') WHERE userId_fk=%i AND clanId_fk=%i", command->callerUserId, clanId);
+	result = pgsql->QueryVariadic("UPDATE lobby2.clanMembers SET memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active') WHERE userId_fk=%i AND clanId_fk=%i", command->callerUserId, clanId);
 	PQclear(result);
 
 
@@ -3322,7 +3556,7 @@ bool RakNet::Clans_AcceptJoinInvitation_PGSQL::ServerDBImpl( Lobby2ServerCommand
 		int count = GetActiveClanCount(command->callerUserId, pgsql);
 		if (count>1)
 		{
-			result = pgsql->QueryVaridic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i;", command->callerUserId, clanId);
+			result = pgsql->QueryVariadic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i;", command->callerUserId, clanId);
 			PQclear(result);
 			resultCode=L2RC_Clans_AcceptJoinInvitation_ALREADY_IN_DIFFERENT_CLAN;
 			return true;
@@ -3349,7 +3583,7 @@ bool RakNet::Clans_AcceptJoinInvitation_PGSQL::ServerDBImpl( Lobby2ServerCommand
 	unsigned int clanLeaderId = GetClanLeaderId(clanId, pgsql);
 
 	// Send email to leader
-	SendEmail(clanLeaderId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_AcceptJoinInvitation", pgsql);
+	SendEmail(clanLeaderId, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Clans_AcceptJoinInvitation", pgsql);
 
 	resultCode=L2RC_SUCCESS;
 	return true;
@@ -3374,13 +3608,13 @@ bool RakNet::Clans_RejectJoinInvitation_PGSQL::ServerDBImpl( Lobby2ServerCommand
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", command->callerUserId, clanId);
+	result = pgsql->QueryVariadic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", command->callerUserId, clanId);
 	PQclear(result);
 
 	unsigned int clanLeaderId = GetClanLeaderId(clanId, pgsql);
 
 	// Send email to leader
-	SendEmail(clanLeaderId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_RejectJoinInvitation", pgsql);
+	SendEmail(clanLeaderId, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Clans_RejectJoinInvitation", pgsql);
 
 	// Subleader and leader notification
 	DataStructures::List<ClanMemberDescriptor> clanMembers;
@@ -3407,7 +3641,7 @@ bool RakNet::Clans_RejectJoinInvitation_PGSQL::ServerDBImpl( Lobby2ServerCommand
 bool RakNet::Clans_DownloadInvitationList_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 {
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-	PGresult *result = pgsql->QueryVaridic(
+	PGresult *result = pgsql->QueryVariadic(
 		" SELECT clanHandle FROM lobby2.clans INNER JOIN "
 		" (SELECT clanId_fk FROM lobby2.clanMembers WHERE userId_fk=%i AND memberState_fk = "
 		" (SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_JoinInvited') ) as tbl1 "
@@ -3469,14 +3703,14 @@ bool RakNet::Clans_SendJoinRequest_PGSQL::ServerDBImpl( Lobby2ServerCommand *com
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("SELECT requiresInvitationsToJoin FROM lobby2.clans WHERE clanId_pk=%i",clanId);
+	result = pgsql->QueryVariadic("SELECT requiresInvitationsToJoin FROM lobby2.clans WHERE clanId_pk=%i",clanId);
 	bool requiresInvitationsToJoin;
 	PostgreSQLInterface::PQGetValueFromBinary(&requiresInvitationsToJoin, result, 0, "requiresInvitationsToJoin");
 	PQclear(result);
 
 	if (requiresInvitationsToJoin==false)
 	{
-		result = pgsql->QueryVaridic(
+		result = pgsql->QueryVariadic(
 			"INSERT INTO lobby2.clanMembers (userId_fk, clanId_fk, isSubleader, memberState_fk) VALUES "
 			"(%i, %i, false, (SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active') );"
 			,command->callerUserId, clanId);
@@ -3502,14 +3736,14 @@ bool RakNet::Clans_SendJoinRequest_PGSQL::ServerDBImpl( Lobby2ServerCommand *com
 		unsigned int clanLeaderId = GetClanLeaderId(clanId, pgsql);
 
 		// Send email to leader
-		SendEmail(clanLeaderId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_SendJoinRequest", pgsql);
+		SendEmail(clanLeaderId, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Clans_SendJoinRequest", pgsql);
 
 		clanJoined=true;
 	}
 	else
 	{
 		// Add row to lobby2.clanMembers
-		result = pgsql->QueryVaridic(
+		result = pgsql->QueryVariadic(
 			"INSERT INTO lobby2.clanMembers (userId_fk, clanId_fk, isSubleader, memberState_fk) VALUES "
 			"(%i, %i, false, (SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_JoinRequested') );"
 			,command->callerUserId, clanId);
@@ -3565,7 +3799,7 @@ bool RakNet::Clans_WithdrawJoinRequest_PGSQL::ServerDBImpl( Lobby2ServerCommand 
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", command->callerUserId, clanId);
+	result = pgsql->QueryVariadic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", command->callerUserId, clanId);
 
 	if (result==0)
 	{
@@ -3577,7 +3811,7 @@ bool RakNet::Clans_WithdrawJoinRequest_PGSQL::ServerDBImpl( Lobby2ServerCommand 
 
 	// Send email to leader
 	unsigned int clanLeaderId = GetClanLeaderId(clanId, pgsql);
-	SendEmail(clanLeaderId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_WithdrawJoinRequest", pgsql);
+	SendEmail(clanLeaderId, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Clans_WithdrawJoinRequest", pgsql);
 	
 	// Send notification to leader, subleaders
 	DataStructures::List<ClanMemberDescriptor> clanMembers;
@@ -3665,7 +3899,7 @@ bool RakNet::Clans_AcceptJoinRequest_PGSQL::ServerDBImpl( Lobby2ServerCommand *c
 	}
 
 	// Change status to clan member
-	result = pgsql->QueryVaridic("UPDATE lobby2.clanMembers SET memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active') WHERE userId_fk=%i AND clanId_fk=%i", targetId, clanId);
+	result = pgsql->QueryVariadic("UPDATE lobby2.clanMembers SET memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active') WHERE userId_fk=%i AND clanId_fk=%i", targetId, clanId);
 	PQclear(result);
 
 	// Do AFTER the update in case another thread also added to a clan
@@ -3674,7 +3908,7 @@ bool RakNet::Clans_AcceptJoinRequest_PGSQL::ServerDBImpl( Lobby2ServerCommand *c
 		int count = GetActiveClanCount(targetId, pgsql);
 		if (count>1)
 		{
-			result = pgsql->QueryVaridic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i;", targetId, clanId);
+			result = pgsql->QueryVariadic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i;", targetId, clanId);
 			PQclear(result);
 			resultCode=L2RC_Clans_AcceptJoinRequest_TARGET_ALREADY_IN_DIFFERENT_CLAN;
 			return true;
@@ -3698,7 +3932,7 @@ bool RakNet::Clans_AcceptJoinRequest_PGSQL::ServerDBImpl( Lobby2ServerCommand *c
 	}
 
 	// Send email to member
-	SendEmail(targetId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_AcceptJoinRequest", pgsql);
+	SendEmail(targetId, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Clans_AcceptJoinRequest", pgsql);
 
 	resultCode=L2RC_SUCCESS;
 	return true;
@@ -3744,7 +3978,7 @@ bool RakNet::Clans_RejectJoinRequest_PGSQL::ServerDBImpl( Lobby2ServerCommand *c
 		return true;
 	}
 
-	result = pgsql->QueryVaridic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", targetId, clanId);
+	result = pgsql->QueryVariadic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", targetId, clanId);
 	PQclear(result);
 
 	// Subleader and leader notification
@@ -3776,7 +4010,7 @@ bool RakNet::Clans_RejectJoinRequest_PGSQL::ServerDBImpl( Lobby2ServerCommand *c
 	}
 
 	// Send email to member
-	SendEmail(targetId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_RejectJoinRequest", pgsql);
+	SendEmail(targetId, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Clans_RejectJoinRequest", pgsql);
 
 	resultCode=L2RC_SUCCESS;
 	return true;
@@ -3789,7 +4023,7 @@ bool RakNet::Clans_DownloadRequestList_PGSQL::ServerDBImpl( Lobby2ServerCommand 
 	int i;
 
 	// Get all clanMembers that are in state requested of all clans where I am the leader or subleader
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"SELECT C.clanHandle, creationDate, U.handle FROM lobby2.clanMembers INNER JOIN "
 		"(SELECT clanId_pk as clanId FROM lobby2.clans WHERE leaderUserId_fk=%i "
 		"UNION ALL "
@@ -3816,7 +4050,7 @@ bool RakNet::Clans_DownloadRequestList_PGSQL::ServerDBImpl( Lobby2ServerCommand 
 	PQclear(result);
 
 	// Get all clanMembers where I am in state requested
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"SELECT C.clanHandle, M.creationDate FROM lobby2.clanMembers AS M, lobby2.clans AS C WHERE "
 		"M.userId_fk=%i AND C.clanId_pk=M.clanId_fk AND M.memberState_fk = "
 		"(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_JoinRequested');",
@@ -3900,7 +4134,7 @@ bool RakNet::Clans_KickAndBlacklistUser_PGSQL::ServerDBImpl( Lobby2ServerCommand
 		if (clanMemberState!=CMD_UNDEFINED)
 		{
 			// Change status to banned
-			result = pgsql->QueryVaridic(
+			result = pgsql->QueryVariadic(
 				"UPDATE lobby2.clanMembers "
 				"SET banReason=%s, memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Banned') "
 				"WHERE userId_fk=%i AND clanId_fk=%i;", reason.C_String(), targetId, clanId);
@@ -3908,7 +4142,7 @@ bool RakNet::Clans_KickAndBlacklistUser_PGSQL::ServerDBImpl( Lobby2ServerCommand
 		else
 		{
 			// Add row as banned
-			result = pgsql->QueryVaridic(
+			result = pgsql->QueryVariadic(
 				"INSERT INTO lobby2.clanMembers (userId_fk, clanId_fk, isSubleader, memberState_fk, banReason) VALUES "
 				"(%i, %i, false, (SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Banned'), %s );"
 				, targetId, clanId, reason.C_String());
@@ -3918,7 +4152,7 @@ bool RakNet::Clans_KickAndBlacklistUser_PGSQL::ServerDBImpl( Lobby2ServerCommand
 	else if (kick)
 	{
 		// Remove from the clanMembers table
-		result = pgsql->QueryVaridic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", targetId, clanId);
+		result = pgsql->QueryVariadic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", targetId, clanId);
 		PQclear(result);
 	}
 
@@ -3956,7 +4190,7 @@ bool RakNet::Clans_KickAndBlacklistUser_PGSQL::ServerDBImpl( Lobby2ServerCommand
 	}
 
 	// Send email to member
-	SendEmail(targetId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_KickAndBlacklistUser", pgsql);
+	SendEmail(targetId, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Clans_KickAndBlacklistUser", pgsql);
 
 	resultCode=L2RC_SUCCESS;
 	return true;
@@ -4005,7 +4239,7 @@ bool RakNet::Clans_UnblacklistUser_PGSQL::ServerDBImpl( Lobby2ServerCommand *com
 	}
 
 	// Remove from the clanMembers table
-	result = pgsql->QueryVaridic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", targetId, clanId);
+	result = pgsql->QueryVariadic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", targetId, clanId);
 	PQclear(result);
 
 	// Subleader and leader notification
@@ -4028,7 +4262,7 @@ bool RakNet::Clans_UnblacklistUser_PGSQL::ServerDBImpl( Lobby2ServerCommand *com
 	}
 
 	// Send email to member
-	SendEmail(targetId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_UnblacklistUser", pgsql);
+	SendEmail(targetId, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Clans_UnblacklistUser", pgsql);
 
 	resultCode=L2RC_SUCCESS;
 	return true;
@@ -4049,7 +4283,7 @@ bool RakNet::Clans_GetBlacklist_PGSQL::ServerDBImpl( Lobby2ServerCommand *comman
 	}
 
 	// Get the names of all banned members in this clan
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"SELECT U.handle FROM lobby2.clanMembers AS M, lobby2.users AS U "
 		"WHERE M.clanId_fk=%i AND M.userId_fk=U.userId_pk "
 		"AND M.memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Banned');",
@@ -4089,7 +4323,7 @@ bool RakNet::Clans_GetMembers_PGSQL::ServerDBImpl( Lobby2ServerCommand *command,
 
 	unsigned int clanLeaderId = GetClanLeaderId(clanId, pgsql);
 
-	result = pgsql->QueryVaridic("SELECT handle from lobby2.users WHERE userId_pk=%i", clanLeaderId);
+	result = pgsql->QueryVariadic("SELECT handle from lobby2.users WHERE userId_pk=%i", clanLeaderId);
 	if (result==0)
 	{
 		PQclear(result);
@@ -4103,7 +4337,7 @@ bool RakNet::Clans_GetMembers_PGSQL::ServerDBImpl( Lobby2ServerCommand *command,
 	PQclear(result);
 
 	// Get the names of all other active members in this clan
-	result = pgsql->QueryVaridic(
+	result = pgsql->QueryVariadic(
 		"SELECT U.handle FROM lobby2.clanMembers AS M, lobby2.users AS U "
 		"WHERE M.clanId_fk=%i AND M.userId_fk!=%i AND M.userId_fk=U.userId_pk "
 		"AND M.memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active');",
@@ -4120,6 +4354,31 @@ bool RakNet::Clans_GetMembers_PGSQL::ServerDBImpl( Lobby2ServerCommand *command,
 	{
 		PostgreSQLInterface::PQGetValueFromBinary(&memberName, result, i, "handle");
 		clanMembersOtherThanLeader.Insert(memberName);
+	}
+	PQclear(result);
+
+	resultCode=L2RC_SUCCESS;
+	return true;
+}
+
+bool RakNet::Clans_GetList_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
+{
+	(void)command;
+
+	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
+
+	PGresult *result = pgsql->QueryVariadic("SELECT clanhandle from lobby2.clans");
+	if (result==0)
+	{
+		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
+		return true;
+	}
+
+	RakNet::RakString clanName;
+	for (int i=0; i < PQntuples(result); i++)
+	{
+		PostgreSQLInterface::PQGetValueFromBinary(&clanName, result, i, "clanhandle");
+		clanNames.Insert(clanName);
 	}
 	PQclear(result);
 

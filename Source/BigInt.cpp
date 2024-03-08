@@ -8,7 +8,7 @@
 #include "RakMemoryOverride.h"
 #include "Rand.h"
 
-#if defined(_MSC_VER) && !defined(_DEBUG)
+#if defined(_MSC_VER) && !defined(_DEBUG) && _MSC_VER > 1300
 #include <intrin.h>
 #endif
 

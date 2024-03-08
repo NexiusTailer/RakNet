@@ -67,9 +67,9 @@ if(packet)<br>
 			{<br>
 				// Good response, let the PHPDirectoryServer class handle the data<br>
 				// If resultCode is not an empty string, then we got something other than a table<br>
-				// (such as delete row success notification, or the message is for HTTP only and not for this class).<br>
-				RakNet::RakString resultCode = phpDirectoryServer.ProcessHTTPRead(httpConnection.Read());<br>
-				if (resultCode.IsEmpty())<br>
+				<span class="RakNetCode">// (such as delete row success notification, or the message is for HTTP only and not for this class).<br>
+HTTPReadResult readResult = phpDirectoryServer.ProcessHTTPRead(httpResult);<BR>
+if (readResult==HTTP_RESULT_GOT_TABLE)<BR>
 				{<br>
 					/// Got a table which was stored internally. Print it out<br>
 					char out[10000];<br>

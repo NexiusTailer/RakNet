@@ -29,14 +29,19 @@
 #include "UDPProxyCoordinator.h"
 #include "UDPProxyClient.h"
 
+#ifdef USE_UPNP
 // This file is in Samples/upnp
-#include "UPNPNAT.h"
+#include "upnpnat.h"
+#endif
 
 static const unsigned short NAT_PUNCHTHROUGH_FACILITATOR_PORT=60481;
 static const char *NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD="";
-static const char *DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP="216.224.123.180";
+static const char *DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP="8.17.250.34";
+//static const char *DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP="192.168.1.4";
 static const char *COORDINATOR_PASSWORD="Dummy Coordinator Password";
+static const unsigned short NAT_PUNCHTHROUGH_CLIENT_PORT=22111;
 
+#ifdef USE_UPNP
 // UPNP can directly tell the router to open a port (if it works)
 void OpenWithUPNP(NatPunchthroughClient *npc)
 {
@@ -56,6 +61,7 @@ void OpenWithUPNP(NatPunchthroughClient *npc)
 		return;
 	}
 };
+#endif
 
 
 struct NatPunchthroughDebugInterface_PacketFileLogger : public NatPunchthroughDebugInterface
@@ -127,6 +133,7 @@ bool PushSystemStatus(RakNetGUID remoteGuid, SystemAddress remoteAddress)
 	systems.Push(ss, __FILE__, __LINE__);
 	return true;
 }
+#ifdef USE_UPNP
 void PrintStatus(const DataStructures::List<SystemStatus> &systems)
 {
 	system("cls");
@@ -151,7 +158,7 @@ void GUIClientTest()
 	ConnectionGraph2 connectionGraph;
 	rakPeer->AttachPlugin(&connectionGraph);
 	rakPeer->AttachPlugin(&natPunchthroughClient);
-	rakPeer->Startup(1024,0,&SocketDescriptor(0,0), 1);
+	rakPeer->Startup(NAT_PUNCHTHROUGH_CLIENT_PORT,0,&SocketDescriptor(0,0), 1);
 	rakPeer->SetMaximumIncomingConnections(32);
 	rakPeer->Connect(DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP, NAT_PUNCHTHROUGH_FACILITATOR_PORT, NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD, (int) strlen(NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD));
 
@@ -323,6 +330,7 @@ void GUIClientTest()
 	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
 
 }
+#endif
 
 void VerboseTest()
 {
@@ -335,6 +343,8 @@ void VerboseTest()
 	NatPunchthroughDebugInterface_Printf debugInterface;
 	// NAT punchthrough plugin for the server
 	NatPunchthroughServer natPunchthroughServer;
+	NatPunchthroughServerDebugInterface_Printf natPunchthroughServerDebugger;
+	natPunchthroughServer.SetDebugInterface(&natPunchthroughServerDebugger);
 
 	// Fallback systems - if NAT punchthrough fails, we route messages through a server
 	// Maintains a list of running UDPProxyServer
@@ -438,7 +448,7 @@ void VerboseTest()
 		if (str[0]!=0)
 			pc->EXTERNAL_IP_WAIT_AFTER_ALL_ATTEMPTS=atoi(str);
 
-		rakPeer->Startup(1024,0,&socketDescriptor, 1);
+		rakPeer->Startup(NAT_PUNCHTHROUGH_CLIENT_PORT,0,&socketDescriptor, 1);
 		rakPeer->SetMaximumIncomingConnections(32);
 		printf("Enter facilitator IP: ");
 		gets(facilitatorIP);
@@ -459,7 +469,7 @@ void VerboseTest()
 	else
 	{
 		socketDescriptor.port=NAT_PUNCHTHROUGH_FACILITATOR_PORT;
-		rakPeer->Startup(1024,0,&socketDescriptor, 1);
+		rakPeer->Startup(32,0,&socketDescriptor, 1);
 		rakPeer->SetMaximumIncomingConnections(32);
 		rakPeer->AttachPlugin(&natPunchthroughServer);
 		rakPeer->AttachPlugin(&udpProxyServer);
@@ -530,7 +540,9 @@ void VerboseTest()
 				if (p->systemAddress==facilitatorSystemAddress)
 				{
 					printf("Connected to facilitator with GUID %s.\n", p->guid.ToString());
+#ifdef USE_UPNP
 					OpenWithUPNP(&natPunchthroughClient);
+#endif
 				}
 				if (mode[0]=='s' || mode[0]=='S')
 				{
@@ -662,9 +674,9 @@ void VerboseTest()
 int main(void)
 {
 //#ifdef _DEBUG
-//	VerboseTest();
+	VerboseTest();
 //#else
-	GUIClientTest();
+//	GUIClientTest();
 //#endif
 	return 1;
 }

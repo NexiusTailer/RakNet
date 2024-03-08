@@ -52,7 +52,7 @@ void NatPunchthroughServer::User::LogConnectionAttempts(RakNet::RakString &rs)
 {
 	rs.Clear();
 	unsigned int index;
-	char guidStr[128], ipStr[64];
+	char guidStr[128], ipStr[128];
 	guid.ToString(guidStr);
 	systemAddress.ToString(true,ipStr);
 	rs=RakNet::RakString("User systemAddress=%s guid=%s\n", ipStr, guidStr);
@@ -148,7 +148,7 @@ void NatPunchthroughServer::Update(void)
 				{
 					if (connectionAttempt->attemptPhase!=ConnectionAttempt::NAT_ATTEMPT_PHASE_NOT_STARTED &&
 						time > connectionAttempt->startTime &&
-						time - connectionAttempt->startTime > 10000) // Formerly 5000, but sometimes false positives
+						time > 10000 + connectionAttempt->startTime ) // Formerly 5000, but sometimes false positives
 					{
 						RakNet::BitStream outgoingBs;
 						
@@ -176,7 +176,7 @@ void NatPunchthroughServer::Update(void)
 						if (natPunchthroughServerDebugInterface)
 						{
 							char str[1024];
-							char addr1[64], addr2[64];
+							char addr1[128], addr2[128];
 							connectionAttempt->sender->systemAddress.ToString(true,addr1);
 							connectionAttempt->recipient->systemAddress.ToString(true,addr2);
 							sprintf(str, "Sending ID_NAT_TARGET_UNRESPONSIVE to sender %s and recipient %s.", addr1, addr2);
@@ -278,6 +278,7 @@ void NatPunchthroughServer::OnNewConnection(SystemAddress systemAddress, RakNetG
 	user->guid=rakNetGUID;
 	user->mostRecentPort=0;
 	user->systemAddress=systemAddress;
+	user->isReady=true;
 	users.Insert(rakNetGUID, user, true);
 }
 void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
@@ -356,7 +357,7 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 		if (natPunchthroughServerDebugInterface)
 		{
 			RakNet::RakString log;
-			char addr1[64], addr2[64];
+			char addr1[128], addr2[128];
 			packet->systemAddress.ToString(true,addr1);
 			packet->guid.ToString(addr2);
 			log=RakNet::RakString("Got ID_NAT_GET_MOST_RECENT_PORT from systemAddress %s guid %s", addr1, addr2);
@@ -398,7 +399,7 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 				if (natPunchthroughServerDebugInterface)
 				{
 					RakNet::RakString log;
-					char addr1[64], addr2[64];
+					char addr1[128], addr2[128];
 					recipientSystemAddress.ToString(true,addr1);
 					connectionAttempt->recipient->guid.ToString(addr2);
 					log=RakNet::RakString("Sending ID_NAT_CONNECT_AT_TIME to recipient systemAddress %s guid %s", addr1, addr2);
@@ -422,7 +423,7 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 				if (natPunchthroughServerDebugInterface)
 				{
 					RakNet::RakString log;
-					char addr1[64], addr2[64];
+					char addr1[128], addr2[128];
 					senderSystemAddress.ToString(true,addr1);
 					connectionAttempt->sender->guid.ToString(addr2);
 					log=RakNet::RakString("Sending ID_NAT_CONNECT_AT_TIME to sender systemAddress %s guid %s", addr1, addr2);
@@ -457,7 +458,7 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 		if (natPunchthroughServerDebugInterface)
 		{
 			RakNet::RakString log;
-			char addr1[64], addr2[64];
+			char addr1[128], addr2[128];
 			packet->systemAddress.ToString(true,addr1);
 			packet->guid.ToString(addr2);
 			log=RakNet::RakString("Ignoring ID_NAT_GET_MOST_RECENT_PORT from systemAddress %s guid %s", addr1, addr2);
@@ -495,7 +496,7 @@ void NatPunchthroughServer::StartPunchthroughForUser(User *user)
 			if (natPunchthroughServerDebugInterface)
 			{
 				char str[1024];
-				char addr1[64], addr2[64];
+				char addr1[128], addr2[128];
 				sender->systemAddress.ToString(true,addr1);
 				recipient->systemAddress.ToString(true,addr2);
 				sprintf(str, "Sending NAT_ATTEMPT_PHASE_GETTING_RECENT_PORTS to sender %s and recipient %s.", addr1, addr2);

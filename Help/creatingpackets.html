@@ -171,19 +171,6 @@ Packets with structs</td>
     by the pointer will be sent over the network. This is not the case -
     all it would send is the pointer address<br>
     <br>
-    <i>Usability comment:</i><br>
-    <br>
-    You'll notice that I called the NetworkID networkId, and the
-    SystemAddress systemAddress. Why not use more descriptive names, like
-    mineId and mineOwnerSystemAddress? I can tell you from experience that
-    using descriptive names in this particular situation doesn't benefit
-    you in any way because by the time you determine the packet type you
-    know what those variables mean from the context; they can't mean
-    anything else. The benefit of using generic names is that you can cut
-    and paste code to quickly handle your packet without tediously going
-    through and renaming stuff. When you have a lot of packets, as you will
-    in a big game, this saves a lot of hassle.<br>
-    <br>
     Nested Structures<br>
     <br>
     There is no problem with nesting structures. Just keep in mind that the
@@ -233,9 +220,9 @@ Packets with Bitstreams</span></td>
   Lets take our mine example above and use a bitstream to write it out
   instead. We have all the same data as before.<br>
   <br>
-  <span class="RakNetCode">    unsigned char useTimeStamp; // Assign this to ID_TIMESTAMP<br>
+  <span class="RakNetCode">    MessageID useTimeStamp; // Assign this to ID_TIMESTAMP<br>
     unsigned long timeStamp; // Put the system time in here returned by RakNet::GetTime()<br>
-    unsigned char typeId; // This will be assigned to a type I've added after ID_USER_PACKET_ENUM, lets say ID_SET_TIMED_MINE<br>
+    MessageID typeId; // This will be assigned to a type I've added after ID_USER_PACKET_ENUM, lets say ID_SET_TIMED_MINE<br>
     useTimeStamp = ID_TIMESTAMP;<br>
     timeStamp = RakNet::GetTime();<br>
     typeId=ID_SET_TIMED_MINE;<br>
@@ -332,10 +319,14 @@ Packets with Bitstreams</span></td>
     EncodeString, if your string is less than 256 it will write the entire
     string. If it is greater than 256 characters it will truncate it such
     that it would decode to an array with 256 characters, including the
-    null terminator.     <br>
-          <br>
-          <i>Programmer's notes:</i><br>
-          <br>
+    null terminator.     </p>
+  <p>RakNet also has a string class, RakNet::RakString, found in RakString.h</p>
+  <p class="RakNetCode">RakNet::RakString rakString(&quot;The value is %i&quot;, myInt);</p>
+  <p><span class="RakNetCode">bitStream-&gt;write(rakString);</span><br>
+    <br>
+    RakString is approximately 3X faster than std::string.</p>
+  <p><i>Programmer's notes:</i><br>
+    <br>
     1. You can also write structs
     directly into a Bitstream simply by casting it to a (char*). It will
     copy your structs using memcpy. As with structs, it will not
@@ -345,8 +336,7 @@ Packets with Bitstreams</span></td>
     If you use a string very commonly, you can use the StringTable class
     instead. It works the same way as StringCompressor, but can send two
     bytes to represent a known string.<font class="G10" color="#666666" size="2"><font class="G10" color="#666666" size="2"><font class="G10" color="#666666" size="2"><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2"><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2"><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2"><br>
-      
-</p></td>
+  </p></td>
 </tr>
 </tbody>
 </table>

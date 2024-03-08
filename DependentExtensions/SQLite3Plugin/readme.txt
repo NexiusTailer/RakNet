@@ -1,4 +1,4 @@
-Project: SQLLite3
+Project: SQLite3
 
 Description: Just passes calls to sqlite3_exec over the network. Replacement for LightweightDatabaseServer
 

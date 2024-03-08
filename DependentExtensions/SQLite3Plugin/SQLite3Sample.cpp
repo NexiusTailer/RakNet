@@ -7,7 +7,8 @@
 /// Usage of RakNet is subject to the appropriate license agreement.
 
 #include "RakPeerInterface.h"
-#include "SQLite3Plugin.h"
+#include "SQLite3ServerPlugin.h"
+#include "SQLite3ClientPlugin.h"
 #include "BitStream.h"
 #include "RakSleep.h"
 #include "RakNetworkFactory.h"
@@ -17,7 +18,7 @@
 using namespace RakNet;
 
 /// A sample derived implementation that will automatically update the table with all connected systems
-class ConnectionStatePlugin : public SQLite3Plugin
+class ConnectionStatePlugin : public SQLite3ServerPlugin
 {
 public:
 	ConnectionStatePlugin() {lastTimeRemovedDeadRows=0;}
@@ -53,7 +54,7 @@ public:
 	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 	{
 		// Call down to the base class in case it does anything in the future (right now it does nothing)
-		SQLite3Plugin::OnClosedConnection(systemAddress, rakNetGUID, lostConnectionReason);
+		SQLite3ServerPlugin::OnClosedConnection(systemAddress, rakNetGUID, lostConnectionReason);
 
 		// Get the database index associated with the table used for this class
 		DataStructures::DefaultIndexType idx = dbHandles.GetIndexOf(connectionStateIdentifier);
@@ -72,7 +73,7 @@ public:
 	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
 	{
 		// Call down to the base class in case it does anything in the future (right now it does nothing)
-		SQLite3Plugin::OnNewConnection(systemAddress, rakNetGUID, isIncoming);
+		SQLite3ServerPlugin::OnNewConnection(systemAddress, rakNetGUID, isIncoming);
 
 		// Get the database index associated with the table used for this class
 		DataStructures::DefaultIndexType idx = dbHandles.GetIndexOf(connectionStateIdentifier);
@@ -128,7 +129,7 @@ int main(void)
 	RakPeerInterface *rakClient=RakNetworkFactory::GetRakPeerInterface();
 	RakPeerInterface *rakServer=RakNetworkFactory::GetRakPeerInterface();
 	// Client just needs the base class to do sends
-	SQLite3Plugin sqlite3ClientPlugin;
+	SQLite3ClientPlugin sqlite3ClientPlugin;
 	// Server uses our sample derived class to track logins
 	ConnectionStatePlugin sqlite3ServerPlugin;
 	// Default result handler to print what happens on the client

@@ -5,6 +5,7 @@
 #include "Lobby2ResultCode.h"
 #include "RakString.h"
 #include "RakAssert.h"
+#include "RakNetSmartPtr.h"
 
 #if defined(_XBOX) || defined(X360)
 #include "XBOX360Includes.h"
@@ -59,6 +60,8 @@ enum Lobby2MessageID
 	L2MID_Client_StartIgnore,
 	L2MID_Client_StopIgnore,
 	L2MID_Client_GetIgnoreList,
+	L2MID_Client_PerTitleIntegerStorage,
+	L2MID_Client_PerTitleBinaryStorage,
 	L2MID_Friends_SendInvite,
 	L2MID_Friends_AcceptInvite,
 	L2MID_Friends_RejectInvite,
@@ -107,6 +110,7 @@ enum Lobby2MessageID
 	L2MID_Clans_UnblacklistUser,
 	L2MID_Clans_GetBlacklist,
 	L2MID_Clans_GetMembers,
+	L2MID_Clans_GetList,
 	L2MID_Clans_CreateBoard,
 	L2MID_Clans_DestroyBoard,
 	L2MID_Clans_CreateNewTopic,
@@ -128,7 +132,9 @@ enum Lobby2MessageID
 	L2MID_Console_JoinRoom,
 	L2MID_Console_LeaveRoom,
 	L2MID_Console_SendLobbyInvitationToRoom,
+	L2MID_Console_SendDataMessageToUser,
 	L2MID_Console_SendRoomChatMessage,
+	L2MID_Console_SetPresence,
 	L2MID_Notification_Client_IgnoreStatus,
 	L2MID_Notification_Friends_StatusChange,
 	L2MID_Notification_User_ChangedHandle,
@@ -164,7 +170,7 @@ enum Lobby2MessageID
 	L2MID_Notification_Console_ChatEvent,
 	L2MID_Notification_Console_MuteListChanged,
 	L2MID_Notification_Console_Local_Users_Changed,
-	L2MID_Notification_Console_Signaling_Result,
+	L2MID_Notification_ReceivedDataMessageFromUser,
 
 
 	L2MID_COUNT,
@@ -249,7 +255,7 @@ struct Lobby2Message
 	bool ValidateHandle( RakNet::RakString *handle );
 
 	/// Binary data cannot be longer than L2_MAX_BINARY_DATA_LENGTH
-	bool ValidateBinary( BinaryDataBlock *binaryDataBlock);
+	bool ValidateBinary( RakNetSmartPtr<BinaryDataBlock>binaryDataBlock);
 
 	/// Required text cannot be empty.
 	bool ValidateRequiredText( RakNet::RakString *text );
@@ -279,6 +285,8 @@ struct Lobby2Message
 	/// Use it if you need to lookup queries on the callback reply
 #if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
 	uint32_t requestId;
+	// For polling, when necessary
+	virtual bool WasCompleted(void) {return false;}
 #else
 	uint64_t requestId;
 #endif
@@ -330,6 +338,8 @@ struct Client_UpdateAccount;
 struct Client_StartIgnore;
 struct Client_StopIgnore;
 struct Client_GetIgnoreList;
+struct Client_PerTitleIntegerStorage;
+struct Client_PerTitleBinaryStorage;
 struct Friends_SendInvite;
 struct Friends_AcceptInvite;
 struct Friends_RejectInvite;
@@ -378,6 +388,7 @@ struct Clans_KickAndBlacklistUser;
 struct Clans_UnblacklistUser;
 struct Clans_GetBlacklist;
 struct Clans_GetMembers;
+struct Clans_GetList;
 struct Clans_CreateBoard;
 struct Clans_DestroyBoard;
 struct Clans_CreateNewTopic;
@@ -399,7 +410,9 @@ struct Console_CreateRoom;
 struct Console_JoinRoom;
 struct Console_LeaveRoom;
 struct Console_SendLobbyInvitationToRoom;
+struct Console_SendDataMessageToUser;
 struct Console_SendRoomChatMessage;
+struct Console_SetPresence;
 struct Notification_Client_IgnoreStatus;
 struct Notification_Friends_StatusChange;
 struct Notification_User_ChangedHandle;
@@ -435,7 +448,7 @@ struct Notification_Console_RoomMemberConnectivityUpdate;
 struct Notification_Console_ChatEvent;
 struct Notification_Console_MuteListChanged;
 struct Notification_Console_Local_Users_Changed;
-struct Notification_Console_Signaling_Result;
+struct Notification_ReceivedDataMessageFromUser;
 
 // --------------------------------------------- Callback interface for all messages, notifies the user --------------------------------------------
 
@@ -474,6 +487,8 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Client_StartIgnore *message);
 	virtual void MessageResult(Client_StopIgnore *message);
 	virtual void MessageResult(Client_GetIgnoreList *message);
+	virtual void MessageResult(Client_PerTitleIntegerStorage *message);
+	virtual void MessageResult(Client_PerTitleBinaryStorage *message);
 	virtual void MessageResult(Friends_SendInvite *message);
 	virtual void MessageResult(Friends_AcceptInvite *message);
 	virtual void MessageResult(Friends_RejectInvite *message);
@@ -522,6 +537,7 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Clans_UnblacklistUser *message);
 	virtual void MessageResult(Clans_GetBlacklist *message);
 	virtual void MessageResult(Clans_GetMembers *message);
+	virtual void MessageResult(Clans_GetList *message);
 	virtual void MessageResult(Clans_CreateBoard *message);
 	virtual void MessageResult(Clans_DestroyBoard *message);
 	virtual void MessageResult(Clans_CreateNewTopic *message);
@@ -543,7 +559,9 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Console_JoinRoom *message);
 	virtual void MessageResult(Console_LeaveRoom *message);
 	virtual void MessageResult(Console_SendLobbyInvitationToRoom *message);
+	virtual void MessageResult(Console_SendDataMessageToUser *message);
 	virtual void MessageResult(Console_SendRoomChatMessage *message);
+	virtual void MessageResult(Console_SetPresence *message);
 	virtual void MessageResult(Notification_Client_IgnoreStatus *message);
 	virtual void MessageResult(Notification_Friends_StatusChange *message);
 	virtual void MessageResult(Notification_User_ChangedHandle *message);
@@ -579,7 +597,7 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Notification_Console_ChatEvent *message);
 	virtual void MessageResult(Notification_Console_MuteListChanged *message);
 	virtual void MessageResult(Notification_Console_Local_Users_Changed *message);
-	virtual void MessageResult(Notification_Console_Signaling_Result *message);
+	virtual void MessageResult(Notification_ReceivedDataMessageFromUser *message);
 
 	virtual void ExecuteDefaultResult(Lobby2Message *message) { (void)message; }
 
@@ -600,11 +618,16 @@ struct BinaryDataBlock
 	char *binaryData;
 	unsigned int binaryDataLength;
 	BinaryDataBlock() {binaryData=0; binaryDataLength=0;}
-	~BinaryDataBlock() {if (binaryData) rakFree_Ex(binaryData, __FILE__, __LINE__ );}
+	~BinaryDataBlock() {
+		if (binaryData)
+			rakFree_Ex(binaryData, __FILE__, __LINE__ );
+	}
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
 };
 struct CreateAccountParameters
 {
+	CreateAccountParameters() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~CreateAccountParameters() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
 	/// [in] Self-apparent
 	RakNet::RakString firstName;
 	/// [in] Self-apparent
@@ -654,21 +677,26 @@ struct CreateAccountParameters
 	/// [in] Self-apparent
 	unsigned int ageInDays;
 	/// [in] binary data
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	
 
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
 };
 struct PendingInvite
 {
+	PendingInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~PendingInvite() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
 	RakNet::RakString sender;
 	RakNet::RakString subject;
 	RakNet::RakString body;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
 };
 struct EmailResult
 {
+	EmailResult() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~EmailResult() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
 	RakNet::RakString sender;
 	RakNet::RakString recipient;
 	RakNet::RakString subject;
@@ -677,7 +705,7 @@ struct EmailResult
 	bool wasSendByMe;
 	bool wasReadByMe;
 	unsigned int emailID; // Unique ID for this email, used in Emails_Delete, etc.
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 	RakNet::RakString creationDate;
 
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
@@ -693,9 +721,11 @@ struct MatchParticipant
 };
 struct SubmittedMatch
 {
+	SubmittedMatch() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~SubmittedMatch() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
 	DataStructures::List<MatchParticipant> matchParticipants;
 	RakNet::RakString matchNote;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 	// Use EpochTimeToString to convert to a date
 	double whenSubmittedDate;
 	unsigned int matchID; // Unique key, Output parameter to Ranking_GetMatches
@@ -704,10 +734,12 @@ struct SubmittedMatch
 };
 struct ClanInfo
 {
+	ClanInfo() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~ClanInfo() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
 	RakNet::RakString clanName;
 	RakNet::RakString description;
 	RakNet::RakString clanLeader;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 	DataStructures::List<RakNet::RakString> clanMembersOtherThanLeader;
 
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
@@ -789,6 +821,8 @@ struct System_DestroyDatabase : public Lobby2Message
 /// Each title essentially corresponds to a game. For example, the same lobby system may be used for both asteroids and Pac-man. When logging in, and for some functions, it is necessary to specify which title you are logging in under. This way users playing asteroids do not interact with users playing pac-man, where such interations are game specific (such as ranking).
 struct System_CreateTitle : public Lobby2Message
 {
+	System_CreateTitle() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~System_CreateTitle() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
 	__L2_MSG_BASE_IMPL(System_CreateTitle)
 	virtual bool RequiresAdmin(void) const {return true;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -801,7 +835,7 @@ struct System_CreateTitle : public Lobby2Message
 	RakNet::RakString titleName;
 	RakNet::RakString titleSecretKey;
 	int requiredAge;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 };
 struct System_DestroyTitle : public Lobby2Message
 {
@@ -835,6 +869,8 @@ struct System_GetTitleRequiredAge : public Lobby2Message
 };
 struct System_GetTitleBinaryData : public Lobby2Message
 {
+	System_GetTitleBinaryData() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~System_GetTitleBinaryData() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
 	__L2_MSG_BASE_IMPL(System_GetTitleBinaryData)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -847,7 +883,7 @@ struct System_GetTitleBinaryData : public Lobby2Message
 	RakNet::RakString titleName;
 
 	// Output parameters
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 };
 /// Adds the input strings to a table of profanity. non-unique or empty strings can be ignored. This table will be used internally to ensure that handles and clan names do not contain profanity. Multiple calls add to the table. This table will be used for functions that take a user-defined string that is highly visible, such as clan and user names. It does not need to be checked for emails or message boards.
 struct System_RegisterProfanity : public Lobby2Message
@@ -1273,9 +1309,91 @@ struct Client_GetIgnoreList : public Lobby2Message
 	// Output parameters
 	DataStructures::List<RakNet::RakString> ignoredHandles;
 };
+// TODO - only implemented for PS3. Also implement for PC
+struct Client_PerTitleIntegerStorage : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Client_PerTitleIntegerStorage)
+	virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return false;}
+	virtual bool RequiresLogin(void) const {return true;}
+	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
+	virtual bool PrevalidateInput(void);
+
+	/// [in] Name of a created title
+	RakNet::RakString titleName;
+	/// [in] Slot index can be any value, and just lets you store more than one 64 bit integer
+	unsigned int slotIndex;
+	/// [in] Compared against the current value
+	double conditionValue;
+	/// [in] How conditionValue is compared against the conditional value
+	/// Condition always passes if the integer in this slot was never set to begin with
+	enum PTIS_Condition
+	{
+		PTISC_EQUAL,
+		PTISC_NOT_EQUAL,
+		PTISC_GREATER_THAN,
+		PTISC_GREATER_OR_EQUAL,
+		PTISC_LESS_THAN,
+		PTISC_LESS_OR_EQUAL,
+	} conditionForOperation;
+	/// [in] What value is written (used for PTISO_WRITE and PTISO_ADD only)
+	double inputValue;
+	/// [in] What to do. Write will overwrite the existing value with inputValue
+	/// Read will return the existing value in outputValue
+	/// Delete will delete the entry, if it exists
+	/// Add will add inputValue to the current value.
+	enum PTIS_Operation
+	{
+		PTISO_WRITE,
+		PTISO_READ,
+		PTISO_DELETE,
+		PTISO_ADD,
+	} operationToPerform;
+	/// [out] On return, new value is returned in outputValue
+	/// For write, it will be the same as inputValue
+	/// For read, it will be the current value (or 0, if the row does not exist)
+	/// For delete, it is undefined
+	/// For add, it is inputValue plus the existing value. If no existing value, 0 is used as the existing value.
+	double outputValue;
+};
+
+/// For each combination of user and title, structures can be stored
+// TODO - only implemented for PS3. Also implement for PC
+struct Client_PerTitleBinaryStorage : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Client_PerTitleBinaryStorage)
+		Client_PerTitleBinaryStorage() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Client_PerTitleBinaryStorage() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+		virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return false;}
+	virtual bool RequiresLogin(void) const {return true;}
+	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
+	virtual bool PrevalidateInput(void);
+
+	/// [in] Name of a created title
+	RakNet::RakString titleName;
+	/// [in] Slot index can be any value, and just lets you store more than one 64 bit integer
+	unsigned int slotIndex;
+	/// [in/out] Binary data. On Write, will be written to the row. On Read, will be filled in with the value of the row. Unused for delete
+	/// Max length of binaryData is 256K
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	/// [in] What to do. Write will overwrite the existing value with binaryData
+	/// Read will return the existing value in binaryData
+	enum PTIS_Operation
+	{
+		PTISO_WRITE,
+		PTISO_READ,
+		PTISO_DELETE,
+	} operationToPerform;
+};
+
 /// Stores in the database an add friend invite from my handle to their handle. The combination of my handle and their handle must be unique, so you cannot send more than one add friend invite to a single user. Sends an email to their handle the subject, body, and binary data. Note: if myHandle is ignored by theirHandle, then the function fails. See Client_StartIgnore.
 struct Friends_SendInvite : public Lobby2Message
 {
+	Friends_SendInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Friends_SendInvite() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
 	__L2_MSG_BASE_IMPL(Friends_SendInvite)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1290,7 +1408,7 @@ struct Friends_SendInvite : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 
 	// Output parameters
 };
@@ -1298,6 +1416,9 @@ struct Friends_SendInvite : public Lobby2Message
 /// Stores in the database that this user is now my friend. This is bidirectional, which is to say if someone accepts an add friend invite, they are my friend, and I am their friend. Recommended to store by primary key for speed and in case the friend's handle changes. Store in the emails table from my handle to their handle the subject, body, and binary data. Note: if myHandle is ignored by theirHandle, then the function fails. See AddToIgnoreList.
 struct Friends_AcceptInvite : public Lobby2Message
 {
+
+	Friends_AcceptInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Friends_AcceptInvite() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
 	__L2_MSG_BASE_IMPL(Friends_AcceptInvite)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1312,7 +1433,7 @@ struct Friends_AcceptInvite : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 
 	// Output parameters
 };
@@ -1320,6 +1441,9 @@ struct Friends_AcceptInvite : public Lobby2Message
 struct Friends_RejectInvite : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Friends_RejectInvite)
+
+	Friends_RejectInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Friends_RejectInvite() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
@@ -1333,7 +1457,7 @@ struct Friends_RejectInvite : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 
 	// Output parameters
 };
@@ -1371,6 +1495,9 @@ struct Friends_GetFriends : public Lobby2Message
 /// Ends a friendship between two users. Remove from the database the friend entry between my handle and their handle. As with accept add friend invite, this is bidirectional. Either user can terminate the friendship. Store in the emails table from my handle to their handle the subject, body, and binary data, and procedure type flag.
 struct Friends_Remove : public Lobby2Message
 {
+	Friends_Remove() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Friends_Remove() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Friends_Remove)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1385,7 +1512,7 @@ struct Friends_Remove : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 
 	// Output parameters
 };
@@ -1444,6 +1571,10 @@ struct BookmarkedUsers_Get : public Lobby2Message
 /// Adds to an emails table from myHandle (store primary key) to recipient handles (store primary key) the specified subject, body, and binary data. Emails are persistent, therefore emails should be stored in a separate table and referenced by the user. Deleting the user does not delete previously send email. Emails should have an automatic timestamp to store when they were created. Email should be flagged as sent=true (boolean), markedRead=true (boolean), deletedBySender=false (boolean), deletedByReciever=false (boolean).
 struct Emails_Send : public Lobby2Message
 {
+
+	Emails_Send() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Emails_Send() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Emails_Send)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1458,7 +1589,7 @@ struct Emails_Send : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int status;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 
 	// Output parameters
 };
@@ -1555,6 +1686,10 @@ struct Ranking_GetMatches : public Lobby2Message
 /// Because of the large amount of binary data potentially returned, this function is used to retrieve binary data for a particular match. 
 struct Ranking_GetMatchBinaryData : public Lobby2Message
 {
+
+	Ranking_GetMatchBinaryData() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Ranking_GetMatchBinaryData() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Ranking_GetMatchBinaryData)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1566,7 +1701,7 @@ struct Ranking_GetMatchBinaryData : public Lobby2Message
 	unsigned int matchID;
 
 	// Output parameters
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 };
 /// When a match is submitted with Ranking_SubmitMatch, the total running score and number of matches played for each player for each game title and game mode combination should be recorded. Because matches can be pruned wth PruneMatches(), the total score sum and number of scores submitted should be stored, rather than summed up from prior submitted matches.
 struct Ranking_GetTotalScore : public Lobby2Message
@@ -1704,6 +1839,10 @@ struct Ranking_GetRating : public Lobby2Message
 /// userHandle updates the clanDescription and clanBinaryData of a clan with the specified clanHandle. userHandle must be the clan leader.
 struct Clans_Create : public Lobby2Message
 {
+
+	Clans_Create() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_Create() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_Create)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1719,7 +1858,7 @@ struct Clans_Create : public Lobby2Message
 	bool requiresInvitationsToJoin;
 	RakNet::RakString description;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 
 	// Output parameters
 };
@@ -1727,6 +1866,9 @@ struct Clans_Create : public Lobby2Message
 /// userHandle updates the clanDescription and clanBinaryData of a clan with the specified clanHandle. userHandle must be the clan leader.
 struct Clans_SetProperties : public Lobby2Message
 {
+	Clans_SetProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_SetProperties() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_SetProperties)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1739,11 +1881,14 @@ struct Clans_SetProperties : public Lobby2Message
 	// Input parameters
 	RakNet::RakString clanHandle;
 	RakNet::RakString description;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 };
 /// Returns clanDescription and clanBinaryData for the given clan.
 struct Clans_GetProperties : public Lobby2Message
 {
+	Clans_GetProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_GetProperties() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_GetProperties)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1758,12 +1903,16 @@ struct Clans_GetProperties : public Lobby2Message
 
 	// Output parameters
 	RakNet::RakString description;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 };
 
 /// Each member of each clan has the the properties clanMemberDescription and clanMemberBinaryData which default to empty. These properties can be set here, and retrieved via GetClanMemberProperties
 struct Clans_SetMyMemberProperties : public Lobby2Message
 {
+
+	Clans_SetMyMemberProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_SetMyMemberProperties() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_SetMyMemberProperties)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1776,7 +1925,7 @@ struct Clans_SetMyMemberProperties : public Lobby2Message
 	// Input parameters
 	RakNet::RakString clanHandle;
 	RakNet::RakString description;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 
 	// Output parameters
 };
@@ -1834,6 +1983,9 @@ struct Clans_SetMemberRank : public Lobby2Message
 /// Returns properties for a clan member of a given clan
 struct Clans_GetMemberProperties : public Lobby2Message
 {
+	Clans_GetMemberProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_GetMemberProperties() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_GetMemberProperties)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1849,7 +2001,7 @@ struct Clans_GetMemberProperties : public Lobby2Message
 
 	// Output parameters
 	RakNet::RakString description;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 	unsigned int rank;
 	bool isSubleader;
 	ClanMemberState clanMemberState;
@@ -1877,6 +2029,9 @@ struct Clans_ChangeHandle : public Lobby2Message
 /// If this user is the leader of the clan, and dissolveIfClanLeader is true, then also destroy the clan and remove all members from the clan, as well as all data associated with the clan (clan boards, join requests, etc). If the clan is automatically destroyed in this way,  use Emails_Send() to each clan member with clanDissolvedSubject and clanDissolvedBody. The sender of the email should be the clan leader. If the clan is not destroyed, then leadership passes to the oldest subleader. If no subleaders exist, leadership passes to the oldest member. If no other members exist, the clan is destroyed.
 struct Clans_Leave : public Lobby2Message
 {
+	Clans_Leave() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_Leave() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_Leave)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1892,7 +2047,7 @@ struct Clans_Leave : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 
 	// Output parameters
 	bool wasDissolved;
@@ -1902,7 +2057,7 @@ struct Clans_Leave : public Lobby2Message
 struct Clans_Get : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_Get)
-		virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return true;}
 	virtual bool RequiresLogin(void) const {return true;}
@@ -1917,6 +2072,10 @@ struct Clans_Get : public Lobby2Message
 /// if myPrimaryKey is a leader or subleader of clanHandle, and invitedUserHandle is a valid user not already invited to this clan, add this user to the invite table. The invite table contains the clan, who send the invite, and who the invite was sent to, and when it was sent. Invites expire after expiration time in seconds. Also, use Emails_Send() to send an email from myPrimaryKey to invitedUserHandle with the specified subject and body.
 struct Clans_SendJoinInvitation : public Lobby2Message
 {
+	
+	Clans_SendJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+		~Clans_SendJoinInvitation() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_SendJoinInvitation)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1932,13 +2091,16 @@ struct Clans_SendJoinInvitation : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 
 	// Output parameters
 };
 /// if myPrimaryKey is a leader or subleader of clanHandle, and invitedUserHandle is a valid user with an invite to this clan, remove this invite.  Also, use Emails_Send() to send an email from myPrimaryKey to invitedUserHandle with the specified subject and body.
 struct Clans_WithdrawJoinInvitation : public Lobby2Message
 {
+	Clans_WithdrawJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_WithdrawJoinInvitation() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_WithdrawJoinInvitation)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1954,11 +2116,14 @@ struct Clans_WithdrawJoinInvitation : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 };
 /// If myPrimaryKey has an invitation to the specified clan, add him to the clan. Fail on specified output parameters. Use Emails_Send() to send an email from myPrimaryKey to all clan members with the specified subject and body.
 struct Clans_AcceptJoinInvitation : public Lobby2Message
 {
+	Clans_AcceptJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_AcceptJoinInvitation() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_AcceptJoinInvitation)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1973,7 +2138,7 @@ struct Clans_AcceptJoinInvitation : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 	bool failIfAlreadyInClan;
 
 	// Output parameters
@@ -1981,6 +2146,9 @@ struct Clans_AcceptJoinInvitation : public Lobby2Message
 /// If we have an open clan invitation, reject it (just delete it from the database).
 struct Clans_RejectJoinInvitation : public Lobby2Message
 {
+	Clans_RejectJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_RejectJoinInvitation() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_RejectJoinInvitation)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1995,7 +2163,7 @@ struct Clans_RejectJoinInvitation : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 
 	// Output parameters
 };
@@ -2017,6 +2185,9 @@ struct Clans_DownloadInvitationList : public Lobby2Message
 /// If requiresInvitationsToJoin==false when CreateClan() was called, send a join request to the specified clan, if we don't have one already. Join request expires after expiration time in seconds. Also, use Emails_Send() to send an email from myPrimaryKey to the clan leader and all subleaders with the specified subject and body.
 struct Clans_SendJoinRequest : public Lobby2Message
 {
+	Clans_SendJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_SendJoinRequest() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_SendJoinRequest)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -2031,7 +2202,7 @@ struct Clans_SendJoinRequest : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 
 	// Output parameters
 	bool clanJoined;
@@ -2039,6 +2210,9 @@ struct Clans_SendJoinRequest : public Lobby2Message
 /// Withdraws a previously sent clan join request via SendClanJoinRequest.  Use Emails_Send() to send an email from myPrimaryKey to the clan leader and all subleaders with the specified subject and body.
 struct Clans_WithdrawJoinRequest : public Lobby2Message
 {
+	Clans_WithdrawJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_WithdrawJoinRequest() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_WithdrawJoinRequest)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -2053,7 +2227,7 @@ struct Clans_WithdrawJoinRequest : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 
 	// Output parameters
 
@@ -2061,6 +2235,9 @@ struct Clans_WithdrawJoinRequest : public Lobby2Message
 /// A clan leader or subleader accepts a join request from requestingUserHandle to this clan. requestingUserHandle joins the clan as a regular member.  Use Emails_Send() to send an email from requestingUserHandle to all clan members with the specified subject and body.
 struct Clans_AcceptJoinRequest : public Lobby2Message
 {
+	Clans_AcceptJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_AcceptJoinRequest() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_AcceptJoinRequest)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -2075,7 +2252,7 @@ struct Clans_AcceptJoinRequest : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 	RakNet::RakString requestingUserHandle;
 	bool failIfAlreadyInClan;	
 
@@ -2084,6 +2261,9 @@ struct Clans_AcceptJoinRequest : public Lobby2Message
 /// Rejects a clan join request from requestingUserHandle. Send an email from myPrimaryKey to requestingUserHandle with the specified subject and body.
 struct Clans_RejectJoinRequest : public Lobby2Message
 {
+	Clans_RejectJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_RejectJoinRequest() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_RejectJoinRequest)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -2098,7 +2278,7 @@ struct Clans_RejectJoinRequest : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 	RakNet::RakString requestingUserHandle;
 
 	// Output parameters
@@ -2123,6 +2303,9 @@ struct Clans_DownloadRequestList : public Lobby2Message
 /// Kicks a user from the clan and/or blacklists a user so they cannot join. Only a clan leader or subleader can perform this operation. The operation can only be performed on members of lower status (leader can perform on subleader or regular member or nonmember, subleader on regular members or nonmember). If a member is banned, they are added to the banned table which contains the member's primary key, which user banned them, and the reason. Email is sent from myPrimaryKey to all leaders if a clan member is banned. Emails is furthermore sent to all clan members if successfully kicked. 
 struct Clans_KickAndBlacklistUser : public Lobby2Message
 {
+	Clans_KickAndBlacklistUser() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_KickAndBlacklistUser() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_KickAndBlacklistUser)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -2137,7 +2320,7 @@ struct Clans_KickAndBlacklistUser : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 	RakNet::RakString targetHandle;
 	bool kick;
 	bool blacklist;
@@ -2146,6 +2329,9 @@ struct Clans_KickAndBlacklistUser : public Lobby2Message
 /// Removes a user from the blacklist for this clan.
 struct Clans_UnblacklistUser : public Lobby2Message
 {
+	Clans_UnblacklistUser() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_UnblacklistUser() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_UnblacklistUser)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -2161,7 +2347,7 @@ struct Clans_UnblacklistUser : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 };
 /// Returns a list of all members  blacklisted from this clan. Each element in the list contains the handle of the user that did the ban, who was banned, when the user was banned, and the reason passed to ClanKickAndBlacklistUser
 struct Clans_GetBlacklist : public Lobby2Message
@@ -2200,9 +2386,27 @@ struct Clans_GetMembers : public Lobby2Message
 	RakNet::RakString clanLeader;
 	DataStructures::List<RakNet::RakString> clanMembersOtherThanLeader;
 };
+/// Returns all clans names
+struct Clans_GetList : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Clans_GetList)
+		virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return true;}
+	virtual bool RequiresLogin(void) const {return true;}
+	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
+
+	// Input parameters
+
+	// Output parameters
+	DataStructures::List<RakNet::RakString> clanNames;
+};
 /// Creates a new clan board for clan members to post in using AddPostToClanBoard. Clan boards are unique, and are destroyed when the clan is destroyed, or if DestroyClanBoard is called.
 struct Clans_CreateBoard : public Lobby2Message
 {
+	Clans_CreateBoard() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_CreateBoard() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_CreateBoard)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -2218,7 +2422,7 @@ struct Clans_CreateBoard : public Lobby2Message
 	bool allowPublicReads;
 	bool allowPublicWrites;
 	RakNet::RakString description;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 
 	// Output parameters
 };
@@ -2243,6 +2447,9 @@ struct Clans_DestroyBoard : public Lobby2Message
 /// Each clan has a clan board that only clan members can post to. This adds a topic to the clan board. Posts should reference the primary key of the poster, so that even if the poster chagnes his or her handle, the post author is updated properly. Each post automatically stores the timestamp when it was created. Banned users may not add new posts to the clan board.
 struct Clans_CreateNewTopic : public Lobby2Message
 {
+	Clans_CreateNewTopic() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_CreateNewTopic() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_CreateNewTopic)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -2257,7 +2464,7 @@ struct Clans_CreateNewTopic : public Lobby2Message
 	RakNet::RakString clanBoardName;
 	RakNet::RakString body;
 	RakNet::RakString subject;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 
 	// Output parameters
 	unsigned int postId; // (unique for clanHandle)
@@ -2265,6 +2472,9 @@ struct Clans_CreateNewTopic : public Lobby2Message
 /// Replies to a topic created with Clans_CreateTopic(). If postId references a post within a topic, just add the reply to the last post.  Banned users may not add new posts to the clan board.
 struct Clans_ReplyToTopic : public Lobby2Message
 {
+	Clans_ReplyToTopic() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
+	~Clans_ReplyToTopic() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+
 	__L2_MSG_BASE_IMPL(Clans_ReplyToTopic)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -2278,7 +2488,7 @@ struct Clans_ReplyToTopic : public Lobby2Message
 	unsigned int postId; // returned from Clans_CreateTopic()
 	RakNet::RakString subject;
 	RakNet::RakString body;
-	BinaryDataBlock binaryData;
+	RakNetSmartPtr<BinaryDataBlock>binaryData;
 };
 /// The clan leader or subleaders may remove posts or topics from a clan board.
 struct Clans_RemovePost : public Lobby2Message
@@ -2492,6 +2702,15 @@ struct Console_SendLobbyInvitationToRoom : public Lobby2Message
 	virtual bool RequiresLogin(void) const {return true;}
 };
 
+struct Console_SendDataMessageToUser : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Console_SendDataMessageToUser)
+		virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return true;}
+	virtual bool RequiresLogin(void) const {return true;}
+};
+
 struct Console_SendRoomChatMessage : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Console_SendRoomChatMessage)
@@ -2501,6 +2720,17 @@ struct Console_SendRoomChatMessage : public Lobby2Message
 	virtual bool RequiresLogin(void) const {return true;}
 
 	RakNet::RakString message;
+};
+
+struct Console_SetPresence : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Console_SetPresence)
+		virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return true;}
+	virtual bool RequiresLogin(void) const {return true;}
+
+	RakNet::BitStream presenceInfo;
 };
 
 struct Notification_Client_IgnoreStatus : public Lobby2Message
@@ -2526,6 +2756,7 @@ struct Notification_Friends_StatusChange : public Lobby2Message
 	enum Status
 	{
 		FRIEND_LOGGED_IN,
+		FRIEND_LOGGED_IN_DIFFERENT_CONTEXT, // Used for consoles, different game
 		FRIEND_LOGGED_OFF,
 		FRIEND_ACCOUNT_WAS_DELETED,
 		YOU_WERE_REMOVED_AS_A_FRIEND,
@@ -2925,9 +3156,9 @@ struct Notification_Console_Local_Users_Changed : public Lobby2Message
 	virtual bool RequiresLogin(void) const {return false;}
 };
 
-struct Notification_Console_Signaling_Result : public Lobby2Message
+struct Notification_ReceivedDataMessageFromUser : public Lobby2Message
 {
-	__L2_MSG_BASE_IMPL(Notification_Console_Signaling_Result)
+	__L2_MSG_BASE_IMPL(Notification_ReceivedDataMessageFromUser)
 		virtual bool RequiresAdmin(void) const {return true;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
@@ -2974,6 +3205,8 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Client_StartIgnore);
 			__L2_MSG_FACTORY_BASE(Client_StopIgnore);
 			__L2_MSG_FACTORY_BASE(Client_GetIgnoreList);
+			__L2_MSG_FACTORY_BASE(Client_PerTitleIntegerStorage);
+			__L2_MSG_FACTORY_BASE(Client_PerTitleBinaryStorage);
 			__L2_MSG_FACTORY_BASE(Friends_SendInvite);
 			__L2_MSG_FACTORY_BASE(Friends_AcceptInvite);
 			__L2_MSG_FACTORY_BASE(Friends_RejectInvite);
@@ -3022,6 +3255,7 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Clans_UnblacklistUser);
 			__L2_MSG_FACTORY_BASE(Clans_GetBlacklist);
 			__L2_MSG_FACTORY_BASE(Clans_GetMembers);
+			__L2_MSG_FACTORY_BASE(Clans_GetList);
 			__L2_MSG_FACTORY_BASE(Clans_CreateBoard);
 			__L2_MSG_FACTORY_BASE(Clans_DestroyBoard);
 			__L2_MSG_FACTORY_BASE(Clans_CreateNewTopic);
@@ -3043,7 +3277,9 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Console_JoinRoom);
 			__L2_MSG_FACTORY_BASE(Console_LeaveRoom);
 			__L2_MSG_FACTORY_BASE(Console_SendLobbyInvitationToRoom);
+			__L2_MSG_FACTORY_BASE(Console_SendDataMessageToUser);
 			__L2_MSG_FACTORY_BASE(Console_SendRoomChatMessage);
+			__L2_MSG_FACTORY_BASE(Console_SetPresence);
 			__L2_MSG_FACTORY_BASE(Notification_Client_IgnoreStatus);
 			__L2_MSG_FACTORY_BASE(Notification_Friends_StatusChange);
 			__L2_MSG_FACTORY_BASE(Notification_User_ChangedHandle);
@@ -3077,7 +3313,7 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Notification_Console_ChatEvent);
 			__L2_MSG_FACTORY_BASE(Notification_Console_MuteListChanged);
 			__L2_MSG_FACTORY_BASE(Notification_Console_Local_Users_Changed);
-			__L2_MSG_FACTORY_BASE(Notification_Console_Signaling_Result);
+			__L2_MSG_FACTORY_BASE(Notification_ReceivedDataMessageFromUser);
 
 		default:
 			return 0;

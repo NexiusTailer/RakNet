@@ -22,13 +22,14 @@ to other systems</span></td>
 <td><span class="RakNetBlueHeader">Find
 who to connect to<br>
 </span><br>
- There are 4 ways to find other systems to connect to:<br>
+ There are 5 ways to find other systems to connect to:<br>
 <ol>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Direct IP entry (you already know it)</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">LAN Broadcast</li>
-<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Using the lightweight database plugin as a directory
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Using the SQLLite plugin as a directory
 server</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Using the lobby server</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Using DirectoryServer.php</li>
 </ol>
 <span class="RakNetBlueHeader">Option 1: Direct IP Entry</span><br>
 <br>
@@ -120,19 +121,12 @@ no GUI or user interaction required</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Won't work for the general internet</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Not as flexible as the <a href="lightweightdatabase.html">lightweight database plugin</a></li>
 </ul>
-<span class="RakNetBlueHeader">Option 3: Lightweight Database Plugin</span><br>
+<span class="RakNetBlueHeader">Option 3: SQLLite Plugin</span><br>
 <br>
-The lightweight database plugin provides functionality to add, remove,
-update, and query rows in one or more table(s) hosted on another
-system. While you could use it for any purpose, the design and intent
-behind the class was to allow one system to&nbsp;act as a directory
-server, listing games for clients to connect to. This plugin provides
+The <a href="sqlite3plugin.html">SQLLite3 plugin</a>, found at DependentExtensions\SQLite3Plugin, contains the networking needed to make SQLLite work over the internet. The sample code has an implementation that will track all connections made to the server, allowing you to query the server for systems that have connected or disconnected. You can modify or update the sample to list game properties.  This plugin provides
 functionality similar to the game listings you find on online services,
 or for first person shooters.<br>
 <br><img style="width: 512px; height: 128px;" alt="Directory Server Listing" src="DirectoryServerListing.jpg"><br>
-<br>
-See the sample <span style="font-weight: bold;">LightweightDatabase</span>
-for an example of how to use this plugin.<br>
 <br>
 <span style="font-style: italic;">Advantages:<br>
 </span>
@@ -149,6 +143,7 @@ list if they crash.</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Requires a separate, dedicated server to host the
 plugin</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Does not support persistent data, such as friends.</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">SQL queries can be hard to write or setup in some cases</li>
 </ul>
 <span class="RakNetBlueHeader">Option 4: Lobby Server</span><br>
 <br>
@@ -175,7 +170,22 @@ for a demonstration of how to use this feature.<br>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Requires a separate, dedicated server to host the
 plugin, and the server must have database support</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Feature is relatively large and complex compared to a
-simple game listing, requiring a good investment in time and programming</li>
+  simple game listing, requiring a good investment in time and programming</li>
+</ul>
+<p><span class="RakNetBlueHeader">Option 5: DirectoryServer.php</span><br>
+  <br>
+DirectoryServer.php and related code can be found at Samples\PHPDirectoryServer. It is a cheap way to list games, by using your web server to store when a game was uploaded, and string based information about that game. For more information, see the <a href="phpdirectoryserver.html">manual page</a> on this feature.<br>
+<br>
+<span style="font-style: italic;">Advantages:
+</span>
+<ul>
+  <li>Doesn't require a dedicated server, just a webpage</li>
+</ul>
+<span style="font-style: italic;">Disadvantages:<br>
+</span>
+<ul>
+  <li>Inflexible</li>
+  <li>Sometimes unreliable (may require multiple queries)</li>
 </ul>
 <span class="RakNetBlueHeader">Initiate
 connection attempt<span style="font-weight: normal;"><br>
@@ -197,10 +207,7 @@ RakPeerInterface::SetPassword(), the remote system will reply with
 ID_INVALID_PASSWORD.</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">passwordDataLength is the length, in bytes, of
 passwordData</li>
-<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">connectionSocketIndex is which socket to use should
-RakNet be bound to more than one socket. This can be ignored by most
-users (use the default parameter 0). See RakPeer::Startup() in the
-header file RakPeerInterface.h for more information on this parameter.</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">connectionSocketIndex is obsolete, do not use</li>
 </ul>
 <p>Connect() will return true for a successful attempt, false if you are
   already connected to this system, or if the domain name cannot be
@@ -230,7 +237,7 @@ plugin to resolve this.</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">On Windows Vista,&nbsp;the network driver
 security service pack sometimes breaks UDP, not just for RakNet, but in
 general, even for DirectPlay. This service pack should be rolled back,
-and not installed. (This may be fixed eventually)</li>
+and not installed.</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2"><a href="secureconnections.html">Secure
 connections</a> are enabled, and your system failed the security
 check.</li>

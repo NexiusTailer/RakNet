@@ -291,6 +291,7 @@ ThreadPool<InputType, OutputType>::ThreadPool()
 	numThreadsRunning=0;
 	threadDataInterface=0;
 	tdiContext=0;
+	numThreadsWorking=0;
 
 }
 template <class InputType, class OutputType>

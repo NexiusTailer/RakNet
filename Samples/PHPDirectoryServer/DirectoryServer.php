@@ -268,8 +268,8 @@ function update_game_list() {
 
 		foreach($updates as $akey => $avalue) {
 			$game[$akey] = $avalue;
-			if(empty($avalue))
-				unset($game[$akey]);
+/*			if(empty($avalue))
+				unset($game[$akey]); */
 		}
 
 		$game['__SEC_AFTER_EPOCH_SINCE_LAST_UPDATE'] = time();

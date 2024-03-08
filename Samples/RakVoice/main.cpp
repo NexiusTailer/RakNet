@@ -105,7 +105,7 @@ int main(void)
 	err = Pa_OpenStream(
 		&stream,
 		Pa_GetDefaultInputDeviceID(),
-		1, // Num channels, whatever the fuck that means
+		1, // Num channels, whatever that means
 		PA_SAMPLE_TYPE,
 		NULL,
 		Pa_GetDefaultOutputDeviceID(),
@@ -137,7 +137,7 @@ int main(void)
 		printf("Enter IP of facilitator (enter for default): ");
 		gets(facilitatorIP);
 		if (facilitatorIP[0]==0)
-			strcpy(facilitatorIP, "216.224.123.180");
+			strcpy(facilitatorIP, "8.17.250.34");
 		facilitator.SetBinaryAddress(facilitatorIP);
 		facilitator.port=NAT_PUNCHTHROUGH_FACILITATOR_PORT;
 		rakPeer->Connect(facilitatorIP, NAT_PUNCHTHROUGH_FACILITATOR_PORT, 0, 0);

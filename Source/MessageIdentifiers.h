@@ -259,22 +259,21 @@ enum DefaultMessageIDTypes
 	ID_INCOMPATIBLE_PROTOCOL_VERSION,
 
 	/// \internal For FullyConnectedMesh2 plugin
-	ID_FCM2_ELAPSED_RUNTIME,
-	/// Returned by FullyConnectedMesh2 to tell us of a new host. New host is contained in Packet::systemAddress and Packet::guid
 	ID_FCM2_NEW_HOST,
+	/// \internal For FullyConnectedMesh2 plugin
+	ID_FCM2_REQUEST_FCMGUID,
+	/// \internal For FullyConnectedMesh2 plugin
+	ID_FCM2_RESPOND_FCMGUID,
+	/// \internal For FullyConnectedMesh2 plugin
+	ID_FCM2_INFORM_FCMGUID,
 
 	/// UDP proxy messages. Second byte indicates type.
 	ID_UDP_PROXY_GENERAL,
 
 	/// SQLite3Plugin - execute
-	ID_SQLLITE3_EXEC,
+	ID_SQLite3_EXEC,
 	/// SQLite3Plugin - Remote database is unknown
-	ID_SQLLITE3_UNKNOWN_DB,
-
-	// Router2Plugin
-	ID_ROUTER2_PING_REQUEST,
-	ID_ROUTER2_PING_RESPONSE,
-	ID_ROUTER2_SETUP_FORWARDING,
+	ID_SQLite3_UNKNOWN_DB,
 
 	/// Serialize construction for an object that already exists on the remote system
 	ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING,

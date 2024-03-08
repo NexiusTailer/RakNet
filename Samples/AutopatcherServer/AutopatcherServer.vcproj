@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;./../../DependentExtensions/AutopatcherPostgreRepository;./../../DependentExtensions/PostgreSQLInterface"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;./../../DependentExtensions/Autopatcher/AutopatcherPostgreRepository;./../../DependentExtensions/Autopatcher/PostgreSQLInterface"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -71,7 +71,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;./../../DependentExtensions/AutopatcherPostgreRepository;./../../DependentExtensions/PostgreSQLInterface"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;./../../DependentExtensions/Autopatcher/AutopatcherPostgreRepository;./../../DependentExtensions/Autopatcher/PostgreSQLInterface"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -122,16 +122,16 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\DependentExtensions\AutopatcherServer.cpp">
+				RelativePath="..\..\DependentExtensions\Autopatcher\AutopatcherServer.cpp">
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\AutopatcherServer.h">
+				RelativePath="..\..\DependentExtensions\Autopatcher\AutopatcherServer.h">
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\CreatePatch.cpp">
+				RelativePath="..\..\DependentExtensions\Autopatcher\CreatePatch.cpp">
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\MemoryCompressor.cpp">
+				RelativePath="..\..\DependentExtensions\Autopatcher\MemoryCompressor.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -139,10 +139,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\DependentExtensions\CreatePatch.h">
+				RelativePath="..\..\DependentExtensions\Autopatcher\CreatePatch.h">
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\MemoryCompressor.h">
+				RelativePath="..\..\DependentExtensions\Autopatcher\MemoryCompressor.h">
 			</File>
 		</Filter>
 		<Filter
@@ -187,7 +187,7 @@
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\..\DependentExtensions\AutopatcherPostgreRepository\Readme.txt">
+			RelativePath="..\..\DependentExtensions\Autopatcher\AutopatcherPostgreRepository\Readme.txt">
 		</File>
 	</Files>
 	<Globals>

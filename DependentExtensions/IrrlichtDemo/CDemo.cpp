@@ -1063,69 +1063,59 @@ void CDemo::UpdateRakNet(void)
 	}
 	for (packet=tcpInterface->Receive(); packet; tcpInterface->DeallocatePacket(packet), packet=tcpInterface->Receive())
 	{
-		if (packet->systemAddress==httpConnection->GetServerAddress() && httpConnection->ProcessFinalTCPPacket(packet))
-		{
-			int code;
-			RakNet::RakString data;
-			/// Check that the request was handled and is not an error code
-			if (httpConnection->HasBadResponse(&code, &data))
-			{
-				PushMessage(RakNet::RakString("Bad HTTP response code %i: %s", code, data.C_String()));
-			}
-			else
-			{
-				// Good response, let the PHPDirectoryServer class handle the data
-				// If resultCode is not an empty string, then we got something other than a table
-				// (such as delete row success notification, or the message is for HTTP only and not for this class).
-				RakNet::RakString httpRead = httpConnection->Read();
-				HTTPReadResult readResult = phpDirectoryServer->ProcessHTTPRead(httpRead);
+		httpConnection->ProcessTCPPacket(packet);
+	}
+	if (httpConnection->HasRead())
+	{
+		RakNet::RakString httpResult = httpConnection->Read();
+		// Good response, let the PHPDirectoryServer2 class handle the data
+		// If resultCode is not an empty string, then we got something other than a table
+		// (such as delete row success notification, or the message is for HTTP only and not for this class).
+		HTTPReadResult readResult = phpDirectoryServer2->ProcessHTTPRead(httpResult);
 
-				if (readResult==HTTP_RESULT_GOT_TABLE)
+		if (readResult==HTTP_RESULT_GOT_TABLE)
+		{
+			/// Got a table which was stored internally. Print it out
+			const DataStructures::Table *games = phpDirectoryServer2->GetLastDownloadedTable();
+			// __GAME_NAME is an automatic column passed to PHPDirectoryServer::UploadTable
+			unsigned int gameNameIndex = games->ColumnIndex("__GAME_NAME");
+			// RakNetGUID is a column we manually added using our own GUID with PHPDirectoryServer::SetField
+			// We need to use RakNetGUID because NAT punchthrough refers to systems by RakNetGUID, rather than by SystemAddress
+			unsigned int guidIndex = games->ColumnIndex("RakNetGUID");
+			DataStructures::Table::Row *row;
+			unsigned int i;
+			unsigned int tableSize=0, connectionCount=0;
+			DataStructures::Page<unsigned, DataStructures::Table::Row*, _TABLE_BPLUS_TREE_ORDER> *cur = games->GetRows().GetListHead();
+			while (cur)
+			{
+				for (i=0; i < (unsigned)cur->size; i++)
 				{
-					/// Got a table which was stored internally. Print it out
-					const DataStructures::Table *games = phpDirectoryServer->GetLastDownloadedTable();
-					// __GAME_NAME is an automatic column passed to PHPDirectoryServer::UploadTable
-					unsigned int gameNameIndex = games->ColumnIndex("__GAME_NAME");
-					// RakNetGUID is a column we manually added using our own GUID with PHPDirectoryServer::SetField
-					// We need to use RakNetGUID because NAT punchthrough refers to systems by RakNetGUID, rather than by SystemAddress
-					unsigned int guidIndex = games->ColumnIndex("RakNetGUID");
-					DataStructures::Table::Row *row;
-					unsigned int i;
-					unsigned int tableSize=0, connectionCount=0;
-					DataStructures::Page<unsigned, DataStructures::Table::Row*, _TABLE_BPLUS_TREE_ORDER> *cur = games->GetRows().GetListHead();
-					while (cur)
+					RakAssert(gameNameIndex!=-1);
+					row = cur->data[i];
+					// Make sure it's the same game, since the PHPDirectoryServer can return other games too
+					if (gameNameIndex!=-1 && strcmp(row->cells[gameNameIndex]->c, "IrrlichtDemo")==0)
 					{
-						for (i=0; i < (unsigned)cur->size; i++)
+						tableSize++;
+						RakNet::RakString guidStr = row->cells[guidIndex]->c;
+						RakNetGUID guid;
+						guid.FromString(guidStr.C_String());
+						// Connect as long as I'm not connecting to myself
+						if (guid!=rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
 						{
-							RakAssert(gameNameIndex!=-1);
-							row = cur->data[i];
-							// Make sure it's the same game, since the PHPDirectoryServer can return other games too
-							if (gameNameIndex!=-1 && strcmp(row->cells[gameNameIndex]->c, "IrrlichtDemo")==0)
-							{
-								tableSize++;
-								RakNet::RakString guidStr = row->cells[guidIndex]->c;
-								RakNetGUID guid;
-								guid.FromString(guidStr.C_String());
-								// Connect as long as I'm not connecting to myself
-								if (guid!=rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
-								{
-									connectionCount++;
-									systemsToConnectTo.Push(guid);
-								}
-							}
+							connectionCount++;
+							systemsToConnectTo.Push(guid);
 						}
-						cur=cur->next;
 					}
-					PushMessage(RakNet::RakString("DirectoryServer returned %i rows, of which we are connecting to %i",tableSize,connectionCount));
 				}
-				else if (readResult==HTTP_RESULT_ERROR)
-				{
-					/// Some other result, could be an error, could be a general HTTP message not used by this class
-					PushMessage(httpRead);
-				}
+				cur=cur->next;
 			}
+			PushMessage(RakNet::RakString("DirectoryServer returned %i rows, of which we are connecting to %i",tableSize,connectionCount));
 		}
 	}
+
+	// Update our two classes so they can do time-based updates
+	httpConnection->Update();
+	phpDirectoryServer2->Update();
 
 	// Start punchthrough to all pending systems, which we got from the PHP directory server code about 20 lines above
 	if (isConnectedToNATPunchthroughServer)
@@ -1142,7 +1132,7 @@ void CDemo::UpdateRakNet(void)
 	// Update non-plugin helper classes.
 	// This keeps our system listed on the PHP directory server
 	httpConnection->Update();
-	phpDirectoryServer->Update();
+	phpDirectoryServer2->Update();
 
 	// Call the Update function for networked game objects added to BaseIrrlichtReplica once the game is ready
 	if (currentScene>=1)

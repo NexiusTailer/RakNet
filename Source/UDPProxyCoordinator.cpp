@@ -156,8 +156,8 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 	sata.senderClientAddress=sourceAddress;
 	sata.targetClientAddress=targetAddress;
 	SenderAndTargetAddress sataReversed;
-	sata.senderClientAddress=targetAddress;
-	sata.targetClientAddress=sourceAddress;
+	sataReversed.senderClientAddress=targetAddress;
+	sataReversed.targetClientAddress=sourceAddress;
 	DataStructures::DefaultIndexType insertionIndex;
 	insertionIndex = forwardingRequestList.GetInsertionIndex(sata);
 	if (insertionIndex==(DataStructures::DefaultIndexType)-1 ||

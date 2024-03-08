@@ -18,7 +18,7 @@ Use the source, static lib ,or a DLL?
 <BR>
 <BR>
 
-RakNet includes the source and a pre-made DLL and static lib, along with the projects to make the DLL and static lib, and samples.  You may use either in your game.  During development, you will probably want to use the source so you can trace into the code for better control.  During release, you will probably want to use a DLL so you don't have to make your game multithreaded, and for easier patching.
+RakNet includes the source, along with the projects to make the DLL and static lib, and samples.  It no longer includes pre-built DLLs or libraries - this is due to incompatibilities across compilers. We recommend using the source directly, however you can also use the DLL or static lib projects to build your own.
 
 <P><font color="#666666" size="2" face="Geneva, Verdana, Arial, Helvetica, sans-serif" class="G10">Projects to build the DLL/Static Lib, and the samples, are provided for Microsoft Visual Studio .Net 2003 and 2005. 
 
@@ -36,8 +36,7 @@ RakNet includes the source and a pre-made DLL and static lib, along with the pro
   <p class="RakNetBlueHeader">Creating a DLL</p>
   <ol>
     <li>Create a DLL project.  I'll assume you know how to do this.  In MSVC 7 you would create an empty project, then under Application Settings you check DLL and empty project.</li>
-    <li>Add the source files under the /Source directory to the project.  If you don't plan to use voice capabilities, leave out everything with "RakVoice" in the filename</li>
-    <li>If you want to use voice capabilities, add the source files under the DependentExtensions\speex-x.x.xx\libspeex </li>
+    <li>Add the source files under the /Source directory to the project.</li>
     <li>Add to "Additional Include Directories" your directory with the source files.<font color="#666666" size="2" face="Geneva, Verdana, Arial, Helvetica, sans-serif" class="G10"></li>
     <li>Import ws2_32.lib, or wsock32.lib if you don't have Winsock 2 installed.  In MSVC 7 you can right click on the project, select configuration properties / linker / input / additional dependencies and type "ws2_32.lib" in there.</li>
     <li>Set your project to use multi-threaded runtime libraries.  In MSVC 7 you can right click on the project, select configuration properties / C/C++ / Code Generation / Runtime Library and change it to Multi-threaded (/MT).</li>
@@ -65,20 +64,7 @@ RakNet includes the source and a pre-made DLL and static lib, along with the pro
 <OL>
   <LI>Copy the DLL you just created to your game in the same directory as the exe.  The lib can be in any directory you want.
   <LI>Add the .lib to your project
-  <LI>Add the required source files to your project:
-    
-  <UL>
-  
-  <LI>RakNetDefines.h
-  <LI>Export.h  
-  <LI>RakPeerInterface.h
-  <LI>RakNetworkFactory.h
-  (Creates instances of the peer)
-  <LI>RakNetTypes.h (Defines <A HREF="systemaddresses.html">SystemAddress</A> and Packet)
-  <LI>PacketPriority.h. (Defines the PacketPriority and PacketReliability enumerations)  
-  <LI>BitStream.h
-  </UL>
-</OL>
+  <LI>Add all header files from /Source to your project</OL>
 <BR>
 
 If you want to jump right in, refer to the <A HREF="tutorial.html">Basic code tutorial</A><BR>

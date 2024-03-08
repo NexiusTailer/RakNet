@@ -217,7 +217,7 @@ const char* PacketLogger::BaseIDTOString(unsigned char Id)
 	if (Id >= ID_USER_PACKET_ENUM)
         return 0;
 
-	const char *IDTable[(int)ID_USER_PACKET_ENUM]=
+	const char *IDTable[((int)ID_USER_PACKET_ENUM)+1]=
 	{
 		"ID_INTERNAL_PING",
 		"ID_PING",
@@ -315,14 +315,15 @@ const char* PacketLogger::BaseIDTOString(unsigned char Id)
 		"ID_LOBBY2_SEND_MESSAGE",
 		"ID_LOBBY2_SERVER_ERROR",
 		"ID_INCOMPATIBLE_PROTOCOL_VERSION",
-		"ID_FCM2_ELAPSED_RUNTIME",
 		"ID_FCM2_NEW_HOST",
+		"ID_FCM2_REQUEST_FCMGUID",
+		"ID_FCM2_RESPOND_FCMGUID",
+		"ID_FCM2_INFORM_FCMGUID",
 		"ID_UDP_PROXY_GENERAL",
-		"ID_SQLLITE3_EXEC",
-		"ID_SQLLITE3_UNKNOWN_DB",
-		"ID_ROUTER2_PING_REQUEST",
-		"ID_ROUTER2_PING_RESPONSE",
-		"ID_ROUTER2_SETUP_FORWARDING",
+		"ID_SQLite3_EXEC",
+		"ID_SQLite3_UNKNOWN_DB",
+		"ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING",
+		"ID_USER_PACKET_ENUM"
 	};
 
 	return (char*)IDTable[Id];
@@ -359,6 +360,7 @@ void PacketLogger::GetLocalTime(char buffer[128])
 #else
 	time_t rawtime;
 	struct timeval tv;
+	// If you get an arror about an incomplete type, just delete this file
 	struct timezone tz;
 	gettimeofday(&tv, &tz);
 	// time ( &rawtime );

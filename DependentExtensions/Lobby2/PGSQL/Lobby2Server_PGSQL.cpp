@@ -18,6 +18,7 @@ Lobby2Server_PGSQL::Lobby2Server_PGSQL()
 }
 Lobby2Server_PGSQL::~Lobby2Server_PGSQL()
 {
+	Clear();
 }
 void Lobby2Server_PGSQL::AddInputFromThread(Lobby2Message *msg, unsigned int targetUserId, RakNet::RakString targetUserHandle)
 {

@@ -8,6 +8,7 @@ enum Lobby2ResultCode
 {
 	L2RC_SUCCESS,
 	L2RC_PROCESSING,
+	L2RC_BUSY_EXCEEDED_PROCESSING_LIMIT,
 	L2RC_GENERAL_ERROR,
 	L2RC_OUT_OF_MEMORY,
 	L2RC_NOT_IMPLEMENTED,
@@ -80,6 +81,10 @@ enum Lobby2ResultCode
 	L2RC_Client_StartIgnore_ALREADY_IGNORED,
 	L2RC_Client_StopIgnore_UNKNOWN_TARGET_HANDLE,
 	L2RC_Client_StopIgnore_CANNOT_PERFORM_ON_SELF,
+	L2RC_Client_PerTitleIntegerStorage_TITLE_NOT_IN_USE,
+	L2RC_Client_PerTitleIntegerStorage_ROW_EMPTY,
+	L2RC_Client_PerTitleBinaryStorage_TITLE_NOT_IN_USE,
+	L2RC_Client_PerTitleBinaryStorage_ROW_EMPTY,
 	L2RC_Friends_SendInvite_UNKNOWN_TARGET_HANDLE,
 	L2RC_Friends_SendInvite_CANNOT_PERFORM_ON_SELF,
 	L2RC_Friends_SendInvite_ALREADY_SENT_INVITE,

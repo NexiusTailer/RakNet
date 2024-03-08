@@ -21,7 +21,7 @@ Please refer to the <A HREF="compilersetup.html">Compiler Setup</A> page, as all
 <BR>
 API Description <BR>
 <BR>
-RakNet is an advanced networking API that provides services for and over Berkeley Sockets, or on Windows systems "Winsock."  It allows any application to communicate with other applications that also uses it, whether that be on the same computer, over a LAN, or over the internet.  Although RakNet can be used for any networked application, it was developed with a focus on online gaming and provides extra functionality to facilitate the programming of online games as well as being programmed to address the most common needs of online games. <BR>
+RakNet is a game engine focused on networking, and networking related services. It includes not only network communication, but game-level replication, patching, NAT punchthrough, and voice chat.   It allows any application to communicate with other applications that also uses it, whether that be on the same computer, over a LAN, or over the internet.  Although RakNet can be used for any networked application, it was developed with a focus on online gaming and provides extra functionality to facilitate the programming of online games as well as being programmed to address the most common needs of online games. <BR>
 <BR>
 Networking 101 <BR>
 <BR>
@@ -55,7 +55,7 @@ separate data). UDP packets are good because they are sent right away and are se
 </table>
 <table width="100%" border="0" cellspacing="0" cellpadding="10">
   <tr>
-    <td class="RakNetManualTextBody">At the lowest level, RakNet provides a layer over UDP packets that handle these problems transparently, allowing the programmer to focus on the game rather than worrying about the engine.<BR>
+    <td class="RakNetManualTextBody">At the lowest level, RakNet's peer to peer class, RakPeerInterface provides a layer over UDP packets that handle these problems transparently, allowing the programmer to focus on the game rather than worrying about the engine.<BR>
       <UL>
         <LI>RakNet can automatically resend packets that did not arrive.
           
@@ -68,7 +68,7 @@ separate data). UDP packets are good because they are sent right away and are se
         <LI>RakNet transparently handles network issues such as flow control and aggreggation.
           
       </UL>
-      Of course, RakNet would be not much use if it handled these issues inefficiently such as by sending a lot of data, locking up, or making it hard to take advantage of these features.  Fortunately, that is not the case.<BR>
+      Of course, RakNet would be not much use if it handled these issues inefficiently such as by sending a lot of data, locking up with blocking operations, or making it hard to take advantage of these features.  Fortunately, that is not the case.<BR>
       <BR>
 Unlike the majority of networking APIs:<BR>
 <UL>

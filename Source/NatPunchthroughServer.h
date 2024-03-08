@@ -22,9 +22,11 @@ struct Packet;
 class PacketLogger;
 
 /// \defgroup NAT_PUNCHTHROUGH_GROUP NatPunchthrough
+/// \brief Connect systems despite both systems being behind a router
+/// \details
 /// \ingroup PLUGINS_GROUP
 
-
+/// \ingroup NAT_PUNCHTHROUGH_GROUP
 struct NatPunchthroughServerDebugInterface
 {
 	NatPunchthroughServerDebugInterface() {}
@@ -32,11 +34,13 @@ struct NatPunchthroughServerDebugInterface
 	virtual void OnServerMessage(const char *msg)=0;
 };
 
+/// \ingroup NAT_PUNCHTHROUGH_GROUP
 struct NatPunchthroughServerDebugInterface_Printf : public NatPunchthroughServerDebugInterface
 {
 	virtual void OnServerMessage(const char *msg);
 };
 
+/// \ingroup NAT_PUNCHTHROUGH_GROUP
 struct NatPunchthroughServerDebugInterface_PacketLogger : public NatPunchthroughServerDebugInterface
 {
 	// Set to non-zero to write to the packetlogger!
@@ -47,17 +51,18 @@ struct NatPunchthroughServerDebugInterface_PacketLogger : public NatPunchthrough
 	virtual void OnServerMessage(const char *msg);
 };
 
-/// Maintain connection to NatPunchthroughServer to process incoming connection attempts through NatPunchthroughClient
-/// Server maintains two sockets clients can connect to so as to estimate the next port choice
+/// \brief Server code for NATPunchthrough
+/// \details Maintain connection to NatPunchthroughServer to process incoming connection attempts through NatPunchthroughClient<BR>
+/// Server maintains two sockets clients can connect to so as to estimate the next port choice<BR>
 /// Server tells other client about port estimate, current public port to the server, and a time to start connection attempts
 /// \ingroup NAT_PUNCHTHROUGH_GROUP
 class RAK_DLL_EXPORT NatPunchthroughServer : public PluginInterface2
 {
 public:
-	/// Constructor
+	// Constructor
 	NatPunchthroughServer();
 
-	/// Destructor
+	// Destructor
 	virtual ~NatPunchthroughServer();
 
 	/// Sets a callback to be called with debug messages

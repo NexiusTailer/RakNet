@@ -39,6 +39,18 @@
 <p><strong>Address-Restricted cone NAT</strong>: Accepts datagrams to a port as long as the datagram source IP address is a system we have already sent to. Will accept the first datagram if both systems send simultaneously. Otherwise, will accept the first datagram after we have sent one datagram.</p>
 <p><strong>Port-Restricted cone NAT</strong>: Same as restricted cone NAT, but we had to send to both the correct remote IP address and correct remote port. If the router maps the same external port to two different destination addresses, then the port will be correct and this works as well as address-restricted cone NAT.</p>
 <p><strong>Symmetric NAT</strong>: A different port is chosen for every remote destination. Since the port will be different, the first external punchthrough attempt will fai. For this to work it requires  port-prediction (MAX_PREDICTIVE_PORT_RANGE&gt;1) and that the router chooses ports sequentially.</p>
+
+<CENTER><B>Success Graph</B>
+<TABLE BORDER=1>
+<TR><TD>Router Type</TD><TD><I>Full cone NAT</I></TD><TD><I>Address-Restricted cone NAT</I></TD><TD><I>Port-Restricted cone NAT</I></TD><TD><I>Symmetric NAT</I></TD></TR>
+<TR><TD><I>Full cone NAT</I></TD><TD>YES</TD><TD>YES</TD><TD>YES</TD><TD>YES</TD></TR>
+<TR><TD><I>Address-Restricted cone NAT</I></TD><TD>YES</TD><TD>YES</TD><TD>YES</TD><TD>YES</TD></TR>
+<TR><TD><I>Port-Restricted cone NAT</I></TD><TD>YES</TD><TD>YES</TD><TD>YES</TD><TD>NO</TD></TR>
+<TR><TD><I>Symmetric NAT</I></TD><TD>YES</TD><TD>YES</TD><TD>NO</TD><TD>NO</TD></TR>
+</TABLE></CENTER>
+<BR>
+<FONT SIZE="1">* NO may still connect if port estimation works, but can't be relied upon.</FONT>
+
 <p><span class="RakNetBlueHeader">Client Implementation</span></p>
 	  <ol>
 	    <li>Create an instance of the plugin: <span class="RakNetCode">NatPunchthroughClient natPunchthroughClient;</span></li>

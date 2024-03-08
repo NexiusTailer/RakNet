@@ -71,6 +71,7 @@ void main(void)
 	/// This plan will create the database, register two users, and log them both in
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_CreateDatabase));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_CreateTitle));
+
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_CDKey_Add));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_RegisterProfanity));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_RegisterAccount));
@@ -79,6 +80,9 @@ void main(void)
 	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_System_SetEmailAddressValidated));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_Login));
 	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_Login));
+
+/*
+
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Ranking_SubmitMatch));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Ranking_SubmitMatch));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Ranking_UpdateRating));
@@ -86,9 +90,13 @@ void main(void)
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Ranking_WipeRatings));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Friends_SendInvite));
 	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Friends_AcceptInvite));
+	*/
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Create));
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Get));
+	/*
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_SetProperties));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_SetMyMemberProperties));
+	*/
 	/*
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_SendJoinInvitation));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_WithdrawJoinInvitation));
@@ -102,9 +110,11 @@ void main(void)
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_GrantLeader));
 	*/
 
+	/*
 	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Clans_SendJoinRequest));
 	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Clans_WithdrawJoinRequest));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_AcceptJoinRequest));
+	*/
 
 //	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Clans_SendJoinRequest));
 //	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Clans_DownloadRequestList));
@@ -701,6 +711,9 @@ void ExecuteCommand(RakNet::Lobby2MessageID command, RakNet::RakString userName,
 			arg->failIfAlreadyInClan=true;
 			arg->requiresInvitationsToJoin=true;
 			arg->description="Clan Description";
+			arg->binaryData->binaryData=new char[10];
+			strcpy(arg->binaryData->binaryData,"Hello");
+			arg->binaryData->binaryDataLength=10;
 		}
 		break;
 

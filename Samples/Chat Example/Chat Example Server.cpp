@@ -60,9 +60,9 @@ int main(void)
 	printf("Difficulty: Beginner\n\n");
 
 	// A server
-//	puts("Enter the server port to listen on");
-//	gets(portstring);
-//	if (portstring[0]==0)
+	puts("Enter the server port to listen on");
+	gets(portstring);
+	if (portstring[0]==0)
 		strcpy(portstring, "1234");
 	
 	puts("Starting server.");

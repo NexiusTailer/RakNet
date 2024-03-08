@@ -14,7 +14,7 @@ NatPunchthroughClient *natPunchthroughClient;
 UDPProxyClient *udpProxyClient;
 TCPInterface *tcpInterface;
 HTTPConnection *httpConnection;
-PHPDirectoryServer *phpDirectoryServer;
+PHPDirectoryServer2 *phpDirectoryServer2;
 PlayerReplica *playerReplica;
 
 /*
@@ -103,13 +103,13 @@ void InstantiateRakNetClasses(void)
 	// All the rest is to connect to http://www.jenkinssoftware.com/raknet/DirectoryServer.php and upload/download the player list so we know about other people
 	tcpInterface=new TCPInterface;
 	tcpInterface->Start(TCP_PORT,0);
-	httpConnection=new HTTPConnection(*tcpInterface, "jenkinssoftware.com");
-	phpDirectoryServer=new PHPDirectoryServer(*httpConnection, "/raknet/DirectoryServer.php");
-	phpDirectoryServer->SetField("RakNetGUID",rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
+	httpConnection=new HTTPConnection;
+	httpConnection->Init(tcpInterface, "jenkinssoftware.com");
+	phpDirectoryServer2=new PHPDirectoryServer2;
+	phpDirectoryServer2->Init(httpConnection, "/raknet/DirectoryServer.php");
+	phpDirectoryServer2->SetField("RakNetGUID",rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
 	// Upload our own game instance
-	phpDirectoryServer->UploadTable(60, "IrrlichtDemo", rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port, "");
-	// Download all other game instances
-	phpDirectoryServer->DownloadTable("");
+	phpDirectoryServer2->UploadAndDownloadTable("a", "a", "IrrlichtDemo", rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port, true);
 	// Connect to the NAT punchthrough server
 	rakPeer->Connect(DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP, DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_PORT,0,0);
 }
@@ -124,7 +124,7 @@ void DeinitializeRakNetClasses(void)
 	delete udpProxyClient;
 	delete httpConnection;
 	delete tcpInterface;
-	delete phpDirectoryServer;
+	delete phpDirectoryServer2;
 	// ReplicaManager3 deletes all referenced objects, including this one
 	//playerReplica->PreDestruction(0);
 	//delete playerReplica;
@@ -149,7 +149,7 @@ RM3SerializationResult BaseIrrlichtReplica::Serialize(RakNet::SerializeParameter
 {
 	return RM3SR_BROADCAST_IDENTICALLY;
 }
-void BaseIrrlichtReplica::Deserialize(RakNet::BitStream *serializationBitstream, RakNetTime timeStamp, RakNet::Connection_RM3 *sourceConnection)
+void BaseIrrlichtReplica::Deserialize(RakNet::DeserializeParameters *deserializeParameters)
 {
 }
 void BaseIrrlichtReplica::Update(RakNetTime curTime)
@@ -226,20 +226,20 @@ void PlayerReplica::PreDestruction(RakNet::Connection_RM3 *sourceConnection)
 RM3SerializationResult PlayerReplica::Serialize(RakNet::SerializeParameters *serializeParameters)
 {
 	BaseIrrlichtReplica::Serialize(serializeParameters);
-	serializeParameters->outputBitstream.Write(position);
-	serializeParameters->outputBitstream.Write(rotationAroundYAxis);
-	serializeParameters->outputBitstream.Write(isMoving);
-	serializeParameters->outputBitstream.Write(IsDead());
+	serializeParameters->outputBitstream[0].Write(position);
+	serializeParameters->outputBitstream[0].Write(rotationAroundYAxis);
+	serializeParameters->outputBitstream[0].Write(isMoving);
+	serializeParameters->outputBitstream[0].Write(IsDead());
 	return RM3SR_BROADCAST_IDENTICALLY;
 }
-void PlayerReplica::Deserialize(RakNet::BitStream *serializationBitstream, RakNetTime timeStamp, RakNet::Connection_RM3 *sourceConnection)
+void PlayerReplica::Deserialize(RakNet::DeserializeParameters *deserializeParameters)
 {
-	BaseIrrlichtReplica::Deserialize(serializationBitstream, timeStamp, sourceConnection);
-	serializationBitstream->Read(position);
-	serializationBitstream->Read(rotationAroundYAxis);
-	serializationBitstream->Read(isMoving);
+	BaseIrrlichtReplica::Deserialize(deserializeParameters);
+	deserializeParameters->serializationBitstream[0].Read(position);
+	deserializeParameters->serializationBitstream[0].Read(rotationAroundYAxis);
+	deserializeParameters->serializationBitstream[0].Read(isMoving);
 	bool wasDead=isDead;
-	serializationBitstream->Read(isDead);
+	deserializeParameters->serializationBitstream[0].Read(isDead);
 	if (isDead==true && wasDead==false)
 	{
 		demo->PlayDeathSound(position);
@@ -413,9 +413,9 @@ RM3SerializationResult BallReplica::Serialize(RakNet::SerializeParameters *seria
 	BaseIrrlichtReplica::Serialize(serializeParameters);
 	return RM3SR_BROADCAST_IDENTICALLY;
 }
-void BallReplica::Deserialize(RakNet::BitStream *serializationBitstream, RakNetTime timeStamp, RakNet::Connection_RM3 *sourceConnection)
+void BallReplica::Deserialize(RakNet::DeserializeParameters *deserializeParameters)
 {
-	BaseIrrlichtReplica::Deserialize(serializationBitstream, timeStamp, sourceConnection);
+	BaseIrrlichtReplica::Deserialize(deserializeParameters);
 }
 void BallReplica::Update(RakNetTime curTime)
 {

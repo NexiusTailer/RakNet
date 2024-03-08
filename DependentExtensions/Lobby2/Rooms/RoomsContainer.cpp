@@ -1303,7 +1303,7 @@ Room::Room( RoomID _roomId, RoomCreationParameters *roomCreationParameters, Data
 	
 	autoLockReadyStatus=roomCreationParameters->networkedRoomCreationParameters.autoLockReadyStatus;
 	hiddenFromSearches=roomCreationParameters->networkedRoomCreationParameters.hiddenFromSearches;
-	destroyOnModeratorLeave=roomCreationParameters->networkedRoomCreationParameters.destroyOnModeratorLeave;
+//	destroyOnModeratorLeave=roomCreationParameters->networkedRoomCreationParameters.destroyOnModeratorLeave;
 	clearInvitesOnNewModerator=roomCreationParameters->networkedRoomCreationParameters.clearInvitesOnNewModerator;
 	inviteToRoomPermission=roomCreationParameters->networkedRoomCreationParameters.inviteToRoomPermission;
 	inviteToSpectatorSlotPermission=roomCreationParameters->networkedRoomCreationParameters.inviteToSpectatorSlotPermission;
@@ -2044,6 +2044,8 @@ RoomsErrorCode Room::RemoveUser(RoomsParticipant* roomsParticipant,RemoveUserRes
 
 	if (roomMemberList[roomsParticipantIndex]->roomMemberMode==RMM_MODERATOR)
 	{
+		int destroyOnModeratorLeave;
+		tableRow->cells[DefaultRoomColumns::TC_DESTROY_ON_MODERATOR_LEAVE]->Get(&destroyOnModeratorLeave);
 		if (destroyOnModeratorLeave || roomMemberList.Size()==1)
 		{
 			removeUserResult->clearedInvitations=inviteList;

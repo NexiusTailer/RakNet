@@ -50,6 +50,7 @@ class C : public A, public B, public NetworkIDObject {
 public:
 	C() {c=3;} int c;
 	virtual void ClassMemberFunc(A *a1, A &a2, C *c1, C &c2, D *d1, D &d2, RakNet::BitStream *bs1, RakNet::BitStream &bs2, RakNet::RPC3 *rpc3Inst);
+	void ClassMemberFunc2(RakNet::RPC3 *rpc3Inst);
 };
 
 class D : public B, public NetworkIDObject {
@@ -93,6 +94,24 @@ void C::ClassMemberFunc(A *a1, A &a2, C *c1, C &c2, D *d1, D &d2, RakNet::BitStr
 		// d1 will transmit d1->GetNetworkID() and also bitStream << (*d1) (contents of the pointer)
 		//
 		rpc3Inst.CallCPP("&C::ClassMemberFunc", GetNetworkID(), a1,a2,c1,c2,RakNet::_RPC3::Deref(d1),d2,bs1,bs2,rpcFromNetwork);
+	}
+}	
+
+void C::ClassMemberFunc2(RakNet::RPC3 *rpcFromNetwork)	{
+	printf("\nC::ClassMemberFunc2\n");
+
+	if (rpcFromNetwork==0)
+	{
+		// The RakNet::RPC3 * parameter can be passed to Call() if you want to - it is skipped and not serialized or deserialized so it doesn't matter.
+		// The point of it is so when this function is called on the remote system, it is set to the instance of the plugin so you can query network parameters from the caller
+		// 
+		// By default, pointers to objects that derive from NetworkIDObject (classes C and D), only transmit the NetworkID of the object.
+		// If you also want to dereference the pointer and serialize the object itself, use RakNet::_RPC3::Deref(myVariable)
+		// In this case, parameters that both derive from NetworkIDObject and are pointers are the variables c1 and d1
+		// c1 will only transmit c1->GetNetworkID() (default behavior)
+		// d1 will transmit d1->GetNetworkID() and also bitStream << (*d1) (contents of the pointer)
+		//
+		rpc3Inst.CallCPP("&C::ClassMemberFunc2", GetNetworkID(), rpcFromNetwork);
 	}
 }	
 
@@ -155,6 +174,7 @@ int main(void)
 	RPC3_REGISTER_FUNCTION(&rpc3Inst, CFunc);
 	// Note the & operator as the macro and RPC3::RegisterFunction takes a class pointer
 	RPC3_REGISTER_FUNCTION(&rpc3Inst, &C::ClassMemberFunc);
+	RPC3_REGISTER_FUNCTION(&rpc3Inst, &C::ClassMemberFunc2);
 
 	printf("(S)erver or (C)lient?: ");
 	bool isServer;
@@ -218,6 +238,7 @@ int main(void)
 				testBitStream1.Write("Hello World 1");
 				testBitStream2.Write("Hello World 2");
 				c.ClassMemberFunc(&a,a,&c,c,&d,d,&testBitStream1,testBitStream2,0);
+				c.ClassMemberFunc2(0);
 				RakNet::RakString rs("RakString test");
 				int intArray[10];
 				for (int i=0; i < sizeof(intArray)/sizeof(int); i++)

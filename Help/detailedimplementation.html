@@ -127,50 +127,51 @@ SetMaximumIncomingConnections is necessary if you want to allow other peers to c
 </table>
 <table width="100%" border="0" cellspacing="0" cellpadding="10">
   <tr>
-    <td class="RakNetManualTextBody">Packet *packet = peer->Receive();<BR>
+    <td class="RakNetManualTextBody"><p>Packet *packet = peer->Receive();<BR>
       <BR>
-It's that easy.  If packet is 0 then there was nothing to read and you can go on with your game.  Otherwise you got some data.<BR>
-<BR>
-You can get two kinds of data:<BR>
-Messages from the engine<BR>
-Messages from other instances of RakNet, on the same computer or from other computers<BR>
-Both are handled the same way.<BR>
-<BR>
-Lets look at the Packet struct:<BR>
-struct Packet<BR>
-{ <BR>
-SystemIndex systemIndex; /// Server only - this is the index into the player array that this systemAddress maps to <BR>
-SystemAddress systemAddress; /// The system that send this packet. <BR>
-unsigned int length; /// The length of the data in bytes. Deprecated You should use bitSize. <BR>
-unsigned int bitSize; /// The length of the data in bits <BR>
-unsigned char* data ;/// The data from the sender<BR>
-bool deleteData; /// Internal. Indicates whether to delete the data, or to simply delete the packet.<BR>
-};<BR>
-<BR>
-systemAddress specifies the origin of the packet. Every connected system has a unique SystemAddress which is assigned automatically. Certain native network messages use this field - for example ID_REMOTE_DISCONNECTION_NOTIFICATION tells you as a client that another client has disconnected.  systemAddress in that case specifies which client.  UNASSIGNED_SYSTEM_ADDRESS is a reserved value for "Unknown".<BR>
-<BR>
-bitSize tells you how many bits long the data field of the struct is.<BR>
-<BR>
-Now that you got a packet you need to determine what the data means.  Usually the first byte of the data is an enum that specifies type (see creating packets for more information).  This is not always the case as you'll later learn, because with some packets, you might get a TimeStamp. To make things easy here it is a function to get the identifier when the packet has a TimeStamp:<BR>
-<BR>
-unsigned char GetPacketIdentifier(Packet *p)<BR>
-{<BR>
-if ((unsigned char)p->data[0] == ID_TIMESTAMP)<BR>
-return (unsigned char) p->data[sizeof(unsigned char) + sizeof(unsigned long)];<BR>
-else<BR>
-return (unsigned char) p->data[0];<BR>
-}<BR>
-<BR>
-This will return an unsigned char, which corresponds to an enum specified in MessageIdentifiers.h.<BR>
-<BR>
-The network engine will return certain messages only for the client, certain messages only for the server, and certain messages for both.  For a full explanation of the messages refer to MessageIdentifiers.h.  The important ones to worry about are ID_NEW_INCOMING_CONNECTION and ID_CONNECTION_REQUEST_ACCEPTED.  These mean that the server or a peer got a new incoming client, and the client or a peer has successfully connected respectively.  At this point you can send your own messages. <BR>
-<BR>
-If the packet identifier is NOT one of the pre-defined identifiers then you got user data which was sent by another system.  You can then decode the data and handle it in your game as appropriate.  See <A HREF="creatingpackets.html">creating packets</A> for information on encoding and decoding data.<BR>
-<BR>
-<I>IMPORTANT!</I><BR>
-When you are done with your data, don't forget to deallocate the packet!  Just pass it to DeallocatePacket.<br>
-<BR>
-peer->DeallocatePacket(p);</td>
+      It's that easy.  If packet is 0 then there was nothing to read and you can go on with your game.  Otherwise you got some data.<BR>
+  <BR>
+      You can get two kinds of data:<BR>
+      Messages from the engine<BR>
+      Messages from other instances of RakNet, on the same computer or from other computers<BR>
+      Both are handled the same way.<BR>
+  <BR>
+      Lets look at the Packet struct:<BR>
+      struct Packet<BR>
+      { <BR>
+      SystemIndex systemIndex; /// Server only - this is the index into the player array that this systemAddress maps to <BR>
+      SystemAddress systemAddress; /// The IP address / port of the system that send this packet.<BR> 
+      RakNetGUID guid; /// Unique identifier for the system that sent this packet<BR>
+        unsigned int length; /// The length of the data in bytes. Deprecated You should use bitSize. <BR>
+        unsigned int bitSize; /// The length of the data in bits <BR>
+        unsigned char* data ;/// The data from the sender<BR>
+        bool deleteData; /// Internal. Indicates whether to delete the data, or to simply delete the packet.<BR>
+        };<BR>
+        <BR>
+        systemAddress specifies the origin of the packet. Every connected system has a unique SystemAddress which is assigned automatically. Note that the system address will be constant and unique over the lifetime of the connection. However, a particlar system may not have the same system address to all other systems. Use RakNetGUID as a unique identifier for a particular instance of RakPeerInterface. Certain native network messages use this field - for example ID_REMOTE_DISCONNECTION_NOTIFICATION tells you as a client that another client has disconnected.  systemAddress in that case specifies which client.  UNASSIGNED_SYSTEM_ADDRESS is a reserved value for "Unknown".<BR>
+        <BR>
+        bitSize tells you how many bits long the data field of the struct is.<BR>
+        <BR>
+        Now that you got a packet you need to determine what the data means.  Usually the first byte of the data is an enum that specifies type (see creating packets for more information).  This is not always the case as you'll later learn, because with some packets, you might get a TimeStamp. To make things easy here it is a function to get the identifier when the packet has a TimeStamp:<BR>
+        <BR>
+        unsigned char GetPacketIdentifier(Packet *p)<BR>
+        {<BR>
+        if ((unsigned char)p->data[0] == ID_TIMESTAMP)<BR>
+        return (unsigned char) p->data[sizeof(unsigned char) + sizeof(unsigned long)];<BR>
+        else<BR>
+        return (unsigned char) p->data[0];<BR>
+        }<BR>
+        <BR>
+        This will return an unsigned char, which corresponds to an enum specified in MessageIdentifiers.h.<BR>
+        <BR>
+        The network engine will return certain messages only for the client, certain messages only for the server, and certain messages for both.  For a full explanation of the messages refer to MessageIdentifiers.h.  The important ones to worry about are ID_NEW_INCOMING_CONNECTION and ID_CONNECTION_REQUEST_ACCEPTED.  These mean that the server or a peer got a new incoming client, and the client or a peer has successfully connected respectively.  At this point you can send your own messages. <BR>
+        <BR>
+        If the packet identifier is NOT one of the pre-defined identifiers then you got user data which was sent by another system.  You can then decode the data and handle it in your game as appropriate.  See <A HREF="creatingpackets.html">creating packets</A> for information on encoding and decoding data.<BR>
+        <BR>
+        <I>IMPORTANT!</I><BR>
+        When you are done with your data, don't forget to deallocate the packet!  Just pass it to DeallocatePacket.<br>
+        <BR>
+    peer->DeallocatePacket(p);</p></td>
   </tr>
 </table>
 <table width="100%" border="0">

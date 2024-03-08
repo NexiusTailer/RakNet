@@ -329,7 +329,7 @@ int CUDTUnited::newConnection(const UDTSOCKET listen, const sockaddr* peer, CHan
          // connection already exist, this is a repeated connection request
          // respond with existing HS information
 
-         hs->m_iISN = ns->m_pUDT->m_iISN;
+		  hs->m_iISN = ns->m_pUDT->udtCCWrapper.m_iISN;
          hs->m_iMSS = ns->m_pUDT->m_iMSS;
          hs->m_iFlightFlagSize = ns->m_pUDT->m_iFlightFlagSize;
          hs->m_iReqType = -1;
@@ -962,7 +962,7 @@ int CUDTUnited::select(ud_set* readfds, ud_set* writefds, ud_set* exceptfds, con
       {
          s = *j1;
 
-         if ((s->m_pUDT->m_bConnected && (s->m_pUDT->m_pRcvBuffer->getRcvDataSize() > 0) && ((s->m_pUDT->m_iSockType == UDT_STREAM) || (s->m_pUDT->m_pRcvBuffer->getRcvMsgNum() > 0)))
+         if ((s->m_pUDT->m_bConnected && (s->m_pUDT->udtCCWrapper.m_pRcvBuffer->getRcvDataSize() > 0) && ((s->m_pUDT->m_iSockType == UDT_STREAM) || (s->m_pUDT->udtCCWrapper.m_pRcvBuffer->getRcvMsgNum() > 0)))
             || (!s->m_pUDT->m_bListening && (s->m_pUDT->m_bBroken || !s->m_pUDT->m_bConnected))
             || (s->m_pUDT->m_bListening && (s->m_pQueuedSockets->size() > 0))
             || (s->m_Status == CUDTSocket::CLOSED))
@@ -977,7 +977,7 @@ int CUDTUnited::select(ud_set* readfds, ud_set* writefds, ud_set* exceptfds, con
       {
          s = *j2;
 
-         if ((s->m_pUDT->m_bConnected && (s->m_pUDT->m_pSndBuffer->getCurrBufSize() < s->m_pUDT->m_iSndBufSize))
+         if ((s->m_pUDT->m_bConnected && (s->m_pUDT->udtCCWrapper.m_pSndBuffer->getCurrBufSize() < s->m_pUDT->m_iSndBufSize))
             || s->m_pUDT->m_bBroken || !s->m_pUDT->m_bConnected || (s->m_Status == CUDTSocket::CLOSED))
          {
             ws.insert(s->m_SocketID);
@@ -1094,7 +1094,7 @@ void CUDTUnited::checkBrokenSockets()
       if (i->second->m_pUDT->m_bBroken)
       {
          // if there is still data in the receiver buffer, wait longer
-         if ((i->second->m_pUDT->m_pRcvBuffer->getRcvDataSize() > 0) && (i->second->m_pUDT->m_iBrokenCounter -- > 0))
+         if ((i->second->m_pUDT->udtCCWrapper.m_pRcvBuffer->getRcvDataSize() > 0) && (i->second->m_pUDT->m_iBrokenCounter -- > 0))
             continue;
 
          //close broken connections and start removal timer

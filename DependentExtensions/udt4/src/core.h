@@ -80,6 +80,79 @@ struct UDTCCWrapper
 	*/
 	//CControl* m_pController;			// congestion control manager
 
+
+public: // Sending related data
+	CSndBuffer* m_pSndBuffer;                    // Sender buffer
+	CSndLossList* m_pSndLossList;                // Sender loss list
+	CPktTimeWindow* m_pSndTimeWindow;            // Packet sending time window
+
+	volatile uint64_t m_ullInterval;             // Inter-packet time, in CPU clock cycles
+	uint64_t m_ullTimeDiff;                      // aggregate difference in inter-packet time
+
+	volatile int m_iFlowWindowSize;              // Flow control window size
+	volatile double m_dCongestionWindow;         // congestion window size
+
+	volatile int32_t m_iSndLastAck;              // Last ACK received
+	int32_t m_iSndLastDataAck;                   // The real last ACK that updates the sender buffer and loss list
+	int32_t m_iSndCurrSeqNo;                     // The largest sequence number that has been sent
+	int32_t m_iLastDecSeq;                       // Sequence number sent last decrease occurs
+	int32_t m_iSndLastAck2;                      // Last ACK2 sent back
+	uint64_t m_ullSndLastAck2Time;               // The time when last ACK2 was sent back
+
+	int32_t m_iISN;                              // Initial Sequence Number
+
+public: // Receiving related data
+	CRcvBuffer* m_pRcvBuffer;                    // Receiver buffer
+	CRcvLossList* m_pRcvLossList;                // Receiver loss list
+	CACKWindow* m_pACKWindow;                    // ACK history window
+	CPktTimeWindow* m_pRcvTimeWindow;            // Packet arrival time window
+
+	int32_t m_iRcvLastAck;                       // Last sent ACK
+	uint64_t m_ullLastAckTime;                   // Timestamp of last ACK
+	int32_t m_iRcvLastAckAck;                    // Last sent ACK that has been acknowledged
+	int32_t m_iAckSeqNo;                         // Last ACK sequence number
+	int32_t m_iRcvCurrSeqNo;                     // Largest received sequence number
+
+	uint64_t m_ullLastWarningTime;               // Last time that a warning message is sent
+
+	int32_t m_iPeerISN;                          // Initial Sequence Number of the peer side
+
+public: // Timers
+	uint64_t m_ullCPUFrequency;                  // CPU clock frequency, used for Timer
+
+	static const int m_iSYNInterval;             // Periodical Rate Control Interval, 10 ms
+	static const int m_iSelfClockInterval;       // ACK interval for self-clocking
+
+	uint64_t m_ullNextACKTime;			// Next ACK time, in CPU clock cycles
+	uint64_t m_ullNextNAKTime;			// Next NAK time
+	uint64_t m_ullNextEXPTime;			// Next timeout
+
+	volatile uint64_t m_ullSYNInt;		// SYN interval
+	volatile uint64_t m_ullACKInt;		// ACK interval
+	volatile uint64_t m_ullNAKInt;		// NAK interval
+	volatile uint64_t m_ullEXPInt;		// EXP interval
+	volatile uint64_t m_ullMinEXPInt;		// Minimum EXP interval
+
+	int m_iPktCount;				// packet counter for ACK
+	int m_iLightACKCount;			// light ACK counter
+
+	uint64_t m_ullTargetTime;			// target time of next packet sending
+
+	int m_iBrokenCounter;			// a counter (number of GC checks) to let the GC tag this socket as disconnected
+
+	int m_iBandwidth;                            // Estimated bandwidth
+	int m_iRTT;                                  // RTT
+	int m_iRTTVar;                               // RTT varianc
+	int m_iDeliveryRate;				// Packet arrival rate at the receiver side
+
+
+// Other:
+	int m_iEXPCount;                             // Expiration counter
+
+	void processCtrl(CPacket& ctrlpkt) {}
+	int processData(CUnit* unit) {}
+	void sendCtrl(const int& pkttype, void* lparam = NULL, void* rparam = NULL, const int& size = 0) {}
+	void checkTimers() {}
 };
 
 
@@ -322,49 +395,10 @@ private: // Status
    volatile bool m_bShutdown;                   // If the peer side has shutdown the connection
    volatile bool m_bBroken;                     // If the connection has been broken
    bool m_bOpened;                              // If the UDT entity has been opened
-   int m_iBrokenCounter;			// a counter (number of GC checks) to let the GC tag this socket as disconnected
 
-   int m_iEXPCount;                             // Expiration counter
-   int m_iBandwidth;                            // Estimated bandwidth
-   int m_iRTT;                                  // RTT
-   int m_iRTTVar;                               // RTT varianc
-   int m_iDeliveryRate;				// Packet arrival rate at the receiver side
 
-private: // Sending related data
-   CSndBuffer* m_pSndBuffer;                    // Sender buffer
-   CSndLossList* m_pSndLossList;                // Sender loss list
-   CPktTimeWindow* m_pSndTimeWindow;            // Packet sending time window
 
-   volatile uint64_t m_ullInterval;             // Inter-packet time, in CPU clock cycles
-   uint64_t m_ullTimeDiff;                      // aggregate difference in inter-packet time
-
-   volatile int m_iFlowWindowSize;              // Flow control window size
-   volatile double m_dCongestionWindow;         // congestion window size
-
-   volatile int32_t m_iSndLastAck;              // Last ACK received
-   int32_t m_iSndLastDataAck;                   // The real last ACK that updates the sender buffer and loss list
-   int32_t m_iSndCurrSeqNo;                     // The largest sequence number that has been sent
-   int32_t m_iLastDecSeq;                       // Sequence number sent last decrease occurs
-   int32_t m_iSndLastAck2;                      // Last ACK2 sent back
-   uint64_t m_ullSndLastAck2Time;               // The time when last ACK2 was sent back
-
-   int32_t m_iISN;                              // Initial Sequence Number
-
-private: // Receiving related data
-   CRcvBuffer* m_pRcvBuffer;                    // Receiver buffer
-   CRcvLossList* m_pRcvLossList;                // Receiver loss list
-   CACKWindow* m_pACKWindow;                    // ACK history window
-   CPktTimeWindow* m_pRcvTimeWindow;            // Packet arrival time window
-
-   int32_t m_iRcvLastAck;                       // Last sent ACK
-   uint64_t m_ullLastAckTime;                   // Timestamp of last ACK
-   int32_t m_iRcvLastAckAck;                    // Last sent ACK that has been acknowledged
-   int32_t m_iAckSeqNo;                         // Last ACK sequence number
-   int32_t m_iRcvCurrSeqNo;                     // Largest received sequence number
-
-   uint64_t m_ullLastWarningTime;               // Last time that a warning message is sent
-
-   int32_t m_iPeerISN;                          // Initial Sequence Number of the peer side
+   void checkTimers();
 
 private: // synchronization: mutexes and conditions
    pthread_mutex_t m_ConnectionLock;            // used to synchronize connection operation
@@ -385,7 +419,7 @@ private: // synchronization: mutexes and conditions
    void releaseSynch();
 
 private: // Generation and processing of packets
-   void sendCtrl(const int& pkttype, void* lparam = NULL, void* rparam = NULL, const int& size = 0);
+	void sendCtrl(const int& pkttype, void* lparam = NULL, void* rparam = NULL, const int& size = 0);
    void processCtrl(CPacket& ctrlpkt);
    int packData(CPacket& packet, uint64_t& ts);
    int processData(CUnit* unit);
@@ -414,28 +448,6 @@ private: // Trace
    int m_iSentNAK;                              // number of NAKs sent in the last trace interval
    int m_iRecvNAK;                              // number of NAKs received in the last trace interval
 
-private: // Timers
-   uint64_t m_ullCPUFrequency;                  // CPU clock frequency, used for Timer
-
-   static const int m_iSYNInterval;             // Periodical Rate Control Interval, 10 ms
-   static const int m_iSelfClockInterval;       // ACK interval for self-clocking
-
-   uint64_t m_ullNextACKTime;			// Next ACK time, in CPU clock cycles
-   uint64_t m_ullNextNAKTime;			// Next NAK time
-   uint64_t m_ullNextEXPTime;			// Next timeout
-
-   volatile uint64_t m_ullSYNInt;		// SYN interval
-   volatile uint64_t m_ullACKInt;		// ACK interval
-   volatile uint64_t m_ullNAKInt;		// NAK interval
-   volatile uint64_t m_ullEXPInt;		// EXP interval
-   volatile uint64_t m_ullMinEXPInt;		// Minimum EXP interval
-
-   int m_iPktCount;				// packet counter for ACK
-   int m_iLightACKCount;			// light ACK counter
-
-   uint64_t m_ullTargetTime;			// target time of next packet sending
-
-   void checkTimers();
 
 private: // for UDP multiplexer
    CSndQueue* m_pSndQueue;			// packet sending queue

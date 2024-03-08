@@ -69,10 +69,10 @@ class ReliabilityLayer//<ReliabilityLayer>
 {
 public:
 
-	/// Constructor
+	// Constructor
 	ReliabilityLayer();
 
-	/// Destructor
+	// Destructor
 	~ReliabilityLayer();
 
 	/// Resets the layer for reuse
@@ -130,7 +130,7 @@ public:
 	void Update( SOCKET s, SystemAddress systemAddress, int MTUSize, RakNetTimeUS time,
 		unsigned bitsPerSecondLimit,
 		DataStructures::List<PluginInterface2*> &messageHandlerList,
-		RakNetRandom *rnr, bool isPS3LobbySocket);
+		RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3);
 #else
 	void Update(  UDTSOCKET s, SystemAddress systemAddress, int MTUSize, RakNetTimeUS time, unsigned maxBitsPerSecond, DataStructures::List<PluginInterface2*> &messageHandlerList, RakNetRandom *rnr, bool isPS3LobbySocket );
 #endif
@@ -196,10 +196,10 @@ private:
 	/// \param[in] systemAddress The address and port to send to
 	/// \param[in] bitStream The data to send.
 	#ifdef _USE_RAKNET_FLOW_CONTROL // These variables only necessary for RakNet's flow control
-	void SendBitStream( SOCKET s, SystemAddress systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, bool isPS3LobbySocket, bool isReliable);
+	void SendBitStream( SOCKET s, SystemAddress systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, bool isReliable);
 	#else
-	int SendBitStream( UDTSOCKET s, SystemAddress systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, bool isPS3LobbySocket, bool isReliable);
-	#endif
+	int SendBitStream( UDTSOCKET s, SystemAddress systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, bool isReliable);
+#endif
 
 	///Parse an internalPacket and create a bitstream to represent this data
 	/// \return Returns number of bits used

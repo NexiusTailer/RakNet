@@ -50,7 +50,7 @@ public:
 
 	// --------------------------------------------------------------------------------------------Major Low Level Functions - Functions needed by most users--------------------------------------------------------------------------------------------
 	/// \brief Starts the network threads, opens the listen port.
-	/// You must call this before calling Connect().
+	/// \details You must call this before calling Connect().
 	/// Multiple calls while already active are ignored.  To call this function again with different settings, you must first call Shutdown().
 	/// \note Call SetMaximumIncomingConnections if you want to accept incoming connections
 	/// \note Set _RAKNET_THREADSAFE in RakNetDefines.h if you want to call RakNet functions from multiple threads (not recommended, as it is much slower and RakNet is already asynchronous).
@@ -119,7 +119,7 @@ public:
 	void GetIncomingPassword( char* passwordData, int *passwordDataLength  );
 
 	/// \brief Connect to the specified host (ip or domain name) and server port.
-	/// Calling Connect and not calling SetMaximumIncomingConnections acts as a dedicated client.
+	/// \details Calling Connect and not calling SetMaximumIncomingConnections acts as a dedicated client.
 	/// Calling both acts as a true peer. This is a non-blocking connection.
 	/// You know the connection is successful when IsConnected() returns true or Receive() gets a message with the type identifier ID_CONNECTION_ACCEPTED.
 	/// If the connection is not successful, such as a rejected connection or no response then neither of these things will happen.
@@ -148,7 +148,7 @@ public:
 	virtual bool ConnectWithSocket(const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, RakNetSmartPtr<RakNetSocket> socket, unsigned sendConnectionAttemptCount=7, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNetTime timeoutTime=0);
 
 	/// \brief Connect to the specified network ID (Platform specific console function)
-	/// Does built-in NAT traversal
+	/// \details Does built-in NAT traversal
 	/// \param[in] networkServiceId Network ID structure for the online service
 	/// \param[in] passwordData A data block that must match the data block on the server passed to SetIncomingPassword.  This can be a string or can be a stream of data.  Use 0 for no password.
 	/// \param[in] passwordDataLength The length in bytes of passwordData
@@ -239,25 +239,25 @@ public:
 	unsigned short GetMaximumNumberOfPeers( void ) const;
 
 	// --------------------------------------------------------------------------------------------Remote Procedure Call Functions - Functions to initialize and perform RPC--------------------------------------------------------------------------------------------
-	/// \depreciated
 	/// \ingroup RAKNET_RPC
 	/// Register a C or static member function as available for calling as a remote procedure call
 	/// \param[in] uniqueID A null-terminated unique string to identify this procedure.  See RegisterClassMemberRPC() for class member functions.
 	/// \param[in] functionPointer(...) The name of the function to be used as a function pointer. This can be called whether active or not, and registered functions stay registered unless unregistered
+	/// \deprecated Use RakNet::RPC3
 	void RegisterAsRemoteProcedureCall( const char* uniqueID, void ( *functionPointer ) ( RPCParameters *rpcParms ) );
 
-	/// \depreciated
 	/// \ingroup RAKNET_RPC
 	/// Register a C++ member function as available for calling as a remote procedure call.
 	/// \param[in] uniqueID A null terminated string to identify this procedure. Recommended you use the macro REGISTER_CLASS_MEMBER_RPC to create the string.  Use RegisterAsRemoteProcedureCall() for static functions.
 	/// \param[in] functionPointer The name of the function to be used as a function pointer. This can be called whether active or not, and registered functions stay registered unless unregistered with UnregisterAsRemoteProcedureCall
 	/// \sa The sample ObjectMemberRPC.cpp
+	/// \deprecated Use RakNet::RPC3
 	void RegisterClassMemberRPC( const char* uniqueID, void *functionPointer );
 
-	/// \depreciated
 	/// \ingroup RAKNET_RPC
 	/// Unregisters a C function as available for calling as a remote procedure call that was formerly registered with RegisterAsRemoteProcedureCall. Only call offline.
 	/// \param[in] uniqueID A string of only letters to identify this procedure.  Recommended you use the macro CLASS_MEMBER_ID for class member functions.
+		/// \deprecated Use RakNet::RPC3
 	void UnregisterAsRemoteProcedureCall( const char* uniqueID );
 
 	/// \ingroup RAKNET_RPC
@@ -269,7 +269,6 @@ public:
 	/// \return Returns the value passed to SetNetworkIDManager or 0 if never called.
 	NetworkIDManager *GetNetworkIDManager(void) const;
 
-	/// \depreciated
 	/// \ingroup RAKNET_RPC
 	/// Calls a C function on the remote system that was already registered using RegisterAsRemoteProcedureCall().
 	/// \pre To use object member RPC (networkID!=UNASSIGNED_OBJECT_ID), The recipient must have called SetNetworkIDManager so the system can handle the object lookups
@@ -285,9 +284,9 @@ public:
 	/// \param[in] networkID For static functions, pass UNASSIGNED_NETWORK_ID.  For member functions, you must derive from NetworkIDObject and pass the value returned by NetworkIDObject::GetNetworkID for that object.
 	/// \param[in] replyFromTarget If 0, this function is non-blocking.  Otherwise it will block while waiting for a reply from the target procedure, which should be remotely written to RPCParameters::replyToSender and copied to replyFromTarget.  The block will return early on disconnect or if the sent packet is unreliable and more than 3X the ping has elapsed.
 	/// \return True on a successful packet send (this does not indicate the recipient performed the call), false on failure
+	/// \deprecated Use RakNet::RPC3. This only correctly works for C functions. For C++, it only works for Windows. It is less flexible than RPC3
 	bool RPC( const char* uniqueID, const char *data, BitSize_t bitLength, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget );
 
-	/// \depreciated
 	/// \ingroup RAKNET_RPC
 	/// Calls a C function on the remote system that was already registered using RegisterAsRemoteProcedureCall.
 	/// If you want that function to return data you should call RPC from that system in the same wayReturns true on a successful packet
@@ -305,6 +304,7 @@ public:
 	/// \param[in] networkID For static functions, pass UNASSIGNED_NETWORK_ID.  For member functions, you must derive from NetworkIDObject and pass the value returned by NetworkIDObject::GetNetworkID for that object.
 	/// \param[in] replyFromTarget If 0, this function is non-blocking.  Otherwise it will block while waiting for a reply from the target procedure, which should be remotely written to RPCParameters::replyToSender and copied to replyFromTarget.  The block will return early on disconnect or if the sent packet is unreliable and more than 3X the ping has elapsed.
 	/// \return True on a successful packet send (this does not indicate the recipient performed the call), false on failure
+	/// \deprecated Use RakNet::RPC3. This only correctly works for C functions. For C++, it only works for Windows. It is less flexible than RPC3
 	bool RPC( const char* uniqueID, const RakNet::BitStream *bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget );
 	
 	// -------------------------------------------------------------------------------------------- Connection Management Functions--------------------------------------------------------------------------------------------
@@ -433,7 +433,7 @@ public:
 	/// If \a input is UNASSIGNED_SYSTEM_ADDRESS, will return your own GUID
 	/// \pre Call Startup() first, or the function will return UNASSIGNED_RAKNET_GUID
 	/// \param[in] input The system address of the system we are connected to
-	RakNetGUID GetGuidFromSystemAddress( const SystemAddress input ) const;
+	const RakNetGUID& GetGuidFromSystemAddress( const SystemAddress input ) const;
 
 	/// Given the GUID of a connected system, give us the system address of that system.
 	/// The GUID will be the same on all systems connected to that instance of RakPeer, even if the external system addresses are different
@@ -580,12 +580,12 @@ public:
 	void PushBackPacket( Packet *packet, bool pushAtHead );
 
 	/// \Internal
-	/// \depreciated
+	/// \deprecated This was added without considering proper architecture
 	// \param[in] routerInterface The router to use to route messages to systems not directly connected to this system.
 	void SetRouterInterface( RouterInterface *routerInterface );
 
 	/// \Internal
-	/// \depreciated
+	/// \deprecated This was added without considering proper architecture
 	// \param[in] routerInterface The router to use to route messages to systems not directly connected to this system.
 	void RemoveRouterInterface( RouterInterface *routerInterface );
 
@@ -611,7 +611,7 @@ public:
 	/// Adds simulated ping and packet loss to the outgoing data flow.
 	/// To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and maxSendBPS value on each.
 	/// You can exclude network simulator code with the _RELEASE #define to decrease code size
-	/// \depreciated Use http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0 instead.
+	/// \deprecated Use http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0 instead.
 	/// \param[in] maxSendBPS Maximum bits per second to send.  Packetloss grows linearly.  0 to disable. (CURRENTLY BROKEN - ALWAYS DISABLED)
 	/// \param[in] minExtraPing The minimum time to delay sends.
 	/// \param[in] extraPingVariance The additional random time to delay sends.
@@ -646,6 +646,7 @@ public:
 
 	/// \internal
 	bool SendOutOfBand(const char *host, unsigned short remotePort, MessageID header, const char *data, BitSize_t dataLength, unsigned connectionSocketIndex=0 );
+	virtual void WriteOutOfBandHeader(RakNet::BitStream *bitStream, MessageID header);
 
 	/// \internal
 	/// \brief Holds the clock differences between systems, along with the ping
@@ -715,7 +716,9 @@ protected:
 	int GetIndexFromSystemAddress( const SystemAddress systemAddress, bool calledFromNetworkThread );
 
 	//void RemoveFromRequestedConnectionsList( const SystemAddress systemAddress );
+	// Two versions needed because some buggy compilers strip the last parameter if unused, and crashes
 	bool SendConnectionRequest( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex, unsigned int extraData, unsigned sendConnectionAttemptCount, unsigned timeBetweenSendConnectionAttemptsMS, RakNetTime timeoutTime, RakNetSmartPtr<RakNetSocket> socket );
+	bool SendConnectionRequest( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex, unsigned int extraData, unsigned sendConnectionAttemptCount, unsigned timeBetweenSendConnectionAttemptsMS, RakNetTime timeoutTime );
 	///Get the reliability layer associated with a systemAddress.  
 	/// \param[in] systemAddress The player identifier 
 	/// \return 0 if none
@@ -882,7 +885,7 @@ protected:
 		char *data;
 		bool haveRakNetCloseSocket;
 		unsigned connectionSocketIndex;
-		SocketDescriptor::SocketType socketType;
+		unsigned short remotePortRakNetWasStartedOn_PS3;
 		SOCKET socket;
 		unsigned short port;
 		enum {BCS_SEND, BCS_CLOSE_CONNECTION, BCS_GET_SOCKET, /* BCS_USE_USER_SOCKET, BCS_REBIND_SOCKET_ADDRESS, BCS_RPC, BCS_RPC_SHIFT,*/ BCS_DO_NOTHING} command;
@@ -993,7 +996,7 @@ protected:
 	//DataStructures::Queue<Packet*> pushedBackPacket, outOfOrderDeallocatedPacket;
 	// A free-list of packets, to reduce memory fragmentation
 	DataStructures::Queue<Packet*> packetPool;
-	// Used for object lookup for RPC (actually depreciated, since RPC is depreciated)
+	// Used for object lookup for RPC (actually deprecated, since RPC is deprecated)
 	NetworkIDManager *networkIDManager;
 	// Systems in this list will not go through the secure connection process, even when secure connections are turned on. Wildcards are accepted.
 	DataStructures::List<RakNet::RakString> securityExceptionList;

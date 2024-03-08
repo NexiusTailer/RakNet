@@ -18,7 +18,7 @@
 <P><span class="RakNetBlueHeader">The autopatcher system</span><BR>
 <BR>
 
-The autopatcher is a class that manages the copying of missing or changed files between two or more systems.  It handles transferring files, compressing transferred files, security, and file operations.  It does not handle basic connectivity or provide a user interface - that is up to you.  Autopatchers are  used in all online only games and most AAA commercial games.<BR><BR>
+The autopatcher is a class that manages the copying of missing or changed files between two or more systems.  It handles transferring files, compressing transferred files, security, and file operations.  It does not handle basic connectivity or provide a user interface. For basic connectivity, make sure you connect RakPeerInterface or PacketizedTCP before using it. For a UI, that is entirely up to you. Autopatchers are  used in all online only games and most AAA commercial games.<BR><BR>
 On the client, you need an instance of AutopatcherClient. The server needs an instance of AutopatcherServer. The code for those classes is not part of RakNet core. They are located at .\DependentExtensions\ , and you need to add them to your project.<br>
 <br>
 <strong>On the client side</strong> <br>
@@ -105,11 +105,18 @@ Pass the interface to your repository with this function.  RakNet comes with Aut
         <li>DependentExtensions\ApplyPatch.h and .cpp</li>
         <li>DependentExtensions\AutopatcherClient.h and .cpp</li>
         <li>All source files in Samples\AutopatcherClient, should you want to use the default console application as a design template.</li>
-        <li>All source files in Samples\AutopatcherClientRestarter, should you want to use the default console application to restart the autopatcher after it patches itself.
-      <BR>
-        </li>
-      </ul>      
-      </TD>
+        <li>All source files in Samples\AutopatcherClientRestarter, should you want to use the default console application to restart the autopatcher after it patches itself.      </li>
+      </ul>
+      <p><strong>Using TCP instead of UDP (recommended)</strong></p>
+      <p>RakPeerInterfaces uses UDP, which is a problem if RakNet's protocol changes - the autopatcher wouldn't be able to connect to the new protocol. It is recommended you use TCP instead of UDP. In the sample AutopatcherClientTest.cpp and AutopatcherServerTest_MySQL.cpp or AutopatcherServerTest.cpp you can enable this with the define USE_TCP found at the top of those files.</p>
+      <p>Changes:</p>
+      <ol>
+        <li>Use the PacketizedTCP class instead of RakPeerInterface</li>
+        <li>PacketizedTCP returns connection state changes with HasCompletedConnectionAttempt(), HasNewIncomingConnection(), and HasLostConnection(), rather than byte identifiers.</li>
+        <li>Attach the plugin to your instance of PacketizedTCP instead of RakPeerInterface</li>
+      </ol>
+      <p><strong>Note on memory usage:</strong></p>
+<p>Patches are created with code from Colin Percival <a href="http://www.daemonology.net/bsdiff/">http://www.daemonology.net/bsdiff/</a> . The patching algorithm uses   <a href="http://www.cs.lth.se/Research/Algorithms/Papers/jesper5.ps"> Larsson and Sadakane's qsufsort</a> and is quite memory intensive, and not recommended for files over several hundred megabytes.</p></TD>
 </TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
 <img src="spacer.gif" width="8" height="1">See Also</td>

@@ -46,7 +46,7 @@ int main(void)
 		printf("Enter remote IP: ");
 		gets(text);
 		if (text[0]==0)
-			strcpy(text, "216.224.123.180");
+			strcpy(text, "8.17.250.34");
 	}
 	else if (ch=='s')
 	{

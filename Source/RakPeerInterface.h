@@ -39,7 +39,7 @@ public:
 
 	// --------------------------------------------------------------------------------------------Major Low Level Functions - Functions needed by most users--------------------------------------------------------------------------------------------
 	/// \brief Starts the network threads, opens the listen port.
-	/// You must call this before calling Connect().
+	/// \details You must call this before calling Connect().
 	/// Multiple calls while already active are ignored.  To call this function again with different settings, you must first call Shutdown().
 	/// \note Call SetMaximumIncomingConnections if you want to accept incoming connections
 	/// \note Set _RAKNET_THREADSAFE in RakNetDefines.h if you want to call RakNet functions from multiple threads (not recommended, as it is much slower and RakNet is already asynchronous).
@@ -136,7 +136,7 @@ public:
 	virtual bool ConnectWithSocket(const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, RakNetSmartPtr<RakNetSocket> socket, unsigned sendConnectionAttemptCount=7, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNetTime timeoutTime=0)=0;
 
 	/// \brief Connect to the specified network ID (Platform specific console function)
-	/// Does built-in NAt traversal
+	/// \details Does built-in NAt traversal
 	/// \param[in] passwordData A data block that must match the data block on the server passed to SetIncomingPassword.  This can be a string or can be a stream of data.  Use 0 for no password.
 	/// \param[in] passwordDataLength The length in bytes of passwordData
 	//virtual bool Console2LobbyConnect( void *networkServiceId, const char *passwordData, int passwordDataLength )=0;
@@ -227,24 +227,24 @@ public:
 
 	// --------------------------------------------------------------------------------------------Remote Procedure Call Functions - Functions to initialize and perform RPC--------------------------------------------------------------------------------------------
 	/// \ingroup RAKNET_RPC
-	/// \depreciated Use the AutoRPC plugin instead
 	/// Register a C or static member function as available for calling as a remote procedure call
 	/// \param[in] uniqueID A null-terminated unique string to identify this procedure.  See RegisterClassMemberRPC() for class member functions.
 	/// \param[in] functionPointer(...) The name of the function to be used as a function pointer. This can be called whether active or not, and registered functions stay registered unless unregistered
+	/// \deprecated Use RakNet::RPC3 instead
 	virtual void RegisterAsRemoteProcedureCall( const char* uniqueID, void ( *functionPointer ) ( RPCParameters *rpcParms ) )=0;
 
 	/// \ingroup RAKNET_RPC
-	/// \depreciated Use the AutoRPC plugin instead
 	/// Register a C++ member function as available for calling as a remote procedure call.
 	/// \param[in] uniqueID A null terminated string to identify this procedure. Recommended you use the macro REGISTER_CLASS_MEMBER_RPC to create the string.  Use RegisterAsRemoteProcedureCall() for static functions.
 	/// \param[in] functionPointer The name of the function to be used as a function pointer. This can be called whether active or not, and registered functions stay registered unless unregistered with UnregisterAsRemoteProcedureCall
 	/// \sa The sample ObjectMemberRPC.cpp
+	/// \deprecated Use RakNet::RPC3 instead
 	virtual void RegisterClassMemberRPC( const char* uniqueID, void *functionPointer )=0;
 
 	/// \ingroup RAKNET_RPC
-	/// \depreciated Use the AutoRPC plugin instead
 	/// Unregisters a C function as available for calling as a remote procedure call that was formerly registered with RegisterAsRemoteProcedureCall. Only call offline.
 	/// \param[in] uniqueID A string of only letters to identify this procedure.  Recommended you use the macro CLASS_MEMBER_ID for class member functions.
+	/// \deprecated Use RakNet::RPC3 instead
 	virtual void UnregisterAsRemoteProcedureCall( const char* uniqueID )=0;
 
 	/// \ingroup RAKNET_RPC
@@ -415,7 +415,7 @@ public:
 	/// If \a input is UNASSIGNED_SYSTEM_ADDRESS, will return your own GUID
 	/// \pre Call Startup() first, or the function will return UNASSIGNED_RAKNET_GUID
 	/// \param[in] input The system address of the system we are connected to
-	virtual RakNetGUID GetGuidFromSystemAddress( const SystemAddress input ) const=0;
+	virtual const RakNetGUID& GetGuidFromSystemAddress( const SystemAddress input ) const=0;
 
 	/// Given the GUID of a connected system, give us the system address of that system.
 	/// The GUID will be the same on all systems connected to that instance of RakPeer, even if the external system addresses are different
@@ -590,7 +590,7 @@ public:
 	/// Adds simulated ping and packet loss to the outgoing data flow.
 	/// To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and maxSendBPS value on each.
 	/// You can exclude network simulator code with the _RELEASE #define to decrease code size
-	/// \depreciated Use http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0 instead.
+	/// \deprecated Use http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0 instead.
 	/// \param[in] maxSendBPS Maximum bits per second to send.  Packetloss grows linearly.  0 to disable. (CURRENTLY BROKEN - ALWAYS DISABLED)
 	/// \param[in] minExtraPing The minimum time to delay sends.
 	/// \param[in] extraPingVariance The additional random time to delay sends.
@@ -624,6 +624,7 @@ public:
 
 	/// \internal
 	virtual bool SendOutOfBand(const char *host, unsigned short remotePort, MessageID header, const char *data, BitSize_t dataLength, unsigned connectionSocketIndex=0 )=0;
+	virtual void WriteOutOfBandHeader(RakNet::BitStream *bitStream, MessageID header)=0;
 
 };
 

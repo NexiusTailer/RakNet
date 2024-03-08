@@ -1,3 +1,9 @@
+///
+/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
+///
+/// Usage of RakNet is subject to the appropriate license agreement.
+///
+
 #if !defined(_XBOX) && !defined(X360)
 
 /*

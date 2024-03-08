@@ -26,15 +26,18 @@ class NetworkIDManager;
 #endif
 
 /// \defgroup RPC_3_GROUP RPC3
+/// \brief Remote procedure calls, powered by the 3rd party library Boost
+/// \details
 /// \ingroup PLUGINS_GROUP
 
 namespace RakNet
 {
 
+/// \ingroup RPC_3_GROUP
 #define RPC3_REGISTER_FUNCTION(RPC3Instance, _FUNCTION_PTR_ ) (RPC3Instance)->RegisterFunction((#_FUNCTION_PTR_), (_FUNCTION_PTR_))
 
-/// Error codes returned by a remote system as to why an RPC function call cannot execute
-/// Follows packet ID ID_RPC_REMOTE_ERROR, that is packet->data[1]
+/// \brief Error codes returned by a remote system as to why an RPC function call cannot execute
+/// \details Error code follows packet ID ID_RPC_REMOTE_ERROR, that is packet->data[1]<BR>
 /// Name of the function will be appended starting at packet->data[2]
 /// \ingroup RPC_3_GROUP
 enum RPCErrorCodes
@@ -63,20 +66,20 @@ enum RPCErrorCodes
 	RPC_ERROR_CALLING_C_AS_CPP,
 };
 
-/// The RPC3 plugin allows you to call remote functions as if they were local functions, using the standard function call syntax
-/// No serialization or deserialization is needed.
-/// Features:
-/// 1. Pointers to classes that derive from NetworkID are automatically looked up using NetworkIDManager
-/// 2. Types are written to BitStream, meaning built-in serialization operations are performed, including endian swapping
-/// 3. Types can customize autoserialization by providing an implementation of operator << and operator >> to and from BitStream
+/// \brief The RPC3 plugin allows you to call remote functions as if they were local functions, using the standard function call syntax
+/// \details No serialization or deserialization is needed.<BR>
+/// Features:<BR>
+/// <LI>Pointers to classes that derive from NetworkID are automatically looked up using NetworkIDManager
+/// <LI>Types are written to BitStream, meaning built-in serialization operations are performed, including endian swapping
+/// <LI>Types can customize autoserialization by providing an implementation of operator << and operator >> to and from BitStream
 /// \ingroup RPC_3_GROUP
 class RPC3 : public PluginInterface2
 {
 public:
-	/// Constructor
+	// Constructor
 	RPC3();
 
-	/// Destructor
+	// Destructor
 	virtual ~RPC3();
 
 	/// Sets the network ID manager to use for object lookup

@@ -268,9 +268,12 @@ void RPC3::OnRPC3Call(SystemAddress systemAddress, unsigned char *data, unsigned
 		stringCompressor->DecodeString(strIdentifier,512,&bs,0);
 	bs.ReadCompressed(bitsOnStack);
 	RakNet::BitStream serializedParameters;
-	serializedParameters.AddBitsAndReallocate(BITS_TO_BYTES(bitsOnStack));
-	bs.ReadAlignedBytes(serializedParameters.GetData(), BITS_TO_BYTES(bitsOnStack));
-	serializedParameters.SetWriteOffset(bitsOnStack);
+	if (bitsOnStack>0)
+	{
+		serializedParameters.AddBitsAndReallocate(bitsOnStack);
+		bs.ReadAlignedBytes(serializedParameters.GetData(), BITS_TO_BYTES(bitsOnStack));
+		serializedParameters.SetWriteOffset(bitsOnStack);
+	}
 
 	if (hasFunctionIndex)
 	{

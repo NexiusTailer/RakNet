@@ -45,19 +45,20 @@ public:
 			RakAssert(0);
 
 
-		printf("%i. (100%%) %i/%i %s %ib->%ib / %ib->%ib\n", onFileStruct->setID, onFileStruct->fileIndex+1, onFileStruct->setCount,
-			onFileStruct->fileName, onFileStruct->compressedTransmissionLength, onFileStruct->finalDataLength,
-			onFileStruct->setTotalCompressedTransmissionLength, onFileStruct->setTotalFinalLength);
+		printf("%i. (100%%) %i/%i %s %ib / ib\n", onFileStruct->setID, onFileStruct->fileIndex+1, onFileStruct->numberOfFilesInThisSet,
+			onFileStruct->fileName, onFileStruct->byteLengthOfThisFile,
+			onFileStruct->byteLengthOfThisSet);
 
 		// Return false for the file data to be deallocated automatically
 		return false;
 	}
 
-	virtual void OnFileProgress(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int partLength, char *firstDataChunk)
+	virtual void OnFileProgress(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int dataChunkLength, char *firstDataChunk)
 	{
-		printf("Downloading: %i. (%i%%) %i/%i %s %ib->%ib / %ib->%ib\n", onFileStruct->setID, (int) (100.0*(double)partCount/(double)partTotal),
-			onFileStruct->fileIndex+1, onFileStruct->setCount, onFileStruct->fileName, onFileStruct->compressedTransmissionLength,
-			onFileStruct->finalDataLength, onFileStruct->setTotalCompressedTransmissionLength, onFileStruct->setTotalFinalLength);
+		printf("Downloading: %i. (%i%%) %i/%i %s %ib / %ib\n", onFileStruct->setID, (int) (100.0*(double)partCount/(double)partTotal),
+			onFileStruct->fileIndex+1, onFileStruct->numberOfFilesInThisSet, onFileStruct->fileName,
+			onFileStruct->byteLengthOfThisFile,
+			onFileStruct->byteLengthOfThisSet);
 	}
 
 } transferCallback;
@@ -100,7 +101,8 @@ int main(int argc, char **argv)
 	printf("Enter server IP: ");
 	gets(buff);
 	if (buff[0]==0)
-		strcpy(buff, "216.224.123.180");
+	//	strcpy(buff, "8.17.250.34");
+		strcpy(buff, "127.0.0.1");
 #ifdef USE_TCP
 	packetizedTCP.Connect(buff,60000,false);
 #else
@@ -113,7 +115,7 @@ int main(int argc, char **argv)
 	gets(appDir);
 	if (appDir[0]==0)
 	{
-		strcpy(appDir, "C:/temp/AutopatcherClient");
+		strcpy(appDir, "C:/temp2");
 	}
 	printf("Enter application name: ");
 	char appName[512];

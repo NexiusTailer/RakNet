@@ -200,11 +200,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\Samples\PHPDirectoryServer\PHPDirectoryServer.cpp"
+			RelativePath="..\..\Samples\PHPDirectoryServer2\PHPDirectoryServer2.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\Samples\PHPDirectoryServer\PHPDirectoryServer.h"
+			RelativePath="..\..\Samples\PHPDirectoryServer2\PHPDirectoryServer2.h"
 			>
 		</File>
 		<File

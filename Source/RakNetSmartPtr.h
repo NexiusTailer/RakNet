@@ -30,7 +30,7 @@ private:
 	ReferenceCounter* reference; // Reference refCount
 
 public:
-	RakNetSmartPtr() : reference(0), ptr(0)
+	RakNetSmartPtr() : ptr(0), reference(0)
 	{
 		// Do not allocate by default, wasteful if we just have a list of preallocated and unassigend smart pointers
 	}

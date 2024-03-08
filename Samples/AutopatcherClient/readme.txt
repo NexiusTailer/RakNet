@@ -1,6 +1,6 @@
 Project: Autopatcher Client
 
-Description: Provides patching capabilities to an end-user's application.
+Description: Provides patching capabilities to an end-user's application. This is a console application.
 
 Dependencies: None
 

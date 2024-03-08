@@ -95,14 +95,19 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = Source \
-                         DependentExtensions
+                         DependentExtensions \
+                         DependentExtensions\Autopatcher \
+                         DependentExtensions\Autopatcher\AutopatcherPostgreRepository \
+                         DependentExtensions\Lobby2 \
+                         DependentExtensions\Lobby2\PGSQL \
+                         DependentExtensions\Lobby2\Rooms \
+                         DependentExtensions\Autopatcher\AutopatcherMySQLRepository \
+                         DependentExtensions\MySQLInterface \
+                         DependentExtensions\PostgreSQLInterface \
+                         DependentExtensions\RPC3 \
+                         DependentExtensions\SQLite3Plugin
 INPUT_ENCODING         = UTF-8
-FILE_PATTERNS          = *.c \
-                         *.cc \
-                         *.cxx \
-                         *.cpp \
-                         *.c++ \
-                         *.d \
+FILE_PATTERNS          = *.d \
                          *.java \
                          *.ii \
                          *.ixx \
@@ -124,8 +129,6 @@ FILE_PATTERNS          = *.c \
                          *.mm \
                          *.dox \
                          *.C \
-                         *.CC \
-                         *.C++ \
                          *.II \
                          *.I++ \
                          *.H \
@@ -136,14 +139,8 @@ FILE_PATTERNS          = *.c \
                          *.PHP3 \
                          *.M \
                          *.MM
-RECURSIVE              = YES
-EXCLUDE                = C:/RakNet/DependentExtensions/bzip2-1.0.3 \
-                         C:/RakNet/DependentExtensions/IrrlichtDemo \
-                         C:/RakNet/DependentExtensions/Lobby \
-                         C:/RakNet/DependentExtensions/Ogre3DInterpDemo \
-                         C:/RakNet/DependentExtensions/openssl-0.9.8g \
-                         C:/RakNet/DependentExtensions/portaudio_v18_1 \
-                         C:/RakNet/DependentExtensions/speex-1.1.12
+RECURSIVE              = NO
+EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXCLUDE_SYMBOLS        = 

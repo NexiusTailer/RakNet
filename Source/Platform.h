@@ -71,12 +71,12 @@
 
 struct u128 { uint32_t u[4]; };
 
-union Float32 {
+union catFloat32 {
 	float f;
 	uint32_t i;
 
-	Float32(float n) { f = n; }
-	Float32(uint32_t n) { i = n; }
+	catFloat32(float n) { f = n; }
+	catFloat32(uint32_t n) { i = n; }
 };
 
 
@@ -221,7 +221,7 @@ enum QuadCoords
 	inline int64_t getBE(int64_t n) { return BOSWAP64((uint64_t)n); }
 
 	inline float getBE(float n) {
-		Float32 c = n;
+		catFloat32 c = n;
 		c.i = BOSWAP32(c.i);
 		return c.f;
 	}
@@ -251,7 +251,7 @@ enum QuadCoords
 	inline int64_t getLE(int64_t n) { return BOSWAP64((uint64_t)n); }
 
 	inline float getLE(float n) {
-		Float32 c = n;
+		catFloat32 c = n;
 		c.i = BOSWAP32(c.i);
 		return c.f;
 	}

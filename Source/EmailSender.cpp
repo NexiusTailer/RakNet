@@ -329,7 +329,7 @@ const char *EmailSender::GetResponse(TCPInterface *tcpInterface, const SystemAdd
 #if defined(OPEN_SSL_CLIENT_SUPPORT)
 			if (strstr((const char*)packet->data, "250-STARTTLS"))
 			{
-				tcpInterface->Send("STARTTLS\r\n", (unsigned int) strlen("STARTTLS\r\n"), packet->systemAddress);
+				tcpInterface->Send("STARTTLS\r\n", (unsigned int) strlen("STARTTLS\r\n"), packet->systemAddress, false);
 				return "CONTINUE";
 			}
 #endif

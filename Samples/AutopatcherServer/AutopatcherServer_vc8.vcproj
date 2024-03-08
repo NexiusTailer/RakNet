@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;./../../DependentExtensions/AutopatcherPostgreRepository;./../../DependentExtensions/PostgreSQLInterface"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;./../../DependentExtensions/Autopatcher/AutopatcherPostgreRepository;./../../DependentExtensions/PostgreSQLInterface"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib ./../../DependentExtensions\AutopatcherPostgreRepository\Debug\AutopatcherPostgreRepository.lib &quot;C:\Program Files\PostgreSQL\8.3\lib\libpq.lib&quot;"
+				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib ./../../DependentExtensions\Autopatcher\AutopatcherPostgreRepository\Debug\AutopatcherPostgreRepository.lib &quot;C:\Program Files (x86)\PostgreSQL\8.3\lib\libpq.lib&quot;"
 				OutputFile="$(OutDir)/AutopatcherServer.exe"
 				LinkIncremental="2"
 				IgnoreAllDefaultLibraries="false"
@@ -95,7 +95,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;C:\Program Files\PostgreSQL\8.3\bin\*.dll&quot; .\Debug"
+				CommandLine="copy &quot;C:\Program Files (x86)\PostgreSQL\8.3\bin\*.dll&quot; .\Debug"
 			/>
 		</Configuration>
 		<Configuration
@@ -123,7 +123,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;./../../DependentExtensions/AutopatcherPostgreRepository;./../../DependentExtensions/PostgreSQLInterface"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;./../../DependentExtensions/Autopatcher/AutopatcherPostgreRepository;./../../DependentExtensions/PostgreSQLInterface"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -142,7 +142,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStatic.lib ws2_32.lib ./../../DependentExtensions\AutopatcherPostgreRepository\Release\AutopatcherPostgreRepository.lib &quot;C:\Program Files\PostgreSQL\8.3\lib\libpq.lib&quot;"
+				AdditionalDependencies="./../../lib/RakNetLibStatic.lib ws2_32.lib ./../../DependentExtensions\Autopatcher\AutopatcherPostgreRepository\Release\AutopatcherPostgreRepository.lib &quot;C:\Program Files\PostgreSQL\8.3\lib\libpq.lib&quot;"
 				OutputFile="$(OutDir)/AutopatcherServer.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
@@ -188,19 +188,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\DependentExtensions\AutopatcherServer.cpp"
+				RelativePath="..\..\DependentExtensions\Autopatcher\AutopatcherServer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\AutopatcherServer.h"
+				RelativePath="..\..\DependentExtensions\Autopatcher\AutopatcherServer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\CreatePatch.cpp"
+				RelativePath="..\..\DependentExtensions\Autopatcher\CreatePatch.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\MemoryCompressor.cpp"
+				RelativePath="..\..\DependentExtensions\Autopatcher\MemoryCompressor.cpp"
 				>
 			</File>
 		</Filter>
@@ -210,11 +210,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\DependentExtensions\CreatePatch.h"
+				RelativePath="..\..\DependentExtensions\Autopatcher\CreatePatch.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\MemoryCompressor.h"
+				RelativePath="..\..\DependentExtensions\Autopatcher\MemoryCompressor.h"
 				>
 			</File>
 		</Filter>

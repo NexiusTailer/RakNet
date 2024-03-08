@@ -1,7 +1,7 @@
 lib_LTLIBRARIES 		= libraknet.la
 libraknet_la_LDFLAGS		= -version-info 0:0:0 $(PTHREAD_LIBS) $(PTHREAD_CFLAGS)
 libraknet_la_CPPFLAGS		= $(PTHREAD_CFLAGS)
-libraknet_la_SOURCES		= 	AsynchronousFileIO.cpp  \
+libraknet_la_SOURCES		= 	AsynchronousFileIO.cpp \
 AutoRPC.cpp \
 BigInt.cpp \
 BitStream.cpp \
@@ -31,6 +31,7 @@ FullyConnectedMesh2.cpp \
 FunctionThread.cpp \
 Gen_RPC8.cpp \
 GetTime.cpp \
+gettimeofday.cpp \
 GridSectorizer.cpp \
 HTTPConnection.cpp \
 IncrementalReadInterface.cpp \
@@ -55,6 +56,7 @@ PluginInterface.cpp \
 PluginInterface2.cpp \
 RakMemoryOverride.cpp \
 RakNetCommandParser.cpp \
+RakNetSocket.cpp \
 RakNetStatistics.cpp \
 RakNetTransport.cpp \
 RakNetTransport2.cpp \
@@ -89,10 +91,11 @@ UDPForwarder.cpp \
 UDPProxyClient.cpp \
 UDPProxyCoordinator.cpp \
 UDPProxyServer.cpp \
+VariadicSQLParser.cpp \
 WSAStartupSingleton.cpp \
 _FindFirst.cpp
 
-pkginclude_HEADERS =	AsynchronousFileIO.h  \
+pkginclude_HEADERS =	AsynchronousFileIO.h \
 AutopatcherPatchContext.h \
 AutopatcherRepositoryInterface.h \
 AutoRPC.h \
@@ -144,6 +147,7 @@ FullyConnectedMesh2.h \
 FunctionThread.h \
 Gen_RPC8.h \
 GetTime.h \
+gettimeofday.h \
 GridSectorizer.h \
 HTTPConnection.h \
 IncrementalReadInterface.h \
@@ -179,6 +183,8 @@ RakAssert.h \
 RakMemoryOverride.h \
 RakNetCommandParser.h \
 RakNetDefines.h \
+RakNetSmartPtr.h \
+RakNetSocket.h \
 RakNetStatistics.h \
 RakNetTime.h \
 RakNetTransport.h \
@@ -228,6 +234,7 @@ UDPProxyClient.h \
 UDPProxyCommon.h \
 UDPProxyCoordinator.h \
 UDPProxyServer.h \
+VariadicSQLParser.h \
 WindowsIncludes.h \
 WSAStartupSingleton.h \
 _FindFirst.h

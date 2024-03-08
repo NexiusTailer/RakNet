@@ -48,7 +48,7 @@ written by
 
 
 CCC::CCC():
-m_iSYNInterval(CUDT::m_iSYNInterval),
+m_iSYNInterval(UDTCCWrapper::m_iSYNInterval),
 m_dPktSndPeriod(1.0),
 m_dCWndSize(16.0),
 m_pcParam(NULL),

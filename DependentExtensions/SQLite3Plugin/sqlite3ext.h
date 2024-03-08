@@ -17,8 +17,8 @@
 **
 ** @(#) $Id: sqlite3ext.h,v 1.25 2008/10/12 00:27:54 shane Exp $
 */
-#ifndef _SQLITE3EXT_H_
-#define _SQLITE3EXT_H_
+#ifndef _SQLite3EXT_H_
+#define _SQLite3EXT_H_
 #include "sqlite3.h"
 
 typedef struct sqlite3_api_routines sqlite3_api_routines;
@@ -377,4 +377,4 @@ struct sqlite3_api_routines {
 #define SQLITE_EXTENSION_INIT1     const sqlite3_api_routines *sqlite3_api = 0;
 #define SQLITE_EXTENSION_INIT2(v)  sqlite3_api = v;
 
-#endif /* _SQLITE3EXT_H_ */
+#endif /* _SQLite3EXT_H_ */

@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions;./../../DependentExtensions/bzip2-1.0.3"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;./../../DependentExtensions/bzip2-1.0.3"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -122,7 +122,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions;./../../DependentExtensions/bzip2-1.0.3"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;./../../DependentExtensions/bzip2-1.0.3"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -184,19 +184,19 @@
 			Name="Client Files"
 			>
 			<File
-				RelativePath="..\..\DependentExtensions\ApplyPatch.cpp"
+				RelativePath="..\..\DependentExtensions\Autopatcher\ApplyPatch.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\ApplyPatch.h"
+				RelativePath="..\..\DependentExtensions\Autopatcher\ApplyPatch.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\AutopatcherClient.cpp"
+				RelativePath="..\..\DependentExtensions\Autopatcher\AutopatcherClient.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\AutopatcherClient.h"
+				RelativePath="..\..\DependentExtensions\Autopatcher\AutopatcherClient.h"
 				>
 			</File>
 			<File
@@ -260,11 +260,11 @@
 			Name="BZip2Wrapper"
 			>
 			<File
-				RelativePath="..\..\DependentExtensions\MemoryCompressor.cpp"
+				RelativePath="..\..\DependentExtensions\Autopatcher\MemoryCompressor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\MemoryCompressor.h"
+				RelativePath="..\..\DependentExtensions\Autopatcher\MemoryCompressor.h"
 				>
 			</File>
 		</Filter>

@@ -1,6 +1,6 @@
 Project: ReplicaManager 2 Demo
 
-Description: DEPRECIATED. Tests / Demonstrates using the second iteration of the ReplicaManager class. Used to distribute and autoserialize objects
+Description: deprecated. Tests / Demonstrates using the second iteration of the ReplicaManager class. Used to distribute and autoserialize objects
 
 Dependencies: None
 

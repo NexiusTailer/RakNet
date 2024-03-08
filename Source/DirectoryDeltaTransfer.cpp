@@ -31,7 +31,7 @@ public:
 		{
 			strcpy(fullPathToDir, outputSubdir);
 			strcat(fullPathToDir, onFileStruct->fileName+subdirLen);
-			WriteFileWithDirectories(fullPathToDir, (char*)onFileStruct->fileData, (unsigned int ) onFileStruct->finalDataLength);
+			WriteFileWithDirectories(fullPathToDir, (char*)onFileStruct->fileData, (unsigned int ) onFileStruct->byteLengthOfThisFile);
 		}
 		else
 			fullPathToDir[0]=0;
@@ -39,7 +39,7 @@ public:
 		return onFileCallback->OnFile(onFileStruct);
 	}
 
-	virtual void OnFileProgress(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int partLength, char *firstDataChunk)
+	virtual void OnFileProgress(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int dataChunkLength, char *firstDataChunk)
 	{
 		char fullPathToDir[1024];
 
@@ -51,7 +51,7 @@ public:
 		else
 			fullPathToDir[0]=0;
 
-		onFileCallback->OnFileProgress(onFileStruct, partCount, partTotal, partLength, firstDataChunk);
+		onFileCallback->OnFileProgress(onFileStruct, partCount, partTotal, dataChunkLength, firstDataChunk);
 	}
 	virtual bool OnDownloadComplete(void)
 	{

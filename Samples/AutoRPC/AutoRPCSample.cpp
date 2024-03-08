@@ -149,7 +149,7 @@ int main(void)
 	printf("It is similar to Raknet's RPC system, but automatically\n");
 	printf("serializes and deserializes the parameters to the function call\n");
 	printf("On Linux compile with -Wno-pmf-conversions.\n");
-	printf("-- DEPRECIATED -- Use RPC3 if possible.\n");
+	printf("-- deprecated -- Use RPC3 if possible.\n");
 	printf("Difficulty: Intermediate\n\n");
 
 	printf("(S)erver or (C)lient?: ");

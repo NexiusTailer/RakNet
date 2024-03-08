@@ -22,9 +22,15 @@ namespace RakNet
 	class BitStream;
 }
 
+/// \defgroup RAKNET_TRANSPORT_GROUP RakNetTransport
+/// \brief UDP based transport implementation for the ConsoleServer
+/// \details
+/// \ingroup PLUGINS_GROUP
+
 /// \brief Use RakNetTransport if you need a secure connection between the client and the console server.
-/// RakNetTransport automatically initializes security for the system.  Use the project CommandConsoleClient to connect
+/// \details RakNetTransport automatically initializes security for the system.  Use the project CommandConsoleClient to connect
 /// To the ConsoleServer if you use RakNetTransport
+/// \ingroup RAKNET_TRANSPORT_GROUP
 class RAK_DLL_EXPORT RakNetTransport2 : public TransportInterface, public PluginInterface2
 {
 public:

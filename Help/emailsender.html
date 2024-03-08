@@ -19,8 +19,8 @@
         <BR>
 			  
 	The EmailSender class, found at EmailSender.h, is a simple class with only one function, Send(...), to send an email using a provided mail server. It is used internally by the <a href="crashreporter.html">CrashReporter</a> class to send emails for unmonitored servers. See EmailSender.h for a full description of each parameter.</p>
-    <p><em>Note: At the time of this writing, this class has only been tested at one location to work. Given the wide variety of mail servers and configurations, it is possible this class may not work with your server.</em></p>
-  </TR>
+      <p>See the project Samples/SendEmail for a sample of this</p>
+    <p>The class has also been tested to work with Gmail POP servers, so if you have a Gmail account you can send emails without using your own mail server. The sample has the settings you need by default. You will also need to uncomment OPEN_SSL_CLIENT_SUPPORT in RakNetDefines.h, as Gmail requires the TCP connection to be made with SSL.</p></TR>
 </TABLE>
 <table width="100%" border="0">
       <tr>

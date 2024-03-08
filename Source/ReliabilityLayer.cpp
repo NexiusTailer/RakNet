@@ -14,6 +14,9 @@
 #include "MessageIdentifiers.h"
 #include <math.h>
 
+// Can't figure out which library has this function on the PS3
+double Ceil(double d) {if (((double)((int)d))==d) return d; return (int) (d+1.0);}
+
 
 #ifndef _USE_RAKNET_FLOW_CONTROL // Use UDT
 // The reason for this is that UDT itself is very slow to call sendmsg - it locks critical sections and does lookups
@@ -456,9 +459,9 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 				RakNetTimeUS diff;
 				// Decrease time between packets by 2%
 				if (lastPacketlossTime==0 || (time>lastPacketlossTime && time-lastPacketlossTime>5000000))
-					diff = (RakNetTimeUS)ceil(((long double) timeBetweenPackets * TIME_BETWEEN_PACKETS_INCREASE_MULTIPLIER_DEFAULT * 3.0));
+					diff = (RakNetTimeUS)Ceil(((long double) timeBetweenPackets * TIME_BETWEEN_PACKETS_INCREASE_MULTIPLIER_DEFAULT * 3.0));
 				else
-					diff = (RakNetTimeUS)ceil(((long double) timeBetweenPackets * TIME_BETWEEN_PACKETS_INCREASE_MULTIPLIER_DEFAULT));
+					diff = (RakNetTimeUS)Ceil(((long double) timeBetweenPackets * TIME_BETWEEN_PACKETS_INCREASE_MULTIPLIER_DEFAULT));
 
 				if (diff < timeBetweenPackets)
 				{
@@ -473,7 +476,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 			else if (pingLowering==false || backoffThisSample>1)
 			{
 				RakNetTimeUS diff;
-				diff = (RakNetTimeUS)ceil(((long double) timeBetweenPackets * TIME_BETWEEN_PACKETS_DECREASE_MULTIPLIER_DEFAULT));
+				diff = (RakNetTimeUS)Ceil(((long double) timeBetweenPackets * TIME_BETWEEN_PACKETS_DECREASE_MULTIPLIER_DEFAULT));
 
 				nextSendTime+=diff;
 				timeBetweenPackets+=diff;
@@ -621,7 +624,8 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 			}
 			else // holeCount>=receivedPackets.Size()
 			{
-				if (holeCount > 1000000)
+				// 6/25/09 changed from 1000000 to 100000. At 10 megabytes per second for a 1 second buffer only 7000 is needed.
+				if (holeCount > 100000)
 				{
 #if defined(DEBUG_SPLIT_PACKET_PROBLEMS)
 					if (internalPacket->splitPacketCount>0)
@@ -1125,7 +1129,7 @@ bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPri
 void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSize, RakNetTimeUS time,
 							  unsigned bitsPerSecondLimit,
 							  DataStructures::List<PluginInterface2*> &messageHandlerList,
-							  RakNetRandom *rnr, bool isPS3LobbySocket)
+							  RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3)
 #else
 void ReliabilityLayer::Update(  UDTSOCKET s, SystemAddress systemAddress, int MTUSize, RakNetTimeUS time, unsigned maxBitsPerSecond, DataStructures::List<PluginInterface2*> &messageHandlerList, RakNetRandom *rnr, bool isPS3LobbySocket )
 #endif
@@ -1276,7 +1280,7 @@ void ReliabilityLayer::Update(  UDTSOCKET s, SystemAddress systemAddress, int MT
 			updateBitStream.Reset();
 			internalPacket->packetNumber=sendPacketCount;
 			statistics.messageTotalBitsSent[ i ] += WriteToBitStreamFromInternalPacket( &updateBitStream, internalPacket, time );
-			if (SendBitStream( s, systemAddress, &updateBitStream, rnr, isPS3LobbySocket, internalPacket->reliability==RELIABLE || internalPacket->reliability==RELIABLE_SEQUENCED || internalPacket->reliability==RELIABLE_ORDERED )==0)
+			if (SendBitStream( s, systemAddress, &updateBitStream, rnr, remotePortRakNetWasStartedOn_PS3, internalPacket->reliability==RELIABLE || internalPacket->reliability==RELIABLE_SEQUENCED || internalPacket->reliability==RELIABLE_ORDERED )==0)
 			{
 				internalPacket->messageNumberAssigned=false;
 				sendPacketSet[i].PushAtHead(internalPacket);
@@ -1393,7 +1397,7 @@ void ReliabilityLayer::Update(  UDTSOCKET s, SystemAddress systemAddress, int MT
 			else
 #endif
 			{
-				SendBitStream( s, systemAddress, &updateBitStream, rnr, isPS3LobbySocket, reliableDataSent );
+				SendBitStream( s, systemAddress, &updateBitStream, rnr, remotePortRakNetWasStartedOn_PS3, reliableDataSent );
 
 			}
 
@@ -1451,7 +1455,7 @@ void ReliabilityLayer::Update(  UDTSOCKET s, SystemAddress systemAddress, int MT
 				updateBitStream.Write(elapsedMS);
 				BitSize_t bitsSent = acknowlegements.Serialize(&updateBitStream, (MTUSize-UDP_HEADER_SIZE)*8-1, true);
 				statistics.acknowlegementBitsSent +=bitsSent;
-				SendBitStream( s, systemAddress, &updateBitStream, rnr, isPS3LobbySocket, true );
+				SendBitStream( s, systemAddress, &updateBitStream, rnr, remotePortRakNetWasStartedOn_PS3, true );
 
 				if (bitsPerSecondLimit > 0)
 				{
@@ -1473,7 +1477,7 @@ void ReliabilityLayer::Update(  UDTSOCKET s, SystemAddress systemAddress, int MT
 			updateBitStream.Reset();
 			updateBitStream.Write( delayList[ i ]->data, delayList[ i ]->length );
 			// Send it now
-			SendBitStream( s, systemAddress, &updateBitStream, rnr, isPS3LobbySocket, true );
+			SendBitStream( s, systemAddress, &updateBitStream, rnr, remotePortRakNetWasStartedOn_PS3, true );
 
 			RakNet::OP_DELETE(delayList[ i ], __FILE__, __LINE__);
 			if (i != (int) delayList.Size() - 1)
@@ -1494,9 +1498,9 @@ void ReliabilityLayer::Update(  UDTSOCKET s, SystemAddress systemAddress, int MT
 // Writes a bitstream to the socket
 //-------------------------------------------------------------------------------------------------------
 #ifdef _USE_RAKNET_FLOW_CONTROL // These variables only necessary for RakNet's flow control
-void ReliabilityLayer::SendBitStream( SOCKET s, SystemAddress systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, bool isPS3LobbySocket, bool isReliable)
+void ReliabilityLayer::SendBitStream( SOCKET s, SystemAddress systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, bool isReliable)
 #else
-int ReliabilityLayer::SendBitStream( UDTSOCKET s, SystemAddress systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, bool isPS3LobbySocket, bool isReliable)
+int ReliabilityLayer::SendBitStream( UDTSOCKET s, SystemAddress systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, bool isReliable)
 #endif
 {
 	(void) systemAddress;
@@ -1548,7 +1552,7 @@ int ReliabilityLayer::SendBitStream( UDTSOCKET s, SystemAddress systemAddress, R
 	//RAKNET_DEBUG_PRINTF("total bits=%i length=%i\n", BITS_TO_BYTES(statistics.totalBitsSent), length);
 
 	#ifdef _USE_RAKNET_FLOW_CONTROL // These variables only necessary for RakNet's flow control
-	SocketLayer::Instance()->SendTo( s, ( char* ) bitStream->GetData(), length, systemAddress.binaryAddress, systemAddress.port, isPS3LobbySocket );
+	SocketLayer::Instance()->SendTo( s, ( char* ) bitStream->GetData(), length, systemAddress.binaryAddress, systemAddress.port, remotePortRakNetWasStartedOn_PS3 );
 	#else
 	int retVal=SocketLayer::Instance()->SendToUDT( s, ( char* ) bitStream->GetData(), length, isPS3LobbySocket, isReliable ? -1 : 1000 );
 	if (retVal==0)
@@ -1730,7 +1734,7 @@ bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize,
 				if (internalPacket->timesSent>=3 && lastAckTime!=0 && time - lastAckTime>1000000)
 				{
 					// Totally unable to deliver messages for more than a second
-					RakNetTimeUS diff = (RakNetTimeUS)ceil(((long double) timeBetweenPackets * .5));
+					RakNetTimeUS diff = (RakNetTimeUS)Ceil(((long double) timeBetweenPackets * .5));
 					nextSendTime+=diff;
 					timeBetweenPackets+=diff;
 					lastTimeBetweenPacketsIncrease=time;

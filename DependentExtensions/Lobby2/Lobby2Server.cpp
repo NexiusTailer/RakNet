@@ -2,7 +2,7 @@
 #include "RakAssert.h"
 #include "MessageIdentifiers.h"
 
-// #define __INTEGRATE_LOBBY2_WITH_ROOMS_PLUGIN
+//#define __INTEGRATE_LOBBY2_WITH_ROOMS_PLUGIN
 
 #ifdef __INTEGRATE_LOBBY2_WITH_ROOMS_PLUGIN
 #include "RoomsPlugin.h"
@@ -353,6 +353,24 @@ void Lobby2Server::ClearUsers(void)
 		RakNet::OP_DELETE(users[i], __FILE__, __LINE__);
 	users.Clear();
 }
+void Lobby2Server::LogoffFromRooms(User *user)
+{
+	// Remove from the room too
+#if defined(__INTEGRATE_LOBBY2_WITH_ROOMS_PLUGIN)
+	// Tell the rooms plugin about the logoff event
+	if (roomsPlugin)
+	{
+		roomsPlugin->LogoffRoomsParticipant(user->userName, UNASSIGNED_SYSTEM_ADDRESS);
+	}
+	else if (roomsPluginAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+	{
+		RakNet::BitStream bs;
+		RoomsPlugin::SerializeLogoff(user->userName,&bs);
+		SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, roomsPluginAddress, false);
+	}
+#endif
+
+}
 void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 {
 	if (calledFromThread)
@@ -368,6 +386,42 @@ void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 
 	bool objectExists;
 	unsigned int insertionIndex = users.GetIndexFromKey(command->callerSystemAddress, &objectExists);
+	if (objectExists)
+	{
+		User * user = users[insertionIndex];
+		LogoffFromRooms(user);
+
+		// Already logged in from this system address.
+		// Delete the existing entry, which will be reinserted.
+		RakNet::OP_DELETE(user,__FILE__,__LINE__);
+		users.RemoveAtIndex(insertionIndex);
+	}
+	else
+	{
+		unsigned int idx2 = GetUserIndexByGUID(command->callerGuid);
+		unsigned int idx3 = GetUserIndexByUsername(command->callingUserName);
+		if (idx2!=(unsigned int) -1)
+		{
+			User * user = users[idx2];
+			LogoffFromRooms(user);
+
+			RakNet::OP_DELETE(user,__FILE__,__LINE__);
+			users.RemoveAtIndex(idx2);
+
+			insertionIndex = users.GetIndexFromKey(command->callerSystemAddress, &objectExists);
+		}
+		else if (idx3!=(unsigned int) -1)
+		{
+			User * user = users[idx3];
+			LogoffFromRooms(user);
+
+			RakNet::OP_DELETE(user,__FILE__,__LINE__);
+			users.RemoveAtIndex(idx3);
+
+			insertionIndex = users.GetIndexFromKey(command->callerSystemAddress, &objectExists);
+		}
+	}
+
 	User *user = RakNet::OP_NEW<User>( __FILE__, __LINE__ );
 	user->userName=command->callingUserName;
 	user->systemAddress=command->callerSystemAddress;
@@ -491,19 +545,7 @@ void Lobby2Server::RemoveUser(unsigned int index)
 			i++;
 	}
 	threadPool.UnlockInput();
-#if defined(__INTEGRATE_LOBBY2_WITH_ROOMS_PLUGIN)
-	// Tell the rooms plugin about the logoff event
-	if (roomsPlugin)
-	{
-		roomsPlugin->LogoffRoomsParticipant(user->userName, UNASSIGNED_SYSTEM_ADDRESS);
-	}
-	else if (roomsPluginAddress!=UNASSIGNED_SYSTEM_ADDRESS)
-	{
-		RakNet::BitStream bs;
-		RoomsPlugin::SerializeLogoff(user->userName,&bs);
-		SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, roomsPluginAddress, false);
-	}
-#endif
+	LogoffFromRooms(user);
 
 	RakNet::OP_DELETE(user,__FILE__,__LINE__);
 	users.RemoveAtIndex(index);
@@ -517,6 +559,22 @@ unsigned int Lobby2Server::GetUserIndexBySystemAddress(SystemAddress systemAddre
 	if (objectExists)
 		return idx;
 	return (unsigned int)-1;
+}
+unsigned int Lobby2Server::GetUserIndexByGUID(RakNetGUID guid)
+{
+	unsigned int idx;
+	for (idx=0; idx < users.Size(); idx++)
+		if (users[idx]->guid==guid)
+			return idx;
+	return (unsigned int) -1;
+}
+unsigned int Lobby2Server::GetUserIndexByUsername(RakNet::RakString userName)
+{
+	unsigned int idx;
+	for (idx=0; idx < users.Size(); idx++)
+		if (users[idx]->userName==userName)
+			return idx;
+	return (unsigned int) -1;
 }
 void Lobby2Server::StopThreads(void)
 {

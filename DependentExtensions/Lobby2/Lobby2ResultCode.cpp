@@ -7,6 +7,7 @@ static Lobby2ResultCodeDescription resultCodeDescriptions[L2RC_COUNT] =
 {
 	{L2RC_SUCCESS, "SUCCESS"},
 	{L2RC_PROCESSING, "PROCESSING"},
+	{L2RC_BUSY_EXCEEDED_PROCESSING_LIMIT, "L2RC_BUSY_EXCEEDED_PROCESSING_LIMIT"},
 	{L2RC_GENERAL_ERROR, "GENERAL_ERROR"},
 	{L2RC_OUT_OF_MEMORY, "L2RC_OUT_OF_MEMORY"},
 	{L2RC_NOT_IMPLEMENTED, "NOT_IMPLEMENTED"},
@@ -79,6 +80,10 @@ static Lobby2ResultCodeDescription resultCodeDescriptions[L2RC_COUNT] =
 	{L2RC_Client_StartIgnore_ALREADY_IGNORED, "Client_StartIgnore_ALREADY_IGNORED"},
 	{L2RC_Client_StopIgnore_UNKNOWN_TARGET_HANDLE, "Client_StopIgnore_UNKNOWN_TARGET_HANDLE"},
 	{L2RC_Client_StopIgnore_CANNOT_PERFORM_ON_SELF, "Client_StopIgnore_CANNOT_PERFORM_ON_SELF"},
+	{L2RC_Client_PerTitleIntegerStorage_TITLE_NOT_IN_USE, "Client_PerTitleIntegerStorage_TITLE_NOT_IN_USE"},
+	{L2RC_Client_PerTitleIntegerStorage_ROW_EMPTY, "Client_PerTitleIntegerStorage_ROW_EMPTY"},
+	{L2RC_Client_PerTitleBinaryStorage_TITLE_NOT_IN_USE, "Client_PerTitleBinaryStorage_TITLE_NOT_IN_USE"},
+	{L2RC_Client_PerTitleBinaryStorage_ROW_EMPTY, "Client_PerTitleBinaryStorage_ROW_EMPTY"},
 	{L2RC_Friends_SendInvite_UNKNOWN_TARGET_HANDLE, "Friends_SendInvite_UNKNOWN_TARGET_HANDLE"},
 	{L2RC_Friends_SendInvite_CANNOT_PERFORM_ON_SELF, "Friends_SendInvite_CANNOT_PERFORM_ON_SELF"},
 	{L2RC_Friends_SendInvite_ALREADY_SENT_INVITE, "Friends_SendInvite_ALREADY_SENT_INVITE"},

@@ -231,6 +231,8 @@ private:
    int m_iRTO;                          // RTO value, microseconds
 
    CPerfMon m_PerfInfo;                 // protocol statistics information
+
+   friend struct UDTCCWrapper;
 };
 
 class CCCVirtualFactory

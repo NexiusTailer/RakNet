@@ -53,7 +53,7 @@ int main(void)
 	printf("3. Demonstrates serialization visibility scoping.\n");
 	printf("This sample uses client/server.\nPeer to peer and clustered servers are also supported.\n");
 	printf("Difficulty: Intermediate\n\n");
-	printf("\nDEPRECIATED\nUse ReplicaManager3\n");
+	printf("\ndeprecated\nUse ReplicaManager3\n");
 
 	printf("Start as (c)lient or (s)erver? ");
 	ch=getche();

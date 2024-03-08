@@ -6,13 +6,14 @@
 #include <string>
 #include <vector>
 #include "RakNetTime.h"
+#include "Export.h"
 
 // KevinJ:
 #include "WindowsIncludes.h"
 
 #pragma   warning(disable:   4251) 
 
-class __declspec (dllexport) UPNPNAT
+class RAK_DLL_EXPORT UPNPNAT
 {
 public:
  
