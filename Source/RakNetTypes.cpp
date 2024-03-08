@@ -93,19 +93,7 @@ void SystemAddress::ToString(bool writePort, char *dest) const
 	}
 
 #if defined(_XBOX) || defined(X360)
-	// Don't do this, can't use ToString() to call Connect()
-//	if (writePort)
-//		sprintf( dest, "%016I64X:%d", binaryAddress, port );
-//	else
-//		sprintf( dest, "%016I64X", binaryAddress );
-
-	Itoa(binaryAddress, dest, 10);
-	if (writePort)
-	{
-		strcat(dest, ":");
-		Itoa(port, dest+strlen(dest), 10);
-	}
-
+                                                                                                                      
 #else
 
 	
@@ -122,9 +110,9 @@ void SystemAddress::ToString(bool writePort, char *dest) const
 	}
 #endif
 }
-SystemAddress::SystemAddress() {*this=UNASSIGNED_SYSTEM_ADDRESS;}
-SystemAddress::SystemAddress(const char *a, unsigned short b) {SetBinaryAddress(a); port=b;};
-SystemAddress::SystemAddress(unsigned int a, unsigned short b) {binaryAddress=a; port=b;};
+SystemAddress::SystemAddress() {*this=UNASSIGNED_SYSTEM_ADDRESS; systemIndex=(SystemIndex)-1;}
+SystemAddress::SystemAddress(const char *a, unsigned short b) {SetBinaryAddress(a); port=b; systemIndex=(SystemIndex)-1;};
+SystemAddress::SystemAddress(unsigned int a, unsigned short b) {binaryAddress=a; port=b; systemIndex=(SystemIndex)-1;};
 #ifdef _MSC_VER
 #pragma warning( disable : 4996 )  // The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strnicmp. See online help for details.
 #endif
@@ -134,7 +122,7 @@ void SystemAddress::SetBinaryAddress(const char *str)
 	{
 
 #if defined(_XBOX) || defined(X360)
-		return;
+         
 #else
 	#if defined(_WIN32)
 		if (_strnicmp(str,"localhost", 9)==0)
@@ -182,16 +170,7 @@ void SystemAddress::SetBinaryAddress(const char *str)
 		}
 
 #if defined(_XBOX) || defined(X360)
-		int dotCount=0;
-		for (index=0; str[index] && str[index]!=':' && index<22; index++)
-		{
-			if (str[index]=='.')
-				dotCount++;
-		}
-		if (IPPart[0] && dotCount==3)
-			binaryAddress=inet_addr(IPPart);
-		else
-			binaryAddress=atoi(IPPart);
+                                                                                                                                                                                                                                                        
 #else
 		if (IPPart[0])
 			binaryAddress=inet_addr(IPPart);
@@ -207,7 +186,7 @@ void SystemAddress::SetBinaryAddress(const char *str)
 
 NetworkID& NetworkID::operator = ( const NetworkID& input )
 {
-#if defined NETWORK_ID_SUPPORTS_PEER_TO_PEER
+#if NETWORK_ID_SUPPORTS_PEER_TO_PEER==1
 	systemAddress = input.systemAddress;
 	guid = input.guid;
 #endif
@@ -217,7 +196,7 @@ NetworkID& NetworkID::operator = ( const NetworkID& input )
 
 bool NetworkID::operator==( const NetworkID& right ) const
 {
-#if defined NETWORK_ID_SUPPORTS_PEER_TO_PEER
+#if NETWORK_ID_SUPPORTS_PEER_TO_PEER==1
 //	if (NetworkID::peerToPeerMode)
 	{
 		if (guid!=UNASSIGNED_RAKNET_GUID)
@@ -233,7 +212,7 @@ bool NetworkID::operator==( const NetworkID& right ) const
 
 bool NetworkID::operator!=( const NetworkID& right ) const
 {
-#if defined NETWORK_ID_SUPPORTS_PEER_TO_PEER
+#if NETWORK_ID_SUPPORTS_PEER_TO_PEER==1
 //	if (NetworkID::peerToPeerMode)
 	{
 		if (guid!=UNASSIGNED_RAKNET_GUID)
@@ -249,7 +228,7 @@ bool NetworkID::operator!=( const NetworkID& right ) const
 
 bool NetworkID::operator>( const NetworkID& right ) const
 {
-#if defined NETWORK_ID_SUPPORTS_PEER_TO_PEER
+#if NETWORK_ID_SUPPORTS_PEER_TO_PEER==1
 //	if (NetworkID::peerToPeerMode)
 	{
 		if (guid!=UNASSIGNED_RAKNET_GUID)
@@ -265,7 +244,7 @@ bool NetworkID::operator>( const NetworkID& right ) const
 
 bool NetworkID::operator<( const NetworkID& right ) const
 {
-#if defined NETWORK_ID_SUPPORTS_PEER_TO_PEER
+#if NETWORK_ID_SUPPORTS_PEER_TO_PEER==1
 //	if (NetworkID::peerToPeerMode)
 	{
 		if (guid!=UNASSIGNED_RAKNET_GUID)
@@ -280,7 +259,7 @@ bool NetworkID::operator<( const NetworkID& right ) const
 }
 bool NetworkID::IsPeerToPeerMode(void)
 {
-#if defined NETWORK_ID_SUPPORTS_PEER_TO_PEER
+#if NETWORK_ID_SUPPORTS_PEER_TO_PEER==1
 	return true;
 #else
 	return false;
@@ -299,53 +278,19 @@ void NetworkID::SetPeerToPeerMode(bool isPeerToPeer)
 }
 bool RakNetGUID::operator==( const RakNetGUID& right ) const
 {
-	//return memcmp(g, right.g, sizeof(g))==0;
 	return g==right.g;
-//	for (unsigned int i=0; i < sizeof(RakNetGUID) / sizeof(RakNetGUID::g[0]); i++)
-//		if (g[i]!=right.g[i])
-//			return false;
-//	return true;
 }
 bool RakNetGUID::operator!=( const RakNetGUID& right ) const
 {
 	return g!=right.g;
-	// return memcmp(g, right.g, sizeof(g))!=0;
-//	for (unsigned int i=0; i < sizeof(RakNetGUID) / sizeof(RakNetGUID::g[0]); i++)
-//		if (g[i]!=right.g[i])
-//			return true;
-//	return false;
 }
 bool RakNetGUID::operator > ( const RakNetGUID& right ) const
 {
-	// memcmp returns the wrong result!
-//	return memcmp(g, right.g, sizeof(g))>0;
 	return g > right.g;
-	/*
-	for (unsigned int i=0; i < sizeof(RakNetGUID) / sizeof(RakNetGUID::g[0]); i++)
-	{
-		if (g[i]<right.g[i])
-			return false;
-		if (g[i]>right.g[i])
-			return true;
-	}
-	return false;
-	*/
 }
 bool RakNetGUID::operator < ( const RakNetGUID& right ) const
 {
 	return g < right.g;
-	// memcmp returns the wrong result!
-//	return memcmp(g, right.g, sizeof(g))<0;
-	/*
-	for (unsigned int i=0; i < sizeof(RakNetGUID) / sizeof(RakNetGUID::g[0]); i++)
-	{
-		if (g[i]>right.g[i])
-			return false;
-		if (g[i]<right.g[i])
-			return true;
-	}
-	return false;
-	*/
 }
 const char *RakNetGUID::ToString(void) const
 {
@@ -371,39 +316,13 @@ bool RakNetGUID::FromString(const char *source)
 	if (source==0)
 		return false;
 
-#if defined(WIN32) || defined(_XBOX) || defined(_X360)
+#if defined(_XBOX) || defined(_X360)
+                   
+#elif defined(WIN32)
 	g=_atoi64(source);
 #else
 	g=atoll(source);
 #endif
 	return true;
 
-	/*
-	char intPart[128];
-	unsigned int destIndex, sourceIndex=0, partIndex;
-	for (partIndex=0; partIndex<sizeof(RakNetGUID) / sizeof(RakNetGUID::g[0]); partIndex++)
-	{
-		for (destIndex=0; source[sourceIndex] && source[sourceIndex]!='.' && destIndex<sizeof(intPart)-1; destIndex++, sourceIndex++)
-		{
-			if (source[sourceIndex]<'0' || source[sourceIndex]>'9')
-				return false;
-			intPart[destIndex]=source[sourceIndex];
-		}
-		if (source[sourceIndex]!='.' && partIndex<3)
-		{
-			// Failed
-			return false;
-		}
-		if (destIndex==0)
-		{
-			// Failed
-			return false;
-		}
-		intPart[destIndex]=0;
-		g[partIndex]=strtoul(intPart,0,0);
-		sourceIndex++;
-	}
-
-	return true;
-	*/
 }

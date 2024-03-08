@@ -29,7 +29,10 @@
   </div>
 </div>
 <div class="contents">
-<h1>RakNet::Emails_Delete Struct Reference</h1><!-- doxytag: class="RakNet::Emails_Delete" --><!-- doxytag: inherits="RakNet::Lobby2Message" -->Deletes an email with a specified ID. This ID is returned in GetEmail and should uniquely identify an email (it's fine to use the primary key). Note: Emails are not actually deleted from the database in this function. This just sets the deletedBySender or deletedByReciever flags. Emails are actually stored in a log recording past emails and sender and receiver primary key. They are not truly destroyed until done so with <a class="el" href="structRakNet_1_1System__PruneAccounts.html">System_PruneAccounts</a>.  
+<h1>RakNet::Emails_Delete Struct Reference<br>
+<small>
+[<a class="el" href="group__LOBBY__2__COMMANDS.html">Lobby2Commands</a>]</small>
+</h1><!-- doxytag: class="RakNet::Emails_Delete" --><!-- doxytag: inherits="RakNet::Lobby2Message" -->Deletes an email with a specified ID. This ID is returned in GetEmail and should uniquely identify an email (it's fine to use the primary key). Note: Emails are not actually deleted from the database in this function. This just sets the deletedBySender or deletedByReciever flags. Emails are actually stored in a log recording past emails and sender and receiver primary key. They are not truly destroyed until done so with <a class="el" href="structRakNet_1_1System__PruneAccounts.html" title="Unused accounts are deleted. This is cascading, such that emails and other tables...">System_PruneAccounts</a>.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;Lobby2Message.h&gt;</code>
@@ -62,7 +65,7 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Overridable serialization of the contents of this message. Defaults to SerializeBase(). <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Deletes an email with a specified ID. This ID is returned in GetEmail and should uniquely identify an email (it's fine to use the primary key). Note: Emails are not actually deleted from the database in this function. This just sets the deletedBySender or deletedByReciever flags. Emails are actually stored in a log recording past emails and sender and receiver primary key. They are not truly destroyed until done so with <a class="el" href="structRakNet_1_1System__PruneAccounts.html">System_PruneAccounts</a>. <hr><h2>Member Function Documentation</h2>
+Deletes an email with a specified ID. This ID is returned in GetEmail and should uniquely identify an email (it's fine to use the primary key). Note: Emails are not actually deleted from the database in this function. This just sets the deletedBySender or deletedByReciever flags. Emails are actually stored in a log recording past emails and sender and receiver primary key. They are not truly destroyed until done so with <a class="el" href="structRakNet_1_1System__PruneAccounts.html" title="Unused accounts are deleted. This is cascading, such that emails and other tables...">System_PruneAccounts</a>. <hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="109e706d3cd5fe794ff697eef7b3e090"></a><!-- doxytag: member="RakNet::Emails_Delete::CancelOnDisconnect" ref="109e706d3cd5fe794ff697eef7b3e090" args="(void) const " -->
 <div class="memitem">
 <div class="memproto">
@@ -102,7 +105,7 @@ Should this message not be processed on the server if the requesting user discon
 <div class="memdoc">
 
 <p>
-Is this message something that should only be run by a system with admin privileges? Set admin privileges with <a class="el" href="classRakNet_1_1Lobby2Server.html#499cbfd420d6a6caecd62a8143a641da">Lobby2Server::AddAdminAddress()</a> 
+Is this message something that should only be run by a system with admin privileges? Set admin privileges with <a class="el" href="classRakNet_1_1Lobby2Server.html#499cbfd420d6a6caecd62a8143a641da" title="If Lobby2Message::RequiresAdmin() returns true, the message can only be processed...">Lobby2Server::AddAdminAddress()</a> 
 <p>Implements <a class="el" href="structRakNet_1_1Lobby2Message.html#79cbb400e4521af2c353fbd640fed0f7">RakNet::Lobby2Message</a>.</p>
 
 </div>
@@ -146,15 +149,15 @@ Does this function require logging into the server before it can be executed? If
 <div class="memdoc">
 
 <p>
-Is this message something that should only be run by a system with ranking upload priviledges? Set ranking privileges with Lobby2Server::AddRankingAddress() 
+Is this message something that should only be run by a system with ranking upload priviledges? Set ranking privileges with <a class="el" href="classRakNet_1_1Lobby2Server.html#16a9ef14b0c08f5c01745908666064d5" title="If Lobby2Message::RequiresRankingPermission() returns true, then the system that...">Lobby2Server::AddRankingAddress()</a> 
 <p>Implements <a class="el" href="structRakNet_1_1Lobby2Message.html#3eab67e30f491cd3410b9d850ffcecea">RakNet::Lobby2Message</a>.</p>
 
 </div>
 </div><p>
 <hr>The documentation for this struct was generated from the following file:<ul>
-<li>C:/RakNet/DependentExtensions/Lobby2/Lobby2Message.h</ul>
+<li>c:/RakNet/DependentExtensions/Lobby2/Lobby2Message.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:48 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:15 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

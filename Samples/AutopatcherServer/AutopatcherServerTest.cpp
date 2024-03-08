@@ -33,8 +33,12 @@ void main(int argc, char **argv)
 	AutopatcherServer autopatcherServer;
 	FLP_Printf progressIndicator;
 	FileListTransfer fileListTransfer;
-	AutopatcherPostgreRepository postgre;
-	autopatcherServer.SetAutopatcherRepositoryInterface(&postgre);
+	// So only one thread runs per connection, we create an array of connection objects, and tell the autopatcher server to use one thread per item
+	static const int sqlConnectionObjectCount=4;
+	AutopatcherPostgreRepository connectionObject[sqlConnectionObjectCount];
+	AutopatcherRepositoryInterface *connectionObjectAddresses[sqlConnectionObjectCount];
+	for (int i=0; i < sqlConnectionObjectCount; i++)
+		connectionObjectAddresses[i]=&connectionObject[i];
 	fileListTransfer.SetCallback(&progressIndicator);
 	autopatcherServer.SetFileListTransferPlugin(&fileListTransfer);
 #ifdef USE_TCP
@@ -67,12 +71,20 @@ void main(int argc, char **argv)
 	strcat(connectionString, username);
 	strcat(connectionString, " password=");
 	strcat(connectionString, password);
-	if (postgre.Connect(connectionString)==false)
+	for (int conIdx=0; conIdx < sqlConnectionObjectCount; conIdx++)
 	{
-		printf("Database connection failed.\n");
-		return;
+		if (connectionObject[conIdx].Connect(connectionString)==false)
+		{
+			printf("Database connection failed.\n");
+			return;
+		}
 	}
+
 	printf("Database connection suceeded.\n");
+	printf("Starting threads\n");
+	autopatcherServer.StartThreads(sqlConnectionObjectCount,connectionObjectAddresses);
+	printf("System ready for connections\n");
+
 	printf("(D)rop database\n(C)reate database.\n(A)dd application\n(U)pdate revision.\n(R)emove application\n(Q)uit\n");
 
 	char ch;
@@ -120,13 +132,13 @@ void main(int argc, char **argv)
 				break;
 			else if (ch=='c')
 			{
-				if (postgre.CreateAutopatcherTables()==false)
-					printf("%s", postgre.GetLastError());
+				if (connectionObject[0].CreateAutopatcherTables()==false)
+					printf("%s", connectionObject[0].GetLastError());
 			}
 			else if (ch=='d')
 			{
-                if (postgre.DestroyAutopatcherTables()==false)
-					printf("%s", postgre.GetLastError());
+                if (connectionObject[0].DestroyAutopatcherTables()==false)
+					printf("%s", connectionObject[0].GetLastError());
 			}
 			else if (ch=='a')
 			{
@@ -136,8 +148,8 @@ void main(int argc, char **argv)
 				if (appName[0]==0)
 					strcpy(appName, "TestApp");
 
-				if (postgre.AddApplication(appName, username)==false)
-					printf("%s", postgre.GetLastError());
+				if (connectionObject[0].AddApplication(appName, username)==false)
+					printf("%s", connectionObject[0].GetLastError());
 				else
 					printf("Done\n");
 			}
@@ -149,8 +161,8 @@ void main(int argc, char **argv)
 				if (appName[0]==0)
 					strcpy(appName, "TestApp");
 
-				if (postgre.RemoveApplication(appName)==false)
-					printf("%s", postgre.GetLastError());
+				if (connectionObject[0].RemoveApplication(appName)==false)
+					printf("%s", connectionObject[0].GetLastError());
 				else
 					printf("Done\n");
 			}
@@ -168,9 +180,9 @@ void main(int argc, char **argv)
 				if (appDir[0]==0)
 					strcpy(appDir, "C:/temp");
 
-				if (postgre.UpdateApplicationFiles(appName, appDir, username, &progressIndicator)==false)
+				if (connectionObject[0].UpdateApplicationFiles(appName, appDir, username, &progressIndicator)==false)
 				{
-					printf("%s", postgre.GetLastError());
+					printf("%s", connectionObject[0].GetLastError());
 				}
 				else
 				{

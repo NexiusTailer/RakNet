@@ -2,8 +2,7 @@
 #include "RakNetDefines.h"
 
 #if defined(_PS3)
-// Alloca
-#include <alloca.h>
+                              
 #endif
 #include <stdlib.h>
 

@@ -28,6 +28,9 @@
 </div>
 <div class="contents">
 <h1>RakNet::Lobby2Client Member List</h1>This is the complete list of members for <a class="el" href="classRakNet_1_1Lobby2Client.html">RakNet::Lobby2Client</a>, including all inherited members.<p><table>
+  <tr class="memlist"><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html#d20e1b1a427254ecfbf17ccc12e569ec">AddCallbackInterface</a>(Lobby2Callbacks *cb)</td><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html">RakNet::Lobby2Plugin</a></td><td><code> [virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html#c123ed7d7aa608d3bf3e594a38ed94b1">ClearCallbackInterfaces</a>()</td><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html">RakNet::Lobby2Plugin</a></td><td><code> [virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html#8b6d1b34ae44e0991c6622c693e80dae">GetMessageFactory</a>(void) const </td><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html">RakNet::Lobby2Plugin</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPluginInterface2.html#3141887d338b4aff184882254a937aef">OnAck</a>(unsigned int messageNumber, SystemAddress remoteSystemAddress, RakNetTime time)</td><td><a class="el" href="classPluginInterface2.html">PluginInterface2</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classPluginInterface2.html#523fa43791dfc9c363d0d20e9609b177">OnAttach</a>(void)</td><td><a class="el" href="classPluginInterface2.html">PluginInterface2</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1Lobby2Client.html#5093b0e3583e6a66415b0060c16c4c1a">OnClosedConnection</a>(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)</td><td><a class="el" href="classRakNet_1_1Lobby2Client.html">RakNet::Lobby2Client</a></td><td><code> [protected, virtual]</code></td></tr>
@@ -41,15 +44,17 @@
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1Lobby2Client.html#b6bd157a6a8d6e71961e94c8ec10e817">OnReceive</a>(Packet *packet)</td><td><a class="el" href="classRakNet_1_1Lobby2Client.html">RakNet::Lobby2Client</a></td><td><code> [protected, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1Lobby2Client.html#2794aa29dcb3ff22427c551ecf57a89a">OnShutdown</a>(void)</td><td><a class="el" href="classRakNet_1_1Lobby2Client.html">RakNet::Lobby2Client</a></td><td><code> [protected, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classPluginInterface2.html#99443028fe498e6ae6c400f53eb8cf4a">OnStartup</a>(void)</td><td><a class="el" href="classPluginInterface2.html">PluginInterface2</a></td><td><code> [inline, virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html#1c24e8721bba20cdd86712d373846ea7">RemoveCallbackInterface</a>(Lobby2Callbacks *cb)</td><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html">RakNet::Lobby2Plugin</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f">SendMsg</a>(Lobby2Message *msg)</td><td><a class="el" href="classRakNet_1_1Lobby2Client.html">RakNet::Lobby2Client</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1Lobby2Client.html#95ce0205949b6129eaa2401a86d71eeb">SendMsgAndDealloc</a>(Lobby2Message *msg)</td><td><a class="el" href="classRakNet_1_1Lobby2Client.html">RakNet::Lobby2Client</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html#5090cd5b0c83e5ed290b11fe9e81ac75">SetCallbackInterface</a>(Lobby2Callbacks *cb)</td><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html">RakNet::Lobby2Plugin</a></td><td><code> [virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html#ea2398d48dc769d0d88b7819601636c4">SetMessageFactory</a>(Lobby2MessageFactory *f)</td><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html">RakNet::Lobby2Plugin</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html#9eefa18ec9dfee3207cb539a1904512c">SetOrderingChannel</a>(char oc)</td><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html">RakNet::Lobby2Plugin</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html#d64f0357967307e763260d6d68a11769">SetSendPriority</a>(PacketPriority pp)</td><td><a class="el" href="classRakNet_1_1Lobby2Plugin.html">RakNet::Lobby2Plugin</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1Lobby2Client.html#6fcabb02010caf3076044a38b9bab820">SetServerAddress</a>(SystemAddress addr)</td><td><a class="el" href="classRakNet_1_1Lobby2Client.html">RakNet::Lobby2Client</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPluginInterface2.html#3ae050232a13186f812e8ecb493fb53b">Update</a>(void)</td><td><a class="el" href="classPluginInterface2.html">PluginInterface2</a></td><td><code> [inline, virtual]</code></td></tr>
 </table></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:48 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:14 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

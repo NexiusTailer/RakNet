@@ -1,4 +1,4 @@
-RakNet 3.62
+RakNet 3.71
 Copyright 2002-2005 Kevin Jenkins (rakkar@jenkinssoftware.com).
 This API and the code herein created by and wholly and privately owned by Kevin Jenkins except where specifically indicated otherwise.
 Licensed under the "RakNet" brand by Jenkins Software and subject to the terms of the relevant licensing agreement available at http://www.jenkinssoftware.com
@@ -98,6 +98,12 @@ Code:
 lipo -create *.a -o libraknet.a
 
 You now have a file named libraknet.a. This is the RakNet library, built to run on both PowerPC and Intel Macs. Enjoy! ;-)
+
+-----------------------------------------
+IPod
+-----------------------------------------
+Depending on what version you target, you may have to change two defines to not use 64 bit integers and floats or doubles. See 
+See http://www.jenkinssoftware.com/forum/index.php?topic=2717.0
 
 
 -----------------------------------------

@@ -34,8 +34,12 @@ int main(int argc, char **argv)
 	AutopatcherServer autopatcherServer;
 	FLP_Printf progressIndicator;
 	FileListTransfer fileListTransfer;
-	AutopatcherMySQLRepository repository;
-	autopatcherServer.SetAutopatcherRepositoryInterface(&repository);
+	// So only one thread runs per connection, we create an array of connection objects, and tell the autopatcher server to use one thread per item
+	static const int sqlConnectionObjectCount=4;
+	AutopatcherMySQLRepository connectionObject[sqlConnectionObjectCount];
+	AutopatcherRepositoryInterface *connectionObjectAddresses[sqlConnectionObjectCount];
+	for (int i=0; i < sqlConnectionObjectCount; i++)
+		connectionObjectAddresses[i]=&connectionObject[i];
 	fileListTransfer.SetCallback(&progressIndicator);
 	autopatcherServer.SetFileListTransferPlugin(&fileListTransfer);
 #ifdef USE_TCP
@@ -67,15 +71,30 @@ int main(int argc, char **argv)
 		strcpy(password,"aaaa");
 	char db[256];
 	printf("Enter DB schema: ");
+	// To create the schema, go to the command line client and type create schema autopatcher;
+	// You also have to add 
+	// max_allowed_packet=128M
+	// Where 128 is the maximum size file in megabytes you'll ever add
+	// to MySQL\MySQL Server 5.1\my.ini in the [mysqld] section
+	// Be sure to restart the service after doing so
 	gets(db);
 	if (db[0]==0)
 		strcpy(db,"autopatcher");
-	if (!repository.Connect("localhost", username, password, db, 0, NULL, 0))
+	for (int conIdx=0; conIdx < sqlConnectionObjectCount; conIdx++)
 	{
-		printf("Database connection failed.\n");
-		return 1;
+		if (!connectionObject[conIdx].Connect("localhost", username, password, db, 0, NULL, 0))
+		{
+			printf("Database connection failed.\n");
+			return 1;
+		}
 	}
 	printf("Database connection suceeded.\n");
+
+
+	printf("Starting threads\n");
+	autopatcherServer.StartThreads(sqlConnectionObjectCount, connectionObjectAddresses);
+	printf("System ready for connections\n");
+
 	printf("(D)rop database\n(C)reate database.\n(A)dd application\n(U)pdate revision.\n(R)emove application\n(Q)uit\n");
 
 	char ch;
@@ -122,15 +141,15 @@ int main(int argc, char **argv)
 				break;
 			else if (ch=='c')
 			{
-				if (repository.CreateAutopatcherTables()==false)
-					printf("Error: %s\n", repository.GetLastError());
+				if (connectionObject[0].CreateAutopatcherTables()==false)
+					printf("Error: %s\n", connectionObject[0].GetLastError());
 				else
 					printf("Created\n");
 			}
 			else if (ch=='d')
 			{
-				if (repository.DestroyAutopatcherTables()==false)
-					printf("Error: %s\n", repository.GetLastError());
+				if (connectionObject[0].DestroyAutopatcherTables()==false)
+					printf("Error: %s\n", connectionObject[0].GetLastError());
 				else
 					printf("Destroyed\n");
 			}
@@ -142,8 +161,8 @@ int main(int argc, char **argv)
 				if (appName[0]==0)
 					strcpy(appName, "TestApp");
 
-				if (repository.AddApplication(appName, username)==false)
-					printf("Error: %s\n", repository.GetLastError());
+				if (connectionObject[0].AddApplication(appName, username)==false)
+					printf("Error: %s\n", connectionObject[0].GetLastError());
 				else
 					printf("Done\n");
 			}
@@ -155,8 +174,8 @@ int main(int argc, char **argv)
 				if (appName[0]==0)
 					strcpy(appName, "TestApp");
 
-				if (repository.RemoveApplication(appName)==false)
-					printf("Error: %s\n", repository.GetLastError());
+				if (connectionObject[0].RemoveApplication(appName)==false)
+					printf("Error: %s\n", connectionObject[0].GetLastError());
 				else
 					printf("Done\n");
 			}
@@ -174,9 +193,9 @@ int main(int argc, char **argv)
 				if (appDir[0]==0)
 					strcpy(appDir, "C:/temp");
 
-				if (repository.UpdateApplicationFiles(appName, appDir, username, &progressIndicator)==false)
+				if (connectionObject[0].UpdateApplicationFiles(appName, appDir, username, &progressIndicator)==false)
 				{
-					printf("Error: %s\n", repository.GetLastError());
+					printf("Error: %s\n", connectionObject[0].GetLastError());
 				}
 				else
 				{

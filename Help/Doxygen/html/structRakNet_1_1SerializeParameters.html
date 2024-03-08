@@ -41,6 +41,8 @@
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SerializeParameters.html#d7ab99674d6452c3d5a5ea6301da4a75">outputBitstream</a> [RM3_NUM_OUTPUT_BITSTREAM_CHANNELS]</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SerializeParameters.html#3f827fa6ae16ed1f35efddf5696ae4e9">lastSentBitstream</a> [RM3_NUM_OUTPUT_BITSTREAM_CHANNELS]</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">RakNetTime&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SerializeParameters.html#aecbe1e740707f88e2bda424a6157123">messageTimestamp</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRO&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SerializeParameters.html#653bfe8b81e149b38b9cf191307e6750">pro</a></td></tr>
@@ -86,6 +88,21 @@ For prior serializations this tick, for the same connection, how many bits have 
 
 <p>
 Current time, in milliseconds. curTime - whenLastSerialized is how long it has been since this object was last sent 
+</div>
+</div><p>
+<a class="anchor" name="3f827fa6ae16ed1f35efddf5696ae4e9"></a><!-- doxytag: member="RakNet::SerializeParameters::lastSentBitstream" ref="3f827fa6ae16ed1f35efddf5696ae4e9" args="[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS]" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a>* <a class="el" href="structRakNet_1_1SerializeParameters.html#3f827fa6ae16ed1f35efddf5696ae4e9">RakNet::SerializeParameters::lastSentBitstream</a>[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS]          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Last bitstream we sent for this replica to this system. Read, but DO NOT MODIFY 
 </div>
 </div><p>
 <a class="anchor" name="aecbe1e740707f88e2bda424a6157123"></a><!-- doxytag: member="RakNet::SerializeParameters::messageTimestamp" ref="aecbe1e740707f88e2bda424a6157123" args="" -->
@@ -149,9 +166,9 @@ When this object was last serialized to the connection 0 means never
 </div>
 </div><p>
 <hr>The documentation for this struct was generated from the following file:<ul>
-<li>C:/RakNet/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
+<li>c:/RakNet/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:47 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:14 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

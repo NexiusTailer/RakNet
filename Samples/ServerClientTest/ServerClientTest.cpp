@@ -48,7 +48,7 @@ class Client
 		void Connect(void)
 		{
 			bool b;
-			b=peer->Connect("127.0.0.1", (unsigned short) SERVER_PORT, 0, 0, 0);
+			b=peer->Connect("94.198.81.195", (unsigned short) SERVER_PORT, 0, 0, 0);
 			if (b==false)
 			{
 				printf("Client connect call failed!\n");

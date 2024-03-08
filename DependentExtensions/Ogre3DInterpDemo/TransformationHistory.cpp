@@ -18,21 +18,21 @@ void TransformationHistory::Init(RakNetTime maxWriteInterval, RakNetTime maxHist
 {
 	writeInterval=maxWriteInterval;
 	maxHistoryLength = maxHistoryTime/maxWriteInterval+1;
-	history.ClearAndForceAllocation(maxHistoryLength+1);
+	history.ClearAndForceAllocation(maxHistoryLength+1, __FILE__, __LINE__ );
 	RakAssert(writeInterval>0);
 }
 void TransformationHistory::Write(const Ogre::Vector3 &position, const Ogre::Vector3 &velocity, const Ogre::Quaternion &orientation, RakNetTime curTimeMS)
 {
 	if (history.Size()==0)
 	{
-		history.Push(TransformationHistoryCell(curTimeMS,position,velocity,orientation));
+		history.Push(TransformationHistoryCell(curTimeMS,position,velocity,orientation), __FILE__, __LINE__ );
 	}
 	else
 	{
 		const TransformationHistoryCell &lastCell = history.PeekTail();
 		if (curTimeMS-lastCell.time>=writeInterval)
 		{
-			history.Push(TransformationHistoryCell(curTimeMS,position,velocity,orientation));
+			history.Push(TransformationHistoryCell(curTimeMS,position,velocity,orientation), __FILE__, __LINE__ );
 			if (history.Size()>maxHistoryLength)
 				history.Pop();
 		}
@@ -43,7 +43,7 @@ void TransformationHistory::Overwrite(const Ogre::Vector3 &position, const Ogre:
 	int historySize = history.Size();
 	if (historySize==0)
 	{
-		history.Push(TransformationHistoryCell(when,position,velocity,orientation));
+		history.Push(TransformationHistoryCell(when,position,velocity,orientation), __FILE__, __LINE__ );
 	}
 	else
 	{
@@ -57,7 +57,7 @@ void TransformationHistory::Overwrite(const Ogre::Vector3 &position, const Ogre:
 				if (i==historySize-1 && when-cell.time>=writeInterval)
 				{
 					// Not an overwrite at all, but a new cell
-					history.Push(TransformationHistoryCell(when,position,velocity,orientation));
+					history.Push(TransformationHistoryCell(when,position,velocity,orientation), __FILE__, __LINE__ );
 					if (history.Size()>maxHistoryLength)
 						history.Pop();
 					return;
@@ -130,5 +130,5 @@ void TransformationHistory::Read(Ogre::Vector3 *position, Ogre::Vector3 *velocit
 }
 void TransformationHistory::Clear(void)
 {
-	history.Clear();
+	history.Clear(__FILE__, __LINE__);
 }

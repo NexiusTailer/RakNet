@@ -103,7 +103,7 @@ void RakVoice::CloseAllChannels(void)
 		FreeChannelMemory(index,false);
 	}
 
-	voiceChannels.Clear();
+	voiceChannels.Clear(false, __FILE__, __LINE__);
 }
 bool RakVoice::SendFrame(SystemAddress recipient, void *inputBuffer)
 {
@@ -646,7 +646,7 @@ void RakVoice::OpenChannel(Packet *packet)
 	SetPreprocessorParameter(channel->pre_state, SPEEX_PREPROCESS_SET_DENOISE, (defaultDENOISEState) ? 1 : 2);
 	SetPreprocessorParameter(channel->pre_state, SPEEX_PREPROCESS_SET_VAD, (defaultVADState) ? 1 : 2);
 
-	voiceChannels.Insert(packet->systemAddress, channel, true);
+	voiceChannels.Insert(packet->systemAddress, channel, true, __FILE__, __LINE__);
 }
 
 

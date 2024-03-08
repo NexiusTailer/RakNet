@@ -9,33 +9,37 @@ namespace RakNet
 
 struct Lobby2Message;
 
-/// The lobby system works by sending implementations of Lobby2Message from Lobby2Client to Lobby2Server, and getting the results via Lobby2Client::SetCallbackInterface()
-/// The client itself is a thin shell that does little more than call Serialize on the messages.
-/// To use:
-/// 1. Call Lobby2Client::SetServerAddress() after connecting to the system running Lobby2Server.
-/// 2. Instantiate an instance of RakNet::Lobby2MessageFactory and register it with RakNet::Lobby2Plugin::SetMessageFactory() (the base class of Lobby2Client)
-/// 3. Call messageFactory.Alloc(command); where command is one of the Lobby2MessageID enumerations.
-/// 4. Instantiate a (probably derived) instance of Lobby2Callbacks and register it with Lobby2Client::SetCallbackInterface()
-/// 5. Cast the returned structure, fill in the input parameters, and call Lobby2Client::SendMsg() to send this command to the server.
-/// 6. Wait for the result of the operation to be sent to your callback. The message will contain the original input parameters, possibly output parameters, and Lobby2Message::resultCode will be filled in.
+/// \brief Class used to send commands to Lobby2Server
+/// \details The lobby system works by sending implementations of Lobby2Message from Lobby2Client to Lobby2Server, and getting the results via Lobby2Client::SetCallbackInterface()<BR>
+/// The client itself is a thin shell that does little more than call Serialize on the messages.<BR>
+/// To use:<BR>
+/// <OL>
+/// <LI>Call Lobby2Client::SetServerAddress() after connecting to the system running Lobby2Server.
+/// <LI>Instantiate an instance of RakNet::Lobby2MessageFactory and register it with RakNet::Lobby2Plugin::SetMessageFactory() (the base class of Lobby2Client)
+/// <LI>Call messageFactory.Alloc(command); where command is one of the Lobby2MessageID enumerations.
+/// <LI>Instantiate a (probably derived) instance of Lobby2Callbacks and register it with Lobby2Client::SetCallbackInterface()
+/// <LI>Cast the returned structure, fill in the input parameters, and call Lobby2Client::SendMsg() to send this command to the server.
+/// <LI>Wait for the result of the operation to be sent to your callback. The message will contain the original input parameters, possibly output parameters, and Lobby2Message::resultCode will be filled in.
+/// </OL>
+/// \ingroup LOBBY_2_CLIENT
 class RAK_DLL_EXPORT Lobby2Client : public RakNet::Lobby2Plugin
 {
 public:	
 	Lobby2Client();
 	virtual ~Lobby2Client();
 	
-	/// Set the address of the server. When you call SendMsg() the packet will be sent to this address.
+	/// \brief Set the address of the server. When you call SendMsg() the packet will be sent to this address.
 	void SetServerAddress(SystemAddress addr);
 
-	// Return whatever was passed to SetServerAddress()
+	// \brief Return whatever was passed to SetServerAddress()
 	SystemAddress GetServerAddress(void) const;
 
-	/// Send a command to the server
+	/// \brief Send a command to the server
 	/// \param[in] msg The message that represents the command
 	/// \param[in] callbackId Which callback, registered with SetCallbackInterface() or AddCallbackInterface(), should process the result. -1 for all
 	virtual void SendMsg(Lobby2Message *msg);
 
-	/// Same as SendMsg()
+	/// \brief Same as SendMsg()
 	/// Also calls Dealloc on the message factory
 	virtual void SendMsgAndDealloc(Lobby2Message *msg);
 

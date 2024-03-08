@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="BigPacketTest"
 	ProjectGUID="{5B38727A-2D86-4235-907D-37A1530392FA}"
+	RootNamespace="BigPacketTest"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -61,7 +62,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib"
+				AdditionalDependencies="ws2_32.lib"
+				ShowProgress="0"
 				OutputFile="$(OutDir)/BigPacketTest.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -138,7 +140,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStatic.lib ws2_32.lib"
+				AdditionalDependencies="ws2_32.lib"
 				OutputFile="$(OutDir)/BigPacketTest.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"

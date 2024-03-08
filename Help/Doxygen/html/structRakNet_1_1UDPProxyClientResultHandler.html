@@ -45,13 +45,15 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1UDPProxyClientResultHandler.html#a5230e0e90bc1478562ca6ca09b40fc3">OnNoServersOnline</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> proxyCoordinator, <a class="el" href="structSystemAddress.html">SystemAddress</a> sourceAddress, <a class="el" href="structSystemAddress.html">SystemAddress</a> targetAddress, <a class="el" href="classRakNet_1_1UDPProxyClient.html">RakNet::UDPProxyClient</a> *proxyClientPlugin)=0</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1UDPProxyClientResultHandler.html#42c32a851a4173b83f677670d572ecee">OnRecipientNotConnected</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> proxyCoordinator, <a class="el" href="structSystemAddress.html">SystemAddress</a> sourceAddress, <a class="el" href="structSystemAddress.html">SystemAddress</a> targetAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> targetGuid, <a class="el" href="classRakNet_1_1UDPProxyClient.html">RakNet::UDPProxyClient</a> *proxyClientPlugin)=0</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1UDPProxyClientResultHandler.html#de82de3a5e0fc1de743da537bdedff75">OnAllServersBusy</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> proxyCoordinator, <a class="el" href="structSystemAddress.html">SystemAddress</a> sourceAddress, <a class="el" href="structSystemAddress.html">SystemAddress</a> targetAddress, <a class="el" href="classRakNet_1_1UDPProxyClient.html">RakNet::UDPProxyClient</a> *proxyClientPlugin)=0</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1UDPProxyClientResultHandler.html#043f736d85cf71abf7e8458aeff8cb95">OnForwardingInProgress</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> proxyCoordinator, <a class="el" href="structSystemAddress.html">SystemAddress</a> sourceAddress, <a class="el" href="structSystemAddress.html">SystemAddress</a> targetAddress, <a class="el" href="classRakNet_1_1UDPProxyClient.html">RakNet::UDPProxyClient</a> *proxyClientPlugin)=0</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Callback to handle results of calling <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding()</a> <hr><h2>Member Function Documentation</h2>
+Callback to handle results of calling <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding()</a> <hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="de82de3a5e0fc1de743da537bdedff75"></a><!-- doxytag: member="RakNet::UDPProxyClientResultHandler::OnAllServersBusy" ref="de82de3a5e0fc1de743da537bdedff75" args="(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)=0" -->
 <div class="memitem">
 <div class="memproto">
@@ -92,9 +94,9 @@ Callback to handle results of calling <a class="el" href="classRakNet_1_1UDPProx
 <p>
 Called when our forwarding request failed, because all UDPProxyServers that are connected to <a class="el" href="classRakNet_1_1UDPProxyCoordinator.html" title="Middleman between UDPProxyServer and UDPProxyClient, maintaining a list of UDPProxyServer...">UDPProxyCoordinator</a> are at their capacity Either add more servers, or increase capacity via <a class="el" href="classRakNet_1_1UDPForwarder.html#59d01c307683affb6ecf8c6a2e18d7ca">UDPForwarder::SetMaxForwardEntries()</a> <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyCoordinator</em>&nbsp;</td><td><em>proxyCoordinator</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding</a> </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>sourceAddress</em>&nbsp;</td><td><em>sourceAddress</em> parameter passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding</a>. If it was UNASSIGNED_SYSTEM_ADDRESS, it is now our external IP address. </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>targetAddress</em>&nbsp;</td><td><em>targetAddress</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding</a> </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyCoordinator</em>&nbsp;</td><td><em>proxyCoordinator</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a> </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>sourceAddress</em>&nbsp;</td><td><em>sourceAddress</em> parameter passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a>. If it was UNASSIGNED_SYSTEM_ADDRESS, it is now our external IP address. </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>targetAddress</em>&nbsp;</td><td><em>targetAddress</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a> </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyClient</em>&nbsp;</td><td>The plugin that is calling this callback </td></tr>
   </table>
 </dl>
@@ -141,9 +143,9 @@ Called when our forwarding request failed, because all UDPProxyServers that are 
 <p>
 Called when our forwarding request is already in progress on the <em>proxyCoordinator</em>. This can be ignored, but indicates an unneeded second request <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyCoordinator</em>&nbsp;</td><td><em>proxyCoordinator</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding</a> </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>sourceAddress</em>&nbsp;</td><td><em>sourceAddress</em> parameter passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding</a>. If it was UNASSIGNED_SYSTEM_ADDRESS, it is now our external IP address. </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>targetAddress</em>&nbsp;</td><td><em>targetAddress</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding</a> </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyCoordinator</em>&nbsp;</td><td><em>proxyCoordinator</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a> </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>sourceAddress</em>&nbsp;</td><td><em>sourceAddress</em> parameter passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a>. If it was UNASSIGNED_SYSTEM_ADDRESS, it is now our external IP address. </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>targetAddress</em>&nbsp;</td><td><em>targetAddress</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a> </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyClient</em>&nbsp;</td><td>The plugin that is calling this callback </td></tr>
   </table>
 </dl>
@@ -211,9 +213,9 @@ Called when another system has setup forwarding, with our system as the target a
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyIPAddress</em>&nbsp;</td><td>IP Address of the proxy server, which will forward messages to targetAddress </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyPort</em>&nbsp;</td><td>Remote port to use on the proxy server, which will forward messages to targetAddress </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>reverseProxyPort</em>&nbsp;</td><td>The port the destination will reply back to us on. You may not need this. </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyCoordinator</em>&nbsp;</td><td><em>proxyCoordinator</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding</a> </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>sourceAddress</em>&nbsp;</td><td><em>sourceAddress</em> parameter passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding</a>. This is originating source IP address of the remote system that will be sending to us. </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>targetAddress</em>&nbsp;</td><td><em>targetAddress</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding</a>. This is our external IP address. </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyCoordinator</em>&nbsp;</td><td><em>proxyCoordinator</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a> </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>sourceAddress</em>&nbsp;</td><td><em>sourceAddress</em> parameter passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a>. This is originating source IP address of the remote system that will be sending to us. </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>targetAddress</em>&nbsp;</td><td><em>targetAddress</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a>. This is our external IP address. </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyClient</em>&nbsp;</td><td>The plugin that is calling this callback </td></tr>
   </table>
 </dl>
@@ -281,9 +283,9 @@ Called when our forwarding request was completed. We can now connect to <em>targ
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyIPAddress</em>&nbsp;</td><td>IP Address of the proxy server, which will forward messages to targetAddress </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyPort</em>&nbsp;</td><td>Remote port to use on the proxy server, which will forward messages to targetAddress </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>reverseProxyPort</em>&nbsp;</td><td>The port the destination will reply back to us on. You may not need this. </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyCoordinator</em>&nbsp;</td><td><em>proxyCoordinator</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding</a> </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>sourceAddress</em>&nbsp;</td><td><em>sourceAddress</em> parameter passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding</a>. If it was UNASSIGNED_SYSTEM_ADDRESS, it is now our external IP address. </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>targetAddress</em>&nbsp;</td><td><em>targetAddress</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding</a> </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyCoordinator</em>&nbsp;</td><td><em>proxyCoordinator</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a> </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>sourceAddress</em>&nbsp;</td><td><em>sourceAddress</em> parameter passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a>. If it was UNASSIGNED_SYSTEM_ADDRESS, it is now our external IP address. </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>targetAddress</em>&nbsp;</td><td><em>targetAddress</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a> </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyClient</em>&nbsp;</td><td>The plugin that is calling this callback </td></tr>
   </table>
 </dl>
@@ -330,9 +332,65 @@ Called when our forwarding request was completed. We can now connect to <em>targ
 <p>
 Called when our forwarding request failed, because no UDPProxyServers are connected to <a class="el" href="classRakNet_1_1UDPProxyCoordinator.html" title="Middleman between UDPProxyServer and UDPProxyClient, maintaining a list of UDPProxyServer...">UDPProxyCoordinator</a> <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyCoordinator</em>&nbsp;</td><td><em>proxyCoordinator</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding</a> </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>sourceAddress</em>&nbsp;</td><td><em>sourceAddress</em> parameter passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding</a>. If it was UNASSIGNED_SYSTEM_ADDRESS, it is now our external IP address. </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>targetAddress</em>&nbsp;</td><td><em>targetAddress</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#15aaeb2ddca67268fa9422ecca59e200">UDPProxyClient::RequestForwarding</a> </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyCoordinator</em>&nbsp;</td><td><em>proxyCoordinator</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a> </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>sourceAddress</em>&nbsp;</td><td><em>sourceAddress</em> parameter passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a>. If it was UNASSIGNED_SYSTEM_ADDRESS, it is now our external IP address. </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>targetAddress</em>&nbsp;</td><td><em>targetAddress</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a> </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyClient</em>&nbsp;</td><td>The plugin that is calling this callback </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="42c32a851a4173b83f677670d572ecee"></a><!-- doxytag: member="RakNet::UDPProxyClientResultHandler::OnRecipientNotConnected" ref="42c32a851a4173b83f677670d572ecee" args="(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)=0" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void RakNet::UDPProxyClientResultHandler::OnRecipientNotConnected           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>proxyCoordinator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>sourceAddress</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>targetAddress</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>targetGuid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1UDPProxyClient.html">RakNet::UDPProxyClient</a> *&nbsp;</td>
+          <td class="paramname"> <em>proxyClientPlugin</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [pure virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Called when our forwarding request failed, because no UDPProxyServers are connected to <a class="el" href="classRakNet_1_1UDPProxyCoordinator.html" title="Middleman between UDPProxyServer and UDPProxyClient, maintaining a list of UDPProxyServer...">UDPProxyCoordinator</a> <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyCoordinator</em>&nbsp;</td><td><em>proxyCoordinator</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a> </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>sourceAddress</em>&nbsp;</td><td><em>sourceAddress</em> parameter passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a>. If it was UNASSIGNED_SYSTEM_ADDRESS, it is now our external IP address. </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>targetAddress</em>&nbsp;</td><td><em>targetAddress</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a> </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>targetGuid</em>&nbsp;</td><td><em>targetGuid</em> parameter originally passed to <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">UDPProxyClient::RequestForwarding</a> </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>proxyClient</em>&nbsp;</td><td>The plugin that is calling this callback </td></tr>
   </table>
 </dl>
@@ -340,9 +398,9 @@ Called when our forwarding request failed, because no UDPProxyServers are connec
 </div>
 </div><p>
 <hr>The documentation for this struct was generated from the following file:<ul>
-<li>C:/RakNet/Source/<a class="el" href="UDPProxyClient_8h.html">UDPProxyClient.h</a></ul>
+<li>c:/RakNet/Source/<a class="el" href="UDPProxyClient_8h.html">UDPProxyClient.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:48 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:14 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

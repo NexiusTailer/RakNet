@@ -77,6 +77,9 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#4f5a2327da7dc46e7cd1f0b2d0bf4c25">Serialize</a> (bool writeToBitstream, char *input, const unsigned int numberOfBytes)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Bidirectional serialize/deserialize an array or casted stream or raw data. This does NOT do endian swapping.  <a href="#4f5a2327da7dc46e7cd1f0b2d0bf4c25"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#865cabe0ab41bd573d8e880f0d822258">SerializeFloat16</a> (bool writeToBitstream, float &amp;f, float floatMin, float floatMax)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Serialize a float into 2 bytes, spanning the range between <em>floatMin</em> and <em>floatMax</em>.  <a href="#865cabe0ab41bd573d8e880f0d822258"></a><br></td></tr>
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class templateType &gt; </td></tr>
 <tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#d4fec447540af6e5959c0335bd2b0f18">SerializeNormVector</a> (bool writeToBitstream, templateType &amp;x, templateType &amp;y, templateType &amp;z)</td></tr>
 
@@ -153,10 +156,13 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#26624b5669df1c38f6dd6dabf4c1b769">Write</a> (<a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *bitStream, BitSize_t numberOfBits)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write one bitstream to another.  <a href="#26624b5669df1c38f6dd6dabf4c1b769"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#8b37ff9ba34ce6f98c8521710ba51366">WriteFloat16</a> (float x, float floatMin, float floatMax)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write a float into 2 bytes, spanning the range between <em>floatMin</em> and <em>floatMax</em>.  <a href="#8b37ff9ba34ce6f98c8521710ba51366"></a><br></td></tr>
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class templateType &gt; </td></tr>
 <tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#95cfc5e892e308e6cda4738d6001ee61">WriteNormVector</a> (templateType x, templateType y, templateType z)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Read a normalized 3D vector, using (at most) 4 bytes + 3 bits instead of 12-24 bytes.  <a href="#95cfc5e892e308e6cda4738d6001ee61"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write a normalized 3D vector, using (at most) 4 bytes + 3 bits instead of 12-24 bytes.  <a href="#95cfc5e892e308e6cda4738d6001ee61"></a><br></td></tr>
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class templateType &gt; </td></tr>
 <tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#92da13ea0b4bdf7676a8df2e2d0c68b7">WriteVector</a> (templateType x, templateType y, templateType z)</td></tr>
 
@@ -172,6 +178,9 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#25b53ddc6f6bc9a1e0c01cb677a3c6d1">Read</a> (char *output, const unsigned int numberOfBytes)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Read an array or casted stream of byte.  <a href="#25b53ddc6f6bc9a1e0c01cb677a3c6d1"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#7511682d07133e59b1950a180924c357">ReadFloat16</a> (float &amp;f, float floatMin, float floatMax)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Read a float into 2 bytes, spanning the range between <em>floatMin</em> and <em>floatMax</em>.  <a href="#7511682d07133e59b1950a180924c357"></a><br></td></tr>
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class templateType &gt; </td></tr>
 <tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#3fe2307474325b610e2571d741c3ff5b">ReadNormVector</a> (templateType &amp;x, templateType &amp;y, templateType &amp;z)</td></tr>
 
@@ -289,6 +298,14 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#8ee4d3114fcce22de87644241dcdd39b">AddBitsAndReallocate</a> (const BitSize_t numberOfBitsToWrite)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Reallocates (if necessary) in preparation of writing numberOfBitsToWrite. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5636fae364dc1bce7655be79f3a98739"></a><!-- doxytag: member="RakNet::BitStream::Read" ref="5636fae364dc1bce7655be79f3a98739" args="(char *var)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#5636fae364dc1bce7655be79f3a98739">Read</a> (char *var)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Read strings, non reference. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1517a13993e3b19f84692db75d1c162f"></a><!-- doxytag: member="RakNet::BitStream::PadWithZeroToByteLength" ref="1517a13993e3b19f84692db75d1c162f" args="(unsigned int bytes)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#1517a13993e3b19f84692db75d1c162f">PadWithZeroToByteLength</a> (unsigned int bytes)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write zeros until the bitstream is filled up to <em>bytes</em>. <br></td></tr>
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#930c41f31ad2ef48016d3fa6b26df3be">Write</a> (bool var)</td></tr>
 
@@ -305,14 +322,6 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#7fa8ab50d31c416a7e63e24c315d350d">Write</a> (<a class="el" href="classRakNet_1_1RakString.html">RakString</a> var)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write a string to a bitstream.  <a href="#7fa8ab50d31c416a7e63e24c315d350d"></a><br></td></tr>
-<tr><td class="memTemplParams" nowrap colspan="2">template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#dd3a290f8b75831e1b43a45b959d9635">WriteDelta</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> currentValue, <a class="el" href="structSystemAddress.html">SystemAddress</a> lastValue)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write a systemAddress.  <a href="#dd3a290f8b75831e1b43a45b959d9635"></a><br></td></tr>
-<tr><td class="memTemplParams" nowrap colspan="2">template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#1150788cf46625410d13531c38e998a8">WriteDelta</a> (NetworkID currentValue, NetworkID lastValue)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write a systemAddress.  <a href="#1150788cf46625410d13531c38e998a8"></a><br></td></tr>
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#003e89b6fe2eaa55d3f17f3455422840">WriteDelta</a> (bool currentValue, bool lastValue)</td></tr>
 
@@ -472,7 +481,7 @@ Set <em>_copyData</em> to true if you want to make an internal copy of the data 
           <td class="paramtype">void&nbsp;</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td></td>
+          <td><code> [inline]</code></td>
         </tr>
       </table>
 </div>
@@ -494,7 +503,7 @@ This can be used to 'waste' bits to byte align for efficiency reasons It can als
           <td class="paramtype">void&nbsp;</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td></td>
+          <td><code> [inline]</code></td>
         </tr>
       </table>
 </div>
@@ -1170,6 +1179,50 @@ If the written value differed from the value compared against in the write funct
 
 </div>
 </div><p>
+<a class="anchor" name="7511682d07133e59b1950a180924c357"></a><!-- doxytag: member="RakNet::BitStream::ReadFloat16" ref="7511682d07133e59b1950a180924c357" args="(float &amp;f, float floatMin, float floatMax)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakNet::BitStream::ReadFloat16           </td>
+          <td>(</td>
+          <td class="paramtype">float &amp;&nbsp;</td>
+          <td class="paramname"> <em>f</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&nbsp;</td>
+          <td class="paramname"> <em>floatMin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&nbsp;</td>
+          <td class="paramname"> <em>floatMax</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Read a float into 2 bytes, spanning the range between <em>floatMin</em> and <em>floatMax</em>. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>f</em>&nbsp;</td><td>The float to read </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>floatMin</em>&nbsp;</td><td>Predetermined minimum value of f </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>floatMax</em>&nbsp;</td><td>Predetermined maximum value of f </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <a class="anchor" name="492d3b89ce89aafa804f99aa6e432be1"></a><!-- doxytag: member="RakNet::BitStream::ReadNormQuat" ref="492d3b89ce89aafa804f99aa6e432be1" args="(templateType &amp;w, templateType &amp;x, templateType &amp;y, templateType &amp;z)" -->
 <div class="memitem">
 <div class="memproto">
@@ -1766,6 +1819,56 @@ If the current value is different from the last value the current value will be 
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true if <em>writeToBitstream</em> is true. true if <em>writeToBitstream</em> is false and the read was successful. false if <em>writeToBitstream</em> is false and the read was not successful. </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="865cabe0ab41bd573d8e880f0d822258"></a><!-- doxytag: member="RakNet::BitStream::SerializeFloat16" ref="865cabe0ab41bd573d8e880f0d822258" args="(bool writeToBitstream, float &amp;f, float floatMin, float floatMax)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakNet::BitStream::SerializeFloat16           </td>
+          <td>(</td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>writeToBitstream</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float &amp;&nbsp;</td>
+          <td class="paramname"> <em>f</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&nbsp;</td>
+          <td class="paramname"> <em>floatMin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&nbsp;</td>
+          <td class="paramname"> <em>floatMax</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Serialize a float into 2 bytes, spanning the range between <em>floatMin</em> and <em>floatMax</em>. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>f</em>&nbsp;</td><td>The float to write </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>floatMin</em>&nbsp;</td><td>Predetermined minimum value of f </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>floatMax</em>&nbsp;</td><td>Predetermined maximum value of f </td></tr>
+  </table>
+</dl>
 
 </div>
 </div><p>
@@ -2573,84 +2676,6 @@ Write a bool delta. Same thing as just calling Write.
 
 </div>
 </div><p>
-<a class="anchor" name="1150788cf46625410d13531c38e998a8"></a><!-- doxytag: member="RakNet::BitStream::WriteDelta" ref="1150788cf46625410d13531c38e998a8" args="(NetworkID currentValue, NetworkID lastValue)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void RakNet::BitStream::WriteDelta           </td>
-          <td>(</td>
-          <td class="paramtype">NetworkID&nbsp;</td>
-          <td class="paramname"> <em>currentValue</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">NetworkID&nbsp;</td>
-          <td class="paramname"> <em>lastValue</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Write a systemAddress. 
-<p>
-If the current value is different from the last value the current value will be written. Otherwise, a single bit will be written <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>currentValue</em>&nbsp;</td><td>The current value to write </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lastValue</em>&nbsp;</td><td>The last value to compare against </td></tr>
-  </table>
-</dl>
-
-</div>
-</div><p>
-<a class="anchor" name="dd3a290f8b75831e1b43a45b959d9635"></a><!-- doxytag: member="RakNet::BitStream::WriteDelta" ref="dd3a290f8b75831e1b43a45b959d9635" args="(SystemAddress currentValue, SystemAddress lastValue)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void RakNet::BitStream::WriteDelta           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>currentValue</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>lastValue</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Write a systemAddress. 
-<p>
-If the current value is different from the last value the current value will be written. Otherwise, a single bit will be written <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>currentValue</em>&nbsp;</td><td>The current value to write </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lastValue</em>&nbsp;</td><td>The last value to compare against </td></tr>
-  </table>
-</dl>
-
-</div>
-</div><p>
 <a class="anchor" name="2afdd1e7e79a293be6fffd104924f668"></a><!-- doxytag: member="RakNet::BitStream::WriteDelta" ref="2afdd1e7e79a293be6fffd104924f668" args="(templateType currentValue)" -->
 <div class="memitem">
 <div class="memproto">
@@ -2720,6 +2745,50 @@ If the current value is different from the last value the current value will be 
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>currentValue</em>&nbsp;</td><td>The current value to write </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lastValue</em>&nbsp;</td><td>The last value to compare against </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="8b37ff9ba34ce6f98c8521710ba51366"></a><!-- doxytag: member="RakNet::BitStream::WriteFloat16" ref="8b37ff9ba34ce6f98c8521710ba51366" args="(float x, float floatMin, float floatMax)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::BitStream::WriteFloat16           </td>
+          <td>(</td>
+          <td class="paramtype">float&nbsp;</td>
+          <td class="paramname"> <em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&nbsp;</td>
+          <td class="paramname"> <em>floatMin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&nbsp;</td>
+          <td class="paramname"> <em>floatMax</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Write a float into 2 bytes, spanning the range between <em>floatMin</em> and <em>floatMax</em>. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>f</em>&nbsp;</td><td>The float to write </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>floatMin</em>&nbsp;</td><td>Predetermined minimum value of f </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>floatMax</em>&nbsp;</td><td>Predetermined maximum value of f </td></tr>
   </table>
 </dl>
 
@@ -2812,7 +2881,7 @@ template&lt;class templateType &gt; </div>
 <div class="memdoc">
 
 <p>
-Read a normalized 3D vector, using (at most) 4 bytes + 3 bits instead of 12-24 bytes. 
+Write a normalized 3D vector, using (at most) 4 bytes + 3 bits instead of 12-24 bytes. 
 <p>
 Will further compress y or z axis aligned vectors. Accurate to 1/32767.5. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -2975,9 +3044,9 @@ Loses accuracy to about 3/10ths and only saves 2 bytes, so only use if accuracy 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>C:/RakNet/Source/<a class="el" href="BitStream_8h.html">BitStream.h</a></ul>
+<li>c:/RakNet/Source/<a class="el" href="BitStream_8h.html">BitStream.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:47 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:13 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

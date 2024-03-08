@@ -9,6 +9,7 @@ Source/AutoRPC.cpp
 Source/BigInt.cpp
 Source/BitStream.cpp
 Source/BitStream_NoTemplate.cpp
+Source/CCRakNetUDT.cpp
 Source/CheckSum.cpp
 Source/CommandParserInterface.cpp
 Source/ConnectionGraph.cpp
@@ -34,6 +35,7 @@ Source/FullyConnectedMesh2.cpp
 Source/FunctionThread.cpp
 Source/Gen_RPC8.cpp
 Source/GetTime.cpp
+Source/gettimeofday.cpp
 Source/GridSectorizer.cpp
 Source/HTTPConnection.cpp
 Source/IncrementalReadInterface.cpp
@@ -47,6 +49,9 @@ Source/LogCommandParser.cpp
 Source/MessageFilter.cpp
 Source/NatPunchthroughClient.cpp
 Source/NatPunchthroughServer.cpp
+Source/NatTypeDetectionClient.cpp
+Source/NatTypeDetectionCommon.cpp
+Source/NatTypeDetectionServer.cpp
 Source/NetworkIDManager.cpp
 Source/NetworkIDObject.cpp
 Source/PacketConsoleLogger.cpp
@@ -58,6 +63,7 @@ Source/PluginInterface.cpp
 Source/PluginInterface2.cpp
 Source/RakMemoryOverride.cpp
 Source/RakNetCommandParser.cpp
+Source/RakNetSocket.cpp
 Source/RakNetStatistics.cpp
 Source/RakNetTransport.cpp
 Source/RakNetTransport2.cpp
@@ -77,7 +83,9 @@ Source/rijndael.cpp
 Source/Router.cpp
 Source/RPCMap.cpp
 Source/RSACrypt.cpp
+Source/SendToThread.cpp
 Source/SHA1.cpp
+Source/SignaledEvent.cpp
 Source/SimpleMutex.cpp
 Source/SocketLayer.cpp
 Source/StringCompressor.cpp
@@ -92,6 +100,7 @@ Source/UDPForwarder.cpp
 Source/UDPProxyClient.cpp
 Source/UDPProxyCoordinator.cpp
 Source/UDPProxyServer.cpp
+Source/VariadicSQLParser.cpp
 Source/WSAStartupSingleton.cpp
 Source/_FindFirst.cpp
 )
@@ -105,6 +114,7 @@ Source/AutoRPC.h
 Source/BigInt.h
 Source/BitStream.h
 Source/BitStream_NoTemplate.h
+Source/CCRakNetUDT.h
 Source/CheckSum.h
 Source/ClientContextStruct.h
 Source/CommandParserInterface.h
@@ -133,6 +143,7 @@ Source/DS_Queue.h
 Source/DS_QueueLinkedList.h
 Source/DS_RangeList.h
 Source/DS_Table.h
+Source/DS_ThreadsafeAllocatingQueue.h
 Source/DS_Tree.h
 Source/DS_WeightedGraph.h
 Source/EmailSender.h
@@ -150,6 +161,7 @@ Source/FullyConnectedMesh2.h
 Source/FunctionThread.h
 Source/Gen_RPC8.h
 Source/GetTime.h
+Source/gettimeofday.h
 Source/GridSectorizer.h
 Source/HTTPConnection.h
 Source/IncrementalReadInterface.h
@@ -168,6 +180,9 @@ Source/MTUSize.h
 Source/NativeTypes.h
 Source/NatPunchthroughClient.h
 Source/NatPunchthroughServer.h
+Source/NatTypeDetectionClient.h
+Source/NatTypeDetectionCommon.h
+Source/NatTypeDetectionServer.h
 Source/NetworkIDManager.h
 Source/NetworkIDObject.h
 Source/PacketConsoleLogger.h
@@ -185,6 +200,9 @@ Source/RakAssert.h
 Source/RakMemoryOverride.h
 Source/RakNetCommandParser.h
 Source/RakNetDefines.h
+Source/RakNetDefinesOverrides.h
+Source/RakNetSmartPtr.h
+Source/RakNetSocket.h
 Source/RakNetStatistics.h
 Source/RakNetTime.h
 Source/RakNetTransport.h
@@ -213,7 +231,9 @@ Source/RouterInterface.h
 Source/RPCMap.h
 Source/RPCNode.h
 Source/RSACrypt.h
+Source/SendToThread.h
 Source/SHA1.h
+Source/SignaledEvent.h
 Source/SimpleMutex.h
 Source/SimpleTCPServer.h
 Source/SingleProducerConsumer.h
@@ -234,6 +254,7 @@ Source/UDPProxyClient.h
 Source/UDPProxyCommon.h
 Source/UDPProxyCoordinator.h
 Source/UDPProxyServer.h
+Source/VariadicSQLParser.h
 Source/WindowsIncludes.h
 Source/WSAStartupSingleton.h
 Source/_FindFirst.h

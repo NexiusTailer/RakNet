@@ -263,7 +263,7 @@ public:
 		replicaManager3->Reference(p);
 		static int count=0;
 		count++;
-		popcornList.Insert(p);
+		popcornList.Insert(p, __FILE__, __LINE__ );
 		p->sceneNode = app->GetSceneManager()->getRootSceneNode()->createChildSceneNode();
 		p->sceneNode->attachObject(popcornKernel->clone(FormatString("%p",p)));
 

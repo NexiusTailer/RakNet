@@ -19,7 +19,7 @@ void FSM::Clear(void)
 		stateHistory[stateHistory.Size()-1]->OnLeave(this, true);
 	for (i=0; i < stateHistory.Size(); i++)
 		stateHistory[i]->FSMRemoveRef(this);
-	stateHistory.Clear();
+	stateHistory.Clear(false, __FILE__, __LINE__);
 }
 State *FSM::CurrentState(void) const
 {
@@ -56,7 +56,7 @@ void FSM::AddState(State *state)
 		stateHistory[stateHistory.Size()-1]->OnLeave(this, false);
 	state->FSMAddRef(this);
 	state->OnEnter(this, true);
-	stateHistory.Insert(state);
+	stateHistory.Insert(state, __FILE__, __LINE__ );
 }
 void FSM::ReplaceState(const int index, State *state)
 {

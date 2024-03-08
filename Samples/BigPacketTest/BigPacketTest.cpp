@@ -8,6 +8,7 @@
 #include "MessageIdentifiers.h"
 #include "MTUSize.h"
 #include <stdio.h>
+#include "Kbhit.h"
 
 #ifdef _COMPATIBILITY_1
 #include "Compatibility1Includes.h" // Developers of a certain platform will know what to do here.
@@ -18,13 +19,33 @@
 bool quit;
 bool sentPacket=false;
 
-#define BIG_PACKET_SIZE 60739000
+#define BIG_PACKET_SIZE 100000000
 
 RakPeerInterface *client, *server;
 char *text;
 
 int main(void)
 {
+
+	/*
+	double MAXIMUM_DATAGRAM_SIZE=1443;
+	const double PS=MAXIMUM_DATAGRAM_SIZE;
+	const double PS_Inverse=1.0/MAXIMUM_DATAGRAM_SIZE;
+	const double Beta = 0.0000015;
+	double B = 54.407983433342451;
+	double C = 1.8850486880853508;
+	double SND = 1.0/C;
+	double SYN=10000;
+	for (int i=0; i < 1000; i++)
+	{
+		double inc =    pow(10.0, ceil(log10( (B-C) * 1000000 * 8.0))) * Beta * PS_Inverse;
+		SND = (SND * SYN) / (SND * inc*1000 + SYN);
+		if (i%10==0)
+			printf("%i. SND=%f\n",i,1.0/(SND));
+		C = 1.0/SND;
+	}
+	*/
+
 	client=server=0;
 
 	text= new char [BIG_PACKET_SIZE];
@@ -37,8 +58,10 @@ int main(void)
 	printf("Difficulty: Beginner\n\n");
 
 	printf("Enter 's' to run as server, 'c' to run as client, space to run local.\n");
+	ch=' ';
 	gets(text);
 	ch=text[0];
+
 	if (ch=='c')
 	{
 		client=RakNetworkFactory::GetRakPeerInterface();
@@ -46,7 +69,8 @@ int main(void)
 		printf("Enter remote IP: ");
 		gets(text);
 		if (text[0]==0)
-			strcpy(text, "8.17.250.34");
+			//strcpy(text, "127.0.0.1");
+			strcpy(text, "94.198.81.195"); // dx in Europe
 	}
 	else if (ch=='s')
 	{
@@ -62,15 +86,15 @@ int main(void)
 	if (client)
 	{
 		SocketDescriptor socketDescriptor(0,0);
-		client->Startup(1, 0, &socketDescriptor, 1);
-		client->SetSplitMessageProgressInterval(100); // Get ID_DOWNLOAD_PROGRESS notifications
+		client->Startup(1, 10, &socketDescriptor, 1);
+		client->SetSplitMessageProgressInterval(10000); // Get ID_DOWNLOAD_PROGRESS notifications
 		client->Connect(text, 60000, 0, 0);
 	}
 	if (server)
 	{
 		SocketDescriptor socketDescriptor(60000,0);
-		server->SetMaximumIncomingConnections(32);
-		server->Startup(32, 0, &socketDescriptor, 1);
+		server->SetMaximumIncomingConnections(4);
+		server->Startup(4, 10, &socketDescriptor, 1);
 	}
 	RakSleep(500);
 
@@ -83,8 +107,8 @@ int main(void)
 
 	RakNetTime start,stop;
 
-	start=RakNet::GetTime();
 	Packet *packet;
+	start=RakNet::GetTimeMS();
 	while (!quit)
 	{
 		if (server)
@@ -93,10 +117,16 @@ int main(void)
 			{
 				if (packet->data[0]==ID_NEW_INCOMING_CONNECTION)
 				{
-					for (int i=0; i < BIG_PACKET_SIZE; i++)
-						text[i]=i%256;
-					text[0]=(char)255; // So it doesn't register as an internal ID
-					server->Send(text, BIG_PACKET_SIZE, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+					printf("Starting send\n");
+					start=RakNet::GetTimeMS();
+					if (BIG_PACKET_SIZE<=100000)
+					{
+						for (int i=0; i < BIG_PACKET_SIZE; i++)
+							text[i]=255-(i&255);
+					}
+					else
+						text[0]=(unsigned char) 255;
+					server->Send(text, BIG_PACKET_SIZE, LOW_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 					// Keep the stat from updating until the messages move to the thread or it quits right away
 					nextStatTime=RakNet::GetTime()+1000;
 				}
@@ -108,6 +138,18 @@ int main(void)
 					printf("ID_NEW_INCOMING_CONNECTION from %s\n", packet->systemAddress.ToString());
 				else if (packet->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
 					printf("ID_CONNECTION_REQUEST_ACCEPTED from %s\n", packet->systemAddress.ToString());
+			}
+
+			if (kbhit())
+			{
+				char ch=getch();
+				if (ch==' ')
+				{
+					printf("Sending medium priority message\n");
+					char t[1];
+					t[0]=(unsigned char) 254;
+					server->Send(t, 1, MEDIUM_PRIORITY, RELIABLE_ORDERED, 1, UNASSIGNED_SYSTEM_ADDRESS, true);
+				}
 			}
 		}
 		if (client)
@@ -129,36 +171,43 @@ int main(void)
 					progressBS.ReadBits( (unsigned char* ) &total, BYTES_TO_BITS(sizeof(total)), true );
 					progressBS.ReadBits( (unsigned char* ) &partLength, BYTES_TO_BITS(sizeof(partLength)), true );
 
-					printf("Progress: msgID=%i Progress %i/%i Partsize=%i Full=%i\n",
+					printf("Progress: msgID=%i Progress %i/%i Partsize=%i\n",
 						(unsigned char) packet->data[0],
 						progress,
 						total,
-						partLength,
-						rss->bandwidthExceeded);
+						partLength);
 				}
-				else if (packet->data[0]>=ID_USER_PACKET_ENUM)
+				else if (packet->data[0]==255)
 				{
-					if (packet->data[0]==255)
+					if (packet->length!=BIG_PACKET_SIZE)
 					{
-						bool dataValid=true;
-						for (int i=1; i < BIG_PACKET_SIZE; i++)
+						printf("Test failed. %i bytes (wrong number of bytes).\n", packet->length);
+						quit=true;
+						break;
+					}
+					if (BIG_PACKET_SIZE<=100000)
+					{
+						for (int i=0; i < BIG_PACKET_SIZE; i++)
 						{
-							if (packet->data[i]!=i%256)
+							if  (packet->data[i]!=255-(i&255))
 							{
-								dataValid=false;
+								printf("Test failed. %i bytes (bad data).\n", packet->length);
+								quit=true;
 								break;
 							}
 						}
-
-						if (dataValid)
-							printf("Test succeeded. %i bytes.\n", packet->length);
-						else
-							printf("Test failed. %i bytes.\n", packet->length);
 					}
-					else
-						printf("Unknown packet %i: Test failed. %i bytes.\n", packet->data[0], packet->length);
 
-					quit=true;
+					if (quit==false)
+					{
+						printf("Test succeeded. %i bytes.\n", packet->length);
+						quit=true;
+					}
+
+				}
+				else if (packet->data[0]==254)
+				{
+ 					printf("Got high priority message.\n");
 				}
 				else if (packet->data[0]==ID_CONNECTION_LOST)
 					printf("ID_CONNECTION_LOST from %s\n", packet->systemAddress.ToString());
@@ -167,7 +216,10 @@ int main(void)
 				else if (packet->data[0]==ID_NEW_INCOMING_CONNECTION)
 					printf("ID_NEW_INCOMING_CONNECTION from %s\n", packet->systemAddress.ToString());
 				else if (packet->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
+				{
+					start=RakNet::GetTimeMS();
 					printf("ID_CONNECTION_REQUEST_ACCEPTED from %s\n", packet->systemAddress.ToString());
+				}
 
 				client->DeallocatePacket(packet);
 				packet = client->Receive();
@@ -186,37 +238,23 @@ int main(void)
 				server->GetConnectionList(0,&numSystems);
 				if (numSystems>0)
 				{
-					printf("KPBS,ploss: ");
 					for (i=0; i < numSystems; i++)
 					{
 						rssSender=server->GetStatistics(server->GetSystemAddressFromIndex(i));
-						printf("%i:%.0f,%.1f ", i+1,rssSender->bitsPerSecondSent/1000, 100.0f * ( float ) rssSender->messagesTotalBitsResent / ( float ) rssSender->totalBitsSent);
+						StatisticsToString(rssSender, text, 3);
+						printf("==== System %i ====\n", i+1);
+						printf("%s\n\n", text);
 					}
-					printf("\n");
 				}
-
-				/*
-				if (rssSender)
-				{
-				printf("Snd: %i waiting. %i waiting on ack. Got %i acks. KBPS=%.1f. Ploss=%.1f. Full=%i\n", rssSender->messageSendBuffer[HIGH_PRIORITY], rssSender->messagesOnResendQueue,rssSender->acknowlegementsReceived, rssSender->bitsPerSecond/1000, 100.0f * ( float ) rssSender->messagesTotalBitsResent / ( float ) rssSender->totalBitsSent, rssSender->bandwidthExceeded);
-				if (client==0)
-				printf("\n");
-				if (sentPacket && rssSender->messageSendBuffer[HIGH_PRIORITY]==0 && rssSender->messagesOnResendQueue==0 && client==0)
-				{
-				RakNetStatistics *rss=server->GetStatistics(server->GetSystemAddressFromIndex(0));
-				StatisticsToString(rss, text, 2);
-				printf("%s", text);
-				printf("Sender quitting with no messages on resend queue.\n");
-				quit=true;
-				}
-				}
-				*/
 			}
-			if (client)
+			if (client && server==0)
 			{
 				rssReceiver=client->GetStatistics(client->GetSystemAddressFromIndex(0));
 				if (rssReceiver)
-					printf("Receiver: %i acks waiting.\n", rssReceiver->acknowlegementsPending);
+				{
+					StatisticsToString(rssReceiver, text, 3);
+					printf("%s\n\n", text);
+				}
 			}
 		}
 
@@ -227,12 +265,12 @@ int main(void)
 
 	if (server)
 	{
-		RakNetStatistics *rssSender=server->GetStatistics(server->GetSystemAddressFromIndex(0));
-		StatisticsToString(rssSender, text, 2);
+		RakNetStatistics *rssSender2=server->GetStatistics(server->GetSystemAddressFromIndex(0));
+		StatisticsToString(rssSender2, text, 1);
 		printf("%s", text);
 	}
 
-	printf("%i bytes per second transfered. Press enter to quit\n", (int)((double)(BIG_PACKET_SIZE) / seconds )) ;
+	printf("%i bytes per second (%.2f seconds). Press enter to quit\n", (int)((double)(BIG_PACKET_SIZE) / seconds ), seconds) ;
 	gets(text);
 
 	delete []text;

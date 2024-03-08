@@ -101,16 +101,20 @@ void Lobby2Callbacks::MessageResult(Console_GetLobbyListFromWorld *message) {Exe
 void Lobby2Callbacks::MessageResult(Console_JoinLobby *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_LeaveLobby *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_SendLobbyChatMessage *message) {ExecuteDefaultResult(message);}
-void Lobby2Callbacks::MessageResult(Console_SearchRoomsInLobby *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Console_SearchRooms *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_GetRoomDetails *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_GetLobbyMemberData *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_CreateRoom *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Console_SetRoomSearchProperties *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Console_UpdateRoomParameters *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_JoinRoom *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_LeaveRoom *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_SendLobbyInvitationToRoom *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Console_SendGUIInvitationToRoom *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_SendDataMessageToUser *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_SendRoomChatMessage *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_SetPresence *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Notification_Client_RemoteLogin *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Client_IgnoreStatus *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Friends_StatusChange *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_User_ChangedHandle *message) {ExecuteDefaultResult(message);}
@@ -149,7 +153,7 @@ void Lobby2Callbacks::MessageResult(Notification_ReceivedDataMessageFromUser *me
 
 Lobby2Message::Lobby2Message() {refCount=1; requestId=(unsigned int)-1; callbackId=(unsigned char)-1;
 #if defined(_XBOX) || defined(X360)
-ZeroMemory( &m_Overlapped, sizeof( XOVERLAPPED ) );
+                                                   
 #endif
 }
 void Lobby2Message::SerializeBase(bool writeToBitstream, bool serializeOutput, BitStream *bitStream)
@@ -360,7 +364,7 @@ void SubmittedMatch::Serialize(bool writeToBitstream, BitStream *bitStream)
 		else
 		{
 			obj.Serialize(writeToBitstream, bitStream);
-			matchParticipants.Insert(obj);
+			matchParticipants.Insert(obj, __FILE__, __LINE__ );
 		}
 	}
 }
@@ -382,7 +386,7 @@ void ClanInfo::Serialize(bool writeToBitstream, BitStream *bitStream)
 		else
 		{
 			bitStream->Serialize(writeToBitstream, obj);
-			clanMembersOtherThanLeader.Insert(obj);
+			clanMembersOtherThanLeader.Insert(obj, __FILE__, __LINE__ );
 		}
 	}
 }
@@ -457,7 +461,7 @@ void System_RegisterProfanity::Serialize( bool writeToBitstream, bool serializeO
 		else
 		{
 			bitStream->Serialize(writeToBitstream, obj);
-			profanityWords.Insert(obj);
+			profanityWords.Insert(obj, __FILE__, __LINE__);
 		}
 	}
 }
@@ -512,7 +516,7 @@ void CDKey_Add::Serialize( bool writeToBitstream, bool serializeOutput, BitStrea
 		else
 		{
 			bitStream->Serialize(writeToBitstream, obj);
-			cdKeys.Insert(obj);
+			cdKeys.Insert(obj, __FILE__, __LINE__);
 		}
 	}
 }
@@ -797,7 +801,7 @@ void Client_GetIgnoreList::Serialize( bool writeToBitstream, bool serializeOutpu
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				ignoredHandles.Insert(obj);
+				ignoredHandles.Insert(obj, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -812,18 +816,18 @@ void Client_PerTitleIntegerStorage::Serialize( bool writeToBitstream, bool seria
 	SerializeBase(writeToBitstream, serializeOutput, bitStream);
 	bitStream->Serialize(writeToBitstream,titleName);
 	bitStream->Serialize(writeToBitstream,slotIndex);
-	if (operationToPerform!=PTISC_NOT_EQUAL)
-		bitStream->Serialize(writeToBitstream,conditionValue);
 	unsigned char c;
-	c = conditionForOperation;
+	c = addConditionForOperation;
 	bitStream->Serialize(writeToBitstream,c);
-	conditionForOperation = (PTIS_Condition) c;
+	addConditionForOperation = (PTIS_Condition) c;
 	c = operationToPerform;
 	bitStream->Serialize(writeToBitstream,c);
 	operationToPerform = (PTIS_Operation) c;
+	if (operationToPerform!=PTISC_NOT_EQUAL)
+		bitStream->Serialize(writeToBitstream,conditionValue);
 	if (operationToPerform!=PTISO_DELETE)
 	{
-		if (operationToPerform==PTISO_WRITE || operationToPerform==PTISO_ADD)
+		if (operationToPerform==PTISO_ADD || operationToPerform==PTISO_WRITE)
 			bitStream->Serialize(writeToBitstream,inputValue);
 		if (serializeOutput)
 		{
@@ -920,7 +924,7 @@ void Friends_GetInvites::Serialize( bool writeToBitstream, bool serializeOutput,
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				invitesSent.Insert(obj);
+				invitesSent.Insert(obj, __FILE__, __LINE__);
 			}
 		}
 		listSize = (unsigned short) invitesReceived.Size();
@@ -935,7 +939,7 @@ void Friends_GetInvites::Serialize( bool writeToBitstream, bool serializeOutput,
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				invitesReceived.Insert(obj);
+				invitesReceived.Insert(obj, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -958,7 +962,7 @@ void Friends_GetFriends::Serialize( bool writeToBitstream, bool serializeOutput,
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				myFriends.Insert(obj);
+				myFriends.Insert(obj, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -1024,7 +1028,7 @@ void BookmarkedUsers_Get::Serialize( bool writeToBitstream, bool serializeOutput
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				bookmarkedUsers.Insert(obj);
+				bookmarkedUsers.Insert(obj, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -1049,7 +1053,7 @@ void Emails_Send::Serialize( bool writeToBitstream, bool serializeOutput, BitStr
 		else
 		{
 			bitStream->Serialize(writeToBitstream, obj);
-			recipients.Insert(obj);
+			recipients.Insert(obj, __FILE__, __LINE__);
 		}
 	}
 }
@@ -1085,7 +1089,7 @@ void Emails_Get::Serialize( bool writeToBitstream, bool serializeOutput, BitStre
 			else
 			{
 				obj.Serialize( writeToBitstream, bitStream );
-				emailResults.Insert(obj);
+				emailResults.Insert(obj, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -1157,7 +1161,7 @@ void Ranking_GetMatches::Serialize( bool writeToBitstream, bool serializeOutput,
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				submittedMatches.Insert(obj);
+				submittedMatches.Insert(obj, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -1484,7 +1488,7 @@ void Clans_Get::Serialize( bool writeToBitstream, bool serializeOutput, BitStrea
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				clans.Insert(obj);
+				clans.Insert(obj, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -1585,7 +1589,7 @@ void Clans_DownloadInvitationList::Serialize( bool writeToBitstream, bool serial
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				invitations.Insert(obj);
+				invitations.Insert(obj, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -1688,7 +1692,7 @@ void Clans_DownloadRequestList::Serialize( bool writeToBitstream, bool serialize
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				joinRequestsToMyClan.Insert(obj);
+				joinRequestsToMyClan.Insert(obj, __FILE__, __LINE__);
 			}
 		}
 
@@ -1704,7 +1708,7 @@ void Clans_DownloadRequestList::Serialize( bool writeToBitstream, bool serialize
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				joinRequestsFromMe.Insert(obj);
+				joinRequestsFromMe.Insert(obj, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -1772,7 +1776,7 @@ void Clans_GetBlacklist::Serialize( bool writeToBitstream, bool serializeOutput,
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				blacklistedUsers.Insert(obj);
+				blacklistedUsers.Insert(obj, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -1806,7 +1810,7 @@ void Clans_GetMembers::Serialize( bool writeToBitstream, bool serializeOutput, B
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				clanMembersOtherThanLeader.Insert(obj);
+				clanMembersOtherThanLeader.Insert(obj, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -1836,7 +1840,7 @@ void Clans_GetList::Serialize( bool writeToBitstream, bool serializeOutput, BitS
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				clanNames.Insert(obj);
+				clanNames.Insert(obj, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -1942,7 +1946,7 @@ void Clans_GetBoards::Serialize( bool writeToBitstream, bool serializeOutput, Bi
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				clanBoardsNames.Insert(obj);
+				clanBoardsNames.Insert(obj, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -1981,7 +1985,11 @@ bool Clans_GetPosts::PrevalidateInput( void )
 	
 	return true;
 }
-
+void RakNet::Notification_Client_RemoteLogin::Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream )
+{
+	SerializeBase(writeToBitstream, serializeOutput, bitStream);
+	bitStream->Serialize(writeToBitstream, handle);
+}
 void RakNet::Notification_Client_IgnoreStatus::Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream )
 {
 	SerializeBase(writeToBitstream, serializeOutput, bitStream);

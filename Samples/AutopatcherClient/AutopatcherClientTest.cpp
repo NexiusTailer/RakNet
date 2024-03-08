@@ -64,7 +64,6 @@ public:
 } transferCallback;
 
 #define USE_TCP
-#define MAX_INCOMING_CONNECTIONS 8
 
 int main(int argc, char **argv)
 {
@@ -73,13 +72,13 @@ int main(int argc, char **argv)
 	printf("Difficulty: Intermediate\n\n");
 
 	printf("Client starting...");
-	SystemAddress serverAddress;
+	SystemAddress serverAddress=UNASSIGNED_SYSTEM_ADDRESS;
 	AutopatcherClient autopatcherClient;
 	FileListTransfer fileListTransfer;
 	autopatcherClient.SetFileListTransferPlugin(&fileListTransfer);
 #ifdef USE_TCP
 	PacketizedTCP packetizedTCP;
-	if (packetizedTCP.Start(0,MAX_INCOMING_CONNECTIONS)==false)
+	if (packetizedTCP.Start(0,1)==false)
 	{
 		printf("Failed to start TCP. Is the port already in use?");
 		return 1;
@@ -98,11 +97,17 @@ int main(int argc, char **argv)
 #endif
 	printf("started\n");
 	char buff[512];
-	printf("Enter server IP: ");
-	gets(buff);
-	if (buff[0]==0)
-	//	strcpy(buff, "8.17.250.34");
-		strcpy(buff, "127.0.0.1");
+	if (argc<2)
+	{
+		printf("Enter server IP: ");
+		gets(buff);
+		if (buff[0]==0)
+			//	strcpy(buff, "94.198.81.195");
+			strcpy(buff, "127.0.0.1");
+	}
+	else
+		strcpy(buff, argv[1]);
+
 #ifdef USE_TCP
 	packetizedTCP.Connect(buff,60000,false);
 #else
@@ -110,20 +115,36 @@ int main(int argc, char **argv)
 #endif
 
 	printf("Connecting...\n");
-	printf("Enter application directory: ");
 	char appDir[512];
-	gets(appDir);
-	if (appDir[0]==0)
+	if (argc<3)
 	{
-		strcpy(appDir, "C:/temp2");
+		printf("Enter application directory: ");
+		gets(appDir);
+		if (appDir[0]==0)
+		{
+			strcpy(appDir, "C:/temp2");
+		}
 	}
-	printf("Enter application name: ");
+	else
+		strcpy(appDir, argv[2]);
 	char appName[512];
-	gets(appName);
-	if (appName[0]==0)
-		strcpy(appName, "TestApp");
+	if (argc<4)
+	{
+		printf("Enter application name: ");
+		gets(appName);
+		if (appName[0]==0)
+			strcpy(appName, "TestApp");
+	}
+	else
+		strcpy(appName, argv[3]);
 
-	printf("Hit 'q' to quit, 'p' to patch, 'c' to cancel the patch.\n");
+	bool patchImmediately=argc==5 && argv[4][0]=='1';
+
+	if (patchImmediately==false)
+		printf("Hit 'q' to quit, 'p' to patch, 'c' to cancel the patch.\n");
+	else
+		printf("Hit 'q' to quit, 'c' to cancel the patch.\n");
+
 	char ch;
 	Packet *p;
 	while (1)
@@ -199,38 +220,43 @@ int main(int argc, char **argv)
 #endif
 
 		if (kbhit())
-		{
 			ch=getch();
-			if (ch=='q')
-				break;
-			else if (ch=='p')
-			{
-				char lastUpdateDate[128];
-				char restartFile[512];
-				strcpy(restartFile, appDir);
-				strcat(restartFile, "/autopatcherRestart.txt");
-				printf("Enter last update date (only newer updates retrieved) or nothing to get all updates\n");
-				gets(lastUpdateDate);
+		else
+			ch=0;
 
-				if (autopatcherClient.PatchApplication(appName, appDir, lastUpdateDate, serverAddress, &transferCallback, restartFile, argv[0]))
-				{
-					printf("Patching process starting.\n");
-				}
-				else
-				{
-					printf("Failed to start patching.\n");
-				}
-			}
-			else if (ch=='c')
-			{
-				autopatcherClient.Clear();
-				printf("Autopatcher cleared.\n");
-			}
+		if (ch=='q')
+			break;
+		else if (ch=='p' || (serverAddress!=UNASSIGNED_SYSTEM_ADDRESS && patchImmediately==true))
+		{
+			patchImmediately=false;
+			char lastUpdateDate[128];
+			char restartFile[512];
+			strcpy(restartFile, appDir);
+			strcat(restartFile, "/autopatcherRestart.txt");
+		//	printf("Enter last update date (only newer updates retrieved) or nothing to get all updates\n");
+		//	gets(lastUpdateDate);
+			lastUpdateDate[0]=0;
 
+			if (autopatcherClient.PatchApplication(appName, appDir, lastUpdateDate, serverAddress, &transferCallback, restartFile, argv[0]))
+			{
+				printf("Patching process starting.\n");
+			}
+			else
+			{
+				printf("Failed to start patching.\n");
+			}
+		}
+		else if (ch=='c')
+		{
+			autopatcherClient.Clear();
+			printf("Autopatcher cleared.\n");
 		}
 
 		RakSleep(30);
 	}
+
+	// Dereference so the destructor doesn't crash
+	autopatcherClient.SetFileListTransferPlugin(0);
 
 #ifdef USE_TCP
 	packetizedTCP.Stop();

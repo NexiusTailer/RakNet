@@ -38,7 +38,7 @@
 <tr><td colspan="2"><br><h2>Defines</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#ge8725bfeccab05a3422cde0923f176b3">REGISTER_STATIC_RPC</a>(networkObject, functionName)&nbsp;&nbsp;&nbsp;(networkObject)-&gt;RegisterAsRemoteProcedureCall((#functionName),(functionName))</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">RPC Function Implementation.  <a href="#ge8725bfeccab05a3422cde0923f176b3"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">RPC Function Implementation  Use RPC3.  <a href="#ge8725bfeccab05a3422cde0923f176b3"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="gcdb86b76f825bec13557202fff8fbab1"></a><!-- doxytag: member="RAKNET_RPC::CLASS_MEMBER_ID" ref="gcdb86b76f825bec13557202fff8fbab1" args="(className, functionName)" -->
 #define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#gcdb86b76f825bec13557202fff8fbab1">CLASS_MEMBER_ID</a>(className, functionName)&nbsp;&nbsp;&nbsp;#className &quot;_&quot; #functionName</td></tr>
 
@@ -75,7 +75,9 @@
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-A system to call C or object member procudures on other systems, and even to return return values. <hr><h2>Define Documentation</h2>
+A system to call C or object member procudures on other systems, and even to return return values. 
+<p>
+Use RPC3 <hr><h2>Define Documentation</h2>
 <a class="anchor" name="g70705f68c378bfaf9d854de1fe55431d"></a><!-- doxytag: member="RakNetTypes.h::REGISTER_CLASS_MEMBER_RPC" ref="g70705f68c378bfaf9d854de1fe55431d" args="(networkObject, className, functionName)" -->
 <div class="memitem">
 <div class="memproto">
@@ -134,7 +136,7 @@ RPC member Functions MUST be marked __cdecl! <dl class="see" compact><dt><b>See 
 <div class="memdoc">
 
 <p>
-RPC Function Implementation. 
+RPC Function Implementation  Use RPC3. 
 <p>
 The Remote Procedure Call Subsystem provide the RPC paradigm to <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> user. It consists in providing remote function call over the network. A call to a remote function require you to prepare the data for each parameter (using BitStream) for example.<p>
 Use the following C function prototype for your callbacks <div class="fragment"><pre class="fragment"> <span class="keywordtype">void</span> functionName(<a class="code" href="structRPCParameters.html">RPCParameters</a> *rpcParms);
@@ -847,7 +849,7 @@ Unregisters a C function as available for calling as a remote procedure call tha
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:45 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:12 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

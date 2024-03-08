@@ -89,7 +89,9 @@ bool AutopatcherPostgreRepository::CreateAutopatcherTables(void)
 	"COMMIT;";
 
 	PGresult *result;
+	//sqlCommandMutex.Lock();
 	bool res = ExecuteBlockingCommand(command, &result, true);
+	//sqlCommandMutex.Unlock();
 	PQclear(result);
 	return res;
 }
@@ -106,7 +108,9 @@ bool AutopatcherPostgreRepository::DestroyAutopatcherTables(void)
 		"COMMIT;";
 
 	PGresult *result;
+	//sqlCommandMutex.Lock();
 	bool b = ExecuteBlockingCommand(command, &result, true);
+	//sqlCommandMutex.Unlock();
 	PQclear(result);
 	return b;
 }
@@ -120,7 +124,9 @@ bool AutopatcherPostgreRepository::AddApplication(const char *applicationName, c
 
 	sprintf(query, "INSERT INTO Applications (applicationName, userName) VALUES ('%s', '%s');", GetEscapedString(applicationName).C_String(), GetEscapedString(userName).C_String());
 	PGresult *result;
+	//sqlCommandMutex.Lock();
 	bool b = ExecuteBlockingCommand(query, &result, false);
+	//sqlCommandMutex.Unlock();
 	PQclear(result);
 	return b;
 }
@@ -132,7 +138,9 @@ bool AutopatcherPostgreRepository::RemoveApplication(const char *applicationName
 	
 	sprintf(query, "DELETE FROM Applications WHERE applicationName='%s';", GetEscapedString(applicationName).C_String());
 	PGresult *result;
+	//sqlCommandMutex.Lock();
 	bool b = ExecuteBlockingCommand(query, &result, false);
+	//sqlCommandMutex.Unlock();
 	PQclear(result);
 	return b;
 }
@@ -148,11 +156,14 @@ bool AutopatcherPostgreRepository::GetChangelistSinceDate(const char *applicatio
 	RakNet::RakString escapedApplicationName = GetEscapedString(applicationName);
 	RakNet::RakString escapedSinceDate = GetEscapedString(sinceDate);
 	sprintf(query, "SELECT applicationID FROM applications WHERE applicationName='%s';", escapedApplicationName.C_String());
+	//sqlCommandMutex.Lock();
 	if (ExecuteBlockingCommand(query, &result, false)==false)
 	{
+		//sqlCommandMutex.Unlock();
 		PQclear(result);
 		return false;
 	}
+	//sqlCommandMutex.Unlock();
 	int numRows;
 	numRows = PQntuples(result);
 	if (numRows==0)
@@ -170,7 +181,9 @@ bool AutopatcherPostgreRepository::GetChangelistSinceDate(const char *applicatio
 	else
 		sprintf(query, "SELECT DISTINCT ON (filename) filename, fileLength, contentHash, createFile FROM FileVersionHistory WHERE applicationId=%i ORDER BY filename, fileId DESC;", applicationID);
 
+	//sqlCommandMutex.Lock();
 	result = PQexecParams(pgConn, query,0,0,0,0,0,PQEXECPARAM_FORMAT_BINARY);
+	//sqlCommandMutex.Unlock();
 	if (IsResultSuccessful(result, false)==false)
 	{
 		PQclear(result);
@@ -209,11 +222,14 @@ bool AutopatcherPostgreRepository::GetChangelistSinceDate(const char *applicatio
 		}
 	}
 
+	//sqlCommandMutex.Lock();
 	if (ExecuteBlockingCommand("SELECT LOCALTIMESTAMP", &result, false)==false)
 	{
+		//sqlCommandMutex.Unlock();
 		PQclear(result);
 		return false;
 	}
+	//sqlCommandMutex.Unlock();
 
 	char *ts=PQgetvalue(result, 0, 0);
 	if (ts)
@@ -237,11 +253,14 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 		return false;
 	RakNet::RakString escapedApplicationName = GetEscapedString(applicationName);
 	sprintf(query, "SELECT applicationID FROM applications WHERE applicationName='%s';", escapedApplicationName.C_String());
+	//sqlCommandMutex.Lock();
 	if (ExecuteBlockingCommand(query, &result, false)==false)
 	{
+		//sqlCommandMutex.Unlock();
 		PQclear(result);
 		return false;
 	}
+	//sqlCommandMutex.Unlock();
 	int numRows;
 	numRows = PQntuples(result);
 	if (numRows==0)
@@ -257,7 +276,8 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 
 	// Go through the input list.
 	unsigned inputIndex;
-	char *userHash, *userFilename, *contentHash;
+	char *userHash, *contentHash;
+	RakNet::RakString userFilename;
 	// char *content;
 //	char *fileId, *fileLength;
 	char *patch;
@@ -265,7 +285,7 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 	int patchLength;
 //	int contentColumnIndex;
 	int contentHashIndex, fileIdIndex, fileLengthIndex;
-	char *outTemp[2];
+	const char *outTemp[2];
 	int outLengths[2];
 	int formats[2];
 	PGresult *patchResult;
@@ -279,10 +299,12 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 			// If the user does not have a hash in the input list, get the contents of latest version of this named file and write it to the patch list
 		//	sprintf(query, "SELECT DISTINCT ON (filename) content FROM FileVersionHistory WHERE applicationId=%i AND filename=$1::text ORDER BY filename, fileId DESC;", applicationID);
 			sprintf(query, "SELECT DISTINCT ON (filename) fileId, fileLength FROM FileVersionHistory WHERE applicationId=%i AND filename=$1::text ORDER BY filename, fileId DESC;", applicationID);
-			outTemp[0]=userFilename;
-			outLengths[0]=(int)strlen(userFilename);
+			outTemp[0]=userFilename.C_String();
+			outLengths[0]=(int) userFilename.GetLength();
 			formats[0]=PQEXECPARAM_FORMAT_BINARY;
+			//sqlCommandMutex.Lock();
 			result = PQexecParams(pgConn, query,1,0,outTemp,outLengths,formats,PQEXECPARAM_FORMAT_BINARY);
+			//sqlCommandMutex.Unlock();
 			if (IsResultSuccessful(result, false)==false)
 			{
 				PQclear(result);
@@ -312,10 +334,12 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 
 			// Get the hash and ID of the latest version of this file, by filename.
 			sprintf(query, "SELECT DISTINCT ON (filename) contentHash, fileId, fileLength FROM FileVersionHistory WHERE applicationId=%i AND filename=$1::text ORDER BY filename, fileId DESC;", applicationID);
-			outTemp[0]=userFilename;
-			outLengths[0]=(int)strlen(userFilename);
+			outTemp[0]=userFilename.C_String();
+			outLengths[0]=(int)userFilename.GetLength();
 			formats[0]=PQEXECPARAM_FORMAT_BINARY;
+			//sqlCommandMutex.Lock();
 			result = PQexecParams(pgConn, query,1,0,outTemp,outLengths,formats,PQEXECPARAM_FORMAT_BINARY);
+			//sqlCommandMutex.Unlock();
 			if (IsResultSuccessful(result, false)==false)
 			{
 				PQclear(result);
@@ -341,13 +365,15 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 				{
 					// Look up by user hash/filename/applicationID, returning the patch
 					sprintf(query, "SELECT patch FROM FileVersionHistory WHERE applicationId=%i AND filename=$1::text AND contentHash=$2::bytea;", applicationID);
-					outTemp[0]=userFilename;
-					outLengths[0]=(int)strlen(userFilename);
+					outTemp[0]=userFilename.C_String();
+					outLengths[0]=(int)userFilename.GetLength();
 					formats[0]=PQEXECPARAM_FORMAT_TEXT;
 					outTemp[1]=userHash;
 					outLengths[1]=HASH_LENGTH;
 					formats[1]=PQEXECPARAM_FORMAT_BINARY;
+					//sqlCommandMutex.Lock();
 					patchResult = PQexecParams(pgConn, query,2,0,outTemp,outLengths,formats,PQEXECPARAM_FORMAT_BINARY);
+					//sqlCommandMutex.Unlock();
 
 					if (IsResultSuccessful(patchResult, false)==false)
 					{
@@ -441,11 +467,14 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 		}
 	}
 
+	//sqlCommandMutex.Lock();
 	if (ExecuteBlockingCommand("SELECT LOCALTIMESTAMP", &result, false)==false)
 	{
+		//sqlCommandMutex.Unlock();
 		PQclear(result);
 		return false;
 	}
+	//sqlCommandMutex.Unlock();
 
 	char *ts=PQgetvalue(result, 0, 0);
 	if (ts)
@@ -482,11 +511,14 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 
 	RakNet::RakString escapedApplicationName = GetEscapedString(applicationName);
 	sprintf(query, "SELECT applicationID FROM applications WHERE applicationName='%s';", escapedApplicationName.C_String());
+	//sqlCommandMutex.Lock();
 	if (ExecuteBlockingCommand(query, &result, false)==false)
 	{
+		//sqlCommandMutex.Unlock();
 		PQclear(result);
 		return false;
 	}
+	//sqlCommandMutex.Unlock();
 	numRows = PQntuples(result);
 	if (numRows==0)
 	{
@@ -500,19 +532,25 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 	PQclear(result);
 
 	// If ExecuteBlockingCommand fails then it does a rollback
+	//sqlCommandMutex.Lock();
 	if (ExecuteBlockingCommand("BEGIN;", &result, false)==false)
 	{
+		//sqlCommandMutex.Unlock();
 		PQclear(result);
 		return false;
 	}
+	//sqlCommandMutex.Unlock();
 	PQclear(result);
 
 	sprintf(query, "UPDATE applications SET changeSetId = changeSetId + 1 where applicationID=%i; SELECT changeSetId FROM applications WHERE applicationID=%i;", applicationID, applicationID);
+	//sqlCommandMutex.Lock();
 	if (ExecuteBlockingCommand(query, &result, true)==false)
 	{
+		//sqlCommandMutex.Unlock();
 		PQclear(result);
 		return false;
 	}
+	//sqlCommandMutex.Unlock();
 	numRows = PQntuples(result);
 	if (numRows==0)
 	{
@@ -531,7 +569,9 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 	// Gets all newest files
 	// TODO - This can be non-blocking
 	sprintf(query, "SELECT DISTINCT ON (filename) filename, contentHash, createFile FROM FileVersionHistory WHERE applicationID=%i ORDER BY filename, fileId DESC;", applicationID);
+	//sqlCommandMutex.Lock();
 	result = PQexecParams(pgConn, query,0,0,0,0,0,PQEXECPARAM_FORMAT_BINARY);
+	//sqlCommandMutex.Unlock();
 	if (IsResultSuccessful(result, true)==false)
 	{
 		PQclear(result);
@@ -547,9 +587,9 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 
 	unsigned fileListIndex;
 	int rowIndex;
-	char *hardDriveFilename;
+	RakNet::RakString hardDriveFilename;
 	char *hardDriveHash;
-	char *queryFilename;
+	RakNet::RakString queryFilename;
 	char *createFileResult;
 	char *hash;
 	bool addFile;
@@ -604,7 +644,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 		fileOnHarddrive=false;
 		for (fileListIndex=0; fileListIndex < filesOnHarddrive.fileList.Size(); fileListIndex++)
 		{
-			hardDriveFilename=filesOnHarddrive.fileList[fileListIndex].filename;
+			hardDriveFilename=filesOnHarddrive.fileList[fileListIndex].filename.C_String();
 			hardDriveHash=filesOnHarddrive.fileList[fileListIndex].data;
 
 			if (_stricmp(hardDriveFilename, queryFilename)==0)
@@ -622,7 +662,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 	PQclear(result);
 	filesOnHarddrive.Clear();
 
-	char *outTemp[3];
+	const char *outTemp[3];
 	int outLengths[3];
 	int formats[3];
 	formats[0]=PQEXECPARAM_FORMAT_TEXT;
@@ -637,10 +677,12 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 
 		// BUGGED
 		sprintf(query, "INSERT INTO FileVersionHistory(applicationID, filename, createFile, changeSetID, userName) VALUES (%i, $1::text,FALSE,%i,'%s');", applicationID, changeSetId, GetEscapedString(userName).C_String());
-		outTemp[0]=deletedFiles.fileList[fileListIndex].filename;
-		outLengths[0]=(int)strlen(deletedFiles.fileList[fileListIndex].filename);
+		outTemp[0]=deletedFiles.fileList[fileListIndex].filename.C_String();
+		outLengths[0]=(int)deletedFiles.fileList[fileListIndex].filename.GetLength();
 		formats[0]=PQEXECPARAM_FORMAT_TEXT;
+		//sqlCommandMutex.Lock();
 		result = PQexecParams(pgConn, query,1,0,outTemp,outLengths,formats,PQEXECPARAM_FORMAT_BINARY);
+		//sqlCommandMutex.Unlock();
 		if (IsResultSuccessful(result, true)==false)
 		{
 			deletedFiles.Clear();
@@ -682,8 +724,9 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 		outTemp[0]=hardDriveFilename;
 		outLengths[0]=(int)strlen(hardDriveFilename);
 		formats[0]=PQEXECPARAM_FORMAT_TEXT;
-
+		//sqlCommandMutex.Lock();
 		fileRows = PQexecParams(pgConn, query,1,0,outTemp,outLengths,formats,PQEXECPARAM_FORMAT_TEXT);
+		//sqlCommandMutex.Unlock();
 		if (IsResultSuccessful(fileRows, true)==false)
 		{
 			newFiles.Clear();
@@ -709,7 +752,9 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 			
 			// The last query handled all the relevant comparisons
 			sprintf(query, "SELECT content from FileVersionHistory WHERE fileID=$1::int;" );
+			//sqlCommandMutex.Lock();
 			result = PQexecParams(pgConn, query,1,0,outTemp,outLengths,formats,PQEXECPARAM_FORMAT_BINARY);
+			//sqlCommandMutex.Unlock();
 			if (IsResultSuccessful(result, true)==false)
 			{
 				Rollback();
@@ -750,7 +795,9 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 			outTemp[1]=patch;
 			outLengths[1]=patchLength;
 			
+			//sqlCommandMutex.Lock();
 			uploadResult = PQexecParams(pgConn, "UPDATE FileVersionHistory SET patch=$2::bytea where fileID=$1::int;",2,0,outTemp,outLengths,formats,PQEXECPARAM_FORMAT_TEXT);
+			//sqlCommandMutex.Unlock();
 			if (IsResultSuccessful(uploadResult, true)==false)
 			{
 				Rollback();
@@ -790,7 +837,9 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 		RakAssert(formats[2]==PQEXECPARAM_FORMAT_BINARY);
 		
 		// Upload the new file
+		//sqlCommandMutex.Lock();
 		uploadResult = PQexecParams(pgConn, query,3,0,outTemp,outLengths,formats,PQEXECPARAM_FORMAT_BINARY);
+		//sqlCommandMutex.Unlock();
 		if( !uploadResult )
 		{
 			// Libpq had a problem inserting the file to the table. Most likely due to it running out of
@@ -816,12 +865,15 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 	printf("DB COMMIT\n");
 
 	// If ExecuteBlockingCommand fails then it does a rollback
+	//sqlCommandMutex.Lock();
 	if (ExecuteBlockingCommand("COMMIT;", &result, true)==false)
 	{
+		//sqlCommandMutex.Unlock();
 		printf("COMMIT Failed!\n");
 		PQclear(result);
 		return false;
 	}
+	//sqlCommandMutex.Unlock();
 	PQclear(result);
 
 	printf("COMMIT Success\n");
@@ -832,7 +884,7 @@ const char *AutopatcherPostgreRepository::GetLastError(void) const
 {
 	return PostgreSQLInterface::GetLastError();
 }
-unsigned int AutopatcherPostgreRepository::GetFilePart( char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)
+unsigned int AutopatcherPostgreRepository::GetFilePart( const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)
 {
 	PGresult *result;
 	char query[512];
@@ -841,12 +893,15 @@ unsigned int AutopatcherPostgreRepository::GetFilePart( char *filename, unsigned
 
 	// Seems that substring is 1 based for its index, so add 1 to startReadBytes
 	sprintf(query, "SELECT substring(content from %i for %i) FROM FileVersionHistory WHERE fileId=%i;", startReadBytes+1,numBytesToRead,context.fileId);
+	//sqlCommandMutex.Lock();
 	result = PQexecParams(pgConn, query,0,0,0,0,0,PQEXECPARAM_FORMAT_BINARY);
 	if (IsResultSuccessful(result, false)==false)
 	{
+		//sqlCommandMutex.Unlock();
 		PQclear(result);
 		return 0;
 	}
+	//sqlCommandMutex.Unlock();
 	content = PQgetvalue(result, 0, 0);
 	contentLength=PQgetlength(result, 0, 0);
 	memcpy(preallocatedDestination,content,contentLength);

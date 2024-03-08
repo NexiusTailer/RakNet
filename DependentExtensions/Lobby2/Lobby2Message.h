@@ -8,7 +8,7 @@
 #include "RakNetSmartPtr.h"
 
 #if defined(_XBOX) || defined(X360)
-#include "XBOX360Includes.h"
+                            
 #endif
 
 #pragma once
@@ -28,6 +28,7 @@ const unsigned int L2_MAX_BINARY_DATA_LENGTH=1000000;
 // --------------------------------------------- Enumeration list of all message IDs --------------------------------------------
 
 /// All enumerations for Lobby2Message. Each Lobby2Message has one enumeration
+/// \ingroup LOBBY_2_COMMANDS
 enum Lobby2MessageID
 {
 	L2MID_Platform_Startup,
@@ -126,16 +127,20 @@ enum Lobby2MessageID
 	L2MID_Console_JoinLobby,
 	L2MID_Console_LeaveLobby,
 	L2MID_Console_SendLobbyChatMessage,
-	L2MID_Console_SearchRoomsInLobby,
+	L2MID_Console_SearchRooms,
 	L2MID_Console_GetRoomDetails,
 	L2MID_Console_GetLobbyMemberData,
 	L2MID_Console_CreateRoom,
+	L2MID_Console_SetRoomSearchProperties,
+	L2MID_Console_UpdateRoomParameters,
 	L2MID_Console_JoinRoom,
 	L2MID_Console_LeaveRoom,
 	L2MID_Console_SendLobbyInvitationToRoom,
+	L2MID_Console_SendGUIInvitationToRoom,
 	L2MID_Console_SendDataMessageToUser,
 	L2MID_Console_SendRoomChatMessage,
 	L2MID_Console_SetPresence,
+	L2MID_Notification_Client_RemoteLogin,
 	L2MID_Notification_Client_IgnoreStatus,
 	L2MID_Notification_Friends_StatusChange,
 	L2MID_Notification_User_ChangedHandle,
@@ -177,6 +182,7 @@ enum Lobby2MessageID
 };
 
 // Should match tab;e lobby2.clanMemberStates
+/// \ingroup LOBBY_2_COMMANDS
 enum ClanMemberState
 {
 	CMD_UNDEFINED=0,
@@ -187,13 +193,14 @@ enum ClanMemberState
 };
 // --------------------------------------------- Base class for all messages (functions and notifications --------------------------------------------
 
-/// A Lobby2Message encapsulates a networked function call from the client.
-/// The client should fill in the input parameters, call Lobby2Client::SendMsg(), and wait for the reply in the callback passed to Lobby2Client::SetCallbackInterface()
+/// \brief A Lobby2Message encapsulates a networked function call from the client.
+/// \details The client should fill in the input parameters, call Lobby2Client::SendMsg(), and wait for the reply in the callback passed to Lobby2Client::SetCallbackInterface()
 /// The input parameters are always serialized back from the server.
 /// See resultCode for the result of the operation. L2RC_SUCCESS means success. Anything else means failure.
 /// Any message may return between L2RC_NOT_LOGGED_IN and L2RC_EMAIL_ADDRESS_IS_INVALID, which indices formatting errors in the input.
 /// All other return codes have the name of the message in the enumeration.
 /// The system can be extended by deriving from Lobby2Message, adding your own input and output parameters, and deriving from Lobby2MessageFactory register your own class factory with RakNet::Lobby2Plugin::SetMessageFactory()
+/// \ingroup LOBBY_2_COMMANDS
 struct Lobby2Message
 {
 	Lobby2Message();
@@ -284,9 +291,7 @@ struct Lobby2Message
 	/// Just a number, uniquely identifying each allocation of Lobby2Message.
 	/// Use it if you need to lookup queries on the callback reply
 #if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-	uint32_t requestId;
-	// For polling, when necessary
-	virtual bool WasCompleted(void) {return false;}
+                                                                                                       
 #else
 	uint64_t requestId;
 #endif
@@ -302,7 +307,7 @@ struct Lobby2Message
 	int refCount;
 
 #if defined(_XBOX) || defined(X360)
-	XOVERLAPPED        m_Overlapped;
+                                 
 #endif
 };
 
@@ -404,16 +409,20 @@ struct Console_GetLobbyListFromWorld;
 struct Console_JoinLobby;
 struct Console_LeaveLobby;
 struct Console_SendLobbyChatMessage;
-struct Console_SearchRoomsInLobby;
+struct Console_SearchRooms;
 struct Console_GetRoomDetails;
 struct Console_GetLobbyMemberData;
 struct Console_CreateRoom;
+struct Console_SetRoomSearchProperties;
+struct Console_UpdateRoomParameters;
 struct Console_JoinRoom;
 struct Console_LeaveRoom;
 struct Console_SendLobbyInvitationToRoom;
+struct Console_SendGUIInvitationToRoom;
 struct Console_SendDataMessageToUser;
 struct Console_SendRoomChatMessage;
 struct Console_SetPresence;
+struct Notification_Client_RemoteLogin;
 struct Notification_Client_IgnoreStatus;
 struct Notification_Friends_StatusChange;
 struct Notification_User_ChangedHandle;
@@ -453,6 +462,7 @@ struct Notification_ReceivedDataMessageFromUser;
 // --------------------------------------------- Callback interface for all messages, notifies the user --------------------------------------------
 
 /// Every Lobby2Message processed with Lobby2Client::SendMsg() while connected will call the callback registered with Lobby2Client::SetCallbackInterface().
+/// \ingroup LOBBY_2_GROUP
 struct Lobby2Callbacks
 {
 	Lobby2Callbacks() {callbackId=nextCallbackId++;}
@@ -553,16 +563,20 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Console_JoinLobby *message);
 	virtual void MessageResult(Console_LeaveLobby *message);
 	virtual void MessageResult(Console_SendLobbyChatMessage *message);
-	virtual void MessageResult(Console_SearchRoomsInLobby *message);
+	virtual void MessageResult(Console_SearchRooms *message);
 	virtual void MessageResult(Console_GetRoomDetails *message);
 	virtual void MessageResult(Console_GetLobbyMemberData *message);
 	virtual void MessageResult(Console_CreateRoom *message);
+	virtual void MessageResult(Console_SetRoomSearchProperties *message);
+	virtual void MessageResult(Console_UpdateRoomParameters *message);
 	virtual void MessageResult(Console_JoinRoom *message);
 	virtual void MessageResult(Console_LeaveRoom *message);
 	virtual void MessageResult(Console_SendLobbyInvitationToRoom *message);
+	virtual void MessageResult(Console_SendGUIInvitationToRoom *message);
 	virtual void MessageResult(Console_SendDataMessageToUser *message);
 	virtual void MessageResult(Console_SendRoomChatMessage *message);
 	virtual void MessageResult(Console_SetPresence *message);
+	virtual void MessageResult(Notification_Client_RemoteLogin *message);
 	virtual void MessageResult(Notification_Client_IgnoreStatus *message);
 	virtual void MessageResult(Notification_Friends_StatusChange *message);
 	virtual void MessageResult(Notification_User_ChangedHandle *message);
@@ -606,6 +620,7 @@ struct Lobby2Callbacks
 };
 
 /// Just print out the name of the message by default. This class is used in the sample.
+/// \ingroup LOBBY_2_GROUP
 struct Lobby2Printf : public Lobby2Callbacks
 {
 	virtual void ExecuteDefaultResult(Lobby2Message *message) {message->DebugPrintf();}
@@ -774,7 +789,8 @@ struct BookmarkedUser
 	virtual const char* GetName(void) const {return #__NAME__;} \
 	virtual void DebugMsg(RakNet::RakString &out) const {out.Set(#__NAME__ " result=%s\n", Lobby2ResultCodeDescription::ToEnglish(resultCode));};
 
-// Platform specific startup. Unused on the PC
+/// \brief Platform specific startup. Unused on the PC
+/// \ingroup LOBBY_2_COMMANDS
 struct Platform_Startup : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Platform_Startup)
@@ -786,7 +802,8 @@ struct Platform_Startup : public Lobby2Message
 	virtual bool ServerMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; return true; }
 };
 
-// Platform specific startup. Unused on the PC
+/// \brief Platform specific startup. Unused on the PC
+/// \ingroup LOBBY_2_COMMANDS
 struct Platform_Shutdown : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Platform_Shutdown)
@@ -798,7 +815,8 @@ struct Platform_Shutdown : public Lobby2Message
 	virtual bool ServerMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; return true; }
 };
 
-/// Create all tables and stored procedures on a system that does not already have them
+/// \brief Create all tables and stored procedures on a system that does not already have them
+/// \ingroup LOBBY_2_COMMANDS
 struct System_CreateDatabase : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(System_CreateDatabase)
@@ -808,7 +826,8 @@ struct System_CreateDatabase : public Lobby2Message
 	virtual bool RequiresLogin(void) const {return false;}
 	virtual bool PrevalidateInput(void) {return true;}
 };
-/// Destroy all tables and stored procedures created with System_CreateDatabase
+/// \brief Destroy all tables and stored procedures created with System_CreateDatabase
+/// \ingroup LOBBY_2_COMMANDS
 struct System_DestroyDatabase : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(System_DestroyDatabase)
@@ -818,7 +837,8 @@ struct System_DestroyDatabase : public Lobby2Message
 	virtual bool RequiresLogin(void) const {return false;}
 	virtual bool PrevalidateInput(void) {return true;}
 };
-/// Each title essentially corresponds to a game. For example, the same lobby system may be used for both asteroids and Pac-man. When logging in, and for some functions, it is necessary to specify which title you are logging in under. This way users playing asteroids do not interact with users playing pac-man, where such interations are game specific (such as ranking).
+/// \brief Each title essentially corresponds to a game. For example, the same lobby system may be used for both asteroids and Pac-man. When logging in, and for some functions, it is necessary to specify which title you are logging in under. This way users playing asteroids do not interact with users playing pac-man, where such interations are game specific (such as ranking).
+/// \ingroup LOBBY_2_COMMANDS
 struct System_CreateTitle : public Lobby2Message
 {
 	System_CreateTitle() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -837,6 +857,8 @@ struct System_CreateTitle : public Lobby2Message
 	int requiredAge;
 	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
+/// \brief Destroy a previously added title
+/// \ingroup LOBBY_2_COMMANDS
 struct System_DestroyTitle : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(System_DestroyTitle)
@@ -851,6 +873,8 @@ struct System_DestroyTitle : public Lobby2Message
 	RakNet::RakString titleName;
 
 };
+/// \brief Get the required age set with System_CreateTitle
+/// \ingroup LOBBY_2_COMMANDS
 struct System_GetTitleRequiredAge : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(System_GetTitleRequiredAge)
@@ -867,6 +891,8 @@ struct System_GetTitleRequiredAge : public Lobby2Message
 	// Output parameters
 	int requiredAge;
 };
+/// \brief Get the binary data set with System_CreateTitle
+/// \ingroup LOBBY_2_COMMANDS
 struct System_GetTitleBinaryData : public Lobby2Message
 {
 	System_GetTitleBinaryData() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -885,7 +911,8 @@ struct System_GetTitleBinaryData : public Lobby2Message
 	// Output parameters
 	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
-/// Adds the input strings to a table of profanity. non-unique or empty strings can be ignored. This table will be used internally to ensure that handles and clan names do not contain profanity. Multiple calls add to the table. This table will be used for functions that take a user-defined string that is highly visible, such as clan and user names. It does not need to be checked for emails or message boards.
+/// \brief Adds the input strings to a table of profanity. non-unique or empty strings can be ignored. This table will be used internally to ensure that handles and clan names do not contain profanity. Multiple calls add to the table. This table will be used for functions that take a user-defined string that is highly visible, such as clan and user names. It does not need to be checked for emails or message boards.
+/// \ingroup LOBBY_2_COMMANDS
 struct System_RegisterProfanity : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(System_RegisterProfanity)
@@ -912,7 +939,8 @@ struct System_RegisterProfanity : public Lobby2Message
 
 	// Output parameters
 };
-/// Bans a specific user (will be most likely called by a moderator). Adds the user's primary key to a ban table, along with the name of the moderator, the reason for the ban. Banning is used to prevent the banned user from logging on for some specified duration. A date column should be present and automatically filled in. When bans are expired, the ban can be deleted from the database. However, a separate table should log bans, so that even expired bans can be looked up in case.
+/// \brief Bans a specific user (will be most likely called by a moderator). Adds the user's primary key to a ban table, along with the name of the moderator, the reason for the ban. Banning is used to prevent the banned user from logging on for some specified duration. A date column should be present and automatically filled in. When bans are expired, the ban can be deleted from the database. However, a separate table should log bans, so that even expired bans can be looked up in case.
+/// \ingroup LOBBY_2_COMMANDS
 struct System_BanUser : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(System_BanUser)
@@ -932,6 +960,8 @@ struct System_BanUser : public Lobby2Message
 
 
 };
+/// \brief Unban a user banned with System_BanUser
+/// \ingroup LOBBY_2_COMMANDS
 struct System_UnbanUser : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(System_UnbanUser)
@@ -947,7 +977,8 @@ struct System_UnbanUser : public Lobby2Message
 	RakNet::RakString reason;
 	RakNet::RakString userName;
 };
-/// Adds CDKeys to the database. Duplicate CDKeys for a particular title are ignored. CDKeys can be identical for different titles.
+/// \brief Adds CDKeys to the database. Duplicate CDKeys for a particular title are ignored. CDKeys can be identical for different titles.
+/// \ingroup LOBBY_2_COMMANDS
 struct CDKey_Add : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(CDKey_Add)
@@ -965,7 +996,8 @@ struct CDKey_Add : public Lobby2Message
 
 	// Output parameters
 };
-/// Returns if a CD key was previously added with AddCDKey.
+/// \brief Returns if a CD key was previously added with AddCDKey.
+/// \ingroup LOBBY_2_COMMANDS
 struct CDKey_GetStatus : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(CDKey_GetStatus)
@@ -987,7 +1019,8 @@ struct CDKey_GetStatus : public Lobby2Message
 	RakNet::RakString activationDate;
 	bool wasStolen;
 };
-/// Associates a cd key with a user, such that the cd key cannot be used again. If Client_Login() is called with check cd key as true, then this table will be checked to make sure UserCDKey() was previously called with this user and a valid key. If this user is already associated with a CD Key, add the new key, and use the most recent key. All CD Key usage should be logged in a separate table, including the date used and result.
+/// \brief Associates a cd key with a user, such that the cd key cannot be used again. If Client_Login() is called with check cd key as true, then this table will be checked to make sure UserCDKey() was previously called with this user and a valid key. If this user is already associated with a CD Key, add the new key, and use the most recent key. All CD Key usage should be logged in a separate table, including the date used and result.
+/// \ingroup LOBBY_2_COMMANDS
 struct CDKey_Use : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(CDKey_Use)
@@ -1007,7 +1040,8 @@ struct CDKey_Use : public Lobby2Message
 	// Output parameters
 };
 
-/// Flags one or more CD keys as stolen. Stolen CD keys will prevent Client_Login() if check cd key is true. They will also prevent these cd keys from being used with CDKey_Use. If this key is already in use by certain users for this particular title, then log this similarly to how CDKey_Use does so.
+/// \brief Flags one or more CD keys as stolen. Stolen CD keys will prevent Client_Login() if check cd key is true. They will also prevent these cd keys from being used with CDKey_Use. If this key is already in use by certain users for this particular title, then log this similarly to how CDKey_Use does so.
+/// \ingroup LOBBY_2_COMMANDS
 struct CDKey_FlagStolen : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(CDKey_FlagStolen)
@@ -1027,12 +1061,15 @@ struct CDKey_FlagStolen : public Lobby2Message
 	// Output parameters
 	RakNet::RakString userUsingThisKey;
 };
-/// Once a client creates an account with Client_RegisterAccount, the client is able to logon. The login process will check
-/// 1. The CDKey associated with this user (See CDKey_Use) if checkCDKey is true
-/// 2. The userPassword passed to this function
-/// 3. The titleName and titleSecretKey, to ensure this title was previously created with System_CreateTitle
-/// 4. If allowLoginWithoutEmailAddressValidation==false for this user (See Client_RegisterAccount) and System_SetEmailAddressValidated was not called for that email address, fail.
-/// 5. If this user was banned with a ban still in effect via System_BanUser
+/// \brief Logon with a previously registered account
+/// \details Once a client creates an account with Client_RegisterAccount, the client is able to logon. The login process will check
+/// <OL>
+/// <LI>The CDKey associated with this user (See CDKey_Use) if checkCDKey is true
+/// <LI>The userPassword passed to this function
+/// <LI>The titleName and titleSecretKey, to ensure this title was previously created with System_CreateTitle
+/// <LI>If allowLoginWithoutEmailAddressValidation==false for this user (See Client_RegisterAccount) and System_SetEmailAddressValidated was not called for that email address, fail.
+/// <LI>If this user was banned with a ban still in effect via System_BanUser
+/// </OL>
 /// If all checks pass, store in a logging table that the user has logged in at this time. No status flag needs be set, this will be done in C++.
 /// \param[in] userHandle 
 /// \param[in] userPassword 
@@ -1043,6 +1080,7 @@ struct CDKey_FlagStolen : public Lobby2Message
 /// \param[out] bannedReason Only returned on banned
 /// \param[out] whenBanned Only returned on banned
 /// \param[out] banningModeratorID Only returned on banned
+/// \ingroup LOBBY_2_COMMANDS
 struct Client_Login : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_Login)
@@ -1066,6 +1104,8 @@ struct Client_Login : public Lobby2Message
 	RakNet::RakString whenBanned;
 	RakNet::RakString bannedExpiration;
 };
+/// \brief Logoff, after logging in
+/// \ingroup LOBBY_2_COMMANDS
 struct Client_Logoff : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_Logoff)
@@ -1074,7 +1114,8 @@ struct Client_Logoff : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return true;}
 };
-/// This creates a new account in the database, which can be used in a subsequent call to Login. Most parameters are optional. handle is not optional, and must be unique using case-insensitive compare. emailAddress should be validated to have a sensible format, including an @ sign and a period with a 3 letter extension. allowLoginWithoutEmailAddressValidation is used in Client_Login to potentially disallow logon attempts with unverified email addresses.
+/// \brief This creates a new account in the database, which can be used in a subsequent call to Login. Most parameters are optional. handle is not optional, and must be unique using case-insensitive compare. emailAddress should be validated to have a sensible format, including an @ sign and a period with a 3 letter extension. allowLoginWithoutEmailAddressValidation is used in Client_Login to potentially disallow logon attempts with unverified email addresses.
+/// \ingroup LOBBY_2_COMMANDS
 struct Client_RegisterAccount : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_RegisterAccount)
@@ -1095,7 +1136,8 @@ struct Client_RegisterAccount : public Lobby2Message
 
 	// Output parameters
 };
-/// For the client with the given handle, mark a column emailAddressValidated as true or false as appropriate. This is potentially used in Client_Login
+/// \brief For the client with the given handle, mark a column emailAddressValidated as true or false as appropriate. This is potentially used in Client_Login
+/// \ingroup LOBBY_2_COMMANDS
 struct System_SetEmailAddressValidated : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(System_SetEmailAddressValidated)
@@ -1112,7 +1154,8 @@ struct System_SetEmailAddressValidated : public Lobby2Message
 
 	// Output parameters
 };
-/// Looks up in the database if this handle is already in use, subject to the usual constraints of handles. This will be used by the user to quickly check for available handles.
+/// \brief Looks up in the database if this handle is already in use, subject to the usual constraints of handles. This will be used by the user to quickly check for available handles.
+/// \ingroup LOBBY_2_COMMANDS
 struct Client_ValidateHandle : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_ValidateHandle)
@@ -1125,7 +1168,8 @@ struct Client_ValidateHandle : public Lobby2Message
 
 	RakNet::RakString userName;
 };
-/// Flags as deleted an account registered with RegisterAccount. Accounts are not actually deleted, only tagged as deleted.
+/// \brief Flags as deleted an account registered with RegisterAccount. Accounts are not actually deleted, only tagged as deleted.
+/// \ingroup LOBBY_2_COMMANDS
 struct System_DeleteAccount : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(System_DeleteAccount)
@@ -1141,9 +1185,13 @@ struct System_DeleteAccount : public Lobby2Message
 	RakNet::RakString userName;
 	RakNet::RakString password;
 };
-/// Unused accounts are deleted. This is cascading, such that emails and other tables that reference this key are also deleted. unused accounts are defined as:
-/// 1. Deleted accounts over deletedPruneTime seconds old
-/// 2. Accounts which have not been logged into for over loggedInPruneTime seconds
+/// \brief Unused accounts are deleted. This is cascading, such that emails and other tables that reference this key are also deleted. unused accounts are defined as:
+/// \details
+/// <OL>
+/// <LI>Deleted accounts over deletedPruneTime seconds old
+/// <LI>Accounts which have not been logged into for over loggedInPruneTime seconds
+/// <\OL>
+/// \ingroup LOBBY_2_COMMANDS
 struct System_PruneAccounts : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(System_PruneAccounts)
@@ -1159,7 +1207,8 @@ struct System_PruneAccounts : public Lobby2Message
 
 	// Output parameters
 };
-/// Returns the email address associated with a specific handle, invalid handle. This is used for password recovery.
+/// \brief Returns the email address associated with a specific handle, invalid handle. This is used for password recovery.
+/// \ingroup LOBBY_2_COMMANDS
 struct Client_GetEmailAddress : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_GetEmailAddress)
@@ -1178,7 +1227,8 @@ struct Client_GetEmailAddress : public Lobby2Message
 	bool emailAddressValidated;
 
 };
-/// Returns the passwordRecoveryQuestion associated with handle, invalid handle
+/// \brief Returns the passwordRecoveryQuestion associated with handle, invalid handle
+/// \ingroup LOBBY_2_COMMANDS
 struct Client_GetPasswordRecoveryQuestionByHandle : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_GetPasswordRecoveryQuestionByHandle)
@@ -1195,7 +1245,8 @@ struct Client_GetPasswordRecoveryQuestionByHandle : public Lobby2Message
 	RakNet::RakString emailAddress;
 	RakNet::RakString passwordRecoveryQuestion;
 };
-/// Returns the password associated with a handle, if the passwordRecoveryAnswer is correct
+/// \brief Returns the password associated with a handle, if the passwordRecoveryAnswer is correct
+/// \ingroup LOBBY_2_COMMANDS
 struct Client_GetPasswordByPasswordRecoveryAnswer : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_GetPasswordByPasswordRecoveryAnswer)
@@ -1213,7 +1264,8 @@ struct Client_GetPasswordByPasswordRecoveryAnswer : public Lobby2Message
 	// Output parameters
 	RakNet::RakString password;
 };
-/// Changes the handle for a user.
+/// \brief Changes the handle for a user.
+/// \ingroup LOBBY_2_COMMANDS
 struct Client_ChangeHandle : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_ChangeHandle)
@@ -1235,8 +1287,9 @@ struct Client_ChangeHandle : public Lobby2Message
 	// Output parameters
 };
 
-/// Will update any or all of the inputs that were previously passed to Client_RegisterAccount, except handle.
-/// For input parameters, see Client_RegisterAccount() createAccountParameters
+/// \brief Will update any or all of the inputs that were previously passed to Client_RegisterAccount, except handle.
+/// \details For input parameters, see Client_RegisterAccount() createAccountParameters
+/// \ingroup LOBBY_2_COMMANDS
 struct Client_UpdateAccount : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_UpdateAccount)
@@ -1254,6 +1307,8 @@ struct Client_UpdateAccount : public Lobby2Message
 	// Output parameters
 };
 
+/// \brief Get the parameters set with Client_RegisterAccount
+/// \ingroup LOBBY_2_COMMANDS
 struct Client_GetAccountDetails : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_GetAccountDetails)
@@ -1269,7 +1324,8 @@ struct Client_GetAccountDetails : public Lobby2Message
 	CreateAccountParameters createAccountParameters;
 };
 
-/// Adds the specified user to an ignore list for my user. Recommended to store the primary key of the remote user, both for speed and so if the other use changes their handle it still works. The ignore list is checked for friend invites, emails, and elsewhere where indicated. Ignoring is uni-directional, so if A ignores B, A will block messages from B where appropriate, but B will not immediately block messages from A.
+/// \brief Adds the specified user to an ignore list for my user. Recommended to store the primary key of the remote user, both for speed and so if the other use changes their handle it still works. The ignore list is checked for friend invites, emails, and elsewhere where indicated. Ignoring is uni-directional, so if A ignores B, A will block messages from B where appropriate, but B will not immediately block messages from A.
+/// \ingroup LOBBY_2_COMMANDS
 struct Client_StartIgnore : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_StartIgnore)
@@ -1289,7 +1345,8 @@ struct Client_StartIgnore : public Lobby2Message
 	// Output parameters
 };
 
-/// Removes an entry in the database such that myHandle will no longer ignore theirHandle.
+/// \brief Removes an entry in the database such that myHandle will no longer ignore theirHandle.
+/// \ingroup LOBBY_2_COMMANDS
 struct Client_StopIgnore : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_StopIgnore)
@@ -1309,7 +1366,8 @@ struct Client_StopIgnore : public Lobby2Message
 	// Output parameters
 
 };
-/// Returns all users I have ignored
+/// \brief Returns all users I have ignored
+/// \ingroup LOBBY_2_COMMANDS
 struct Client_GetIgnoreList : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_GetIgnoreList)
@@ -1343,7 +1401,7 @@ struct Client_PerTitleIntegerStorage : public Lobby2Message
 	/// [in] Compared against the current value
 	double conditionValue;
 	/// [in] How conditionValue is compared against the conditional value
-	/// Condition always passes if the integer in this slot was never set to begin with
+	/// Used for PTISO_ADD only
 	enum PTIS_Condition
 	{
 		PTISC_EQUAL,
@@ -1352,7 +1410,7 @@ struct Client_PerTitleIntegerStorage : public Lobby2Message
 		PTISC_GREATER_OR_EQUAL,
 		PTISC_LESS_THAN,
 		PTISC_LESS_OR_EQUAL,
-	} conditionForOperation;
+	} addConditionForOperation;
 	/// [in] What value is written (used for PTISO_WRITE and PTISO_ADD only)
 	double inputValue;
 	/// [in] What to do. Write will overwrite the existing value with inputValue
@@ -1374,7 +1432,8 @@ struct Client_PerTitleIntegerStorage : public Lobby2Message
 	double outputValue;
 };
 
-/// For each combination of user and title, structures can be stored
+/// \brief For each combination of user and title, structures can be stored
+/// \ingroup LOBBY_2_COMMANDS
 struct Client_PerTitleBinaryStorage : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_PerTitleBinaryStorage)
@@ -1404,7 +1463,8 @@ struct Client_PerTitleBinaryStorage : public Lobby2Message
 	} operationToPerform;
 };
 
-/// Stores in the database an add friend invite from my handle to their handle. The combination of my handle and their handle must be unique, so you cannot send more than one add friend invite to a single user. Sends an email to their handle the subject, body, and binary data. Note: if myHandle is ignored by theirHandle, then the function fails. See Client_StartIgnore.
+/// \brief Stores in the database an add friend invite from my handle to their handle. The combination of my handle and their handle must be unique, so you cannot send more than one add friend invite to a single user. Sends an email to their handle the subject, body, and binary data. Note: if myHandle is ignored by theirHandle, then the function fails. See Client_StartIgnore.
+/// \ingroup LOBBY_2_COMMANDS
 struct Friends_SendInvite : public Lobby2Message
 {
 	Friends_SendInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -1428,7 +1488,8 @@ struct Friends_SendInvite : public Lobby2Message
 	// Output parameters
 };
 
-/// Stores in the database that this user is now my friend. This is bidirectional, which is to say if someone accepts an add friend invite, they are my friend, and I am their friend. Recommended to store by primary key for speed and in case the friend's handle changes. Store in the emails table from my handle to their handle the subject, body, and binary data. Note: if myHandle is ignored by theirHandle, then the function fails. See AddToIgnoreList.
+/// \brief Stores in the database that this user is now my friend. This is bidirectional, which is to say if someone accepts an add friend invite, they are my friend, and I am their friend. Recommended to store by primary key for speed and in case the friend's handle changes. Store in the emails table from my handle to their handle the subject, body, and binary data. Note: if myHandle is ignored by theirHandle, then the function fails. See AddToIgnoreList.
+/// \ingroup LOBBY_2_COMMANDS
 struct Friends_AcceptInvite : public Lobby2Message
 {
 
@@ -1452,7 +1513,8 @@ struct Friends_AcceptInvite : public Lobby2Message
 
 	// Output parameters
 };
-/// Removes from the database the pending add friend invite. Operation completes even if ignored. Unless ignored, store in the emails table from my handle to their handle the subject, body,  binary data, and procedure type flag.
+/// \brief Removes from the database the pending add friend invite. Operation completes even if ignored. Unless ignored, store in the emails table from my handle to their handle the subject, body,  binary data, and procedure type flag.
+/// \ingroup LOBBY_2_COMMANDS
 struct Friends_RejectInvite : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Friends_RejectInvite)
@@ -1476,7 +1538,8 @@ struct Friends_RejectInvite : public Lobby2Message
 
 	// Output parameters
 };
-/// Returns all invites for this user
+/// \brief Returns all invites for this user
+/// \ingroup LOBBY_2_COMMANDS
 struct Friends_GetInvites : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Friends_GetInvites)
@@ -1493,7 +1556,8 @@ struct Friends_GetInvites : public Lobby2Message
 	DataStructures::List<RakNet::RakString> invitesSent;
 	DataStructures::List<RakNet::RakString> invitesReceived;
 };
-/// Gets all friends to this user
+/// \brief Gets all friends to this user
+/// \ingroup LOBBY_2_COMMANDS
 struct Friends_GetFriends : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Friends_GetFriends)
@@ -1507,7 +1571,8 @@ struct Friends_GetFriends : public Lobby2Message
 	// Output parameters
 	DataStructures::List<RakNet::RakString> myFriends;
 };
-/// Ends a friendship between two users. Remove from the database the friend entry between my handle and their handle. As with accept add friend invite, this is bidirectional. Either user can terminate the friendship. Store in the emails table from my handle to their handle the subject, body, and binary data, and procedure type flag.
+/// \brief Ends a friendship between two users. Remove from the database the friend entry between my handle and their handle. As with accept add friend invite, this is bidirectional. Either user can terminate the friendship. Store in the emails table from my handle to their handle the subject, body, and binary data, and procedure type flag.
+/// \ingroup LOBBY_2_COMMANDS
 struct Friends_Remove : public Lobby2Message
 {
 	Friends_Remove() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -1531,10 +1596,11 @@ struct Friends_Remove : public Lobby2Message
 
 	// Output parameters
 };
-/// Remembers a user, with a type integer and description for you to use, if desired.
-/// Can be used for recent users or other types of lists
+/// \brief Remembers a user, with a type integer and description for you to use, if desired.
+/// \details Can be used for recent users or other types of lists
 /// The combination of targetHandle and type uniquely identifies a bookmarked user.
 /// If you want more than one list of bookmarked usrs, use a different value for type
+/// \ingroup LOBBY_2_COMMANDS
 struct BookmarkedUsers_Add : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(BookmarkedUsers_Add)
@@ -1552,6 +1618,8 @@ struct BookmarkedUsers_Add : public Lobby2Message
 	RakNet::RakString description;
 
 };
+/// \brief Remove a user added with BookmarkedUsers_Add
+/// \ingroup LOBBY_2_COMMANDS
 struct BookmarkedUsers_Remove : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(BookmarkedUsers_Remove)
@@ -1567,7 +1635,8 @@ struct BookmarkedUsers_Remove : public Lobby2Message
 	RakNet::RakString targetHandle;
 	int type;
 };
-/// Returns all users added to BookmarkedUsers_Add
+/// \brief Returns all users added to BookmarkedUsers_Add
+/// \ingroup LOBBY_2_COMMANDS
 struct BookmarkedUsers_Get : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(BookmarkedUsers_Get)
@@ -1583,7 +1652,8 @@ struct BookmarkedUsers_Get : public Lobby2Message
 	/// \param[out] recentlyMetUsers Handles of recently met users, by BookmarkedUsers_Add, subject to expirationTimeSeconds
 	DataStructures::List<BookmarkedUser> bookmarkedUsers;
 };
-/// Adds to an emails table from myHandle (store primary key) to recipient handles (store primary key) the specified subject, body, and binary data. Emails are persistent, therefore emails should be stored in a separate table and referenced by the user. Deleting the user does not delete previously send email. Emails should have an automatic timestamp to store when they were created. Email should be flagged as sent=true (boolean), markedRead=true (boolean), deletedBySender=false (boolean), deletedByReciever=false (boolean).
+/// \brief Adds to an emails table from myHandle (store primary key) to recipient handles (store primary key) the specified subject, body, and binary data. Emails are persistent, therefore emails should be stored in a separate table and referenced by the user. Deleting the user does not delete previously send email. Emails should have an automatic timestamp to store when they were created. Email should be flagged as sent=true (boolean), markedRead=true (boolean), deletedBySender=false (boolean), deletedByReciever=false (boolean).
+/// \ingroup LOBBY_2_COMMANDS
 struct Emails_Send : public Lobby2Message
 {
 
@@ -1608,7 +1678,8 @@ struct Emails_Send : public Lobby2Message
 
 	// Output parameters
 };
-/// Returns emails as noted. Emails which were marked deleted are not returned.
+/// \brief Returns emails as noted. Emails which were marked deleted are not returned.
+/// \ingroup LOBBY_2_COMMANDS
 struct Emails_Get : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Emails_Get)
@@ -1624,7 +1695,8 @@ struct Emails_Get : public Lobby2Message
 	/// \param[out] emailResults Up to caller to deallocate binary data
 	DataStructures::List<EmailResult> emailResults;
 };
-/// Deletes an email with a specified ID. This ID is returned in GetEmail and should uniquely identify an email (it's fine to use the primary key). Note: Emails are not actually deleted from the database in this function. This just sets the deletedBySender or deletedByReciever flags. Emails are actually stored in a log recording past emails and sender and receiver primary key. They are not truly destroyed until done so with System_PruneAccounts.
+/// \brief Deletes an email with a specified ID. This ID is returned in GetEmail and should uniquely identify an email (it's fine to use the primary key). Note: Emails are not actually deleted from the database in this function. This just sets the deletedBySender or deletedByReciever flags. Emails are actually stored in a log recording past emails and sender and receiver primary key. They are not truly destroyed until done so with System_PruneAccounts.
+/// \ingroup LOBBY_2_COMMANDS
 struct Emails_Delete : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Emails_Delete)
@@ -1639,7 +1711,8 @@ struct Emails_Delete : public Lobby2Message
 
 	// Output parameters
 };
-/// Sets the status flag for an email. This is a property defined by and used by the user
+/// \brief Sets the status flag for an email. This is a property defined by and used by the user
+/// \ingroup LOBBY_2_COMMANDS
 struct Emails_SetStatus : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Emails_SetStatus)
@@ -1659,7 +1732,8 @@ struct Emails_SetStatus : public Lobby2Message
 
 	// Output parameters
 };
-/// Will record in the database the results of a match. This will store in the database the the match which is defined by the the match notes, match id, winner and loser participant primary keys, winner and loser participant scores, and binary data.
+/// \brief Will record in the database the results of a match. This will store in the database the the match which is defined by the the match notes, match id, winner and loser participant primary keys, winner and loser participant scores, and binary data.
+/// \ingroup LOBBY_2_COMMANDS
 struct Ranking_SubmitMatch : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Ranking_SubmitMatch)
@@ -1678,7 +1752,8 @@ struct Ranking_SubmitMatch : public Lobby2Message
 
 	// Output parameters
 };
-/// Gets matches recorded with Ranking_SubmitMatch ordered from most recent to least recent. Each returned match has all columns submitted to Ranking_SubmitMatch, except binary data, which can be retrieved with Ranking_GetMatchBinaryData. Additionally, each returned match returns the primary key of each match, to be passed to Ranking_GetMatchBinaryData
+/// \brief Gets matches recorded with Ranking_SubmitMatch ordered from most recent to least recent. Each returned match has all columns submitted to Ranking_SubmitMatch, except binary data, which can be retrieved with Ranking_GetMatchBinaryData. Additionally, each returned match returns the primary key of each match, to be passed to Ranking_GetMatchBinaryData
+/// \ingroup LOBBY_2_COMMANDS
 struct Ranking_GetMatches : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Ranking_GetMatches)
@@ -1698,7 +1773,8 @@ struct Ranking_GetMatches : public Lobby2Message
 	/// \param[out] submittedMatches (excluding binary data, up to caller to deallocate)
 	DataStructures::List<SubmittedMatch> submittedMatches;
 };
-/// Because of the large amount of binary data potentially returned, this function is used to retrieve binary data for a particular match. 
+/// \brief Because of the large amount of binary data potentially returned, this function is used to retrieve binary data for a particular match. 
+/// \ingroup LOBBY_2_COMMANDS
 struct Ranking_GetMatchBinaryData : public Lobby2Message
 {
 
@@ -1718,7 +1794,8 @@ struct Ranking_GetMatchBinaryData : public Lobby2Message
 	// Output parameters
 	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
-/// When a match is submitted with Ranking_SubmitMatch, the total running score and number of matches played for each player for each game title and game mode combination should be recorded. Because matches can be pruned wth PruneMatches(), the total score sum and number of scores submitted should be stored, rather than summed up from prior submitted matches.
+/// \brief When a match is submitted with Ranking_SubmitMatch, the total running score and number of matches played for each player for each game title and game mode combination should be recorded. Because matches can be pruned wth PruneMatches(), the total score sum and number of scores submitted should be stored, rather than summed up from prior submitted matches.
+/// \ingroup LOBBY_2_COMMANDS
 struct Ranking_GetTotalScore : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Ranking_GetTotalScore)
@@ -1740,7 +1817,8 @@ struct Ranking_GetTotalScore : public Lobby2Message
 	unsigned int numScoresSubmitted;
 };
 
-/// Resets the sum of all submitted scores to 0, the number of scores submitted to 0
+/// \brief Resets the sum of all submitted scores to 0, the number of scores submitted to 0
+/// \ingroup LOBBY_2_COMMANDS
 struct Ranking_WipeScoresForPlayer : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Ranking_WipeScoresForPlayer)
@@ -1759,7 +1837,8 @@ struct Ranking_WipeScoresForPlayer : public Lobby2Message
 
 	// Output parameters
 };
-/// Deletes all matches submitted with submit match. Also deletes all scores for all players associated with this titleName and gameType (e.g. same thing that WipeScoresForPlayer does, but for all players).
+/// \brief Deletes all matches submitted with submit match. Also deletes all scores for all players associated with this titleName and gameType (e.g. same thing that WipeScoresForPlayer does, but for all players).
+/// \ingroup LOBBY_2_COMMANDS
 struct Ranking_WipeMatches : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Ranking_WipeMatches)
@@ -1777,7 +1856,8 @@ struct Ranking_WipeMatches : public Lobby2Message
 
 	// Output parameters
 };
-/// Will delete all matches submitted with SubmitMatch over PruneTime days old. Will also prune matches if the total storage space of all matches exceeds PruneSizeMB megabytes in the database.
+/// \brief Will delete all matches submitted with SubmitMatch over PruneTime days old. Will also prune matches if the total storage space of all matches exceeds PruneSizeMB megabytes in the database.
+/// \ingroup LOBBY_2_COMMANDS
 struct Ranking_PruneMatches : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Ranking_PruneMatches)
@@ -1792,6 +1872,8 @@ struct Ranking_PruneMatches : public Lobby2Message
 
 	// Output parameters
 };
+/// \brief Add or update a rating for a user, in a particular game and game mode
+/// \ingroup LOBBY_2_COMMANDS
 struct Ranking_UpdateRating : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Ranking_UpdateRating)
@@ -1811,7 +1893,8 @@ struct Ranking_UpdateRating : public Lobby2Message
 
 	// Output parameters
 };
-/// Deletes all ratings for all players for this combination of titleName and gameType.
+/// \brief Deletes all ratings for all players for this combination of titleName and gameType.
+/// \ingroup LOBBY_2_COMMANDS
 struct Ranking_WipeRatings : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Ranking_WipeRatings)
@@ -1829,7 +1912,8 @@ struct Ranking_WipeRatings : public Lobby2Message
 
 	// Output parameters
 };
-/// Get rating for a player
+/// \brief Get rating for a player
+/// \ingroup LOBBY_2_COMMANDS
 struct Ranking_GetRating : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Ranking_GetRating)
@@ -1851,7 +1935,8 @@ struct Ranking_GetRating : public Lobby2Message
 	float currentRating;
 };
 
-/// userHandle updates the clanDescription and clanBinaryData of a clan with the specified clanHandle. userHandle must be the clan leader.
+/// \brief userHandle updates the clanDescription and clanBinaryData of a clan with the specified clanHandle. userHandle must be the clan leader.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_Create : public Lobby2Message
 {
 
@@ -1878,7 +1963,8 @@ struct Clans_Create : public Lobby2Message
 	// Output parameters
 };
 
-/// userHandle updates the clanDescription and clanBinaryData of a clan with the specified clanHandle. userHandle must be the clan leader.
+/// \brief userHandle updates the clanDescription and clanBinaryData of a clan with the specified clanHandle. userHandle must be the clan leader.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_SetProperties : public Lobby2Message
 {
 	Clans_SetProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -1898,7 +1984,8 @@ struct Clans_SetProperties : public Lobby2Message
 	RakNet::RakString description;
 	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
-/// Returns clanDescription and clanBinaryData for the given clan.
+/// \brief Returns clanDescription and clanBinaryData for the given clan.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_GetProperties : public Lobby2Message
 {
 	Clans_GetProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -1921,7 +2008,8 @@ struct Clans_GetProperties : public Lobby2Message
 	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
 
-/// Each member of each clan has the the properties clanMemberDescription and clanMemberBinaryData which default to empty. These properties can be set here, and retrieved via GetClanMemberProperties
+/// \brief Each member of each clan has the the properties clanMemberDescription and clanMemberBinaryData which default to empty. These properties can be set here, and retrieved via GetClanMemberProperties
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_SetMyMemberProperties : public Lobby2Message
 {
 
@@ -1944,7 +2032,8 @@ struct Clans_SetMyMemberProperties : public Lobby2Message
 
 	// Output parameters
 };
-/// myPrimaryKey becomes a subleader. newLeaderHandle becomes the leader. An email is sent with Emails_Send() to all members with the specified subject and body
+/// \brief myPrimaryKey becomes a subleader. newLeaderHandle becomes the leader. An email is sent with Emails_Send() to all members with the specified subject and body
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_GrantLeader : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_GrantLeader)
@@ -1960,7 +2049,8 @@ struct Clans_GrantLeader : public Lobby2Message
 	RakNet::RakString clanHandle;
 	RakNet::RakString targetHandle;
 };
-/// Promotes a clan member to a subleader, or demotes a subleader to a regular member. On promotion, email is sent to all members from myPrimary key with the specified subject and body. On demotion, email is sent to all leaders from myPrimary key with the specified subject and body.
+/// \brief Promotes a clan member to a subleader, or demotes a subleader to a regular member. On promotion, email is sent to all members from myPrimary key with the specified subject and body. On demotion, email is sent to all leaders from myPrimary key with the specified subject and body.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_SetSubleaderStatus : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_SetSubleaderStatus)
@@ -1978,7 +2068,8 @@ struct Clans_SetSubleaderStatus : public Lobby2Message
 	bool setToSubleader;
 };
 
-/// Lets the clan leader set the rank property for a clan member
+/// \brief Lets the clan leader set the rank property for a clan member
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_SetMemberRank : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_SetMemberRank)
@@ -1995,7 +2086,8 @@ struct Clans_SetMemberRank : public Lobby2Message
 	RakNet::RakString targetHandle;
 	unsigned int newRank;
 };
-/// Returns properties for a clan member of a given clan
+/// \brief Returns properties for a clan member of a given clan
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_GetMemberProperties : public Lobby2Message
 {
 	Clans_GetMemberProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -2022,7 +2114,8 @@ struct Clans_GetMemberProperties : public Lobby2Message
 	ClanMemberState clanMemberState;
 	RakNet::RakString banReason;
 };
-/// Renames the clan. Note that this may be called asynchronously, in which case the stored procedure should account for this occuring at the same time as another function that uses the old clan handle.
+/// \brief Renames the clan. Note that this may be called asynchronously, in which case the stored procedure should account for this occuring at the same time as another function that uses the old clan handle.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_ChangeHandle : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_ChangeHandle)
@@ -2040,8 +2133,9 @@ struct Clans_ChangeHandle : public Lobby2Message
 
 	// Output parameters
 };
-/// Remove user identified by myPrimaryKey from clan identified by clanHandle.
-/// If this user is the leader of the clan, and dissolveIfClanLeader is true, then also destroy the clan and remove all members from the clan, as well as all data associated with the clan (clan boards, join requests, etc). If the clan is automatically destroyed in this way,  use Emails_Send() to each clan member with clanDissolvedSubject and clanDissolvedBody. The sender of the email should be the clan leader. If the clan is not destroyed, then leadership passes to the oldest subleader. If no subleaders exist, leadership passes to the oldest member. If no other members exist, the clan is destroyed.
+/// \brief Remove user identified by myPrimaryKey from clan identified by clanHandle.
+/// \details If this user is the leader of the clan, and dissolveIfClanLeader is true, then also destroy the clan and remove all members from the clan, as well as all data associated with the clan (clan boards, join requests, etc). If the clan is automatically destroyed in this way,  use Emails_Send() to each clan member with clanDissolvedSubject and clanDissolvedBody. The sender of the email should be the clan leader. If the clan is not destroyed, then leadership passes to the oldest subleader. If no subleaders exist, leadership passes to the oldest member. If no other members exist, the clan is destroyed.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_Leave : public Lobby2Message
 {
 	Clans_Leave() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -2068,7 +2162,8 @@ struct Clans_Leave : public Lobby2Message
 	bool wasDissolved;
 	RakNet::RakString newClanLeader; // If not dissolved	
 };
-/// Returns all clans that userHandle is a member of. Clans and clan members should be sorted by name, using ascending or descending sort as specified.
+/// \brief Returns all clans that userHandle is a member of. Clans and clan members should be sorted by name, using ascending or descending sort as specified.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_Get : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_Get)
@@ -2084,7 +2179,8 @@ struct Clans_Get : public Lobby2Message
 	// Output parameters
 	DataStructures::List<ClanInfo> clans;
 };
-/// if myPrimaryKey is a leader or subleader of clanHandle, and invitedUserHandle is a valid user not already invited to this clan, add this user to the invite table. The invite table contains the clan, who send the invite, and who the invite was sent to, and when it was sent. Invites expire after expiration time in seconds. Also, use Emails_Send() to send an email from myPrimaryKey to invitedUserHandle with the specified subject and body.
+/// \brief if myPrimaryKey is a leader or subleader of clanHandle, and invitedUserHandle is a valid user not already invited to this clan, add this user to the invite table. The invite table contains the clan, who send the invite, and who the invite was sent to, and when it was sent. Invites expire after expiration time in seconds. Also, use Emails_Send() to send an email from myPrimaryKey to invitedUserHandle with the specified subject and body.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_SendJoinInvitation : public Lobby2Message
 {
 	
@@ -2110,7 +2206,8 @@ struct Clans_SendJoinInvitation : public Lobby2Message
 
 	// Output parameters
 };
-/// if myPrimaryKey is a leader or subleader of clanHandle, and invitedUserHandle is a valid user with an invite to this clan, remove this invite.  Also, use Emails_Send() to send an email from myPrimaryKey to invitedUserHandle with the specified subject and body.
+/// \brief if myPrimaryKey is a leader or subleader of clanHandle, and invitedUserHandle is a valid user with an invite to this clan, remove this invite.  Also, use Emails_Send() to send an email from myPrimaryKey to invitedUserHandle with the specified subject and body.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_WithdrawJoinInvitation : public Lobby2Message
 {
 	Clans_WithdrawJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -2133,7 +2230,8 @@ struct Clans_WithdrawJoinInvitation : public Lobby2Message
 	int emailStatus;
 	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
-/// If myPrimaryKey has an invitation to the specified clan, add him to the clan. Fail on specified output parameters. Use Emails_Send() to send an email from myPrimaryKey to all clan members with the specified subject and body.
+/// \brief If myPrimaryKey has an invitation to the specified clan, add him to the clan. Fail on specified output parameters. Use Emails_Send() to send an email from myPrimaryKey to all clan members with the specified subject and body.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_AcceptJoinInvitation : public Lobby2Message
 {
 	Clans_AcceptJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -2158,7 +2256,8 @@ struct Clans_AcceptJoinInvitation : public Lobby2Message
 
 	// Output parameters
 };
-/// If we have an open clan invitation, reject it (just delete it from the database).
+/// \brief If we have an open clan invitation, reject it (just delete it from the database).
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_RejectJoinInvitation : public Lobby2Message
 {
 	Clans_RejectJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -2182,7 +2281,8 @@ struct Clans_RejectJoinInvitation : public Lobby2Message
 
 	// Output parameters
 };
-/// Returns all invites sent by Clans_SendJoinInvitation that were not yet acted upon (withdrawn, accepted, rejected).
+/// \brief Returns all invites sent by Clans_SendJoinInvitation that were not yet acted upon (withdrawn, accepted, rejected).
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_DownloadInvitationList : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_DownloadInvitationList)
@@ -2195,9 +2295,10 @@ struct Clans_DownloadInvitationList : public Lobby2Message
 	// Output parameters
 	DataStructures::List<OpenInvite> invitations;
 };
-/// Function has two forms:
-/// If requiresInvitationsToJoin==true when CreateClan() was called, will join the specified clan immediately. Sends subject and body to all other members in the clan.
+/// \brief Function has two forms:
+/// \details If requiresInvitationsToJoin==true when CreateClan() was called, will join the specified clan immediately. Sends subject and body to all other members in the clan.
 /// If requiresInvitationsToJoin==false when CreateClan() was called, send a join request to the specified clan, if we don't have one already. Join request expires after expiration time in seconds. Also, use Emails_Send() to send an email from myPrimaryKey to the clan leader and all subleaders with the specified subject and body.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_SendJoinRequest : public Lobby2Message
 {
 	Clans_SendJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -2222,7 +2323,8 @@ struct Clans_SendJoinRequest : public Lobby2Message
 	// Output parameters
 	bool clanJoined;
 };
-/// Withdraws a previously sent clan join request via SendClanJoinRequest.  Use Emails_Send() to send an email from myPrimaryKey to the clan leader and all subleaders with the specified subject and body.
+/// \brief Withdraws a previously sent clan join request via SendClanJoinRequest.  Use Emails_Send() to send an email from myPrimaryKey to the clan leader and all subleaders with the specified subject and body.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_WithdrawJoinRequest : public Lobby2Message
 {
 	Clans_WithdrawJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -2247,7 +2349,8 @@ struct Clans_WithdrawJoinRequest : public Lobby2Message
 	// Output parameters
 
 };
-/// A clan leader or subleader accepts a join request from requestingUserHandle to this clan. requestingUserHandle joins the clan as a regular member.  Use Emails_Send() to send an email from requestingUserHandle to all clan members with the specified subject and body.
+/// \brief A clan leader or subleader accepts a join request from requestingUserHandle to this clan. requestingUserHandle joins the clan as a regular member.  Use Emails_Send() to send an email from requestingUserHandle to all clan members with the specified subject and body.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_AcceptJoinRequest : public Lobby2Message
 {
 	Clans_AcceptJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -2273,7 +2376,8 @@ struct Clans_AcceptJoinRequest : public Lobby2Message
 
 	// Output parameters
 };
-/// Rejects a clan join request from requestingUserHandle. Send an email from myPrimaryKey to requestingUserHandle with the specified subject and body.
+/// \brief Rejects a clan join request from requestingUserHandle. Send an email from myPrimaryKey to requestingUserHandle with the specified subject and body.
+/// \details 
 struct Clans_RejectJoinRequest : public Lobby2Message
 {
 	Clans_RejectJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -2298,7 +2402,8 @@ struct Clans_RejectJoinRequest : public Lobby2Message
 
 	// Output parameters
 };
-/// Returns all open requests this user has sent to clans, that have not yet acted upon (withdrawn, accepted, rejected, expired).
+/// \brief Returns all open requests this user has sent to clans, that have not yet acted upon (withdrawn, accepted, rejected, expired).
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_DownloadRequestList : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_DownloadRequestList)
@@ -2315,7 +2420,8 @@ struct Clans_DownloadRequestList : public Lobby2Message
 	// joinRequestsToMyClan is only filled out for clans you are a leader or subleader in
 	DataStructures::List<ClanJoinRequest> joinRequestsToMyClan, joinRequestsFromMe;
 };
-/// Kicks a user from the clan and/or blacklists a user so they cannot join. Only a clan leader or subleader can perform this operation. The operation can only be performed on members of lower status (leader can perform on subleader or regular member or nonmember, subleader on regular members or nonmember). If a member is banned, they are added to the banned table which contains the member's primary key, which user banned them, and the reason. Email is sent from myPrimaryKey to all leaders if a clan member is banned. Emails is furthermore sent to all clan members if successfully kicked. 
+/// \brief Kicks a user from the clan and/or blacklists a user so they cannot join. Only a clan leader or subleader can perform this operation. The operation can only be performed on members of lower status (leader can perform on subleader or regular member or nonmember, subleader on regular members or nonmember). If a member is banned, they are added to the banned table which contains the member's primary key, which user banned them, and the reason. Email is sent from myPrimaryKey to all leaders if a clan member is banned. Emails is furthermore sent to all clan members if successfully kicked. 
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_KickAndBlacklistUser : public Lobby2Message
 {
 	Clans_KickAndBlacklistUser() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -2341,7 +2447,8 @@ struct Clans_KickAndBlacklistUser : public Lobby2Message
 	bool blacklist;
 	RakNet::RakString reason;
 };
-/// Removes a user from the blacklist for this clan.
+/// \brief Removes a user from the blacklist for this clan.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_UnblacklistUser : public Lobby2Message
 {
 	Clans_UnblacklistUser() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -2364,7 +2471,8 @@ struct Clans_UnblacklistUser : public Lobby2Message
 	int emailStatus;
 	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
-/// Returns a list of all members  blacklisted from this clan. Each element in the list contains the handle of the user that did the ban, who was banned, when the user was banned, and the reason passed to ClanKickAndBlacklistUser
+/// \brief Returns a list of all members  blacklisted from this clan. Each element in the list contains the handle of the user that did the ban, who was banned, when the user was banned, and the reason passed to ClanKickAndBlacklistUser
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_GetBlacklist : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_GetBlacklist)
@@ -2382,7 +2490,8 @@ struct Clans_GetBlacklist : public Lobby2Message
 	// Output parameters
 	DataStructures::List<RakNet::RakString> blacklistedUsers;
 };
-/// Returns all clan members for this clan. Each entry returned contains handle, description, binary data, status (leader, regular member, subleader).
+/// \brief Returns all clan members for this clan. Each entry returned contains handle, description, binary data, status (leader, regular member, subleader).
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_GetMembers : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_GetMembers)
@@ -2401,7 +2510,8 @@ struct Clans_GetMembers : public Lobby2Message
 	RakNet::RakString clanLeader;
 	DataStructures::List<RakNet::RakString> clanMembersOtherThanLeader;
 };
-/// Returns all clans names
+/// \brief Returns all clans names
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_GetList : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_GetList)
@@ -2416,7 +2526,8 @@ struct Clans_GetList : public Lobby2Message
 	// Output parameters
 	DataStructures::List<RakNet::RakString> clanNames;
 };
-/// Creates a new clan board for clan members to post in using AddPostToClanBoard. Clan boards are unique, and are destroyed when the clan is destroyed, or if DestroyClanBoard is called.
+/// \brief Creates a new clan board for clan members to post in using AddPostToClanBoard. Clan boards are unique, and are destroyed when the clan is destroyed, or if DestroyClanBoard is called.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_CreateBoard : public Lobby2Message
 {
 	Clans_CreateBoard() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -2441,7 +2552,8 @@ struct Clans_CreateBoard : public Lobby2Message
 
 	// Output parameters
 };
-/// Success, invalid parameter syntax, myPrimaryKey is not the leader or subleader of clanHandle, unknown myPrimaryKey, unknown clanHandle, unknown clanBoardName
+/// \brief Success, invalid parameter syntax, myPrimaryKey is not the leader or subleader of clanHandle, unknown myPrimaryKey, unknown clanHandle, unknown clanBoardName
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_DestroyBoard : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_DestroyBoard)
@@ -2459,7 +2571,8 @@ struct Clans_DestroyBoard : public Lobby2Message
 
 	// Output parameters
 };
-/// Each clan has a clan board that only clan members can post to. This adds a topic to the clan board. Posts should reference the primary key of the poster, so that even if the poster chagnes his or her handle, the post author is updated properly. Each post automatically stores the timestamp when it was created. Banned users may not add new posts to the clan board.
+/// \brief Each clan has a clan board that only clan members can post to. This adds a topic to the clan board. Posts should reference the primary key of the poster, so that even if the poster chagnes his or her handle, the post author is updated properly. Each post automatically stores the timestamp when it was created. Banned users may not add new posts to the clan board.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_CreateNewTopic : public Lobby2Message
 {
 	Clans_CreateNewTopic() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -2484,7 +2597,8 @@ struct Clans_CreateNewTopic : public Lobby2Message
 	// Output parameters
 	unsigned int postId; // (unique for clanHandle)
 };
-/// Replies to a topic created with Clans_CreateTopic(). If postId references a post within a topic, just add the reply to the last post.  Banned users may not add new posts to the clan board.
+/// \brief Replies to a topic created with Clans_CreateTopic(). If postId references a post within a topic, just add the reply to the last post.  Banned users may not add new posts to the clan board.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_ReplyToTopic : public Lobby2Message
 {
 	Clans_ReplyToTopic() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -2505,7 +2619,8 @@ struct Clans_ReplyToTopic : public Lobby2Message
 	RakNet::RakString body;
 	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
-/// The clan leader or subleaders may remove posts or topics from a clan board.
+/// \brief The clan leader or subleaders may remove posts or topics from a clan board.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_RemovePost : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_RemovePost)
@@ -2522,7 +2637,8 @@ struct Clans_RemovePost : public Lobby2Message
 
 };
 
-/// Gets clan boards created for clanHandle. Boards are returned if we are a clan member, or if allowPublicReads in Clans_CreateBoard() was passed as false. However, if we are banned from this clan, no boards are returned.
+/// \brief Gets clan boards created for clanHandle. Boards are returned if we are a clan member, or if allowPublicReads in Clans_CreateBoard() was passed as false. However, if we are banned from this clan, no boards are returned.
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_GetBoards : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_GetBoards)
@@ -2542,7 +2658,8 @@ struct Clans_GetBoards : public Lobby2Message
 
 
 };
-/// Gets topics (posts that are not replies to other posts, created with Clans_CreateTopic()) for the specified clanHandle and clanBoardName. If we are not a clan member and the clan was created with allowPublicReads==false, then the user is not allowed to read topics
+/// \brief Gets topics (posts that are not replies to other posts, created with Clans_CreateTopic()) for the specified clanHandle and clanBoardName. If we are not a clan member and the clan was created with allowPublicReads==false, then the user is not allowed to read topics
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_GetTopics : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_GetTopics)
@@ -2558,7 +2675,8 @@ struct Clans_GetTopics : public Lobby2Message
 	RakNet::RakString clanHandle;
 	RakNet::RakString clanBoardName;
 };
-/// Gets all posts for a particular topic. If postId is not a topic but is instead a post in a topic, treat it as if the topic postId was passed. If we are not a clan member and the clan was created with allowPublicReads==false, then the user is not allowed to read topics
+/// \brief Gets all posts for a particular topic. If postId is not a topic but is instead a post in a topic, treat it as if the topic postId was passed. If we are not a clan member and the clan was created with allowPublicReads==false, then the user is not allowed to read topics
+/// \ingroup LOBBY_2_COMMANDS
 struct Clans_GetPosts : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Clans_GetPosts)
@@ -2574,8 +2692,8 @@ struct Clans_GetPosts : public Lobby2Message
 	unsigned int postId;
 };
 
-// Call the function to get the list of servers available.
-// Does nothing on the PC.
+// \brief Call the function to get the list of servers available.
+// \note Does nothing on the PC.
 struct Console_GetServerStatus : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Console_GetServerStatus)
@@ -2585,8 +2703,8 @@ struct Console_GetServerStatus : public Lobby2Message
 	virtual bool RequiresLogin(void) const {return true;}
 };
 
-// Given a server, get the list of worlds
-// Does nothing on the PC.
+// \brief Given a server, get the list of worlds
+// \note Does nothing on the PC.
 struct Console_GetWorldListFromServer : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Console_GetWorldListFromServer)
@@ -2645,9 +2763,9 @@ struct Console_SendLobbyChatMessage : public Lobby2Message
 
 // Search rooms in the lobby
 // Does nothing on the PC.
-struct Console_SearchRoomsInLobby : public Lobby2Message
+struct Console_SearchRooms : public Lobby2Message
 {
-	__L2_MSG_BASE_IMPL(Console_SearchRoomsInLobby)
+	__L2_MSG_BASE_IMPL(Console_SearchRooms)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return true;}
@@ -2690,6 +2808,25 @@ struct Console_CreateRoom : public Lobby2Message
 	int privateSlots;
 };
 
+struct Console_SetRoomSearchProperties : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Console_SetRoomSearchProperties)
+		virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return true;}
+	virtual bool RequiresLogin(void) const {return true;}
+};
+
+struct Console_UpdateRoomParameters : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Console_UpdateRoomParameters)
+		virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return true;}
+	virtual bool RequiresLogin(void) const {return true;}
+
+
+};
 struct Console_JoinRoom : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Console_JoinRoom)
@@ -2711,6 +2848,15 @@ struct Console_LeaveRoom : public Lobby2Message
 struct Console_SendLobbyInvitationToRoom : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Console_SendLobbyInvitationToRoom)
+		virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return true;}
+	virtual bool RequiresLogin(void) const {return true;}
+};
+
+struct Console_SendGUIInvitationToRoom : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Console_SendGUIInvitationToRoom)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return true;}
@@ -2747,7 +2893,19 @@ struct Console_SetPresence : public Lobby2Message
 
 	RakNet::BitStream presenceInfo;
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
+struct Notification_Client_RemoteLogin : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Notification_Client_RemoteLogin)
+		virtual bool RequiresAdmin(void) const {return true;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return false;}
+	virtual bool RequiresLogin(void) const {return false;}
+	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
+	RakNet::RakString handle;
+};
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Client_IgnoreStatus : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Client_IgnoreStatus)
@@ -2760,6 +2918,7 @@ struct Notification_Client_IgnoreStatus : public Lobby2Message
 	bool nowIgnored;
 	RakNet::RakString otherHandle;
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Friends_StatusChange : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Friends_StatusChange)
@@ -2781,6 +2940,7 @@ struct Notification_Friends_StatusChange : public Lobby2Message
 	} op;
 	RakNet::RakString otherHandle;
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_User_ChangedHandle : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_User_ChangedHandle)
@@ -2792,6 +2952,7 @@ struct Notification_User_ChangedHandle : public Lobby2Message
 
 	RakNet::RakString oldHandle, newHandle;
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Friends_CreatedClan : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Friends_CreatedClan)
@@ -2804,6 +2965,7 @@ struct Notification_Friends_CreatedClan : public Lobby2Message
 	RakNet::RakString otherHandle;
 	RakNet::RakString clanName;	
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Emails_Received : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Emails_Received)
@@ -2817,6 +2979,7 @@ struct Notification_Emails_Received : public Lobby2Message
 	RakNet::RakString subject;
 	unsigned int emailId;
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Clans_GrantLeader : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Clans_GrantLeader)
@@ -2830,6 +2993,7 @@ struct Notification_Clans_GrantLeader : public Lobby2Message
 	RakNet::RakString newLeader;
 	RakNet::RakString oldLeader;
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Clans_SetSubleaderStatus : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Clans_SetSubleaderStatus)
@@ -2844,6 +3008,7 @@ struct Notification_Clans_SetSubleaderStatus : public Lobby2Message
 	RakNet::RakString leaderHandle;
 	bool setToSubleader;
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Clans_SetMemberRank : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Clans_SetMemberRank)
@@ -2858,6 +3023,7 @@ struct Notification_Clans_SetMemberRank : public Lobby2Message
 	RakNet::RakString leaderHandle;
 	unsigned int newRank;
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Clans_ChangeHandle : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Clans_ChangeHandle)
@@ -2871,6 +3037,7 @@ struct Notification_Clans_ChangeHandle : public Lobby2Message
 	RakNet::RakString newClanHandle;
 	RakNet::RakString leaderHandle;
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Clans_Leave : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Clans_Leave)
@@ -2883,6 +3050,7 @@ struct Notification_Clans_Leave : public Lobby2Message
 	RakNet::RakString clanHandle;
 	RakNet::RakString targetHandle;
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Clans_PendingJoinStatus : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Clans_PendingJoinStatus)
@@ -2913,6 +3081,7 @@ struct Notification_Clans_PendingJoinStatus : public Lobby2Message
 		JOIN_REJECTED,
 	} minorOp;
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Clans_NewClanMember : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Clans_NewClanMember)
@@ -2925,6 +3094,7 @@ struct Notification_Clans_NewClanMember : public Lobby2Message
 	RakNet::RakString clanHandle;
 	RakNet::RakString targetHandle;
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Clans_KickAndBlacklistUser : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Clans_KickAndBlacklistUser)
@@ -2941,6 +3111,7 @@ struct Notification_Clans_KickAndBlacklistUser : public Lobby2Message
 	bool targetHandleWasKicked;
 	RakNet::RakString reason;
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Clans_UnblacklistUser : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Clans_UnblacklistUser)
@@ -2955,6 +3126,7 @@ struct Notification_Clans_UnblacklistUser : public Lobby2Message
 	// Currently this is always the clan leader, since subleaders cannot unblacklist
 	RakNet::RakString unblacklistingUserHandle;
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Clans_Destroyed : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Clans_Destroyed)
@@ -2967,6 +3139,7 @@ struct Notification_Clans_Destroyed : public Lobby2Message
 	RakNet::RakString clanHandle;
 	RakNet::RakString oldClanLeader;
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_CableDisconnected : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_CableDisconnected)
@@ -2975,6 +3148,7 @@ struct Notification_Console_CableDisconnected : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_ContextError : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_ContextError)
@@ -2983,7 +3157,7 @@ struct Notification_Console_ContextError : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_MemberJoinedLobby : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_MemberJoinedLobby)
@@ -2994,7 +3168,7 @@ struct Notification_Console_MemberJoinedLobby : public Lobby2Message
 
 	RakNet::RakString targetHandle;
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_MemberLeftLobby : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_MemberLeftLobby)
@@ -3005,7 +3179,7 @@ struct Notification_Console_MemberLeftLobby : public Lobby2Message
 
 	RakNet::RakString targetHandle;
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_LobbyDestroyed : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_LobbyDestroyed)
@@ -3014,7 +3188,7 @@ struct Notification_Console_LobbyDestroyed : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_LobbyMemberDataUpdated : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_LobbyMemberDataUpdated)
@@ -3023,7 +3197,7 @@ struct Notification_Console_LobbyMemberDataUpdated : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_LobbyGotChatMessage : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_LobbyGotChatMessage)
@@ -3035,7 +3209,7 @@ struct Notification_Console_LobbyGotChatMessage : public Lobby2Message
 	RakNet::RakString sender;
 	RakNet::RakString message;
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_LobbyGotRoomInvitation : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_LobbyGotRoomInvitation)
@@ -3046,7 +3220,7 @@ struct Notification_Console_LobbyGotRoomInvitation : public Lobby2Message
 
 	RakNet::RakString sender;
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_MemberJoinedRoom : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_MemberJoinedRoom)
@@ -3057,7 +3231,7 @@ struct Notification_Console_MemberJoinedRoom : public Lobby2Message
 
 	RakNet::RakString memberName;
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_MemberLeftRoom : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_MemberLeftRoom)
@@ -3068,7 +3242,7 @@ struct Notification_Console_MemberLeftRoom : public Lobby2Message
 
 	RakNet::RakString memberName;
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_KickedOutOfRoom : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_KickedOutOfRoom)
@@ -3077,7 +3251,7 @@ struct Notification_Console_KickedOutOfRoom : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_RoomWasDestroyed : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_RoomWasDestroyed)
@@ -3086,7 +3260,7 @@ struct Notification_Console_RoomWasDestroyed : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_RoomOwnerChanged : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_RoomOwnerChanged)
@@ -3095,7 +3269,7 @@ struct Notification_Console_RoomOwnerChanged : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_RoomChatMessage : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_RoomChatMessage)
@@ -3107,7 +3281,7 @@ struct Notification_Console_RoomChatMessage : public Lobby2Message
 	RakNet::RakString sender;
 	RakNet::RakString message;
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_RoomMessage : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_RoomMessage)
@@ -3120,7 +3294,7 @@ struct Notification_Console_RoomMessage : public Lobby2Message
 	RakNet::RakString sender;
 	RakNet::RakString message;
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_RoomMemberConnectivityUpdate : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_RoomMemberConnectivityUpdate)
@@ -3132,7 +3306,7 @@ struct Notification_Console_RoomMemberConnectivityUpdate : public Lobby2Message
 	// Out
 	SystemAddress systemAddress;
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_ChatEvent : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_ChatEvent)
@@ -3141,7 +3315,7 @@ struct Notification_Console_ChatEvent : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_MuteListChanged : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_MuteListChanged)
@@ -3150,7 +3324,7 @@ struct Notification_Console_MuteListChanged : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_Local_Users_Changed : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_Local_Users_Changed)
@@ -3159,7 +3333,7 @@ struct Notification_Console_Local_Users_Changed : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_ReceivedDataMessageFromUser : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_ReceivedDataMessageFromUser)
@@ -3172,6 +3346,7 @@ struct Notification_ReceivedDataMessageFromUser : public Lobby2Message
 // --------------------------------------------- Base interface of factory class for all messages --------------------------------------------
 #define __L2_ALLOCATE_AND_DEFINE(FACTORY, __TYPE__,VAR_NAME) RakNet::__TYPE__ *VAR_NAME = (RakNet::__TYPE__ *) FACTORY->Alloc(L2MID_##__TYPE__); RakAssert(VAR_NAME);
 #define __L2_MSG_FACTORY_BASE(__NAME__) {case L2MID_##__NAME__ : Lobby2Message *m = RakNet::OP_NEW< __NAME__ >( __FILE__, __LINE__ ) ; RakAssert(m->GetID()==L2MID_##__NAME__ ); m->requestId=nextRequestId++; return m;}
+/// \ingroup LOBBY_2_GROUP
 struct Lobby2MessageFactory
 {
 	Lobby2MessageFactory() {nextRequestId=0;}
@@ -3276,16 +3451,20 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Console_JoinLobby);
 			__L2_MSG_FACTORY_BASE(Console_LeaveLobby);
 			__L2_MSG_FACTORY_BASE(Console_SendLobbyChatMessage);
-			__L2_MSG_FACTORY_BASE(Console_SearchRoomsInLobby);
+			__L2_MSG_FACTORY_BASE(Console_SearchRooms);
 			__L2_MSG_FACTORY_BASE(Console_GetRoomDetails);
 			__L2_MSG_FACTORY_BASE(Console_GetLobbyMemberData);
 			__L2_MSG_FACTORY_BASE(Console_CreateRoom);
+			__L2_MSG_FACTORY_BASE(Console_SetRoomSearchProperties);
+			__L2_MSG_FACTORY_BASE(Console_UpdateRoomParameters);
 			__L2_MSG_FACTORY_BASE(Console_JoinRoom);
 			__L2_MSG_FACTORY_BASE(Console_LeaveRoom);
 			__L2_MSG_FACTORY_BASE(Console_SendLobbyInvitationToRoom);
+			__L2_MSG_FACTORY_BASE(Console_SendGUIInvitationToRoom);
 			__L2_MSG_FACTORY_BASE(Console_SendDataMessageToUser);
 			__L2_MSG_FACTORY_BASE(Console_SendRoomChatMessage);
 			__L2_MSG_FACTORY_BASE(Console_SetPresence);
+			__L2_MSG_FACTORY_BASE(Notification_Client_RemoteLogin);
 			__L2_MSG_FACTORY_BASE(Notification_Client_IgnoreStatus);
 			__L2_MSG_FACTORY_BASE(Notification_Friends_StatusChange);
 			__L2_MSG_FACTORY_BASE(Notification_User_ChangedHandle);

@@ -79,8 +79,13 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 			bool& outAdditive, bool& outVSync, bool& outAA,
 			video::E_DRIVER_TYPE& outDriver, core::stringw &playerName)
 {
-	MenuDevice = createDevice(video::EDT_BURNINGSVIDEO,
-		core::dimension2d<s32>(512, 384), 16, false, false, false, this);
+	//video::E_DRIVER_TYPE driverType = video::EDT_DIRECT3D9;
+	//video::E_DRIVER_TYPE driverType = video::EDT_OPENGL;
+	video::E_DRIVER_TYPE driverType = video::EDT_BURNINGSVIDEO;
+	//video::E_DRIVER_TYPE driverType = video::EDT_SOFTWARE;
+
+	MenuDevice = createDevice(driverType,
+		core::dimension2d<u32>(512, 384), 16, false, false, false, this);
 
 	if (MenuDevice->getFileSystem()->existFile("irrlicht.dat"))
 		MenuDevice->getFileSystem()->addZipFileArchive("irrlicht.dat");

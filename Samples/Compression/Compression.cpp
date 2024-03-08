@@ -242,6 +242,10 @@ int main(void)
 				sprintf(message, "%s", packet->data);
 				rakServer->Send(message, (const int)strlen(message)+1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, true);
 			}
+			if (packet->data[0]>=ID_CONNECTION_REQUEST_ACCEPTED)
+			{
+				printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
+			}
 			rakServer->DeallocatePacket(packet);
 		}
 	}

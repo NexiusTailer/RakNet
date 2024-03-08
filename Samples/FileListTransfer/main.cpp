@@ -55,7 +55,15 @@ public:
 
 	virtual void OnFileProgress(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int dataChunkLength, char *firstDataChunk)
 	{
-		printf("%i (%i%%) %i/%i %s %ib / %ib\n", onFileStruct->setID, (int) (100.0*(double)partCount/(double)partTotal), onFileStruct->fileIndex+1, onFileStruct->numberOfFilesInThisSet, onFileStruct->fileName, onFileStruct->byteLengthOfThisFile, onFileStruct->byteLengthOfThisSet, firstDataChunk);
+		printf("%i partCount=%i partTotal=%i (%i%%) %i/%i %s %ib / %ib\n",
+			onFileStruct->setID,
+			partCount, partTotal, (int) (100.0*(double)partCount/(double)partTotal),
+			onFileStruct->fileIndex+1,
+			onFileStruct->numberOfFilesInThisSet,
+			onFileStruct->fileName,
+			onFileStruct->byteLengthOfThisFile,
+			onFileStruct->byteLengthOfThisSet,
+			firstDataChunk);
 	}
 
 	virtual bool OnDownloadComplete(void)
@@ -114,7 +122,7 @@ void main(void)
 	char str[256];
 	gets(str);
 	if (str[0]==0)
-		strcpy(str, "c:\\temp\\Lobby2ClientGFx3.zip");
+		strcpy(str, "C:\\temp\\RakNet-3.x.zip");
 	file=str;
 	fileCopy=file+"_copy";
 	// Reference this file, rather than add it in memory. Will send 1000 byte chunks. The reason to do this is so the whole file does not have to be in memory at once
@@ -168,14 +176,14 @@ void main(void)
 		SystemAddress sa;
 		sa = tcp1.HasNewIncomingConnection();
 		if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
-			flt1.Send(&fileList,0,sa,0,HIGH_PRIORITY,0,false, &incrementalReadInterface, 50000);
+			flt1.Send(&fileList,0,sa,0,HIGH_PRIORITY,0,false, &incrementalReadInterface, 2000000);
 		tcp1.DeallocatePacket(packet1);
 		tcp2.DeallocatePacket(packet2);
 #else
 		packet1=peer1->Receive();
 		packet2=peer2->Receive();
 		if (packet1 && packet1->data[0]==ID_NEW_INCOMING_CONNECTION)
-			flt1.Send(&fileList,peer1,packet1->systemAddress,0,HIGH_PRIORITY,0,false, &incrementalReadInterface, 50000);
+			flt1.Send(&fileList,peer1,packet1->systemAddress,0,HIGH_PRIORITY,0,false, &incrementalReadInterface, 2000000);
 		peer1->DeallocatePacket(packet1);
 		peer2->DeallocatePacket(packet2);
 

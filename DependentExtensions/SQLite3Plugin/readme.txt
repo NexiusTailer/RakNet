@@ -1,6 +1,6 @@
-Project: SQLite3
+Project: SQLite3, SQLite3ClientLogger, SQLite3ServerLogger
 
-Description: Just passes calls to sqlite3_exec over the network. Replacement for LightweightDatabaseServer
+Description: SQLite3 just passes calls to sqlite3_exec over the network. Replacement for LightweightDatabaseServer. SQLite3ClientLogger and SQLite3ServerLogger extend this to using an SQLite database for logging. 
 
 Dependencies: http://www.sqlite.org version 3
 

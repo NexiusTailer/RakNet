@@ -446,7 +446,7 @@ void AutopatcherClient::Update(void)
 			p->bitSize=p->length*8;
 			p->data[0]=ID_AUTOPATCHER_RESTART_APPLICATION;
 			p->systemAddress=serverId;
-			p->systemIndex=serverIdIndex;
+			p->systemAddress.systemIndex=serverIdIndex;
 			PushBackPacketUnified(p,false);
 
 			FILE *fp;
@@ -472,7 +472,7 @@ void AutopatcherClient::Update(void)
 			p->bitSize=p->length*8;
 			p->data[0]=ID_AUTOPATCHER_FINISHED;
 			p->systemAddress=serverId;
-			p->systemIndex=serverIdIndex;
+			p->systemAddress.systemIndex=serverIdIndex;
 			PushBackPacketUnified(p,false);
 		}
 	}
@@ -574,7 +574,7 @@ PluginReceiveResult AutopatcherClient::OnDownloadFinished(Packet *packet)
 		stringCompressor->DecodeString(serverDate, 128, &inBitStream);
 	RakAssert(serverDate[0]);
 	serverId=packet->systemAddress;
-	serverIdIndex=packet->systemIndex;
+	serverIdIndex=packet->systemAddress.systemIndex;
 
 	return RR_CONTINUE_PROCESSING;
 }
@@ -583,7 +583,7 @@ PluginReceiveResult AutopatcherClient::OnDownloadFinishedInternal(Packet *packet
 	RakNet::BitStream inBitStream(packet->data, packet->length, false);
 	inBitStream.IgnoreBits(8);
 	serverId=packet->systemAddress;
-	serverIdIndex=packet->systemIndex;
+	serverIdIndex=packet->systemAddress.systemIndex;
 	stringCompressor->DecodeString(serverDate, 128, &inBitStream);
 	RakAssert(serverDate[0]);
 

@@ -533,7 +533,7 @@ void AutoRPC::OnRPCRemoteIndex(SystemAddress systemAddress, unsigned char *data,
 			newRemoteFunction.identifier.isObjectMember=identifier.isObjectMember;
 			newRemoteFunction.identifier.uniqueIdentifier = (char*) rakMalloc_Ex(strlen(strIdentifier)+1, __FILE__, __LINE__);
 			strcpy(newRemoteFunction.identifier.uniqueIdentifier, strIdentifier);
-			theList->InsertAtIndex(newRemoteFunction, insertionIndex);
+			theList->InsertAtIndex(newRemoteFunction, insertionIndex, __FILE__, __LINE__);
 		}
 	}
 	else
@@ -544,7 +544,7 @@ void AutoRPC::OnRPCRemoteIndex(SystemAddress systemAddress, unsigned char *data,
 		newRemoteFunction.identifier.isObjectMember=identifier.isObjectMember;
 		newRemoteFunction.identifier.uniqueIdentifier = (char*) rakMalloc_Ex(strlen(strIdentifier)+1, __FILE__, __LINE__);
 		strcpy(newRemoteFunction.identifier.uniqueIdentifier, strIdentifier);
-		theList->InsertAtEnd(newRemoteFunction);
+		theList->InsertAtEnd(newRemoteFunction, __FILE__, __LINE__);
 
 		remoteFunctions.SetNew(systemAddress,theList);
 	}
@@ -660,7 +660,7 @@ void AutoRPC::Clear(void)
 		if (localFunctions[i].identifier.uniqueIdentifier)
 			rakFree_Ex(localFunctions[i].identifier.uniqueIdentifier, __FILE__, __LINE__ );
 	}
-	localFunctions.Clear();
+	localFunctions.Clear(false, __FILE__, __LINE__);
 	remoteFunctions.Clear();
 	outgoingExtraData.Reset();
 	incomingExtraData.Reset();

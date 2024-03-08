@@ -30,16 +30,17 @@ struct Lobby2ServerCommand
 	Lobby2Server *server;
 };
 
-/// The base class for the lobby server, without database specific functionality
-/// This is a plugin which will take incoming messages via Lobby2Client_PC::SendMessage(), process them, and send back the same messages with output and a result code
+/// \brief The base class for the lobby server, without database specific functionality
+/// \details This is a plugin which will take incoming messages via Lobby2Client_PC::SendMessage(), process them, and send back the same messages with output and a result code
 /// Unlike the first implementation of the lobby server, this is a thin plugin that mostly just sends messages to threads and sends back the results.
+/// \ingroup LOBBY_2_SERVER
 class RAK_DLL_EXPORT Lobby2Server : public RakNet::Lobby2Plugin, public ThreadDataInterface
 {
 public:	
 	Lobby2Server();
 	virtual ~Lobby2Server();
 	
-	/// Connect to the database \a numWorkerThreads times using the connection string
+	/// \brief Connect to the database \a numWorkerThreads times using the connection string
 	/// \param[in] conninfo See the postgre docs
 	/// \return True on success, false on failure.
 	virtual bool ConnectToDB(const char *conninfo, int numWorkerThreads)=0;
@@ -48,65 +49,75 @@ public:
 	/// \internal
 	virtual void AddOutputFromThread(Lobby2Message *msg, unsigned int targetUserId, RakNet::RakString targetUserHandle)=0;
 
-	/// Lobby2Message encapsulates a user command, containing both input and output data
-	/// This will serialize and transmit that command
+	/// \brief Lobby2Message encapsulates a user command, containing both input and output data
+	/// \details This will serialize and transmit that command
 	void SendMessage(Lobby2Message *msg, SystemAddress recipient);
 
-	/// Add a command, which contains a message and other data such as who send the message.
-	/// The command will be processed according to its implemented virtual functions. Most likely it will be processed in a thread to run database commands
+	/// \brief Add a command, which contains a message and other data such as who send the message.
+	/// \details The command will be processed according to its implemented virtual functions. Most likely it will be processed in a thread to run database commands
 	void ExecuteCommand(Lobby2ServerCommand *command);
 
-	/// If Lobby2Message::RequiresAdmin() returns true, the message can only be processed from a remote system if the sender's system address is first added()
-	/// This is useful if you want to administrate the server remotely
+	/// \brief If Lobby2Message::RequiresAdmin() returns true, the message can only be processed from a remote system if the sender's system address is first added()
+	/// \details This is useful if you want to administrate the server remotely
 	void AddAdminAddress(SystemAddress addr);
-	/// If AddAdminAddress() was previously called with \a addr then this returns true.
+	/// \brief If AddAdminAddress() was previously called with \a addr then this returns true.
 	bool IsAdminAddress(SystemAddress addr);
-	/// Removes a system address previously added with AddAdminAddress()
+	/// \brief Removes a system address previously added with AddAdminAddress()
 	void RemoveAdminAddress(SystemAddress addr);
-	/// Removes all system addresses previously added with AddAdminAddress()
+	/// \brief Removes all system addresses previously added with AddAdminAddress()
 	void ClearAdminAddresses(void);
 
-	// This is a server which can submit ranking and match results
+	/// \brief If Lobby2Message::RequiresRankingPermission() returns true, then the system that sent the command must be registered with AddRankingAddress()
+	/// \param[in] addr Address to allow
 	void AddRankingAddress(SystemAddress addr);
+
+	/// Returns if an address was previously added with AddRankingAddress()
+	/// \param[in] addr Address to check
 	bool IsRankingAddress(SystemAddress addr);
+
+	/// Removes an addressed added with AddRankingAddress()
+	/// \param[in] addr Address to check
 	void RemoveRankingAddress(SystemAddress addr);
+
+	/// \brief Clears all addresses added with AddRankingAddress()
 	void ClearRankingAddresses(void);
 	
-	/// The rooms plugin does not automatically handle users logging in and logging off, or renaming users.
+	/// \brief To use RoomsPlugin and Lobby2Server together, register RoomsPlugin with this funcrtion
+	/// \details The rooms plugin does not automatically handle users logging in and logging off, or renaming users.
 	/// You can have Lobby2Server manage this for you by calling SetRoomsPlugin() with a pointer to the rooms plugin, if it is on the local system.
 	/// This will call RoomsPlugin::LoginRoomsParticipant() and RoomsPlugin::LogoffRoomsParticipant() as the messages L2MID_Client_Login and L2MID_Client_Logoff arrive
 	/// This will use the pointer to RoomsPlugin directly. Setting this will disable SetRoomsPluginAddress()
 	/// \note This is an empty function. You must #define __INTEGRATE_LOBBY2_WITH_ROOMS_PLUGIN and link with RoomsPlugin.h to use it()
 	void SetRoomsPlugin(RoomsPlugin *rp);
 
-	/// This is similar to SetRoomsPlugin(), except the plugin is on another system.
-	/// This will set the system address of that system to send the login and logoff commands to.
+	/// \brief This is similar to SetRoomsPlugin(), except the plugin is on another system.
+	/// \details This will set the system address of that system to send the login and logoff commands to.
 	/// For this function to work, you must first call RoomsPlugin::AddLoginServerAddress() so that RoomsPlugin will accept the incoming login and logoff messages.
 	/// \note This is an empty function. You must #define __INTEGRATE_LOBBY2_WITH_ROOMS_PLUGIN and link with RoomsPlugin.h to use it()
 	void SetRoomsPluginAddress(SystemAddress address);
 
-	/// Server configuration properties, to customize how the server runs specific commands
+	/// \brief Server configuration properties, to customize how the server runs specific commands
 	struct ConfigurationProperties
 	{
 		ConfigurationProperties() {requiresEmailAddressValidationToLogin=false; requiresTitleToLogin=false; accountRegistrationRequiredAgeYears=0;}
 
-		/// If true, Client_Login will fail with Client_Login_EMAIL_ADDRESS_NOT_VALIDATED unless the email address registered with Client_RegisterAccount is verified with the command System_SetEmailAddressValidated
+		/// \brief If true, Client_Login will fail with Client_Login_EMAIL_ADDRESS_NOT_VALIDATED unless the email address registered with Client_RegisterAccount is verified with the command System_SetEmailAddressValidated
 		bool requiresEmailAddressValidationToLogin;
 
-		/// If true Client_Login::titleName and Client_Login::titleSecretKey must be previously registered with System_CreateTitle or Client_Login will fail with L2RC_Client_Login_BAD_TITLE_OR_TITLE_SECRET_KEY
+		/// \brief If true Client_Login::titleName and Client_Login::titleSecretKey must be previously registered with System_CreateTitle or Client_Login will fail with L2RC_Client_Login_BAD_TITLE_OR_TITLE_SECRET_KEY
 		bool requiresTitleToLogin;
 
-		/// If true, Client_RegisterAccount::cdKey must be previously registered with CDKey_Add or Client_RegisterAccount will fail with L2RC_Client_RegisterAccount_REQUIRES_CD_KEY or a related error message
+		/// \brief If true, Client_RegisterAccount::cdKey must be previously registered with CDKey_Add or Client_RegisterAccount will fail with L2RC_Client_RegisterAccount_REQUIRES_CD_KEY or a related error message
 		bool accountRegistrationRequiresCDKey;
 
-		/// The minimum age needed to register accounts. If Client_RegisterAccount::createAccountParameters::ageInDays is less than this, then the account registration will fail with L2RC_Client_RegisterAccount_REQUIRED_AGE_NOT_MET
-		/// Per-title age requirements can be handled client-side with System_CreateTitle::requiredAge and System_GetTitleRequiredAge
+		/// \brief The minimum age needed to register accounts. If Client_RegisterAccount::createAccountParameters::ageInDays is less than this, then the account registration will fail with L2RC_Client_RegisterAccount_REQUIRED_AGE_NOT_MET
+		/// \details Per-title age requirements can be handled client-side with System_CreateTitle::requiredAge and System_GetTitleRequiredAge
 		unsigned int accountRegistrationRequiredAgeYears;
 	};
 
-	/// Set the desired configuration properties. This is read during runtime from threads.
+	/// \brief Set the desired configuration properties. This is read during runtime from threads.
 	void SetConfigurationProperties(ConfigurationProperties c);
-	/// Get the previously set configuration properties.
+	/// \brief Get the previously set configuration properties.
 	const ConfigurationProperties *GetConfigurationProperties(void) const;
 
 	/// \internal Lets the plugin know that a user has logged on, so this user can be tracked and the message forwarded to RoomsPlugin
@@ -150,6 +161,7 @@ protected:
 	unsigned int GetUserIndexByGUID(RakNetGUID guid);
 	unsigned int GetUserIndexByUsername(RakNet::RakString userName);
 	void StopThreads(void);
+	void SendRemoteLoginNotification(RakNet::RakString handle, SystemAddress recipient);
 
 	/// \internal
 	void RemoveUser(SystemAddress address);

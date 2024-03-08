@@ -63,6 +63,7 @@ int main(void)
 		SocketDescriptor socketDescriptor2(serverPort+1+index,0);
 		clients[index]->Startup(1,0, &socketDescriptor2, 1);
 		clients[index]->Connect("127.0.0.1", serverPort, 0, 0);
+		clients[index]->SetTimeoutTime(5000,UNASSIGNED_SYSTEM_ADDRESS);
 
 		#ifdef _WIN32
 				Sleep(10);

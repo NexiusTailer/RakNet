@@ -324,7 +324,12 @@ int main(void)
 				printf("ID_CONNECTION_LOST\n");
 				break;
 			case ID_ADVERTISE_SYSTEM:
-				rakPeer->Connect(packet->systemAddress.ToString(false), packet->systemAddress.port,0,0);
+				// The conditional is needed because ID_ADVERTISE_SYSTEM may be from a system we are connected to, but replying on a different address.
+				if (rakPeer->GetSystemAddressFromGuid(packet->guid)==UNASSIGNED_SYSTEM_ADDRESS)
+				{
+					printf("Connecting to %s\n", packet->systemAddress.ToString(true));
+					rakPeer->Connect(packet->systemAddress.ToString(false), packet->systemAddress.port,0,0);
+				}
 				break;
 			}
 		}
@@ -362,7 +367,7 @@ int main(void)
 				// 	B. Delete these objects on my own system
 				replicaManager.GetReplicasCreatedByMe(replicaListOut);
 				replicaManager.BroadcastDestructionList(replicaListOut, UNASSIGNED_SYSTEM_ADDRESS);
-				replicaListOut.ClearPointers();
+				replicaListOut.ClearPointers( true, __FILE__, __LINE__ );
 			}
 
 		}

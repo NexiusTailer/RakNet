@@ -16,7 +16,7 @@
 #include "SocketIncludes.h"
 #include "DS_OrderedList.h"
 #include "RakString.h"
-#include "NATTypeDetectionCommon.h"
+#include "NatTypeDetectionCommon.h"
 
 class RakPeerInterface;
 struct Packet;

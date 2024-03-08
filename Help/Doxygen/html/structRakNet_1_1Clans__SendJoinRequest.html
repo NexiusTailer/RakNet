@@ -29,7 +29,13 @@
   </div>
 </div>
 <div class="contents">
-<h1>RakNet::Clans_SendJoinRequest Struct Reference</h1><!-- doxytag: class="RakNet::Clans_SendJoinRequest" --><!-- doxytag: inherits="RakNet::Lobby2Message" --><code>#include &lt;Lobby2Message.h&gt;</code>
+<h1>RakNet::Clans_SendJoinRequest Struct Reference<br>
+<small>
+[<a class="el" href="group__LOBBY__2__COMMANDS.html">Lobby2Commands</a>]</small>
+</h1><!-- doxytag: class="RakNet::Clans_SendJoinRequest" --><!-- doxytag: inherits="RakNet::Lobby2Message" -->Function has two forms:.  
+<a href="#_details">More...</a>
+<p>
+<code>#include &lt;Lobby2Message.h&gt;</code>
 <p>
 <div class="dynheader">
 Inheritance diagram for RakNet::Clans_SendJoinRequest:</div>
@@ -61,7 +67,9 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Function has two forms: If requiresInvitationsToJoin==true when CreateClan() was called, will join the specified clan immediately. Sends subject and body to all other members in the clan. If requiresInvitationsToJoin==false when CreateClan() was called, send a join request to the specified clan, if we don't have one already. Join request expires after expiration time in seconds. Also, use Emails_Send() to send an email from myPrimaryKey to the clan leader and all subleaders with the specified subject and body. <hr><h2>Member Function Documentation</h2>
+Function has two forms:. 
+<p>
+If requiresInvitationsToJoin==true when CreateClan() was called, will join the specified clan immediately. Sends subject and body to all other members in the clan. If requiresInvitationsToJoin==false when CreateClan() was called, send a join request to the specified clan, if we don't have one already. Join request expires after expiration time in seconds. Also, use Emails_Send() to send an email from myPrimaryKey to the clan leader and all subleaders with the specified subject and body. <hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="fad2acba8be8d6e6002764559055618f"></a><!-- doxytag: member="RakNet::Clans_SendJoinRequest::CancelOnDisconnect" ref="fad2acba8be8d6e6002764559055618f" args="(void) const " -->
 <div class="memitem">
 <div class="memproto">
@@ -124,7 +132,7 @@ If data members can be validated for correctness in the server's main thread, ov
 <div class="memdoc">
 
 <p>
-Is this message something that should only be run by a system with admin privileges? Set admin privileges with <a class="el" href="classRakNet_1_1Lobby2Server.html#499cbfd420d6a6caecd62a8143a641da">Lobby2Server::AddAdminAddress()</a> 
+Is this message something that should only be run by a system with admin privileges? Set admin privileges with <a class="el" href="classRakNet_1_1Lobby2Server.html#499cbfd420d6a6caecd62a8143a641da" title="If Lobby2Message::RequiresAdmin() returns true, the message can only be processed...">Lobby2Server::AddAdminAddress()</a> 
 <p>Implements <a class="el" href="structRakNet_1_1Lobby2Message.html#79cbb400e4521af2c353fbd640fed0f7">RakNet::Lobby2Message</a>.</p>
 
 </div>
@@ -168,15 +176,15 @@ Does this function require logging into the server before it can be executed? If
 <div class="memdoc">
 
 <p>
-Is this message something that should only be run by a system with ranking upload priviledges? Set ranking privileges with Lobby2Server::AddRankingAddress() 
+Is this message something that should only be run by a system with ranking upload priviledges? Set ranking privileges with <a class="el" href="classRakNet_1_1Lobby2Server.html#16a9ef14b0c08f5c01745908666064d5" title="If Lobby2Message::RequiresRankingPermission() returns true, then the system that...">Lobby2Server::AddRankingAddress()</a> 
 <p>Implements <a class="el" href="structRakNet_1_1Lobby2Message.html#3eab67e30f491cd3410b9d850ffcecea">RakNet::Lobby2Message</a>.</p>
 
 </div>
 </div><p>
 <hr>The documentation for this struct was generated from the following file:<ul>
-<li>C:/RakNet/DependentExtensions/Lobby2/Lobby2Message.h</ul>
+<li>c:/RakNet/DependentExtensions/Lobby2/Lobby2Message.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:49 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:15 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

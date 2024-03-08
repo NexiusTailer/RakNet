@@ -1,0 +1,10 @@
+Start Debug/AutopatcherClient.exe 127.0.0.1 C:/temp2 TestApp 1
+Start Debug/AutopatcherClient.exe 127.0.0.1 C:/temp3 TestApp 1
+Start Debug/AutopatcherClient.exe 127.0.0.1 C:/temp4 TestApp 1
+Start Debug/AutopatcherClient.exe 127.0.0.1 C:/temp5 TestApp 1
+Start Debug/AutopatcherClient.exe 127.0.0.1 C:/temp6 TestApp 1
+Start Debug/AutopatcherClient.exe 127.0.0.1 C:/temp7 TestApp 1
+Start Debug/AutopatcherClient.exe 127.0.0.1 C:/temp8 TestApp 1
+Start Debug/AutopatcherClient.exe 127.0.0.1 C:/temp9 TestApp 1
+Start Debug/AutopatcherClient.exe 127.0.0.1 C:/temp10 TestApp 1
+Start Debug/AutopatcherClient.exe 127.0.0.1 C:/temp11 TestApp 1

@@ -100,14 +100,20 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><a class="el" href="classRakNet_1_1UDPProxyServer.html" title="UDPProxyServer to control our instance of UDPForwarder.">UDPProxyServer</a> to control our instance of <a class="el" href="classRakNet_1_1UDPForwarder.html" title="Forwards UDP datagrams. Independent of RakNet&#39;s protocol.">UDPForwarder</a>.  <a href="classRakNet_1_1UDPProxyServer.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html">Lobby2Client</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Class used to send commands to <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base class for the lobby server, without database specific functionality.">Lobby2Server</a>.  <a href="classRakNet_1_1Lobby2Client.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A <a class="el" href="structRakNet_1_1Lobby2Message.html" title="A Lobby2Message encapsulates a networked function call from the client.">Lobby2Message</a> encapsulates a networked function call from the client.  <a href="structRakNet_1_1Lobby2Message.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Callbacks.html">Lobby2Callbacks</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Every <a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> processed with <a class="el" href="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f">Lobby2Client::SendMsg()</a> while connected will call the callback registered with <a class="el" href="classRakNet_1_1Lobby2Plugin.html#5090cd5b0c83e5ed290b11fe9e81ac75" title="Set the callback to receive the results of operations via SendMsg().">Lobby2Client::SetCallbackInterface()</a>.  <a href="structRakNet_1_1Lobby2Callbacks.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Printf.html">Lobby2Printf</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Just print out the name of the message by default. This class is used in the sample.  <a href="structRakNet_1_1Lobby2Printf.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Platform__Startup.html">Platform_Startup</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Platform specific startup. Unused on the PC.  <a href="structRakNet_1_1Platform__Startup.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Platform__Shutdown.html">Platform_Shutdown</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Platform specific startup. Unused on the PC.  <a href="structRakNet_1_1Platform__Shutdown.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1System__CreateDatabase.html">System_CreateDatabase</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create all tables and stored procedures on a system that does not already have them.  <a href="structRakNet_1_1System__CreateDatabase.html#_details">More...</a><br></td></tr>
@@ -117,12 +123,24 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1System__CreateTitle.html">System_CreateTitle</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Each title essentially corresponds to a game. For example, the same lobby system may be used for both asteroids and Pac-man. When logging in, and for some functions, it is necessary to specify which title you are logging in under. This way users playing asteroids do not interact with users playing pac-man, where such interations are game specific (such as ranking).  <a href="structRakNet_1_1System__CreateTitle.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1System__DestroyTitle.html">System_DestroyTitle</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroy a previously added title.  <a href="structRakNet_1_1System__DestroyTitle.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1System__GetTitleRequiredAge.html">System_GetTitleRequiredAge</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the required age set with <a class="el" href="structRakNet_1_1System__CreateTitle.html" title="Each title essentially corresponds to a game. For example, the same lobby system...">System_CreateTitle</a>.  <a href="structRakNet_1_1System__GetTitleRequiredAge.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1System__GetTitleBinaryData.html">System_GetTitleBinaryData</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the binary data set with <a class="el" href="structRakNet_1_1System__CreateTitle.html" title="Each title essentially corresponds to a game. For example, the same lobby system...">System_CreateTitle</a>.  <a href="structRakNet_1_1System__GetTitleBinaryData.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1System__RegisterProfanity.html">System_RegisterProfanity</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds the input strings to a table of profanity. non-unique or empty strings can be ignored. This table will be used internally to ensure that handles and clan names do not contain profanity. Multiple calls add to the table. This table will be used for functions that take a user-defined string that is highly visible, such as clan and user names. It does not need to be checked for emails or message boards.  <a href="structRakNet_1_1System__RegisterProfanity.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1System__BanUser.html">System_BanUser</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Bans a specific user (will be most likely called by a moderator). Adds the user's primary key to a ban table, along with the name of the moderator, the reason for the ban. Banning is used to prevent the banned user from logging on for some specified duration. A date column should be present and automatically filled in. When bans are expired, the ban can be deleted from the database. However, a separate table should log bans, so that even expired bans can be looked up in case.  <a href="structRakNet_1_1System__BanUser.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1System__UnbanUser.html">System_UnbanUser</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Unban a user banned with <a class="el" href="structRakNet_1_1System__BanUser.html" title="Bans a specific user (will be most likely called by a moderator). Adds the user&#39;s...">System_BanUser</a>.  <a href="structRakNet_1_1System__UnbanUser.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1CDKey__Add.html">CDKey_Add</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds CDKeys to the database. Duplicate CDKeys for a particular title are ignored. CDKeys can be identical for different titles.  <a href="structRakNet_1_1CDKey__Add.html#_details">More...</a><br></td></tr>
@@ -137,12 +155,16 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Flags one or more CD keys as stolen. Stolen CD keys will prevent Client_Login() if check cd key is true. They will also prevent these cd keys from being used with <a class="el" href="structRakNet_1_1CDKey__Use.html" title="Associates a cd key with a user, such that the cd key cannot be used again. If Client_Login()...">CDKey_Use</a>. If this key is already in use by certain users for this particular title, then log this similarly to how <a class="el" href="structRakNet_1_1CDKey__Use.html" title="Associates a cd key with a user, such that the cd key cannot be used again. If Client_Login()...">CDKey_Use</a> does so.  <a href="structRakNet_1_1CDKey__FlagStolen.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Client__Login.html">Client_Login</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Logon with a previously registered account.  <a href="structRakNet_1_1Client__Login.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Client__Logoff.html">Client_Logoff</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Logoff, after logging in.  <a href="structRakNet_1_1Client__Logoff.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Client__RegisterAccount.html">Client_RegisterAccount</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This creates a new account in the database, which can be used in a subsequent call to Login. Most parameters are optional. handle is not optional, and must be unique using case-insensitive compare. emailAddress should be validated to have a sensible format, including an @ sign and a period with a 3 letter extension. allowLoginWithoutEmailAddressValidation is used in <a class="el" href="structRakNet_1_1Client__Login.html">Client_Login</a> to potentially disallow logon attempts with unverified email addresses.  <a href="structRakNet_1_1Client__RegisterAccount.html#_details">More...</a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This creates a new account in the database, which can be used in a subsequent call to Login. Most parameters are optional. handle is not optional, and must be unique using case-insensitive compare. emailAddress should be validated to have a sensible format, including an @ sign and a period with a 3 letter extension. allowLoginWithoutEmailAddressValidation is used in <a class="el" href="structRakNet_1_1Client__Login.html" title="Logon with a previously registered account.">Client_Login</a> to potentially disallow logon attempts with unverified email addresses.  <a href="structRakNet_1_1Client__RegisterAccount.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1System__SetEmailAddressValidated.html">System_SetEmailAddressValidated</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">For the client with the given handle, mark a column emailAddressValidated as true or false as appropriate. This is potentially used in <a class="el" href="structRakNet_1_1Client__Login.html">Client_Login</a>.  <a href="structRakNet_1_1System__SetEmailAddressValidated.html#_details">More...</a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">For the client with the given handle, mark a column emailAddressValidated as true or false as appropriate. This is potentially used in <a class="el" href="structRakNet_1_1Client__Login.html" title="Logon with a previously registered account.">Client_Login</a>.  <a href="structRakNet_1_1System__SetEmailAddressValidated.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Client__ValidateHandle.html">Client_ValidateHandle</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Looks up in the database if this handle is already in use, subject to the usual constraints of handles. This will be used by the user to quickly check for available handles.  <a href="structRakNet_1_1Client__ValidateHandle.html#_details">More...</a><br></td></tr>
@@ -151,6 +173,7 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Flags as deleted an account registered with RegisterAccount. Accounts are not actually deleted, only tagged as deleted.  <a href="structRakNet_1_1System__DeleteAccount.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1System__PruneAccounts.html">System_PruneAccounts</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Unused accounts are deleted. This is cascading, such that emails and other tables that reference this key are also deleted. unused accounts are defined as:.  <a href="structRakNet_1_1System__PruneAccounts.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Client__GetEmailAddress.html">Client_GetEmailAddress</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the email address associated with a specific handle, invalid handle. This is used for password recovery.  <a href="structRakNet_1_1Client__GetEmailAddress.html#_details">More...</a><br></td></tr>
@@ -165,6 +188,10 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Changes the handle for a user.  <a href="structRakNet_1_1Client__ChangeHandle.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Client__UpdateAccount.html">Client_UpdateAccount</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Will update any or all of the inputs that were previously passed to <a class="el" href="structRakNet_1_1Client__RegisterAccount.html" title="This creates a new account in the database, which can be used in a subsequent call...">Client_RegisterAccount</a>, except handle.  <a href="structRakNet_1_1Client__UpdateAccount.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Client__GetAccountDetails.html">Client_GetAccountDetails</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the parameters set with <a class="el" href="structRakNet_1_1Client__RegisterAccount.html" title="This creates a new account in the database, which can be used in a subsequent call...">Client_RegisterAccount</a>.  <a href="structRakNet_1_1Client__GetAccountDetails.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Client__StartIgnore.html">Client_StartIgnore</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds the specified user to an ignore list for my user. Recommended to store the primary key of the remote user, both for speed and so if the other use changes their handle it still works. The ignore list is checked for friend invites, emails, and elsewhere where indicated. Ignoring is uni-directional, so if A ignores B, A will block messages from B where appropriate, but B will not immediately block messages from A.  <a href="structRakNet_1_1Client__StartIgnore.html#_details">More...</a><br></td></tr>
@@ -197,9 +224,13 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Ends a friendship between two users. Remove from the database the friend entry between my handle and their handle. As with accept add friend invite, this is bidirectional. Either user can terminate the friendship. Store in the emails table from my handle to their handle the subject, body, and binary data, and procedure type flag.  <a href="structRakNet_1_1Friends__Remove.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1BookmarkedUsers__Add.html">BookmarkedUsers_Add</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remembers a user, with a type integer and description for you to use, if desired.  <a href="structRakNet_1_1BookmarkedUsers__Add.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1BookmarkedUsers__Remove.html">BookmarkedUsers_Remove</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a user added with <a class="el" href="structRakNet_1_1BookmarkedUsers__Add.html" title="Remembers a user, with a type integer and description for you to use, if desired...">BookmarkedUsers_Add</a>.  <a href="structRakNet_1_1BookmarkedUsers__Remove.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1BookmarkedUsers__Get.html">BookmarkedUsers_Get</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns all users added to <a class="el" href="structRakNet_1_1BookmarkedUsers__Add.html">BookmarkedUsers_Add</a>.  <a href="structRakNet_1_1BookmarkedUsers__Get.html#_details">More...</a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns all users added to <a class="el" href="structRakNet_1_1BookmarkedUsers__Add.html" title="Remembers a user, with a type integer and description for you to use, if desired...">BookmarkedUsers_Add</a>.  <a href="structRakNet_1_1BookmarkedUsers__Get.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Emails__Send.html">Emails_Send</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds to an emails table from myHandle (store primary key) to recipient handles (store primary key) the specified subject, body, and binary data. Emails are persistent, therefore emails should be stored in a separate table and referenced by the user. Deleting the user does not delete previously send email. Emails should have an automatic timestamp to store when they were created. Email should be flagged as sent=true (boolean), markedRead=true (boolean), deletedBySender=false (boolean), deletedByReciever=false (boolean).  <a href="structRakNet_1_1Emails__Send.html#_details">More...</a><br></td></tr>
@@ -208,7 +239,7 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns emails as noted. Emails which were marked deleted are not returned.  <a href="structRakNet_1_1Emails__Get.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Emails__Delete.html">Emails_Delete</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Deletes an email with a specified ID. This ID is returned in GetEmail and should uniquely identify an email (it's fine to use the primary key). Note: Emails are not actually deleted from the database in this function. This just sets the deletedBySender or deletedByReciever flags. Emails are actually stored in a log recording past emails and sender and receiver primary key. They are not truly destroyed until done so with <a class="el" href="structRakNet_1_1System__PruneAccounts.html">System_PruneAccounts</a>.  <a href="structRakNet_1_1Emails__Delete.html#_details">More...</a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Deletes an email with a specified ID. This ID is returned in GetEmail and should uniquely identify an email (it's fine to use the primary key). Note: Emails are not actually deleted from the database in this function. This just sets the deletedBySender or deletedByReciever flags. Emails are actually stored in a log recording past emails and sender and receiver primary key. They are not truly destroyed until done so with <a class="el" href="structRakNet_1_1System__PruneAccounts.html" title="Unused accounts are deleted. This is cascading, such that emails and other tables...">System_PruneAccounts</a>.  <a href="structRakNet_1_1Emails__Delete.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Emails__SetStatus.html">Emails_SetStatus</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets the status flag for an email. This is a property defined by and used by the user.  <a href="structRakNet_1_1Emails__SetStatus.html#_details">More...</a><br></td></tr>
@@ -233,6 +264,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Ranking__PruneMatches.html">Ranking_PruneMatches</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Will delete all matches submitted with SubmitMatch over PruneTime days old. Will also prune matches if the total storage space of all matches exceeds PruneSizeMB megabytes in the database.  <a href="structRakNet_1_1Ranking__PruneMatches.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Ranking__UpdateRating.html">Ranking_UpdateRating</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add or update a rating for a user, in a particular game and game mode.  <a href="structRakNet_1_1Ranking__UpdateRating.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Ranking__WipeRatings.html">Ranking_WipeRatings</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Deletes all ratings for all players for this combination of titleName and gameType.  <a href="structRakNet_1_1Ranking__WipeRatings.html#_details">More...</a><br></td></tr>
@@ -268,6 +302,7 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Renames the clan. Note that this may be called asynchronously, in which case the stored procedure should account for this occuring at the same time as another function that uses the old clan handle.  <a href="structRakNet_1_1Clans__ChangeHandle.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Clans__Leave.html">Clans_Leave</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove user identified by myPrimaryKey from clan identified by clanHandle.  <a href="structRakNet_1_1Clans__Leave.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Clans__Get.html">Clans_Get</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns all clans that userHandle is a member of. Clans and clan members should be sorted by name, using ascending or descending sort as specified.  <a href="structRakNet_1_1Clans__Get.html#_details">More...</a><br></td></tr>
@@ -288,6 +323,7 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns all invites sent by <a class="el" href="structRakNet_1_1Clans__SendJoinInvitation.html" title="if myPrimaryKey is a leader or subleader of clanHandle, and invitedUserHandle is...">Clans_SendJoinInvitation</a> that were not yet acted upon (withdrawn, accepted, rejected).  <a href="structRakNet_1_1Clans__DownloadInvitationList.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Clans__SendJoinRequest.html">Clans_SendJoinRequest</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Function has two forms:.  <a href="structRakNet_1_1Clans__SendJoinRequest.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Clans__WithdrawJoinRequest.html">Clans_WithdrawJoinRequest</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Withdraws a previously sent clan join request via SendClanJoinRequest. Use Emails_Send() to send an email from myPrimaryKey to the clan leader and all subleaders with the specified subject and body.  <a href="structRakNet_1_1Clans__WithdrawJoinRequest.html#_details">More...</a><br></td></tr>
@@ -341,11 +377,12 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets all posts for a particular topic. If postId is not a topic but is instead a post in a topic, treat it as if the topic postId was passed. If we are not a clan member and the clan was created with allowPublicReads==false, then the user is not allowed to read topics.  <a href="structRakNet_1_1Clans__GetPosts.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Plugin.html">Lobby2Plugin</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Both the server and pc client plugins derive from this class.  <a href="classRakNet_1_1Lobby2Plugin.html#_details">More...</a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Both <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base class for the lobby server, without database specific functionality.">Lobby2Server</a> and <a class="el" href="classRakNet_1_1Lobby2Client.html" title="Class used to send commands to Lobby2Server.">Lobby2Client</a> derive from this class.  <a href="classRakNet_1_1Lobby2Plugin.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2ServerCommand.html">Lobby2ServerCommand</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The base class for the lobby server, without database specific functionality.  <a href="classRakNet_1_1Lobby2Server.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server__PGSQL.html">Lobby2Server_PGSQL</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">PostgreSQL specific functionality to the lobby server.  <a href="classRakNet_1_1Lobby2Server__PGSQL.html#_details">More...</a><br></td></tr>
@@ -354,12 +391,16 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Base class for rooms functionality.  <a href="structRakNet_1_1RoomsPluginFunc.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1CreateRoom__Func.html">CreateRoom_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a room. Each user can be in at most one room, so will fail if the user is already in a room.  <a href="structRakNet_1_1CreateRoom__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1EnterRoom__Func.html">EnterRoom_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Joins a room if possible. If not, creates a room.  <a href="structRakNet_1_1EnterRoom__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1JoinByFilter__Func.html">JoinByFilter_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Joins a room given the filter parameters and desired room member mode.  <a href="structRakNet_1_1JoinByFilter__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1LeaveRoom__Func.html">LeaveRoom_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Leaves a room. You can leave at any time, even if the room is locked.  <a href="structRakNet_1_1LeaveRoom__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1GetInvitesToParticipant__Func.html">GetInvitesToParticipant_Func</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SendInvite__Func.html">SendInvite_Func</a></td></tr>
@@ -376,17 +417,22 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Stop spectating. This will rejoin the room as a player, using a reserved slot if we were invited, and a public slot if not or if there are no reserved slots.  <a href="structRakNet_1_1StopSpectating__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1GrantModerator__Func.html">GrantModerator_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Give moderator to another player. Moderators cannot be spectators.  <a href="structRakNet_1_1GrantModerator__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1ChangeSlotCounts__Func.html">ChangeSlotCounts_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Change the allowed slot counts for the room. Setting fewer slot counts than the number of players does not kick out players, though it may prevent changing spectator status.  <a href="structRakNet_1_1ChangeSlotCounts__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SetCustomRoomProperties__Func.html">SetCustomRoomProperties_Func</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets a table of user-defined room properties.  <a href="structRakNet_1_1SetCustomRoomProperties__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1GetRoomProperties__Func.html">GetRoomProperties_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Given a named room, return the properties of that room, including member list.  <a href="structRakNet_1_1GetRoomProperties__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1ChangeRoomName__Func.html">ChangeRoomName_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Change the name of the room.  <a href="structRakNet_1_1ChangeRoomName__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SetHiddenFromSearches__Func.html">SetHiddenFromSearches_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set or unset the room hidden from searches. If a room is hidden from searches, it can only be joined through invitations.  <a href="structRakNet_1_1SetHiddenFromSearches__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SetDestroyOnModeratorLeave__Func.html">SetDestroyOnModeratorLeave_Func</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets or unsets to destroy the room when the moderator leaves the room.  <a href="structRakNet_1_1SetDestroyOnModeratorLeave__Func.html#_details">More...</a><br></td></tr>
@@ -395,79 +441,109 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets or unsets the user as flagged 'ready'.  <a href="structRakNet_1_1SetReadyStatus__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1GetReadyStatus__Func.html">GetReadyStatus_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the ready states for every user in the room, excluding spectators.  <a href="structRakNet_1_1GetReadyStatus__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SetRoomLockState__Func.html">SetRoomLockState_Func</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Lock or unlock the room.  <a href="structRakNet_1_1SetRoomLockState__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1GetRoomLockState__Func.html">GetRoomLockState_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the lock state of the room.  <a href="structRakNet_1_1GetRoomLockState__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1AreAllMembersReady__Func.html">AreAllMembersReady_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">If all members have been set to ready using <a class="el" href="structRakNet_1_1SetReadyStatus__Func.html" title="Sets or unsets the user as flagged &#39;ready&#39;.">SetReadyStatus_Func</a>, this operation will set allReady to true.  <a href="structRakNet_1_1AreAllMembersReady__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1KickMember__Func.html">KickMember_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Kick a member out of the room. This will also automatically ban that member from rejoining as long as the moderator does not change, or the member is unbanned.  <a href="structRakNet_1_1KickMember__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1UnbanMember__Func.html">UnbanMember_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Allow a member previously kicked out of the room to rejoin.  <a href="structRakNet_1_1UnbanMember__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1GetBanReason__Func.html">GetBanReason_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">For a given room, get the <em>reason</em> parameter of <a class="el" href="structRakNet_1_1KickMember__Func.html" title="Kick a member out of the room. This will also automatically ban that member from...">KickMember_Func</a> when we were kicked out.  <a href="structRakNet_1_1GetBanReason__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1AddUserToQuickJoin__Func.html">AddUserToQuickJoin_Func</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Enter quick join mode.  <a href="structRakNet_1_1AddUserToQuickJoin__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RemoveUserFromQuickJoin__Func.html">RemoveUserFromQuickJoin_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Leave quick join mode.  <a href="structRakNet_1_1RemoveUserFromQuickJoin__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1IsInQuickJoin__Func.html">IsInQuickJoin_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns if you are waiting in quick join mode.  <a href="structRakNet_1_1IsInQuickJoin__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SearchByFilter__Func.html">SearchByFilter_Func</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return all rooms that pass the <em>roomQuery</em> filter.  <a href="structRakNet_1_1SearchByFilter__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1ChangeHandle__Func.html">ChangeHandle_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Change your handle.  <a href="structRakNet_1_1ChangeHandle__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Chat__Func.html">Chat_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Send a chat message.  <a href="structRakNet_1_1Chat__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Bitstream__Func.html">Bitstream_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Send an arbitrary binary message.  <a href="structRakNet_1_1Bitstream__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomsPluginNotification.html">RoomsPluginNotification</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Base class for notification callbacks.  <a href="structRakNet_1_1RoomsPluginNotification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1QuickJoinExpired__Notification.html">QuickJoinExpired_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The quick join duration has expired without joining or creating any rooms.  <a href="structRakNet_1_1QuickJoinExpired__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1QuickJoinEnteredRoom__Notification.html">QuickJoinEnteredRoom_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Quick join succeeded, and you are now in a room.  <a href="structRakNet_1_1QuickJoinEnteredRoom__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomMemberStartedSpectating__Notification.html">RoomMemberStartedSpectating_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Another room member has started spectating.  <a href="structRakNet_1_1RoomMemberStartedSpectating__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomMemberStoppedSpectating__Notification.html">RoomMemberStoppedSpectating_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Another room member has stopped spectating.  <a href="structRakNet_1_1RoomMemberStoppedSpectating__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1ModeratorChanged__Notification.html">ModeratorChanged_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The room has a new moderator (possibly you).  <a href="structRakNet_1_1ModeratorChanged__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SlotCountsSet__Notification.html">SlotCountsSet_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The slot counts in the room has changed.  <a href="structRakNet_1_1SlotCountsSet__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1CustomRoomPropertiesSet__Notification.html">CustomRoomPropertiesSet_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The custom properties for the room has changed.  <a href="structRakNet_1_1CustomRoomPropertiesSet__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomNameSet__Notification.html">RoomNameSet_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The name of the room has been changed.  <a href="structRakNet_1_1RoomNameSet__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1HiddenFromSearchesSet__Notification.html">HiddenFromSearchesSet_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The room is now hidden, or no longer hidden, from searches.  <a href="structRakNet_1_1HiddenFromSearchesSet__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomMemberReadyStatusSet__Notification.html">RoomMemberReadyStatusSet_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Another room member has changed their ready status.  <a href="structRakNet_1_1RoomMemberReadyStatusSet__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomLockStateSet__Notification.html">RoomLockStateSet_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The room is now, or is no longer, locked.  <a href="structRakNet_1_1RoomLockStateSet__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomMemberKicked__Notification.html">RoomMemberKicked_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A room member has been kicked out of the room (possibly you).  <a href="structRakNet_1_1RoomMemberKicked__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomMemberHandleSet__Notification.html">RoomMemberHandleSet_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A room member has changed their handle.  <a href="structRakNet_1_1RoomMemberHandleSet__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomMemberLeftRoom__Notification.html">RoomMemberLeftRoom_Notification</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomMemberJoinedRoom__Notification.html">RoomMemberJoinedRoom_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A room member has joined the room.  <a href="structRakNet_1_1RoomMemberJoinedRoom__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomInvitationSent__Notification.html">RoomInvitationSent_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">You have received an invitation to a room.  <a href="structRakNet_1_1RoomInvitationSent__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomInvitationWithdrawn__Notification.html">RoomInvitationWithdrawn_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A previous room invitation is no longer valid (possibly due to moderator change, or the room no longer exists).  <a href="structRakNet_1_1RoomInvitationWithdrawn__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomDestroyedOnModeratorLeft__Notification.html">RoomDestroyedOnModeratorLeft_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The moderator has left the room, and everyone left is a spectator, or the room was set to be destroyed when the moderator left<p>
+You are no longer in the room.  <a href="structRakNet_1_1RoomDestroyedOnModeratorLeft__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Chat__Notification.html">Chat_Notification</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">You got a chat message from another user.  <a href="structRakNet_1_1Chat__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Bitstream__Notification.html">Bitstream_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">You got a generic bitstream message from another user.  <a href="structRakNet_1_1Bitstream__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html">RoomsPlugin</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Used to create rooms for players where they can matchmake.  <a href="classRakNet_1_1RoomsPlugin.html#_details">More...</a><br></td></tr>
@@ -594,9 +670,8 @@ typedef int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg9a29b413d7f2b9cb21c16457631d3aef22b7a36a8c1481cc6345d8c4efbe4aac">RM3QSR_NEVER_CALL_SERIALIZE</a>
  }</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#f20aff5b3604dbaad834c046a03d8299">Lobby2MessageID</a> </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__LOBBY__2__COMMANDS.html#gf20aff5b3604dbaad834c046a03d8299">Lobby2MessageID</a> </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">All enumerations for Lobby2Message. Each Lobby2Message has one enumeration. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RPC__3__GROUP.html#gc20c52e6dc585406689d52db29925bba">RPCErrorCodes</a> { <br>
 &nbsp;&nbsp;<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbadb2af6809c1b915b09b0e801a6e457dc">RPC_ERROR_NETWORK_ID_MANAGER_UNAVAILABLE</a>, 
 <a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bba22e0bebd27fb755abb7ebbe9bf894953">RPC_ERROR_OBJECT_DOES_NOT_EXIST</a>, 
@@ -863,7 +938,7 @@ Return a friendly string representing the enumeration None and relaxed can conne
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:46 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:13 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

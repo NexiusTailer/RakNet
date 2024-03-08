@@ -96,7 +96,7 @@ public:
 		if (IsFunctionRegistered(uniqueIdentifier)) return false;
 		_RPC3::FunctionPointer fp;
 		fp= _RPC3::GetBoundPointer(functionPtr);
-		localFunctions.Insert(LocalRPCFunction(uniqueIdentifier,fp));
+		localFunctions.Insert(LocalRPCFunction(uniqueIdentifier,fp), __FILE__, __LINE__ );
 		return true;
 	}
 

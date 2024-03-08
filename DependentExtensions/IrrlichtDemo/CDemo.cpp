@@ -1,4 +1,4 @@
-// This is a Demo of the Irrlicht Engine (c) 2005-2008 by N.Gebhardt.
+// This is a Demo of the Irrlicht Engine (c) 2005-2009 by N.Gebhardt.
 // This file is not documented.
 
 #include "CDemo.h"
@@ -43,7 +43,7 @@ CDemo::~CDemo()
 
 void CDemo::run()
 {
-	core::dimension2d<s32> resolution ( 800, 600 );
+	core::dimension2d<u32> resolution ( 800, 600 );
 
 	if ( driverType == video::EDT_BURNINGSVIDEO || driverType == video::EDT_SOFTWARE )
 	{
@@ -109,12 +109,12 @@ void CDemo::run()
 		// RakNet: Render even if not active, multiplayer never stops
 		//if (device->isWindowActive())
 		{
-			#ifdef USE_IRRKLANG
+#ifdef USE_IRRKLANG
 			// update 3D position for sound engine
 			scene::ICameraSceneNode* cam = smgr->getActiveCamera();
 			if (cam && irrKlang)
 				irrKlang->setListenerPosition(cam->getAbsolutePosition(), cam->getTarget());
-			#endif
+#endif
 
 			// load next scene if necessary
 			now = device->getTimer()->getTime();
@@ -135,7 +135,7 @@ void CDemo::run()
 			static s32 lastfps = 0;
 			s32 nowfps = driver->getFPS();
 
-			swprintf(tmp, 255, L"%ls fps:%3d triangles:%0.3f mio", 
+			swprintf(tmp, 255, L"%ls fps:%3d triangles:%0.3f mio",
 				driver->getName(),
 				driver->getFPS(),
 				(f32) driver->getPrimitiveCountDrawn( 1 ) * ( 1.f / 1000000.f )
@@ -427,6 +427,9 @@ void CDemo::loadSceneData()
 	video::IVideoDriver* driver = device->getVideoDriver();
 	scene::ISceneManager* sm = device->getSceneManager();
 
+	// Quake3 Shader controls Z-Writing
+	sm->getParameters()->setAttribute(scene::ALLOW_ZWRITE_ON_TRANSPARENT, true);
+
 	quakeLevelMesh = (scene::IQ3LevelMesh*) sm->getMesh("maps/20kdm2.bsp");
 
 	if (quakeLevelMesh)
@@ -442,9 +445,9 @@ void CDemo::loadSceneData()
 			sm->getMeshManipulator()->transformMesh ( quakeLevelMesh->getMesh(i), m );
 		}
 
-		quakeLevelNode = sm->addOctTreeSceneNode( 
+		quakeLevelNode = sm->addOctTreeSceneNode(
 			quakeLevelMesh->getMesh( scene::quake3::E_Q3_MESH_GEOMETRY)
-									);
+			);
 		if (quakeLevelNode)
 		{
 			//quakeLevelNode->setPosition(core::vector3df(-1300,-70,-1249));
@@ -475,7 +478,7 @@ void CDemo::loadSceneData()
 			s32 shaderIndex = (s32) material.MaterialTypeParam2;
 
 			// the meshbuffer can be rendered without additional support, or it has no shader
-			const scene::quake3::SShader *shader = quakeLevelMesh->getShader ( shaderIndex );
+			const scene::quake3::IShader *shader = quakeLevelMesh->getShader ( shaderIndex );
 			if ( 0 == shader )
 			{
 				continue;
@@ -484,8 +487,6 @@ void CDemo::loadSceneData()
 			sm->addQuake3SceneNode ( meshBuffer, shader );
 		}
 
-		// original mesh is not needed anymore
-		quakeLevelMesh->releaseMesh ( scene::quake3::E_Q3_MESH_ITEMS );
 
 	}
 
@@ -559,7 +560,7 @@ void CDemo::loadSceneData()
 		core::stringc tmp(IRRLICHT_MEDIA_PATH "portal");
 		tmp += g;
 		tmp += ".bmp";
-		video::ITexture* t = driver->getTexture( tmp.c_str () );
+		video::ITexture* t = driver->getTexture( tmp );
 		textures.push_back(t);
 	}
 
@@ -632,14 +633,14 @@ void CDemo::loadSceneData()
 
 	// load music
 
-	#ifdef USE_IRRKLANG
+#ifdef USE_IRRKLANG
 	if (music)
 		startIrrKlang();
-	#endif
-	#ifdef USE_SDL_MIXER
+#endif
+#ifdef USE_SDL_MIXER
 	if (music)
 		startSound();
-	#endif
+#endif
 
 }
 
@@ -647,7 +648,8 @@ void CDemo::loadSceneData()
 
 void CDemo::createLoadingScreen()
 {
-	core::dimension2d<int> size = device->getVideoDriver()->getScreenSize();
+	core::dimension2d<u32> size = device->getVideoDriver()->getScreenSize();
+
 	device->getCursorControl()->setVisible(false);
 
 	// setup loading screen
@@ -660,7 +662,7 @@ void CDemo::createLoadingScreen()
 	inOutFader->setColor(backColor,	video::SColor ( 0, 230, 230, 230 ));
 
 	// irrlicht logo
-	device->getGUIEnvironment()->addImage(device->getVideoDriver()->getTexture(IRRLICHT_MEDIA_PATH "irrlichtlogo2.png"),
+	device->getGUIEnvironment()->addImage(device->getVideoDriver()->getTexture("../../media/irrlichtlogo2.png"),
 		core::position2d<s32>(5,5));
 
 	// loading text
@@ -693,7 +695,9 @@ void CDemo::CalculateSyndeyBoundingBox(void)
 	irr::scene::IAnimatedMeshSceneNode* model;
 	model = sm->addAnimatedMeshSceneNode(mesh, 0);
 	model->setScale(core::vector3df(2,2,2));
-	core::aabbox3df modelBoundingBox = model->getBoundingBox();
+	// Bounding box changed in Irrlicht 1.5.1
+	core::aabbox3df modelBoundingBox = model->getMesh()->getBoundingBox();
+	// core::aabbox3df modelBoundingBox = model->getBoundingBox();
 	core::vector3df minEdgeExtended = modelBoundingBox.MinEdge;
 	core::vector3df maxEdgeExtended = modelBoundingBox.MaxEdge;
 	minEdgeExtended.X-=BALL_DIAMETER/2;
@@ -758,9 +762,9 @@ RakNetTime CDemo::shootFromOrigin(core::vector3df camPosition, core::vector3df c
 	core::line3d<f32> line(start, end);
 
 	// get intersection point with map
-
+	const scene::ISceneNode* hitNode;
 	if (sm->getSceneCollisionManager()->getCollisionPoint(
-		line, mapSelector, end, triangle))
+		line, mapSelector, end, triangle, hitNode))
 	{
 		// collides with wall
 		core::vector3df out = triangle.getNormal();
@@ -940,6 +944,13 @@ void CDemo::UpdateRakNet(void)
 
 		switch (packet->data[0])
 		{
+		case ID_IP_RECENTLY_CONNECTED:
+			{
+				PushMessage(RakNet::RakString("This IP address recently connected from ") + targetName + RakNet::RakString("."));
+				if (packet->systemAddress==facilitatorSystemAddress)
+					PushMessage("Multiplayer will not work without the NAT punchthrough server!");
+			}
+			break;
 		case ID_INCOMPATIBLE_PROTOCOL_VERSION:
 			{
 				PushMessage(RakNet::RakString("Incompatible protocol version from ") + targetName + RakNet::RakString("."));
@@ -1044,7 +1055,7 @@ void CDemo::UpdateRakNet(void)
 				if (weAreSender)
 				{
 					PushMessage(RakNet::RakString("Punchthrough to ") + targetName + RakNet::RakString(" failed. Using proxy."));
-					udpProxyClient->RequestForwarding(facilitatorSystemAddress, UNASSIGNED_SYSTEM_ADDRESS, packet->systemAddress, 7000);
+					udpProxyClient->RequestForwarding(facilitatorSystemAddress, UNASSIGNED_SYSTEM_ADDRESS, packet->guid, 7000);
 				}
 				else
 				{
@@ -1165,6 +1176,10 @@ void CDemo::OnForwardingNotification(const char *proxyIPAddress, unsigned short 
 void CDemo::OnNoServersOnline(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 {
 	PushMessage(RakNet::RakString("RakNet::RakString(No proxy servers online. Unable to connect to %s.", sourceAddress.ToString(true)));
+}
+void CDemo::OnRecipientNotConnected(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)
+{
+	PushMessage(RakNet::RakString("Failure: Recipient not connected to coordinator.\n"));
 }
 void CDemo::OnAllServersBusy(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 {

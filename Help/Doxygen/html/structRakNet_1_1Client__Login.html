@@ -29,7 +29,13 @@
   </div>
 </div>
 <div class="contents">
-<h1>RakNet::Client_Login Struct Reference</h1><!-- doxytag: class="RakNet::Client_Login" --><!-- doxytag: inherits="RakNet::Lobby2Message" --><code>#include &lt;Lobby2Message.h&gt;</code>
+<h1>RakNet::Client_Login Struct Reference<br>
+<small>
+[<a class="el" href="group__LOBBY__2__COMMANDS.html">Lobby2Commands</a>]</small>
+</h1><!-- doxytag: class="RakNet::Client_Login" --><!-- doxytag: inherits="RakNet::Lobby2Message" -->Logon with a previously registered account.  
+<a href="#_details">More...</a>
+<p>
+<code>#include &lt;Lobby2Message.h&gt;</code>
 <p>
 <div class="dynheader">
 Inheritance diagram for RakNet::Client_Login:</div>
@@ -61,7 +67,21 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Once a client creates an account with <a class="el" href="structRakNet_1_1Client__RegisterAccount.html" title="This creates a new account in the database, which can be used in a subsequent call...">Client_RegisterAccount</a>, the client is able to logon. The login process will check 1. The CDKey associated with this user (See <a class="el" href="structRakNet_1_1CDKey__Use.html" title="Associates a cd key with a user, such that the cd key cannot be used again. If Client_Login()...">CDKey_Use</a>) if checkCDKey is true 2. The userPassword passed to this function 3. The titleName and titleSecretKey, to ensure this title was previously created with <a class="el" href="structRakNet_1_1System__CreateTitle.html" title="Each title essentially corresponds to a game. For example, the same lobby system...">System_CreateTitle</a> 4. If allowLoginWithoutEmailAddressValidation==false for this user (See <a class="el" href="structRakNet_1_1Client__RegisterAccount.html" title="This creates a new account in the database, which can be used in a subsequent call...">Client_RegisterAccount</a>) and <a class="el" href="structRakNet_1_1System__SetEmailAddressValidated.html" title="For the client with the given handle, mark a column emailAddressValidated as true...">System_SetEmailAddressValidated</a> was not called for that email address, fail. 5. If this user was banned with a ban still in effect via <a class="el" href="structRakNet_1_1System__BanUser.html" title="Bans a specific user (will be most likely called by a moderator). Adds the user&#39;s...">System_BanUser</a> If all checks pass, store in a logging table that the user has logged in at this time. No status flag needs be set, this will be done in C++. <dl compact><dt><b>Parameters:</b></dt><dd>
+Logon with a previously registered account. 
+<p>
+Once a client creates an account with <a class="el" href="structRakNet_1_1Client__RegisterAccount.html" title="This creates a new account in the database, which can be used in a subsequent call...">Client_RegisterAccount</a>, the client is able to logon. The login process will check <ol>
+<li>
+The CDKey associated with this user (See <a class="el" href="structRakNet_1_1CDKey__Use.html" title="Associates a cd key with a user, such that the cd key cannot be used again. If Client_Login()...">CDKey_Use</a>) if checkCDKey is true </li>
+<li>
+The userPassword passed to this function </li>
+<li>
+The titleName and titleSecretKey, to ensure this title was previously created with <a class="el" href="structRakNet_1_1System__CreateTitle.html" title="Each title essentially corresponds to a game. For example, the same lobby system...">System_CreateTitle</a> </li>
+<li>
+If allowLoginWithoutEmailAddressValidation==false for this user (See <a class="el" href="structRakNet_1_1Client__RegisterAccount.html" title="This creates a new account in the database, which can be used in a subsequent call...">Client_RegisterAccount</a>) and <a class="el" href="structRakNet_1_1System__SetEmailAddressValidated.html" title="For the client with the given handle, mark a column emailAddressValidated as true...">System_SetEmailAddressValidated</a> was not called for that email address, fail. </li>
+<li>
+If this user was banned with a ban still in effect via <a class="el" href="structRakNet_1_1System__BanUser.html" title="Bans a specific user (will be most likely called by a moderator). Adds the user&#39;s...">System_BanUser</a> </li>
+</ol>
+If all checks pass, store in a logging table that the user has logged in at this time. No status flag needs be set, this will be done in C++. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>userHandle</em>&nbsp;</td><td></td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>userPassword</em>&nbsp;</td><td></td></tr>
@@ -137,7 +157,7 @@ If data members can be validated for correctness in the server's main thread, ov
 <div class="memdoc">
 
 <p>
-Is this message something that should only be run by a system with admin privileges? Set admin privileges with <a class="el" href="classRakNet_1_1Lobby2Server.html#499cbfd420d6a6caecd62a8143a641da">Lobby2Server::AddAdminAddress()</a> 
+Is this message something that should only be run by a system with admin privileges? Set admin privileges with <a class="el" href="classRakNet_1_1Lobby2Server.html#499cbfd420d6a6caecd62a8143a641da" title="If Lobby2Message::RequiresAdmin() returns true, the message can only be processed...">Lobby2Server::AddAdminAddress()</a> 
 <p>Implements <a class="el" href="structRakNet_1_1Lobby2Message.html#79cbb400e4521af2c353fbd640fed0f7">RakNet::Lobby2Message</a>.</p>
 
 </div>
@@ -181,15 +201,15 @@ Does this function require logging into the server before it can be executed? If
 <div class="memdoc">
 
 <p>
-Is this message something that should only be run by a system with ranking upload priviledges? Set ranking privileges with Lobby2Server::AddRankingAddress() 
+Is this message something that should only be run by a system with ranking upload priviledges? Set ranking privileges with <a class="el" href="classRakNet_1_1Lobby2Server.html#16a9ef14b0c08f5c01745908666064d5" title="If Lobby2Message::RequiresRankingPermission() returns true, then the system that...">Lobby2Server::AddRankingAddress()</a> 
 <p>Implements <a class="el" href="structRakNet_1_1Lobby2Message.html#3eab67e30f491cd3410b9d850ffcecea">RakNet::Lobby2Message</a>.</p>
 
 </div>
 </div><p>
 <hr>The documentation for this struct was generated from the following file:<ul>
-<li>C:/RakNet/DependentExtensions/Lobby2/Lobby2Message.h</ul>
+<li>c:/RakNet/DependentExtensions/Lobby2/Lobby2Message.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:48 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:15 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

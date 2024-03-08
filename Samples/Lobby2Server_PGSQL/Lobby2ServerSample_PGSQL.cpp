@@ -36,12 +36,12 @@ void main(void)
 	RakNet::Lobby2MessageFactory_PGSQL messageFactory;
 	lobby2Server.SetMessageFactory(&messageFactory);
 
-//	printf("Enter database password:\n");
+	printf("Enter database password:\n");
 	char connectionString[256],password[128];
 	char username[256];
 	strcpy(username, "postgres");
 	password[0]=0;
-//	gets(password);
+	gets(password);
 	if (password[0]==0) strcpy(password, "aaaa");
 	strcpy(connectionString, "user=");
 	strcat(connectionString, username);

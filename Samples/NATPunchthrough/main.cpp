@@ -37,10 +37,9 @@
 
 static const unsigned short NAT_PUNCHTHROUGH_FACILITATOR_PORT=60481;
 static const char *NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD="";
-static const char *DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP="8.17.250.34";
+static const char *DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP="94.198.81.195";
 //static const char *DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP="192.168.1.4";
 static const char *COORDINATOR_PASSWORD="Dummy Coordinator Password";
-static const unsigned short NAT_PUNCHTHROUGH_CLIENT_PORT=22111;
 
 #ifdef USE_UPNP
 // UPNP can directly tell the router to open a port (if it works)
@@ -99,6 +98,10 @@ struct UDPProxyClientResultHandler_Test : public RakNet::UDPProxyClientResultHan
 	virtual void OnNoServersOnline(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 	{
 		printf("Failure: No servers logged into coordinator.\n");
+	}
+	virtual void OnRecipientNotConnected(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)
+	{
+		printf("Failure: Recipient not connected to coordinator.\n");
 	}
 	virtual void OnAllServersBusy(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 	{
@@ -386,7 +389,7 @@ void VerboseTest()
 
 			if (internalIds.GetIndexOf(rs)==(unsigned int)-1)
 			{	
-				internalIds.Push(rs);
+				internalIds.Push(rs, __FILE__, __LINE__ );
 			}
 		}
 	}
@@ -451,7 +454,7 @@ void VerboseTest()
 		if (str[0]!=0)
 			pc->EXTERNAL_IP_WAIT_AFTER_ALL_ATTEMPTS=atoi(str);
 
-		rakPeer->Startup(NAT_PUNCHTHROUGH_CLIENT_PORT,0,&socketDescriptor, 1);
+		rakPeer->Startup(8,0,&socketDescriptor, 1);
 		rakPeer->SetMaximumIncomingConnections(32);
 		printf("Enter facilitator IP: ");
 		gets(facilitatorIP);
@@ -607,7 +610,7 @@ void VerboseTest()
 				if (mode[0]=='s' || mode[0]=='S')
 				{
 					printf("Attemping proxy connection.\n");
-					udpProxyClient.RequestForwarding(facilitatorSystemAddress, UNASSIGNED_SYSTEM_ADDRESS, p->systemAddress, 7000);
+					udpProxyClient.RequestForwarding(facilitatorSystemAddress, UNASSIGNED_SYSTEM_ADDRESS, p->guid, 7000);
 				}
 				else
 					printf("Waiting for proxy connection.\n");

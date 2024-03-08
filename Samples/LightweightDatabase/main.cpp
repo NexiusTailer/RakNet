@@ -114,8 +114,8 @@ void main(void)
 							table.PrintRow(str, 256, ',', true, cur->data[i]);
 							SystemAddress sysAddr;
 							RakNetGUID guid;			
-							memcpy(&sysAddr, cur->data[i]->cells[table.ColumnIndex(SYSTEM_ID_COLUMN_NAME)]->c, sizeof(SystemAddress));
-							memcpy(&guid, cur->data[i]->cells[table.ColumnIndex(SYSTEM_GUID_COLUMN_NAME)]->c, sizeof(RakNetGUID));
+							memcpy(&sysAddr, cur->data[i]->cells[table.ColumnIndex(SYSTEM_ID_COLUMN_NAME)]->c, SystemAddress::size());
+							memcpy(&guid, cur->data[i]->cells[table.ColumnIndex(SYSTEM_GUID_COLUMN_NAME)]->c, RakNetGUID::size());
 							printf("SystemAddress=%s GUID=%s\n", sysAddr.ToString(true), guid.ToString());
 							printf("RowID %i: %s\n", cur->keys[i], str );
 							

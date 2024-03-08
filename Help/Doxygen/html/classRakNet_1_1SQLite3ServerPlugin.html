@@ -51,9 +51,9 @@ Inheritance diagram for RakNet::SQLite3ServerPlugin:</div>
 <a href="classRakNet_1_1SQLite3ServerPlugin-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1SQLite3ServerPlugin.html#d8da9ae39df4f06df0fc0b78b6170b35">AddDBHandle</a> (<a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> dbIdentifier, sqlite3 *dbHandle)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1SQLite3ServerPlugin.html#dc69bce7cf4b447c687cf34862813c9d">AddDBHandle</a> (<a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> dbIdentifier, sqlite3 *dbHandle, bool dbAutoCreated=false)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1SQLite3ServerPlugin.html#ff16d893b173598b51f029e3c0831246">RemoveDBHandle</a> (<a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> dbIdentifier)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1SQLite3ServerPlugin.html#7855f76295baa69e2d8a6901560ccdf7">RemoveDBHandle</a> (<a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> dbIdentifier, bool alsoCloseConnection=false)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1SQLite3ServerPlugin.html#6d83f6d4f39c1dd3afbd11c3f07f879f">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
@@ -74,12 +74,12 @@ SQLite version 3 supports remote calls via networked file handles, but not over 
  That's all it does - any remote system can execute SQL queries.<br>
  Intended as a starting platform to derive from for more advanced functionality (security over who can query, etc).<br>
  Compatible as a plugin with both <a class="el" href="classRakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a> and PacketizedTCP <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="d8da9ae39df4f06df0fc0b78b6170b35"></a><!-- doxytag: member="RakNet::SQLite3ServerPlugin::AddDBHandle" ref="d8da9ae39df4f06df0fc0b78b6170b35" args="(RakNet::RakString dbIdentifier, sqlite3 *dbHandle)" -->
+<a class="anchor" name="dc69bce7cf4b447c687cf34862813c9d"></a><!-- doxytag: member="RakNet::SQLite3ServerPlugin::AddDBHandle" ref="dc69bce7cf4b447c687cf34862813c9d" args="(RakNet::RakString dbIdentifier, sqlite3 *dbHandle, bool dbAutoCreated=false)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool RakNet::SQLite3ServerPlugin::AddDBHandle           </td>
+          <td class="memname">virtual bool RakNet::SQLite3ServerPlugin::AddDBHandle           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a>&nbsp;</td>
           <td class="paramname"> <em>dbIdentifier</em>, </td>
@@ -88,12 +88,18 @@ SQLite version 3 supports remote calls via networked file handles, but not over 
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">sqlite3 *&nbsp;</td>
-          <td class="paramname"> <em>dbHandle</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>dbHandle</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>dbAutoCreated</em> = <code>false</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td></td><td></td>
+          <td></td><td></td><td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -186,7 +192,7 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 
 </div>
 </div><p>
-<a class="anchor" name="ff16d893b173598b51f029e3c0831246"></a><!-- doxytag: member="RakNet::SQLite3ServerPlugin::RemoveDBHandle" ref="ff16d893b173598b51f029e3c0831246" args="(RakNet::RakString dbIdentifier)" -->
+<a class="anchor" name="7855f76295baa69e2d8a6901560ccdf7"></a><!-- doxytag: member="RakNet::SQLite3ServerPlugin::RemoveDBHandle" ref="7855f76295baa69e2d8a6901560ccdf7" args="(RakNet::RakString dbIdentifier, bool alsoCloseConnection=false)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -194,9 +200,18 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
           <td class="memname">void RakNet::SQLite3ServerPlugin::RemoveDBHandle           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a>&nbsp;</td>
-          <td class="paramname"> <em>dbIdentifier</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
+          <td class="paramname"> <em>dbIdentifier</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>alsoCloseConnection</em> = <code>false</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
         </tr>
       </table>
 </div>
@@ -207,9 +222,9 @@ Stop using a dbHandle, lookup either by identifier or by pointer. If SQLite3_STA
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>C:/RakNet/DependentExtensions/SQLite3Plugin/<a class="el" href="SQLite3ServerPlugin_8h.html">SQLite3ServerPlugin.h</a></ul>
+<li>c:/RakNet/DependentExtensions/SQLite3Plugin/<a class="el" href="SQLite3ServerPlugin_8h.html">SQLite3ServerPlugin.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:50 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:16 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

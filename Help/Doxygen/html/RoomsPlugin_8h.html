@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-<title>RakNet: C:/RakNet/DependentExtensions/Lobby2/Rooms/RoomsPlugin.h File Reference</title>
+<title>RakNet: c:/RakNet/DependentExtensions/Lobby2/Rooms/RoomsPlugin.h File Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -23,7 +23,7 @@
       <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><a class="el" href="dir_e6bb53534ac0e427887cf7a94c0c004e.html">C:</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_f7cd53cc22f5210495ddab2873e60145.html">RakNet</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_b8d4783466f0516760defe063c11161e.html">DependentExtensions</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_02bbd86d82f975d2ec4ce1946fd9cf75.html">Lobby2</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_941e33c7814445e839cdc81a8795361f.html">Rooms</a>
+  <div class="navpath"><a class="el" href="dir_1d1a3fa7d4e4df4d0ec39c23fa37d84f.html">c:</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_01fc5a143a0bfcc861f5e14454f5d632.html">RakNet</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_7ccf8d604d36bf785eec81c798412af3.html">DependentExtensions</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_e414ca8898a3c9799ee4e8d9be969b8d.html">Lobby2</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_da44bbe271ef75bc487df5ff9d557662.html">Rooms</a>
   </div>
 </div>
 <div class="contents">
@@ -46,12 +46,16 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Base class for rooms functionality.  <a href="structRakNet_1_1RoomsPluginFunc.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1CreateRoom__Func.html">RakNet::CreateRoom_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a room. Each user can be in at most one room, so will fail if the user is already in a room.  <a href="structRakNet_1_1CreateRoom__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1EnterRoom__Func.html">RakNet::EnterRoom_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Joins a room if possible. If not, creates a room.  <a href="structRakNet_1_1EnterRoom__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1JoinByFilter__Func.html">RakNet::JoinByFilter_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Joins a room given the filter parameters and desired room member mode.  <a href="structRakNet_1_1JoinByFilter__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1LeaveRoom__Func.html">RakNet::LeaveRoom_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Leaves a room. You can leave at any time, even if the room is locked.  <a href="structRakNet_1_1LeaveRoom__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1GetInvitesToParticipant__Func.html">RakNet::GetInvitesToParticipant_Func</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SendInvite__Func.html">RakNet::SendInvite_Func</a></td></tr>
@@ -68,17 +72,22 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Stop spectating. This will rejoin the room as a player, using a reserved slot if we were invited, and a public slot if not or if there are no reserved slots.  <a href="structRakNet_1_1StopSpectating__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1GrantModerator__Func.html">RakNet::GrantModerator_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Give moderator to another player. Moderators cannot be spectators.  <a href="structRakNet_1_1GrantModerator__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1ChangeSlotCounts__Func.html">RakNet::ChangeSlotCounts_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Change the allowed slot counts for the room. Setting fewer slot counts than the number of players does not kick out players, though it may prevent changing spectator status.  <a href="structRakNet_1_1ChangeSlotCounts__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SetCustomRoomProperties__Func.html">RakNet::SetCustomRoomProperties_Func</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets a table of user-defined room properties.  <a href="structRakNet_1_1SetCustomRoomProperties__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1GetRoomProperties__Func.html">RakNet::GetRoomProperties_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Given a named room, return the properties of that room, including member list.  <a href="structRakNet_1_1GetRoomProperties__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1ChangeRoomName__Func.html">RakNet::ChangeRoomName_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Change the name of the room.  <a href="structRakNet_1_1ChangeRoomName__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SetHiddenFromSearches__Func.html">RakNet::SetHiddenFromSearches_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set or unset the room hidden from searches. If a room is hidden from searches, it can only be joined through invitations.  <a href="structRakNet_1_1SetHiddenFromSearches__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SetDestroyOnModeratorLeave__Func.html">RakNet::SetDestroyOnModeratorLeave_Func</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets or unsets to destroy the room when the moderator leaves the room.  <a href="structRakNet_1_1SetDestroyOnModeratorLeave__Func.html#_details">More...</a><br></td></tr>
@@ -87,79 +96,109 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets or unsets the user as flagged 'ready'.  <a href="structRakNet_1_1SetReadyStatus__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1GetReadyStatus__Func.html">RakNet::GetReadyStatus_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the ready states for every user in the room, excluding spectators.  <a href="structRakNet_1_1GetReadyStatus__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SetRoomLockState__Func.html">RakNet::SetRoomLockState_Func</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Lock or unlock the room.  <a href="structRakNet_1_1SetRoomLockState__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1GetRoomLockState__Func.html">RakNet::GetRoomLockState_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the lock state of the room.  <a href="structRakNet_1_1GetRoomLockState__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1AreAllMembersReady__Func.html">RakNet::AreAllMembersReady_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">If all members have been set to ready using <a class="el" href="structRakNet_1_1SetReadyStatus__Func.html" title="Sets or unsets the user as flagged &#39;ready&#39;.">SetReadyStatus_Func</a>, this operation will set allReady to true.  <a href="structRakNet_1_1AreAllMembersReady__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1KickMember__Func.html">RakNet::KickMember_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Kick a member out of the room. This will also automatically ban that member from rejoining as long as the moderator does not change, or the member is unbanned.  <a href="structRakNet_1_1KickMember__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1UnbanMember__Func.html">RakNet::UnbanMember_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Allow a member previously kicked out of the room to rejoin.  <a href="structRakNet_1_1UnbanMember__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1GetBanReason__Func.html">RakNet::GetBanReason_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">For a given room, get the <em>reason</em> parameter of <a class="el" href="structRakNet_1_1KickMember__Func.html" title="Kick a member out of the room. This will also automatically ban that member from...">KickMember_Func</a> when we were kicked out.  <a href="structRakNet_1_1GetBanReason__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1AddUserToQuickJoin__Func.html">RakNet::AddUserToQuickJoin_Func</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Enter quick join mode.  <a href="structRakNet_1_1AddUserToQuickJoin__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RemoveUserFromQuickJoin__Func.html">RakNet::RemoveUserFromQuickJoin_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Leave quick join mode.  <a href="structRakNet_1_1RemoveUserFromQuickJoin__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1IsInQuickJoin__Func.html">RakNet::IsInQuickJoin_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns if you are waiting in quick join mode.  <a href="structRakNet_1_1IsInQuickJoin__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SearchByFilter__Func.html">RakNet::SearchByFilter_Func</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return all rooms that pass the <em>roomQuery</em> filter.  <a href="structRakNet_1_1SearchByFilter__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1ChangeHandle__Func.html">RakNet::ChangeHandle_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Change your handle.  <a href="structRakNet_1_1ChangeHandle__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Chat__Func.html">RakNet::Chat_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Send a chat message.  <a href="structRakNet_1_1Chat__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Bitstream__Func.html">RakNet::Bitstream_Func</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Send an arbitrary binary message.  <a href="structRakNet_1_1Bitstream__Func.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomsPluginNotification.html">RakNet::RoomsPluginNotification</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Base class for notification callbacks.  <a href="structRakNet_1_1RoomsPluginNotification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1QuickJoinExpired__Notification.html">RakNet::QuickJoinExpired_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The quick join duration has expired without joining or creating any rooms.  <a href="structRakNet_1_1QuickJoinExpired__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1QuickJoinEnteredRoom__Notification.html">RakNet::QuickJoinEnteredRoom_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Quick join succeeded, and you are now in a room.  <a href="structRakNet_1_1QuickJoinEnteredRoom__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomMemberStartedSpectating__Notification.html">RakNet::RoomMemberStartedSpectating_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Another room member has started spectating.  <a href="structRakNet_1_1RoomMemberStartedSpectating__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomMemberStoppedSpectating__Notification.html">RakNet::RoomMemberStoppedSpectating_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Another room member has stopped spectating.  <a href="structRakNet_1_1RoomMemberStoppedSpectating__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1ModeratorChanged__Notification.html">RakNet::ModeratorChanged_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The room has a new moderator (possibly you).  <a href="structRakNet_1_1ModeratorChanged__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SlotCountsSet__Notification.html">RakNet::SlotCountsSet_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The slot counts in the room has changed.  <a href="structRakNet_1_1SlotCountsSet__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1CustomRoomPropertiesSet__Notification.html">RakNet::CustomRoomPropertiesSet_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The custom properties for the room has changed.  <a href="structRakNet_1_1CustomRoomPropertiesSet__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomNameSet__Notification.html">RakNet::RoomNameSet_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The name of the room has been changed.  <a href="structRakNet_1_1RoomNameSet__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1HiddenFromSearchesSet__Notification.html">RakNet::HiddenFromSearchesSet_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The room is now hidden, or no longer hidden, from searches.  <a href="structRakNet_1_1HiddenFromSearchesSet__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomMemberReadyStatusSet__Notification.html">RakNet::RoomMemberReadyStatusSet_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Another room member has changed their ready status.  <a href="structRakNet_1_1RoomMemberReadyStatusSet__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomLockStateSet__Notification.html">RakNet::RoomLockStateSet_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The room is now, or is no longer, locked.  <a href="structRakNet_1_1RoomLockStateSet__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomMemberKicked__Notification.html">RakNet::RoomMemberKicked_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A room member has been kicked out of the room (possibly you).  <a href="structRakNet_1_1RoomMemberKicked__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomMemberHandleSet__Notification.html">RakNet::RoomMemberHandleSet_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A room member has changed their handle.  <a href="structRakNet_1_1RoomMemberHandleSet__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomMemberLeftRoom__Notification.html">RakNet::RoomMemberLeftRoom_Notification</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomMemberJoinedRoom__Notification.html">RakNet::RoomMemberJoinedRoom_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A room member has joined the room.  <a href="structRakNet_1_1RoomMemberJoinedRoom__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomInvitationSent__Notification.html">RakNet::RoomInvitationSent_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">You have received an invitation to a room.  <a href="structRakNet_1_1RoomInvitationSent__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomInvitationWithdrawn__Notification.html">RakNet::RoomInvitationWithdrawn_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A previous room invitation is no longer valid (possibly due to moderator change, or the room no longer exists).  <a href="structRakNet_1_1RoomInvitationWithdrawn__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RoomDestroyedOnModeratorLeft__Notification.html">RakNet::RoomDestroyedOnModeratorLeft_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The moderator has left the room, and everyone left is a spectator, or the room was set to be destroyed when the moderator left<p>
+You are no longer in the room.  <a href="structRakNet_1_1RoomDestroyedOnModeratorLeft__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Chat__Notification.html">RakNet::Chat_Notification</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">You got a chat message from another user.  <a href="structRakNet_1_1Chat__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Bitstream__Notification.html">RakNet::Bitstream_Notification</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">You got a generic bitstream message from another user.  <a href="structRakNet_1_1Bitstream__Notification.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Used to create rooms for players where they can matchmake.  <a href="classRakNet_1_1RoomsPlugin.html#_details">More...</a><br></td></tr>
@@ -175,7 +214,7 @@ Adds networking to AllGamesRoomsContainer. Lets you create, join, search, and de
 <p>
 This file is part of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> Copyright 2003 Jenkins Software LLC<p>
 Usage of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> is subject to the appropriate license agreement. </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:44 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:11 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

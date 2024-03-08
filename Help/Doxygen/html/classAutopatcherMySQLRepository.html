@@ -61,7 +61,7 @@ Inheritance diagram for AutopatcherMySQLRepository:</div>
 virtual const char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAutopatcherMySQLRepository.html#f8fd992ee313d2f29add6bf56a52d41c">GetLastError</a> (void) const </td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">If any of the above functions fail, the error string is stored internally. Call this to get it. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAutopatcherMySQLRepository.html#9f5b72afbb886bfaf3085b921e77a8cf">GetFilePart</a> (char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAutopatcherMySQLRepository.html#321254df8f51bda101db85adca7b2277">GetFilePart</a> (const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -203,14 +203,14 @@ Get list of files added and deleted since a certain date. This is used by <a cla
 
 </div>
 </div><p>
-<a class="anchor" name="9f5b72afbb886bfaf3085b921e77a8cf"></a><!-- doxytag: member="AutopatcherMySQLRepository::GetFilePart" ref="9f5b72afbb886bfaf3085b921e77a8cf" args="(char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)" -->
+<a class="anchor" name="321254df8f51bda101db85adca7b2277"></a><!-- doxytag: member="AutopatcherMySQLRepository::GetFilePart" ref="321254df8f51bda101db85adca7b2277" args="(const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">virtual unsigned int AutopatcherMySQLRepository::GetFilePart           </td>
           <td>(</td>
-          <td class="paramtype">char *&nbsp;</td>
+          <td class="paramtype">const char *&nbsp;</td>
           <td class="paramname"> <em>filename</em>, </td>
         </tr>
         <tr>
@@ -388,9 +388,9 @@ Update all the files for an application to match what is at the specified direct
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>C:/RakNet/DependentExtensions/Autopatcher/AutopatcherMySQLRepository/<a class="el" href="AutopatcherMySQLRepository_8h.html">AutopatcherMySQLRepository.h</a></ul>
+<li>c:/RakNet/DependentExtensions/Autopatcher/AutopatcherMySQLRepository/<a class="el" href="AutopatcherMySQLRepository_8h.html">AutopatcherMySQLRepository.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:45 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:12 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

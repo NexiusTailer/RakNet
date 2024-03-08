@@ -42,7 +42,10 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Got a file.  <a href="#7f45070c1ee93bc95f28dd2e475944c9"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransferCBInterface.html#ab0042a6c20b765eb554160665ccce4a">OnFileProgress</a> (OnFileStruct *onFileStruct, unsigned int partCount, unsigned int partTotal, unsigned int dataChunkLength, char *firstDataChunk)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Got part of a <a class="el" href="namespacebig.html">big</a> file.  <a href="#ab0042a6c20b765eb554160665ccce4a"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Got part of a <a class="el" href="namespacebig.html">big</a> file internally in <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> (we cannot access it).  <a href="#ab0042a6c20b765eb554160665ccce4a"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransferCBInterface.html#bca7a5995b10e1335f267792dafe2fa6">OnReferencePush</a> (OnFileStruct *onFileStruct, unsigned int partCount, unsigned int partTotal, unsigned int dataChunkLength, char *firstDataChunk)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Got part of a <a class="el" href="namespacebig.html">big</a> file, written to the data block in the plugin (we can access it).  <a href="#bca7a5995b10e1335f267792dafe2fa6"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransferCBInterface.html#35fc481a05fbdfbbe2e07132f4a07dcc">Update</a> (void)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called while the handler is active by <a class="el" href="classFileListTransfer.html" title="A plugin to provide a simple way to compress and incrementally send the files in...">FileListTransfer</a>.  <a href="#35fc481a05fbdfbbe2e07132f4a07dcc"></a><br></td></tr>
@@ -169,7 +172,7 @@ This structure is only valid for the duration of this function call. <dl class="
 <div class="memdoc">
 
 <p>
-Got part of a <a class="el" href="namespacebig.html">big</a> file. 
+Got part of a <a class="el" href="namespacebig.html">big</a> file internally in <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> (we cannot access it). 
 <p>
 You can get these notifications by calling <a class="el" href="classRakPeer.html#c1cb3f6aeaa842c721bbe4a3d74c3d5d">RakPeer::SetSplitMessageProgressInterval</a> Otherwise you will only get complete files. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -181,6 +184,55 @@ You can get these notifications by calling <a class="el" href="classRakPeer.html
   </table>
 </dl>
 
+</div>
+</div><p>
+<a class="anchor" name="bca7a5995b10e1335f267792dafe2fa6"></a><!-- doxytag: member="FileListTransferCBInterface::OnReferencePush" ref="bca7a5995b10e1335f267792dafe2fa6" args="(OnFileStruct *onFileStruct, unsigned int partCount, unsigned int partTotal, unsigned int dataChunkLength, char *firstDataChunk)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void FileListTransferCBInterface::OnReferencePush           </td>
+          <td>(</td>
+          <td class="paramtype">OnFileStruct *&nbsp;</td>
+          <td class="paramname"> <em>onFileStruct</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&nbsp;</td>
+          <td class="paramname"> <em>partCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&nbsp;</td>
+          <td class="paramname"> <em>partTotal</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&nbsp;</td>
+          <td class="paramname"> <em>dataChunkLength</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&nbsp;</td>
+          <td class="paramname"> <em>firstDataChunk</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Got part of a <a class="el" href="namespacebig.html">big</a> file, written to the data block in the plugin (we can access it). 
+<p>
+Only used for incremental sends. partCount and partTotal are based on how many blocks the file was split into for incremental reads Also only used for UDP. TCP returns the same information, but to OnFileProgress 
 </div>
 </div><p>
 <a class="anchor" name="35fc481a05fbdfbbe2e07132f4a07dcc"></a><!-- doxytag: member="FileListTransferCBInterface::Update" ref="35fc481a05fbdfbbe2e07132f4a07dcc" args="(void)" -->
@@ -206,9 +258,9 @@ Return false when you are done with the class. At that point OnDereference will 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>C:/RakNet/Source/<a class="el" href="FileListTransferCBInterface_8h.html">FileListTransferCBInterface.h</a></ul>
+<li>c:/RakNet/Source/<a class="el" href="FileListTransferCBInterface_8h.html">FileListTransferCBInterface.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:45 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:12 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

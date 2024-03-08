@@ -11,7 +11,7 @@
 
 #include "GetTime.h"
 #if defined(_XBOX) || defined(X360)
-#include "XBOX360Includes.h"
+                            
 #endif
 #if defined(_WIN32)
 DWORD mProcMask;
@@ -19,12 +19,7 @@ DWORD mSysMask;
 HANDLE mThread;
 static LARGE_INTEGER yo;
 #elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-#include "PS3Includes.h"
-#include <sys/sys_time.h> // GetTime.cpp
-#include <stdint.h> // GetTime.cpp
-#include <sys/time_util.h> // GetTime.cpp
-uint64_t ticksPerSecond;
-uint64_t initialTime;
+                                                                                                                                                                                                  
 #else
 #include <sys/time.h>
 #include <unistd.h>
@@ -42,18 +37,7 @@ RakNetTime RakNet::GetTime( void )
 RakNetTimeUS RakNet::GetTimeNS( void )
 {
 #if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-	uint64_t curTime;
-	if ( initialized == false)
-	{
-		ticksPerSecond = _PS3_GetTicksPerSecond();
-		// Use the function to get elapsed ticks, this is a macro.
-		_PS3_GetElapsedTicks(curTime);
-		uint64_t quotient, remainder;
-		quotient=(curTime / ticksPerSecond);
-		remainder=(curTime % ticksPerSecond);
-		initialTime = (RakNetTimeUS) quotient*(RakNetTimeUS)1000000 + (remainder*(RakNetTimeUS)1000000 / ticksPerSecond);
-		initialized = true;
-	}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 #elif defined(_WIN32)
 	// Win32
 	if ( initialized == false)
@@ -104,14 +88,7 @@ RakNetTimeUS RakNet::GetTimeNS( void )
 #endif
 
 #if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-	// Use the function to get elapsed ticks, this is a macro.
-	_PS3_GetElapsedTicks(curTime);
-	uint64_t quotient, remainder;
-	quotient=(curTime / ticksPerSecond);
-	remainder=(curTime % ticksPerSecond);
-	curTime = (RakNetTimeUS) quotient*(RakNetTimeUS)1000000 + (remainder*(RakNetTimeUS)1000000 / ticksPerSecond);
-	// Subtract from initialTime so the millisecond conversion does not underflow
-	return curTime - initialTime;
+                                                                                                                                                                                                                                                                                                                                                                                                                                           
 #elif defined(_WIN32)
 
 	RakNetTimeUS curTime;
@@ -122,7 +99,8 @@ RakNetTimeUS RakNet::GetTimeNS( void )
 
 #if !defined(_WIN32_WCE) && !defined(_XBOX) && !defined(X360)
 	// Set affinity to the first core
-	SetThreadAffinityMask(mThread, 1);
+	// 8/9/09 This freaking destroys performance, 90% of the time in this function is due to SetThreadAffinityMask().
+	//SetThreadAffinityMask(mThread, 1);
 #endif // !defined(_WIN32_WCE)
 
 	// Docs: On a multiprocessor computer, it should not matter which processor is called.
@@ -132,7 +110,8 @@ RakNetTimeUS RakNet::GetTimeNS( void )
 
 #if !defined(_WIN32_WCE) && !defined(_XBOX) && !defined(X360)
 	// Reset affinity
-	SetThreadAffinityMask(mThread, mProcMask);
+	// 8/9/09 This freaking destroys performance, 90% of the time in this function is due to SetThreadAffinityMask().
+//	SetThreadAffinityMask(mThread, mProcMask);
 #endif // !defined(_WIN32_WCE)
 
 	__int64 quotient, remainder;

@@ -257,7 +257,7 @@ void NatPunchthroughServer::OnClosedConnection(SystemAddress systemAddress, RakN
 			if (connectionAttempt->attemptPhase==ConnectionAttempt::NAT_ATTEMPT_PHASE_GETTING_RECENT_PORTS)
 			{
 				otherUser->isReady=true;
-				freedUpInProgressUsers.Insert(otherUser);
+				freedUpInProgressUsers.Insert(otherUser, __FILE__, __LINE__ );
 			}
 
 			otherUser->DeleteConnectionAttempt(connectionAttempt);
@@ -283,7 +283,7 @@ void NatPunchthroughServer::OnNewConnection(SystemAddress systemAddress, RakNetG
 	user->mostRecentPort=0;
 	user->systemAddress=systemAddress;
 	user->isReady=true;
-	users.Insert(rakNetGUID, user, true);
+	users.Insert(rakNetGUID, user, true, __FILE__,__LINE__);
 }
 void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
 {
@@ -320,8 +320,8 @@ void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
 		return;
 	}
 
-	ca->sender->connectionAttempts.Insert(ca);
-	ca->recipient->connectionAttempts.Insert(ca);
+	ca->sender->connectionAttempts.Insert(ca, __FILE__, __LINE__ );
+	ca->recipient->connectionAttempts.Insert(ca, __FILE__, __LINE__ );
 
 	StartPunchthroughForUser(ca->sender);
 }

@@ -304,6 +304,9 @@ struct SerializeParameters
 	/// Write to any or all of the NUM_OUTPUT_BITSTREAM_CHANNELS channels available. Channels can hold independent data
 	RakNet::BitStream outputBitstream[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS];
 
+	/// Last bitstream we sent for this replica to this system.
+	/// Read, but DO NOT MODIFY
+	RakNet::BitStream* lastSentBitstream[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS];
 
 	/// Set to non-zero to transmit a timestamp with this message.
 	/// Defaults to 0
@@ -457,6 +460,8 @@ public:
 
 	// Internal - does the other system have this connection too? Validated means we can now use it
 	bool isValidated;
+	// Internal - Used to see if we should send download started
+	bool isFirstConstruction;
 
 protected:
 
@@ -745,6 +750,10 @@ public:
 	/// \param[in/out] serializeParameters Parameters controlling the serialization, including destination bitstream to write to
 	/// \return Whether to serialize, and if so, how to optimize the results
 	virtual RM3SerializationResult Serialize(RakNet::SerializeParameters *serializeParameters)=0;
+
+	/// \brief Called when the class is actually transmitted via Serialize()
+	/// \details Use to track how much bandwidth this class it taking
+	virtual void OnSerializeTransmission(RakNet::BitStream *bitStream, SystemAddress systemAddress) {(void) bitStream; (void) systemAddress; }
 
 	/// \brief Read what was written in Serialize()
 	/// \details Reads the contents of the class from SerializationParamters::serializationBitstream.<BR>

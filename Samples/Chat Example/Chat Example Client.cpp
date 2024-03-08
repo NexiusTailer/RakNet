@@ -11,6 +11,7 @@
 #include "RakNetStatistics.h"
 #include "RakNetTypes.h"
 #include "BitStream.h"
+#include "PacketLogger.h"
 #include <assert.h>
 #include <cstdio>
 #include <cstring>
@@ -32,6 +33,8 @@ int main(void)
 	// Note we can easily have both in the same program
 	RakPeerInterface *client=RakNetworkFactory::GetRakPeerInterface();
 //	client->InitializeSecurity(0,0,0,0);
+	//PacketLogger packetLogger;
+	//client->AttachPlugin(&packetLogger);
 	
 	// Holds packets
 	Packet* p;
@@ -78,7 +81,7 @@ int main(void)
 	// Connecting the client is very simple.  0 means we don't care about
 	// a connectionValidationInteger, and false for low priority threads
 	SocketDescriptor socketDescriptor(atoi(clientPort),0);
-	client->Startup(1,30,&socketDescriptor, 1);
+	client->Startup(8,30,&socketDescriptor, 1);
 	client->SetOccasionalPing(true);
 	bool b = client->Connect(ip, atoi(serverPort), "Rumpelstiltskin", (int) strlen("Rumpelstiltskin"));	
 
@@ -133,13 +136,21 @@ int main(void)
 
 			if (strcmp(message, "disconnect")==0)
 			{
-				client->CloseConnection(client->GetSystemAddressFromIndex(0),true,0);
+				printf("Enter index to disconnect: ");
+				char str[32];
+				gets(str);
+				if (str[0]==0)
+					strcpy(str,"0");
+				int index = atoi(str);
+				client->CloseConnection(client->GetSystemAddressFromIndex(index),true);
 				printf("Disconnecting.\n");
 				continue;
 			}
 
 			if (strcmp(message, "connect")==0)
 			{
+				printf("Enter server port: ");
+				gets(serverPort);
 				bool b = client->Connect(ip, atoi(serverPort), "Rumpelstiltskin", (int) strlen("Rumpelstiltskin"));	
 
 				if (b)
@@ -160,6 +171,14 @@ int main(void)
 				continue;
 			}
 
+			if (strcmp(message, "getlastping")==0)
+			{
+				if (client->GetSystemAddressFromIndex(0)!=UNASSIGNED_SYSTEM_ADDRESS)
+					printf("Last ping is %i\n", client->GetLastPing(client->GetSystemAddressFromIndex(0)));
+
+				continue;
+			}
+
 			// message is the data to send
 			// strlen(message)+1 is to send the null terminator
 			// HIGH_PRIORITY doesn't actually matter here because we don't use any other priority
@@ -169,28 +188,27 @@ int main(void)
 
 		// Get a packet from either the server or the client
 
-		p = client->Receive();
-
-	
-		if (p==0)
-			continue; // Didn't get any packets
-
-		// We got a packet, get the identifier with our handy function
-		packetIdentifier = GetPacketIdentifier(p);
-
-		// Check if this is a network message packet
-		switch (packetIdentifier)
+		for (p=client->Receive(); p; client->DeallocatePacket(p), p=client->Receive())
 		{
+			// We got a packet, get the identifier with our handy function
+			packetIdentifier = GetPacketIdentifier(p);
+
+			// Check if this is a network message packet
+			switch (packetIdentifier)
+			{
 			case ID_DISCONNECTION_NOTIFICATION:
-				  // Connection lost normally
+				// Connection lost normally
 				printf("ID_DISCONNECTION_NOTIFICATION\n");
 				break;
 			case ID_ALREADY_CONNECTED:
 				// Connection lost normally
 				printf("ID_ALREADY_CONNECTED\n");
 				break;
+			case ID_INCOMPATIBLE_PROTOCOL_VERSION:
+				printf("ID_INCOMPATIBLE_PROTOCOL_VERSION\n");
+				break;
 			case ID_REMOTE_DISCONNECTION_NOTIFICATION: // Server telling the clients of another client disconnecting gracefully.  You can manually broadcast this in a peer to peer enviroment if you want.
-				printf("ID_REMOTE_DISCONNECTION_NOTIFICATION\n");
+				printf("ID_REMOTE_DISCONNECTION_NOTIFICATION\n"); 
 				break;
 			case ID_REMOTE_CONNECTION_LOST: // Server telling the clients of another client disconnecting forcefully.  You can manually broadcast this in a peer to peer enviroment if you want.
 				printf("ID_REMOTE_CONNECTION_LOST\n");
@@ -205,7 +223,7 @@ int main(void)
 				printf("Connection attempt failed\n");
 				break;
 			case ID_NO_FREE_INCOMING_CONNECTIONS:
-				 // Sorry, the server is full.  I don't do anything here but
+				// Sorry, the server is full.  I don't do anything here but
 				// A real app should tell the user
 				printf("ID_NO_FREE_INCOMING_CONNECTIONS\n");
 				break;
@@ -226,17 +244,15 @@ int main(void)
 
 			case ID_CONNECTION_REQUEST_ACCEPTED:
 				// This tells the client they have connected
-				printf("ID_CONNECTION_REQUEST_ACCEPTED to %s with GUID %s\n", p->systemAddress.ToString(), p->guid.ToString());
+				printf("ID_CONNECTION_REQUEST_ACCEPTED to %s with GUID %s\n", p->systemAddress.ToString(true), p->guid.ToString());
+				printf("My external address is %s\n", client->GetExternalID(p->systemAddress).ToString(true));
 				break;
 			default:
-					// It's a client, so just show the message
-					printf("%s\n", p->data);
+				// It's a client, so just show the message
+				printf("%s\n", p->data);
 				break;
+			}
 		}
-
-
-		// We're done with the packet
-		client->DeallocatePacket(p);
 	}
 
 	// Be nice and let the server know we quit.

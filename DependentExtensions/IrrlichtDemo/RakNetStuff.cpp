@@ -435,7 +435,12 @@ void BallReplica::Update(RakNetTime curTime)
 	// Keep at the same position as the visible effect
 	// Deterministic, so no need to actually transmit position
 	// The variable position is the origin that the ball was created at. For the player, it is their actual position
-	RakNetTime elapsedTime = curTime - creationTime;
+	RakNetTime elapsedTime;
+	// Due to ping variances and timestamp miscalculations, it's possible with very low pings to get a slightly negative time, so we have to check
+	if (curTime>=creationTime)
+		elapsedTime = curTime - creationTime;
+	else
+		elapsedTime=0;
 	irr::core::vector3df updatedPosition = position + shotDirection * (float) elapsedTime * SHOT_SPEED;
 
 	// See if the bullet hit us

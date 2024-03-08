@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-<title>RakNet: C:/RakNet/Source/InternalPacket.h File Reference</title>
+<title>RakNet: c:/RakNet/Source/InternalPacket.h File Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -23,7 +23,7 @@
       <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><a class="el" href="dir_e6bb53534ac0e427887cf7a94c0c004e.html">C:</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_f7cd53cc22f5210495ddab2873e60145.html">RakNet</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_73a846603f1b67861e75b95bbd31ba61.html">Source</a>
+  <div class="navpath"><a class="el" href="dir_1d1a3fa7d4e4df4d0ec39c23fa37d84f.html">c:</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_01fc5a143a0bfcc861f5e14454f5d632.html">RakNet</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_95337b1b57d57cb69fa9a3cbd95f5bc9.html">Source</a>
   </div>
 </div>
 <div class="contents">
@@ -33,15 +33,20 @@
 <code>#include &quot;<a class="el" href="PacketPriority_8h.html">PacketPriority.h</a>&quot;</code><br>
 <code>#include &quot;<a class="el" href="RakNetTypes_8h.html">RakNetTypes.h</a>&quot;</code><br>
 <code>#include &quot;<a class="el" href="RakMemoryOverride_8h.html">RakMemoryOverride.h</a>&quot;</code><br>
+<code>#include &quot;RakNetDefines.h&quot;</code><br>
+<code>#include &quot;CCRakNetUDT.h&quot;</code><br>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Classes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structInternalPacketRefCountedData.html">InternalPacketRefCountedData</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Used in <a class="el" href="structInternalPacket.html">InternalPacket</a> when pointing to sharedDataBlock, rather than allocating itself.  <a href="structInternalPacketRefCountedData.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structInternalPacket.html">InternalPacket</a></td></tr>
 
 <tr><td colspan="2"><br><h2>Typedefs</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="InternalPacket_8h.html#e6e949657cf29274407b91a351deedb1">MessageNumberType</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef uint24_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="InternalPacket_8h.html#7bee53364aff03583e7d6bb2a6df7bc3">MessageNumberType</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef <a class="el" href="InternalPacket_8h.html#e6e949657cf29274407b91a351deedb1">MessageNumberType</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="InternalPacket_8h.html#1e417e7b38f7c117696dd9dad2dd8f20">OrderingIndexType</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef <a class="el" href="InternalPacket_8h.html#7bee53364aff03583e7d6bb2a6df7bc3">MessageNumberType</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="InternalPacket_8h.html#1e417e7b38f7c117696dd9dad2dd8f20">OrderingIndexType</a></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -49,19 +54,19 @@
 <p>
 This file is part of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> Copyright 2003 Jenkins Software LLC<p>
 Usage of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> is subject to the appropriate license agreement. Creative Commons Licensees are subject to the license found at <a href="http://creativecommons.org/licenses/by-nc/2.5/">http://creativecommons.org/licenses/by-nc/2.5/</a> Single application licensees are subject to the license found at <a href="http://www.jenkinssoftware.com/SingleApplicationLicense.html">http://www.jenkinssoftware.com/SingleApplicationLicense.html</a> Custom license users are subject to the terms therein. GPL license users are subject to the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version. <hr><h2>Typedef Documentation</h2>
-<a class="anchor" name="e6e949657cf29274407b91a351deedb1"></a><!-- doxytag: member="InternalPacket.h::MessageNumberType" ref="e6e949657cf29274407b91a351deedb1" args="" -->
+<a class="anchor" name="7bee53364aff03583e7d6bb2a6df7bc3"></a><!-- doxytag: member="InternalPacket.h::MessageNumberType" ref="7bee53364aff03583e7d6bb2a6df7bc3" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef unsigned int <a class="el" href="InternalPacket_8h.html#e6e949657cf29274407b91a351deedb1">MessageNumberType</a>          </td>
+          <td class="memname">typedef uint24_t <a class="el" href="InternalPacket_8h.html#7bee53364aff03583e7d6bb2a6df7bc3">MessageNumberType</a>          </td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-This is the counter used for holding packet numbers, so we can detect duplicate packets. It should be large enough that if the variables were to wrap, the newly wrapped values would no longer be in use. Warning: Too large of a value wastes bandwidth! Use the smallest possible value, such that you send no more than rangeof(MessageNumberType) / GetTimeoutTime() packets per second For the default value of 10 seconds, this is unsigned char - 25.5 packets per second unsigned short - 6553.5 packets per second unsigned int - You'll run out of memory first. 
+This is the counter used for holding packet numbers, so we can detect duplicate packets. It should be large enough that if the variables Internally assumed to be 4 bytes, but written as 3 bytes in ReliabilityLayer::WriteToBitStreamFromInternalPacket 
 </div>
 </div><p>
 <a class="anchor" name="1e417e7b38f7c117696dd9dad2dd8f20"></a><!-- doxytag: member="InternalPacket.h::OrderingIndexType" ref="1e417e7b38f7c117696dd9dad2dd8f20" args="" -->
@@ -69,7 +74,7 @@ This is the counter used for holding packet numbers, so we can detect duplicate 
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="InternalPacket_8h.html#e6e949657cf29274407b91a351deedb1">MessageNumberType</a> <a class="el" href="InternalPacket_8h.html#1e417e7b38f7c117696dd9dad2dd8f20">OrderingIndexType</a>          </td>
+          <td class="memname">typedef <a class="el" href="InternalPacket_8h.html#7bee53364aff03583e7d6bb2a6df7bc3">MessageNumberType</a> <a class="el" href="InternalPacket_8h.html#1e417e7b38f7c117696dd9dad2dd8f20">OrderingIndexType</a>          </td>
         </tr>
       </table>
 </div>
@@ -80,7 +85,7 @@ This is the counter used for holding ordered packet numbers, so we can detect ou
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:44 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:11 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -37,23 +37,23 @@
 <a href="classReliabilityLayer-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bede0ba47272cf86480f1650a26deda5"></a><!-- doxytag: member="ReliabilityLayer::Reset" ref="bede0ba47272cf86480f1650a26deda5" args="(bool resetVariables)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#bede0ba47272cf86480f1650a26deda5">Reset</a> (bool resetVariables)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="cffaa7f6bedf9bc7c6c2cd2e20589b7d"></a><!-- doxytag: member="ReliabilityLayer::Reset" ref="cffaa7f6bedf9bc7c6c2cd2e20589b7d" args="(bool resetVariables, int MTUSize)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#cffaa7f6bedf9bc7c6c2cd2e20589b7d">Reset</a> (bool resetVariables, int MTUSize)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Resets the layer for reuse. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#5b08f31987893c40bb50f579554879e1">SetEncryptionKey</a> (const unsigned char *key)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#9fcff15bef6ebd3503eed279e7721714">SetTimeoutTime</a> (RakNetTime time)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#49f5a4e63806e65b56c3aca121852e47">SetTimeoutTime</a> (RakNetTimeMS time)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">RakNetTime&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#ef602e205058eab7e6a961790553856f">GetTimeoutTime</a> (void)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">RakNetTimeMS&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#8910d7f6b5450a733894d59b30d3855b">GetTimeoutTime</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#c1cce813d9f4439a822343e8c175cea4">HandleSocketReceiveFromConnectedPlayer</a> (const char *buffer, unsigned int length, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classPluginInterface2.html">PluginInterface2</a> * &gt; &amp;messageHandlerList, int MTUSize)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#181f009d0c35bad7708d422d35aa1379">HandleSocketReceiveFromConnectedPlayer</a> (const char *buffer, unsigned int length, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classPluginInterface2.html">PluginInterface2</a> * &gt; &amp;messageHandlerList, int MTUSize, SOCKET s, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, CCTimeType timeRead)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">BitSize_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#bcc7d50f16310d422dcdb3eaee55c7db">Receive</a> (unsigned char **data)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#55d2378b105d46c5c76b9fef0f45b471">Send</a> (char *data, BitSize_t numberOfBitsToSend, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, RakNetTimeUS currentTime)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#6c849140cb402532c48edf42422a98e5">Send</a> (char *data, BitSize_t numberOfBitsToSend, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, CCTimeType currentTime)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#dc9ecc68aa23de9e2cc523265b50b174">Update</a> (SOCKET s, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, int MTUSize, RakNetTimeUS time, unsigned bitsPerSecondLimit, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classPluginInterface2.html">PluginInterface2</a> * &gt; &amp;messageHandlerList, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#5ff2c02e480013e16ea5c23d3c438574">Update</a> (SOCKET s, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, int MTUSize, CCTimeType time, unsigned bitsPerSecondLimit, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classPluginInterface2.html">PluginInterface2</a> * &gt; &amp;messageHandlerList, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#d7f2277b9df3b6dcbff170657cd7532a">IsCheater</a> (void) const </td></tr>
 
@@ -71,8 +71,8 @@ bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Are we waiting for any data to be sent out or be processed by the player? <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#9d54b491be8d725ee14bff0f2dfe4ec4">IsNetworkSimulatorActive</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="823c2d3fdcb3dbafb401a6c651abe80f"></a><!-- doxytag: member="ReliabilityLayer::AckTimeout" ref="823c2d3fdcb3dbafb401a6c651abe80f" args="(RakNetTimeUS curTime)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#823c2d3fdcb3dbafb401a6c651abe80f">AckTimeout</a> (RakNetTimeUS curTime)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7a4a58802adab453857a4b31eb031505"></a><!-- doxytag: member="ReliabilityLayer::AckTimeout" ref="7a4a58802adab453857a4b31eb031505" args="(RakNetTimeMS curTime)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#7a4a58802adab453857a4b31eb031505">AckTimeout</a> (RakNetTimeMS curTime)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Has a lot of time passed since the last ack. <br></td></tr>
 </table>
@@ -99,12 +99,12 @@ Get Statistics <dl class="return" compact><dt><b>Returns:</b></dt><dd>A pointer 
 
 </div>
 </div><p>
-<a class="anchor" name="ef602e205058eab7e6a961790553856f"></a><!-- doxytag: member="ReliabilityLayer::GetTimeoutTime" ref="ef602e205058eab7e6a961790553856f" args="(void)" -->
+<a class="anchor" name="8910d7f6b5450a733894d59b30d3855b"></a><!-- doxytag: member="ReliabilityLayer::GetTimeoutTime" ref="8910d7f6b5450a733894d59b30d3855b" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">RakNetTime ReliabilityLayer::GetTimeoutTime           </td>
+          <td class="memname">RakNetTimeMS ReliabilityLayer::GetTimeoutTime           </td>
           <td>(</td>
           <td class="paramtype">void&nbsp;</td>
           <td class="paramname">          </td>
@@ -124,7 +124,7 @@ Returns the value passed to SetTimeoutTime. or the default if it was never calle
 
 </div>
 </div><p>
-<a class="anchor" name="c1cce813d9f4439a822343e8c175cea4"></a><!-- doxytag: member="ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer" ref="c1cce813d9f4439a822343e8c175cea4" args="(const char *buffer, unsigned int length, SystemAddress systemAddress, DataStructures::List&lt; PluginInterface2 * &gt; &amp;messageHandlerList, int MTUSize)" -->
+<a class="anchor" name="181f009d0c35bad7708d422d35aa1379"></a><!-- doxytag: member="ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer" ref="181f009d0c35bad7708d422d35aa1379" args="(const char *buffer, unsigned int length, SystemAddress systemAddress, DataStructures::List&lt; PluginInterface2 * &gt; &amp;messageHandlerList, int MTUSize, SOCKET s, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, CCTimeType timeRead)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -156,7 +156,31 @@ Returns the value passed to SetTimeoutTime. or the default if it was never calle
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&nbsp;</td>
-          <td class="paramname"> <em>MTUSize</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>MTUSize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">SOCKET&nbsp;</td>
+          <td class="paramname"> <em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">RakNetRandom *&nbsp;</td>
+          <td class="paramname"> <em>rnr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned short&nbsp;</td>
+          <td class="paramname"> <em>remotePortRakNetWasStartedOn_PS3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CCTimeType&nbsp;</td>
+          <td class="paramname"> <em>timeRead</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -275,7 +299,7 @@ This allocates bytes and writes a user-level message to those bytes. <dl compact
 
 </div>
 </div><p>
-<a class="anchor" name="55d2378b105d46c5c76b9fef0f45b471"></a><!-- doxytag: member="ReliabilityLayer::Send" ref="55d2378b105d46c5c76b9fef0f45b471" args="(char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, RakNetTimeUS currentTime)" -->
+<a class="anchor" name="6c849140cb402532c48edf42422a98e5"></a><!-- doxytag: member="ReliabilityLayer::Send" ref="6c849140cb402532c48edf42422a98e5" args="(char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, CCTimeType currentTime)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -324,7 +348,7 @@ This allocates bytes and writes a user-level message to those bytes. <dl compact
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">RakNetTimeUS&nbsp;</td>
+          <td class="paramtype">CCTimeType&nbsp;</td>
           <td class="paramname"> <em>currentTime</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -378,14 +402,14 @@ Sets the encryption key. Doing so will activate secure connections <dl compact><
 
 </div>
 </div><p>
-<a class="anchor" name="9fcff15bef6ebd3503eed279e7721714"></a><!-- doxytag: member="ReliabilityLayer::SetTimeoutTime" ref="9fcff15bef6ebd3503eed279e7721714" args="(RakNetTime time)" -->
+<a class="anchor" name="49f5a4e63806e65b56c3aca121852e47"></a><!-- doxytag: member="ReliabilityLayer::SetTimeoutTime" ref="49f5a4e63806e65b56c3aca121852e47" args="(RakNetTimeMS time)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void ReliabilityLayer::SetTimeoutTime           </td>
           <td>(</td>
-          <td class="paramtype">RakNetTime&nbsp;</td>
+          <td class="paramtype">RakNetTimeMS&nbsp;</td>
           <td class="paramname"> <em>time</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td></td>
@@ -403,7 +427,7 @@ Set the time, in MS, to use before considering ourselves disconnected after not 
 
 </div>
 </div><p>
-<a class="anchor" name="dc9ecc68aa23de9e2cc523265b50b174"></a><!-- doxytag: member="ReliabilityLayer::Update" ref="dc9ecc68aa23de9e2cc523265b50b174" args="(SOCKET s, SystemAddress systemAddress, int MTUSize, RakNetTimeUS time, unsigned bitsPerSecondLimit, DataStructures::List&lt; PluginInterface2 * &gt; &amp;messageHandlerList, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3)" -->
+<a class="anchor" name="5ff2c02e480013e16ea5c23d3c438574"></a><!-- doxytag: member="ReliabilityLayer::Update" ref="5ff2c02e480013e16ea5c23d3c438574" args="(SOCKET s, SystemAddress systemAddress, int MTUSize, CCTimeType time, unsigned bitsPerSecondLimit, DataStructures::List&lt; PluginInterface2 * &gt; &amp;messageHandlerList, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -428,7 +452,7 @@ Set the time, in MS, to use before considering ourselves disconnected after not 
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">RakNetTimeUS&nbsp;</td>
+          <td class="paramtype">CCTimeType&nbsp;</td>
           <td class="paramname"> <em>time</em>, </td>
         </tr>
         <tr>
@@ -479,9 +503,9 @@ Call once per game cycle. Handles internal lists and actually does the send. <dl
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>C:/RakNet/Source/<a class="el" href="ReliabilityLayer_8h.html">ReliabilityLayer.h</a></ul>
+<li>c:/RakNet/Source/<a class="el" href="ReliabilityLayer_8h.html">ReliabilityLayer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:46 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:13 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

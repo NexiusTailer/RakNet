@@ -15,7 +15,7 @@ FileVerifier::~FileVerifier()
 	unsigned i;
 	for (i=0; i < fileList.Size(); i++)
 		delete fileList[i];
-	fileList.Clear();
+	fileList.Clear(false, __FILE__, __LINE__);
 }
 
 void FileVerifier::Serialize(RakNet::BitStream *bitStream)
@@ -165,7 +165,7 @@ void FileVerifier::AddFileForVerification(char *filename, bool requiredFile)
 	strcpy(fwcs->fileName, filename);
 	fwcs->fileIsRequired=requiredFile;
 	fwcs->checkSum=checkSum.Get();
-	fileList.Insert(fwcs);
+	fileList.Insert(fwcs, __FILE__, __LINE__ );
 }
 
 int FileVerifier::FindFileInList(char *filename)

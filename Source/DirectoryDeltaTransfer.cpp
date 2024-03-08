@@ -53,6 +53,10 @@ public:
 
 		onFileCallback->OnFileProgress(onFileStruct, partCount, partTotal, dataChunkLength, firstDataChunk);
 	}
+	virtual void OnReferencePush(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int dataChunkLength, char *firstDataChunk)
+	{
+		onFileCallback->OnReferencePush(onFileStruct, partCount, partTotal, dataChunkLength, firstDataChunk);
+	}
 	virtual bool OnDownloadComplete(void)
 	{
 		return onFileCallback->OnDownloadComplete();

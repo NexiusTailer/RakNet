@@ -41,7 +41,14 @@ void PluginInterface2::PushBackPacketUnified(Packet *packet, bool pushAtHead)
 	else
 		return packetizedTCP->PushBackPacket(packet,pushAtHead);
 }
-bool PluginInterface2::SendListUnified( char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast )
+void PluginInterface2::DeallocPacketUnified(Packet *packet)
+{
+	if (rakPeerInterface)
+		return rakPeerInterface->DeallocatePacket(packet);
+	else
+		return packetizedTCP->DeallocatePacket(packet);
+}
+bool PluginInterface2::SendListUnified( const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast )
 {
 	if (rakPeerInterface)
 	{

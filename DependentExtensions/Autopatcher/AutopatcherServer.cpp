@@ -27,7 +27,7 @@ AutopatcherServer::AutopatcherServer()
 	fileListTransfer=0;
 	priority=HIGH_PRIORITY;
 	orderingChannel=0;
-	repository=0;
+//	repository=0;
 }
 AutopatcherServer::~AutopatcherServer()
 {
@@ -42,14 +42,21 @@ void AutopatcherServer::SetFileListTransferPlugin(FileListTransfer *flt)
 {
 	fileListTransfer=flt;
 }
-void AutopatcherServer::SetAutopatcherRepositoryInterface(AutopatcherRepositoryInterface *ari)
+void AutopatcherServer::StartThreads(int numThreads, AutopatcherRepositoryInterface **sqlConnectionPtrArray)
 {
-	RakAssert(ari);
-	repository=ari;
+	connectionPoolMutex.Lock();
+	for (int i=0; i < numThreads; i++)
+	{
+		// Test the pointers passed, in case the user incorrectly casted an array of a different type
+		sqlConnectionPtrArray[i]->GetLastError();
+		connectionPool.Push(sqlConnectionPtrArray[i],__FILE__,__LINE__);
+	}
+	connectionPoolMutex.Unlock();
+	threadPool.SetThreadDataInterface(this,0);
+	threadPool.StartThreads(numThreads, 0);
 }
 void AutopatcherServer::OnAttach(void)
 {
-	threadPool.StartThreads(1, 0);
 }
 void AutopatcherServer::OnDetach(void)
 {
@@ -60,6 +67,7 @@ void AutopatcherServer::OnDetach(void)
 #endif
 void AutopatcherServer::Update(void)
 {
+	/*
 	ResultTypeAndBitstream* rtab;
 	while (threadPool.HasOutputFast() && threadPool.HasOutput())
 	{
@@ -118,6 +126,7 @@ void AutopatcherServer::Update(void)
 			SendUnified(&(rtab->bitStream2), priority, RELIABLE_ORDERED, orderingChannel, rtab->systemAddress, false);
 		RakNet::OP_DELETE(rtab, __FILE__, __LINE__);
 	}	
+	*/
 }
 PluginReceiveResult AutopatcherServer::OnReceive(Packet *packet)
 {
@@ -206,32 +215,75 @@ void AutopatcherServer::RemoveFromThreadPool(SystemAddress systemAddress)
 }
 AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherServer::ThreadData threadData, bool *returnOutput, void* perThreadData)
 {
+	AutopatcherRepositoryInterface *repository = (AutopatcherRepositoryInterface*)perThreadData;
 	
 	FileList addedFiles, deletedFiles;
 	char currentDate[64];
 	currentDate[0]=0;
 	AutopatcherServer *server = threadData.server;
 
-	AutopatcherServer::ResultTypeAndBitstream *rtab = RakNet::OP_NEW<AutopatcherServer::ResultTypeAndBitstream>( __FILE__, __LINE__ );
-	rtab->systemAddress=threadData.systemAddress;
-	rtab->deletedFiles=RakNet::OP_NEW<FileList>( __FILE__, __LINE__ );
-	rtab->addedFiles=RakNet::OP_NEW<FileList>( __FILE__, __LINE__ );
+	//AutopatcherServer::ResultTypeAndBitstream *rtab = RakNet::OP_NEW<AutopatcherServer::ResultTypeAndBitstream>( __FILE__, __LINE__ );
+	AutopatcherServer::ResultTypeAndBitstream rtab;
+	rtab.systemAddress=threadData.systemAddress;
+// 	rtab.deletedFiles=RakNet::OP_NEW<FileList>( __FILE__, __LINE__ );
+// 	rtab.addedFiles=RakNet::OP_NEW<FileList>( __FILE__, __LINE__ );
+	rtab.deletedFiles=&deletedFiles;
+	rtab.addedFiles=&addedFiles;
 
 	// Query the database for a changelist since this date
 	RakAssert(server);
-	if (server->repository->GetChangelistSinceDate(threadData.applicationName.C_String(), rtab->addedFiles, rtab->deletedFiles, threadData.lastUpdateDate.C_String(), currentDate))
+	//if (server->repository->GetChangelistSinceDate(threadData.applicationName.C_String(), rtab.addedFiles, rtab.deletedFiles, threadData.lastUpdateDate.C_String(), currentDate))
+	if (repository->GetChangelistSinceDate(threadData.applicationName.C_String(), rtab.addedFiles, rtab.deletedFiles, threadData.lastUpdateDate.C_String(), currentDate))
 	{
-		rtab->fatalError=false;
+		rtab.fatalError=false;
 	}
 	else
 	{
-		rtab->fatalError=true;
+		rtab.fatalError=true;
 	}
 
-	rtab->operation=AutopatcherServer::ResultTypeAndBitstream::GET_CHANGELIST_SINCE_DATE;
-	rtab->currentDate=currentDate;
-	*returnOutput=true;
-	return rtab;
+	rtab.operation=AutopatcherServer::ResultTypeAndBitstream::GET_CHANGELIST_SINCE_DATE;
+	rtab.currentDate=currentDate;
+	// *returnOutput=true;
+	// return rtab;
+
+	if (rtab.fatalError==false)
+	{
+		if (rtab.deletedFiles->fileList.Size())
+		{
+			rtab.bitStream1.Write((unsigned char) ID_AUTOPATCHER_DELETION_LIST);
+			rtab.deletedFiles->Serialize(&rtab.bitStream1);
+		}
+
+		if (rtab.addedFiles->fileList.Size())
+		{
+			rtab.bitStream2.Write((unsigned char) ID_AUTOPATCHER_CREATION_LIST);
+			rtab.addedFiles->Serialize(&rtab.bitStream2);
+			stringCompressor->EncodeString(rtab.currentDate.C_String(),64,&rtab.bitStream2);
+			rtab.addedFiles->Clear();
+		}
+		else
+		{
+			rtab.bitStream2.Write((unsigned char) ID_AUTOPATCHER_FINISHED);
+			stringCompressor->EncodeString(rtab.currentDate.C_String(),64,&rtab.bitStream2);
+		}
+	}
+	else
+	{
+		rtab.bitStream2.Write((unsigned char) ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR);
+		stringCompressor->EncodeString(repository->GetLastError(), 256, &rtab.bitStream2);	
+	}
+// 	RakNet::OP_DELETE(rtab.deletedFiles, __FILE__, __LINE__);
+// 	RakNet::OP_DELETE(rtab.addedFiles, __FILE__, __LINE__);
+
+	*returnOutput=false;
+
+	if (rtab.bitStream1.GetNumberOfBitsUsed()>0)
+		server->SendUnified(&(rtab.bitStream1), server->priority, RELIABLE_ORDERED, server->orderingChannel, rtab.systemAddress, false);
+	if (rtab.bitStream2.GetNumberOfBitsUsed()>0)
+		server->SendUnified(&(rtab.bitStream2), server->priority, RELIABLE_ORDERED, server->orderingChannel, rtab.systemAddress, false);
+
+	return 0;
 }
 void AutopatcherServer::OnGetChangelistSinceDate(Packet *packet)
 {
@@ -248,26 +300,66 @@ void AutopatcherServer::OnGetChangelistSinceDate(Packet *packet)
 AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadData threadData, bool *returnOutput, void* perThreadData)
 {
 	AutopatcherServer *server = threadData.server;
+	AutopatcherRepositoryInterface *repository = (AutopatcherRepositoryInterface*)perThreadData;
 
-	AutopatcherServer::ResultTypeAndBitstream *rtab = RakNet::OP_NEW<AutopatcherServer::ResultTypeAndBitstream>( __FILE__, __LINE__ );
-	rtab->systemAddress=threadData.systemAddress;
-	rtab->patchList=RakNet::OP_NEW<FileList>( __FILE__, __LINE__ );
+	// AutopatcherServer::ResultTypeAndBitstream *rtab = RakNet::OP_NEW<AutopatcherServer::ResultTypeAndBitstream>( __FILE__, __LINE__ );
+	AutopatcherServer::ResultTypeAndBitstream rtab;
+	rtab.systemAddress=threadData.systemAddress;
+	FileList fileList;
+	// rtab.patchList=RakNet::OP_NEW<FileList>( __FILE__, __LINE__ );
+	rtab.patchList=&fileList;
 	RakAssert(server);
-	RakAssert(server->repository);
+//	RakAssert(server->repository);
 	char currentDate[64];
 	currentDate[0]=0;
-	if (server->repository->GetPatches(threadData.applicationName.C_String(), threadData.clientList, rtab->patchList, currentDate))
-		rtab->fatalError=false;
+//	if (server->repository->GetPatches(threadData.applicationName.C_String(), threadData.clientList, rtab.patchList, currentDate))
+	if (repository->GetPatches(threadData.applicationName.C_String(), threadData.clientList, rtab.patchList, currentDate))
+		rtab.fatalError=false;
 	else
-		rtab->fatalError=true;
-	rtab->operation=AutopatcherServer::ResultTypeAndBitstream::GET_PATCH;
-	rtab->setId=threadData.setId;
-	rtab->currentDate=currentDate;
+		rtab.fatalError=true;
+	rtab.operation=AutopatcherServer::ResultTypeAndBitstream::GET_PATCH;
+	rtab.setId=threadData.setId;
+	rtab.currentDate=currentDate;
 
 	RakNet::OP_DELETE(threadData.clientList, __FILE__, __LINE__);
 
-	*returnOutput=true;
-	return rtab;
+	if (rtab.fatalError==false)
+	{
+		if (rtab.patchList->fileList.Size())
+			//server->fileListTransfer->Send(rtab.patchList, 0, rtab.systemAddress, rtab.setId, server->priority, server->orderingChannel, false, server->repository);
+			server->fileListTransfer->Send(rtab.patchList, 0, rtab.systemAddress, rtab.setId, server->priority, server->orderingChannel, false, repository);
+
+		rtab.bitStream1.Write((unsigned char) ID_AUTOPATCHER_FINISHED_INTERNAL);
+		stringCompressor->EncodeString(rtab.currentDate.C_String(),64,&rtab.bitStream1);
+	}
+	else
+	{
+		rtab.bitStream1.Write((unsigned char) ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR);
+	//	stringCompressor->EncodeString(server->repository->GetLastError(), 256, &rtab.bitStream1);
+		stringCompressor->EncodeString(repository->GetLastError(), 256, &rtab.bitStream1);
+	}
+
+	*returnOutput=false;
+
+	if (rtab.bitStream1.GetNumberOfBitsUsed()>0)
+		server->SendUnified(&(rtab.bitStream1), server->priority, RELIABLE_ORDERED, server->orderingChannel, rtab.systemAddress, false);
+	if (rtab.bitStream2.GetNumberOfBitsUsed()>0)
+		server->SendUnified(&(rtab.bitStream2), server->priority, RELIABLE_ORDERED, server->orderingChannel, rtab.systemAddress, false);
+
+	// Wait for repository to finish
+	// This is so that the same sql connection is not used between two different plugins, which causes thrashing and bad performance
+	// Plus if fileListTransfer uses multiple threads, this will keep this thread and the fileListTransfer thread from using the same connection at the same time
+	// PostgreSQL possibly MySQL are not threadsafe for multiple threads on the same connection
+	int pendingFiles = server->fileListTransfer->GetPendingFilesToAddress(rtab.systemAddress);
+	while (pendingFiles>0)
+	{
+		RakSleep(pendingFiles*10);
+		pendingFiles = server->fileListTransfer->GetPendingFilesToAddress(rtab.systemAddress);
+	}
+
+	// *returnOutput=true;
+	// return rtab;
+	return 0;
 }
 void AutopatcherServer::OnGetPatch(Packet *packet)
 {
@@ -296,6 +388,22 @@ void AutopatcherServer::OnGetPatch(Packet *packet)
 	threadPool.AddInput(GetPatchCB, threadData);
 	return;
 }
+void* AutopatcherServer::PerThreadFactory(void *context)
+{
+	(void)context;
+
+	AutopatcherRepositoryInterface* p;
+	connectionPoolMutex.Lock();
+	p=connectionPool.Pop();
+	connectionPoolMutex.Unlock();
+	return p;
+}
+void AutopatcherServer::PerThreadDestructor(void* factoryResult, void *context)
+{
+	(void)context;
+	(void)factoryResult;
+}
+
 
 #ifdef _MSC_VER
 #pragma warning( pop )

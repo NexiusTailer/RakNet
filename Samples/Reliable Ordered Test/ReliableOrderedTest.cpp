@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include "Rand.h"
 #include "RakNetStatistics.h"
+#include "RakSleep.h"
+#include "RakMemoryOverride.h"
 
 #ifdef _WIN32
 #include "Kbhit.h"
@@ -17,7 +19,41 @@
 #include <unistd.h> // usleep
 #endif
 
-int main(void)
+FILE *fp;
+int memoryUsage=0;
+void *LoggedMalloc(size_t size, const char *file, unsigned int line)
+{
+	memoryUsage+=size;
+	if (fp)
+		fprintf(fp,"Alloc %s:%i %i bytes %i total\n", file,line,size,memoryUsage);
+	char *p = (char*) malloc(size+sizeof(size));
+	memcpy(p,&size,sizeof(size));
+	return p+sizeof(size);
+}
+void LoggedFree(void *p, const char *file, unsigned int line)
+{
+	char *realP=(char*)p-sizeof(size_t);
+	size_t allocatedSize;
+	memcpy(&allocatedSize,realP,sizeof(size_t));
+	memoryUsage-=allocatedSize;
+	if (fp)
+		fprintf(fp,"Free %s:%i %i bytes %i total\n", file,line,allocatedSize,memoryUsage);
+	free(realP);
+}
+void* LoggedRealloc(void *p, size_t size, const char *file, unsigned int line)
+{
+	char *realP=(char*)p-sizeof(size_t);
+	size_t allocatedSize;
+	memcpy(&allocatedSize,realP,sizeof(size_t));
+	memoryUsage-=allocatedSize;
+	memoryUsage+=size;
+	p = realloc(realP,size+sizeof(size));
+	memcpy(p,&size,sizeof(size));
+	if (fp)
+		fprintf(fp,"Realloc %s:%i %i to %i bytes %i total\n", file,line,allocatedSize,size,memoryUsage);
+	return (char*)p+sizeof(size);
+}
+int main(int argc, char **argv)
 {
 	RakPeerInterface *sender, *receiver;
 	unsigned int packetNumber[32], receivedPacketNumber, receivedTime;
@@ -32,7 +68,7 @@ int main(void)
 
 	for (int i=0; i < 32; i++)
 		packetNumber[i]=0;
-	
+
 	printf("This project tests RakNet's reliable ordered sending system.\n");
 	printf("Difficulty: Beginner\n\n");
 
@@ -41,15 +77,27 @@ int main(void)
 	if (str[0]==0)
 		return 1;
 
+	if (argc==2)
+	{
+		fp = fopen(argv[1],"wt");
+		SetMalloc_Ex(LoggedMalloc);
+		SetRealloc_Ex(LoggedRealloc);
+		SetFree_Ex(LoggedFree);
+	}
+	else
+		fp=0;
+
 	if (str[0]=='s' || str[0]=='S')
 	{
 		sender = RakNetworkFactory::GetRakPeerInterface();
+		//sender->ApplyNetworkSimulator(.02, 100, 50);
+
 		receiver = 0;
 
 		printf("Enter number of ms to pass between sends: ");
 		gets(str);
 		if (str[0]==0)
-			sendInterval=5;
+			sendInterval=30;
 		else
 			sendInterval=atoi(str);
 
@@ -57,6 +105,7 @@ int main(void)
 		gets(ip);
 		if (ip[0]==0)
 			strcpy(ip, "127.0.0.1");
+	//		strcpy(ip, "94.198.81.195");
 		
 		printf("Enter remote port: ");
 		gets(str);
@@ -79,6 +128,7 @@ int main(void)
 	else
 	{
 		receiver = RakNetworkFactory::GetRakPeerInterface();
+		//receiver->ApplyNetworkSimulator(.02, 100, 50);
 		sender=0;
 
 		printf("Enter local port: ");
@@ -175,7 +225,7 @@ int main(void)
 				bitStream.Write(streamNumber);
 				bitStream.Write(currentTime);
 				char *pad;
-				int padLength = 1000; // (randomMT() % 5000) + 1;
+				int padLength = (randomMT() % 5000) + 1;
 				pad = new char [padLength];
 				bitStream.Write(pad, padLength);
 				delete [] pad;
@@ -189,10 +239,14 @@ int main(void)
 				{
 					RakNetStatistics *rssSender;
 					rssSender=sender->GetStatistics(sender->GetSystemAddressFromIndex(0));
-					printf("Snd: %i waiting. %i waiting on ack. Got %i acks. KBPS=%.1f. Ploss=%.1f. Full=%i.\n", rssSender->messageSendBuffer[HIGH_PRIORITY], rssSender->messagesOnResendQueue,rssSender->acknowlegementsReceived, rssSender->bitsPerSecondSent/1000, 100.0f * ( float ) rssSender->messagesTotalBitsResent / ( float ) rssSender->totalBitsSent, rssSender->bandwidthExceeded);
+					printf("Snd: %i. %i waiting on ack. KBPS=%.1f. Ploss=%.1f. Bandwidth=%f.\n", packetNumber[streamNumber], rssSender->messagesOnResendQueue,rssSender->bitsPerSecondSent/1000, 100.0f * ( float ) rssSender->messagesTotalBitsResent / ( float ) rssSender->totalBitsSent, rssSender->estimatedLinkCapacityMBPS);
 				}
 
 				nextSend+=sendInterval;
+
+				// Test halting
+			//	if (rand()%20==0)
+			//		nextSend+=1000;
 			}
 		}
 		else
@@ -253,6 +307,9 @@ int main(void)
 		RakNetworkFactory::DestroyRakPeerInterface(sender);
 	if (receiver)
 		RakNetworkFactory::DestroyRakPeerInterface(receiver);
+
+	if (fp)
+		fclose(fp);
 
 	return 1;
 }

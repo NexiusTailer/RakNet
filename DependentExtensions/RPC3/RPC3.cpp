@@ -392,7 +392,7 @@ void RPC3::OnRPCRemoteIndex(SystemAddress systemAddress, unsigned char *data, un
 		{
 			newRemoteFunction.functionIndex=remoteIndex;
 			newRemoteFunction.identifier = strIdentifier;
-			theList->InsertAtIndex(newRemoteFunction, insertionIndex);
+			theList->InsertAtIndex(newRemoteFunction, insertionIndex, __FILE__, __LINE__ );
 		}
 	}
 	else
@@ -401,7 +401,7 @@ void RPC3::OnRPCRemoteIndex(SystemAddress systemAddress, unsigned char *data, un
 
 		newRemoteFunction.functionIndex=remoteIndex;
 		newRemoteFunction.identifier = strIdentifier;
-		theList->InsertAtEnd(newRemoteFunction);
+		theList->InsertAtEnd(newRemoteFunction, __FILE__, __LINE__ );
 
 		remoteFunctions.SetNew(systemAddress,theList);
 	}
@@ -430,7 +430,7 @@ void RPC3::Clear(void)
 		DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, RPC3::RemoteRPCFunctionComp> *theList = remoteFunctions[j];
 		delete theList;
 	}
-	localFunctions.Clear();
+	localFunctions.Clear(false, __FILE__, __LINE__);
 	remoteFunctions.Clear();
 	outgoingExtraData.Reset();
 	incomingExtraData.Reset();

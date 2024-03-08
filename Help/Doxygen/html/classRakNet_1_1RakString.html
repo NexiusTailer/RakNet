@@ -99,10 +99,26 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#56f28e7fd28bb8f398dba39e79824af7">SetChar</a> (unsigned index, <a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> s)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Replace character at index with string s. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="07550f34d070c5afdb74d868d8b76492"></a><!-- doxytag: member="RakNet::RakString::Truncate" ref="07550f34d070c5afdb74d868d8b76492" args="(unsigned length)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#07550f34d070c5afdb74d868d8b76492">Truncate</a> (unsigned length)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Make sure string is no longer than <em>length</em>. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bdf336f3ab5269642b40261f8353289f"></a><!-- doxytag: member="RakNet::RakString::Erase" ref="bdf336f3ab5269642b40261f8353289f" args="(unsigned int index, unsigned int count)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#bdf336f3ab5269642b40261f8353289f">Erase</a> (unsigned int index, unsigned int count)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Erase characters out of the string at index for count. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="79068e21d14ab58af70acbda5820763d"></a><!-- doxytag: member="RakNet::RakString::TerminateAtFirstCharacter" ref="79068e21d14ab58af70acbda5820763d" args="(char c)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#79068e21d14ab58af70acbda5820763d">TerminateAtFirstCharacter</a> (char c)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the first instance of c with a NULL terminator. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="47359a2ee66669ab9a1873d49a06eab4"></a><!-- doxytag: member="RakNet::RakString::TerminateAtLastCharacter" ref="47359a2ee66669ab9a1873d49a06eab4" args="(char c)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#47359a2ee66669ab9a1873d49a06eab4">TerminateAtLastCharacter</a> (char c)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the last instance of c with a NULL terminator. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="30ed346a44897c35a8828b9f03e9a03a"></a><!-- doxytag: member="RakNet::RakString::RemoveCharacter" ref="30ed346a44897c35a8828b9f03e9a03a" args="(char c)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#30ed346a44897c35a8828b9f03e9a03a">RemoveCharacter</a> (char c)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove all instances of c. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="84e1217c6ce0ac078c4f8d915d6affd4"></a><!-- doxytag: member="RakNet::RakString::StrCmp" ref="84e1217c6ce0ac078c4f8d915d6affd4" args="(const RakString &amp;rhs) const " -->
 int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#84e1217c6ce0ac078c4f8d915d6affd4">StrCmp</a> (const <a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;rhs) const </td></tr>
 
@@ -147,6 +163,10 @@ bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#6932a1a6069d3c017b3ed7389a8262bd">SQLEscape</a> (void)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Scan for quote, double quote, and backslash and prepend with backslash. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5a8f252381a344093ea45ee62fd98d2f"></a><!-- doxytag: member="RakNet::RakString::MakeFilePath" ref="5a8f252381a344093ea45ee62fd98d2f" args="(void)" -->
+<a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#5a8f252381a344093ea45ee62fd98d2f">MakeFilePath</a> (void)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Fix to be a file path, ending with /. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#677d8cc510bb643fecd3f193b76733ad">Serialize</a> (<a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *bs)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#3ea5a42912fb5bba4cec15e28eb05da7">SerializeCompressed</a> (<a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *bs, int languageId=0, bool writeLanguageId=false)</td></tr>
@@ -245,7 +265,7 @@ Deserialize compressed string, written by SerializeCompressed <dl compact><dt><b
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true if the deserialization was successful </dd></dl>
-<dl class="pre" compact><dt><b>Precondition:</b></dt><dd><a class="el" href="classStringCompressor.html#2f022ecc1ff2bd74015a54e8261e442e" title="Used so I can allocate and deallocate this singleton at runtime.">StringCompressor::AddReference</a> must have been called to instantiate the class (Happens automatically from <a class="el" href="classRakPeer.html#51cef3ffad61d4449cc148e954fbd31d" title="Starts the network threads, opens the listen port.">RakPeer::Startup()</a>) </dd></dl>
+<dl class="pre" compact><dt><b>Precondition:</b></dt><dd><a class="el" href="classStringCompressor.html#2f022ecc1ff2bd74015a54e8261e442e" title="Used so I can allocate and deallocate this singleton at runtime.">StringCompressor::AddReference</a> must have been called to instantiate the class (Happens automatically from <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads, opens the listen port.">RakPeer::Startup()</a>) </dd></dl>
 
 </div>
 </div><p>
@@ -353,14 +373,14 @@ Serialize to a bitstream, compressed (better bandwidth usage) <dl compact><dt><b
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>writeLanguageId</em>&nbsp;</td><td>encode the languageId variable in the stream. If false, 0 is assumed, and DeserializeCompressed will not look for this variable in the stream (saves bandwidth) </td></tr>
   </table>
 </dl>
-<dl class="pre" compact><dt><b>Precondition:</b></dt><dd><a class="el" href="classStringCompressor.html#2f022ecc1ff2bd74015a54e8261e442e" title="Used so I can allocate and deallocate this singleton at runtime.">StringCompressor::AddReference</a> must have been called to instantiate the class (Happens automatically from <a class="el" href="classRakPeer.html#51cef3ffad61d4449cc148e954fbd31d" title="Starts the network threads, opens the listen port.">RakPeer::Startup()</a>) </dd></dl>
+<dl class="pre" compact><dt><b>Precondition:</b></dt><dd><a class="el" href="classStringCompressor.html#2f022ecc1ff2bd74015a54e8261e442e" title="Used so I can allocate and deallocate this singleton at runtime.">StringCompressor::AddReference</a> must have been called to instantiate the class (Happens automatically from <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads, opens the listen port.">RakPeer::Startup()</a>) </dd></dl>
 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>C:/RakNet/Source/RakString.h</ul>
+<li>c:/RakNet/Source/RakString.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:47 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:14 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

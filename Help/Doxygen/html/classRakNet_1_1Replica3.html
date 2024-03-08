@@ -92,6 +92,9 @@ Inheritance diagram for RakNet::Replica3:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g993da25eb23b67455e2438971c51429c">RM3SerializationResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b22441365145bf552f89e09">Serialize</a> (<a class="el" href="structRakNet_1_1SerializeParameters.html">RakNet::SerializeParameters</a> *serializeParameters)=0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Serialize our class to a bitstream.  <a href="#6e59b6a75b22441365145bf552f89e09"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#61eb31f27074dae04ae7168eb2712c3b">OnSerializeTransmission</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the class is actually transmitted via <a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b22441365145bf552f89e09" title="Serialize our class to a bitstream.">Serialize()</a>.  <a href="#61eb31f27074dae04ae7168eb2712c3b"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#dc3ca56ef4fe3ad95e381c7d72f0956f">Deserialize</a> (RakNet::DeserializeParameters *deserializeParameters)=0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Read what was written in <a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b22441365145bf552f89e09" title="Serialize our class to a bitstream.">Serialize()</a>.  <a href="#dc3ca56ef4fe3ad95e381c7d72f0956f"></a><br></td></tr>
@@ -466,6 +469,37 @@ Return true to delete the object. <a class="el" href="classRakNet_1_1Replica3.ht
 <p>
 creatingSystemGUID is set the first time Reference() is called, or if we get the object from another system <dl class="return" compact><dt><b>Returns:</b></dt><dd>System that originally created this object </dd></dl>
 
+</div>
+</div><p>
+<a class="anchor" name="61eb31f27074dae04ae7168eb2712c3b"></a><!-- doxytag: member="RakNet::Replica3::OnSerializeTransmission" ref="61eb31f27074dae04ae7168eb2712c3b" args="(RakNet::BitStream *bitStream, SystemAddress systemAddress)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void RakNet::Replica3::OnSerializeTransmission           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *&nbsp;</td>
+          <td class="paramname"> <em>bitStream</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Called when the class is actually transmitted via <a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b22441365145bf552f89e09" title="Serialize our class to a bitstream.">Serialize()</a>. 
+<p>
+Use to track how much bandwidth this class it taking 
 </div>
 </div><p>
 <a class="anchor" name="1b02555caeb5e436e21ec2b0901c2644"></a><!-- doxytag: member="RakNet::Replica3::PostDeserializeConstruction" ref="1b02555caeb5e436e21ec2b0901c2644" args="(RakNet::Connection_RM3 *sourceConnection)" -->
@@ -933,9 +967,9 @@ GUID of the system that first called Reference() on this object. Transmitted aut
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>C:/RakNet/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
+<li>c:/RakNet/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:47 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:14 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

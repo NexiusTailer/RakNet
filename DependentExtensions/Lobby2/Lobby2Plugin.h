@@ -6,9 +6,36 @@
 #include "PacketPriority.h"
 #include "RakPeerInterface.h"
 
+/// \defgroup LOBBY_2_GROUP Lobby2Plugin
+/// \brief SQL based lobby system, with support for users, friends, clans, emails, ranking, and a message board
+/// \details
+/// \ingroup PLUGINS_GROUP
+
+/// \defgroup LOBBY_2_COMMANDS Lobby2Commands
+/// \brief Commands that can be sent to Lobby2Server from Lobby2Client
+/// \details
+/// \ingroup LOBBY_2_GROUP
+
+/// \defgroup LOBBY_2_NOTIFICATIONS Lobby2Notifications
+/// \brief Callbacks that the Lobby2System will send to you
+/// \details
+/// \ingroup LOBBY_2_GROUP
+
+/// \defgroup LOBBY_2_SERVER Lobby2Server
+/// \brief Runs the server modules that asynchronously processes Lobby2Message
+/// \details
+/// \ingroup LOBBY_2_GROUP
+
+/// \defgroup LOBBY_2_CLIENT Lobby2Client
+/// \brief Sends commands to Lobby2Server
+/// \details
+/// \ingroup LOBBY_2_GROUP
+
+
 namespace RakNet
 {
 
+/// \ingroup LOBBY_2_GROUP
 enum ServerErrors
 {
 	// Class factory could not create a message of the given type
@@ -20,29 +47,42 @@ enum ServerErrors
 
 struct Lobby2MessageFactory;
 
-/// Both the server and pc client plugins derive from this class.
+/// \brief Both Lobby2Server and Lobby2Client derive from this class
+/// \details 
+/// \ingroup LOBBY_2_GROUP
 class RAK_DLL_EXPORT Lobby2Plugin : public PluginInterface2
 {
 public:
 	Lobby2Plugin();
 	~Lobby2Plugin();
 	
-	/// Ordering channel to use with RakPeer::Send()
+	/// \brief Ordering channel to send messages on
+	/// \param[in] oc The ordering channel
 	void SetOrderingChannel(char oc);
 
-	/// Send priority to use with RakPeer::Send()
+	/// \brief Send priority to send messages on
+	/// \param[in] pp The packet priority
 	void SetSendPriority(PacketPriority pp);
 
-	// Creates messages from message IDs
-	// Server should get a factory that creates messages with database functionality
-	// Client can use the base class
+	/// \brief Creates messages from message IDs
+	/// \details Server should get a factory that creates messages with database functionality.<BR>
+	/// Client can use the base class
+	/// \param[in] f Class factory instance, which should remain valid for the scope of the plugin
 	void SetMessageFactory(Lobby2MessageFactory *f);
+
+	/// \brief Returns whatever was passed to SetMessageFactory()
 	Lobby2MessageFactory* GetMessageFactory(void) const;
 
-	/// Set the callback to receive the results of operations via SendMsg()
+	/// \brief Set the callback to receive the results of operations via SendMsg()
 	virtual void SetCallbackInterface(Lobby2Callbacks *cb);	
+
+	/// \brief You can have more than one callback to get called from the results of operations via SendMsg()
 	virtual void AddCallbackInterface(Lobby2Callbacks *cb);	
+
+	/// \brief Removes a callback added with AddCallbackInterface();
 	virtual void RemoveCallbackInterface(Lobby2Callbacks *cb);
+
+	/// \brief Removes all callbacks added with AddCallbackInterface();
 	virtual void ClearCallbackInterfaces();
 	
 protected:

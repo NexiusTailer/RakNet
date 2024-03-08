@@ -15,7 +15,7 @@
 static const unsigned short NAT_TYPE_DETECTION_SERVER_PORT=60481;
 
 // For the client, so I don't have to type it if I just press enter
-static const char *DEFAULT_NAT_TYPE_DETECTION_SERVER_IP1="8.17.250.34";
+static const char *DEFAULT_NAT_TYPE_DETECTION_SERVER_IP1="94.198.81.195";
 
 static const char *NAT_TYPE_DETECTION_SERVER_PASSWORD="";
 
@@ -108,6 +108,8 @@ void RunClient()
 		printf("Failed to connect to server\n");
 		return;
 	}
+	else
+		printf("Connected to server.\n");
 	printf("(D)etect NAT type\n");
 	printf("(Q)uit\n");
 	while (1)
@@ -122,6 +124,7 @@ void RunClient()
 			}
 			else
 			{
+				printf("Detecting NAT type...\n");
 				natTypeDetectionClient.DetectNATType(serverAddress);
 			}
 		}
@@ -173,7 +176,7 @@ int main(void)
 	printf("NAT type detection sample.\n");
 	printf("Demonstrates how to use NatTypeDetectionClient/Server.\n");
 	printf("Requires a non-NAT server with at least four IP addresses.\n");
-	printf("A free server is provided by default at 8.17.250.34\n");
+	printf("A free server is provided by default at 94.198.81.195\n");
 
 	printf("Run as (s)erver or (c)lient?");
 	char ch = getch();

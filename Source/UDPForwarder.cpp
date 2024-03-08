@@ -47,6 +47,9 @@ UDPForwarder::~UDPForwarder()
 }
 void UDPForwarder::Startup(void)
 {
+	if (isRunning==true)
+		return;
+
 	isRunning=true;
 	threadRunning=false;
 
@@ -64,6 +67,9 @@ void UDPForwarder::Startup(void)
 }
 void UDPForwarder::Shutdown(void)
 {
+	if (isRunning==false)
+		return;
+
 	isRunning=false;
 
 #ifdef UDP_FORWARDER_EXECUTE_THREADED
@@ -124,7 +130,7 @@ void UDPForwarder::UpdateThreaded(void)
 	largestDescriptor = forwardList[forwardList.GetSize()-1]->readSocket;
 
 #if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-	selectResult=socketselect(largestDescriptor+1, &readFD, 0, 0, &tv);
+                                                                    
 #else
 	selectResult=(int) select((int) largestDescriptor+1, &readFD, 0, 0, &tv);
 #endif
@@ -301,11 +307,11 @@ UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source, SystemAdd
 	ThreadOperation threadOperation;
 	threadOperation.source=source;
 	threadOperation.destination=destination;
-	threadOperation.timeoutOnNoDataMS;
+	threadOperation.timeoutOnNoDataMS=timeoutOnNoDataMS;
 	threadOperation.forceHostAddress=forceHostAddress;
 	threadOperation.operation=ThreadOperation::TO_START_FORWARDING;
 	threadOperationIncomingMutex.Lock();
-	threadOperationIncomingQueue.Push(threadOperation);
+	threadOperationIncomingQueue.Push(threadOperation, __FILE__, __LINE__ );
 	threadOperationIncomingMutex.Unlock();
 
 	while (1)
@@ -368,7 +374,7 @@ void UDPForwarder::StopForwarding(SystemAddress source, SystemAddress destinatio
 	threadOperation.destination=destination;
 	threadOperation.operation=ThreadOperation::TO_STOP_FORWARDING;
 	threadOperationIncomingMutex.Lock();
-	threadOperationIncomingQueue.Push(threadOperation);
+	threadOperationIncomingQueue.Push(threadOperation, __FILE__, __LINE__ );
 	threadOperationIncomingMutex.Unlock();
 #else
 	StopForwardingThreaded(source, destination);
@@ -415,7 +421,7 @@ RAK_THREAD_DECLARATION(UpdateUDPForwarder)
 				threadOperation.result=udpForwarder->StartForwardingThreaded(threadOperation.source, threadOperation.destination, threadOperation.timeoutOnNoDataMS,
 					threadOperation.forceHostAddress, &threadOperation.srcToDestPort, &threadOperation.destToSourcePort);
 				udpForwarder->threadOperationOutgoingMutex.Lock();
-				udpForwarder->threadOperationOutgoingQueue.Push(threadOperation);
+				udpForwarder->threadOperationOutgoingQueue.Push(threadOperation, __FILE__, __LINE__ );
 				udpForwarder->threadOperationOutgoingMutex.Unlock();
 			}
 			else

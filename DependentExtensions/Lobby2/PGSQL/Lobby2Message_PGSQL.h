@@ -425,6 +425,7 @@ struct Lobby2MessageFactory_PGSQL : public Lobby2MessageFactory
 			__L2_MSG_FACTORY_IMPL(Clans_GetBoards, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Clans_GetTopics, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Clans_GetPosts, PGSQL);
+			__L2_MSG_FACTORY_BASE(Notification_Client_RemoteLogin);
 			__L2_MSG_FACTORY_BASE(Notification_Client_IgnoreStatus);
 			__L2_MSG_FACTORY_IMPL(Notification_Friends_StatusChange, PGSQL);
 			__L2_MSG_FACTORY_BASE(Notification_User_ChangedHandle);

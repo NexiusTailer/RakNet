@@ -12,6 +12,7 @@
 #include "RakNetTypes.h"
 #include "BitStream.h"
 #include "RakSleep.h"
+#include "PacketLogger.h"
 #include <assert.h>
 #include <cstdio>
 #include <cstring>
@@ -39,9 +40,10 @@ int main(void)
 	// Note we can easily have both in the same program
 	RakPeerInterface *server=RakNetworkFactory::GetRakPeerInterface();
 	RakNetStatistics *rss;
-	//server->InitializeSecurity(0,0,0,0);
-	int i = server->GetNumberOfAddresses();
 	server->SetIncomingPassword("Rumpelstiltskin", (int)strlen("Rumpelstiltskin"));
+	server->SetTimeoutTime(5000,UNASSIGNED_SYSTEM_ADDRESS);
+//	PacketLogger packetLogger;
+//	server->AttachPlugin(&packetLogger);
 
 	// Holds packets
 	Packet* p;
@@ -80,6 +82,7 @@ int main(void)
 		exit(1);
 	}
 	server->SetOccasionalPing(true);
+	server->SetUnreliableTimeout(1000);
 
 	DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
 	server->GetSockets(sockets);
@@ -139,6 +142,17 @@ int main(void)
 				continue;
 			}
 
+			if (strcmp(message, "getconnectionlist")==0)
+			{
+				SystemAddress systems[10];
+				unsigned short numConnections=10;
+				server->GetConnectionList((SystemAddress*) &systems, &numConnections);
+				for (int i=0; i < numConnections; i++)
+				{
+					printf("%i. %s\n", i+1, systems[i].ToString(true));
+				}
+				continue;
+			}
 
 			if (strcmp(message, "ban")==0)
 			{
@@ -173,27 +187,28 @@ int main(void)
 
 		// Get a packet from either the server or the client
 
-		p = server->Receive();
-		
-		if (p==0)
-			continue; // Didn't get any packets
-
-		// We got a packet, get the identifier with our handy function
-		packetIdentifier = GetPacketIdentifier(p);
-
-		// Check if this is a network message packet
-		switch (packetIdentifier)
+		for (p=server->Receive(); p; server->DeallocatePacket(p), p=server->Receive())
 		{
+			// We got a packet, get the identifier with our handy function
+			packetIdentifier = GetPacketIdentifier(p);
+
+			// Check if this is a network message packet
+			switch (packetIdentifier)
+			{
 			case ID_DISCONNECTION_NOTIFICATION:
-				  // Connection lost normally
+				// Connection lost normally
 				printf("ID_DISCONNECTION_NOTIFICATION from %s\n", p->systemAddress.ToString(true));;
 				break;
 
-		
+
 			case ID_NEW_INCOMING_CONNECTION:
-				 // Somebody connected.  We have their IP now
+				// Somebody connected.  We have their IP now
 				printf("ID_NEW_INCOMING_CONNECTION from %s with GUID %s\n", p->systemAddress.ToString(true), p->guid.ToString());
 				clientID=p->systemAddress; // Record the player ID of the client
+				break;
+
+			case ID_INCOMPATIBLE_PROTOCOL_VERSION:
+				printf("ID_INCOMPATIBLE_PROTOCOL_VERSION\n");
 				break;
 
 			case ID_MODIFIED_PACKET:
@@ -217,12 +232,11 @@ int main(void)
 				// Sending is the same as before
 				sprintf(message, "%s", p->data);
 				server->Send(message, (const int) strlen(message)+1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, p->systemAddress, true);
-			
-				break;
-		}
 
-		// We're done with the packet
-		server->DeallocatePacket(p);
+				break;
+			}
+
+		}
 	}
 
 	server->Shutdown(300);

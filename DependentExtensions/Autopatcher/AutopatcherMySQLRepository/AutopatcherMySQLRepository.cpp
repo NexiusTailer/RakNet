@@ -52,6 +52,7 @@ bool AutopatcherMySQLRepository::CreateAutopatcherTables(void)
 	if (!IsConnected())
 		return false;
 
+	//sqlCommandMutex.Lock();
 	ExecuteBlockingCommand("BEGIN;");
 
 	if (!ExecuteBlockingCommand(
@@ -106,7 +107,9 @@ bool AutopatcherMySQLRepository::CreateAutopatcherTables(void)
 		"ORDER BY Applications.applicationID ASC, FileVersionHistory.fileID ASC;"
 		)) {Rollback(); return false;}
 
-	return ExecuteBlockingCommand("COMMIT;");
+	bool b = ExecuteBlockingCommand("COMMIT;");
+	//sqlCommandMutex.Unlock();
+	return b;
 }
 
 bool AutopatcherMySQLRepository::DestroyAutopatcherTables(void)
@@ -114,11 +117,14 @@ bool AutopatcherMySQLRepository::DestroyAutopatcherTables(void)
 	if (!IsConnected())
 		return false;
 
+	//sqlCommandMutex.Lock();
 	ExecuteBlockingCommand("DROP INDEX FV_appID;");
 	ExecuteBlockingCommand("DROP INDEX FV_fname;");
 	ExecuteBlockingCommand("DROP TABLE Applications CASCADE;");
 	ExecuteBlockingCommand("DROP TABLE FileVersionHistory CASCADE;");
-	return ExecuteBlockingCommand("DROP VIEW AutoPatcherView;");
+	bool b = ExecuteBlockingCommand("DROP VIEW AutoPatcherView;");
+	//sqlCommandMutex.Unlock();
+	return b;
 }
 
 bool AutopatcherMySQLRepository::AddApplication(const char *applicationName, const char *userName)
@@ -127,13 +133,19 @@ bool AutopatcherMySQLRepository::AddApplication(const char *applicationName, con
 
 	char query[512];
 	sprintf(query, "INSERT INTO Applications (applicationName, userName) VALUES ('%s', '%s');", GetEscapedString(applicationName).C_String(), GetEscapedString(userName).C_String());
-	return ExecuteBlockingCommand(query);
+	//sqlCommandMutex.Lock();
+	bool b = ExecuteBlockingCommand(query);
+	//sqlCommandMutex.Unlock();
+	return b;
 }
 bool AutopatcherMySQLRepository::RemoveApplication(const char *applicationName)
 {
 	char query[512];	
 	sprintf(query, "DELETE FROM Applications WHERE applicationName='%s';", GetEscapedString(applicationName).C_String());
-	return ExecuteBlockingCommand(query);
+	//sqlCommandMutex.Lock();
+	bool b = ExecuteBlockingCommand(query);
+	//sqlCommandMutex.Unlock();
+	return b;
 }
 
 bool AutopatcherMySQLRepository::GetChangelistSinceDate(const char *applicationName, FileList *addedFiles, FileList *deletedFiles, const char *sinceDate, char currentDate[64])
@@ -146,11 +158,14 @@ bool AutopatcherMySQLRepository::GetChangelistSinceDate(const char *applicationN
 	sprintf(query, "SELECT applicationID FROM Applications WHERE applicationName='%s';", escapedApplicationName.C_String());
 
 	int applicationID;
+	//sqlCommandMutex.Lock();
 	if (!ExecuteQueryReadInt(query, &applicationID))
 	{
+		//sqlCommandMutex.Unlock();
 		sprintf(lastError,"ERROR: %s not found in UpdateApplicationFiles\n",escapedApplicationName.C_String());
 		return false;
 	}
+	//sqlCommandMutex.Unlock();
 
 	if (sinceDate && sinceDate[0])
 		sprintf(query,
@@ -166,8 +181,13 @@ bool AutopatcherMySQLRepository::GetChangelistSinceDate(const char *applicationN
 		"ORDER BY filename DESC;", applicationID);
 
 	MYSQL_RES * result = 0;
+	//sqlCommandMutex.Lock();
 	if (!ExecuteBlockingCommand (query, &result))
+	{
+		//sqlCommandMutex.Unlock();
 		return false;
+	}
+	//sqlCommandMutex.Unlock();
 
 	MYSQL_ROW row;
 	while ((row = mysql_fetch_row (result)) != 0)
@@ -200,11 +220,14 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 	RakNet::RakString escapedApplicationName = GetEscapedString(applicationName);
 	sprintf(query, "SELECT applicationID FROM Applications WHERE applicationName='%s';", escapedApplicationName.C_String());
 	int applicationID;
+	//sqlCommandMutex.Lock();
 	if (!ExecuteQueryReadInt (query, &applicationID))
 	{
+		//sqlCommandMutex.Unlock();
 	    sprintf(lastError,"ERROR: %s not found in GetPatches\n",applicationName);
 	    return false;
 	}
+	//sqlCommandMutex.Unlock();
 
 	// Go through the input list.
 	for (unsigned inputIndex=0; inputIndex < input->fileList.Size(); inputIndex++)
@@ -229,11 +252,14 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 				applicationID, fn);
 
 			MYSQL_RES * result = 0;
+			//sqlCommandMutex.Lock();
 			if (!ExecuteBlockingCommand (query, &result))
 			{
+				//sqlCommandMutex.Unlock();
 				delete [] fn;
 				return false;
 			}
+			//sqlCommandMutex.Unlock();
 
 			MYSQL_ROW row = mysql_fetch_row (result);	
 			if (row != 0)
@@ -263,11 +289,14 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 				applicationID, fn);
 
 			MYSQL_RES * result = 0;
+			//sqlCommandMutex.Lock();
 			if (!ExecuteBlockingCommand (query, &result))
 			{
+				//sqlCommandMutex.Unlock();
 				delete [] fn;
 				return false;
 			}
+			//sqlCommandMutex.Unlock();
 
 			MYSQL_ROW row = mysql_fetch_row (result);	
 			if (row != 0)
@@ -283,11 +312,14 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 					
 					sprintf(query, "SELECT patch FROM FileVersionHistory WHERE applicationId=%i AND filename='%s' AND contentHash='%s'; ", applicationID, fn, buf);
                     MYSQL_RES * patchResult = 0;
+					//sqlCommandMutex.Lock();
                     if (!ExecuteBlockingCommand (query, &patchResult))
 					{
+						//sqlCommandMutex.Unlock();
 						delete [] fn;
                         return false;
 					}
+					//sqlCommandMutex.Unlock();
 
                     MYSQL_ROW row = mysql_fetch_row (patchResult);
 					if (row==0)
@@ -375,29 +407,40 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 	sprintf(query, "SELECT applicationID FROM Applications WHERE applicationName='%s';", escapedApplicationName.C_String());
 	int applicationID;
 
+	//sqlCommandMutex.Lock();
 	if (!ExecuteQueryReadInt(query, &applicationID))
 	{
+		//sqlCommandMutex.Unlock();
 		sprintf(lastError,"ERROR: %s not found in UpdateApplicationFiles\n",escapedApplicationName.C_String());
 		return false;
 	}
 
 	if (!ExecuteBlockingCommand("BEGIN;"))
 	{
+		//sqlCommandMutex.Unlock();
 		return false;
 	}
+	//sqlCommandMutex.Unlock();
+
 	sprintf(query, "UPDATE Applications SET changeSetId = changeSetId + 1 where applicationID=%i;", applicationID);
+	//sqlCommandMutex.Lock();
 	if (!ExecuteBlockingCommand(query))
 	{
 		Rollback ();
+		//sqlCommandMutex.Unlock();
 		return false;
 	}
+	//sqlCommandMutex.Unlock();
 	int changeSetId = 0;
 	sprintf(query, "SELECT changeSetId FROM Applications WHERE applicationID=%i;", applicationID);
+	//sqlCommandMutex.Lock();
 	if (!ExecuteQueryReadInt(query, &changeSetId))
 	{
 		Rollback ();
+		//sqlCommandMutex.Unlock();
 		return false;
 	}
+	//sqlCommandMutex.Unlock();
 
 	// +1 was added in the update
 	changeSetId--;
@@ -409,11 +452,14 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 	               "ORDER BY filename DESC;", applicationID);
 
 	MYSQL_RES *result = 0;
+	//sqlCommandMutex.Lock();
 	if (!ExecuteBlockingCommand(query, &result))
 	{
 		Rollback();
+		//sqlCommandMutex.Unlock();
 		return false;
 	}
+	//sqlCommandMutex.Unlock();
 	DataStructures::List <FileInfo> newestFiles;
 	MYSQL_ROW row;
 	while ((row = mysql_fetch_row (result)) != 0)
@@ -426,7 +472,7 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 			RakAssert(mysql_fetch_lengths (result) [1] == HASH_LENGTH);  // check the data is sensible
 			memcpy (fi.contentHash, row [1], HASH_LENGTH);
 		}
-	    newestFiles.Insert (fi);
+	    newestFiles.Insert (fi, __FILE__, __LINE__ );
 	}    
 	mysql_free_result(result);
 
@@ -504,13 +550,16 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 		sprintf(query, "INSERT INTO FileVersionHistory(applicationID, filename, createFile, changeSetID, userName) VALUES (%i, '%s', FALSE,%i,'%s');", 
 			applicationID, GetEscapedString(deletedFiles.fileList[fileListIndex].filename).C_String(), changeSetId, GetEscapedString(userName).C_String());
 		
+		//sqlCommandMutex.Lock();
 		if (!ExecuteBlockingCommand (query))
 		{
 			Rollback();
+			//sqlCommandMutex.Unlock();
 			deletedFiles.Clear();
 			newFiles.Clear();
 			return false;
 		}
+		//sqlCommandMutex.Unlock();
 	}
 	
 	// Clear the delete list as it is no longer needed.
@@ -529,12 +578,15 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 		sprintf( query, "SELECT fileID from FileVersionHistory WHERE applicationID=%i AND filename='%s' AND createFile=TRUE;", applicationID, GetEscapedString(hardDriveFilename).C_String() );
 
 		MYSQL_RES * res = 0;
+		//sqlCommandMutex.Lock();
 		if (!ExecuteBlockingCommand (query, &res))
 		{
 			Rollback();
+			//sqlCommandMutex.Unlock();
 			newFiles.Clear();
 			return false;
 		}
+		//sqlCommandMutex.Unlock();
 		
 		// Create new patches for every create version
 		MYSQL_ROW row;
@@ -546,13 +598,16 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 			// The last query handled all the relevant comparisons
 			sprintf(query, "SELECT content from FileVersionHistory WHERE fileID=%s", fileID );
 			MYSQL_RES * queryResult = 0;
+			//sqlCommandMutex.Lock();
 			if (!ExecuteBlockingCommand (query, &queryResult))
 			{
 				Rollback();
+				//sqlCommandMutex.Unlock();
 				newFiles.Clear();
 				mysql_free_result(res);
 				return false;
 			}
+			//sqlCommandMutex.Unlock();
 		
 			MYSQL_ROW queryRow = mysql_fetch_row (queryResult);
 
@@ -600,17 +655,20 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 				return false;
 			}
 
+			//sqlCommandMutex.Lock();
 			if (mysql_stmt_execute(stmt))
 			{
 				strcpy (lastError, mysql_stmt_error (stmt));
 				mysql_stmt_close(stmt);
 				Rollback();
+				//sqlCommandMutex.Unlock();
 				newFiles.Clear();
 				mysql_free_result(res);
 				mysql_free_result(queryResult);
 				delete [] patch;
 				return false;
 			}
+			//sqlCommandMutex.Unlock();
 
 			mysql_stmt_close(stmt);
 			delete [] patch;
@@ -663,22 +721,28 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 			 return false;
 		 }
 
+		 //sqlCommandMutex.Lock();
 		 if (mysql_stmt_execute(stmt))
 		 {
 			 strcpy (lastError, mysql_stmt_error (stmt));
 			 mysql_stmt_close(stmt);
 			 Rollback();
+			 //sqlCommandMutex.Unlock();
 			 return false;
 		 }
+		 //sqlCommandMutex.Unlock();
 
 		 mysql_stmt_close(stmt);
 	}
 
+	//sqlCommandMutex.Lock();
 	if (!ExecuteBlockingCommand("COMMIT;"))
 	{
         Rollback ();
+		//sqlCommandMutex.Unlock();
 		return false;
 	}
+	//sqlCommandMutex.Unlock();
 
 	return true;
 }
@@ -687,16 +751,19 @@ const char *AutopatcherMySQLRepository::GetLastError(void) const
 {
 	return MySQLInterface::GetLastError();
 }
-unsigned int AutopatcherMySQLRepository::GetFilePart( char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)
+unsigned int AutopatcherMySQLRepository::GetFilePart( const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)
 {
 	char query[512];
 	sprintf(query, "SELECT substring(content from %i for %i) FROM FileVersionHistory WHERE fileId=%i;", startReadBytes+1,numBytesToRead,context.fileId);
 
 	MYSQL_RES * result = 0;
+//	getFilePartMutex.Lock();
 	if (!ExecuteBlockingCommand (query, &result))
 	{
+//		getFilePartMutex.Unlock();
 		return 0;
 	}
+	//sqlCommandMutex.Unlock();
 
 	MYSQL_ROW row = mysql_fetch_row (result);	
 	if (row != 0)
@@ -704,10 +771,12 @@ unsigned int AutopatcherMySQLRepository::GetFilePart( char *filename, unsigned i
 		const char * content = row [0];
 		unsigned long contentLength=mysql_fetch_lengths (result) [0];
 		memcpy(preallocatedDestination,content,contentLength);
+	//	getFilePartMutex.Unlock();
 		mysql_free_result (result);
 		return contentLength;
 	}
 
+//	getFilePartMutex.Unlock();
 	mysql_free_result (result);
 	return 0;
 }

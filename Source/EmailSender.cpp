@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 #if defined(_XBOX) || defined(X360)
-#include "XBOX360Includes.h"
+                            
 #endif
 
 #include "RakSleep.h"
@@ -255,7 +255,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 			sprintf(query, "\r\n--%s\r\n", boundary);
 			tcpInterface.Send(query, (unsigned int)strlen(query), emailServer,false);
 
-			sprintf(query, "Content-Type: APPLICATION/Octet-Stream; SizeOnDisk=%i; name=\"%s\"\r\nContent-Transfer-Encoding: BASE64\r\nContent-Description: %s\r\n\r\n", attachedFiles->fileList[i].dataLengthBytes, attachedFiles->fileList[i].filename, attachedFiles->fileList[i].filename);
+			sprintf(query, "Content-Type: APPLICATION/Octet-Stream; SizeOnDisk=%i; name=\"%s\"\r\nContent-Transfer-Encoding: BASE64\r\nContent-Description: %s\r\n\r\n", attachedFiles->fileList[i].dataLengthBytes, attachedFiles->fileList[i].filename.C_String(), attachedFiles->fileList[i].filename.C_String());
 			tcpInterface.Send(query, (unsigned int)strlen(query), emailServer,false);
 
 			newBody = (char*) rakMalloc_Ex( (size_t) (attachedFiles->fileList[i].dataLengthBytes*3)/2, __FILE__, __LINE__ );

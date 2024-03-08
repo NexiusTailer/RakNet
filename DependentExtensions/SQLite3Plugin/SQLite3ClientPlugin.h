@@ -86,7 +86,7 @@ class RAK_DLL_EXPORT SQLite3ClientPlugin : public PluginInterface2
 {
 public:
 	SQLite3ClientPlugin();
-	~SQLite3ClientPlugin();
+	virtual ~SQLite3ClientPlugin();
 
 	/// Add an interface to get callbacks for results
 	/// Up to user to make sure the pointer is valid through the lifetime of use

@@ -45,6 +45,12 @@
     <A HREF="http://www.jenkinssoftware.com/raknet/manual/ReplicaManager3Video.htm">Tutorial 3: ReplicaManager3</A><BR>
     <A HREF="http://www.jenkinssoftware.com/raknet/manual/AutopatcherDemo.htm">Tutorial 4: Autopatcher</A><BR>
     </p></TD></TR></TABLE>
+    <table width="100%" border="0"><tr>
+  <td bgcolor="2c5d92" class="RakNetWhiteHeader">&nbsp;Feature Videos</td>
+</tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD><p><A HREF="http://www.jenkinssoftware.com/raknet/manual/SQLite3LoggerPluginVideo.html">Networked logging with SQLiteClientLoggerPlugin</A></p></TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="2c5d92">
 <img src="spacer.gif" width="8" height="1"><span class="RakNetWhiteHeader">The Basics</span></td>
 </tr></table>
@@ -111,8 +117,10 @@
 <p><a href="filelisttransfer.html">File List Transfer</a><br>
   - Plugin to send a list of files, encoded in the FileList structure<br>
 </p>
-<p><A HREF="fullyconnectedmesh.html">Fully Connected Mesh</A><BR>
+<p><A HREF="fullyconnectedmesh.html">Fully Connected Mesh</A> (Depreciated)<BR>
       - A plug-in to make all peers connect to all other peers automatically.</p>
+<p><A HREF="fullyconnectedmesh2.html">Fully Connected Mesh 2</A><BR>
+- A plug-in to make all peers connect to all other peers automatically, and also choose the oldest peer to act as a host.</p>
 <p><A HREF="lightweightdatabase.html">Lightweight Database Client / Lightweight Database Server</A><BR>
 - (Depreciated) A simple flat database included with RakNet, useful as a directory server to list games</p>
 <p><a href="lobby.html">Lobby Client / Lobby Server</a><br>
@@ -137,7 +145,9 @@
   - A plug-in that provides management for your game objects and players to make serialization, scoping, and object creation and destruction easier.<BR>
   <BR>
   <a href="router.html">Router</a><br>
-  - Send network messages to one or more remote systems we are not directly connected to.</p>
+  - Send network messages to one or more remote systems we are not directly connected to</p>
+<p><a href="sqlite3loggerplugin.html">SQLite3LoggerPlugin</a><br>
+- Create networked log files using SQLite. Based on <a href="sqlite3plugin.html">SQLite3Plugin</a></p>
 <p><a href="sqlite3plugin.html">SQLite3Plugin</a><br>
   - Execute statements over the network with SQLite (replacement for LightweightDatabase)</p>
 </TD></TR></TABLE>
@@ -165,8 +175,20 @@
 <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
     
     <p><a href="ogre3dinterpdemo.html">Ogre 3D Interpolation Demo</a><br>
-      - Use <A HREF="http://www.ogre3d.org/">Ogre 3D</A> to show a demo of popping popcorn over a client/server network, using <a href="replicamanager.html">ReplicaManager2</a></p>
+      - Use <A HREF="http://www.ogre3d.org/">Ogre 3D</A> to show a demo of popping popcorn over a client/server network, using <a href="replicamanager3.html">ReplicaManager3</a></p>
+          <p><a href="irrlichtfpsdemo.html">Irrlicht FPS Demo</a><br>
+      - Use <A HREF="http://irrlicht.sourceforge.net/">Irrlicht</A> to show a 3D FPS demo using peer to peer with NAT punchthrough. Also uses <a href="replicamanager3.html">ReplicaManager3</a></p>
     </TD></TR></TABLE>
+        
+    <table width="100%" border="0"><tr>
+  <td bgcolor="#2c5d92"><font color="#FFFFFF" size="3" face="Arial, Helvetica, sans-serif"><strong><span class="RakNetWhiteHeader">&nbsp;Technical Design Documents</span></strong></td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+    
+    <a href="congestioncontrol.html">UDT based congestion control</a><BR>
+    <a href="RakNetUML.jpg">UML Diagram</a>
+    </TD></TR></TABLE>
+        
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92"><font color="#FFFFFF" size="3" face="Arial, Helvetica, sans-serif"><strong><span class="RakNetWhiteHeader">&nbsp;Data Structures</span></strong></td>
 </tr></table>
 <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>

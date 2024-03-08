@@ -137,7 +137,7 @@ int main(void)
 		printf("Enter IP of facilitator (enter for default): ");
 		gets(facilitatorIP);
 		if (facilitatorIP[0]==0)
-			strcpy(facilitatorIP, "8.17.250.34");
+			strcpy(facilitatorIP, "94.198.81.195");
 		facilitator.SetBinaryAddress(facilitatorIP);
 		facilitator.port=NAT_PUNCHTHROUGH_FACILITATOR_PORT;
 		rakPeer->Connect(facilitatorIP, NAT_PUNCHTHROUGH_FACILITATOR_PORT, 0, 0);

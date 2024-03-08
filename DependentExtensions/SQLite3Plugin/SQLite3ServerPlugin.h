@@ -46,18 +46,18 @@ class RAK_DLL_EXPORT SQLite3ServerPlugin : public PluginInterface2
 {
 public:
 	SQLite3ServerPlugin();
-	~SQLite3ServerPlugin();
+	virtual ~SQLite3ServerPlugin();
 
 	/// Associate identifier with dbHandle, so when we get calls to operate on identifier, we use dbhandle
 	/// If SQLite3_STATEMENT_EXECUTE_THREADED is defined, will start the execution thread the first time a dbHandle is added.
 	/// \return true on success, false on dbIdentifier empty, or already in use
-	bool AddDBHandle(RakNet::RakString dbIdentifier, sqlite3 *dbHandle);
+	virtual bool AddDBHandle(RakNet::RakString dbIdentifier, sqlite3 *dbHandle, bool dbAutoCreated=false);
 
 	/// Stop using a dbHandle, lookup either by identifier or by pointer.
 	/// If SQLite3_STATEMENT_EXECUTE_THREADED is defined, do not call this while processing commands, since the commands run in a thread and might be using the dbHandle
 	/// Call before closing the handle or else SQLite3Plugin won't know that it was closed, and will continue using it
-	void RemoveDBHandle(RakNet::RakString dbIdentifier);
-	void RemoveDBHandle(sqlite3 *dbHandle);
+	void RemoveDBHandle(RakNet::RakString dbIdentifier, bool alsoCloseConnection=false);
+	void RemoveDBHandle(sqlite3 *dbHandle, bool alsoCloseConnection=false);
 
 	/// \internal For plugin handling
 	virtual PluginReceiveResult OnReceive(Packet *packet);
@@ -69,38 +69,45 @@ public:
 	{
 		RakNet::RakString dbIdentifier;
 		sqlite3 *dbHandle;
+		bool dbAutoCreated;
+		RakNetTimeMS whenCreated;
 	};
 
 #ifdef SQLite3_STATEMENT_EXECUTE_THREADED
 	virtual void Update(void);
 	/// \internal
-	struct ExecThreadInput
+	struct SQLExecThreadInput
 	{
+		SQLExecThreadInput() {data=0; packet=0;}
 		char *data;
 		unsigned int length;
 		SystemAddress sender;
+		RakNetTimeMS whenMessageArrived;
 		sqlite3 *dbHandle;
+		Packet *packet;
 	};
 
 	/// \internal
-	struct ExecThreadOutput
+	struct SQLExecThreadOutput
 	{
+		SQLExecThreadOutput() {data=0; packet=0;}
 		char *data;
 		unsigned int length;
 		SystemAddress sender;
+		Packet *packet;
 	};
 #endif // SQLite3_STATEMENT_EXECUTE_THREADED
 
 protected:
-	void StopThreads(void);
+	virtual void StopThreads(void);
 
 	// List of databases added with AddDBHandle()
 	DataStructures::Multilist<ML_ORDERED_LIST, NamedDBHandle, RakNet::RakString> dbHandles;
 
 #ifdef SQLite3_STATEMENT_EXECUTE_THREADED
-	// The point of the threadPool is so that SQL queries, which are blocking, happen in the thread and don't slow down the rest of the application
-	// The threadPool has a queue for incoming processing requests.  As systems disconnect their pending requests are removed from the list.
-	ThreadPool<ExecThreadInput, ExecThreadOutput> threadPool;
+	// The point of the sqlThreadPool is so that SQL queries, which are blocking, happen in the thread and don't slow down the rest of the application
+	// The sqlThreadPool has a queue for incoming processing requests.  As systems disconnect their pending requests are removed from the list.
+	ThreadPool<SQLExecThreadInput, SQLExecThreadOutput> sqlThreadPool;
 #endif
 };
 

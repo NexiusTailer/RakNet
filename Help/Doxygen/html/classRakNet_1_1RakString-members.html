@@ -42,6 +42,7 @@
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#26660f0a5bc671d66825963c95e689b2">IPAddressMatch</a>(const char *IP)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#ed2f7cfdfd65f63a3e6f7fdf28930f7e">IsEmailAddress</a>(void) const </td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#e022e3749d4c3a40c81634ab1aea55ce">IsEmpty</a>(void) const </td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#5a8f252381a344093ea45ee62fd98d2f">MakeFilePath</a>(void)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#6220f7e457fda28d722c83ee95d9baa9">NonVariadic</a>(const char *str)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#06ec155fa754785178a46e6cfc5698d3">nPos</a></td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#dbb9f791e47d30829cfd32682fa2fa1d">operator const char *</a>() const </td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td><code> [inline]</code></td></tr>
@@ -51,6 +52,7 @@
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#8a34592015f4dbedb01084bf592f146b">operator==</a>(const RakString &amp;rhs) const </td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#6eda78ce277dfa2575ec9d13a8c19b13">operator[]</a>(const unsigned int position) const </td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#e856fde4a0c06c92e1b6358ee2f416d9">Printf</a>(void)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#30ed346a44897c35a8828b9f03e9a03a">RemoveCharacter</a>(char c)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#908d42cb232ad4ea0e24eafc10849bfa">Replace</a>(unsigned index, unsigned count, unsigned char c)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#677d8cc510bb643fecd3f193b76733ad">Serialize</a>(BitStream *bs)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#e7c203a84b2d03b70d97a7bb79c6a84e">Serialize</a>(const char *str, BitStream *bs)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td><code> [static]</code></td></tr>
@@ -62,12 +64,15 @@
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#6932a1a6069d3c017b3ed7389a8262bd">SQLEscape</a>(void)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#84e1217c6ce0ac078c4f8d915d6affd4">StrCmp</a>(const RakString &amp;rhs) const </td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#3d140fcc50a7c3d77dc3374d41b3224c">StrICmp</a>(const RakString &amp;rhs) const </td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#79068e21d14ab58af70acbda5820763d">TerminateAtFirstCharacter</a>(char c)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#47359a2ee66669ab9a1873d49a06eab4">TerminateAtLastCharacter</a>(char c)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#3fb93d1bd2bb2ce06c4797956f89f476">ToLower</a>(void)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#a4c723f521bede5c1bd468f499509bdd">ToUpper</a>(void)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#07550f34d070c5afdb74d868d8b76492">Truncate</a>(unsigned length)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#665ee6e312ae9770d96732ea7eac8222">URLDecode</a>(void)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RakString.html#ac87f8015d01c5c973c259066d96b4f0">URLEncode</a>(void)</td><td><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a></td><td></td></tr>
 </table></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:47 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:14 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

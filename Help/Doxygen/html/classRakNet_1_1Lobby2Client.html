@@ -29,7 +29,13 @@
   </div>
 </div>
 <div class="contents">
-<h1>RakNet::Lobby2Client Class Reference</h1><!-- doxytag: class="RakNet::Lobby2Client" --><!-- doxytag: inherits="RakNet::Lobby2Plugin" --><code>#include &lt;Lobby2Client.h&gt;</code>
+<h1>RakNet::Lobby2Client Class Reference<br>
+<small>
+[<a class="el" href="group__LOBBY__2__CLIENT.html">Lobby2Client</a>]</small>
+</h1><!-- doxytag: class="RakNet::Lobby2Client" --><!-- doxytag: inherits="RakNet::Lobby2Plugin" -->Class used to send commands to <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base class for the lobby server, without database specific functionality.">Lobby2Server</a>.  
+<a href="#_details">More...</a>
+<p>
+<code>#include &lt;Lobby2Client.h&gt;</code>
 <p>
 <div class="dynheader">
 Inheritance diagram for RakNet::Lobby2Client:</div>
@@ -49,11 +55,14 @@ Inheritance diagram for RakNet::Lobby2Client:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6fcabb02010caf3076044a38b9bab820"></a><!-- doxytag: member="RakNet::Lobby2Client::SetServerAddress" ref="6fcabb02010caf3076044a38b9bab820" args="(SystemAddress addr)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#6fcabb02010caf3076044a38b9bab820">SetServerAddress</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> addr)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the address of the server. When you call <a class="el" href="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f">SendMsg()</a> the packet will be sent to this address. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the address of the server. When you call <a class="el" href="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f" title="Send a command to the server.">SendMsg()</a> the packet will be sent to this address. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f">SendMsg</a> (<a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> *msg)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#95ce0205949b6129eaa2401a86d71eeb">SendMsgAndDealloc</a> (<a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> *msg)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Send a command to the server.  <a href="#756efa8e824f52acecf7138617dc4c3f"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="95ce0205949b6129eaa2401a86d71eeb"></a><!-- doxytag: member="RakNet::Lobby2Client::SendMsgAndDealloc" ref="95ce0205949b6129eaa2401a86d71eeb" args="(Lobby2Message *msg)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#95ce0205949b6129eaa2401a86d71eeb">SendMsgAndDealloc</a> (<a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> *msg)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Same as <a class="el" href="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f" title="Send a command to the server.">SendMsg()</a> Also calls Dealloc on the message factory. <br></td></tr>
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#b6bd157a6a8d6e71961e94c8ec10e817">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
@@ -65,7 +74,26 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-The lobby system works by sending implementations of <a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> from <a class="el" href="classRakNet_1_1Lobby2Client.html">Lobby2Client</a> to <a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a>, and getting the results via <a class="el" href="classRakNet_1_1Lobby2Plugin.html#5090cd5b0c83e5ed290b11fe9e81ac75" title="Set the callback to receive the results of operations via SendMsg().">Lobby2Client::SetCallbackInterface()</a> The client itself is a thin shell that does little more than call Serialize on the messages. To use: 1. Call <a class="el" href="classRakNet_1_1Lobby2Client.html#6fcabb02010caf3076044a38b9bab820" title="Set the address of the server. When you call SendMsg() the packet will be sent to...">Lobby2Client::SetServerAddress()</a> after connecting to the system running <a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a>. 2. Instantiate an instance of RakNet::Lobby2MessageFactory and register it with RakNet::Lobby2Plugin::SetMessageFactory() (the base class of <a class="el" href="classRakNet_1_1Lobby2Client.html">Lobby2Client</a>) 3. Call messageFactory.Alloc(command); where command is one of the Lobby2MessageID enumerations. 4. Instantiate a (probably derived) instance of <a class="el" href="structRakNet_1_1Lobby2Callbacks.html" title="Every Lobby2Message processed with Lobby2Client::SendMsg() while connected will call...">Lobby2Callbacks</a> and register it with <a class="el" href="classRakNet_1_1Lobby2Plugin.html#5090cd5b0c83e5ed290b11fe9e81ac75" title="Set the callback to receive the results of operations via SendMsg().">Lobby2Client::SetCallbackInterface()</a> 5. Cast the returned structure, fill in the input parameters, and call <a class="el" href="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f">Lobby2Client::SendMsg()</a> to send this command to the server. 6. Wait for the result of the operation to be sent to your callback. The message will contain the original input parameters, possibly output parameters, and <a class="el" href="structRakNet_1_1Lobby2Message.html#750b6a5d792d6f6c2532bfc7e3f74c99" title="Result of the operation. L2RC_SUCCESS means the result completed. Anything else means...">Lobby2Message::resultCode</a> will be filled in. <hr><h2>Member Function Documentation</h2>
+Class used to send commands to <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base class for the lobby server, without database specific functionality.">Lobby2Server</a>. 
+<p>
+The lobby system works by sending implementations of <a class="el" href="structRakNet_1_1Lobby2Message.html" title="A Lobby2Message encapsulates a networked function call from the client.">Lobby2Message</a> from <a class="el" href="classRakNet_1_1Lobby2Client.html" title="Class used to send commands to Lobby2Server.">Lobby2Client</a> to <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base class for the lobby server, without database specific functionality.">Lobby2Server</a>, and getting the results via <a class="el" href="classRakNet_1_1Lobby2Plugin.html#5090cd5b0c83e5ed290b11fe9e81ac75" title="Set the callback to receive the results of operations via SendMsg().">Lobby2Client::SetCallbackInterface()</a><br>
+ The client itself is a thin shell that does little more than call Serialize on the messages.<br>
+ To use:<br>
+ <ol>
+<li>
+Call <a class="el" href="classRakNet_1_1Lobby2Client.html#6fcabb02010caf3076044a38b9bab820" title="Set the address of the server. When you call SendMsg() the packet will be sent to...">Lobby2Client::SetServerAddress()</a> after connecting to the system running <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base class for the lobby server, without database specific functionality.">Lobby2Server</a>. </li>
+<li>
+Instantiate an instance of RakNet::Lobby2MessageFactory and register it with <a class="el" href="classRakNet_1_1Lobby2Plugin.html#ea2398d48dc769d0d88b7819601636c4" title="Creates messages from message IDs.">RakNet::Lobby2Plugin::SetMessageFactory()</a> (the base class of <a class="el" href="classRakNet_1_1Lobby2Client.html" title="Class used to send commands to Lobby2Server.">Lobby2Client</a>) </li>
+<li>
+Call messageFactory.Alloc(command); where command is one of the Lobby2MessageID enumerations. </li>
+<li>
+Instantiate a (probably derived) instance of <a class="el" href="structRakNet_1_1Lobby2Callbacks.html">Lobby2Callbacks</a> and register it with <a class="el" href="classRakNet_1_1Lobby2Plugin.html#5090cd5b0c83e5ed290b11fe9e81ac75" title="Set the callback to receive the results of operations via SendMsg().">Lobby2Client::SetCallbackInterface()</a> </li>
+<li>
+Cast the returned structure, fill in the input parameters, and call <a class="el" href="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f" title="Send a command to the server.">Lobby2Client::SendMsg()</a> to send this command to the server. </li>
+<li>
+Wait for the result of the operation to be sent to your callback. The message will contain the original input parameters, possibly output parameters, and <a class="el" href="structRakNet_1_1Lobby2Message.html#750b6a5d792d6f6c2532bfc7e3f74c99" title="Result of the operation. L2RC_SUCCESS means the result completed. Anything else means...">Lobby2Message::resultCode</a> will be filled in. </li>
+</ol>
+<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="5093b0e3583e6a66415b0060c16c4c1a"></a><!-- doxytag: member="RakNet::Lobby2Client::OnClosedConnection" ref="5093b0e3583e6a66415b0060c16c4c1a" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
@@ -155,39 +183,21 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Send a command to the server <dl compact><dt><b>Parameters:</b></dt><dd>
+Send a command to the server. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>msg</em>&nbsp;</td><td>The message that represents the command </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>callbackId</em>&nbsp;</td><td>Which callback, registered with <a class="el" href="classRakNet_1_1Lobby2Plugin.html#5090cd5b0c83e5ed290b11fe9e81ac75" title="Set the callback to receive the results of operations via SendMsg().">SetCallbackInterface()</a> or AddCallbackInterface(), should process the result. -1 for all </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>callbackId</em>&nbsp;</td><td>Which callback, registered with <a class="el" href="classRakNet_1_1Lobby2Plugin.html#5090cd5b0c83e5ed290b11fe9e81ac75" title="Set the callback to receive the results of operations via SendMsg().">SetCallbackInterface()</a> or <a class="el" href="classRakNet_1_1Lobby2Plugin.html#d20e1b1a427254ecfbf17ccc12e569ec" title="You can have more than one callback to get called from the results of operations...">AddCallbackInterface()</a>, should process the result. -1 for all </td></tr>
   </table>
 </dl>
 
 </div>
 </div><p>
-<a class="anchor" name="95ce0205949b6129eaa2401a86d71eeb"></a><!-- doxytag: member="RakNet::Lobby2Client::SendMsgAndDealloc" ref="95ce0205949b6129eaa2401a86d71eeb" args="(Lobby2Message *msg)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void RakNet::Lobby2Client::SendMsgAndDealloc           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> *&nbsp;</td>
-          <td class="paramname"> <em>msg</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Same as <a class="el" href="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f">SendMsg()</a> Also calls Dealloc on the message factory 
-</div>
-</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>C:/RakNet/DependentExtensions/Lobby2/Lobby2Client.h</ul>
+<li>c:/RakNet/DependentExtensions/Lobby2/Lobby2Client.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:48 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:14 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

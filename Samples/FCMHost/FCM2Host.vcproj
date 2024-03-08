@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="FCMHost2"
+	Name="FCM2Host"
 	ProjectGUID="{64EEE2EC-DF4C-4B9A-9C6E-1995C49ADD11}"
 	RootNamespace="FCMHost2"
 	Keyword="Win32Proj"

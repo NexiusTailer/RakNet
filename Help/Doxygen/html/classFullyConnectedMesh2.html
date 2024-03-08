@@ -49,6 +49,8 @@ Inheritance diagram for FullyConnectedMesh2:</div>
 <a href="classFullyConnectedMesh2-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFullyConnectedMesh2.html#d0c9f8349664320402c3457a59add4bb">SetConnectOnNewRemoteConnection</a> (bool attemptConnection, <a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> pw)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFullyConnectedMesh2.html#ab477aae9992d7b6fe03750545791ef0">GetConnectedHost</a> (void) const </td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The connected host is whichever system we are connected to that has been running the longest.  <a href="#ab477aae9992d7b6fe03750545791ef0"></a><br></td></tr>
@@ -61,9 +63,13 @@ Inheritance diagram for FullyConnectedMesh2:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFullyConnectedMesh2.html#7ef4a22a2089c6b6c1c277ce6cb28cd3">SetAutoparticipateConnections</a> (bool b)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Automatically add new connections to the fully connected mesh.  <a href="#7ef4a22a2089c6b6c1c277ce6cb28cd3"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFullyConnectedMesh2.html#68e8dcf1ff565870f03359028d059a67">AddParticipant</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> participant)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e38791d1069d82e4d2ef967eb68f6bbf"></a><!-- doxytag: member="FullyConnectedMesh2::ResetHostCalculation" ref="e38791d1069d82e4d2ef967eb68f6bbf" args="(void)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFullyConnectedMesh2.html#e38791d1069d82e4d2ef967eb68f6bbf">ResetHostCalculation</a> (void)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">if <a class="el" href="classFullyConnectedMesh2.html#7ef4a22a2089c6b6c1c277ce6cb28cd3" title="Automatically add new connections to the fully connected mesh.">SetAutoparticipateConnections()</a> is called with false, then you need to use AddParticipant before these systems will be added to the mesh  <a href="#68e8dcf1ff565870f03359028d059a67"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Clear our own host order, and recalculate as if we had just reconnected. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFullyConnectedMesh2.html#a8559b6b70b434482609b1748988482c">AddParticipant</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGuid)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">if <a class="el" href="classFullyConnectedMesh2.html#7ef4a22a2089c6b6c1c277ce6cb28cd3" title="Automatically add new connections to the fully connected mesh.">SetAutoparticipateConnections()</a> is called with false, then you need to use AddParticipant before these systems will be added to the mesh  <a href="#a8559b6b70b434482609b1748988482c"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFullyConnectedMesh2.html#bb0f1f00b17c1e109a69040e4dc13cb3">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c5b859942c04231e23cb8c41550c79fd"></a><!-- doxytag: member="FullyConnectedMesh2::OnStartup" ref="c5b859942c04231e23cb8c41550c79fd" args="(void)" -->
@@ -93,15 +99,15 @@ Fully connected mesh plugin, revision 2.
 This will connect <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> to all connecting peers, and all peers the connecting peer knows about.<br>
  It will also calculate which system has been running longest, to find out who should be host, if you need one system to act as a host <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>You must also install the <a class="el" href="classConnectionGraph2.html" title="A one hop connection graph.">ConnectionGraph2</a> plugin </dd></dl>
 <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="68e8dcf1ff565870f03359028d059a67"></a><!-- doxytag: member="FullyConnectedMesh2::AddParticipant" ref="68e8dcf1ff565870f03359028d059a67" args="(SystemAddress participant)" -->
+<a class="anchor" name="a8559b6b70b434482609b1748988482c"></a><!-- doxytag: member="FullyConnectedMesh2::AddParticipant" ref="a8559b6b70b434482609b1748988482c" args="(RakNetGUID rakNetGuid)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void FullyConnectedMesh2::AddParticipant           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>participant</em>          </td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>rakNetGuid</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td></td>
         </tr>
@@ -381,10 +387,45 @@ Defaults to true. <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
-<hr>The documentation for this class was generated from the following file:<ul>
-<li>C:/RakNet/Source/<a class="el" href="FullyConnectedMesh2_8h.html">FullyConnectedMesh2.h</a></ul>
+<a class="anchor" name="d0c9f8349664320402c3457a59add4bb"></a><!-- doxytag: member="FullyConnectedMesh2::SetConnectOnNewRemoteConnection" ref="d0c9f8349664320402c3457a59add4bb" args="(bool attemptConnection, RakNet::RakString pw)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void FullyConnectedMesh2::SetConnectOnNewRemoteConnection           </td>
+          <td>(</td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>attemptConnection</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a>&nbsp;</td>
+          <td class="paramname"> <em>pw</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:45 2009 for RakNet by&nbsp;
+<div class="memdoc">
+
+<p>
+When the message ID_REMOTE_NEW_INCOMING_CONNECTION arrives, we try to connect to that system <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>attemptConnection</em>&nbsp;</td><td>If true, we try to connect to any systems we are notified about with ID_REMOTE_NEW_INCOMING_CONNECTION, which comes from the <a class="el" href="classConnectionGraph2.html" title="A one hop connection graph.">ConnectionGraph2</a> plugin. Defaults to true. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>pw</em>&nbsp;</td><td>The password to use to connect with. Only used if <em>attemptConnection</em> is true </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<hr>The documentation for this class was generated from the following file:<ul>
+<li>c:/RakNet/Source/<a class="el" href="FullyConnectedMesh2_8h.html">FullyConnectedMesh2.h</a></ul>
+</div>
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:12 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

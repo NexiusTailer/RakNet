@@ -29,6 +29,7 @@
 <div class="contents">
 <h1>RakNet::RoomsPlugin Member List</h1>This is the complete list of members for <a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a>, including all inherited members.<p><table>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RoomsPlugin.html#2f7d51bd655dad92b8d72c67957a62b4">AddLoginServerAddress</a>(SystemAddress systemAddress)</td><td><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakNet_1_1RoomsPlugin.html#01127b5eb8a069c7c0ee9a90d77e5882">ChangeHandle</a>(RakNet::RakString oldHandle, RakNet::RakString newHandle)</td><td><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RoomsPlugin.html#d9e648c365d1800931a316a0c15b6b53">ClearLoginServerAdddresses</a>(void)</td><td><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RoomsPlugin.html#4e50b77329efb0e37cf2fce84dcca655">ClearRoomMembers</a>()</td><td><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RoomsPlugin.html#88194af5ce6cbc83a1af4b4bae7c56b1">ExecuteFunc</a>(RoomsPluginFunc *func)</td><td><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td><td></td></tr>
@@ -50,6 +51,9 @@
   <tr class="memlist"><td><a class="el" href="classPluginInterface2.html#99443028fe498e6ae6c400f53eb8cf4a">OnStartup</a>(void)</td><td><a class="el" href="classPluginInterface2.html">PluginInterface2</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RoomsPlugin.html#e9f941199d575d2445ec19c68418aa51">RemoveLoginServerAddress</a>(SystemAddress systemAddress)</td><td><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RoomsPlugin.html#42fd97f32605eb0d1ebfbd9c19edb2c0">roomsContainer</a></td><td><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakNet_1_1RoomsPlugin.html#215ae5a91dc25d4309d889284d39d9af">SerializeChangeHandle</a>(RakNet::RakString oldHandle, RakNet::RakString newHandle, RakNet::BitStream *bs)</td><td><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakNet_1_1RoomsPlugin.html#8c580074c49b918b138bb9a91e775257">SerializeLogin</a>(RakNet::RakString userName, SystemAddress userAddress, RakNetGUID guid, RakNet::BitStream *bs)</td><td><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakNet_1_1RoomsPlugin.html#55480d9a5aa125e8c81faf4a97d256cb">SerializeLogoff</a>(RakNet::RakString userName, RakNet::BitStream *bs)</td><td><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RoomsPlugin.html#14cfd5d620048075b0240e17f1480f59">SetOrderingChannel</a>(char oc)</td><td><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RoomsPlugin.html#db6f41986a08d0c82cb284e83f68e272">SetProfanityFilter</a>(ProfanityFilter *pf)</td><td><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RoomsPlugin.html#92be4d16a2a000e1547750ac667c627f">SetRoomsCallback</a>(RoomsCallback *_roomsCallback)</td><td><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td><td></td></tr>
@@ -57,7 +61,7 @@
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RoomsPlugin.html#6bbf9f7511bfa2fad06154abee6da29d">SetServerAddress</a>(SystemAddress systemAddress)</td><td><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RoomsPlugin.html#39b4dabe0213312c1e66be4deda4eeec">Update</a>(void)</td><td><a class="el" href="classRakNet_1_1RoomsPlugin.html">RakNet::RoomsPlugin</a></td><td><code> [virtual]</code></td></tr>
 </table></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:49 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:16 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

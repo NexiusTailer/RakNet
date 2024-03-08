@@ -469,6 +469,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\rdlmalloc.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\ReadyEvent.cpp"
 				>
 			</File>
@@ -505,7 +509,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\SendToThread.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\SHA1.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\SignaledEvent.cpp"
 				>
 			</File>
 			<File
@@ -720,6 +732,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\DS_Table.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\DS_ThreadsafeAllocatingQueue.h"
 				>
 			</File>
 			<File
@@ -999,6 +1015,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\rdlmalloc-options.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\rdlmalloc.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\ReadyEvent.h"
 				>
 			</File>
@@ -1059,7 +1083,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\SendToThread.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\SHA1.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\SignaledEvent.h"
 				>
 			</File>
 			<File
@@ -1152,110 +1184,6 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\WSAStartupSingleton.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="UDT"
-			>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\api.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\api.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\buffer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\buffer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\ccc.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\ccc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\channel.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\channel.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\co-op.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\co-op.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\common.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\common.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\core.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\core.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\list.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\list.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\md5.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\md5.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\packet.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\packet.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\queue.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\queue.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\udt.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\window.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\DependentExtensions\udt4\src\window.h"
 				>
 			</File>
 		</Filter>

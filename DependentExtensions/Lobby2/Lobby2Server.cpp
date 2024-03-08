@@ -259,12 +259,12 @@ void Lobby2Server::Clear(void)
 	threadPool.ClearOutput();
 
 	threadActionQueueMutex.Lock();
-	threadActionQueue.Clear();
+	threadActionQueue.Clear(__FILE__, __LINE__);
 	threadActionQueueMutex.Unlock();
 }
 void Lobby2Server::AddAdminAddress(SystemAddress addr)
 {
-	adminAddresses.Insert(addr,addr,false);
+	adminAddresses.Insert(addr,addr,false, __FILE__, __LINE__ );
 }
 bool Lobby2Server::IsAdminAddress(SystemAddress addr)
 {
@@ -276,11 +276,11 @@ void Lobby2Server::RemoveAdminAddress(SystemAddress addr)
 }
 void Lobby2Server::ClearAdminAddresses(void)
 {
-	adminAddresses.Clear();
+	adminAddresses.Clear(false, __FILE__, __LINE__);
 }
 void Lobby2Server::AddRankingAddress(SystemAddress addr)
 {
-	rankingAddresses.Insert(addr,addr,false);
+	rankingAddresses.Insert(addr,addr,false, __FILE__, __LINE__ );
 }
 bool Lobby2Server::IsRankingAddress(SystemAddress addr)
 {
@@ -292,7 +292,7 @@ void Lobby2Server::RemoveRankingAddress(SystemAddress addr)
 }
 void Lobby2Server::ClearRankingAddresses(void)
 {
-	rankingAddresses.Clear();
+	rankingAddresses.Clear(false, __FILE__, __LINE__);
 }
 void Lobby2Server::ExecuteCommand(Lobby2ServerCommand *command)
 {
@@ -351,7 +351,7 @@ void Lobby2Server::ClearUsers(void)
 	unsigned int i;
 	for (i=0; i < users.Size(); i++)
 		RakNet::OP_DELETE(users[i], __FILE__, __LINE__);
-	users.Clear();
+	users.Clear(false, __FILE__, __LINE__);
 }
 void Lobby2Server::LogoffFromRooms(User *user)
 {
@@ -371,6 +371,13 @@ void Lobby2Server::LogoffFromRooms(User *user)
 #endif
 
 }
+void Lobby2Server::SendRemoteLoginNotification(RakNet::RakString handle, SystemAddress recipient)
+{
+	Notification_Client_RemoteLogin notification;
+	notification.handle=handle;
+	notification.resultCode=L2RC_SUCCESS;
+	SendMessage(&notification, recipient);
+}
 void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 {
 	if (calledFromThread)
@@ -379,7 +386,7 @@ void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 		ta.action=L2MID_Client_Login;
 		ta.command=*command;
 		threadActionQueueMutex.Lock();
-		threadActionQueue.Push(ta);
+		threadActionQueue.Push(ta, __FILE__, __LINE__ );
 		threadActionQueueMutex.Unlock();
 		return;
 	}
@@ -389,6 +396,7 @@ void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 	if (objectExists)
 	{
 		User * user = users[insertionIndex];
+		SendRemoteLoginNotification(user->userName, user->systemAddress);
 		LogoffFromRooms(user);
 
 		// Already logged in from this system address.
@@ -403,6 +411,7 @@ void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 		if (idx2!=(unsigned int) -1)
 		{
 			User * user = users[idx2];
+			SendRemoteLoginNotification(user->userName, user->systemAddress);
 			LogoffFromRooms(user);
 
 			RakNet::OP_DELETE(user,__FILE__,__LINE__);
@@ -413,6 +422,7 @@ void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 		else if (idx3!=(unsigned int) -1)
 		{
 			User * user = users[idx3];
+			SendRemoteLoginNotification(user->userName, user->systemAddress);
 			LogoffFromRooms(user);
 
 			RakNet::OP_DELETE(user,__FILE__,__LINE__);
@@ -427,7 +437,7 @@ void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 	user->systemAddress=command->callerSystemAddress;
 	user->guid=command->callerGuid;
 	user->callerUserId=command->callerUserId;
-	users.InsertAtIndex(user, insertionIndex);
+	users.InsertAtIndex(user, insertionIndex, __FILE__, __LINE__ );
 
 #if defined(__INTEGRATE_LOBBY2_WITH_ROOMS_PLUGIN)
 	// Tell the rooms plugin about the login event
@@ -451,7 +461,7 @@ void Lobby2Server::OnLogoff(Lobby2ServerCommand *command, bool calledFromThread)
 		ta.action=L2MID_Client_Logoff;
 		ta.command=*command;
 		threadActionQueueMutex.Lock();
-		threadActionQueue.Push(ta);
+		threadActionQueue.Push(ta, __FILE__, __LINE__ );
 		threadActionQueueMutex.Unlock();
 		return;
 	}
@@ -465,7 +475,7 @@ void Lobby2Server::OnChangeHandle(Lobby2ServerCommand *command, bool calledFromT
 		ta.action=L2MID_Client_ChangeHandle;
 		ta.command=*command;
 		threadActionQueueMutex.Lock();
-		threadActionQueue.Push(ta);
+		threadActionQueue.Push(ta, __FILE__, __LINE__ );
 		threadActionQueueMutex.Unlock();
 		return;
 	}

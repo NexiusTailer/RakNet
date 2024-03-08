@@ -83,9 +83,9 @@ bool DSoundVoiceAdapter::SetupAdapter(RakVoice *rakVoice, IDirectSound8 *pDS)
 
 bool DSoundVoiceAdapter::SetupAdapter(RakVoice *rakVoice)
 {
-	assert(rakVoice);
+	RakAssert(rakVoice);
 	// Make sure rakVoice was initialized
-	assert((rakVoice->IsInitialized())&&(rakVoice->GetRakPeerInterface()!=NULL));
+	RakAssert((rakVoice->IsInitialized())&&(rakVoice->GetRakPeerInterface()!=NULL));
 
 	this->rakVoice = rakVoice;
 

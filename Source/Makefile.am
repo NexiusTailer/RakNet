@@ -6,6 +6,7 @@ AutoRPC.cpp \
 BigInt.cpp \
 BitStream.cpp \
 BitStream_NoTemplate.cpp \
+CCRakNetUDT.cpp \
 CheckSum.cpp \
 CommandParserInterface.cpp \
 ConnectionGraph.cpp \
@@ -45,6 +46,9 @@ LogCommandParser.cpp \
 MessageFilter.cpp \
 NatPunchthroughClient.cpp \
 NatPunchthroughServer.cpp \
+NatTypeDetectionClient.cpp \
+NatTypeDetectionCommon.cpp \
+NatTypeDetectionServer.cpp \
 NetworkIDManager.cpp \
 NetworkIDObject.cpp \
 PacketConsoleLogger.cpp \
@@ -76,7 +80,9 @@ rijndael.cpp \
 Router.cpp \
 RPCMap.cpp \
 RSACrypt.cpp \
+SendToThread.cpp \
 SHA1.cpp \
+SignaledEvent.cpp \
 SimpleMutex.cpp \
 SocketLayer.cpp \
 StringCompressor.cpp \
@@ -102,6 +108,7 @@ AutoRPC.h \
 BigInt.h \
 BitStream.h \
 BitStream_NoTemplate.h \
+CCRakNetUDT.h \
 CheckSum.h \
 ClientContextStruct.h \
 CommandParserInterface.h \
@@ -130,6 +137,7 @@ DS_Queue.h \
 DS_QueueLinkedList.h \
 DS_RangeList.h \
 DS_Table.h \
+DS_ThreadsafeAllocatingQueue.h \
 DS_Tree.h \
 DS_WeightedGraph.h \
 EmailSender.h \
@@ -166,6 +174,9 @@ MTUSize.h \
 NativeTypes.h \
 NatPunchthroughClient.h \
 NatPunchthroughServer.h \
+NatTypeDetectionClient.h \
+NatTypeDetectionCommon.h \
+NatTypeDetectionServer.h \
 NetworkIDManager.h \
 NetworkIDObject.h \
 PacketConsoleLogger.h \
@@ -183,6 +194,7 @@ RakAssert.h \
 RakMemoryOverride.h \
 RakNetCommandParser.h \
 RakNetDefines.h \
+RakNetDefinesOverrides.h \
 RakNetSmartPtr.h \
 RakNetSocket.h \
 RakNetStatistics.h \
@@ -213,7 +225,9 @@ RouterInterface.h \
 RPCMap.h \
 RPCNode.h \
 RSACrypt.h \
+SendToThread.h \
 SHA1.h \
+SignaledEvent.h \
 SimpleMutex.h \
 SimpleTCPServer.h \
 SingleProducerConsumer.h \

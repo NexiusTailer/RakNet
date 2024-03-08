@@ -63,7 +63,7 @@ public:
 	/// \return Return true to have RakNet delete the memory allocated to hold this file for this function call.
 	virtual bool OnFile(OnFileStruct *onFileStruct)=0;
 
-	/// \brief Got part of a big file.
+	/// \brief Got part of a big file internally in RakNet (we cannot access it)
 	/// \details You can get these notifications by calling RakPeer::SetSplitMessageProgressInterval
 	/// Otherwise you will only get complete files.
 	/// \param[in] onFileStruct General information about this file, such as the filename and the first \a partLength bytes. You do NOT need to save this data yourself. The complete file will arrive normally.
@@ -72,6 +72,17 @@ public:
 	/// \param[in] partLength How many bytes long firstDataChunk is
 	/// \param[in] firstDataChunk The first \a partLength of the final file. If you store identifying information about the file in the first \a partLength bytes, you can read them while the download is taking place. If this hasn't arrived yet, firstDataChunk will be 0
 	virtual void OnFileProgress(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int dataChunkLength, char *firstDataChunk) {
+		(void) onFileStruct;
+		(void) partCount;
+		(void) partTotal;
+		(void) dataChunkLength;
+		(void) firstDataChunk;
+	}
+
+	/// \brief Got part of a big file, written to the data block in the plugin (we can access it)
+	/// \details Only used for incremental sends. partCount and partTotal are based on how many blocks the file was split into for incremental reads
+	/// Also only used for UDP. TCP returns the same information, but to OnFileProgress
+	virtual void OnReferencePush(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int dataChunkLength, char *firstDataChunk) {
 		(void) onFileStruct;
 		(void) partCount;
 		(void) partTotal;

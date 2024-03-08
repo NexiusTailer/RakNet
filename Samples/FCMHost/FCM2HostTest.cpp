@@ -12,6 +12,7 @@
 #include <assert.h>
 #include "SocketLayer.h"
 #include "Kbhit.h"
+#include "PacketLogger.h"
 
 RakPeerInterface *rakPeer;
 
@@ -30,7 +31,11 @@ void main(void)
 	rakPeer->Startup(8,0,&sd,1);
 	rakPeer->SetMaximumIncomingConnections(8);
 	rakPeer->SetTimeoutTime(1000,UNASSIGNED_SYSTEM_ADDRESS);
+	printf("Our guid is %s\n", rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
 
+//	PacketLogger packetLogger;
+//	rakPeer->AttachPlugin(&packetLogger);
+//	packetLogger.SetLogDirectMessages(false);
 
 	bool quit=false;
 	Packet *packet;
@@ -49,12 +54,12 @@ void main(void)
 
 			case ID_NEW_INCOMING_CONNECTION:
 				// Somebody connected.  We have their IP now
-				printf("ID_NEW_INCOMING_CONNECTION from %s\n", packet->systemAddress.ToString(true));
+				printf("ID_NEW_INCOMING_CONNECTION from %s. guid=%s.\n", packet->systemAddress.ToString(true), packet->guid.ToString());
 				break;
 
 			case ID_CONNECTION_REQUEST_ACCEPTED:
 				// Somebody connected.  We have their IP now
-				printf("ID_CONNECTION_REQUEST_ACCEPTED from %s\n", packet->systemAddress.ToString(true));
+				printf("ID_CONNECTION_REQUEST_ACCEPTED from %s. guid=%s.\n", packet->systemAddress.ToString(true), packet->guid.ToString());
 				break;
 
 
@@ -67,6 +72,7 @@ void main(void)
 			case ID_ADVERTISE_SYSTEM:
 				rakPeer->Connect(packet->systemAddress.ToString(false), packet->systemAddress.port,0,0);
 				break;
+
 			case ID_FCM2_NEW_HOST:
 				if (packet->systemAddress==UNASSIGNED_SYSTEM_ADDRESS)
 					printf("Got new host (ourselves)\n");
@@ -79,6 +85,12 @@ void main(void)
 		if (kbhit())
 		{
 			ch=getch();
+			if (ch==' ')
+			{
+				DataStructures::DefaultIndexType participantList;
+				fcm2.GetParticipantCount(&participantList);
+				printf("participantList=%i\n",participantList);
+			}
 			if (ch=='q' || ch=='Q')
 			{
 				printf("Quitting.\n");

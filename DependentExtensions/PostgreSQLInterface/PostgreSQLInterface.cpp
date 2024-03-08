@@ -565,7 +565,7 @@ PGresult * PostgreSQLInterface::QueryVariadic( const char * input, ... )
 	}
 	if (preparedQueryIndex==preparedQueries.Size())
 	{
-		indices.Clear();
+		indices.Clear(false, __FILE__, __LINE__);
 		GetTypeMappingIndices( input, indices );
 //		if (indices.Size()>0)
 //			query += " (";
@@ -597,7 +597,7 @@ PGresult * PostgreSQLInterface::QueryVariadic( const char * input, ... )
 		if (IsResultSuccessful(result, false))
 		{
 			PQclear(result);
-			preparedQueries.Insert(inputStr);
+			preparedQueries.Insert(inputStr, __FILE__, __LINE__);
 		}
 		else
 		{

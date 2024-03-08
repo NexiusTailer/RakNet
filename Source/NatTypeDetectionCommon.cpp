@@ -1,5 +1,6 @@
-#include "NATTypeDetectionCommon.h"
+#include "NatTypeDetectionCommon.h"
 #include "SocketLayer.h"
+#include "SocketIncludes.h"
 
 using namespace RakNet;
 
@@ -63,6 +64,14 @@ const char *RakNet::NATTypeDetectionResultToStringFriendly(NATTypeDetectionResul
 SOCKET RakNet::CreateNonblockingBoundSocket(const char *bindAddr)
 {
 	SOCKET s = SocketLayer::Instance()->CreateBoundSocket( 0, false, bindAddr, true );
+	#ifdef _WIN32
+		unsigned long nonblocking = 1;
+		ioctlsocket( s, FIONBIO, &nonblocking );
+	#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                                                                                                 
+	#else
+		fcntl( s, F_SETFL, O_NONBLOCK );
+	#endif
 	return s;
 }
 

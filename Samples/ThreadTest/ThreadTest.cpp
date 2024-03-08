@@ -75,13 +75,14 @@ void main(void)
 	peer1->Startup(1,0,&socketDescriptor, 1);
 	socketDescriptor.port=1235;
 	peer2->Startup(1,0,&socketDescriptor, 1);
+	Sleep(500);
 	peer1->Connect("127.0.0.1", 1235, 0, 0);
 	peer2->Connect("127.0.0.1", 1234, 0, 0);
-	Sleep(500);
 
 	printf("Tests multiple threads sharing the same instance of RakPeer\n");
 	printf("Difficulty: Beginner\n\n");
 
+	/*
 	printf("Did you define _RAKNET_THREADSAFE in RakNetDefines.h? (y/n) ");
 	char response[256];
 	gets(response);
@@ -89,6 +90,7 @@ void main(void)
 	{
 		return;
 	}
+	*/
 
 
 	endThreads=false;

@@ -24,7 +24,7 @@ class AutopatcherRepositoryInterface;
 class FileListTransfer;
 
 /// \brief The server plugin for the autopatcher.  Must be running for the client to get patches.
-class RAK_DLL_EXPORT AutopatcherServer : public PluginInterface2
+class RAK_DLL_EXPORT AutopatcherServer : public PluginInterface2 , public ThreadDataInterface
 {
 public:
 	// Constructor
@@ -32,6 +32,14 @@ public:
 
 	// Destructor
 	~AutopatcherServer();
+
+	/// DO THIS FIRST
+	/// Implement to start the worker threads.
+	/// Before this is called, no queries will be performed
+	/// When this is called, AllocAutopatcherRepositoryInterface will be called with \a repositoryAllocationParameters
+	/// \param[in] numThreads number of threads to run. Recommended 1-4
+	/// \param[in] sqlConnectionPtrArray List of pointers to AutopatcherRepositoryInterface, equal to number of threads. C++ note: Don't just cast a derived class array, you need to take the address of each item
+	void StartThreads(int numThreads, AutopatcherRepositoryInterface **sqlConnectionPtrArray);
 
 	/// What parameters to use for the RakPeerInterface::Send() call when uploading files.
 	/// \param[in] _priority See RakPeerInterface::Send()
@@ -42,11 +50,6 @@ public:
 	/// So you need an instance of that plugin registered with RakPeerInterface, and a pointer to that interface should be passed here.
 	/// \param[in] flt A pointer to a registered instance of FileListTransfer
 	void SetFileListTransferPlugin(FileListTransfer *flt);
-
-	/// This class only does the network transfers for the autopatcher.  All the data is stored in a repository.
-	/// Pass the interface to your repository with this function.  RakNet comes with AutopatcherPostgreRepository if you wish to use that.
-	/// \param[in] ari An implementation of the interface for the autopatcher repository.
-	void SetAutopatcherRepositoryInterface(AutopatcherRepositoryInterface *ari);
 
 	/// Clear buffered input and output
 	void Clear(void);
@@ -100,9 +103,11 @@ protected:
 	friend AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadData pap, bool *returnOutput, void* perThreadData);
 	void OnGetChangelistSinceDate(Packet *packet);
 	void OnGetPatch(Packet *packet);
+	void* PerThreadFactory(void *context);
+	void PerThreadDestructor(void* factoryResult, void *context);
 
 	void RemoveFromThreadPool(SystemAddress systemAddress);
-	AutopatcherRepositoryInterface *repository;
+	//AutopatcherRepositoryInterface *repository;
 	FileListTransfer *fileListTransfer;
 	PacketPriority priority;
 	char orderingChannel;
@@ -110,6 +115,11 @@ protected:
 	// The point of the threadPool is so that SQL queries, which are blocking, happen in the thread and don't slow down the rest of the application
 	// The threadPool has a queue for incoming processing requests.  As systems disconnect their pending requests are removed from the list.
 	ThreadPool<ThreadData, ResultTypeAndBitstream*> threadPool;
+
+
+	SimpleMutex connectionPoolMutex;
+	DataStructures::Queue<AutopatcherRepositoryInterface *> connectionPool;
+
 };
 
 #endif

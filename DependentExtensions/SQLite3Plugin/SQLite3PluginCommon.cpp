@@ -28,7 +28,7 @@ void SQLite3Table::Serialize(RakNet::BitStream *bitStream)
 void SQLite3Table::Deserialize(RakNet::BitStream *bitStream)
 {
 	rows.ClearPointers(true,__FILE__,__LINE__);
-	columnNames.Clear();
+	columnNames.Clear(true , __FILE__, __LINE__ );
 
 	DataStructures::DefaultIndexType numColumns, numRows;
 	bitStream->Read(numColumns);
@@ -37,7 +37,7 @@ void SQLite3Table::Deserialize(RakNet::BitStream *bitStream)
 	for (idx1=0; idx1 < numColumns; idx1++)
 	{
 		bitStream->Read(inputStr);
-		columnNames.Push(inputStr);
+		columnNames.Push(inputStr, __FILE__, __LINE__ );
 	}
 	bitStream->Read(numRows);
 	for (idx1=0; idx1 < numRows; idx1++)
@@ -47,7 +47,7 @@ void SQLite3Table::Deserialize(RakNet::BitStream *bitStream)
 		for (idx2=0; idx2 < numColumns; idx2++)
 		{
 			bitStream->Read(inputStr);
-			row->entries.Push(inputStr);
+			row->entries.Push(inputStr, __FILE__, __LINE__ );
 		}
 	}
 }

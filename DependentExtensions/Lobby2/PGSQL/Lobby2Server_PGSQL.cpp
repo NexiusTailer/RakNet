@@ -70,7 +70,7 @@ bool Lobby2Server_PGSQL::ConnectToDB(const char *conninfo, int numWorkerThreads)
 			return false;
 		}
 		connectionPoolMutex.Lock();
-		connectionPool.Insert(connection);
+		connectionPool.Insert(connection, __FILE__, __LINE__ );
 		connectionPoolMutex.Unlock();
 	}
 
@@ -101,6 +101,6 @@ void Lobby2Server_PGSQL::ClearConnections(void)
 	connectionPoolMutex.Lock();
 	for (i=0; i < connectionPool.Size(); i++)
 		RakNet::OP_DELETE(connectionPool[i], __FILE__, __LINE__);
-	connectionPool.Clear();
+	connectionPool.Clear(false, __FILE__, __LINE__);
 	connectionPoolMutex.Unlock();
 }

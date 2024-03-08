@@ -1,4 +1,4 @@
-#include "NATTypeDetectionClient.h"
+#include "NatTypeDetectionClient.h"
 #include "RakNetSocket.h"
 #include "RakNetSmartPtr.h"
 #include "BitStream.h"
@@ -52,7 +52,7 @@ void NatTypeDetectionClient::OnCompletion(NATTypeDetectionResult result)
 	printf("Returning nat detection result to the user\n");
 	p->data[0]=ID_NAT_TYPE_DETECTION_RESULT;
 	p->systemAddress=serverAddress;
-	p->systemIndex=(SystemIndex)-1;
+	p->systemAddress.systemIndex=(SystemIndex)-1;
 	p->guid=rakPeerInterface->GetGuidFromSystemAddress(serverAddress);
 	p->data[1]=(unsigned char) result;
 	rakPeerInterface->PushBackPacket(p, true);

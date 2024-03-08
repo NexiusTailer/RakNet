@@ -27,7 +27,7 @@
   </div>
 </div>
 <div class="contents">
-<h1>AutopatcherServer Class Reference</h1><!-- doxytag: class="AutopatcherServer" --><!-- doxytag: inherits="PluginInterface2" -->The server plugin for the autopatcher. Must be running for the client to get patches.  
+<h1>AutopatcherServer Class Reference</h1><!-- doxytag: class="AutopatcherServer" --><!-- doxytag: inherits="PluginInterface2,ThreadDataInterface" -->The server plugin for the autopatcher. Must be running for the client to get patches.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;AutopatcherServer.h&gt;</code>
@@ -46,11 +46,11 @@ Inheritance diagram for AutopatcherServer:</div>
 <a href="classAutopatcherServer-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAutopatcherServer.html#ea1fac5cc8da4b622d39c4b6bd6bf962">StartThreads</a> (int numThreads, <a class="el" href="classAutopatcherRepositoryInterface.html">AutopatcherRepositoryInterface</a> **sqlConnectionPtrArray)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAutopatcherServer.html#de983a990c3dd7684c50c8e5d3ffeea9">SetUploadSendParameters</a> (<a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> _priority, char _orderingChannel)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAutopatcherServer.html#738ecbecfbe551003fa65c85752ff9d2">SetFileListTransferPlugin</a> (<a class="el" href="classFileListTransfer.html">FileListTransfer</a> *flt)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAutopatcherServer.html#3e37a03446b4bbb2b108932c3434571e">SetAutopatcherRepositoryInterface</a> (<a class="el" href="classAutopatcherRepositoryInterface.html">AutopatcherRepositoryInterface</a> *ari)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ecac7249afd4d7337ad76e944acabd7d"></a><!-- doxytag: member="AutopatcherServer::Clear" ref="ecac7249afd4d7337ad76e944acabd7d" args="(void)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAutopatcherServer.html#ecac7249afd4d7337ad76e944acabd7d">Clear</a> (void)</td></tr>
@@ -201,31 +201,6 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 
 </div>
 </div><p>
-<a class="anchor" name="3e37a03446b4bbb2b108932c3434571e"></a><!-- doxytag: member="AutopatcherServer::SetAutopatcherRepositoryInterface" ref="3e37a03446b4bbb2b108932c3434571e" args="(AutopatcherRepositoryInterface *ari)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void AutopatcherServer::SetAutopatcherRepositoryInterface           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classAutopatcherRepositoryInterface.html">AutopatcherRepositoryInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>ari</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-This class only does the network transfers for the autopatcher. All the data is stored in a repository. Pass the interface to your repository with this function. <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> comes with <a class="el" href="classAutopatcherPostgreRepository.html">AutopatcherPostgreRepository</a> if you wish to use that. <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>ari</em>&nbsp;</td><td>An implementation of the interface for the autopatcher repository. </td></tr>
-  </table>
-</dl>
-
-</div>
-</div><p>
 <a class="anchor" name="738ecbecfbe551003fa65c85752ff9d2"></a><!-- doxytag: member="AutopatcherServer::SetFileListTransferPlugin" ref="738ecbecfbe551003fa65c85752ff9d2" args="(FileListTransfer *flt)" -->
 <div class="memitem">
 <div class="memproto">
@@ -286,10 +261,45 @@ What parameters to use for the <a class="el" href="classRakPeerInterface.html#cc
 
 </div>
 </div><p>
-<hr>The documentation for this class was generated from the following file:<ul>
-<li>C:/RakNet/DependentExtensions/Autopatcher/<a class="el" href="AutopatcherServer_8h.html">AutopatcherServer.h</a></ul>
+<a class="anchor" name="ea1fac5cc8da4b622d39c4b6bd6bf962"></a><!-- doxytag: member="AutopatcherServer::StartThreads" ref="ea1fac5cc8da4b622d39c4b6bd6bf962" args="(int numThreads, AutopatcherRepositoryInterface **sqlConnectionPtrArray)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void AutopatcherServer::StartThreads           </td>
+          <td>(</td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>numThreads</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classAutopatcherRepositoryInterface.html">AutopatcherRepositoryInterface</a> **&nbsp;</td>
+          <td class="paramname"> <em>sqlConnectionPtrArray</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:45 2009 for RakNet by&nbsp;
+<div class="memdoc">
+
+<p>
+DO THIS FIRST Implement to start the worker threads. Before this is called, no queries will be performed When this is called, AllocAutopatcherRepositoryInterface will be called with <em>repositoryAllocationParameters</em> <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>numThreads</em>&nbsp;</td><td>number of threads to run. Recommended 1-4 </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>sqlConnectionPtrArray</em>&nbsp;</td><td>List of pointers to <a class="el" href="classAutopatcherRepositoryInterface.html" title="An interface used by AutopatcherServer to get the data necessary to run an autopatcher...">AutopatcherRepositoryInterface</a>, equal to number of threads. C++ note: Don't just cast a derived class array, you need to take the address of each item </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<hr>The documentation for this class was generated from the following file:<ul>
+<li>c:/RakNet/DependentExtensions/Autopatcher/<a class="el" href="AutopatcherServer_8h.html">AutopatcherServer.h</a></ul>
+</div>
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:12 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

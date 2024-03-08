@@ -69,17 +69,20 @@ void main(void)
 	/// Do all these operations in this order once we are logged in.
 	/// This is for easier testing.
 	/// This plan will create the database, register two users, and log them both in
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_CreateDatabase));
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_CreateTitle));
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_CreateDatabase), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_CreateTitle), __FILE__, __LINE__ );
 
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_CDKey_Add));
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_RegisterProfanity));
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_RegisterAccount));
-	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_RegisterAccount));
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_SetEmailAddressValidated));
-	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_System_SetEmailAddressValidated));
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_Login));
-	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_Login));
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_CDKey_Add), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_RegisterProfanity), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_RegisterAccount), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_RegisterAccount), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_SetEmailAddressValidated), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_System_SetEmailAddressValidated), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_Login), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_Login), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_GetAccountDetails), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_PerTitleIntegerStorage), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_PerTitleIntegerStorage), __FILE__, __LINE__ );
 
 /*
 
@@ -91,8 +94,8 @@ void main(void)
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Friends_SendInvite));
 	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Friends_AcceptInvite));
 	*/
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Create));
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Get));
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Create), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Get), __FILE__, __LINE__ );
 	/*
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_SetProperties));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_SetMyMemberProperties));
@@ -347,9 +350,9 @@ void ExecuteCommand(RakNet::Lobby2MessageID command, RakNet::RakString userName,
 	case RakNet::L2MID_System_RegisterProfanity:
 		{
 			RakNet::System_RegisterProfanity *arg = (RakNet::System_RegisterProfanity *) m;
-			arg->profanityWords.Insert("Bodily Functions");
-			arg->profanityWords.Insert("Racial Epithet");
-			arg->profanityWords.Insert("Euphemism treadmill");
+			arg->profanityWords.Insert("Bodily Functions", __FILE__, __LINE__ );
+			arg->profanityWords.Insert("Racial Epithet", __FILE__, __LINE__ );
+			arg->profanityWords.Insert("Euphemism treadmill", __FILE__, __LINE__ );
 		}
 		break;
 	case RakNet::L2MID_System_BanUser:
@@ -370,8 +373,8 @@ void ExecuteCommand(RakNet::Lobby2MessageID command, RakNet::RakString userName,
 	case RakNet::L2MID_CDKey_Add:
 		{
 			RakNet::CDKey_Add *arg = (RakNet::CDKey_Add *) m;
-			arg->cdKeys.Insert("Test CD Key");
-			arg->cdKeys.Insert("Test CD Key 2");
+			arg->cdKeys.Insert("Test CD Key", __FILE__, __LINE__ );
+			arg->cdKeys.Insert("Test CD Key 2", __FILE__, __LINE__ );
 			arg->titleName="Test Title Name";
 		}
 		break;
@@ -516,6 +519,22 @@ void ExecuteCommand(RakNet::Lobby2MessageID command, RakNet::RakString userName,
 		}
 		break;
 
+	case RakNet::L2MID_Client_PerTitleIntegerStorage:
+		{
+			RakNet::Client_PerTitleIntegerStorage *arg = (RakNet::Client_PerTitleIntegerStorage *) m;
+			arg->titleName="Test Title Name";
+			arg->slotIndex=0;
+			arg->conditionValue=1.0;
+			arg->addConditionForOperation=RakNet::Client_PerTitleIntegerStorage::PTISC_GREATER_THAN;
+			arg->inputValue=0.0;
+			static int runCount=0;
+			if (runCount++%2==0)
+				arg->operationToPerform=RakNet::Client_PerTitleIntegerStorage::PTISO_WRITE;
+			else
+				arg->operationToPerform=RakNet::Client_PerTitleIntegerStorage::PTISO_READ;
+		}
+		break;
+
 	case RakNet::L2MID_Friends_SendInvite:
 		{
 			RakNet::Friends_SendInvite *arg = (RakNet::Friends_SendInvite *) m;
@@ -591,8 +610,8 @@ void ExecuteCommand(RakNet::Lobby2MessageID command, RakNet::RakString userName,
 	case RakNet::L2MID_Emails_Send:
 		{
 			RakNet::Emails_Send *arg = (RakNet::Emails_Send *) m;
-			arg->recipients.Insert(RakNet::RakString("Test User %i", instanceNumber+1));
-			arg->recipients.Insert(RakNet::RakString("Test User %i", instanceNumber+2));
+			arg->recipients.Insert(RakNet::RakString("Test User %i", instanceNumber+1), __FILE__, __LINE__ );
+			arg->recipients.Insert(RakNet::RakString("Test User %i", instanceNumber+2), __FILE__, __LINE__ );
 			arg->subject="L2MID_Emails_Send subject";
 			arg->body="L2MID_Emails_Send body";
 			arg->status=0;
@@ -629,8 +648,8 @@ void ExecuteCommand(RakNet::Lobby2MessageID command, RakNet::RakString userName,
 			arg->gameType="Match game type";
 			arg->titleName="Test Title Name";
 			arg->submittedMatch.matchNote="Ranking match note";
-			arg->submittedMatch.matchParticipants.Insert(RakNet::MatchParticipant("Test User 0", 5.0f));
-			arg->submittedMatch.matchParticipants.Insert(RakNet::MatchParticipant("Test User 1", 10.0f));
+			arg->submittedMatch.matchParticipants.Insert(RakNet::MatchParticipant("Test User 0", 5.0f), __FILE__, __LINE__ );
+			arg->submittedMatch.matchParticipants.Insert(RakNet::MatchParticipant("Test User 1", 10.0f), __FILE__, __LINE__ );
 		}
 		break;
 

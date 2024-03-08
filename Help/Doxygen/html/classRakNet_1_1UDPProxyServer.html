@@ -55,6 +55,10 @@ Inheritance diagram for RakNet::UDPProxyServer:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyServer.html#32edaff2aec11cce6a138897b0e2a158">LoginToCoordinator</a> (<a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> password, <a class="el" href="structSystemAddress.html">SystemAddress</a> coordinatorAddress)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyServer.html#47ebde04af6efb122dbcf3994b9faa3f">OnAttach</a> (void)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyServer.html#a0bf0313fe56e485dc5be8c5b72a9c75">OnDetach</a> (void)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1e6a78a82faae30bb6b33e1cd994e846"></a><!-- doxytag: member="RakNet::UDPProxyServer::Update" ref="1e6a78a82faae30bb6b33e1cd994e846" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyServer.html#1e6a78a82faae30bb6b33e1cd994e846">Update</a> (void)</td></tr>
 
@@ -113,6 +117,33 @@ Coordinator must have set a password with <a class="el" href="classRakNet_1_1UDP
 
 </div>
 </div><p>
+<a class="anchor" name="47ebde04af6efb122dbcf3994b9faa3f"></a><!-- doxytag: member="RakNet::UDPProxyServer::OnAttach" ref="47ebde04af6efb122dbcf3994b9faa3f" args="(void)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void RakNet::UDPProxyServer::OnAttach           </td>
+          <td>(</td>
+          <td class="paramtype">void&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
+  </table>
+</dl>
+
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#523fa43791dfc9c363d0d20e9609b177">PluginInterface2</a>.</p>
+
+</div>
+</div><p>
 <a class="anchor" name="a32937092d4aa45314e7bdf15f1549f0"></a><!-- doxytag: member="RakNet::UDPProxyServer::OnClosedConnection" ref="a32937092d4aa45314e7bdf15f1549f0" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
@@ -154,6 +185,33 @@ Called when a connection is dropped because the user called <a class="el" href="
 </dl>
 
 <p>Reimplemented from <a class="el" href="classPluginInterface2.html#f14d27351aca9bfd5b4fc2ac1461ff14">PluginInterface2</a>.</p>
+
+</div>
+</div><p>
+<a class="anchor" name="a0bf0313fe56e485dc5be8c5b72a9c75"></a><!-- doxytag: member="RakNet::UDPProxyServer::OnDetach" ref="a0bf0313fe56e485dc5be8c5b72a9c75" args="(void)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void RakNet::UDPProxyServer::OnDetach           </td>
+          <td>(</td>
+          <td class="paramtype">void&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Called when the interface is detached <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
+  </table>
+</dl>
+
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#017a96cb76e2462a320b570cc8877317">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -227,9 +285,9 @@ Operative class that performs the forwarding Exposed so you can call <a class="e
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>C:/RakNet/Source/<a class="el" href="UDPProxyServer_8h.html">UDPProxyServer.h</a></ul>
+<li>c:/RakNet/Source/<a class="el" href="UDPProxyServer_8h.html">UDPProxyServer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:48 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:14 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

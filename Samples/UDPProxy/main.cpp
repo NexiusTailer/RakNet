@@ -58,6 +58,10 @@ struct UDPProxyClientResultHandler_Test : public RakNet::UDPProxyClientResultHan
 	{
 		printf("Failure: No servers logged into coordinator.\n");
 	}
+	virtual void OnRecipientNotConnected(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)
+	{
+		printf("Failure: Recipient not connected to coordinator.\n");
+	}
 	virtual void OnAllServersBusy(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 	{
 		printf("Failure: No servers have available forwarding ports.\n");

@@ -12,6 +12,7 @@
 #include "RakNetTypes.h"
 #include <assert.h>
 #include "RakSleep.h"
+#include "BitStream.h"
 
 void PrintOptions(void)
 {
@@ -35,10 +36,19 @@ void PrintPacketHeader(Packet *packet)
 			printf("Connection request accepted.\n");
 			break;
 		case ID_NEW_INCOMING_CONNECTION:
-			printf("New incoming connection.\n");
+			{
+				printf("New incoming connection.\n");
+				RakNet::BitStream testBlockLargerThanMTU;
+				testBlockLargerThanMTU.Write((MessageID) ID_USER_PACKET_ENUM);
+				testBlockLargerThanMTU.PadWithZeroToByteLength(10000);
+				rakPeer2->Send(&testBlockLargerThanMTU, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+			}
 			break;
 		case ID_MODIFIED_PACKET:
 			printf("Packet checksum invalid.  Either RSA decrypt function gave the wrong value\nor the packet was tampered with.\n");
+			break;
+		case ID_USER_PACKET_ENUM:
+			printf("Got test message\n");
 			break;
 		default:
 			printf("%s\n", packet->data);

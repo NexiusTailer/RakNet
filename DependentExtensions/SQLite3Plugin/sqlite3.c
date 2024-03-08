@@ -67129,7 +67129,7 @@ static void typeofFunc(
   switch( sqlite3_value_type(argv[0]) ){
     case SQLITE_INTEGER: z = "integer"; break;
     case SQLITE_TEXT:    z = "text";    break;
-    case SQLITE_FLOAT:   z = "real";    break;
+    case SQLITE_FLOAT:   z = "numeric";    break;
     case SQLITE_BLOB:    z = "blob";    break;
     default:             z = "null";    break;
   }
