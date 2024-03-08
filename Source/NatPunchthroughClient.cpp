@@ -36,6 +36,9 @@ bool NatPunchthroughClient::OpenNAT(RakNetGUID destination, SystemAddress facili
 {
 	if (rakPeerInterface->IsConnected(facilitator)==false)
 		return false;
+	// Already connected
+	if (rakPeerInterface->GetSystemAddressFromGuid(destination)!=UNASSIGNED_SYSTEM_ADDRESS)
+		return false;
 
 	SendPunchthrough(destination, facilitator);
 	return true;
@@ -52,7 +55,7 @@ void NatPunchthroughClient::Update(void)
 		RakNetTimeMS delta = time - sp.nextActionTime;
 		if (sp.testMode==SendPing::TESTING_INTERNAL_IPS)
 		{
-		//	SendOutOfBand(sp.internalIds[sp.attemptCount],ID_NAT_ESTABLISH_UNIDIRECTIONAL);
+			SendOutOfBand(sp.internalIds[sp.attemptCount],ID_NAT_ESTABLISH_UNIDIRECTIONAL);
 
 			if (++sp.retryCount>=pc.UDP_SENDS_PER_PORT_INTERNAL)
 			{
@@ -91,12 +94,12 @@ void NatPunchthroughClient::Update(void)
 			int port = sa.port+sp.attemptCount;
 			sa.port=(unsigned short) port;
 			SendOutOfBand(sa,ID_NAT_ESTABLISH_UNIDIRECTIONAL);
-			
+
 			if (++sp.retryCount>=pc.UDP_SENDS_PER_PORT_EXTERNAL)
 			{
 				++sp.attemptCount;
 				sp.retryCount=0;
-				sp.nextActionTime=time+pc.EXTERNAL_IP_WAIT_BETWEEN_PORTS-delta;				
+				sp.nextActionTime=time+pc.EXTERNAL_IP_WAIT_BETWEEN_PORTS-delta;
 			}
 			else
 			{
@@ -124,7 +127,7 @@ void NatPunchthroughClient::Update(void)
 			{
 				++sp.attemptCount;
 				sp.retryCount=0;
-				sp.nextActionTime=time+pc.EXTERNAL_IP_WAIT_BETWEEN_PORTS-delta;		
+				sp.nextActionTime=time+pc.EXTERNAL_IP_WAIT_BETWEEN_PORTS-delta;
 			}
 			else
 			{
@@ -154,6 +157,7 @@ void NatPunchthroughClient::Update(void)
 
 		if (sp.testMode==SendPing::PUNCHING_FIXED_PORT)
 		{
+//			RakAssert(rakPeerInterface->IsConnected(sp.targetAddress,true,true)==false);
 			SendOutOfBand(sp.targetAddress,ID_NAT_ESTABLISH_BIDIRECTIONAL);
 			if (++sp.retryCount>=sp.punchingFixedPortAttempts)
 			{
@@ -181,12 +185,16 @@ void NatPunchthroughClient::Update(void)
 }
 void NatPunchthroughClient::PushFailure(void)
 {
-	Packet *p = rakPeerInterface->AllocatePacket(sizeof(MessageID));
+	Packet *p = rakPeerInterface->AllocatePacket(sizeof(MessageID)+sizeof(unsigned char));
 	p->data[0]=ID_NAT_PUNCHTHROUGH_FAILED;
 	p->systemAddress=sp.targetAddress;
 	p->systemIndex=(SystemIndex)-1;
 	p->guid=sp.targetGuid;
-	rakPeerInterface->PushBackPacket(p, false);
+	if (sp.weAreSender)
+		p->data[1]=1;
+	else
+		p->data[1]=0;
+	rakPeerInterface->PushBackPacket(p, true);
 }
 void NatPunchthroughClient::OnPunchthroughFailure(void)
 {
@@ -263,7 +271,7 @@ void NatPunchthroughClient::OnPunchthroughFailure(void)
 
 	// Tell the server we are ready
 	OnReadyForNextPunchthrough();
-	
+
 	// If we are the sender, try again, immediately if possible, else added to the queue on the faciltiator
 	if (sp.weAreSender)
 		SendPunchthrough(sp.targetGuid, sp.facilitator);
@@ -273,13 +281,23 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 	switch (packet->data[0])
 	{
 	case ID_NAT_GET_MOST_RECENT_PORT:
-		OnGetMostRecentPort(packet);
-		return RR_STOP_PROCESSING_AND_DEALLOCATE;
+		{
+			OnGetMostRecentPort(packet);
+			return RR_STOP_PROCESSING_AND_DEALLOCATE;
+		}
+		break;
 	case ID_OUT_OF_BAND_INTERNAL:
-		if (packet->length>=2 && (packet->data[1]==ID_NAT_ESTABLISH_UNIDIRECTIONAL || packet->data[1]==ID_NAT_ESTABLISH_BIDIRECTIONAL))
+		if (packet->length>=2 &&
+			(packet->data[1]==ID_NAT_ESTABLISH_UNIDIRECTIONAL || packet->data[1]==ID_NAT_ESTABLISH_BIDIRECTIONAL) &&
+			sp.nextActionTime!=0)
 		{
 			RakNet::BitStream bs(packet->data,packet->length,false);
 			bs.IgnoreBytes(2);
+			unsigned int sessionId;
+			bs.Read(sessionId);
+//			RakAssert(sessionId<100);
+			if (sessionId!=sp.sessionId)
+				break;
 
 			char ipAddressString[32];
 			packet->systemAddress.ToString(true,ipAddressString);
@@ -293,16 +311,18 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 				}
 				if (sp.testMode!=SendPing::PUNCHING_FIXED_PORT)
 				{
-					sp.testMode=SendPing::PUNCHING_FIXED_PORT;	
+					sp.testMode=SendPing::PUNCHING_FIXED_PORT;
 					sp.retryCount+=sp.attemptCount*pc.UDP_SENDS_PER_PORT_EXTERNAL;
 					sp.targetAddress=packet->systemAddress;
+//					RakAssert(rakPeerInterface->IsConnected(sp.targetAddress,true,true)==false);
 					// Keeps trying until the other side gives up too, in case it is unidirectional
 					sp.punchingFixedPortAttempts=pc.UDP_SENDS_PER_PORT_EXTERNAL*pc.MAX_PREDICTIVE_PORT_RANGE;
 				}
 
 				SendOutOfBand(sp.targetAddress,ID_NAT_ESTABLISH_BIDIRECTIONAL);
 			}
-			else if (packet->data[1]==ID_NAT_ESTABLISH_BIDIRECTIONAL && sp.targetGuid==packet->guid && sp.nextActionTime!=0)
+			else if (packet->data[1]==ID_NAT_ESTABLISH_BIDIRECTIONAL &&
+				sp.targetGuid==packet->guid)
 			{
 				// They send back our port
 				bs.Read(mostRecentNewExternalPort);
@@ -310,32 +330,12 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 				SendOutOfBand(packet->systemAddress,ID_NAT_ESTABLISH_BIDIRECTIONAL);
 
 				// Tell the user about the success
-				Packet *p = rakPeerInterface->AllocatePacket(sizeof(MessageID)+sizeof(unsigned char));
-				p->data[0]=ID_NAT_PUNCHTHROUGH_SUCCEEDED;
-				p->systemAddress=packet->systemAddress;
-				p->systemIndex=(SystemIndex)-1;
-				p->guid=packet->guid;
-				if (sp.weAreSender)
-					p->data[1]=1;
-				else
-					p->data[1]=0;
-				rakPeerInterface->PushBackPacket(p, false);
-
+				sp.targetAddress=packet->systemAddress;
+				PushSuccess();
 				OnReadyForNextPunchthrough();
+//				RakAssert(rakPeerInterface->IsConnected(sp.targetAddress,true,true)==false);
+				bool removedFromFailureQueue=RemoveFromFailureQueue();
 
-				bool removedFromFailureQueue=false;
-				unsigned int i;
-				for (i=0; i < failedAttemptList.Size(); i++)
-				{
-					if (failedAttemptList[i].guid==packet->guid)
-					{
-						// Remove from failure queue
-						failedAttemptList.RemoveAtIndexFast(i);
-						removedFromFailureQueue=true;
-						break;
-					}
-				}
-				
 				if (natPunchthroughDebugInterface)
 				{
 					char guidString[64];
@@ -379,8 +379,18 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 
 			RakNet::BitStream incomingBs(packet->data, packet->length, false);
 			incomingBs.IgnoreBytes(sizeof(MessageID));
+
 			RakNetGUID targetGuid;
 			incomingBs.Read(targetGuid);
+			if (packet->data[0]==ID_NAT_CONNECTION_TO_TARGET_LOST ||
+				packet->data[0]==ID_NAT_TARGET_UNRESPONSIVE)
+			{
+				unsigned int sessionId;
+				incomingBs.Read(sessionId);
+				if (sessionId!=sp.sessionId)
+					break;
+			}
+
 			unsigned int i;
 			for (i=0; i < failedAttemptList.Size(); i++)
 			{
@@ -395,7 +405,7 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 					}
 
 					// If the retry target is not connected, or loses connection, or is not responsive, then previous failures cannot be retried.
-					
+
 					// Don't need to return failed, the other messages indicate failure anyway
 					/*
 					Packet *p = rakPeerInterface->AllocatePacket(sizeof(MessageID));
@@ -417,6 +427,9 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 				targetGuid.ToString(guidString);
 				natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString("Punchthrough attempt to guid %s failed due to %s.", guidString, reason));
 			}
+
+			// Stop trying punchthrough
+			sp.nextActionTime=0;
 
 			/*
 			RakNet::BitStream bs(packet->data, packet->length, false);
@@ -471,11 +484,15 @@ void NatPunchthroughClient::ProcessNextPunchthroughQueue(void)
 */
 void NatPunchthroughClient::OnConnectAtTime(Packet *packet)
 {
+//	RakAssert(sp.nextActionTime==0);
+
 	RakNet::BitStream bs(packet->data, packet->length, false);
 	bs.IgnoreBytes(sizeof(MessageID));
 	bs.Read(sp.nextActionTime);
 	bs.IgnoreBytes(sizeof(MessageID));
+	bs.Read(sp.sessionId);
 	bs.Read(sp.targetAddress);
+	//RakAssert(rakPeerInterface->IsConnected(sp.targetAddress,true,true)==false);
 	int j;
 	for (j=0; j < MAXIMUM_NUMBER_OF_INTERNAL_IDS; j++)
 		bs.Read(sp.internalIds[j]);
@@ -484,6 +501,8 @@ void NatPunchthroughClient::OnConnectAtTime(Packet *packet)
 	sp.testMode=SendPing::TESTING_INTERNAL_IPS;
 	bs.Read(sp.targetGuid);
 	bs.Read(sp.weAreSender);
+
+	//RakAssert(rakPeerInterface->IsConnected(sp.targetAddress,true,true)==false);
 }
 void NatPunchthroughClient::SendTTL(SystemAddress sa)
 {
@@ -503,14 +522,18 @@ void NatPunchthroughClient::SendOutOfBand(SystemAddress sa, MessageID oobId)
 	if (sa.port==0)
 		return;
 
+	//RakAssert(rakPeerInterface->IsConnected(sp.targetAddress,true,true)==false);
+
 	RakNet::BitStream oob;
 	oob.Write(oobId);
+	oob.Write(sp.sessionId);
+//	RakAssert(sp.sessionId<100);
 	if (oobId==ID_NAT_ESTABLISH_BIDIRECTIONAL)
 		oob.Write(sa.port);
 	char ipAddressString[32];
 	sa.ToString(false, ipAddressString);
 	rakPeerInterface->SendOutOfBand((const char*) ipAddressString,sa.port,(MessageID) ID_OUT_OF_BAND_INTERNAL,(const char*) oob.GetData(),oob.GetNumberOfBytesUsed());
-	
+
 	if (natPunchthroughDebugInterface)
 	{
 		sa.ToString(true,ipAddressString);
@@ -602,8 +625,14 @@ void NatPunchthroughClient::OnClosedConnection(SystemAddress systemAddress, RakN
 }
 void NatPunchthroughClient::OnGetMostRecentPort(Packet *packet)
 {
+	RakNet::BitStream incomingBs(packet->data,packet->length,false);
+	incomingBs.IgnoreBytes(sizeof(MessageID));
+	unsigned int sessionId;
+	incomingBs.Read(sessionId);
+
 	RakNet::BitStream outgoingBs;
 	outgoingBs.Write((MessageID)ID_NAT_GET_MOST_RECENT_PORT);
+	outgoingBs.Write(sessionId);
 	outgoingBs.Write(mostRecentNewExternalPort);
 	rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
 	sp.facilitator=packet->systemAddress;
@@ -626,6 +655,8 @@ void NatPunchthroughClient::SendPunchthrough(RakNetGUID destination, SystemAddre
 	outgoingBs.Write((MessageID)ID_NAT_PUNCHTHROUGH_REQUEST);
 	outgoingBs.Write(destination);
 	rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,facilitator,false);
+
+//	RakAssert(rakPeerInterface->GetSystemAddressFromGuid(destination)==UNASSIGNED_SYSTEM_ADDRESS);
 
 	if (natPunchthroughDebugInterface)
 	{
@@ -666,4 +697,35 @@ void NatPunchthroughClient::OnReadyForNextPunchthrough(void)
 	RakNet::BitStream outgoingBs;
 	outgoingBs.Write((MessageID)ID_NAT_CLIENT_READY);
 	rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,sp.facilitator,false);
+}
+
+void NatPunchthroughClient::PushSuccess(void)
+{
+//	RakAssert(rakPeerInterface->IsConnected(sp.targetAddress,true,true)==false);
+
+	Packet *p = rakPeerInterface->AllocatePacket(sizeof(MessageID)+sizeof(unsigned char));
+	p->data[0]=ID_NAT_PUNCHTHROUGH_SUCCEEDED;
+	p->systemAddress=sp.targetAddress;
+	p->systemIndex=(SystemIndex)-1;
+	p->guid=sp.targetGuid;
+	if (sp.weAreSender)
+		p->data[1]=1;
+	else
+		p->data[1]=0;
+	rakPeerInterface->PushBackPacket(p, true);
+}
+
+bool NatPunchthroughClient::RemoveFromFailureQueue(void)
+{
+	unsigned int i;
+	for (i=0; i < failedAttemptList.Size(); i++)
+	{
+		if (failedAttemptList[i].guid==sp.targetGuid)
+		{
+			// Remove from failure queue
+			failedAttemptList.RemoveAtIndexFast(i);
+			return true;
+		}
+	}
+	return false;
 }

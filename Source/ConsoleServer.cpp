@@ -265,7 +265,6 @@ void ConsoleServer::Update(void)
 				transport->Send(p->systemAddress, "Unknown command:  Type 'help' for help.\r\n");
 			}
 
-			ShowPrompt(p->systemAddress);
 		}
 
 

@@ -16,7 +16,7 @@
 #include "MessageIdentifiers.h"
 #include "BitStream.h"
 #include "RakSleep.h"
-#include "ConnectionGraph.h"
+#include "ConnectionGraph2.h"
 #include "PacketLogger.h"
 #include "StringCompressor.h"
 #include "PacketFileLogger.h"
@@ -82,6 +82,210 @@ struct UDPProxyClientResultHandler_Test : public RakNet::UDPProxyClientResultHan
 	RakPeerInterface *rakPeer;
 };
 
+struct SystemStatus
+{
+	RakNetGUID guid;
+	SystemAddress systemAddress;
+	unsigned char packetId;
+	int status; // -1 = failed. 0 = connecting. 1 = punched. 2 = connected.
+};
+DataStructures::List<SystemStatus> systems;
+
+bool PushSystemStatus(RakNetGUID remoteGuid, SystemAddress remoteAddress)
+{
+	DataStructures::DefaultIndexType idx;
+	for (idx=0; idx < systems.Size(); idx++)
+		if (systems[idx].guid==remoteGuid)
+			return false;
+	SystemStatus ss;
+	ss.guid=remoteGuid;
+	ss.status=0;
+	ss.systemAddress=remoteAddress;
+	systems.Push(ss, __FILE__, __LINE__);
+	return true;
+}
+void PrintStatus(const DataStructures::List<SystemStatus> &systems)
+{
+	system("cls");
+	DataStructures::DefaultIndexType i;
+	printf("Failed\t\tWorking\t\tPunched\t\tConnected\n");
+	for (i=0; i < systems.Size(); i++)
+	{
+		unsigned int tabCount = (systems[i].status+1)*2;
+		for (unsigned int j=0; j < tabCount; j++)
+			printf("\t");
+		printf("%s", systems[i].systemAddress.ToString(true));
+		if (systems[i].status==-1)
+			printf(" (Code %i)", systems[i].packetId);
+		printf("\n");
+	}
+}
+void GUIClientTest()
+{
+	SystemAddress serverSystemAddress(DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP,NAT_PUNCHTHROUGH_FACILITATOR_PORT);
+	RakPeerInterface *rakPeer=RakNetworkFactory::GetRakPeerInterface();
+	NatPunchthroughClient natPunchthroughClient;
+	ConnectionGraph2 connectionGraph;
+	rakPeer->AttachPlugin(&connectionGraph);
+	rakPeer->AttachPlugin(&natPunchthroughClient);
+	rakPeer->Startup(1024,0,&SocketDescriptor(0,0), 1);
+	rakPeer->SetMaximumIncomingConnections(32);
+	rakPeer->Connect(DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP, NAT_PUNCHTHROUGH_FACILITATOR_PORT, NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD, (int) strlen(NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD));
+	
+	Packet *p;
+	while (1)
+	{
+		p=rakPeer->Receive();
+		while (p)
+		{
+			if (p->data[0]==ID_REMOTE_NEW_INCOMING_CONNECTION)
+			{
+				unsigned int count;
+				RakNet::BitStream bsIn(p->data, p->length, false);
+				bsIn.IgnoreBytes(sizeof(MessageID));
+				bsIn.Read(count);
+				SystemAddress remoteAddress;
+				RakNetGUID remoteGuid;
+				for (unsigned int i=0; i < count; i++)
+				{
+					bsIn.Read(remoteAddress);
+					bsIn.Read(remoteGuid);
+
+					if (remoteAddress!=serverSystemAddress)
+					{
+						if (PushSystemStatus(remoteGuid, remoteAddress))
+							natPunchthroughClient.OpenNAT(remoteGuid, serverSystemAddress);
+					}					
+				}
+			}
+			if (p->data[0]==ID_DISCONNECTION_NOTIFICATION || p->data[0]==ID_CONNECTION_LOST)
+			{
+				DataStructures::DefaultIndexType i;
+				for (i=0; i < systems.Size(); i++)
+					if (systems[i].guid==p->guid)
+						systems.RemoveAtIndex(i);
+			}
+			else if (p->data[0]==ID_NO_FREE_INCOMING_CONNECTIONS)
+			{
+			}
+			else if (p->data[0]==ID_CONNECTION_GRAPH_REPLY)
+			{
+			}
+			else if (p->data[0]==ID_REMOTE_DISCONNECTION_NOTIFICATION ||
+				p->data[0]==ID_REMOTE_CONNECTION_LOST)
+			{
+				// Ignore this if not from the server
+				if (p->systemAddress==serverSystemAddress)
+				{
+					RakNet::BitStream bsIn(p->data, p->length, false);
+					SystemAddress remoteAddress;
+					RakNetGUID remoteGuid;
+					bsIn.IgnoreBytes(sizeof(MessageID));
+					bsIn.Read(remoteAddress);
+					bsIn.Read(remoteGuid);
+
+					DataStructures::DefaultIndexType i;
+					for (i=0; i < systems.Size(); i++)
+						if (systems[i].systemAddress==remoteAddress)
+							systems.RemoveAtIndex(i);
+				}
+			}
+			else if (p->data[0]==ID_NEW_INCOMING_CONNECTION ||
+				p->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
+			{
+				if (strcmp(p->systemAddress.ToString(false),DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP)!=0)
+				{
+					DataStructures::DefaultIndexType i;
+					bool gotAny=false;
+					for (i=0; i < systems.Size(); i++)
+					{
+						if (systems[i].guid==p->guid)
+						{
+							gotAny=true;
+							systems[i].status=2;
+							break;
+						}
+					}
+					RakAssert(gotAny==true);
+				}
+			}
+			else if (
+				p->data[0]==ID_NAT_TARGET_NOT_CONNECTED ||
+				p->data[0]==ID_NAT_TARGET_UNRESPONSIVE ||
+				p->data[0]==ID_NAT_CONNECTION_TO_TARGET_LOST ||
+//				p->data[0]==ID_NAT_ALREADY_IN_PROGRESS ||
+				p->data[0]==ID_NAT_PUNCHTHROUGH_FAILED
+				)
+			{
+				RakNetGUID guid;
+				if (p->data[0]==ID_NAT_PUNCHTHROUGH_FAILED)
+					guid=p->guid;
+				else
+				{
+					RakNet::BitStream bs(p->data,p->length,false);
+					bs.IgnoreBytes(1);
+					bool b = bs.Read(guid);
+					RakAssert(b);
+				}
+
+				DataStructures::DefaultIndexType i;
+				for (i=0; i < systems.Size(); i++)
+				{
+					if (systems[i].guid==guid)
+					{
+						systems[i].packetId=p->data[0];
+						systems[i].status=-1;
+						break;
+					}
+				}
+			}
+			else if (p->data[0]==ID_NAT_PUNCHTHROUGH_SUCCEEDED)
+			{
+				DataStructures::DefaultIndexType i;
+				for (i=0; i < systems.Size(); i++)
+				{
+					if (systems[i].guid==p->guid && systems[i].status==0)
+					{
+						// Might get legitimately due to high lag for one of the systems
+					//	RakAssert(systems[i].status==0);
+						systems[i].status=1;
+						break;
+					}
+				}
+
+				if (p->data[1]==1)
+					rakPeer->Connect(p->systemAddress.ToString(), p->systemAddress.port, 0, 0);
+			}
+			else if (p->data[0]==ID_PONG)
+			{
+			}
+			else if (p->data[0]==ID_INVALID_PASSWORD)
+			{
+			}
+			else if (p->data[0]==ID_NAT_ALREADY_IN_PROGRESS)
+			{
+			}
+
+			rakPeer->DeallocatePacket(p);
+			p=rakPeer->Receive();
+		}
+
+		if (kbhit())
+		{
+			char ch = getch();
+			if (ch=='q' || ch=='Q')
+				break;
+		}
+
+		PrintStatus(systems);
+		RakSleep(0);
+	}
+
+	rakPeer->Shutdown(100,0);
+	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+
+}
+
 void VerboseTest()
 {
 	RakPeerInterface *rakPeer=RakNetworkFactory::GetRakPeerInterface();
@@ -108,7 +312,7 @@ void VerboseTest()
 	udpProxyCoordinator.SetRemoteLoginPassword(COORDINATOR_PASSWORD);
 
 	// Helps with the sample, to connect systems that join
-	ConnectionGraph connectionGraph;
+	ConnectionGraph2 connectionGraph;
 	natPunchthroughClient.SetDebugInterface(&debugInterface);
 	rakPeer->AttachPlugin(&connectionGraph);
 
@@ -239,35 +443,11 @@ void VerboseTest()
 			if (p->data[0]==ID_REMOTE_NEW_INCOMING_CONNECTION && (mode[0]=='s' || mode[0]=='S'))
 			{
 				RakNet::BitStream bsIn(p->data, p->length, false);
-				ConnectionGraphGroupID group1, group2;
-				SystemAddress node1, node2, remoteAddress, serverAddress;
-				RakNetGUID guid1, guid2, remoteGuid, serverGuid;
-				bsIn.IgnoreBytes(1);
-				bsIn.Read(node1);
-				bsIn.Read(group1);
-				bsIn.Read(guid1);
-				bsIn.Read(node2);
-				bsIn.Read(group2);
-				bsIn.Read(guid2);
-				if (rakPeer->GetSystemAddressFromGuid(guid1)==UNASSIGNED_SYSTEM_ADDRESS)
-				{
-					remoteAddress=node1;
-					remoteGuid=guid1;
-					serverAddress=node2;
-					serverGuid=guid2;
-				}
-				else
-				{
-					remoteAddress=node2;
-					remoteGuid=guid2;
-					serverAddress=node1;
-					serverGuid=guid1;
-				}
-
-				printf("Remote address is %s\n", remoteAddress.ToString(true));
-				printf("Remote guid is %s\n", remoteGuid.ToString());
-				printf("Server address is %s\n", serverAddress.ToString(true));
-				printf("Server guid is %s\n", serverGuid.ToString());
+				SystemAddress remoteAddress;
+				RakNetGUID remoteGuid;
+				bsIn.IgnoreBytes(sizeof(MessageID));
+				bsIn.Read(remoteAddress);
+				bsIn.Read(remoteGuid);
 
 				printf("Connecting to remote system.\n");
 				natPunchthroughClient.OpenNAT(remoteGuid, rakPeer->GetSystemAddressFromIndex(0));
@@ -431,6 +611,10 @@ void VerboseTest()
 // That plugin will cause the lobby server to send ID_REMOTE_* system notifications to its connected systems.
 int main(void)
 {
-	VerboseTest();
+//#ifdef _DEBUG
+//	VerboseTest();
+//#else
+	GUIClientTest();
+//#endif
 	return 1;
 }

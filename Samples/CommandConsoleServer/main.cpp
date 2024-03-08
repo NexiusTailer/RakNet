@@ -14,8 +14,9 @@
 #include "RakPeerInterface.h"
 #include "LogCommandParser.h"
 #include "GetTime.h"
-#include "RakNetTransport.h"
+#include "RakNetTransport2.h"
 #include "LinuxStrings.h"
+#include <stdio.h>
 
 #ifdef _COMPATIBILITY_1
 #include "Compatibility1Includes.h"
@@ -29,24 +30,28 @@
 
 
 void TestTCPInterface(void);
-void TestCommandServer(TransportInterface *ti, unsigned short port);
+void TestCommandServer(TransportInterface *ti, unsigned short port, RakPeerInterface *rakPeer);
 
 int main(void)
 {
-	TelnetTransport tt;
-	// RakNetTransport rt; // Raknet defaults to port whatever you want
-	TestCommandServer(&tt, 23); // Uncomment to use Telnet as a client.  Telnet uses port 23 by default.
-	// TestCommandServer(&rt, 60000); // Uncomment to use RakNet as a client
+	// TelnetTransport tt;
+	// TestCommandServer(&tt, 23); // Uncomment to use Telnet as a client.  Telnet uses port 23 by default.
+
+	RakNetTransport2 rt2;
+	RakPeerInterface *rakPeer = RakNetworkFactory::GetRakPeerInterface();
+	rakPeer->Startup(128,30,&SocketDescriptor(60000,0),1);
+	rakPeer->SetMaximumIncomingConnections(128);
+	rakPeer->AttachPlugin(&rt2);
+	TestCommandServer(&rt2, 60000,rakPeer); // Uncomment to use RakNet as a client
 	return 1;
 }
 
-void TestCommandServer(TransportInterface *ti, unsigned short port)
+void TestCommandServer(TransportInterface *ti, unsigned short port, RakPeerInterface *rakPeer)
 {
     ConsoleServer consoleServer;
 	RakNetCommandParser rcp;
 	LogCommandParser lcp;
 	RakNetTime lastLog=0;
-	RakPeerInterface *rakPeer = RakNetworkFactory::GetRakPeerInterface();
 
 	printf("This sample demonstrates the command console server, which can be.\n");
 	printf("a standalone application or part of your game server.  It allows you to\n");
@@ -65,6 +70,8 @@ void TestCommandServer(TransportInterface *ti, unsigned short port)
 	while (1)
 	{
 		consoleServer.Update();
+		// Ignore raknet packets for this sample.
+		rakPeer->DeallocatePacket(rakPeer->Receive());
 
 		if (RakNet::GetTime() > lastLog + 4000)
 		{

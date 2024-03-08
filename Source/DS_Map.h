@@ -15,7 +15,7 @@
 #include "RakAssert.h"
 
 // If I want to change this to a red-black tree, this is a good site: http://www.cs.auckland.ac.nz/software/AlgAnim/red_black.html
-// This makes insertions and deletions faster.  But then traversals are slow, while they are currently fast.
+// This makes insertions and deletions faster. But then traversals are slow, while they are currently fast.
 
 /// The namespace DataStructures was only added to avoid compiler errors for commonly named data structures
 /// As these data structures are stand-alone, you can use them outside of RakNet for your own projects if you wish.
@@ -24,10 +24,21 @@ namespace DataStructures
 	/// The default comparison has to be first so it can be called as a default parameter.
 	/// It then is followed by MapNode, followed by NodeComparisonFunc
 	template <class key_type>
-		int defaultMapKeyComparison(const key_type &a, const key_type &b)
+	int defaultMapKeyComparison(const key_type &a, const key_type &b)
 	{
 		if (a<b) return -1; if (a==b) return 0; return 1;
 	}
+
+	// Has to be a static because the comparison callback for DataStructures::OrderedList is a C function
+	template <class key_type, class map_node_type, int (*key_comparison_func)(const key_type&, const key_type&) >
+	int NodeComparisonFunc(const key_type &a, const map_node_type &b)
+	{
+#ifdef _MSC_VER
+#pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
+#endif
+		return key_comparison_func(a, b.mapNodeKey);
+	}
+
 
 	/// \note IMPORTANT! If you use defaultMapKeyComparison then call IMPLEMENT_DEFAULT_COMPARISON or you will get an unresolved external linker error.
 	template <class key_type, class data_type, int (*key_comparison_func)(const key_type&, const key_type&)=defaultMapKeyComparison<key_type> >
@@ -46,21 +57,12 @@ namespace DataStructures
 			data_type mapNodeData;
 		};
 
-		// Has to be a static because the comparison callback for DataStructures::OrderedList is a C function
-		static int NodeComparisonFunc(const key_type &a, const MapNode &b)
-		{
-#ifdef _MSC_VER
-#pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
-#endif
-			return key_comparison_func(a, b.mapNodeKey);
-		}
-
 		Map();
 		~Map();
 		Map( const Map& original_copy );
 		Map& operator= ( const Map& original_copy );
 
-		data_type& Get(const key_type &key) const; 
+		data_type& Get(const key_type &key) const;
 		data_type Pop(const key_type &key);
 		// Add if needed
 		void Set(const key_type &key, const data_type &data);
@@ -78,7 +80,7 @@ namespace DataStructures
 		unsigned Size(void) const;
 
 	protected:
-		DataStructures::OrderedList< key_type,MapNode,Map::NodeComparisonFunc > mapNodeList;
+		DataStructures::OrderedList< key_type,MapNode, NodeComparisonFunc<key_type,MapNode,key_comparison_func> > mapNodeList;
 
 		void SaveLastSearch(const key_type &key, unsigned index) const;
 		bool HasSavedSearchResult(const key_type &key) const;
@@ -91,6 +93,11 @@ namespace DataStructures
 	template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
 	Map<key_type, data_type, key_comparison_func>::Map()
 	{
+		// Prevent unresolved external
+		key_type a;
+		MapNode b;
+		NodeComparisonFunc<key_type,MapNode,key_comparison_func>(a,b);
+
 		lastSearchIndexValid=false;
 	}
 
@@ -104,12 +111,12 @@ namespace DataStructures
 	Map<key_type, data_type, key_comparison_func>::Map( const Map& original_copy )
 	{
 		mapNodeList=original_copy.mapNodeList;
-        lastSearchIndex=original_copy.lastSearchIndex;
+		lastSearchIndex=original_copy.lastSearchIndex;
 		lastSearchKey=original_copy.lastSearchKey;
 		lastSearchIndexValid=original_copy.lastSearchIndexValid;
 	}
 
-    template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
+	template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
 	Map<key_type, data_type, key_comparison_func>& Map<key_type, data_type, key_comparison_func>::operator= ( const Map& original_copy )
 	{
 		mapNodeList=original_copy.mapNodeList;
@@ -158,7 +165,7 @@ namespace DataStructures
 	}
 
 	template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
-		data_type Map<key_type, data_type, key_comparison_func>::Pop(const key_type &key)
+	data_type Map<key_type, data_type, key_comparison_func>::Pop(const key_type &key)
 	{
 		bool objectExists;
 		unsigned index;
@@ -168,7 +175,7 @@ namespace DataStructures
 		{
 			index=mapNodeList.GetIndexFromKey(key, &objectExists);
 			RakAssert(objectExists);
-		}		
+		}    
 		data_type tmp = mapNodeList[index].mapNodeData;
 		mapNodeList.RemoveAtIndex(index);
 		lastSearchIndexValid=false;
@@ -186,7 +193,7 @@ namespace DataStructures
 			mapNodeList[lastSearchIndex].mapNodeData=data;
 			return;
 		}
-		
+
 		index=mapNodeList.GetIndexFromKey(key, &objectExists);
 
 		if (objectExists)
@@ -215,10 +222,10 @@ namespace DataStructures
 			index=mapNodeList.GetIndexFromKey(key, &objectExists);
 			RakAssert(objectExists);
 			SaveLastSearch(key,index);
-		}		
+		}    
 
 		mapNodeList[index].mapNodeData=data;
-	}	
+	}  
 
 	template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
 	void Map<key_type, data_type, key_comparison_func>::SetNew(const key_type &key, const data_type &data)
@@ -252,7 +259,7 @@ namespace DataStructures
 		if (HasSavedSearchResult(key))
 		{
 			lastSearchIndexValid=false;
-			mapNodeList.RemoveAtIndex(lastSearchIndex);   
+			mapNodeList.RemoveAtIndex(lastSearchIndex);
 			return true;
 		}
 
@@ -283,7 +290,7 @@ namespace DataStructures
 	}
 
 	template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
-		key_type Map<key_type, data_type, key_comparison_func>::GetKeyAtIndex( const unsigned int position ) const
+	key_type Map<key_type, data_type, key_comparison_func>::GetKeyAtIndex( const unsigned int position ) const
 	{
 		return mapNodeList[position].mapNodeKey;
 	}

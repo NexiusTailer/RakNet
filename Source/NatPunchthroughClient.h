@@ -32,17 +32,17 @@ class PacketLogger;
 struct RAK_DLL_EXPORT PunchthroughConfiguration
 {
 	// internal: (15 ms * 2 tries + 30 wait) * 5 ports * 8 players = 2.4 seconds
-	// external: (50 ms * 10 sends + 200 wait) * 1 port * 8 players = 5.6 seconds
+	// external: (50 ms * 8 sends + 100 wait) * 2 port * 8 players = 8 seconds
 	// Total: 8 seconds
 	PunchthroughConfiguration() {
 		TIME_BETWEEN_PUNCH_ATTEMPTS_INTERNAL=15;
 		TIME_BETWEEN_PUNCH_ATTEMPTS_EXTERNAL=50;
 		UDP_SENDS_PER_PORT_INTERNAL=2;
-		UDP_SENDS_PER_PORT_EXTERNAL=10;
+		UDP_SENDS_PER_PORT_EXTERNAL=8;
 		INTERNAL_IP_WAIT_AFTER_ATTEMPTS=30;
 		MAXIMUM_NUMBER_OF_INTERNAL_IDS_TO_CHECK=5;
-		MAX_PREDICTIVE_PORT_RANGE=1;
-		EXTERNAL_IP_WAIT_BETWEEN_PORTS=200;
+		MAX_PREDICTIVE_PORT_RANGE=2;
+		EXTERNAL_IP_WAIT_BETWEEN_PORTS=100;
 		EXTERNAL_IP_WAIT_AFTER_ALL_ATTEMPTS=EXTERNAL_IP_WAIT_BETWEEN_PORTS;
 		retryOnFailure=false;
 	}
@@ -148,6 +148,8 @@ protected:
 	void OnPunchthroughFailure(void);
 	void OnReadyForNextPunchthrough(void);
 	void PushFailure(void);
+	bool RemoveFromFailureQueue(void);
+	void PushSuccess(void);
 	//void ProcessNextPunchthroughQueue(void);
 
 	/*
@@ -170,6 +172,7 @@ protected:
 		int attemptCount;
 		int retryCount;
 		int punchingFixedPortAttempts; // only used for TestMode::PUNCHING_FIXED_PORT
+		unsigned int sessionId;
 		// Give priority to internal IP addresses because if we are on a LAN, we don't want to try to connect through the internet
 		enum TestMode
 		{

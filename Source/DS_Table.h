@@ -183,8 +183,8 @@ namespace DataStructures
 		/// Column indices are stored in the order they are added.
 		/// \param[in] columnName The name of the column
 		/// \return The index of the column, or (unsigned)-1 if no such column
-		unsigned ColumnIndex(char columnName[_TABLE_MAX_COLUMN_NAME_LENGTH]);
-		unsigned ColumnIndex(const char *columnName);
+		unsigned ColumnIndex(char columnName[_TABLE_MAX_COLUMN_NAME_LENGTH]) const;
+		unsigned ColumnIndex(const char *columnName) const;
 
 		/// \brief Gives the string name of the column at a certain index
 		/// \param[in] index The index of the column

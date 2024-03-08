@@ -632,56 +632,56 @@ struct Chat_Notification : public RoomsPluginNotification {
 struct RoomsCallback
 {
 	// Results of calls
-	virtual void CreateRoom_Callback( SystemAddress senderAddress, CreateRoom_Func *callResult) {}
-	virtual void EnterRoom_Callback( SystemAddress senderAddress, EnterRoom_Func *callResult) {}
-	virtual void JoinByFilter_Callback( SystemAddress senderAddress, JoinByFilter_Func *callResult) {}
-	virtual void LeaveRoom_Callback( SystemAddress senderAddress, LeaveRoom_Func *callResult) {}
-	virtual void GetInvitesToParticipant_Callback( SystemAddress senderAddress, GetInvitesToParticipant_Func *callResult) {}
-	virtual void SendInvite_Callback( SystemAddress senderAddress, SendInvite_Func *callResult) {}
-	virtual void AcceptInvite_Callback( SystemAddress senderAddress, AcceptInvite_Func *callResult) {}
-	virtual void StartSpectating_Callback( SystemAddress senderAddress, StartSpectating_Func *callResult) {}
-	virtual void StopSpectating_Callback( SystemAddress senderAddress, StopSpectating_Func *callResult) {}
-	virtual void GrantModerator_Callback( SystemAddress senderAddress, GrantModerator_Func *callResult) {}
-	virtual void ChangeSlotCounts_Callback( SystemAddress senderAddress, ChangeSlotCounts_Func *callResult) {}
-	virtual void SetCustomRoomProperties_Callback( SystemAddress senderAddress, SetCustomRoomProperties_Func *callResult) {}
-	virtual void GetRoomProperties_Callback( SystemAddress senderAddress, GetRoomProperties_Func *callResult) {}
-	virtual void ChangeRoomName_Callback( SystemAddress senderAddress, ChangeRoomName_Func *callResult) {}
-	virtual void SetHiddenFromSearches_Callback( SystemAddress senderAddress, SetHiddenFromSearches_Func *callResult) {}
-	virtual void SetDestroyOnModeratorLeave_Callback( SystemAddress senderAddress, SetDestroyOnModeratorLeave_Func *callResult) {}
-	virtual void SetReadyStatus_Callback( SystemAddress senderAddress, SetReadyStatus_Func *callResult) {}
-	virtual void GetReadyStatus_Callback( SystemAddress senderAddress, GetReadyStatus_Func *callResult) {}
-	virtual void SetRoomLockState_Callback( SystemAddress senderAddress, SetRoomLockState_Func *callResult) {}
-	virtual void GetRoomLockState_Callback( SystemAddress senderAddress, GetRoomLockState_Func *callResult) {}
-	virtual void AreAllMembersReady_Callback( SystemAddress senderAddress, AreAllMembersReady_Func *callResult) {}
-	virtual void KickMember_Callback( SystemAddress senderAddress, KickMember_Func *callResult) {}
-	virtual void UnbanMember_Callback( SystemAddress senderAddress, UnbanMember_Func *callResult) {}
-	virtual void GetBanReason_Callback( SystemAddress senderAddress, GetBanReason_Func *callResult) {}
-	virtual void AddUserToQuickJoin_Callback( SystemAddress senderAddress, AddUserToQuickJoin_Func *callResult) {}
-	virtual void RemoveUserFromQuickJoin_Callback( SystemAddress senderAddress, RemoveUserFromQuickJoin_Func *callResult) {}
-	virtual void IsInQuickJoin_Callback( SystemAddress senderAddress, IsInQuickJoin_Func *callResult) {}
-	virtual void SearchByFilter_Callback( SystemAddress senderAddress, SearchByFilter_Func *callResult) {}
-	virtual void ChangeHandle_Callback( SystemAddress senderAddress, ChangeHandle_Func *callResult) {}
-	virtual void Chat_Callback( SystemAddress senderAddress, Chat_Func *callResult) {}
+	virtual void CreateRoom_Callback( SystemAddress senderAddress, CreateRoom_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void EnterRoom_Callback( SystemAddress senderAddress, EnterRoom_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void JoinByFilter_Callback( SystemAddress senderAddress, JoinByFilter_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void LeaveRoom_Callback( SystemAddress senderAddress, LeaveRoom_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void GetInvitesToParticipant_Callback( SystemAddress senderAddress, GetInvitesToParticipant_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void SendInvite_Callback( SystemAddress senderAddress, SendInvite_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void AcceptInvite_Callback( SystemAddress senderAddress, AcceptInvite_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void StartSpectating_Callback( SystemAddress senderAddress, StartSpectating_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void StopSpectating_Callback( SystemAddress senderAddress, StopSpectating_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void GrantModerator_Callback( SystemAddress senderAddress, GrantModerator_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void ChangeSlotCounts_Callback( SystemAddress senderAddress, ChangeSlotCounts_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void SetCustomRoomProperties_Callback( SystemAddress senderAddress, SetCustomRoomProperties_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void GetRoomProperties_Callback( SystemAddress senderAddress, GetRoomProperties_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void ChangeRoomName_Callback( SystemAddress senderAddress, ChangeRoomName_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void SetHiddenFromSearches_Callback( SystemAddress senderAddress, SetHiddenFromSearches_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void SetDestroyOnModeratorLeave_Callback( SystemAddress senderAddress, SetDestroyOnModeratorLeave_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void SetReadyStatus_Callback( SystemAddress senderAddress, SetReadyStatus_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void GetReadyStatus_Callback( SystemAddress senderAddress, GetReadyStatus_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void SetRoomLockState_Callback( SystemAddress senderAddress, SetRoomLockState_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void GetRoomLockState_Callback( SystemAddress senderAddress, GetRoomLockState_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void AreAllMembersReady_Callback( SystemAddress senderAddress, AreAllMembersReady_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void KickMember_Callback( SystemAddress senderAddress, KickMember_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void UnbanMember_Callback( SystemAddress senderAddress, UnbanMember_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void GetBanReason_Callback( SystemAddress senderAddress, GetBanReason_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void AddUserToQuickJoin_Callback( SystemAddress senderAddress, AddUserToQuickJoin_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void RemoveUserFromQuickJoin_Callback( SystemAddress senderAddress, RemoveUserFromQuickJoin_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void IsInQuickJoin_Callback( SystemAddress senderAddress, IsInQuickJoin_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void SearchByFilter_Callback( SystemAddress senderAddress, SearchByFilter_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void ChangeHandle_Callback( SystemAddress senderAddress, ChangeHandle_Func *callResult) {(void) senderAddress; (void) callResult;}
+	virtual void Chat_Callback( SystemAddress senderAddress, Chat_Func *callResult) {(void) senderAddress; (void) callResult;}
 	// Notifications due to other room members
-	virtual void QuickJoinExpired_Callback( SystemAddress senderAddress, QuickJoinExpired_Notification *notification) {}
-	virtual void QuickJoinEnteredRoom_Callback( SystemAddress senderAddress, QuickJoinEnteredRoom_Notification *notification) {}
-	virtual void RoomMemberStartedSpectating_Callback( SystemAddress senderAddress, RoomMemberStartedSpectating_Notification *notification) {}
-	virtual void RoomMemberStoppedSpectating_Callback( SystemAddress senderAddress, RoomMemberStoppedSpectating_Notification *notification) {}
-	virtual void ModeratorChanged_Callback( SystemAddress senderAddress, ModeratorChanged_Notification *notification) {}
-	virtual void SlotCountsSet_Callback( SystemAddress senderAddress, SlotCountsSet_Notification *notification) {}
-	virtual void CustomRoomPropertiesSet_Callback( SystemAddress senderAddress, CustomRoomPropertiesSet_Notification *notification) {}
-	virtual void RoomNameSet_Callback( SystemAddress senderAddress, RoomNameSet_Notification *notification) {}
-	virtual void HiddenFromSearchesSet_Callback( SystemAddress senderAddress, HiddenFromSearchesSet_Notification *notification) {}
-	virtual void RoomMemberReadyStatusSet_Callback( SystemAddress senderAddress, RoomMemberReadyStatusSet_Notification *notification) {}
-	virtual void RoomLockStateSet_Callback( SystemAddress senderAddress, RoomLockStateSet_Notification *notification) {}
-	virtual void RoomMemberKicked_Callback( SystemAddress senderAddress, RoomMemberKicked_Notification *notification) {}
-	virtual void RoomMemberHandleSet_Callback( SystemAddress senderAddress, RoomMemberHandleSet_Notification *notification) {}
-	virtual void RoomMemberLeftRoom_Callback( SystemAddress senderAddress, RoomMemberLeftRoom_Notification *notification) {}
-	virtual void RoomMemberJoinedRoom_Callback( SystemAddress senderAddress, RoomMemberJoinedRoom_Notification *notification) {}
-	virtual void RoomInvitationSent_Callback( SystemAddress senderAddress, RoomInvitationSent_Notification *notification) {}
-	virtual void RoomInvitationWithdrawn_Callback( SystemAddress senderAddress, RoomInvitationWithdrawn_Notification *notification) {}
-	virtual void RoomDestroyedOnModeratorLeft_Callback( SystemAddress senderAddress, RoomDestroyedOnModeratorLeft_Notification *notification) {}
-	virtual void Chat_Callback( SystemAddress senderAddress, Chat_Notification *notification) {}
+	virtual void QuickJoinExpired_Callback( SystemAddress senderAddress, QuickJoinExpired_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void QuickJoinEnteredRoom_Callback( SystemAddress senderAddress, QuickJoinEnteredRoom_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void RoomMemberStartedSpectating_Callback( SystemAddress senderAddress, RoomMemberStartedSpectating_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void RoomMemberStoppedSpectating_Callback( SystemAddress senderAddress, RoomMemberStoppedSpectating_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void ModeratorChanged_Callback( SystemAddress senderAddress, ModeratorChanged_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void SlotCountsSet_Callback( SystemAddress senderAddress, SlotCountsSet_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void CustomRoomPropertiesSet_Callback( SystemAddress senderAddress, CustomRoomPropertiesSet_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void RoomNameSet_Callback( SystemAddress senderAddress, RoomNameSet_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void HiddenFromSearchesSet_Callback( SystemAddress senderAddress, HiddenFromSearchesSet_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void RoomMemberReadyStatusSet_Callback( SystemAddress senderAddress, RoomMemberReadyStatusSet_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void RoomLockStateSet_Callback( SystemAddress senderAddress, RoomLockStateSet_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void RoomMemberKicked_Callback( SystemAddress senderAddress, RoomMemberKicked_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void RoomMemberHandleSet_Callback( SystemAddress senderAddress, RoomMemberHandleSet_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void RoomMemberLeftRoom_Callback( SystemAddress senderAddress, RoomMemberLeftRoom_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void RoomMemberJoinedRoom_Callback( SystemAddress senderAddress, RoomMemberJoinedRoom_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void RoomInvitationSent_Callback( SystemAddress senderAddress, RoomInvitationSent_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void RoomInvitationWithdrawn_Callback( SystemAddress senderAddress, RoomInvitationWithdrawn_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void RoomDestroyedOnModeratorLeft_Callback( SystemAddress senderAddress, RoomDestroyedOnModeratorLeft_Notification *notification) {(void) senderAddress; (void) notification;}
+	virtual void Chat_Callback( SystemAddress senderAddress, Chat_Notification *notification) {(void) senderAddress; (void) notification;}
 };
 
 /// \ingroup ROOMS_GROUP

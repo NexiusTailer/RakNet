@@ -17,14 +17,14 @@
   <p>
   <B>What is the difference between the license versions?</B><BR>
   <br>
-  <em>Non-profit applications or engines:</em><br>
-    You can use RakNet for free under the <a rel="license" href="http://creativecommons.org/licenses/by-nc/2.5/">Creative Commons Attribution - NonCommercial 2.5</a> license<br>
+  <em><a href="http://www.jenkinssoftware.com/FreeIndyLicense-2.0.pdf">Indy License</a></em><br>
+  RakNet is free up to 250K gross. After that, you'd be obligated to purchase a single application license. Until such time, you must display the RakNet logo in your splash screen or credits. Lastly, it can only be distributed as a downloadable game (not retail) for the PC, Mac, or Linux. <strong>If you plan to make more than 250K, you can use the free license until your sales build up to where you do.</strong><br>
     <br>
-    <em>Single application license:</em><br>
-A <a href="http://www.jenkinssoftware.com/SingleApplicationLicense.html">Single Application license</a>  applies to commercial software sold both online and retail. You may  download RakNet immediately and are only required to pay when you ship  your product. At that time you choose how much to pay based on what you  can afford and how much value you feel RakNet has brought to you.<br>
+    <em><a href="http://www.jenkinssoftware.com/SingleApplicationLicense-2.0.pdf">Single application license:</a></em><br>
+A Single Application license applies to commercial software sold both online and retail. You may  download RakNet immediately and are only required to pay when you ship  your product. At that time you choose how much to pay based on what you  can afford and how much value you feel RakNet has brought to you.<br>
 <br>
 <em>Site licenses and commercial engine development.</em><br>
-An unlimited application Engine License* applies to commercial software  sold using any distribution model and also allows resale of your  engine. You may use RakNet as long as you wish during development. When  you wish to sell your engine or release your product, you may purchase  a license at a fixed fee.<br>
+An unlimited application Engine License applies to commercial software  sold using any distribution model and also allows resale of your  engine. You may use RakNet as long as you wish during development. When  you wish to sell your engine or release your product, you may purchase  a license at a fixed fee.<br>
   <br>
     All licenses can support any number of players.<BR>
       <BR>
@@ -37,32 +37,18 @@ An unlimited application Engine License* applies to commercial software  sold us
       <B>My data pointed to by a pointer isn't arriving.</B><BR>
     This is the same problem as when trying to use a default copy constructor with allocated memory.  You can just send pointers if you want, but it will send the pointer variable rather than the data pointed to.  You will need to serialize the contents of pointers yourself.<BR>
       <BR>
-      <B>Question about that ReplicaManager.  If the level, and level objects and so on are replicated, but the objects rely on the level being loaded first, how do you ensure that the Level is replicated and fully constructed before everything else?  What about more complex relationships?</B><BR>
-    Participants in the system are not added until you call AddParticipant, unless you were to call SetAutoParticipateNewConnections(true).<BR>
-    Objects in the system are not constructed on other systems until you call Construct, unless you were to call SetAutoConstructToNewParticipants(true).<BR>
-      <BR>
-    In the case of a map load, you usually wouldn't want systems still in the menu states to be getting updates for game objects.  So you would not add them as a participant in that case.<BR>
-      <BR>
-    Another way to handle this is when you get the ReceiveConstructionInterface::ReceiveConstruction callback, return REPLICA_PROCESS_LATER.  In this way you can defer processing the call until such a time as you choose.<BR>
-      <BR>
       <B>I get very high pings.</B><BR>
-    Use 0 for the sleep timer, and put a Sleep(0) in your main game loop.  This will ensure responsive context switches.<BR>
-      <BR>
-      <B>How do I use object member remote procedure calls?.</B><BR>
-    Look at the sample ObjectMemberRPC.<br>
-    <BR>
-	
-<strong>My scope and/or serialize sends do not arrive on the remote system.</strong><br>
-
-      Scope and Serialize messages are only sent if the ReplicaManager   knows that your object exists on the remote system.&nbsp; This does not   happen automatically, even when you handle   ReceiveConstructionInterface::ReceiveConstruction.&nbsp; When you locally create an object that   you know exists on the sending system, and don't need to send a   Construction message back to that system, be sure to call   ReplicaManager::Construct with isCopy set to true, instead of (for   example) ReplicaManager::ReferencePointer<br>
-      <BR>
-      <B>How should I deal with firewalls?</B><BR>
+    Use 0 for the sleep timer, and put a Sleep(0) in your main game loop.  This will ensure responsive context switches.</p>
+  <p><B>I get very high CPU usage</B><BR>
+Use 30 for the sleep timer. This will ensure RakNet spends most of its time waiting.<BR>
+<BR>
+<B>How should I deal with firewalls?</B><BR>
     Be sure to specify that your end-users need to open the appropriate ports, or use a port that is probably already open (such as the http port).  One way to reduce tech support calls in this regard is to have your application try connecting a local client to a local server.  If you can't connect after a couple of tries then the user probably has a firewall blocking this. You can message the user in-game that they probably have a firewall that needs to be turned off on whichever port your game uses.<BR>
-      <BR>
-      <B>I get linker errors such as: unresolved external symbol "public: static void __cdecl RakNetworkFactory::DestroyRakPeerInterface(class RakPeerInterface *)"</B><BR>
+    <BR>
+    <B>I get linker errors such as: unresolved external symbol "public: static void __cdecl RakNetworkFactory::DestroyRakPeerInterface(class RakPeerInterface *)"</B><BR>
     You didn't link the library into your project.  You must have the .lib and not the .dll in the project.  See <A HREF="compilersetup.html">Compiler Setup</A><BR>
-      <BR>
-      <B>I get conflicting lib errors such as follows</B><BR>
+    <BR>
+    <B>I get conflicting lib errors such as follows</B><BR>
     LIBCMT.lib(dosmap.obj) : error LNK2005: __dosmaperr already defined in LIBCD.lib(dosmap.obj)<BR>
     LIBCMT.lib(mbctype.obj) : error LNK2005: __getmbcp already defined in LIBCD.lib(mbctype.obj)<BR>
     LIBCMT.lib(mbctype.obj) : error LNK2005: __setmbcp already defined in LIBCD.lib(mbctype.obj)<BR>
@@ -71,39 +57,32 @@ An unlimited application Engine License* applies to commercial software  sold us
     LIBCMT.lib(tolower.obj) : error LNK2005: _tolower already defined in LIBCD.lib(tolower.obj)<BR>
     LIBCMT.lib(isctype.obj) : error LNK2005: __isctype already defined in LIBCD.lib(isctype.obj)<BR>
     LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library<BR>
-      <BR>
+    <BR>
     You need to select Multithreaded Debug and Multithreaded libraries in the project options.<BR>
     <BR>
-      <B>I get linker errors such as follows</B><BR>
-			LIBCMTD.lib(invarg.obj) : error LNK2005: __invoke_watson already defined in MSVCRTD.lib(MSVCR80D.dll)<BR>
-			LIBCMTD.lib(setlocal.obj) : error LNK2005: __configthreadlocale already defined in MSVCRTD.lib(MSVCR80D.dll)<BR>
-			LIBCMTD.lib(tidtable.obj) : error LNK2005: __encode_pointer already defined in MSVCRTD.lib(MSVCR80D.dll)<BR>
-			LIBCMTD.lib(tidtable.obj) : error LNK2005: __decode_pointer already defined in MSVCRTD.lib(MSVCR80D.dll)<BR>
-			LIBCMTD.lib(dbgheap.obj) : error LNK2005: _malloc already defined in MSVCRTD.lib(MSVCR80D.dll)<BR>
-			LIBCMTD.lib(dbgheap.obj) : error LNK2005: _realloc already defined in MSVCRTD.lib(MSVCR80D.dll)<BR>
-			LIBCMTD.lib(dbgheap.obj) : error LNK2005: _free already defined in MSVCRTD.lib(MSVCR80D.dll)<BR>
-			LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; use /NODEFAULTLIB:library<BR>
-			LINK : warning LNK4098: defaultlib 'LIBCMTD' conflicts with use of other libs; use /NODEFAULTLIB:library<BR>
-      <BR>
+    <B>I get linker errors such as follows</B><BR>
+    LIBCMTD.lib(invarg.obj) : error LNK2005: __invoke_watson already defined in MSVCRTD.lib(MSVCR80D.dll)<BR>
+    LIBCMTD.lib(setlocal.obj) : error LNK2005: __configthreadlocale already defined in MSVCRTD.lib(MSVCR80D.dll)<BR>
+    LIBCMTD.lib(tidtable.obj) : error LNK2005: __encode_pointer already defined in MSVCRTD.lib(MSVCR80D.dll)<BR>
+    LIBCMTD.lib(tidtable.obj) : error LNK2005: __decode_pointer already defined in MSVCRTD.lib(MSVCR80D.dll)<BR>
+    LIBCMTD.lib(dbgheap.obj) : error LNK2005: _malloc already defined in MSVCRTD.lib(MSVCR80D.dll)<BR>
+    LIBCMTD.lib(dbgheap.obj) : error LNK2005: _realloc already defined in MSVCRTD.lib(MSVCR80D.dll)<BR>
+    LIBCMTD.lib(dbgheap.obj) : error LNK2005: _free already defined in MSVCRTD.lib(MSVCR80D.dll)<BR>
+    LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; use /NODEFAULTLIB:library<BR>
+    LINK : warning LNK4098: defaultlib 'LIBCMTD' conflicts with use of other libs; use /NODEFAULTLIB:library<BR>
+    <BR>
     Right click on the project name, click properties, go to Configuration Properties / C/C++ / Code Generation and change from Multithreaded Debug DLL to Multithreaded Debug (same for release).<BR>
     <BR>
-      <B>Dropped connections are not detected and/or I can't reconnect after losing the connection.</B><BR>
-    By default, the timeout in debug build is set to 30 seconds, and in release to 10 senconds.  A keepalive is sent every 5 seconds.  So you may have to wait 35 seconds before you can reconnect. You can change the timeout using RakPeerInterface::SetTimeoutTime.<BR>
-      <BR>
-      <B>I want to, or should I call Send and Receive from multiple threads.</B><BR>
-    Those functions are not currently threadsafe.  There is no benefit to calling them from threads, as they are already optimized to run asynchronously with the main network thread.<BR>
-      <BR>
-      <B>I want event callbacks on packet arrival.</B><BR>
+    <B>Dropped connections are not detected and/or I can't reconnect after losing the connection.</B><BR>
+    By default, the timeout in debug build is set to 30 seconds, and in release to 10 senconds.  A detect lost connections message is sent every 5 seconds.  So you may have to wait 35 seconds before you can reconnect. You can change the timeout using RakPeerInterface::SetTimeoutTime.<BR>
+    <BR>
+    <B>I want to, or should I call Send and Receive from multiple threads.</B><BR>
+    Those functions are not threadsafe.  There is no benefit to calling them from threads, as they are already optimized to run asynchronously with the main network thread. Use RAKNET_THREADSAFE in RakNetDefines.h if you insist on doing this.<BR>
+    <BR>
+    <B>I want event callbacks on packet arrival.</B><BR>
     There are no event callbacks on packet arrival.  If you want an event, poll Receive and make your own event if non-zero is returned.<BR>
-      <BR>
-      <B>No offline ping or advertise system data with a broadcast to 255.255.255.255.  My packet data length is always 1.</B><BR>
-    This is intentional to prevent denial of server attacks.  After you get a response, send another ping or advertise system call directly to that system.<BR>
-      <BR>
-      <B>Is AdvertiseSystem reliable?</B><BR>
-    Yes.<BR>
-      <BR>
-      <B>I can't connect to the other system or other systems can't connect to me.  What are some possible reasons?</B>
-    </p>
+    <BR>
+    <B>I can't connect to the other system or other systems can't connect to me.  What are some possible reasons?</B> </p>
   
 <UL>
   <LI>The other system isn't running RakNet.
@@ -132,17 +111,6 @@ In .Net this would be project / configuration properties / C/C++ / Preprocessor 
 You will get this or a similar warning:<BR>
 warning C4005: '_WINSOCKAPI_' : macro redefinition unknown(0) : see previous definition of '_WINSOCKAPI_'<BR>
 You can ignore it.<BR>
-<BR>
-<B>Whenever I define __USE_IO_COMPLETION_PORTS I get a huge number of errors.<BR>
-All of them are of the type:<BR>
-<BR>
-winsock2.h(2353) : error C2375: 'WSAAsyncSelect' : redefinition; different linkage<BR>
-winsock.h(824) : see declaration of 'WSAAsyncSelect'<BR>
-<BR>
-One for each of the functions exported by winsock2.</B><BR>
-<BR>
-Windows.h has to be included after the Rak* headers. __USE_IO_COMPLETION_PORTS has to be defined globally, or before the headers.
-<BR>
 <BR>
 <B>I can connect but don't get any data from the other system.  What are some possible reasons?</B><BR>
 <BR>
@@ -212,16 +180,12 @@ Yes<BR><BR>
 - Get a better internet connection.<BR>
 - Decrease the number of clients allowed.<BR>
 <BR>
-<B>Does RakNet use TCP at all?</B><BR>
-No.<BR>
+<B>Does RakNet use TCP at all?</B><BR> 
+RakPeer does not. However, some plugins support it - EmailSender, Autopatcher, FileListTransfer, DeltaDirectoryTransfer.
+<BR>
 <BR>
 <B>Will RakNet work with my game written in C?</B><BR>
-No.<BR>
-<BR>
-<B>What OSes does RakNet support?</B><BR>
-Unix, Linux, Mac, Windows, and some others.<BR>
-
-</TD></TR></TABLE>
+No.<BR></TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
 <img src="spacer.gif" width="8" height="1">See Also</td>
 </tr></table>

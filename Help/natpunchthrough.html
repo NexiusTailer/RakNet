@@ -71,6 +71,7 @@
    udpProxyClient.RequestForwarding(coordinatorAddress, UNASSIGNED_SYSTEM_ADDRESS, p-&gt;systemAddress, 7000);</span></li>
   <li>Assuming you are connected to the coordinator, and the coordinator is running the plugin, your event handler class created in step 2 should get a callback within a second or two. <span class="RakNetCode">UDPProxyClientResultHandler::OnForwardingSuccess</span> will be returned if a UDPProxyServer has been assigned to forward datagrams from the source system specified in step 6, to the target system specified in step 6. For example, to connect to the remote system use: <span class="RakNetCode">rakPeer-&gt;Connect(proxyIPAddress, proxyPort, 0, 0);</span></li>
   </ol>
+<p>If more than one server is available, and both source and target relay systems are running RakNet, then source and target will automatically ping all available servers. The servers will be attempted in order of lowest ping sum to highest. This is based on the assumption that the lowest ping sum gives you the server that has the shortest path between the two systems, and therefore the least lag.</p>
 <p><span class="RakNetBlueHeader">Coordinator Implementation</span>:</p>
 <ol>
   <li>Create an instance of the plugin: <span class="RakNetCode">UDPProxyCoordinator udpProxyCoordinator;</span></li>
@@ -87,7 +88,51 @@
   If the coordinator plugin is on the same system as the server plugin, use:<BR>  
   <span class="RakNetCode">udpProxyServer.LoginToCoordinator(COORDINATOR_PASSWORD, rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS));</span></li>
   <li>If you want to get callbacks as events occur (especially login failure) derive from <span class="RakNetCode">RakNet::UDPProxyServerResultHandler</span> and register your derived class with <span class="RakNetCode">UDPProxyServer::SetResultHandler()</span></li>
-</ol>
+  </ol>
+<p><strong>State diagram with UDP Proxy</strong></p>
+
+<TABLE>
+  <TR>
+<TD><A HREF="natpunchpanel1.jpg"><IMG SRC="natpunchpanel1small.jpg"></A></TD>
+<TD><A HREF="natpunchpanel2.jpg"><IMG SRC="natpunchpanel2small.jpg"></A></TD>
+<TD><A HREF="natpunchpanel3.jpg"><IMG SRC="natpunchpanel3small.jpg"></A></TD>
+<TD><A HREF="natpunchpanel4.jpg"><IMG SRC="natpunchpanel4small.jpg"></A></TD>
+</TR>
+<TR>
+<TD><A HREF="natpunchpanel5.jpg"><IMG SRC="natpunchpanel5small.jpg"></A></TD>
+<TD><A HREF="natpunchpanel6.jpg"><IMG SRC="natpunchpanel6small.jpg"></A></TD>
+<TD><A HREF="natpunchpanel7.jpg"><IMG SRC="natpunchpanel7small.jpg"></A></TD>
+<TD></TD>
+</TR>
+</TABLE>
+
+<BR>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">Server hosting</td>
+  </tr>
+</table>
+
+<p><span class="RakNetBlueHeader">Server requirements</span>
+
+<OL>
+<LI>No network address translation.</LI>
+<LI>No firewall, or firewall opened on the appropriate ports.</LI>
+<LI>Static IP address. <A HREF="http://www.dyndns.com/">Dynamic DNS</A> is one way to get around this requirement.</LI>
+<LI>Compile with __GET_TIME_64BIT if you want to run the server longer than a month without rebooting</LI>
+<LI>Enough bandwidth to handle all connections</LI>
+</OL>
+
+<p><span class="RakNetBlueHeader">Commercial hosting solutions</span>
+<OL>
+<LI><A HREF="http://www.hypernia.com/">Hypernia</A><BR>
+Worldwide locations. Servers are individual machines. Starting at $150 a month</LI>
+</OL>
+
+If you find more hosting solutions, <A HREF="mailto:rakkar@jenkinssoftware.com">contact us</A> and it'll be added to this list.
+<BR>
+<BR>
+
 <table width="100%" border="0">
         <tr>
           <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">See Also</td>

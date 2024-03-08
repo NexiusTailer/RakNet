@@ -298,7 +298,7 @@ void Table::RemoveColumn(unsigned columnIndex)
 		cur=cur->next;
 	}
 }
-unsigned Table::ColumnIndex(const char *columnName)
+unsigned Table::ColumnIndex(const char *columnName) const
 {
 	unsigned columnIndex;
 	for (columnIndex=0; columnIndex<columns.Size(); columnIndex++)
@@ -306,7 +306,7 @@ unsigned Table::ColumnIndex(const char *columnName)
 			return columnIndex;
 	return (unsigned)-1;
 }
-unsigned Table::ColumnIndex(char columnName[_TABLE_MAX_COLUMN_NAME_LENGTH])
+unsigned Table::ColumnIndex(char columnName[_TABLE_MAX_COLUMN_NAME_LENGTH]) const
 {
 	return ColumnIndex((const char *) columnName);
 }

@@ -107,9 +107,32 @@ public:
 	/// \internal
 	virtual void Update(void);
 	virtual PluginReceiveResult OnReceive(Packet *packet);
+	virtual void OnShutdown(void);
 	
+	struct ServerWithPing
+	{
+		unsigned short ping;
+		SystemAddress serverAddress;
+	};
+	struct SenderAndTargetAddress
+	{
+		SystemAddress senderClientAddress;
+		SystemAddress targetClientAddress;
+	};
+	struct PingServerGroup
+	{
+		SenderAndTargetAddress sata;
+		RakNetTime startPingTime;
+		SystemAddress coordinatorAddressForPings;
+		DataStructures::Multilist<ML_UNORDERED_LIST, ServerWithPing> serversToPing;
+		bool AreAllServersPinged(void) const;
+		void SendPingedServersToCoordinator(RakPeerInterface *rakPeerInterface);
+	};
+	DataStructures::Multilist<ML_UNORDERED_LIST, PingServerGroup*> pingServerGroups;
 protected:
 
+	void OnPingServers(Packet *packet);
+	void Clear(void);
 	UDPProxyClientResultHandler *resultHandler;
 
 };

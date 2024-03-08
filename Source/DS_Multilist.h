@@ -153,6 +153,9 @@ namespace DataStructures
 		/// The list is not deallocated if it is small, unless \a deallocateSmallBlocks is true
 		void ClearPointers( bool deallocateSmallBlocks=true, const char *file=__FILE__, unsigned int line=__LINE__ );
 
+		/// Empty one item from the list, first calling RakNet::OP_Delete on that item
+		void ClearPointer( _KeyType key, const char *file=__FILE__, unsigned int line=__LINE__ );
+
 		/// Reverses the elements in the list, and flips the sort order returned by GetSortOrder() if IsSorted() returns true at the time the function is called
 		void ReverseList(void);
 
@@ -370,6 +373,8 @@ namespace DataStructures
 					if ( MLKeyRef<_KeyType>(key) > operator[](dataSize-2) )
 						sortState=ML_UNSORTED;
 				}
+
+				sortState=ML_UNSORTED;
 			}
 		}
 	}
@@ -787,6 +792,18 @@ namespace DataStructures
 		for (i=0; i < dataSize; i++)
 			RakNet::OP_DELETE(operator[](i), file, line);
 		Clear(deallocateSmallBlocks, file, line);
+	}
+
+	template <const MultilistType _MultilistType, class _DataType, class _KeyType, class _IndexType>
+	void Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::ClearPointer( _KeyType key, const char *file, unsigned int line )
+	{
+		_IndexType i;
+		i = GetIndexOf(key);
+		if (i!=-1)
+		{
+			RakNet::OP_DELETE(operator[](i), file, line);
+			RemoveAtIndex(i);
+		}
 	}
 
 	template <const MultilistType _MultilistType, class _DataType, class _KeyType, class _IndexType>

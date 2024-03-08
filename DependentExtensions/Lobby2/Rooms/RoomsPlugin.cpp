@@ -1483,6 +1483,9 @@ void RoomsPlugin::OnRoomsExecuteFunc(Packet *packet)
 }
 void RoomsPlugin::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
+	(void) lostConnectionReason;
+	(void) rakNetGUID;
+
 	RemoveUserResult removeUserResult;
 	unsigned i;
 	i=0;

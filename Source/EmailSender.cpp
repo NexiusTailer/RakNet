@@ -148,7 +148,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 	int i,j;
 	if (attachedFiles && attachedFiles->fileList.Size())
 	{
-		seedMT(RakNet::GetTime());
+		seedMT((unsigned int) RakNet::GetTime());
 		// Random multipart message boundary
 		for (i=0; i < boundarySize; i++)
 			boundary[i]=base64Map[randomMT()%64];

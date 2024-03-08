@@ -134,13 +134,54 @@ void PHPDirectoryServer::DownloadTable(RakNet::RakString password)
 }
 
 
-RakNet::RakString PHPDirectoryServer::ProcessHTTPRead(RakNet::RakString httpRead)
+HTTPReadResult PHPDirectoryServer::ProcessHTTPRead(RakNet::RakString httpRead)
 {
-	RakNet::RakString resultString;
-	const char *c = HandleReply(httpRead, resultString);
+	const char *c = (const char*) httpRead.C_String(); // current position
+
+	HTTPReadResult resultCode=HTTP_RESULT_ERROR;
+
+	while(c && *c)
+	{
+		if(*c == '\n')
+			++c;
+
+		if(0 == strncmp(c,"Configuration follows",21))
+		{
+			resultCode=HTTP_RESULT_GOT_CONFIGURATION;
+		}
+		if(0 == strncmp(c,"max_length: ",12))
+		{
+			maxCharactersInARecord = atoi(c + 12);
+			resultCode=HTTP_RESULT_GOT_CONFIGURATION;
+		}
+		else if (0 == strncmp(c,"<b>Fatal error</b>:", 16))
+		{
+			resultCode=HTTP_RESULT_ERROR;
+			return resultCode;
+		}
+		else if(0 == strncmp(c,"max_timeout: ",13))
+		{
+			resultCode=HTTP_RESULT_GOT_CONFIGURATION;
+			RakNetTime newTO = atoi(c + 13);
+			if(newTO > 0)
+				maxTimeoutAllowed = maxTimeoutAllowed > newTO ? newTO : maxTimeoutAllowed;
+		}
+		else if(0 == strncmp(c,"Game List",8))
+		{
+			resultCode=HTTP_RESULT_GOT_TABLE;
+			c = strstr(c,"\n");
+			break;
+		}
+		else if(0 == strncmp(c,"Entry Deleted",13))
+		{
+			resultCode=HTTP_RESULT_DELETED;
+		}
+
+		c = strstr(c,"\n");
+	}
 	
 	if (c==0 || *c==0)
-		return resultString;
+		return resultCode;
 
 	// add each line to the table
 	DataStructures::Table::Row *row = 0;
@@ -166,7 +207,7 @@ RakNet::RakString PHPDirectoryServer::ProcessHTTPRead(RakNet::RakString httpRead
 					const char *delim2 = strpbrk(c2,"\002");
 
 					if(delim==0 || delim2==0)
-						return RakNet::RakString();
+						return resultCode;
 
 					// if the field name and value are more than 1 character
 					if(delim2 > c2 + 1 && delim > delim2 + 1)
@@ -251,7 +292,7 @@ RakNet::RakString PHPDirectoryServer::ProcessHTTPRead(RakNet::RakString httpRead
 
 	}
 
-	return RakNet::RakString();
+	return resultCode;
 }
 const DataStructures::Table *PHPDirectoryServer::GetLastDownloadedTable(void) const
 {
@@ -339,55 +380,4 @@ void PHPDirectoryServer::Update(void)
     {
         waitingForReply = false;
     }
-}
-
-const char * PHPDirectoryServer::HandleReply(RakString &body, RakNet::RakString &resultString)
-{
-    const char *c = (const char*) body.C_String(); // current position
-	bool gotConfiguration=false;
-
-    while(c && *c)
-    {
-        if(*c == '\n')
-            ++c;
-        
-        if(0 == strncmp(c,"max_length: ",12))
-        {
-            maxCharactersInARecord = atoi(c + 12);
-			gotConfiguration=true;
-        }
-		else if (0 == strncmp(c,"<b>Fatal error</b>:", 16))
-		{
-			resultString=c;
-			return 0;
-		}
-        else if(0 == strncmp(c,"max_timeout: ",13))
-        {
-            RakNetTime newTO = atoi(c + 13);
-            if(newTO > 0)
-                maxTimeoutAllowed = maxTimeoutAllowed > newTO ? newTO : maxTimeoutAllowed;
-			gotConfiguration=true;
-        }
-        else if(0 == strncmp(c,"Game List",8))
-        {
-            c = strstr(c,"\n");
-            return c;
-        }
-        else if(0 == strncmp(c,"Entry Deleted",13))
-        {
-//            WebPacket deleted(true);
-  //          deleted.code = HTTPConnection::Deleted;
-    //        packets.Push(deleted);
-			resultString = "Deleted";
-            return 0;
-        }
-
-        c = strstr(c,"\n");
-    }
-    
-	if (gotConfiguration)
-		resultString="Got Configuration";
-	else
-		resultString="N/A";
-    return c;
 }

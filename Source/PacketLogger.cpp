@@ -89,7 +89,7 @@ unsigned int splitPacketId, unsigned int splitPacketIndex, unsigned int splitPac
 void PacketLogger::OnDirectSocketSend(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress)
 {
 	char str[256];
-	FormatLine(str, "Snd", "Raw", 0, 0, data[0], bitsUsed, RakNet::GetTime(), rakPeerInterface->GetInternalID(), remoteSystemAddress, (unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
+	FormatLine(str, "Snd", "Raw", 0, 0, data[0], bitsUsed, RakNet::GetTime(), rakPeerInterface->GetExternalID(remoteSystemAddress), remoteSystemAddress, (unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
 	AddToLog(str);
 }
 
@@ -101,14 +101,14 @@ void PacketLogger::LogHeader(void)
 void PacketLogger::OnDirectSocketReceive(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress)
 {
 	char str[256];
-	FormatLine(str, "Rcv", "Raw", 0, 0, data[0], bitsUsed, RakNet::GetTime(), rakPeerInterface->GetInternalID(), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
+	FormatLine(str, "Rcv", "Raw", 0, 0, data[0], bitsUsed, RakNet::GetTime(), rakPeerInterface->GetExternalID(remoteSystemAddress), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
 	AddToLog(str);
 }
 void PacketLogger::OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, RakNetTime time)
 {
 	char str[256];
 	char str1[64], str2[62];
-	SystemAddress localSystemAddress = rakPeerInterface->GetInternalID();
+	SystemAddress localSystemAddress = rakPeerInterface->GetExternalID(remoteSystemAddress);
 	localSystemAddress.ToString(true, str1);
 	remoteSystemAddress.ToString(true, str2);
 
@@ -124,7 +124,7 @@ void PacketLogger::OnPushBackPacket(const char *data, const BitSize_t bitsUsed, 
 {
 	char str[256];
 	char str1[64], str2[62];
-	SystemAddress localSystemAddress = rakPeerInterface->GetInternalID();
+	SystemAddress localSystemAddress = rakPeerInterface->GetExternalID(remoteSystemAddress);
 	localSystemAddress.ToString(true, str1);
 	remoteSystemAddress.ToString(true, str2);
 	RakNetTime time = RakNet::GetTime();
@@ -142,7 +142,7 @@ void PacketLogger::OnInternalPacket(InternalPacket *internalPacket, unsigned fra
 {
 	char str[256];
 	const char* sendType = (isSend) ? "Snd" : "Rcv";
-	SystemAddress localSystemAddress = rakPeerInterface->GetInternalID();
+	SystemAddress localSystemAddress = rakPeerInterface->GetExternalID(remoteSystemAddress);
 
 	if (internalPacket->data[0]==ID_TIMESTAMP && internalPacket->data[sizeof(unsigned char)+sizeof(RakNetTime)]!=ID_RPC)
 	{
@@ -300,12 +300,8 @@ const char* PacketLogger::BaseIDTOString(unsigned char Id)
 		"ID_LOBBY2_SEND_MESSAGE",
 		"ID_LOBBY2_SERVER_ERROR",
 		"ID_INCOMPATIBLE_PROTOCOL_VERSION",
-		"ID_FCM_HOST_QUERY",
-		"ID_FCM_HOST_UNKNOWN",
-		"ID_FCM_HOST_NOTIFICATION",
-		"ID_FCM_HOST_PARTICIPANT_LIST_TRANSMIT",
-		"ID_FCM_HOST_PARTICIPANT_LIST_MATCH",
-		"ID_FCM_HOST_STATE_CHANGE_NOTIFICATION",
+		"ID_FCM2_ELAPSED_RUNTIME",
+		"ID_FCM2_NEW_HOST",
 	};
 
 	return (char*)IDTable[Id];

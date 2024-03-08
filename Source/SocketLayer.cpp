@@ -10,6 +10,11 @@
 #include "RakAssert.h"
 #include "MTUSize.h"
 
+#ifdef USE_STEAM_SOCKET_FUNCTIONS
+#include "RakNetTypes.h"
+#include "Lobby2Client_Steam.h"
+#endif
+
 #ifdef _WIN32
 #elif !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
 #include <string.h> // memcpy
@@ -442,14 +447,24 @@ void SocketLayer::Write( const SOCKET writeSocket, const char* data, const int l
 //#include "BitStream.h"
 int SocketLayer::RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode, unsigned connectionSocketIndex, bool isPs3LobbySocket )
 {
+	int len=0;
+	char data[ MAXIMUM_MTU_SIZE ];
+
+	// Poseidon damn them 
+#ifdef USE_STEAM_SOCKET_FUNCTIONS
+	SystemAddress sender;
+	if (RakNet::Lobby2Client_Steam::RecvFrom(data,&len,&sender))
+	{
+		ProcessNetworkPacket( sender.binaryAddress, sender.port, data, len, rakPeer, connectionSocketIndex );
+		return 1;
+	}
+#endif
+
 	if ( s == (SOCKET) -1 )
 	{
 		*errorCode = -1;
 		return -1;
 	}
-
-	int len=0;
-	char data[ MAXIMUM_MTU_SIZE ];
 
 #if defined (_WIN32) || !defined(MSG_DONTWAIT)
 	const int flag=0;
@@ -565,6 +580,12 @@ int SocketLayer::RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode, uns
 #endif
 int SocketLayer::SendTo( SOCKET s, const char *data, int length, unsigned int binaryAddress, unsigned short port, bool isPs3LobbySocket )
 {
+	// Poseidon damn them 
+#ifdef USE_STEAM_SOCKET_FUNCTIONS
+	RakNet::Lobby2Client_Steam::SendTo(data,length,SystemAddress(binaryAddress,port));
+	return length;
+#endif
+
 	if ( s == (SOCKET) -1 )
 	{
 		return -1;
@@ -647,6 +668,14 @@ int SocketLayer::SendTo( SOCKET s, const char *data, int length, const char ip[ 
 }
 int SocketLayer::SendToTTL( SOCKET s, const char *data, int length, const char ip[ 16 ], unsigned short port, int ttl )
 {
+	// Poseidon damn them 
+#ifdef USE_STEAM_SOCKET_FUNCTIONS
+	unsigned int binaryAddress;
+	binaryAddress = inet_addr( ip );
+	RakNet::Lobby2Client_Steam::SendTo(data,length,SystemAddress(binaryAddress,port));
+	return length;
+#endif
+
 #if !defined(_XBOX) && !defined(X360)
 	int oldTTL;
 	socklen_t opLen=sizeof(oldTTL);

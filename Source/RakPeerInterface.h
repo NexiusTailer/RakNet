@@ -13,6 +13,7 @@
 #include "RakNetTypes.h"
 #include "RakMemoryOverride.h"
 #include "Export.h"
+#include "DS_List.h"
 
 // Forward declarations
 namespace RakNet
@@ -303,6 +304,17 @@ public:
 	/// \return The SystemAddress
 	virtual SystemAddress GetSystemAddressFromIndex( int index )=0;
 
+	/// Same as GetSystemAddressFromIndex but returns RakNetGUID
+	/// \param[in] index Index should range between 0 and the maximum number of players allowed - 1.
+	/// \return The RakNetGUID
+	virtual RakNetGUID GetGUIDFromIndex( int index )=0;
+
+	/// Same as calling GetSystemAddressFromIndex and GetGUIDFromIndex for all systems, but more efficient
+	/// Indices match each other, so \a addresses[0] and \a guids[0] refer to the same system
+	/// \param[out] addresses All system addresses. Size of the list is the number of connections. Size of the list will match the size of the \a guids list.
+	/// \param[out] guids All guids. Size of the list is the number of connections. Size of the list will match the size of the \a addresses list.
+	virtual void GetSystemList(DataStructures::List<SystemAddress> &addresses, DataStructures::List<RakNetGUID> &guids)=0;
+
 	/// Bans an IP from connecting.  Banned IPs persist between connections but are not saved on shutdown nor loaded on startup.
 	/// param[in] IP Dotted IP address. Can use * as a wildcard, such as 128.0.0.* will ban all IP addresses starting with 128.0.0
 	/// \param[in] milliseconds how many ms for a temporary ban.  Use 0 for a permanent ban
@@ -327,6 +339,7 @@ public:
 	virtual void Ping( const SystemAddress target )=0;
 
 	/// Send a ping to the specified unconnected system. The remote system, if it is Initialized, will respond with ID_PONG followed by sizeof(RakNetTime) containing the system time the ping was sent.(Default is 4 bytes - See __GET_TIME_64BIT in RakNetTypes.h
+	/// System should reply with ID_PONG if it is active
 	/// \param[in] host Either a dotted IP address or a domain name.  Can be 255.255.255.255 for LAN broadcast.
 	/// \param[in] remotePort Which port to connect to on the remote machine.
 	/// \param[in] onlyReplyOnAcceptingConnections Only request a reply if the remote system is accepting connections

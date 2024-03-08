@@ -1,5 +1,5 @@
 /// \file
-/// \brief Contains WebGameList, a client for communicating with a HTTP list of game servers
+/// \brief Contains PHPDirectoryServer, a client for communicating with a HTTP list of game servers
 ///
 /// This file is part of RakNet Copyright 2008 Kevin Jenkins.
 ///
@@ -27,6 +27,14 @@
 #include "DS_Map.h"
 
 struct SystemAddress;
+
+enum HTTPReadResult
+{
+	HTTP_RESULT_DELETED,
+	HTTP_RESULT_GOT_TABLE,
+	HTTP_RESULT_GOT_CONFIGURATION,
+	HTTP_RESULT_ERROR,
+};
 
 /// \brief Use PHPDirectoryServer as a C++ client to DirectoryServer.php
 ///
@@ -75,10 +83,11 @@ public:
 	/// When HTTPConnection::ProcessDataPacket() returns true, and not an error, pass HTTPConnection::Read() to this function
 	/// The message will be parsed into DataStructures::Table, and a copy stored internally which can be retrieved by GetLastDownloadedTable();
 	/// \param[in] packetData Returned from HTTPInterface::Read()
-	/// \return Empty string for success, "Deleted" for successful deletion, "N/A" if the packet does not contain any tables, "Got Configuration" if we downloaded configuration info, error or status message otherwise
-	RakNet::RakString ProcessHTTPRead(RakNet::RakString httpRead);
+	/// \return One of the values for HTTPReadResult
+	HTTPReadResult ProcessHTTPRead(RakNet::RakString httpRead);
 
 	/// Returns the last value returned from ProcessHTTPString
+	/// Default columns are "__GAME_NAME", "__GAME_PORT", "__SystemAddress"
 	/// \return The table created by parsing httpString
 	const DataStructures::Table *GetLastDownloadedTable(void) const;
 
@@ -111,10 +120,6 @@ private:
 	bool needsUpdate;
 
 	DataStructures::Table lastDownloadedTable;
-
-	/// Parses out text from the body of an HTTP reply, storing configuration varaibles
-	/// Returns a pointer to the table itself
-	const char * HandleReply(RakNet::RakString &body, RakNet::RakString &resultString);
 
 };
 

@@ -1,4 +1,5 @@
 /// \file
+/// \depreciated Use ConnectionGraph2
 /// \brief Connection graph plugin.  This maintains a graph of connections for the entire network, so every peer knows about every other peer.
 ///
 /// This file is part of RakNet Copyright 2003 Jenkins Software LLC
@@ -24,6 +25,7 @@ typedef unsigned char ConnectionGraphGroupID;
 /// \defgroup CONNECTION_GRAPH_GROUP ConnectionGraph
 /// \ingroup PLUGINS_GROUP
 
+/// \depreciated Use ConnectionGraph2
 /// \ingroup CONNECTION_GRAPH_GROUP
 /// \brief A connection graph.  Each peer will know about all other peers.
 class RAK_DLL_EXPORT ConnectionGraph : public PluginInterface2
@@ -153,7 +155,6 @@ protected:
 
 	// Used to broadcast new connections after some time so the pings are correct
 	//RakNetTime forceBroadcastTime;
-
 };
 
 #endif

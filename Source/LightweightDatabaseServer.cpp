@@ -222,7 +222,7 @@ void LightweightDatabaseServer::Update(void)
 									char str1[64];
 									systemAddress.ToString(false, str1);
 									rakPeerInterface->Ping(str1, systemAddress.port, false);
-									row->cells[databaseTable->nextPingSendColumnIndex]->i=time+SEND_PING_INTERVAL+(randomMT()%1000);
+									row->cells[databaseTable->nextPingSendColumnIndex]->i=(double)(time+SEND_PING_INTERVAL+(randomMT()%1000));
 								}
 							}
 						}
@@ -491,10 +491,12 @@ void LightweightDatabaseServer::OnPong(Packet *packet)
 	SystemAddress systemAddress;
 	RakNetTime time=0;
 	for (databaseIndex=0; databaseIndex < database.Size(); databaseIndex++)
-		{
+	{
 		databaseTable=database[databaseIndex];
 		if (databaseTable->removeRowOnPingFailure)
-			{
+		{
+			if (databaseTable->SystemAddressColumnIndex==-1)
+				continue;
 			if (time==0)
 				time=RakNet::GetTime();
 
@@ -502,20 +504,20 @@ void LightweightDatabaseServer::OnPong(Packet *packet)
 			DataStructures::Page<unsigned, DataStructures::Table::Row*, _TABLE_BPLUS_TREE_ORDER> *cur = rows.GetListHead();
 
 			while (cur)
-				{
+			{
 				for (curIndex=0; curIndex < (unsigned) cur->size; curIndex++)
-					{
+				{
 					cur->data[curIndex]->cells[databaseTable->SystemAddressColumnIndex]->Get((char*)&systemAddress,0);
 					if (systemAddress==packet->systemAddress)
-						{
+					{
 						cur->data[curIndex]->cells[databaseTable->lastPingResponseColumnIndex]->i=(int)time;
-						}
 					}
-				cur=cur->next;
 				}
+				cur=cur->next;
 			}
 		}
 	}
+}
 
 LightweightDatabaseServer::DatabaseTable * LightweightDatabaseServer::DeserializeClientHeader(RakNet::BitStream *inBitstream, RakPeerInterface *peer, Packet *packet, int mode)
 	{
@@ -569,29 +571,34 @@ LightweightDatabaseServer::DatabaseTable * LightweightDatabaseServer::Deserializ
 	}
 
 DataStructures::Table::Row * LightweightDatabaseServer::GetRowFromIP(DatabaseTable *databaseTable, SystemAddress systemAddress, unsigned *rowKey)
-	{
+{
 	const DataStructures::BPlusTree<unsigned, DataStructures::Table::Row*, _TABLE_BPLUS_TREE_ORDER> &rows = databaseTable->table.GetRows();
 	DataStructures::Page<unsigned, DataStructures::Table::Row*, _TABLE_BPLUS_TREE_ORDER> *cur = rows.GetListHead();
 	DataStructures::Table::Row* row;
 	unsigned i;
+	if (databaseTable->SystemAddressColumnIndex==-1)
+		return 0;
 	while (cur)
-		{
+	{
 		for (i=0; i < (unsigned)cur->size; i++)
-			{
+		{
 			row = cur->data[i];
 			if (RowHasIP(row, systemAddress, databaseTable->SystemAddressColumnIndex ))
-				{
+			{
 				if (rowKey)
 					*rowKey=cur->keys[i];
 				return row;
-				}
 			}
-		cur=cur->next;
 		}
-	return 0;
+		cur=cur->next;
 	}
+	return 0;
+}
 bool LightweightDatabaseServer::RowHasIP(DataStructures::Table::Row *row, SystemAddress systemAddress, unsigned SystemAddressColumnIndex)
-	{
+{
+	if (SystemAddressColumnIndex==-1)
+		return false;
+
 	SystemAddress sysAddr;
 	memcpy(&sysAddr, row->cells[SystemAddressColumnIndex]->c, sizeof(SystemAddress));
 	return sysAddr==systemAddress;
@@ -601,7 +608,7 @@ bool LightweightDatabaseServer::RowHasIP(DataStructures::Table::Row *row, System
 	//if (memcmp(row->cells[SystemAddressColumnIndex]->c, &systemAddress, sizeof(SystemAddress))==0)
 	//	return true;
 	// return false;
-	}
+}
 DataStructures::Table::Row * LightweightDatabaseServer::AddRow(LightweightDatabaseServer::DatabaseTable *databaseTable, SystemAddress systemAddress, RakNetGUID guid, bool hasRowId, unsigned rowId)
 	{
 	DataStructures::Table::Row *row;
@@ -639,7 +646,7 @@ DataStructures::Table::Row * LightweightDatabaseServer::AddRow(LightweightDataba
 	return row;
 	}
 void LightweightDatabaseServer::RemoveRowsFromIP(SystemAddress systemAddress)
-	{
+{
 	// Remove rows for tables that do so on a system disconnect
 	DatabaseTable *databaseTable;
 	DataStructures::List<unsigned> removeList;
@@ -647,8 +654,10 @@ void LightweightDatabaseServer::RemoveRowsFromIP(SystemAddress systemAddress)
 	DataStructures::Page<unsigned, DataStructures::Table::Row*, _TABLE_BPLUS_TREE_ORDER> *cur;
 	unsigned i,j;
 	for (i=0; i < database.Size(); i++)
+	{
+		databaseTable=database[i];
+		if (databaseTable->SystemAddressColumnIndex!=-1)
 		{
-			databaseTable=database[i];
 			const DataStructures::BPlusTree<unsigned, DataStructures::Table::Row*, _TABLE_BPLUS_TREE_ORDER> &rows = databaseTable->table.GetRows();
 			cur = rows.GetListHead();
 			while (cur)
@@ -665,18 +674,19 @@ void LightweightDatabaseServer::RemoveRowsFromIP(SystemAddress systemAddress)
 						else if (databaseTable->removeRowOnPingFailure)
 						{
 							row = cur->data[j];
-							row->cells[databaseTable->nextPingSendColumnIndex]->i=RakNet::GetTime()+SEND_PING_INTERVAL+(randomMT()%1000);
+							row->cells[databaseTable->nextPingSendColumnIndex]->i=(double)(RakNet::GetTime()+SEND_PING_INTERVAL+(randomMT()%1000));
 						}
 					}
 				}
 				cur=cur->next;
 			}
+		}
 
-			for (j=0; j < removeList.Size(); j++)
-				databaseTable->table.RemoveRow(removeList[j]);
-			removeList.Clear(true);
-			}	
-	}
+		for (j=0; j < removeList.Size(); j++)
+			databaseTable->table.RemoveRow(removeList[j]);
+		removeList.Clear(true);
+	}	
+}
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif

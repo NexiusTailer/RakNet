@@ -647,8 +647,10 @@ void ReplicaManager3::OnSerialize(unsigned char *packetData, int packetDataLengt
 	replica = networkIDManager->GET_OBJECT_FROM_ID<Replica3*>(networkId);
 	bsIn.AlignReadToByteBoundary();
 
-	if (replica!=0)
+	if (replica!=0 && bsIn.GetNumberOfUnreadBits()>0)
+	{
 		replica->Deserialize(&bsIn,timestamp,connection);
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -829,6 +831,8 @@ void Connection_RM3::OnAutoserializeInterval(PRO defaultSendParameters, ReplicaM
 
 void Connection_RM3::SendSerialize(RakNet::Replica3 *replica, RakNet::BitStream *serializationData, RakNetTime timestamp, PRO sendParameters, RakPeerInterface *rakPeer, unsigned char worldId)
 {
+	if (serializationData->GetNumberOfBitsUsed()==0)
+		return;
 	RakAssert(replica->GetNetworkID()!=UNASSIGNED_NETWORK_ID);
 	RakNet::BitStream out;
 	if (timestamp!=0)
@@ -943,9 +947,11 @@ void Connection_RM3::SendSerializeIfChanged(LastSerializationResult *lastSeriali
 	else
 		bsSentLastTick=replica->identicalSerializationLastTick;
 
-	if (forceForNewConnection ||
+	if (
+		bsSentThisTick->GetNumberOfBitsUsed()>0 &&
+		(forceForNewConnection ||
 		bsSentThisTick->GetNumberOfBitsUsed() != bsSentLastTick->GetNumberOfBitsUsed() ||
-		memcmp(bsSentThisTick->GetData(), bsSentLastTick->GetData(), bsSentThisTick->GetNumberOfBytesUsed())!=0)
+		memcmp(bsSentThisTick->GetData(), bsSentLastTick->GetData(), bsSentThisTick->GetNumberOfBytesUsed())!=0))
 	{
 		sp->bitsWrittenSoFar+=bsSentThisTick->GetNumberOfBitsUsed();
 		SendSerialize(replica, bsSentThisTick, sp->messageTimestamp, sp->pro, rakPeer, worldId);

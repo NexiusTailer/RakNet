@@ -92,7 +92,7 @@ int main(void)
 
 	printf("My IP is %s\n", client->GetLocalIP(0));
 	printf("My GUID is %s\n", client->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
-	puts("'quit' to quit. 'stat' to show stats. 'ping' to ping. 'disconnect' to disconnect. Type to talk.");
+	puts("'quit' to quit. 'stat' to show stats. 'ping' to ping.\n'disconnect' to disconnect. 'connect' to reconnnect. Type to talk.");
 	
 	char message[2048];
 
@@ -136,6 +136,20 @@ int main(void)
 			{
 				client->CloseConnection(client->GetSystemAddressFromIndex(0),true,0);
 				printf("Disconnecting.\n");
+				continue;
+			}
+
+			if (strcmp(message, "connect")==0)
+			{
+				bool b = client->Connect(ip, atoi(serverPort), "Rumpelstiltskin", (int) strlen("Rumpelstiltskin"));	
+
+				if (b)
+					puts("Attempting connection");
+				else
+				{
+					puts("Bad connection attempt.  Terminating.");
+					exit(1);
+				}
 				continue;
 			}
 

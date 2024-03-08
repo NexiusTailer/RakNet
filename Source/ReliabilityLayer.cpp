@@ -75,7 +75,8 @@ ReliabilityLayer::ReliabilityLayer() : updateBitStream( DEFAULT_MTU_SIZE + 21 ) 
 #endif
 
 #ifndef _RELEASE
-	maxSendBPS=minExtraPing=extraPingVariance=0;
+	minExtraPing=extraPingVariance=0;
+	maxSendBPS=(double) minExtraPing;	
 #endif
 
 	InitializeVariables();

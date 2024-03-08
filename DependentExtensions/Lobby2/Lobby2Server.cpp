@@ -75,6 +75,7 @@ void Lobby2Server::Update(void)
 			bs.Write((MessageID)ID_LOBBY2_SEND_MESSAGE);
 			bs.Write((MessageID)c.lobby2Message->GetID());
 			c.lobby2Message->Serialize(true,true,&bs);
+			// Have the ID to send to, but not the address. The ID came from the thread, such as notifying another user
 			if (c.callerSystemAddress==UNASSIGNED_SYSTEM_ADDRESS)
 			{
 				unsigned int i;
@@ -86,6 +87,20 @@ void Lobby2Server::Update(void)
 						{
 							c.callerSystemAddress=users[i]->systemAddress;
 							c.callerGuid=users[i]->guid;
+
+							if (c.requiredConnectionAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+							{
+								// This message refers to another use that has to be logged on for it to be sent
+								bool objectExists;
+								unsigned int idx;
+								idx = users.GetIndexFromKey(c.callerSystemAddress,&objectExists);
+								if (objectExists==false)
+								{
+									if (c.deallocMsgWhenDone)
+										RakNet::OP_DELETE(c.lobby2Message, __FILE__, __LINE__);
+									return;
+								}
+							}
 							break;
 						}
 					}
@@ -108,7 +123,9 @@ void Lobby2Server::Update(void)
 				bool objectExists;
 				unsigned int idx;
 				idx = users.GetIndexFromKey(c.callerSystemAddress,&objectExists);
-				if (objectExists && users[idx]->userName!=c.callingUserName)
+				if (objectExists && 
+					c.callingUserName.IsEmpty()==false &&
+					users[idx]->userName!=c.callingUserName)
 				{
 					// Different user, same IP address. Abort the send.
 					if (c.deallocMsgWhenDone)
@@ -146,6 +163,18 @@ void Lobby2Server::OnClosedConnection(SystemAddress systemAddress, RakNetGUID ra
 	// If systemAddress is a user, then notify his friends about him logging off
 	if (index!=-1)
 	{
+		// Log this logoff due to closed connection
+		Lobby2Message *lobby2Message = msgFactory->Alloc(L2MID_Client_Logoff);
+		Lobby2ServerCommand command;
+		command.lobby2Message=lobby2Message;
+		command.deallocMsgWhenDone=true;
+		command.returnToSender=true;
+		command.callerSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
+		command.callerGuid=UNASSIGNED_RAKNET_GUID;
+		command.callerUserId=users[index]->callerUserId;
+		command.server=this;
+		ExecuteCommand(&command);
+
 		RemoveUser(index);
 	}
 }
@@ -415,6 +444,10 @@ void Lobby2Server::OnChangeHandle(Lobby2ServerCommand *command, bool calledFromT
 }
 void Lobby2Server::RemoveUser(SystemAddress address)
 {
+	// Could be UNASSIGNED_SYSTEM_ADDRESS if locally generated due to disconnect
+	if (address==UNASSIGNED_SYSTEM_ADDRESS)
+		return;
+
 	bool objectExists;
 	unsigned int index = users.GetIndexFromKey(address, &objectExists);
 	if (objectExists)
@@ -455,7 +488,6 @@ void Lobby2Server::RemoveUser(unsigned int index)
 			i++;
 	}
 	threadPool.UnlockInput();
-
 #if defined(__INTEGRATE_LOBBY2_WITH_ROOMS_PLUGIN)
 	// Tell the rooms plugin about the logoff event
 	if (roomsPlugin)
@@ -469,6 +501,10 @@ void Lobby2Server::RemoveUser(unsigned int index)
 		SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, roomsPluginAddress, false);
 	}
 #endif
+
+	RakNet::OP_DELETE(user,__FILE__,__LINE__);
+	users.RemoveAtIndex(index);
+
 }
 unsigned int Lobby2Server::GetUserIndexBySystemAddress(SystemAddress systemAddress)
 {

@@ -52,6 +52,7 @@ protected:
 /// \brief Use RakNetTransport if you need a secure connection between the client and the console server.
 /// RakNetTransport automatically initializes security for the system.  Use the project CommandConsoleClient to connect
 /// To the ConsoleServer if you use RakNetTransport
+/// \depreciated Use RakNetTranport2, which is a plugin
 class RAK_DLL_EXPORT RakNetTransport : public TransportInterface
 {
 public:

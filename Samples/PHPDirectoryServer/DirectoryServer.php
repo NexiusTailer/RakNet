@@ -30,13 +30,14 @@
 
     header("Cache-Control: no-cache, must-revalidate");
 
-    define("CONF_FILE",'./directoryserver.cfg');
+    define("CONF_FILE",'./directoryserver.cfg.php');
 
     // Initialize configuration variables
     // (configuration includes the game database)
     $gv = array(
         'title' => 'directoryserver',
         'password' => '', // for changing the configuration
+        'gamePassword' => '', // game password
         'max_length' => 5000, // for a game, total # of field
         'max_timeout' => 5000, // timeouts are in seconds
         'games' => array() // game database, indexed by IP address
@@ -48,17 +49,16 @@
 
     // Lock configuration if we may have updates
     if($posted)
-        $lock_file = fopen(CONF_FILE . ".lock", "w")
+        $lock_file = fopen(CONF_FILE . ".lock.php", "w")
         and flock($lock_file, LOCK_EX);
 
-    if(! file_exists(CONF_FILE))
-        trigger_error(
-            "The configuration file \"" . CONF_FILE . "\"
-             does not yet exist.  Try revealing the directoryserver configuration, setting the <em>title</em>,
-             and a new <em>password</em> below, then submit the
-             updated information. ");
-    else
+    if(! file_exists(CONF_FILE)) {        
+		$cfgExists = 0;		
+	}
+    else {
         include(CONF_FILE);
+		$cfgExists = 1;
+	}
 
     // update handling
     if($posted) {
@@ -77,18 +77,27 @@
                 unset($gv['games'][$ip]);
         }
 
-
+		@unlink(CONF_FILE);
         // Save configuration variable ($gv) to file
-        $new_cfg = fopen(CONF_FILE . ".tmp","w")
+        $new_cfg = fopen(CONF_FILE . ".tmp.php","w")
         and fwrite($new_cfg,"<?php \$gv = \n")
-        and fwrite($new_cfg,var_export($gv,true))
+        and fwrite($new_cfg,var_export($gv,true))		
         and fwrite($new_cfg,"?>")
-        and fclose($new_cfg)
-        and rename(CONF_FILE . ".tmp",CONF_FILE);
+        and fclose($new_cfg)		
+        and @rename(CONF_FILE . ".tmp.php",CONF_FILE);
 
         fclose($lock_file);
     }
-
+	
+	if(! file_exists(CONF_FILE)) {
+		trigger_error(
+            "The configuration file \"" . CONF_FILE . "\"
+             does not yet exist.  Try revealing the directoryserver configuration, setting the <em>title</em>,
+             and a new <em>password</em> below, then submit the
+             updated information. ");
+	}
+	
+	
     // don't send HTML to a game server
     if(isset($_GET['update']) or isset($_GET['query']))
         {
@@ -131,6 +140,15 @@
         form.closed_form p { display: none; }
         form.closed_form #submit { display: none; }
     </style>
+	<?php
+		if (!$cfgExists) {
+			$classname = "";
+		}
+		else {
+			$classname = "closed_form";
+		}
+?>
+	
     <script type="text/javascript">
         function init() {
             var block =  document.getElementById("conf_form");
@@ -139,10 +157,11 @@
                 block.className = block.className == "" ? "closed_form" : "";
             }
 
-            block.className = "closed_form";
+            block.className = "<?php echo $classname; ?>";
         }
     </script>
 </head>
+
 <body onload="init()">
     <h1><?php echo $gv['title'] ?></h1>
 
@@ -164,10 +183,12 @@
                     output_game($address, $fields);
         ?>
     </div>
-
-    <form method="post" id="conf_form">
+	
+	
+	
+    <form method="post" autocomplete="off" id="conf_form">
         <h2>directoryserver configuration <input type="button" value="Reveal / Hide" /></h2>
-        <p>To make changes, supply the <label>current password:
+        <p>To make changes to the configuration, supply the <label>current password:
             <input type="password" name="password" /></label>
             <em>(by default the password is blank)</em>.</p>
 
@@ -178,7 +199,10 @@
         <p>Change the page title:
             <input name="title" value="<?php echo $gv['title'] ?>" /></p>
 
-        <p>Change the maximum number of characters allowed in a record:
+        <p>Change the game password (usually blank):
+            <input type="password" name="gamePassword" /></p>
+
+		<p>Change the maximum number of characters allowed in a record:
             <input name="max_length" value="<?php echo $gv['max_length'] ?>" />.
             Records longer than this will be truncated.</p>
 
@@ -210,7 +234,7 @@ function update_game_list() {
         } elseif(0 == strcasecmp("__DELETE_ROW",$akey)) {
             $delete_record = true;
         } elseif(0 == strcasecmp("__PHP_DIRECTORY_SERVER_PASSWORD",$akey)) {
-            if(0 == strcmp($avalue, $gv['password']))
+            if(0 == strcmp($avalue, $gv['gamePassword']))
 
                 $password_correct = true;
             continue;
@@ -222,7 +246,7 @@ function update_game_list() {
             trigger_error("Updated record timeout too long", E_USER_WARNING);
     }
 
-    if(!$password_correct && !empty($gv['password'])) {
+    if(!$password_correct && !empty($gv['gamePassword'])) {
         trigger_error("Supplied password is wrong", E_USER_ERROR);
         return;
     }
@@ -235,21 +259,21 @@ function update_game_list() {
         return;
     }
 
-    $game =& $gv['games'][$_SERVER["REMOTE_ADDR"] . ":" . $port];
+    $game =& $gv['games'][$_SERVER["REMOTE_ADDR"] . ":" . $port];	
+		if(strlen(@implode(@array_keys($game))) + strlen(@implode($game))
+			   + strlen(@array_keys($updates)) + strlen(array_values($updates)) > $gv['max_length']) {
+			trigger_error("Dumping old record to make room for new information");
+			$game = array();
+		}
 
-    if(strlen(implode(array_keys($game))) + strlen(implode($game))
-           + strlen(array_keys($updates)) + strlen(array_values($updates)) > $gv['max_length']) {
-        trigger_error("Dumping old record to make room for new information");
-        $game = array();
-    }
+		foreach($updates as $akey => $avalue) {
+			$game[$akey] = $avalue;
+			if(empty($avalue))
+				unset($game[$akey]);
+		}
 
-    foreach($updates as $akey => $avalue) {
-        $game[$akey] = $avalue;
-        if(empty($avalue))
-            unset($game[$akey]);
-    }
-
-    $game['__SEC_AFTER_EPOCH_SINCE_LAST_UPDATE'] = time();
+		$game['__SEC_AFTER_EPOCH_SINCE_LAST_UPDATE'] = time();
+			
 }
 
 function respond_to_game_server() {
@@ -270,7 +294,7 @@ function respond_to_game_server() {
     if(! isset($_GET['query']))
         return;
 
-    if(!$password_correct && !empty($gv['password'])) {
+    if(!$password_correct && !empty($gv['gamePassword'])) {
         trigger_error("Supplied password is wrong", E_USER_ERROR);
         return;
     }
@@ -306,8 +330,10 @@ function update_config() {
     if(! empty($_POST['title']))
         $gv['title'] = $_POST['title'];
 
-    if(! empty($_POST['newpass1'])) {
+    if(! empty($_POST['gamePassword']))
+        $gv['gamePassword'] = $_POST['gamePassword'];
 
+	if(isset($_POST['newpass1'])) {		
         if(strcmp($_POST['newpass1'], $_POST['newpass2']))
             $config_message = "New passwords do not match.\n";
         else
@@ -360,3 +386,4 @@ DOC;
 }
 
 ?>
+

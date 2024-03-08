@@ -318,6 +318,17 @@ public:
 	/// \return The SystemAddress
 	SystemAddress GetSystemAddressFromIndex( int index );
 
+	/// Same as GetSystemAddressFromIndex but returns RakNetGUID
+	/// \param[in] index Index should range between 0 and the maximum number of players allowed - 1.
+	/// \return The RakNetGUID
+	RakNetGUID GetGUIDFromIndex( int index );
+
+	/// Same as calling GetSystemAddressFromIndex and GetGUIDFromIndex for all systems, but more efficient
+	/// Indices match each other, so \a addresses[0] and \a guids[0] refer to the same system
+	/// \param[out] addresses All system addresses. Size of the list is the number of connections. Size of the list will match the size of the \a guids list.
+	/// \param[out] guids All guids. Size of the list is the number of connections. Size of the list will match the size of the \a addresses list.
+	void GetSystemList(DataStructures::List<SystemAddress> &addresses, DataStructures::List<RakNetGUID> &guids);
+
 	/// Bans an IP from connecting.  Banned IPs persist between connections but are not saved on shutdown nor loaded on startup.
 	/// param[in] IP Dotted IP address. Can use * as a wildcard, such as 128.0.0.* will ban all IP addresses starting with 128.0.0
 	/// \param[in] milliseconds how many ms for a temporary ban.  Use 0 for a permanent ban
@@ -342,6 +353,7 @@ public:
 	void Ping( const SystemAddress target );
 
 	/// Send a ping to the specified unconnected system. The remote system, if it is Initialized, will respond with ID_PONG followed by sizeof(RakNetTime) containing the system time the ping was sent.(Default is 4 bytes - See __GET_TIME_64BIT in RakNetTypes.h
+	/// System should reply with ID_PONG if it is active
 	/// \param[in] host Either a dotted IP address or a domain name.  Can be 255.255.255.255 for LAN broadcast.
 	/// \param[in] remotePort Which port to connect to on the remote machine.
 	/// \param[in] onlyReplyOnAcceptingConnections Only request a reply if the remote system is accepting connections
@@ -673,6 +685,7 @@ protected:
 	/// \param[in] systemAddress The player identifier 
 	/// \return 0 if none
 	RemoteSystemStruct *GetRemoteSystemFromSystemAddress( const SystemAddress systemAddress, bool calledFromNetworkThread, bool onlyActive ) const;
+	RemoteSystemStruct *GetRemoteSystemFromGUID( const RakNetGUID guid ) const;
 	///Parse out a connection request packet
 	void ParseConnectionRequestPacket( RakPeer::RemoteSystemStruct *remoteSystem, SystemAddress systemAddress, const char *data, int byteSize);
 	///When we get a connection request from an ip / port, accept it unless full

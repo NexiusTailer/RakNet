@@ -298,7 +298,7 @@ struct SerializeParameters
 
 /// \brief Each remote system is represented by Connection_RM3. Used to allocate Replica3 and track which instances have been allocated
 /// Important function: AllocReplica() - must be overridden to create an object given an identifier for that object, which you define for all objects in your game
-class Connection_RM3
+class RAK_DLL_EXPORT Connection_RM3
 {
 public:
 	Connection_RM3(SystemAddress _systemAddress, RakNetGUID _guid);
@@ -310,7 +310,7 @@ public:
 	/// \sa Replica3::WriteAllocationID()
 	/// Return 0 if unable to create the intended object.
 	/// Sample implementation:
-	/// {RakNet::RakString typeName; allocationId->Read(typeName); if (typeName=="Soldier") return new Soldier; return 0;}
+	/// {RakNet::RakString typeName; allocationIdBitstream->Read(typeName); if (typeName=="Soldier") return new Soldier; return 0;}
 	/// \param[in] allocationIdBitstream user-defined bitstream uniquely identifying a game object type
 	virtual Replica3 *AllocReplica(RakNet::BitStream *allocationIdBitstream)=0;
 
@@ -463,7 +463,7 @@ enum RM3SerializationResult
 /// \brief Base class for your replicated objects for the ReplicaManager3 system.
 /// To use, derive your class, or a member of your class, from Replica3
 /// Implement all pure virtual functions
-class Replica3 : public NetworkIDObject
+class RAK_DLL_EXPORT Replica3 : public NetworkIDObject
 {
 public:
 	Replica3();
@@ -475,7 +475,7 @@ public:
 	/// \brief Write a unique identifer for this class type
 	/// The value written to \a allocationIdBitstream will be passed to Connection_RM3::AllocReplica()
 	/// Sample implementation:
-	/// {allocationId->Write(RakNet::RakString("Soldier");}
+	/// {allocationIdBitstream->Write(RakNet::RakString("Soldier");}
 	/// \param[out] allocationIdBitstream Bitstream for the user to write to, to identify this class
 	virtual void WriteAllocationID(RakNet::BitStream *allocationIdBitstream) const=0;
 

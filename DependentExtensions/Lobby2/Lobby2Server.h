@@ -25,6 +25,7 @@ struct Lobby2ServerCommand
 	unsigned int callerUserId;
 	RakNet::RakString callingUserName;
 	SystemAddress callerSystemAddress;
+	SystemAddress requiredConnectionAddress;
 	RakNetGUID callerGuid;
 	Lobby2Server *server;
 };
@@ -133,6 +134,8 @@ public:
 		Lobby2MessageID action;
 		Lobby2ServerCommand command;
 	};
+
+	const DataStructures::OrderedList<SystemAddress, User*, Lobby2Server::UserCompBySysAddr>& GetUsers(void) const {return users;}
 
 protected:
 

@@ -12,6 +12,7 @@ Source/BitStream_NoTemplate.cpp
 Source/CheckSum.cpp
 Source/CommandParserInterface.cpp
 Source/ConnectionGraph.cpp
+Source/ConnectionGraph2.cpp
 Source/ConsoleServer.cpp
 Source/DataBlockEncryptor.cpp
 Source/DataCompressor.cpp
@@ -24,12 +25,12 @@ Source/EmailSender.cpp
 Source/EncodeClassName.cpp
 Source/EpochTimeToString.cpp
 Source/ExtendedOverlappedPool.cpp
-Source/FCMHost.cpp
 Source/FileList.cpp
 Source/FileListTransfer.cpp
 Source/FileOperations.cpp
 Source/FormatString.cpp
 Source/FullyConnectedMesh.cpp
+Source/FullyConnectedMesh2.cpp
 Source/FunctionThread.cpp
 Source/Gen_RPC8.cpp
 Source/GetTime.cpp
@@ -52,12 +53,14 @@ Source/PacketConsoleLogger.cpp
 Source/PacketFileLogger.cpp
 Source/PacketizedTCP.cpp
 Source/PacketLogger.cpp
+Source/PacketOutputWindowLogger.cpp
 Source/PluginInterface.cpp
 Source/PluginInterface2.cpp
 Source/RakMemoryOverride.cpp
 Source/RakNetCommandParser.cpp
 Source/RakNetStatistics.cpp
 Source/RakNetTransport.cpp
+Source/RakNetTransport2.cpp
 Source/RakNetTypes.cpp
 Source/RakNetworkFactory.cpp
 Source/RakPeer.cpp
@@ -69,6 +72,7 @@ Source/ReadyEvent.cpp
 Source/ReliabilityLayer.cpp
 Source/ReplicaManager.cpp
 Source/ReplicaManager2.cpp
+Source/ReplicaManager3.cpp
 Source/rijndael.cpp
 Source/Router.cpp
 Source/RPCMap.cpp
@@ -84,6 +88,10 @@ Source/TableSerializer.cpp
 Source/TCPInterface.cpp
 Source/TelnetTransport.cpp
 Source/ThreadsafePacketLogger.cpp
+Source/UDPForwarder.cpp
+Source/UDPProxyClient.cpp
+Source/UDPProxyCoordinator.cpp
+Source/UDPProxyServer.cpp
 Source/WSAStartupSingleton.cpp
 Source/_FindFirst.cpp
 )
@@ -101,6 +109,7 @@ Source/CheckSum.h
 Source/ClientContextStruct.h
 Source/CommandParserInterface.h
 Source/ConnectionGraph.h
+Source/ConnectionGraph2.h
 Source/ConsoleServer.h
 Source/DataBlockEncryptor.h
 Source/DataCompressor.h
@@ -130,7 +139,6 @@ Source/EmailSender.h
 Source/EpochTimeToString.h
 Source/Export.h
 Source/ExtendedOverlappedPool.h
-Source/FCMHost.h
 Source/FileList.h
 Source/FileListNodeContext.h
 Source/FileListTransfer.h
@@ -138,6 +146,7 @@ Source/FileListTransferCBInterface.h
 Source/FileOperations.h
 Source/FormatString.h
 Source/FullyConnectedMesh.h
+Source/FullyConnectedMesh2.h
 Source/FunctionThread.h
 Source/Gen_RPC8.h
 Source/GetTime.h
@@ -165,6 +174,7 @@ Source/PacketConsoleLogger.h
 Source/PacketFileLogger.h
 Source/PacketizedTCP.h
 Source/PacketLogger.h
+Source/PacketOutputWindowLogger.h
 Source/PacketPool.h
 Source/PacketPriority.h
 Source/Platform.h
@@ -178,6 +188,7 @@ Source/RakNetDefines.h
 Source/RakNetStatistics.h
 Source/RakNetTime.h
 Source/RakNetTransport.h
+Source/RakNetTransport2.h
 Source/RakNetTypes.h
 Source/RakNetVersion.h
 Source/RakNetworkFactory.h
@@ -194,6 +205,7 @@ Source/Replica.h
 Source/ReplicaEnums.h
 Source/ReplicaManager.h
 Source/ReplicaManager2.h
+Source/ReplicaManager3.h
 Source/Rijndael-Boxes.h
 Source/Rijndael.h
 Source/Router.h
@@ -217,6 +229,11 @@ Source/TelnetTransport.h
 Source/ThreadPool.h
 Source/ThreadsafePacketLogger.h
 Source/TransportInterface.h
+Source/UDPForwarder.h
+Source/UDPProxyClient.h
+Source/UDPProxyCommon.h
+Source/UDPProxyCoordinator.h
+Source/UDPProxyServer.h
 Source/WindowsIncludes.h
 Source/WSAStartupSingleton.h
 Source/_FindFirst.h

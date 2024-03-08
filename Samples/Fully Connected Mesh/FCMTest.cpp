@@ -6,24 +6,22 @@
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
 #include "RakNetworkFactory.h"
-#include "FullyConnectedMesh.h"
-#include "ConnectionGraph.h"
+#include "FullyConnectedMesh2.h"
+#include "ConnectionGraph2.h"
 #include <assert.h>
 #include "Kbhit.h"
 #include "RakSleep.h"
 
-static const int NUM_PEERS=7;
+static const int NUM_PEERS=8;
 RakPeerInterface *rakPeer[NUM_PEERS];
-FullyConnectedMesh fullyConnectedMeshPlugin[NUM_PEERS];
-ConnectionGraph connectionGraphPlugin[NUM_PEERS];
+FullyConnectedMesh2 fullyConnectedMeshPlugin[NUM_PEERS];
+ConnectionGraph2 connectionGraphPlugin[NUM_PEERS];
 void PrintConnections(void);
 
 int main(void)
 {
 	int i;
 
-	// TODO - this is very slow using the connection graph.  A lot of crap is being sent around.  Fix that.
-	
 	for (i=0; i < NUM_PEERS; i++)
 		rakPeer[i]=RakNetworkFactory::GetRakPeerInterface();
 
@@ -36,7 +34,7 @@ int main(void)
 	// Initialize the message handlers
 	for (peerIndex=0; peerIndex < NUM_PEERS; peerIndex++)
 	{
-		fullyConnectedMeshPlugin[peerIndex].Startup(0,0);
+//		fullyConnectedMeshPlugin[peerIndex].Startup(0,0);
 		rakPeer[peerIndex]->AttachPlugin(&fullyConnectedMeshPlugin[peerIndex]);
 		// The fully connected mesh relies on the connection graph plugin also being attached
 		rakPeer[peerIndex]->AttachPlugin(&connectionGraphPlugin[peerIndex]);
@@ -227,6 +225,10 @@ void PrintConnections()
 			{
 				if (packet->data[0]==ID_CONNECTION_ATTEMPT_FAILED)
 					printf("%i: ID_CONNECTION_ATTEMPT_FAILED to %i\n", 60000+i, packet->systemAddress.port);
+	//			if (packet->data[0]==ID_NEW_INCOMING_CONNECTION)
+	//				printf("%i: ID_NEW_INCOMING_CONNECTION from %i\n", 60000+i, packet->systemAddress.port);
+	//			if (packet->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
+	//				printf("%i: ID_CONNECTION_REQUEST_ACCEPTED from %i\n", 60000+i, packet->systemAddress.port);
 				rakPeer[i]->DeallocatePacket(packet);
 			}
 		}

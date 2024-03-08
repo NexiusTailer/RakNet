@@ -17,6 +17,7 @@ class RakPeerInterface;
 /// \ingroup PLUGINS_GROUP
 
 /// Fully connected mesh plugin.  This will connect RakPeer to all connecting peers, and all peers the connecting peer knows about.
+/// \depreciated Use FullyConnectedMesh2
 /// \pre You must also install the ConnectionGraph plugin.  If you want a password, set it there.
 /// \ingroup FULLY_CONNECTED_MESH_GROUP
 class RAK_DLL_EXPORT FullyConnectedMesh : public PluginInterface2

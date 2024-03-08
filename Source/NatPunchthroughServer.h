@@ -15,12 +15,37 @@
 #include "PacketPriority.h"
 #include "SocketIncludes.h"
 #include "DS_OrderedList.h"
+#include "RakString.h"
 
 class RakPeerInterface;
 struct Packet;
+class PacketLogger;
 
 /// \defgroup NAT_PUNCHTHROUGH_GROUP NatPunchthrough
 /// \ingroup PLUGINS_GROUP
+
+
+struct NatPunchthroughServerDebugInterface
+{
+	NatPunchthroughServerDebugInterface() {}
+	virtual ~NatPunchthroughServerDebugInterface() {}
+	virtual void OnServerMessage(const char *msg)=0;
+};
+
+struct NatPunchthroughServerDebugInterface_Printf : public NatPunchthroughServerDebugInterface
+{
+	virtual void OnServerMessage(const char *msg);
+};
+
+struct NatPunchthroughServerDebugInterface_PacketLogger : public NatPunchthroughServerDebugInterface
+{
+	// Set to non-zero to write to the packetlogger!
+	PacketLogger *pl;
+
+	NatPunchthroughServerDebugInterface_PacketLogger() {pl=0;}
+	~NatPunchthroughServerDebugInterface_PacketLogger() {}
+	virtual void OnServerMessage(const char *msg);
+};
 
 /// Maintain connection to NatPunchthroughServer to process incoming connection attempts through NatPunchthroughClient
 /// Server maintains two sockets clients can connect to so as to estimate the next port choice
@@ -34,6 +59,10 @@ public:
 
 	/// Destructor
 	virtual ~NatPunchthroughServer();
+
+	/// Sets a callback to be called with debug messages
+	/// \param[in] i Pointer to an interface. The pointer is stored, so don't delete it while in progress. Pass 0 to clear.
+	void SetDebugInterface(NatPunchthroughServerDebugInterface *i);
 
 	/// \internal For plugin handling
 	virtual void Update(void);
@@ -49,10 +78,10 @@ public:
 	struct User;
 	struct ConnectionAttempt
 	{
-		ConnectionAttempt() {sender=0; recipient=0; startTime=0; inProgress=false; attemptPhase=NAT_ATTEMPT_PHASE_NOT_STARTED;}
+		ConnectionAttempt() {sender=0; recipient=0; startTime=0; attemptPhase=NAT_ATTEMPT_PHASE_NOT_STARTED;}
 		User *sender, *recipient;
+		unsigned int sessionId;
 		RakNetTime startTime;
-		bool inProgress;
 		enum
 		{
 			NAT_ATTEMPT_PHASE_NOT_STARTED,
@@ -70,6 +99,7 @@ public:
 		bool HasConnectionAttemptToUser(User *user);
 		void DerefConnectionAttempt(ConnectionAttempt *ca);
 		void DeleteConnectionAttempt(ConnectionAttempt *ca);
+		void LogConnectionAttempts(RakNet::RakString &rs);
 	};
 	RakNetTime lastUpdate;
 	static int NatPunchthroughUserComp( const RakNetGUID &key, User * const &data );
@@ -83,6 +113,8 @@ protected:
 	void SendTimestamps(void);
 	void StartPendingPunchthrough(void);
 	void StartPunchthroughForUser(User*user);
+	unsigned int sessionId;
+	NatPunchthroughServerDebugInterface *natPunchthroughServerDebugInterface;
 
 };
 
