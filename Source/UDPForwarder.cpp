@@ -314,6 +314,9 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
 // 	saOut.sin_family = AF_INET;
 	do
 	{
+
+
+
 #if RAKNET_SUPPORT_IPV6==1
 		if (forwardTarget.address.addr4.sin_family==AF_INET)
 		{
@@ -338,6 +341,35 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
 		}
 		while ( len == 0 );
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	}
 	while ( len == 0 );
@@ -414,6 +446,8 @@ void UDPForwarder::UpdateUDPForwarder(void)
 				listenerSocketAddress.sin_family = AF_INET;
 				if (sfis->forceHostAddress.IsEmpty()==false)
 				{
+
+
 
 
 

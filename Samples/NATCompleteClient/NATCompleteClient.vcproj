@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Debug_Win32.lib ./../../Lib/MiniupnpcStatic_Debug_Win32.lib ws2_32.lib IPHlpApi.Lib"
+				AdditionalDependencies="./../../Lib/RakNet_VS2008_LibStatic_Debug_Win32.lib ./../../Lib/RakNet_VS2008_MiniupnpcStatic_Debug_Win32.lib ws2_32.lib IPHlpApi.Lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -136,7 +136,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Release_Win32.lib ./../../Lib/MiniupnpcStatic_Debug_Win32.lib ws2_32.lib IPHlpApi.Lib"
+				AdditionalDependencies="./../../Lib/RakNet_VS2008_LibStatic_Release_Win32.lib ./../../Lib/RakNet_VS2008_MiniupnpcStatic_Debug_Win32.lib ws2_32.lib IPHlpApi.Lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"

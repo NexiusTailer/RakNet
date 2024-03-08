@@ -33,12 +33,12 @@ class RAK_DLL_EXPORT AutopatcherPostgreRepository : public AutopatcherRepository
 {
 public:
 	AutopatcherPostgreRepository();
-	~AutopatcherPostgreRepository();
+	virtual ~AutopatcherPostgreRepository();
 
 
 	/// Create the tables used by the autopatcher, for all applications.  Call this first.
 	/// \return True on success, false on failure.
-	bool CreateAutopatcherTables(void);
+	virtual bool CreateAutopatcherTables(void);
 
 	/// Destroy the tables used by the autopatcher.  Don't call this unless you don't want to use the autopatcher anymore, or are testing.
 	/// \return True on success, false on failure.
@@ -58,12 +58,13 @@ public:
 	/// Update all the files for an application to match what is at the specified directory.  Call this third.
 	/// Be careful not to call this with the wrong directory.
 	/// This is implemented in a Begin and Rollback block so you won't a messed up database from get partial updates.
+	/// \note It takes 10 bytes of memory to create a patch per byte on disk for a file. So you should not have any files larger than 1/10th your server memory.
 	/// \param[in] applicationName A null terminated string previously passed to AddApplication
 	/// \param[in] applicationDirectory The base directory of your application.  All files in this directory and subdirectories are added.
 	/// \param[in] userName Stored in the database, but otherwise unused.  Useful to track who added this revision
 	/// \param[in] cb Callback to get progress updates. Pass 0 to not use.
 	/// \return True on success, false on failure.
-	bool UpdateApplicationFiles(const char *applicationName, const char *applicationDirectory, const char *userName, FileListProgress *cb);
+	virtual bool UpdateApplicationFiles(const char *applicationName, const char *applicationDirectory, const char *userName, FileListProgress *cb);
 
 	/// Get list of files added and deleted since a certain date.  This is used by AutopatcherServer and not usually explicitly called.
 	/// \param[in] applicationName A null terminated string previously passed to AddApplication
@@ -105,10 +106,34 @@ public:
 
 	/// \return Passed to FileListTransfer::Send() as the _chunkSize parameter.
 	virtual const int GetIncrementalReadChunkSize(void) const;
-
+	
 	// Use a separate connection for file parts, because PGConn is not threadsafe
 	PGconn *filePartConnection;
 	SimpleMutex filePartConnectionMutex;
+};
+
+
+// This version references the version on the harddrive, rather than store the patch in the database
+// It is necessary if your game has files over about 400 megabytes.
+class RAK_DLL_EXPORT AutopatcherPostgreRepository2 : public AutopatcherPostgreRepository
+{
+public:
+	virtual bool CreateAutopatcherTables(void);
+	virtual bool GetMostRecentChangelistWithPatches(RakNet::RakString &applicationName, FileList *patchedFiles, FileList *addedFiles, FileList *addedOrModifiedFileHashes, FileList *deletedFiles, double *priorRowPatchTime, double *mostRecentRowPatchTime);
+	virtual bool UpdateApplicationFiles(const char *applicationName, const char *applicationDirectory, const char *userName, FileListProgress *cb);
+	virtual unsigned int GetFilePart( const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context);
+	
+	/// Can override this to create patches using a different tool
+	/// \param[in] oldFile Path to the old version of the file, on disk
+	/// \param[in] newFile Path to the updated file, on disk
+	/// \param[out] patch Pointer you should allocate, to hold the patch
+	/// \param[out] patchLength Write the length of the resultant patch here
+	/// \param[out] patchAlgorithm Stored in the database. Use if you want to represent what algorithm was used. Transmitted to the client for decompression
+	virtual bool MakePatch(const char *oldFile, const char *newFile, char **patch, unsigned int *patchLength, int *patchAlgorithm);
+protected:
+	// Implements MakePatch using bsDiff. Uses a lot of memory, should not use for files above about 100 megabytes.
+	virtual bool MakePatchBSDiff(FILE *fpOld, int contentLengthOld, FILE *fpNew, int contentLengthNew, char **patch, unsigned int *patchLength);
+
 };
 
 } // namespace RakNet

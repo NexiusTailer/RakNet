@@ -10,7 +10,7 @@
 #include "AutopatcherPatchContext.h"
 #include "ApplyPatch.h"
 #include "FileOperations.h"
-//#include "SHA1.h"
+//#include "DR_SHA1.h"
 #include <stdio.h>
 #include "FileOperations.h"
 #include "RakAssert.h"
@@ -27,13 +27,50 @@ static const unsigned HASH_LENGTH=4;
 
 #define COPY_ON_RESTART_EXTENSION ".patched.tmp"
 
+// -----------------------------------------------------------------
+
+PatchContext AutopatcherClientCBInterface::ApplyPatchBase(const char *oldFilePath, char **newFileContents, unsigned int *newFileSize, char *patchContents, unsigned int patchSize, uint32_t patchAlgorithm)
+{
+	return ApplyPatchBSDiff(oldFilePath, newFileContents, newFileSize, patchContents, patchSize);
+}
+
+PatchContext AutopatcherClientCBInterface::ApplyPatchBSDiff(const char *oldFilePath, char **newFileContents, unsigned int *newFileSize, char *patchContents, unsigned int patchSize)
+{
+	FILE *fp;
+	fp=fopen(oldFilePath, "rb");
+	if (fp==0)
+		return PC_ERROR_PATCH_TARGET_MISSING;
+
+	fseek(fp, 0, SEEK_END);
+	unsigned int prePatchLength = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	char *prePatchFile = (char*) rakMalloc_Ex(prePatchLength, _FILE_AND_LINE_);
+	fread(prePatchFile, prePatchLength, 1, fp);
+	fclose(fp);
+
+	bool result = ApplyPatch(prePatchFile, prePatchLength, newFileContents, newFileSize, patchContents, patchSize);
+	rakFree_Ex(prePatchFile, _FILE_AND_LINE_);
+
+	if (result==false)
+		return PC_ERROR_PATCH_APPLICATION_FAILURE;
+	
+	return PC_WRITE_FILE;
+}
+
+// -----------------------------------------------------------------
+
 struct AutopatcherClientThreadInfo
 {
 	FileListTransferCBInterface::OnFileStruct onFileStruct;
 	char applicationDirectory[512];
 	PatchContext result;
-	unsigned prePatchLength, postPatchLength;
-	char *prePatchFile, *postPatchFile;
+	// unsigned prePatchLength;
+	// char *prePatchFile;
+
+	// postPatchFile is passed in PC_NOTICE_WILL_COPY_ON_RESTART
+	char *postPatchFile;
+	unsigned postPatchLength;
+	AutopatcherClientCBInterface *cbInterface;
 };
 // -----------------------------------------------------------------
 AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThreadInfo* input, bool *returnOutput, void* perThreadData)
@@ -69,21 +106,7 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 		RakAssert(input->onFileStruct.context.op==PC_HASH_1_WITH_PATCH || input->onFileStruct.context.op==PC_HASH_2_WITH_PATCH);
 
 //		CSHA1 sha1;
-		FILE *fp;
-
-		fp=fopen(fullPathToDir, "rb");
-		if (fp==0)
-		{
-			input->result=PC_ERROR_PATCH_TARGET_MISSING;
-			return input;
-		}
-		fseek(fp, 0, SEEK_END);
-		input->prePatchLength = ftell(fp);
-		fseek(fp, 0, SEEK_SET);
-		input->postPatchFile=0;
-		input->prePatchFile= (char*) rakMalloc_Ex(input->prePatchLength, _FILE_AND_LINE_);
-		fread(input->prePatchFile, input->prePatchLength, 1, fp);
-		fclose(fp);
+		
 
 		//				printf("apply patch %i bytes\n", byteLengthOfThisFile-SHA1_LENGTH);
 		//				for (int i=0; i < byteLengthOfThisFile-SHA1_LENGTH; i++)
@@ -94,16 +117,13 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 			hashMultiplier=1;
 		else
 			hashMultiplier=2; // else op==PC_HASH_2_WITH_PATCH
-		if (ApplyPatch((char*)input->prePatchFile, input->prePatchLength, &input->postPatchFile, &input->postPatchLength, (char*)input->onFileStruct.fileData+HASH_LENGTH*hashMultiplier, input->onFileStruct.byteLengthOfThisFile-HASH_LENGTH*hashMultiplier)==false)
-		{
 
-			input->result=PC_ERROR_PATCH_APPLICATION_FAILURE;
+		PatchContext result = input->cbInterface->ApplyPatchBase(fullPathToDir, &input->postPatchFile, &input->postPatchLength, (char*)input->onFileStruct.fileData+HASH_LENGTH*hashMultiplier, input->onFileStruct.byteLengthOfThisFile-HASH_LENGTH*hashMultiplier, input->onFileStruct.context.flnc_extraData);
+		if (result == PC_ERROR_PATCH_APPLICATION_FAILURE || input->result==PC_ERROR_PATCH_TARGET_MISSING)
+		{
+			input->result=result;
 			return input;
 		}
-
-//		sha1.Reset();
-//		sha1.Update((unsigned char*) input->postPatchFile, input->postPatchLength);
-//		sha1.Final();
 
 		unsigned int hash = SuperFastHash(input->postPatchFile, input->postPatchLength);
 		if (RakNet::BitStream::DoEndianSwap())
@@ -115,25 +135,27 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 		{
 			input->result=PC_ERROR_PATCH_RESULT_CHECKSUM_FAILURE;
 		}
-
-		// Write postPatchFile over the existing file
-		if (WriteFileWithDirectories(fullPathToDir, (char*)input->postPatchFile, input->postPatchLength)==false)
+		else
 		{
-			char newDir[1024];
-			strcpy(newDir, fullPathToDir);
-			strcat(newDir, COPY_ON_RESTART_EXTENSION);
-			if (WriteFileWithDirectories(newDir, (char*)input->postPatchFile, input->postPatchLength))
+			// Write postPatchFile over the existing file
+			if (WriteFileWithDirectories(fullPathToDir, (char*)input->postPatchFile, input->postPatchLength)==false)
 			{
-				input->result=PC_NOTICE_WILL_COPY_ON_RESTART;
+				char newDir[1024];
+				strcpy(newDir, fullPathToDir);
+				strcat(newDir, COPY_ON_RESTART_EXTENSION);
+				if (WriteFileWithDirectories(newDir, (char*)input->postPatchFile, input->postPatchLength))
+				{
+					input->result=PC_NOTICE_WILL_COPY_ON_RESTART;
+				}
+				else
+				{
+					input->result=PC_ERROR_FILE_WRITE_FAILURE;
+				}
 			}
 			else
 			{
-				input->result=PC_ERROR_FILE_WRITE_FAILURE;
+				input->result=(PatchContext)input->onFileStruct.context.op;
 			}
-		}
-		else
-		{
-			input->result=(PatchContext)input->onFileStruct.context.op;
 		}
 	}
 
@@ -147,7 +169,7 @@ class AutopatcherClientCallback : public FileListTransferCBInterface
 public:
 	ThreadPool<AutopatcherClientThreadInfo*,AutopatcherClientThreadInfo*> threadPool;
 	char applicationDirectory[512];
-	FileListTransferCBInterface *onFileCallback;
+	AutopatcherClientCBInterface *onFileCallback;
 	AutopatcherClient *client;
 	bool downloadComplete;
 	bool canDeleteUser;
@@ -172,8 +194,8 @@ public:
 		for (i=0; i < threadPool.InputSize(); i++)
 		{
 			info = threadPool.GetInputAtIndex(i);
-			if (info->prePatchFile)
-				rakFree_Ex(info->prePatchFile, _FILE_AND_LINE_ );
+//			if (info->prePatchFile)
+//				rakFree_Ex(info->prePatchFile, _FILE_AND_LINE_ );
 			if (info->postPatchFile)
 				rakFree_Ex(info->postPatchFile, _FILE_AND_LINE_ );
 			if (info->onFileStruct.fileData)
@@ -184,8 +206,8 @@ public:
 		for (i=0; i < threadPool.OutputSize(); i++)
 		{
 			info = threadPool.GetOutputAtIndex(i);
-			if (info->prePatchFile)
-				rakFree_Ex(info->prePatchFile, _FILE_AND_LINE_ );
+//			if (info->prePatchFile)
+//				rakFree_Ex(info->prePatchFile, _FILE_AND_LINE_ );
 			if (info->postPatchFile)
 				rakFree_Ex(info->postPatchFile, _FILE_AND_LINE_ );
 			if (info->onFileStruct.fileData)
@@ -274,8 +296,8 @@ public:
 				break;
 			}
 
-			if (threadInfo->prePatchFile)
-				rakFree_Ex(threadInfo->prePatchFile, _FILE_AND_LINE_ );
+//			if (threadInfo->prePatchFile)
+//				rakFree_Ex(threadInfo->prePatchFile, _FILE_AND_LINE_ );
 			if (threadInfo->postPatchFile)
 				rakFree_Ex(threadInfo->postPatchFile, _FILE_AND_LINE_ );
 			if (threadInfo->onFileStruct.fileData)
@@ -316,8 +338,9 @@ public:
 	virtual bool OnFile(OnFileStruct *onFileStruct)
 	{
 		AutopatcherClientThreadInfo *inStruct = RakNet::OP_NEW<AutopatcherClientThreadInfo>( _FILE_AND_LINE_ );
-		inStruct->prePatchFile=0;
+//		inStruct->prePatchFile=0;
 		inStruct->postPatchFile=0;
+		inStruct->cbInterface=onFileCallback;
 		memcpy(&(inStruct->onFileStruct), onFileStruct, sizeof(OnFileStruct));
 		memcpy(inStruct->applicationDirectory,applicationDirectory,sizeof(applicationDirectory));
 		if (onFileStruct->context.op==PC_HASH_1_WITH_PATCH || onFileStruct->context.op==PC_HASH_2_WITH_PATCH)
@@ -396,7 +419,7 @@ bool AutopatcherClient::IsPatching(void) const
 {
 	return fileListTransfer->IsHandlerActive(setId);
 }
-bool AutopatcherClient::PatchApplication(const char *_applicationName, const char *_applicationDirectory, double lastUpdateDate, SystemAddress host, FileListTransferCBInterface *onFileCallback, const char *restartOutputFilename, const char *pathToRestartExe)
+bool AutopatcherClient::PatchApplication(const char *_applicationName, const char *_applicationDirectory, double lastUpdateDate, SystemAddress host, AutopatcherClientCBInterface *onFileCallback, const char *restartOutputFilename, const char *pathToRestartExe)
 {
     RakAssert(applicationName);
 	RakAssert(applicationDirectory);

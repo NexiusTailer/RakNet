@@ -153,6 +153,10 @@ void AutopatcherServer::CacheMostRecentPatch(const char *applicationName)
 		cache_maxTime=0;
 
 		cacheLoaded = connectionPool[0]->GetMostRecentChangelistWithPatches(cache_appName, &cache_patchedFiles, &cache_addedFiles, &cache_addedOrModifiedFileHashes, &cache_deletedFiles, &cache_minTime, &cache_maxTime);
+		if (cacheLoaded==false)
+		{
+			printf("Warning: Cache not loaded. This is OK if no patch was ever saved.\n");
+		}
 	}
 }
 void AutopatcherServer::OnAttach(void)

@@ -318,7 +318,7 @@
 				RelativePath="..\..\Source\SendToThread.cpp">
 			</File>
 			<File
-				RelativePath="..\..\Source\SHA1.cpp">
+				RelativePath="..\..\Source\DR_SHA1.cpp">
 			</File>
 			<File
 				RelativePath="..\..\Source\SignaledEvent.cpp">
@@ -710,7 +710,7 @@
 				RelativePath="..\..\Source\SendToThread.h">
 			</File>
 			<File
-				RelativePath="..\..\Source\SHA1.h">
+				RelativePath="..\..\Source\DR_SHA1.h">
 			</File>
 			<File
 				RelativePath="..\..\Source\SignaledEvent.h">

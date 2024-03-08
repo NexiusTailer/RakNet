@@ -91,7 +91,7 @@
     <ClCompile Include="..\..\..\Source\RPC4Plugin.cpp" />
     <ClCompile Include="..\..\..\Source\SecureHandshake.cpp" />
     <ClCompile Include="..\..\..\Source\SendToThread.cpp" />
-    <ClCompile Include="..\..\..\Source\SHA1.cpp" />
+    <ClCompile Include="..\..\..\Source\DR_SHA1.cpp" />
     <ClCompile Include="..\..\..\Source\SignaledEvent.cpp" />
     <ClCompile Include="..\..\..\Source\SimpleMutex.cpp" />
     <ClCompile Include="..\..\..\Source\SocketLayer.cpp" />
@@ -235,7 +235,7 @@
     <ClInclude Include="..\..\..\Source\RPC4Plugin.h" />
     <ClInclude Include="..\..\..\Source\SecureHandshake.h" />
     <ClInclude Include="..\..\..\Source\SendToThread.h" />
-    <ClInclude Include="..\..\..\Source\SHA1.h" />
+    <ClInclude Include="..\..\..\Source\DR_SHA1.h" />
     <ClInclude Include="..\..\..\Source\SignaledEvent.h" />
     <ClInclude Include="..\..\..\Source\SimpleMutex.h" />
     <ClInclude Include="..\..\..\Source\SimpleTCPServer.h" />

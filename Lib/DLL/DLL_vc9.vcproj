@@ -53,7 +53,7 @@
 				BufferSecurityCheck="false"
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
+				ProgramDataBaseFileName="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
@@ -70,13 +70,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib"
-				OutputFile="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).dll"
+				OutputFile="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				ImportLibrary="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -136,7 +136,7 @@
 				BufferSecurityCheck="false"
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
+				ProgramDataBaseFileName="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -153,13 +153,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib"
-				OutputFile="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).dll"
+				OutputFile="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				ImportLibrary="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -216,7 +216,7 @@
 				BufferSecurityCheck="false"
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
+				ProgramDataBaseFileName="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -233,7 +233,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib"
-				OutputFile="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).dll"
+				OutputFile="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).dll"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -241,7 +241,7 @@
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				ImportLibrary="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -299,7 +299,7 @@
 				BufferSecurityCheck="false"
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
+				ProgramDataBaseFileName="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -316,7 +316,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib"
-				OutputFile="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).dll"
+				OutputFile="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).dll"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -324,7 +324,7 @@
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				ImportLibrary="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -683,7 +683,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\SHA1.cpp"
+				RelativePath="..\..\Source\DR_SHA1.cpp"
 				>
 			</File>
 			<File
@@ -1257,7 +1257,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\SHA1.h"
+				RelativePath="..\..\Source\DR_SHA1.h"
 				>
 			</File>
 			<File

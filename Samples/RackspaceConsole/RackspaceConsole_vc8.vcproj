@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Debug_Win32.lib ws2_32.lib ./../../DependentExtensions/openssl-1.0.0d/lib/libeay32.lib ./../../DependentExtensions/openssl-1.0.0d/lib/ssleay32.lib"
+				AdditionalDependencies="./../../Lib/RakNet_VS2008_LibStatic_Debug_Win32.lib ws2_32.lib ./../../DependentExtensions/openssl-1.0.0d/lib/libeay32.lib ./../../DependentExtensions/openssl-1.0.0d/lib/ssleay32.lib"
 				OutputFile="$(OutDir)/RackspaceConsole.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -140,7 +140,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Release_Win32.lib ws2_32.lib ./../../DependentExtensions/openssl-1.0.0d/lib/libeay32.lib ./../../DependentExtensions/openssl-1.0.0d/lib/ssleay32.lib"
+				AdditionalDependencies="./../../Lib/RakNet_VS2008_LibStatic_Release_Win32.lib ws2_32.lib ./../../DependentExtensions/openssl-1.0.0d/lib/libeay32.lib ./../../DependentExtensions/openssl-1.0.0d/lib/ssleay32.lib"
 				OutputFile="$(OutDir)/RackspaceConsole.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"

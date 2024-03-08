@@ -8,6 +8,15 @@
 #include "DS_ThreadsafeAllocatingQueue.h"
 #include "Export.h"
 
+// For CFSocket
+// https://developer.apple.com/library/mac/#documentation/CoreFOundation/Reference/CFSocketRef/Reference/reference.html
+// Reason: http://sourceforge.net/p/open-dis/discussion/683284/thread/0929d6a0
+#if defined(__APPLE__)
+#import <CoreFoundation/CoreFoundation.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#endif
+
 // #define TEST_NATIVE_CLIENT_ON_WINDOWS
 
 #ifdef TEST_NATIVE_CLIENT_ON_WINDOWS
@@ -28,7 +37,7 @@ enum RNS2BindResult
 	BR_SUCCESS,
 	BR_REQUIRES_RAKNET_SUPPORT_IPV6_DEFINE,
 	BR_FAILED_TO_BIND_SOCKET,
-	BR_FAILED_SEND_TEST
+	BR_FAILED_SEND_TEST,
 };
 
 typedef int RNS2SendResult;
@@ -78,6 +87,8 @@ public:
 class RAK_DLL_EXPORT RNS2EventHandler
 {
 public:
+	RNS2EventHandler() {}
+	virtual ~RNS2EventHandler() {}
 
 	//		bufferedPackets.Push(recvFromStruct);
 	//		quitAndDataEvents.SetEvent();
@@ -244,7 +255,7 @@ struct RNS2_BerkleyBindParameters
 	int doNotFragment;
 	int pollingThreadPriority;
 	RNS2EventHandler *eventHandler;
-	unsigned short remotePortRakNetWasStartedOn_PS3_PSP2;
+	unsigned short remotePortRakNetWasStartedOn_PS3_PS4_PSP2;
 };
 
 // Every platform except Windows Store 8 can use the Berkley sockets interface
@@ -252,20 +263,13 @@ class IRNS2_Berkley : public RakNetSocket2
 {
 public:
 	// ----------- STATICS ------------
+	// For addressFamily, use AF_INET
+	// For type, use SOCK_DGRAM
 	static bool IsPortInUse(unsigned short port, const char *hostAddress, unsigned short addressFamily, int type );
 
 	// ----------- MEMBERS ------------
 	virtual RNS2BindResult Bind( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line )=0;
 };
-
-// For CFSocket
-// https://developer.apple.com/library/mac/#documentation/CoreFOundation/Reference/CFSocketRef/Reference/reference.html
-// Reason: http://sourceforge.net/p/open-dis/discussion/683284/thread/0929d6a0
-#if defined(__APPLE__)
-#import <CoreFoundation/CoreFoundation.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#endif
 
 // Every platform that uses Berkley sockets, except native client, can compile some common functions
 class RNS2_Berkley : public IRNS2_Berkley
@@ -336,6 +340,7 @@ protected:
 	static RNS2SendResult Send_Windows_Linux_360NoVDP( RNS2Socket rns2Socket, RNS2_SendParameters *sendParameters, const char *file, unsigned int line );
 };
 #endif
+
 
 
 

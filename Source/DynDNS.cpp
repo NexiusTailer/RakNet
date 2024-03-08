@@ -83,7 +83,7 @@ void DynDNS::UpdateHostIPAsynch(const char *dnsHost, const char *newIPAddress, c
 	getString+="Host: members.dyndns.org\n";
 	getString+="Authorization: Basic ";
 	char outputData[512];
-	Base64Encoding(usernameAndPassword, (int) strlen(usernameAndPassword), outputData);
+	Base64Encoding((const unsigned char*) usernameAndPassword, (int) strlen(usernameAndPassword), outputData);
 	getString+=outputData;
 	getString+="User-Agent: Jenkins Software LLC - PC - 1.0\n\n";
 }

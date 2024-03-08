@@ -916,16 +916,29 @@ void Router2::SendOOBFromSpecifiedSocket(OutOfBandIdentifiers oob, SystemAddress
 	bs.Write((unsigned char) oob);
 	// SocketLayer::SendTo_PC( socket, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), sa, __FILE__, __LINE__  );
 
+
 	if (sa.address.addr4.sin_family==AF_INET)
 	{
 		sendto__( socket, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), 0, ( const sockaddr* ) & sa.address.addr4, sizeof( sockaddr_in ) );
 	}
 	else
 	{
-#if RAKNET_SUPPORT_IPV6==1
+		#if RAKNET_SUPPORT_IPV6==1
 		sendto__( socket, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), 0, ( const sockaddr* ) & sa.address.addr6, sizeof( sockaddr_in6 ) );
-#endif
+		#endif
 	}
+
+
+
+
+
+
+
+
+
+
+
+
 }
 void Router2::SendOOBMessages(Router2::MiniPunchRequest *mpr)
 {

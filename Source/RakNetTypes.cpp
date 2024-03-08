@@ -273,6 +273,14 @@ void SystemAddress::ToString_Old(bool writePort, char *dest, char portDelineator
 
 
 
+
+
+
+
+
+
+
+
 	in_addr in;
 	in.s_addr = address.addr4.sin_addr.s_addr;
 	const char *ntoaStr = inet_ntoa( in );
@@ -446,6 +454,8 @@ bool SystemAddress::SetBinaryAddress(const char *str, char portDelineator)
 
 
 
+
+
 			address.addr4.sin_addr.s_addr=inet_addr__("127.0.0.1");
 
 			if (str[9])
@@ -461,6 +471,8 @@ bool SystemAddress::SetBinaryAddress(const char *str, char portDelineator)
 		RakNetSocket2::DomainNameToIP(str, ip);
 		if (ip[0])
 		{
+
+
 
 
 
@@ -520,6 +532,8 @@ bool SystemAddress::SetBinaryAddress(const char *str, char portDelineator)
 
 		if (IPPart[0])
 		{
+
+
 
 
 

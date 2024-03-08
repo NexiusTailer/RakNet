@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Debug_Win32.lib Winmm.lib ws2_32.lib fmodex_vc.lib"
+				AdditionalDependencies="./../../Lib/RakNet_VS2008_LibStatic_Debug_Win32.lib Winmm.lib ws2_32.lib fmodex_vc.lib"
 				OutputFile="$(OutDir)/RakVoice.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\Program Files\FMOD SoundSystem\FMOD Programmers API Win32\api\lib&quot;"
@@ -139,7 +139,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Release_Win32.lib Winmm.lib ws2_32.lib fmodex_vc.lib"
+				AdditionalDependencies="./../../Lib/RakNet_VS2008_LibStatic_Release_Win32.lib Winmm.lib ws2_32.lib fmodex_vc.lib"
 				OutputFile="$(OutDir)/RakVoice.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;C:\Program Files\FMOD SoundSystem\FMOD Programmers API Win32\api\lib&quot;"

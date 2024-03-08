@@ -51,6 +51,7 @@ namespace RakNet
 
 	/// \brief Version 2 of the code that uses the TCPInterface class to communicate with the Rackspace API servers
 	/// Works with their "next-gen" API as of 2012
+	/// API operations are hidden at http://docs.rackspace.com/servers/api/v2/cs-devguide/content/ch_api_operations.html
 	/// \pre Compile RakNet with OPEN_SSL_CLIENT_SUPPORT set to 1
 	/// Maintains its own TCPInterface class
 	class RAK_DLL_EXPORT Rackspace2

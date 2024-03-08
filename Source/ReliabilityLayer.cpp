@@ -1705,7 +1705,7 @@ void ReliabilityLayer::Update( RakNetSocket2 *s, SystemAddress &systemAddress, i
 			bsp.data = (char*) dat->data;
 			bsp.length = dat->length;
 			bsp.systemAddress = systemAddress;
-			if (dat->s->Send(&bsp, _FILE_AND_LINE_) == 10040)
+			dat->s->Send(&bsp, _FILE_AND_LINE_);
 
 			RakNet::OP_DELETE(dat,__FILE__,__LINE__);
 		}

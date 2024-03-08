@@ -28,6 +28,63 @@
 #define LISTEN_PORT 60000
 #define MAX_INCOMING_CONNECTIONS 128
 
+char WORKING_DIRECTORY[MAX_PATH];
+char PATH_TO_XDELTA_EXE[MAX_PATH];
+
+// The default AutopatcherPostgreRepository2 uses bsdiff which takes too much memory for large files.
+// I override MakePatch to use XDelta in this case
+class AutopatcherPostgreRepository2_WithXDelta : public RakNet::AutopatcherPostgreRepository2
+{
+	bool MakePatch(const char *oldFile, const char *newFile, char **patch, unsigned int *patchLength, int *patchAlgorithm)
+	{
+		FILE *fpOld = fopen(oldFile, "rb");
+		fseek(fpOld, 0, SEEK_END);
+		int contentLengthOld = ftell(fpOld);
+		FILE *fpNew = fopen(newFile, "rb");
+		fseek(fpNew, 0, SEEK_END);
+		int contentLengthNew = ftell(fpNew);
+
+		if ((contentLengthOld < 33554432 && contentLengthNew < 33554432) || PATH_TO_XDELTA_EXE[0]==0)
+		{
+			// Use bsdiff, which does a good job but takes a lot of memory based on the size of the file
+			*patchAlgorithm=0;
+			bool b = MakePatchBSDiff(fpOld, contentLengthOld, fpNew, contentLengthNew, patch, patchLength);
+			fclose(fpOld);
+			fclose(fpNew);
+			return b;
+		}
+		else
+		{
+			*patchAlgorithm=1;
+			fclose(fpOld);
+			fclose(fpNew);
+
+			// Invoke xdelta
+			// See https://code.google.com/p/xdelta/wiki/CommandLineSyntax
+			char commandLine[512];
+			_snprintf(commandLine, sizeof(commandLine)-1, "-f -s %s %s patchServer.tmp", oldFile, newFile);
+			commandLine[511]=0;
+			ShellExecute(NULL, "open", PATH_TO_XDELTA_EXE, commandLine, WORKING_DIRECTORY, SW_SHOWNORMAL);
+
+			char pathToPatch[MAX_PATH];
+			if (WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='/' || WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='\\')
+				sprintf(pathToPatch, "%spatchServer.tmp", WORKING_DIRECTORY);
+			else
+				sprintf(pathToPatch, "%s/patchServer.tmp", WORKING_DIRECTORY);
+			FILE *fpPatch = fopen(pathToPatch, "rb");
+			if (fpPatch==0)
+				return false;
+			fseek(fpPatch, 0, SEEK_END);
+			*patchLength = ftell(fpPatch);
+			fseek(fpPatch, 0, SEEK_SET);
+			*patch = (char*) rakMalloc_Ex(*patchLength, _FILE_AND_LINE_);
+			fread(*patch, 1, *patchLength, fpPatch);
+			fclose(fpPatch);
+			return true;
+		}
+	}
+};
+
 int main(int argc, char **argv)
 {
 	printf("Server starting... ");
@@ -36,7 +93,7 @@ int main(int argc, char **argv)
 	RakNet::FileListTransfer fileListTransfer;
 	static const int workerThreadCount=4; // Used for checking patches only
 	static const int sqlConnectionObjectCount=32; // Used for both checking patches and downloading
-	RakNet::AutopatcherPostgreRepository connectionObject[sqlConnectionObjectCount];
+	AutopatcherPostgreRepository2_WithXDelta connectionObject[sqlConnectionObjectCount];
 	RakNet::AutopatcherRepositoryInterface *connectionObjectAddresses[sqlConnectionObjectCount];
 	for (int i=0; i < sqlConnectionObjectCount; i++)
 		connectionObjectAddresses[i]=&connectionObject[i];
@@ -95,6 +152,21 @@ int main(int argc, char **argv)
 	autopatcherServer.CacheMostRecentPatch(0);
 	// autopatcherServer.SetAllowDownloadOfOriginalUnmodifiedFiles(false);
 	printf("System ready for connections\n");
+
+	// https://code.google.com/p/xdelta/downloads/list
+	printf("Optional: Enter path to xdelta.exe: ");
+	Gets(PATH_TO_XDELTA_EXE, sizeof(PATH_TO_XDELTA_EXE));
+	//if (PATH_TO_XDELTA_EXE[0]==0)
+	//	strcpy(PATH_TO_XDELTA_EXE, "D:/temp/xdelta3-3.0.6-win32.exe");
+
+	if (PATH_TO_XDELTA_EXE[0])
+	{
+		printf("Enter working directory to store temporary files: ");
+		Gets(WORKING_DIRECTORY, sizeof(WORKING_DIRECTORY));
+		if (WORKING_DIRECTORY[0]==0)
+			GetTempPath(MAX_PATH, WORKING_DIRECTORY);
+
+	}
 
 	printf("(D)rop database\n(C)reate database.\n(A)dd application\n(U)pdate revision.\n(R)emove application\n(Q)uit\n");
 
@@ -189,8 +261,8 @@ int main(int argc, char **argv)
 				char appDir[512];
 				Gets(appDir,sizeof(appDir));
 				if (appDir[0]==0)
-					strcpy(appDir, "D:/temp");
-
+					strcpy(appDir, "D:\\temp");
+				
 				if (connectionObject[0].UpdateApplicationFiles(appName, appDir, username, 0)==false)
 				{
 					printf("%s", connectionObject[0].GetLastError());

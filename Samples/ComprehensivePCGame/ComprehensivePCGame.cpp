@@ -22,7 +22,7 @@
 #include "upnpcommands.h"
 #include "upnperrors.h"
 #include "TCPInterface.h"
-#include "ReadyEvent.h"
+#include "ReadyEvent.h"	
 #include "PacketLogger.h"
 #include "RPC4Plugin.h"
 #include "Kbhit.h"
@@ -1157,44 +1157,55 @@ int main(void)
 					else
 					{
 						void *iter = json_object_iter(root);
-						const char *firstKey = json_object_iter_key(iter);
-						if (stricmp(firstKey, "GET")==0)
+						while (iter)
 						{
-							game->SetMasterServerQueryResult(root);
-
-							json_t* jsonArray = json_object_iter_value(iter);
-							size_t arraySize = json_array_size(jsonArray);
-							for (unsigned int i=0; i < arraySize; i++)
+							const char *firstKey = json_object_iter_key(iter);
+							if (stricmp(firstKey, "GET")==0)
 							{
-								json_t* object = json_array_get(jsonArray, i);
-								json_t* roomNameVal = json_object_get(object, "roomName");
-								RakAssert(roomNameVal->type==JSON_STRING);
-								json_t* natTypesVal = json_object_get(object, "natTypes");
-								RakAssert(natTypesVal->type==JSON_ARRAY);
-								size_t natTypesSize = json_array_size(natTypesVal);
-								printf("Room name: %s. Players: %i\n", json_string_value(roomNameVal), natTypesSize);
+								game->SetMasterServerQueryResult(root);
+
+								json_t* jsonArray = json_object_iter_value(iter);
+								size_t arraySize = json_array_size(jsonArray);
+								for (unsigned int i=0; i < arraySize; i++)
+								{
+									json_t* object = json_array_get(jsonArray, i);
+									json_t* roomNameVal = json_object_get(object, "roomName");
+									RakAssert(roomNameVal->type==JSON_STRING);
+									json_t* natTypesVal = json_object_get(object, "natTypes");
+									RakAssert(natTypesVal->type==JSON_ARRAY);
+									size_t natTypesSize = json_array_size(natTypesVal);
+									printf("Room name: %s. Players: %i\n", json_string_value(roomNameVal), natTypesSize);
+								}
+
+								if (arraySize==0)
+									printf("No rooms.\n");
+
+
+								printf("(J)oin room\n");
+								printf("(C)reate room\n");
+								printf("(S)earch rooms\n");
+								break;
 							}
+							else if (stricmp(firstKey, "POST")==0)
+							{
+								RakAssert(stricmp(firstKey, "POST")==0);
 
-							if (arraySize==0)
-								printf("No rooms.\n");
+								json_t* jsonObject = json_object_iter_value(iter);
+								json_t* val1 = json_object_get(jsonObject, "__rowId");
+								RakAssert(val1->type==JSON_INTEGER);
+								game->masterServerRow = (int) json_integer_value(val1);
 
-
-							printf("(J)oin room\n");
-							printf("(C)reate room\n");
-							printf("(S)earch rooms\n");
+								printf("Session posted to row %i\n", game->masterServerRow);
+								break;
+							}
+							else
+							{
+								iter = json_object_iter_next(root, iter);
+								RakAssert(iter != 0);
+							}
 						}
-						else
-						{
-							RakAssert(stricmp(firstKey, "POST")==0);
-
-							json_t* jsonObject = json_object_iter_value(iter);
-							json_t* val1 = json_object_get(jsonObject, "__rowId");
-							RakAssert(val1->type==JSON_INTEGER);
-							game->masterServerRow = (int) json_integer_value(val1);
-
-							printf("Session posted to row %i\n", game->masterServerRow);
-						}
-
+						
+						json_decref(root);
 					}
 				}
 			}

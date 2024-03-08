@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Debug_Win32.lib ws2_32.lib &quot;C:\Program Files (x86)\PostgreSQL\9.2\lib\libpq.lib&quot;"
+				AdditionalDependencies="./../../Lib/RakNet_VS2008_LibStatic_Debug_Win32.lib ws2_32.lib &quot;C:\Program Files (x86)\PostgreSQL\9.2\lib\libpq.lib&quot;"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -137,7 +137,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Release_Win32.lib ws2_32.lib &quot;C:\Program Files (x86)\PostgreSQL\9.2\lib\libpq.lib&quot;"
+				AdditionalDependencies="./../../Lib/RakNet_VS2008_LibStatic_Release_Win32.lib ws2_32.lib &quot;C:\Program Files (x86)\PostgreSQL\9.2\lib\libpq.lib&quot;"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"

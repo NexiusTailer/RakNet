@@ -54,7 +54,7 @@
 				DisableLanguageExtensions="false"
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
+				ProgramDataBaseFileName="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
@@ -70,7 +70,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				OutputFile="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
 				IgnoreDefaultLibraryNames="LIBCD.lib LIBCMTD.lib MSVCRT.lib"
 			/>
 			<Tool
@@ -125,7 +125,7 @@
 				DisableLanguageExtensions="false"
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
+				ProgramDataBaseFileName="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -141,7 +141,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				OutputFile="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
 				IgnoreDefaultLibraryNames="LIBCD.lib LIBCMTD.lib MSVCRT.lib"
 			/>
 			<Tool
@@ -191,7 +191,7 @@
 				BufferSecurityCheck="false"
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
+				ProgramDataBaseFileName="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -207,7 +207,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				OutputFile="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
 				IgnoreDefaultLibraryNames="LIBC.lib LIBCMT.lib MSVCRT.lib"
 			/>
 			<Tool
@@ -258,7 +258,7 @@
 				BufferSecurityCheck="false"
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
+				ProgramDataBaseFileName="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -274,7 +274,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\RakNet_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				OutputFile="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
 				IgnoreDefaultLibraryNames="LIBC.lib LIBCMT.lib MSVCRT.lib"
 			/>
 			<Tool
@@ -627,7 +627,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\SHA1.cpp"
+				RelativePath="..\..\Source\DR_SHA1.cpp"
 				>
 			</File>
 			<File
@@ -1201,7 +1201,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\SHA1.h"
+				RelativePath="..\..\Source\DR_SHA1.h"
 				>
 			</File>
 			<File

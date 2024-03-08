@@ -42,7 +42,7 @@ public:
 		}
 
 		irr::video::SColorHSL color;
-		irr::video::SColor rgb(0);
+		irr::video::SColorf rgb(0);
 		color.Hue = ( (timeMs + Phase) % Frequency  ) * ( 2.f * irr::core::PI / Frequency );
 		color.Saturation = 1.f;
 		color.Luminance = 0.5f;
@@ -88,9 +88,9 @@ bool CMainMenu::run(bool& outFullscreen, bool& outMusic, bool& outShadows,
 		core::dimension2d<u32>(512, 384), 16, false, false, false, this);
 
 	if (MenuDevice->getFileSystem()->existFile("irrlicht.dat"))
-		MenuDevice->getFileSystem()->addZipFileArchive("irrlicht.dat");
+		MenuDevice->getFileSystem()->addFileArchive("irrlicht.dat", true, true, io::EFAT_ZIP);
 	else
-		MenuDevice->getFileSystem()->addZipFileArchive("../../media/irrlicht.dat");
+		MenuDevice->getFileSystem()->addFileArchive("../../media/irrlicht.dat", true, true, io::EFAT_ZIP);
 
 	video::IVideoDriver* driver = MenuDevice->getVideoDriver();
 	scene::ISceneManager* smgr = MenuDevice->getSceneManager();

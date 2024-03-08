@@ -28,6 +28,8 @@ void RakSleep(unsigned int ms)
 
 
 
+#elif defined(_PS4__)
+	_PS4_usleep((SceKernelUseconds) ms * 1000);
 
 
 #else

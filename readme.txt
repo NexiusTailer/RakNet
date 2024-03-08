@@ -1,4 +1,4 @@
-RakNet 4.068
+RakNet 4.0691
 Copyright 2002-2005 Kevin Jenkins (rakkar@jenkinssoftware.com).
 This API and the code herein created by and wholly and privately owned by Kevin Jenkins except where specifically indicated otherwise.
 Licensed under the "RakNet" brand by Jenkins Software and subject to the terms of the relevant licensing agreement available at http://www.jenkinssoftware.com
@@ -112,15 +112,36 @@ For example: p users.orderedList.listArray[0].guid
 Command to install g++
 sudo apt-get install gcc-c++
 sudo apt-get install build-essential
+Or:
+yum install gcc-c++
+Or:
+sudo apt-get update
+sudo apt-get install g++
 
 Command to install gdb
 sudo apt-get install gdb
+
+Command to install wget, used to download files from webpages
+sudo apt-get install wget
+wget http://www.raknet.com/raknet/downloads/RakNet_PC-4.068.zip
 
 Text editor from console:
 pico
 
 Command to checkout RakNet
 svn checkout <URL>
+
+Series of commands for a new server:
+1. sudo apt-get install wget
+2. sudo apt-get update
+3. sudo apt-get install --fix-missing g++
+4. sudo apt-get install gdb
+5. wget http://www.raknet.com/raknet/downloads/RakNet_PC-4.068.zip
+6. sudo apt-get install unzip
+7. unzip RakNet_PC-4.068.zip
+8. cd Source
+9. g++ -m64 -g -pthread -I./ "../Samples/Chat Example/Chat Example Server.cpp" *.cpp
+10. ./a.out
 
 -----------------------------------------
 DevCPP Users

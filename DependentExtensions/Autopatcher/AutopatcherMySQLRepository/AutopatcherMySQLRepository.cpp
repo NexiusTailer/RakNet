@@ -15,7 +15,7 @@
 #include "mysql.h"
 #include "CreatePatch.h"
 #include "AutopatcherPatchContext.h"
-// #include "SHA1.h"
+// #include "DR_SHA1.h"
 #include <stdlib.h>
 #include "LinuxStrings.h"
 
@@ -627,7 +627,7 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 			unsigned patchLength;	
 			if (!CreatePatch(content, contentLength, (char *) hardDriveData, hardDriveDataLength, &patch, &patchLength))
 			{
-				strcpy(lastError,"CreatePatch failed.");
+				strcpy(lastError,"CreatePatch failed.\n");
 				Rollback();
 
 				newFiles.Clear();
@@ -763,7 +763,7 @@ const char *AutopatcherMySQLRepository::GetLastError(void) const
 unsigned int AutopatcherMySQLRepository::GetFilePart( const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)
 {
 	char query[512];
-	sprintf(query, "SELECT substring(content from %i for %i) FROM FileVersionHistory WHERE fileId=%i;", startReadBytes+1,numBytesToRead,context.fileId);
+	sprintf(query, "SELECT substring(content from %i for %i) FROM FileVersionHistory WHERE fileId=%i;", startReadBytes+1,numBytesToRead,context.flnc_extraData);
 
 	// CREATE NEW CONNECTION JUST FOR THIS QUERY
 	// This is because the autopatcher is sharing this class, but this is called from multiple threads and mysql is not threadsafe

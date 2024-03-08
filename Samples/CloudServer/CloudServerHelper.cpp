@@ -276,11 +276,11 @@ void CloudServerHelper::OnPacket(Packet *packet, RakPeerInterface *rakPeer, Clou
 		RakNet::CloudServerHelper::OnConnectionCountChange(rakPeer, cloudClient);
 		break;
 	case ID_CONNECTION_LOST:
-		printf("ID_CONNECTION_LOST (UDP) from %s\n", packet->systemAddress.ToString(true));
+	//	printf("ID_CONNECTION_LOST (UDP) from %s\n", packet->systemAddress.ToString(true));
 		RakNet::CloudServerHelper::OnConnectionCountChange(rakPeer, cloudClient);
 		break;
 	case ID_DISCONNECTION_NOTIFICATION:
-		printf("ID_DISCONNECTION_NOTIFICATION (UDP) from %s\n", packet->systemAddress.ToString(true));
+	//	printf("ID_DISCONNECTION_NOTIFICATION (UDP) from %s\n", packet->systemAddress.ToString(true));
 		RakNet::CloudServerHelper::OnConnectionCountChange(rakPeer, cloudClient);
 		break;
 	case ID_TWO_WAY_AUTHENTICATION_INCOMING_CHALLENGE_SUCCESS:

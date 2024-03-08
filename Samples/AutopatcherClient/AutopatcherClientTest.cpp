@@ -18,7 +18,10 @@
 #include "Gets.h"
 #include "RakSleep.h"
 
-class TestCB : public RakNet::FileListTransferCBInterface
+char WORKING_DIRECTORY[MAX_PATH];
+char PATH_TO_XDELTA_EXE[MAX_PATH];
+
+class TestCB : public RakNet::AutopatcherClientCBInterface
 {
 public:
 	virtual bool OnFile(OnFileStruct *onFileStruct)
@@ -63,6 +66,44 @@ public:
 			fps->onFileStruct->bytesDownloadedForThisSet,
 			fps->onFileStruct->byteLengthOfThisSet
 			);
+	}
+
+	virtual PatchContext ApplyPatchBase(const char *oldFilePath, char **newFileContents, unsigned int *newFileSize, char *patchContents, unsigned int patchSize, uint32_t patchAlgorithm)
+	{
+		if (patchAlgorithm==0)
+		{
+			return ApplyPatchBSDiff(oldFilePath, newFileContents, newFileSize, patchContents, patchSize);
+		}
+		else
+		{
+			char pathToPatch[MAX_PATH];
+			sprintf(pathToPatch, "%s/patchClient.tmp", WORKING_DIRECTORY);
+			FILE *fpPatch = fopen(pathToPatch, "wb");
+			if (fpPatch==0)
+				return PC_ERROR_PATCH_TARGET_MISSING;
+			fwrite(patchContents, 1, patchSize, fpPatch);
+			fclose(fpPatch);
+
+			// Invoke xdelta
+			// See https://code.google.com/p/xdelta/wiki/CommandLineSyntax
+			char commandLine[512];
+			_snprintf(commandLine, sizeof(commandLine)-1, "-d -f -s %s patchClient.tmp newFile.tmp", oldFilePath);
+			commandLine[511]=0;
+			ShellExecute(NULL, "open", PATH_TO_XDELTA_EXE, commandLine, WORKING_DIRECTORY, SW_SHOWNORMAL);
+
+			sprintf(pathToPatch, "%s/newFile.tmp", WORKING_DIRECTORY);
+			fpPatch = fopen(pathToPatch, "rb");
+			if (fpPatch==0)
+				return PC_ERROR_PATCH_TARGET_MISSING;
+			
+			fseek(fpPatch, 0, SEEK_END);
+			*newFileSize = ftell(fpPatch);
+			fseek(fpPatch, 0, SEEK_SET);
+			*newFileContents = (char*) rakMalloc_Ex(*newFileSize, _FILE_AND_LINE_);
+			fread(*newFileContents, 1, *newFileSize, fpPatch);
+			fclose(fpPatch);
+			return PC_WRITE_FILE;
+		}
 	}
 
 } transferCallback;
@@ -148,9 +189,25 @@ int main(int argc, char **argv)
 		strcpy(appName, argv[3]);
 
 	bool patchImmediately=argc>=5 && argv[4][0]=='1';
-
+	
 	if (patchImmediately==false)
+	{
+		printf("Optional: Enter path to xdelta exe: ");
+		Gets(PATH_TO_XDELTA_EXE, sizeof(PATH_TO_XDELTA_EXE));
+		// https://code.google.com/p/xdelta/downloads/list
+		//if (PATH_TO_XDELTA_EXE[0]==0)
+		//	strcpy(PATH_TO_XDELTA_EXE, "D:/temp/xdelta3-3.0.6-win32.exe");
+
+		if (PATH_TO_XDELTA_EXE[0])
+		{
+			printf("Enter working directory to store temporary files: ");
+			Gets(WORKING_DIRECTORY, sizeof(WORKING_DIRECTORY));
+			if (WORKING_DIRECTORY[0]==0)
+				GetTempPath(MAX_PATH, WORKING_DIRECTORY);
+		}
+
 		printf("Hit 'q' to quit, 'p' to patch, 'c' to cancel the patch. 'r' to reconnect. 'd' to disconnect.\n");
+	}
 	else
 		printf("Hit 'q' to quit, 'c' to cancel the patch.\n");
 

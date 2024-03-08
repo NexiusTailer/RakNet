@@ -34,7 +34,7 @@ void UploadInstanceToCloud(RakNet::CloudClient *cloudClient, RakNet::RakNetGUID 
 
 #define CLOUD_CLIENT_PRIMARY_KEY "SelfScaling_Patcher_PK"
 
-class TestCB : public RakNet::FileListTransferCBInterface
+class TestCB : public RakNet::AutopatcherClientCBInterface
 {
 public:
 	virtual bool OnFile(OnFileStruct *onFileStruct)
@@ -81,22 +81,63 @@ public:
 			);
 	}
 
+	virtual PatchContext ApplyPatchBase(const char *oldFilePath, char **newFileContents, unsigned int *newFileSize, char *patchContents, unsigned int patchSize, uint32_t patchAlgorithm)
+	{
+		if (patchAlgorithm==0)
+		{
+			return ApplyPatchBSDiff(oldFilePath, newFileContents, newFileSize, patchContents, patchSize);
+		}
+		else
+		{
+			char WORKING_DIRECTORY[MAX_PATH];
+			GetTempPath(MAX_PATH, WORKING_DIRECTORY);
+
+			char pathToPatch[MAX_PATH];
+			sprintf(pathToPatch, "%s/patchClient.tmp", WORKING_DIRECTORY);
+			FILE *fpPatch = fopen(pathToPatch, "wb");
+			if (fpPatch==0)
+				return PC_ERROR_PATCH_TARGET_MISSING;
+			fwrite(patchContents, 1, patchSize, fpPatch);
+			fclose(fpPatch);
+
+			// Invoke xdelta
+			// See https://code.google.com/p/xdelta/wiki/CommandLineSyntax
+			char commandLine[512];
+			_snprintf(commandLine, sizeof(commandLine)-1, "-d -f -s %s patchClient.tmp newFile.tmp", oldFilePath);
+			commandLine[511]=0;
+			ShellExecute(NULL, "open", "xdelta3-3.0.6-win32.exe", commandLine, WORKING_DIRECTORY, SW_SHOWNORMAL);
+
+			sprintf(pathToPatch, "%s/newFile.tmp", WORKING_DIRECTORY);
+			fpPatch = fopen(pathToPatch, "rb");
+			if (fpPatch==0)
+				return PC_ERROR_PATCH_TARGET_MISSING;
+
+			fseek(fpPatch, 0, SEEK_END);
+			*newFileSize = ftell(fpPatch);
+			fseek(fpPatch, 0, SEEK_SET);
+			*newFileContents = (char*) rakMalloc_Ex(*newFileSize, _FILE_AND_LINE_);
+			fread(*newFileContents, 1, *newFileSize, fpPatch);
+			fclose(fpPatch);
+			return PC_WRITE_FILE;
+		}
+	}
+
 } transferCallback;
 
 int main(int argc, char **argv)
 {
+	if (argc<8)
+	{
+		printf("Arguments: serverIP, pathToGame, gameName, patchImmediately, localPort, serverPort, fullScan");
+		return 0;
+	}
+
 	RakNet::SystemAddress TCPServerAddress=RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 	RakNet::AutopatcherClient autopatcherClient;
 	RakNet::FileListTransfer fileListTransfer;
 	RakNet::CloudClient cloudClient;
 	autopatcherClient.SetFileListTransferPlugin(&fileListTransfer);
 	bool didRebalance=false; // So we only reconnect to a lower load server once, for load balancing
-
-	if (argc<8)
-	{
-		printf("Arguments: serverIP, pathToGame, gameName, patchImmediately, localPort, serverPort, fullScan");
-		return 0;
-	}
 
 	bool fullScan = argv[7][0]=='1';
 

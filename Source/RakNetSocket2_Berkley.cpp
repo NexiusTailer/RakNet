@@ -38,7 +38,8 @@ void RNS2_Berkley::SetSocketOptions(void)
 void RNS2_Berkley::SetNonBlockingSocket(unsigned long nonblocking)
 {
 #ifdef _WIN32
-		ioctlsocket__( rns2Socket, FIONBIO, &nonblocking );
+		int res = ioctlsocket__( rns2Socket, FIONBIO, &nonblocking );
+		RakAssert(res==0);
 
 
 
@@ -74,6 +75,8 @@ void RNS2_Berkley::GetSystemAddressIPV4 ( RNS2Socket rns2Socket, SystemAddress *
 
 	if (systemAddressOut->address.addr4.sin_addr.s_addr == INADDR_ANY)
 	{
+
+
 
 
 
@@ -158,9 +161,15 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4( RNS2_BerkleyBindParameters *bindPar
 
 	// Fill in the rest of the address structure
 	boundAddress.address.addr4.sin_family = AF_INET;
+	
+#ifdef __PS4__
+	boundAddress.address.addr4.sin_len = sizeof(SceNetSockaddrIn);
+#endif
 
 	if (bindParameters->hostAddress && bindParameters->hostAddress[0])
 	{
+
+
 
 
 
@@ -182,6 +191,7 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4( RNS2_BerkleyBindParameters *bindPar
 
 	if ( ret <= -1 )
 	{
+
 
 
 
@@ -217,6 +227,7 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4( RNS2_BerkleyBindParameters *bindPar
 		case ENOTDIR:
 			RAKNET_DEBUG_PRINTF("bind__(): A component of the path prefix is not a directory.\n"); break;
 		case EACCES:
+			// Port reserved on PS4
 			RAKNET_DEBUG_PRINTF("bind__(): Search permission is denied on a component of the path prefix.\n"); break;
 
 		case ELOOP:
@@ -335,6 +346,24 @@ void RNS2_Berkley::RecvFromBlockingIPV4And6(RNS2RecvStruct *recvFromStruct)
 
 
 	recvFromStruct->bytesRead = recvfrom__(rns2Socket, recvFromStruct->data, dataOutSize, flag, sockAddrPtr, socketlenPtr );
+
+#if defined(_WIN32) && defined(_DEBUG) && !defined(WINDOWS_PHONE_8)
+	if (recvFromStruct->bytesRead==-1)
+	{
+		DWORD dwIOError = GetLastError();
+		if (dwIoError != 10035)
+		{
+			LPVOID messageBuffer;
+			FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+				NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
+				( LPTSTR ) & messageBuffer, 0, NULL );
+			// I see this hit on XP with IPV6 for some reason
+			RAKNET_DEBUG_PRINTF( "Warning: recvfrom failed:Error code - %d\n%s", dwIOError, messageBuffer );
+			LocalFree( messageBuffer );
+		}
+	}	
+#endif
+
 
 
 

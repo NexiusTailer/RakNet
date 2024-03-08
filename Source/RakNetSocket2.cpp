@@ -30,6 +30,7 @@ using namespace RakNet;
 #define RAKNET_SOCKET_2_INLINE_FUNCTIONS
 #include "RakNetSocket2_360_720.cpp"
 #include "RakNetSocket2_PS3_PS4.cpp"
+#include "RakNetSocket2_PS4.cpp"
 #include "RakNetSocket2_Windows_Linux.cpp"
 #include "RakNetSocket2_Windows_Linux_360.cpp"
 #include "RakNetSocket2_Vita.cpp"
@@ -270,7 +271,7 @@ void RNS2_NativeClient::Update(void)
 #else // defined(__native_client__)
 bool IRNS2_Berkley::IsPortInUse(unsigned short port, const char *hostAddress, unsigned short addressFamily, int type ) {
 	RNS2_BerkleyBindParameters bbp;
-	bbp.remotePortRakNetWasStartedOn_PS3_PSP2=0;
+	bbp.remotePortRakNetWasStartedOn_PS3_PS4_PSP2=0;
 	bbp.port=port; bbp.hostAddress=(char*) hostAddress;	bbp.addressFamily=addressFamily;
 	bbp.type=type; bbp.protocol=0; bbp.nonBlockingSocket=false;
 	bbp.setBroadcast=false;	bbp.doNotFragment=false; bbp.protocol=0;
@@ -357,6 +358,7 @@ unsigned RNS2_Berkley::RecvFromLoopInt(void)
 			}
 			else
 			{
+				RakSleep(0);
 				binding.eventHandler->DeallocRNS2RecvStruct(recvFromStruct, _FILE_AND_LINE_);
 			}
 		}
@@ -375,12 +377,11 @@ RNS2_Berkley::RNS2_Berkley()
 }
 RNS2_Berkley::~RNS2_Berkley()
 {
-#if defined(__APPLE__)
-	CFSocketInvalidate(_cfSocket);
-#endif
-
 	if (rns2Socket!=INVALID_SOCKET)
 	{
+#if defined(__APPLE__)
+		CFSocketInvalidate(_cfSocket);
+#endif
 		closesocket__(rns2Socket);
 	}
 

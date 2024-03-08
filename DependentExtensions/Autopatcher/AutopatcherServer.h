@@ -5,6 +5,16 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+// TODO - bsdiff doesn't work for files above 100 megabytes.
+// See http://xdelta.org/
+// XDelta is GPL 2, however I could run that as a separate EXE and invoke to only transmit the delta file. 
+
+// See http://pocketsoft.com/rtpatch.html
+// See use rdiff instead of bsdiff, or perhaps librsync
+
+// See https://code.google.com/p/open-vcdiff/
+// https://code.google.com/p/open-vcdiff/wiki/HowToUseOpenVcdiff
+// https://github.com/gtoubassi/femtozip/wiki/Sdch
 
 #ifndef __AUTOPATCHER_SERVER_H
 #define __AUTOPATCHER_SERVER_H

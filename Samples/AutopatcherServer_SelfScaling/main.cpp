@@ -53,6 +53,12 @@
 #define LISTEN_PORT_TCP_PATCHER 60000
 
 using namespace RakNet;
+static const RakNet::Time LOAD_CHECK_INTERVAL=1000*60*5;
+static const RakNet::Time LOAD_CHECK_INTERVAL_AFTER_SPAWN=1000*60*60;
+char databasePassword[128];
+int workerThreadCount;
+int sqlConnectionObjectCount;
+int allowDownloadingUnmodifiedFiles;
 
 RakNet::RakPeerInterface *rakPeer;
 RakNet::AutopatcherServer *autopatcherServer;
@@ -287,7 +293,7 @@ public:
 					}
 				}
 				else
-					printf("Aborted.");
+					printf("Aborted.\n");
 			}
 
 			json_decref(root);
@@ -533,135 +539,56 @@ public:
 	virtual void PrintHelp(void)
 	{
 		printf("Distributed authenticated CloudServer using DNS based host migration.\n");
-		printf("Query running servers with CloudClient::Get() on key CloudServerList,0\n\n");
-		printf("Query load with key CloudConnCount,0. Read row data as unsigned short.\n\n");
-		printf("Usage:\n");
-		printf("CloudServer.exe S2SPWD [Port] [ConnIn] [ConnOut]\n\n");
-		printf("Parameters:\n");
-		printf("authenticationURL - See http://docs.rackspace.com/cdns/api/v1.0/cdns-devguide/content/Authentication-d1e647.html\n");
-		printf("dnsURL - See http://docs.rackspace.com/cdns/api/v1.0/cdns-devguide/content/Service_Access_Endpoints-d1e753.html\n");
-		printf("Username - Rackspace username.\n");
-		printf("APIAccessKey - Rackspace API Access key, from the control panel.\n");
-		printf("S2SPWD - Server to server password for servers on the cloud.\n");
-		printf("Port - RakPeer listen port. Default is 60000\n");
-		printf("ConnIn - Max incoming connections for clients. Default is 1024\n");
-		printf("ConnIn - Max outgoing connections, used for server to server. Default 128\n\n");
+		printf("Parameter1: serverToServerPassword\n");
+		printf("Parameter2: serverPort\n");
+		printf("Parameter3: allowedIncomingConnections\n");
+		printf("Parameter4: allowedOutgoingConnections\n");
+		printf("Parameter5: patcherHostRecordURL\n");
+		printf("Parameter6: patcherHostDomainURL\n");
+		printf("Parameter7: rackspaceAuthenticationURL\n");
+		printf("Parameter8: rackspaceCloudUsername\n");
+		printf("Parameter9: apiAccessKey\n");
+		printf("Parameter10: databasePassword\n");
+		printf("Parameter11: workerThreadCount\n");
+		printf("Parameter12: sqlConnectionObjectCount\n");
+		printf("Parameter13: allowDownloadingUnmodifiedFiles\n");
 		printf("Example:\n");
-		printf("AutopatcherServer_SelfScaling.exe randomServerPassword1234 60000 1024 128 \n\n");
+		printf("AutopatcherServer_SelfScaling s2sPassword 60000 1024 128 game1.mycompanypatcher.com mycompanypatcher.com https://identity.api.rackspacecloud.com/v2.0 rackspaceUsername rackspacePw dbPassword 3 6 1");
 	}
 	virtual bool ParseCommandLineParameters(int argc, char **argv) {
 
-		if (argc==1)
+		if (argc!=14)
 			PrintHelp();
 
-		const unsigned short DEFAULT_SERVER_PORT=60000;
-		const unsigned short DEFAULT_ALLOWED_INCOMING_CONNECTIONS=1024;
-		const unsigned short DEFAULT_ALLOWED_OUTGOING_CONNECTIONS=128;
-
 		serverToServerPassword=argv[1];
+		rakPeerPort=atoi(argv[2]);
+		allowedIncomingConnections=atoi(argv[3]);
+		allowedOutgoingConnections=atoi(argv[4]);
+		strcpy(patcherHostSubdomainURL, argv[5]);
+		strcpy(patcherHostDomainURL, argv[6]);
+		strcpy(rackspaceAuthenticationURL, argv[7]);
+		strcpy(rackspaceCloudUsername, argv[8]);
+		strcpy(apiAccessKey, argv[9]);
+		strcpy(databasePassword, argv[10]);
+		workerThreadCount=atoi(argv[11]);
+		sqlConnectionObjectCount=atoi(argv[12]);
+		allowDownloadingUnmodifiedFiles=atoi(argv[13]);
 
-		if (argc<3) rakPeerPort=DEFAULT_SERVER_PORT;
-		else rakPeerPort=atoi(argv[2]);
 
-		if (argc<4) allowedIncomingConnections=DEFAULT_ALLOWED_INCOMING_CONNECTIONS;
-		else allowedIncomingConnections=atoi(argv[3]);
 
-		if (argc<5) allowedOutgoingConnections=DEFAULT_ALLOWED_OUTGOING_CONNECTIONS;
-		else allowedOutgoingConnections=atoi(argv[4]);
 
-		FILE *fp;
-		fp = fopen("patcherHostSubdomainURL.txt", "rb");
-		if (fp)
-		{
-			fgets(patcherHostSubdomainURL,128,fp);
-			fclose(fp);
-		}
-		else
-		{
-			// Example: mygame.raknetpatcher.com
-			printf("Enter patcher host subdomain URL: ");
-			Gets(patcherHostSubdomainURL, sizeof(patcherHostSubdomainURL));
-			if (patcherHostSubdomainURL[0]==0)
-				return false;
-		}
-		
-		fp = fopen("patcherHostDomainURL.txt", "rb");
-		if (fp)
-		{
-			fgets(patcherHostDomainURL,128,fp);
-			fclose(fp);
-		}
-		else
-		{
-			// Example: raknetpatcher.com
-			printf("Enter patcher host domain URL: ");
-			Gets(patcherHostDomainURL, sizeof(patcherHostDomainURL));
-			if (patcherHostDomainURL[0]==0)
-				return false;
-		}
-
-		fp = fopen("rackspaceAuthenticationURL.txt", "rb");
-		if (fp)
-		{
-			fgets(rackspaceAuthenticationURL,128,fp);
-			fclose(fp);
-		}
-		else
-		{
-			// See http://docs.rackspace.com/cdns/api/v1.0/cdns-devguide/content/Authentication-d1e647.html
-			// Example: https://identity.api.rackspacecloud.com/v2.0
-			printf("Enter Rackspace authentication URL: ");
-			Gets(rackspaceAuthenticationURL, sizeof(rackspaceAuthenticationURL));
-			if (rackspaceAuthenticationURL[0]==0)
-				return false;
-		}
-
-		/*
-		fp = fopen("rackspaceServersURL.txt", "rb");
-		if (fp)
-		{
-			fgets(rackspaceServersURL,128,fp);
-			fclose(fp);
-		}
-		else
-		{
-			
-			printf("Enter Rackspace Servers URL: ");
-			Gets(rackspaceServersURL, sizeof(rackspaceServersURL));
-			if (rackspaceServersURL[0]==0)
-				return false;
-		}
-		*/
-	
-		fp = fopen("rackspaceCloudUsername.txt", "rb");
-		if (fp)
-		{
-			fgets(rackspaceCloudUsername,128,fp);
-			fclose(fp);
-		}
-		else
-		{
-			// This is what you signed up to Rackspace with
-			printf("Enter Rackspace username: ");
-			Gets(rackspaceCloudUsername, sizeof(rackspaceCloudUsername));
-			if (rackspaceCloudUsername[0]==0)
-				return false;
-		}
-
-		fp = fopen("apiAccessKey.txt", "rb");
-		if (fp)
-		{
-			fgets(apiAccessKey,128,fp);
-			fclose(fp);
-		}
-		else
-		{
-			// You get this from your Rackspace control panel
-			printf("Enter Rackspace API Access key: ");
-			Gets(apiAccessKey, sizeof(apiAccessKey));
-			if (apiAccessKey[0]==0)
-				return false;
-		}
+	/*
+	2 worker threads, 4 mb read: 5 minutes, 55 seconds
+	4 worker threads, 4 mb read: 5 minutes, 7 seconds
+	8 worker threads, 4 mb read: 4 minutes, 48 seconds
+	2 worker threads, 2 mb read: 8 minutes, 31 seconds
+	8 worker threads, 2 mb read: 4 minutes, 30 seconds, but one failed to start
+	4 worker threads, 8 mb read: 4 minutes, 55 seconds
+	4 worker threads, 16 mb read: 4 minutes, 48 seconds
+	3 worker threads, 16 mb read: 4 minutes, 19 seconds
+	2 worker threads, 16 mb read: 5 minutes, 18 seconds
+	3 worker threads, 32 mb read: 4 minutes, 18 seconds
+	*/
 
 
 		return true;
@@ -784,6 +711,68 @@ void SetMaxConcurrentUsers(int i)
 	autopatcherServer->SetMaxConurrentUsers(i);
 }
 
+
+//char WORKING_DIRECTORY[MAX_PATH];
+//char PATH_TO_XDELTA_EXE[MAX_PATH];
+
+// The default AutopatcherPostgreRepository2 uses bsdiff which takes too much memory for large files.
+// I override MakePatch to use XDelta in this case
+class AutopatcherPostgreRepository2_WithXDelta : public RakNet::AutopatcherPostgreRepository2
+{
+	bool MakePatch(const char *oldFile, const char *newFile, char **patch, unsigned int *patchLength, int *patchAlgorithm)
+	{
+		FILE *fpOld = fopen(oldFile, "rb");
+		fseek(fpOld, 0, SEEK_END);
+		int contentLengthOld = ftell(fpOld);
+		FILE *fpNew = fopen(newFile, "rb");
+		fseek(fpNew, 0, SEEK_END);
+		int contentLengthNew = ftell(fpNew);
+
+		char WORKING_DIRECTORY[MAX_PATH];
+		GetTempPath(MAX_PATH, WORKING_DIRECTORY);
+		const char *PATH_TO_XDELTA_EXE = "c:/xdelta3-3.0.6-win32.exe";
+
+		if ((contentLengthOld < 33554432 && contentLengthNew < 33554432) || PATH_TO_XDELTA_EXE[0]==0)
+		{
+			// Use bsdiff, which does a good job but takes a lot of memory based on the size of the file
+			*patchAlgorithm=0;
+			bool b = MakePatchBSDiff(fpOld, contentLengthOld, fpNew, contentLengthNew, patch, patchLength);
+			fclose(fpOld);
+			fclose(fpNew);
+			return b;
+		}
+		else
+		{
+			*patchAlgorithm=1;
+			fclose(fpOld);
+			fclose(fpNew);
+
+			// Invoke xdelta
+			// See https://code.google.com/p/xdelta/wiki/CommandLineSyntax
+			char commandLine[512];
+			_snprintf(commandLine, sizeof(commandLine)-1, "-f -s %s %s patchServer.tmp", oldFile, newFile);
+			commandLine[511]=0;
+			ShellExecute(NULL, "open", PATH_TO_XDELTA_EXE, commandLine, WORKING_DIRECTORY, SW_SHOWNORMAL);
+
+			char pathToPatch[MAX_PATH];
+			if (WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='/' || WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='\\')
+				sprintf(pathToPatch, "%spatchServer.tmp", WORKING_DIRECTORY);
+			else
+				sprintf(pathToPatch, "%s/patchServer.tmp", WORKING_DIRECTORY);
+			FILE *fpPatch = fopen(pathToPatch, "rb");
+			if (fpPatch==0)
+				return false;
+			fseek(fpPatch, 0, SEEK_END);
+			*patchLength = ftell(fpPatch);
+			fseek(fpPatch, 0, SEEK_SET);
+			*patch = (char*) rakMalloc_Ex(*patchLength, _FILE_AND_LINE_);
+			fread(*patch, 1, *patchLength, fpPatch);
+			fclose(fpPatch);
+			return true;
+		}
+	}
+};
+
 int main(int argc, char **argv)
 {
 #if OPEN_SSL_CLIENT_SUPPORT==0
@@ -805,37 +794,8 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	char databasePassword[128];
-	FILE *fp = fopen("databasePassword.txt", "rb");
-	if (fp)
-	{
-		fgets(databasePassword,128,fp);
-		fclose(fp);
-	}
-	else
-	{
-		// This is what you signed up to Rackspace with
-		printf("Enter database password: ");
-		Gets(databasePassword, sizeof(databasePassword));
-		if (databasePassword[0]==0)
-			return false;
-	}
 
-
-	int workerThreadCount;
-	int sqlConnectionObjectCount;
-
-	if (argc<7) workerThreadCount=4;
-	else workerThreadCount=atoi(argv[6]);
-
-	if (argc<8) sqlConnectionObjectCount=8;
-	else sqlConnectionObjectCount=atoi(argv[7]);
-
-	int allowDownloadingUnmodifiedFiles;
-	if (argc<9) allowDownloadingUnmodifiedFiles=0;
-	else allowDownloadingUnmodifiedFiles=atoi(argv[8]);
-
-	RakNet::Time timeSinceLastLoadCheck=RakNet::GetTime();
+	RakNet::Time timeForNextLoadCheck=RakNet::GetTime()+LOAD_CHECK_INTERVAL;
 
 	if (!cloudServerHelper->AuthenticateWithRackspaceBlocking())
 	{
@@ -849,8 +809,8 @@ int main(int argc, char **argv)
 	autopatcherServer = RakNet::OP_NEW<AutopatcherServer>(_FILE_AND_LINE_);
 	// RakNet::FLP_Printf progressIndicator;
 	RakNet::FileListTransfer fileListTransfer;
-	RakNet::AutopatcherPostgreRepository *connectionObject;
-	connectionObject = RakNet::OP_NEW_ARRAY<AutopatcherPostgreRepository>(sqlConnectionObjectCount, _FILE_AND_LINE_);
+	AutopatcherPostgreRepository2_WithXDelta *connectionObject;
+	connectionObject = RakNet::OP_NEW_ARRAY<AutopatcherPostgreRepository2_WithXDelta>(sqlConnectionObjectCount, _FILE_AND_LINE_);
 	// RakNet::AutopatcherRepositoryInterface **connectionObjectAddresses[sqlConnectionObjectCount];
 	AutopatcherRepositoryInterface **connectionObjectAddresses = RakNet::OP_NEW_ARRAY<AutopatcherRepositoryInterface *>(sqlConnectionObjectCount, _FILE_AND_LINE_);
 
@@ -955,14 +915,14 @@ int main(int argc, char **argv)
 	{
 		RakNet::SystemAddress notificationAddress;
 		notificationAddress=packetizedTCP.HasCompletedConnectionAttempt();
-		if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
-			printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
+// 		if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
+// 			printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
 		notificationAddress=packetizedTCP.HasNewIncomingConnection();
-		if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
-			printf("ID_NEW_INCOMING_CONNECTION\n");
+// 		if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
+// 			printf("ID_NEW_INCOMING_CONNECTION\n");
 		notificationAddress=packetizedTCP.HasLostConnection();
-		if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
-			printf("ID_CONNECTION_LOST\n");
+// 		if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
+// 			printf("ID_CONNECTION_LOST\n");
 
 		p=packetizedTCP.Receive();
 		while (p)
@@ -974,13 +934,16 @@ int main(int argc, char **argv)
 		p=rakPeer->Receive();
 		while (p)
 		{
+			/*
 			if (p->data[0]==ID_NEW_INCOMING_CONNECTION)
 				printf("ID_NEW_INCOMING_CONNECTION (TCP) from %s\n", p->systemAddress.ToString(true));
 			else if (p->data[0]==ID_DISCONNECTION_NOTIFICATION)
 				printf("ID_DISCONNECTION_NOTIFICATION (TCP) from %s\n", p->systemAddress.ToString(true));
 			else if (p->data[0]==ID_CONNECTION_LOST)
 				printf("ID_CONNECTION_LOST (TCP) from %s\n", p->systemAddress.ToString(true));
-			else if (p->data[0]==ID_FCM2_NEW_HOST)
+			else
+			*/
+			if (p->data[0]==ID_FCM2_NEW_HOST)
 			{
 				if (appState==AP_RUNNING)
 				{
@@ -1002,7 +965,7 @@ int main(int argc, char **argv)
 						}
 					}
 
-					timeSinceLastLoadCheck=RakNet::GetTime();
+					timeForNextLoadCheck=RakNet::GetTime()+LOAD_CHECK_INTERVAL;
 				}
 			}
 			else if (p->data[0]==ID_USER_PACKET_ENUM)
@@ -1075,6 +1038,8 @@ int main(int argc, char **argv)
 						cloudServerHelper->SpawnServers(newServersNeeded);
 				}
 
+				timeForNextLoadCheck = RakNet::GetTime() + LOAD_CHECK_INTERVAL_AFTER_SPAWN;
+
 				cloudClient.DeallocateWithDefaultAllocator(&cloudQueryResult);
 			}
 
@@ -1124,10 +1089,9 @@ int main(int argc, char **argv)
 		if (fullyConnectedMesh2.IsHostSystem() && autopatcherServer->GetMaxConurrentUsers()>0)
 		{
 			RakNet::Time curTime = RakNet::GetTime();
-			RakNet::Time diff = curTime - timeSinceLastLoadCheck;
-			if (diff > 0 && diff > 1000 * 60 * 60)
+			if (curTime > timeForNextLoadCheck)
 			{
-				timeSinceLastLoadCheck = curTime;
+				timeForNextLoadCheck = curTime + LOAD_CHECK_INTERVAL;
 
 				// If the load exceeds such that >=1 new fully loaded server is needed, add that many servers
 				// See ID_CLOUD_GET_RESPONSE

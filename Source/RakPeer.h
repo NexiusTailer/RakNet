@@ -546,7 +546,7 @@ public:
 
 	/// \brief Gets all sockets in use.
 	/// \note This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so.
-	/// \param[out] sockets List of RakNetSocket structures in use. Sockets will not be closed until \a sockets goes out of scope
+	/// \param[out] sockets List of RakNetSocket structures in use.
 	virtual void GetSockets( DataStructures::List<RakNetSocket2* > &sockets );
 	virtual void ReleaseSockets( DataStructures::List<RakNetSocket2* > &sockets );
 

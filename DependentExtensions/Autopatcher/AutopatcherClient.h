@@ -15,6 +15,8 @@
 #include "PacketPriority.h"
 #include "FileList.h"
 #include "SimpleMutex.h"
+#include "FileListTransferCBInterface.h"
+#include "AutopatcherPatchContext.h"
 
 namespace RakNet
 {
@@ -22,7 +24,13 @@ namespace RakNet
 class RakPeerInterface;
 struct Packet;
 class FileListTransfer;
-class FileListTransferCBInterface;
+
+class RAK_DLL_EXPORT AutopatcherClientCBInterface : public FileListTransferCBInterface
+{
+public:
+	virtual PatchContext ApplyPatchBSDiff(const char *oldFilePath, char **newFileContents, unsigned int *newFileSize, char *patchContents, unsigned int patchSize);
+	virtual PatchContext ApplyPatchBase(const char *oldFilePath, char **newFileContents, unsigned int *newFileSize, char *patchContents, unsigned int patchSize, uint32_t patchAlgorithm);
+};
 
 /// \ingroup Autopatcher
 class RAK_DLL_EXPORT AutopatcherClient : public PluginInterface2
@@ -57,7 +65,7 @@ public:
 	/// \param[in] _restartOutputFilename If it is necessary to restart this application, where to write the restart data to.  You can include a path in this filename.
 	/// \param[in] pathToRestartExe What exe to launch from the AutopatcherClientRestarter .  argv[0] will work to relaunch this application.
 	/// \return true on success, false on failure.  On failure, ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR is returned, with the error message written using the stringCompressor class starting after the message id.
-	bool PatchApplication(const char *_applicationName, const char *_applicationDirectory, double lastUpdateDate, SystemAddress host, FileListTransferCBInterface *onFileCallback, const char *restartOutputFilename, const char *pathToRestartExe);
+	bool PatchApplication(const char *_applicationName, const char *_applicationDirectory, double lastUpdateDate, SystemAddress host, AutopatcherClientCBInterface *onFileCallback, const char *restartOutputFilename, const char *pathToRestartExe);
 
 	/// After getting ID_AUTOPATCHER_FINISHED or ID_AUTOPATCHER_RESTART_APPLICATION, the server date will be internally recorded.  You can send this to PatchApplication::lastUpdateDate to only check for files newer than that date.
 	double GetServerDate(void) const;
@@ -77,6 +85,7 @@ public:
 	/// \internal For plugin handling
 	virtual void OnShutdown(void);
 	void OnThreadCompletion(void);
+
 protected:
 	PluginReceiveResult OnCreationList(Packet *packet);
 	void OnDeletionList(Packet *packet);
@@ -98,7 +107,7 @@ protected:
 	SystemIndex serverIdIndex;
 	char orderingChannel;
 	unsigned short setId;
-	FileListTransferCBInterface *userCB;
+	AutopatcherClientCBInterface *userCB;
 	bool patchComplete;
 	FileList redownloadList, copyAndRestartList;
 

@@ -64,7 +64,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Debug_Win32.lib ws2_32.lib"
+				AdditionalDependencies="./../../Lib/RakNet_VS2008_LibStatic_Debug_Win32.lib ws2_32.lib"
 				OutputFile="$(OutDir)/AutopatcherClient_SelfScaling.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames=""
@@ -142,7 +142,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Release_Win32.lib ws2_32.lib"
+				AdditionalDependencies="./../../Lib/RakNet_VS2008_LibStatic_Release_Win32.lib ws2_32.lib"
 				OutputFile="$(OutDir)/AutopatcherClient.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames=""

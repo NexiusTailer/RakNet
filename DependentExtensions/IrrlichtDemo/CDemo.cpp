@@ -72,13 +72,13 @@ void CDemo::run()
 		return;
 
 	if (device->getFileSystem()->existFile("irrlicht.dat"))
-		device->getFileSystem()->addZipFileArchive("irrlicht.dat");
+		device->getFileSystem()->addFileArchive("irrlicht.dat", true, true, io::EFAT_ZIP);
 	else
-		device->getFileSystem()->addZipFileArchive(IRRLICHT_MEDIA_PATH "irrlicht.dat");
+		device->getFileSystem()->addFileArchive(IRRLICHT_MEDIA_PATH "irrlicht.dat", true, true, io::EFAT_ZIP);
 	if (device->getFileSystem()->existFile("map-20kdm2.pk3"))
-		device->getFileSystem()->addZipFileArchive("map-20kdm2.pk3");
+		device->getFileSystem()->addFileArchive("map-20kdm2.pk3", true, true, io::EFAT_ZIP);
 	else
-		device->getFileSystem()->addZipFileArchive(IRRLICHT_MEDIA_PATH "map-20kdm2.pk3");
+		device->getFileSystem()->addFileArchive(IRRLICHT_MEDIA_PATH "map-20kdm2.pk3", true, true, io::EFAT_ZIP);
 
 	video::IVideoDriver* driver = device->getVideoDriver();
 	scene::ISceneManager* smgr = device->getSceneManager();
@@ -447,7 +447,7 @@ void CDemo::loadSceneData()
 
 		for ( i = 0; i!= scene::quake3::E_Q3_MESH_SIZE; ++i )
 		{
-			sm->getMeshManipulator()->transformMesh ( quakeLevelMesh->getMesh(i), m );
+			sm->getMeshManipulator()->transform ( quakeLevelMesh->getMesh(i), m );
 		}
 
 		quakeLevelNode = sm->addOctreeSceneNode(
@@ -767,7 +767,7 @@ RakNet::TimeMS CDemo::shootFromOrigin(core::vector3df camPosition, core::vector3
 	core::line3d<f32> line(start, end);
 
 	// get intersection point with map
-	const scene::ISceneNode* hitNode;
+	scene::ISceneNode* hitNode;
 	if (sm->getSceneCollisionManager()->getCollisionPoint(
 		line, mapSelector, end, triangle, hitNode))
 	{
@@ -1153,7 +1153,8 @@ void CDemo::UpdateRakNet(void)
 				if (packet->data[1]==1)
 				{
 					PushMessage(RakNet::RakString("Connecting to existing game instance"));
-					rakPeer->Connect(packet->systemAddress.ToString(false), packet->systemAddress.GetPort(), 0, 0);
+					RakNet::ConnectionAttemptResult car = rakPeer->Connect(packet->systemAddress.ToString(false), packet->systemAddress.GetPort(), 0, 0);
+					RakAssert(car==RakNet::CONNECTION_ATTEMPT_STARTED);
 				}
 			}
 			break;
@@ -1163,7 +1164,8 @@ void CDemo::UpdateRakNet(void)
 			{
 				char hostIP[32];
 				packet->systemAddress.ToString(false,hostIP);
-				rakPeer->Connect(hostIP,packet->systemAddress.GetPort(),0,0);
+				RakNet::ConnectionAttemptResult car = rakPeer->Connect(hostIP,packet->systemAddress.GetPort(),0,0);
+				RakAssert(car==RakNet::CONNECTION_ATTEMPT_STARTED);
 			}
 			break;
 		}

@@ -126,14 +126,16 @@ void Rackspace2::Update(void)
 					{
 						const char *message = json_string_value(json_object_iter_value(iter));
 
-						if (eventCallback)
-							eventCallback->OnMessage(message, responseReceived, stringTransmitted, contentOffset);
-
 						if (strcmp(message, "Invalid authentication token. Please renew.")==0)
 						{
 							// Sets reexecuteLastRequestOnAuth to true
 							// After authenticate completes, will rerun the last run command
 							Reauthenticate();
+						}
+						else
+						{
+							if (eventCallback)
+								eventCallback->OnMessage(message, responseReceived, stringTransmitted, contentOffset);
 						}
 					}
 					else

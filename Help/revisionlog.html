@@ -637,6 +637,17 @@ Updated readme.txt about Unreal Engine integrations
 FullyConnectedMesh2; Fix verified joins from outside a LAN.
 NATTypeDetectionClient: Fix crash on shutdown.
 RakString: Fix FormatForDelete
+4.069 (3/10/13)
+FileListTransfer: (TCP) will now continually print download progress notifications for smooth progress bar notifications in a UI.
+RakPeer: Fixed potential ID_OUT_OF_BAND_INTERNAL crash if sending a message with too short of a length. Fix memory leak when using ApplyNetworkSimulator.
+PS3: Added callSceNpBasicRegisterContextSensitiveHandler. Fixed memory leak with Lobby2Client_PS3. Added termnp2 to Client_Logoff_PS3
+Autopatcher: Now supports large files. AutopatcherPostgreRepository2 was added to keep files on disk, rather than store in the repository. This is because PostgreSQL fails to store files above several hundred megabytes. Additionally, the database table now stores a column patchAlgorithm. Both the client and server can override the method used to create and apply patches. This was done becuase bsdiff takes excessive memory to generate patches. The sample shows how to use xdelta on the server, instead of bsdiff, if the file is larger than 33554432 bytes.
+RelayPlugin: Added for internal use. A simple implementation of chat messages between systems, and chat rooms.
+NATTypeDetectionServer: Reduced CPU usage for non-blocking recvfrom
+PS4: Support added
+Lib: Names of binaries under /lib changed to include $(SolutionName) because the VS2008 version is not compatible later versions of Visual Studio. See http://stackoverflow.com/questions/2896754/link-error-after-update-from-vs2008-to-vs2010
+SHA: Prior code didn't work, updated to current version. Also added SHA1HMAC
+APPLE: Fix crash on failing to create socket.
 </pre>
 <BR>
 </p></TD></TR></TABLE>

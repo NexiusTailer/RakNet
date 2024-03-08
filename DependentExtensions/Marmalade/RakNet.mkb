@@ -87,7 +87,7 @@ files
 	RPC4Plugin.cpp
 	SecureHandshake.cpp
 	SendToThread.cpp
-	SHA1.cpp
+	DR_SHA1.cpp
 	SignaledEvent.cpp
 	SimpleMutex.cpp
 	SocketLayer.cpp

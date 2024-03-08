@@ -24,7 +24,7 @@
 #include <sys/stat.h>
 #endif
 
-//#include "SHA1.h"
+//#include "DR_SHA1.h"
 #include "DS_Queue.h"
 #include "StringCompressor.h"
 #include "BitStream.h"
@@ -314,7 +314,7 @@ void FileList::AddFilesFromDirectory(const char *applicationDirectory, const cha
 				else if (writeHash)
 				{
 //					sha1.Reset();
-//					sha1.HashFile((char*)fullPath);
+//					DR_SHA1.hashFile((char*)fullPath);
 //					sha1.Final();
 
 					unsigned int hash = SuperFastHashFile(fullPath);
@@ -376,7 +376,7 @@ void FileList::Serialize(RakNet::BitStream *outBitStream)
 	for (i=0; i < fileList.Size(); i++)
 	{
 		outBitStream->WriteCompressed(fileList[i].context.op);
-		outBitStream->WriteCompressed(fileList[i].context.fileId);
+		outBitStream->WriteCompressed(fileList[i].context.flnc_extraData);
 		StringCompressor::Instance()->EncodeString(fileList[i].filename.C_String(), MAX_FILENAME_LENGTH, outBitStream);
 
 		bool writeFileData = (fileList[i].dataLengthBytes>0)==true;
@@ -396,7 +396,7 @@ bool FileList::Deserialize(RakNet::BitStream *inBitStream)
 {
 	bool b, dataLenNonZero=false, fileLenMatchesDataLen=false;
 	char filename[512];
-	unsigned int fileListSize;
+	uint32_t fileListSize;
 	FileListNode n;
 	b=inBitStream->ReadCompressed(fileListSize);
 #ifdef _DEBUG
@@ -410,7 +410,7 @@ bool FileList::Deserialize(RakNet::BitStream *inBitStream)
 	for (i=0; i < fileListSize; i++)
 	{
 		inBitStream->ReadCompressed(n.context.op);
-		inBitStream->ReadCompressed(n.context.fileId);
+		inBitStream->ReadCompressed(n.context.flnc_extraData);
 		StringCompressor::Instance()->DecodeString((char*)filename, MAX_FILENAME_LENGTH, inBitStream);
 		inBitStream->Read(dataLenNonZero);
 		if (dataLenNonZero)

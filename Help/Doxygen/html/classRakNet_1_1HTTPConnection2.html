@@ -74,11 +74,11 @@ Inheritance diagram for RakNet::HTTPConnection2:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aacec2983036f77d87a89a73a4bcb5f96"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1HTTPConnection2.html#aacec2983036f77d87a89a73a4bcb5f96">TransmitRequest</a> (const char *stringToTransmit, const char *host, unsigned short port=80, int ipVersion=4, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> useAddress=<a class="el" href="namespaceRakNet.html#a80c95b4ed53f42911a6fa92b85e929cf">UNASSIGNED_SYSTEM_ADDRESS</a>)</td></tr>
-<tr class="memdesc:aacec2983036f77d87a89a73a4bcb5f96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect to, then transmit a request to a TCP based server.  <a href="#aacec2983036f77d87a89a73a4bcb5f96"></a><br/></td></tr>
-<tr class="separator:aacec2983036f77d87a89a73a4bcb5f96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22ff40b521a0cd0b87b20683561f2cb2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1HTTPConnection2.html#a22ff40b521a0cd0b87b20683561f2cb2">TransmitRequest</a> (const char *stringToTransmit, const char *host, unsigned short port=80, bool useSSL=false, int ipVersion=4, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> useAddress=<a class="el" href="namespaceRakNet.html#a80c95b4ed53f42911a6fa92b85e929cf">UNASSIGNED_SYSTEM_ADDRESS</a>)</td></tr>
+<tr class="memdesc:a22ff40b521a0cd0b87b20683561f2cb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect to, then transmit a request to a TCP based server.  <a href="#a22ff40b521a0cd0b87b20683561f2cb2"></a><br/></td></tr>
+<tr class="separator:a22ff40b521a0cd0b87b20683561f2cb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aabd5ad8f5796a764047581ab6f48263c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1HTTPConnection2.html#aabd5ad8f5796a764047581ab6f48263c">GetResponse</a> (<a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;stringTransmitted, <a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;hostTransmitted, <a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;responseReceived, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;hostReceived, int &amp;contentOffset)</td></tr>
-<tr class="memdesc:aabd5ad8f5796a764047581ab6f48263c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check for and return a response from a prior call to <a class="el" href="classRakNet_1_1HTTPConnection2.html#aacec2983036f77d87a89a73a4bcb5f96" title="Connect to, then transmit a request to a TCP based server.">TransmitRequest()</a> As TCP is stream based, you may get a webserver reply over several calls to TCPInterface::Receive() <a class="el" href="classRakNet_1_1HTTPConnection2.html" title="Use HTTPConnection2 to communicate with a web server.">HTTPConnection2</a> will store <a class="el" href="structRakNet_1_1Packet.html#a63e46b85c8ca156b205a124e54659614" title="The data from the sender.">Packet::data</a> and return the response to you either when the connection to the webserver is lost, or enough data has been received() This will only potentially return true after a call to ProcessTCPPacket() or OnLostConnection()  <a href="#aabd5ad8f5796a764047581ab6f48263c"></a><br/></td></tr>
+<tr class="memdesc:aabd5ad8f5796a764047581ab6f48263c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check for and return a response from a prior call to <a class="el" href="classRakNet_1_1HTTPConnection2.html#a22ff40b521a0cd0b87b20683561f2cb2" title="Connect to, then transmit a request to a TCP based server.">TransmitRequest()</a> As TCP is stream based, you may get a webserver reply over several calls to TCPInterface::Receive() <a class="el" href="classRakNet_1_1HTTPConnection2.html" title="Use HTTPConnection2 to communicate with a web server.">HTTPConnection2</a> will store <a class="el" href="structRakNet_1_1Packet.html#a63e46b85c8ca156b205a124e54659614" title="The data from the sender.">Packet::data</a> and return the response to you either when the connection to the webserver is lost, or enough data has been received() This will only potentially return true after a call to ProcessTCPPacket() or OnLostConnection()  <a href="#aabd5ad8f5796a764047581ab6f48263c"></a><br/></td></tr>
 <tr class="separator:aabd5ad8f5796a764047581ab6f48263c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a24b49b7b334a9ccca97b3400bd1d274f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a24b49b7b334a9ccca97b3400bd1d274f"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1HTTPConnection2.html#a24b49b7b334a9ccca97b3400bd1d274f">IsBusy</a> (void) const </td></tr>
@@ -178,11 +178,11 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
       </table>
 </div><div class="memdoc">
 
-<p>Check for and return a response from a prior call to <a class="el" href="classRakNet_1_1HTTPConnection2.html#aacec2983036f77d87a89a73a4bcb5f96" title="Connect to, then transmit a request to a TCP based server.">TransmitRequest()</a> As TCP is stream based, you may get a webserver reply over several calls to TCPInterface::Receive() <a class="el" href="classRakNet_1_1HTTPConnection2.html" title="Use HTTPConnection2 to communicate with a web server.">HTTPConnection2</a> will store <a class="el" href="structRakNet_1_1Packet.html#a63e46b85c8ca156b205a124e54659614" title="The data from the sender.">Packet::data</a> and return the response to you either when the connection to the webserver is lost, or enough data has been received() This will only potentially return true after a call to ProcessTCPPacket() or OnLostConnection() </p>
+<p>Check for and return a response from a prior call to <a class="el" href="classRakNet_1_1HTTPConnection2.html#a22ff40b521a0cd0b87b20683561f2cb2" title="Connect to, then transmit a request to a TCP based server.">TransmitRequest()</a> As TCP is stream based, you may get a webserver reply over several calls to TCPInterface::Receive() <a class="el" href="classRakNet_1_1HTTPConnection2.html" title="Use HTTPConnection2 to communicate with a web server.">HTTPConnection2</a> will store <a class="el" href="structRakNet_1_1Packet.html#a63e46b85c8ca156b205a124e54659614" title="The data from the sender.">Packet::data</a> and return the response to you either when the connection to the webserver is lost, or enough data has been received() This will only potentially return true after a call to ProcessTCPPacket() or OnLostConnection() </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[out]</td><td class="paramname">stringTransmitted</td><td>The original string transmitted </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">hostTransmitted</td><td>The parameter of the same name passed to <a class="el" href="classRakNet_1_1HTTPConnection2.html#aacec2983036f77d87a89a73a4bcb5f96" title="Connect to, then transmit a request to a TCP based server.">TransmitRequest()</a> </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">hostTransmitted</td><td>The parameter of the same name passed to <a class="el" href="classRakNet_1_1HTTPConnection2.html#a22ff40b521a0cd0b87b20683561f2cb2" title="Connect to, then transmit a request to a TCP based server.">TransmitRequest()</a> </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">responseReceived</td><td>The response, if any </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">hostReceived</td><td>The <a class="el" href="structRakNet_1_1SystemAddress.html" title="Network address for a system.">SystemAddress</a> from ProcessTCPPacket() or OnLostConnection() </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">contentOffset</td><td>The offset from the start of responseReceived to the data body. Equivalent to searching for <br/>
@@ -375,7 +375,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </div>
 </div>
-<a class="anchor" id="aacec2983036f77d87a89a73a4bcb5f96"></a>
+<a class="anchor" id="a22ff40b521a0cd0b87b20683561f2cb2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -396,6 +396,12 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
           <td></td>
           <td class="paramtype">unsigned short&#160;</td>
           <td class="paramname"><em>port</em> = <code>80</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>useSSL</em> = <code>false</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -424,6 +430,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
     <tr><td class="paramdir">[in]</td><td class="paramname">stringToTransmit</td><td>What string to transmit. See <a class="el" href="classRakNet_1_1RakString.html#a579954736686dae1626bf7d882554e73">RakString::FormatForPOST()</a>, <a class="el" href="classRakNet_1_1RakString.html#aff1544a8a50d06edecbc61073d88a3c6">RakString::FormatForGET()</a>, <a class="el" href="classRakNet_1_1RakString.html#ae4df821fd3d2759c66f204f301269aa4">RakString::FormatForDELETE()</a> </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">host</td><td>The IP address to connect to </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">port</td><td>The port to connect to </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">useSSL</td><td>If to use SSL to connect. OPEN_SSL_CLIENT_SUPPORT must be defined to 1 in RakNetDefines.h or RakNetDefinesOverrides.h </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">ipVersion</td><td>4 for IPV4, 6 for IPV6 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">useAddress</td><td>Assume we are connected to this address and send to it, rather than do a lookup </td></tr>
   </table>
@@ -439,7 +446,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Feb 6 2013 22:04:21 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Apr 7 2013 01:52:13 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

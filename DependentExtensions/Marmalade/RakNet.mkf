@@ -125,7 +125,7 @@ files
 	RPC4Plugin.h
 	SecureHandshake.h
 	SendToThread.h
-	SHA1.h
+	DR_SHA1.h
 	SignaledEvent.h
 	SimpleMutex.h
 	SimpleTCPServer.h

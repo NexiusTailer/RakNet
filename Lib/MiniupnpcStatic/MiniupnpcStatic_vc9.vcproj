@@ -52,7 +52,7 @@
 				RuntimeLibrary="1"
 				BufferSecurityCheck="false"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
+				ProgramDataBaseFileName="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -67,7 +67,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				OutputFile="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
 				IgnoreDefaultLibraryNames="LIBC.lib LIBCMT.lib MSVCRT.lib"
 			/>
 			<Tool
@@ -120,7 +120,7 @@
 				RuntimeLibrary="1"
 				BufferSecurityCheck="false"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
+				ProgramDataBaseFileName="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -135,7 +135,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				OutputFile="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
 				IgnoreDefaultLibraryNames="LIBC.lib LIBCMT.lib MSVCRT.lib"
 			/>
 			<Tool
@@ -188,7 +188,7 @@
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
+				ProgramDataBaseFileName="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -203,7 +203,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				OutputFile="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
 				IgnoreDefaultLibraryNames="LIBC.lib LIBCMT.lib MSVCRT.lib"
 			/>
 			<Tool
@@ -257,7 +257,7 @@
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(OutDir)\$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
+				ProgramDataBaseFileName="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).pdb"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -272,7 +272,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				OutputFile="$(OutDir)\$(SolutionName)_$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
 				IgnoreDefaultLibraryNames="LIBC.lib LIBCMT.lib MSVCRT.lib"
 			/>
 			<Tool

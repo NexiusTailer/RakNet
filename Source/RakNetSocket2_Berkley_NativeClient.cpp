@@ -57,6 +57,7 @@ void DomainNameToIP_Berkley_IPV4And6( const char *domainName, char ip[65] )
 #endif // #if RAKNET_SUPPORT_IPV6==1
 }
 
+
 void DomainNameToIP_Berkley_IPV4( const char *domainName, char ip[65] )
 {
 	static struct in_addr addr;
@@ -82,6 +83,8 @@ void DomainNameToIP_Berkley_IPV4( const char *domainName, char ip[65] )
 	strcpy(ip, inet_ntoa( addr ));
 }
 
+
+
 void DomainNameToIP_Berkley( const char *domainName, char ip[65] )
 {
 #if RAKNET_SUPPORT_IPV6==1
@@ -90,6 +93,7 @@ void DomainNameToIP_Berkley( const char *domainName, char ip[65] )
 	return DomainNameToIP_Berkley_IPV4(domainName, ip);
 #endif
 }
+
 
 
 

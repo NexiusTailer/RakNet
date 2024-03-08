@@ -132,7 +132,7 @@ public:
 	/// \return 0 on success, nonzero on failure.
 //	static int SendTo( UDPSOCKET s, const char *data, int length, const char ip[ 16 ], unsigned short port, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, const char *file, const long line );
 
-	/// Call sendto (UDP obviously)
+	/// Call sendto' (UDP obviously)
 	/// It won't reach the recipient, except on a LAN
 	/// However, this is good for opening routers / firewalls
 	/// \param[in] s the socket
