@@ -249,7 +249,7 @@ int main(void)
 			if (p->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
 			{
 				printf("\nID_CONNECTION_REQUEST_ACCEPTED from %s\n", p->systemAddress.ToString());
-				rakVoice.RequestVoiceChannel(p->systemAddress);
+				rakVoice.RequestVoiceChannel(p->guid);
 			}
 			else if (p->data[0]==ID_RAKVOICE_OPEN_CHANNEL_REQUEST)
 			{

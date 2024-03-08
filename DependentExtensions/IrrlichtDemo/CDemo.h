@@ -7,7 +7,10 @@
 #define USE_IRRKLANG
 //#define USE_SDL_MIXER
 
-// Include path in project by defaults assumes C:\irrlicht-1.5
+// For windows 1.6 must be used for this demo unless you recompile the dlls and replace them, 
+// however it is untested on windows with later versions
+// Include path in windows project by defaults assumes C:\irrlicht-1.6
+// 1.6 or higher may be used in linux
 // Get Irrlicht from http://irrlicht.sourceforge.net/ , it's a great engine
 #include <irrlicht.h>
 
@@ -24,7 +27,11 @@ using namespace irr;
 
 // Included in RakNet download with permission by Nikolaus Gebhardt
 #ifdef USE_IRRKLANG
-	#include <irrKlang-1.1.3/irrKlang.h>
+	#if defined(__WIN32__) || defined(WIN32) || defined(_WIN32)
+		#include <irrKlang-1.1.3/irrKlang.h>
+	#else
+		#include "irrKlang.h"
+	#endif
 
 	#ifdef _IRR_WINDOWS_
 	#pragma comment (lib, "irrKlang-1.1.3/irrKlang.lib")

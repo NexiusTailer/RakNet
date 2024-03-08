@@ -53,7 +53,7 @@ static int PACallback( void *inputBuffer, void *outputBuffer,
 
 		for (i=0; i < rakPeer->GetMaximumNumberOfPeers(); i++)
 		{
-			rakVoice.SendFrame(rakPeer->GetSystemAddressFromIndex(i), inputBuffer);
+			rakVoice.SendFrame(rakPeer->GetGUIDFromIndex(i), inputBuffer);
 		}
 #else
 		rakVoice.SendFrame(UNASSIGNED_SYSTEM_ADDRESS, inputBuffer);
@@ -241,7 +241,7 @@ int main(void)
 				else
 				{
 					printf("ID_CONNECTION_REQUEST_ACCEPTED from %s\n", p->systemAddress.ToString());
-					rakVoice.RequestVoiceChannel(p->systemAddress);
+					rakVoice.RequestVoiceChannel(p->guid);
 				}
 			}
 			else if (p->data[0]==ID_CONNECTION_ATTEMPT_FAILED)

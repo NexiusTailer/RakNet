@@ -15,11 +15,7 @@
 #include "DebugTools.h"
 #include "TestHelpers.h"
 #include "CommonFunctions.h"
-#include "RakTimer.h";
-
-
-
-
+#include "RakTimer.h"
 
 
 class PingTestsTest : public TestInterface

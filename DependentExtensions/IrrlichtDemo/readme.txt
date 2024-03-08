@@ -16,7 +16,8 @@ Project: IrrlichtDemo
 
 Description: Demonstrates Irrlicht modified with RakNet for peer to peer multiplayer, written in two days. See RakNetStuff.cpp for most of the networking code
 
-Dependencies: Irrlicht version 1.5.1, assumed to be installed at c:\irlicht1-5.1 . If you don't have it installed here, change the project paths. IrrKlang included by default with permission of the author. The website for Irrlicht is http://irrlicht.sourceforge.net/
+Dependencies: For windows Irrlicht version 1.6 is assumed to be installed at c:\irlicht1-6 . If you don't have it installed here, change the project paths. IrrKlang included by default with permission of the author. The website for Irrlicht is http://irrlicht.sourceforge.net/
+For linux version 1.6 or higher may be used, irrKlang headers and .so file is also required for the linux version.
 
 Related projects: NatPunchthrough, UDPProxy, PHPDirectoryServer
 

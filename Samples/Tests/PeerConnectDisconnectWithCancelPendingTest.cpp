@@ -44,7 +44,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 
 
-	char str[512];
+
 	char pauseStr[512];
 	SystemAddress currentSystem;
 
@@ -132,9 +132,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 		RakSleep(100);
 		//Clear pending if not finished
-
-
-		int before[peerNum],after[peerNum];
+
 		for (int i=0;i<peerNum;i++)
 		{
 
@@ -146,23 +144,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 				currentSystem.SetBinaryAddress("127.0.0.1");
 				currentSystem.port=60000+j;
 
-
-				before[i]=peerList[i]->GetIndexFromSystemAddress(currentSystem);
-
-
-
 				peerList[i]->CancelConnectionAttempt(currentSystem);  	//Make sure a connection is not pending before trying to connect.
-
-
-				after[i] =peerList[i]->GetIndexFromSystemAddress(currentSystem);
-
-
-				peerList[i]->GetSystemList(systemList,guidList);//Get connectionlist for use in breakpoint
-
-				int len=systemList.Size();
-
-
-
 
 			}
 
@@ -185,7 +167,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 				{
 
 
-					currentSystem.SetBinaryAddress(str);
+					currentSystem.SetBinaryAddress("127.0.0.1");
 					currentSystem.port=60000+j;
 
 
@@ -196,7 +178,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 
 
-					if(after[i]!=-1&&before[i]==after[i]&&!peerList[i]->IsConnected (currentSystem,false,true) )//Did we drop a pending connection? 
+					if(peerList[i]->IsConnectionAttemptPending(currentSystem))//Did we drop the pending connection? 
 					{
 						if (isVerbose)
 							DebugTools::ShowError("Did not cancel the pending request \n",!noPauses && isVerbose,__LINE__,__FILE__);

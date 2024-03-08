@@ -1,6 +1,5 @@
 #include "UPNPNATInternal.h"
-
-
+#include "XMLParser.h"
 static bool parseUrl(const char* url,RakNet::RakString& host,unsigned short* port,RakNet::RakString& path)
 {
 	RakNet::RakString strUrl=url;
@@ -50,36 +49,38 @@ static bool parseUrl(const char* url,RakNet::RakString& host,unsigned short* por
 	return true;
 }
 
-
-
-
-
-
-
-
-
-
-
 UPNPNATInternal::UPNPNATInternal(RakNet::RakString whichInterface,RakNetTime timeout)
 {
+	Restart(whichInterface, timeout);
+}
+
+UPNPNATInternal::~UPNPNATInternal(){}
+
+UPNPNATInternal::UPNPNATInternal()
+{
+	timeOut=0;
+	status=NAT_INIT;
+	strcpy(httpOk , "200 OK");
+}
+
+void UPNPNATInternal::Restart(RakNet::RakString whichInterface,RakNetTime timeout)
+{
+	tcpInterface.Stop();
+
 	timeOut=timeout;
 	status=NAT_INIT;
 	strcpy(httpOk , "200 OK");
 	thisSocketAddress= whichInterface;
 #ifdef _WIN32
-	failedStart=tcpIface.Start(0,0,1,THREAD_PRIORITY_NORMAL);
+	failedStart=tcpInterface.Start(0,0,1);
 #else
-	failedStart=tcpIface.Start(0,0,1,4);
+	failedStart=tcpInterface.Start(0,0,1);
 #endif
-
-
 }
-
-UPNPNATInternal::~UPNPNATInternal(){}
 
 bool UPNPNATInternal::TcpConnect(const char * host,unsigned short int port)
 {
-	tcpIface.Connect(host,port,true);
+	tcpInterface.Connect(host,port,true);
 
 	RakNetTime stopWaiting = RakNet::GetTime() + timeOut;
 	while (RakNet::GetTime() < stopWaiting)
@@ -87,7 +88,7 @@ bool UPNPNATInternal::TcpConnect(const char * host,unsigned short int port)
 
 		RakSleep(50);
 
-		serverAddress=tcpIface.HasCompletedConnectionAttempt();
+		serverAddress=tcpInterface.HasCompletedConnectionAttempt();
 
 		if(serverAddress!=UNASSIGNED_SYSTEM_ADDRESS)
 		{
@@ -104,48 +105,30 @@ bool UPNPNATInternal::TcpConnect(const char * host,unsigned short int port)
 	return false;	
 }
 
-bool UPNPNATInternal::Discovery()
+bool UPNPNATInternal::Discovery(void)
 {
 	const RakNet::RakString searchRequestString= "M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\nST:upnp:rootdevice\r\nMAN:\"ssdp:discover\"\r\nMX:3\r\n\r\n";
-
-
-
-
-
 	int ret;
 	RakNet::RakString sendBuff=searchRequestString;
 	RakNet::RakString recvBuff;
-
-
 	RakNet::RakString broadCastAddress ="";
-
-
 	u_long hostAddr;
 	u_long netMask;
 	u_long netAddr;
 	u_long dirBcastAddr;
-
-
 
 	const int targetPort =1900;
 
 	bool bOptVal = true;
 	int bOptLen = sizeof(bool);
 	int iOptLen = sizeof(int);
-
-
 	RakNetSmartPtr<RakNetSocket> socketptr;
 	socketptr= new RakNetSocket();
 	SocketLayer * currentInstance=SocketLayer::Instance();
-
-
-	RakNetTime stopWaiting = RakNet::GetTime() + 5000;
-
+	
 	socketptr->s= (unsigned int)currentInstance->CreateBoundSocket(0,false,thisSocketAddress.C_String(),true);
-
-
 	currentInstance->SetNonBlocking(socketptr->s);
-
+	
 	SystemAddress connvertSys,convertSys2;
 
 	connvertSys.SetBinaryAddress(thisSocketAddress.C_String());
@@ -154,50 +137,33 @@ bool UPNPNATInternal::Discovery()
 
 	if (subNetAddress=="")
 	{
-	subNetAddress="255.255.255.0";
+		subNetAddress="255.255.255.0";
 	}
-
-
 	hostAddr = connvertSys.binaryAddress;   
 	convertSys2.SetBinaryAddress(subNetAddress.C_String());
 	netMask = convertSys2.binaryAddress;  
 	netAddr = (hostAddr & netMask);         
 	dirBcastAddr = netAddr | (~netMask); 
-
-
 	char tmpBroadcast[32];
 
 	sprintf(tmpBroadcast,"%d.%d.%d.%d",  ((dirBcastAddr >> (24 - 8 * 3)) & 0xFF),((dirBcastAddr >> (24 - 16)) & 0xFF),((dirBcastAddr >> (24 - 8 )) & 0xFF),((dirBcastAddr >> (24)) & 0xFF));
 
-
-
-	//printf ("R: %s, %s\n",tmpBroadcast,thisSocketAddress.C_String());
-
 	broadCastAddress=tmpBroadcast;
-
-
 	char buff2[maxBuffSize];
-
-
-
-
 	currentInstance->SendTo(socketptr->s, sendBuff.C_String(), (int) sendBuff.GetLength()+1, broadCastAddress.C_String(), targetPort, false);
 
 	SystemAddress outAddress;
 	RakNetTimeUS timeOut;
-
+	RakNetTime stopWaiting = RakNet::GetTime() + 5000;//Reply times can vary, this value seems to be a good buffer to catch
+	//the reply so the discovery doesn't fail, most of the time the reply is almost immediate
 	while (RakNet::GetTime() < stopWaiting)
 	{
-
-
 
 		memset(buff2, 0, sizeof(buff2));
 
 		currentInstance->RawRecvFromNonBlocking( socketptr->s, false, buff2, &ret, &outAddress, &timeOut);
-
-
 		if(ret==-1){
-			RakSleep(50);
+			RakSleep(100);
 			continue;
 		}
 
@@ -216,8 +182,6 @@ bool UPNPNATInternal::Discovery()
 			continue;    //invalid response
 
 		describeUrl.Assign(recvBuff,begin,end-begin);
-
-
 		if(!GetDescription()){
 			RakSleep(50);
 			continue;
@@ -227,8 +191,6 @@ bool UPNPNATInternal::Discovery()
 			RakSleep(50);
 			continue;
 		}
-
-
 		status=NAT_FOUND;	//find a router
 
 		return true ;
@@ -236,8 +198,6 @@ bool UPNPNATInternal::Discovery()
 
 	status=NAT_ERROR;
 	lastError="Fail to find an UPNP NAT.\n";
-
-
 	//delete currentInstance;
 	return false;                               //no router found
 }
@@ -266,13 +226,11 @@ bool UPNPNATInternal::GetDescription()
 	RakNet::RakString httpRequest=request;
 
 	//send request
-	tcpIface.Send(httpRequest.C_String(),(int) httpRequest.GetLength(),UNASSIGNED_SYSTEM_ADDRESS,true);
-	
+	tcpInterface.Send(httpRequest.C_String(),(int) httpRequest.GetLength(),UNASSIGNED_SYSTEM_ADDRESS,true);
+
 
 	RakSleep(1000);
 	descriptionInfo=WaitAndReturnResponse(5000);	
-
-
 
 	return true;
 }
@@ -280,17 +238,15 @@ bool UPNPNATInternal::GetDescription()
 RakNet::RakString UPNPNATInternal::WaitAndReturnResponse(int waitTime)
 {
 	Packet *packet;
-
-
 	RakNet::RakString response;	
 	RakNetTime stopWaiting = RakNet::GetTime() + waitTime;
 	while (RakNet::GetTime() < stopWaiting)
 	{
-		while ( (packet=tcpIface.Receive()) >0) 
+		while ( (packet=tcpInterface.Receive()) >0) 
 		{
 			response+=packet->data;
 
-			tcpIface.DeallocatePacket(packet);
+			tcpInterface.DeallocatePacket(packet);
 
 		}
 	}
@@ -299,16 +255,12 @@ RakNet::RakString UPNPNATInternal::WaitAndReturnResponse(int waitTime)
 
 bool UPNPNATInternal::ParseDescription()
 {
-
-
 	const char deviceType1[]=	"urn:schemas-upnp-org:device:InternetGatewayDevice:1";
 	const char deviceType2[]=	"urn:schemas-upnp-org:device:WANDevice:1";
 	const char deviceType3[]=	"urn:schemas-upnp-org:device:WANConnectionDevice:1";
 
 	const char serviceWanIp[]=	"urn:schemas-upnp-org:service:WANIPConnection:1";
 	const char serviceWanPPP[]= "urn:schemas-upnp-org:service:WANPPPConnection:1" ;
-
-
 
 	XMLNode node=XMLNode::parseString(descriptionInfo.C_String(),"root");
 	if(node.isEmpty())
@@ -445,32 +397,22 @@ bool UPNPNATInternal::ParseDescription()
 
 	XMLNode controlURLNode=serviceNode.getChildNode("controlURL");
 	controlUrl=controlURLNode.getText();
-
-
 	if(controlUrl.Find("http://")==RakNet::RakString::nPos&&controlUrl.Find("HTTP://")==RakNet::RakString::nPos)
 		controlUrl=baseUrl+controlUrl;
 	if(serviceDescribeUrl.Find("http://")==RakNet::RakString::nPos&&serviceDescribeUrl.Find("HTTP://")==RakNet::RakString::nPos)
 		serviceDescribeUrl=baseUrl+serviceDescribeUrl;
 
-	tcpIface.CloseConnection(serverAddress);
+	tcpInterface.CloseConnection(serverAddress);
 
 	status=NAT_GETCONTROL;
 	return true;	
 }
-
-
 bool UPNPNATInternal::AddPortMapping(const char * description, const char * destinationIp, unsigned short int portEx, unsigned short int port_in, char * protocol)
 {
-
-
 	const char httpHeaderAction[]= "POST %s HTTP/1.1\r\nHOST: %s:%u\r\nSOAPACTION:\"%s#%s\"\r\nCONTENT-TYPE: text/xml ; charset=\"utf-8\"\r\nContent-Length: %d \r\n\r\n";
 
 	const char soapAction[]=   "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\r\n<s:Body>\r\n<u:%s xmlns:u=\"%s\">\r\n%s</u:%s>\r\n</s:Body>\r\n</s:Envelope>\r\n";
-
-
 	const char portMappingLeaseTime[]=  "0";
-
-
 	const char actionAdd[]= 	 "AddPortMapping";
 
 	const char addPortMappingParams[]= "<NewRemoteHost></NewRemoteHost>\r\n<NewExternalPort>%u</NewExternalPort>\r\n<NewProtocol>%s</NewProtocol>\r\n<NewInternalPort>%u</NewInternalPort>\r\n<NewInternalClient>%s</NewInternalClient>\r\n<NewEnabled>1</NewEnabled>\r\n<NewPortMappingDescription>%s</NewPortMappingDescription>\r\n<NewLeaseDuration>0</NewLeaseDuration>\r\n";
@@ -487,8 +429,6 @@ bool UPNPNATInternal::AddPortMapping(const char * description, const char * dest
 		return false;
 	}
 
-
-
 	if(!TcpConnect(host.C_String(),port)){
 		return false;
 	}
@@ -504,11 +444,7 @@ bool UPNPNATInternal::AddPortMapping(const char * description, const char * dest
 	RakNet::RakString action_message=buff;
 
 	RakNet::RakString httpRequest=action_message+soap_message;
-
-
-	tcpIface.Send(httpRequest.C_String(),(int) httpRequest.GetLength(),UNASSIGNED_SYSTEM_ADDRESS,true);
-
-
+	tcpInterface.Send(httpRequest.C_String(),(int) httpRequest.GetLength(),UNASSIGNED_SYSTEM_ADDRESS,true);
 
 	RakSleep(1000);
 	RakNet::RakString response=WaitAndReturnResponse(5000);
@@ -519,12 +455,10 @@ bool UPNPNATInternal::AddPortMapping(const char * description, const char * dest
 		char temp[100];
 		sprintf(temp,"Fail to add port mapping (%s/%s)\n",description,protocol);
 		lastError=temp;
-	
+
 		return false;
 	}
-
-
-	tcpIface.CloseConnection(serverAddress);
+	tcpInterface.CloseConnection(serverAddress);
 	status=NAT_ADD;
 	return true;	
 }

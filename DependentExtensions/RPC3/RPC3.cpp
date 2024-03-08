@@ -263,7 +263,9 @@ void RPC3::OnRPC3Call(SystemAddress systemAddress, unsigned char *data, unsigned
 	bs.Read(hasNetworkId);
 	if (hasNetworkId)
 	{
-		bs.Read(networkId);
+		bool readSuccess = bs.Read(networkId);
+		RakAssert(readSuccess);
+		RakAssert(networkId!=UNASSIGNED_NETWORK_ID);
 		if (networkIdManager==0 && (networkIdManager=rakPeerInterface->GetNetworkIDManager())==0)
 		{
 			// Failed - Tried to call object member, however, networkIDManager system was never registered
@@ -538,7 +540,8 @@ void RPC3::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID
 
 void RPC3::OnShutdown(void)
 {
-	Clear();
+	// Not needed, and if the user calls Shutdown inadvertantly, it unregisters his functions
+	// Clear();
 }
 
 void RPC3::Clear(void)

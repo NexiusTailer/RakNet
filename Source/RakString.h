@@ -185,7 +185,7 @@ public:
 
 	/// Serialize to a bitstream, uncompressed (slightly faster)
 	/// \param[out] bs Bitstream to serialize to
-	void Serialize(BitStream *bs);
+	void Serialize(BitStream *bs) const;
 
 	/// Static version of the Serialize function
 	static void Serialize(const char *str, BitStream *bs);
@@ -195,7 +195,7 @@ public:
 	/// \param[in] languageId languageId to pass to the StringCompressor class
 	/// \param[in] writeLanguageId encode the languageId variable in the stream. If false, 0 is assumed, and DeserializeCompressed will not look for this variable in the stream (saves bandwidth)
 	/// \pre StringCompressor::AddReference must have been called to instantiate the class (Happens automatically from RakPeer::Startup())
-	void SerializeCompressed(BitStream *bs, int languageId=0, bool writeLanguageId=false);
+	void SerializeCompressed(BitStream *bs, int languageId=0, bool writeLanguageId=false) const;
 
 	/// Static version of the SerializeCompressed function
 	static void SerializeCompressed(const char *str, BitStream *bs, int languageId=0, bool writeLanguageId=false);

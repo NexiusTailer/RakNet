@@ -20,7 +20,6 @@ THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR ANY PURPOSE.
 
 #include "LobbyTypes.h"
 
-
 // The data provider is the interface between the lobby application and
 // the lobby data. This data can exist online (ex: GameSpy central servers)
 // or offline, and the data provider is intended to encapsulate this
@@ -281,6 +280,28 @@ public:
     virtual UInt        GetMaxStatusStringLength()          { return 35; }
     virtual UInt        GetMaxBuddyRequestReasonLength()    { return 128; }
     virtual UInt        GetMaxErrorStringLength()           { return 128; }
+
+	virtual void f2c_Platform_Query(){}
+	virtual void f2c_Parties_InviteBuddyToParty(){}
+	virtual void f2c_Parties_Leave(){}
+	virtual void f2c_Parties_StartPrivate(){}
+	virtual void f2c_Parties_StartRanked(){}
+	virtual void f2c_OnProgressStatusPressed(){}
+	virtual void f2c_Parties_GetBuddies(){}
+	virtual void f2c_Parties_GetPartyMembers(){}
+	virtual void f2c_Rooms_CreateRoom(){}
+	virtual void f2c_Rooms_OnMakePrivateSlotPressed(){}
+	virtual void f2c_Rooms_OnKickPlayerPressed(){}
+	virtual void f2c_Rooms_OnLockTeamsPressed(){}
+	virtual void f2c_Rooms_OnInviteBuddyPressed(){}
+	virtual void f2c_Rooms_OnSwitchTeamsPressed(){}
+	virtual void f2c_Rooms_OnToggleReadyPressed(){}
+	virtual void f2c_Rooms_OnToggleSpectatorPresed(){}
+	virtual void f2c_Rooms_OnChatMessage(){}
+	virtual void f2c_Rooms_OnLeavePressed(){}
+	virtual void f2c_Rooms_Join(int roomNumber){}
+	virtual void f2c_Rooms_QuickJoin(){}
+	virtual void f2c_LoadedSWF(){}
 
 protected:
 

@@ -139,7 +139,7 @@ int main(int argc, char **argv)
 
 		printf("Waiting for connections...\n");
 		SocketDescriptor socketDescriptor(localPort,0);
-		receiver->Startup(32, 30, &socketDescriptor, 1);
+		receiver->Startup(1, 30, &socketDescriptor, 1);
 		receiver->SetMaximumIncomingConnections(32);
 	}
 

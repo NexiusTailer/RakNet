@@ -11,12 +11,17 @@ THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR ANY PURPOSE.
 
 **********************************************************************/
 
-// RakNetDataProvider_PC must be first to avoid
+// WindowsIncludes must be first to avoid
 // 1>c:\program files (x86)\microsoft visual studio 8\vc\platformsdk\include\winsock2.h(112) : error C2011: 'fd_set' : 'struct' type redefinition
 // 1>        c:\program files (x86)\microsoft visual studio 8\vc\platformsdk\include\winsock.h(54) : see declaration of 'fd_set'
 // 1>c:\program files (x86)\microsoft visual studio 8\vc\platformsdk\include\winsock2.h(147) : warning C4005: 'FD_SET' : macro redefinition
 // 1>        c:\program files (x86)\microsoft visual studio 8\vc\platformsdk\include\winsock.h(88) : see previous definition of 'FD_SET'
+#include "WindowsIncludes.h"
+#ifdef _WIN32
 #include "RakNetDataProvider_PC.h"
+#else
+#include "RakNetDataProvider_PS3.h"
+#endif
 #include "LobbyController.h"
 #include "Offline\OfflineDataProvider.h"
 
@@ -38,11 +43,65 @@ TopServerIndex(-1)
 #endif
 
     BootDataProvider();
+
+#ifdef TELNET_DEBUGGING
+	lobbyControllerCommandParser = new LobbyControllerCommandParser(this);
+
+	lobbyControllerCommandParser->RegisterCommand(3,"c2f_ShowProgress","bool showCancel, bool showOK, GString dialogId");
+	lobbyControllerCommandParser->RegisterCommand(1,"c2f_HideProgress","GString dialogId");
+	lobbyControllerCommandParser->RegisterCommand(1,"c2f_LoadSWF","GString swfId");
+	lobbyControllerCommandParser->RegisterCommand(2,"c2f_Parties_AddOrUpdateBuddy","GString name, GString presenceString");
+	lobbyControllerCommandParser->RegisterCommand(1,"c2f_Parties_RemoveBuddy","GString name");
+	lobbyControllerCommandParser->RegisterCommand(2,"c2f_Parties_AddOrUpdatePartyMember","GString name, GString connectionStatus");
+	lobbyControllerCommandParser->RegisterCommand(1,"c2f_Parties_RemovePartyMember","GString name");
+	lobbyControllerCommandParser->RegisterCommand(CommandParserInterface::VARIABLE_NUMBER_OF_PARAMETERS,
+		"c2f_Rooms_Show",
+		"GString roomName, bool teamsAreLocked, bool showGameStartCountdown, int gameStartCountdownInSeconds, int numSlots\r\n"
+		"(For each slot in numSlots)\r\n"
+		"GString slotStatus (open, private, spectator, player)\r\n"
+		"(If player, then the following parameters also apply)\r\n"
+		"GString playerName, GString playerConnectionStatus, int playerCurrentTeamNumber, int playerDesiredTeamNumber, bool playerIsReady, bool playerIsTalking, int playerPing\r\n"
+		);
+	lobbyControllerCommandParser->RegisterCommand(1,"c2f_Rooms_UpdateTeamsAreLocked","bool isLocked");
+	lobbyControllerCommandParser->RegisterCommand(CommandParserInterface::VARIABLE_NUMBER_OF_PARAMETERS,"c2f_Rooms_UpdateSlots",
+		"int numSlots\r\n"
+		"(For each slot in numSlots)\r\n"
+		"GString slotStatus (open, private, spectator, player)\r\n"
+		"(If player, then the following parameters also apply)\r\n"
+		"GString playerName, GString playerConnectionStatus, int playerCurrentTeamNumber, int playerDesiredTeamNumber, bool playerIsReady, bool playerIsTalking, int playerPing\r\n"
+		);
+	lobbyControllerCommandParser->RegisterCommand(7,"c2f_Rooms_Update_Player",
+		"GString playerName, GString playerConnectionStatus, int playerCurrentTeamNumber, int playerDesiredTeamNumber, bool playerIsReady, bool playerIsTalking, int playerPing\r\n"
+		);
+	lobbyControllerCommandParser->RegisterCommand(0,"c2f_Rooms_ShowGameStartCountdown","");
+	lobbyControllerCommandParser->RegisterCommand(0,"c2f_Rooms_HideGameStartCountdown","");
+	lobbyControllerCommandParser->RegisterCommand(1,"c2f_Rooms_UpdateGameStartCountdown","gameStartCountdownInSeconds");
+	lobbyControllerCommandParser->RegisterCommand(0,"c2f_Rooms_OnGameStarted","");
+	lobbyControllerCommandParser->RegisterCommand(2,"c2f_Rooms_ShowChatMessage","GString senderName, GString message");
+
+	consoleServer = new ConsoleServer;
+	rakPeer = RakNetworkFactory::GetRakPeerInterface();
+	SocketDescriptor sd(23,0);
+	rakPeer->Startup(1,10,&sd,1);
+	rakPeer->SetMaximumIncomingConnections(1);
+	raknetTransport = new RakNetTransport2;
+	rakPeer->AttachPlugin(raknetTransport);
+	raknetTransport->Start(23,true);
+	consoleServer->AddCommandParser(lobbyControllerCommandParser);
+	consoleServer->SetTransportProvider(raknetTransport, 23);
+	consoleServer->SetPrompt("> "); // Show this character when waiting for user input
+#endif
 }
 
 
 LobbyController::~LobbyController()
 {
+#ifdef TELNET_DEBUGGING
+	delete lobbyControllerCommandParser;
+	delete consoleServer;
+	delete raknetTransport;
+#endif
+
     if (pDataProvider)
     {
         pDataProvider->Stop();
@@ -64,14 +123,23 @@ void LobbyController::BootDataProvider()
     }
 #ifndef LOBBY_NO_ONLINE
     if (bOfflineMode)
+	{
         pDataProvider = *new OfflineDataProvider();
+	}
     else 
+	{
+#ifdef _WIN32
         pDataProvider = *new RakNetDataProvider_PC();
+#else
+		pDataProvider = *new RakNetDataProvider_PS3();
+#endif
+	}
 #else
     pDataProvider = *new OfflineDataProvider();
 #endif
     pDataProvider->AddResultListener(this);
     pDataProvider->Start();
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -96,9 +164,15 @@ void LobbyController::ClearData()
 void LobbyController::ProcessTasks()
 {
     pDataProvider->ExecuteSynchronousTasks();
+
+#ifdef TELNET_DEBUGGING
+	Packet *packet;
+	for (packet=rakPeer->Receive(); packet; rakPeer->DeallocatePacket(packet), packet=rakPeer->Receive())
+	{
+	}
+	consoleServer->Update();
+#endif
 }
-
-
 //////////////////////////////////////////////////////////////////////////
 // FxDelegate callback installer. This method registers all the callbacks
 // for the user interface.
@@ -158,6 +232,28 @@ void LobbyController::Accept(FxDelegateHandler::CallbackProcessor* cp)
 
     cp->Process("applyLanguage", LobbyController::OnApplyLanguage);
     cp->Process("getCurrentLang", LobbyController::OnGetCurrentLanguage);
+
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Platform_Query);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Parties_InviteBuddyToParty);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Parties_Leave);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Parties_StartPrivate);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Parties_StartRanked);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_OnProgressStatusPressed);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Parties_GetBuddies);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Parties_GetPartyMembers);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Rooms_CreateRoom);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Rooms_OnMakePrivateSlotPressed);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Rooms_OnKickPlayerPressed);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Rooms_OnLockTeamsPressed);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Rooms_OnInviteBuddyPressed);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Rooms_OnSwitchTeamsPressed);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Rooms_OnToggleReadyPressed);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Rooms_OnToggleSpectatorPresed);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Rooms_OnChatMessage);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Rooms_OnLeavePressed);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Rooms_Join);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_Rooms_QuickJoin);
+	ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(cp,LobbyController,f2c_LoadedSWF);
 }
 
 
@@ -172,6 +268,18 @@ void LobbyController::OnDataProviderResult(LDPResult* r)
     
     switch (r->Type)
     {
+		case LDPResult::R_ServerErrorReceived:
+		{	
+			GFC_DEBUG_MESSAGE(1, "> Unable to connect with server.");
+			FxResponseArgs<1> args;
+			args.Add(GFxValue(r->Error.Message));
+			pDelegate->Invoke(pMovie, "openErrorDialog", args);
+
+			pDataProvider->StopUpdating(ActiveServerListNetwork);
+			pDataProvider->Logout();
+			ClearData();
+			break;
+		}
     case LDPResult::R_UserLoggedIn:
         {
             GASSERT(pLoginProfile.GetPtr());
@@ -1580,3 +1688,348 @@ void LobbyController::NotifyPlayerListsClear()
         pDelegate->Invoke(pMovie, "refreshPlayerLists", args2);
     }
 }
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void LobbyController::c2f_ShowProgress(bool showCancel, bool showOK, GString dialogId)
+{
+	FxResponseArgs<3> rargs;
+	rargs.Add(showCancel);
+	rargs.Add(showOK);
+	rargs.Add(GFxValue(dialogId.ToCStr()));
+	FxDelegate::Invoke(pMovie, "c2f_ShowProgress", rargs);
+}
+void LobbyController::c2f_HideProgress(GString dialogId)
+{
+	FxResponseArgs<1> rargs;
+	rargs.Add(GFxValue(dialogId.ToCStr()));
+	FxDelegate::Invoke(pMovie, "c2f_HideProgress", rargs);
+}
+void LobbyController::c2f_LoadSWF(GString swfId)
+{
+	FxResponseArgs<1> rargs;
+	rargs.Add(GFxValue(swfId.ToCStr()));
+	FxDelegate::Invoke(pMovie, "c2f_LoadSWF", rargs);
+}
+void LobbyController::c2f_Parties_AddOrUpdateBuddy(GString name, GString presenceString)
+{
+	FxResponseArgs<2> rargs;
+	rargs.Add(GFxValue(name.ToCStr()));
+	rargs.Add(GFxValue(presenceString.ToCStr()));
+	FxDelegate::Invoke(pMovie, "c2f_Parties_AddOrUpdateBuddy", rargs);
+}
+void LobbyController::c2f_Parties_RemoveBuddy(GString name)
+{
+	FxResponseArgs<1> rargs;
+	rargs.Add(GFxValue(name.ToCStr()));
+	FxDelegate::Invoke(pMovie, "c2f_Parties_RemoveBuddy", rargs);
+}
+void LobbyController::c2f_Parties_AddOrUpdatePartyMember(GString name, GString connectionStatus)
+{
+	FxResponseArgs<2> rargs;
+	rargs.Add(GFxValue(name.ToCStr()));
+	rargs.Add(GFxValue(connectionStatus.ToCStr()));
+	FxDelegate::Invoke(pMovie, "c2f_Parties_AddOrUpdatePartyMember", rargs);
+}
+void LobbyController::c2f_Parties_RemovePartyMember(GString name)
+{
+	FxResponseArgs<1> rargs;
+	rargs.Add(GFxValue(name.ToCStr()));
+	FxDelegate::Invoke(pMovie, "c2f_Parties_RemovePartyMember", rargs);
+}
+void LobbyController::RoomPlayer::WriteToArgs(FxResponseArgsList &rargs) const
+{
+	rargs.Add(GFxValue(playerName.ToCStr()));
+	rargs.Add(GFxValue(playerConnectionStatus.ToCStr()));
+	rargs.Add(GFxValue(playerCurrentTeam.ToCStr()));
+	rargs.Add(GFxValue(playerDesiredTeam.ToCStr()));
+	rargs.Add(playerIsReady);
+	rargs.Add(playerIsTalking);
+	rargs.Add((Double) (playerPing));
+}
+void LobbyController::RoomSlot::WriteToArgs(FxResponseArgsList &rargs) const
+{
+	if (slotStatus==SS_IS_OPEN)
+		rargs.Add( GFxValue( "open" )  );
+	else if (slotStatus==SS_IS_PRIVATE)
+		rargs.Add( GFxValue( "private" ) );
+	else if (slotStatus==SS_IS_SPECTATOR)
+		rargs.Add( GFxValue( "spectator" ) );
+	else if (slotStatus==SS_IS_PLAYER)
+	{
+		rargs.Add( GFxValue( "player" ));
+		roomPlayer->WriteToArgs(rargs);
+	}
+}
+void LobbyController::c2f_Rooms_Show(GString roomName, bool teamsAreLocked, bool showGameStartCountdown, int gameStartCountdownInSeconds, int numSlots, const RoomSlot *roomSlots)
+{
+	FxResponseArgsList rargs;
+	rargs.Add(GFxValue(roomName.ToCStr()));
+	rargs.Add(teamsAreLocked);
+	rargs.Add(showGameStartCountdown);
+	rargs.Add((Double) gameStartCountdownInSeconds);
+	rargs.Add((Double) numSlots);
+	for (int i=0; i < numSlots; i++)
+		roomSlots[i].WriteToArgs(rargs);
+	FxDelegate::Invoke(pMovie, "c2f_Rooms_Show", rargs);
+}
+void LobbyController::c2f_Rooms_UpdateTeamsAreLocked(bool isLocked)
+{
+	FxResponseArgs<1> rargs;
+	rargs.Add(isLocked);
+	FxDelegate::Invoke(pMovie, "c2f_Rooms_UpdateTeamsAreLocked", rargs);
+}
+void LobbyController::c2f_Rooms_UpdateSlots(int numSlots, RoomSlot *roomSlots)
+{
+	FxResponseArgsList rargs;
+	rargs.Add((Double) numSlots);
+	for (int i=0; i < numSlots; i++)
+		roomSlots[i].WriteToArgs(rargs);
+	FxDelegate::Invoke(pMovie, "c2f_Rooms_UpdateSlots", rargs);
+}
+void LobbyController::c2f_Rooms_Update_Player(const RoomPlayer *roomPlayer)
+{
+	FxResponseArgsList rargs;
+	roomPlayer->WriteToArgs(rargs);
+	FxDelegate::Invoke(pMovie, "c2f_Rooms_Update_Player", rargs);
+}
+void LobbyController::c2f_Rooms_ShowGameStartCountdown(void)
+{
+	FxResponseArgsList rargs;
+	FxDelegate::Invoke(pMovie, "c2f_Rooms_ShowGameStartCountdown", rargs);
+}
+void LobbyController::c2f_Rooms_HideGameStartCountdown(void)
+{
+	FxResponseArgsList rargs;
+	FxDelegate::Invoke(pMovie, "c2f_Rooms_HideGameStartCountdown", rargs);
+}
+void LobbyController::c2f_Rooms_UpdateGameStartCountdown(int gameStartCountdownInSeconds)
+{
+	FxResponseArgs<1> rargs;
+	rargs.Add((Double) gameStartCountdownInSeconds);
+	FxDelegate::Invoke(pMovie, "c2f_Rooms_UpdateGameStartCountdown", rargs);
+}
+void LobbyController::c2f_Rooms_OnGameStarted(void)
+{
+	FxResponseArgsList rargs;
+	FxDelegate::Invoke(pMovie, "c2f_Rooms_OnGameStarted", rargs);
+}
+void LobbyController::c2f_Rooms_ShowChatMessage(GString senderName, GString message)
+{
+	FxResponseArgs<2> rargs;
+	rargs.Add(GFxValue(senderName.ToCStr()));
+	rargs.Add(GFxValue(message.ToCStr()));
+	FxDelegate::Invoke(pMovie, "c2f_Rooms_ShowChatMessage", rargs);
+}
+
+
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Platform_Query) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Parties_InviteBuddyToParty) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Parties_Leave) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Parties_StartPrivate) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Parties_StartRanked) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_OnProgressStatusPressed) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Parties_GetBuddies) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Parties_GetPartyMembers) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Rooms_CreateRoom) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Rooms_OnMakePrivateSlotPressed) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Rooms_OnKickPlayerPressed) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Rooms_OnLockTeamsPressed) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Rooms_OnInviteBuddyPressed) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Rooms_OnSwitchTeamsPressed) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Rooms_OnToggleReadyPressed) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Rooms_OnToggleSpectatorPresed) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Rooms_OnChatMessage) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Rooms_OnLeavePressed) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Rooms_Join)
+{
+	pDataProvider->f2c_Rooms_Join(pparams[0].GetNumber());
+}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_Rooms_QuickJoin) {}
+ACTIONSCRIPT_CALLABLE_FUNCTION(LobbyController, f2c_LoadedSWF) {}
+
+
+#ifdef TELNET_DEBUGGING
+bool LobbyControllerCommandParser::OnCommand(const char *command, unsigned numParameters, char **parameterList, TransportInterface *transport, SystemAddress systemAddress, const char *originalString)
+{
+	(void) originalString;
+
+	if (strcmp(command, "c2f_ShowProgress")==0)
+	{
+		lobbyController->c2f_ShowProgress(atoi(parameterList[0]), atoi(parameterList[1]), parameterList[2]);
+		ReturnResult(command, transport, systemAddress);
+	}
+	else if (strcmp(command, "c2f_HideProgress")==0)
+	{
+		lobbyController->c2f_HideProgress(parameterList[0]);
+		ReturnResult(command, transport, systemAddress);
+	}
+	else if (strcmp(command, "c2f_LoadSWF")==0)
+	{
+		lobbyController->c2f_LoadSWF(parameterList[0]);
+		ReturnResult(command, transport, systemAddress);
+	}
+	else if (strcmp(command, "c2f_Parties_AddOrUpdateBuddy")==0)
+	{
+		lobbyController->c2f_Parties_AddOrUpdateBuddy(parameterList[0],parameterList[1]);
+		ReturnResult(command, transport, systemAddress);
+	}
+	else if (strcmp(command, "c2f_Parties_RemoveBuddy")==0)
+	{
+		lobbyController->c2f_Parties_RemoveBuddy(parameterList[0]);
+		ReturnResult(command, transport, systemAddress);
+	}
+	else if (strcmp(command, "c2f_Parties_AddOrUpdatePartyMember")==0)
+	{
+		lobbyController->c2f_Parties_AddOrUpdatePartyMember(parameterList[0],parameterList[1]);
+		ReturnResult(command, transport, systemAddress);
+	}
+	else if (strcmp(command, "c2f_Parties_RemovePartyMember")==0)
+	{
+		lobbyController->c2f_Parties_RemovePartyMember(parameterList[0]);
+		ReturnResult(command, transport, systemAddress);
+	}
+	else if (strcmp(command, "c2f_Rooms_Show")==0)
+	{
+		LobbyController::RoomSlot roomSlots[32];
+		LobbyController::RoomPlayer roomPlayers[32];
+		int numSlots=atoi(parameterList[4]);
+		int parameterListIndex=5;
+		int roomPlayerIndex=0;
+		for (int i=0; i < numSlots; i++)
+		{
+			char *param = parameterList[parameterListIndex++];
+			if (stricmp(param,"open")==0)
+				roomSlots[i].slotStatus=LobbyController::RoomSlot::SS_IS_OPEN;
+			else if (stricmp(param,"private")==0)
+				roomSlots[i].slotStatus=LobbyController::RoomSlot::SS_IS_PRIVATE;
+			else if (stricmp(param,"spectator")==0)
+				roomSlots[i].slotStatus=LobbyController::RoomSlot::SS_IS_SPECTATOR;
+			else if (stricmp(param,"player")==0)
+				roomSlots[i].slotStatus=LobbyController::RoomSlot::SS_IS_PLAYER;
+			else
+				GASSERT(0);
+
+			 if (roomSlots[i].slotStatus==LobbyController::RoomSlot::SS_IS_PLAYER)
+			 {
+				 roomSlots[i].roomPlayer=roomPlayers+roomPlayerIndex;
+				 roomPlayers[roomPlayerIndex].playerName=parameterList[parameterListIndex++];
+				 roomPlayers[roomPlayerIndex].playerConnectionStatus=parameterList[parameterListIndex++];
+				 roomPlayers[roomPlayerIndex].playerCurrentTeam=parameterList[parameterListIndex++];
+				 roomPlayers[roomPlayerIndex].playerDesiredTeam=parameterList[parameterListIndex++];
+				 roomPlayers[roomPlayerIndex].playerIsReady=atoi(parameterList[parameterListIndex++]);
+				 roomPlayers[roomPlayerIndex].playerIsTalking=atoi(parameterList[parameterListIndex++]);
+				 roomPlayers[roomPlayerIndex].playerPing=atoi(parameterList[parameterListIndex++]);
+				 roomPlayerIndex++;
+			 }
+			 else
+			 {
+				 roomSlots[i].roomPlayer=0;
+			 }
+		}
+
+		lobbyController->c2f_Rooms_Show(parameterList[0], atoi(parameterList[1]), atoi(parameterList[2]), atoi(parameterList[3]), atoi(parameterList[4]), (LobbyController::RoomSlot*) roomSlots);
+		ReturnResult(command, transport, systemAddress);
+
+	}
+	else if (strcmp(command, "c2f_Rooms_UpdateTeamsAreLocked")==0)
+	{
+		lobbyController->c2f_Rooms_UpdateTeamsAreLocked(atoi(parameterList[0]));
+		ReturnResult(command, transport, systemAddress);
+	}
+	else if (strcmp(command, "c2f_Rooms_UpdateSlots")==0)
+	{
+		LobbyController::RoomSlot roomSlots[32];
+		LobbyController::RoomPlayer roomPlayers[32];
+		int numSlots=atoi(parameterList[0]);
+		int parameterListIndex=1;
+		int roomPlayerIndex=0;
+		for (int i=0; i < numSlots; i++)
+		{
+			char *param = parameterList[parameterListIndex++];
+			if (stricmp(param,"open")==0)
+				roomSlots[i].slotStatus=LobbyController::RoomSlot::SS_IS_OPEN;
+			else if (stricmp(param,"private")==0)
+				roomSlots[i].slotStatus=LobbyController::RoomSlot::SS_IS_PRIVATE;
+			else if (stricmp(param,"spectator")==0)
+				roomSlots[i].slotStatus=LobbyController::RoomSlot::SS_IS_SPECTATOR;
+			else if (stricmp(param,"player")==0)
+				roomSlots[i].slotStatus=LobbyController::RoomSlot::SS_IS_PLAYER;
+			else
+				GASSERT(0);
+
+			if (roomSlots[i].slotStatus==LobbyController::RoomSlot::SS_IS_PLAYER)
+			{
+				roomSlots[i].roomPlayer=roomPlayers+roomPlayerIndex;
+				roomPlayers[roomPlayerIndex].playerName=parameterList[parameterListIndex++];
+				roomPlayers[roomPlayerIndex].playerConnectionStatus=parameterList[parameterListIndex++];
+				roomPlayers[roomPlayerIndex].playerCurrentTeam=parameterList[parameterListIndex++];
+				roomPlayers[roomPlayerIndex].playerDesiredTeam=parameterList[parameterListIndex++];
+				roomPlayers[roomPlayerIndex].playerIsReady=atoi(parameterList[parameterListIndex++]);
+				roomPlayers[roomPlayerIndex].playerIsTalking=atoi(parameterList[parameterListIndex++]);
+				roomPlayers[roomPlayerIndex].playerPing=atoi(parameterList[parameterListIndex++]);
+				roomPlayerIndex++;
+			}
+			else
+			{
+				roomSlots[i].roomPlayer=0;
+			}
+		}
+
+		lobbyController->c2f_Rooms_UpdateSlots(atoi(parameterList[0]), (LobbyController::RoomSlot*) roomSlots);
+		ReturnResult(command, transport, systemAddress);
+
+	}
+	else if (strcmp(command, "c2f_Rooms_Update_Player")==0)
+	{
+		LobbyController::RoomPlayer roomPlayer;
+		roomPlayer.playerName=parameterList[0];
+		roomPlayer.playerConnectionStatus=parameterList[1];
+		roomPlayer.playerCurrentTeam=parameterList[2];
+		roomPlayer.playerDesiredTeam=parameterList[3];
+		roomPlayer.playerIsReady=atoi(parameterList[4]);
+		roomPlayer.playerIsTalking=atoi(parameterList[5]);
+		roomPlayer.playerPing=atoi(parameterList[6]);
+
+		lobbyController->c2f_Rooms_Update_Player(&roomPlayer);
+		ReturnResult(command, transport, systemAddress);
+	}
+	else if (strcmp(command, "c2f_Rooms_ShowGameStartCountdown")==0)
+	{
+		lobbyController->c2f_Rooms_ShowGameStartCountdown();
+		ReturnResult(command, transport, systemAddress);
+	}
+	else if (strcmp(command, "c2f_Rooms_HideGameStartCountdown")==0)
+	{
+		lobbyController->c2f_Rooms_HideGameStartCountdown();
+		ReturnResult(command, transport, systemAddress);
+	}
+	else if (strcmp(command, "c2f_Rooms_UpdateGameStartCountdown")==0)
+	{
+		lobbyController->c2f_Rooms_UpdateGameStartCountdown(atoi(parameterList[0]));
+		ReturnResult(command, transport, systemAddress);
+	}
+	else if (strcmp(command, "c2f_Rooms_OnGameStarted")==0)
+	{
+		lobbyController->c2f_Rooms_OnGameStarted();
+		ReturnResult(command, transport, systemAddress);
+	}
+	else if (strcmp(command, "c2f_Rooms_ShowChatMessage")==0)
+	{
+		lobbyController->c2f_Rooms_ShowChatMessage(parameterList[0],parameterList[1]);
+		ReturnResult(command, transport, systemAddress);
+	}
+
+	return true;
+}
+const char *LobbyControllerCommandParser::GetName(void) const
+{
+	return "LobbyControllerCommandParser";
+}
+void LobbyControllerCommandParser::SendHelp(TransportInterface *transport, SystemAddress systemAddress)
+{
+	transport->Send(systemAddress, "Run c2f functions manually, for debugging.\r\n");
+}
+#endif

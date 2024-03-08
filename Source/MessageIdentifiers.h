@@ -22,6 +22,7 @@ enum OutOfBandIdentifiers
 	ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT,
 	ID_ROUTER_2_MINI_PUNCH_REPLY,
 	ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE,
+	ID_ROUTER_2_REROUTE,
 };
 
 /// You should not edit the file MessageIdentifiers.h as it is a part of RakNet static library
@@ -306,7 +307,22 @@ enum DefaultMessageIDTypes
 	ID_ROUTER_2_INTERNAL,
 	/// No path is available or can be established to the remote system
 	ID_ROUTER_2_FORWARDING_NO_PATH,
+	/// \brief You can now call connect, ping, or other operations to the destination system.
+	///
+	/// Connect as follows:
+	///
+	/// RakNet::BitStream bs(packet->data, packet->length, false);
+	/// bs.IgnoreBytes(sizeof(MessageID));
+	/// RakNetGUID endpointGuid;
+	/// bs.Read(endpointGuid);
+	/// unsigned short sourceToDestPort;
+	/// bs.Read(sourceToDestPort);
+	/// char ipAddressString[32];
+	/// packet->systemAddress.ToString(false, ipAddressString);
+	/// rakPeerInterface->Connect(ipAddressString, sourceToDestPort, 0,0);
+	ID_ROUTER_2_FORWARDING_ESTABLISHED,
 	/// The IP address for a forwarded connection has changed
+	/// Read endpointGuid and port as per ID_ROUTER_2_FORWARDING_ESTABLISHED
 	ID_ROUTER_2_REROUTED,
 
 	/// \internal Used by the team balancer plugin

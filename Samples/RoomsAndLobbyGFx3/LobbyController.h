@@ -21,9 +21,62 @@ THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR ANY PURPOSE.
 #include "LobbyProfileManager.h"
 
 
+// KevinJ:
+#define ACTIONSCRIPT_CALLABLE_HEADER(functionName) \
+static void functionName##_static(const FxDelegateArgs& pparams); \
+virtual void functionName(const FxDelegateArgs& pparams);
+#define ACTIONSCRIPT_CALLABLE_FUNCTION(className, functionName) \
+void className::functionName##_static(const FxDelegateArgs& pparams) \
+{ \
+	((className*)pparams.GetHandler())->functionName(pparams);  \
+} \
+void className::functionName(const FxDelegateArgs& pparams)
+#define ACCEPT_ACTION_SCRIPT_CALLABLE_FUNCTION(callbackProcessor, className, functionName) \
+callbackProcessor->Process( #functionName , className::functionName##_static);
+
+
 // This is the main lobby application. It interfaces with both the UI and
 // the data stores (online and offline).
 
+// #define TELNET_DEBUGGING
+
+#ifdef TELNET_DEBUGGING
+#include "RakNetTransport2.h"
+#include "ConsoleServer.h"
+#include "CommandParserInterface.h"
+#include "RakNetworkFactory.h"
+#include "RakPeerInterface.h"
+
+class LobbyController;
+
+class LobbyControllerCommandParser : public CommandParserInterface
+{
+public:
+	LobbyControllerCommandParser(LobbyController *_lobbyController) {lobbyController=_lobbyController;}
+
+	/// Given \a command with parameters \a parameterList , do whatever processing you wish.
+	/// \param[in] command The command to process
+	/// \param[in] numParameters How many parameters were passed along with the command
+	/// \param[in] parameterList The list of parameters.  parameterList[0] is the first parameter and so on.
+	/// \param[in] transport The transport interface we can use to write to
+	/// \param[in] systemAddress The player that sent this command.
+	/// \param[in] originalString The string that was actually sent over the network, in case you want to do your own parsing
+	bool OnCommand(const char *command, unsigned numParameters, char **parameterList, TransportInterface *transport, SystemAddress systemAddress, const char *originalString);
+
+	/// You are responsible for overriding this function and returning a static string, which will identifier your parser.
+	/// This should return a static string
+	/// \return The name that you return.
+	const char *GetName(void) const;
+
+	/// A callback for when you are expected to send a brief description of your parser to \a systemAddress
+	/// \param[in] transport The transport interface we can use to write to
+	/// \param[in] systemAddress The player that requested help.
+	void SendHelp(TransportInterface *transport, SystemAddress systemAddress);
+
+protected:
+	LobbyController *lobbyController;
+};
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 // Localization interface for the lobby application
@@ -112,6 +165,82 @@ public:
     void            ProcessTasks();
 
     GINLINE bool            IsOfflineMode() { return bOfflineMode; }
+
+
+	// --------------- KEVINJ ---------------------
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Platform_Query);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Parties_InviteBuddyToParty);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Parties_Leave);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Parties_StartPrivate);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Parties_StartRanked);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_OnProgressStatusPressed);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Parties_GetBuddies);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Parties_GetPartyMembers);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Rooms_CreateRoom);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Rooms_OnMakePrivateSlotPressed);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Rooms_OnKickPlayerPressed);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Rooms_OnLockTeamsPressed);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Rooms_OnInviteBuddyPressed);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Rooms_OnSwitchTeamsPressed);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Rooms_OnToggleReadyPressed);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Rooms_OnToggleSpectatorPresed);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Rooms_OnChatMessage);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Rooms_OnLeavePressed);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Rooms_Join);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_Rooms_QuickJoin);
+	ACTIONSCRIPT_CALLABLE_HEADER(f2c_LoadedSWF);
+
+	struct RoomPlayer
+	{
+		GString playerName;
+		GString playerConnectionStatus;
+		GString playerCurrentTeam;
+		GString playerDesiredTeam;
+		bool playerIsReady;
+		bool playerIsTalking;
+		int playerPing;
+
+		void WriteToArgs(FxResponseArgsList &rargs) const;
+	};
+	struct RoomSlot
+	{
+		enum SlotStatus
+		{
+			SS_IS_OPEN,
+			SS_IS_PRIVATE,
+			SS_IS_SPECTATOR,
+			SS_IS_PLAYER,
+		};
+		
+		SlotStatus slotStatus;
+		RoomPlayer *roomPlayer; // If 0, then this slot is not used.		
+
+		void WriteToArgs(FxResponseArgsList &rargs) const;
+	};
+	virtual void c2f_ShowProgress(bool showCancel, bool showOK, GString dialogId);
+	virtual void c2f_HideProgress(GString dialogId);
+	virtual void c2f_LoadSWF(GString swfId);
+	virtual void c2f_Parties_AddOrUpdateBuddy(GString name, GString presenceString);
+	virtual void c2f_Parties_RemoveBuddy(GString name);
+	virtual void c2f_Parties_AddOrUpdatePartyMember(GString name, GString connectionStatus);
+	virtual void c2f_Parties_RemovePartyMember(GString name);
+	virtual void c2f_Rooms_Show(GString roomName, bool teamsAreLocked, bool showGameStartCountdown, int gameStartCountdownInSeconds, int numSlots, const RoomSlot *roomSlots);
+	virtual void c2f_Rooms_UpdateTeamsAreLocked(bool isLocked);
+	virtual void c2f_Rooms_UpdateSlots(int numSlots, RoomSlot *roomSlots);
+	virtual void c2f_Rooms_Update_Player(const RoomPlayer *roomPlayer);
+	virtual void c2f_Rooms_ShowGameStartCountdown(void);
+	virtual void c2f_Rooms_HideGameStartCountdown(void);
+	virtual void c2f_Rooms_UpdateGameStartCountdown(int gameStartCountdownInSeconds);
+	virtual void c2f_Rooms_OnGameStarted(void);
+	virtual void c2f_Rooms_ShowChatMessage(GString senderName, GString message);
+
+
+#ifdef TELNET_DEBUGGING
+	ConsoleServer *consoleServer;
+	RakNetTransport2 *raknetTransport;
+	RakPeerInterface *rakPeer;
+	LobbyControllerCommandParser *lobbyControllerCommandParser;
+#endif
 
 private:
     // If true, then the current data provider is an offline data provider 

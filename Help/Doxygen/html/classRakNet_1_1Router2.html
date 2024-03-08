@@ -51,8 +51,9 @@ Inheritance diagram for RakNet::Router2:</div>
 <a href="classRakNet_1_1Router2-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Router2.html#0947ee37cb84156ddd2529a735199ce7">Connect</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> endpointGuid)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Router2.html#8d86939663f286f21a8aefeea615565b">EstablishRouting</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> endpointGuid)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Query all connected systems to connect through them to a third system. System will return ID_ROUTER_2_FORWARDING_NO_PATH if unable to connect. Else you will get ID_ROUTER_2_FORWARDING_ESTABLISHED.  <a href="#8d86939663f286f21a8aefeea615565b"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Router2.html#60d0f2bffeed81aabcde1daa6d0cd79d">SetMaximumForwardingRequests</a> (int max)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Router2.html#825d62c2f01def72c58815b609cf4bbf">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
@@ -74,12 +75,12 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Class interface for the <a class="el" href="classRakNet_1_1Router2.html" title="Class interface for the Router2 system.">Router2</a> system. <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="0947ee37cb84156ddd2529a735199ce7"></a><!-- doxytag: member="RakNet::Router2::Connect" ref="0947ee37cb84156ddd2529a735199ce7" args="(RakNetGUID endpointGuid)" -->
+<a class="anchor" name="8d86939663f286f21a8aefeea615565b"></a><!-- doxytag: member="RakNet::Router2::EstablishRouting" ref="8d86939663f286f21a8aefeea615565b" args="(RakNetGUID endpointGuid)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void RakNet::Router2::Connect           </td>
+          <td class="memname">void RakNet::Router2::EstablishRouting           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
           <td class="paramname"> <em>endpointGuid</em>          </td>
@@ -91,7 +92,11 @@ Class interface for the <a class="el" href="classRakNet_1_1Router2.html" title="
 <div class="memdoc">
 
 <p>
-Query all connected systems to connect through them to a third system. System will return ID_ROUTER_2_FORWARDING_NO_PATH if unable to connect. Else you will get ID_CONNECTION_REQUEST_ACCEPTED with <a class="el" href="structPacket.html#6b5a4002d538754bc3649e4e8e1eda85">Packet::guid</a> equal to endpointGuid <dl class="note" compact><dt><b>Note:</b></dt><dd>The <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> for a connection should not be used - always use RakNetGuid as the address can change at any time. When the address changes, you will get ID_ROUTER_2_REROUTED </dd></dl>
+Query all connected systems to connect through them to a third system. System will return ID_ROUTER_2_FORWARDING_NO_PATH if unable to connect. Else you will get ID_ROUTER_2_FORWARDING_ESTABLISHED. 
+<p>
+On ID_ROUTER_2_FORWARDING_ESTABLISHED, EstablishRouting as follows:<p>
+<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> bs(packet-&gt;data, packet-&gt;length, false); bs.IgnoreBytes(sizeof(MessageID)); <a class="el" href="structRakNetGUID.html">RakNetGUID</a> endpointGuid; bs.Read(endpointGuid); unsigned short sourceToDestPort; bs.Read(sourceToDestPort); char ipAddressString[32]; packet-&gt;systemAddress.ToString(false, ipAddressString); rakPeerInterface-&gt;EstablishRouting(ipAddressString, sourceToDestPort, 0,0);<p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>The <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> for a connection should not be used - always use RakNetGuid as the address can change at any time. When the address changes, you will get ID_ROUTER_2_REROUTED </dd></dl>
 
 </div>
 </div><p>
@@ -271,7 +276,7 @@ Set the maximum number of bidirectional connections this system will support Def
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="Router2_8h.html">Router2.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 4 22:17:53 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Feb 27 09:39:26 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

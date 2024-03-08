@@ -72,7 +72,7 @@ bool FMODVoiceAdapter::SetupAdapter(FMOD::System *fmodSystem, RakVoice *rakVoice
 		return false;
 
 	// Start recording
-	fmodErr=fmodSystem->recordStart(recSound, true);
+	fmodErr=fmodSystem->recordStart(0,recSound, true);
 	if (fmodErr!=FMOD_OK)
 		return false;
 
@@ -95,10 +95,10 @@ void FMODVoiceAdapter::Release(void)
 
 	// Stop recording
 	bool recording=false;
-	err = fmodSystem->isRecording(&recording);
+	err = fmodSystem->isRecording(0,&recording);
 	RakAssert(err==FMOD_OK);
 	if (recording){
-		fmodSystem->recordStop();
+		fmodSystem->recordStop(0);
 	}
 
 	// Stop what we hear
@@ -142,7 +142,7 @@ void FMODVoiceAdapter::UpdateSound(bool isRec)
 	// get current Play or recording position
 	unsigned int currPos;
 	if (isRec){
-		fmodErr=fmodSystem->getRecordPosition(&currPos);
+		fmodErr=fmodSystem->getRecordPosition(0,&currPos);
 		RakAssert(fmodErr==FMOD_OK);
 	} else {
 		fmodErr=channel->getPosition(&currPos, FMOD_TIMEUNIT_PCM);
@@ -212,7 +212,7 @@ void FMODVoiceAdapter::BroadcastFrame(void *ptr)
 	unsigned int numPeers = rakVoice->GetRakPeerInterface()->GetMaximumNumberOfPeers();
 	for (i=0; i < numPeers; i++)
 	{
-		rakVoice->SendFrame(rakVoice->GetRakPeerInterface()->GetSystemAddressFromIndex(i), ptr);
+		rakVoice->SendFrame(rakVoice->GetRakPeerInterface()->GetGUIDFromIndex(i), ptr);
 	}
 #else
 	rakVoice->SendFrame(UNASSIGNED_SYSTEM_ADDRESS, ptr);

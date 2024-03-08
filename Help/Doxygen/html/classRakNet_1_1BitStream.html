@@ -307,21 +307,21 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write zeros until the bitstream is filled up to <em>bytes</em>. <br></td></tr>
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#930c41f31ad2ef48016d3fa6b26df3be">Write</a> (bool var)</td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#3ff5dcb2495cf244e12fa841d95ccbb5">WriteRef</a> (const bool &amp;var)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write a bool to a bitstream.  <a href="#930c41f31ad2ef48016d3fa6b26df3be"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write a bool to a bitstream.  <a href="#3ff5dcb2495cf244e12fa841d95ccbb5"></a><br></td></tr>
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#bebd3f513297dbee394290b0b467c76f">Write</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> var)</td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#09e0e41fd7f77fd80990d9200ccaf3c0">WriteRef</a> (const <a class="el" href="structSystemAddress.html">SystemAddress</a> &amp;var)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write a systemAddress to a bitstream.  <a href="#bebd3f513297dbee394290b0b467c76f"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write a systemAddress to a bitstream.  <a href="#09e0e41fd7f77fd80990d9200ccaf3c0"></a><br></td></tr>
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#dcafaa827c61d08f6301cc6daec8ccef">Write</a> (NetworkID var)</td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#627a0278a7b473f519d4e6d59d09581f">WriteRef</a> (const NetworkID &amp;var)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write an networkID to a bitstream.  <a href="#dcafaa827c61d08f6301cc6daec8ccef"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write an networkID to a bitstream.  <a href="#627a0278a7b473f519d4e6d59d09581f"></a><br></td></tr>
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;&gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#7fa8ab50d31c416a7e63e24c315d350d">Write</a> (<a class="el" href="classRakNet_1_1RakString.html">RakString</a> var)</td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#7c3db30da6d0de0bc7f1c21a04044e54">WriteRef</a> (const <a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;var)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write a string to a bitstream.  <a href="#7fa8ab50d31c416a7e63e24c315d350d"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write a string to a bitstream.  <a href="#7c3db30da6d0de0bc7f1c21a04044e54"></a><br></td></tr>
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;&gt; </td></tr>
 <tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#003e89b6fe2eaa55d3f17f3455422840">WriteDelta</a> (bool currentValue, bool lastValue)</td></tr>
 
@@ -2151,122 +2151,6 @@ Move the write pointer to a position on the array.
 
 </div>
 </div><p>
-<a class="anchor" name="7fa8ab50d31c416a7e63e24c315d350d"></a><!-- doxytag: member="RakNet::BitStream::Write" ref="7fa8ab50d31c416a7e63e24c315d350d" args="(RakString var)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void RakNet::BitStream::Write           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakNet_1_1RakString.html">RakString</a>&nbsp;</td>
-          <td class="paramname"> <em>var</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Write a string to a bitstream. 
-<p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>var</em>&nbsp;</td><td>The value to write </td></tr>
-  </table>
-</dl>
-
-</div>
-</div><p>
-<a class="anchor" name="dcafaa827c61d08f6301cc6daec8ccef"></a><!-- doxytag: member="RakNet::BitStream::Write" ref="dcafaa827c61d08f6301cc6daec8ccef" args="(NetworkID var)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void RakNet::BitStream::Write           </td>
-          <td>(</td>
-          <td class="paramtype">NetworkID&nbsp;</td>
-          <td class="paramname"> <em>var</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Write an networkID to a bitstream. 
-<p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>var</em>&nbsp;</td><td>The value to write </td></tr>
-  </table>
-</dl>
-
-</div>
-</div><p>
-<a class="anchor" name="bebd3f513297dbee394290b0b467c76f"></a><!-- doxytag: member="RakNet::BitStream::Write" ref="bebd3f513297dbee394290b0b467c76f" args="(SystemAddress var)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void RakNet::BitStream::Write           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>var</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Write a systemAddress to a bitstream. 
-<p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>var</em>&nbsp;</td><td>The value to write </td></tr>
-  </table>
-</dl>
-
-</div>
-</div><p>
-<a class="anchor" name="930c41f31ad2ef48016d3fa6b26df3be"></a><!-- doxytag: member="RakNet::BitStream::Write" ref="930c41f31ad2ef48016d3fa6b26df3be" args="(bool var)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void RakNet::BitStream::Write           </td>
-          <td>(</td>
-          <td class="paramtype">bool&nbsp;</td>
-          <td class="paramname"> <em>var</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Write a bool to a bitstream. 
-<p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>var</em>&nbsp;</td><td>The value to write </td></tr>
-  </table>
-</dl>
-
-</div>
-</div><p>
 <a class="anchor" name="26624b5669df1c38f6dd6dabf4c1b769"></a><!-- doxytag: member="RakNet::BitStream::Write" ref="26624b5669df1c38f6dd6dabf4c1b769" args="(BitStream *bitStream, BitSize_t numberOfBits)" -->
 <div class="memitem">
 <div class="memproto">
@@ -2997,6 +2881,122 @@ Undefine __BITSTREAM_NATIVE_END if you need endian swapping. <dl compact><dt><b>
 
 </div>
 </div><p>
+<a class="anchor" name="7c3db30da6d0de0bc7f1c21a04044e54"></a><!-- doxytag: member="RakNet::BitStream::WriteRef" ref="7c3db30da6d0de0bc7f1c21a04044e54" args="(const RakString &amp;var)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::BitStream::WriteRef           </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>var</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Write a string to a bitstream. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>var</em>&nbsp;</td><td>The value to write </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="627a0278a7b473f519d4e6d59d09581f"></a><!-- doxytag: member="RakNet::BitStream::WriteRef" ref="627a0278a7b473f519d4e6d59d09581f" args="(const NetworkID &amp;var)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::BitStream::WriteRef           </td>
+          <td>(</td>
+          <td class="paramtype">const NetworkID &amp;&nbsp;</td>
+          <td class="paramname"> <em>var</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Write an networkID to a bitstream. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>var</em>&nbsp;</td><td>The value to write </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="09e0e41fd7f77fd80990d9200ccaf3c0"></a><!-- doxytag: member="RakNet::BitStream::WriteRef" ref="09e0e41fd7f77fd80990d9200ccaf3c0" args="(const SystemAddress &amp;var)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::BitStream::WriteRef           </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structSystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>var</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Write a systemAddress to a bitstream. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>var</em>&nbsp;</td><td>The value to write </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="3ff5dcb2495cf244e12fa841d95ccbb5"></a><!-- doxytag: member="RakNet::BitStream::WriteRef" ref="3ff5dcb2495cf244e12fa841d95ccbb5" args="(const bool &amp;var)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::BitStream::WriteRef           </td>
+          <td>(</td>
+          <td class="paramtype">const bool &amp;&nbsp;</td>
+          <td class="paramname"> <em>var</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Write a bool to a bitstream. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>var</em>&nbsp;</td><td>The value to write </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <a class="anchor" name="92da13ea0b4bdf7676a8df2e2d0c68b7"></a><!-- doxytag: member="RakNet::BitStream::WriteVector" ref="92da13ea0b4bdf7676a8df2e2d0c68b7" args="(templateType x, templateType y, templateType z)" -->
 <div class="memitem">
 <div class="memproto">
@@ -3046,7 +3046,7 @@ Loses accuracy to about 3/10ths and only saves 2 bytes, so only use if accuracy 
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="BitStream_8h.html">BitStream.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 4 22:17:52 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Feb 27 09:39:25 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -55,15 +55,16 @@ Inheritance diagram for RakNet::Replica3:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#5a5fa47314cf6ae149b8601e757840e8">WriteAllocationID</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *allocationIdBitstream) const =0</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write a unique identifer for this class type.  <a href="#5a5fa47314cf6ae149b8601e757840e8"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write a unique identifer that can be read on a remote system to create an object of this same class.  <a href="#5a5fa47314cf6ae149b8601e757840e8"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g16aaecf3c23582f0de6652b348ccfa38">RM3ConstructionState</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943">QueryConstruction</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection, <a class="el" href="classRakNet_1_1ReplicaManager3.html">ReplicaManager3</a> *replicaManager3)=0</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This object does not exist on this system. Queried every tick to see if it should be created.  <a href="#d826e04ce6a0db4e32c3d990fd27e943"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Ask if this object, which does not exist on <em>destinationConnection</em> should (now) be sent to that system.  <a href="#d826e04ce6a0db4e32c3d990fd27e943"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g400c157a937f062bd8a3c19a49d33541">RM3DestructionState</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#b476629672d62c7c33c8b1d8aa606918">QueryDestruction</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection, <a class="el" href="classRakNet_1_1ReplicaManager3.html">ReplicaManager3</a> *replicaManager3)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Ask if this object, which does exist on <em>destinationConnection</em> should be removed from the remote system.  <a href="#b476629672d62c7c33c8b1d8aa606918"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#79bd207fb79055d2b39943eb1c6b1f58">QueryRemoteConstruction</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *sourceConnection)=0</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Should I allow this object to be created remotely, based solely on the sender?  <a href="#79bd207fb79055d2b39943eb1c6b1f58"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">We're about to call <a class="el" href="classRakNet_1_1Replica3.html#8e18c95612054b601ce0149f91a5a34d" title="Read data written by Replica3::SerializeConstruction().">DeserializeConstruction()</a> on this <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>. If <a class="el" href="classRakNet_1_1Replica3.html#79bd207fb79055d2b39943eb1c6b1f58" title="We&#39;re about to call DeserializeConstruction() on this Replica3. If QueryRemoteConstruction()...">QueryRemoteConstruction()</a> returns false, this object is deleted instead.  <a href="#79bd207fb79055d2b39943eb1c6b1f58"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#8297aa828aa9261d8ff6194f0023423a">SerializeConstruction</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *constructionBitstream, <a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection)=0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write data to be sent only when the object is constructed on a remote system.  <a href="#8297aa828aa9261d8ff6194f0023423a"></a><br></td></tr>
@@ -118,27 +119,27 @@ Inheritance diagram for RakNet::Replica3:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f19b1f29ccf827ce9da41cd1a5cd0d69"></a><!-- doxytag: member="RakNet::Replica3::QueryConstruction_ClientConstruction" ref="f19b1f29ccf827ce9da41cd1a5cd0d69" args="(RakNet::Connection_RM3 *destinationConnection)" -->
 virtual <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g16aaecf3c23582f0de6652b348ccfa38">RM3ConstructionState</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#f19b1f29ccf827ce9da41cd1a5cd0d69">QueryConstruction_ClientConstruction</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="This object does not exist on this system. Queried every tick to see if it should...">QueryConstruction()</a>. Allow clients to create this object. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">QueryConstruction()</a>. Allow clients to create this object. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="48c121adedc7c5e5fef9dd16f7130c2f"></a><!-- doxytag: member="RakNet::Replica3::QueryRemoteConstruction_ClientConstruction" ref="48c121adedc7c5e5fef9dd16f7130c2f" args="(RakNet::Connection_RM3 *sourceConnection)" -->
 virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#48c121adedc7c5e5fef9dd16f7130c2f">QueryRemoteConstruction_ClientConstruction</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *sourceConnection)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="This object does not exist on this system. Queried every tick to see if it should...">QueryConstruction()</a>. Allow clients to create this object. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">QueryConstruction()</a>. Allow clients to create this object. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e46e02c681346347be9ac56f392be304"></a><!-- doxytag: member="RakNet::Replica3::QueryConstruction_ServerConstruction" ref="e46e02c681346347be9ac56f392be304" args="(RakNet::Connection_RM3 *destinationConnection)" -->
 virtual <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g16aaecf3c23582f0de6652b348ccfa38">RM3ConstructionState</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#e46e02c681346347be9ac56f392be304">QueryConstruction_ServerConstruction</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="This object does not exist on this system. Queried every tick to see if it should...">QueryConstruction()</a>. Allow the server to create this object, but not the client. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">QueryConstruction()</a>. Allow the server to create this object, but not the client. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="71882fe371babd85eeb2c658e1a50289"></a><!-- doxytag: member="RakNet::Replica3::QueryRemoteConstruction_ServerConstruction" ref="71882fe371babd85eeb2c658e1a50289" args="(RakNet::Connection_RM3 *sourceConnection)" -->
 virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#71882fe371babd85eeb2c658e1a50289">QueryRemoteConstruction_ServerConstruction</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *sourceConnection)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="This object does not exist on this system. Queried every tick to see if it should...">QueryConstruction()</a>. Allow the server to create this object, but not the client. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">QueryConstruction()</a>. Allow the server to create this object, but not the client. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b8f287ba6df69cae303519f74033bcdf"></a><!-- doxytag: member="RakNet::Replica3::QueryConstruction_PeerToPeer" ref="b8f287ba6df69cae303519f74033bcdf" args="(RakNet::Connection_RM3 *destinationConnection)" -->
 virtual <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g16aaecf3c23582f0de6652b348ccfa38">RM3ConstructionState</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#b8f287ba6df69cae303519f74033bcdf">QueryConstruction_PeerToPeer</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="This object does not exist on this system. Queried every tick to see if it should...">QueryConstruction()</a>. Peer to peer - creating system sends the object to all other systems. No relaying. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">QueryConstruction()</a>. Peer to peer - creating system sends the object to all other systems. No relaying. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6f398550955711b0a2b8366ca6627835"></a><!-- doxytag: member="RakNet::Replica3::QueryRemoteConstruction_PeerToPeer" ref="6f398550955711b0a2b8366ca6627835" args="(RakNet::Connection_RM3 *sourceConnection)" -->
 virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#6f398550955711b0a2b8366ca6627835">QueryRemoteConstruction_PeerToPeer</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *sourceConnection)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="This object does not exist on this system. Queried every tick to see if it should...">QueryConstruction()</a>. Peer to peer - creating system sends the object to all other systems. No relaying. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">QueryConstruction()</a>. Peer to peer - creating system sends the object to all other systems. No relaying. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b5d74a28b5a9d490f5e9dd371018d961"></a><!-- doxytag: member="RakNet::Replica3::QuerySerialization_ClientSerializable" ref="b5d74a28b5a9d490f5e9dd371018d961" args="(RakNet::Connection_RM3 *destinationConnection)" -->
 virtual <br class="typebreak">
 <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g9a29b413d7f2b9cb21c16457631d3aef">RakNet::RM3QuerySerializationResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#b5d74a28b5a9d490f5e9dd371018d961">QuerySerialization_ClientSerializable</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection)</td></tr>
@@ -178,7 +179,7 @@ virtual RM3ActionOnPopConnection&nbsp;</td><td class="memItemRight" valign="bott
 Base class for your replicated objects for the <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> system. 
 <p>
 To use, derive your class, or a member of your class, from <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>.<br>
- Implement all pure virtual functions. <hr><h2>Constructor &amp; Destructor Documentation</h2>
+ <hr><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" name="1fbe0ed0e0c540bbad1da2549b1a4074"></a><!-- doxytag: member="RakNet::Replica3::~Replica3" ref="1fbe0ed0e0c540bbad1da2549b1a4074" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -602,11 +603,11 @@ Return QueryActionOnPopConnection_Client, QueryActionOnPopConnection_Server, or 
 <div class="memdoc">
 
 <p>
-This object does not exist on this system. Queried every tick to see if it should be created. 
+Ask if this object, which does not exist on <em>destinationConnection</em> should (now) be sent to that system. 
 <p>
-If <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">ReplicaManager3::SetAutoManageConnections()</a> is true, then this function is called by <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Update is called every time a packet is checked for .">ReplicaManager3::Update()</a> to determine if an object should exist on a given system.<br>
- If an object previously existed, but no longer does, a network message will be automatically sent to destroy it.<br>
- Likewise, if an object did not previously exist, but now does, a network message will be automatically sent to create it.<br>
+If ReplicaManager3::QueryConstructionMode() returns QUERY_CONNECTION_FOR_REPLICA_LIST or QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION (default), then QueyrConstruction() is called once per tick from <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Update is called every time a packet is checked for .">ReplicaManager3::Update()</a> to determine if an object should exist on a given system.<br>
+ Based on the return value, a network message may be sent to the other system to create the object.<br>
+ If QueryConstructionMode() is overriden to return QUERY_CONNECTION_FOR_REPLICA_LIST, this function is unused.<br>
  <dl class="note" compact><dt><b>Note:</b></dt><dd>Defaults are provided: <a class="el" href="classRakNet_1_1Replica3.html#b8f287ba6df69cae303519f74033bcdf" title="Default call for QueryConstruction(). Peer to peer - creating system sends the object...">QueryConstruction_PeerToPeer()</a>, <a class="el" href="classRakNet_1_1Replica3.html#e46e02c681346347be9ac56f392be304" title="Default call for QueryConstruction(). Allow the server to create this object, but...">QueryConstruction_ServerConstruction()</a>, <a class="el" href="classRakNet_1_1Replica3.html#f19b1f29ccf827ce9da41cd1a5cd0d69" title="Default call for QueryConstruction(). Allow clients to create this object.">QueryConstruction_ClientConstruction()</a>. Return one of these functions for a working default for the relevant topology. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -644,7 +645,13 @@ If <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
+Ask if this object, which does exist on <em>destinationConnection</em> should be removed from the remote system. 
+<p>
+If ReplicaManager3::QueryConstructionMode() returns QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION (default), then <a class="el" href="classRakNet_1_1Replica3.html#b476629672d62c7c33c8b1d8aa606918" title="Ask if this object, which does exist on destinationConnection should be removed from...">QueryDestruction()</a> is called once per tick from <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Update is called every time a packet is checked for .">ReplicaManager3::Update()</a> to determine if an object that exists on a remote system should be destroyed for a given system.<br>
+ Based on the return value, a network message may be sent to the other system to destroy the object.<br>
+ Note that you can also destroy objects with <a class="el" href="classRakNet_1_1Replica3.html#7c6a22d575326cddec3a70eb1c2568f2">BroadcastDestruction()</a>, so this function is not useful unless you plan to delete objects for only a particular connection.<br>
+ If QueryConstructionMode() is overriden to return QUERY_CONNECTION_FOR_REPLICA_LIST, this function is unused.<br>
+ <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>destinationConnection</em>&nbsp;</td><td>Which system we will send to </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>replicaManager3</em>&nbsp;</td><td>Plugin instance for this <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> </td></tr>
@@ -671,9 +678,11 @@ If <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a
 <div class="memdoc">
 
 <p>
-Should I allow this object to be created remotely, based solely on the sender? 
+We're about to call <a class="el" href="classRakNet_1_1Replica3.html#8e18c95612054b601ce0149f91a5a34d" title="Read data written by Replica3::SerializeConstruction().">DeserializeConstruction()</a> on this <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>. If <a class="el" href="classRakNet_1_1Replica3.html#79bd207fb79055d2b39943eb1c6b1f58" title="We&#39;re about to call DeserializeConstruction() on this Replica3. If QueryRemoteConstruction()...">QueryRemoteConstruction()</a> returns false, this object is deleted instead. 
 <p>
-<dl class="note" compact><dt><b>Note:</b></dt><dd>Defaults are provided: <a class="el" href="classRakNet_1_1Replica3.html#6f398550955711b0a2b8366ca6627835" title="Default call for QueryConstruction(). Peer to peer - creating system sends the object...">QueryRemoteConstruction_PeerToPeer()</a>, <a class="el" href="classRakNet_1_1Replica3.html#71882fe371babd85eeb2c658e1a50289" title="Default call for QueryConstruction(). Allow the server to create this object, but...">QueryRemoteConstruction_ServerConstruction()</a>, <a class="el" href="classRakNet_1_1Replica3.html#48c121adedc7c5e5fef9dd16f7130c2f" title="Default call for QueryConstruction(). Allow clients to create this object.">QueryRemoteConstruction_ClientConstruction()</a>. Return one of these functions for a working default for the relevant topology. </dd></dl>
+By default, <a class="el" href="classRakNet_1_1Replica3.html#71882fe371babd85eeb2c658e1a50289" title="Default call for QueryConstruction(). Allow the server to create this object, but...">QueryRemoteConstruction_ServerConstruction()</a> does not allow clients to create objects. The client will get <a class="el" href="classRakNet_1_1Replica3.html#d76a171b4bc6747bd204c3b4471efab4">Replica3::DeserializeConstructionRequestRejected()</a>.<br>
+ If you want the client to be able to potentially create objects for client/server, override accordingly.<br>
+ Other variants of QueryRemoteConstruction_* just return true. <dl class="note" compact><dt><b>Note:</b></dt><dd>Defaults are provided: <a class="el" href="classRakNet_1_1Replica3.html#6f398550955711b0a2b8366ca6627835" title="Default call for QueryConstruction(). Peer to peer - creating system sends the object...">QueryRemoteConstruction_PeerToPeer()</a>, <a class="el" href="classRakNet_1_1Replica3.html#71882fe371babd85eeb2c658e1a50289" title="Default call for QueryConstruction(). Allow the server to create this object, but...">QueryRemoteConstruction_ServerConstruction()</a>, <a class="el" href="classRakNet_1_1Replica3.html#48c121adedc7c5e5fef9dd16f7130c2f" title="Default call for QueryConstruction(). Allow clients to create this object.">QueryRemoteConstruction_ClientConstruction()</a>. Return one of these functions for a working default for the relevant topology. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>sourceConnection</em>&nbsp;</td><td>Which system sent us the object creation request message. </td></tr>
@@ -768,7 +777,8 @@ User should implement this function to write the contents of this class to Seria
 Write data to be sent only when the object is constructed on a remote system. 
 <p>
 SerializeConstruction is used to write out data that you need to create this object in the context of your game, such as health, score, name. Use it for data you only need to send when the object is created.<br>
- After <a class="el" href="classRakNet_1_1Replica3.html#8297aa828aa9261d8ff6194f0023423a" title="Write data to be sent only when the object is constructed on a remote system.">SerializeConstruction()</a> is called, <a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b22441365145bf552f89e09" title="Serialize our class to a bitstream.">Serialize()</a> will be called immediately thereafter. However, they are sent in different messages, so <a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b22441365145bf552f89e09" title="Serialize our class to a bitstream.">Serialize()</a> may arrive a later frame than <a class="el" href="classRakNet_1_1Replica3.html#8297aa828aa9261d8ff6194f0023423a" title="Write data to be sent only when the object is constructed on a remote system.">SerializeConstruction()</a> <dl class="note" compact><dt><b>Note:</b></dt><dd>The object's NetworkID and allocation id are handled by the system automatically, you do not need to write these values. </dd></dl>
+ After <a class="el" href="classRakNet_1_1Replica3.html#8297aa828aa9261d8ff6194f0023423a" title="Write data to be sent only when the object is constructed on a remote system.">SerializeConstruction()</a> is called, <a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b22441365145bf552f89e09" title="Serialize our class to a bitstream.">Serialize()</a> will be called immediately thereafter. However, they are sent in different messages, so <a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b22441365145bf552f89e09" title="Serialize our class to a bitstream.">Serialize()</a> may arrive a later frame than <a class="el" href="classRakNet_1_1Replica3.html#8297aa828aa9261d8ff6194f0023423a" title="Write data to be sent only when the object is constructed on a remote system.">SerializeConstruction()</a> For that reason, the object should be valid after a call to <a class="el" href="classRakNet_1_1Replica3.html#8e18c95612054b601ce0149f91a5a34d" title="Read data written by Replica3::SerializeConstruction().">DeserializeConstruction()</a> for at least a short time.<br>
+ <dl class="note" compact><dt><b>Note:</b></dt><dd>The object's NetworkID and allocation id are handled by the system automatically, you do not need to write these values to <em>constructionBitstream</em> </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>constructionBitstream</em>&nbsp;</td><td>Destination bitstream to write your data to </td></tr>
@@ -937,7 +947,7 @@ Write extra data to send with the object deletion event, if desired.
 <div class="memdoc">
 
 <p>
-Write a unique identifer for this class type. 
+Write a unique identifer that can be read on a remote system to create an object of this same class. 
 <p>
 The value written to <em>allocationIdBitstream</em> will be passed to <a class="el" href="classRakNet_1_1Connection__RM3.html#b05d85100f726378f2ed73c6792a5b46" title="Class factory to create a Replica3 instance, given a user-defined identifier.">Connection_RM3::AllocReplica()</a>.<br>
  Sample implementation:<br>
@@ -969,7 +979,7 @@ GUID of the system that first called Reference() on this object. Transmitted aut
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 4 22:17:53 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Feb 27 09:39:26 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

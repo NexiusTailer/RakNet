@@ -199,14 +199,6 @@
 				Name="Source Files"
 				>
 				<File
-					RelativePath="..\UPNP\EventReceiver.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\UPNP\UPNPCallBackInterface.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\UPNP\UPNPNATInternal.cpp"
 					>
 				</File>

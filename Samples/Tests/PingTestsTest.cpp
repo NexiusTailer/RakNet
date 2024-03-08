@@ -45,15 +45,6 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 	TestHelpers::StandardClientPrep(sender2,destroyList);
 
-
-
-
-
-
-
-
-
-
 	receiver=RakNetworkFactory::GetRakPeerInterface();
 	destroyList.Push(receiver,__FILE__,__LINE__);
 	receiver->Startup(2, 30, &SocketDescriptor(60000,0), 1);
@@ -87,13 +78,10 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 	int lastPing=0;
 	int lowestPing=0;
+	RakNetTime nextPing=0;
 
 	while(!timer.IsExpired())
 	{
-
-
-
-
 		for (packet=receiver->Receive();packet;receiver->DeallocatePacket(packet),packet=receiver->Receive())
 		{
 			if (isVerbose)
@@ -108,9 +96,13 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 		}
 
+		if (RakNet::GetTimeMS()>nextPing)
+		{
+			sender2->Ping(currentSystem);
+			nextPing=RakNet::GetTimeMS()+30;
+		}
 
-		sender2->Ping(currentSystem);
-
+		RakSleep(1);
 	}
 
 	int averagePing=sender2->GetAveragePing(currentSystem);
@@ -134,11 +126,6 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 		return returnVal;
 	}
-
-
-
-
-
 
 
 	if (lastPing>100)//100 MS for localhost?
@@ -185,28 +172,20 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 	}
 
-
-
-
-
 	lastPing=0;
 	lowestPing=0;
 	sender->SetOccasionalPing(true);
 
 	printf("Testing SetOccasionalPing\n");
 
-
 	timer.Start();
 	while(!timer.IsExpired())
 	{
-
-
 		for (packet=receiver->Receive();packet;receiver->DeallocatePacket(packet),packet=receiver->Receive())
 		{
 			if (isVerbose)
 				printf("Receive packet id %i\n",packet->data[0]);
 		}
-
 
 		for (packet=sender->Receive();packet;sender->DeallocatePacket(packet),packet=sender->Receive())
 		{
@@ -215,6 +194,7 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 		}
 
+		RakSleep(1);
 	}
 
 	averagePing=sender->GetAveragePing(currentSystem);
@@ -228,11 +208,6 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 		return returnVal;
 	}
-
-
-
-
-
 
 	return 0;
 

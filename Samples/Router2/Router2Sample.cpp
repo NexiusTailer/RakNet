@@ -10,814 +10,261 @@
 #include "RakSleep.h"
 #include "GetTime.h"
 #include "Rand.h"
+#include "RakAssert.h"
+#include "SocketLayer.h"
+#include "Getche.h"
 
+using namespace RakNet;
 
+// Global just to make the sample easier to write
+RakNetGUID endpointGuid;
+RakPeerInterface *endpoint=0, *router=0, *sender=0;
+RakPeerInterface *rakPeer;
+Router2 *router2Plugin;
 
-
-bool SendGUID(RakNetGUID GUID,SystemAddress routerAddress,char * stringRouterIp,RakPeerInterface *peer,unsigned char messageId)
+void ReadAllPackets(void)
 {
-	if(!peer->IsConnected (routerAddress,true,true) )//Are we connected or is there a pending operation ?
-	{
-
-		peer->Connect(stringRouterIp,routerAddress.port,0,0);
-
-	}
-
-
-	RakNet::BitStream bitStream;
-	bitStream.Reset();
-	bitStream.Write(messageId);
-	bitStream.Write(GUID);
-
-
-
-	RakNetTimeMS stopWaiting = RakNet::GetTimeMS() + 1000;
-	while (peer->Send(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED ,0, routerAddress, false)==false)
-	{
-		if (RakNet::GetTimeMS()>stopWaiting)
-		{
-			return false;
-		}
-
-	}
-
-
-	return true;
-}
-
-
-RakNetGUID QueryRouterForSourceGUID(SystemAddress routerAddress,char * stringRouterIp,RakPeerInterface *peer)
-{
-
-
-
-	if(!peer->IsConnected (routerAddress,true,true) )//Are we connected or is there a pending operation ?
-	{
-
-		peer->Connect(stringRouterIp,routerAddress.port,0,0);
-
-	}
-
-	RakNetGUID returnedGUID;
-
+	char str[64], str2[64];
 	Packet *packet;
-	RakNet::BitStream bitStream;
-	bitStream.Reset();
-	bitStream.Write((unsigned char) (ID_USER_PACKET_ENUM+4));
-
-
-
-	RakNetTimeMS stopWaiting = RakNet::GetTimeMS() + 1000;
-	while (peer->Send(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED ,0, routerAddress, false)==false)
+	for (packet=rakPeer->Receive(); packet; rakPeer->DeallocatePacket(packet), packet=rakPeer->Receive())
 	{
-		if (RakNet::GetTimeMS()>stopWaiting)
+		packet->guid.ToString(str);
+		packet->systemAddress.ToString(true,str2);
+		if (packet->data[0]==ID_NEW_INCOMING_CONNECTION)
 		{
-			return UNASSIGNED_RAKNET_GUID;
-		}
+			printf("ID_NEW_INCOMING_CONNECTION from %s on %s\n", str, str2);
 
-	}
-
-
-	stopWaiting = RakNet::GetTimeMS() + 1000;
-	while (RakNet::GetTimeMS()<stopWaiting)
-	{
-
-
-		for (packet=peer->Receive(); packet; peer->DeallocatePacket(packet), packet=peer->Receive())
-		{
-
-			//	printf("Talker recieved packet id %i\n",packet->data[0]);
-
-			if (packet->data[0]==ID_USER_PACKET_ENUM+5)
+			// If this is the router, then send the guid of the endpoint to the sender
+			if (router)
 			{
-
-				bitStream.Reset();
-				bitStream.Write((char*)packet->data, packet->length);
-				bitStream.IgnoreBits(8); 
-				bitStream.Read(returnedGUID);
-				return returnedGUID;
+				endpointGuid=rakPeer->GetGUIDFromIndex(0);
+				RakAssert(endpointGuid!=UNASSIGNED_RAKNET_GUID);
+				RakNet::BitStream bsOut;
+				bsOut.Write((MessageID)ID_USER_PACKET_ENUM);
+				bsOut.Write(endpointGuid);
+				rakPeer->Send(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
 			}
 		}
-
-	}
-
-
-
-	return UNASSIGNED_RAKNET_GUID;
-
-
-}
-
-
-
-RakNetGUID QueryRouterForEndPointGUID(SystemAddress routerAddress,char * stringRouterIp,RakPeerInterface *peer)
-{
-
-
-
-	if(!peer->IsConnected (routerAddress,true,true) )//Are we connected or is there a pending operation ?
-	{
-
-		peer->Connect(stringRouterIp,routerAddress.port,0,0);
-
-	}
-
-	RakNetGUID returnedGUID;
-
-	Packet *packet;
-	RakNet::BitStream bitStream;
-	bitStream.Reset();
-	bitStream.Write((unsigned char) (ID_USER_PACKET_ENUM+6));
-
-
-
-	RakNetTimeMS stopWaiting = RakNet::GetTimeMS() + 1000;
-	while (peer->Send(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED ,0, routerAddress, false)==false)
-	{
-		if (RakNet::GetTimeMS()>stopWaiting)
+		else if (packet->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
 		{
-			return UNASSIGNED_RAKNET_GUID;
-		}
-
-	}
-
-
-	stopWaiting = RakNet::GetTimeMS() + 1000;
-	while (RakNet::GetTimeMS()<stopWaiting)
-	{
-
-
-		for (packet=peer->Receive(); packet; peer->DeallocatePacket(packet), packet=peer->Receive())
-		{
-
-			//printf("Talker recieved packet id %i\n",packet->data[0]);
-
-			if (packet->data[0]==ID_USER_PACKET_ENUM+7)
+			if (sender!=0 && packet->guid==endpointGuid)
 			{
-
-				bitStream.Reset();
-				bitStream.Write((char*)packet->data, packet->length);
-				bitStream.IgnoreBits(8); 
-				bitStream.Read(returnedGUID);
-				return returnedGUID;
+				printf("Sender got ID_CONNECTION_REQUEST_ACCEPTED to endpoint on %s.\n", str2);
+			}
+			else
+			{
+				printf("ID_CONNECTION_REQUEST_ACCEPTED from %s on %s\n", str, str2);
 			}
 		}
-
-	}
-
-
-
-	return UNASSIGNED_RAKNET_GUID;
-
-
-}
-
-
-
-int RouterMode()
-{
-
-	RakNet::BitStream bitStream;
-
-	RakPeerInterface  *router;
-	RakNet::Router2 routerR2;
-
-
-
-	router = RakNetworkFactory::GetRakPeerInterface();
-
-
-
-	router->AttachPlugin(&routerR2);
-	routerR2.SetMaximumForwardingRequests(8);
-
-
-
-	SocketDescriptor sdRouter(1235,0);
-
-
-
-	router->Startup(8,0,&sdRouter,1);
-	router->SetMaximumIncomingConnections(8);
-
-
-
-
-
-	RakSleep(100);
-
-	SystemAddress routerAddress;
-
-
-
-
-	RakNetGUID endpointGuid=UNASSIGNED_RAKNET_GUID;
-
-	RakNetGUID sourceGuid=UNASSIGNED_RAKNET_GUID;
-
-
-
-	char loopNumber=0;
-	int lastSequence;
-	int dupsRecieved;
-	SystemAddress receivedAddress;
-	RakNetGUID returnId;
-
-
-
-	printf("Waiting for connections and data");
-
-	do
-	{
-
-		Packet *packet;
-		bool testPassed=false;
-
-		RakNetTimeMS stopWaiting = RakNet::GetTimeMS() + 5000;
-		while (RakNet::GetTimeMS()<stopWaiting)
+		else if (packet->data[0]==ID_USER_PACKET_ENUM)
 		{
+			// Only sender should get this message
+			RakAssert(sender!=0);
 
-
-
-
-
-
-			for (packet=router->Receive(); packet; router->DeallocatePacket(packet), packet=router->Receive())
+			// This should be returned once for each router, so just process the first one
+			if (endpointGuid==UNASSIGNED_RAKNET_GUID)
 			{
-				printf("Router  Recieved packet id %i\n",packet->data[0]);
-
-				if (packet->data[0]==ID_NEW_INCOMING_CONNECTION)
-				{
-					printf("Router Recieved packet id %i, incoming connection, Ip:%s\n",packet->data[0],packet->systemAddress.ToString());
-
-				}
-
-
-				if (packet->data[0]==ID_USER_PACKET_ENUM+2)
-				{
-
-
-					bitStream.Reset();
-					bitStream.Write((char*)packet->data, packet->length);
-					bitStream.IgnoreBits(8); 
-					bitStream.Read(receivedAddress);
-					returnId=router->GetGuidFromSystemAddress(receivedAddress);
-
-
-					bitStream.Reset();
-					bitStream.Write((unsigned char) (ID_USER_PACKET_ENUM+3));
-					bitStream.Write(returnId);
-
-
-					router->Send(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED ,0, packet->systemAddress, false);
-
-				}
-
-
-				if (packet->data[0]==ID_USER_PACKET_ENUM+8)
-				{
-
-
-					bitStream.Reset();
-					bitStream.Write((char*)packet->data, packet->length);
-					bitStream.IgnoreBits(8); 
-					bitStream.Read(sourceGuid);
-
-
-				}
-
-
-				if (packet->data[0]==ID_USER_PACKET_ENUM+9)
-				{
-
-
-					bitStream.Reset();
-					bitStream.Write((char*)packet->data, packet->length);
-					bitStream.IgnoreBits(8); 
-					bitStream.Read(endpointGuid);
-
-
-				}
-
-				if (packet->data[0]==ID_USER_PACKET_ENUM+4)
-				{
-
-
-
-
-
-					bitStream.Reset();
-					bitStream.Write((unsigned char) (ID_USER_PACKET_ENUM+5));
-					bitStream.Write(sourceGuid);
-
-
-					router->Send(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED ,0, packet->systemAddress, false);
-
-				}
-
-
-
-				if (packet->data[0]==ID_USER_PACKET_ENUM+6)
-				{
-
-
-
-
-
-					bitStream.Reset();
-					bitStream.Write((unsigned char) (ID_USER_PACKET_ENUM+7));
-					bitStream.Write(endpointGuid);
-
-
-					router->Send(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED ,0, packet->systemAddress, false);
-
-				}
-
+				RakNet::BitStream bsIn(packet->data, packet->length, false);
+				bsIn.IgnoreBytes(sizeof(MessageID));
+				bsIn.Read(endpointGuid);
+				endpointGuid.ToString(str);
+				printf("Sender got endpoint guid of %s. Attempting routing.\n", str);
+				router2Plugin->EstablishRouting(endpointGuid);
 			}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-			RakSleep(0);
 		}
-
-
-
-
-
-		RakSleep(0);
-
-
-	}
-	while(1);
-
-
-
-
-	RakNetworkFactory::DestroyRakPeerInterface(router);
-
-	return 0;
-}
-
-
-
-
-int EndPointMode(char * routerIp,char * backupRouterIp,bool isBackupRouter)
-{
-	RakPeerInterface *endpoint,*routerTalker;
-	RakNet::Router2 endpointR2;
-
-
-	routerTalker= RakNetworkFactory::GetRakPeerInterface();
-
-
-
-
-	endpoint = RakNetworkFactory::GetRakPeerInterface();
-
-
-
-	endpoint->AttachPlugin(&endpointR2);
-
-
-
-	SocketDescriptor sdEndpoint(1236,0);
-
-
-	endpoint->Startup(8,0,&sdEndpoint,1);
-	endpoint->SetMaximumIncomingConnections(8);
-
-
-	routerTalker->Startup(8,0,&SocketDescriptor(1233,0),1);
-
-
-
-
-	endpoint->Connect(routerIp,1235,0,0);
-
-	if (isBackupRouter)
-		endpoint->Connect(backupRouterIp,1235,0,0);
-
-
-	routerTalker->Connect(routerIp,1235,0,0);
-
-
-	RakSleep(100);
-
-	SystemAddress routerAddress;
-
-
-
-	routerAddress.SetBinaryAddress(routerIp);
-	routerAddress.port=1235;
-
-
-
-	printf("Sending endpoint GUID\n");
-	while(!SendGUID(endpoint->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS),routerAddress,routerIp,routerTalker,ID_USER_PACKET_ENUM+9))
-	{
-		RakSleep(1000);
-	}
-
-
-
-	RakNetGUID sourceGuid=UNASSIGNED_RAKNET_GUID;
-
-
-	printf("Waiting for source GUID\n");
-	while(sourceGuid==UNASSIGNED_RAKNET_GUID)
-	{
-		sourceGuid=QueryRouterForSourceGUID(routerAddress,routerIp,routerTalker);
-		RakSleep(1000);
-	}
-
-
-	printf("sourceGuid=%s\n",sourceGuid.ToString());
-
-
-
-
-	char loopNumber=0;
-	int lastSequence;
-	int dupsRecieved;
-	SystemAddress receivedAddress;
-	RakNetGUID returnId;
-
-
-
-
-	do
-	{
-
-		Packet *packet;
-		bool testPassed=false;
-
-		RakNetTimeMS stopWaiting = RakNet::GetTimeMS() + 5000;
-		while (RakNet::GetTimeMS()<stopWaiting)
+		else if (packet->data[0]==ID_ROUTER_2_FORWARDING_NO_PATH)
 		{
+			// Only sender should get this message
+			RakAssert(sender!=0);
 
-
-
-
-
-
-
-			lastSequence=-1;
-			dupsRecieved=0;
-			for (packet=endpoint->Receive(); packet; endpoint->DeallocatePacket(packet), packet=endpoint->Receive())
-			{
-
-
-				printf("Endpoint recieved packet id %i\n",packet->data[0]);
-				if (packet->data[0]==ID_USER_PACKET_ENUM+1  && packet->guid==sourceGuid)
-				{
-
-					printf("Recieved packet from loop %i\n",packet->data[9]);
-					testPassed=true;
-					stopWaiting=0;
-					if (packet->data[9]==lastSequence)
-					{
-						dupsRecieved++;
-						printf("This is duplicate number %i\n",dupsRecieved);
-
-					}
-					else
-					{
-						dupsRecieved=0;
-
-					}
-					lastSequence=packet->data[9];
-					//break;
-				}
-
-
-
-			}
-
-
-
-
-
-
-
-
-
-
-			RakSleep(0);
+			printf("No path to endpoint exists. Routing failed.\n");
 		}
-
-
-
-
-
-		RakSleep(0);
-
-
-	}
-	while(1);
-
-
-
-
-	RakNetworkFactory::DestroyRakPeerInterface(endpoint);
-
-	return 0;
-}
-
-
-
-int SourceMode(char * routerIp,char * backupRouterIp,bool isBackupRouter)
-{
-	RakPeerInterface *source,*routerTalker;
-	RakNet::Router2 sourceR2;
-
-
-	routerTalker= RakNetworkFactory::GetRakPeerInterface();
-
-
-
-	source = RakNetworkFactory::GetRakPeerInterface();
-
-
-
-
-	source->AttachPlugin(&sourceR2);
-
-
-
-
-	SocketDescriptor sdSource(1234,0);
-
-
-
-	source->Startup(8,0,&sdSource,1);
-
-
-	routerTalker->Startup(8,0,&SocketDescriptor(1232,0),1);
-
-
-
-
-
-	source->Connect(routerIp,1235,0,0);
-
-	if (isBackupRouter)
-		source->Connect(backupRouterIp,1235,0,0);
-
-
-	routerTalker->Connect(routerIp,1235,0,0);
-
-
-	RakSleep(100);
-
-	SystemAddress routerAddress;
-
-
-	routerAddress.SetBinaryAddress(routerIp);
-	routerAddress.port=1235;
-
-
-	printf("Sending source GUID\n");
-	while(!SendGUID(source->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS),routerAddress,routerIp,routerTalker,ID_USER_PACKET_ENUM+8))
-	{
-		RakSleep(1000);}
-
-
-	RakNetGUID endpointGuid=UNASSIGNED_RAKNET_GUID;
-
-
-	printf("Getting endpoint GUID\n");
-	while(endpointGuid==UNASSIGNED_RAKNET_GUID)
-	{
-		endpointGuid=  QueryRouterForEndPointGUID(routerAddress,routerIp,routerTalker);
-		RakSleep(1000);
-	}
-
-
-
-	printf("endpointGuid=%s\n",endpointGuid.ToString());
-
-
-
-
-
-	sourceR2.Connect(endpointGuid);
-
-	char loopNumber=0;
-	int lastSequence;
-	int dupsRecieved;
-	SystemAddress receivedAddress;
-	RakNetGUID returnId;
-
-
-
-	do
-	{
-
-		Packet *packet;
-		bool testPassed=false;
-
-		RakNetTimeMS stopWaiting = RakNet::GetTimeMS() + 5000;
-		while (RakNet::GetTimeMS()<stopWaiting)
+		else if (packet->data[0]==ID_CONNECTION_LOST)
 		{
-
-
-
-			for (packet=source->Receive(); packet; source->DeallocatePacket(packet), packet=source->Receive())
+			if (sender!=0 && packet->guid==endpointGuid)
 			{
-
-				printf("Source recieved packet id %i\n",packet->data[0]);
-				if (packet->data[0]==ID_CONNECTION_REQUEST_ACCEPTED  && packet->guid==endpointGuid)
-				{
-					testPassed=true;
-					stopWaiting=0;
-					//break;
-				}
-
-
+				printf("Sender got ID_CONNECTION_LOST to endpoint.\n");
 			}
-
-
-
-
-
-
-
-
-
-
-
-
-
-			RakSleep(0);
+			else
+			{
+				printf("ID_CONNECTION_LOST from %s\n", str);
+			}
 		}
+		else if (packet->data[0]==ID_ROUTER_2_FORWARDING_ESTABLISHED)
+		{
+			// Only sender should get this message
+			RakAssert(sender!=0);
 
+			printf("Routing through %s successful. Connecting to endpoint.\n", str);
 
+			RakNet::BitStream bs(packet->data, packet->length, false);
+			bs.IgnoreBytes(sizeof(MessageID));
+			RakNetGUID endpointGuid;
+			bs.Read(endpointGuid);
+			unsigned short sourceToDestPort;
+			bs.Read(sourceToDestPort);
+			char ipAddressString[32];
+			packet->systemAddress.ToString(false, ipAddressString);
+			rakPeer->Connect(ipAddressString, sourceToDestPort, 0,0);
+		}
+		else if (packet->data[0]==ID_ROUTER_2_REROUTED)
+		{
+			// Only sender should get this message
+			RakAssert(sender!=0);
 
+			// You could read the endpointGuid and sourceToDestPoint if you wanted to
+			RakNet::BitStream bs(packet->data, packet->length, false);
+			bs.IgnoreBytes(sizeof(MessageID));
+			RakNetGUID endpointGuid2;
+			bs.Read(endpointGuid2);
+			RakAssert(endpointGuid2==endpointGuid);
+			unsigned short sourceToDestPort;
+			bs.Read(sourceToDestPort);
+			SystemAddress intermediateAddress=packet->systemAddress;
+			intermediateAddress.port=sourceToDestPort;
 
-		RakSleep(50);
-		char str[]="AAAAAAAAAA";
-		str[0]=ID_USER_PACKET_ENUM+1;
-		str[9]=loopNumber;
-		printf("Sending packet from loop %i\n",loopNumber);
-		source->Send(str, (int) strlen(str)+1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
-		loopNumber++;
+			printf("Sender connection to endpoint rerouted through %s\n", str);
+			intermediateAddress.ToString(true, str);
+			printf("Sending reroute message to endpoint on %s\n", str);
 
-
-
-
-
+			// Test sending a message to the endpoint
+			RakNet::BitStream bsOut;
+			MessageID id = ID_USER_PACKET_ENUM+1;
+			bsOut.Write(id);
+			rakPeer->Send(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,endpointGuid,false);
+		}
+		else if (packet->data[0]==ID_USER_PACKET_ENUM+1)
+		{
+			RakAssert(endpoint!=0);
+			printf("Endpoint got test message after rerouting.\n");
+		}
 	}
-	while(1);
-
-
-	RakNetworkFactory::DestroyRakPeerInterface(source);
-
-
-
-	return 0;
 }
-
-
 
 int main(void)
 {
 	printf("Demonstration of the router2 plugin.\n");
-	printf("The router2 plugin allows you to connect to a system, routing messages through a third system\n");
-	printf("This is useful if you can connect to the second system, but not the third, due to NAT issues.\n");
+	printf("The router2 plugin allows you to connect to a system, routing messages through\n");
+	printf("a third system. This is useful if you can connect to the second system, but not\n");
+	printf("the third, due to NAT issues.\n");
+	printf("1. Start the endpoint\n");
+	printf("2. Start 1 or more routers, and connect them to the endpoint\n");
+	printf("3. Start the sender\n");
+	printf("4. After the sender connects to the endpoint, close the router\n");
 	printf("Difficulty: Advanced\n\n");
 
-	char routerType;
-	char isBackupRouterChar;
-	bool isBackupRouter;
-	char routerIp[15];
-	char backupRouterIp[15];
-
-
-	bool passedDisconnect=false;
-	bool passedRerouting=false;
-	bool passedRecieve=false;
-
-
-
-
-
-
-	printf("Source(S),Endpoint(E),router(R) :");
-	fflush(stdin);
-	routerType=getchar();
-
-
-	if (routerType>97)
+	printf("Run as:\n(E)ndpoint\n(R)outer\n(S)ender\n");
+	endpointGuid=UNASSIGNED_RAKNET_GUID;
+	const unsigned short ENDPOINT_PORT=1234;
+	const unsigned short ROUTER_PORT=1235;
+	char ch = getche();
+	char str[64];
+	printf("\n");
+	if (ch=='e' || ch=='E')
 	{
-		routerType-=32;
+		endpoint=RakNetworkFactory::GetRakPeerInterface();
+		rakPeer=endpoint;
+		endpoint->SetMaximumIncomingConnections(32);
+		SocketDescriptor sd(ENDPOINT_PORT,0);
+		endpoint->Startup(32,0,&sd,1);
 	}
-
-	switch (routerType)
+	else if (ch=='r' || ch=='R')
 	{
-	case 'S':
+		router=RakNetworkFactory::GetRakPeerInterface();
+		rakPeer=router;
+		router->SetMaximumIncomingConnections(32);
+		SocketDescriptor sd;
+		sd.port=ROUTER_PORT;
+		while (SocketLayer::IsPortInUse(sd.port)==true)
+			sd.port++;
+		router->Startup(32,0,&sd,1);
 
-	case 'E':
-	case 'R':
+		printf("Enter endpoint IP address: ");
+		gets(str);
+		if (str[0]==0)
+			strcpy(str, "127.0.0.1");
 
-		break;
-	default:
+		// Connect to the endpoint
+		router->Connect(str,ENDPOINT_PORT,0,0);
+
+		// To make things easy, just wait for the connection
+		RakSleep(1000);
+
+		// Check who we connected to
+		SystemAddress remoteSystems[1];
+		unsigned short numberOfSystems=1;
+		router->GetConnectionList((SystemAddress*) remoteSystems,&numberOfSystems);
+		if (numberOfSystems==0)
+		{
+			printf("Didn't connect to the endpoint. Quitting\n");
+			return 1;
+		}
+	}
+	else if (ch=='s' || ch=='S')
+	{
+		sender=RakNetworkFactory::GetRakPeerInterface();
+		rakPeer=sender;
+		SocketDescriptor sd(0,0);
+		sender->Startup(32,0,&sd,1);
+
+		printf("Enter router IP address: ");
+		gets(str);
+		if (str[0]==0)
+			strcpy(str, "127.0.0.1");
+
+		// Try connecting to up to 8 routers
+		for (unsigned short i=0; i < 8; i++)
+		{
+			sender->Connect(str,ROUTER_PORT+i,0,0);
+		}
+
+		// To make things easy, just wait for all connections
+		RakSleep(1000);
+
+		// Check who we connected to
+		SystemAddress remoteSystems[8];
+		unsigned short numberOfSystems=8;
+		sender->GetConnectionList((SystemAddress*) remoteSystems,&numberOfSystems);
+		if (numberOfSystems==0)
+		{
+			printf("Didn't connect to any routers. Quitting\n");
+			return 1;
+		}
+	}
+	else
+	{
+		printf("Unknown mode. Quitting\n");
 		return 1;
-
-
 	}
 
-	if (routerType=='E'||routerType=='S')
+	rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString(str);
+	printf("My GUID is %s\n", str);
+
+	rakPeer->SetTimeoutTime(3000,UNASSIGNED_SYSTEM_ADDRESS);
+	router2Plugin = new Router2;
+	rakPeer->AttachPlugin(router2Plugin);
+	router2Plugin->SetMaximumForwardingRequests(1);
+
+	// Print connection update messages
+	ReadAllPackets();
+
+	// The sender needs to read out the endpointGuid
+	RakSleep(500);
+	ReadAllPackets();
+
+	printf("Sample running. Press 'q' to quit\n");
+	while (1)
 	{
-		fflush(stdin);
-
-		printf("RouterIp : ");
-		fgets(routerIp, sizeof(routerIp), stdin);
-
-		if (routerIp[strlen(routerIp)-1]=='\n')
+		if (kbhit())
 		{
-			routerIp[strlen(routerIp)-1]=0;
-
+			if (getch()=='q')
+				break;
 		}
 
-
-		fflush(stdin);
-
-		printf("Have backup router? (Y)(N) :");
-		isBackupRouterChar=getchar();
-
-		if (isBackupRouterChar>97)
-		{
-			isBackupRouterChar-=32;
-		}
-
-
-		if (isBackupRouterChar=='Y')
-		{
-			isBackupRouter=true;
-		}
-		else
-		{
-			isBackupRouter=false;
-		}
-
-
-		if (isBackupRouter)
-		{
-			fflush(stdin);
-
-			printf("BackupRouterIp : ");
-			fgets(backupRouterIp, sizeof(backupRouterIp), stdin);
-
-			if (backupRouterIp[strlen(backupRouterIp)-1]=='\n')
-			{
-				backupRouterIp[strlen(backupRouterIp)-1]=0;
-
-			}
-		}
-
+		RakSleep(30);
+		ReadAllPackets();
 	}
 
-
-	switch (routerType)
-	{
-	case 'S':
-		SourceMode(routerIp, backupRouterIp, isBackupRouter);
-		break;
-
-	case 'E':
-		EndPointMode(routerIp, backupRouterIp, isBackupRouter);
-		break;
-	case 'R':
-		RouterMode();
-		break;
-
-	default:
-		return 1;
-
-
-	}
-
-
-
-
-
-	return 0;
+	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	delete router2Plugin;
 }
-
-
-
-

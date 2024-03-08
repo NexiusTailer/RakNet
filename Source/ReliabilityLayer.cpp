@@ -2756,6 +2756,16 @@ void ReliabilityLayer::PushPacket(CCTimeType time, InternalPacket *internalPacke
 	packetsToDeallocThisUpdate.Push(isReliable==false, __FILE__, __LINE__ );
 	RakAssert(internalPacket->headerLength==GetMessageHeaderLengthBits(internalPacket));
 
+// This code tells me how much time elapses between when you send, and when the message actually goes out
+// 	if (internalPacket->data[0]==0)
+// 	{
+// 		RakNetTime t;
+// 		RakNet::BitStream bs(internalPacket->data+1,sizeof(t),false);
+// 		bs.Read(t);
+// 		RakNetTime curTime=RakNet::GetTime();
+// 		RakNetTime diff = curTime-t;
+// 	}
+
 	congestionManager.OnSendBytes(time, BITS_TO_BYTES(internalPacket->dataBitLength)+BITS_TO_BYTES(internalPacket->headerLength));
 }
 //-------------------------------------------------------------------------------------------------------

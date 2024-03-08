@@ -85,10 +85,18 @@ void App3D::PreConfigure(void)
 	try
 	{
 		// If it throws an exception, change project properties / configuration properties / debugging / working directory to $(ProjectDir)
-#ifdef _DEBUG
+#ifdef WIN32
+	#ifdef _DEBUG
 		root = new Ogre::Root("PluginsDebug.cfg", "Graphics.cfg", "Graphics.log");
-#else
+	#else
 		root = new Ogre::Root("Plugins.cfg", "Graphics.cfg", "Graphics.log");
+	#endif
+	#else
+	#ifdef _DEBUG
+		root = new Ogre::Root("PluginsDebugL.cfg", "Graphics.cfg", "Graphics.log");
+	#else
+		root = new Ogre::Root("PluginsL.cfg", "Graphics.cfg", "Graphics.log");
+	#endif
 #endif
 	}
 	catch (Ogre::Exception* e)

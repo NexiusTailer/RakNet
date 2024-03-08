@@ -1,9 +1,8 @@
+#if defined(_WIN32) && !defined(_XBOX) && !defined(X360)
+#include <conio.h> /* getche() */
+#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
 
-
-#if !defined(linux) && !defined(__GNUC__) && !defined(__GCCXML__)
-
-
-#elif !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
+#else
 
 #include "Getche.h"
 
@@ -23,4 +22,4 @@ char getche()
   return ch;
 
 } 
-#endif 
+#endif

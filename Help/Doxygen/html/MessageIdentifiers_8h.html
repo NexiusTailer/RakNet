@@ -156,10 +156,11 @@
 <br>
 &nbsp;&nbsp;<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3d208f303a18cdeac3d78852ed3352464">ID_ROUTER_2_INTERNAL</a>, 
 <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd31354fc350a01e62346643e3e0739ff77">ID_ROUTER_2_FORWARDING_NO_PATH</a>, 
+<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3128ee3a0bf13e0b463e0dd12db5ad50a">ID_ROUTER_2_FORWARDING_ESTABLISHED</a>, 
 <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3e5c2bfca3da7660a9a6b5b4703a01839">ID_ROUTER_2_REROUTED</a>
-, <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3cd0390148288ade2da494f4ba266b2b4">ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING</a>, 
-<br>
-&nbsp;&nbsp;<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3e388bbb96d3a716b3b0f2f7b7a3cc6de">ID_TEAM_BALANCER_TEAMS_LOCKED</a>, 
+, <br>
+&nbsp;&nbsp;<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3cd0390148288ade2da494f4ba266b2b4">ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING</a>, 
+<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3e388bbb96d3a716b3b0f2f7b7a3cc6de">ID_TEAM_BALANCER_TEAMS_LOCKED</a>, 
 <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd342266a19aa17158f228bf0baaec39e6d">ID_TEAM_BALANCER_TEAM_ASSIGNED</a>
 <br>
  }</td></tr>
@@ -388,8 +389,13 @@ Events happening with SQLiteClientLoggerPlugin. </td></tr>
 Used by the router2 plugin. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd31354fc350a01e62346643e3e0739ff77"></a><!-- doxytag: member="ID_ROUTER_2_FORWARDING_NO_PATH" ref="c1b471af280629f5ace02e586d5bcfd31354fc350a01e62346643e3e0739ff77" args="" -->ID_ROUTER_2_FORWARDING_NO_PATH</em>&nbsp;</td><td>
 No path is available or can be established to the remote system. </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd3128ee3a0bf13e0b463e0dd12db5ad50a"></a><!-- doxytag: member="ID_ROUTER_2_FORWARDING_ESTABLISHED" ref="c1b471af280629f5ace02e586d5bcfd3128ee3a0bf13e0b463e0dd12db5ad50a" args="" -->ID_ROUTER_2_FORWARDING_ESTABLISHED</em>&nbsp;</td><td>
+You can now call connect, ping, or other operations to the destination system. 
+<p>
+Connect as follows:<p>
+<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> bs(packet-&gt;data, packet-&gt;length, false); bs.IgnoreBytes(sizeof(MessageID)); <a class="el" href="structRakNetGUID.html">RakNetGUID</a> endpointGuid; bs.Read(endpointGuid); unsigned short sourceToDestPort; bs.Read(sourceToDestPort); char ipAddressString[32]; packet-&gt;systemAddress.ToString(false, ipAddressString); rakPeerInterface-&gt;Connect(ipAddressString, sourceToDestPort, 0,0); </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd3e5c2bfca3da7660a9a6b5b4703a01839"></a><!-- doxytag: member="ID_ROUTER_2_REROUTED" ref="c1b471af280629f5ace02e586d5bcfd3e5c2bfca3da7660a9a6b5b4703a01839" args="" -->ID_ROUTER_2_REROUTED</em>&nbsp;</td><td>
-The IP address for a forwarded connection has changed. </td></tr>
+The IP address for a forwarded connection has changed Read endpointGuid and port as per ID_ROUTER_2_FORWARDING_ESTABLISHED </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd3cd0390148288ade2da494f4ba266b2b4"></a><!-- doxytag: member="ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING" ref="c1b471af280629f5ace02e586d5bcfd3cd0390148288ade2da494f4ba266b2b4" args="" -->ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING</em>&nbsp;</td><td>
 Cannot switch to the desired team because it is full. However, if someone on that team leaves, you will get ID_TEAM_BALANCER_SET_TEAM later. Byte 1 contains the team you requested to join. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd3e388bbb96d3a716b3b0f2f7b7a3cc6de"></a><!-- doxytag: member="ID_TEAM_BALANCER_TEAMS_LOCKED" ref="c1b471af280629f5ace02e586d5bcfd3e388bbb96d3a716b3b0f2f7b7a3cc6de" args="" -->ID_TEAM_BALANCER_TEAMS_LOCKED</em>&nbsp;</td><td>
@@ -402,7 +408,7 @@ Team balancer plugin informing you of your team. Byte 1 contains the team you re
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 4 22:17:50 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Feb 27 09:39:23 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

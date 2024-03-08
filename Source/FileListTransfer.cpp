@@ -632,8 +632,7 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFileAndIsNotDow
 	unsigned int chunkLength;
 	inBitStream.ReadCompressed(offset);
 	inBitStream.ReadCompressed(chunkLength);
-//	if (chunkLength==0)
-//		return;
+
 	bool lastChunk;
 	inBitStream.Read(lastChunk);
 	bool finished = lastChunk && isTheFileAndIsNotDownloadProgress;
@@ -697,7 +696,7 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFileAndIsNotDow
 
 	unsigned int totalNotifications;
 	unsigned int currentNotificationIndex;
-	if (chunkLength==onFileStruct.byteLengthOfThisFile)
+	if (chunkLength==0 || chunkLength==onFileStruct.byteLengthOfThisFile)
 		totalNotifications=1;
 	else
 		totalNotifications = onFileStruct.byteLengthOfThisFile / chunkLength + 1;

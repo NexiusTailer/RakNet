@@ -99,7 +99,7 @@ static int __RPC3TagHead=0;
 static int __RPC3TagTail=0;
 
 // If this assert hits, then RakNet::_RPC3::Deref was called more times than the argument was passed to the function
-static void __RPC3_Tag_AddHead(RPC3Tag &p)
+static void __RPC3_Tag_AddHead(const RPC3Tag &p)
 {
 	// Update tag if already in array
 	int i;
@@ -301,7 +301,7 @@ struct ReadWithoutNetworkIDPtr
 		else
 			count=1;
 
-		t = new ActualObjectType[count];
+		t = new ActualObjectType[count]();
 		if (isArray)
 		{
 			for (unsigned int i=0; i < count; i++)
@@ -557,7 +557,8 @@ struct WriteWithNetworkIDPtr
 		}
 		for (unsigned int i=0; i < tag.count; i++)
 		{
-			bitStream << t->GetNetworkID();
+			NetworkID inNetworkID=t->GetNetworkID();
+			bitStream << inNetworkID;
 			if (deref)
 			{
 				// skip bytes, write data, go back, write number of bits written, reset cursor

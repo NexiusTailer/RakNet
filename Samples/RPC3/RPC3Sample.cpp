@@ -13,7 +13,8 @@
 #include "NetworkIDManager.h"
 #include "GetTime.h"
 
-RakNet::RPC3 rpc3Inst;
+// This has to be a pointer, because it uses UNASSIGNED_NETWORK_ID, initialized globally
+RakNet::RPC3 *rpc3Inst;
 
 struct NormalizedVector
 {
@@ -44,12 +45,12 @@ public: A() {a=1;} int a;};
 class B {
 public:
 	B() {b=2;} int b;
-	virtual void ClassMemberFunc(A *a1, A &a2, C *c1, C &c2, D *d1, D &d2, RakNet::BitStream *bs1, RakNet::BitStream &bs2, RakNet::RPC3 *rpc3Inst);
+	virtual void ClassMemberFunc(A *a1, A &a2, C *c1, D *d1, RakNet::BitStream *bs1, RakNet::BitStream &bs2, RakNet::RPC3 *rpc3Inst);
 };
 class C : public A, public B, public NetworkIDObject {
 public:
 	C() {c=3;} int c;
-	virtual void ClassMemberFunc(A *a1, A &a2, C *c1, C &c2, D *d1, D &d2, RakNet::BitStream *bs1, RakNet::BitStream &bs2, RakNet::RPC3 *rpc3Inst);
+	virtual void ClassMemberFunc(A *a1, A &a2, C *c1, D *d1, RakNet::BitStream *bs1, RakNet::BitStream &bs2, RakNet::RPC3 *rpc3Inst);
 	void ClassMemberFunc2(RakNet::RPC3 *rpc3Inst);
 	virtual void TestSlot(void) {printf("C::TestSlot\n");}
 };
@@ -65,13 +66,13 @@ public:
 // The number of parameters for a C++ function is limited by BOOST_FUSION_INVOKE_MAX_ARITY-1 found in boost/fusion/functional/invocation/limits.hpp
 // I define this in RPC3_Boost.h to be 10. The default is 6.
 // rpcFromNetwork is automatically filled in from the RPC class. Pass 0 when calling locally. Will be set to the plugin instance when this function is called from the remote system
-void B::ClassMemberFunc(A *a1, A &a2, C *c1, C &c2, D *d1, D &d2, RakNet::BitStream *bs1, RakNet::BitStream &bs2, RakNet::RPC3 *rpcFromNetwork){
+void B::ClassMemberFunc(A *a1, A &a2, C *c1, D *d1, RakNet::BitStream *bs1, RakNet::BitStream &bs2, RakNet::RPC3 *rpcFromNetwork){
 	if (rpcFromNetwork==0)
 		printf("\nB::ClassMemberFunc called locally\n");
 	else
 		printf("\nB::ClassMemberFunc called from %s\n", rpcFromNetwork->GetLastSenderAddress().ToString());
-	printf("a1=%i a2=%i c1=%i c2=%i\n", a1->a, a2.a, c1->c, c2.c);
-	printf("d1::Verify=%i d2::Verify=%i\n", d1->Verify(), d2.Verify());
+	printf("a1=%i a2=%i c1=%i\n", a1->a, a2.a, c1->c);
+	printf("d1::Verify=%i\n", d1->Verify());
 	RakNet::RakString rs1, rs2;
 	bs1->Read(rs1);
 	bs2.Read(rs2);
@@ -80,9 +81,10 @@ void B::ClassMemberFunc(A *a1, A &a2, C *c1, C &c2, D *d1, D &d2, RakNet::BitStr
 	printf("rpc3Inst=%p\n", rpc3Inst);
 }
 
-void C::ClassMemberFunc(A *a1, A &a2, C *c1, C &c2, D *d1, D &d2, RakNet::BitStream *bs1, RakNet::BitStream &bs2, RakNet::RPC3 *rpcFromNetwork)	{
+// C and D derive from networkIDObject, so cannot be passed as references. A pointer is required to do the object lookup
+void C::ClassMemberFunc(A *a1, A &a2, C *c1, D *d1, RakNet::BitStream *bs1, RakNet::BitStream &bs2, RakNet::RPC3 *rpcFromNetwork)	{
 	printf("\nC::ClassMemberFunc\n");
-	B::ClassMemberFunc(a1,a2,c1,c2,d1,d2,bs1,bs2,rpcFromNetwork);
+	B::ClassMemberFunc(a1,a2,c1,d1,bs1,bs2,rpcFromNetwork);
 
 	if (rpcFromNetwork==0)
 	{
@@ -95,7 +97,7 @@ void C::ClassMemberFunc(A *a1, A &a2, C *c1, C &c2, D *d1, D &d2, RakNet::BitStr
 		// c1 will only transmit c1->GetNetworkID() (default behavior)
 		// d1 will transmit d1->GetNetworkID() and also bitStream << (*d1) (contents of the pointer)
 		//
-		rpc3Inst.CallCPP("&C::ClassMemberFunc", GetNetworkID(), a1,a2,c1,c2,RakNet::_RPC3::Deref(d1),d2,bs1,bs2,rpcFromNetwork);
+		rpc3Inst->CallCPP("&C::ClassMemberFunc", GetNetworkID(), a1,a2,c1,RakNet::_RPC3::Deref(d1),bs1,bs2,rpcFromNetwork);
 	}
 }	
 
@@ -113,13 +115,13 @@ void C::ClassMemberFunc2(RakNet::RPC3 *rpcFromNetwork)	{
 		// c1 will only transmit c1->GetNetworkID() (default behavior)
 		// d1 will transmit d1->GetNetworkID() and also bitStream << (*d1) (contents of the pointer)
 		//
-		rpc3Inst.CallCPP("&C::ClassMemberFunc2", GetNetworkID(), rpcFromNetwork);
+		rpc3Inst->CallCPP("&C::ClassMemberFunc2", GetNetworkID(), rpcFromNetwork);
 	}
 }	
 
 // The number of parameters for a C function is limited by BOOST_FUSION_INVOKE_MAX_ARITY found in boost/fusion/functional/invocation/limits.hpp
 // I define this in RPC3_Boost.h to be 9. The default is 6.
-void CFunc(RakNet::RakString rakString, int intArray[10], C *c1, C &c2, const char *str, NormalizedVector *nv1, NormalizedVector &nv2, RakNet::RPC3 *rpcFromNetwork )
+void CFunc(RakNet::RakString rakString, int intArray[10], C *c1, const char *str, NormalizedVector *nv1, NormalizedVector &nv2, RakNet::RPC3 *rpcFromNetwork )
 {
 	// We pass 0 to the rpcFromNetwork when calling this function locally. When it is called by the RPC3 system, it is set to the address of the plugin
 	if (rpcFromNetwork==0)
@@ -131,7 +133,7 @@ void CFunc(RakNet::RakString rakString, int intArray[10], C *c1, C &c2, const ch
 	for (int i=0; i < 10; i++)
 		printf("%i ", intArray[i]);
 	printf("\n");
-	printf("c1=%i c2=%i\n", c1->c, c2.c);
+	printf("c1=%i\n", c1->c);
 	printf("str=%s\n", str);
 	printf("nv1->x=%f nv1->y=%f nv1->z=%f\n", nv1->x, nv1->y, nv1->z);
 	printf("nv2.x=%f nv2.y=%f nv2.z=%f\n", nv2.x, nv2.y, nv2.z);
@@ -141,7 +143,7 @@ void CFunc(RakNet::RakString rakString, int intArray[10], C *c1, C &c2, const ch
 	// The RakNet::_RPC3::PtrToArray() function will tell the RPC3 system that this is actually an array of n elements
 	// Each element will be endian swapped appropriately
 	if (rpcFromNetwork==0)
-		rpc3Inst.CallC("CFunc", rakString,RakNet::_RPC3::PtrToArray(10,intArray),c1,c2,str,nv1,nv2,rpcFromNetwork);
+		rpc3Inst->CallC("CFunc", rakString,RakNet::_RPC3::PtrToArray(10,intArray),c1,str,nv1,nv2,rpcFromNetwork);
 }
 int main(void)
 {
@@ -169,11 +171,12 @@ int main(void)
 	RakNetTime stage2=0;
 	NetworkIDManager networkIDManager;
 	networkIDManager.SetIsNetworkIDAuthority(true);
-	rpc3Inst.SetNetworkIDManager(&networkIDManager);
+	rpc3Inst = new RakNet::RPC3;
+	rpc3Inst->SetNetworkIDManager(&networkIDManager);
 	NetworkID idZero, idOne;
 	idZero.localSystemAddress=0;
 	idOne.localSystemAddress=1;
-	rpc3Inst.SetNetworkIDManager(&networkIDManager);
+	rpc3Inst->SetNetworkIDManager(&networkIDManager);
 	c.SetNetworkIDManager(&networkIDManager);
 	d.SetNetworkIDManager(&networkIDManager);
 	c.SetNetworkID(idZero);
@@ -181,14 +184,14 @@ int main(void)
 
 	// Register a regular C function, and a class member function
 	// Unlike AutoRPC, you don't have to specify if it is C or C++, or the number of parameters
-	RPC3_REGISTER_FUNCTION(&rpc3Inst, CFunc);
+	RPC3_REGISTER_FUNCTION(rpc3Inst, CFunc);
 	// Note the & operator as the macro and RPC3::RegisterFunction takes a class pointer
-	RPC3_REGISTER_FUNCTION(&rpc3Inst, &C::ClassMemberFunc);
-	RPC3_REGISTER_FUNCTION(&rpc3Inst, &C::ClassMemberFunc2);
+	RPC3_REGISTER_FUNCTION(rpc3Inst, &C::ClassMemberFunc);
+	RPC3_REGISTER_FUNCTION(rpc3Inst, &C::ClassMemberFunc2);
 
 	// All slots are called when a signal is sent. This is true whether the slot is local or remote
-	rpc3Inst.RegisterSlot("TestSlot",&C::TestSlot, c.GetNetworkID(), 0);
-	rpc3Inst.RegisterSlot("TestSlot",&D::TestSlot, d.GetNetworkID(), 0);
+	rpc3Inst->RegisterSlot("TestSlot",&C::TestSlot, c.GetNetworkID(), 0);
+	rpc3Inst->RegisterSlot("TestSlot",&D::TestSlot, d.GetNetworkID(), 0);
 
 	printf("(S)erver or (C)lient?: ");
 	bool isServer;
@@ -217,7 +220,7 @@ int main(void)
 
 		printf("Client started. Will automatically connect to running servers.\n");
 	}
-	rakPeer->AttachPlugin(&rpc3Inst);
+	rakPeer->AttachPlugin(rpc3Inst);
 
 	Packet *p;
 	while (1)
@@ -251,13 +254,13 @@ int main(void)
 				RakNet::BitStream testBitStream1, testBitStream2;
 				testBitStream1.Write("Hello World 1");
 				testBitStream2.Write("Hello World 2");
-				c.ClassMemberFunc(&a,a,&c,c,&d,d,&testBitStream1,testBitStream2,0);
+				c.ClassMemberFunc(&a,a,&c,&d,&testBitStream1,testBitStream2,0);
 				c.ClassMemberFunc2(0);
 				RakNet::RakString rs("RakString test");
 				int intArray[10];
 				for (int i=0; i < sizeof(intArray)/sizeof(int); i++)
 					intArray[i]=i;
-				CFunc(rs, intArray,&c,c,"Test string",&normalizedVector,normalizedVector,0);
+				CFunc(rs, intArray,&c,"Test string",&normalizedVector,normalizedVector,0);
 				stage2=RakNet::GetTime()+500;
 				break;
 			}				
@@ -300,13 +303,13 @@ int main(void)
 			RakNet::BitStream testBitStream1, testBitStream2;
 			testBitStream1.Write("Hello World 1 (2)");
 			testBitStream2.Write("Hello World 2 (2)");
-			c.ClassMemberFunc(&a,a,&c,c,&d,d,&testBitStream1,testBitStream2,0);
+			c.ClassMemberFunc(&a,a,&c,&d,&testBitStream1,testBitStream2,0);
 			RakNet::RakString rs("RakString test (2)");
 			int intArray[10];
 			for (int i=0; i < sizeof(intArray)/sizeof(int); i++)
 				intArray[i]=i;
-			CFunc(rs, intArray,&c,c,"Test string (2)",&normalizedVector,normalizedVector,0);
-			rpc3Inst.Signal("TestSlot");
+			CFunc(rs, intArray,&c,"Test string (2)",&normalizedVector,normalizedVector,0);
+			rpc3Inst->Signal("TestSlot");
 		}
 
 		RakSleep(0);
@@ -314,6 +317,7 @@ int main(void)
 
 	rakPeer->Shutdown(100,0);
 	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	delete rpc3Inst;
 
 	return 1;
 }

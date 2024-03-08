@@ -323,58 +323,62 @@ void FxPlayerTiny::AdvanceAndDisplay()
 // to GFxKeyEvents and routes them to GFxPlayer.
 void    FxPlayerTiny::HandleKeyEvent(UInt keyCode, bool downFlag)
 {
-    GFxKey::Code key(GFxKey::VoidSymbol);
+	GFxKey::Code key(GFxKey::VoidSymbol);
 
-    if (keyCode >= 'A' && keyCode <= 'Z')
-    {
-        key = (GFxKey::Code) ((keyCode - 'A') + GFxKey::A);
-    }
-    else if (keyCode >= VK_F1 && keyCode <= VK_F15)
-    {
-        key = (GFxKey::Code) ((keyCode - VK_F1) + GFxKey::F1);
-    }
-    else if (keyCode >= VK_NUMPAD0 && keyCode <= VK_NUMPAD9)
-    {
-        key = (GFxKey::Code) ((keyCode - VK_NUMPAD0) + GFxKey::KP_0);
-    }
-    else
-    {
-        // Use a look-up table for keys don't correlate in order,.
-        struct {
-            int          vk;
-            GFxKey::Code gs;
-            } table[] =
-        {
-                { VK_RETURN,    GFxKey::Return },
-                { VK_ESCAPE,    GFxKey::Escape },
-                { VK_LEFT,      GFxKey::Left },
-                { VK_UP,        GFxKey::Up },
-                { VK_RIGHT,     GFxKey::Right },
-                { VK_DOWN,      GFxKey::Down },
+	if (keyCode >= 'A' && keyCode <= 'Z')
+	{
+		key = (GFxKey::Code) ((keyCode - 'A') + GFxKey::A);
+	}
+	else if (keyCode >= VK_F1 && keyCode <= VK_F15)
+	{
+		key = (GFxKey::Code) ((keyCode - VK_F1) + GFxKey::F1);
+	}
+	else if (keyCode >= VK_NUMPAD0 && keyCode <= VK_NUMPAD9)
+	{
+		key = (GFxKey::Code) ((keyCode - VK_NUMPAD0) + GFxKey::KP_0);
+	}
+	else
+	{
+		// Use a look-up table for keys don't correlate in order,.
+		struct {
+			int          vk;
+			GFxKey::Code gs;
+		} table[] =
+		{
+			{ VK_RETURN,    GFxKey::Return },
+			{ VK_ESCAPE,    GFxKey::Escape },
+			{ VK_LEFT,      GFxKey::Left },
+			{ VK_UP,        GFxKey::Up },
+			{ VK_RIGHT,     GFxKey::Right },
+			{ VK_DOWN,      GFxKey::Down },
+			{ VK_SPACE,     GFxKey::Space },
+			{ VK_BACK,      GFxKey::Backspace },
+			{ VK_DELETE,	  GFxKey::Delete },
+			{ VK_INSERT,    GFxKey::Insert },
 
-                // TODO: fill this out some more
-                { 0, GFxKey::VoidSymbol }
-        };
+			// TODO: fill this out some more
+			{ 0, GFxKey::VoidSymbol }
+		};
 
-        for (int i = 0; table[i].vk != 0; i++)
-        {
-            if (keyCode == (UInt)table[i].vk)
-            {
-                key = table[i].gs;
-                break;
-            }
-        }
-    }
-    
-    if (key != GFxKey::VoidSymbol)
-    {
-        if (pMovie)
-        {
-            // Pass Key events to the movie so that can be handled in ActionScript.
-            GFxKeyEvent event(downFlag ? GFxEvent::KeyDown : GFxKeyEvent::KeyUp, key);
-            pMovie->HandleEvent(event);
-        }
-    }
+		for (int i = 0; table[i].vk != 0; i++)
+		{
+			if (keyCode == (UInt)table[i].vk)
+			{
+				key = table[i].gs;
+				break;
+			}
+		}
+	}
+
+	if (key != GFxKey::VoidSymbol)
+	{
+		if (pMovie)
+		{
+			// Pass Key events to the movie so that can be handled in ActionScript.
+			GFxKeyEvent event(downFlag ? GFxEvent::KeyDown : GFxKeyEvent::KeyUp, key);
+			pMovie->HandleEvent(event);
+		}
+	}
 }
 
 // OnKey handles system keys by first interpreting some Ctrl+Key combinations

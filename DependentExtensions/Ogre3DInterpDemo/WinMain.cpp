@@ -50,7 +50,7 @@ static const unsigned short SERVER_PORT=12345;
 static const int DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES=250;
 
 // Demo variables
-static const int MIN_KERNELS=60;
+static const int MIN_KERNELS=100;
 static const int KERNELS_VARIANCE=60;
 static const RakNetTime POP_COUNTDOWN_MIN_DELAY_MS=1000;
 static const RakNetTime POP_COUNTDOWN_VARIANCE_MS=5000;
@@ -354,7 +354,7 @@ public:
 	void Update(AppTime curTimeMS, AppTime elapsedTimeMS)
 	{
 #ifndef WIN32
-		Ogre::PlatformManager::getSingleton().messagePump (window);
+		WindowEventUtilities::messagePump();
 #endif
 
 		// Update all subsystems

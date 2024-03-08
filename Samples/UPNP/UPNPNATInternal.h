@@ -3,16 +3,18 @@
 #ifndef UPNPNAT_H
 #define UPNPNAT_H
 
+#include "WindowsIncludes.h"
 #include "RakNetTime.h"
 #include "Export.h"
 #include "RakString.h"
 #include "TCPInterface.h"
 #include "SocketIncludes.h"
 #include "SocketLayer.h"
-#include "XMLParser.h"
 #include "RakSleep.h"
 #include "GetTime.h"
 
+
+#pragma   warning(disable: 4251) 
 
 /// \defgroup UPNP_GROUP
 /// \brief Collection of classes for UPNP
@@ -21,24 +23,20 @@
 /// \brief UPNP class for private RAKNET use, do not use
 /// \details
 /// \ingroup UPNP_GROUP
-
-
-
-
-
-
-#pragma   warning(disable:   4251) 
-
 class RAK_DLL_EXPORT UPNPNATInternal
 {
 public:
 
-	UPNPNATInternal(RakNet::RakString whichInterface,RakNetTime timeout=250);
+	UPNPNATInternal();
+	UPNPNATInternal(RakNet::RakString whichInterface, RakNetTime connectToRouterTimeout=1000);
 	~UPNPNATInternal(void);
+
+	/// Restart the system
+	void Restart(RakNet::RakString whichInterface, RakNetTime connectToRouterTimeout=1000);
 
 	/// Finds a UPNP router. For private RAKNET use, do not use.
 	/// \return Success if found, otherwise fails
-	bool Discovery();
+	bool Discovery(void);
 
 	/// Uses UPNP to open ports, Use the thread wrapper class as it automates much of it and performs checks. For private RAKNET use, do not use.
 	/// \param[in] description The name that may show up on router management
@@ -76,7 +74,7 @@ private:
 	RakNet::RakString WaitAndReturnResponse(int waitTime);
 
 
-	TCPInterface tcpIface;
+	TCPInterface tcpInterface;
 
 	/// Gets information from the router for later UPNP communication
 	/// \return true on success, false on failure

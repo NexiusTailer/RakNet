@@ -56,11 +56,12 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g993da25eb23b67455e2438971c51429c">RakNet::RM3SerializationResult</a> { <br>
 &nbsp;&nbsp;<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg993da25eb23b67455e2438971c51429c574f9c4ac43601e7e49ff56a796a3fe2">RakNet::RM3SR_BROADCAST_IDENTICALLY</a>, 
+<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg993da25eb23b67455e2438971c51429c03ccf6a7cb2e7bc303525529c3cf2fa3">RakNet::RM3SR_BROADCAST_IDENTICALLY_FORCE_SERIALIZATION</a>, 
 <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg993da25eb23b67455e2438971c51429c433b42251411758236dff004c87d0814">RakNet::RM3SR_SERIALIZED_UNIQUELY</a>, 
 <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg993da25eb23b67455e2438971c51429c80ff6894a8a24e8ec6bd6895501628b5">RakNet::RM3SR_SERIALIZED_ALWAYS</a>, 
-<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg993da25eb23b67455e2438971c51429c065bb061cfc67fc94c4ddc147cd9e525">RakNet::RM3SR_SERIALIZED_ALWAYS_IDENTICALLY</a>, 
 <br>
-&nbsp;&nbsp;<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg993da25eb23b67455e2438971c51429c60f8e6fa13b204ae52d20844e00b2a36">RakNet::RM3SR_DO_NOT_SERIALIZE</a>, 
+&nbsp;&nbsp;<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg993da25eb23b67455e2438971c51429c065bb061cfc67fc94c4ddc147cd9e525">RakNet::RM3SR_SERIALIZED_ALWAYS_IDENTICALLY</a>, 
+<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg993da25eb23b67455e2438971c51429c60f8e6fa13b204ae52d20844e00b2a36">RakNet::RM3SR_DO_NOT_SERIALIZE</a>, 
 <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg993da25eb23b67455e2438971c51429c113936a2cd1690f9d2d3abfdf85d665c">RakNet::RM3SR_NEVER_SERIALIZE_FOR_THIS_CONNECTION</a>
 <br>
  }</td></tr>
@@ -85,7 +86,7 @@ Third implementation of object replication. <hr><h2>Enumeration Type Documentati
 <div class="memdoc">
 
 <p>
-Return codes for Connection_RM3::GetConstructionState() and <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="This object does not exist on this system. Queried every tick to see if it should...">Replica3::QueryConstruction()</a>. 
+Return codes for Connection_RM3::GetConstructionState() and <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">Replica3::QueryConstruction()</a>. 
 <p>
 Indicates what state the object should be in for the remote system <dl compact><dt><b>Enumerator: </b></dt><dd>
 <table border="0" cellspacing="2" cellpadding="0">
@@ -168,6 +169,8 @@ Return codes when constructing an object <dl compact><dt><b>Enumerator: </b></dt
 <table border="0" cellspacing="2" cellpadding="0">
 <tr><td valign="top"><em><a class="anchor" name="gg993da25eb23b67455e2438971c51429c574f9c4ac43601e7e49ff56a796a3fe2"></a><!-- doxytag: member="RM3SR_BROADCAST_IDENTICALLY" ref="gg993da25eb23b67455e2438971c51429c574f9c4ac43601e7e49ff56a796a3fe2" args="" -->RM3SR_BROADCAST_IDENTICALLY</em>&nbsp;</td><td>
 This object serializes identically no matter who we send to We also send it to every connection (broadcast). Efficient for memory, speed, and bandwidth but only if the object is always broadcast identically. </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="gg993da25eb23b67455e2438971c51429c03ccf6a7cb2e7bc303525529c3cf2fa3"></a><!-- doxytag: member="RM3SR_BROADCAST_IDENTICALLY_FORCE_SERIALIZATION" ref="gg993da25eb23b67455e2438971c51429c03ccf6a7cb2e7bc303525529c3cf2fa3" args="" -->RM3SR_BROADCAST_IDENTICALLY_FORCE_SERIALIZATION</em>&nbsp;</td><td>
+Same as RM3SR_BROADCAST_IDENTICALLY, but assume the object needs to be serialized, do not check with a memcmp Assume the object changed, and serialize it Use this if you know exactly when your object needs to change. Can be faster than RM3SR_BROADCAST_IDENTICALLY. An example of this is if every member variable has an accessor, changing a member sets a flag, and you check that flag in <a class="el" href="classRakNet_1_1Replica3.html#ea6ea21dd0f668abd09d0196eac0a336" title="Implement with QuerySerialization_ClientSerializable(), QuerySerialization_ServerSerializable()...">Replica3::QuerySerialization()</a> The opposite of this is RM3SR_DO_NOT_SERIALIZE, in case the object did not change </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="gg993da25eb23b67455e2438971c51429c433b42251411758236dff004c87d0814"></a><!-- doxytag: member="RM3SR_SERIALIZED_UNIQUELY" ref="gg993da25eb23b67455e2438971c51429c433b42251411758236dff004c87d0814" args="" -->RM3SR_SERIALIZED_UNIQUELY</em>&nbsp;</td><td>
 Either this object serializes differently depending on who we send to or we send it to some systems and not others. Inefficient for memory and speed, but efficient for bandwidth However, if you don't know what to return, return this </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="gg993da25eb23b67455e2438971c51429c80ff6894a8a24e8ec6bd6895501628b5"></a><!-- doxytag: member="RM3SR_SERIALIZED_ALWAYS" ref="gg993da25eb23b67455e2438971c51429c80ff6894a8a24e8ec6bd6895501628b5" args="" -->RM3SR_SERIALIZED_ALWAYS</em>&nbsp;</td><td>
@@ -184,7 +187,7 @@ Never serialize this object for this connection Useful for objects that are down
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 4 22:17:50 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Feb 27 09:39:23 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

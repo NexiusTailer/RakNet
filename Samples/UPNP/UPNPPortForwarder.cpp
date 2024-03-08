@@ -1,386 +1,363 @@
 #include "UPNPPortForwarder.h"
+#include "UPNPNATInternal.h"
+
+using namespace RakNet;
+
+RAK_THREAD_DECLARATION(QueryUPNPSupportThread);
+RAK_THREAD_DECLARATION(OpenPortOnInterfaceThread);
+
+/*
+#if defined(_XBOX) || defined(X360)
+#elif defined(_WIN32)
+#include "WSAStartupSingleton.h"
+#include <ws2tcpip.h> // 'IP_DONTFRAGMENT' 'IP_TTL'
+// GetGateways
+#include <iphlpapi.h>
+#pragma comment(lib, "IPHLPAPI.lib")
+#endif
+*/
+
+void AddToIpList(char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], const char *in)
+{
+	int i;
+	for (i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
+	{
+		if (strcmp(ipList[i], in)==0)
+			return;
+	}
+
+	for (i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
+	{
+		if (ipList[i][0]==0)
+			break;
+	}
+
+	if (i < MAXIMUM_NUMBER_OF_INTERNAL_IDS)
+		strcpy(ipList[i],in);
+}
+
+/*
+void GetGateways(char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ])
+{
+#if defined(_XBOX) || defined(X360)
+#elif defined(_WIN32)
+	for (int i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
+		ipList[i][0]=0;
+
+	// Microsoft recommends using GetAdaptersAddresses instead of GetAdaptersInfo, but GetAdaptersAddresses does not return Gateways!
+	/*
+	ULONG outBufLen;
+	PIP_ADAPTER_ADDRESSES pAddresses;
+	PIP_ADAPTER_ADDRESSES pCurrAddresses;
+	PIP_ADAPTER_UNICAST_ADDRESS pUnicast = NULL;
+	PIP_ADAPTER_ANYCAST_ADDRESS pAnycast = NULL;
+	PIP_ADAPTER_MULTICAST_ADDRESS pMulticast = NULL;
+
+	DWORD dwRetVal = 0;
+
+	// Allocate a 15 KB buffer to start with.
+	outBufLen = 15000;
+	pAddresses = (IP_ADAPTER_ADDRESSES *) rakMalloc_Ex(outBufLen,__FILE__,__LINE__);
+
+	dwRetVal = GetAdaptersAddresses(AF_UNSPEC, 0, NULL, pAddresses, &outBufLen);
+
+	if (dwRetVal == NO_ERROR)
+	{
+		pCurrAddresses = pAddresses;
+		while (pCurrAddresses)
+		{
+			pUnicast = pCurrAddresses->FirstUnicastAddress;
+			while (pUnicast != NULL)
+			{
+// 				inet_ntop(pUnicast->Address.lpSockaddr->sa_family, pUnicast->Address.lpSockaddr->sa_data,
+// 					ipList[ipListIndex++], 16);
+
+				struct hostent *phe = gethostbyname( pUnicast->Address.lpSockaddr->sa_data );
+				int idx;
+				for ( idx = 0; idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ++idx )
+				{
+					if (phe->h_addr_list[ idx ] == 0)
+						break;
+
+					struct in_addr addr;
+					memcpy( &addr, phe->h_addr_list[ idx ], sizeof( struct in_addr ) );
+					AddToIpList( ipList, inet_ntoa( addr ) );
+				}
+
+
+				pUnicast = pUnicast->Next;
+			}
+
+			pAnycast = pCurrAddresses->FirstAnycastAddress;
+			while (pAnycast != NULL)
+			{
+				pAnycast = pAnycast->Next;
+			}
+
+			pMulticast = pCurrAddresses->FirstMulticastAddress;
+			while (pMulticast != NULL)
+			{
+				struct hostent *phe = gethostbyname( pMulticast->Address.lpSockaddr->sa_data );
+				int idx;
+				for ( idx = 0; idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ++idx )
+				{
+					if (phe->h_addr_list[ idx ] == 0)
+						break;
+
+					struct in_addr addr;
+					memcpy( &addr, phe->h_addr_list[ idx ], sizeof( struct in_addr ) );
+					AddToIpList( ipList, inet_ntoa( addr ) );
+				}
+
+				pMulticast = pMulticast->Next;
+			}
+
+			pCurrAddresses = pCurrAddresses->Next;
+		}
+	}
+
+	rakFree_Ex(pAddresses,__FILE__,__LINE__);
+	*/
+/*
+	PIP_ADAPTER_INFO pAdapterInfo;
+	PIP_ADAPTER_INFO pAdapter = NULL;
+	DWORD dwRetVal = 0;
+//	UINT i;
+	// variables used to print DHCP time info
+//	struct tm newtime;
+//	char buffer[32];
+//	errno_t error;
+
+
+	ULONG ulOutBufLen = sizeof (IP_ADAPTER_INFO);
+	pAdapterInfo = (IP_ADAPTER_INFO *) rakMalloc_Ex(sizeof (IP_ADAPTER_INFO),__FILE__,__LINE__);
+	if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW) {
+		rakFree_Ex(pAdapterInfo,__FILE__,__LINE__);
+		pAdapterInfo = (IP_ADAPTER_INFO *) rakMalloc_Ex(ulOutBufLen,__FILE__,__LINE__);
+		if (pAdapterInfo == NULL) {
+			printf("Error allocating memory needed to call GetAdaptersinfo\n");
+			return;
+		}
+	}
+
+	// http://msdn.microsoft.com/en-us/library/aa365917%28VS.85%29.aspx
+	if ((dwRetVal = GetAdaptersInfo(pAdapterInfo, &ulOutBufLen)) == NO_ERROR) {
+		pAdapter = pAdapterInfo;
+		while (pAdapter) {
+			
+		//	printf("\tGateway: \t%s\n", pAdapter->GatewayList.IpAddress.String);
+			AddToIpList( ipList, pAdapter->GatewayList.IpAddress.String );
+			
+			pAdapter = pAdapter->Next;
+	//		printf("\n");
+		}
+	} else {
+		printf("GetAdaptersInfo failed with error: %d\n", dwRetVal);
+
+	}
+	if (pAdapterInfo)
+		rakFree_Ex(pAdapterInfo,__FILE__,__LINE__);
+
+
+#else
+	unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
+	SocketLayer::Instance()->GetMyIP( ipList, unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
+#endif
+}
+*/
+
+
+#if defined(_XBOX) || defined(X360)
+                                   
+#elif defined(_WIN32)
+static const int THREAD_PRIORITY=0;
+#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                                      
+#else
+static const int THREAD_PRIORITY=1000;
+#endif
+
+/// Used by UPNPCallbackInterface::QueryUPNPSupport_Result
+struct QueryUPNPSupportInput
+{
+	// Input parameters copied from UPNPPortForwarder::QueryUPNPSupport
+	RakNet::RakString interfaceQueried;
+
+	// Pointer to calling class
+	UPNPPortForwarder *upnpPortForwarder;
+
+	// Pointer to callback to be called when the operation is done
+	UPNPCallbackInterface *callBack;
+};
 
 UPNPPortForwarder::UPNPPortForwarder(void)
 {
-	threadNumber=0;
 }
 
 UPNPPortForwarder::~UPNPPortForwarder(void)
 {
 }
 
-struct UPNPPortForwarder::UPNPParamDesc UPNPPortForwarder::CreateParamDesc(int index,RakNet::RakString name,RakNet::RakString type, RakNet::RakString subType)
+void UPNPPortForwarder::QueryUPNPSupport(UPNPCallbackInterface *callBack,RakNet::RakString interfaceIp)
 {
-	struct UPNPParamDesc currentDesc;
-
-	currentDesc.type=type;
-	currentDesc.subType=subType;
-	currentDesc.name=name;
-	currentDesc.index=index;
-
-	return currentDesc;
+	QueryUPNPSupportInput *fupnpi = OP_NEW<QueryUPNPSupportInput>(__FILE__,__LINE__);
+	fupnpi->interfaceQueried=interfaceIp;
+	fupnpi->upnpPortForwarder=this;
+	fupnpi->callBack=callBack;
+	RakNet::RakThread::Create(QueryUPNPSupportThread,fupnpi,THREAD_PRIORITY);
 }
 
-struct UPNPPortForwarder::StandardUPNPParams * UPNPPortForwarder::CreateNewParamList()
+void UPNPPortForwarder::OpenPortOnInterface(UPNPCallbackInterface *callBack,int internalPort,RakNet::RakString interfaceIp,int portToOpenOnRouter, RakNet::RakString mappingName, UPNPProtocolType protocol)
 {
-	struct StandardUPNPParams *params= new struct StandardUPNPParams;
-	params->currentIntIndex=0;
-	params->currentStringIndex=0;
-	params->currentPointerIndex=0;
-
-	return params;
-
-}
-unsigned int UPNPPortForwarder::QueryUPNPSupport(UPNPCallBackInterface *callBack)
-{
-	// Tyler TODO
-	// Callback NoRouterFoundOnAnyInterface or RouterFound
-	callBack->RouterFound(0);
-	return 0;
-}
-unsigned int UPNPPortForwarder::OpenPortOnInterface(int internalPort,UPNPCallBackInterface *callBack,RakNet::RakString interfaceIp,int portToOpenOnRouter, RakNet::RakString mappingName, ProtocolType protocol)
-{
-
-	struct StandardUPNPParams *params=CreateNewParamList();
-	threadNumber++;
-	SetCommonParams( params,threadNumber,internalPort,callBack,  portToOpenOnRouter, mappingName,  protocol);
-
-
-	if (interfaceIp!="ALL")
-	{
-		AddParam (&interfaceIp,params,"interfaceIp");	
-	}
-
-	RakNet::RakThread::Create(RunOpenPortOnAllInterfacesOrInterfaceThread,params);
-
-
-
-
-
-
-	return threadNumber;
-
-}
-
-
-void UPNPPortForwarder::SetCommonParams(struct StandardUPNPParams* params,int threadNumber,int internalPort,UPNPCallBackInterface *callBack, int portToOpenOnRouter,RakNet::RakString mappingName, ProtocolType protocol)
-{
-
-	RakNet::RakString protocolString;
-	seedMT((unsigned int)RakNet::GetTime()+threadNumber);
-
-	if (internalPort<=0)//Zero is valid, but indicates a random port, I doubt it is what is wanted in this situation
-	{
-		internalPort=1;
-
-	}
-
-	if (internalPort>65535)
-	{
-		internalPort=65535;
-	}
-
-
-	if (portToOpenOnRouter<=0||portToOpenOnRouter>65535)//Zero is valid, but indicates a random port, I doubt it is what is wanted in this situation
-	{
-		portToOpenOnRouter=internalPort;
-	}
-
+	OpenPortResult *opr = openedPorts.Allocate(__FILE__,__LINE__);
+	opr->internalPort=internalPort;
+	opr->interfaceIp=interfaceIp;
+	if (portToOpenOnRouter==-1)
+		opr->portToOpenOnRouter=internalPort;
+	else
+		opr->portToOpenOnRouter=portToOpenOnRouter;
+	seedMT((unsigned int)RakNet::GetTime()+internalPort+opr->portToOpenOnRouter);
 	if (mappingName=="")
 	{
 		mappingName="UPNPRAKNET";
-
 		for (int i=0;i<3;i++)
 			mappingName+=(char)(randomMT()%26+65);
-
 	}
-
-
-
-
-	if (protocol==TCP)
-	{
-		protocolString="TCP";
-	}
-	else
-	{
-		protocolString="UDP";
-
-	}
-
-
-
-
-	//Push pointer
-	AddParam (callBack,params,"callBack","pointer","UPNPCallBackInterface");
-
-	//Push ints
-	AddParam (&internalPort,params,"internalPort","int");
-	AddParam (&portToOpenOnRouter,params,"portToOpenOnRouter","int");	
-	AddParam (&threadNumber,params,"threadNumber","int");	
-
-
-
-
-	//Push strings
-	AddParam (&mappingName,params,"mappingName");
-	AddParam (&protocolString,params,"protocol");	
-
+	opr->mappingName=mappingName;
+	opr->protocol=protocol;
+	opr->upnpPortForwarder=this;
+	opr->callBack=callBack;
+	RakNet::RakThread::Create(OpenPortOnInterfaceThread,opr,THREAD_PRIORITY);
 }
 
-
-
-
-
-
-RAK_THREAD_DECLARATION(UPNPPortForwarder::RunOpenPortOnAllInterfacesOrInterfaceThread)
+void UPNPPortForwarder::CallCallbacks(void)
 {
-
-	struct StandardUPNPParams *params=(struct StandardUPNPParams *)arguments;
-
-	UPNPCallBackInterface *callBack=(UPNPCallBackInterface *)params->pointerList[0];
-
-
-	int internalPort=params->intList[0];
-	int portToOpenOnRouter=params->intList[1];
-	int threadNum=params->intList[2];
-	RakNet::RakString mappingName=params->stringList[0];
-	RakNet::RakString protocol=params->stringList[1];
-	bool specificInterface=false;
-	RakNet::RakString interfaceIp="";
-	if (params->stringList.Size()==3)
+	QueryUPNPSupportResult *r1;
+	while ((r1 = foundInterfaces.Pop())!=0)
 	{
-		if (params->stringList[2].GetLength()<=16)
-		{
-			specificInterface=true;
-			interfaceIp=params->stringList[2];
-		}
+		r1->callBack->QueryUPNPSupport_Result(r1);
+		foundInterfaces.Deallocate(r1,__FILE__,__LINE__);
 	}
 
-	bool foundOne=false;
-
-	bool success=false;
-	UPNPNATInternal* nat;
-	char ipList[99][16];
-	unsigned int binaryAddresses[99];
-	bool wasReleased=false;
-
-	if (callBack!=NULL)
+	OpenPortResult *r2;
+	while ((r2 = openedPorts.Pop())!=0)
 	{
-		callBack->Lock();
-		callBack->SetReleaseTracker(wasReleased);
-		callBack->UnLock();
+		r2->callBack->OpenPortOnInterface_Result(r2);
+		openedPorts.Deallocate(r2,__FILE__,__LINE__);
 	}
+}
 
-	if (!specificInterface)
+RAK_THREAD_DECLARATION(QueryUPNPSupportThread)
+{
+	UPNPNATInternal upnp;
+
+	QueryUPNPSupportInput *fupnpi = ( QueryUPNPSupportInput * ) arguments;
+	QueryUPNPSupportResult *result = fupnpi->upnpPortForwarder->foundInterfaces.Allocate(__FILE__,__LINE__);
+	result->callBack=fupnpi->callBack;
+
+	char ipList[MAXIMUM_NUMBER_OF_INTERNAL_IDS][16];
+	if (fupnpi->interfaceQueried=="ALL")
 	{
-		if (callBack!=NULL&&!wasReleased)
-		{
-			callBack->Lock();
-			if (!wasReleased)
-			{
-				callBack->UPNPPrint("Opening ports on all interfaces, if at least one success then pass.");
-				callBack->UnLock();
-			}
-		}
+		unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
+		SocketLayer::Instance()->GetMyIP(ipList, binaryAddresses);
 	}
 	else
 	{
-		if (callBack!=NULL&&!wasReleased)
-		{
-			callBack->Lock();
-			if (!wasReleased)
-			{
-				callBack->UPNPPrint("Opening ports on interface.");
-				callBack->UnLock();
-			}
-		}
-	}
-
-
-	if (!specificInterface)
-	{
-		SocketLayer::Instance()->GetMyIP(ipList,binaryAddresses);
-	}
-	else
-	{
-		strcpy(ipList[0],interfaceIp.C_String());
+		strcpy(ipList[0],fupnpi->interfaceQueried.C_String());
 		ipList[1][0]=0;
 	}
 
-
-	for (int i=0;ipList[i][0]!=0;i++)
+	for (unsigned int i=0;ipList[i][0]!=0;i++)
 	{
-
-		if (strcmp(ipList[i],"127.0.0.1")==0)//Skip localhost
-		{
-
-			if (callBack!=NULL&&!wasReleased)
-			{
-				callBack->Lock();
-				if (!wasReleased)
-				{
-					callBack->UPNPPrint("Skipping localhost");
-					callBack->UnLock();
-				}
-			}
-			continue;
-		}
-		if (i>=99)
-			break;
-		if (callBack!=NULL&&!wasReleased)
-		{
-			callBack->Lock();
-			if (!wasReleased)
-			{
-				callBack->UPNPPrint(RakNet::RakString ("Ip: %s",ipList[i]));
-				callBack->UnLock();
-			}
-		}
-		nat=new UPNPNATInternal(ipList[i]);
-
-
-
-		if(!nat->Discovery()){
-			if (callBack!=NULL&&!wasReleased)
-			{
-				callBack->Lock();
-				if (!wasReleased)
-				{
-					callBack->UPNPPrint(RakNet::RakString ("Discovery for interface %s error is %s",ipList[i],nat->GetLastError()));
-					callBack->UnLock();
-				}
-			}
-			delete nat;
-			continue;
-		}
-		foundOne=true;
-		if(!nat->AddPortMapping(mappingName.C_String(),ipList[i],portToOpenOnRouter,internalPort,(char *)protocol.C_String())){
-			if (callBack!=NULL&&!wasReleased)
-			{
-				callBack->Lock();
-				if (!wasReleased)
-				{
-					callBack->UPNPPrint(RakNet::RakString ("Add port mapping  error is %s for %s",nat->GetLastError(),ipList[i]));
-					callBack->UnLock();
-				}
-			}
-			delete nat;
-			continue;
-		}
-
-		if (callBack!=NULL&&!wasReleased)
-		{
-			callBack->Lock();
-			if (!wasReleased)
-			{
-				callBack->UPNPPrint(RakNet::RakString ("Add port mapping success for %s",ipList[i]));
-				callBack->UnLock();
-			}
-			success=true;
-		}
-		delete nat;
+		if (strcmp(ipList[i],"127.0.0.1")!=0 &&
+			strcmp(ipList[i],"0.0.0.0")!=0
+			)//Skip localhost
+			result->interfacesQueried.Push(ipList[i],__FILE__,__LINE__);
 	}
 
-
-	if (success)
+	if (result->interfacesQueried.Size()==0)
 	{
-		if (callBack!=NULL&&!wasReleased)
-		{
-			callBack->Lock();
-			if (!wasReleased)
-			{
-				callBack->UPNPPrint("Success");
-				callBack->UnLock();
-			}
-		}
-
+		result->callBack->UPNPStatusUpdate("No interfaces to query\n");
 	}
-	else
-	{
-		if (callBack!=NULL&&!wasReleased)
-		{
-			callBack->Lock();
-			if (!wasReleased)
-			{
-				callBack->UPNPPrint("Fail");
-				callBack->UnLock();
-			}
-		}
 
-		if (callBack!=NULL&&!wasReleased)
-		{
-			if (foundOne)
-			{
-				callBack->Lock();
-				if (!wasReleased)
-				{
-					callBack->NoPortOpenedOnAnyInterface(threadNum,internalPort,portToOpenOnRouter);
-					callBack->UnLock();
-				}
-			}
-			else
-			{
-				callBack->Lock();
-				if (!wasReleased)
-				{
-					callBack->NoRouterFoundOnAnyInterface(threadNum,internalPort,portToOpenOnRouter);
-					callBack->UnLock();
-				}
-			}
-		}
-	}
-	if (callBack!=NULL&&!wasReleased)
+	for (unsigned int i=0;i < result->interfacesQueried.Size();i++)
 	{
-		callBack->Lock();
-		if (!wasReleased)
+		fupnpi->callBack->UPNPStatusUpdate(RakNet::RakString ("QueryUPNPSupportThread %s... ",result->interfacesQueried[i].C_String()));
+		upnp.Restart(result->interfacesQueried[i].C_String(), 250);
+
+		if (upnp.Discovery())
 		{
-			callBack->ThreadFinished(threadNum,internalPort,portToOpenOnRouter,success);
-			callBack->UnLock();
+			fupnpi->callBack->UPNPStatusUpdate("Found.\n");
+			result->interfacesFound.Push(result->interfacesQueried[i],__FILE__,__LINE__);
+		}
+		else
+		{
+			fupnpi->callBack->UPNPStatusUpdate("Not found.\n");
 		}
 	}
 
+	fupnpi->upnpPortForwarder->foundInterfaces.Push(result);
 
-	if (callBack!=NULL&&!wasReleased)
-	{
-		callBack->Lock();
-		if (!wasReleased)
-		{
-			callBack->RemoveReleaseTracker(wasReleased);
-			callBack->UnLock();
-		}
-	}
-	delete params;
+	RakNet::OP_DELETE(fupnpi,__FILE__,__LINE__);
 
 	return 0;
 }
 
-
-
-void UPNPPortForwarder::AddParam (void* inParam,struct StandardUPNPParams* params,RakNet::RakString name,RakNet::RakString type, RakNet::RakString subType)
+RAK_THREAD_DECLARATION(OpenPortOnInterfaceThread)
 {
+	UPNPNATInternal upnp;
+	OpenPortResult *opr = ( OpenPortResult * ) arguments;
 
-	if (type=="RakString")
+	char ipList[MAXIMUM_NUMBER_OF_INTERNAL_IDS][16];
+	if (opr->interfaceIp=="ALL")
 	{
-		params->stringList.Push(*((RakNet::RakString*)inParam),__FILE__,__LINE__);
-		params->descList.Push(CreateParamDesc(params->currentStringIndex,name,type,subType),__FILE__,__LINE__);
-		params->currentStringIndex++;
+		unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
+		SocketLayer::Instance()->GetMyIP(ipList, binaryAddresses);
 	}
-	if (type=="pointer")
+	else
 	{
-		params->pointerList.Push(inParam,__FILE__,__LINE__);
-		params->descList.Push(CreateParamDesc(params->currentPointerIndex,name,type,subType),__FILE__,__LINE__);
-		params->currentPointerIndex++;
+		strcpy(ipList[0],opr->interfaceIp.C_String());
+		ipList[1][0]=0;
 	}
-	if (type=="int")
-	{
-		params->intList.Push(*((int *)inParam),__FILE__,__LINE__);
-		params->descList.Push(CreateParamDesc(params->currentIntIndex,name,type,subType),__FILE__,__LINE__);
-		params->currentIntIndex++;
 
+	for (unsigned int i=0;ipList[i][0]!=0;i++)
+	{
+		if (strcmp(ipList[i],"127.0.0.1")!=0 &&
+			strcmp(ipList[i],"0.0.0.0")!=0
+			)//Skip localhost
+			opr->interfacesQueried.Push(ipList[i],__FILE__,__LINE__);
 	}
+
+	if (opr->interfacesQueried.Size()==0)
+	{
+		opr->callBack->UPNPStatusUpdate("No interfaces to open\n");
+	}
+
+
+	for (unsigned int i=0;i < opr->interfacesQueried.Size();i++)
+	{
+		opr->callBack->UPNPStatusUpdate(RakNet::RakString ("OpenPortOnInterfaceThread %s intPort=%i routerPort=%i... ",opr->interfacesQueried[i].C_String(),opr->internalPort,opr->portToOpenOnRouter));
+		upnp.Restart(opr->interfacesQueried[i].C_String(), 1000);
+		if (upnp.Discovery())
+		{
+			if (upnp.AddPortMapping(opr->mappingName.C_String(),opr->interfacesQueried[i].C_String(),opr->portToOpenOnRouter,opr->internalPort,(char*)(opr->protocol==UDP ? "UDP" : "TCP")))
+			{
+				opr->callBack->UPNPStatusUpdate("Opened.\n");
+				opr->succeeded.Push(true,__FILE__,__LINE__);
+			}
+			else
+			{
+				opr->callBack->UPNPStatusUpdate("Not opened.\n");
+				opr->succeeded.Push(false,__FILE__,__LINE__);
+			}
+		}
+		else
+		{
+			opr->callBack->UPNPStatusUpdate("Failed discovery.\n");
+		}
+	}
+
+	opr->upnpPortForwarder->openedPorts.Push(opr);
+
+	return 0;
 }
-
-
-
-

@@ -62,7 +62,7 @@ void LogStats(){
 	float avgBpsSent = rss->totalBitsSent/((currTime-rss->connectionStartTime)/1000.0f);
 	float avgBpsRec = rss->bitsReceived/((currTime-rss->connectionStartTime)/1000.0f);
 
-	printf("avgKbpsSent=%02.1f avgKbpsRec=%02.1f kbpsSent=%02.1f kbpsRec=%02.1f    \r", avgBpsSent/1000, avgBpsRec/1000, bpsSent/1000 , bpsRec/1000, rakVoice.GetBufferedBytesToReturn(UNASSIGNED_SYSTEM_ADDRESS));
+	printf("avgKbpsSent=%02.1f avgKbpsRec=%02.1f kbpsSent=%02.1f kbpsRec=%02.1f    \r", avgBpsSent/1000, avgBpsRec/1000, bpsSent/1000 , bpsRec/1000, rakVoice.GetBufferedBytesToReturn(UNASSIGNED_RAKNET_GUID));
 	//printf("MsgBuf=%6i SndBuf=%10i RcvBuf=%10i    \r", rakVoice.GetRakPeerInterface()->GetStatistics(UNASSIGNED_SYSTEM_ADDRESS)->messageSendBuffer[HIGH_PRIORITY], rakVoice.GetBufferedBytesToSend(UNASSIGNED_SYSTEM_ADDRESS), rakVoice.GetBufferedBytesToReturn(UNASSIGNED_SYSTEM_ADDRESS));
 }
 
@@ -244,7 +244,7 @@ int main(void)
 			if (p->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
 			{
 				printf("\nID_CONNECTION_REQUEST_ACCEPTED from %s\n", p->systemAddress.ToString());
-				rakVoice.RequestVoiceChannel(p->systemAddress);
+				rakVoice.RequestVoiceChannel(p->guid);
 			}
 			else if (p->data[0]==ID_RAKVOICE_OPEN_CHANNEL_REQUEST)
 			{

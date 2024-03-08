@@ -72,13 +72,13 @@ void TransformationHistory::Overwrite(const Ogre::Vector3 &position, const Ogre:
 		}
 	}	
 }
-void TransformationHistory::Read(Ogre::Vector3 *position, Ogre::Vector3 *velocity, Ogre::Quaternion *orientation,
+TransformationHistory::ReadResult TransformationHistory::Read(Ogre::Vector3 *position, Ogre::Vector3 *velocity, Ogre::Quaternion *orientation,
 								 RakNetTime when, RakNetTime curTime)
 {
 	int historySize = history.Size();
 	if (historySize==0)
 	{
-		return;
+		return VALUES_UNCHANGED;
 	}
 
 	int i;
@@ -90,7 +90,7 @@ void TransformationHistory::Read(Ogre::Vector3 *position, Ogre::Vector3 *velocit
 			if (i==historySize-1)
 			{
 				if (curTime<=cell.time)
-					return;
+					return VALUES_UNCHANGED;
 
 				float divisor = (float)(curTime-cell.time);
 				RakAssert(divisor!=0.0f);
@@ -115,7 +115,7 @@ void TransformationHistory::Read(Ogre::Vector3 *position, Ogre::Vector3 *velocit
 				if (orientation)
 					*orientation = Ogre::Quaternion::Slerp(lerp, cell.orientation, nextCell.orientation,true);
 			}
-			return;
+			return INTERPOLATED;
 		}
 	}
 
@@ -127,6 +127,7 @@ void TransformationHistory::Read(Ogre::Vector3 *position, Ogre::Vector3 *velocit
 		*orientation=cell.orientation;
 	if (velocity)
 		*velocity=cell.velocity;
+	return READ_OLDEST;
 }
 void TransformationHistory::Clear(void)
 {

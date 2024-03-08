@@ -186,7 +186,7 @@ namespace DataStructures
 		{
 #ifdef _DEBUG
 			RakAssert( head != tail );
-			RakAssert( allocation_size > 0 && Size() >= 0 );
+			RakAssert( Size() >= 0 );
 #endif
 			if (tail!=0)
 				return ( queue_type ) array[ tail-1 ];

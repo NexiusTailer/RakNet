@@ -28,15 +28,12 @@ Disconnection.
 */
 int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
 {
-
 	const int peerNum= 8;
 	RakPeerInterface *peerList[peerNum];//A list of 8 peers
 	int connectionAmount[peerNum];//Counter for me to keep track of connection requests and accepts
 	int recievedFromList[peerNum][peerNum];//Counter for me to keep track of packets received
 	int lastNumberReceivedFromList[peerNum][peerNum];//Counter for me to keep track of last recieved sequence number
-
-
-
+	const int numPackets=100;
 	Packet *packet;
 	RakNet::BitStream bitStream;
 	destroyList.Clear(false,__FILE__,__LINE__);
@@ -60,70 +57,44 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 	}
 
-
-
-
 	//Connect all the peers together
-
-
-
 	for (int i=0;i<peerNum;i++)
 	{
-
 		for (int j=i+1;j<peerNum;j++)//Start at i+1 so don't connect two of the same together.
 		{
-
 			if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
 			{
-
 				if (isVerbose)
 				{
 					DebugTools::ShowError("Problem while calling connect. \n",!noPauses && isVerbose,__LINE__,__FILE__);
 
 				}
-
-
 				return 1;//This fails the test, don't bother going on.
-
 			}
-
 		}
 
 	}
 
-
-
-
-
-
-
 	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
+	RakNetTime finishTimer=RakNet::GetTime();
 	bool initialConnectOver=false;//Our initial connect all has been done.
 
-
-	for (int k=0;k<100;)//Quit after we send 100 messages while connected, if not all connected and not failure, otherwise fail after 20 seconds and exit
+	for (int k=0;k<numPackets||RakNet::GetTime()-finishTimer<5000;)//Quit after we send 100 messages while connected, if not all connected and not failure, otherwise fail after 20 seconds and exit
 	{
-
-
-
 		bool allConnected=true;//Start true, only one failed case makes it all fail
 		for (int i=0;i<peerNum;i++)//Make sure all peers are connected to eachother
 		{
 			if (connectionAmount[i]<peerNum-1)
 			{
-
 				allConnected=false;
 			}
 		}
-
 
 		if (RakNet::GetTime()-entryTime>20000 &&!initialConnectOver &&!allConnected)//failed for 20 seconds
 		{
 
 			if (isVerbose)
 				DebugTools::ShowError("Failed to connect to all peers after 20 seconds",!noPauses && isVerbose,__LINE__,__FILE__);
-
-
 			return 2;
 			break;
 		}
@@ -132,7 +103,8 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 		{
 			if(!initialConnectOver)
 				initialConnectOver=true;
-
+			if (k<numPackets)
+			{
 			for (int i=0;i<peerNum;i++)//Have all peers send a message to all peers
 			{
 
@@ -147,17 +119,21 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 				peerList[i]->Send(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED ,0, UNASSIGNED_SYSTEM_ADDRESS, true);
 
 			}
+			}
 			k++;
 		}
 
-		if (k>=97)//This is our last 3 loops, give it time to send packet and arrive on interface, 2 seconds is more than enough 
+		if (k>=numPackets-3)//This is our last 3 packets, give it time to send packet and arrive on interface, 2 seconds is more than enough 
 		{
-			RakSleep(2000);
+			RakSleep(300);
+			if (k==numPackets)
+			{
+				finishTimer=RakNet::GetTime();
+			}
 		}
 
 		for (int i=0;i<peerNum;i++)//Receive for all peers
 		{
-
 			if (allConnected)//If all connected try to make the data more visually appealing by bunching it in one receive
 			{
 				int waittime=0;
@@ -182,8 +158,6 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 			else//Otherwise just keep recieving quickly until connected
 			{
 				packet=peerList[i]->Receive();
-
-
 			}
 			if (isVerbose)
 				printf("For peer %i with %i connected peers.\n",i,connectionAmount[i]);
@@ -273,8 +247,6 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 					if (packet->data[0]==ID_USER_PACKET_ENUM+1)
 					{
-
-
 						int thePeerNum;
 						int sequenceNum;
 						bitStream.Reset();
@@ -282,8 +254,6 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 						bitStream.IgnoreBits(8);
 						bitStream.Read(sequenceNum);
 						bitStream.Read(thePeerNum);
-
-
 						if (isVerbose)
 							printf("Message %i from %i\n",sequenceNum,thePeerNum );
 
@@ -307,9 +277,7 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 					}
 					break;
 				}
-
 				peerList[i]->DeallocatePacket(packet);
-
 				// Stay in the loop as long as there are more packets.
 				packet = peerList[i]->Receive();
 			}
@@ -330,7 +298,7 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 			{
 				if (isVerbose)
 					printf("%i recieved %i packets from %i\n",i,recievedFromList[i][j],j);
-				if  (recievedFromList[i][j]!=100)
+				if  (recievedFromList[i][j]!=numPackets)
 				{
 					if (isVerbose)
 					{

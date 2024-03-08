@@ -12,6 +12,7 @@
 #include "GetTime.h"
 #include "DebugTools.h"
 #include "Rand.h" // randomMT
+#include "RakTimer.h"
 #include <cstdio>
 
 class DroppedConnectionConvertTest :

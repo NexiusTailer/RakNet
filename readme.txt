@@ -1,4 +1,4 @@
-RakNet 3.718
+RakNet 3.72
 Copyright 2002-2005 Kevin Jenkins (rakkar@jenkinssoftware.com).
 This API and the code herein created by and wholly and privately owned by Kevin Jenkins except where specifically indicated otherwise.
 Licensed under the "RakNet" brand by Jenkins Software and subject to the terms of the relevant licensing agreement available at http://www.jenkinssoftware.com
@@ -40,7 +40,7 @@ You might have to copy *.dll from cygwin\bin as well.
 -----------------------------------------
 Linux users
 -----------------------------------------
-The Makefile was created by Netbeans 6.0. You can also open the project in Netbeans, as it reads the "nbproject" directory.
+Use cmake.
 
 -----------------------------------------
 DevCPP Users
@@ -51,11 +51,6 @@ Load RakNet.dev
 CodeBlocks Users
 -----------------------------------------
 Load RakNet.cbp
-
-------------------------------------------
-DigitalMars Users
------------------------------------------
-A user contributed file DMCMakefile.win is included in the distribution.  I have no idea if it works or not.  If it doesn't, you can email me updates at rakkar@jenkinssoftware.com
 
 -----------------------------------------
 Mac Users

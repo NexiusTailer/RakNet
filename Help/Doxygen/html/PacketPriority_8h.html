@@ -33,7 +33,8 @@
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> { , <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705ccb1785f11dd02aa7f5d164fb314c594e">HIGH_PRIORITY</a>, 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> { <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c416b3a41b78a58a7a5a6ee24d628e456">IMMEDIATE_PRIORITY</a>, 
+<a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705ccb1785f11dd02aa7f5d164fb314c594e">HIGH_PRIORITY</a>, 
 <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c06b314d863076d54942e065d90c179c4">MEDIUM_PRIORITY</a>, 
 <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705cdb8ee22a232a2787f32ba28da55c43c1">LOW_PRIORITY</a>
  }</td></tr>
@@ -71,12 +72,14 @@ These enumerations are used to describe when packets are delivered.
 <p>
 <dl compact><dt><b>Enumerator: </b></dt><dd>
 <table border="0" cellspacing="2" cellpadding="0">
+<tr><td valign="top"><em><a class="anchor" name="659378374e516180f93640c79f59705c416b3a41b78a58a7a5a6ee24d628e456"></a><!-- doxytag: member="IMMEDIATE_PRIORITY" ref="659378374e516180f93640c79f59705c416b3a41b78a58a7a5a6ee24d628e456" args="" -->IMMEDIATE_PRIORITY</em>&nbsp;</td><td>
+The highest possible priority. These message trigger sends immediately, and are generally not buffered or aggregated into a single datagram. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="659378374e516180f93640c79f59705ccb1785f11dd02aa7f5d164fb314c594e"></a><!-- doxytag: member="HIGH_PRIORITY" ref="659378374e516180f93640c79f59705ccb1785f11dd02aa7f5d164fb314c594e" args="" -->HIGH_PRIORITY</em>&nbsp;</td><td>
-High priority messages are send before medium priority messages. </td></tr>
+For every 2 IMMEDIATE_PRIORITY messages, 1 HIGH_PRIORITY will be sent. Messages at this priority and lower are buffered to be sent in groups at 10 millisecond intervals to reduce UDP overhead and better measure congestion control. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="659378374e516180f93640c79f59705c06b314d863076d54942e065d90c179c4"></a><!-- doxytag: member="MEDIUM_PRIORITY" ref="659378374e516180f93640c79f59705c06b314d863076d54942e065d90c179c4" args="" -->MEDIUM_PRIORITY</em>&nbsp;</td><td>
-Medium priority messages are send before low priority messages. </td></tr>
+For every 2 HIGH_PRIORITY messages, 1 MEDIUM_PRIORITY will be sent. Messages at this priority and lower are buffered to be sent in groups at 10 millisecond intervals to reduce UDP overhead and better measure congestion control. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="659378374e516180f93640c79f59705cdb8ee22a232a2787f32ba28da55c43c1"></a><!-- doxytag: member="LOW_PRIORITY" ref="659378374e516180f93640c79f59705cdb8ee22a232a2787f32ba28da55c43c1" args="" -->LOW_PRIORITY</em>&nbsp;</td><td>
-Low priority messages are only sent when no other messages are waiting. </td></tr>
+For every 2 MEDIUM_PRIORITY messages, 1 LOW_PRIORITY will be sent. Messages at this priority and lower are buffered to be sent in groups at 10 millisecond intervals to reduce UDP overhead and better measure congestion control. </td></tr>
 </table>
 </dl>
 
@@ -113,7 +116,7 @@ This message is reliable and will arrive in the sequence you sent it. Out or ord
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 4 22:17:50 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Feb 27 09:39:23 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

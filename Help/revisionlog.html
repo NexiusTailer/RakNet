@@ -309,7 +309,17 @@ Improve randomness of random number for FullyConnectedMesh2<BR>
 3.715 (12/11/2009) Fix bug returning ID_ALREADY_CONNECTED. You can now also pass a RakNetGuid to most places in RakPeer you previously passed a SystemAddress. Change disconnect timeout method.<BR>
 3.716 (12/29/2009) Fix bug introduced in 3.714 causing players to get disconnected. FileListTransfer now supports incremental writes in addition to incremental reads. Reduce per-datagram overhead by 4 bytes once the bandwidth capacity has been determined.<BR>
 3.717 (1/05/2010) Fix a hashing bug affecting players reconnecting. Add RakPeerInterface::IsConnectionAttemptPending<BR>
-3.718 (02/04/2010) 64 bit fixes. Lower second attempt MTU detection to 1200. Skip MTU sends that will fail anyway. Add TeamBalancer plugin. Add threaded version of UPNP. Add signals and slots support for RPC3. Fix autopatcher building. Add Router2 plugin.<BR>
+3.718 (02/04/2010) 64 bit to 32 bit network communication fixes. Lower second attempt MTU detection to 1200. Skip MTU sends that will fail anyway. Add TeamBalancer plugin. Add signals and slots support for RPC3. Fixed autopatcher. Add Router2 plugin, to route messages in a fully connected mesh, when two peers cannot directly connect. Add IMMEDIATE_PRIORITY, above HIGH_PRIORITY. With IMMEDIATE_PRIORITY, messages will be sent immediately, rather than joined with other messages for more efficient bandwidth usage. RakVoice now refers to other systems by RakNetGUID, rather than SystemAddress, in order to work properly with NAT punchthrough. Fixed various warnings for Linux. Fixed pure virtual function call in Lobby2Server when shutting down. Fixed Client_GetAccountDetails for lobby2. Changed implementation of BitStream::WriteNormVector to handle small numbers. Added UPNPPortForwarder as a replacement nonblocking interface to the old UPNP system.<BR>
+3.72 (02/27/2010)
+PS3: Added dice sample
+FileListTransfer: Fixed divide by 0 crash when using incremental reads.
+Cmake: Fixed, all other projects and makefiles removed for Linux.
+UPNP: Fixed
+BitStream: Added WriteRef, and use with the shift left operator, so that RPC3 does not do a pass-by-value on object writes. This fixes a problem where the pass-by-value caused the destructor to be called on the copied object.
+ReplicaManager3: Replace AutoConstructByQuery with QueryConstructionMode, and added QueryReplicaList, for better performance for massively multiplayer games.
+TelnetTransport: You can now press the up arrow key to repeat the last command.
+RakPeer: Fix IMMEDIATE_PRIORITY to send right away when called by the user.
+Router2: Various bugs fixed.
  </TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
 <img src="spacer.gif" width="8" height="1">See Also</td>

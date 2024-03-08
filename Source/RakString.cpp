@@ -786,7 +786,7 @@ void RakString::FreeMemoryNoMutex(void)
 	}
 	freeList.Clear(false, __FILE__, __LINE__);
 }
-void RakString::Serialize(BitStream *bs)
+void RakString::Serialize(BitStream *bs) const
 {
 	Serialize(sharedString->c_str, bs);
 }
@@ -796,7 +796,7 @@ void RakString::Serialize(const char *str, BitStream *bs)
 	bs->Write(l);
 	bs->WriteAlignedBytes((const unsigned char*) str, (const unsigned int) l);
 }
-void RakString::SerializeCompressed(BitStream *bs, int languageId, bool writeLanguageId)
+void RakString::SerializeCompressed(BitStream *bs, int languageId, bool writeLanguageId) const
 {
 	SerializeCompressed(C_String(), bs, languageId, writeLanguageId);
 }

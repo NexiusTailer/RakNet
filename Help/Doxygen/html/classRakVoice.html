@@ -77,22 +77,22 @@ Inheritance diagram for RakVoice:</div>
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#cb269cb03ec4be272ab61cf92974439e">Deinit</a> (void)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Shuts down <a class="el" href="classRakVoice.html" title="Voice compression and transmission interface.">RakVoice</a>. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#32770cb0bb9527ce9e396c125e9a5719">RequestVoiceChannel</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> recipient)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#f3cdd6266c1e3211e59cdac75268307e">RequestVoiceChannel</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> recipient)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Opens a channel to another connected system You will get ID_RAKVOICE_OPEN_CHANNEL_REPLY on success.  <a href="#32770cb0bb9527ce9e396c125e9a5719"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#d3163c23c54c7e04f9cc9325b97d0a05">CloseVoiceChannel</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> recipient)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Opens a channel to another connected system You will get ID_RAKVOICE_OPEN_CHANNEL_REPLY on success.  <a href="#f3cdd6266c1e3211e59cdac75268307e"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#c6dcdb169a8145494ff8b708450b1c1b">CloseVoiceChannel</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> recipient)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Closes an existing voice channel. Other system will get ID_RAKVOICE_CLOSE_CHANNEL.  <a href="#d3163c23c54c7e04f9cc9325b97d0a05"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Closes an existing voice channel. Other system will get ID_RAKVOICE_CLOSE_CHANNEL.  <a href="#c6dcdb169a8145494ff8b708450b1c1b"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d4db644934b9128f182cae783baffbdf"></a><!-- doxytag: member="RakVoice::CloseAllChannels" ref="d4db644934b9128f182cae783baffbdf" args="(void)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#d4db644934b9128f182cae783baffbdf">CloseAllChannels</a> (void)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Closes all existing voice channels Other systems will get ID_RAKVOICE_CLOSE_CHANNEL. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#3811ec76775d48254675a5979d786587">SendFrame</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> recipient, void *inputBuffer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#c5aea5f5c76a0bdedebb639897cf2f7d">SendFrame</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> recipient, void *inputBuffer)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sends voice data to a system on an open channel.  <a href="#3811ec76775d48254675a5979d786587"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#f8e59646605eff02b853b0bf2a32492f">IsSendingVoiceDataTo</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> recipient)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sends voice data to a system on an open channel.  <a href="#c5aea5f5c76a0bdedebb639897cf2f7d"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#65423c103d71cc5f1354a599df19a801">IsSendingVoiceDataTo</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> recipient)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns if we are currently sending voice data, accounting for voice activity detection.  <a href="#f8e59646605eff02b853b0bf2a32492f"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns if we are currently sending voice data, accounting for voice activity detection.  <a href="#65423c103d71cc5f1354a599df19a801"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#5393d4704f712f0e1fd2dea1b8b66a41">ReceiveFrame</a> (void *outputBuffer)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets decoded voice data, from one or more remote senders.  <a href="#5393d4704f712f0e1fd2dea1b8b66a41"></a><br></td></tr>
@@ -104,9 +104,9 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#fb2b9d6ffffafaf3e567b5e36495be29">GetRakPeerInterface</a> (void) const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#fa67f4b0e69b283a7ca81622d0686b9c">GetBufferedBytesToSend</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress) const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#e55a6bead609f6b1e31e4e4b760fa44a">GetBufferedBytesToSend</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> guid) const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#464be88f54571ff835975ae48ff15ed8">GetBufferedBytesToReturn</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress) const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#0bf086e73d688b29acd68ea0d0aaa8b4">GetBufferedBytesToReturn</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> guid) const </td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#e6518711e046fc752ca40d4eb96da416">SetLoopbackMode</a> (bool enabled)</td></tr>
 
@@ -127,14 +127,14 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Voice compression and transmission interface. <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="d3163c23c54c7e04f9cc9325b97d0a05"></a><!-- doxytag: member="RakVoice::CloseVoiceChannel" ref="d3163c23c54c7e04f9cc9325b97d0a05" args="(SystemAddress recipient)" -->
+<a class="anchor" name="c6dcdb169a8145494ff8b708450b1c1b"></a><!-- doxytag: member="RakVoice::CloseVoiceChannel" ref="c6dcdb169a8145494ff8b708450b1c1b" args="(RakNetGUID recipient)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void RakVoice::CloseVoiceChannel           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
           <td class="paramname"> <em>recipient</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td></td>
@@ -154,15 +154,15 @@ Closes an existing voice channel. Other system will get ID_RAKVOICE_CLOSE_CHANNE
 
 </div>
 </div><p>
-<a class="anchor" name="464be88f54571ff835975ae48ff15ed8"></a><!-- doxytag: member="RakVoice::GetBufferedBytesToReturn" ref="464be88f54571ff835975ae48ff15ed8" args="(SystemAddress systemAddress) const " -->
+<a class="anchor" name="0bf086e73d688b29acd68ea0d0aaa8b4"></a><!-- doxytag: member="RakVoice::GetBufferedBytesToReturn" ref="0bf086e73d688b29acd68ea0d0aaa8b4" args="(RakNetGUID guid) const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">unsigned RakVoice::GetBufferedBytesToReturn           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>          </td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>guid</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td> const</td>
         </tr>
@@ -173,22 +173,22 @@ Closes an existing voice channel. Other system will get ID_RAKVOICE_CLOSE_CHANNE
 <p>
 How many bytes are on the read buffer, waiting to be passed to a call to ReceiveFrame This should remain at a fairly small near-constant size as incoming data is read out at the same rate as outgoing data from the remote system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system to query, or UNASSIGNED_SYSTEM_ADDRESS for the sum of all channels. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>guid</em>&nbsp;</td><td>The system to query, or UNASSIGNED_SYSTEM_ADDRESS for the sum of all channels. </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>Number of bytes on the read buffer. </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="fa67f4b0e69b283a7ca81622d0686b9c"></a><!-- doxytag: member="RakVoice::GetBufferedBytesToSend" ref="fa67f4b0e69b283a7ca81622d0686b9c" args="(SystemAddress systemAddress) const " -->
+<a class="anchor" name="e55a6bead609f6b1e31e4e4b760fa44a"></a><!-- doxytag: member="RakVoice::GetBufferedBytesToSend" ref="e55a6bead609f6b1e31e4e4b760fa44a" args="(RakNetGUID guid) const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">unsigned RakVoice::GetBufferedBytesToSend           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>          </td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>guid</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td> const</td>
         </tr>
@@ -199,7 +199,7 @@ How many bytes are on the read buffer, waiting to be passed to a call to Receive
 <p>
 How many bytes are on the write buffer, waiting to be passed to a call to <a class="el" href="classRakPeer.html#f1ba142c575e8a7b656a76b937a810ff" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send</a> (internally) This should remain at a fairly small near-constant size as outgoing data is sent to the Send function <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system to query, or UNASSIGNED_SYSTEM_ADDRESS for the sum of all channels. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>guid</em>&nbsp;</td><td>The system to query, or UNASSIGNED_SYSTEM_ADDRESS for the sum of all channels. </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>Number of bytes on the write buffer </dd></dl>
@@ -397,14 +397,14 @@ Returns the current state of the noise filter.
 
 </div>
 </div><p>
-<a class="anchor" name="f8e59646605eff02b853b0bf2a32492f"></a><!-- doxytag: member="RakVoice::IsSendingVoiceDataTo" ref="f8e59646605eff02b853b0bf2a32492f" args="(SystemAddress recipient)" -->
+<a class="anchor" name="65423c103d71cc5f1354a599df19a801"></a><!-- doxytag: member="RakVoice::IsSendingVoiceDataTo" ref="65423c103d71cc5f1354a599df19a801" args="(RakNetGUID recipient)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool RakVoice::IsSendingVoiceDataTo           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
           <td class="paramname"> <em>recipient</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td></td>
@@ -571,14 +571,14 @@ Gets decoded voice data, from one or more remote senders.
 
 </div>
 </div><p>
-<a class="anchor" name="32770cb0bb9527ce9e396c125e9a5719"></a><!-- doxytag: member="RakVoice::RequestVoiceChannel" ref="32770cb0bb9527ce9e396c125e9a5719" args="(SystemAddress recipient)" -->
+<a class="anchor" name="f3cdd6266c1e3211e59cdac75268307e"></a><!-- doxytag: member="RakVoice::RequestVoiceChannel" ref="f3cdd6266c1e3211e59cdac75268307e" args="(RakNetGUID recipient)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void RakVoice::RequestVoiceChannel           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
           <td class="paramname"> <em>recipient</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td></td>
@@ -598,14 +598,14 @@ Opens a channel to another connected system You will get ID_RAKVOICE_OPEN_CHANNE
 
 </div>
 </div><p>
-<a class="anchor" name="3811ec76775d48254675a5979d786587"></a><!-- doxytag: member="RakVoice::SendFrame" ref="3811ec76775d48254675a5979d786587" args="(SystemAddress recipient, void *inputBuffer)" -->
+<a class="anchor" name="c5aea5f5c76a0bdedebb639897cf2f7d"></a><!-- doxytag: member="RakVoice::SendFrame" ref="c5aea5f5c76a0bdedebb639897cf2f7d" args="(RakNetGUID recipient, void *inputBuffer)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool RakVoice::SendFrame           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
           <td class="paramname"> <em>recipient</em>, </td>
         </tr>
         <tr>
@@ -775,7 +775,7 @@ Enables or disables VBR VBR is variable bitrate. Uses less bandwidth but more CP
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/DependentExtensions/<a class="el" href="RakVoice_8h.html">RakVoice.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 4 22:17:51 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Feb 27 09:39:24 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

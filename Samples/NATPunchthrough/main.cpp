@@ -37,8 +37,6 @@
 #ifdef USE_UPNP
 // These files are in Samples/upnp
 #include "UPNPPortForwarder.h"
-#include "UPNPCallBackInterface.h"
-#include "EventReceiver.h"
 #endif
 
 static const unsigned short NAT_PUNCHTHROUGH_FACILITATOR_PORT=60481;
@@ -48,27 +46,52 @@ static const char *DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP="94.198.81.195";
 static const char *COORDINATOR_PASSWORD="Dummy Coordinator Password";
 
 #ifdef USE_UPNP
+class UPNPCallback : public RakNet::UPNPCallbackInterface
+{
+public:
+	UPNPCallback() {isDone=false;}
+
+	virtual void UPNPStatusUpdate(RakNet::RakString stringToPrint)
+	{
+		printf(stringToPrint.C_String());
+	}
+	virtual void QueryUPNPSupport_Result(RakNet::QueryUPNPSupportResult *result)
+	{
+		if (result->interfacesFound.Size()>0)
+			printf("UPNP Supported\n");
+		else
+			printf("UPNP not supported\n");
+		isDone=true;
+	}
+	virtual void OpenPortOnInterface_Result(RakNet::OpenPortResult *result)
+	{
+		if (result->interfacesQueried.Size()==0)
+		{
+			printf("No UPNP interfaces queried\n");
+		}
+
+		for (unsigned int i=0; i < result->interfacesQueried.Size(); i++)
+		{
+			printf("Queried %s: Success: %i\n", result->interfacesQueried[i].C_String(), result->succeeded[i]);
+		}
+		isDone=true;
+	}
+
+	bool isDone;
+};
 // UPNP can directly tell the router to open a port (if it works)
-void OpenWithUPNP(NatPunchthroughClient *npc)
+void OpenWithUPNPBlocking(NatPunchthroughClient *npc)
 {
 	printf("Opening UPNP...\n");
 
-
-	UPNPPortForwarder forwarder;
-
-	EventReceiver * eventObject= new EventReceiver(1);
-
-	forwarder.OpenPortOnInterface(npc->GetUPNPInternalPort(),eventObject,npc->GetUPNPInternalAddress(),npc->GetUPNPExternalPort());
-
-
-
-
-	while(eventObject->IsRunningAnyThread())
-	{}
-
-	delete eventObject;
-
-
+	RakNet::UPNPPortForwarder forwarder;
+	UPNPCallback callback;
+	forwarder.OpenPortOnInterface(&callback,555);
+	while (callback.isDone==false)
+	{
+		RakSleep(300);
+		forwarder.CallCallbacks();
+	}
 };
 #endif
 
@@ -265,7 +288,7 @@ void GUIClientTest()
 				else
 				{
 					// Use UPNP to open the port connections will come in on, if possible
-					OpenWithUPNP(&natPunchthroughClient);
+					OpenWithUPNPBlocking(&natPunchthroughClient);
 				}
 			}
 			else if (
@@ -562,7 +585,7 @@ void VerboseTest()
 				{
 					printf("Connected to facilitator with GUID %s.\n", p->guid.ToString());
 #ifdef USE_UPNP
-					OpenWithUPNP(&natPunchthroughClient);
+					OpenWithUPNPBlocking(&natPunchthroughClient);
 #endif
 				}
 				if (mode[0]=='s' || mode[0]=='S')

@@ -24,8 +24,17 @@ public:
 	void Init(RakNetTime maxWriteInterval, RakNetTime maxHistoryTime);
 	void Write(const Ogre::Vector3 &position, const Ogre::Vector3 &velocity, const Ogre::Quaternion &orientation, RakNetTime curTimeMS);
 	void Overwrite(const Ogre::Vector3 &position, const Ogre::Vector3 &velocity, const Ogre::Quaternion &orientation, RakNetTime when);
+	enum ReadResult
+	{
+		// We are reading so far in the past there is no data yet
+		READ_OLDEST,
+		// We are not reading in the past, so the input parameters stay the same
+		VALUES_UNCHANGED,
+		// We are reading in the past
+		INTERPOLATED
+	};
 	// Parameters are in/out, modified to reflect the history
-	void Read(Ogre::Vector3 *position, Ogre::Vector3 *velocity, Ogre::Quaternion *orientation,
+	ReadResult Read(Ogre::Vector3 *position, Ogre::Vector3 *velocity, Ogre::Quaternion *orientation,
 		RakNetTime when, RakNetTime curTime);
 	void Clear(void);
 protected:

@@ -65,7 +65,7 @@ Inheritance diagram for RakNet::ReplicaManager3:</div>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Track a new <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> instance.  <a href="#8c076754cf73ec47ea31a95c9c3f27f8"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#200726c38288e43321ba1a50fe17d698">PopConnection</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> guid)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Stop tracking a connection, and optionally destroy all objects created by that system.  <a href="#200726c38288e43321ba1a50fe17d698"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Stop tracking a connection.  <a href="#200726c38288e43321ba1a50fe17d698"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#db56b06f09b0379483aeeecfed0805b6">Reference</a> (<a class="el" href="classRakNet_1_1Replica3.html">RakNet::Replica3</a> *replica3)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds a replicated object to the system.  <a href="#db56b06f09b0379483aeeecfed0805b6"></a><br></td></tr>
@@ -108,9 +108,6 @@ Inheritance diagram for RakNet::ReplicaManager3:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#3909030c3ad377e9b2ac1afc0e78889f">SetDefaultPacketReliability</a> (<a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> def)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#f1d82ce64069659c5586537b6688c091">SetAutoConstructByQuery</a> (bool autoConstruct, bool autoDestruct)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Enables or disables the automatic object creation and destruction feature.  <a href="#f1d82ce64069659c5586537b6688c091"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#f560164736e6771f0f86f4e252fb8feb">SetAutoSerializeInterval</a> (RakNetTime intervalMS)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#3b16abbd1c3117833340b506f69c43c6">GetConnectionsThatHaveReplicaConstructed</a> (<a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> *replica, <a class="el" href="classDataStructures_1_1Multilist.html">DataStructures::Multilist</a>&lt; ML_STACK, <a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a> * &gt; &amp;connectionsThatHaveConstructedThisReplica)</td></tr>
@@ -153,11 +150,11 @@ System to help automate game object construction, destruction, and serialization
  To use:<br>
  <ol>
 <li>
-Derive from <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> and implement <a class="el" href="classRakNet_1_1Connection__RM3.html#b05d85100f726378f2ed73c6792a5b46" title="Class factory to create a Replica3 instance, given a user-defined identifier.">Connection_RM3::AllocReplica()</a>. This is a factory function where given an identifier for a class (such as name) return an instance of that class. Should be able to return any networked object in your game. </li>
+Derive from <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> and implement <a class="el" href="classRakNet_1_1Connection__RM3.html#b05d85100f726378f2ed73c6792a5b46" title="Class factory to create a Replica3 instance, given a user-defined identifier.">Connection_RM3::AllocReplica()</a>. This is a factory function where given a user-supplied identifier for a class (such as name) return an instance of that class. Should be able to return any networked object in your game. </li>
 <li>
 Derive from <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> and implement <a class="el" href="classRakNet_1_1ReplicaManager3.html#fd1bc3b39b052c129ff46bd53aa6fdf6" title="Implement to return a game specific derivation of Connection_RM3.">AllocConnection()</a> and <a class="el" href="classRakNet_1_1ReplicaManager3.html#78b449c8e3caa9a343a7d273f768687c" title="Implement to destroy a class instanced returned by AllocConnection().">DeallocConnection()</a> to return the class you created in step 1. </li>
 <li>
-Derive your networked game objects from <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>. All pure virtuals have to be implemented, however defaults are provided for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="This object does not exist on this system. Queried every tick to see if it should...">Replica3::QueryConstruction()</a>, <a class="el" href="classRakNet_1_1Replica3.html#79bd207fb79055d2b39943eb1c6b1f58" title="Should I allow this object to be created remotely, based solely on the sender?">Replica3::QueryRemoteConstruction()</a>, and <a class="el" href="classRakNet_1_1Replica3.html#ea6ea21dd0f668abd09d0196eac0a336" title="Implement with QuerySerialization_ClientSerializable(), QuerySerialization_ServerSerializable()...">Replica3::QuerySerialization()</a> depending on your network architecture. </li>
+Derive your networked game objects from <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>. All pure virtuals have to be implemented, however defaults are provided for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">Replica3::QueryConstruction()</a>, <a class="el" href="classRakNet_1_1Replica3.html#79bd207fb79055d2b39943eb1c6b1f58" title="We&#39;re about to call DeserializeConstruction() on this Replica3. If QueryRemoteConstruction()...">Replica3::QueryRemoteConstruction()</a>, and <a class="el" href="classRakNet_1_1Replica3.html#ea6ea21dd0f668abd09d0196eac0a336" title="Implement with QuerySerialization_ClientSerializable(), QuerySerialization_ServerSerializable()...">Replica3::QuerySerialization()</a> depending on your network architecture. </li>
 <li>
 When a new game object is created on the local system, pass it to <a class="el" href="classRakNet_1_1ReplicaManager3.html#db56b06f09b0379483aeeecfed0805b6" title="Adds a replicated object to the system.">ReplicaManager3::Reference()</a>. </li>
 <li>
@@ -196,8 +193,9 @@ Implement to return a game specific derivation of <a class="el" href="classRakNe
 The connection object represents a remote system connected to you that is using the <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> system.<br>
  It has functions to perform operations per-connection.<br>
  <a class="el" href="classRakNet_1_1ReplicaManager3.html#fd1bc3b39b052c129ff46bd53aa6fdf6" title="Implement to return a game specific derivation of Connection_RM3.">AllocConnection()</a> and <a class="el" href="classRakNet_1_1ReplicaManager3.html#78b449c8e3caa9a343a7d273f768687c" title="Implement to destroy a class instanced returned by AllocConnection().">DeallocConnection()</a> are factory functions to create and destroy instances of the connection object.<br>
- It is used if connections are automanaged (which they are by default).<br>
- <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a> </dd></dl>
+ It is used if autoCreate is true via <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a> (true by default). Otherwise, the function is not called, and you will have to call <a class="el" href="classRakNet_1_1ReplicaManager3.html#8c076754cf73ec47ea31a95c9c3f27f8" title="Track a new Connection_RM3 instance.">PushConnection()</a> manually<br>
+ <dl class="note" compact><dt><b>Note:</b></dt><dd>If you do not want a new network connection to immediately download game objects, <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a> and <a class="el" href="classRakNet_1_1ReplicaManager3.html#8c076754cf73ec47ea31a95c9c3f27f8" title="Track a new Connection_RM3 instance.">PushConnection()</a> are how you do this. </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a> </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Address of the system you are adding </td></tr>
@@ -262,7 +260,8 @@ Send a network command to destroy one or more <a class="el" href="classRakNet_1_
 <p>
 Implement to destroy a class instanced returned by <a class="el" href="classRakNet_1_1ReplicaManager3.html#fd1bc3b39b052c129ff46bd53aa6fdf6" title="Implement to return a game specific derivation of Connection_RM3.">AllocConnection()</a>. 
 <p>
-Most likely just implement as {delete connection;} <dl compact><dt><b>Parameters:</b></dt><dd>
+Most likely just implement as {delete connection;}<br>
+ It is used if autoDestroy is true via <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a> (true by default). Otherwise, the function is not called and you would then be responsible for deleting your own connection objects. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>connection</em>&nbsp;</td><td>The pointer instance to delete </td></tr>
   </table>
@@ -318,7 +317,7 @@ The object is not deallocated, it is up to the caller to do so.<br>
 Removes multiple replicated objects from the system. 
 <p>
 Same as <a class="el" href="classRakNet_1_1ReplicaManager3.html#ae0f5dfc750be2606f2ba05c16721bc8" title="Removes a replicated object from the system.">Dereference()</a>, but for a list of objects.<br>
- Useful if also using <a class="el" href="classRakNet_1_1ReplicaManager3.html#93a39f06f2fc8358d0eabcf316b9fe41" title="Returns all objects originally created by a particular system.">GetReplicasCreatedByGuid()</a>, <a class="el" href="classRakNet_1_1ReplicaManager3.html#75ea8255f9ddf997c39a2ebc478e4773" title="Returns all objects originally created by your system.">GetReplicasCreatedByMe()</a>, or <a class="el" href="classRakNet_1_1ReplicaManager3.html#b0e700277d18c3b063871fe33abdec62" title="Returns the entire list of Replicas that we know about.">GetReferencedReplicaList()</a>.<br>
+ Useful with the lists returned by <a class="el" href="classRakNet_1_1ReplicaManager3.html#93a39f06f2fc8358d0eabcf316b9fe41" title="Returns all objects originally created by a particular system.">GetReplicasCreatedByGuid()</a>, <a class="el" href="classRakNet_1_1ReplicaManager3.html#75ea8255f9ddf997c39a2ebc478e4773" title="Returns all objects originally created by your system.">GetReplicasCreatedByMe()</a>, or <a class="el" href="classRakNet_1_1ReplicaManager3.html#b0e700277d18c3b063871fe33abdec62" title="Returns the entire list of Replicas that we know about.">GetReferencedReplicaList()</a>.<br>
  <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>replicaListIn</em>&nbsp;</td><td>List of objects </td></tr>
@@ -430,7 +429,7 @@ Returns a connection pointer previously added with <a class="el" href="classRakN
 <p>
 Returns the number of connections. 
 <p>
-Returns the number of connections added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#8c076754cf73ec47ea31a95c9c3f27f8" title="Track a new Connection_RM3 instance.">ReplicaManager3::PushConnection()</a>, minus the number removed with <a class="el" href="classRakNet_1_1ReplicaManager3.html#200726c38288e43321ba1a50fe17d698" title="Stop tracking a connection, and optionally destroy all objects created by that system...">ReplicaManager3::PopConnection()</a> <dl class="return" compact><dt><b>Returns:</b></dt><dd>The number of registered connections </dd></dl>
+Returns the number of connections added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#8c076754cf73ec47ea31a95c9c3f27f8" title="Track a new Connection_RM3 instance.">ReplicaManager3::PushConnection()</a>, minus the number removed with <a class="el" href="classRakNet_1_1ReplicaManager3.html#200726c38288e43321ba1a50fe17d698" title="Stop tracking a connection.">ReplicaManager3::PopConnection()</a> <dl class="return" compact><dt><b>Returns:</b></dt><dd>The number of registered connections </dd></dl>
 
 </div>
 </div><p>
@@ -769,10 +768,10 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Stop tracking a connection, and optionally destroy all objects created by that system. 
+Stop tracking a connection. 
 <p>
-If <em>autoDestroy</em> is false for <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a>, then you need to manually have the system stop connections.<br>
- <a class="el" href="classRakNet_1_1ReplicaManager3.html#200726c38288e43321ba1a50fe17d698" title="Stop tracking a connection, and optionally destroy all objects created by that system...">PopConnection()</a> will do so, and return that connection instance to you.<br>
+On call, for each replica returned by <a class="el" href="classRakNet_1_1ReplicaManager3.html#93a39f06f2fc8358d0eabcf316b9fe41" title="Returns all objects originally created by a particular system.">GetReplicasCreatedByGuid()</a>, QueryActionOnPopConnection() will be called. Depending on the return value, this may delete the corresponding replica.<br>
+ If autoDestroy is true in the call to <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a> (true by default) then this is called automatically when the connection is lost. In that case, the returned connection instance is deleted.<br>
  <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>guid</em>&nbsp;</td><td>of the connection to get. Passed to <a class="el" href="classRakNet_1_1ReplicaManager3.html#fd1bc3b39b052c129ff46bd53aa6fdf6" title="Implement to return a game specific derivation of Connection_RM3.">ReplicaManager3::AllocConnection()</a> originally. </td></tr>
@@ -800,8 +799,7 @@ If <em>autoDestroy</em> is false for <a class="el" href="classRakNet_1_1ReplicaM
 <p>
 Track a new <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> instance. 
 <p>
-If <em>autoCreate</em> is false for <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a>, then you need to add new instances of <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> yourself.<br>
- Use <a class="el" href="classRakNet_1_1ReplicaManager3.html#8c076754cf73ec47ea31a95c9c3f27f8" title="Track a new Connection_RM3 instance.">PushConnection()</a> to do so.<br>
+If <em>autoCreate</em> is false for <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a>, then you need this function to add new instances of <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> yourself.<br>
  You don't need to track this pointer yourself, you can get it with <a class="el" href="classRakNet_1_1ReplicaManager3.html#f807a58b272373f60c7f336bc86d1920" title="Returns a connection pointer previously added with PushConnection().">GetConnectionAtIndex()</a>, <a class="el" href="classRakNet_1_1ReplicaManager3.html#508498bc416c653124bb9c8df17e28fb" title="Returns a connection pointer previously added with PushConnection.().">GetConnectionByGUID()</a>, or <a class="el" href="classRakNet_1_1ReplicaManager3.html#3b4ba43cd0f401ecc9fff5b9f7a63c2e" title="Returns a connection pointer previously added with PushConnection().">GetConnectionBySystemAddress()</a>.<br>
  <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -831,52 +829,10 @@ If <em>autoCreate</em> is false for <a class="el" href="classRakNet_1_1ReplicaMa
 Adds a replicated object to the system. 
 <p>
 Anytime you create a new object that derives from <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, and you want <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> to use it, pass it to <a class="el" href="classRakNet_1_1ReplicaManager3.html#db56b06f09b0379483aeeecfed0805b6" title="Adds a replicated object to the system.">Reference()</a>.<br>
- Remote systems already connected will download this object the next time <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Update is called every time a packet is checked for .">ReplicaManager3::Update()</a> is called, which happens every time you call <a class="el" href="classRakPeerInterface.html#b92ff92041d251011bc166f6abdf119d">RakPeerInterface::Receive()</a>.<br>
+ Remote systems already connected will potentially download this object the next time <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Update is called every time a packet is checked for .">ReplicaManager3::Update()</a> is called, which happens every time you call <a class="el" href="classRakPeerInterface.html#b92ff92041d251011bc166f6abdf119d">RakPeerInterface::Receive()</a>.<br>
  <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>replica3</em>&nbsp;</td><td>The object to start tracking </td></tr>
-  </table>
-</dl>
-
-</div>
-</div><p>
-<a class="anchor" name="f1d82ce64069659c5586537b6688c091"></a><!-- doxytag: member="RakNet::ReplicaManager3::SetAutoConstructByQuery" ref="f1d82ce64069659c5586537b6688c091" args="(bool autoConstruct, bool autoDestruct)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void RakNet::ReplicaManager3::SetAutoConstructByQuery           </td>
-          <td>(</td>
-          <td class="paramtype">bool&nbsp;</td>
-          <td class="paramname"> <em>autoConstruct</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&nbsp;</td>
-          <td class="paramname"> <em>autoDestruct</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Enables or disables the automatic object creation and destruction feature. 
-<p>
-If true, then each <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Update is called every time a packet is checked for .">ReplicaManager3::Update()</a>, <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="This object does not exist on this system. Queried every tick to see if it should...">Replica3::QueryConstruction()</a> will be called for each locally created instance of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, for each instance of <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a>.<br>
- Based on the return value of QueryConstruction(), the object will be created or destroyed on that remote system.<br>
- Defaults to true.<br>
- This is not efficient for large worlds where higher level culling mechanisms exist. You can narrow the scope of which objects are checked by using Connection_RM3::SetConstructionByList.<br>
- <dl class="note" compact><dt><b>Note:</b></dt><dd>Connection_RM3::SetConstructionByList and <a class="el" href="classRakNet_1_1ReplicaManager3.html#f1d82ce64069659c5586537b6688c091" title="Enables or disables the automatic object creation and destruction feature.">ReplicaManager3::SetAutoConstructByQuery</a> are mutually exclusive. Do not use both at the same time. </dd></dl>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>autoConstruct</em>&nbsp;</td><td>True to enable, false to disable. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>autoDestruct</em>&nbsp;</td><td>Same as autoConstruct, but for objects that already exist. Should this object continue to exist for this particular system? (Slow, recommended disabled) </td></tr>
   </table>
 </dl>
 
@@ -911,9 +867,9 @@ If true, then each <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2f
 Enable or disable automatically assigning connections to new instances of <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a>. 
 <p>
 <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> can automatically create and/or destroy <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> as systems connect or disconnect from <a class="el" href="classRakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a>.<br>
- By default this is on, to make the system faster to setup.<br>
+ By default this is on, to make the system easier to learn and setup.<br>
  If you don't want all connections to take part in the game, or you want to delay when a connection downloads the game, set <em>autoCreate</em> to false.<br>
- If you want to delay deleting a connection that has dropped, set <em>autoDestroy</em> to false. If you do this, then you must call <a class="el" href="classRakNet_1_1ReplicaManager3.html#200726c38288e43321ba1a50fe17d698" title="Stop tracking a connection, and optionally destroy all objects created by that system...">PopConnection()</a> to remove that connection from being internally tracked. You'll also have to delete the connection instance on your own..<br>
+ If you want to delay deleting a connection that has dropped, set <em>autoDestroy</em> to false. If you do this, then you must call <a class="el" href="classRakNet_1_1ReplicaManager3.html#200726c38288e43321ba1a50fe17d698" title="Stop tracking a connection.">PopConnection()</a> to remove that connection from being internally tracked. You'll also have to delete the connection instance on your own.<br>
  <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>autoCreate</em>&nbsp;</td><td>Automatically call <a class="el" href="classRakNet_1_1ReplicaManager3.html#fd1bc3b39b052c129ff46bd53aa6fdf6" title="Implement to return a game specific derivation of Connection_RM3.">ReplicaManager3::AllocConnection()</a> for each new connection. Defaults to true. </td></tr>
@@ -1082,7 +1038,7 @@ Defines the unique instance of <a class="el" href="classRakNet_1_1ReplicaManager
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 4 22:17:53 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Feb 27 09:39:26 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

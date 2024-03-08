@@ -1,0 +1,29 @@
+CRITICAL (Cannot demo)
+
+1. Server list is not populated if you export the flash files yourself. It only works with the .fla files included with the distribution
+
+Major (Can demo, but cannot release)
+
+1. On C_CreateAccount, if the server does not respond, you cannot leave the login screen, even if you return
+LDPResult* r = new LDPResult(LDPResult::R_LoginErrorReceived);
+r->Error.Type = LobbyError::ET_Connection;
+
+2. Exporting the flash files has numerous compile errors, with both 3.0 and 3.1
+
+3. If you lose connection to the server, this code does not set you back to the login screen
+LDPResult* r = new LDPResult(LDPResult::R_ServerErrorReceived);
+r->Error.Type = LobbyError::ET_Connection;
+r->Error.Message = "Connection to server lost";
+
+4. With all error messages in LDPResult, if the string is too long, it gets truncated. THe threshold for what consistutes too long is overly limited
+
+5. In LobbyController::OnPlayersListRequestItemRange, When void LobbyController::OnPlayersListRequestItemRange is called, and only one player is in the list, then eidx is -1 and sidx is 0.
+This calculation then amounts to -1 - 0 + 1 = 0.
+SInt    numRet = (eidx - sidx + 1);
+So no players are returned, although 1 player is actually in the list.
+
+Minor:
+
+1. I had to add LobbyDataProvider::OnBuddyPanelStateChange, because otherwise if you report buddy status too soon after logging in, the buddy list is not updated
+
+2. For LobbyDataProvider, I added the buddy name parameter for AcceptBuddyRequest and DenyBuddyRequest. This is because the code already has that information, and only returning the number to the user requires that the application make an otherwise unnecessary copy of the buddy list

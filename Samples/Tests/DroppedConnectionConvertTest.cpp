@@ -83,6 +83,7 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 	int randomTest;
 
 	bool dropTest=false;
+	RakTimer timeoutWaitTimer(1000);
 
 
 	while (RakNet::GetTime()-entryTime<30000)//run for 30 seconds.
@@ -224,8 +225,12 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 
 				if (isVerbose)
 					printf("Testing if clients dropped after timeout.\n");
-
-				RakSleep(1000);//Wait half the timeout time, the other half after receive so we don't drop all connections only missing ones
+				timeoutWaitTimer.Start();
+						//Wait half the timeout time, the other half after receive so we don't drop all connections only missing ones, Active ait so the threads run on linux
+				while (!timeoutWaitTimer.IsExpired())
+				{
+				RakSleep(50);
+				}
 				dropTest=true;
 
 			}
@@ -341,7 +346,12 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 		}
 		if (dropTest)
 		{
-			RakSleep(1000);//Trigger the timeout if no recieve
+			//Trigger the timeout if no recieve
+			timeoutWaitTimer.Start();
+			while (!timeoutWaitTimer.IsExpired())
+			{
+			RakSleep(50);
+			}
 		}
 		// 11/29/05 - No longer necessary since I added the keepalive
 		/*

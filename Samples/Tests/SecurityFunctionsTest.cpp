@@ -69,10 +69,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 {
 
 
-	
-
 	char thePassword[]="password";
-
 	server=RakNetworkFactory::GetRakPeerInterface();
 
 	client=RakNetworkFactory::GetRakPeerInterface();
@@ -87,9 +84,9 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 	char returnedPass[22];
 	int returnedLen=22;
 	server->GetIncomingPassword(returnedPass,&returnedLen);
+	returnedPass[returnedLen]=0;//Password is a data block convert to null terminated string to make the test easier
 
-
-	if (!strcmp(returnedPass,thePassword))
+	if (strcmp(returnedPass,thePassword)!=0)
 	{
 		if (isVerbose)
 		{
@@ -377,8 +374,6 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 	//-----------------------------
 
 	// RSACrypt is a class that handles RSA encryption/decryption internally
-	char str[256];
-	bool keyLoaded; // Does D,E,N have values?
 
 
 	RSACrypt rsacrypt;
@@ -428,7 +423,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 
 	char str2[]="AAAAAAAAAA";
-	str2[0]=ID_USER_PACKET_ENUM+1;
+	str2[0]=(char)(ID_USER_PACKET_ENUM+1);
 	client->Send(str2,(int) strlen(str2)+1, HIGH_PRIORITY, RELIABLE_ORDERED ,0, UNASSIGNED_SYSTEM_ADDRESS, true);
 	client->Send(str2,(int) strlen(str2)+1, HIGH_PRIORITY, RELIABLE_ORDERED ,0, UNASSIGNED_SYSTEM_ADDRESS, true);
 
@@ -511,7 +506,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 
 
-	str2[0]=ID_USER_PACKET_ENUM+1;
+	str2[0]=(char)(ID_USER_PACKET_ENUM+1);
 	client->Send(str2,(int) strlen(str2)+1, HIGH_PRIORITY, RELIABLE_ORDERED ,0, UNASSIGNED_SYSTEM_ADDRESS, true);
 	client->Send(str2,(int) strlen(str2)+1, HIGH_PRIORITY, RELIABLE_ORDERED ,0, UNASSIGNED_SYSTEM_ADDRESS, true);
 
@@ -578,7 +573,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 	}
 
 
-	str2[0]=ID_USER_PACKET_ENUM+1;
+	str2[0]=(char)(ID_USER_PACKET_ENUM+1);
 	client->Send(str2,(int) strlen(str2)+1, HIGH_PRIORITY, RELIABLE_ORDERED ,0, UNASSIGNED_SYSTEM_ADDRESS, true);
 	client->Send(str2,(int) strlen(str2)+1, HIGH_PRIORITY, RELIABLE_ORDERED ,0, UNASSIGNED_SYSTEM_ADDRESS, true);
 

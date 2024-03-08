@@ -131,8 +131,10 @@ void UDPForwarder::UpdateThreaded(void)
 #endif
 		FD_SET(forwardList[i]->readSocket, &readFD);
 //		FD_SET(forwardList[i]->readSocket, &exceptionFD);
+
+		if (forwardList[i]->readSocket > largestDescriptor)
+			largestDescriptor = forwardList[i]->readSocket;
 	}
-	largestDescriptor = forwardList[forwardList.GetSize()-1]->readSocket;
 
 #if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
                                                                     
