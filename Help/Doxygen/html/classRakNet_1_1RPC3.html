@@ -75,7 +75,7 @@ Inheritance diagram for RakNet::RPC3:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f91f170de71c934c8b79f5e941c372cd"></a><!-- doxytag: member="RakNet::RPC3::GetRakPeer" ref="f91f170de71c934c8b79f5e941c372cd" args="(void) const " -->
 <a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC3.html#f91f170de71c934c8b79f5e941c372cd">GetRakPeer</a> (void) const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> this plugin was attached to. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the instance of <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a> this plugin was attached to. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">const char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC3.html#d2479662844dde75ec63bcbf90b7f9cc">GetCurrentExecution</a> (void) const </td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC3.html#78fc5dd5e2e325cfbac3feb7cdcf5fcb">Call</a> (const char *uniqueIdentifier)</td></tr>
@@ -92,7 +92,7 @@ Inheritance diagram for RakNet::RPC3:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="85b95ca4a0e673e1f2bc9335881d8508"></a><!-- doxytag: member="RakNet::RPC3::OnShutdown" ref="85b95ca4a0e673e1f2bc9335881d8508" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC3.html#85b95ca4a0e673e1f2bc9335881d8508">OnShutdown</a> (void)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 The <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RPC3</a> plugin allows you to call remote functions as if they were local functions, using the standard function call syntax. 
@@ -280,7 +280,7 @@ Returns if a function identifier was previously registered with <a class="el" hr
 <p>
 Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
   </table>
 </dl>
 
@@ -320,7 +320,7 @@ Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#4a7c586a8be0d977354a3cfd09bab6b7">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
+Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#4a7c586a8be0d977354a3cfd09bab6b7" title="Close the connection to another host (if we initiated the connection it will disconnect...">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system whose connection was closed </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
@@ -451,8 +451,8 @@ Sets the network ID manager to use for object lookup Required to call C++ object
 <p>
 Set system to send to for all following calls to <a class="el" href="classRakNet_1_1RPC3.html#78fc5dd5e2e325cfbac3feb7cdcf5fcb">Call()</a> Defaults to UNASSIGNED_SYSTEM_ADDRESS, broadcast=true <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be">RakPeer::Send()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be">RakPeer::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
   </table>
 </dl>
 
@@ -516,11 +516,11 @@ Set the NetworkID to pass for all following calls to <a class="el" href="classRa
 <div class="memdoc">
 
 <p>
-Set parameters to pass to <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be">RakPeer::Send()</a> for all following calls to <a class="el" href="classRakNet_1_1RPC3.html#78fc5dd5e2e325cfbac3feb7cdcf5fcb">Call()</a> Deafults to HIGH_PRIORITY, RELIABLE_ORDERED, ordering channel 0 <dl compact><dt><b>Parameters:</b></dt><dd>
+Set parameters to pass to <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> for all following calls to <a class="el" href="classRakNet_1_1RPC3.html#78fc5dd5e2e325cfbac3feb7cdcf5fcb">Call()</a> Deafults to HIGH_PRIORITY, RELIABLE_ORDERED, ordering channel 0 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be">RakPeer::Send()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be">RakPeer::Send()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be">RakPeer::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
   </table>
 </dl>
 
@@ -580,7 +580,7 @@ Unregisters a function pointer to be callable given an identifier for the pointe
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/DependentExtensions/RPC3/<a class="el" href="RPC3_8h.html">RPC3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Nov 24 10:29:01 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Dec 5 08:09:19 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

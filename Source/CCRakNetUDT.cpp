@@ -6,6 +6,7 @@
 #include <stdlib.h>
 //#include <memory.h>
 #include "RakAssert.h"
+#include "RakAlloca.h"
 
 using namespace RakNet;
 
@@ -44,10 +45,11 @@ void CCRakNetUDT::Init(CCTimeType curTime, uint32_t maxDatagramPayload)
 	nextSYNUpdate=0;
 	packetPairRecieptHistoryWriteIndex=0;
 	packetArrivalHistoryWriteIndex=0;
+	packetArrivalHistoryWriteCount=0;
 	RTT=UNSET_TIME_US;
-//	RTTVar=UNSET_TIME_US;
+	//	RTTVar=UNSET_TIME_US;
 	isInSlowStart=true;
-	LastDecSeq=0;
+	nextDatagramSYNUpdate=0;
 	NAKCount=1000;
 	AvgNAKNum=1;
 	DecInterval=1;
@@ -64,6 +66,8 @@ void CCRakNetUDT::Init(CCTimeType curTime, uint32_t maxDatagramPayload)
 	ExpCount=1.0;
 	totalUserDataBytesSent=0;
 	oldestUnsentAck=0;
+	rttSum=0;
+	rttLow=-1;
 	MAXIMUM_MTU_INCLUDING_UDP_HEADER=maxDatagramPayload;
 	CWND_MAX_THRESHOLD=25600;
 #if CC_TIME_TYPE_BYTES==4
@@ -71,17 +75,21 @@ void CCRakNetUDT::Init(CCTimeType curTime, uint32_t maxDatagramPayload)
 #else
 	const BytesPerMicrosecond DEFAULT_TRANSFER_RATE=(BytesPerMicrosecond) .0036;
 #endif
-	B=DEFAULT_TRANSFER_RATE;
+	//	B=DEFAULT_TRANSFER_RATE;
 	AS=UNDEFINED_TRANSFER_RATE;
 	const MicrosecondsPerByte DEFAULT_BYTE_INTERVAL=(MicrosecondsPerByte) (1.0/DEFAULT_TRANSFER_RATE);
 	SND=DEFAULT_BYTE_INTERVAL;
 	expectedNextSequenceNumber=0;
 	sendBAndASCount=0;
 	packetArrivalHistoryContinuousGapsIndex=0;
-	packetPairRecipetHistoryGapsIndex=0;
+	//packetPairRecipetHistoryGapsIndex=0;
 	hasWrittenToPacketPairReceiptHistory=false;
 	InitPacketArrivalHistory();
-	InitPacketPairRecieptHistory();
+
+	rttHistoryWriteCount=0;
+	rttHistoryIndex=0;
+	gotPacketlossThisUpdate=false;
+	//	lastSndUpdateTime=0;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetUDT::SetMTU(uint32_t bytes)
@@ -104,31 +112,32 @@ void CCRakNetUDT::Update(CCTimeType curTime, bool hasDataToSendOrResend)
 
 	// I suspect this is causing major lag
 
-
+	/*
 	if (hasDataToSendOrResend==false)
-		halveSNDOnNoDataTime=0;
+	halveSNDOnNoDataTime=0;
 	else if (halveSNDOnNoDataTime==0)
 	{
-		UpdateHalveSNDOnNoDataTime(curTime);
-		ExpCount=1.0;
+	UpdateHalveSNDOnNoDataTime(curTime);
+	ExpCount=1.0;
 	}
 
 	// If you send, and get no data at all from that time to RTO, then halve send rate7
 	if (HasHalveSNDOnNoDataTimeElapsed(curTime))
 	{
-		/// 2000 bytes per second
-		/// 0.0005 seconds per byte
-		/// 0.5 milliseconds per byte
-		/// 500 microseconds per byte
-		// printf("No incoming data, halving send rate\n");
-		SND*=2.0;
-		CapMinSnd(__FILE__,__LINE__);
-		ExpCount+=1.0;
-		if (ExpCount>8.0)
-			ExpCount=8.0;
+	/// 2000 bytes per second
+	/// 0.0005 seconds per byte
+	/// 0.5 milliseconds per byte
+	/// 500 microseconds per byte
+	// printf("No incoming data, halving send rate\n");
+	SND*=2.0;
+	CapMinSnd(__FILE__,__LINE__);
+	ExpCount+=1.0;
+	if (ExpCount>8.0)
+	ExpCount=8.0;
 
-		UpdateHalveSNDOnNoDataTime(curTime);
+	UpdateHalveSNDOnNoDataTime(curTime);
 	}
+	*/
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 uint32_t CCRakNetUDT::GetRetransmissionBandwidth(CCTimeType curTime, CCTimeType estimatedTimeToNextTick)
@@ -225,10 +234,10 @@ bool CCRakNetUDT::ShouldSendACKs(CCTimeType curTime, CCTimeType estimatedTimeToN
 		return true;
 	}
 
-	
-//	CCTimeType remoteRetransmitTime=oldestUnsentAck+rto-RTT*.5;
-//	CCTimeType ackArrivalTimeIfWeDelay=RTT*.5+estimatedTimeToNextTick+curTime;
-//	return ackArrivalTimeIfWeDelay<remoteRetransmitTime;
+
+	//	CCTimeType remoteRetransmitTime=oldestUnsentAck+rto-RTT*.5;
+	//	CCTimeType ackArrivalTimeIfWeDelay=RTT*.5+estimatedTimeToNextTick+curTime;
+	//	return ackArrivalTimeIfWeDelay<remoteRetransmitTime;
 
 	// Simplified equation
 	// GU: At least one ACK should be sent per SYN, otherwise your protocol will increase slower.
@@ -269,56 +278,6 @@ void CCRakNetUDT::UpdateNextAllowedSend(CCTimeType curTime, uint32_t numBytes)
 			nextAllowedSend=curTime+(CCTimeType)((double)numBytes*SND);
 	}
 }
-// ****************************************************** UNIT TESTING ******************************************************
-bool CCRakNetUDT::UnitTest(void)
-{
-	bool testCompleted;
-	testCompleted=TestReceiverCalculateLinkCapacityMedian();
-	if (!testCompleted)
-	{
-		RakAssert("TestReceiverCalculateLinkCapacityMedian unit test failed" && 0);
-		return false;
-	}
-
-	DatagramSequenceNumberType a, b;
-	a=0;
-	b=1;
-	RakAssert(GreaterThan(b,a));
-	RakAssert(LessThan(a,b));
-	a=(DatagramSequenceNumberType)(const uint32_t)-1;
-	b=0;
-	RakAssert(GreaterThan(b,a));
-	RakAssert(LessThan(a,b));
-
-	return true;
-}
-// ----------------------------------------------------------------------------------------------------------------------------
-bool CCRakNetUDT::TestReceiverCalculateLinkCapacityMedian(void)
-{
-	CCRakNetUDT ccRakNetUDT;
-	int i;
-	int lt=0,gt=0,eq=0;
-	for (i=0; i < CC_RAKNET_UDT_PACKET_HISTORY_LENGTH; i++)
-		ccRakNetUDT.packetPairRecieptHistory[i]=frandomMT();
-	BytesPerMicrosecond calculatedMedian=ccRakNetUDT.ReceiverCalculateLinkCapacityMedian();
-	for (i=0; i < CC_RAKNET_UDT_PACKET_HISTORY_LENGTH; i++)
-	{
-		if (ccRakNetUDT.packetPairRecieptHistory[i]<calculatedMedian)
-			lt++;
-		else if (ccRakNetUDT.packetPairRecieptHistory[i]>calculatedMedian)
-			gt++;
-		else
-			eq++;
-	}
-	RakAssert(CC_RAKNET_UDT_PACKET_HISTORY_LENGTH%2==0);
-
-//	BytesPerMicrosecond averageOfMedianFilteredValues=ccRakNetUDT.ReceiverCalculateLinkCapacity();
-
-	return lt==gt || lt==gt+1 || lt==gt-1 || eq!=1;
-}
-
-
-
 
 
 
@@ -331,38 +290,28 @@ void CCRakNetUDT::SetNextSYNUpdate(CCTimeType currentTime)
 		nextSYNUpdate=currentTime+SYN;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
-BytesPerMicrosecond CCRakNetUDT::ReceiverCalculateLinkCapacity(void) const
-{
-	BytesPerMicrosecond median = ReceiverCalculateLinkCapacityMedian();
-	int i;
-	const BytesPerMicrosecond oneEighthMedian=median*(1.0/8.0);
-	const BytesPerMicrosecond eightTimesMedian=median*8.0f;
-	BytesPerMicrosecond medianListLength=0.0;
-	BytesPerMicrosecond sum=0.0;
-	// Find average of acceptedMedianValues
-	for (i=0; i < CC_RAKNET_UDT_PACKET_HISTORY_LENGTH; i++)
-	{
-		if (packetPairRecieptHistory[i]>=oneEighthMedian &&
-			packetPairRecieptHistory[i]<eightTimesMedian)
-		{
-			medianListLength=medianListLength+1.0;
-			sum+=packetPairRecieptHistory[i];
-		}
-	}
-	if (medianListLength==0.0)
-		return UNDEFINED_TRANSFER_RATE;
-	return sum/medianListLength;
-}
-// ----------------------------------------------------------------------------------------------------------------------------
-BytesPerMicrosecond CCRakNetUDT::ReceiverCalculateLinkCapacityMedian(void) const
-{
-	return CalculateListMedianRecursive(packetPairRecieptHistory, CC_RAKNET_UDT_PACKET_HISTORY_LENGTH, 0, 0);
-}
-// ----------------------------------------------------------------------------------------------------------------------------
 BytesPerMicrosecond CCRakNetUDT::ReceiverCalculateDataArrivalRate(CCTimeType curTime) const
 {
+	(void) curTime;
+	// Not an instantaneous measurement
+	/*
 	if (continuousBytesReceivedStartTime!=0 && curTime>continuousBytesReceivedStartTime)
-		return (BytesPerMicrosecond) continuousBytesReceived/(BytesPerMicrosecond) (curTime-continuousBytesReceivedStartTime);
+	{
+	#if CC_TIME_TYPE_BYTES==4
+	const CCTimeType threshold=100;
+	#else
+	const CCTimeType threshold=100000;
+	#endif
+	if (curTime-continuousBytesReceivedStartTime>threshold)
+	return (BytesPerMicrosecond) continuousBytesReceived/(BytesPerMicrosecond) (curTime-continuousBytesReceivedStartTime);
+	}
+
+	return UNDEFINED_TRANSFER_RATE;
+	*/
+
+
+	if (packetArrivalHistoryWriteCount<CC_RAKNET_UDT_PACKET_HISTORY_LENGTH)
+		return UNDEFINED_TRANSFER_RATE;
 
 	BytesPerMicrosecond median = ReceiverCalculateDataArrivalRateMedian();
 	int i;
@@ -408,7 +357,7 @@ BytesPerMicrosecond CCRakNetUDT::CalculateListMedianRecursive(const BytesPerMicr
 	if (lessThanMedianListLength+lessThanSum==greaterThanMedianListLength+greaterThanSum+1 ||
 		lessThanMedianListLength+lessThanSum==greaterThanMedianListLength+greaterThanSum-1)
 		return median;
-	
+
 	if (lessThanMedianListLength+lessThanSum < greaterThanMedianListLength+greaterThanSum)
 	{
 		lessThanMedian[lessThanMedianListLength++]=median;
@@ -420,10 +369,58 @@ BytesPerMicrosecond CCRakNetUDT::CalculateListMedianRecursive(const BytesPerMicr
 		return CalculateListMedianRecursive(lessThanMedian, lessThanMedianListLength, lessThanSum, greaterThanMedianListLength+greaterThanSum);		
 	}
 }
+/*
+uint32_t CCRakNetUDT::CalculateListMedianRecursive(const uint32_t inputList[RTT_HISTORY_LENGTH], int inputListLength, int lessThanSum, int greaterThanSum)
+{
+	uint32_t *lessThanMedian, *greaterThanMedian;
+
+#if !defined(_XBOX) && !defined(X360)
+	lessThanMedian = ( uint32_t* ) alloca( (size_t) inputListLength * sizeof(uint32_t) ) ;
+	greaterThanMedian = ( uint32_t* ) alloca( (size_t) inputListLength * sizeof(uint32_t) ) ;
+#else
+	lessThanMedian = (uint32_t*) rakMalloc_Ex((size_t) inputListLength * sizeof(uint32_t), __FILE__, __LINE__);
+	greaterThanMedian = (uint32_t*) rakMalloc_Ex((size_t) inputListLength * sizeof(uint32_t), __FILE__, __LINE__);
+#endif
+
+	int lessThanMedianListLength=0, greaterThanMedianListLength=0;
+	uint32_t median=inputList[0];
+	int i;
+	for (i=1; i < inputListLength; i++)
+	{
+		// If same value, spread among lists evenly
+		if (inputList[i]<median || ((i&1)==0 && inputList[i]==median))
+			lessThanMedian[lessThanMedianListLength++]=inputList[i];
+		else
+			greaterThanMedian[greaterThanMedianListLength++]=inputList[i];
+	}
+	RakAssert(RTT_HISTORY_LENGTH%2==0);
+	if (lessThanMedianListLength+lessThanSum==greaterThanMedianListLength+greaterThanSum+1 ||
+		lessThanMedianListLength+lessThanSum==greaterThanMedianListLength+greaterThanSum-1)
+		return median;
+
+	if (lessThanMedianListLength+lessThanSum < greaterThanMedianListLength+greaterThanSum)
+	{
+		lessThanMedian[lessThanMedianListLength++]=median;
+		return CalculateListMedianRecursive(greaterThanMedian, greaterThanMedianListLength, lessThanMedianListLength+lessThanSum, greaterThanSum);
+	}
+	else
+	{
+		greaterThanMedian[greaterThanMedianListLength++]=median;
+		return CalculateListMedianRecursive(lessThanMedian, lessThanMedianListLength, lessThanSum, greaterThanMedianListLength+greaterThanSum);		
+	}
+
+
+#if !defined(_XBOX) && !defined(X360)
+#else
+	rakFree_Ex(lessThanMedian, __FILE__, __LINE__);
+	rakFree_Ex(greaterThanMedian, __FILE__, __LINE__);
+#endif
+}
+*/
 // ----------------------------------------------------------------------------------------------------------------------------
 bool CCRakNetUDT::GreaterThan(DatagramSequenceNumberType a, DatagramSequenceNumberType b)
 {
-	 // a > b?
+	// a > b?
 	const DatagramSequenceNumberType halfSpan =(DatagramSequenceNumberType) (((DatagramSequenceNumberType)(const uint32_t)-1)/(DatagramSequenceNumberType)2);
 	return b!=a && b-a>halfSpan;
 }
@@ -478,46 +475,33 @@ void CCRakNetUDT::OnNAK(CCTimeType curTime, DatagramSequenceNumberType nakSequen
 		return;
 	}
 
-	if (nakSequenceNumber>=LastDecSeq)
+	if (nakSequenceNumber>=nextDatagramSYNUpdate)
+	{
+		//	printf("- MBPS during update to %f due to packetloss on packet %i. Next update at %i.\n", 1.0/(SND*=1.04), nakSequenceNumber, nextDatagramSequenceNumber );
+	}
+	else if (gotPacketlossThisUpdate==false)
+	{
+		//	printf("- MBPS intercepting update to %f due to packetloss on packet %i. Next update at %i.\n", 1.0/(SND*=1.04), nakSequenceNumber, nextDatagramSequenceNumber );
+	}
+	else
+	{
+	}
+
+	if (nakSequenceNumber>=nextDatagramSYNUpdate || gotPacketlossThisUpdate==false)
 	{
 		// Slow down sends
-		SND*=1.125;
+		SND*=1.04;
 
-		// Test
-//		printf("NEW_CONGESTION_PERIOD,start=%i,stop=%i,SND*=1.125=%f\n",nakSequenceNumber.val,nextDatagramSequenceNumber.val,1.0/SND);
-
-		CapMinSnd(__FILE__,__LINE__);
-		// Update average number of NAKs per congestion period
-		AvgNAKNum=NAKCount;
-		// Restart number of NAKs this congestion period
-		NAKCount=1;
-		// Every interval number of NAKs, we slow the send rate (in addition to the first)
-		DecInterval=1+(randomMT()%AvgNAKNum);
-		// Decremented send rate 1 time this congestion period
-		DecCount=1;
 		// Sequence number that was most recently sent this congestion period
-		LastDecSeq=nextDatagramSequenceNumber-(DatagramSequenceNumberType)1;
+		nextDatagramSYNUpdate=nextDatagramSequenceNumber-(DatagramSequenceNumberType)1;
+		gotPacketlossThisUpdate=true;
 
 		return;
 	}
 
-	++NAKCount;
-
-	if (DecCount<=5 && (NAKCount%DecInterval)==0)
-	{
-		// Slow down sends more
-		SND*=1.125;
-
-		// Test
-//		printf("DecInterval,SND*=1.125=%f ",1.0/SND);
-
-		CapMinSnd(__FILE__,__LINE__);
-		// Decremented again
-		DecCount++;
-	}
 
 	// Record continuing congestion period
-	LastDecSeq=nextDatagramSequenceNumber-(DatagramSequenceNumberType)1;
+	nextDatagramSYNUpdate=nextDatagramSequenceNumber-(DatagramSequenceNumberType)1;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetUDT::EndSlowStart(void)
@@ -541,59 +525,15 @@ void CCRakNetUDT::EndSlowStart(void)
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetUDT::OnGotPacketPair(DatagramSequenceNumberType datagramSequenceNumber, uint32_t sizeInBytes, CCTimeType curTime)
 {
-	if (datagramSequenceNumber-(DatagramSequenceNumberType)1==lastPacketPairSequenceNumber && lastPacketPairPacketArrivalTime!=0)
-	{
-		// Is a pair
-		if (curTime>lastPacketPairPacketArrivalTime)
-		{
-		//	if ((BytesPerMicrosecond)sizeInBytes/(BytesPerMicrosecond)(curTime-lastPacketPairPacketArrivalTime)<1.0)
-		//	{
-		//		int a=5;
-		//	}
-			// TODO - on perm slowdown, packet pairs never sent
-//			printf("Got PP %f MGBPSEC\n", (BytesPerMicrosecond)sizeInBytes/(BytesPerMicrosecond)(curTime-lastPacketPairPacketArrivalTime));
+	(void) datagramSequenceNumber;
+	(void) sizeInBytes;
+	(void) curTime;
 
-//			printf("Packet Pair gap is %I64u\n", (curTime-lastPacketPairPacketArrivalTime));
-
-			BytesPerMicrosecond val = (BytesPerMicrosecond)sizeInBytes/(BytesPerMicrosecond)(curTime-lastPacketPairPacketArrivalTime);
-			// .0036 is 28.8K modem. Anything less is considered an error due to timing issues
-			//RakAssert(val >=  0.0035);
-			if (val < 0.0035)
-				return;
-
-			mostRecentPacketPairValue=val;
-			if (hasWrittenToPacketPairReceiptHistory==false)
-			{
-				hasWrittenToPacketPairReceiptHistory=true;
-				for (int j=0; j < CC_RAKNET_UDT_PACKET_HISTORY_LENGTH; j++)
-					packetPairRecieptHistory[j]=mostRecentPacketPairValue;
-
-				packetPairRecieptHistoryWriteIndex=1;
-			}
-			else
-			{
-				packetPairRecieptHistory[packetPairRecieptHistoryWriteIndex++]=mostRecentPacketPairValue;
-				packetPairRecieptHistoryGaps[packetPairRecipetHistoryGapsIndex++]=(int)(curTime-lastPacketPairPacketArrivalTime);
-				packetPairRecipetHistoryGapsIndex&=(CC_RAKNET_UDT_PACKET_HISTORY_LENGTH-1);
-				// Wrap to 0 at the end of the range
-				// Assumes power of 2 for CC_RAKNET_UDT_PACKET_HISTORY_LENGTH
-				packetPairRecieptHistoryWriteIndex&=(CC_RAKNET_UDT_PACKET_HISTORY_LENGTH-1);
-			}
-			
-		
-		}
-	}
-	else
-	{
-		lastPacketPairSequenceNumber=datagramSequenceNumber;
-		lastPacketPairPacketArrivalTime=curTime;
-	}
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 bool CCRakNetUDT::OnGotPacket(DatagramSequenceNumberType datagramSequenceNumber, bool isContinuousSend, CCTimeType curTime, uint32_t sizeInBytes, uint32_t *skippedMessageCount)
 {	
 	CC_DEBUG_PRINTF_2("R%i ",datagramSequenceNumber.val);
-
 
 	if (datagramSequenceNumber==expectedNextSequenceNumber)
 	{
@@ -619,12 +559,12 @@ bool CCRakNetUDT::OnGotPacket(DatagramSequenceNumberType datagramSequenceNumber,
 	}
 
 	ResetOnDataArrivalHalveSNDOnNoDataTime(curTime);
-	
+
 	if (curTime>lastPacketArrivalTime)
 	{
 		CCTimeType interval = curTime-lastPacketArrivalTime;
 
-//		printf("Packet arrival gap is %I64u\n", (interval));
+		//		printf("Packet arrival gap is %I64u\n", (interval));
 
 		if (isContinuousSend)
 		{
@@ -635,14 +575,15 @@ bool CCRakNetUDT::OnGotPacket(DatagramSequenceNumberType datagramSequenceNumber,
 
 			mostRecentPacketArrivalHistory=(BytesPerMicrosecond)sizeInBytes/(BytesPerMicrosecond)interval;
 
-	//		if (mostRecentPacketArrivalHistory < (BytesPerMicrosecond)0.0035)
-	//		{
-	//			printf("%s:%i LIKELY BUG: Calculated packetArrivalHistory is below 28.8 Kbps modem\nReport to rakkar@jenkinssoftware.com with file and line number\n", __FILE__, __LINE__);
-	//		}
+			//		if (mostRecentPacketArrivalHistory < (BytesPerMicrosecond)0.0035)
+			//		{
+			//			printf("%s:%i LIKELY BUG: Calculated packetArrivalHistory is below 28.8 Kbps modem\nReport to rakkar@jenkinssoftware.com with file and line number\n", __FILE__, __LINE__);
+			//		}
 
 			packetArrivalHistoryContinuousGaps[packetArrivalHistoryContinuousGapsIndex++]=(int) interval;
 			packetArrivalHistoryContinuousGapsIndex&=(CC_RAKNET_UDT_PACKET_HISTORY_LENGTH-1);
 
+			packetArrivalHistoryWriteCount++;
 			packetArrivalHistory[packetArrivalHistoryWriteIndex++]=mostRecentPacketArrivalHistory;
 			// Wrap to 0 at the end of the range
 			// Assumes power of 2 for CC_RAKNET_UDT_PACKET_HISTORY_LENGTH
@@ -659,22 +600,25 @@ bool CCRakNetUDT::OnGotPacket(DatagramSequenceNumberType datagramSequenceNumber,
 	return true;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
-void CCRakNetUDT::OnAck(CCTimeType curTime, CCTimeType rtt, bool hasBAndAS, BytesPerMicrosecond _B, BytesPerMicrosecond _AS, double totalUserDataBytesAcked )
+void CCRakNetUDT::OnAck(CCTimeType curTime, CCTimeType rtt, bool hasBAndAS, BytesPerMicrosecond _B, BytesPerMicrosecond _AS, double totalUserDataBytesAcked, bool isContinuousSend, DatagramSequenceNumberType sequenceNumber )
 {
 #if CC_TIME_TYPE_BYTES==4
 	RakAssert(rtt < 10000);
 #else
 	RakAssert(rtt < 10000000);
 #endif
+	(void) _B;
+
 	if (hasBAndAS)
 	{
-		RakAssert(_B!=UNDEFINED_TRANSFER_RATE && _AS!=UNDEFINED_TRANSFER_RATE);
-		B=B * .875 + _B * .125;
+		///	RakAssert(_B!=UNDEFINED_TRANSFER_RATE && _AS!=UNDEFINED_TRANSFER_RATE);
+		//	B=B * .875 + _B * .125;
 		// AS is packet arrival rate
+		RakAssert(_AS!=UNDEFINED_TRANSFER_RATE);
 		AS=_AS;
 		CC_DEBUG_PRINTF_4("ArrivalRate=%f linkCap=%f incomingLinkCap=%f\n", _AS,B,_B);
 	}
-	UpdateRTT(rtt);
+	//	UpdateRTT(rtt);
 	ResetOnDataArrivalHalveSNDOnNoDataTime(curTime);
 
 	if (oldestUnsentAck==0)
@@ -686,7 +630,7 @@ void CCRakNetUDT::OnAck(CCTimeType curTime, CCTimeType rtt, bool hasBAndAS, Byte
 	if (isInSlowStart==true)
 		UpdateWindowSizeAndAckOnAckPreSlowStart(totalUserDataBytesAcked);
 	else
-		UpdateWindowSizeAndAckOnAckPerSyn(curTime);
+		UpdateWindowSizeAndAckOnAckPerSyn(curTime, rtt, isContinuousSend, sequenceNumber);
 
 	lastUpdateWindowSizeAndAck=curTime;
 
@@ -695,74 +639,18 @@ void CCRakNetUDT::OnAck(CCTimeType curTime, CCTimeType rtt, bool hasBAndAS, Byte
 void CCRakNetUDT::OnSendAckGetBAndAS(CCTimeType curTime, bool *hasBAndAS, BytesPerMicrosecond *_B, BytesPerMicrosecond *_AS)
 {
 	if (curTime>lastTransmitOfBAndAS+SYN)
-	{		
-		// Median doesn't work, too high
-		*_B=ReceiverCalculateLinkCapacity();
-
-		/*
-		// Lowest value doesn't work, too low
-		BytesPerMicrosecond lowestValue=packetPairRecieptHistory[0];
-		for (int i=1; i < CC_RAKNET_UDT_PACKET_HISTORY_LENGTH; i++)
-		{
-			if (packetPairRecieptHistory[i]<lowestValue)
-				lowestValue=packetPairRecieptHistory[i];
-		}
-		*_B=lowestValue;
-		*/
-
+	{
+		*_B=0;
 		*_AS=ReceiverCalculateDataArrivalRate(curTime);
 
-		
-		if (*_B==UNDEFINED_TRANSFER_RATE || *_AS==UNDEFINED_TRANSFER_RATE)
+
+		if (*_AS==UNDEFINED_TRANSFER_RATE)
 		{
 			*hasBAndAS=false;
 		}
 		else
 		{
-			if (packetArrivalHistoryContinuousGaps[CC_RAKNET_UDT_PACKET_HISTORY_LENGTH-1]!=0)
-			{
-				// BytesPerMicrosecond packetPairGapValue = CalculateListMedianRecursive(packetPairRecieptHistoryGaps, CC_RAKNET_UDT_PACKET_HISTORY_LENGTH, 0, 0);
-
-				BytesPerMicrosecond packetPairGapLow=packetPairRecieptHistoryGaps[0];
-				for (int i=1; i < CC_RAKNET_UDT_PACKET_HISTORY_LENGTH; i++)
-				{
-					if (packetPairRecieptHistoryGaps[i]<packetPairGapLow)
-						packetPairGapLow=packetPairRecieptHistoryGaps[i];
-				}
-				BytesPerMicrosecond packetPairGapValue;
-				BytesPerMicrosecond sum;
-				sum=0;
-				for (int i=0; i < CC_RAKNET_UDT_PACKET_HISTORY_LENGTH; i++)
-				{
-					if (packetPairRecieptHistoryGaps[i]<packetPairGapLow)
-						sum+=packetPairRecieptHistoryGaps[i];
-				}
-				sum/=CC_RAKNET_UDT_PACKET_HISTORY_LENGTH;
-				packetPairGapValue=sum;
-
-			//	BytesPerMicrosecond arrivalHistoryVal = CalculateListMedianRecursive(packetArrivalHistoryContinuousGaps, CC_RAKNET_UDT_PACKET_HISTORY_LENGTH, 0, 0);
-				sum=0;
-				for (int i=0; i < CC_RAKNET_UDT_PACKET_HISTORY_LENGTH; i++)
-				{
-					sum+=packetArrivalHistoryContinuousGaps[i];
-				}
-				BytesPerMicrosecond arrivalHistoryVal=sum/(BytesPerMicrosecond)CC_RAKNET_UDT_PACKET_HISTORY_LENGTH;
-				if (arrivalHistoryVal > packetPairGapValue)
-				{
-					double avgMicrosecondsLostDueToCompetingBandwidth = arrivalHistoryVal-packetPairGapValue;
-					// TODO - should be actual bytes sent, not max
-					double interval=(double)GetMTU()/ *_B;
-					interval+=avgMicrosecondsLostDueToCompetingBandwidth;
-//					printf("Modifying _B from %f to ", *_B);
-					*_B = (double)GetMTU()/interval;
-//					printf("%f\n", *_B);
-				}
-			}
-
-			sendBAndASCount++;
-			lastTransmitOfBAndAS=curTime;
 			*hasBAndAS=true;
-			CC_DEBUG_PRINTF_3("DataArrivalRate=%f,LinkCapacity=%f  ", *_AS,*_B);
 		}
 	}
 	else
@@ -778,7 +666,7 @@ void CCRakNetUDT::OnSendAck(CCTimeType curTime, uint32_t numBytes)
 
 	// This is not accounted for on the remote system, and thus causes bandwidth to be underutilized
 	//UpdateNextAllowedSend(curTime, numBytes+UDP_HEADER_SIZE);
-	
+
 	oldestUnsentAck=0;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
@@ -788,50 +676,52 @@ void CCRakNetUDT::OnSendNACK(CCTimeType curTime, uint32_t numBytes)
 	(void) curTime;
 
 	// This is not accounted for on the remote system, and thus causes bandwidth to be underutilized
-//	UpdateNextAllowedSend(curTime, numBytes+UDP_HEADER_SIZE);
+	//	UpdateNextAllowedSend(curTime, numBytes+UDP_HEADER_SIZE);
 }
 // ----------------------------------------------------------------------------------------------------------------------------
+/*
 void CCRakNetUDT::UpdateRTT(CCTimeType rtt)
 {
-	if (RTT==UNSET_TIME_US)
-	{
+if (RTT==UNSET_TIME_US)
+{
 #if CC_TIME_TYPE_BYTES==4
-		RakAssert(rtt < 10000);
+RakAssert(rtt < 10000);
 #else
-		RakAssert(rtt < 10000000);
+RakAssert(rtt < 10000000);
 #endif
-		RTT=(double) rtt;
-		// RTTVar=(double) rtt;
-		minRTT=maxRTT=(double)rtt;
-	}
-	else
-	{
-		// Ignore massively out of range values, such as from debugging
-		if (rtt > RTT * 4 + 100000)
-			return;
-
-		RTT = RTT * 0.875 + (double) rtt * 0.125;
-		// RTTVar = RTTVar * 0.875 + fabs(RTT - (double) rtt) * 0.125;
-		if (rtt < minRTT)
-		{
-			minRTT=(double)rtt;
-		}
-		else if (rtt > maxRTT)
-		{
-			maxRTT=(double)rtt;
-		}
-		else
-		{
-			// gradually close min/max while not updated
-			double delta = maxRTT-minRTT;
-			if (delta>0)
-			{
-				minRTT+=delta*.05;
-				maxRTT-=delta*.05;
-			}
-		}
-	}
+RTT=(double) rtt;
+// RTTVar=(double) rtt;
+minRTT=maxRTT=(double)rtt;
 }
+else
+{
+// Ignore massively out of range values, such as from debugging
+if (rtt > RTT * 4 + 100000)
+return;
+
+RTT = RTT * 0.875 + (double) rtt * 0.125;
+// RTTVar = RTTVar * 0.875 + fabs(RTT - (double) rtt) * 0.125;
+if (rtt < minRTT)
+{
+minRTT=(double)rtt;
+}
+else if (rtt > maxRTT)
+{
+maxRTT=(double)rtt;
+}
+else
+{
+// gradually close min/max while not updated
+double delta = maxRTT-minRTT;
+if (delta>0)
+{
+minRTT+=delta*.05;
+maxRTT-=delta*.05;
+}
+}
+}
+}
+*/
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetUDT::UpdateWindowSizeAndAckOnAckPreSlowStart(double totalUserDataBytesAcked)
 {
@@ -850,58 +740,82 @@ void CCRakNetUDT::UpdateWindowSizeAndAckOnAckPreSlowStart(double totalUserDataBy
 		CWND=CWND_MIN_THRESHOLD;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
-void CCRakNetUDT::UpdateWindowSizeAndAckOnAckPerSyn(CCTimeType curTime)
+void CCRakNetUDT::UpdateWindowSizeAndAckOnAckPerSyn(CCTimeType curTime, CCTimeType rtt, bool isContinuousSend, DatagramSequenceNumberType sequenceNumber)
 {
 	(void) curTime;
+	(void) rtt;
 
-	if (isInSlowStart==true)
-		return;
+	uint32_t rtt32 = (uint32_t) rtt;
 
-	RakAssert(RTT!=UNSET_TIME_US);
-	//RakAssert(RTTVar!=UNSET_TIME_US);
-
-	CWND=AS/(BytesPerMicrosecond)MAXIMUM_MTU_INCLUDING_UDP_HEADER * (RTT + SYN) + 16.0;
-	if (CWND>CWND_MAX_THRESHOLD)
-		CWND=CWND_MAX_THRESHOLD;
-
-	// C is the current sending rate, which can be computed by SND (C = 1/SND).
-	BytesPerMicrosecond C = 1.0 / SND;
-	// inc is the amount to increase by
-	MicrosecondsPerByte inc;
-	// Fixed packet size
-	// B = estimated link capacity
-//	const double PS=MAXIMUM_MTU_INCLUDING_UDP_HEADER;
-	const double PS_Inverse=1.0/MAXIMUM_MTU_INCLUDING_UDP_HEADER;
-	const double Beta = 0.0015;
-	//const double Beta = 0.0000015;
-	if (B <= C)
+	if (isContinuousSend && sequenceNumber>=nextDatagramSYNUpdate)
 	{
-		//inc = 1/PS;
-		inc = PS_Inverse;
-	}
-	else
-	{
-		// Inside log10 should be bits per second
-		// 1000000 is to convert bytes per microsecond to bytes per second
-#if CC_TIME_TYPE_BYTES==4
-		double a =    pow(10.0, ceil(log10( (B-C) * 1000.0 * 8.0))) * Beta * PS_Inverse;
-#else
-		double a =    pow(10.0, ceil(log10( (B-C) * 1000000.0 * 8.0))) * Beta * PS_Inverse;
-#endif
-		double b = PS_Inverse;
-		if (a>b)
-			inc = a;
+		if (++rttHistoryWriteCount>RTT_HISTORY_LENGTH)
+		{
+			uint32_t average=rttSum/RTT_HISTORY_LENGTH;
+			bool trackRtt;
+
+			// If rtt is increasing, decrease send rate
+			if (rtt32>average+(average-rttLow))
+			{
+				// Increase time between sends up to once per rtt
+				SND*=1.04;
+				//			printf("+++ rtt=%i average=%i cap=%i\n", rtt32,average,average+(average-low)+((average-low)>>3));
+				nextDatagramSYNUpdate=nextDatagramSequenceNumber-(DatagramSequenceNumberType)1;
+
+				//printf("- MBPS update %f due to high ping on packet %i. Next update at %i.\n", 1.0/SND, sequenceNumber, nextDatagramSequenceNumber );
+				trackRtt=false;
+			}
+			else if (rtt<average-(average-rttLow)/2)
+			{
+				// Decrease time between sends
+				SND*=.98;
+
+				//			printf("--- rtt=%i average=%i cap=%i\n", rtt32,average,average+(average-low)+((average-low)>>3));
+				nextDatagramSYNUpdate=nextDatagramSequenceNumber-(DatagramSequenceNumberType)1;
+
+				//	printf("+ MBPS update %f due to low ping on packet %i. Next update at %i.\n", 1.0/SND, sequenceNumber, nextDatagramSequenceNumber );
+				trackRtt=true;
+			}
+			else
+			{
+				trackRtt=true;
+			}
+
+			if (trackRtt)
+			{
+				rttSum-=rttHistory[rttHistoryIndex];
+				if (rtt32<rttLow)
+					rttLow=rtt32;
+				else if (rttHistory[rttHistoryIndex]==rttLow)
+				{
+					rttLow=rttHistory[0];
+					for (int i=1; i < RTT_HISTORY_LENGTH; i++)
+					{
+						if (rttHistory[i]<rttLow)
+							rttLow=rttHistory[i];
+					}
+				}
+				rttHistory[rttHistoryIndex++]=rtt32;
+				rttSum+=rtt32;
+				if (rttHistoryIndex==RTT_HISTORY_LENGTH)
+					rttHistoryIndex=0;
+
+			}
+		
+		}
 		else
-			inc = b;
+		{
+			rttHistory[rttHistoryIndex++]=rtt32;
+			rttSum+=rtt32;
+			if (rtt32<rttLow)
+				rttLow=rtt32;
+			if (rttHistoryIndex==RTT_HISTORY_LENGTH)
+				rttHistoryIndex=0;
+		}
+			
 	}
-//	printf("SND=%f to ", 1.0/SND);
-	SND = (SND * SYN) / (SND * inc + SYN);
-//	printf("%f\n", 1.0/SND);
-	CapMinSnd(__FILE__,__LINE__);
-
-	if (isInSlowStart==false && SND > 1.0)
-		PrintLowBandwidthWarning();
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 double CCRakNetUDT::BytesPerMicrosecondToPacketsPerMillisecond(BytesPerMicrosecond in)
 {
@@ -934,19 +848,6 @@ void CCRakNetUDT::ResetOnDataArrivalHalveSNDOnNoDataTime(CCTimeType curTime)
 	ExpCount=1.0;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
-void CCRakNetUDT::InitPacketPairRecieptHistory(void)
-{
-	// Initializing with low-end default values works very poorly on bad networks
-	// Early NAKs cause it to use the default values, and it takes a very long time to recover
-	unsigned int i;
-	mostRecentPacketPairValue=UNDEFINED_TRANSFER_RATE;
-	for (i=0; i < CC_RAKNET_UDT_PACKET_HISTORY_LENGTH; i++)
-	{
-		packetPairRecieptHistory[i]=UNDEFINED_TRANSFER_RATE;
-		packetPairRecieptHistoryGaps[i]=0;
-	}
-}
-// ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetUDT::InitPacketArrivalHistory(void)
 {
 	unsigned int i;
@@ -956,26 +857,27 @@ void CCRakNetUDT::InitPacketArrivalHistory(void)
 		packetArrivalHistoryContinuousGaps[i]=0;
 	}
 
+	packetArrivalHistoryWriteCount=0;
 	continuousBytesReceived=0;
 	continuousBytesReceivedStartTime=0;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetUDT::PrintLowBandwidthWarning(void)
 {
-	
+
 	/*
-		printf("\n-------LOW BANDWIDTH -----\n");
-		if (isInSlowStart==false)
-			printf("SND=%f Megabytes per second\n", 1.0/SND);
-		printf("Window size=%f\n", CWND);
-		printf("Pipe from packet pair = %f megabytes per second\n", B);
-		printf("RTT=%f milliseconds\n", RTT/1000.0);
-		printf("RTT Variance=%f milliseconds\n", RTTVar/1000.0);
-		printf("Retransmission=%i milliseconds\n", GetRTOForRetransmission()/1000);
-		printf("Packet arrival rate on the remote system=%f megabytes per second\n", AS);
-		printf("Packet arrival rate on our system=%f megabytes per second\n", ReceiverCalculateDataArrivalRate());
-		printf("isInSlowStart=%i\n", isInSlowStart);
-		printf("---------------\n");
+	printf("\n-------LOW BANDWIDTH -----\n");
+	if (isInSlowStart==false)
+	printf("SND=%f Megabytes per second\n", 1.0/SND);
+	printf("Window size=%f\n", CWND);
+	printf("Pipe from packet pair = %f megabytes per second\n", B);
+	printf("RTT=%f milliseconds\n", RTT/1000.0);
+	printf("RTT Variance=%f milliseconds\n", RTTVar/1000.0);
+	printf("Retransmission=%i milliseconds\n", GetRTOForRetransmission()/1000);
+	printf("Packet arrival rate on the remote system=%f megabytes per second\n", AS);
+	printf("Packet arrival rate on our system=%f megabytes per second\n", ReceiverCalculateDataArrivalRate());
+	printf("isInSlowStart=%i\n", isInSlowStart);
+	printf("---------------\n");
 	*/
 }
 BytesPerMicrosecond CCRakNetUDT::GetLocalReceiveRate(CCTimeType currentTime) const

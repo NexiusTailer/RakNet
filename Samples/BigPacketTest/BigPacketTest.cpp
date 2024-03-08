@@ -26,26 +26,6 @@ char *text;
 
 int main(void)
 {
-
-	/*
-	double MAXIMUM_DATAGRAM_SIZE=1443;
-	const double PS=MAXIMUM_DATAGRAM_SIZE;
-	const double PS_Inverse=1.0/MAXIMUM_DATAGRAM_SIZE;
-	const double Beta = 0.0000015;
-	double B = 54.407983433342451;
-	double C = 1.8850486880853508;
-	double SND = 1.0/C;
-	double SYN=10000;
-	for (int i=0; i < 1000; i++)
-	{
-		double inc =    pow(10.0, ceil(log10( (B-C) * 1000000 * 8.0))) * Beta * PS_Inverse;
-		SND = (SND * SYN) / (SND * inc*1000 + SYN);
-		if (i%10==0)
-			printf("%i. SND=%f\n",i,1.0/(SND));
-		C = 1.0/SND;
-	}
-	*/
-
 	client=server=0;
 
 	text= new char [BIG_PACKET_SIZE];

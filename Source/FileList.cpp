@@ -151,8 +151,6 @@ void FileList::AddFile(const char *filename, const char *fullPathToFile, const c
 
 	FileListNode n;
 	size_t fileNameLen = strlen(filename);
-	n.filename=(char*) rakMalloc_Ex( fileNameLen+1, __FILE__, __LINE__ );
-	n.fullPathToFile=(char*) rakMalloc_Ex( strlen(fullPathToFile)+1, __FILE__, __LINE__ );
 	if (dataLength && data)
 	{
 		n.data=(char*) rakMalloc_Ex( dataLength, __FILE__, __LINE__ );

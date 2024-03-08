@@ -153,7 +153,7 @@ int main(void)
 	Packet *p;
 	quit=false;
 	if (useNatPunchthrough==false)
-		printf("(Q)uit. (C)onnect. (D)isconnect. (M)ute. ' ' for stats.\n");
+		printf("(Q)uit. (C)onnect. (D)isconnect. C(l)ose voice channels. (M)ute. ' ' for stats.\n");
 
 	while (!quit)
 	{
@@ -208,6 +208,10 @@ int main(void)
 			else if (ch=='d')
 			{
 				rakPeer->Shutdown(100,0);
+			}
+			else if (ch=='l')
+			{
+				rakVoice.CloseAllChannels();
 			}
 			else if (ch==' ')
 			{
@@ -298,6 +302,18 @@ int main(void)
 			else if (p->data[0]==ID_ALREADY_CONNECTED)
 			{
 				printf("ID_ALREADY_CONNECTED\n");
+			}
+			else if (p->data[0]==ID_RAKVOICE_CLOSE_CHANNEL)
+			{
+				printf("ID_RAKVOICE_CLOSE_CHANNEL\n");
+			}
+			else if (p->data[0]==ID_DISCONNECTION_NOTIFICATION)
+			{
+				printf("ID_DISCONNECTION_NOTIFICATION\n");
+			}
+			else if (p->data[0]==ID_NEW_INCOMING_CONNECTION)
+			{
+				printf("ID_NEW_INCOMING_CONNECTION\n");
 			}
 			else
 			{

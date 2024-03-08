@@ -89,7 +89,7 @@ Inheritance diagram for ReadyEvent:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="821f5dd54c2dd0ffc3629f8fd0553471"></a><!-- doxytag: member="ReadyEvent::OnShutdown" ref="821f5dd54c2dd0ffc3629f8fd0553471" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReadyEvent.html#821f5dd54c2dd0ffc3629f8fd0553471">OnShutdown</a> (void)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Peer to peer synchronized ready and unready events. 
@@ -503,7 +503,7 @@ Returns if a particular system is waiting on a particular event. <dl compact><dt
 <div class="memdoc">
 
 <p>
-Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#4a7c586a8be0d977354a3cfd09bab6b7">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
+Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#4a7c586a8be0d977354a3cfd09bab6b7" title="Close the connection to another host (if we initiated the connection it will disconnect...">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system whose connection was closed </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
@@ -632,9 +632,9 @@ Sets or updates the initial ready state for our local system. If eventId is an u
 <div class="memdoc">
 
 <p>
-This channel will be used for all <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be">RakPeer::Send</a> calls <dl compact><dt><b>Parameters:</b></dt><dd>
+This channel will be used for all <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send</a> calls <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>newChannel</em>&nbsp;</td><td>The channel to use for internal <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be">RakPeer::Send</a> calls from this system. Defaults to 0. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>newChannel</em>&nbsp;</td><td>The channel to use for internal <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send</a> calls from this system. Defaults to 0. </td></tr>
   </table>
 </dl>
 
@@ -643,7 +643,7 @@ This channel will be used for all <a class="el" href="classRakPeer.html#3acee662
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="ReadyEvent_8h.html">ReadyEvent.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Nov 24 10:28:58 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Dec 5 08:09:16 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

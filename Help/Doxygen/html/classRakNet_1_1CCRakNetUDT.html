@@ -65,7 +65,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#e2974c3b902a61d06c4d33cf9426cda2">OnNAK</a> (CCTimeType curTime, DatagramSequenceNumberType nakSequenceNumber)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#0514552602a85274a2121e7cd798415e">OnAck</a> (CCTimeType curTime, CCTimeType rtt, bool hasBAndAS, BytesPerMicrosecond _B, BytesPerMicrosecond _AS, double totalUserDataBytesAcked)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#68aa7981397893a0c872a983bbb7e2e7">OnAck</a> (CCTimeType curTime, CCTimeType rtt, bool hasBAndAS, BytesPerMicrosecond _B, BytesPerMicrosecond _AS, double totalUserDataBytesAcked, bool isContinuousSend, DatagramSequenceNumberType sequenceNumber)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#4450a87680553db9783ea30755f6d5a8">OnSendAckGetBAndAS</a> (CCTimeType curTime, bool *hasBAndAS, BytesPerMicrosecond *_B, BytesPerMicrosecond *_AS)</td></tr>
 
@@ -103,14 +103,6 @@ static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#ce0d603d0ea12c812e5a16f2911a2848">SetNextSYNUpdate</a> (CCTimeType currentTime)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update nextSYNUpdate by SYN, or the same amount past the current time if no updates have occurred for a long time. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2c68c2f648cdb2cb4f428c9b02a75508"></a><!-- doxytag: member="RakNet::CCRakNetUDT::ReceiverCalculateLinkCapacity" ref="2c68c2f648cdb2cb4f428c9b02a75508" args="(void) const " -->
-BytesPerMicrosecond&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#2c68c2f648cdb2cb4f428c9b02a75508">ReceiverCalculateLinkCapacity</a> (void) const </td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the average link capacity as based on the packet pair technique, after doing median filtering. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b91e195dda1d5208c24d547983dc5791"></a><!-- doxytag: member="RakNet::CCRakNetUDT::ReceiverCalculateLinkCapacityMedian" ref="b91e195dda1d5208c24d547983dc5791" args="(void) const " -->
-BytesPerMicrosecond&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#b91e195dda1d5208c24d547983dc5791">ReceiverCalculateLinkCapacityMedian</a> (void) const </td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the median of the link capacity. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="055271fe5ad776eec681349e31d13868"></a><!-- doxytag: member="RakNet::CCRakNetUDT::ReceiverCalculateDataArrivalRate" ref="055271fe5ad776eec681349e31d13868" args="(CCTimeType curTime) const " -->
 BytesPerMicrosecond&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#055271fe5ad776eec681349e31d13868">ReceiverCalculateDataArrivalRate</a> (CCTimeType curTime) const </td></tr>
 
@@ -129,16 +121,11 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#e2b2fd5b0e7a48044e37a0e3022ed575">BytesPerMicrosecondToPacketsPerMillisecond</a> (BytesPerMicrosecond in)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Does the named conversion. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5d9c79ca3e409c7dee0a259f28dd0a9c"></a><!-- doxytag: member="RakNet::CCRakNetUDT::UpdateRTT" ref="5d9c79ca3e409c7dee0a259f28dd0a9c" args="(CCTimeType rtt)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#5d9c79ca3e409c7dee0a259f28dd0a9c">UpdateRTT</a> (CCTimeType rtt)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#99cc63d23201e61352fb33485a039d34">UpdateWindowSizeAndAckOnAckPreSlowStart</a> (double totalUserDataBytesAcked)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update the round trip time, from ACK or ACK2. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="99cc63d23201e61352fb33485a039d34"></a><!-- doxytag: member="RakNet::CCRakNetUDT::UpdateWindowSizeAndAckOnAckPreSlowStart" ref="99cc63d23201e61352fb33485a039d34" args="(double totalUserDataBytesAcked)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#99cc63d23201e61352fb33485a039d34">UpdateWindowSizeAndAckOnAckPreSlowStart</a> (double totalUserDataBytesAcked)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update the corresponding variables pre-slow start. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="32ed33efd989c6be9dc3eda4f48de740"></a><!-- doxytag: member="RakNet::CCRakNetUDT::UpdateWindowSizeAndAckOnAckPerSyn" ref="32ed33efd989c6be9dc3eda4f48de740" args="(CCTimeType curTime)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#32ed33efd989c6be9dc3eda4f48de740">UpdateWindowSizeAndAckOnAckPerSyn</a> (CCTimeType curTime)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update the round trip time, from ACK or ACK2.  <a href="#99cc63d23201e61352fb33485a039d34"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="61ab6246afa94f10534d00eb72b72e48"></a><!-- doxytag: member="RakNet::CCRakNetUDT::UpdateWindowSizeAndAckOnAckPerSyn" ref="61ab6246afa94f10534d00eb72b72e48" args="(CCTimeType curTime, CCTimeType rtt, bool isContinuousSend, DatagramSequenceNumberType sequenceNumber)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#61ab6246afa94f10534d00eb72b72e48">UpdateWindowSizeAndAckOnAckPerSyn</a> (CCTimeType curTime, CCTimeType rtt, bool isContinuousSend, DatagramSequenceNumberType sequenceNumber)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update the corresponding variables post-slow start. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4e1e06cd9b3712b886fe7794dd68394a"></a><!-- doxytag: member="RakNet::CCRakNetUDT::HasHalveSNDOnNoDataTimeElapsed" ref="4e1e06cd9b3712b886fe7794dd68394a" args="(CCTimeType curTime)" -->
@@ -165,11 +152,7 @@ static BytesPerMicrosecond&nbsp;</td><td class="memItemRight" valign="bottom"><a
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">CCTimeType&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#eb20ef9ac41fa2db0a5275384bfc93af">nextSYNUpdate</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">BytesPerMicrosecond&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#4ba9aec7f3e28a1856336f53bba3f11a">packetPairRecieptHistory</a> [CC_RAKNET_UDT_PACKET_HISTORY_LENGTH]</td></tr>
-
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#f2235085e5a25b0e03bd4425180e191b">packetPairRecieptHistoryWriteIndex</a></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">BytesPerMicrosecond&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#9e3f398e5ce3900ee34ffb1d17e0a0a0">B</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#860d3d061c314f419d0e5cd1aba7136e">RTT</a></td></tr>
 
@@ -190,7 +173,7 @@ CCTimeType&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#75b10ff828e2ac84b4c9a790d3bf8806">isInSlowStart</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">DatagramSequenceNumberType&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#ac76d17164c737e7a757f8bb5d24fee7">LastDecSeq</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">DatagramSequenceNumberType&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#40babaee131618d32488b2f24fc90a3a">nextDatagramSYNUpdate</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">uint32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#cc5c90cb7f27ab3f3ed68fbe5be2ec18">NAKCount</a></td></tr>
 
@@ -403,7 +386,7 @@ Retransmission time out for the sender If the time difference between when a mes
 Same as GetRTOForRetransmission, but does not factor in ExpCount This is because the receiver does not know ExpCount for the sender, and even if it did, acks shouldn't be delayed for this reason 
 </div>
 </div><p>
-<a class="anchor" name="0514552602a85274a2121e7cd798415e"></a><!-- doxytag: member="RakNet::CCRakNetUDT::OnAck" ref="0514552602a85274a2121e7cd798415e" args="(CCTimeType curTime, CCTimeType rtt, bool hasBAndAS, BytesPerMicrosecond _B, BytesPerMicrosecond _AS, double totalUserDataBytesAcked)" -->
+<a class="anchor" name="68aa7981397893a0c872a983bbb7e2e7"></a><!-- doxytag: member="RakNet::CCRakNetUDT::OnAck" ref="68aa7981397893a0c872a983bbb7e2e7" args="(CCTimeType curTime, CCTimeType rtt, bool hasBAndAS, BytesPerMicrosecond _B, BytesPerMicrosecond _AS, double totalUserDataBytesAcked, bool isContinuousSend, DatagramSequenceNumberType sequenceNumber)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -441,7 +424,19 @@ Same as GetRTOForRetransmission, but does not factor in ExpCount This is because
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&nbsp;</td>
-          <td class="paramname"> <em>totalUserDataBytesAcked</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>totalUserDataBytesAcked</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>isContinuousSend</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">DatagramSequenceNumberType&nbsp;</td>
+          <td class="paramname"> <em>sequenceNumber</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -709,6 +704,28 @@ Set the maximum amount of data that can be sent in one datagram Default to MAXIM
 Acks do not have to be sent immediately. Instead, they can be buffered up such that groups of acks are sent at a time This reduces overall bandwidth usage How long they can be buffered depends on the retransmit time of the sender Should call once per update tick, and send if needed 
 </div>
 </div><p>
+<a class="anchor" name="99cc63d23201e61352fb33485a039d34"></a><!-- doxytag: member="RakNet::CCRakNetUDT::UpdateWindowSizeAndAckOnAckPreSlowStart" ref="99cc63d23201e61352fb33485a039d34" args="(double totalUserDataBytesAcked)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::CCRakNetUDT::UpdateWindowSizeAndAckOnAckPreSlowStart           </td>
+          <td>(</td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>totalUserDataBytesAcked</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [protected]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Update the round trip time, from ACK or ACK2. 
+<p>
+Update the corresponding variables pre-slow start 
+</div>
+</div><p>
 <hr><h2>Member Data Documentation</h2>
 <a class="anchor" name="9e80b5e34c39d41f063319c34be704d7"></a><!-- doxytag: member="RakNet::CCRakNetUDT::AS" ref="9e80b5e34c39d41f063319c34be704d7" args="" -->
 <div class="memitem">
@@ -738,21 +755,6 @@ Data arrival rate from the sender to the receiver, as told to us by the receiver
 
 <p>
 How many NAKs do you get on average during a congestion period? Starts at 1 Used to generate a random number, DecRandom, between 1 and AvgNAKNum 
-</div>
-</div><p>
-<a class="anchor" name="9e3f398e5ce3900ee34ffb1d17e0a0a0"></a><!-- doxytag: member="RakNet::CCRakNetUDT::B" ref="9e3f398e5ce3900ee34ffb1d17e0a0a0" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">BytesPerMicrosecond <a class="el" href="classRakNet_1_1CCRakNetUDT.html#9e3f398e5ce3900ee34ffb1d17e0a0a0">RakNet::CCRakNetUDT::B</a><code> [protected]</code>          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Sent to the sender by the receiver from packetPairRecieptHistory whenever a back to back packet arrives on the receiver Updated by B = B * .875 + incomingB * .125 
 </div>
 </div><p>
 <a class="anchor" name="5edf6a2e77d05d838d69f352672fbdf6"></a><!-- doxytag: member="RakNet::CCRakNetUDT::CWND" ref="5edf6a2e77d05d838d69f352672fbdf6" args="" -->
@@ -830,21 +832,6 @@ If you send, and get no data at all from that time to RTO, then halve send rate 
 New connections start in slow start During slow start, SND is not used, only CWND Slow start ends when we get a NAK, or the maximum size of CWND is reached SND is initialized to the inverse of the receiver's packet arrival rate when slow start ends 
 </div>
 </div><p>
-<a class="anchor" name="ac76d17164c737e7a757f8bb5d24fee7"></a><!-- doxytag: member="RakNet::CCRakNetUDT::LastDecSeq" ref="ac76d17164c737e7a757f8bb5d24fee7" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">DatagramSequenceNumberType <a class="el" href="classRakNet_1_1CCRakNetUDT.html#ac76d17164c737e7a757f8bb5d24fee7">RakNet::CCRakNetUDT::LastDecSeq</a><code> [protected]</code>          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Largest sequence number sent so far when a NAK arrives Initialized to 0 If a NAK arrives with a sequence number larger than LastDecSeq, then this is defined as a new congestion period, in which case we do various things to slow our send rate. 
-</div>
-</div><p>
 <a class="anchor" name="d53be9c9b7fcea1400bee4fa18dfcfb9"></a><!-- doxytag: member="RakNet::CCRakNetUDT::lastPacketPairPacketArrivalTime" ref="d53be9c9b7fcea1400bee4fa18dfcfb9" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -902,7 +889,7 @@ When the receiver last calculated and send B and AS, from packetArrivalHistory a
 <div class="memdoc">
 
 <p>
-Used to cap <a class="el" href="classRakNet_1_1CCRakNetUDT.html#32ed33efd989c6be9dc3eda4f48de740" title="Update the corresponding variables post-slow start.">UpdateWindowSizeAndAckOnAckPerSyn()</a> to once speed increase per SYN This is to prevent speeding up faster than congestion control can compensate for 
+Used to cap <a class="el" href="classRakNet_1_1CCRakNetUDT.html#61ab6246afa94f10534d00eb72b72e48" title="Update the corresponding variables post-slow start.">UpdateWindowSizeAndAckOnAckPerSyn()</a> to once speed increase per SYN This is to prevent speeding up faster than congestion control can compensate for 
 </div>
 </div><p>
 <a class="anchor" name="c78f298234f763e5ebf18798165e13ab"></a><!-- doxytag: member="RakNet::CCRakNetUDT::minRTT" ref="c78f298234f763e5ebf18798165e13ab" args="" -->
@@ -967,6 +954,21 @@ How many NAKs arrived this congestion period Initialized to 1 when the congestio
 Every time we send, nextAllowedSend is set to curTime + the number of bytes sent * SND We can then not send again until that time elapses The best amount of time to wait before sending again is exactly up until that time 
 </div>
 </div><p>
+<a class="anchor" name="40babaee131618d32488b2f24fc90a3a"></a><!-- doxytag: member="RakNet::CCRakNetUDT::nextDatagramSYNUpdate" ref="40babaee131618d32488b2f24fc90a3a" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DatagramSequenceNumberType <a class="el" href="classRakNet_1_1CCRakNetUDT.html#40babaee131618d32488b2f24fc90a3a">RakNet::CCRakNetUDT::nextDatagramSYNUpdate</a><code> [protected]</code>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Largest sequence number sent so far when a NAK arrives Initialized to 0 If a NAK arrives with a sequence number larger than nextDatagramSYNUpdate, then this is defined as a new congestion period, in which case we do various things to slow our send rate. 
+</div>
+</div><p>
 <a class="anchor" name="eb20ef9ac41fa2db0a5275384bfc93af"></a><!-- doxytag: member="RakNet::CCRakNetUDT::nextSYNUpdate" ref="eb20ef9ac41fa2db0a5275384bfc93af" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -1027,21 +1029,6 @@ Used to calculate packet arrival rate (in UDT) but data arrival rate (in <a clas
 Index into packetArrivalHistory where we will next write The history is always full (starting with default values) so no read index is needed 
 </div>
 </div><p>
-<a class="anchor" name="4ba9aec7f3e28a1856336f53bba3f11a"></a><!-- doxytag: member="RakNet::CCRakNetUDT::packetPairRecieptHistory" ref="4ba9aec7f3e28a1856336f53bba3f11a" args="[CC_RAKNET_UDT_PACKET_HISTORY_LENGTH]" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">BytesPerMicrosecond <a class="el" href="classRakNet_1_1CCRakNetUDT.html#4ba9aec7f3e28a1856336f53bba3f11a">RakNet::CCRakNetUDT::packetPairRecieptHistory</a>[CC_RAKNET_UDT_PACKET_HISTORY_LENGTH]<code> [protected]</code>          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Tracks PacketPairHistoryNode History is initialized with 1 second intervals for all packets (slow start) All values greater than 8x of the median or less than 1/8 of the median should be ignored when calculating the average Used to calculate link capacity (via <a class="el" href="classRakNet_1_1CCRakNetUDT.html#2c68c2f648cdb2cb4f428c9b02a75508" title="Returns the average link capacity as based on the packet pair technique, after doing...">ReceiverCalculateLinkCapacity()</a>) B = averageAmongElements(numBytes/intervalBetweenPair) B is calculated on the receiver, and send to the sender back in acks B is only sent to the sender every 10 acks, to avoid unnecessary calculation Each node represents numBytes in one of the packets in the pair / intervalBetweenPair Value is in bytes per microsecond 
-</div>
-</div><p>
 <a class="anchor" name="f2235085e5a25b0e03bd4425180e191b"></a><!-- doxytag: member="RakNet::CCRakNetUDT::packetPairRecieptHistoryWriteIndex" ref="f2235085e5a25b0e03bd4425180e191b" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -1069,7 +1056,7 @@ Index into packetPairRecieptHistory where we will next write The history is alwa
 <div class="memdoc">
 
 <p>
-Running round trip time (ping*2) Only sender needs to know this Initialized to UNSET Set to rtt on first calculation Updated gradually by RTT = RTT * 0.875 + rtt * 0.125 
+Sent to the sender by the receiver from packetPairRecieptHistory whenever a back to back packet arrives on the receiver Updated by B = B * .875 + incomingB * .125 Running round trip time (ping*2) Only sender needs to know this Initialized to UNSET Set to rtt on first calculation Updated gradually by RTT = RTT * 0.875 + rtt * 0.125 
 </div>
 </div><p>
 <a class="anchor" name="af5b074b6ec43f211853d5c168150ab6"></a><!-- doxytag: member="RakNet::CCRakNetUDT::SND" ref="af5b074b6ec43f211853d5c168150ab6" args="" -->
@@ -1105,7 +1092,7 @@ Total number of user data bytes sent Used to adjust the window size, on ACK, dur
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/CCRakNetUDT.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Nov 24 10:28:59 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Dec 5 08:09:17 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

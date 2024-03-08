@@ -83,7 +83,7 @@ unsigned short, false &gt; *&nbsp;</td><td class="memItemRight" valign="bottom">
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2d585a618f7d1ab52744aea9d71a3551"></a><!-- doxytag: member="ConnectionGraph::OnShutdown" ref="2d585a618f7d1ab52744aea9d71a3551" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#2d585a618f7d1ab52744aea9d71a3551">OnShutdown</a> (void)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bda4b47df4571d95962fe8aa32001206"></a><!-- doxytag: member="ConnectionGraph::Update" ref="bda4b47df4571d95962fe8aa32001206" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#bda4b47df4571d95962fe8aa32001206">Update</a> (void)</td></tr>
 
@@ -142,7 +142,7 @@ Adds a new connection to the connection graph from this system to the specified 
 <p>
 Only used and valid when SetAutoAddNewConnections(false) is called. Call this for this system sometime after getting ID_NEW_INCOMING_CONNECTION or ID_CONNECTION_REQUEST_ACCEPTED for systems that contain a connection graph Groups are sets of one or more nodes in the total graph We only add to the graph groups which we subscribe to <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>The instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> to send through </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>The instance of <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a> to send through </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system that is connected to us. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>guid</em>&nbsp;</td><td>The system that is connected to us. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>groupId</em>&nbsp;</td><td>Just a number representing a group. Important: 0 is reserved to mean unassigned group ID and is assigned to all systems added with SetAutoAddNewConnections(true) </td></tr>
@@ -206,7 +206,7 @@ Returns the connection graph.
 <div class="memdoc">
 
 <p>
-Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#4a7c586a8be0d977354a3cfd09bab6b7">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
+Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#4a7c586a8be0d977354a3cfd09bab6b7" title="Close the connection to another host (if we initiated the connection it will disconnect...">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system whose connection was closed </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
@@ -428,7 +428,7 @@ Calling this does not add remove nodes with this groupId which are already prese
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="ConnectionGraph_8h.html">ConnectionGraph.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Nov 24 10:28:58 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Dec 5 08:09:16 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

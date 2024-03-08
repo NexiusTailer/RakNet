@@ -17,6 +17,13 @@
 #include <unistd.h>
 #endif
 
+#if defined(new)
+#pragma push_macro("new")
+#undef new
+#define RMO_NEW_UNDEF_ALLOCATING_QUEUE
+#endif
+
+
 #include <time.h>
 
 #include <ctype.h> // toupper
@@ -43,6 +50,8 @@
 RAK_THREAD_DECLARATION(UpdateNetworkLoop);
 RAK_THREAD_DECLARATION(RecvFromLoop);
 RAK_THREAD_DECLARATION(UDTConnect);
+
+#define REMOTE_SYSTEM_LOOKUP_HASH_MULTIPLE 8
 
 #if !defined ( __APPLE__ ) && !defined ( __APPLE_CC__ )
 #include <stdlib.h> // malloc
@@ -210,6 +219,7 @@ RakPeer::RakPeer()
 	maximumNumberOfPeers = 0;
 	//remoteSystemListSize=0;
 	remoteSystemList = 0;
+	remoteSystemLookup=0;
 	bytesSentPerSecond = bytesReceivedPerSecond = 0;
 	endThreads = true;
 	isMainLoopThreadActive = false;
@@ -459,6 +469,7 @@ bool RakPeer::Startup( unsigned short maxConnections, int _threadSleepTimer, Soc
 		//remoteSystemList = RakNet::OP_NEW<RemoteSystemStruct[ remoteSystemListSize ]>( __FILE__, __LINE__ );
 		remoteSystemList = RakNet::OP_NEW_ARRAY<RemoteSystemStruct>(maximumNumberOfPeers, __FILE__, __LINE__ );
 
+		remoteSystemLookup = RakNet::OP_NEW_ARRAY<SystemAddressAndIndex>(maximumNumberOfPeers * REMOTE_SYSTEM_LOOKUP_HASH_MULTIPLE, __FILE__, __LINE__ );
 
 		for ( i = 0; i < maximumNumberOfPeers; i++ )
 		//for ( i = 0; i < remoteSystemListSize; i++ )
@@ -475,10 +486,11 @@ bool RakPeer::Startup( unsigned short maxConnections, int _threadSleepTimer, Soc
 			#endif
 		}
 
-		// Clear the lookup table.  Safe to call from the user thread since the network thread is now stopped
-		ValidateRemoteSystemLookup();
-		remoteSystemLookup.Clear(false, __FILE__, __LINE__);
-		ValidateRemoteSystemLookup();
+		for (int i=0; i < maximumNumberOfPeers*REMOTE_SYSTEM_LOOKUP_HASH_MULTIPLE; i++)
+		{
+			remoteSystemLookup[i].systemAddress=UNASSIGNED_SYSTEM_ADDRESS;
+			remoteSystemLookup[i].index=(unsigned int) -1;
+		}
 	}
 
 	// For histogram statistics
@@ -969,11 +981,6 @@ void RakPeer::Shutdown( unsigned int blockDuration, unsigned char orderingChanne
 		remoteSystemList[ i ].rakNetSocket.SetNull();
 	}
 
-	// Clear the lookup table.  Safe to call from the user thread since the network thread is now stopped
-	ValidateRemoteSystemLookup();
-	remoteSystemLookup.Clear(false, __FILE__, __LINE__);
-	ValidateRemoteSystemLookup();
-
 	// Setting maximumNumberOfPeers to 0 allows remoteSystemList to be reallocated in Initialize.
 	// Setting remoteSystemListSize prevents threads from accessing the reliability layer
 	maximumNumberOfPeers = 0;
@@ -1025,6 +1032,9 @@ void RakPeer::Shutdown( unsigned int blockDuration, unsigned char orderingChanne
 	RemoteSystemStruct * temp = remoteSystemList;
 	remoteSystemList = 0;
 	RakNet::OP_DELETE_ARRAY(temp, __FILE__, __LINE__);
+
+	RakNet::OP_DELETE_ARRAY(remoteSystemLookup, __FILE__, __LINE__);
+	remoteSystemLookup=0;
 
 #ifdef USE_THREADED_SEND
 	SendToThread::Deref();
@@ -3381,21 +3391,9 @@ int RakPeer::GetIndexFromSystemAddress( const SystemAddress systemAddress, bool 
 	if (systemAddress.systemIndex!=(SystemIndex)-1 && systemAddress.systemIndex < maximumNumberOfPeers && remoteSystemList[systemAddress.systemIndex].systemAddress==systemAddress && remoteSystemList[ systemAddress.systemIndex ].isActive)
 		return systemAddress.systemIndex;
 	
-
-	ValidateRemoteSystemLookup();
-
 	if (calledFromNetworkThread)
 	{
-		bool objectExists;
-		unsigned index;
-		index = remoteSystemLookup.GetIndexFromKey(systemAddress, &objectExists);
-		if (objectExists)
-		{
-			RakAssert(remoteSystemList[remoteSystemLookup[index].index].systemAddress==systemAddress);
-			return remoteSystemLookup[index].index;
-		}
-		else
-			return -1;
+		return RemoteSystemListIndexUsingHashIndex(systemAddress);
 	}
 	else
 	{
@@ -3506,10 +3504,6 @@ bool RakPeer::SendConnectionRequest( const char* host, unsigned short remotePort
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void RakPeer::ValidateRemoteSystemLookup(void) const
 {
-#ifdef _DEBUG
-	for (unsigned int i=0; i < remoteSystemLookup.Size(); i++)
-		RakAssert(remoteSystemList[ remoteSystemLookup[i].index ].systemAddress==remoteSystemLookup[i].systemAddress);
-#endif
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 RakPeer::RemoteSystemStruct *RakPeer::GetRemoteSystemFromSystemAddress( const SystemAddress systemAddress, bool calledFromNetworkThread, bool onlyActive ) const
@@ -3521,18 +3515,9 @@ RakPeer::RemoteSystemStruct *RakPeer::GetRemoteSystemFromSystemAddress( const Sy
 
 	if (calledFromNetworkThread)
 	{
-		ValidateRemoteSystemLookup();
-
-		bool objectExists;
-		unsigned index;
-		index = remoteSystemLookup.GetIndexFromKey(systemAddress, &objectExists);
-		if (objectExists)
-		{
-#ifdef _DEBUG
-			RakAssert(remoteSystemList[ remoteSystemLookup[index].index ].systemAddress==systemAddress);
-#endif
-			return remoteSystemList + remoteSystemLookup[index].index;
-		}
+		unsigned int index = RemoteSystemListIndexUsingHashIndex(systemAddress);
+		if (index!=-1)
+			return remoteSystemList + index;
 	}
 	else
 	{
@@ -3747,32 +3732,6 @@ RakPeer::RemoteSystemStruct * RakPeer::AssignSystemAddressToRemoteSystemList( co
 		}
 	}
 
-	// TEMP - put back in
-	/*
-	ValidateRemoteSystemLookup();
-
-	if (IsLoopbackAddress(systemAddress,false)==false)
-	{
-		for ( i = 0; i < maximumNumberOfPeers; i++ )
-		{
-			if ( remoteSystemList[ i ].isActive==true &&
-				remoteSystemList[ i ].systemAddress.binaryAddress==systemAddress.binaryAddress &&
-				time >= remoteSystemList[ i ].connectionTime &&
-				time - remoteSystemList[ i ].connectionTime < 100
-				)
-			{
-				// 4/13/09 Attackers can flood ID_OPEN_CONNECTION_REQUEST and use up all available connection slots
-				// Ignore connection attempts if this IP address connected within the last 100 milliseconds
-				*thisIPConnectedRecently=true;
-				ValidateRemoteSystemLookup();
-				return 0;
-			}
-		}
-	}
-
-	ValidateRemoteSystemLookup();
-	*/
-
 	// Don't use a different port than what we received on
 	bindingAddress.port=incomingRakNetSocket->boundAddress.port;
 
@@ -3913,21 +3872,17 @@ RakPeer::RemoteSystemStruct * RakPeer::AssignSystemAddressToRemoteSystemList( co
 			remoteSystem->lastReliableSend=time;
 
 
-
-
 			// Add this player to the lookup tree
 			SystemAddressAndIndex systemAddressAndIndex;
 			systemAddressAndIndex.systemAddress=systemAddress;
 			systemAddressAndIndex.index=assignedIndex;
-			remoteSystemLookup.Insert(systemAddress,systemAddressAndIndex, true, __FILE__, __LINE__);
-
-			ValidateRemoteSystemLookup();
+			unsigned int index = FirstFreeRemoteSystemLookupIndex(systemAddress);
+			remoteSystemLookup[index]=systemAddressAndIndex;
 
 			return remoteSystem;
 		}
 	}
 
-	ValidateRemoteSystemLookup();
 	return 0;
 }
 
@@ -3979,7 +3934,52 @@ RakNetTime RakPeer::GetBestClockDifferential( const SystemAddress systemAddress 
 
 	return clockDifferential;
 }
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+unsigned int RakPeer::RemoteSystemLookupHashIndex(SystemAddress sa) const
+{
+	return (sa.binaryAddress+sa.port) % (maximumNumberOfPeers * REMOTE_SYSTEM_LOOKUP_HASH_MULTIPLE);
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+unsigned int RakPeer::LookupIndexUsingHashIndex(SystemAddress sa) const
+{
+	unsigned int scanCount=0;
+	unsigned int index = RemoteSystemLookupHashIndex(sa);
+	while (remoteSystemLookup[index].systemAddress!=sa)
+	{
+		if (remoteSystemLookup[index].systemAddress==UNASSIGNED_SYSTEM_ADDRESS)
+			return (unsigned int) -1;
+		if (++index==(unsigned int) maximumNumberOfPeers*REMOTE_SYSTEM_LOOKUP_HASH_MULTIPLE)
+			index=0;
+		if (++scanCount>maximumNumberOfPeers)
+			return (unsigned int) -1;
+	}
+	return index;
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+unsigned int RakPeer::RemoteSystemListIndexUsingHashIndex(SystemAddress sa) const
+{
+	unsigned int index = LookupIndexUsingHashIndex(sa);
+	if (index!=(unsigned int) -1)
+	{
+		return remoteSystemLookup[index].index;
+	}
+	return (unsigned int) -1;
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+unsigned int RakPeer::FirstFreeRemoteSystemLookupIndex(SystemAddress sa) const
+{
+//	unsigned int collisionCount=0;
+	unsigned int index = RemoteSystemLookupHashIndex(sa);
+	while (remoteSystemLookup[index].systemAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+	{
+		if (++index==(unsigned int) maximumNumberOfPeers*REMOTE_SYSTEM_LOOKUP_HASH_MULTIPLE)
+			index=0;
+//		collisionCount++;
+	}
+//	printf("%i collisions. Using index %i\n", collisionCount, index);
+	return index;
 
+}
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Description:
 // Handles an RPC packet.  If you get a packet with the ID ID_RPC you should pass it to this function
@@ -4652,10 +4652,12 @@ void RakPeer::CloseConnectionInternal( const SystemAddress target, bool sendDisc
 					// Not using this socket
 					remoteSystemList[i].rakNetSocket.SetNull();
 
-					// Remove from the lookup list
-					ValidateRemoteSystemLookup();
-					remoteSystemLookup.Remove(target);
-					ValidateRemoteSystemLookup();
+					unsigned int index = LookupIndexUsingHashIndex(target);
+					if (index!=-1)
+					{
+						remoteSystemLookup[index].systemAddress=UNASSIGNED_SYSTEM_ADDRESS;
+						remoteSystemLookup[index].index=(unsigned int) -1;
+					}
 
 					RakAssert(0==GetRemoteSystemFromSystemAddress(target,true,false));
 
@@ -5205,16 +5207,14 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 					RakAssert(rcs->actionToTake==RakPeer::RequestedConnectionStruct::CONNECT);
 					// You might get this when already connected because of cross-connections
 					bool thisIPConnectedRecently=false;
-					rakPeer->ValidateRemoteSystemLookup();
 					remoteSystem=rakPeer->GetRemoteSystemFromSystemAddress( systemAddress, true, true );
 					if (remoteSystem==0)
 					{
-						rakPeer->ValidateRemoteSystemLookup();
 						if (rcs->socket.IsNull())
 							remoteSystem=rakPeer->AssignSystemAddressToRemoteSystemList(systemAddress, RakPeer::RemoteSystemStruct::UNVERIFIED_SENDER, rakNetSocket, &thisIPConnectedRecently, bindingAddress, length+UDP_HEADER_SIZE);
 						else
 							remoteSystem=rakPeer->AssignSystemAddressToRemoteSystemList(systemAddress, RakPeer::RemoteSystemStruct::UNVERIFIED_SENDER, rcs->socket, &thisIPConnectedRecently, bindingAddress, length+UDP_HEADER_SIZE);
-						rakPeer->ValidateRemoteSystemLookup();
+
 
 						//						printf("System %i got ID_OPEN_CONNECTION_REPLY from %i\n", rakPeer->mySystemAddress[0].port, systemAddress.port);
 					}
@@ -6523,6 +6523,12 @@ RAK_THREAD_DECLARATION(UpdateNetworkLoop)
 
 	return 0;
 }
+
+#if defined(RMO_NEW_UNDEF_ALLOCATING_QUEUE)
+#pragma pop_macro("new")
+#undef RMO_NEW_UNDEF_ALLOCATING_QUEUE
+#endif
+
 
 #ifdef _MSC_VER
 #pragma warning( pop )

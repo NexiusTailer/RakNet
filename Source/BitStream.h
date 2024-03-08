@@ -969,7 +969,7 @@ namespace RakNet
 #ifdef _MSC_VER
 #pragma warning(disable:4127)   // conditional expression is constant
 #endif
-		if (sizeof(var)==1)
+		if (sizeof(templateType)==1)
 			WriteBits( ( unsigned char* ) var, sizeof( templateType ) * 8, true );
 		else
 		{
@@ -1395,7 +1395,7 @@ namespace RakNet
 #ifdef _MSC_VER
 #pragma warning(disable:4127)   // conditional expression is constant
 #endif
-		if (sizeof(var)==1)
+		if (sizeof(templateType)==1)
 			return ReadBits( ( unsigned char* ) var, sizeof(templateType) * 8, true );
 		else
 		{

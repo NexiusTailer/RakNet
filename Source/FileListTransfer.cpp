@@ -808,10 +808,13 @@ void FileListTransfer::SendIRIToAddress(SystemAddress systemAddress)
 				lengths[1]=bytesRead;
 				SendListUnified(dataBlocks,lengths,2,ftp->packetPriority, RELIABLE_ORDERED, ftp->orderingChannel, systemAddress, false);
 
+				// LWS : fixed freed pointer reference
+				unsigned int chunkSize = ftp->chunkSize;
 				RakNet::OP_DELETE(ftp,__FILE__,__LINE__);
 				ftpr->filesToPush.Pop();
 				smallFileTotalSize+=bytesRead;
-				done = bytesRead!=ftp->chunkSize;
+				//done = bytesRead!=ftp->chunkSize;
+				done = bytesRead!=chunkSize;
 				ftp = ftpr->filesToPush.Peek();
 				bytesRead=ftp->incrementalReadInterface->GetFilePart(ftp->fileListNode.fullPathToFile, ftp->currentOffset, ftp->chunkSize, buff, ftp->fileListNode.context);
 			}

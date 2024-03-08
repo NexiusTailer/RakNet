@@ -106,7 +106,7 @@ Register a member function of an instantiated object as a Remote procedure call.
 RPC member Functions MUST be marked __cdecl! <dl class="see" compact><dt><b>See also:</b></dt><dd>ObjectMemberRPC.cpp <b><a class="el" href="group__RAKNET__RPC.html#gcdb86b76f825bec13557202fff8fbab1" title="Concatenate two strings.">CLASS_MEMBER_ID</a></b> is a utility macro to generate a unique signature for a class and function pair and can be used for the Raknet functions RegisterClassMemberRPC(...) and RPC(...) <b><a class="el" href="group__RAKNET__RPC.html#g70705f68c378bfaf9d854de1fe55431d" title="Register a member function of an instantiated object as a Remote procedure call.">REGISTER_CLASS_MEMBER_RPC</a></b> is a utility macro to more easily call RegisterClassMemberRPC </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkObject</em>&nbsp;</td><td>Your instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a>, <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a>, or <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkObject</em>&nbsp;</td><td>Your instance of <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a>, <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a>, or <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>className</em>&nbsp;</td><td>The class containing the function </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>functionName</em>&nbsp;</td><td>The name of the function (not in quotes, just the name) </td></tr>
   </table>
@@ -141,14 +141,14 @@ RPC Function Implementation  Use RPC3.
 The Remote Procedure Call Subsystem provide the RPC paradigm to <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> user. It consists in providing remote function call over the network. A call to a remote function require you to prepare the data for each parameter (using BitStream) for example.<p>
 Use the following C function prototype for your callbacks <div class="fragment"><pre class="fragment"> <span class="keywordtype">void</span> functionName(<a class="code" href="structRPCParameters.html">RPCParameters</a> *rpcParms);
 </pre></div> If you pass input data, you can parse the input data in two ways. 1. Cast input to a struct (such as if you sent a struct) i.e. MyStruct *s = (MyStruct*) input; Make sure that the sizeof(MyStruct) is equal to the number of bytes passed! 2. Create a BitStream instance with input as data and the number of bytes i.e. BitStream myBitStream(input, (numberOfBitsOfData-1)/8+1) (numberOfBitsOfData-1)/8+1 is how convert from bits to bytes Full example: <div class="fragment"><pre class="fragment"> <span class="keywordtype">void</span> MyFunc(<a class="code" href="structRPCParameters.html">RPCParameters</a> *rpcParms) {}
- <a class="code" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> *rakClient;
+ <a class="code" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a> *rakClient;
  REGISTER_AS_REMOTE_PROCEDURE_CALL(rakClient, MyFunc);
  This would allow MyFunc to be called from the server <span class="keyword">using</span>  (<span class="keywordflow">for</span> example)
  rakServer-&gt;RPC(<span class="stringliteral">"MyFunc"</span>, 0, clientID, <span class="keyword">false</span>);
 </pre></div><p>
 Register a C function as a Remote procedure. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkObject</em>&nbsp;</td><td>Your instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a>, <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a>, or <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkObject</em>&nbsp;</td><td>Your instance of <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a>, <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a>, or <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>functionName</em>&nbsp;</td><td>The name of the C function to call </td></tr>
   </table>
 </dl>
@@ -849,7 +849,7 @@ Unregisters a C function as available for calling as a remote procedure call tha
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Nov 24 10:28:57 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Dec 5 08:09:15 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

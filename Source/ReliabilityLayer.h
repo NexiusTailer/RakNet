@@ -491,8 +491,8 @@ private:
 	void AddToBitsRecentlyResent(int b);
 	float GetContinuousPacketloss(void);
 	// Positive = sent, negative = resent
-	int bitsRecentlySent[256];
-	unsigned char bitTrackerWriteIndex;
+	int bitsRecentlySent[512];
+	unsigned short bitTrackerWriteIndex;
 	BitSize_t bitsRecentlySentSum;
 	BitSize_t bitsRecentlyResentSum;
 };

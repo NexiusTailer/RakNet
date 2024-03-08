@@ -70,8 +70,13 @@ void RakVoice::Init(unsigned short sampleRate, unsigned bufferSizeBytes)
 }
 void RakVoice::Deinit(void)
 {
-	rakFree_Ex(bufferedOutput, __FILE__, __LINE__ );
-	CloseAllChannels();
+	// LWS : check pointer before free
+	if( bufferedOutput )
+	{
+		rakFree_Ex(bufferedOutput, __FILE__, __LINE__ );
+		bufferedOutput = 0;
+		CloseAllChannels();
+	}
 }
 void RakVoice::RequestVoiceChannel(SystemAddress recipient)
 {

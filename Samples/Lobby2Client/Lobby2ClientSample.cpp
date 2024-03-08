@@ -84,6 +84,9 @@ void main(void)
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_PerTitleIntegerStorage), __FILE__, __LINE__ );
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_PerTitleIntegerStorage), __FILE__, __LINE__ );
 
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_StartIgnore), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_GetIgnoreList), __FILE__, __LINE__ );
+
 /*
 
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Ranking_SubmitMatch));
@@ -94,8 +97,8 @@ void main(void)
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Friends_SendInvite));
 	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Friends_AcceptInvite));
 	*/
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Create), __FILE__, __LINE__ );
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Get), __FILE__, __LINE__ );
+// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Create), __FILE__, __LINE__ );
+// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Get), __FILE__, __LINE__ );
 	/*
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_SetProperties));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_SetMyMemberProperties));

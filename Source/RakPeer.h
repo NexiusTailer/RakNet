@@ -1,5 +1,5 @@
 /// \file
-/// \brief The main class used for data transmission and most of RakNet's functionality.
+/// \brief Declares RakPeer class.
 ///
 /// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
@@ -34,9 +34,13 @@ class PluginInterface2;
 struct SystemAddressAndIndex{SystemAddress systemAddress;unsigned index;};
 int RAK_DLL_EXPORT SystemAddressAndIndexComp( const SystemAddress &key, const SystemAddressAndIndex &data ); // GCC requires RakPeer::SystemAddressAndIndex or it won't compile
 
-/// The primary interface for RakNet, RakPeer contains all major functions for the library.
+///\brief The RakPeer class provides the main interface for network communications.
+/// \details It is the main class used for data transmission and most of RakNet's functionality. It is the primary interface for RakNet.
+///
+/// Inherits RakPeerInterface.
+///
 /// See the individual functions for what the class can do.
-/// \brief The main interface for network communications
+/// 
 class RAK_DLL_EXPORT RakPeer : public RakPeerInterface
 {
 public:
@@ -47,160 +51,174 @@ public:
 	virtual ~RakPeer();
 
 	// --------------------------------------------------------------------------------------------Major Low Level Functions - Functions needed by most users--------------------------------------------------------------------------------------------
-	/// \brief Starts the network threads, opens the listen port.
+	/// \brief Starts the network threads and opens the listen port.
 	/// \details You must call this before calling Connect().
-	/// Multiple calls while already active are ignored.  To call this function again with different settings, you must first call Shutdown().
-	/// \note Call SetMaximumIncomingConnections if you want to accept incoming connections
+	/// \note Multiple calls while already active are ignored.  To call this function again with different settings, you must first call Shutdown().
+	/// \note Call SetMaximumIncomingConnections if you want to accept incoming connections.
 	/// \note Set _RAKNET_THREADSAFE in RakNetDefines.h if you want to call RakNet functions from multiple threads (not recommended, as it is much slower and RakNet is already asynchronous).
-	/// \param[in] maxConnections The maximum number of connections between this instance of RakPeer and another instance of RakPeer. Required so the network can preallocate and for thread safety. A pure client would set this to 1.  A pure server would set it to the number of allowed clients.- A hybrid would set it to the sum of both types of connections
-	/// \param[in] localPort The port to listen for connections on.
-	/// \param[in] _threadSleepTimer How many ms to Sleep each internal update cycle. With new congestion control, the best results will be obtained by passing 10.
-	/// \param[in] socketDescriptors An array of SocketDescriptor structures to force RakNet to listen on a particular IP address or port (or both).  Each SocketDescriptor will represent one unique socket.  Do not pass redundant structures.  To listen on a specific port, you can pass SocketDescriptor(myPort,0); such as for a server.  For a client, it is usually OK to just pass SocketDescriptor();
+	/// \param[in] maxConnections Maximum number of connections between this instance of RakPeer and another instance of RakPeer. Required so that the network can preallocate and for thread safety. A pure client would set this to 1.  A pure server would set it to the number of allowed clients.A hybrid would set it to the sum of both types of connections.
+	/// \param[in] localPort Port to listen for connections on.
+	/// \param[in] _threadSleepTimer Time in milliseconds for the thread to Sleep in each internal update cycle. With new congestion control, the best results will be obtained by passing 10.
+	/// \param[in] socketDescriptors An array of SocketDescriptor structures to force RakNet to listen on a particular IP address or port (or both).  Each SocketDescriptor will represent one unique socket.  Do not pass redundant structures.  To listen on a specific port, you can pass SocketDescriptor(myPort,0); for a server.  For a client, it is usually OK to pass SocketDescriptor();
 	/// \param[in] socketDescriptorCount The size of the \a socketDescriptors array.  Pass 1 if you are not sure what to pass.
-	/// \param[in] threadPriority Passed to thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. WARNING!!! On the PS3, 0 means highest priority!
+	/// \param[in] threadPriority Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. WARNING!!! On the PS3, 0 means highest priority!
 	/// \return False on failure (can't create socket or thread), true on success.
 	bool Startup( unsigned short maxConnections, int _threadSleepTimer, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority=-99999 );
 
-	/// Secures connections though a combination of SHA1, AES128, SYN Cookies, and RSA to prevent connection spoofing, replay attacks, data eavesdropping, packet tampering, and MitM attacks.
-	/// There is a significant amount of processing and a slight amount of bandwidth overhead for this feature.
-	/// If you accept connections, you must call this or else secure connections will not be enabled for incoming connections.
-	/// If you are connecting to another system, you can call this with values for the (e and p,q) public keys before connecting to prevent MitM
-	/// Define how many bits are used in RakNetDefines.h with RAKNET_RSA_FACTOR_LIMBS
-	/// \pre Must be called before Initialize
+	/// \brief Secures connections though a combination of SHA1, AES128, SYN Cookies, and RSA to prevent connection spoofing, replay attacks, data eavesdropping, packet tampering, and MitM attacks.
+	/// \details If you accept connections, you must call this for the secure connection to be enabled for incoming connections.
+	/// If you are connecting to another system, you can call this with public key values for p,q and e before connecting to prevent MitM.
+	/// Define how many bits are used in RakNetDefines.h with RAKNET_RSA_FACTOR_LIMBS.
+	/// \note There is a significant amount of processing and a slight amount of bandwidth overhead for this feature.
+	/// \pre Must be called before Initialize.
 	/// \param[in] pubKeyE A pointer to the public keys from the RSACrypt class.  
 	/// \param[in] pubKeyN A pointer to the public keys from the RSACrypt class. 
 	/// \param[in] privKeyP Public key generated from the RSACrypt class.  
 	/// \param[in] privKeyQ Public key generated from the RSACrypt class.  If the private keys are 0, then a new key will be generated when this function is called@see the Encryption sample
 	void InitializeSecurity(const char *pubKeyE, const char *pubKeyN, const char *privKeyP, const char *privKeyQ );
 
-	/// Disables all security.
-	/// \note Must be called while offline
+	/// \brief Disables all security.
+	/// \note Must be called while offline.
 	void DisableSecurity( void );
 
-	/// If secure connections are on, do not use secure connections for a specific IP address.
-	/// This is useful if you have a fixed-address internal server behind a LAN.
-	/// \note Secure connections are determined by the recipient of an incoming connection. This has no effect if called on the system attempting to connect.
+	/// \brief This is useful if you have a fixed-address internal server behind a LAN.
+	///
+	///  Secure connections are determined by the recipient of an incoming connection. This has no effect if called on the system attempting to connect.	
+	/// \note If secure connections are on, do not use secure connections for a specific IP address.
 	/// \param[in] ip IP address to add. * wildcards are supported.
 	void AddToSecurityExceptionList(const char *ip);
 
-	/// Remove a specific connection previously added via AddToSecurityExceptionList
+	/// \brief Remove a specific connection previously added via AddToSecurityExceptionList.
 	/// \param[in] ip IP address to remove. Pass 0 to remove all IP addresses. * wildcards are supported.
 	void RemoveFromSecurityExceptionList(const char *ip);
 
-	/// Checks to see if a given IP is in the security exception list
+	/// \brief Checks to see if a given IP is in the security exception list.
 	/// \param[in] IP address to check.
+	/// \return True if the IP address is found in security exception list, else returns false.
 	bool IsInSecurityExceptionList(const char *ip);
 
-	/// Sets how many incoming connections are allowed. If this is less than the number of players currently connected,
+	/// \brief Sets the maximum number of incoming connections allowed.
+	/// \details If the number of incoming connections is less than the number of players currently connected,
 	/// no more players will be allowed to connect.  If this is greater than the maximum number of peers allowed,
 	/// it will be reduced to the maximum number of peers allowed.
+	/// 
 	/// Defaults to 0, meaning by default, nobody can connect to you
 	/// \param[in] numberAllowed Maximum number of incoming connections allowed.
 	void SetMaximumIncomingConnections( unsigned short numberAllowed );
 
-	/// Returns the value passed to SetMaximumIncomingConnections()
-	/// \return the maximum number of incoming connections, which is always <= maxConnections
+	/// \brief Returns the value passed to SetMaximumIncomingConnections().
+	/// \return Maximum number of incoming connections, which is always <= maxConnections
 	unsigned short GetMaximumIncomingConnections( void ) const;
 
-	/// Returns how many open connections there are at this time
-	/// \return the number of open connections
+	/// \brief Returns how many open connections exist at this time.
+	/// \return Number of open connections.
 	unsigned short NumberOfConnections(void) const;
 
-	/// Sets the password incoming connections must match in the call to Connect (defaults to none). Pass 0 to passwordData to specify no password
-	/// This is a way to set a low level password for all incoming connections.  To selectively reject connections, implement your own scheme using CloseConnection() to remove unwanted connections
+	/// \brief Sets the password for the incoming connections. 
+	/// \details  The password must match in the call to Connect (defaults to none).
+	/// Pass 0 to passwordData to specify no password.
+	/// This is a way to set a low level password for all incoming connections.  To selectively reject connections, implement your own scheme using CloseConnection() to remove unwanted connections.
 	/// \param[in] passwordData A data block that incoming connections must match.  This can be just a password, or can be a stream of data. Specify 0 for no password data
 	/// \param[in] passwordDataLength The length in bytes of passwordData
 	void SetIncomingPassword( const char* passwordData, int passwordDataLength );
 
-	/// Gets the password passed to SetIncomingPassword
+	/// \brief Gets the password passed to SetIncomingPassword
 	/// \param[out] passwordData  Should point to a block large enough to hold the password data you passed to SetIncomingPassword()
-	/// \param[in,out] passwordDataLength Maximum size of the array passwordData.  Modified to hold the number of bytes actually written
+	/// \param[in,out] passwordDataLength Maximum size of the passwordData array.  Modified to hold the number of bytes actually written.
 	void GetIncomingPassword( char* passwordData, int *passwordDataLength  );
 
 	/// \brief Connect to the specified host (ip or domain name) and server port.
 	/// \details Calling Connect and not calling SetMaximumIncomingConnections acts as a dedicated client.
-	/// Calling both acts as a true peer. This is a non-blocking connection.
-	/// You know the connection is successful when IsConnected() returns true or Receive() gets a message with the type identifier ID_CONNECTION_ACCEPTED.
+	/// Calling both acts as a true peer.
+	///	
+	/// This is a non-blocking connection.
+	///
+	/// The connection is successful when IsConnected() returns true or Receive() gets a message with the type identifier ID_CONNECTION_ACCEPTED.
 	/// If the connection is not successful, such as a rejected connection or no response then neither of these things will happen.
-	/// \pre Requires that you first call Initialize
-	/// \param[in] host Either a dotted IP address or a domain name
-	/// \param[in] remotePort Which port to connect to on the remote machine.
-	/// \param[in] passwordData A data block that must match the data block on the server passed to SetIncomingPassword.  This can be a string or can be a stream of data.  Use 0 for no password.
-	/// \param[in] passwordDataLength The length in bytes of passwordData
-	/// \param[in] connectionSocketIndex Index into the array of socket descriptors passed to socketDescriptors in RakPeer::Startup() to send on.
-	/// \param[in] sendConnectionAttemptCount How many datagrams to send to the other system to try to connect.
-	/// \param[in] timeBetweenSendConnectionAttemptsMS How often to send datagrams to the other system to try to connect. After this many times, ID_CONNECTION_ATTEMPT_FAILED is returned
-	/// \param[in] timeoutTime How long to keep the connection alive before dropping it on unable to send a reliable message. 0 to use the default from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
-	/// \return True on successful initiation. False on incorrect parameters, internal error, or too many existing peers.  Returning true does not mean you connected!
+	/// \pre Requires that you first call Initialize.
+	/// \param[in] host Either a dotted IP address or a domain name.
+	/// \param[in] remotePort Port to connect to on the remote machine.
+	/// \param[in] passwordData A data block that must match the data block on the server passed to SetIncomingPassword().  This can be a string or can be a stream of data.  Use 0 for no password.
+	/// \param[in] passwordDataLength The length in bytes of passwordData.
+	/// \param[in] connectionSocketIndex Index into the array of socket descriptors passed to socketDescriptors in RakPeer::Startup() to determine the one to send on.
+	/// \param[in] sendConnectionAttemptCount Number of datagrams to send to the other system to try to connect.
+	/// \param[in] timeBetweenSendConnectionAttemptsMS Time to elapse before a datagram is sent to the other system to try to connect. After sendConnectionAttemptCount number of attempts, ID_CONNECTION_ATTEMPT_FAILED is returned.
+	/// \param[in] timeoutTime Time to elapse before dropping the connection if a reliable message could not be sent. 0 to use the default value from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
+	/// \return True on successful initiation. False on incorrect parameters, internal error, or too many existing peers.
+	/// \note Returning true does not mean you are connected!
 	bool Connect( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex=0, unsigned sendConnectionAttemptCount=12, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNetTime timeoutTime=0 );
 
 	/// \brief Connect to the specified host (ip or domain name) and server port.
-	/// \param[in] host Either a dotted IP address or a domain name
+	/// \param[in] host Either a dotted IP address or a domain name.
 	/// \param[in] remotePort Which port to connect to on the remote machine.
-	/// \param[in] passwordData A data block that must match the data block on the server passed to SetIncomingPassword.  This can be a string or can be a stream of data.  Use 0 for no password.
-	/// \param[in] passwordDataLength The length in bytes of passwordData
-	/// \param[in] socket A bound socket returned by another instance of RakPeerInterface
-	/// \param[in] sendConnectionAttemptCount How many datagrams to send to the other system to try to connect.
-	/// \param[in] timeBetweenSendConnectionAttemptsMS How often to send datagrams to the other system to try to connect. After this many times, ID_CONNECTION_ATTEMPT_FAILED is returned
-	/// \param[in] timeoutTime How long to keep the connection alive before dropping it on unable to send a reliable message. 0 to use the default from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
-	/// \return True on successful initiation. False on incorrect parameters, internal error, or too many existing peers.  Returning true does not mean you connected!
+	/// \param[in] passwordData A data block that must match the data block on the server passed to SetIncomingPassword().  This can be a string or can be a stream of data.  Use 0 for no password.
+	/// \param[in] passwordDataLength The length in bytes of passwordData.
+	/// \param[in] socket A bound socket returned by another instance of RakPeerInterface.
+	/// \param[in] sendConnectionAttemptCount Number of datagrams to send to the other system to try to connect.
+	/// \param[in] timeBetweenSendConnectionAttemptsMS Time to elapse before a datagram is sent to the other system to try to connect. After sendConnectionAttemptCount number of attempts, ID_CONNECTION_ATTEMPT_FAILED is returned.
+	/// \param[in] timeoutTime Time to elapse before dropping the connection if a reliable message could not be sent. 0 to use the default from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
+	/// \return True on successful initiation. False on incorrect parameters, internal error, or too many existing peers.  
+	/// \note Returning true does not mean you arebconnected!
 	virtual bool ConnectWithSocket(const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, RakNetSmartPtr<RakNetSocket> socket, unsigned sendConnectionAttemptCount=12, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNetTime timeoutTime=0);
 
-	/// \brief Connect to the specified network ID (Platform specific console function)
+	/* /// \brief Connect to the specified network ID (Platform specific console function)
 	/// \details Does built-in NAT traversal
 	/// \param[in] networkServiceId Network ID structure for the online service
-	/// \param[in] passwordData A data block that must match the data block on the server passed to SetIncomingPassword.  This can be a string or can be a stream of data.  Use 0 for no password.
-	/// \param[in] passwordDataLength The length in bytes of passwordData
-	//bool Console2LobbyConnect( void *networkServiceId, const char *passwordData, int passwordDataLength );	
+	/// \param[in] passwordData A data block that must match the data block on the server passed to SetIncomingPassword().  This can be a string or can be a stream of data.  Use 0 for no password.
+	/// \param[in] passwordDataLength The length in bytes of passwordData.
+	//bool Console2LobbyConnect( void *networkServiceId, const char *passwordData, int passwordDataLength );*/	
 
 	/// \brief Stops the network threads and closes all connections.
-	/// \param[in] blockDuration How long, in milliseconds, you should wait for all remaining messages to go out, including ID_DISCONNECTION_NOTIFICATION.  If 0, it doesn't wait at all.
-	/// \param[in] orderingChannel If blockDuration > 0, ID_DISCONNECTION_NOTIFICATION will be sent on this channel
-	/// \param[in] disconnectionNotificationPriority Priority to send ID_DISCONNECTION_NOTIFICATION on.
-	/// If you set it to 0 then the disconnection notification won't be sent
+	/// \param[in] blockDuration Wait time(milli seconds) for all remaining messages to go out, including ID_DISCONNECTION_NOTIFICATION.  If 0, it doesn't wait at all.
+	/// \param[in] orderingChannel Channel on which ID_DISCONNECTION_NOTIFICATION will be sent, if blockDuration > 0.
+	/// \param[in] disconnectionNotificationPriority Priority of sending ID_DISCONNECTION_NOTIFICATION.
+	/// If set to 0, the disconnection notification won't be sent.
 	void Shutdown( unsigned int blockDuration, unsigned char orderingChannel=0, PacketPriority disconnectionNotificationPriority=LOW_PRIORITY );
 
-	/// Returns if the network thread is running
-	/// \return true if the network thread is running, false otherwise
+	/// \brief Returns true if the network thread is running.
+	/// \return True if the network thread is running, False otherwise
 	bool IsActive( void ) const;
 
-	/// Fills the array remoteSystems with the SystemAddress of all the systems we are connected to
-	/// \param[out] remoteSystems An array of SystemAddress structures to be filled with the SystemAddresss of the systems we are connected to. Pass 0 to remoteSystems to only get the number of systems we are connected to
-	/// \param[in, out] numberOfSystems As input, the size of remoteSystems array.  As output, the number of elements put into the array 
+	/// \brief Fills the array remoteSystems with the SystemAddress of all the systems we are connected to.
+	/// \param[out] remoteSystems An array of SystemAddress structures, to be filled with the SystemAddresss of the systems we are connected to. Pass 0 to remoteSystems to get the number of systems we are connected to.
+	/// \param[in, out] numberOfSystems As input, the size of remoteSystems array.  As output, the number of elements put into the array. 
 	bool GetConnectionList( SystemAddress *remoteSystems, unsigned short *numberOfSystems ) const;
 
-	/// Sends a block of data to the specified system that you are connected to.
-	/// This function only works while the connected
-	/// The first byte should be a message identifier starting at ID_USER_PACKET_ENUM
-	/// \param[in] data The block of data to send
-	/// \param[in] length The size in bytes of the data to send
-	/// \param[in] priority What priority level to send on.  See PacketPriority.h
-	/// \param[in] reliability How reliability to send this data.  See PacketPriority.h
-	/// \param[in] orderingChannel When using ordered or sequenced messages, what channel to order these on. Messages are only ordered relative to other messages on the same stream
+	/// \brief Sends a block of data to the specified system that you are connected to.
+	/// \note This function only works while the connected.
+	/// \note The first byte should be a message identifier starting at ID_USER_PACKET_ENUM.
+	/// \param[in] data Block of data to send.
+	/// \param[in] length Size in bytes of the data to send.
+	/// \param[in] priority Priority level to send on.  See PacketPriority.h
+	/// \param[in] reliability How reliably to send this data.  See PacketPriority.h
+	/// \param[in] orderingChannel When using ordered or sequenced messages, the channel to order these on. Messages are only ordered relative to other messages on the same stream.
 	/// \param[in] systemAddress Who to send this packet to, or in the case of broadcasting who not to send it to.  Use UNASSIGNED_SYSTEM_ADDRESS to specify none
 	/// \param[in] broadcast True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to.
 	/// \return False on bad input. True otherwise.
 	bool Send( const char *data, const int length, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast );
 
-	/// "Send" to yourself rather than a remote system. The message will be processed through the plugins and returned to the game as usual
+	/// \brief "Send" to yourself rather than a remote system.
+	/// \details The message will be processed through the plugins and returned to the game as usual.
 	/// This function works anytime
-	/// The first byte should be a message identifier starting at ID_USER_PACKET_ENUM
-	/// \param[in] data The block of data to send
-	/// \param[in] length The size in bytes of the data to send
+	/// \note The first byte should be a message identifier starting at ID_USER_PACKET_ENUM
+	/// \param[in] data Block of data to send.
+	/// \param[in] length Size in bytes of the data to send.
 	void SendLoopback( const char *data, const int length );
 
-	/// Sends a block of data to the specified system that you are connected to.  Same as the above version, but takes a BitStream as input.
-	/// \param[in] bitStream The bitstream to send
-	/// \param[in] priority What priority level to send on.  See PacketPriority.h
-	/// \param[in] reliability How reliability to send this data.  See PacketPriority.h
-	/// \param[in] orderingChannel When using ordered or sequenced messages, what channel to order these on. Messages are only ordered relative to other messages on the same stream
-	/// \param[in] systemAddress Who to send this packet to, or in the case of broadcasting who not to send it to.  Use UNASSIGNED_SYSTEM_ADDRESS to specify none
+	/// \brief Sends a block of data to the specified system that you are connected to.
+	/// 
+	/// Same as the above version, but takes a BitStream as input.
+	/// \param[in] bitStream Bitstream to send
+	/// \param[in] priority Priority level to send on.  See PacketPriority.h
+	/// \param[in] reliability How reliably to send this data.  See PacketPriority.h
+	/// \param[in] orderingChannel Channel to order the messages on, when using ordered or sequenced messages. Messages are only ordered relative to other messages on the same stream.
+	/// \param[in] systemAddress System Address to send this packet to, or in the case of broadcasting, the address not to send it to.  Use UNASSIGNED_SYSTEM_ADDRESS to specify none.
 	/// \param[in] broadcast True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to.
 	/// \return False on bad input. True otherwise.
 	/// \note COMMON MISTAKE: When writing the first byte, bitStream->Write((unsigned char) ID_MY_TYPE) be sure it is casted to a byte, and you are not writing a 4 byte enumeration.
 	bool Send( const RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast );
 
-	/// Sends multiple blocks of data, concatenating them automatically.
+	/// \brief Sends multiple blocks of data, concatenating them automatically.
 	///
 	/// This is equivalent to:
 	/// RakNet::BitStream bs;
@@ -209,32 +227,33 @@ public:
 	/// bs.WriteAlignedBytes(block3, blockLength3);
 	/// Send(&bs, ...)
 	///
-	/// This function only works while the connected
+	/// This function only works when connected.
 	/// \param[in] data An array of pointers to blocks of data
 	/// \param[in] lengths An array of integers indicating the length of each block of data
 	/// \param[in] numParameters Length of the arrays data and lengths
-	/// \param[in] priority What priority level to send on.  See PacketPriority.h
-	/// \param[in] reliability How reliability to send this data.  See PacketPriority.h
-	/// \param[in] orderingChannel When using ordered or sequenced messages, what channel to order these on. Messages are only ordered relative to other messages on the same stream
-	/// \param[in] systemAddress Who to send this packet to, or in the case of broadcasting who not to send it to.  Use UNASSIGNED_SYSTEM_ADDRESS to specify none
+	/// \param[in] priority Priority level to send on.  See PacketPriority.h
+	/// \param[in] reliability How reliably to send this data.  See PacketPriority.h
+	/// \param[in] orderingChannel Channel to order the messages on, when using ordered or sequenced messages. Messages are only ordered relative to other messages on the same stream.
+	/// \param[in] systemAddress System Address to send this packet to, or in the case of broadcasting, the address not to send it to.  Use UNASSIGNED_SYSTEM_ADDRESS to specify none.
 	/// \param[in] broadcast True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to.
 	/// \return False on bad input. True otherwise.
-	/// \note Doesn't support the router plugin
+	/// \note Doesn't support the router plugin.
 	bool SendList( const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast );
 
-	/// Gets a message from the incoming message queue.
-	/// Use DeallocatePacket() to deallocate the message after you are done with it.
+	/// \brief Gets a message from the incoming message queue.
+	/// \details Use DeallocatePacket() to deallocate the message after you are done with it.
 	/// User-thread functions, such as RPC calls and the plugin function PluginInterface::Update occur here.
 	/// \return 0 if no packets are waiting to be handled, otherwise a pointer to a packet.
 	/// \note COMMON MISTAKE: Be sure to call this in a loop, once per game tick, until it returns 0. If you only process one packet per game tick they will buffer up.
-	/// sa RakNetTypes.h contains struct Packet
+	/// \sa RakNetTypes.h contains struct Packet.
 	Packet* Receive( void );
 
-	/// Call this to deallocate a message returned by Receive() when you are done handling it.
-	/// \param[in] packet The message to deallocate.	
+	/// \brief Call this to deallocate a message returned by Receive() when you are done handling it.
+	/// \param[in] packet Message to deallocate.	
 	void DeallocatePacket( Packet *packet );
 
-	/// Return the total number of connections we are allowed
+	/// \brief Return the total number of connections we are allowed.
+	/// \return Total number of connections allowed.
 	unsigned short GetMaximumNumberOfPeers( void ) const;
 
 	// --------------------------------------------------------------------------------------------Remote Procedure Call Functions - Functions to initialize and perform RPC--------------------------------------------------------------------------------------------
@@ -307,16 +326,17 @@ public:
 	bool RPC( const char* uniqueID, const RakNet::BitStream *bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget );
 	
 	// -------------------------------------------------------------------------------------------- Connection Management Functions--------------------------------------------------------------------------------------------
-	/// Close the connection to another host (if we initiated the connection it will disconnect, if they did it will kick them out).
+	/// \brief Close the connection to another host (if we initiated the connection it will disconnect, if they did it will kick them out).
+	/// \details This method closes the connection irrespective of who initiated the connection.
 	/// \param[in] target Which system to close the connection to.
 	/// \param[in] sendDisconnectionNotification True to send ID_DISCONNECTION_NOTIFICATION to the recipient.  False to close it silently.
 	/// \param[in] channel Which ordering channel to send the disconnection notification on, if any
 	/// \param[in] disconnectionNotificationPriority Priority to send ID_DISCONNECTION_NOTIFICATION on.
 	void CloseConnection( const SystemAddress target, bool sendDisconnectionNotification, unsigned char orderingChannel=0, PacketPriority disconnectionNotificationPriority=LOW_PRIORITY );
 
-	/// Cancel a pending connection attempt
-	/// If we are already connected, the connection stays open
-	/// \param[in] target Which system to cancel
+	/// \brief Cancel a pending connection attempt.
+	/// \details If we are already connected, the connection stays open
+	/// \param[in] target Target system to cancel.
 	void CancelConnectionAttempt( const SystemAddress target );
 
 	/// Returns if a particular systemAddress is connected to us (this also returns true if we are in the process of connecting)
@@ -349,13 +369,14 @@ public:
 	/// \param[out] guids All guids. Size of the list is the number of connections. Size of the list will match the size of the \a addresses list.
 	void GetSystemList(DataStructures::List<SystemAddress> &addresses, DataStructures::List<RakNetGUID> &guids);
 
-	/// Bans an IP from connecting.  Banned IPs persist between connections but are not saved on shutdown nor loaded on startup.
-	/// param[in] IP Dotted IP address. Can use * as a wildcard, such as 128.0.0.* will ban all IP addresses starting with 128.0.0
-	/// \param[in] milliseconds how many ms for a temporary ban.  Use 0 for a permanent ban
+	/// \brief Bans an IP from connecting.
+	/// \details Banned IPs persist between connections but are not saved on shutdown nor loaded on startup.
+	/// \param[in] IP Dotted IP address. You can use * for a wildcard address, such as 128.0.0. * will ban all IP addresses starting with 128.0.0.
+	/// \param[in] milliseconds Gives time in milli seconds for a temporary ban of the IP address.  Use 0 for a permanent ban.
 	void AddToBanList( const char *IP, RakNetTime milliseconds=0 );
 
-	/// Allows a previously banned IP to connect. 
-	/// param[in] Dotted IP address. Can use * as a wildcard, such as 128.0.0.* will banAll IP addresses starting with 128.0.0
+	/// \brief Allows a previously banned IP to connect. 
+	/// param[in] Dotted IP address. You can use * as a wildcard, such as 128.0.0.* will ban all IP addresses starting with 128.0.0.
 	void RemoveFromBanList( const char *IP );
 
 	/// Allows all previously banned IPs to connect.
@@ -486,20 +507,20 @@ public:
 	/// \return True if this is one of the IP addresses returned by GetLocalIP
 	bool IsLocalIP( const char *ip );
 
-	/// Allow or disallow connection responses from any IP. Normally this should be false, but may be necessary
-	/// when connecting to servers with multiple IP addresses.
-	/// \param[in] allow - True to allow this behavior, false to not allow. Defaults to false. Value persists between connections
+	/// \brief Allow or disallow connection responses from any IP. 
+	/// \details Normally this should be false, but may be necessary when connecting to servers with multiple IP addresses.
+	/// \param[in] allow - True to allow this behavior, false to not allow. Defaults to false. Value persists between connections.
 	void AllowConnectionResponseIPMigration( bool allow );
 
 	/// Sends a one byte message ID_ADVERTISE_SYSTEM to the remote unconnected system.
-	/// This will tell the remote system our external IP outside the LAN along with some user data.
+	/// \brief This will tell the remote system our external IP outside the LAN along with some user data.
 	/// \pre The sender and recipient must already be started via a successful call to Initialize
 	/// \param[in] host Either a dotted IP address or a domain name
 	/// \param[in] remotePort Which port to connect to on the remote machine.
 	/// \param[in] data Optional data to append to the packet.
-	/// \param[in] dataLength length of data in bytes.  Use 0 if no data.
+	/// \param[in] dataLength Length of data in bytes.  Use 0 if no data.
 	/// \param[in] connectionSocketIndex Index into the array of socket descriptors passed to socketDescriptors in RakPeer::Startup() to send on.
-	/// \return false if IsActive()==false or the host is unresolvable. True otherwise
+	/// \return False if IsActive()==false or the host is unresolvable. True otherwise.
 	bool AdvertiseSystem( const char *host, unsigned short remotePort, const char *data, int dataLength, unsigned connectionSocketIndex=0 );
 
 	/// Controls how often to return ID_DOWNLOAD_PROGRESS for large message downloads.
@@ -552,10 +573,12 @@ public:
 	/// \sa Compression.cpp
 	bool GenerateCompressionLayer( unsigned int inputFrequencyTable[ 256 ], bool inputLayer );
 
-	/// Delete the output or input layer as specified.  This is not necessary to call and is only valuable for freeing memory.
-	/// \pre You should only call this when disconnected
-	/// \param[in] inputLayer True to mean the inputLayer, false to mean the output layer
-	/// \return false (failure) if connected.  Otherwise true (success)
+	/// \brief Delete the output or input layer as specified.
+	/// 
+	/// This is not necessary to call and is only valuable for freeing memory.
+	/// \pre You should only call this when disconnected.
+	/// \param[in] inputLayer True to mean the inputLayer, false to mean the output layer.
+	/// \return False (failure) if connected.  Otherwise True (success)
 	bool DeleteCompressionLayer( bool inputLayer );
 
 	/// Returns the compression ratio. A low compression ratio is good.  Compression is for outgoing data
@@ -567,9 +590,9 @@ public:
 	float GetDecompressionRatio( void ) const;
 
 	// -------------------------------------------------------------------------------------------- Plugin Functions--------------------------------------------------------------------------------------------
-	/// Attatches a Plugin interface to run code automatically on message receipt in the Receive call
-	/// \note If plugins have dependencies on each other then the order does matter - for example the router plugin should go first because it might route messages for other plugins
-	/// \param[in] messageHandler Pointer to a plugin to attach
+	/// \brief Attatches a Plugin interface to run code automatically on message receipt in the Receive call.
+	/// \note If plugins have dependencies on each other then the order does matter - for example the router plugin should go first because it might route messages for other plugins.
+	/// \param[in] messageHandler Pointer to a plugin to attach.
 	void AttachPlugin( PluginInterface2 *plugin );
 
 	/// Detaches a Plugin interface to run code automatically on message receipt
@@ -592,10 +615,10 @@ public:
 	// \param[in] routerInterface The router to use to route messages to systems not directly connected to this system.
 	void RemoveRouterInterface( RouterInterface *routerInterface );
 
-	/// \returns a packet for you to write to if you want to create a Packet for some reason.
+	/// \brief Returns a packet for you to write to if you want to create a Packet for some reason.
 	/// You can add it to the receive buffer with PushBackPacket
 	/// \param[in] dataSize How many bytes to allocate for the buffer
-	/// \return A packet you can write to
+	/// \return A packet.
 	Packet* AllocatePacket(unsigned dataSize);
 
 	/// Get the socket used with a particular active connection
@@ -619,10 +642,10 @@ public:
 	virtual void SetUserUpdateThread(void (*_userUpdateThreadPtr)(RakPeerInterface *, void *), void *_userUpdateThreadData);
 
 	// --------------------------------------------------------------------------------------------Network Simulator Functions--------------------------------------------------------------------------------------------
-	/// Adds simulated ping and packet loss to the outgoing data flow.
-	/// To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and maxSendBPS value on each.
-	/// You can exclude network simulator code with the _RELEASE #define to decrease code size
+	/// \brief Adds simulated ping and packet loss to the outgoing data flow.
+	/// \details To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and maxSendBPS values on each.
 	/// \deprecated Use http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0 instead.
+	/// \note You can exclude network simulator code with the _RELEASE #define to decrease code size.
 	/// \note Doesn't work past version 3.6201
 	/// \param[in] packetloss Chance to lose a packet. Ranges from 0 to 1.
 	/// \param[in] minExtraPing The minimum time to delay sends.
@@ -795,20 +818,13 @@ protected:
 	/// and moving elements in the list by copying pointers variables without affecting running threads, even if they are in the reliability layer
 	RemoteSystemStruct* remoteSystemList;
 
-	// remoteSystemLookup is only used in the network thread or when single threaded.  Not safe to use this in the user thread
-	// A list of SystemAddressAndIndex sorted by systemAddress.  This way, given a SystemAddress, we can quickly get the index into remoteSystemList to find this player.
-	// This is an optimization to avoid scanning the remoteSystemList::systemAddress member when doing targeted sends
-	// Improves speed of a targeted send to every player from O(n^2) to O(n * log2(n)).
-	// For an MMOG with 1000 players:
-	// The original method takes 1000^2=1,000,000 calls
-	// The new method takes:
-	// logbx = (logax) / (logab)
-	// log2(x) = log10(x) / log10(2)
-	// log2(1000) = log10(1000) / log10(2)
-	// log2(1000) = 9.965
-	// 9.965 * 1000 = 9965
-	// For 1000 players this optimization improves the speed by over 1000 times.
-	DataStructures::OrderedList<SystemAddress, SystemAddressAndIndex, SystemAddressAndIndexComp> remoteSystemLookup;
+	// Use a hash, with binaryAddress plus port mod length as the index
+	// Hash size is max connections times 4.
+	SystemAddressAndIndex *remoteSystemLookup;
+	unsigned int RemoteSystemLookupHashIndex(SystemAddress sa) const;
+	unsigned int LookupIndexUsingHashIndex(SystemAddress sa) const;
+	unsigned int RemoteSystemListIndexUsingHashIndex(SystemAddress sa) const;
+	unsigned int FirstFreeRemoteSystemLookupIndex(SystemAddress sa) const;
 	
 	enum
 	{

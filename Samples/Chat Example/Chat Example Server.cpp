@@ -72,8 +72,8 @@ int main(void)
 	// 0 means we don't care about a connectionValidationInteger, and false
 	// for low priority threads
 	SocketDescriptor socketDescriptor(atoi(portstring),0);
-	bool b = server->Startup(32, 30, &socketDescriptor, 1 );
-	server->SetMaximumIncomingConnections(2);
+	bool b = server->Startup(4, 30, &socketDescriptor, 1 );
+	server->SetMaximumIncomingConnections(4);
 	if (b)
 		puts("Server started, waiting for connections.");
 	else

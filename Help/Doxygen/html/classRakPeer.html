@@ -27,7 +27,7 @@
   </div>
 </div>
 <div class="contents">
-<h1>RakPeer Class Reference</h1><!-- doxytag: class="RakPeer" --><!-- doxytag: inherits="RakPeerInterface" -->The main interface for network communications.  
+<h1>RakPeer Class Reference</h1><!-- doxytag: class="RakPeer" --><!-- doxytag: inherits="RakPeerInterface" -->The <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a> class provides the main interface for network communications.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;RakPeer.h&gt;</code>
@@ -56,27 +56,37 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85">Startup</a> (unsigned short maxConnections, int _threadSleepTimer, <a class="el" href="structSocketDescriptor.html">SocketDescriptor</a> *socketDescriptors, unsigned socketDescriptorCount, int threadPriority=-99999)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Starts the network threads, opens the listen port.  <a href="#1fbd8608cf1ead14250b293cc6eb9a85"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Starts the network threads and opens the listen port.  <a href="#1fbd8608cf1ead14250b293cc6eb9a85"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#adcb268bdcd4751c304c8156c28eb66d">InitializeSecurity</a> (const char *pubKeyE, const char *pubKeyN, const char *privKeyP, const char *privKeyQ)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Secures connections though a combination of SHA1, AES128, SYN Cookies, and RSA to prevent connection spoofing, replay attacks, data eavesdropping, packet tampering, and MitM attacks.  <a href="#adcb268bdcd4751c304c8156c28eb66d"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#bc9e3cd4ac407f23ce1ee99c94cabd88">DisableSecurity</a> (void)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Disables all security.  <a href="#bc9e3cd4ac407f23ce1ee99c94cabd88"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#f8d5bea4ceaa700d451196b9b0b0ed25">AddToSecurityExceptionList</a> (const char *ip)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This is useful if you have a fixed-address internal server behind a LAN.  <a href="#f8d5bea4ceaa700d451196b9b0b0ed25"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#24be36bb9b57fd85627d89b66b149c50">RemoveFromSecurityExceptionList</a> (const char *ip)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a specific connection previously added via AddToSecurityExceptionList.  <a href="#24be36bb9b57fd85627d89b66b149c50"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#4541da876eef1161bd7460f2cbfcc3bd">IsInSecurityExceptionList</a> (const char *ip)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Checks to see if a given IP is in the security exception list.  <a href="#4541da876eef1161bd7460f2cbfcc3bd"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#d2004ca40f0a88ca24f70196321d48c8">SetMaximumIncomingConnections</a> (unsigned short numberAllowed)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets the maximum number of incoming connections allowed.  <a href="#d2004ca40f0a88ca24f70196321d48c8"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#5c413e010504007506d6be8bc27a2668">GetMaximumIncomingConnections</a> (void) const </td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the value passed to <a class="el" href="classRakPeer.html#d2004ca40f0a88ca24f70196321d48c8" title="Sets the maximum number of incoming connections allowed.">SetMaximumIncomingConnections()</a>.  <a href="#5c413e010504007506d6be8bc27a2668"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#0155271445e2fe26b382080f228df46d">NumberOfConnections</a> (void) const </td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns how many open connections exist at this time.  <a href="#0155271445e2fe26b382080f228df46d"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#a6daafe75bfe4882aa46f32cb753378c">SetIncomingPassword</a> (const char *passwordData, int passwordDataLength)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets the password for the incoming connections.  <a href="#a6daafe75bfe4882aa46f32cb753378c"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#3d16efedd2007d917e613a78f816baba">GetIncomingPassword</a> (char *passwordData, int *passwordDataLength)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the password passed to SetIncomingPassword.  <a href="#3d16efedd2007d917e613a78f816baba"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#c7ba51ef72df78a7da4b7e6d5e2c8276">Connect</a> (const char *host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex=0, unsigned sendConnectionAttemptCount=12, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNetTime timeoutTime=0)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Connect to the specified host (ip or domain name) and server port.  <a href="#c7ba51ef72df78a7da4b7e6d5e2c8276"></a><br></td></tr>
@@ -85,27 +95,34 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Connect to the specified host (ip or domain name) and server port.  <a href="#3341478f794ee257e957021834a41b71"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#ab69808cd87c19f1800ac36d8c8e584c">Shutdown</a> (unsigned int blockDuration, unsigned char orderingChannel=0, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> disconnectionNotificationPriority=LOW_PRIORITY)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Connect to the specified network ID (Platform specific console function).  <a href="#ab69808cd87c19f1800ac36d8c8e584c"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Stops the network threads and closes all connections.  <a href="#ab69808cd87c19f1800ac36d8c8e584c"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#52ff3b23878d11d8b00473835d44b1f5">IsActive</a> (void) const </td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns true if the network thread is running.  <a href="#52ff3b23878d11d8b00473835d44b1f5"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#2f3e89dc1baf72e449911b7c674403fc">GetConnectionList</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> *remoteSystems, unsigned short *numberOfSystems) const </td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Fills the array remoteSystems with the <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> of all the systems we are connected to.  <a href="#2f3e89dc1baf72e449911b7c674403fc"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be">Send</a> (const char *data, const int length, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sends a block of data to the specified system that you are connected to.  <a href="#3acee6622f9526d877fed911669377be"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#888819dc988a3282c41db84ee0a00b6e">SendLoopback</a> (const char *data, const int length)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">"Send" to yourself rather than a remote system.  <a href="#888819dc988a3282c41db84ee0a00b6e"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#c3798ef62d4fcaf901281dc7bfc18368">Send</a> (const <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sends a block of data to the specified system that you are connected to.  <a href="#c3798ef62d4fcaf901281dc7bfc18368"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#7060e48a58e704a92d7124445fe3bcf2">SendList</a> (const char **data, const int *lengths, const int numParameters, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sends multiple blocks of data, concatenating them automatically.  <a href="#7060e48a58e704a92d7124445fe3bcf2"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7">Receive</a> (void)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets a message from the incoming message queue.  <a href="#79fddb1f74db30833fc08687c1310ce7"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#f68f8d2766b45b6d951dfd62cf349a71">DeallocatePacket</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="23aa5e3e7f94cccd150392ff73233526"></a><!-- doxytag: member="RakPeer::GetMaximumNumberOfPeers" ref="23aa5e3e7f94cccd150392ff73233526" args="(void) const " -->
-unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#23aa5e3e7f94cccd150392ff73233526">GetMaximumNumberOfPeers</a> (void) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Call this to deallocate a message returned by <a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7" title="Gets a message from the incoming message queue.">Receive()</a> when you are done handling it.  <a href="#f68f8d2766b45b6d951dfd62cf349a71"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#23aa5e3e7f94cccd150392ff73233526">GetMaximumNumberOfPeers</a> (void) const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return the total number of connections we are allowed. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return the total number of connections we are allowed.  <a href="#23aa5e3e7f94cccd150392ff73233526"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#gc253d708a039e60aa0aaafca3f9a1d41">RegisterAsRemoteProcedureCall</a> (const char *uniqueID, void(*functionPointer)(<a class="el" href="structRPCParameters.html">RPCParameters</a> *rpcParms))</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#gbd4e89c774e58f88754dfd6108b9c7d0">RegisterClassMemberRPC</a> (const char *uniqueID, void *functionPointer)</td></tr>
@@ -122,8 +139,10 @@ unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" 
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#4a7c586a8be0d977354a3cfd09bab6b7">CloseConnection</a> (const <a class="el" href="structSystemAddress.html">SystemAddress</a> target, bool sendDisconnectionNotification, unsigned char orderingChannel=0, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> disconnectionNotificationPriority=LOW_PRIORITY)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Close the connection to another host (if we initiated the connection it will disconnect, if they did it will kick them out).  <a href="#4a7c586a8be0d977354a3cfd09bab6b7"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#01b140bb9e6a90a0c1867a5101131fd1">CancelConnectionAttempt</a> (const <a class="el" href="structSystemAddress.html">SystemAddress</a> target)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Cancel a pending connection attempt.  <a href="#01b140bb9e6a90a0c1867a5101131fd1"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#fdfe595a70afa009590d13aa8f4372c3">IsConnected</a> (const <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool includeInProgress=false, bool includeDisconnecting=false)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#e8766bc81b61738b79ec5f7aedb21fb9">GetIndexFromSystemAddress</a> (const <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
@@ -136,8 +155,11 @@ unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" 
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#8f641435cc9a86c48ad5f105ed4e74ed">AddToBanList</a> (const char *IP, RakNetTime milliseconds=0)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#d046c7809b8889ba708bc20881845e4d">RemoveFromBanList</a> (const char *IP)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Bans an IP from connecting.  <a href="#8f641435cc9a86c48ad5f105ed4e74ed"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d046c7809b8889ba708bc20881845e4d"></a><!-- doxytag: member="RakPeer::RemoveFromBanList" ref="d046c7809b8889ba708bc20881845e4d" args="(const char *IP)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#d046c7809b8889ba708bc20881845e4d">RemoveFromBanList</a> (const char *IP)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Allows a previously banned IP to connect. param[in] Dotted IP address. You can use * as a wildcard, such as 128.0.0.* will ban all IP addresses starting with 128.0.0. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3d0f94bb0bf24d4bbe1df80b1f3bce9d"></a><!-- doxytag: member="RakPeer::ClearBanList" ref="3d0f94bb0bf24d4bbe1df80b1f3bce9d" args="(void)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#3d0f94bb0bf24d4bbe1df80b1f3bce9d">ClearBanList</a> (void)</td></tr>
 
@@ -186,8 +208,10 @@ unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#6073a5dffd55cbd7dbfc6e575c34ffc4">AllowConnectionResponseIPMigration</a> (bool allow)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Allow or disallow connection responses from any IP.  <a href="#6073a5dffd55cbd7dbfc6e575c34ffc4"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#1337a0f14282659e56aca9c8b7d948bc">AdvertiseSystem</a> (const char *host, unsigned short remotePort, const char *data, int dataLength, unsigned connectionSocketIndex=0)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This will tell the remote system our external IP outside the LAN along with some user data.  <a href="#1337a0f14282659e56aca9c8b7d948bc"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#c1cb3f6aeaa842c721bbe4a3d74c3d5d">SetSplitMessageProgressInterval</a> (int interval)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#5943788eec6c727a5b54ba20bac5a0e9">GetSplitMessageProgressInterval</a> (void) const </td></tr>
@@ -204,12 +228,14 @@ unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#c030c867c8e685d11d0789417fdf6aaa">DeleteCompressionLayer</a> (bool inputLayer)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Delete the output or input layer as specified.  <a href="#c030c867c8e685d11d0789417fdf6aaa"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">float&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#b8d51c7aa3bd6662b8ee3fbd618f4c11">GetCompressionRatio</a> (void) const </td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">float&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#3469f4f4b4c38bf749cb394b466b823b">GetDecompressionRatio</a> (void) const </td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#b5c9a18b31e1ef50434f289b6cca9b68">AttachPlugin</a> (<a class="el" href="classPluginInterface2.html">PluginInterface2</a> *plugin)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Attatches a Plugin interface to run code automatically on message receipt in the Receive call.  <a href="#b5c9a18b31e1ef50434f289b6cca9b68"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#3af7b16093477032f5739c05316463bd">DetachPlugin</a> (<a class="el" href="classPluginInterface2.html">PluginInterface2</a> *messageHandler)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#9968ebdb31bcc7563b035a567046169b">PushBackPacket</a> (<a class="el" href="structPacket.html">Packet</a> *packet, bool pushAtHead)</td></tr>
@@ -220,6 +246,7 @@ unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#2e9fba1ec7a65de313fb101f3cffd3b0">AllocatePacket</a> (unsigned dataSize)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a packet for you to write to if you want to create a <a class="el" href="structPacket.html" title="This represents a user message from another system.">Packet</a> for some reason. You can add it to the receive buffer with PushBackPacket.  <a href="#2e9fba1ec7a65de313fb101f3cffd3b0"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual RakNetSmartPtr<br class="typebreak">
 &lt; RakNetSocket &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#858fbbc252b87dfe8f8e8e5f0d83bbf9">GetSocket</a> (const <a class="el" href="structSystemAddress.html">SystemAddress</a> target)</td></tr>
 
@@ -229,6 +256,7 @@ unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#02407ae593277c551cea1524816c3a56">ApplyNetworkSimulator</a> (float packetloss, unsigned short minExtraPing, unsigned short extraPingVariance)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds simulated ping and packet loss to the outgoing data flow.  <a href="#02407ae593277c551cea1524816c3a56"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#43eacd3c80d27df603fe9be59174359b">SetPerConnectionOutgoingBandwidthLimit</a> (unsigned maxBitsPerSecond)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#972f872d20bb187a0bbb92f29d4ae34f">IsNetworkSimulatorActive</a> (void)</td></tr>
@@ -238,7 +266,7 @@ unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6110dab280bb90fd0d90f5cbc8ffd886"></a><!-- doxytag: member="RakPeer::GetReceiveBufferSize" ref="6110dab280bb90fd0d90f5cbc8ffd886" args="(void)" -->
 virtual unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#6110dab280bb90fd0d90f5cbc8ffd886">GetReceiveBufferSize</a> (void)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">how many messages are waiting when you call <a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7">Receive()</a> <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">how many messages are waiting when you call <a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7" title="Gets a message from the incoming message queue.">Receive()</a> <br></td></tr>
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">RemoteSystemStruct *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#b64dd144fe2eff743faa3e09d4a5174c">GetRemoteSystemFromSystemAddress</a> (const <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool calledFromNetworkThread, bool onlyActive) const </td></tr>
 
@@ -315,9 +343,11 @@ RSACrypt&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">How long it has been since things were updated by a call to receiveUpdate thread uses this to determine how long to sleep for.  <a href="#8dc645e7f22a90abe45dfc3fdc74044f"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-The main interface for network communications. 
+The <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a> class provides the main interface for network communications. 
 <p>
-The primary interface for <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a>, <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> contains all major functions for the library. See the individual functions for what the class can do. <hr><h2>Member Function Documentation</h2>
+It is the main class used for data transmission and most of RakNet's functionality. It is the primary interface for <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a>.<p>
+Inherits <a class="el" href="classRakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a>.<p>
+See the individual functions for what the class can do. <hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="8f641435cc9a86c48ad5f105ed4e74ed"></a><!-- doxytag: member="RakPeer::AddToBanList" ref="8f641435cc9a86c48ad5f105ed4e74ed" args="(const char *IP, RakNetTime milliseconds=0)" -->
 <div class="memitem">
 <div class="memproto">
@@ -344,9 +374,12 @@ The primary interface for <a class="el" href="namespaceRakNet.html" title="Forwa
 <div class="memdoc">
 
 <p>
-Bans an IP from connecting. Banned IPs persist between connections but are not saved on shutdown nor loaded on startup. param[in] IP Dotted IP address. Can use * as a wildcard, such as 128.0.0.* will ban all IP addresses starting with 128.0.0 <dl compact><dt><b>Parameters:</b></dt><dd>
+Bans an IP from connecting. 
+<p>
+Banned IPs persist between connections but are not saved on shutdown nor loaded on startup. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>milliseconds</em>&nbsp;</td><td>how many ms for a temporary ban. Use 0 for a permanent ban </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>IP</em>&nbsp;</td><td>Dotted IP address. You can use * for a wildcard address, such as 128.0.0. * will ban all IP addresses starting with 128.0.0. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>milliseconds</em>&nbsp;</td><td>Gives time in milli seconds for a temporary ban of the IP address. Use 0 for a permanent ban. </td></tr>
   </table>
 </dl>
 
@@ -371,7 +404,9 @@ Bans an IP from connecting. Banned IPs persist between connections but are not s
 <div class="memdoc">
 
 <p>
-If secure connections are on, do not use secure connections for a specific IP address. This is useful if you have a fixed-address internal server behind a LAN. <dl class="note" compact><dt><b>Note:</b></dt><dd>Secure connections are determined by the recipient of an incoming connection. This has no effect if called on the system attempting to connect. </dd></dl>
+This is useful if you have a fixed-address internal server behind a LAN. 
+<p>
+Secure connections are determined by the recipient of an incoming connection. This has no effect if called on the system attempting to connect. <dl class="note" compact><dt><b>Note:</b></dt><dd>If secure connections are on, do not use secure connections for a specific IP address. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>ip</em>&nbsp;</td><td>IP address to add. * wildcards are supported. </td></tr>
@@ -426,17 +461,19 @@ If secure connections are on, do not use secure connections for a specific IP ad
 <div class="memdoc">
 
 <p>
-Sends a one byte message ID_ADVERTISE_SYSTEM to the remote unconnected system. This will tell the remote system our external IP outside the LAN along with some user data. <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>The sender and recipient must already be started via a successful call to Initialize </dd></dl>
+This will tell the remote system our external IP outside the LAN along with some user data. 
+<p>
+Sends a one byte message ID_ADVERTISE_SYSTEM to the remote unconnected system. <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>The sender and recipient must already be started via a successful call to Initialize </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>host</em>&nbsp;</td><td>Either a dotted IP address or a domain name </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>remotePort</em>&nbsp;</td><td>Which port to connect to on the remote machine. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>data</em>&nbsp;</td><td>Optional data to append to the packet. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>dataLength</em>&nbsp;</td><td>length of data in bytes. Use 0 if no data. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>connectionSocketIndex</em>&nbsp;</td><td>Index into the array of socket descriptors passed to socketDescriptors in <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads, opens the listen port.">RakPeer::Startup()</a> to send on. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>dataLength</em>&nbsp;</td><td>Length of data in bytes. Use 0 if no data. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>connectionSocketIndex</em>&nbsp;</td><td>Index into the array of socket descriptors passed to socketDescriptors in <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads and opens the listen port.">RakPeer::Startup()</a> to send on. </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>false if <a class="el" href="classRakPeer.html#52ff3b23878d11d8b00473835d44b1f5">IsActive()</a>==false or the host is unresolvable. True otherwise </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>False if <a class="el" href="classRakPeer.html#52ff3b23878d11d8b00473835d44b1f5" title="Returns true if the network thread is running.">IsActive()</a>==false or the host is unresolvable. True otherwise. </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#f814ceeb3f54841c9919d2af8d86e988">RakPeerInterface</a>.</p>
 
@@ -459,13 +496,14 @@ Sends a one byte message ID_ADVERTISE_SYSTEM to the remote unconnected system. T
 <div class="memdoc">
 
 <p>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>a packet for you to write to if you want to create a <a class="el" href="structPacket.html" title="This represents a user message from another system.">Packet</a> for some reason. You can add it to the receive buffer with PushBackPacket </dd></dl>
+Returns a packet for you to write to if you want to create a <a class="el" href="structPacket.html" title="This represents a user message from another system.">Packet</a> for some reason. You can add it to the receive buffer with PushBackPacket. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>dataSize</em>&nbsp;</td><td>How many bytes to allocate for the buffer </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>A packet you can write to </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>A packet. </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#aee2b90c9adf3a359ba5f2c3d8c38793">RakPeerInterface</a>.</p>
 
@@ -488,9 +526,11 @@ Sends a one byte message ID_ADVERTISE_SYSTEM to the remote unconnected system. T
 <div class="memdoc">
 
 <p>
-Allow or disallow connection responses from any IP. Normally this should be false, but may be necessary when connecting to servers with multiple IP addresses. <dl compact><dt><b>Parameters:</b></dt><dd>
+Allow or disallow connection responses from any IP. 
+<p>
+Normally this should be false, but may be necessary when connecting to servers with multiple IP addresses. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>allow</em>&nbsp;</td><td>- True to allow this behavior, false to not allow. Defaults to false. Value persists between connections </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>allow</em>&nbsp;</td><td>- True to allow this behavior, false to not allow. Defaults to false. Value persists between connections. </td></tr>
   </table>
 </dl>
 
@@ -530,8 +570,11 @@ Allow or disallow connection responses from any IP. Normally this should be fals
 <div class="memdoc">
 
 <p>
-Adds simulated ping and packet loss to the outgoing data flow. To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and maxSendBPS value on each. You can exclude network simulator code with the _RELEASE define to decrease code size <dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000024">Deprecated:</a></b></dt><dd>Use <a href="http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0">http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0</a> instead. </dd></dl>
-<dl class="note" compact><dt><b>Note:</b></dt><dd>Doesn't work past version 3.6201 </dd></dl>
+Adds simulated ping and packet loss to the outgoing data flow. 
+<p>
+To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and maxSendBPS values on each. <dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000024">Deprecated:</a></b></dt><dd>Use <a href="http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0">http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0</a> instead. </dd></dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>You can exclude network simulator code with the _RELEASE define to decrease code size. <p>
+Doesn't work past version 3.6201 </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packetloss</em>&nbsp;</td><td>Chance to lose a packet. Ranges from 0 to 1. </td></tr>
@@ -561,10 +604,12 @@ Adds simulated ping and packet loss to the outgoing data flow. To simulate bi-di
 <div class="memdoc">
 
 <p>
-Attatches a Plugin interface to run code automatically on message receipt in the Receive call <dl class="note" compact><dt><b>Note:</b></dt><dd>If plugins have dependencies on each other then the order does matter - for example the router plugin should go first because it might route messages for other plugins </dd></dl>
+Attatches a Plugin interface to run code automatically on message receipt in the Receive call. 
+<p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>If plugins have dependencies on each other then the order does matter - for example the router plugin should go first because it might route messages for other plugins. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>messageHandler</em>&nbsp;</td><td>Pointer to a plugin to attach </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>messageHandler</em>&nbsp;</td><td>Pointer to a plugin to attach. </td></tr>
   </table>
 </dl>
 
@@ -589,9 +634,11 @@ Attatches a Plugin interface to run code automatically on message receipt in the
 <div class="memdoc">
 
 <p>
-Cancel a pending connection attempt If we are already connected, the connection stays open <dl compact><dt><b>Parameters:</b></dt><dd>
+Cancel a pending connection attempt. 
+<p>
+If we are already connected, the connection stays open <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>target</em>&nbsp;</td><td>Which system to cancel </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>target</em>&nbsp;</td><td>Target system to cancel. </td></tr>
   </table>
 </dl>
 
@@ -637,7 +684,9 @@ Cancel a pending connection attempt If we are already connected, the connection 
 <div class="memdoc">
 
 <p>
-Close the connection to another host (if we initiated the connection it will disconnect, if they did it will kick them out). <dl compact><dt><b>Parameters:</b></dt><dd>
+Close the connection to another host (if we initiated the connection it will disconnect, if they did it will kick them out). 
+<p>
+This method closes the connection irrespective of who initiated the connection. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>target</em>&nbsp;</td><td>Which system to close the connection to. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>sendDisconnectionNotification</em>&nbsp;</td><td>True to send ID_DISCONNECTION_NOTIFICATION to the recipient. False to close it silently. </td></tr>
@@ -714,20 +763,23 @@ Close the connection to another host (if we initiated the connection it will dis
 <p>
 Connect to the specified host (ip or domain name) and server port. 
 <p>
-Calling Connect and not calling SetMaximumIncomingConnections acts as a dedicated client. Calling both acts as a true peer. This is a non-blocking connection. You know the connection is successful when <a class="el" href="classRakPeer.html#fdfe595a70afa009590d13aa8f4372c3">IsConnected()</a> returns true or <a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7">Receive()</a> gets a message with the type identifier ID_CONNECTION_ACCEPTED. If the connection is not successful, such as a rejected connection or no response then neither of these things will happen. <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Requires that you first call Initialize </dd></dl>
+Calling Connect and not calling SetMaximumIncomingConnections acts as a dedicated client. Calling both acts as a true peer.<p>
+This is a non-blocking connection.<p>
+The connection is successful when <a class="el" href="classRakPeer.html#fdfe595a70afa009590d13aa8f4372c3">IsConnected()</a> returns true or <a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7" title="Gets a message from the incoming message queue.">Receive()</a> gets a message with the type identifier ID_CONNECTION_ACCEPTED. If the connection is not successful, such as a rejected connection or no response then neither of these things will happen. <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Requires that you first call Initialize. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>host</em>&nbsp;</td><td>Either a dotted IP address or a domain name </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>remotePort</em>&nbsp;</td><td>Which port to connect to on the remote machine. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>passwordData</em>&nbsp;</td><td>A data block that must match the data block on the server passed to SetIncomingPassword. This can be a string or can be a stream of data. Use 0 for no password. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>passwordDataLength</em>&nbsp;</td><td>The length in bytes of passwordData </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>connectionSocketIndex</em>&nbsp;</td><td>Index into the array of socket descriptors passed to socketDescriptors in <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads, opens the listen port.">RakPeer::Startup()</a> to send on. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>sendConnectionAttemptCount</em>&nbsp;</td><td>How many datagrams to send to the other system to try to connect. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>timeBetweenSendConnectionAttemptsMS</em>&nbsp;</td><td>How often to send datagrams to the other system to try to connect. After this many times, ID_CONNECTION_ATTEMPT_FAILED is returned </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>timeoutTime</em>&nbsp;</td><td>How long to keep the connection alive before dropping it on unable to send a reliable message. 0 to use the default from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS); </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>host</em>&nbsp;</td><td>Either a dotted IP address or a domain name. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>remotePort</em>&nbsp;</td><td>Port to connect to on the remote machine. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>passwordData</em>&nbsp;</td><td>A data block that must match the data block on the server passed to <a class="el" href="classRakPeer.html#a6daafe75bfe4882aa46f32cb753378c" title="Sets the password for the incoming connections.">SetIncomingPassword()</a>. This can be a string or can be a stream of data. Use 0 for no password. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>passwordDataLength</em>&nbsp;</td><td>The length in bytes of passwordData. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>connectionSocketIndex</em>&nbsp;</td><td>Index into the array of socket descriptors passed to socketDescriptors in <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads and opens the listen port.">RakPeer::Startup()</a> to determine the one to send on. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>sendConnectionAttemptCount</em>&nbsp;</td><td>Number of datagrams to send to the other system to try to connect. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>timeBetweenSendConnectionAttemptsMS</em>&nbsp;</td><td>Time to elapse before a datagram is sent to the other system to try to connect. After sendConnectionAttemptCount number of attempts, ID_CONNECTION_ATTEMPT_FAILED is returned. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>timeoutTime</em>&nbsp;</td><td>Time to elapse before dropping the connection if a reliable message could not be sent. 0 to use the default value from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS); </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True on successful initiation. False on incorrect parameters, internal error, or too many existing peers. Returning true does not mean you connected! </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True on successful initiation. False on incorrect parameters, internal error, or too many existing peers. </dd></dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>Returning true does not mean you are connected! </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#8d7ac1a40bbaa75455fb262d80b311a8">RakPeerInterface</a>.</p>
 
@@ -799,17 +851,18 @@ Connect to the specified host (ip or domain name) and server port.
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>host</em>&nbsp;</td><td>Either a dotted IP address or a domain name </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>host</em>&nbsp;</td><td>Either a dotted IP address or a domain name. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>remotePort</em>&nbsp;</td><td>Which port to connect to on the remote machine. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>passwordData</em>&nbsp;</td><td>A data block that must match the data block on the server passed to SetIncomingPassword. This can be a string or can be a stream of data. Use 0 for no password. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>passwordDataLength</em>&nbsp;</td><td>The length in bytes of passwordData </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>socket</em>&nbsp;</td><td>A bound socket returned by another instance of <a class="el" href="classRakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>sendConnectionAttemptCount</em>&nbsp;</td><td>How many datagrams to send to the other system to try to connect. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>timeBetweenSendConnectionAttemptsMS</em>&nbsp;</td><td>How often to send datagrams to the other system to try to connect. After this many times, ID_CONNECTION_ATTEMPT_FAILED is returned </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>timeoutTime</em>&nbsp;</td><td>How long to keep the connection alive before dropping it on unable to send a reliable message. 0 to use the default from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS); </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>passwordData</em>&nbsp;</td><td>A data block that must match the data block on the server passed to <a class="el" href="classRakPeer.html#a6daafe75bfe4882aa46f32cb753378c" title="Sets the password for the incoming connections.">SetIncomingPassword()</a>. This can be a string or can be a stream of data. Use 0 for no password. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>passwordDataLength</em>&nbsp;</td><td>The length in bytes of passwordData. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>socket</em>&nbsp;</td><td>A bound socket returned by another instance of <a class="el" href="classRakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a>. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>sendConnectionAttemptCount</em>&nbsp;</td><td>Number of datagrams to send to the other system to try to connect. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>timeBetweenSendConnectionAttemptsMS</em>&nbsp;</td><td>Time to elapse before a datagram is sent to the other system to try to connect. After sendConnectionAttemptCount number of attempts, ID_CONNECTION_ATTEMPT_FAILED is returned. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>timeoutTime</em>&nbsp;</td><td>Time to elapse before dropping the connection if a reliable message could not be sent. 0 to use the default from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS); </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True on successful initiation. False on incorrect parameters, internal error, or too many existing peers. Returning true does not mean you connected! </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True on successful initiation. False on incorrect parameters, internal error, or too many existing peers. </dd></dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>Returning true does not mean you arebconnected! </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#578f8ed36fc9ade5e52601c24a1bbafe">RakPeerInterface</a>.</p>
 
@@ -832,9 +885,11 @@ Connect to the specified host (ip or domain name) and server port.
 <div class="memdoc">
 
 <p>
-Call this to deallocate a message returned by <a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7">Receive()</a> when you are done handling it. <dl compact><dt><b>Parameters:</b></dt><dd>
+Call this to deallocate a message returned by <a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7" title="Gets a message from the incoming message queue.">Receive()</a> when you are done handling it. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>The message to deallocate. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>Message to deallocate. </td></tr>
   </table>
 </dl>
 
@@ -859,13 +914,15 @@ Call this to deallocate a message returned by <a class="el" href="classRakPeer.h
 <div class="memdoc">
 
 <p>
-Delete the output or input layer as specified. This is not necessary to call and is only valuable for freeing memory. <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>You should only call this when disconnected </dd></dl>
+Delete the output or input layer as specified. 
+<p>
+This is not necessary to call and is only valuable for freeing memory. <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>You should only call this when disconnected. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>inputLayer</em>&nbsp;</td><td>True to mean the inputLayer, false to mean the output layer </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>inputLayer</em>&nbsp;</td><td>True to mean the inputLayer, false to mean the output layer. </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>false (failure) if connected. Otherwise true (success) </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>False (failure) if connected. Otherwise True (success) </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#5ae0c3a39a6d29458d12094988a67f40">RakPeerInterface</a>.</p>
 
@@ -915,7 +972,9 @@ Detaches a Plugin interface to run code automatically on message receipt <dl com
 <div class="memdoc">
 
 <p>
-Disables all security. <dl class="note" compact><dt><b>Note:</b></dt><dd>Must be called while offline </dd></dl>
+Disables all security. 
+<p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>Must be called while offline. </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#06966ce41b033b7c8a7e460333968c3b">RakPeerInterface</a>.</p>
 
@@ -1038,10 +1097,12 @@ Returns the compression ratio. A low compression ratio is good. Compression is f
 <div class="memdoc">
 
 <p>
-Fills the array remoteSystems with the <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> of all the systems we are connected to <dl compact><dt><b>Parameters:</b></dt><dd>
+Fills the array remoteSystems with the <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> of all the systems we are connected to. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>remoteSystems</em>&nbsp;</td><td>An array of <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> structures to be filled with the SystemAddresss of the systems we are connected to. Pass 0 to remoteSystems to only get the number of systems we are connected to </td></tr>
-    <tr><td valign="top"><tt>[in,out]</tt>&nbsp;</td><td valign="top"><em>numberOfSystems</em>&nbsp;</td><td>As input, the size of remoteSystems array. As output, the number of elements put into the array </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>remoteSystems</em>&nbsp;</td><td>An array of <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> structures, to be filled with the SystemAddresss of the systems we are connected to. Pass 0 to remoteSystems to get the number of systems we are connected to. </td></tr>
+    <tr><td valign="top"><tt>[in,out]</tt>&nbsp;</td><td valign="top"><em>numberOfSystems</em>&nbsp;</td><td>As input, the size of remoteSystems array. As output, the number of elements put into the array. </td></tr>
   </table>
 </dl>
 
@@ -1144,7 +1205,7 @@ Same as GetSystemAddressFromIndex but returns <a class="el" href="structRakNetGU
 <div class="memdoc">
 
 <p>
-Given a connected system, give us the unique GUID representing that instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a>. This will be the same on all systems connected to that instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a>, even if the external system addresses are different O(log2(n)) If <em>input</em> is UNASSIGNED_SYSTEM_ADDRESS, will return your own GUID <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Call <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads, opens the listen port.">Startup()</a> first, or the function will return UNASSIGNED_RAKNET_GUID </dd></dl>
+Given a connected system, give us the unique GUID representing that instance of <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a>. This will be the same on all systems connected to that instance of <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a>, even if the external system addresses are different O(log2(n)) If <em>input</em> is UNASSIGNED_SYSTEM_ADDRESS, will return your own GUID <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Call <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads and opens the listen port.">Startup()</a> first, or the function will return UNASSIGNED_RAKNET_GUID </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>input</em>&nbsp;</td><td>The system address of the system we are connected to </td></tr>
@@ -1181,10 +1242,12 @@ Given a connected system, give us the unique GUID representing that instance of 
 <div class="memdoc">
 
 <p>
-Gets the password passed to SetIncomingPassword <dl compact><dt><b>Parameters:</b></dt><dd>
+Gets the password passed to SetIncomingPassword. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>passwordData</em>&nbsp;</td><td>Should point to a block large enough to hold the password data you passed to <a class="el" href="classRakPeer.html#a6daafe75bfe4882aa46f32cb753378c">SetIncomingPassword()</a> </td></tr>
-    <tr><td valign="top"><tt>[in,out]</tt>&nbsp;</td><td valign="top"><em>passwordDataLength</em>&nbsp;</td><td>Maximum size of the array passwordData. Modified to hold the number of bytes actually written </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>passwordData</em>&nbsp;</td><td>Should point to a block large enough to hold the password data you passed to <a class="el" href="classRakPeer.html#a6daafe75bfe4882aa46f32cb753378c" title="Sets the password for the incoming connections.">SetIncomingPassword()</a> </td></tr>
+    <tr><td valign="top"><tt>[in,out]</tt>&nbsp;</td><td valign="top"><em>passwordDataLength</em>&nbsp;</td><td>Maximum size of the passwordData array. Modified to hold the number of bytes actually written. </td></tr>
   </table>
 </dl>
 
@@ -1359,9 +1422,36 @@ Returns the lowest ping time read or -1 if none read yet <dl compact><dt><b>Para
 <div class="memdoc">
 
 <p>
-Returns the value passed to <a class="el" href="classRakPeer.html#d2004ca40f0a88ca24f70196321d48c8">SetMaximumIncomingConnections()</a> <dl class="return" compact><dt><b>Returns:</b></dt><dd>the maximum number of incoming connections, which is always &lt;= maxConnections </dd></dl>
+Returns the value passed to <a class="el" href="classRakPeer.html#d2004ca40f0a88ca24f70196321d48c8" title="Sets the maximum number of incoming connections allowed.">SetMaximumIncomingConnections()</a>. 
+<p>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>Maximum number of incoming connections, which is always &lt;= maxConnections </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#717b4bbf42ed8f1a794158dc1e3d7a78">RakPeerInterface</a>.</p>
+
+</div>
+</div><p>
+<a class="anchor" name="23aa5e3e7f94cccd150392ff73233526"></a><!-- doxytag: member="RakPeer::GetMaximumNumberOfPeers" ref="23aa5e3e7f94cccd150392ff73233526" args="(void) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned short RakPeer::GetMaximumNumberOfPeers           </td>
+          <td>(</td>
+          <td class="paramtype">void&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const<code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Return the total number of connections we are allowed. 
+<p>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>Total number of connections allowed. </dd></dl>
+
+<p>Implements <a class="el" href="classRakPeerInterface.html#0302427800e944489b845eec5f6609d5">RakPeerInterface</a>.</p>
 
 </div>
 </div><p>
@@ -1668,7 +1758,7 @@ Returns a structure containing a large set of network statistics for the specifi
 <div class="memdoc">
 
 <p>
-Given the GUID of a connected system, give us the system address of that system. The GUID will be the same on all systems connected to that instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a>, even if the external system addresses are different Currently O(log(n)), but this may be improved in the future If <em>input</em> is UNASSIGNED_RAKNET_GUID, will return UNASSIGNED_SYSTEM_ADDRESS <dl compact><dt><b>Parameters:</b></dt><dd>
+Given the GUID of a connected system, give us the system address of that system. The GUID will be the same on all systems connected to that instance of <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a>, even if the external system addresses are different Currently O(log(n)), but this may be improved in the future If <em>input</em> is UNASSIGNED_RAKNET_GUID, will return UNASSIGNED_SYSTEM_ADDRESS <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>input</em>&nbsp;</td><td>The <a class="el" href="structRakNetGUID.html">RakNetGUID</a> of the system we are checking to see if we are connected to </td></tr>
   </table>
@@ -1894,7 +1984,10 @@ Handles an RPC reply packet. This is data returned from an RPC call <dl compact>
 <div class="memdoc">
 
 <p>
-Secures connections though a combination of SHA1, AES128, SYN Cookies, and RSA to prevent connection spoofing, replay attacks, data eavesdropping, packet tampering, and MitM attacks. There is a significant amount of processing and a slight amount of bandwidth overhead for this feature. If you accept connections, you must call this or else secure connections will not be enabled for incoming connections. If you are connecting to another system, you can call this with values for the (e and p,q) public keys before connecting to prevent MitM Define how many bits are used in RakNetDefines.h with RAKNET_RSA_FACTOR_LIMBS <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Must be called before Initialize </dd></dl>
+Secures connections though a combination of SHA1, AES128, SYN Cookies, and RSA to prevent connection spoofing, replay attacks, data eavesdropping, packet tampering, and MitM attacks. 
+<p>
+If you accept connections, you must call this for the secure connection to be enabled for incoming connections. If you are connecting to another system, you can call this with public key values for p,q and e before connecting to prevent MitM. Define how many bits are used in RakNetDefines.h with RAKNET_RSA_FACTOR_LIMBS. <dl class="note" compact><dt><b>Note:</b></dt><dd>There is a significant amount of processing and a slight amount of bandwidth overhead for this feature. </dd></dl>
+<dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Must be called before Initialize. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>pubKeyE</em>&nbsp;</td><td>A pointer to the public keys from the RSACrypt class. </td></tr>
@@ -1926,7 +2019,9 @@ Secures connections though a combination of SHA1, AES128, SYN Cookies, and RSA t
 <div class="memdoc">
 
 <p>
-Returns if the network thread is running <dl class="return" compact><dt><b>Returns:</b></dt><dd>true if the network thread is running, false otherwise </dd></dl>
+Returns true if the network thread is running. 
+<p>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True if the network thread is running, False otherwise </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#657f140de03d2db27b4cffd3229dc107">RakPeerInterface</a>.</p>
 
@@ -2022,11 +2117,14 @@ Returns if a particular systemAddress is connected to us (this also returns true
 <div class="memdoc">
 
 <p>
-Checks to see if a given IP is in the security exception list <dl compact><dt><b>Parameters:</b></dt><dd>
+Checks to see if a given IP is in the security exception list. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>IP</em>&nbsp;</td><td>address to check. </td></tr>
   </table>
 </dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True if the IP address is found in security exception list, else returns false. </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#3f4a251109ed1f18e2d7797fb751b41e">RakPeerInterface</a>.</p>
 
@@ -2100,7 +2198,9 @@ Returns if you previously called ApplyNetworkSimulator <dl class="return" compac
 <div class="memdoc">
 
 <p>
-Returns how many open connections there are at this time <dl class="return" compact><dt><b>Returns:</b></dt><dd>the number of open connections </dd></dl>
+Returns how many open connections exist at this time. 
+<p>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>Number of open connections. </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#5b008ecfe410e53b2e90be01c6d27a7d">RakPeerInterface</a>.</p>
 
@@ -2149,7 +2249,7 @@ Send a ping to the specified unconnected system. The remote system, if it is Ini
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>host</em>&nbsp;</td><td>Either a dotted IP address or a domain name. Can be 255.255.255.255 for LAN broadcast. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>remotePort</em>&nbsp;</td><td>Which port to connect to on the remote machine. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>onlyReplyOnAcceptingConnections</em>&nbsp;</td><td>Only request a reply if the remote system is accepting connections </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>connectionSocketIndex</em>&nbsp;</td><td>Index into the array of socket descriptors passed to socketDescriptors in <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads, opens the listen port.">RakPeer::Startup()</a> to send on. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>connectionSocketIndex</em>&nbsp;</td><td>Index into the array of socket descriptors passed to socketDescriptors in <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads and opens the listen port.">RakPeer::Startup()</a> to send on. </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true on success, false on failure (unknown hostname) </dd></dl>
@@ -2175,7 +2275,7 @@ Send a ping to the specified unconnected system. The remote system, if it is Ini
 <div class="memdoc">
 
 <p>
-Send a ping to the specified connected system. <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>The sender and recipient must already be started via a successful call to <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads, opens the listen port.">Startup()</a> </dd></dl>
+Send a ping to the specified connected system. <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>The sender and recipient must already be started via a successful call to <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads and opens the listen port.">Startup()</a> </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>target</em>&nbsp;</td><td>Which system to ping </td></tr>
@@ -2240,32 +2340,13 @@ Put a message back at the end of the receive queue in case you don't want to dea
 <div class="memdoc">
 
 <p>
-Gets a message from the incoming message queue. Use <a class="el" href="classRakPeer.html#f68f8d2766b45b6d951dfd62cf349a71">DeallocatePacket()</a> to deallocate the message after you are done with it. User-thread functions, such as RPC calls and the plugin function PluginInterface::Update occur here. <dl class="return" compact><dt><b>Returns:</b></dt><dd>0 if no packets are waiting to be handled, otherwise a pointer to a packet. </dd></dl>
-<dl class="note" compact><dt><b>Note:</b></dt><dd>COMMON MISTAKE: Be sure to call this in a loop, once per game tick, until it returns 0. If you only process one packet per game tick they will buffer up. sa <a class="el" href="RakNetTypes_8h.html" title="Types used by RakNet, most of which involve user code.">RakNetTypes.h</a> contains struct <a class="el" href="structPacket.html" title="This represents a user message from another system.">Packet</a> </dd></dl>
+Gets a message from the incoming message queue. 
+<p>
+Use <a class="el" href="classRakPeer.html#f68f8d2766b45b6d951dfd62cf349a71" title="Call this to deallocate a message returned by Receive() when you are done handling...">DeallocatePacket()</a> to deallocate the message after you are done with it. User-thread functions, such as RPC calls and the plugin function PluginInterface::Update occur here. <dl class="return" compact><dt><b>Returns:</b></dt><dd>0 if no packets are waiting to be handled, otherwise a pointer to a packet. </dd></dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>COMMON MISTAKE: Be sure to call this in a loop, once per game tick, until it returns 0. If you only process one packet per game tick they will buffer up. </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="RakNetTypes_8h.html" title="Types used by RakNet, most of which involve user code.">RakNetTypes.h</a> contains struct <a class="el" href="structPacket.html" title="This represents a user message from another system.">Packet</a>. </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#b92ff92041d251011bc166f6abdf119d">RakPeerInterface</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="d046c7809b8889ba708bc20881845e4d"></a><!-- doxytag: member="RakPeer::RemoveFromBanList" ref="d046c7809b8889ba708bc20881845e4d" args="(const char *IP)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void RakPeer::RemoveFromBanList           </td>
-          <td>(</td>
-          <td class="paramtype">const char *&nbsp;</td>
-          <td class="paramname"> <em>IP</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Allows a previously banned IP to connect. param[in] Dotted IP address. Can use * as a wildcard, such as 128.0.0.* will banAll IP addresses starting with 128.0.0 
-<p>Implements <a class="el" href="classRakPeerInterface.html#257193aa4581473ca2bce51207fce08e">RakPeerInterface</a>.</p>
 
 </div>
 </div><p>
@@ -2286,7 +2367,9 @@ Allows a previously banned IP to connect. param[in] Dotted IP address. Can use *
 <div class="memdoc">
 
 <p>
-Remove a specific connection previously added via AddToSecurityExceptionList <dl compact><dt><b>Parameters:</b></dt><dd>
+Remove a specific connection previously added via AddToSecurityExceptionList. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>ip</em>&nbsp;</td><td>IP address to remove. Pass 0 to remove all IP addresses. * wildcards are supported. </td></tr>
   </table>
@@ -2369,13 +2452,15 @@ Remove a specific connection previously added via AddToSecurityExceptionList <dl
 <div class="memdoc">
 
 <p>
-Sends a block of data to the specified system that you are connected to. Same as the above version, but takes a BitStream as input. <dl compact><dt><b>Parameters:</b></dt><dd>
+Sends a block of data to the specified system that you are connected to. 
+<p>
+Same as the above version, but takes a BitStream as input. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>bitStream</em>&nbsp;</td><td>The bitstream to send </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>What priority level to send on. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>How reliability to send this data. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>When using ordered or sequenced messages, what channel to order these on. Messages are only ordered relative to other messages on the same stream </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Who to send this packet to, or in the case of broadcasting who not to send it to. Use UNASSIGNED_SYSTEM_ADDRESS to specify none </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>bitStream</em>&nbsp;</td><td>Bitstream to send </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>Priority level to send on. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>How reliably to send this data. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>Channel to order the messages on, when using ordered or sequenced messages. Messages are only ordered relative to other messages on the same stream. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>System Address to send this packet to, or in the case of broadcasting, the address not to send it to. Use UNASSIGNED_SYSTEM_ADDRESS to specify none. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to. </td></tr>
   </table>
 </dl>
@@ -2442,13 +2527,17 @@ Sends a block of data to the specified system that you are connected to. Same as
 <div class="memdoc">
 
 <p>
-Sends a block of data to the specified system that you are connected to. This function only works while the connected The first byte should be a message identifier starting at ID_USER_PACKET_ENUM <dl compact><dt><b>Parameters:</b></dt><dd>
+Sends a block of data to the specified system that you are connected to. 
+<p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>This function only works while the connected. <p>
+The first byte should be a message identifier starting at ID_USER_PACKET_ENUM. </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>data</em>&nbsp;</td><td>The block of data to send </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>length</em>&nbsp;</td><td>The size in bytes of the data to send </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>What priority level to send on. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>How reliability to send this data. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>When using ordered or sequenced messages, what channel to order these on. Messages are only ordered relative to other messages on the same stream </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>data</em>&nbsp;</td><td>Block of data to send. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>length</em>&nbsp;</td><td>Size in bytes of the data to send. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>Priority level to send on. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>How reliably to send this data. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>When using ordered or sequenced messages, the channel to order these on. Messages are only ordered relative to other messages on the same stream. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Who to send this packet to, or in the case of broadcasting who not to send it to. Use UNASSIGNED_SYSTEM_ADDRESS to specify none </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to. </td></tr>
   </table>
@@ -2521,22 +2610,23 @@ Sends a block of data to the specified system that you are connected to. This fu
 <div class="memdoc">
 
 <p>
-Sends multiple blocks of data, concatenating them automatically.<p>
+Sends multiple blocks of data, concatenating them automatically. 
+<p>
 This is equivalent to: <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> bs; bs.WriteAlignedBytes(block1, blockLength1); bs.WriteAlignedBytes(block2, blockLength2); bs.WriteAlignedBytes(block3, blockLength3); Send(&amp;bs, ...)<p>
-This function only works while the connected <dl compact><dt><b>Parameters:</b></dt><dd>
+This function only works when connected. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>data</em>&nbsp;</td><td>An array of pointers to blocks of data </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lengths</em>&nbsp;</td><td>An array of integers indicating the length of each block of data </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>numParameters</em>&nbsp;</td><td>Length of the arrays data and lengths </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>What priority level to send on. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>How reliability to send this data. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>When using ordered or sequenced messages, what channel to order these on. Messages are only ordered relative to other messages on the same stream </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Who to send this packet to, or in the case of broadcasting who not to send it to. Use UNASSIGNED_SYSTEM_ADDRESS to specify none </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>Priority level to send on. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>How reliably to send this data. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>Channel to order the messages on, when using ordered or sequenced messages. Messages are only ordered relative to other messages on the same stream. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>System Address to send this packet to, or in the case of broadcasting, the address not to send it to. Use UNASSIGNED_SYSTEM_ADDRESS to specify none. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to. </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>False on bad input. True otherwise. </dd></dl>
-<dl class="note" compact><dt><b>Note:</b></dt><dd>Doesn't support the router plugin </dd></dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>Doesn't support the router plugin. </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#bc2ecea237f8805b0b498048abb90eeb">RakPeerInterface</a>.</p>
 
@@ -2568,10 +2658,13 @@ This function only works while the connected <dl compact><dt><b>Parameters:</b><
 <div class="memdoc">
 
 <p>
-"Send" to yourself rather than a remote system. The message will be processed through the plugins and returned to the game as usual This function works anytime The first byte should be a message identifier starting at ID_USER_PACKET_ENUM <dl compact><dt><b>Parameters:</b></dt><dd>
+"Send" to yourself rather than a remote system. 
+<p>
+The message will be processed through the plugins and returned to the game as usual. This function works anytime <dl class="note" compact><dt><b>Note:</b></dt><dd>The first byte should be a message identifier starting at ID_USER_PACKET_ENUM </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>data</em>&nbsp;</td><td>The block of data to send </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>length</em>&nbsp;</td><td>The size in bytes of the data to send </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>data</em>&nbsp;</td><td>Block of data to send. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>length</em>&nbsp;</td><td>Size in bytes of the data to send. </td></tr>
   </table>
 </dl>
 
@@ -2681,7 +2774,9 @@ Enables or disables frequency table tracking. This is required to get a frequenc
 <div class="memdoc">
 
 <p>
-Sets the password incoming connections must match in the call to Connect (defaults to none). Pass 0 to passwordData to specify no password This is a way to set a low level password for all incoming connections. To selectively reject connections, implement your own scheme using <a class="el" href="classRakPeer.html#4a7c586a8be0d977354a3cfd09bab6b7">CloseConnection()</a> to remove unwanted connections <dl compact><dt><b>Parameters:</b></dt><dd>
+Sets the password for the incoming connections. 
+<p>
+The password must match in the call to Connect (defaults to none). Pass 0 to passwordData to specify no password. This is a way to set a low level password for all incoming connections. To selectively reject connections, implement your own scheme using <a class="el" href="classRakPeer.html#4a7c586a8be0d977354a3cfd09bab6b7" title="Close the connection to another host (if we initiated the connection it will disconnect...">CloseConnection()</a> to remove unwanted connections. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>passwordData</em>&nbsp;</td><td>A data block that incoming connections must match. This can be just a password, or can be a stream of data. Specify 0 for no password data </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>passwordDataLength</em>&nbsp;</td><td>The length in bytes of passwordData </td></tr>
@@ -2736,7 +2831,10 @@ Enable or disable allowing frequent connections from the same IP adderss This is
 <div class="memdoc">
 
 <p>
-Sets how many incoming connections are allowed. If this is less than the number of players currently connected, no more players will be allowed to connect. If this is greater than the maximum number of peers allowed, it will be reduced to the maximum number of peers allowed. Defaults to 0, meaning by default, nobody can connect to you <dl compact><dt><b>Parameters:</b></dt><dd>
+Sets the maximum number of incoming connections allowed. 
+<p>
+If the number of incoming connections is less than the number of players currently connected, no more players will be allowed to connect. If this is greater than the maximum number of peers allowed, it will be reduced to the maximum number of peers allowed.<p>
+Defaults to 0, meaning by default, nobody can connect to you <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>numberAllowed</em>&nbsp;</td><td>Maximum number of incoming connections allowed. </td></tr>
   </table>
@@ -3021,16 +3119,13 @@ If you need code to run in the same thread as RakNet's update thread, this funct
 <div class="memdoc">
 
 <p>
-Connect to the specified network ID (Platform specific console function). 
+Stops the network threads and closes all connections. 
 <p>
-Does built-in NAT traversal <dl compact><dt><b>Parameters:</b></dt><dd>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkServiceId</em>&nbsp;</td><td>Network ID structure for the online service </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>passwordData</em>&nbsp;</td><td>A data block that must match the data block on the server passed to SetIncomingPassword. This can be a string or can be a stream of data. Use 0 for no password. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>passwordDataLength</em>&nbsp;</td><td>The length in bytes of passwordData Stops the network threads and closes all connections. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>blockDuration</em>&nbsp;</td><td>How long, in milliseconds, you should wait for all remaining messages to go out, including ID_DISCONNECTION_NOTIFICATION. If 0, it doesn't wait at all. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>If blockDuration &gt; 0, ID_DISCONNECTION_NOTIFICATION will be sent on this channel </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>disconnectionNotificationPriority</em>&nbsp;</td><td>Priority to send ID_DISCONNECTION_NOTIFICATION on. If you set it to 0 then the disconnection notification won't be sent </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>blockDuration</em>&nbsp;</td><td>Wait time(milli seconds) for all remaining messages to go out, including ID_DISCONNECTION_NOTIFICATION. If 0, it doesn't wait at all. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>Channel on which ID_DISCONNECTION_NOTIFICATION will be sent, if blockDuration &gt; 0. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>disconnectionNotificationPriority</em>&nbsp;</td><td>Priority of sending ID_DISCONNECTION_NOTIFICATION. If set to 0, the disconnection notification won't be sent. </td></tr>
   </table>
 </dl>
 
@@ -3082,18 +3177,19 @@ Does built-in NAT traversal <dl compact><dt><b>Parameters:</b></dt><dd>
 <div class="memdoc">
 
 <p>
-Starts the network threads, opens the listen port. 
+Starts the network threads and opens the listen port. 
 <p>
-You must call this before calling <a class="el" href="classRakPeer.html#c7ba51ef72df78a7da4b7e6d5e2c8276" title="Connect to the specified host (ip or domain name) and server port.">Connect()</a>. Multiple calls while already active are ignored. To call this function again with different settings, you must first call <a class="el" href="classRakPeer.html#ab69808cd87c19f1800ac36d8c8e584c" title="Connect to the specified network ID (Platform specific console function).">Shutdown()</a>. <dl class="note" compact><dt><b>Note:</b></dt><dd>Call SetMaximumIncomingConnections if you want to accept incoming connections <p>
+You must call this before calling <a class="el" href="classRakPeer.html#c7ba51ef72df78a7da4b7e6d5e2c8276" title="Connect to the specified host (ip or domain name) and server port.">Connect()</a>. <dl class="note" compact><dt><b>Note:</b></dt><dd>Multiple calls while already active are ignored. To call this function again with different settings, you must first call <a class="el" href="classRakPeer.html#ab69808cd87c19f1800ac36d8c8e584c" title="Stops the network threads and closes all connections.">Shutdown()</a>. <p>
+Call SetMaximumIncomingConnections if you want to accept incoming connections. <p>
 Set _RAKNET_THREADSAFE in RakNetDefines.h if you want to call <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> functions from multiple threads (not recommended, as it is much slower and <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> is already asynchronous). </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>maxConnections</em>&nbsp;</td><td>The maximum number of connections between this instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> and another instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a>. Required so the network can preallocate and for thread safety. A pure client would set this to 1. A pure server would set it to the number of allowed clients.- A hybrid would set it to the sum of both types of connections </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>localPort</em>&nbsp;</td><td>The port to listen for connections on. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_threadSleepTimer</em>&nbsp;</td><td>How many ms to Sleep each internal update cycle. With new congestion control, the best results will be obtained by passing 10. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>socketDescriptors</em>&nbsp;</td><td>An array of <a class="el" href="structSocketDescriptor.html" title="Describes the local socket to use for RakPeer::Startup.">SocketDescriptor</a> structures to force <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> to listen on a particular IP address or port (or both). Each <a class="el" href="structSocketDescriptor.html" title="Describes the local socket to use for RakPeer::Startup.">SocketDescriptor</a> will represent one unique socket. Do not pass redundant structures. To listen on a specific port, you can pass SocketDescriptor(myPort,0); such as for a server. For a client, it is usually OK to just pass SocketDescriptor(); </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>maxConnections</em>&nbsp;</td><td>Maximum number of connections between this instance of <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a> and another instance of <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a>. Required so that the network can preallocate and for thread safety. A pure client would set this to 1. A pure server would set it to the number of allowed clients.A hybrid would set it to the sum of both types of connections. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>localPort</em>&nbsp;</td><td>Port to listen for connections on. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_threadSleepTimer</em>&nbsp;</td><td>Time in milliseconds for the thread to Sleep in each internal update cycle. With new congestion control, the best results will be obtained by passing 10. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>socketDescriptors</em>&nbsp;</td><td>An array of <a class="el" href="structSocketDescriptor.html" title="Describes the local socket to use for RakPeer::Startup.">SocketDescriptor</a> structures to force <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> to listen on a particular IP address or port (or both). Each <a class="el" href="structSocketDescriptor.html" title="Describes the local socket to use for RakPeer::Startup.">SocketDescriptor</a> will represent one unique socket. Do not pass redundant structures. To listen on a specific port, you can pass SocketDescriptor(myPort,0); for a server. For a client, it is usually OK to pass SocketDescriptor(); </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>socketDescriptorCount</em>&nbsp;</td><td>The size of the <em>socketDescriptors</em> array. Pass 1 if you are not sure what to pass. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>threadPriority</em>&nbsp;</td><td>Passed to thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. WARNING!!! On the PS3, 0 means highest priority! </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>threadPriority</em>&nbsp;</td><td>Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. WARNING!!! On the PS3, 0 means highest priority! </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>False on failure (can't create socket or thread), true on success. </dd></dl>
@@ -3189,7 +3285,7 @@ This is an array of pointers to RemoteSystemStruct This allows us to preallocate
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="RakPeer_8h.html">RakPeer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Nov 24 10:28:58 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Dec 5 08:09:16 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>
