@@ -9,7 +9,7 @@ Everything connects and sends normally.
 Failure conditions:
 Expected values from ping/pong do not occur within expected time.
 */
-int CrossConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int CrossConnectionConvertTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 
 	static const unsigned short SERVER_PORT=1234;
@@ -22,18 +22,18 @@ int CrossConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 	RakPeerInterface *server,*client;
 	unsigned short clientPort;
 	bool gotNotification;
-	server=RakNetworkFactory::GetRakPeerInterface();
-	destroyList.Clear(false,__FILE__,__LINE__);
-	destroyList.Push(server,__FILE__,__LINE__);
-	client=RakNetworkFactory::GetRakPeerInterface();
-	destroyList.Push(client,__FILE__,__LINE__);
+	server=RakPeerInterface::GetInstance();
+	destroyList.Clear(false,_FILE_AND_LINE_);
+	destroyList.Push(server,_FILE_AND_LINE_);
+	client=RakPeerInterface::GetInstance();
+	destroyList.Push(client,_FILE_AND_LINE_);
 
 	
 
-	server->Startup(1,0,&SocketDescriptor(SERVER_PORT,0), 1);
+	server->Startup(1,&SocketDescriptor(SERVER_PORT,0), 1);
 	server->SetMaximumIncomingConnections(1);
 
-	client->Startup(1,0,&SocketDescriptor(0,0), 1);
+	client->Startup(1,&SocketDescriptor(0,0), 1);
 
 	client->Ping(serverIP,SERVER_PORT,false);
 
@@ -41,12 +41,12 @@ int CrossConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 	//	pl.LogHeader();
 	//	rakPeer->AttachPlugin(&pl);
 
-	RakNetTime connectionAttemptTime=0,connectionResultDeterminationTime=0,nextTestStartTime=0;
+	TimeMS connectionAttemptTime=0,connectionResultDeterminationTime=0,nextTestStartTime=0;
 
-	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
+	TimeMS entryTime=GetTimeMS();//Loop entry time
 
 	bool printedYet=false;
-	while(RakNet::GetTime()-entryTime<10000)//Run for 10 Secoonds
+	while(GetTimeMS()-entryTime<10000)//Run for 10 Secoonds
 	{
 
 		Packet *p;
@@ -75,30 +75,30 @@ int CrossConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 					printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
 				gotNotification=true;
 			}
-			else if (p->data[0]==ID_PING)
+			else if (p->data[0]==ID_UNCONNECTED_PING)
 			{
 
 				if (isVerbose)
 					printf("ID_PING\n");
-				connectionAttemptTime=RakNet::GetTime()+1000;
+				connectionAttemptTime=GetTimeMS()+1000;
 				p->systemAddress.ToString(false,clientIP);
 				clientPort=p->systemAddress.port;
 				gotNotification=false;
 			}
-			else if (p->data[0]==ID_PONG)
+			else if (p->data[0]==ID_UNCONNECTED_PONG)
 			{
 
 				if (isVerbose)
-					printf("ID_PONG\n");
-				RakNetTime sendPingTime;
-				RakNet::BitStream bs(p->data,p->length,false);
+					printf("ID_UNCONNECTED_PONG\n");
+				TimeMS sendPingTime;
+				BitStream bs(p->data,p->length,false);
 				bs.IgnoreBytes(1);
 				bs.Read(sendPingTime);
-				RakNetTime rtt = RakNet::GetTime() - sendPingTime;
+				TimeMS rtt = GetTimeMS() - sendPingTime;
 				if (rtt/2<=500)
-					connectionAttemptTime=RakNet::GetTime()+1000-rtt/2;
+					connectionAttemptTime=GetTimeMS()+1000-rtt/2;
 				else
-					connectionAttemptTime=RakNet::GetTime();
+					connectionAttemptTime=GetTimeMS();
 				gotNotification=false;
 			}
 		}
@@ -126,35 +126,35 @@ int CrossConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 					printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
 				gotNotification=true;
 			}
-			else if (p->data[0]==ID_PING)
+			else if (p->data[0]==ID_UNCONNECTED_PING)
 			{
 
 				if (isVerbose)
 					printf("ID_PING\n");
-				connectionAttemptTime=RakNet::GetTime()+1000;
+				connectionAttemptTime=GetTimeMS()+1000;
 				p->systemAddress.ToString(false,clientIP);
 				clientPort=p->systemAddress.port;
 				gotNotification=false;
 			}
-			else if (p->data[0]==ID_PONG)
+			else if (p->data[0]==ID_UNCONNECTED_PONG)
 			{
 
 				if (isVerbose)
-					printf("ID_PONG\n");
-				RakNetTime sendPingTime;
-				RakNet::BitStream bs(p->data,p->length,false);
+					printf("ID_UNCONNECTED_PONG\n");
+				TimeMS sendPingTime;
+				BitStream bs(p->data,p->length,false);
 				bs.IgnoreBytes(1);
 				bs.Read(sendPingTime);
-				RakNetTime rtt = RakNet::GetTime() - sendPingTime;
+				TimeMS rtt = GetTimeMS() - sendPingTime;
 				if (rtt/2<=500)
-					connectionAttemptTime=RakNet::GetTime()+1000-rtt/2;
+					connectionAttemptTime=GetTimeMS()+1000-rtt/2;
 				else
-					connectionAttemptTime=RakNet::GetTime();
+					connectionAttemptTime=GetTimeMS();
 				gotNotification=false;
 			}
 		}
 
-		if (connectionAttemptTime!=0 && RakNet::GetTime()>=connectionAttemptTime)
+		if (connectionAttemptTime!=0 && GetTimeMS()>=connectionAttemptTime)
 		{
 
 			if (isVerbose)
@@ -164,9 +164,9 @@ int CrossConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 			server->Connect(clientIP,clientPort,0,0);
 			client->Connect(serverIP,SERVER_PORT,0,0);
 
-			connectionResultDeterminationTime=RakNet::GetTime()+2000;
+			connectionResultDeterminationTime=GetTimeMS()+2000;
 		}
-		if (connectionResultDeterminationTime!=0 && RakNet::GetTime()>=connectionResultDeterminationTime)
+		if (connectionResultDeterminationTime!=0 && GetTimeMS()>=connectionResultDeterminationTime)
 		{
 			connectionResultDeterminationTime=0;
 			if (gotNotification==false)
@@ -188,10 +188,10 @@ int CrossConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 			client->CloseConnection(client->GetSystemAddressFromIndex(0),true,0);
 
 			//if (isServer==false)
-			nextTestStartTime=RakNet::GetTime()+1000;
+			nextTestStartTime=GetTimeMS()+1000;
 
 		}
-		if (nextTestStartTime!=0 && RakNet::GetTime()>=nextTestStartTime)
+		if (nextTestStartTime!=0 && GetTimeMS()>=nextTestStartTime)
 		{
 			client->Ping(serverIP,SERVER_PORT,false);
 			nextTestStartTime=0;
@@ -206,14 +206,14 @@ int CrossConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 
 }
 
-RakNet::RakString CrossConnectionConvertTest::GetTestName()
+RakString CrossConnectionConvertTest::GetTestName()
 {
 
 	return "CrossConnectionConvertTest";
 
 }
 
-RakNet::RakString CrossConnectionConvertTest::ErrorCodeToString(int errorCode)
+RakString CrossConnectionConvertTest::ErrorCodeToString(int errorCode)
 {
 
 	switch (errorCode)
@@ -239,7 +239,7 @@ void CrossConnectionConvertTest::DestroyPeers()
 	int theSize=destroyList.Size();
 
 	for (int i=0; i < theSize; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+		RakPeerInterface::DestroyInstance(destroyList[i]);
 
 }
 

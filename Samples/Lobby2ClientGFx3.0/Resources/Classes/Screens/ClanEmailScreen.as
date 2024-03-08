@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 import gfx.controls.CheckBox;
@@ -57,92 +57,92 @@ class Screens.ClanEmailScreen extends Screen
 	//	clans_KickAndBlacklistUser_Button.addEventListener("click", this, "f2c_Clans_KickAndBlacklistUser");
 				
 		//Add callbacks for C++
-	//	GameDelegate.addCallBack("c2f_Clans_Leave", this, "c2f_Clans_Leave");
-	//	GameDelegate.addCallBack("c2f_Clans_SendJoinInvitation", this, "c2f_Clans_SendJoinInvitation");
-		GameDelegate.addCallBack("c2f_Clans_WithdrawJoinInvitation", this, "c2f_Clans_WithdrawJoinInvitation");
-	//	GameDelegate.addCallBack("c2f_Clans_AcceptJoinInvitation", this, "c2f_Clans_AcceptJoinInvitation");
-	//	GameDelegate.addCallBack("c2f_Clans_RejectJoinInvitation", this, "c2f_Clans_RejectJoinInvitation");
-	//	GameDelegate.addCallBack("c2f_Clans_SendJoinRequest", this, "c2f_Clans_SendJoinRequest");
-	//	GameDelegate.addCallBack("c2f_Clans_WithdrawJoinRequest", this, "c2f_Clans_WithdrawJoinRequest");
-	//	GameDelegate.addCallBack("c2f_Clans_AcceptJoinRequest", this, "c2f_Clans_AcceptJoinRequest");
-	//	GameDelegate.addCallBack("c2f_Clans_RejectJoinRequest", this, "c2f_Clans_RejectJoinRequest");
-	//	GameDelegate.addCallBack("c2f_Clans_KickAndBlacklistUser", this, "c2f_Clans_KickAndBlacklistUser");
-	//	GameDelegate.addCallBack("c2f_Clans_UnblacklistUser", this, "c2f_Clans_UnblacklistUser");
+	//	ExternalInterface.addCallback("c2f_Clans_Leave", this, c2f_Clans_Leave);
+	//	ExternalInterface.addCallback("c2f_Clans_SendJoinInvitation", this, c2f_Clans_SendJoinInvitation);
+		ExternalInterface.addCallback("c2f_Clans_WithdrawJoinInvitation", this, c2f_Clans_WithdrawJoinInvitation);
+	//	ExternalInterface.addCallback("c2f_Clans_AcceptJoinInvitation", this, c2f_Clans_AcceptJoinInvitation);
+	//	ExternalInterface.addCallback("c2f_Clans_RejectJoinInvitation", this, c2f_Clans_RejectJoinInvitation);
+	//	ExternalInterface.addCallback("c2f_Clans_SendJoinRequest", this, c2f_Clans_SendJoinRequest);
+	//	ExternalInterface.addCallback("c2f_Clans_WithdrawJoinRequest", this, c2f_Clans_WithdrawJoinRequest);
+	//	ExternalInterface.addCallback("c2f_Clans_AcceptJoinRequest", this, c2f_Clans_AcceptJoinRequest);
+	//	ExternalInterface.addCallback("c2f_Clans_RejectJoinRequest", this, c2f_Clans_RejectJoinRequest);
+	//	ExternalInterface.addCallback("c2f_Clans_KickAndBlacklistUser", this, c2f_Clans_KickAndBlacklistUser);
+	//	ExternalInterface.addCallback("c2f_Clans_UnblacklistUser", this, c2f_Clans_UnblacklistUser);
 		
 		super.VOnFinishedLoading();
 	}
 	
 /*	public function f2c_Clans_Leave():Void
 	{
-		GameDelegate.call("f2c_Clans_Leave", [
+		ExternalInterface.call("f2c_Clans_Leave", ternalInterface.call("f2c_Clans_Leave", [
 											  clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text,
-											  clans_Leave_dissolveIfClanLeader_Checkbox.selected], _root);
+											  clans_Le);
 	}*/
 
 /*	public function f2c_Clans_SendJoinInvitation():Void
 	{
-		GameDelegate.call("f2c_Clans_SendJoinInvitation", [clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text,
-														   clans_targetHandle_EditBox.text], _root);
+		ExternalInterface.call("f2c_Clans_SendJoinInvitation", clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text,
+														   clans_targetHandle_EditBox.text);
 	}*/
 
 	public function f2c_Clans_WithdrawJoinInvitation():Void
 	{
-		GameDelegate.call("f2c_Clans_WithdrawJoinInvitation", [clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text,
-														   clans_targetHandle_EditBox.text], _root);
+		ExternalInterface.call("f2c_Clans_WithdrawJoinInvitation", clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text,
+														   clans_targetHandle_EditBox.text);
 	}
 
 /*	public function f2c_Clans_AcceptJoinInvitation():Void
 	{
-		GameDelegate.call("f2c_Clans_AcceptJoinInvitation", [clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text,
-														   clans_AcceptJoinInvitation_failIfAlreadyInClan_Checkbox.selected], _root);
+		ExternalInterface.call("f2c_Clans_AcceptJoinInvitation", clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text,
+														   clans_AcceptJoinInvitation_failIfAlreadyInClan_Checkbox.selected);
 	}*/
 /*
 	public function f2c_Clans_RejectJoinInvitation():Void
 	{
-		GameDelegate.call("f2c_Clans_RejectJoinInvitation", [clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text
-														   ], _root);
+		ExternalInterface.call("f2c_Clans_RejectJoinInvitation", clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text
+														   );
 	}*/
 
 
 /*	public function f2c_Clans_SendJoinRequest():Void
 	{
-		GameDelegate.call("f2c_Clans_SendJoinRequest", [clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text
-														   ], _root);
+		ExternalInterface.call("f2c_Clans_SendJoinRequest", clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text
+														   );
 	}*/
 
 /*	public function f2c_Clans_WithdrawJoinRequest():Void
 	{
-		GameDelegate.call("f2c_Clans_WithdrawJoinRequest", [clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text
-														   ], _root);
+		ExternalInterface.call("f2c_Clans_WithdrawJoinRequest", clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text
+														   );
 	}*/
 
 /*	public function f2c_Clans_AcceptJoinRequest():Void
 	{
-		GameDelegate.call("f2c_Clans_AcceptJoinRequest", [clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text,
+		ExternalInterface.call("f2c_Clans_AcceptJoinRequest", clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text,
 														   clans_AcceptJoinRequest_requestingUserHandle_EditBox.text, 
-														   clans_AcceptJoinRequest_failIfAlreadyInClan_Checkbox.selected], _root);
+														   clans_AcceptJoinRequest_failIfAlreadyInClan_Checkbox.selected);
 	}
 
 	public function f2c_Clans_RejectJoinRequest():Void
 	{
-		GameDelegate.call("f2c_Clans_RejectJoinRequest", [clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text,
-														   clans_RejectJoinRequest_requestingUserHandle_EditBox.text], _root);
+		ExternalInterface.call("f2c_Clans_RejectJoinRequest", clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text,
+														   clans_RejectJoinRequest_requestingUserHandle_EditBox.text);
 	}*/
 
 /*	public function f2c_Clans_KickAndBlacklistUser():Void
 	{
-		GameDelegate.call("f2c_Clans_KickAndBlacklistUser", [clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text,
+		ExternalInterface.call("f2c_Clans_KickAndBlacklistUser", clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text,
 														   clans_KickAndBlacklistUser_targetHandle_EditBox.text,
 														   clans_KickAndBlacklistUser_kick_Checkbox.selected,
 														   clans_KickAndBlacklistUser_blacklist_Checkbox.selected,
 														   clans_KickAndBlacklistUser_reason_EditBox.text
-														   ], _root);
+														   );
 	}*/
 
 /*	public function f2c_Clans_UnblacklistUser():Void
 	{
-		GameDelegate.call("f2c_Clans_UnblacklistUser", [clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text,
-														   clans_targetHandle_EditBox.text], _root);
+		ExternalInterface.call("f2c_Clans_UnblacklistUser", clanHandle_EditBox.text, subject_EditBox.text, body_EditBox.text, emailStatus_EditBox.text,
+														   clans_targetHandle_EditBox.text);
 	}*/
 
 

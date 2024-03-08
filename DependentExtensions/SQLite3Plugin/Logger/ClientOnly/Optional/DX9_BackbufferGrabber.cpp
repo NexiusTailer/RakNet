@@ -57,7 +57,7 @@ void DX9_BackbufferGrabber::LockBackbufferCopy(RakNet::RGBImageBlob *blob)
 	hr = deviceUsedToInit->StretchRect(pBackBuffer, NULL, pRenderTargetSurface, NULL, D3DTEXF_NONE);
 	hr = deviceUsedToInit->GetRenderTargetData(pRenderTargetSurface,pDestSurface);
 
-	//	RakNetTimeMS t1 = RakNet::GetTimeMS();
+	//	RakNet::TimeMS t1 = RakNet::GetTimeMS();
 	D3DLOCKED_RECT lockedRect;
 	unsigned int videoMemoryDestOffset=0;
 	unsigned int pDataOffset=0;

@@ -14,7 +14,7 @@ using namespace RakNet;
 
 // Verbosity level currently supports 0 (low), 1 (medium), 2 (high)
 // Buffer must be hold enough to hold the output string.  See the source to get an idea of how many bytes will be output
-void RAK_DLL_EXPORT StatisticsToString( RakNetStatistics *s, char *buffer, int verbosityLevel )
+void RAK_DLL_EXPORT RakNet::StatisticsToString( RakNetStatistics *s, char *buffer, int verbosityLevel )
 {
 	if ( s == 0 )
 	{
@@ -27,10 +27,10 @@ void RAK_DLL_EXPORT StatisticsToString( RakNetStatistics *s, char *buffer, int v
 		sprintf(buffer,
 			"Bytes per second sent     %"PRINTF_64_BIT_MODIFIER"u\n"
 			"Bytes per second received %"PRINTF_64_BIT_MODIFIER"u\n"
-			"Current packetloss        %.1f%%\n",
+			"Current packetloss        %.0f%%\n",
 			(long long unsigned int) s->valueOverLastSecond[ACTUAL_BYTES_SENT],
 			(long long unsigned int) s->valueOverLastSecond[ACTUAL_BYTES_RECEIVED],
-			s->packetlossLastSecond*100.0f
+			s->packetlossLastSecond
 			);
 	}
 	else if (verbosityLevel==1)
@@ -42,8 +42,8 @@ void RAK_DLL_EXPORT StatisticsToString( RakNetStatistics *s, char *buffer, int v
 			"Total actual bytes sent            %"PRINTF_64_BIT_MODIFIER"u\n"
 			"Total actual bytes received        %"PRINTF_64_BIT_MODIFIER"u\n"
 			"Total message bytes pushed         %"PRINTF_64_BIT_MODIFIER"u\n"
-			"Current packetloss                 %.1f%%\n"
-			"Average packetloss                 %.1f%%\n"
+			"Current packetloss                 %.0f%%\n"
+			"Average packetloss                 %.0f%%\n"
 			"Elapsed connection time in seconds %"PRINTF_64_BIT_MODIFIER"u\n",
 			(long long unsigned int) s->valueOverLastSecond[ACTUAL_BYTES_SENT],
 			(long long unsigned int) s->valueOverLastSecond[ACTUAL_BYTES_RECEIVED],
@@ -51,8 +51,8 @@ void RAK_DLL_EXPORT StatisticsToString( RakNetStatistics *s, char *buffer, int v
 			(long long unsigned int) s->runningTotal[ACTUAL_BYTES_SENT],
 			(long long unsigned int) s->runningTotal[ACTUAL_BYTES_RECEIVED],
 			(long long unsigned int) s->runningTotal[USER_MESSAGE_BYTES_PUSHED],
-			s->packetlossLastSecond*100.0f,
-			s->packetlossTotal*100.0f,
+			s->packetlossLastSecond,
+			s->packetlossTotal,
 			(long long unsigned int) (uint64_t)((RakNet::GetTimeUS()-s->connectionStartTime)/1000000)
 			);
 
@@ -98,8 +98,8 @@ void RAK_DLL_EXPORT StatisticsToString( RakNetStatistics *s, char *buffer, int v
 			"Bytes in send buffer, by priority    %i,%i,%i,%i\n"
 			"Messages in resend buffer            %i\n"
 			"Bytes in resend buffer               %"PRINTF_64_BIT_MODIFIER"u\n"
-			"Current packetloss                   %.1f%%\n"
-			"Average packetloss                   %.1f%%\n"
+			"Current packetloss                   %.0f%%\n"
+			"Average packetloss                   %.0f%%\n"
 			"Elapsed connection time in seconds   %"PRINTF_64_BIT_MODIFIER"u\n",
 			(long long unsigned int) s->valueOverLastSecond[ACTUAL_BYTES_SENT],
 			(long long unsigned int) s->valueOverLastSecond[ACTUAL_BYTES_RECEIVED],
@@ -119,8 +119,8 @@ void RAK_DLL_EXPORT StatisticsToString( RakNetStatistics *s, char *buffer, int v
 			(unsigned int) s->bytesInSendBuffer[IMMEDIATE_PRIORITY],(unsigned int) s->bytesInSendBuffer[HIGH_PRIORITY],(unsigned int) s->bytesInSendBuffer[MEDIUM_PRIORITY],(unsigned int) s->bytesInSendBuffer[LOW_PRIORITY],
 			s->messagesInResendBuffer,
 			(long long unsigned int) s->bytesInResendBuffer,
-			s->packetlossLastSecond*100.0f,
-			s->packetlossTotal*100.0f,
+			s->packetlossLastSecond,
+			s->packetlossTotal,
 			(long long unsigned int) (uint64_t)((RakNet::GetTimeUS()-s->connectionStartTime)/1000000)
 			);
 

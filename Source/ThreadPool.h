@@ -140,7 +140,7 @@ struct RAK_DLL_EXPORT ThreadPool
 protected:
 	// It is valid to cancel input before it is processed.  To do so, lock the inputQueue with inputQueueMutex,
 	// Scan the list, and remove the item you don't want.
-	SimpleMutex inputQueueMutex, outputQueueMutex, workingThreadCountMutex, runThreadsMutex;
+	RakNet::SimpleMutex inputQueueMutex, outputQueueMutex, workingThreadCountMutex, runThreadsMutex;
 
 	void* (*perThreadDataFactory)();
 	void (*perThreadDataDestructor)(void*);
@@ -173,9 +173,9 @@ protected:
 	/// \internal
 	int numThreadsWorking;
 	/// \internal
-	SimpleMutex numThreadsRunningMutex;
+	RakNet::SimpleMutex numThreadsRunningMutex;
 
-	SignaledEvent quitAndIncomingDataEvents;
+	RakNet::SignaledEvent quitAndIncomingDataEvents;
 };
 
 #include "ThreadPool.h"
@@ -258,7 +258,7 @@ void* WorkerThread( void* arguments )
 			if (returnOutput)
 			{
 				threadPool->outputQueueMutex.Lock();
-				threadPool->outputQueue.Push(callbackOutput, __FILE__, __LINE__ );
+				threadPool->outputQueue.Push(callbackOutput, _FILE_AND_LINE_ );
 				threadPool->outputQueueMutex.Unlock();
 			}			
 		}
@@ -304,6 +304,7 @@ bool ThreadPool<InputType, OutputType>::StartThreads(int numThreads, int stackSi
 	runThreadsMutex.Lock();
 	if (runThreads==true)
 	{
+		// Already running
 		runThreadsMutex.Unlock();
 		return false;
 	}
@@ -382,8 +383,8 @@ template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::AddInput(OutputType (*workerThreadCallback)(InputType, bool *returnOutput, void* perThreadData), InputType inputData)
 {
 	inputQueueMutex.Lock();
-	inputQueue.Push(inputData, __FILE__, __LINE__ );
-	inputFunctionQueue.Push(workerThreadCallback, __FILE__, __LINE__ );
+	inputQueue.Push(inputData, _FILE_AND_LINE_ );
+	inputFunctionQueue.Push(workerThreadCallback, _FILE_AND_LINE_ );
 	inputQueueMutex.Unlock();
 
 	quitAndIncomingDataEvents.SetEvent();
@@ -392,7 +393,7 @@ template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::AddOutput(OutputType outputData)
 {
 	outputQueueMutex.Lock();
-	outputQueue.Push(outputData, __FILE__, __LINE__ );
+	outputQueue.Push(outputData, _FILE_AND_LINE_ );
 	outputQueueMutex.Unlock();
 }
 template <class InputType, class OutputType>
@@ -441,19 +442,19 @@ void ThreadPool<InputType, OutputType>::Clear(void)
 	{
 		runThreadsMutex.Unlock();
 		inputQueueMutex.Lock();
-		inputFunctionQueue.Clear(__FILE__, __LINE__);
-		inputQueue.Clear(__FILE__, __LINE__);
+		inputFunctionQueue.Clear(_FILE_AND_LINE_);
+		inputQueue.Clear(_FILE_AND_LINE_);
 		inputQueueMutex.Unlock();
 
 		outputQueueMutex.Lock();
-		outputQueue.Clear(__FILE__, __LINE__);
+		outputQueue.Clear(_FILE_AND_LINE_);
 		outputQueueMutex.Unlock();
 	}
 	else
 	{
-		inputFunctionQueue.Clear(__FILE__, __LINE__);
-		inputQueue.Clear(__FILE__, __LINE__);
-		outputQueue.Clear(__FILE__, __LINE__);
+		inputFunctionQueue.Clear(_FILE_AND_LINE_);
+		inputQueue.Clear(_FILE_AND_LINE_);
+		outputQueue.Clear(_FILE_AND_LINE_);
 	}
 }
 template <class InputType, class OutputType>
@@ -510,14 +511,14 @@ void ThreadPool<InputType, OutputType>::RemoveOutputAtIndex(unsigned index)
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::ClearInput(void)
 {
-	inputQueue.Clear(__FILE__,__LINE__);
-	inputFunctionQueue.Clear(__FILE__,__LINE__);
+	inputQueue.Clear(_FILE_AND_LINE_);
+	inputFunctionQueue.Clear(_FILE_AND_LINE_);
 }
 
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::ClearOutput(void)
 {
-	outputQueue.Clear(__FILE__,__LINE__);
+	outputQueue.Clear(_FILE_AND_LINE_);
 }
 template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::IsWorking(void)

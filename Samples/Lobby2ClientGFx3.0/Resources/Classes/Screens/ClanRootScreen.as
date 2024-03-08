@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 import Screens.ClanGeneralScreen;
@@ -42,7 +42,7 @@ class Screens.ClanRootScreen extends ScreenWithPageNavigator
 		btnSearch.addEventListener("click", this, "Search");
 				
 		//Add callbacks for C++
-		GameDelegate.addCallBack("c2f_Clans_GetList", this, "c2f_Clans_GetList");
+		ExternalInterface.addCallback("c2f_Clans_GetList", this, c2f_Clans_GetList);
 		
 		super.VOnFinishedLoading();
 	}
@@ -59,7 +59,7 @@ class Screens.ClanRootScreen extends ScreenWithPageNavigator
 		mMovieClipList = new Array();
 		mCurrentPage = 0;
 		GoToPage( 1 );
-		GameDelegate.call("f2c_Clans_GetList", [], _root);	
+		ExternalInterface.call("f2c_Clans_GetList");	
 	}
 	
 	public function CreateClan():Void

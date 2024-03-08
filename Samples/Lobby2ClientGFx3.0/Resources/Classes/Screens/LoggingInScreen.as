@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 
@@ -23,15 +23,15 @@ class Screens.LoggingInScreen extends Screen
 		cancelFromLoggingIn.addEventListener("click", this, "cancelFromLoggingInFunc");
 				
 		//Add callbacks for C++
-		GameDelegate.addCallBack("c2f_NotifyLoginResultFailure", this, "c2f_NotifyLoginResultFailure");
-		GameDelegate.addCallBack("c2f_NotifyLoginResultSuccess", this, "c2f_NotifyLoginResultSuccess");
+		ExternalInterface.addCallback("c2f_NotifyLoginResultFailure", this, c2f_NotifyLoginResultFailure);
+		ExternalInterface.addCallback("c2f_NotifyLoginResultSuccess", this, c2f_NotifyLoginResultSuccess);
 		
 		super.VOnFinishedLoading();
 	}
 	
 	function cancelFromLoggingInFunc():Void
 	{
-		GameDelegate.call("f2c_DisconnectFromServer", [], _root);
+		ExternalInterface.call("f2c_DisconnectFromServer");
 		//_root.gotoAndPlay("Disconnected");
 		LobbyInterface.Instance.ShowScreen( ScreenID.CONNECTION );
 	}

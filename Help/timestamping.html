@@ -27,7 +27,7 @@ Fortunately, RakNet deals with this for you, compensating for both system time a
 <BR>
 See <A HREF="creatingpackets.html">Creating Packets</A> for instructions on how to encode timestamps into your packets.<BR>
 <BR>
-Note: It's recommended that you use the included class, <I>GetTime</I>, to get your system time as this is a high resolution timer.  You can also use the windows function timeGetTime(), but this is less accurate.  Timestamping also depends on automatic pinging, so you will need to call the function SetOccasionalPing to use it.
+Note: It's recommended that you use the time functions found in GetTime.h to get your system time as this is a high resolution timer.  You can also use the windows function timeGetTime(), but this is less accurate.  Timestamping also depends on automatic pinging, so you will need to call the function SetOccasionalPing to use it.
 </TD>
 </TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">

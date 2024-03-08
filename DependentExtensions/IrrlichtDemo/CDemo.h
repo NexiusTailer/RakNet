@@ -72,7 +72,7 @@ public:
 	bool IsKeyDown(EKEY_CODE keyCode) const;
 	bool IsMovementKeyDown(void) const;
 	// RakNet: Decouple the origin of the shot from the camera, so the network code can use this same graphical effect
-	RakNetTime shootFromOrigin(core::vector3df camPosition, core::vector3df camAt);
+	RakNet::TimeMS shootFromOrigin(core::vector3df camPosition, core::vector3df camAt);
 	const core::aabbox3df& GetSyndeyBoundingBox(void) const;
 	void PlayDeathSound(core::vector3df position);
 	void EnableInput(bool enabled);
@@ -144,20 +144,20 @@ private:
 	void UpdateRakNet(void);
 	// Callbacks from RakNet::UDPProxyClientResultHandler
 	virtual void OnForwardingSuccess(const char *proxyIPAddress, unsigned short proxyPort,
-		SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
+		RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
 	virtual void OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort,
-		SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
-	virtual void OnNoServersOnline(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
-	virtual void OnRecipientNotConnected(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin);
-	virtual void OnAllServersBusy(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
-	virtual void OnForwardingInProgress(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
+		RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
+	virtual void OnNoServersOnline(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
+	virtual void OnRecipientNotConnected(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin);
+	virtual void OnAllServersBusy(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
+	virtual void OnForwardingInProgress(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
 	// Holds output messages
 	DataStructures::Multilist<ML_QUEUE, RakNet::RakString> outputMessages;
-	RakNetTime whenOutputMessageStarted;
+	RakNet::TimeMS whenOutputMessageStarted;
 	void PushMessage(RakNet::RakString rs);
 	const char *GetCurrentMessage(void);
 	// Systems to try to connect to with NAT punchthrough
-	DataStructures::Multilist<ML_QUEUE, RakNetGUID> systemsToConnectTo;
+	DataStructures::Multilist<ML_QUEUE, RakNet::RakNetGUID> systemsToConnectTo;
 	bool isConnectedToNATPunchthroughServer;
 	// We use this array to store the current state of each key
 	bool KeyIsDown[KEY_KEY_CODES_COUNT];

@@ -461,7 +461,7 @@ bool CreatePatch(const char *old, unsigned oldsize, char *_new, unsigned int new
 	offtout(len-32, header + 8);
 	//memcpy(*out+outWriteOffset, patch.GetOutput(), patch.GetTotalOutputSize());
 	//outWriteOffset+=patch.GetTotalOutputSize();
-	//patch.Clear(__FILE__, __LINE__);
+	//patch.Clear(_FILE_AND_LINE_);
 	
 
 	/* Write compressed diff data */
@@ -477,7 +477,7 @@ bool CreatePatch(const char *old, unsigned oldsize, char *_new, unsigned int new
 	}
 //	memcpy(*out+outWriteOffset, patch.GetOutput(), patch.GetTotalOutputSize());
 //	outWriteOffset+=patch.GetTotalOutputSize();
-//	patch.Clear(__FILE__, __LINE__);
+//	patch.Clear(_FILE_AND_LINE_);
 //	if (bz2err != BZ_OK)
 //		errx(1, "BZ2_bzWrite, bz2err = %d", bz2err);
 //	BZ2_bzWriteClose(&bz2err, pfbz2, 0, NULL, NULL);
@@ -491,7 +491,7 @@ bool CreatePatch(const char *old, unsigned oldsize, char *_new, unsigned int new
 	offtout(newsize - len, header + 16);
 //	memcpy(*out+outWriteOffset, patch.GetOutput(), patch.GetTotalOutputSize());
 //	outWriteOffset+=patch.GetTotalOutputSize();
-//	patch.Clear(__FILE__, __LINE__);
+//	patch.Clear(_FILE_AND_LINE_);
 
 	/* Write compressed extra data */
 //	if ((pfbz2 = BZ2_bzWriteOpen(&bz2err, pf, 9, 0, 0)) == NULL)
@@ -506,7 +506,7 @@ bool CreatePatch(const char *old, unsigned oldsize, char *_new, unsigned int new
 	}
 //	memcpy(*out+outWriteOffset, patch.GetOutput(), patch.GetTotalOutputSize());
 //	outWriteOffset+=patch.GetTotalOutputSize();
-//	patch.Clear(__FILE__, __LINE__);
+//	patch.Clear(_FILE_AND_LINE_);
 //	if (bz2err != BZ_OK)
 //		errx(1, "BZ2_bzWrite, bz2err = %d", bz2err);
 //	BZ2_bzWriteClose(&bz2err, pfbz2, 0, NULL, NULL);

@@ -1,11 +1,22 @@
-RakNet 3.902
+RakNet 4.0
 Copyright 2002-2005 Kevin Jenkins (rakkar@jenkinssoftware.com).
 This API and the code herein created by and wholly and privately owned by Kevin Jenkins except where specifically indicated otherwise.
 Licensed under the "RakNet" brand by Jenkins Software and subject to the terms of the relevant licensing agreement available at http://www.jenkinssoftware.com
 
-------------- IMPORTANT -----------------
+------------------------------------------
+C# support
+------------------------------------------
 
-For now, we are no longer going to release static libraries or DLLs ourselves due to the large conflicts caused by this. We've found that if you don't have the same compiler on the same OS, using the same versions, with the same chipset it will often crash or fail to load. Even if it does load, it often doesn't link due to templates anyway. If building was a complicated process I could see pursuing this further, but it's not.
+See Help\swigtutorial.html
+
+------------------------------------------
+Upgrading from version 3
+------------------------------------------
+
+See 3.x_to_4.x_upgrade.txt
+
+------------- Building Static Libraries for C++ -----------------
+
 1. Open the solution file, RakNet_vc8.sln
 2. Right click "LibStatic"
 3. Click build.
@@ -14,20 +25,25 @@ If you want to use source (recommended), just include all header and cpp files u
 See Help/compilersetup.html or go to the forums http://www.jenkinssoftware.com/raknet/forum/ if you need to
 
 ------------------------------------------
+XBOX and PS3 users
+-----------------------------------------
+Contact us at sales@jenkinssoftware.com to request an evaluation.
+
+------------------------------------------
 Windows users (Visual Studio 2005)
 -----------------------------------------
-Load RakNet.sln and convert.
+Load RakNet_VS2005.sln and convert.
 If it doesn't work, see Help/compilersetup.html or the training video at http://www.jenkinssoftware.com/raknet/manual/helloworldvideo.html on how to setup the project.
 
 -----------------------------------------
 Windows users (.NET 2003)
 -----------------------------------------
-Load RakNet.sln
+Load RakNet_VS2003.sln
 
 -----------------------------------------
 Windows users (VC6)
 -----------------------------------------
-Not officially supported.
+Not supported, but you can get by if you directly include the source.
 
 -----------------------------------------
 CYGWIN users
@@ -100,6 +116,51 @@ IPod
 -----------------------------------------
 Depending on what version you target, you may have to change two defines to not use 64 bit integers and floats or doubles. See 
 See http://www.jenkinssoftware.com/forum/index.php?topic=2717.0
+
+-----------------------------------------
+Android
+-----------------------------------------
+
+You will need the latest CYWGIN and the android NDK to build native code on the android. Under CYWGIN, you will need to run ndk-build on a directory for RakNet.
+
+1. Under cygwin, create the RakNet directory somewhere, such as under samples.
+For example, if you create the path \cygwin\home\Kevin\android-ndk-r4b\samples\RakNet
+
+2. I copied the Android.Manifest.xml and other files from another sample
+
+3. Under jni, you will need the following Android.mk
+
+LOCAL_PATH := $(call my-dir)
+include $(CLEAR_VARS)
+LOCAL_MODULE    := RakNet
+MY_PREFIX := $(LOCAL_PATH)/RakNetSources/
+MY_SOURCES := $(wildcard $(MY_PREFIX)*.cpp)
+LOCAL_SRC_FILES += $(MY_SOURCES:$(MY_PREFIX)%=RakNetSources/%) 
+include $(BUILD_SHARED_LIBRARY)
+
+This version of Android.mk assumes there is a directory called RakNetSources, for example 
+cygwin\home\Kevin\android-ndk-r4b\samples\RakNet\jni\RakNetSources
+
+Under RakNetSources should be the /Source directory to RakNet. Rather than copy the files I used junction.exe 
+http://technet.microsoft.com/en-us/sysinternals/bb896768.aspx
+
+The command I used to create the junction was:
+D:\cygwin\home\Kevin\android-ndk-r4b\samples\RakNet\jni\junction.exe -s D:\cygwin\home\Kevin\android-ndk-r4b\samples\RakNet\jni\RakNetSources D:\RakNet4\Source
+
+To unjunction I used:
+D:\cygwin\home\Kevin\android-ndk-r4b\samples\RakNet\jni\junction.exe -d D:\cygwin\home\Kevin\android-ndk-r4b\samples\RakNet\jni\RakNetSources
+
+From within the CYWGIN enviroment, navigate to ome\Kevin\android-ndk-r4b\samples\RakNet. Then type
+../../ndk-build
+
+Everything should build and you should end up with a .so file.
+
+You should then be able to create a project in eclipse, and import cygwin\home\Kevin\android-ndk-r4b\samples\RakNet
+
+-----------------------------------------
+Consoles
+-----------------------------------------
+Contact rakkar@jenkinssoftware.com for code with Console support.
 
 -----------------------------------------
 Package notes

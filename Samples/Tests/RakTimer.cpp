@@ -22,21 +22,21 @@ RakTimer::~RakTimer(void)
 	}
 	void RakTimer::Start()
 	{
-		startTime=RakNet::GetTime();
+		startTime=RakNet::GetTimeMS();
 
 	}
     void RakTimer::Pause()
 	{
-	pauseOffset=(int)(RakNet::GetTime()-startTime);
+	pauseOffset=(int)(RakNet::GetTimeMS()-startTime);
 	}
 	void RakTimer::Resume()
 	{
-	startTime=RakNet::GetTime()-pauseOffset;
+	startTime=RakNet::GetTimeMS()-pauseOffset;
 	}
 
 	bool RakTimer::IsExpired()
 	{
 
-	return (RakNet::GetTime()-startTime>timerLength);
+	return (RakNet::GetTimeMS()-startTime>timerLength);
 	
 	}

@@ -9,14 +9,14 @@
 #ifndef __AUTOPATCHER_REPOSITORY_INTERFACE_H
 #define __AUTOPATCHER_REPOSITORY_INTERFACE_H
 
-class FileList;
-namespace RakNet
-{
-	class BitStream;
-}
-
 #include "IncrementalReadInterface.h"
 #include "SimpleMutex.h"
+
+namespace RakNet
+{
+/// Forward declarations
+class FileList;
+class BitStream;
 
 /// An interface used by AutopatcherServer to get the data necessary to run an autopatcher.  This is up to you to implement for custom repository solutions.
 class AutopatcherRepositoryInterface : public IncrementalReadInterface
@@ -41,7 +41,12 @@ public:
 
 	/// \return Whatever this function returns is sent from the AutopatcherServer to the AutopatcherClient when one of the above functions returns false.
 	virtual const char *GetLastError(void) const=0;
+
+	/// \return Passed to FileListTransfer::Send() as the _chunkSize parameter.
+	virtual const int GetIncrementalReadChunkSize(void) const=0;
 };
+
+} // namespace RakNet
 
 #endif
 

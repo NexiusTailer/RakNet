@@ -11,15 +11,21 @@
 #ifndef __LOG_COMMAND_PARSER
 #define __LOG_COMMAND_PARSER
 
-class RakPeerInterface;
-
 #include "CommandParserInterface.h"
 #include "Export.h"
+
+namespace RakNet
+{
+/// Forward declarations
+class RakPeerInterface;
 
 /// \brief Adds the ability to send logging output to a remote console
 class RAK_DLL_EXPORT LogCommandParser : public CommandParserInterface
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(LogCommandParser)
+
 	LogCommandParser();
 	~LogCommandParser();
 
@@ -106,6 +112,8 @@ protected:
 	/// This is so I can save the current transport provider, solely so I can use it without having the user pass it to Log
 	TransportInterface *trans;
 };
+
+} // namespace RakNet
 
 #endif
 

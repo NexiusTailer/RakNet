@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 import gfx.controls.CheckBox;
@@ -62,10 +62,10 @@ class Screens.EmailScreen extends ScreenWithPageNavigator
 		btnDelete.addEventListener("click", this, "DeleteSelectedEmails");
 						
 		//Add callbacks for C++
-		GameDelegate.addCallBack("c2f_SendEmail", this, "c2f_SendEmail");
-		GameDelegate.addCallBack("c2f_DeleteEmail", this, "c2f_DeleteEmail");
-		GameDelegate.addCallBack("c2f_UpdateEmail", this, "c2f_UpdateEmail");
-		GameDelegate.addCallBack("c2f_GetEmails", this, "c2f_GetEmails");
+		ExternalInterface.addCallback("c2f_SendEmail", this, c2f_SendEmail);
+		ExternalInterface.addCallback("c2f_DeleteEmail", this, c2f_DeleteEmail);
+		ExternalInterface.addCallback("c2f_UpdateEmail", this, c2f_UpdateEmail);
+		ExternalInterface.addCallback("c2f_GetEmails", this, c2f_GetEmails);
 		
 		mcMail._visible = false;
 		
@@ -95,13 +95,13 @@ class Screens.EmailScreen extends ScreenWithPageNavigator
 	{
 		if ( mcMail.GetToField().length > 0 )
 		{
-			GameDelegate.call("f2c_SendEmail", [
+			ExternalInterface.call("f2c_SendEmail", 
 			mcMail.GetToField(),//emailSendRecipient0EditBox.text, emailSendRecipient1EditBox.text, emailSendRecipient2EditBox.text,
 			"", "", "", "", "", "", "",//emailSendRecipient3EditBox.text, emailSendRecipient4EditBox.text, emailSendRecipient5EditBox.text,
 			//emailSendRecipient6EditBox.text, emailSendRecipient7EditBox.text,
 			mcMail.GetSubjectField(), mcMail.GetMsgField(),//emailSubjectEditBox.text, emailBodyEditBox.text,
 			""//emailStatusEditBox.text
-			], _root);
+			);
 			
 			HideMail();
 		}
@@ -127,7 +127,7 @@ class Screens.EmailScreen extends ScreenWithPageNavigator
 		ConsoleWindow.Trace("f2c_DeleteEmail(), emailID = " + emailID);
 		if ( emailID != null )
 		{
-			GameDelegate.call("f2c_DeleteEmail", [String(emailID)], _root);
+			ExternalInterface.call("f2c_DeleteEmail", String(emailID));
 		}
 	}
 
@@ -154,10 +154,10 @@ class Screens.EmailScreen extends ScreenWithPageNavigator
 
 	function f2c_UpdateEmail():Void
 	{
-		GameDelegate.call("f2c_UpdateEmail", [updateEmailIDEditBox.text,
+		ExternalInterface.call("f2c_UpdateEmail", updateEmailIDEditBox.text,
 		  updateStatusFlagCheckbox.selected, updateMarkedReadCheckbox.selected, 
 		  newStatusFlagEditbox.text, isNowMarkedReadCheckbox.selected
-		  ], _root);
+		  );
 	}
 
 	function c2f_UpdateEmail(resultIdentifier:String):Void
@@ -182,7 +182,7 @@ class Screens.EmailScreen extends ScreenWithPageNavigator
 
 	function f2c_GetEmails():Void
 	{
-		GameDelegate.call("f2c_GetEmails", [], _root);
+		ExternalInterface.call("f2c_GetEmails");
 	}
 	
 	public function DeleteEmail( emailEntry:MovieClip ):Void

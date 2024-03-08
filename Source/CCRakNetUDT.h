@@ -13,12 +13,15 @@
 /// Set to 4 if you are using the iPod Touch TG. See http://www.jenkinssoftware.com/forum/index.php?topic=2717.0
 #define CC_TIME_TYPE_BYTES 8
 
+namespace RakNet
+{
 
 #if CC_TIME_TYPE_BYTES==8
-typedef RakNetTimeUS CCTimeType;
+typedef uint64_t CCTimeType;
 #else
-typedef RakNetTimeMS CCTimeType;
+typedef uint32_t CCTimeType;
 #endif
+
 typedef uint24_t DatagramSequenceNumberType;
 typedef double BytesPerMicrosecond;
 typedef double BytesPerSecond;
@@ -41,9 +44,6 @@ typedef double MicrosecondsPerByte;
 //#define CC_DEBUG_PRINTF_3(x,y,z) printf(x,y,z)
 //#define CC_DEBUG_PRINTF_4(x,y,z,a) printf(x,y,z,a)
 //#define CC_DEBUG_PRINTF_5(x,y,z,a,b) printf(x,y,z,a,b)
-
-namespace RakNet
-{
 
 /// \brief Encapsulates UDT congestion control, as used by RakNet
 /// Requirements:
@@ -182,7 +182,7 @@ class CCRakNetUDT
 
 	protected:
 	// --------------------------- PROTECTED VARIABLES ---------------------------
-	/// time interval between outgoing packets, in microseconds
+	/// time interval between bytes, in microseconds.
 	/// Only used when slowStart==false
 	/// Increased over time as we continually get messages
 	/// Decreased on NAK and timeout
@@ -320,7 +320,7 @@ class CCRakNetUDT
 
 	/// Most recent values read into the corresponding lists
 	/// Used during the beginning of a connection, when the median filter is still inaccurate
-	BytesPerMicrosecond mostRecentPacketPairValue, mostRecentPacketArrivalHistory;
+	BytesPerMicrosecond mostRecentPacketArrivalHistory;
 
 	bool hasWrittenToPacketPairReceiptHistory;
 

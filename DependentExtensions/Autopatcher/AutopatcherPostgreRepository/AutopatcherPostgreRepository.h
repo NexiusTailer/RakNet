@@ -19,10 +19,13 @@ typedef struct pg_conn PGconn;
 struct pg_result;
 typedef struct pg_result PGresult;
 
-class FileListProgress;
 
 #ifndef __POSTGRE_REPOSITORY_H
 #define __POSTGRE_REPOSITORY_H
+
+namespace RakNet
+{
+class FileListProgress;
 
 /// \ingroup Autopatcher
 ///  An implementation of the AutopatcherRepositoryInterface to use PostgreSQL to store the relevant data
@@ -90,8 +93,16 @@ public:
 	/// \param[out] preallocatedDestination Write your data here
 	/// \return The number of bytes read, or 0 if none
 	virtual unsigned int GetFilePart( const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context);
+
+	/// \return Passed to FileListTransfer::Send() as the _chunkSize parameter.
+	virtual const int GetIncrementalReadChunkSize(void) const;
+
+	// Use a separate connection for file parts, because PGConn is not threadsafe
+	PGconn *filePartConnection;
+	SimpleMutex filePartConnectionMutex;
 };
 
-#endif
-#endif
+} // namespace RakNet
 
+#endif
+#endif

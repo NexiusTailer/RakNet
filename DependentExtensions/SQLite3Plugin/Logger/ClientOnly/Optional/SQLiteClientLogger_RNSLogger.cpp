@@ -18,7 +18,7 @@ SQLiteClientLogger_RakNetStatistics::~SQLiteClientLogger_RakNetStatistics()
 }
 void SQLiteClientLogger_RakNetStatistics::Update(void)
 {
-	RakNetTimeUS time = RakNet::GetTimeUS();
+	RakNet::TimeUS time = RakNet::GetTimeUS();
 	if (time-lastUpdate>1000000)
 	{
 		lastUpdate=time;

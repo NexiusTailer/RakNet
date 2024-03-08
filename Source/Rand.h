@@ -35,6 +35,8 @@ extern float RAK_DLL_EXPORT frandomMT( void );
 /// \note not threadSafe, use an instance of RakNetRandom if necessary per thread
 extern void RAK_DLL_EXPORT fillBufferMT( void *buffer, unsigned int bytes );
 
+namespace RakNet {
+
 // Same thing as above functions, but not global
 class RAK_DLL_EXPORT RakNetRandom
 {
@@ -52,5 +54,7 @@ protected:
 	unsigned int *next;
 	int left;
 };
+
+} // namespace RakNet
 
 #endif

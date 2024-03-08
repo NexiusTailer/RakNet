@@ -19,7 +19,7 @@ CDemo::CDemo(bool f, bool m, bool s, bool a, bool v, bool fsaa, video::E_DRIVER_
  currentScene(-2), backColor(0), statusText(0), inOutFader(0),
  quakeLevelMesh(0), quakeLevelNode(0), skyboxNode(0), model1(0), model2(0),
  campFire(0), metaSelector(0), mapSelector(0), sceneStartTime(0),
- timeForThisScene(0), isConnectedToNATPunchthroughServer(false)
+ timeForThisScene(0), isConnectedToNATPunchthroughServer(false), whenOutputMessageStarted(0)
 {
 	for (u32 i=0; i<KEY_KEY_CODES_COUNT; ++i)
 		KeyIsDown[i] = false;
@@ -445,7 +445,7 @@ void CDemo::loadSceneData()
 			sm->getMeshManipulator()->transformMesh ( quakeLevelMesh->getMesh(i), m );
 		}
 
-		quakeLevelNode = sm->addOctTreeSceneNode(
+		quakeLevelNode = sm->addOctreeSceneNode(
 			quakeLevelMesh->getMesh( scene::quake3::E_Q3_MESH_GEOMETRY)
 			);
 		if (quakeLevelNode)
@@ -454,7 +454,7 @@ void CDemo::loadSceneData()
 			quakeLevelNode->setVisible(true);
 
 			// create map triangle selector
-			mapSelector = sm->createOctTreeTriangleSelector(quakeLevelMesh->getMesh(0),
+			mapSelector = sm->createOctreeTriangleSelector(quakeLevelMesh->getMesh(0),
 				quakeLevelNode, 128);
 
 			// if not using shader and no gamma it's better to use more lighting, because
@@ -738,7 +738,7 @@ void CDemo::EnableInput(bool enabled)
 }
 // RakNet - change shoot from assuming the camera, to taking any starting location
 // This way the same function can be called from the network
-RakNetTime CDemo::shootFromOrigin(core::vector3df camPosition, core::vector3df camAt)
+RakNet::TimeMS CDemo::shootFromOrigin(core::vector3df camPosition, core::vector3df camAt)
 {
 	scene::ISceneManager* sm = device->getSceneManager();
 	scene::ICameraSceneNode* camera = sm->getActiveCamera();
@@ -840,7 +840,7 @@ RakNetTime CDemo::shootFromOrigin(core::vector3df camPosition, core::vector3df c
 		playSound(ballSound);
 #endif
 
-	return (RakNetTime) time;
+	return (RakNet::TimeMS) time;
 }
 
 void CDemo::shoot()
@@ -858,7 +858,7 @@ void CDemo::shoot()
 	br->demo=this;
 	br->position=camPosition;
 	br->shotDirection=camAt;
-	br->shotLifetime=RakNet::GetTime() + shootFromOrigin(camPosition, camAt);
+	br->shotLifetime=RakNet::GetTimeMS() + shootFromOrigin(camPosition, camAt);
 	replicaManager3->Reference(br);
 }
 
@@ -927,9 +927,9 @@ void CDemo::createParticleImpacts()
 /// RakNet stuff
 void CDemo::UpdateRakNet(void)
 {
-	SystemAddress facilitatorSystemAddress(DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP, DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_PORT);
-	Packet *packet;
-	RakNetTime curTime = RakNet::GetTime();
+	RakNet::SystemAddress facilitatorSystemAddress(DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP, DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_PORT);
+	RakNet::Packet *packet;
+	RakNet::TimeMS curTime = RakNet::GetTimeMS();
 	RakNet::RakString targetName;
 	for (packet=rakPeer->Receive(); packet; rakPeer->DeallocatePacket(packet), packet=rakPeer->Receive())
 	{
@@ -1010,9 +1010,9 @@ void CDemo::UpdateRakNet(void)
 			break;
 		case ID_NAT_TARGET_NOT_CONNECTED:
 			{
-				RakNetGUID recipientGuid;
+				RakNet::RakNetGUID recipientGuid;
 				RakNet::BitStream bs(packet->data,packet->length,false);
-				bs.IgnoreBytes(sizeof(MessageID));
+				bs.IgnoreBytes(sizeof(RakNet::MessageID));
 				bs.Read(recipientGuid);
 				targetName=recipientGuid.ToString();
 				PushMessage(RakNet::RakString("NAT target ") + targetName + RakNet::RakString(" not connected."));
@@ -1020,9 +1020,9 @@ void CDemo::UpdateRakNet(void)
 			break;
 		case ID_NAT_TARGET_UNRESPONSIVE:
 			{
-				RakNetGUID recipientGuid;
+				RakNet::RakNetGUID recipientGuid;
 				RakNet::BitStream bs(packet->data,packet->length,false);
-				bs.IgnoreBytes(sizeof(MessageID));
+				bs.IgnoreBytes(sizeof(RakNet::MessageID));
 				bs.Read(recipientGuid);
 				targetName=recipientGuid.ToString();
 				PushMessage(RakNet::RakString("NAT target ") + targetName + RakNet::RakString(" unresponsive."));
@@ -1030,9 +1030,9 @@ void CDemo::UpdateRakNet(void)
 			break;
 		case ID_NAT_CONNECTION_TO_TARGET_LOST:
 			{
-				RakNetGUID recipientGuid;
+				RakNet::RakNetGUID recipientGuid;
 				RakNet::BitStream bs(packet->data,packet->length,false);
-				bs.IgnoreBytes(sizeof(MessageID));
+				bs.IgnoreBytes(sizeof(RakNet::MessageID));
 				bs.Read(recipientGuid);
 				targetName=recipientGuid.ToString();
 				PushMessage(RakNet::RakString("NAT target connection to ") + targetName + RakNet::RakString(" lost."));
@@ -1040,9 +1040,9 @@ void CDemo::UpdateRakNet(void)
 			break;
 		case ID_NAT_ALREADY_IN_PROGRESS:
 			{
-				RakNetGUID recipientGuid;
+				RakNet::RakNetGUID recipientGuid;
 				RakNet::BitStream bs(packet->data,packet->length,false);
-				bs.IgnoreBytes(sizeof(MessageID));
+				bs.IgnoreBytes(sizeof(RakNet::MessageID));
 				bs.Read(recipientGuid);
 				targetName=recipientGuid.ToString();
 				PushMessage(RakNet::RakString("NAT punchthrough to ") + targetName + RakNet::RakString(" in progress (skipping)."));
@@ -1055,7 +1055,7 @@ void CDemo::UpdateRakNet(void)
 				if (weAreSender)
 				{
 					PushMessage(RakNet::RakString("Punchthrough to ") + targetName + RakNet::RakString(" failed. Using proxy."));
-					udpProxyClient->RequestForwarding(facilitatorSystemAddress, UNASSIGNED_SYSTEM_ADDRESS, packet->guid, 7000);
+					udpProxyClient->RequestForwarding(facilitatorSystemAddress, RakNet::UNASSIGNED_SYSTEM_ADDRESS, packet->guid, 7000);
 				}
 				else
 				{
@@ -1078,7 +1078,7 @@ void CDemo::UpdateRakNet(void)
 			}
 			break;
 		case ID_ADVERTISE_SYSTEM:
-			if (packet->guid!=rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
+			if (packet->guid!=rakPeer->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS))
 			{
 				char hostIP[32];
 				packet->systemAddress.ToString(false,hostIP);
@@ -1097,17 +1097,18 @@ void CDemo::UpdateRakNet(void)
 		// Good response, let the PHPDirectoryServer2 class handle the data
 		// If resultCode is not an empty string, then we got something other than a table
 		// (such as delete row success notification, or the message is for HTTP only and not for this class).
-		HTTPReadResult readResult = phpDirectoryServer2->ProcessHTTPRead(httpResult);
+		RakNet::HTTPReadResult readResult = phpDirectoryServer2->ProcessHTTPRead(httpResult);
 
-		if (readResult==HTTP_RESULT_GOT_TABLE)
+		if (readResult==RakNet::HTTP_RESULT_GOT_TABLE)
 		{
 			/// Got a table which was stored internally. Print it out
 			const DataStructures::Table *games = phpDirectoryServer2->GetLastDownloadedTable();
 			// __GAME_NAME is an automatic column passed to PHPDirectoryServer::UploadTable
 			unsigned int gameNameIndex = games->ColumnIndex("__GAME_NAME");
-			// RakNetGUID is a column we manually added using our own GUID with PHPDirectoryServer::SetField
-			// We need to use RakNetGUID because NAT punchthrough refers to systems by RakNetGUID, rather than by SystemAddress
+			// RakNet::RakNetGUID is a column we manually added using our own GUID with PHPDirectoryServer::SetField
+			// We need to use RakNet::RakNetGUID because NAT punchthrough refers to systems by RakNet::RakNetGUID, rather than by RakNet::SystemAddress
 			unsigned int guidIndex = games->ColumnIndex("RakNetGUID");
+			RakAssert(guidIndex!=(unsigned int )-1);
 			DataStructures::Table::Row *row;
 			unsigned int i;
 			unsigned int tableSize=0, connectionCount=0;
@@ -1119,14 +1120,14 @@ void CDemo::UpdateRakNet(void)
 					RakAssert(gameNameIndex!=-1);
 					row = cur->data[i];
 					// Make sure it's the same game, since the PHPDirectoryServer can return other games too
-					if (gameNameIndex!=-1 && strcmp(row->cells[gameNameIndex]->c, "IrrlichtDemo")==0)
+					if (gameNameIndex!=(unsigned int) -1 && strcmp(row->cells[gameNameIndex]->c, "IrrlichtDemo")==0)
 					{
 						tableSize++;
 						RakNet::RakString guidStr = row->cells[guidIndex]->c;
-						RakNetGUID guid;
+						RakNet::RakNetGUID guid;
 						guid.FromString(guidStr.C_String());
 						// Connect as long as I'm not connecting to myself
-						if (guid!=rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
+						if (guid!=rakPeer->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS))
 						{
 							connectionCount++;
 							systemsToConnectTo.Push(guid);
@@ -1148,7 +1149,7 @@ void CDemo::UpdateRakNet(void)
 	{
 		while (systemsToConnectTo.GetSize()>0)
 		{
-			RakNetGUID g = systemsToConnectTo.Pop(__FILE__,__LINE__);
+			RakNet::RakNetGUID g = systemsToConnectTo.Pop(_FILE_AND_LINE_);
 			natPunchthroughClient->OpenNAT(g, facilitatorSystemAddress);
 			targetName=g.ToString();
 			PushMessage(RakNet::RakString("Punchthrough to ") + targetName + RakNet::RakString(" started."));
@@ -1169,31 +1170,31 @@ void CDemo::UpdateRakNet(void)
 	}	
 }
 void CDemo::OnForwardingSuccess(const char *proxyIPAddress, unsigned short proxyPort,
-										SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
+										RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 {
 	RakNet::RakString targetName = targetAddress.ToString();
 	PushMessage(RakNet::RakString("Proxy forwarding to ") + targetName + RakNet::RakString(" through %s:%i succeeded. Connecting.", proxyIPAddress, proxyPort));
 	rakPeer->Connect(proxyIPAddress, proxyPort,0,0);
 }
 void CDemo::OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort,
-											 SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
+											 RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 {
 	RakNet::RakString targetName = proxyIPAddress;
 	PushMessage(RakNet::RakString("%s has setup forwarding to us through proxy %s:%i.\n", sourceAddress.ToString(false), proxyIPAddress,proxyPort));
 }
-void CDemo::OnNoServersOnline(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
+void CDemo::OnNoServersOnline(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 {
 	PushMessage(RakNet::RakString("RakNet::RakString(No proxy servers online. Unable to connect to %s.", sourceAddress.ToString(true)));
 }
-void CDemo::OnRecipientNotConnected(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)
+void CDemo::OnRecipientNotConnected(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)
 {
 	PushMessage(RakNet::RakString("Failure: Recipient not connected to coordinator.\n"));
 }
-void CDemo::OnAllServersBusy(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
+void CDemo::OnAllServersBusy(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 {
 	PushMessage(RakNet::RakString("No proxy servers available. Unable to connect to %s.", sourceAddress.ToString(true)));
 }
-void CDemo::OnForwardingInProgress(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
+void CDemo::OnForwardingInProgress(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 {
 	PushMessage(RakNet::RakString("Forwarding to %s already in progress. Ignoring.", sourceAddress.ToString(true)));
 }
@@ -1209,18 +1210,20 @@ KeyIsDown[KEY_KEY_D];
 }
 void CDemo::PushMessage(RakNet::RakString rs)
 {
-	outputMessages.Push(rs,__FILE__,__LINE__);
+	outputMessages.Push(rs,_FILE_AND_LINE_);
 	if (whenOutputMessageStarted==0)
-		whenOutputMessageStarted=RakNet::GetTime();
+	{
+		whenOutputMessageStarted=RakNet::GetTimeMS();
+	}
 }
 const char *CDemo::GetCurrentMessage(void)
 {
 	if (outputMessages.GetSize()==0)
 		return "";
-	RakNetTime curTime = RakNet::GetTime();
+	RakNet::TimeMS curTime = RakNet::GetTimeMS();
 	if (curTime-whenOutputMessageStarted>2500)
 	{
-		outputMessages.Pop(__FILE__,__LINE__);
+		outputMessages.Pop(_FILE_AND_LINE_);
 		whenOutputMessageStarted=curTime;
 	}
 

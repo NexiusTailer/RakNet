@@ -11,8 +11,8 @@ TestHelpers::~TestHelpers(void)
 void TestHelpers::StandardServerPrep(RakPeerInterface *&server)
 {
 
-	server=RakNetworkFactory::GetRakPeerInterface();
-	server->Startup(1,30,&SocketDescriptor(60000,0),1);
+	server=RakPeerInterface::GetInstance();
+	server->Startup(1,&SocketDescriptor(60000,0),1);
 	server->SetMaximumIncomingConnections(1);
 
 }
@@ -20,9 +20,9 @@ void TestHelpers::StandardServerPrep(RakPeerInterface *&server)
 void TestHelpers::StandardClientPrep(RakPeerInterface *&client)
 {
 
-	client=RakNetworkFactory::GetRakPeerInterface();
+	client=RakPeerInterface::GetInstance();
 
-	client->Startup(1,30,&SocketDescriptor(),1);
+	client->Startup(1,&SocketDescriptor(),1);
 
 }
 
@@ -30,7 +30,7 @@ void TestHelpers::StandardServerPrep(RakPeerInterface *&server,DataStructures::L
 {
 
 	StandardServerPrep(server);
-	destroyList.Push(server,__FILE__,__LINE__);
+	destroyList.Push(server,_FILE_AND_LINE_);
 
 }
 
@@ -38,7 +38,7 @@ void TestHelpers::StandardClientPrep(RakPeerInterface *&client,DataStructures::L
 {
 
 	StandardClientPrep(client);
-	destroyList.Push(client,__FILE__,__LINE__);
+	destroyList.Push(client,_FILE_AND_LINE_);
 
 }
 

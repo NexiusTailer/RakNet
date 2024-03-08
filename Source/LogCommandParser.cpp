@@ -3,9 +3,9 @@
 
 #include "LogCommandParser.h"
 #include "TransportInterface.h"
-
+#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
 #include <memory.h>
-
+#endif
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
@@ -15,6 +15,10 @@
 #ifdef _MSC_VER
 #pragma warning( push )
 #endif
+
+using namespace RakNet;
+
+STATIC_FACTORY_DEFINITIONS(LogCommandParser,LogCommandParser);
 
 LogCommandParser::LogCommandParser()
 {
@@ -245,7 +249,7 @@ unsigned LogCommandParser::Subscribe(SystemAddress systemAddress, const char *ch
 		newUser.channels=1<<channelIndex;
 	else
 		newUser.channels=0xFFFF;
-	remoteUsers.Insert(newUser, __FILE__, __LINE__);
+	remoteUsers.Insert(newUser, _FILE_AND_LINE_);
 	return channelIndex;
 }
 unsigned LogCommandParser::GetChannelIndexFromName(const char *channelName)

@@ -55,11 +55,12 @@ else use congestion avoidance
 #define CC_TIME_TYPE_BYTES 8
 
 #if CC_TIME_TYPE_BYTES==8
-typedef RakNetTimeUS CCTimeType;
+typedef RakNet::TimeUS CCTimeType;
 #else
-typedef RakNetTimeMS CCTimeType;
+typedef RakNet::TimeMS CCTimeType;
 #endif
-typedef uint24_t DatagramSequenceNumberType;
+
+typedef RakNet::uint24_t DatagramSequenceNumberType;
 typedef double BytesPerMicrosecond;
 typedef double BytesPerSecond;
 typedef double MicrosecondsPerByte;
@@ -151,12 +152,12 @@ class CCRakNetSlidingWindow
 	uint32_t GetMTU(void) const;
 
 	/// Query for statistics
-	BytesPerMicrosecond GetLocalSendRate(void) const {0;}
+	BytesPerMicrosecond GetLocalSendRate(void) const {return 0;}
 	BytesPerMicrosecond GetLocalReceiveRate(CCTimeType currentTime) const;
-	BytesPerMicrosecond GetRemoveReceiveRate(void) const {0;}
+	BytesPerMicrosecond GetRemoveReceiveRate(void) const {return 0;}
 	//BytesPerMicrosecond GetEstimatedBandwidth(void) const {return B;}
 	BytesPerMicrosecond GetEstimatedBandwidth(void) const {return GetLinkCapacityBytesPerSecond()*1000000.0;}
-	double GetLinkCapacityBytesPerSecond(void) const {return 0;};
+	double GetLinkCapacityBytesPerSecond(void) const {return 0;}
 
 	/// Query for statistics
 	double GetRTT(void) const;
@@ -208,4 +209,3 @@ class CCRakNetSlidingWindow
 #endif
 
 #endif
-

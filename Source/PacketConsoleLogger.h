@@ -12,6 +12,10 @@
 #define __PACKET_CONSOLE_LOGGER_H_
 
 #include "PacketLogger.h"
+
+namespace RakNet
+{
+/// Forward declarations
 class LogCommandParser;
 
 /// \ingroup PACKETLOGGER_GROUP
@@ -26,6 +30,8 @@ public:
 protected:
 	LogCommandParser *logCommandParser;
 };
+
+} // namespace RakNet
 
 #endif
 

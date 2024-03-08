@@ -23,6 +23,13 @@ namespace RakNet
 	class BitStream;
 }
 
+namespace RakNet
+{
+/// Forward declarations
+class RakPeerInterface;
+class FileList;
+
+
 /// Represents once instance of a file
 struct FileListNode
 {
@@ -48,15 +55,13 @@ struct FileListNode
 	bool isAReference;
 };
 
-//int RAK_DLL_EXPORT FileListNodeComp( char * const &key, const FileListNode &data );
-
-class RakPeerInterface;
-class FileList;
-
 /// Callback interface set with FileList::SetCallback() in case you want progress notifications when FileList::AddFilesFromDirectory() is called
 class RAK_DLL_EXPORT FileListProgress
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(FileListProgress)
+
 	FileListProgress() {}
 	virtual ~FileListProgress() {}
 
@@ -97,12 +102,27 @@ public:
 		(void) done;
 		(void) targetSystem;
 	}
+
+	/// \brief This function is called when all files have been read and are being transferred to a remote system
+	virtual void OnFilePushesComplete( SystemAddress systemAddress )
+	{
+		(void) systemAddress;
+	}
+
+	/// \brief This function is called when a send to a system was aborted (probably due to disconnection)
+	virtual void OnSendAborted( SystemAddress systemAddress )
+	{
+		(void) systemAddress;
+	}
 };
 
 /// Implementation of FileListProgress to use RAKNET_DEBUG_PRINTF
 class RAK_DLL_EXPORT FLP_Printf : public FileListProgress
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(FLP_Printf)
+
 	FLP_Printf() {}
 	virtual ~FLP_Printf() {}
 
@@ -111,11 +131,20 @@ public:
 
 	/// Called for each directory, when that directory begins processing
 	virtual void OnDirectory(FileList *fileList, char *dir, unsigned int directoriesRemaining);
+
+	/// \brief This function is called when all files have been transferred to a particular remote system
+	virtual void OnFilePushesComplete( SystemAddress systemAddress );
+
+	/// \brief This function is called when a send to a system was aborted (probably due to disconnection)
+	virtual void OnSendAborted( SystemAddress systemAddress );
 };
 
 class RAK_DLL_EXPORT FileList
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(FileList)
+
 	FileList();
 	~FileList();
 	/// \brief Add all the files at a given directory.
@@ -190,17 +219,30 @@ public:
 	/// \param[in] applicationDirectory Prefixed to the path to each filename.  Use \ as the path delineator.
 	void DeleteFiles(const char *applicationDirectory);
 
-	/// \brief Set a callback to get progress reports about what this class does.
+	/// \brief Adds a callback to get progress reports about what the file list instances do.
 	/// \param[in] cb A pointer to an externally defined instance of FileListProgress. This pointer is held internally, so should remain valid as long as this class is valid.
-	void SetCallback(FileListProgress *cb);
+	void AddCallback(FileListProgress *cb);
+
+	/// \brief Removes a callback
+	/// \param[in] cb A pointer to an externally defined instance of FileListProgress that was previously added with AddCallback()
+	void RemoveCallback(FileListProgress *cb);
+
+	/// \brief Removes all callbacks
+	void ClearCallbacks(void);
+
+	/// Returns all callbacks added with AddCallback()
+	/// \param[out] callbacks The list is set to the list of callbacks
+	void GetCallbacks(DataStructures::List<FileListProgress*> &callbacks);
 
 	// Here so you can read it, but don't modify it
 	DataStructures::List<FileListNode> fileList;
 
 	static bool FixEndingSlash(char *str);
 protected:
-	FileListProgress *callback;
+	DataStructures::List<FileListProgress*> fileListProgressCallbacks;
 };
+
+} // namespace RakNet
 
 #ifdef _MSC_VER
 #pragma warning( pop )

@@ -1,21 +1,23 @@
 #ifndef __SIGNALED_EVENT_H
 #define __SIGNALED_EVENT_H
 
-
-
-#if   defined(_WIN32)
+#if defined(_XBOX) || defined(X360)
+                            
+#elif defined(_WIN32)
 #include <windows.h>
 #else
 	#include <pthread.h>
 	#include <sys/types.h>
 	#include "SimpleMutex.h"
-
-
-
-
+	#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                                                   
+	#endif
 #endif
 
 #include "Export.h"
+
+namespace RakNet
+{
 
 class RAK_DLL_EXPORT SignaledEvent
 {
@@ -42,5 +44,7 @@ protected:
 	pthread_mutexattr_t mutexAttr;
 #endif
 };
+
+} // namespace RakNet
 
 #endif

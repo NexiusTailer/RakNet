@@ -14,7 +14,7 @@ using namespace RakNet;
 // {
 // 	return strcmp(key.C_String(), data.identifier.C_String());
 // }
-int RPC3::LocalSlotObjectComp( const LocalSlotObject &key, const LocalSlotObject &data )
+int RakNet::RPC3::LocalSlotObjectComp( const LocalSlotObject &key, const LocalSlotObject &data )
 {
 	if (key.callPriority>data.callPriority)
 		return -1;
@@ -59,11 +59,11 @@ bool RPC3::UnregisterFunction(const char *uniqueIdentifier)
 
 bool RPC3::IsFunctionRegistered(const char *uniqueIdentifier)
 {
-	DataStructures::StringKeyedHashIndex i = GetLocalFunctionIndex(uniqueIdentifier);
+	DataStructures::HashIndex i = GetLocalFunctionIndex(uniqueIdentifier);
 	return i.IsInvalid()==false;
 }
 
-void RPC3::SetTimestamp(RakNetTime timeStamp)
+void RPC3::SetTimestamp(RakNet::TimeMS timeStamp)
 {
 	outgoingTimestamp=timeStamp;
 }
@@ -86,7 +86,7 @@ void RPC3::SetRecipientObject(NetworkID networkID)
 	outgoingNetworkID=networkID;
 }
 
-RakNetTime RPC3::GetLastSenderTimestamp(void) const
+RakNet::TimeMS RPC3::GetLastSenderTimestamp(void) const
 {
 	return incomingTimeStamp;
 }
@@ -121,7 +121,7 @@ bool RPC3::SendCallOrSignal(RakString uniqueIdentifier, char parameterCount, Rak
 		bs.Write((MessageID)ID_TIMESTAMP);
 		bs.Write(outgoingTimestamp);
 	}
-	bs.Write((MessageID)ID_AUTO_RPC_CALL);
+	bs.Write((MessageID)ID_RPC_PLUGIN);
 	bs.Write(parameterCount);
 	if (outgoingNetworkID!=UNASSIGNED_NETWORK_ID && isCall)
 	{
@@ -142,7 +142,7 @@ bool RPC3::SendCallOrSignal(RakString uniqueIdentifier, char parameterCount, Rak
 		for (systemIndex=0; systemIndex < rakPeerInterface->GetMaximumNumberOfPeers(); systemIndex++)
 		{
 			systemAddr=rakPeerInterface->GetSystemAddressFromIndex(systemIndex);
-			if (systemAddr!=UNASSIGNED_SYSTEM_ADDRESS && systemAddr!=outgoingSystemAddress)
+			if (systemAddr!=RakNet::UNASSIGNED_SYSTEM_ADDRESS && systemAddr!=outgoingSystemAddress)
 			{
 // 				if (GetRemoteFunctionIndex(systemAddr, uniqueIdentifier, &outerIndex, &innerIndex, isCall))
 // 				{
@@ -156,7 +156,7 @@ bool RPC3::SendCallOrSignal(RakString uniqueIdentifier, char parameterCount, Rak
 // 				else
 // 				{
 // 					bs.Write(false);
-					stringCompressor->EncodeString(uniqueIdentifier, 512, &bs, 0);
+					StringCompressor::Instance()->EncodeString(uniqueIdentifier, 512, &bs, 0);
 //				}
 
 				bs.WriteCompressed(serializedParameters->GetNumberOfBitsUsed());
@@ -171,7 +171,7 @@ bool RPC3::SendCallOrSignal(RakString uniqueIdentifier, char parameterCount, Rak
 	else
 	{
 		systemAddr = outgoingSystemAddress;
-		if (systemAddr!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (systemAddr!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 		{
 // 			if (GetRemoteFunctionIndex(systemAddr, uniqueIdentifier, &outerIndex, &innerIndex, isCall))
 // 			{
@@ -185,7 +185,7 @@ bool RPC3::SendCallOrSignal(RakString uniqueIdentifier, char parameterCount, Rak
 // 			else
 // 			{
 // 				bs.Write(false);
-				stringCompressor->EncodeString(uniqueIdentifier, 512, &bs, 0);
+				StringCompressor::Instance()->EncodeString(uniqueIdentifier, 512, &bs, 0);
 //			}
 
 			bs.WriteCompressed(serializedParameters->GetNumberOfBitsUsed());
@@ -200,24 +200,24 @@ bool RPC3::SendCallOrSignal(RakString uniqueIdentifier, char parameterCount, Rak
 
 void RPC3::OnAttach(void)
 {
-	outgoingSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
+	outgoingSystemAddress=RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 	outgoingNetworkID=UNASSIGNED_NETWORK_ID;
-	incomingSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
+	incomingSystemAddress=RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 }
 
 PluginReceiveResult RPC3::OnReceive(Packet *packet)
 {
-	RakNetTime timestamp=0;
+	RakNet::TimeMS timestamp=0;
 	unsigned char packetIdentifier, packetDataOffset;
 	if ( ( unsigned char ) packet->data[ 0 ] == ID_TIMESTAMP )
 	{
-		if ( packet->length > sizeof( unsigned char ) + sizeof( RakNetTime ) )
+		if ( packet->length > sizeof( unsigned char ) + sizeof( RakNet::TimeMS ) )
 		{
-			packetIdentifier = ( unsigned char ) packet->data[ sizeof( unsigned char ) + sizeof( RakNetTime ) ];
+			packetIdentifier = ( unsigned char ) packet->data[ sizeof( unsigned char ) + sizeof( RakNet::TimeMS ) ];
 			// Required for proper endian swapping
 			RakNet::BitStream tsBs(packet->data+sizeof(MessageID),packet->length-1,false);
 			tsBs.Read(timestamp);
-			packetDataOffset=sizeof( unsigned char )*2 + sizeof( RakNetTime );
+			packetDataOffset=sizeof( unsigned char )*2 + sizeof( RakNet::TimeMS );
 		}
 		else
 			return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -230,7 +230,7 @@ PluginReceiveResult RPC3::OnReceive(Packet *packet)
 
 	switch (packetIdentifier)
 	{
-	case ID_AUTO_RPC_CALL:
+	case ID_RPC_PLUGIN:
 		incomingTimeStamp=timestamp;
 		incomingSystemAddress=packet->systemAddress;
 		OnRPC3Call(packet->systemAddress, packet->data+packetDataOffset, packet->length-packetDataOffset);
@@ -247,7 +247,7 @@ void RPC3::OnRPC3Call(SystemAddress systemAddress, unsigned char *data, unsigned
 {
 	RakNet::BitStream bs(data,lengthInBytes,false);
 
-	DataStructures::StringKeyedHashIndex functionIndex;
+	DataStructures::HashIndex functionIndex;
 	LocalRPCFunction *lrpcf;
 	bool hasParameterCount=false;
 	char parameterCount;
@@ -266,13 +266,13 @@ void RPC3::OnRPC3Call(SystemAddress systemAddress, unsigned char *data, unsigned
 		bool readSuccess = bs.Read(networkId);
 		RakAssert(readSuccess);
 		RakAssert(networkId!=UNASSIGNED_NETWORK_ID);
-		if (networkIdManager==0 && (networkIdManager=rakPeerInterface->GetNetworkIDManager())==0)
+		if (networkIdManager==0)
 		{
 			// Failed - Tried to call object member, however, networkIDManager system was never registered
 			SendError(systemAddress, RPC_ERROR_NETWORK_ID_MANAGER_UNAVAILABLE, "");
 			return;
 		}
-		networkIdObject = (NetworkIDObject*) networkIdManager->GET_OBJECT_FROM_ID(networkId);
+		networkIdObject = networkIdManager->GET_OBJECT_FROM_ID<NetworkIDObject*>(networkId);
 		if (networkIdObject==0)
 		{
 			// Failed - Tried to call object member, object does not exist (deleted?)
@@ -291,7 +291,7 @@ void RPC3::OnRPC3Call(SystemAddress systemAddress, unsigned char *data, unsigned
 //	if (hasFunctionIndex)
 //		bs.ReadCompressed(functionIndex);
 //	else
-		stringCompressor->DecodeString(strIdentifier,512,&bs,0);
+		StringCompressor::Instance()->DecodeString(strIdentifier,512,&bs,0);
 	bs.ReadCompressed(bitsOnStack);
 	RakNet::BitStream serializedParameters;
 	if (bitsOnStack>0)
@@ -331,7 +331,7 @@ void RPC3::OnRPC3Call(SystemAddress systemAddress, unsigned char *data, unsigned
 // 					outgoingBitstream.Write((MessageID)ID_AUTO_RPC_REMOTE_INDEX);
 // 					outgoingBitstream.Write(hasNetworkId);
 // 					outgoingBitstream.WriteCompressed(functionIndex);
-// 					stringCompressor->EncodeString(strIdentifier,512,&outgoingBitstream,0);
+// 					StringCompressor::Instance()->EncodeString(strIdentifier,512,&outgoingBitstream,0);
 // 					outgoingBitstream.Write(isCall);
 // 					SendUnified(&outgoingBitstream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemAddress, false);
 // 					break;
@@ -413,14 +413,14 @@ void RPC3::InterruptSignal(void)
 {
 	interruptSignal=true;
 }
-void RPC3::InvokeSignal(DataStructures::StringKeyedHashIndex functionIndex, RakNet::BitStream *serializedParameters, bool temporarilySetUSA)
+void RPC3::InvokeSignal(DataStructures::HashIndex functionIndex, RakNet::BitStream *serializedParameters, bool temporarilySetUSA)
 {
 	if (functionIndex.IsInvalid())
 		return;
 
 	SystemAddress lastIncomingAddress=incomingSystemAddress;
 	if (temporarilySetUSA)
-		incomingSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
+		incomingSystemAddress=RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 	interruptSignal=false;
 	LocalSlot *localSlot = localSlots.ItemAtIndex(functionIndex);
 	unsigned int i;
@@ -433,7 +433,7 @@ void RPC3::InvokeSignal(DataStructures::StringKeyedHashIndex functionIndex, RakN
 	{
 		if (localSlot->slotObjects[i].associatedObject!=UNASSIGNED_NETWORK_ID)
 		{
-			functionArgs.thisPtr = (NetworkIDObject*) networkIdManager->GET_OBJECT_FROM_ID(localSlot->slotObjects[i].associatedObject);
+			functionArgs.thisPtr = networkIdManager->GET_OBJECT_FROM_ID<NetworkIDObject*>(localSlot->slotObjects[i].associatedObject);
 			if (functionArgs.thisPtr==0)
 			{
 				localSlot->slotObjects.RemoveAtIndex(i);
@@ -503,16 +503,16 @@ void RPC3::InvokeSignal(DataStructures::StringKeyedHashIndex functionIndex, RakN
 // 		{
 // 			newRemoteFunction.functionIndex=remoteIndex;
 // 			newRemoteFunction.identifier = strIdentifier;
-// 			theList->InsertAtIndex(newRemoteFunction, insertionIndex, __FILE__, __LINE__ );
+// 			theList->InsertAtIndex(newRemoteFunction, insertionIndex, _FILE_AND_LINE_ );
 // 		}
 // 	}
 // 	else
 // 	{
-// 		theList = RakNet::OP_NEW<DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, RPC3::RemoteRPCFunctionComp> >(__FILE__, __LINE__);
+// 		theList = RakNet::OP_NEW<DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, RPC3::RemoteRPCFunctionComp> >(_FILE_AND_LINE_);
 // 
 // 		newRemoteFunction.functionIndex=remoteIndex;
 // 		newRemoteFunction.identifier = strIdentifier;
-// 		theList->InsertAtEnd(newRemoteFunction, __FILE__, __LINE__ );
+// 		theList->InsertAtEnd(newRemoteFunction, _FILE_AND_LINE_ );
 // 
 // 		if (isCall==true)
 // 			remoteFunctions.SetNew(systemAddress,theList);
@@ -550,29 +550,30 @@ void RPC3::Clear(void)
 // 	for (j=0; j < remoteFunctions.Size(); j++)
 // 	{
 // 		DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, RPC3::RemoteRPCFunctionComp> *theList = remoteFunctions[j];
-// 		RakNet::OP_DELETE(theList,__FILE__,__LINE__);
+// 		RakNet::OP_DELETE(theList,_FILE_AND_LINE_);
 // 	}
 // 	for (j=0; j < remoteSlots.Size(); j++)
 // 	{
 // 		DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, RPC3::RemoteRPCFunctionComp> *theList = remoteSlots[j];
-// 		RakNet::OP_DELETE(theList,__FILE__,__LINE__);
+// 		RakNet::OP_DELETE(theList,_FILE_AND_LINE_);
 // 	}
 
+	DataStructures::List<RakNet::RakString> keyList;
 	DataStructures::List<LocalSlot*> outputList;
-	localSlots.GetItemList(outputList,__FILE__,__LINE__);
+	localSlots.GetAsList(outputList,keyList,_FILE_AND_LINE_);
 	for (j=0; j < outputList.Size(); j++)
 	{
-		RakNet::OP_DELETE(outputList[j],__FILE__,__LINE__);
+		RakNet::OP_DELETE(outputList[j],_FILE_AND_LINE_);
 	}
-	localSlots.Clear(__FILE__,__LINE__);
+	localSlots.Clear(_FILE_AND_LINE_);
 
 	DataStructures::List<LocalRPCFunction*> outputList2;
-	localFunctions.GetItemList(outputList2,__FILE__, __LINE__);
+	localFunctions.GetAsList(outputList2,keyList,_FILE_AND_LINE_);
 	for (j=0; j < outputList2.Size(); j++)
 	{
-		RakNet::OP_DELETE(outputList2[j],__FILE__,__LINE__);
+		RakNet::OP_DELETE(outputList2[j],_FILE_AND_LINE_);
 	}
-	localFunctions.Clear(__FILE__, __LINE__);
+	localFunctions.Clear(_FILE_AND_LINE_);
 //	remoteFunctions.Clear();
 //	remoteSlots.Clear();
 	outgoingExtraData.Reset();
@@ -611,11 +612,11 @@ void RPC3::SendError(SystemAddress target, unsigned char errorCode, const char *
 // 	}
 // 	return objectExists;
 // }
-DataStructures::StringKeyedHashIndex RPC3::GetLocalSlotIndex(const char *sharedIdentifier)
+DataStructures::HashIndex RPC3::GetLocalSlotIndex(const char *sharedIdentifier)
 {
 	return localSlots.GetIndexOf(sharedIdentifier);
 }
-DataStructures::StringKeyedHashIndex RPC3::GetLocalFunctionIndex(RPC3::RPCIdentifier identifier)
+DataStructures::HashIndex RPC3::GetLocalFunctionIndex(RPC3::RPCIdentifier identifier)
 {
 	return localFunctions.GetIndexOf(identifier.C_String());
 }

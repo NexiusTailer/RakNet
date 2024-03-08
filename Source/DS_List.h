@@ -137,7 +137,7 @@ namespace DataStructures
 		List<list_type>::~List()
 	{
 		if (allocation_size>0)
-			RakNet::OP_DELETE_ARRAY(listArray, __FILE__, __LINE__);
+			RakNet::OP_DELETE_ARRAY(listArray, _FILE_AND_LINE_);
 	}
 
 
@@ -153,7 +153,7 @@ namespace DataStructures
 		}
 		else
 		{
-			listArray = RakNet::OP_NEW_ARRAY<list_type >( original_copy.list_size , __FILE__, __LINE__ );
+			listArray = RakNet::OP_NEW_ARRAY<list_type >( original_copy.list_size , _FILE_AND_LINE_ );
 
 			for ( unsigned int counter = 0; counter < original_copy.list_size; ++counter )
 				listArray[ counter ] = original_copy.listArray[ counter ];
@@ -170,7 +170,7 @@ namespace DataStructures
 	{
 		if ( ( &original_copy ) != this )
 		{
-			Clear( false, __FILE__, __LINE__ );
+			Clear( false, _FILE_AND_LINE_ );
 
 			// Allocate memory for copy
 
@@ -182,7 +182,7 @@ namespace DataStructures
 
 			else
 			{
-				listArray = RakNet::OP_NEW_ARRAY<list_type >( original_copy.list_size , __FILE__, __LINE__ );
+				listArray = RakNet::OP_NEW_ARRAY<list_type >( original_copy.list_size , _FILE_AND_LINE_ );
 
 				for ( unsigned int counter = 0; counter < original_copy.list_size; ++counter )
 					listArray[ counter ] = original_copy.listArray[ counter ];

@@ -312,7 +312,7 @@ namespace DataStructures
 		const DataStructures::BPlusTree<unsigned, Row*, _TABLE_BPLUS_TREE_ORDER>& GetRows(void) const;
 
 		/// \brief Get the head of a linked list containing all the row data.
-		DataStructures::Page<unsigned, DataStructures::Table::Row*, _TABLE_BPLUS_TREE_ORDER> * GetListHead(void);
+		DataStructures::Page<unsigned, Row*, _TABLE_BPLUS_TREE_ORDER> * GetListHead(void);
 
 		/// \brief Get the first free row id.
 		/// This could be made more efficient.

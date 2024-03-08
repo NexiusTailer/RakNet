@@ -55,15 +55,15 @@ GetGUIDFromIndex
 GetExternalID  
 
 */
-int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 
 	RakPeerInterface *server,*client;
-	destroyList.Clear(false,__FILE__,__LINE__);
+	destroyList.Clear(false,_FILE_AND_LINE_);
 
 	printf("Testing IsActive\n");
-	client=RakNetworkFactory::GetRakPeerInterface();
-	destroyList.Push(	client,__FILE__,__LINE__);
+	client=RakPeerInterface::GetInstance();
+	destroyList.Push(	client,_FILE_AND_LINE_);
 	if (client->IsActive())
 	{
 
@@ -73,7 +73,7 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 		return 1;
 	}
 
-	client->Startup(1,30,&SocketDescriptor(60001,0),1);
+	client->Startup(1,&SocketDescriptor(60001,0),1);
 
 	if (!client->IsActive())
 	{
@@ -269,14 +269,14 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 
 }
 
-RakNet::RakString SystemAddressAndGuidTest::GetTestName()
+RakString SystemAddressAndGuidTest::GetTestName()
 {
 
 	return "SystemAddressAndGuidTest";
 
 }
 
-RakNet::RakString SystemAddressAndGuidTest::ErrorCodeToString(int errorCode)
+RakString SystemAddressAndGuidTest::ErrorCodeToString(int errorCode)
 {
 
 	if (errorCode>0&&(unsigned int)errorCode<=errorList.Size())
@@ -304,22 +304,22 @@ bool SystemAddressAndGuidTest::compareSystemAddresses(SystemAddress ad1,SystemAd
 SystemAddressAndGuidTest::SystemAddressAndGuidTest(void)
 {
 
-	errorList.Push("Client was active but shouldn't be yet",__FILE__,__LINE__);
-	errorList.Push("Client was not active but should be",__FILE__,__LINE__);
-	errorList.Push("Could not connect the client",__FILE__,__LINE__);
-	errorList.Push("Mismatch between guidList size and systemList size ",__FILE__,__LINE__);
-	errorList.Push("NumberOfConnections problem",__FILE__,__LINE__);
-	errorList.Push("SystemList problem with GetSystemList",__FILE__,__LINE__);
-	errorList.Push("Both SystemList and Number of connections have problems and report different results",__FILE__,__LINE__);
-	errorList.Push("Both SystemList and Number of connections have problems and report same results",__FILE__,__LINE__);
-	errorList.Push("Undefined Error",__FILE__,__LINE__);
-	errorList.Push("System address from list is wrong.",__FILE__,__LINE__);
-	errorList.Push("Guid from list is wrong",__FILE__,__LINE__);
-	errorList.Push("GetSystemAddressFromIndex failed to return correct values",__FILE__,__LINE__);
-	errorList.Push("GetSystemAddressFromGuid failed to return correct values",__FILE__,__LINE__);
-	errorList.Push("GetGuidFromSystemAddress failed to return correct values",__FILE__,__LINE__);
-	errorList.Push("GetGUIDFromIndex failed to return correct values",__FILE__,__LINE__);
-	errorList.Push("GetExternalID failed to return correct values",__FILE__,__LINE__);
+	errorList.Push("Client was active but shouldn't be yet",_FILE_AND_LINE_);
+	errorList.Push("Client was not active but should be",_FILE_AND_LINE_);
+	errorList.Push("Could not connect the client",_FILE_AND_LINE_);
+	errorList.Push("Mismatch between guidList size and systemList size ",_FILE_AND_LINE_);
+	errorList.Push("NumberOfConnections problem",_FILE_AND_LINE_);
+	errorList.Push("SystemList problem with GetSystemList",_FILE_AND_LINE_);
+	errorList.Push("Both SystemList and Number of connections have problems and report different results",_FILE_AND_LINE_);
+	errorList.Push("Both SystemList and Number of connections have problems and report same results",_FILE_AND_LINE_);
+	errorList.Push("Undefined Error",_FILE_AND_LINE_);
+	errorList.Push("System address from list is wrong.",_FILE_AND_LINE_);
+	errorList.Push("Guid from list is wrong",_FILE_AND_LINE_);
+	errorList.Push("GetSystemAddressFromIndex failed to return correct values",_FILE_AND_LINE_);
+	errorList.Push("GetSystemAddressFromGuid failed to return correct values",_FILE_AND_LINE_);
+	errorList.Push("GetGuidFromSystemAddress failed to return correct values",_FILE_AND_LINE_);
+	errorList.Push("GetGUIDFromIndex failed to return correct values",_FILE_AND_LINE_);
+	errorList.Push("GetExternalID failed to return correct values",_FILE_AND_LINE_);
 
 }
 
@@ -333,6 +333,6 @@ void SystemAddressAndGuidTest::DestroyPeers()
 	int theSize=destroyList.Size();
 
 	for (int i=0; i < theSize; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+		RakPeerInterface::DestroyInstance(destroyList[i]);
 
 }

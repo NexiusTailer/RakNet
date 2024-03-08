@@ -61,11 +61,11 @@ bool LogParameter::Deserialize(RakNet::BitStream *bs)
 	case SQLLPDT_POINTER:
 	case SQLLPDT_BLOB:
 	case SQLLPDT_TEXT:
-		data.vptr=rakMalloc_Ex(size,__FILE__,__LINE__);
+		data.vptr=rakMalloc_Ex(size,_FILE_AND_LINE_);
 		b=bs->ReadAlignedBytes(data.ucptr, size);
 		break;
 	case SQLLPDT_IMAGE:
-		data.vptr=rakMalloc_Ex(size,__FILE__,__LINE__);
+		data.vptr=rakMalloc_Ex(size,_FILE_AND_LINE_);
 		bs->ReadAlignedBytes(data.ucptr, size);
 		bs->Read(imageWidth);
 		bs->Read(imageHeight);
@@ -96,7 +96,7 @@ void LogParameter::Free(void)
 }
 void LogParameter::Free(void *v)
 {
-	rakFree_Ex(v,__FILE__,__LINE__);
+	rakFree_Ex(v,_FILE_AND_LINE_);
 }
 #pragma pack(push)
 #pragma pack(1)

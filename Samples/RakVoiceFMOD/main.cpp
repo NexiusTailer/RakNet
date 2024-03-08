@@ -9,7 +9,7 @@
 #include <memory.h>
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
-#include "RakNetworkFactory.h"
+
 #include "RakSleep.h"
 #include "RakVoice.h"
 #include "RakNetStatistics.h"
@@ -22,8 +22,7 @@
 #include "FMODVoiceAdapter.h"
 
 #if defined(_PS3) || defined(__PS3__)
-#include "Console2Includes.h"
-#include "fmodps3.h"
+                                                   
 #endif
 
 
@@ -38,9 +37,9 @@
 // define sample type. Only short(16 bits sound) is supported at the moment.
 typedef short SAMPLE;
 
-RakPeerInterface *rakPeer=NULL;
+RakNet::RakPeerInterface *rakPeer=NULL;
 FMOD::System *fmodSystem=NULL;
-RakVoice rakVoice;
+RakNet::RakVoice rakVoice;
 bool mute;
 
 void FMOD_ERRCHECK(FMOD_RESULT result)
@@ -70,8 +69,8 @@ void LogStats(){
 		data[i] = data[i+1];
 	}
 	
-	RakNetStatistics *rss=rakPeer->GetStatistics(rakPeer->GetSystemAddressFromIndex(0));
-	unsigned int currTime = RakNet::GetTime();
+	RakNet::RakNetStatistics *rss=rakPeer->GetStatistics(rakPeer->GetSystemAddressFromIndex(0));
+	unsigned int currTime = RakNet::GetTimeMS();
 
 	data[numStats-1].time = currTime;
 	data[numStats-1].bitsSent = rss->totalBitsSent;
@@ -135,16 +134,16 @@ int main(void)
 	char ch;
 
 	char port[256];
-	rakPeer = RakNetworkFactory::GetRakPeerInterface();
+	rakPeer = RakNet::RakPeerInterface::GetInstance();
 #if defined(INTERACTIVE)
 	printf("Enter local port: ");
-	gets(port);
+	Gets(port, sizeof(port));
 	if (port[0]==0)
 #endif
 		strcpy(port, "60000");
-	SocketDescriptor socketDescriptor(atoi(port),0);
+	RakNet::SocketDescriptor socketDescriptor(atoi(port),0);
 
-	rakPeer->Startup(4, 30, &socketDescriptor, 1);
+	rakPeer->Startup(4, &socketDescriptor, 1);
 
 	rakPeer->SetMaximumIncomingConnections(4);
 	rakPeer->AttachPlugin(&rakVoice);
@@ -153,12 +152,12 @@ int main(void)
 
 
 	// Initialize our connection with FMOD
-	if (!FMODVoiceAdapter::Instance()->SetupAdapter(fmodSystem, &rakVoice)){
+	if (!RakNet::FMODVoiceAdapter::Instance()->SetupAdapter(fmodSystem, &rakVoice)){
 			printf("An error occurred while initializing FMOD sounds.\n");
 			exit(-1);
 		}
 
-	Packet *p;
+	RakNet::Packet *p;
 	quit=false;
 #if defined(INTERACTIVE)
 	printf("(Q)uit. (C)onnect. (D)isconnect. (M)ute. ' ' for stats.\n");
@@ -208,11 +207,11 @@ int main(void)
 			{
 				char ip[256];
 				printf("\nEnter IP of remote system: ");
-				gets(ip);
+				Gets(ip, sizeof(ip));
 				if (ip[0]==0)
 					strcpy(ip, "127.0.0.1");
 				printf("\nEnter port of remote system: ");
-				gets(port);
+				Gets(port, sizeof(port));
 				if (port[0]==0)
 					strcpy(port, "60000");
 				rakPeer->Connect(ip, atoi(port), 0,0);
@@ -267,18 +266,18 @@ int main(void)
 
 		fmodSystem->update();
 		// Update or connection with FMOD
-		FMODVoiceAdapter::Instance()->Update();
+		RakNet::FMODVoiceAdapter::Instance()->Update();
 		LogStats();
 		RakSleep(20);
 
 	}
 
 	// Release any FMOD resources we used, and shutdown FMOD itself
-	FMODVoiceAdapter::Instance()->Release();
+	RakNet::FMODVoiceAdapter::Instance()->Release();
 	fmodSystem->release();
 
 	rakPeer->Shutdown(300);
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 
 	return 0;
 }

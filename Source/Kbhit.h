@@ -7,8 +7,8 @@ You can do whatever you want with it.
 *****************************************************************************/
 #if defined(_WIN32)
 #include <conio.h> /* kbhit(), getch() */
-
-#else
+#elif defined(_XBOX) || defined(X360)
+#elif !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
 #include <sys/time.h> /* struct timeval, select() */
 /* ICANON, ECHO, TCSANOW, struct termios */
 #include <termios.h> /* tcgetattr(), tcsetattr() */

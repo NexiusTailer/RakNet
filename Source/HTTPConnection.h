@@ -27,6 +27,9 @@
 #include "RakNetTypes.h"
 #include "DS_Queue.h"
 
+namespace RakNet
+{
+/// Forward declarations
 class TCPInterface;
 struct SystemAddress;
 
@@ -40,6 +43,9 @@ struct SystemAddress;
 class RAK_DLL_EXPORT HTTPConnection
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(HTTPConnection)
+
     /// Returns a HTTP object associated with this tcp connection
     HTTPConnection();
     virtual ~HTTPConnection();
@@ -162,6 +168,8 @@ private:
 	*/
 
 };
+
+} // namespace RakNet
 
 #endif
 

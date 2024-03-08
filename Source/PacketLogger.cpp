@@ -8,7 +8,6 @@
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
 #include "StringCompressor.h"
-#include "RPCMap.h"
 #include "GetTime.h"
 #include <stdio.h>
 #include <string.h>
@@ -21,6 +20,10 @@
 #ifdef _MSC_VER
 #pragma warning( push )
 #endif
+
+using namespace RakNet;
+
+STATIC_FACTORY_DEFINITIONS(PacketLogger,PacketLogger);
 
 PacketLogger::PacketLogger()
 {
@@ -95,7 +98,7 @@ void PacketLogger::OnDirectSocketSend(const char *data, const BitSize_t bitsUsed
 		return;
 
 	char str[256];
-	FormatLine(str, "Snd", "Raw", 0, 0, data[0], bitsUsed, RakNet::GetTime(), rakPeerInterface->GetExternalID(remoteSystemAddress), remoteSystemAddress, (unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
+	FormatLine(str, "Snd", "Raw", 0, 0, data[0], bitsUsed, RakNet::GetTimeMS(), rakPeerInterface->GetExternalID(remoteSystemAddress), remoteSystemAddress, (unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
 	AddToLog(str);
 }
 
@@ -119,7 +122,7 @@ void PacketLogger::OnReliabilityLayerPacketError(const char *errorMessage, const
 	FormatLine(str, "RcvErr", errorMessage, 0, 0, "", bitsUsed, RakNet::GetTime(), rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
 	AddToLog(str);
 }
-void PacketLogger::OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, RakNetTime time)
+void PacketLogger::OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, RakNet::TimeMS time)
 {
 	char str[256];
 	char str1[64], str2[62];
@@ -145,7 +148,7 @@ void PacketLogger::OnPushBackPacket(const char *data, const BitSize_t bitsUsed, 
 	SystemAddress localSystemAddress = rakPeerInterface->GetExternalID(remoteSystemAddress);
 	localSystemAddress.ToString(true, str1);
 	remoteSystemAddress.ToString(true, str2);
-	RakNetTime time = RakNet::GetTime();
+	RakNet::TimeMS time = RakNet::GetTimeMS();
 	char localtime[128];
 	GetLocalTime(localtime);
 
@@ -159,7 +162,7 @@ void PacketLogger::OnPushBackPacket(const char *data, const BitSize_t bitsUsed, 
 					);
 	AddToLog(str);
 }
-void PacketLogger::OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNetTime time, int isSend)
+void PacketLogger::OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNet::TimeMS time, int isSend)
 {
 	char str[256];
 	const char *sendTypes[] =
@@ -176,18 +179,9 @@ void PacketLogger::OnInternalPacket(InternalPacket *internalPacket, unsigned fra
 	const char *sendType = sendTypes[isSend];
 	SystemAddress localSystemAddress = rakPeerInterface->GetExternalID(remoteSystemAddress);
 
-	if (internalPacket->data[0]==ID_TIMESTAMP && internalPacket->data[sizeof(unsigned char)+sizeof(RakNetTime)]!=ID_RPC)
+	if (internalPacket->data[0]==ID_TIMESTAMP)
 	{
-		FormatLine(str, sendType, "Tms", internalPacket->reliableMessageNumber, frameNumber, internalPacket->data[1+sizeof(RakNetTime)], internalPacket->dataBitLength, (unsigned long long)time, localSystemAddress, remoteSystemAddress, internalPacket->splitPacketId, internalPacket->splitPacketIndex, internalPacket->splitPacketCount, internalPacket->orderingIndex);
-	}
-	else if (internalPacket->data[0]==ID_RPC || (internalPacket->dataBitLength>(sizeof(unsigned char)+sizeof(RakNetTime))*8 && internalPacket->data[0]==ID_TIMESTAMP && internalPacket->data[sizeof(unsigned char)+sizeof(RakNetTime)]==ID_RPC))
-	{
-		const char *uniqueIdentifier = rakPeerInterface->GetRPCString((const char*) internalPacket->data, internalPacket->dataBitLength, isSend==1 ? remoteSystemAddress : UNASSIGNED_SYSTEM_ADDRESS);
-
-		if (internalPacket->data[0]==ID_TIMESTAMP)
-			FormatLine(str, sendType, "RpT", internalPacket->reliableMessageNumber, frameNumber, uniqueIdentifier, internalPacket->dataBitLength, (unsigned long long)time, localSystemAddress, remoteSystemAddress, internalPacket->splitPacketId, internalPacket->splitPacketIndex, internalPacket->splitPacketCount, internalPacket->orderingIndex);
-		else
-			FormatLine(str, sendType, "Rpc", internalPacket->reliableMessageNumber, frameNumber, uniqueIdentifier, internalPacket->dataBitLength, (unsigned long long)time, localSystemAddress, remoteSystemAddress, internalPacket->splitPacketId, internalPacket->splitPacketIndex, internalPacket->splitPacketCount, internalPacket->orderingIndex);
+		FormatLine(str, sendType, "Tms", internalPacket->reliableMessageNumber, frameNumber, internalPacket->data[1+sizeof(RakNet::Time)], internalPacket->dataBitLength, (unsigned long long)time, localSystemAddress, remoteSystemAddress, internalPacket->splitPacketId, internalPacket->splitPacketIndex, internalPacket->splitPacketCount, internalPacket->orderingIndex);
 	}
 	else
 	{
@@ -210,7 +204,7 @@ void PacketLogger::WriteMiscellaneous(const char *type, const char *msg)
 	char str1[64];
 	SystemAddress localSystemAddress = rakPeerInterface->GetInternalID();
 	localSystemAddress.ToString(true, str1);
-	RakNetTime time = RakNet::GetTime();
+	RakNet::TimeMS time = RakNet::GetTimeMS();
 	char localtime[128];
 	GetLocalTime(localtime);
 
@@ -239,20 +233,22 @@ const char* PacketLogger::BaseIDTOString(unsigned char Id)
 
 	const char *IDTable[((int)ID_USER_PACKET_ENUM)+1]=
 	{
-		"ID_INTERNAL_PING",
-		"ID_PING",
-		"ID_PING_OPEN_CONNECTIONS",
+		"ID_CONNECTED_PING",  
+		"ID_UNCONNECTED_PING",
+		"ID_UNCONNECTED_PING_OPEN_CONNECTIONS",
 		"ID_CONNECTED_PONG",
-		"ID_CONNECTION_REQUEST",
-		"ID_SECURED_CONNECTION_RESPONSE",
-		"ID_SECURED_CONNECTION_CONFIRMATION",
-		"ID_RPC_MAPPING",
 		"ID_DETECT_LOST_CONNECTIONS",
-		"ID_OPEN_CONNECTION_REQUEST",
-		"ID_OPEN_CONNECTION_REPLY",
-		"ID_RPC",
-		"ID_RPC_REPLY",
+		"ID_OPEN_CONNECTION_REQUEST_1",
+		"ID_OPEN_CONNECTION_REPLY_1",
+		"ID_OPEN_CONNECTION_REQUEST_2",
+		"ID_OPEN_CONNECTION_REPLY_2",
+		"ID_CONNECTION_REQUEST",
+		"ID_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY",
+		"ID_OUR_SYSTEM_REQUIRES_SECURITY",
+		"ID_PUBLIC_KEY_MISMATCH",
 		"ID_OUT_OF_BAND_INTERNAL",
+		"ID_SND_RECEIPT_ACKED",
+		"ID_SND_RECEIPT_LOSS",
 		"ID_CONNECTION_REQUEST_ACCEPTED",
 		"ID_CONNECTION_ATTEMPT_FAILED",
 		"ID_ALREADY_CONNECTED",
@@ -260,37 +256,30 @@ const char* PacketLogger::BaseIDTOString(unsigned char Id)
 		"ID_NO_FREE_INCOMING_CONNECTIONS",
 		"ID_DISCONNECTION_NOTIFICATION",
 		"ID_CONNECTION_LOST",
-		"ID_RSA_PUBLIC_KEY_MISMATCH",
 		"ID_CONNECTION_BANNED",
 		"ID_INVALID_PASSWORD",
 		"ID_INCOMPATIBLE_PROTOCOL_VERSION",
 		"ID_IP_RECENTLY_CONNECTED",
-		"ID_MODIFIED_PACKET",
 		"ID_TIMESTAMP",
-		"ID_PONG",
+		"ID_UNCONNECTED_PONG",
 		"ID_ADVERTISE_SYSTEM",
+		"ID_DOWNLOAD_PROGRESS",
 		"ID_REMOTE_DISCONNECTION_NOTIFICATION",
 		"ID_REMOTE_CONNECTION_LOST",
 		"ID_REMOTE_NEW_INCOMING_CONNECTION",
-		"ID_DOWNLOAD_PROGRESS",
 		"ID_FILE_LIST_TRANSFER_HEADER",
 		"ID_FILE_LIST_TRANSFER_FILE",
 		"ID_FILE_LIST_REFERENCE_PUSH_ACK",
 		"ID_DDT_DOWNLOAD_REQUEST",
 		"ID_TRANSPORT_STRING",
 		"ID_REPLICA_MANAGER_CONSTRUCTION",
-		"ID_REPLICA_MANAGER_DESTRUCTION",
 		"ID_REPLICA_MANAGER_SCOPE_CHANGE",
 		"ID_REPLICA_MANAGER_SERIALIZE",
 		"ID_REPLICA_MANAGER_DOWNLOAD_STARTED",
 		"ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE",
-		"ID_CONNECTION_GRAPH_REQUEST",
-		"ID_CONNECTION_GRAPH_REPLY",
-		"ID_CONNECTION_GRAPH_UPDATE",
-		"ID_CONNECTION_GRAPH_NEW_CONNECTION",
-		"ID_CONNECTION_GRAPH_CONNECTION_LOST",
-		"ID_CONNECTION_GRAPH_DISCONNECTION_NOTIFICATION",
-		"ID_ROUTE_AND_MULTICAST",
+		"ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING",
+		"ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_REJECTED",
+		"ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_ACCEPTED",
 		"ID_RAKVOICE_OPEN_CHANNEL_REQUEST",
 		"ID_RAKVOICE_OPEN_CHANNEL_REPLY",
 		"ID_RAKVOICE_CLOSE_CHANNEL",
@@ -314,21 +303,13 @@ const char* PacketLogger::BaseIDTOString(unsigned char Id)
 		"ID_NAT_ALREADY_IN_PROGRESS",
 		"ID_NAT_PUNCHTHROUGH_FAILED",
 		"ID_NAT_PUNCHTHROUGH_SUCCEEDED",
-		"ID_DATABASE_QUERY_REQUEST",
-		"ID_DATABASE_UPDATE_ROW",
-		"ID_DATABASE_REMOVE_ROW",
-		"ID_DATABASE_QUERY_REPLY",
-		"ID_DATABASE_UNKNOWN_TABLE",
-		"ID_DATABASE_INCORRECT_PASSWORD",
 		"ID_READY_EVENT_SET",
 		"ID_READY_EVENT_UNSET",
 		"ID_READY_EVENT_ALL_SET",
 		"ID_READY_EVENT_QUERY",
 		"ID_LOBBY_GENERAL",
-		"ID_AUTO_RPC_CALL",
-		"ID_AUTO_RPC_REMOTE_INDEX",
-		"ID_AUTO_RPC_UNKNOWN_REMOTE_INDEX",
 		"ID_RPC_REMOTE_ERROR",
+		"ID_RPC_PLUGIN",
 		"ID_FILE_LIST_REFERENCE_PUSH",
 		"ID_READY_EVENT_FORCE_ALL_SET",
 		"ID_ROOMS_EXECUTE_FUNC",
@@ -343,29 +324,42 @@ const char* PacketLogger::BaseIDTOString(unsigned char Id)
 		"ID_UDP_PROXY_GENERAL",
 		"ID_SQLite3_EXEC",
 		"ID_SQLite3_UNKNOWN_DB",
-		"ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING",
-		"ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_REJECTED",
-		"ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_ACCEPTED",
+		"ID_SQLLITE_LOGGER",
 		"ID_NAT_TYPE_DETECTION_REQUEST",
 		"ID_NAT_TYPE_DETECTION_RESULT",
-		"ID_SQLLITE_LOGGER",
 		"ID_ROUTER_2_INTERNAL",
 		"ID_ROUTER_2_FORWARDING_NO_PATH",
+		"ID_ROUTER_2_FORWARDING_ESTABLISHED",
 		"ID_ROUTER_2_REROUTED",
 		"ID_TEAM_BALANCER_INTERNAL",
 		"ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING",
 		"ID_TEAM_BALANCER_TEAMS_LOCKED",
 		"ID_TEAM_BALANCER_TEAM_ASSIGNED",
 		"ID_LIGHTSPEED_INTEGRATION",
-		"ID_RPC_4_PLUGIN",
-		"ID_SND_RECEIPT_ACKED",
-		"ID_SND_RECEIPT_LOSS",
+		"ID_XBOX_LOBBY",
+		"ID_TWO_WAY_AUTHENTICATION_INCOMING_CHALLENGE_SUCCESS",
+		"ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_SUCCESS",
+		"ID_TWO_WAY_AUTHENTICATION_INCOMING_CHALLENGE_FAILURE",
+		"ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_FAILURE",
+		"ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_TIMEOUT",
+		"ID_TWO_WAY_AUTHENTICATION_NEGOTIATION",
+		"ID_CLOUD_POST_REQUEST",
+		"ID_CLOUD_RELEASE_REQUEST",
+		"ID_CLOUD_GET_REQUEST",
+		"ID_CLOUD_GET_RESPONSE",
+		"ID_CLOUD_UNSUBSCRIBE_REQUEST",
+		"ID_CLOUD_SERVER_TO_SERVER_COMMAND",
+		"ID_CLOUD_SUBSCRIPTION_NOTIFICATION",
+		"ID_RESERVED_1",
+		"ID_RESERVED_2",
+		"ID_RESERVED_3",
+		"ID_RESERVED_4",
 		"ID_RESERVED_5",
 		"ID_RESERVED_6",
 		"ID_RESERVED_7",
 		"ID_RESERVED_8",
 		"ID_RESERVED_9",
-		"ID_USER_PACKET_ENUM"
+		"ID_USER_PACKET_ENUM",	 
 	};
 
 	return (char*)IDTable[Id];

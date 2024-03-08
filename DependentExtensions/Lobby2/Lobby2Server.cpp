@@ -438,7 +438,7 @@ void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 
 			// Already logged in from this system address.
 			// Delete the existing entry, which will be reinserted.
-			RakNet::OP_DELETE(user,__FILE__,__LINE__);
+			RakNet::OP_DELETE(user,_FILE_AND_LINE_);
 			users.RemoveAtIndex(insertionIndex);
 		}
 		else

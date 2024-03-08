@@ -12,6 +12,10 @@
 
 #include "LinuxStrings.h"
 
+using namespace RakNet;
+
+STATIC_FACTORY_DEFINITIONS(ConsoleServer,ConsoleServer);
+
 ConsoleServer::ConsoleServer()
 {
 	transport=0;
@@ -21,7 +25,7 @@ ConsoleServer::ConsoleServer()
 ConsoleServer::~ConsoleServer()
 {
 	if (prompt)
-		rakFree_Ex(prompt, __FILE__, __LINE__);
+		rakFree_Ex(prompt, _FILE_AND_LINE_);
 }
 void ConsoleServer::SetTransportProvider(TransportInterface *transportInterface, unsigned short port)
 {
@@ -64,7 +68,7 @@ void ConsoleServer::AddCommandParser(CommandParserInterface *commandParserInterf
 		}
 	}
 
-	commandParserList.Insert(commandParserInterface, __FILE__, __LINE__);
+	commandParserList.Insert(commandParserInterface, _FILE_AND_LINE_);
 	if (transport)
 		commandParserInterface->OnTransportChange(transport);
 }
@@ -90,9 +94,9 @@ void ConsoleServer::Update(void)
 	unsigned i;
 	char *parameterList[20]; // Up to 20 parameters
 	unsigned numParameters;
-	SystemAddress newOrLostConnectionId;
-	Packet *p;
-	RegisteredCommand rc;
+	RakNet::SystemAddress newOrLostConnectionId;
+	RakNet::Packet *p;
+	RakNet::RegisteredCommand rc;
 
 	p = transport->Receive();
 	newOrLostConnectionId=transport->HasNewIncomingConnection();
@@ -122,7 +126,7 @@ void ConsoleServer::Update(void)
 		char copy[REMOTE_MAX_TEXT_INPUT];
 		memcpy(copy, p->data, p->length);
 		copy[p->length]=0;
-		CommandParserInterface::ParseConsoleString((char*)p->data, COMMAND_DELINATOR, COMMAND_DELINATOR_TOGGLE, &numParameters, parameterList, 20); // Up to 20 parameters
+		RakNet::CommandParserInterface::ParseConsoleString((char*)p->data, COMMAND_DELINATOR, COMMAND_DELINATOR_TOGGLE, &numParameters, parameterList, 20); // Up to 20 parameters
 		if (numParameters==0)
 		{
 			transport->DeallocatePacket(p);
@@ -167,12 +171,12 @@ void ConsoleServer::Update(void)
 				if (commandParsed==false)
 				{
 					// Try again, for all commands for all parsers.
-					RegisteredCommand rc;
+					RakNet::RegisteredCommand rc;
 					for (i=0; i < commandParserList.Size(); i++)
 					{
 						if (commandParserList[i]->GetRegisteredCommand(parameterList[1], &rc))
 						{
-							if (rc.parameterCount==CommandParserInterface::VARIABLE_NUMBER_OF_PARAMETERS)
+							if (rc.parameterCount==RakNet::CommandParserInterface::VARIABLE_NUMBER_OF_PARAMETERS)
 								transport->Send(p->systemAddress, "(Variable parms): %s %s\r\n", rc.command, rc.commandHelp);
 							else
 								transport->Send(p->systemAddress, "(%i parms): %s %s\r\n", rc.parameterCount, rc.command, rc.commandHelp);
@@ -293,11 +297,11 @@ void ConsoleServer::ShowPrompt(SystemAddress systemAddress)
 void ConsoleServer::SetPrompt(const char *_prompt)
 {
 	if (prompt)
-		rakFree_Ex(prompt,__FILE__,__LINE__);
+		rakFree_Ex(prompt,_FILE_AND_LINE_);
 	if (_prompt && _prompt[0])
 	{
 		size_t len = strlen(_prompt);
-		prompt = (char*) rakMalloc_Ex(len+1,__FILE__,__LINE__);
+		prompt = (char*) rakMalloc_Ex(len+1,_FILE_AND_LINE_);
 		strcpy(prompt,_prompt);
 	}
 	else

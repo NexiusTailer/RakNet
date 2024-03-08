@@ -1,9 +1,10 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 
 connectToServerButton.addEventListener("click", this, "connectToServer");
+ExternalInterface.addCallback("c2f_connectToServer_callback", this, c2f_connectToServer_callback);
 function connectToServer()
 {
-	GameDelegate.call("f2c_ConnectToServer", [ipAddressTextInput.text, portTextInput.text], this, "c2f_connectToServer_callback");
+	ExternalInterface.call("f2c_ConnectToServer", ipAddressTextInput.text, portTextInput.text, "c2f_connectToServer_callback");
 }
 
 function c2f_connectToServer_callback(callSucceeded : Boolean)
@@ -12,13 +13,13 @@ function c2f_connectToServer_callback(callSucceeded : Boolean)
 		gotoAndStop("Main");	
 }
 
-GameDelegate.addCallBack("c2f_NotifyConnectionAttemptToServerSuccess", this, "c2f_NotifyConnectionAttemptToServerSuccess");
+ExternalInterface.addCallback("c2f_NotifyConnectionAttemptToServerSuccess", this, c2f_NotifyConnectionAttemptToServerSuccess);
 function c2f_NotifyConnectionAttemptToServerSuccess():Void
 {
 	gotoAndStop("Accounts_RakNet");
 }
 
-GameDelegate.addCallBack("c2f_NotifyConnectionAttemptToServerFailure", this, "c2f_NotifyConnectionAttemptToServerFailure");
+ExternalInterface.addCallback("c2f_NotifyConnectionAttemptToServerFailure", this, c2f_NotifyConnectionAttemptToServerFailure);
 function c2f_NotifyConnectionAttemptToServerFailure(resultCode:String, systemAddress:String):Void
 {
 	// Result codes are:

@@ -28,10 +28,11 @@ struct StrAndBool
 	char *str;
 	bool b;
 };
-int RAK_DLL_EXPORT StrAndBoolComp( char *const &key, const StrAndBool &data );
 
 namespace RakNet
 {
+	int RAK_DLL_EXPORT StrAndBoolComp( char *const &key, const StrAndBool &data );
+
 	/// \details This is an even more efficient alternative to StringCompressor in that it writes a single byte from a lookup table and only does compression.<BR>
 	/// if the string does not already exist in the table.<BR>
 	/// All string tables must match on all systems - hence you must add all the strings in the same order on all systems.<BR>

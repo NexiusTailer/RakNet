@@ -14,15 +14,34 @@
 #include "Export.h"
 #include "RakNetTypes.h"
 
+namespace RakNet
+{
+
 enum RNSPerSecondMetrics
 {
+	/// How many bytes per pushed via a call to RakPeerInterface::Send()
 	USER_MESSAGE_BYTES_PUSHED,
+
+	/// How many user message bytes were sent via a call to RakPeerInterface::Send(). This is less than or equal to USER_MESSAGE_BYTES_PUSHED.
+	/// A message would be pushed, but not yet sent, due to congestion control
 	USER_MESSAGE_BYTES_SENT,
+
+	/// How many user message bytes were resent. A message is resent if it is marked as reliable, and either the message didn't arrive or the message ack didn't arrive.
 	USER_MESSAGE_BYTES_RESENT,
+
+	/// How many user message bytes were received, and processed successfully.
 	USER_MESSAGE_BYTES_RECEIVED_PROCESSED,
+
+	/// How many user message bytes were received, but ignored due to data format errors. This will usually be 0.
 	USER_MESSAGE_BYTES_RECEIVED_IGNORED,
+
+	/// How many actual bytes were sent, including per-message and per-datagram overhead, and reliable message acks
 	ACTUAL_BYTES_SENT,
+
+	/// How many actual bytes were received, including overead and acks.
 	ACTUAL_BYTES_RECEIVED,
+
+	/// \internal
 	RNS_PER_SECOND_METRICS_COUNT
 };
 
@@ -31,24 +50,47 @@ enum RNSPerSecondMetrics
 /// Store Statistics information related to network usage 
 struct RAK_DLL_EXPORT RakNetStatistics
 {
+	/// For each type in RNSPerSecondMetrics, what is the value over the last 1 second?
 	uint64_t valueOverLastSecond[RNS_PER_SECOND_METRICS_COUNT];
+
+	/// For each type in RNSPerSecondMetrics, what is the total value over the lifetime of the connection?
 	uint64_t runningTotal[RNS_PER_SECOND_METRICS_COUNT];
 	
-	RakNetTimeUS connectionStartTime;
+	/// When did the connection start?
+	/// \sa RakNet::GetTimeUS()
+	RakNet::TimeUS connectionStartTime;
 
-	uint64_t BPSLimitByCongestionControl;
+	/// Is our current send rate throttled by congestion control?
+	/// This value should be true if you send more data per second than your bandwidth capacity
 	bool isLimitedByCongestionControl;
 
-	uint64_t BPSLimitByOutgoingBandwidthLimit;
+	/// If \a isLimitedByCongestionControl is true, what is the limit, in bytes per second?
+	uint64_t BPSLimitByCongestionControl;
+
+	/// Is our current send rate throttled by a call to RakPeer::SetPerConnectionOutgoingBandwidthLimit()?
 	bool isLimitedByOutgoingBandwidthLimit;
 
+	/// If \a isLimitedByOutgoingBandwidthLimit is true, what is the limit, in bytes per second?
+	uint64_t BPSLimitByOutgoingBandwidthLimit;
+
+	/// For each priority level, how many messages are waiting to be sent out?
 	unsigned int messageInSendBuffer[NUMBER_OF_PRIORITIES];
+
+	/// For each priority level, how many bytes are waiting to be sent out?
 	double bytesInSendBuffer[NUMBER_OF_PRIORITIES];
 
+	/// How many messages are waiting in the resend buffer? This includes messages waiting for an ack, so should normally be a small value
+	/// If the value is rising over time, you are exceeding the bandwidth capacity. See BPSLimitByCongestionControl 
 	unsigned int messagesInResendBuffer;
+
+	/// How many bytes are waiting in the resend buffer. See also messagesInResendBuffer
 	uint64_t bytesInResendBuffer;
 
-	float packetlossLastSecond, packetlossTotal;
+	/// Over the last second, what was our packetloss? This number will range from 0.0 (for none) to 1.0 (for 100%)
+	float packetlossLastSecond;
+
+	/// What is the average total packetloss over the lifetime of the connection?
+	float packetlossTotal;
 
 	RakNetStatistics& operator +=(const RakNetStatistics& other)
 	{
@@ -78,5 +120,7 @@ struct RAK_DLL_EXPORT RakNetStatistics
 /// 2 high 
 /// 3 debugging congestion control
 void RAK_DLL_EXPORT StatisticsToString( RakNetStatistics *s, char *buffer, int verbosityLevel );
+
+} // namespace RakNet
 
 #endif

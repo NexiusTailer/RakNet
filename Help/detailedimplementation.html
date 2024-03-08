@@ -30,7 +30,6 @@ These are the most common headers you'll need:</td>
 <table width="100%" border="0" cellspacing="0" cellpadding="10">
   <tr>
     <td class="RakNetManualTextBody">#include "MessageIdentifiers.h"<BR>
-#include "RakNetworkFactory.h"<BR>
 #include "RakPeerInterface.h"<BR>
 #include "RakNetTypes.h"<BR>
 <BR>
@@ -47,7 +46,7 @@ MessageIdentifiers.h contains a giant enumeration representing the native messag
 <table width="100%" border="0" cellspacing="0" cellpadding="10">
   <tr>
     <td class="RakNetManualTextBody"><BR>
-RakPeerInterface* peer = RakNetworkFactory::GetRakPeerInterface();<BR>
+RakNet::RakPeerInterface* peer = RakNet::RakPeerInterface::GetInstance();<BR>
 <BR>
 That code would give you one instance of  the peer.  Usually you would only want one of these in a particular exe.<BR>
 <BR>
@@ -63,7 +62,7 @@ For example:<BR></td>
 </table>
 <table width="100%" border="0" cellspacing="0" cellpadding="10">
   <tr>
-    <td class="RakNetManualTextBody">peer->Startup(1, 30, &SocketDescriptor(), 1)<BR>
+    <td class="RakNetManualTextBody">peer->Startup(1,  &SocketDescriptor(), 1)<BR>
 peer
     ->Connect(serverIP, serverPort, 0, 0);<BR>
     <BR>
@@ -113,7 +112,8 @@ Starting as a server is similar.</td>
 </table>
 <table width="100%" border="0" cellspacing="0" cellpadding="10">
   <tr>
-    <td class="RakNetManualTextBody">peer->Startup(10, 30, &amp;SocketDescriptor(60000,0), 1);<BR>
+    <td class="RakNetManualTextBody">RakNet::SocketDescriptor sd(60000,0);<br>
+      peer->Startup(10,  &amp;sd, 1);<BR>
 peer->SetMaximumIncomingConnections(4);<BR>
 <BR>
 Startup sets 10 allowable connections.  An allowable connection is either incoming or outgoing.  It uses port 60000 to receive data.<br>
@@ -127,7 +127,7 @@ SetMaximumIncomingConnections is necessary if you want to allow other peers to c
 </table>
 <table width="100%" border="0" cellspacing="0" cellpadding="10">
   <tr>
-    <td class="RakNetManualTextBody"><p>Packet *packet = peer->Receive();<BR>
+    <td class="RakNetManualTextBody"><p>RakNet::Packet *packet = peer->Receive();<BR>
       <BR>
       It's that easy.  If packet is 0 then there was nothing to read and you can go on with your game.  Otherwise you got some data.<BR>
   <BR>
@@ -136,32 +136,34 @@ SetMaximumIncomingConnections is necessary if you want to allow other peers to c
       Messages from other instances of RakNet, on the same computer or from other computers<BR>
       Both are handled the same way.<BR>
   <BR>
-      Lets look at the Packet struct:<BR>
-      struct Packet<BR>
-      { <BR>
-      SystemIndex systemIndex; /// Server only - this is the index into the player array that this systemAddress maps to <BR>
-      SystemAddress systemAddress; /// The IP address / port of the system that send this packet.<BR> 
-      RakNetGUID guid; /// Unique identifier for the system that sent this packet<BR>
+      Lets look at the Packet struct:</p>
+      <p class="RakNetCode">namespace RakNet<br>
+        {<BR>
+        struct Packet<BR>
+        { <BR>
+        SystemIndex systemIndex; /// Server only - this is the index into the player array that this systemAddress maps to <BR>
+        SystemAddress systemAddress; /// The IP address / port of the system that send this packet.<BR> 
+        RakNetGUID guid; /// Unique identifier for the system that sent this packet<BR>
         unsigned int length; /// The length of the data in bytes. Deprecated You should use bitSize. <BR>
         unsigned int bitSize; /// The length of the data in bits <BR>
         unsigned char* data ;/// The data from the sender<BR>
         bool deleteData; /// Internal. Indicates whether to delete the data, or to simply delete the packet.<BR>
         };<BR>
-        <BR>
-        systemAddress specifies the origin of the packet. Every connected system has a unique SystemAddress which is assigned automatically. Note that the system address will be constant and unique over the lifetime of the connection. However, a particlar system may not have the same system address to all other systems. Use RakNetGUID as a unique identifier for a particular instance of RakPeerInterface. Certain native network messages use this field - for example ID_REMOTE_DISCONNECTION_NOTIFICATION tells you as a client that another client has disconnected.  systemAddress in that case specifies which client.  UNASSIGNED_SYSTEM_ADDRESS is a reserved value for "Unknown".<BR>
+      } // Namespace</p>
+      <p>        systemAddress specifies the origin of the packet. Every connected system has a unique SystemAddress which is assigned automatically. Note that the system address will be constant and unique over the lifetime of the connection. However, a particlar system may not have the same system address to all other systems. Use RakNetGUID as a unique identifier for a particular instance of RakPeerInterface. Certain native network messages use this field - for example ID_REMOTE_DISCONNECTION_NOTIFICATION tells you as a client that another client has disconnected.  systemAddress in that case specifies which client.  UNASSIGNED_SYSTEM_ADDRESS is a reserved value for "Unknown".<BR>
         <BR>
         bitSize tells you how many bits long the data field of the struct is.<BR>
         <BR>
         Now that you got a packet you need to determine what the data means.  Usually the first byte of the data is an enum that specifies type (see creating packets for more information).  This is not always the case as you'll later learn, because with some packets, you might get a TimeStamp. To make things easy here it is a function to get the identifier when the packet has a TimeStamp:<BR>
         <BR>
-        unsigned char GetPacketIdentifier(Packet *p)<BR>
+        <span class="RakNetCode">unsigned char GetPacketIdentifier(Packet *p)<BR>
         {<BR>
         if ((unsigned char)p->data[0] == ID_TIMESTAMP)<BR>
-        return (unsigned char) p->data[sizeof(unsigned char) + sizeof(unsigned long)];<BR>
+        return (unsigned char) p->data[sizeof(MessageID) + sizeof(RakNet::Time)];<BR>
         else<BR>
         return (unsigned char) p->data[0];<BR>
         }<BR>
-        <BR>
+        </span><BR>
         This will return an unsigned char, which corresponds to an enum specified in MessageIdentifiers.h.<BR>
         <BR>
         The network engine will return certain messages only for the client, certain messages only for the server, and certain messages for both.  For a full explanation of the messages refer to MessageIdentifiers.h.  The important ones to worry about are ID_NEW_INCOMING_CONNECTION and ID_CONNECTION_REQUEST_ACCEPTED.  These mean that the server or a peer got a new incoming client, and the client or a peer has successfully connected respectively.  At this point you can send your own messages. <BR>
@@ -192,24 +194,26 @@ SetMaximumIncomingConnections is necessary if you want to allow other peers to c
       The second parameter is how many bytes to send.  In this example we send the length of the string and one more for the null terminator.<BR>
   <BR>
       The third  parameter is the priority of the packet.  This takes one of three values:<BR>
+      IMMEDIATE_PRIORITY,<br>
       HIGH_PRIORITY<BR>
       MEDIUM_PRIORITY<BR>
       LOW_PRIORITY<BR>
   <BR>
-      High priority packets go out before medium ones, and medium ones go out before low ones do.  Simple.<BR>
-  <BR>
-      The fourth  parameter takes one of five values.  Lets say you send data 1,2,3,4,5,6.  Here's the order and substance of what you might get back:<BR>
-  <BR>
-      UNRELIABLE - 5, 1, 6<BR>
-      UNRELIABLE_SEQUENCED - 5<BR>
-      RELIABLE - 5, 1, 4, 6, 2, 3<BR>
-      RELIABLE_ORDERED - 1, 2, 3, 4, 5, 6<BR>
-      RELIABLE_SEQUENCED - 5, 6<BR>
-  <BR>
-      RELIABLE and RELIABLE_ORDERED are fine for most cases.  For more details on this refer to PacketPriority.h<BR>
-  <BR>
+      IMMEDIATE_PRIOIRTY messages signal RakNet's update thread to update immediately. Assuming bandwidth is available, they get sent immediately. HIGH_PRIORITY, MEDIUM_PRIORITY, and LOW_PRIORITY messages are put into a buffer. The next time RakNet's update thread ticks (which is every 10 milliseconds) those messages get sent. Those 3 priorities can be more efficient for bandwidth, because if multiple messages can be aggregated into a single datagram, RakNet will transparently do so</p>
+      <p>Twice as many messages get sent out for each higher priority.  So if messages of all priorities were waiting to go out, 8 IMMEDIATE_PRIORITY, 4 HIGH_PRIORITY, 2 MEDIUM_PRIORITY, and 1 LOW_PRIORITY would be sent. Obviously however, if only LOW_PRIORITY messages were waiting at all, then those messages would all go out as fast as possible.<BR>
+        <BR>
+        The fourth  parameter takes one of five major values.  Lets say you send data 1,2,3,4,5,6.  Here's the order and substance of what you might get back:<BR>
+        <BR>
+        UNRELIABLE - 5, 1, 6<BR>
+        UNRELIABLE_SEQUENCED - 5<BR>
+        RELIABLE - 5, 1, 4, 6, 2, 3<BR>
+        RELIABLE_ORDERED - 1, 2, 3, 4, 5, 6<BR>
+        RELIABLE_SEQUENCED - 5, 6<BR>
+        <BR>
+        RELIABLE and RELIABLE_ORDERED are fine for most cases.  For more details on this refer to PacketPriority.h.<BR>
+        <BR>
       The fifth parameter (0 in this example) is which ordering stream to use.  This is used for relative ordering of packets in relation to other packets on the same stream.  It's not important for now, but for more information on this refer to the <A HREF="sendingpackets.html">Sending Packets</A> section.</p>
-      <p><font color="#666666" size="2" face="Geneva, Verdana, Arial, Helvetica, sans-serif">The sixth parameter (UNASSIGNED_SYSTEM_ADDRESS), is the SystemAddress to send to. UNASSIGNED_SYSTEM_ADDRESS is a reversed value meaning &quot;no-ono in particular&quot;. This parameter means one of two things : either who you want to send the packet to, or who you don't want to send the packet to, depending on the value of broadcast, which is the last parameter.<br>
+      <p>The sixth parameter (UNASSIGNED_SYSTEM_ADDRESS), is the SystemAddress to send to. UNASSIGNED_SYSTEM_ADDRESS is a reversed value meaning &quot;no-ono in particular&quot;. This parameter means one of two things : either who you want to send the packet to, or who you don't want to send the packet to, depending on the value of broadcast, which is the last parameter.<br>
           <BR>
     The seventh parameter (true in this example) is whether to broadcast to all connected systems or not.  This parameter works with the sixth parameter, systemAddress.  If broadcast is true, then systemAddres specifies who not to send to.  If it is false, then it specifies who to send to.  If we want to broadcast to everyone, then we just specify UNASSIGNED_SYSTEM_ADRRESS for systemAddress.  This works out quite well when relaying packets, because the Packet::systemAddress field in the packet you get will specify who the sender is.   By passing the sender in the systemAddress parameter of the Send function and specifing broadcast as true, we can relay the packet to everyone BUT the sender, which makes sense since we usually don't want to send the same information back to the person who just sent it to us.</p></td>
   </tr>
@@ -238,7 +242,7 @@ Shutdown stops the network threads so RakNet will not consume CPU cycles unneces
   <tr>
     <td>Just pass the instance that the factory gave you to the DestroyRakPeerInterface.  You may want to do this mid-program to free memory but it is not required.<BR>
       <BR>
-RakNetworkFactory::DestroyRakPeerInterface(somePeer);<BR>
+RakNet::RakPeerInterface::DestroyInstance(rakPeer);<BR>
 <BR>
 Firewall and NAT users take note <BR>
 <BR>

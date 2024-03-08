@@ -8,6 +8,8 @@
 #include "SimpleMutex.h"
 #include "RakAssert.h"
 
+using namespace RakNet;
+
 SimpleMutex::SimpleMutex() //: isInitialized(false)
 {
 	// Prior implementation of Initializing in Lock() was not threadsafe

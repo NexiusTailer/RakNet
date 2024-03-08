@@ -1,6 +1,5 @@
 #include "PacketAndLowLevelTestsTest.h"
 
-#include "malloc.h"
 
 /*
 Description:
@@ -9,7 +8,7 @@ virtual int RakPeerInterface::GetSplitMessageProgressInterval  	(  	void   	  	 
 virtual void RakPeerInterface::PushBackPacket  	(  	Packet *   	 packet, 		bool  	pushAtHead	  	) 			"
 virtual bool RakPeerInterface::SendList  	(  	char **   	 data, 		const int *  	lengths, 		const int  	numParameters, 		PacketPriority  	priority, 		PacketReliability  	reliability, 		char  	orderingChannel, 		SystemAddress  	systemAddress, 		bool  	broadcast	  	) 			"						
 virtual void RakPeerInterface::SetSplitMessageProgressInterval 	( 	int  	interval 	 )  	
-virtual void RakPeerInterface::SetUnreliableTimeout  	(  	RakNetTime   	 timeoutMS  	 )   	 
+virtual void RakPeerInterface::SetUnreliableTimeout  	(  	TimeMS   	 timeoutMS  	 )   	 
 virtual Packet* RakPeerInterface::AllocatePacket  	(  	unsigned   	 dataSize  	 )   
 AttachPlugin (PluginInterface2 *plugin)=0
 DetachPlugin (PluginInterface2 *plugin)=0
@@ -36,10 +35,10 @@ AttachPlugin
 DetachPlugin
 
 */
-int PacketAndLowLevelTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int PacketAndLowLevelTestsTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 	RakPeerInterface *server,*client;
-	destroyList.Clear(false,__FILE__,__LINE__);
+	destroyList.Clear(false,_FILE_AND_LINE_);
 
 	TestHelpers::StandardClientPrep(client,destroyList);
 	TestHelpers::StandardServerPrep(server,destroyList);
@@ -277,14 +276,14 @@ void PacketAndLowLevelTestsTest::FloodWithHighPriority(RakPeerInterface* client)
 
 }
 
-RakNet::RakString PacketAndLowLevelTestsTest::GetTestName()
+RakString PacketAndLowLevelTestsTest::GetTestName()
 {
 
 	return "PacketAndLowLevelTestsTest";
 
 }
 
-RakNet::RakString PacketAndLowLevelTestsTest::ErrorCodeToString(int errorCode)
+RakString PacketAndLowLevelTestsTest::ErrorCodeToString(int errorCode)
 {
 
 	if (errorCode>0&&(unsigned int)errorCode<=errorList.Size())
@@ -304,27 +303,27 @@ void PacketAndLowLevelTestsTest::DestroyPeers()
 	int theSize=destroyList.Size();
 
 	for (int i=0; i < theSize; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+		RakPeerInterface::DestroyInstance(destroyList[i]);
 
 }
 
 PacketAndLowLevelTestsTest::PacketAndLowLevelTestsTest(void)
 {
 
-	errorList.Push("Client failed to connect to server",__FILE__,__LINE__);
-	errorList.Push("Attached plugin failed to modify packet",__FILE__,__LINE__);
-	errorList.Push("Plugin is still modifying packets after detach",__FILE__,__LINE__);
-	errorList.Push("GetSplitMessageProgressInterval returned wrong value",__FILE__,__LINE__);
-	errorList.Push("Send to server failed",__FILE__,__LINE__);
-	errorList.Push("Large packet did not split or did not properly get ID_DOWNLOAD_PROGRESS after SetSplitMessageProgressInterval is set to 1 millisecond",__FILE__,__LINE__);
-	errorList.Push("Did not recieve and put on packet made with AllocatePacket and put on recieve stack with PushBackPacket",__FILE__,__LINE__);
-	errorList.Push("Client failed to connect to server",__FILE__,__LINE__);
-	errorList.Push("Did not recieve all packets from SendList",__FILE__,__LINE__);
-	errorList.Push("Did not recieve and put on packet made with AllocatePacket and put on recieve stack with PushBackPacket",__FILE__,__LINE__);
-	errorList.Push("Client failed to connect to server",__FILE__,__LINE__);
-	errorList.Push("PushBackPacket messed up future communication",__FILE__,__LINE__);
-	errorList.Push("Send/Recieve failed",__FILE__,__LINE__);
-	errorList.Push("Recieved size incorrect",__FILE__,__LINE__);
+	errorList.Push("Client failed to connect to server",_FILE_AND_LINE_);
+	errorList.Push("Attached plugin failed to modify packet",_FILE_AND_LINE_);
+	errorList.Push("Plugin is still modifying packets after detach",_FILE_AND_LINE_);
+	errorList.Push("GetSplitMessageProgressInterval returned wrong value",_FILE_AND_LINE_);
+	errorList.Push("Send to server failed",_FILE_AND_LINE_);
+	errorList.Push("Large packet did not split or did not properly get ID_DOWNLOAD_PROGRESS after SetSplitMessageProgressInterval is set to 1 millisecond",_FILE_AND_LINE_);
+	errorList.Push("Did not recieve and put on packet made with AllocatePacket and put on recieve stack with PushBackPacket",_FILE_AND_LINE_);
+	errorList.Push("Client failed to connect to server",_FILE_AND_LINE_);
+	errorList.Push("Did not recieve all packets from SendList",_FILE_AND_LINE_);
+	errorList.Push("Did not recieve and put on packet made with AllocatePacket and put on recieve stack with PushBackPacket",_FILE_AND_LINE_);
+	errorList.Push("Client failed to connect to server",_FILE_AND_LINE_);
+	errorList.Push("PushBackPacket messed up future communication",_FILE_AND_LINE_);
+	errorList.Push("Send/Recieve failed",_FILE_AND_LINE_);
+	errorList.Push("Recieved size incorrect",_FILE_AND_LINE_);
 
 }
 

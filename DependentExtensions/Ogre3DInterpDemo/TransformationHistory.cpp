@@ -6,7 +6,7 @@ TransformationHistoryCell::TransformationHistoryCell()
 {
 
 }
-TransformationHistoryCell::TransformationHistoryCell(RakNetTime t, const Ogre::Vector3& pos, const Ogre::Vector3& vel, const Ogre::Quaternion& quat  ) :
+TransformationHistoryCell::TransformationHistoryCell(RakNet::TimeMS t, const Ogre::Vector3& pos, const Ogre::Vector3& vel, const Ogre::Quaternion& quat  ) :
 time(t),
 velocity(vel),
 position(pos),
@@ -14,36 +14,36 @@ orientation(quat)
 {
 }
 
-void TransformationHistory::Init(RakNetTime maxWriteInterval, RakNetTime maxHistoryTime)
+void TransformationHistory::Init(RakNet::TimeMS maxWriteInterval, RakNet::TimeMS maxHistoryTime)
 {
 	writeInterval=maxWriteInterval;
 	maxHistoryLength = maxHistoryTime/maxWriteInterval+1;
-	history.ClearAndForceAllocation(maxHistoryLength+1, __FILE__, __LINE__ );
+	history.ClearAndForceAllocation(maxHistoryLength+1, _FILE_AND_LINE_ );
 	RakAssert(writeInterval>0);
 }
-void TransformationHistory::Write(const Ogre::Vector3 &position, const Ogre::Vector3 &velocity, const Ogre::Quaternion &orientation, RakNetTime curTimeMS)
+void TransformationHistory::Write(const Ogre::Vector3 &position, const Ogre::Vector3 &velocity, const Ogre::Quaternion &orientation, RakNet::TimeMS curTimeMS)
 {
 	if (history.Size()==0)
 	{
-		history.Push(TransformationHistoryCell(curTimeMS,position,velocity,orientation), __FILE__, __LINE__ );
+		history.Push(TransformationHistoryCell(curTimeMS,position,velocity,orientation), _FILE_AND_LINE_ );
 	}
 	else
 	{
 		const TransformationHistoryCell &lastCell = history.PeekTail();
 		if (curTimeMS-lastCell.time>=writeInterval)
 		{
-			history.Push(TransformationHistoryCell(curTimeMS,position,velocity,orientation), __FILE__, __LINE__ );
+			history.Push(TransformationHistoryCell(curTimeMS,position,velocity,orientation), _FILE_AND_LINE_ );
 			if (history.Size()>maxHistoryLength)
 				history.Pop();
 		}
 	}	
 }
-void TransformationHistory::Overwrite(const Ogre::Vector3 &position, const Ogre::Vector3 &velocity, const Ogre::Quaternion &orientation, RakNetTime when)
+void TransformationHistory::Overwrite(const Ogre::Vector3 &position, const Ogre::Vector3 &velocity, const Ogre::Quaternion &orientation, RakNet::TimeMS when)
 {
 	int historySize = history.Size();
 	if (historySize==0)
 	{
-		history.Push(TransformationHistoryCell(when,position,velocity,orientation), __FILE__, __LINE__ );
+		history.Push(TransformationHistoryCell(when,position,velocity,orientation), _FILE_AND_LINE_ );
 	}
 	else
 	{
@@ -57,7 +57,7 @@ void TransformationHistory::Overwrite(const Ogre::Vector3 &position, const Ogre:
 				if (i==historySize-1 && when-cell.time>=writeInterval)
 				{
 					// Not an overwrite at all, but a new cell
-					history.Push(TransformationHistoryCell(when,position,velocity,orientation), __FILE__, __LINE__ );
+					history.Push(TransformationHistoryCell(when,position,velocity,orientation), _FILE_AND_LINE_ );
 					if (history.Size()>maxHistoryLength)
 						history.Pop();
 					return;
@@ -73,7 +73,7 @@ void TransformationHistory::Overwrite(const Ogre::Vector3 &position, const Ogre:
 	}	
 }
 TransformationHistory::ReadResult TransformationHistory::Read(Ogre::Vector3 *position, Ogre::Vector3 *velocity, Ogre::Quaternion *orientation,
-								 RakNetTime when, RakNetTime curTime)
+								 RakNet::TimeMS when, RakNet::TimeMS curTime)
 {
 	int historySize = history.Size();
 	if (historySize==0)
@@ -131,5 +131,5 @@ TransformationHistory::ReadResult TransformationHistory::Read(Ogre::Vector3 *pos
 }
 void TransformationHistory::Clear(void)
 {
-	history.Clear(__FILE__, __LINE__);
+	history.Clear(_FILE_AND_LINE_);
 }

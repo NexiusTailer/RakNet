@@ -81,7 +81,7 @@ namespace DataStructures
 	MemoryPool<MemoryBlockType>::~MemoryPool()
 	{
 #ifndef _DISABLE_MEMORY_POOL
-		Clear(__FILE__, __LINE__);
+		Clear(_FILE_AND_LINE_);
 #endif
 	}
 

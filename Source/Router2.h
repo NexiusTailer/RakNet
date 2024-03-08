@@ -11,7 +11,6 @@
 #ifndef __ROUTER_2_PLUGIN_H
 #define __ROUTER_2_PLUGIN_H
 
-class RakPeerInterface;
 #include "RakNetTypes.h"
 #include "PluginInterface2.h"
 #include "PacketPriority.h"
@@ -21,16 +20,22 @@ class RakPeerInterface;
 
 namespace RakNet
 {
+/// Forward declarations
+class RakPeerInterface;
 
 struct Router2DebugInterface
 {
+	Router2DebugInterface() {}
+	virtual ~Router2DebugInterface() {}
 	virtual void ShowFailure(const char *message);
 	virtual void ShowDiagnostic(const char *message);
 };
 
 /// \defgroup ROUTER_2_GROUP Router2
 /// \brief Part of the NAT punchthrough solution, allowing you to connect to systems by routing through a shared connection.
-/// \details
+/// \details Router2 routes datagrams between two systems that are not directly connected by using the bandwidth of a third system, to which the other two systems were connected
+/// It is of benefit when a fully connected mesh topology is desired, but could not be completely established due to routers and/or firewalls
+/// As the system address of a remote system will be the system address of the intermediary, it is necessary to use the RakNetGUID object to refer to systems, including with other plugins
 /// \ingroup PLUGINS_GROUP
 
 /// \ingroup ROUTER_2_GROUP
@@ -39,6 +44,9 @@ struct Router2DebugInterface
 class RAK_DLL_EXPORT Router2 : public PluginInterface2
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(Router2)
+
 	Router2();
 	virtual ~Router2();
 
@@ -103,7 +111,7 @@ public:
 		DataStructures::List<ConnectionRequestSystem> connectionRequestSystems;
 		SimpleMutex connectionRequestSystemsMutex;
 		Router2RequestStates requestState;
-		RakNetTimeMS pingTimeout;
+		RakNet::TimeMS pingTimeout;
 		RakNetGUID endpointGuid;
 		RakNetGUID lastRequestedForwardingSystem;
 		bool returnConnectionLostOnFailure;
@@ -120,8 +128,8 @@ public:
 		RakNetGUID sourceGuid;
 		SystemAddress sourceAddress;
 		bool gotReplyFromSource;
-		RakNetTimeMS timeout;
-		RakNetTimeMS nextAction;
+		RakNet::TimeMS timeout;
+		RakNet::TimeMS nextAction;
 		unsigned short forwardingPort;
 		SOCKET forwardingSocket;
 	};
@@ -148,7 +156,7 @@ protected:
 	void OnMiniPunchReplyBounce(Packet *packet);
 	bool OnForwardingSuccess(Packet *packet);
 	int GetLargestPingAmongConnectedSystems(void) const;
-	void ReturnToUser(MessageID messageId, RakNetGUID endpointGuid, SystemAddress systemAddress, bool bypassPlugins);
+	void ReturnToUser(MessageID messageId, RakNetGUID endpointGuid, SystemAddress systemAddress, bool wasGeneratedLocally);
 	bool ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLostOnFailure);
 
 	UDPForwarder *udpForwarder;

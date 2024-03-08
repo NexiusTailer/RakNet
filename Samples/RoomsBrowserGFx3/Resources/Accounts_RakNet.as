@@ -1,26 +1,26 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 
 loginButton.addEventListener("click", this, "Login");
 function Login()
 {
-	GameDelegate.call("f2c_Login", [usernameTextInput.text, passwordTextInput.text], this);
+	ExternalInterface.call("f2c_Login", usernameTextInput.text, passwordTextInput.text);
 }
 
 
 registerAccountButton.addEventListener("click", this, "registerAccount");
 function registerAccount()
 {
-	GameDelegate.call("f2c_RegisterAccount", [usernameTextInput.text, passwordTextInput.text], this);
+	ExternalInterface.call("f2c_RegisterAccount", usernameTextInput.text, passwordTextInput.text);
 }
 
-GameDelegate.addCallBack("c2f_Client_Login", this, "c2f_Client_Login");
+ExternalInterface.addCallback("c2f_Client_Login", this, c2f_Client_Login);
 function c2f_Client_Login(resultCode:String):Void
 {
 	if (resultCode=="L2RC_SUCCESS")
 	{
 		// Save this account
-		GameDelegate.call("f2c_SaveProperty", ["DefaultUsername", usernameTextInput.text], this);
-		GameDelegate.call("f2c_SaveProperty", ["DefaultPassword", passwordTextInput.text], this);
+		ExternalInterface.call("f2c_SaveProperty", "DefaultUsername", usernameTextInput.text);
+		ExternalInterface.call("f2c_SaveProperty", "DefaultPassword", passwordTextInput.text);
 		
 		// Goto logged in screen
 		gotoAndStop("Lobby");
@@ -36,13 +36,13 @@ function c2f_Client_Login(resultCode:String):Void
 	}
 }
 
-GameDelegate.addCallBack("c2f_Client_RegisterAccount", this, "c2f_Client_RegisterAccount");
+ExternalInterface.addCallback("c2f_Client_RegisterAccount", this, c2f_Client_RegisterAccount);
 function c2f_Client_RegisterAccount(resultCode:String):Void
 {
 	if (resultCode=="L2RC_SUCCESS")
 	{
 		// Try to login with this account now
-		GameDelegate.call("f2c_Login", [usernameTextInput.text, passwordTextInput.text], this);
+		ExternalInterface.call("f2c_Login", usernameTextInput.text, passwordTextInput.text);
 	}
 	else
 	{
@@ -58,11 +58,14 @@ function c2f_Client_RegisterAccount(resultCode:String):Void
 	}
 }
 
+ExternalInterface.addCallback("c2f_LoadProperty_DefaultUsername", this, c2f_LoadProperty_DefaultUsername);
+ExternalInterface.addCallback("c2f_LoadProperty_DefaultPassword", this, c2f_LoadProperty_DefaultPassword);
+
 // Ask for last used account
 function FillInUsernameAndPassword()
 {
-	GameDelegate.call("f2c_LoadProperty", ["DefaultUsername"], this, "c2f_LoadProperty_DefaultUsername");
-	GameDelegate.call("f2c_LoadProperty", ["DefaultPassword"], this, "c2f_LoadProperty_DefaultPassword");
+	ExternalInterface.call("f2c_LoadProperty", "DefaultUsername", "c2f_LoadProperty_DefaultUsername");
+	ExternalInterface.call("f2c_LoadProperty", "DefaultPassword", "c2f_LoadProperty_DefaultPassword");
 }
 
 

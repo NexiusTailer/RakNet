@@ -167,23 +167,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\AsynchronousFileIO.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\AutoRPC.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\BigInt.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\BitStream.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\BitStream_NoTemplate.cpp"
 				>
 			</File>
 			<File
@@ -199,11 +183,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\CommandParserInterface.cpp"
+				RelativePath="..\..\Source\CloudClient.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\ConnectionGraph.cpp"
+				RelativePath="..\..\Source\CloudCommon.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\CloudServer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\CommandParserInterface.cpp"
 				>
 			</File>
 			<File
@@ -212,10 +204,6 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\ConsoleServer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\DataBlockEncryptor.cpp"
 				>
 			</File>
 			<File
@@ -243,6 +231,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\DynDNS.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\EmailSender.cpp"
 				>
 			</File>
@@ -252,10 +244,6 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\EpochTimeToString.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\ExtendedOverlappedPool.cpp"
 				>
 			</File>
 			<File
@@ -275,19 +263,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\FullyConnectedMesh.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\FullyConnectedMesh2.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\FunctionThread.cpp"
+				RelativePath="..\..\Source\Getche.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\Gen_RPC8.cpp"
+				RelativePath="..\..\Source\Gets.cpp"
 				>
 			</File>
 			<File
@@ -311,23 +295,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\InlineFunctor.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\Itoa.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\LightweightDatabaseClient.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\LightweightDatabaseCommon.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\LightweightDatabaseServer.cpp"
 				>
 			</File>
 			<File
@@ -351,7 +319,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\NATTypeDetectionClient.cpp"
+				RelativePath="..\..\Source\NatTypeDetectionClient.cpp"
 				>
 			</File>
 			<File
@@ -387,7 +355,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\PluginInterface.cpp"
+				RelativePath="..\..\Source\PacketOutputWindowLogger.cpp"
 				>
 			</File>
 			<File
@@ -411,19 +379,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\RakNetTransport.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\RakNetTransport2.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\Source\RakNetTypes.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\RakNetworkFactory.cpp"
 				>
 			</File>
 			<File
@@ -459,23 +419,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\ReplicaManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\ReplicaManager2.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\ReplicaManager3.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\rijndael.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\Router.cpp"
 				>
 			</File>
 			<File
@@ -487,11 +431,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\RPCMap.cpp"
+				RelativePath="..\..\Source\SecureHandshake.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\RSACrypt.cpp"
+				RelativePath="..\..\Source\SendToThread.cpp"
 				>
 			</File>
 			<File
@@ -523,10 +467,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\SystemAddressList.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\TableSerializer.cpp"
 				>
 			</File>
@@ -544,6 +484,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\ThreadsafePacketLogger.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\TwoWayAuthentication.cpp"
 				>
 			</File>
 			<File
@@ -589,10 +533,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\AsynchronousFileIO.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\AutopatcherPatchContext.h"
 				>
 			</File>
@@ -601,19 +541,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\AutoRPC.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\BigInt.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\BitStream.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\BitStream_NoTemplate.h"
 				>
 			</File>
 			<File
@@ -629,15 +557,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\ClientContextStruct.h"
+				RelativePath="..\..\Source\CloudClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\CloudCommon.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\CloudServer.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\Source\CommandParserInterface.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\ConnectionGraph.h"
 				>
 			</File>
 			<File
@@ -646,10 +578,6 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\ConsoleServer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\DataBlockEncryptor.h"
 				>
 			</File>
 			<File
@@ -674,6 +602,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\DS_ByteQueue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\DS_Hash.h"
 				>
 			</File>
 			<File
@@ -753,6 +685,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\DynDNS.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\EmailSender.h"
 				>
 			</File>
@@ -762,10 +698,6 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\Export.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\ExtendedOverlappedPool.h"
 				>
 			</File>
 			<File
@@ -793,19 +725,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\FullyConnectedMesh.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\FullyConnectedMesh2.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\FunctionThread.h"
+				RelativePath="..\..\Source\Getche.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\Gen_RPC8.h"
+				RelativePath="..\..\Source\Gets.h"
 				>
 			</File>
 			<File
@@ -829,10 +757,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\InlineFunctor.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\InternalPacket.h"
 				>
 			</File>
@@ -845,23 +769,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\LightweightDatabaseClient.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\LightweightDatabaseCommon.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\LightweightDatabaseServer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\LinuxStrings.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\LobbyClientInterface.h"
 				>
 			</File>
 			<File
@@ -885,6 +793,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\NativeFeatureIncludesOverrides.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\NativeTypes.h"
 				>
 			</File>
@@ -897,11 +809,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\NATTypeDetectionClient.h"
+				RelativePath="..\..\Source\NatTypeDetectionClient.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\NATTypeDetectionCommon.h"
+				RelativePath="..\..\Source\NatTypeDetectionCommon.h"
 				>
 			</File>
 			<File
@@ -933,6 +845,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\PacketOutputWindowLogger.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\PacketPool.h"
 				>
 			</File>
@@ -941,15 +857,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\Platform.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\PluginInterface.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\PluginInterface2.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\PS3Includes.h"
 				>
 			</File>
 			<File
@@ -973,6 +885,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\RakNetDefinesOverrides.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\RakNetSmartPtr.h"
 				>
 			</File>
@@ -989,10 +905,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\RakNetTransport.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\RakNetTransport2.h"
 				>
 			</File>
@@ -1002,10 +914,6 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\RakNetVersion.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\RakNetworkFactory.h"
 				>
 			</File>
 			<File
@@ -1061,23 +969,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\ReplicaManager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\ReplicaManager2.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\ReplicaManager3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\Rijndael-Boxes.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\Rijndael.h"
 				>
 			</File>
 			<File
@@ -1089,10 +981,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\RouterInterface.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\RPC4Plugin.h"
 				>
 			</File>
@@ -1101,15 +989,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\RPCNode.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\RPCPlugin.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\RSACrypt.h"
+				RelativePath="..\..\Source\SendToThread.h"
 				>
 			</File>
 			<File
@@ -1182,6 +1062,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\TransportInterface.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\TwoWayAuthentication.h"
 				>
 			</File>
 			<File

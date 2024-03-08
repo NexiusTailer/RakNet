@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.TextArea;
 import gfx.controls.Button;
@@ -31,7 +31,7 @@ class Screens.CreateClan extends Screen
 		btnChangeLogo.addEventListener("click", this, "ChangeLogo");
 						
 		//Add callbacks for C++
-		GameDelegate.addCallBack("c2f_Clans_Create", this, "c2f_Clans_Create");
+		ExternalInterface.addCallback("c2f_Clans_Create", this, c2f_Clans_Create);
 				
 		super.VOnFinishedLoading();
 	}
@@ -47,10 +47,10 @@ class Screens.CreateClan extends Screen
 	
 	public function Create():Void
 	{		
-		GameDelegate.call("f2c_Clans_Create", [tiName.text,
+		ExternalInterface.call("f2c_Clans_Create", tiName.text,
 											   false,
 											   cbInvitationOnly.selected,
-											   taDescription.text], _root);
+											   taDescription.text);
 											   
 		tiName.text = "";
 		taDescription.text = "";

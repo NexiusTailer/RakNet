@@ -330,7 +330,7 @@ __L2_MSG_DB_HEADER(Notification_Friends_StatusChange, PGSQL)
 			OutputFriendsNotification(Notification_Friends_StatusChange::FRIEND_LOGGED_OFF, command, pgsql);
 		}
 
-		// Don't let the thread return this notification with UNASSIGNED_SYSTEM_ADDRESS to the user. It's just a message to the thread.
+		// Don't let the thread return this notification with RakNet::UNASSIGNED_SYSTEM_ADDRESS to the user. It's just a message to the thread.
 		return false;
 	}
 	virtual void ServerPostDBMemoryImpl( Lobby2Server *server, RakString userHandle )
@@ -377,7 +377,7 @@ __L2_MSG_DB_HEADER(Notification_Friends_PresenceUpdate, PGSQL)
 			command->server->AddOutputFromThread(notification, output[idx], "");
 		}
 
-		// Don't let the thread return this notification with UNASSIGNED_SYSTEM_ADDRESS to the user. It's just a message to the thread.
+		// Don't let the thread return this notification with RakNet::UNASSIGNED_SYSTEM_ADDRESS to the user. It's just a message to the thread.
 		return false;
 	}
 };
@@ -385,10 +385,12 @@ __L2_MSG_DB_HEADER(Notification_Friends_PresenceUpdate, PGSQL)
 
 // --------------------------------------------- Database specific factory class for all messages --------------------------------------------
 
-#define __L2_MSG_FACTORY_IMPL(__NAME__,__DB__) {case L2MID_##__NAME__ : return RakNet::OP_NEW< __NAME__##_##__DB__ >( __FILE__, __LINE__ ) ;}
+#define __L2_MSG_FACTORY_IMPL(__NAME__,__DB__) {case L2MID_##__NAME__ : return RakNet::OP_NEW< __NAME__##_##__DB__ >( _FILE_AND_LINE_ ) ;}
 
 struct Lobby2MessageFactory_PGSQL : public Lobby2MessageFactory
 {
+	STATIC_FACTORY_DECLARATIONS(Lobby2MessageFactory_PGSQL)
+
 	virtual Lobby2Message *Alloc(Lobby2MessageID id)
 	{
 		switch (id)

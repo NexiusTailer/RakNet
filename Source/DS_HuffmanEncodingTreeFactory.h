@@ -11,6 +11,9 @@
 #define __HUFFMAN_ENCODING_TREE_FACTORY
 
 #include "RakMemoryOverride.h"
+
+namespace RakNet {
+/// Forward declarations
 class HuffmanEncodingTree;
 
 /// \brief Creates instances of the class HuffmanEncodingTree
@@ -48,5 +51,7 @@ private:
 	/// Frequency table
 	unsigned int frequency[ 256 ];
 };
+
+} // namespace RakNet
 
 #endif

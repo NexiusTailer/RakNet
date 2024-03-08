@@ -26,6 +26,8 @@ of each frame.
 #include "dsound.h"
 #include "dxerr.h"
 
+namespace RakNet {
+
 class DSoundVoiceAdapter
 {
 
@@ -98,5 +100,7 @@ private:
 	DSBPOSITIONNOTIFY outgoingBufferNotifications[FRAMES_IN_SOUND];
 
 };
+
+} // namespace RakNet
 
 #endif

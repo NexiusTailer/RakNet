@@ -1,6 +1,6 @@
 #include "RPC4Plugin.h"
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
+
 #include <stdio.h>
 #include "Kbhit.h"
 #include <string.h>
@@ -13,12 +13,14 @@ using namespace RakNet;
 
 void CFunc( RakNet::BitStream *bitStream, Packet *packet )
 {
-	if (packet->systemAddress==UNASSIGNED_SYSTEM_ADDRESS)
+	if (packet->systemAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 		printf("Localhost call: ");
 	else
-		printf("Remote call: ");
+		printf("Remote call: \n");
 	RakNet::RakString data;
-	bitStream->ReadCompressed(data);
+	int offset=bitStream->GetReadOffset();
+	bool read = bitStream->ReadCompressed(data);
+	RakAssert(read);
 	printf("%s\n", data.C_String());
 }
 int main(void)
@@ -27,16 +29,16 @@ int main(void)
 	printf("Difficulty: Beginner\n\n");
 
 	RakPeerInterface *rakPeer1, *rakPeer2;
-	rakPeer1=RakNetworkFactory::GetRakPeerInterface();
-	rakPeer2=RakNetworkFactory::GetRakPeerInterface();
-	SocketDescriptor sd1(1234,0);
-	SocketDescriptor sd2(1235,0);
-	rakPeer1->Startup(8,0,&sd1,1);
-	rakPeer2->Startup(8,0,&sd2,1);
+	rakPeer1=RakNet::RakPeerInterface::GetInstance();
+	rakPeer2=RakNet::RakPeerInterface::GetInstance();
+	RakNet::SocketDescriptor sd1(1234,0);
+	RakNet::SocketDescriptor sd2(1235,0);
+	rakPeer1->Startup(8,&sd1,1);
+	rakPeer2->Startup(8,&sd2,1);
 	rakPeer1->SetMaximumIncomingConnections(8);
 	rakPeer2->Connect("127.0.0.1", sd1.port, 0, 0);
 	RakSleep(100);
-	RPC4Plugin rpc1, rpc2;
+	RPC4 rpc1, rpc2;
 	rakPeer1->AttachPlugin(&rpc1);
 	rakPeer2->AttachPlugin(&rpc2);
 	rpc1.RegisterFunction("CFunc", CFunc);
@@ -45,7 +47,7 @@ int main(void)
 	testBs.WriteCompressed("testData");
 	rpc2.CallLoopback("blah2", &testBs);
 	rpc2.Call("CFunc", &testBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,rakPeer2->GetSystemAddressFromIndex(0),false);
-	Packet *packet;
+	RakNet::Packet *packet;
 	packet = rakPeer1->Receive();
 	RakAssert(packet->data[0]==ID_NEW_INCOMING_CONNECTION);
 	rakPeer1->DeallocatePacket(packet);
@@ -69,8 +71,8 @@ int main(void)
 
 	rakPeer1->Shutdown(100,0);
 	rakPeer2->Shutdown(100,0);
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer1);
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer2);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer1);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer2);
 
 	return 1;
 }

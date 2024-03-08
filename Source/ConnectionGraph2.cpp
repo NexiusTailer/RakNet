@@ -6,7 +6,11 @@
 #include "MessageIdentifiers.h"
 #include "BitStream.h"
 
-int ConnectionGraph2::RemoteSystemComp( const RakNetGUID &key, RemoteSystem * const &data )
+using namespace RakNet;
+
+STATIC_FACTORY_DEFINITIONS(ConnectionGraph2,ConnectionGraph2);
+
+int RakNet::ConnectionGraph2::RemoteSystemComp( const RakNetGUID &key, RemoteSystem * const &data )
 {
 	if (key < data->guid)
 		return -1;
@@ -15,7 +19,7 @@ int ConnectionGraph2::RemoteSystemComp( const RakNetGUID &key, RemoteSystem * co
 	return 0;
 }
 
-int ConnectionGraph2::SystemAddressAndGuidComp( const SystemAddressAndGuid &key, const SystemAddressAndGuid &data )
+int RakNet::ConnectionGraph2::SystemAddressAndGuidComp( const SystemAddressAndGuid &key, const SystemAddressAndGuid &data )
 {
 	if (key.guid<data.guid)
 		return -1;
@@ -23,7 +27,14 @@ int ConnectionGraph2::SystemAddressAndGuidComp( const SystemAddressAndGuid &key,
 		return 1;
 	return 0;
 }
+ConnectionGraph2::ConnectionGraph2()
+{
+	autoProcessNewConnections=true;
+}
+ConnectionGraph2::~ConnectionGraph2()
+{
 
+}
 bool ConnectionGraph2::GetConnectionListForRemoteSystem(RakNetGUID remoteSystemGuid, SystemAddress *saOut, RakNetGUID *guidOut, unsigned int *outLength)
 {
 	if ((saOut==0 && guidOut==0) || outLength==0 || *outLength==0 || remoteSystemGuid==UNASSIGNED_RAKNET_GUID)
@@ -83,15 +94,21 @@ void ConnectionGraph2::OnClosedConnection(SystemAddress systemAddress, RakNetGUI
 	unsigned int idx = remoteSystems.GetIndexFromKey(rakNetGUID, &objectExists);
 	if (objectExists)
 	{
-		RakNet::OP_DELETE(remoteSystems[idx],__FILE__,__LINE__);
+		RakNet::OP_DELETE(remoteSystems[idx],_FILE_AND_LINE_);
 		remoteSystems.RemoveAtIndex(idx);
 	}
 }
-void ConnectionGraph2::OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
+void ConnectionGraph2::SetAutoProcessNewConnections(bool b)
 {
-	(void) isIncoming;
-
-	// Send all existing systems to new connection
+	autoProcessNewConnections=b;
+}
+bool ConnectionGraph2::GetAutoProcessNewConnections(void) const
+{
+	return autoProcessNewConnections;
+}
+void ConnectionGraph2::AddParticipant(SystemAddress systemAddress, RakNetGUID rakNetGUID)
+{
+	// Relay the new connection to other systems.
 	RakNet::BitStream bs;
 	bs.Write((MessageID)ID_REMOTE_NEW_INCOMING_CONNECTION);
 	bs.Write((uint32_t)1);
@@ -133,10 +150,16 @@ void ConnectionGraph2::OnNewConnection(SystemAddress systemAddress, RakNetGUID r
 	unsigned int ii = remoteSystems.GetIndexFromKey(rakNetGUID, &objectExists);
 	if (objectExists==false)
 	{
-		RemoteSystem* remoteSystem = RakNet::OP_NEW<RemoteSystem>(__FILE__,__LINE__);
+		RemoteSystem* remoteSystem = RakNet::OP_NEW<RemoteSystem>(_FILE_AND_LINE_);
 		remoteSystem->guid=rakNetGUID;
-		remoteSystems.InsertAtIndex(remoteSystem,ii,__FILE__,__LINE__);
+		remoteSystems.InsertAtIndex(remoteSystem,ii,_FILE_AND_LINE_);
 	}
+}
+void ConnectionGraph2::OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
+{
+	(void) isIncoming;
+	if (autoProcessNewConnections)
+		AddParticipant(systemAddress, rakNetGUID);
 }
 PluginReceiveResult ConnectionGraph2::OnReceive(Packet *packet)
 {
@@ -151,7 +174,9 @@ PluginReceiveResult ConnectionGraph2::OnReceive(Packet *packet)
 			SystemAddressAndGuid saag;
 			bs.Read(saag.systemAddress);
 			bs.Read(saag.guid);
-			remoteSystems[idx]->remoteConnections.Remove(saag);
+			idx = remoteSystems[idx]->remoteConnections.GetIndexFromKey(saag, &objectExists);
+			if (objectExists)
+				remoteSystems[idx]->remoteConnections.RemoveAtIndex(idx);
 		}
 	}
 	else if (packet->data[0]==ID_REMOTE_NEW_INCOMING_CONNECTION)
@@ -172,9 +197,9 @@ PluginReceiveResult ConnectionGraph2::OnReceive(Packet *packet)
 				bool objectExists;
 				unsigned int ii = remoteSystems[idx]->remoteConnections.GetIndexFromKey(saag, &objectExists);
 				if (objectExists==false)
-					remoteSystems[idx]->remoteConnections.InsertAtIndex(saag,ii,__FILE__,__LINE__);
+					remoteSystems[idx]->remoteConnections.InsertAtIndex(saag,ii,_FILE_AND_LINE_);
 			}
-		}		
+		}
 	}
 	
 	return RR_CONTINUE_PROCESSING;

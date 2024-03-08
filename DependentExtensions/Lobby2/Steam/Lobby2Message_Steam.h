@@ -14,7 +14,7 @@ namespace RakNet
 
 	__L2_MSG_DB_HEADER(Client_Login, Steam)
 	{
-		virtual bool ClientImpl( Lobby2Client *client);
+		virtual bool ClientImpl( RakNet::Lobby2Plugin *client);
 
 		virtual void DebugMsg(RakNet::RakString &out) const
 		{
@@ -29,7 +29,7 @@ namespace RakNet
 
 	__L2_MSG_DB_HEADER(Client_Logoff, Steam)
 	{
-		virtual bool ClientImpl( Lobby2Client *client);
+		virtual bool ClientImpl( RakNet::Lobby2Plugin *client);
 
 		virtual void DebugMsg(RakNet::RakString &out) const
 		{
@@ -44,7 +44,7 @@ namespace RakNet
 
 	__L2_MSG_DB_HEADER(Console_SearchRooms, Steam)
 	{
-		virtual bool ClientImpl( Lobby2Client *client);
+		virtual bool ClientImpl( RakNet::Lobby2Plugin *client);
 
 		virtual void DebugMsg(RakNet::RakString &out) const
 		{
@@ -71,7 +71,7 @@ namespace RakNet
 
 	__L2_MSG_DB_HEADER(Console_GetRoomDetails, Steam)
 	{
-		virtual bool ClientImpl( Lobby2Client *client);
+		virtual bool ClientImpl( RakNet::Lobby2Plugin *client);
 
 		virtual void DebugMsg(RakNet::RakString &out) const
 		{
@@ -92,7 +92,7 @@ namespace RakNet
 
 	__L2_MSG_DB_HEADER(Console_CreateRoom, Steam)
 	{
-		virtual bool ClientImpl( Lobby2Client *client);
+		virtual bool ClientImpl( RakNet::Lobby2Plugin *client);
 
 		virtual void DebugMsg(RakNet::RakString &out) const
 		{
@@ -118,7 +118,7 @@ namespace RakNet
 
 	__L2_MSG_DB_HEADER(Console_JoinRoom, Steam)
 	{
-		virtual bool ClientImpl( Lobby2Client *client);
+		virtual bool ClientImpl( RakNet::Lobby2Plugin *client);
 
 		virtual void DebugMsg(RakNet::RakString &out) const
 		{
@@ -139,7 +139,7 @@ namespace RakNet
 
 	__L2_MSG_DB_HEADER(Console_LeaveRoom, Steam)
 	{
-		virtual bool ClientImpl( Lobby2Client *client);
+		virtual bool ClientImpl( RakNet::Lobby2Plugin *client);
 
 		virtual void DebugMsg(RakNet::RakString &out) const
 		{
@@ -157,7 +157,7 @@ namespace RakNet
 
 	__L2_MSG_DB_HEADER(Console_SendRoomChatMessage, Steam)
 	{
-		virtual bool ClientImpl( Lobby2Client *client);
+		virtual bool ClientImpl( RakNet::Lobby2Plugin *client);
 
 		virtual void DebugMsg(RakNet::RakString &out) const
 		{
@@ -212,6 +212,7 @@ namespace RakNet
 		uint64_t roomId;
 		uint64_t srcMemberId;
 		RakNet::RakString memberName;
+		SystemAddress remoteSystem;
 
 		virtual void DebugMsg(RakNet::RakString &out) const
 		{
@@ -229,6 +230,7 @@ namespace RakNet
 		uint64_t roomId;
 		uint64_t srcMemberId;
 		RakNet::RakString memberName;
+		SystemAddress remoteSystem;
 
 		virtual void DebugMsg(RakNet::RakString &out) const
 		{
@@ -281,7 +283,7 @@ namespace RakNet
 
 // --------------------------------------------- Database specific factory class for all messages --------------------------------------------
 
-#define __L2_MSG_FACTORY_IMPL(__NAME__,__DB__) {case L2MID_##__NAME__ : Lobby2Message *m = RakNet::OP_NEW< __NAME__##_##__DB__ >(__FILE__, __LINE__) ; return m;}
+#define __L2_MSG_FACTORY_IMPL(__NAME__,__DB__) {case L2MID_##__NAME__ : Lobby2Message *m = RakNet::OP_NEW< __NAME__##_##__DB__ >(_FILE_AND_LINE_) ; return m;}
 
 	struct Lobby2MessageFactory_Steam : public Lobby2MessageFactory
 	{

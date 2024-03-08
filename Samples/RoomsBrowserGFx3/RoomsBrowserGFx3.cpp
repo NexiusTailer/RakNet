@@ -28,7 +28,9 @@ ACTIONSCRIPT_CALLABLE_FUNCTION(RoomsBrowserGFx3, f2c_QueryPlatform)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(QueryPlatform());
-	pparams.Respond(rargs);
+	// pparams.Respond(rargs);
+	
+	FxDelegate::Invoke2(movie, pparams[0].GetString(), rargs);
 }
 
 ACTIONSCRIPT_CALLABLE_FUNCTION(RoomsBrowserGFx3, f2c_SaveProperty)
@@ -41,7 +43,9 @@ ACTIONSCRIPT_CALLABLE_FUNCTION(RoomsBrowserGFx3, f2c_LoadProperty)
 	LoadProperty(pparams[0].GetString(), propertyOut);
 	FxResponseArgs<1> rargs;
 	rargs.Add(propertyOut.C_String());
-	pparams.Respond(rargs);
+	// pparams.Respond(rargs);
+
+	FxDelegate::Invoke2(movie, pparams[1].GetString(), rargs);
 }
 void RoomsBrowserGFx3::Accept(CallbackProcessor* cbreg)
 {

@@ -9,9 +9,9 @@
 #include "SimpleMutex.h"
 #include "Lobby2Presence.h"
 
-
-
-
+#if defined(_XBOX) || defined(X360)
+                            
+#endif
 
 #pragma once
 
@@ -23,6 +23,7 @@ class Lobby2Client;
 class Lobby2Server;
 struct BinaryDataBlock;
 struct Lobby2ServerCommand;
+class Lobby2Plugin;
 
 const unsigned int L2_MAX_BINARY_DATA_LENGTH=1000000;
 
@@ -135,6 +136,7 @@ enum Lobby2MessageID
 	L2MID_Console_GetRoomDetails,
 	L2MID_Console_GetLobbyMemberData,
 	L2MID_Console_CreateRoom,
+	L2MID_Console_SignIntoRoom,
 	L2MID_Console_SetRoomSearchProperties,
 	L2MID_Console_UpdateRoomParameters,
 	L2MID_Console_JoinRoom,
@@ -143,6 +145,11 @@ enum Lobby2MessageID
 	L2MID_Console_SendGUIInvitationToRoom,
 	L2MID_Console_SendDataMessageToUser,
 	L2MID_Console_SendRoomChatMessage,
+	L2MID_Console_ShowFriendsUI,
+	L2MID_Console_EndGame,
+	L2MID_Console_StartGame,
+	L2MID_Console_ShowPartyUI,
+	L2MID_Console_ShowMessagesUI,
 	L2MID_Notification_Client_RemoteLogin,
 	L2MID_Notification_Client_IgnoreStatus,
 	L2MID_Notification_Friends_StatusChange,
@@ -181,6 +188,10 @@ enum Lobby2MessageID
 	L2MID_Notification_Console_MuteListChanged,
 	L2MID_Notification_Console_Local_Users_Changed,
 	L2MID_Notification_ReceivedDataMessageFromUser,
+	L2MID_Notification_Console_MemberJoinedParty,
+	L2MID_Notification_Console_MemberLeftParty,
+	L2MID_Notification_Console_Game_Started, // XBOX only
+	L2MID_Notification_Console_Game_Ended, // XBOX only
 
 
 	L2MID_COUNT,
@@ -243,7 +254,7 @@ struct Lobby2Message
 	
 	/// Override to do any Lobby2Client functionality when the message is returned from the server (usually nothing).
 	/// \return True to call CallCallback immediately. False to defer for some reason (always true on the PC)
-	virtual bool ClientImpl( Lobby2Client *client);
+	virtual bool ClientImpl( RakNet::Lobby2Plugin *client);
 	
 	/// This message has been processed by the server and has arrived back on the client.
 	/// Call the client informing the user of this event.
@@ -296,15 +307,11 @@ struct Lobby2Message
 	/// Result of the operation. L2RC_SUCCESS means the result completed. Anything else means an error
 	RakNet::Lobby2ResultCode resultCode;
 
-	/// Just a number, uniquely identifying each allocation of Lobby2Message.
-	/// Use it if you need to lookup queries on the callback reply
+	// For polling, when necessary
+	virtual bool WasCompleted( RakNet::Lobby2Plugin *client ) {(void) client; return false;}
 
-
-
-
-
-	uint64_t requestId;
-
+	// Is this message a notification / callback?
+	virtual bool IsNotification(void) const {return false;}
 
 	/// Just a number, representing which instance of Lobby2Callbacks should process the result of this operation
 	/// -1 means all
@@ -313,13 +320,21 @@ struct Lobby2Message
 	/// Used for consoles
 	int extendedResultCode;
 
-
-
-
-
 	void AddRef(void) {refCountMutex.Lock(); refCount++; refCountMutex.Unlock(); }
 	void Deref(void) {refCountMutex.Lock(); refCount--; refCountMutex.Unlock();}
 	int GetRefCount(void) {int r; refCountMutex.Lock(); r = refCount; refCountMutex.Unlock(); return r;}
+
+	/// Just a number, uniquely identifying each allocation of Lobby2Message.
+	/// Use it if you need to lookup queries on the callback reply
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                    
+#else
+	uint64_t requestId;
+#endif
+
+#if defined(_XBOX) || defined(X360)
+                                 
+#endif
 
 private:
 
@@ -432,6 +447,7 @@ struct Console_SearchRooms;
 struct Console_GetRoomDetails;
 struct Console_GetLobbyMemberData;
 struct Console_CreateRoom;
+struct Console_SignIntoRoom;
 struct Console_SetRoomSearchProperties;
 struct Console_UpdateRoomParameters;
 struct Console_JoinRoom;
@@ -440,6 +456,11 @@ struct Console_SendLobbyInvitationToRoom;
 struct Console_SendGUIInvitationToRoom;
 struct Console_SendDataMessageToUser;
 struct Console_SendRoomChatMessage;
+struct Console_ShowFriendsUI;
+struct Console_EndGame;
+struct Console_StartGame;
+struct Console_ShowPartyUI;
+struct Console_ShowMessagesUI;
 struct Notification_Client_RemoteLogin;
 struct Notification_Client_IgnoreStatus;
 struct Notification_Friends_StatusChange;
@@ -478,6 +499,10 @@ struct Notification_Console_ChatEvent;
 struct Notification_Console_MuteListChanged;
 struct Notification_Console_Local_Users_Changed;
 struct Notification_ReceivedDataMessageFromUser;
+struct Notification_Console_MemberJoinedParty;
+struct Notification_Console_MemberLeftParty;
+struct Notification_Console_Game_Started;
+struct Notification_Console_Game_Ended;
 
 // --------------------------------------------- Callback interface for all messages, notifies the user --------------------------------------------
 
@@ -589,6 +614,7 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Console_GetRoomDetails *message);
 	virtual void MessageResult(Console_GetLobbyMemberData *message);
 	virtual void MessageResult(Console_CreateRoom *message);
+	virtual void MessageResult(Console_SignIntoRoom *message);
 	virtual void MessageResult(Console_SetRoomSearchProperties *message);
 	virtual void MessageResult(Console_UpdateRoomParameters *message);
 	virtual void MessageResult(Console_JoinRoom *message);
@@ -597,6 +623,11 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Console_SendGUIInvitationToRoom *message);
 	virtual void MessageResult(Console_SendDataMessageToUser *message);
 	virtual void MessageResult(Console_SendRoomChatMessage *message);
+	virtual void MessageResult(Console_ShowFriendsUI *message);
+	virtual void MessageResult(Console_EndGame *message);
+	virtual void MessageResult(Console_StartGame *message);
+	virtual void MessageResult(Console_ShowPartyUI *message);
+	virtual void MessageResult(Console_ShowMessagesUI *message);
 	virtual void MessageResult(Notification_Client_RemoteLogin *message);
 	virtual void MessageResult(Notification_Client_IgnoreStatus *message);
 	virtual void MessageResult(Notification_Friends_StatusChange *message);
@@ -635,6 +666,10 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Notification_Console_MuteListChanged *message);
 	virtual void MessageResult(Notification_Console_Local_Users_Changed *message);
 	virtual void MessageResult(Notification_ReceivedDataMessageFromUser *message);
+	virtual void MessageResult(Notification_Console_MemberJoinedParty *message);
+	virtual void MessageResult(Notification_Console_MemberLeftParty *message);
+	virtual void MessageResult(Notification_Console_Game_Started *message);
+	virtual void MessageResult(Notification_Console_Game_Ended *message);
 
 	virtual void ExecuteDefaultResult(Lobby2Message *message) { (void)message; }
 
@@ -658,14 +693,14 @@ struct BinaryDataBlock
 	BinaryDataBlock() {binaryData=0; binaryDataLength=0;}
 	~BinaryDataBlock() {
 		if (binaryData)
-			rakFree_Ex(binaryData, __FILE__, __LINE__ );
+			rakFree_Ex(binaryData, _FILE_AND_LINE_ );
 	}
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
 };
 struct CreateAccountParameters
 {
-	CreateAccountParameters() {ageInDays=0; binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~CreateAccountParameters() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	CreateAccountParameters() {ageInDays=0; binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~CreateAccountParameters() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 	/// [in] Self-apparent
 	RakNet::RakString firstName;
 	/// [in] Self-apparent
@@ -722,8 +757,8 @@ struct CreateAccountParameters
 };
 struct PendingInvite
 {
-	PendingInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~PendingInvite() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	PendingInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~PendingInvite() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 	RakNet::RakString sender;
 	RakNet::RakString subject;
 	RakNet::RakString body;
@@ -733,23 +768,31 @@ struct PendingInvite
 };
 struct UsernameAndOnlineStatus
 {
-	UsernameAndOnlineStatus() {isOnline=false;}
+	UsernameAndOnlineStatus();
+	UsernameAndOnlineStatus(const UsernameAndOnlineStatus& input);
 	~UsernameAndOnlineStatus() {}
+	UsernameAndOnlineStatus& operator = ( const UsernameAndOnlineStatus& input );
+
 	RakNet::RakString handle;
 	bool isOnline;
+	uint64_t uid; // For XBOX
 	RakNet::Lobby2Presence presence;
 
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
 };
 struct FriendInfo
 {
+	FriendInfo();
+	FriendInfo(const FriendInfo& input);
+	FriendInfo& operator = ( const FriendInfo& input );
+
 	UsernameAndOnlineStatus usernameAndStatus;
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream) {usernameAndStatus.Serialize(writeToBitstream,bitStream);}
 };
 struct EmailResult
 {
-	EmailResult() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~EmailResult() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	EmailResult() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~EmailResult() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 	RakNet::RakString sender;
 	RakNet::RakString recipient;
 	RakNet::RakString subject;
@@ -774,8 +817,8 @@ struct MatchParticipant
 };
 struct SubmittedMatch
 {
-	SubmittedMatch() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~SubmittedMatch() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	SubmittedMatch() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~SubmittedMatch() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 	DataStructures::List<MatchParticipant> matchParticipants;
 	RakNet::RakString matchNote;
 	RakNetSmartPtr<BinaryDataBlock> binaryData;
@@ -787,8 +830,8 @@ struct SubmittedMatch
 };
 struct ClanInfo
 {
-	ClanInfo() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~ClanInfo() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	ClanInfo() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~ClanInfo() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 	RakNet::RakString clanName;
 	RakNet::RakString description;
 	RakNet::RakString clanLeader;
@@ -885,8 +928,8 @@ struct System_DestroyDatabase : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct System_CreateTitle : public Lobby2Message
 {
-	System_CreateTitle() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~System_CreateTitle() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	System_CreateTitle() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~System_CreateTitle() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 	__L2_MSG_BASE_IMPL(System_CreateTitle)
 	virtual bool RequiresAdmin(void) const {return true;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -939,8 +982,8 @@ struct System_GetTitleRequiredAge : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct System_GetTitleBinaryData : public Lobby2Message
 {
-	System_GetTitleBinaryData() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~System_GetTitleBinaryData() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	System_GetTitleBinaryData() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~System_GetTitleBinaryData() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 	__L2_MSG_BASE_IMPL(System_GetTitleBinaryData)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1384,7 +1427,7 @@ struct Client_StartIgnore : public Lobby2Message
 
 	virtual bool PrevalidateInput(void);
 
-	virtual bool ClientImpl( Lobby2Client *client);
+	virtual bool ClientImpl( RakNet::Lobby2Plugin *client);
 
 	// Input parameters
 	RakNet::RakString targetHandle;
@@ -1405,7 +1448,7 @@ struct Client_StopIgnore : public Lobby2Message
 
 	virtual bool PrevalidateInput(void);
 
-	virtual bool ClientImpl( Lobby2Client *client);
+	virtual bool ClientImpl( RakNet::Lobby2Plugin *client);
 
 	// Input parameters
 	RakNet::RakString targetHandle;
@@ -1424,7 +1467,7 @@ struct Client_GetIgnoreList : public Lobby2Message
 	virtual bool RequiresLogin(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
-	virtual bool ClientImpl( Lobby2Client *client);
+	virtual bool ClientImpl( RakNet::Lobby2Plugin *client);
 
 	// Input parameters
 
@@ -1484,8 +1527,8 @@ struct Client_PerTitleIntegerStorage : public Lobby2Message
 struct Client_PerTitleBinaryStorage : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_PerTitleBinaryStorage)
-		Client_PerTitleBinaryStorage() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Client_PerTitleBinaryStorage() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+		Client_PerTitleBinaryStorage() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Client_PerTitleBinaryStorage() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
@@ -1512,6 +1555,7 @@ struct Client_PerTitleBinaryStorage : public Lobby2Message
 
 /// \brief Sets in-memory information about your login state, such as which game you are playing, or if you are playing a game
 /// Online friends will be notified when you presence changes
+/// For the XBOX, just use XUserSetProperty and XUserSetContext directly, as there is no analogue to this function
 struct Client_SetPresence : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_SetPresence)
@@ -1549,8 +1593,8 @@ struct Client_GetPresence : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Friends_SendInvite : public Lobby2Message
 {
-	Friends_SendInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Friends_SendInvite() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Friends_SendInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Friends_SendInvite() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 	__L2_MSG_BASE_IMPL(Friends_SendInvite)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1575,8 +1619,8 @@ struct Friends_SendInvite : public Lobby2Message
 struct Friends_AcceptInvite : public Lobby2Message
 {
 
-	Friends_AcceptInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Friends_AcceptInvite() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Friends_AcceptInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Friends_AcceptInvite() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 	__L2_MSG_BASE_IMPL(Friends_AcceptInvite)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1603,8 +1647,8 @@ struct Friends_RejectInvite : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Friends_RejectInvite)
 
-	Friends_RejectInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Friends_RejectInvite() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Friends_RejectInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Friends_RejectInvite() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
@@ -1659,8 +1703,8 @@ struct Friends_GetFriends : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Friends_Remove : public Lobby2Message
 {
-	Friends_Remove() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Friends_Remove() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Friends_Remove() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Friends_Remove() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Friends_Remove)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -1741,8 +1785,8 @@ struct BookmarkedUsers_Get : public Lobby2Message
 struct Emails_Send : public Lobby2Message
 {
 
-	Emails_Send() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	virtual ~Emails_Send() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Emails_Send() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	virtual ~Emails_Send() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Emails_Send)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -1868,8 +1912,8 @@ struct Ranking_GetMatches : public Lobby2Message
 struct Ranking_GetMatchBinaryData : public Lobby2Message
 {
 
-	Ranking_GetMatchBinaryData() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Ranking_GetMatchBinaryData() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Ranking_GetMatchBinaryData() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Ranking_GetMatchBinaryData() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Ranking_GetMatchBinaryData)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2030,8 +2074,8 @@ struct Ranking_GetRating : public Lobby2Message
 struct Clans_Create : public Lobby2Message
 {
 
-	Clans_Create() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_Create() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_Create() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_Create() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_Create)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2057,8 +2101,8 @@ struct Clans_Create : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_SetProperties : public Lobby2Message
 {
-	Clans_SetProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_SetProperties() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_SetProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_SetProperties() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_SetProperties)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2078,8 +2122,8 @@ struct Clans_SetProperties : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_GetProperties : public Lobby2Message
 {
-	Clans_GetProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_GetProperties() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_GetProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_GetProperties() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_GetProperties)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2103,8 +2147,8 @@ struct Clans_GetProperties : public Lobby2Message
 struct Clans_SetMyMemberProperties : public Lobby2Message
 {
 
-	Clans_SetMyMemberProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_SetMyMemberProperties() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_SetMyMemberProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_SetMyMemberProperties() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_SetMyMemberProperties)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2180,8 +2224,8 @@ struct Clans_SetMemberRank : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_GetMemberProperties : public Lobby2Message
 {
-	Clans_GetMemberProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_GetMemberProperties() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_GetMemberProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_GetMemberProperties() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_GetMemberProperties)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2228,8 +2272,8 @@ struct Clans_ChangeHandle : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_Leave : public Lobby2Message
 {
-	Clans_Leave() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_Leave() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_Leave() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_Leave() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_Leave)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2274,8 +2318,8 @@ struct Clans_Get : public Lobby2Message
 struct Clans_SendJoinInvitation : public Lobby2Message
 {
 	
-	Clans_SendJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-		~Clans_SendJoinInvitation() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_SendJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+		~Clans_SendJoinInvitation() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_SendJoinInvitation)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2300,8 +2344,8 @@ struct Clans_SendJoinInvitation : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_WithdrawJoinInvitation : public Lobby2Message
 {
-	Clans_WithdrawJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_WithdrawJoinInvitation() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_WithdrawJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_WithdrawJoinInvitation() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_WithdrawJoinInvitation)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2324,8 +2368,8 @@ struct Clans_WithdrawJoinInvitation : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_AcceptJoinInvitation : public Lobby2Message
 {
-	Clans_AcceptJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_AcceptJoinInvitation() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_AcceptJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_AcceptJoinInvitation() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_AcceptJoinInvitation)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2350,8 +2394,8 @@ struct Clans_AcceptJoinInvitation : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_RejectJoinInvitation : public Lobby2Message
 {
-	Clans_RejectJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_RejectJoinInvitation() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_RejectJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_RejectJoinInvitation() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_RejectJoinInvitation)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2393,8 +2437,8 @@ struct Clans_DownloadInvitationList : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_SendJoinRequest : public Lobby2Message
 {
-	Clans_SendJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_SendJoinRequest() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_SendJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_SendJoinRequest() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_SendJoinRequest)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2419,8 +2463,8 @@ struct Clans_SendJoinRequest : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_WithdrawJoinRequest : public Lobby2Message
 {
-	Clans_WithdrawJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_WithdrawJoinRequest() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_WithdrawJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_WithdrawJoinRequest() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_WithdrawJoinRequest)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2445,8 +2489,8 @@ struct Clans_WithdrawJoinRequest : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_AcceptJoinRequest : public Lobby2Message
 {
-	Clans_AcceptJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_AcceptJoinRequest() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_AcceptJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_AcceptJoinRequest() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_AcceptJoinRequest)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2472,8 +2516,8 @@ struct Clans_AcceptJoinRequest : public Lobby2Message
 /// \details 
 struct Clans_RejectJoinRequest : public Lobby2Message
 {
-	Clans_RejectJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_RejectJoinRequest() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_RejectJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_RejectJoinRequest() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_RejectJoinRequest)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2516,8 +2560,8 @@ struct Clans_DownloadRequestList : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_KickAndBlacklistUser : public Lobby2Message
 {
-	Clans_KickAndBlacklistUser() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_KickAndBlacklistUser() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_KickAndBlacklistUser() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_KickAndBlacklistUser() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_KickAndBlacklistUser)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2543,8 +2587,8 @@ struct Clans_KickAndBlacklistUser : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_UnblacklistUser : public Lobby2Message
 {
-	Clans_UnblacklistUser() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_UnblacklistUser() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_UnblacklistUser() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_UnblacklistUser() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_UnblacklistUser)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2622,8 +2666,8 @@ struct Clans_GetList : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_CreateBoard : public Lobby2Message
 {
-	Clans_CreateBoard() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_CreateBoard() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_CreateBoard() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_CreateBoard() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_CreateBoard)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2667,8 +2711,8 @@ struct Clans_DestroyBoard : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_CreateNewTopic : public Lobby2Message
 {
-	Clans_CreateNewTopic() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_CreateNewTopic() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_CreateNewTopic() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_CreateNewTopic() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_CreateNewTopic)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2693,8 +2737,8 @@ struct Clans_CreateNewTopic : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_ReplyToTopic : public Lobby2Message
 {
-	Clans_ReplyToTopic() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Clans_ReplyToTopic() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	Clans_ReplyToTopic() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
+	~Clans_ReplyToTopic() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_ReplyToTopic)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2900,6 +2944,16 @@ struct Console_CreateRoom : public Lobby2Message
 	int privateSlots;
 };
 
+// XBOX only - needed after creating or joining a room
+struct Console_SignIntoRoom : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Console_SignIntoRoom)
+	virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return true;}
+	virtual bool RequiresLogin(void) const {return true;}
+};
+
 struct Console_SetRoomSearchProperties : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Console_SetRoomSearchProperties)
@@ -2973,6 +3027,46 @@ struct Console_SendRoomChatMessage : public Lobby2Message
 
 	RakNet::RakString message;
 };
+struct Console_ShowFriendsUI : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Console_ShowFriendsUI)
+		virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return true;}
+	virtual bool RequiresLogin(void) const {return true;}
+};
+struct Console_EndGame : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Console_EndGame)
+		virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return true;}
+	virtual bool RequiresLogin(void) const {return true;}
+};
+struct Console_StartGame : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Console_StartGame)
+		virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return true;}
+	virtual bool RequiresLogin(void) const {return true;}
+};
+struct Console_ShowPartyUI : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Console_ShowPartyUI)
+		virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return true;}
+	virtual bool RequiresLogin(void) const {return true;}
+};
+struct Console_ShowMessagesUI : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Console_ShowMessagesUI)
+		virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return true;}
+	virtual bool RequiresLogin(void) const {return true;}
+};
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Client_RemoteLogin : public Lobby2Message
 {
@@ -2981,6 +3075,7 @@ struct Notification_Client_RemoteLogin : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	RakNet::RakString handle;
@@ -2993,6 +3088,7 @@ struct Notification_Client_IgnoreStatus : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	bool nowIgnored;
@@ -3006,6 +3102,7 @@ struct Notification_Friends_StatusChange : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 	enum Status
 	{
@@ -3055,6 +3152,7 @@ struct Notification_Friends_PresenceUpdate : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 	
 	Lobby2Presence newPresence; 
@@ -3068,6 +3166,7 @@ struct Notification_User_ChangedHandle : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	RakNet::RakString oldHandle, newHandle;
@@ -3080,6 +3179,7 @@ struct Notification_Friends_CreatedClan : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	RakNet::RakString otherHandle;
@@ -3093,6 +3193,7 @@ struct Notification_Emails_Received : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	RakNet::RakString sender;
@@ -3107,6 +3208,7 @@ struct Notification_Clans_GrantLeader : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	RakNet::RakString clanHandle;
@@ -3121,6 +3223,7 @@ struct Notification_Clans_SetSubleaderStatus : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	RakNet::RakString clanHandle;
@@ -3136,6 +3239,7 @@ struct Notification_Clans_SetMemberRank : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	RakNet::RakString clanHandle;
@@ -3151,6 +3255,7 @@ struct Notification_Clans_ChangeHandle : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	RakNet::RakString oldClanHandle;
@@ -3165,6 +3270,7 @@ struct Notification_Clans_Leave : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	RakNet::RakString clanHandle;
@@ -3178,6 +3284,7 @@ struct Notification_Clans_PendingJoinStatus : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	RakNet::RakString clanHandle;
@@ -3209,6 +3316,7 @@ struct Notification_Clans_NewClanMember : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	RakNet::RakString clanHandle;
@@ -3222,6 +3330,7 @@ struct Notification_Clans_KickAndBlacklistUser : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	RakNet::RakString clanHandle;
@@ -3239,6 +3348,7 @@ struct Notification_Clans_UnblacklistUser : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	RakNet::RakString clanHandle;
@@ -3254,6 +3364,7 @@ struct Notification_Clans_Destroyed : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	RakNet::RakString clanHandle;
@@ -3267,6 +3378,7 @@ struct Notification_Console_CableDisconnected : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 };
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_ContextError : public Lobby2Message
@@ -3276,6 +3388,7 @@ struct Notification_Console_ContextError : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 };
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_MemberJoinedLobby : public Lobby2Message
@@ -3285,6 +3398,7 @@ struct Notification_Console_MemberJoinedLobby : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 
 	RakNet::RakString targetHandle;
 };
@@ -3296,6 +3410,7 @@ struct Notification_Console_MemberLeftLobby : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 
 	RakNet::RakString targetHandle;
 };
@@ -3307,6 +3422,7 @@ struct Notification_Console_LobbyDestroyed : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 };
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_LobbyMemberDataUpdated : public Lobby2Message
@@ -3316,6 +3432,7 @@ struct Notification_Console_LobbyMemberDataUpdated : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 };
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_LobbyGotChatMessage : public Lobby2Message
@@ -3325,6 +3442,7 @@ struct Notification_Console_LobbyGotChatMessage : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 
 	RakNet::RakString sender;
 	RakNet::RakString message;
@@ -3337,6 +3455,7 @@ struct Notification_Console_LobbyGotRoomInvitation : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 
 	RakNet::RakString sender;
 };
@@ -3348,6 +3467,7 @@ struct Notification_Console_MemberJoinedRoom : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 
 	RakNet::RakString memberName;
 };
@@ -3359,6 +3479,7 @@ struct Notification_Console_MemberLeftRoom : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 
 	RakNet::RakString memberName;
 };
@@ -3370,6 +3491,7 @@ struct Notification_Console_KickedOutOfRoom : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 };
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_RoomWasDestroyed : public Lobby2Message
@@ -3379,6 +3501,7 @@ struct Notification_Console_RoomWasDestroyed : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 };
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_UpdateRoomParameters : public Lobby2Message
@@ -3388,6 +3511,7 @@ struct Notification_Console_UpdateRoomParameters : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 };
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_RoomOwnerChanged : public Lobby2Message
@@ -3397,6 +3521,7 @@ struct Notification_Console_RoomOwnerChanged : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 };
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_RoomChatMessage : public Lobby2Message
@@ -3406,6 +3531,7 @@ struct Notification_Console_RoomChatMessage : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 
 	RakNet::RakString sender;
 	RakNet::RakString message;
@@ -3418,6 +3544,7 @@ struct Notification_Console_RoomMessage : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 
 
 	RakNet::RakString sender;
@@ -3431,6 +3558,7 @@ struct Notification_Console_RoomMemberConnectivityUpdate : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 
 	// Out
 	SystemAddress systemAddress;
@@ -3443,6 +3571,7 @@ struct Notification_Console_ChatEvent : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 };
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_MuteListChanged : public Lobby2Message
@@ -3452,6 +3581,7 @@ struct Notification_Console_MuteListChanged : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 };
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_Local_Users_Changed : public Lobby2Message
@@ -3461,6 +3591,7 @@ struct Notification_Console_Local_Users_Changed : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 };
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_ReceivedDataMessageFromUser : public Lobby2Message
@@ -3470,11 +3601,51 @@ struct Notification_ReceivedDataMessageFromUser : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
 };
-
+/// \ingroup LOBBY_2_NOTIFICATIONS
+struct Notification_Console_MemberJoinedParty : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Notification_Console_MemberJoinedParty)
+		virtual bool RequiresAdmin(void) const {return true;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return false;}
+	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
+};
+/// \ingroup LOBBY_2_NOTIFICATIONS
+struct Notification_Console_MemberLeftParty : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Notification_Console_MemberLeftParty)
+		virtual bool RequiresAdmin(void) const {return true;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return false;}
+	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
+};
+/// \ingroup LOBBY_2_NOTIFICATIONS
+struct Notification_Console_Game_Started : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Notification_Console_Game_Started)
+		virtual bool RequiresAdmin(void) const {return true;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return false;}
+	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
+};
+/// \ingroup LOBBY_2_NOTIFICATIONS
+struct Notification_Console_Game_Ended : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Notification_Console_Game_Ended)
+		virtual bool RequiresAdmin(void) const {return true;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return false;}
+	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
+};
 // --------------------------------------------- Base interface of factory class for all messages --------------------------------------------
 #define __L2_ALLOCATE_AND_DEFINE(FACTORY, __TYPE__,VAR_NAME) RakNet::__TYPE__ *VAR_NAME = (RakNet::__TYPE__ *) FACTORY->Alloc(L2MID_##__TYPE__); RakAssert(VAR_NAME);
-#define __L2_MSG_FACTORY_BASE(__NAME__) {case L2MID_##__NAME__ : Lobby2Message *m = RakNet::OP_NEW< __NAME__ >( __FILE__, __LINE__ ) ; RakAssert(m->GetID()==L2MID_##__NAME__ ); m->requestId=nextRequestId++; return m;}
+#define __L2_MSG_FACTORY_BASE(__NAME__) {case L2MID_##__NAME__ : Lobby2Message *m = RakNet::OP_NEW< __NAME__ >( _FILE_AND_LINE_ ) ; RakAssert(m->GetID()==L2MID_##__NAME__ ); m->requestId=nextRequestId++; return m;}
 /// \ingroup LOBBY_2_GROUP
 struct Lobby2MessageFactory
 {
@@ -3586,6 +3757,7 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Console_GetRoomDetails);
 			__L2_MSG_FACTORY_BASE(Console_GetLobbyMemberData);
 			__L2_MSG_FACTORY_BASE(Console_CreateRoom);
+			__L2_MSG_FACTORY_BASE(Console_SignIntoRoom);
 			__L2_MSG_FACTORY_BASE(Console_SetRoomSearchProperties);
 			__L2_MSG_FACTORY_BASE(Console_UpdateRoomParameters);
 			__L2_MSG_FACTORY_BASE(Console_JoinRoom);
@@ -3594,6 +3766,11 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Console_SendGUIInvitationToRoom);
 			__L2_MSG_FACTORY_BASE(Console_SendDataMessageToUser);
 			__L2_MSG_FACTORY_BASE(Console_SendRoomChatMessage);
+			__L2_MSG_FACTORY_BASE(Console_ShowFriendsUI);
+			__L2_MSG_FACTORY_BASE(Console_EndGame); // Currently xbox only
+			__L2_MSG_FACTORY_BASE(Console_StartGame); // Currently xbox only
+			__L2_MSG_FACTORY_BASE(Console_ShowPartyUI);
+			__L2_MSG_FACTORY_BASE(Console_ShowMessagesUI);
 			__L2_MSG_FACTORY_BASE(Notification_Client_RemoteLogin);
 			__L2_MSG_FACTORY_BASE(Notification_Client_IgnoreStatus);
 			__L2_MSG_FACTORY_BASE(Notification_Friends_StatusChange);
@@ -3630,6 +3807,10 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Notification_Console_MuteListChanged);
 			__L2_MSG_FACTORY_BASE(Notification_Console_Local_Users_Changed);
 			__L2_MSG_FACTORY_BASE(Notification_ReceivedDataMessageFromUser);
+			__L2_MSG_FACTORY_BASE(Notification_Console_MemberJoinedParty);
+			__L2_MSG_FACTORY_BASE(Notification_Console_MemberLeftParty);
+			__L2_MSG_FACTORY_BASE(Notification_Console_Game_Started); // Currently XBOX only
+			__L2_MSG_FACTORY_BASE(Notification_Console_Game_Ended); // Currently XBOX only
 
 		default:
 			return 0;
@@ -3642,7 +3823,7 @@ struct Lobby2MessageFactory
 			// Only delete one message at a time or else GetRefCount may be called on the same message in two threads at the same time and not be accurate
 			deallocateLockMutex.Lock();
 			if (msg->GetRefCount()<=0)
-				RakNet::OP_DELETE<Lobby2Message>(msg, __FILE__, __LINE__ );
+				RakNet::OP_DELETE<Lobby2Message>(msg, _FILE_AND_LINE_ );
 			deallocateLockMutex.Unlock();
 		}
 	}

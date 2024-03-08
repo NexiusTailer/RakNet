@@ -32,7 +32,7 @@
 <h1>RakNet::SQLite3ServerPlugin Class Reference<br>
 <small>
 [<a class="el" href="group__SQL__LITE__3__PLUGIN.html">SQLite3Plugin</a>]</small>
-</h1><!-- doxytag: class="RakNet::SQLite3ServerPlugin" --><!-- doxytag: inherits="PluginInterface2" -->Exec SQLLite commands over the network.  
+</h1><!-- doxytag: class="RakNet::SQLite3ServerPlugin" --><!-- doxytag: inherits="RakNet::PluginInterface2" -->Exec SQLLite commands over the network.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;SQLite3ServerPlugin.h&gt;</code>
@@ -43,7 +43,7 @@ Inheritance diagram for RakNet::SQLite3ServerPlugin:</div>
 
 <p><center><img src="classRakNet_1_1SQLite3ServerPlugin.png" usemap="#RakNet::SQLite3ServerPlugin_map" border="0" alt=""></center>
 <map name="RakNet::SQLite3ServerPlugin_map">
-<area href="classPluginInterface2.html" alt="PluginInterface2" shape="rect" coords="0,0,177,24">
+<area href="classRakNet_1_1PluginInterface2.html" alt="RakNet::PluginInterface2" shape="rect" coords="0,0,177,24">
 </map>
 </div>
 
@@ -55,12 +55,16 @@ Inheritance diagram for RakNet::SQLite3ServerPlugin:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1SQLite3ServerPlugin.html#7855f76295baa69e2d8a6901560ccdf7">RemoveDBHandle</a> (<a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> dbIdentifier, bool alsoCloseConnection=false)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1SQLite3ServerPlugin.html#6d83f6d4f39c1dd3afbd11c3f07f879f">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g89998adaafb29e5d879113b992161085">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1SQLite3ServerPlugin.html#6d83f6d4f39c1dd3afbd11c3f07f879f">OnReceive</a> (<a class="el" href="structRakNet_1_1Packet.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1SQLite3ServerPlugin.html#0ae0193e4a536546737a6b895ed22614">OnAttach</a> (void)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0ae0193e4a536546737a6b895ed22614"></a><!-- doxytag: member="RakNet::SQLite3ServerPlugin::OnAttach" ref="0ae0193e4a536546737a6b895ed22614" args="(void)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1SQLite3ServerPlugin.html#0ae0193e4a536546737a6b895ed22614">OnAttach</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1SQLite3ServerPlugin.html#817dacd9511047c13763eac6cc59052b">OnDetach</a> (void)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the interface is attached. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="817dacd9511047c13763eac6cc59052b"></a><!-- doxytag: member="RakNet::SQLite3ServerPlugin::OnDetach" ref="817dacd9511047c13763eac6cc59052b" args="(void)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1SQLite3ServerPlugin.html#817dacd9511047c13763eac6cc59052b">OnDetach</a> (void)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the interface is detached. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="147b5f17063ae0e3b65a85342430f498"></a><!-- doxytag: member="RakNet::SQLite3ServerPlugin::Update" ref="147b5f17063ae0e3b65a85342430f498" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1SQLite3ServerPlugin.html#147b5f17063ae0e3b65a85342430f498">Update</a> (void)</td></tr>
 
@@ -73,7 +77,7 @@ SQLite version 3 supports remote calls via networked file handles, but not over 
  This plugin will serialize calls to and results from sqlite3_exec<br>
  That's all it does - any remote system can execute SQL queries.<br>
  Intended as a starting platform to derive from for more advanced functionality (security over who can query, etc).<br>
- Compatible as a plugin with both <a class="el" href="classRakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a> and PacketizedTCP <hr><h2>Member Function Documentation</h2>
+ Compatible as a plugin with both <a class="el" href="classRakNet_1_1RakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a> and PacketizedTCP <hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="dc69bce7cf4b447c687cf34862813c9d"></a><!-- doxytag: member="RakNet::SQLite3ServerPlugin::AddDBHandle" ref="dc69bce7cf4b447c687cf34862813c9d" args="(RakNet::RakString dbIdentifier, sqlite3 *dbHandle, bool dbAutoCreated=false)" -->
 <div class="memitem">
 <div class="memproto">
@@ -110,68 +114,14 @@ Associate identifier with dbHandle, so when we get calls to operate on identifie
 
 </div>
 </div><p>
-<a class="anchor" name="0ae0193e4a536546737a6b895ed22614"></a><!-- doxytag: member="RakNet::SQLite3ServerPlugin::OnAttach" ref="0ae0193e4a536546737a6b895ed22614" args="(void)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void RakNet::SQLite3ServerPlugin::OnAttach           </td>
-          <td>(</td>
-          <td class="paramtype">void&nbsp;</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="Main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface2.html#523fa43791dfc9c363d0d20e9609b177">PluginInterface2</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="817dacd9511047c13763eac6cc59052b"></a><!-- doxytag: member="RakNet::SQLite3ServerPlugin::OnDetach" ref="817dacd9511047c13763eac6cc59052b" args="(void)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void RakNet::SQLite3ServerPlugin::OnDetach           </td>
-          <td>(</td>
-          <td class="paramtype">void&nbsp;</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Called when the interface is detached <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="Main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface2.html#017a96cb76e2462a320b570cc8877317">PluginInterface2</a>.</p>
-
-</div>
-</div><p>
 <a class="anchor" name="6d83f6d4f39c1dd3afbd11c3f07f879f"></a><!-- doxytag: member="RakNet::SQLite3ServerPlugin::OnReceive" ref="6d83f6d4f39c1dd3afbd11c3f07f879f" args="(Packet *packet)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a> RakNet::SQLite3ServerPlugin::OnReceive           </td>
+          <td class="memname">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g89998adaafb29e5d879113b992161085">PluginReceiveResult</a> RakNet::SQLite3ServerPlugin::OnReceive           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1Packet.html">Packet</a> *&nbsp;</td>
           <td class="paramname"> <em>packet</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [virtual]</code></td>
@@ -188,7 +138,7 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface2.html#bc50017a35682db5202a7562c58898ea">PluginInterface2</a>.</p>
+<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#a86f33263c1648f11b8a006469272639">RakNet::PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -222,9 +172,9 @@ Stop using a dbHandle, lookup either by identifier or by pointer. If SQLite3_STA
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/RakNet-3.x/DependentExtensions/SQLite3Plugin/<a class="el" href="SQLite3ServerPlugin_8h.html">SQLite3ServerPlugin.h</a></ul>
+<li>d:/temp/RakNet4/DependentExtensions/SQLite3Plugin/<a class="el" href="SQLite3ServerPlugin_8h.html">SQLite3ServerPlugin.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 22 08:28:39 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:32 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

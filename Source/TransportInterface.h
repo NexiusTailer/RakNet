@@ -15,7 +15,11 @@
 
 #define REMOTE_MAX_TEXT_INPUT 2048
 
+namespace RakNet
+{
+
 class CommandParserInterface;
+
 
 /// \brief Defines an interface that is used to send and receive null-terminated strings.
 /// \details In practice this is only used by the CommandParser system for for servers.
@@ -72,6 +76,8 @@ public:
 	virtual CommandParserInterface* GetCommandParser(void)=0;
 protected:
 };
+
+} // namespace RakNet
 
 #endif
 

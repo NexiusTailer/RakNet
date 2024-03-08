@@ -1,7 +1,5 @@
 #include <stdio.h>
-#ifdef _COMPATIBILITY_1
-#include "Compatibility1Includes.h" // Developers of a certain platform will know what to do here.
-#elif defined(_WIN32)
+#if defined(_WIN32)
 #include "WindowsIncludes.h" // Sleep and CreateProcess
 #include <process.h> // system
 #else
@@ -11,8 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
 #endif
+
+#include "Gets.h"
 
 #include <iostream>
 

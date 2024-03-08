@@ -23,8 +23,6 @@
 #include "DS_ByteQueue.h"
 #include "DS_ThreadsafeAllocatingQueue.h"
 
-struct RemoteClient;
-
 #if OPEN_SSL_CLIENT_SUPPORT==1
 #include <openssl/crypto.h>
 #include <openssl/x509.h>
@@ -33,11 +31,19 @@ struct RemoteClient;
 #include <openssl/err.h>
 #endif
 
+namespace RakNet
+{
+/// Forward declarations
+struct RemoteClient;
+
 /// \internal
 /// \brief As the name says, a simple multithreaded TCP server.  Used by TelnetTransport
 class RAK_DLL_EXPORT TCPInterface
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(TCPInterface)
+
 	TCPInterface();
 	virtual ~TCPInterface();
 
@@ -107,6 +113,12 @@ public:
 
 	// Push a packet back to the queue
 	virtual void PushBackPacket( Packet *packet, bool pushAtHead );
+
+	static const char *Base64Map(void) {return "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";}
+
+	// \brief Returns how many bytes were written.
+	static int Base64Encoding(const char *inputData, int dataLength, char *outputData);
+
 protected:
 
 	bool isStarted, threadRunning;
@@ -201,12 +213,14 @@ struct RemoteClient
 	void Reset(void)
 	{
 		outgoingDataMutex.Lock();
-		outgoingData.Clear(__FILE__,__LINE__);
+		outgoingData.Clear(_FILE_AND_LINE_);
 		outgoingDataMutex.Unlock();
 	}
 	void SetActive(bool a);
 	void SendOrBuffer(const char **data, const unsigned int *lengths, const int numParameters);
 };
+
+} // namespace RakNet
 
 #endif
 

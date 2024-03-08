@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 import gfx.controls.CheckBox;
@@ -57,10 +57,10 @@ class Screens.UpdateAccountScreen extends Screen
 		updateAccountButton.addEventListener("click", this, "f2c_UpdateAccount");
 		
 		//Add callbacks for C++
-		GameDelegate.addCallBack("c2f_UpdateAccountResult", this, "c2f_UpdateAccountResult");
+		ExternalInterface.addCallback("c2f_UpdateAccountResult", this, c2f_UpdateAccountResult);
 		// Do not change the order the parameters are passed in as
-		//GameDelegate.call("f2c_GetAccountDetails", [], _root);
-		//GameDelegate.addCallBack("c2f_GetAccountDetailsResult", this, "c2f_GetAccountDetailsResult");
+		//ExternalInterface.call("f2c_GetAccountDetails");
+		//ExternalInterface.addCallback("c2f_GetAccountDetailsResult", this, c2f_GetAccountDetailsResult);
 		
 		super.VOnFinishedLoading();
 	}
@@ -114,14 +114,14 @@ class Screens.UpdateAccountScreen extends Screen
 	function f2c_UpdateAccount():Void
 	{
 		// Do not change the order the parameters are passed in as
-		GameDelegate.call("f2c_UpdateAccount",
+		ExternalInterface.call("f2c_UpdateAccount",
 		[ firstName.text, middleName.text, lastName.text, race.text, sex_male.selected, homeAddress1.text, homeAddress2.text, homeCity.text, homeState.text,
 		  homeCountry.text, homeZipCode.text, billingAddress1.text, billingAddress2.text, billingCity.text, billingState.text, billingCountry.text, billingZipCode.text, 
 		  emailAddress.text, password.text, passwordRecoveryQuestion.text, passwordRecoveryAnswer.text, caption1.text, caption2.text, ageInDays.text 
-		], _root);
+		]);
 		// This may take a while, show a waiting screen until we get c2f_UpdateAccountResult
 		
-		//GameDelegate.call("f2c_GetAccountDetails", [], _root);
+		//ExternalInterface.call("f2c_GetAccountDetails");
 	}
 
 	function c2f_UpdateAccountResult(resultIdentifier:String)

@@ -34,13 +34,13 @@ LastSerializationResult::LastSerializationResult()
 LastSerializationResult::~LastSerializationResult()
 {
 	if (lastSerializationResultBS)
-		RakNet::OP_DELETE(lastSerializationResultBS,__FILE__,__LINE__);
+		RakNet::OP_DELETE(lastSerializationResultBS,_FILE_AND_LINE_);
 }
 void LastSerializationResult::AllocBS(void)
 {
 	if (lastSerializationResultBS==0)
 	{
-		lastSerializationResultBS=RakNet::OP_NEW<LastSerializationResultBS>(__FILE__,__LINE__);
+		lastSerializationResultBS=RakNet::OP_NEW<LastSerializationResultBS>(_FILE_AND_LINE_);
 	}
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ bool ReplicaManager3::PushConnection(RakNet::Connection_RM3 *newConnection)
 	DataStructures::DefaultIndexType index = connectionList.GetInsertionIndex(newConnection);
 	if (index!=(DataStructures::DefaultIndexType)-1)
 	{
-		connectionList.InsertAtIndex(newConnection,index,__FILE__,__LINE__);
+		connectionList.InsertAtIndex(newConnection,index,_FILE_AND_LINE_);
 
 		// Send message to validate the connection
 		newConnection->SendValidation(rakPeerInterface, worldId);
@@ -101,7 +101,7 @@ bool ReplicaManager3::PushConnection(RakNet::Connection_RM3 *newConnection)
 			DataStructures::DefaultIndexType pushIdx;
 			for (pushIdx=0; pushIdx < userReplicaList.GetSize(); pushIdx++)
 				newConnection->OnLocalReference(userReplicaList[pushIdx], this);
-		}		
+		}
 	}
 	return true;
 }
@@ -132,13 +132,13 @@ RakNet::Connection_RM3 * ReplicaManager3::PopConnection(DataStructures::DefaultI
 		replicaList[index2]->OnPoppedConnection(connection);
 		if (action==RM3AOPC_DELETE_REPLICA)
 		{
-			destructionList.Push( replicaList[index2], __FILE__, __LINE__  );
+			destructionList.Push( replicaList[index2], _FILE_AND_LINE_  );
 		}
 		else if (action==RM3AOPC_DELETE_REPLICA_AND_BROADCAST_DESTRUCTION)
 		{
-			destructionList.Push( replicaList[index2], __FILE__, __LINE__  );
+			destructionList.Push( replicaList[index2], _FILE_AND_LINE_  );
 
-			broadcastList.Push( replicaList[index2], __FILE__, __LINE__  );
+			broadcastList.Push( replicaList[index2], _FILE_AND_LINE_  );
 		}
 	}
 
@@ -149,7 +149,7 @@ RakNet::Connection_RM3 * ReplicaManager3::PopConnection(DataStructures::DefaultI
 		destructionList[index2]->DeallocReplica(connection);
 	}
 
-	connectionList.RemoveAtIndex(index,__FILE__,__LINE__);
+	connectionList.RemoveAtIndex(index,_FILE_AND_LINE_);
 	return connection;
 }
 
@@ -197,14 +197,12 @@ DataStructures::DefaultIndexType ReplicaManager3::ReferenceInternal(RakNet::Repl
 	index = userReplicaList.GetInsertionIndex(replica3);
 	if (index!=(DataStructures::DefaultIndexType)-1)
 	{
-		if (networkIDManager==0)
-			networkIDManager=rakPeerInterface->GetNetworkIDManager();
 		RakAssert(networkIDManager);
 		replica3->SetNetworkIDManager(networkIDManager);
 		if (replica3->creatingSystemGUID==UNASSIGNED_RAKNET_GUID)
 			replica3->creatingSystemGUID=rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 		replica3->replicaManager=this;
-		userReplicaList.InsertAtIndex(replica3,index,__FILE__,__LINE__);
+		userReplicaList.InsertAtIndex(replica3,index,_FILE_AND_LINE_);
 	}
 	return index;
 }
@@ -218,7 +216,7 @@ void ReplicaManager3::Dereference(RakNet::Replica3 *replica3)
 	{
 		if (userReplicaList[index]==replica3)
 		{
-			userReplicaList.RemoveAtIndex(index,__FILE__,__LINE__);
+			userReplicaList.RemoveAtIndex(index,_FILE_AND_LINE_);
 			break;
 		}
 	}
@@ -258,12 +256,12 @@ void ReplicaManager3::GetReferencedReplicaList(DataStructures::Multilist<ML_STAC
 
 void ReplicaManager3::GetReplicasCreatedByGuid(RakNetGUID guid, DataStructures::Multilist<ML_STACK, Replica3*> &replicaListOut)
 {
-	replicaListOut.Clear(false,__FILE__,__LINE__);
+	replicaListOut.Clear(false,_FILE_AND_LINE_);
 	DataStructures::DefaultIndexType index;
 	for (index=0; index < userReplicaList.GetSize(); index++)
 	{
 		if (userReplicaList[index]->creatingSystemGUID==guid)
-			replicaListOut.Push(userReplicaList[index],__FILE__,__LINE__);
+			replicaListOut.Push(userReplicaList[index],_FILE_AND_LINE_);
 	}
 }
 
@@ -349,7 +347,7 @@ void ReplicaManager3::SetDefaultPacketReliability(PacketReliability def)
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void ReplicaManager3::SetAutoSerializeInterval(RakNetTime intervalMS)
+void ReplicaManager3::SetAutoSerializeInterval(RakNet::Time intervalMS)
 {
 	autoSerializeInterval=intervalMS;
 }
@@ -358,12 +356,12 @@ void ReplicaManager3::SetAutoSerializeInterval(RakNetTime intervalMS)
 
 void ReplicaManager3::GetConnectionsThatHaveReplicaConstructed(Replica3 *replica, DataStructures::Multilist<ML_STACK, Connection_RM3*> &connectionsThatHaveConstructedThisReplica)
 {
-	connectionsThatHaveConstructedThisReplica.Clear(false,__FILE__,__LINE__);
+	connectionsThatHaveConstructedThisReplica.Clear(false,_FILE_AND_LINE_);
 	DataStructures::DefaultIndexType index;
 	for (index=0; index < connectionList.GetSize(); index++)
 	{
 		if (connectionList[index]->HasReplicaConstructed(replica))
-			connectionsThatHaveConstructedThisReplica.Push(connectionList[index],__FILE__,__LINE__);
+			connectionsThatHaveConstructedThisReplica.Push(connectionList[index],_FILE_AND_LINE_);
 	}
 }
 
@@ -385,8 +383,8 @@ void ReplicaManager3::Clear(void)
 
 
 
-	connectionList.Clear(true,__FILE__,__LINE__);
-	userReplicaList.Clear(true,__FILE__,__LINE__);
+	connectionList.Clear(true,_FILE_AND_LINE_);
+	userReplicaList.Clear(true,_FILE_AND_LINE_);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -422,8 +420,6 @@ NetworkIDManager *ReplicaManager3::GetNetworkIDManager(void) const
 void ReplicaManager3::SetNetworkIDManager(NetworkIDManager *_networkIDManager)
 {
 	networkIDManager=_networkIDManager;
-	if (networkIDManager)
-		networkIDManager->SetGuid(rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -435,18 +431,18 @@ PluginReceiveResult ReplicaManager3::OnReceive(Packet *packet)
 
 	unsigned char incomingWorldId;
 
-	RakNetTime timestamp=0;
+	RakNet::Time timestamp=0;
 	unsigned char packetIdentifier, packetDataOffset;
 	if ( ( unsigned char ) packet->data[ 0 ] == ID_TIMESTAMP )
 	{
-		if ( packet->length > sizeof( unsigned char ) + sizeof( RakNetTime ) )
+		if ( packet->length > sizeof( unsigned char ) + sizeof( RakNet::Time ) )
 		{
-			packetIdentifier = ( unsigned char ) packet->data[ sizeof( unsigned char ) + sizeof( RakNetTime ) ];
+			packetIdentifier = ( unsigned char ) packet->data[ sizeof( unsigned char ) + sizeof( RakNet::Time ) ];
 			// Required for proper endian swapping
 			RakNet::BitStream tsBs(packet->data+sizeof(MessageID),packet->length-1,false);
 			tsBs.Read(timestamp);
-			incomingWorldId=packet->data[sizeof( unsigned char )*2 + sizeof( RakNetTime )];
-			packetDataOffset=sizeof( unsigned char )*3 + sizeof( RakNetTime );
+			incomingWorldId=packet->data[sizeof( unsigned char )*2 + sizeof( RakNet::Time )];
+			packetDataOffset=sizeof( unsigned char )*3 + sizeof( RakNet::Time );
 		}
 		else
 			return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -523,8 +519,8 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3)
 	LastSerializationResult *lsr;
 	index=0;
 
-	constructedReplicasCulled.Clear(false,__FILE__,__LINE__);
-	destroyedReplicasCulled.Clear(false,__FILE__,__LINE__);
+	constructedReplicasCulled.Clear(false,_FILE_AND_LINE_);
+	destroyedReplicasCulled.Clear(false,_FILE_AND_LINE_);
 
 	if (constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION || constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION)
 	{
@@ -552,7 +548,7 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3)
 				// This is done here, as it isn't done in PushConstruction
 				SerializeParameters sp;
 				RakNet::BitStream emptyBs;
-				for (index=0; index < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; index++)
+				for (index=0; index < (DataStructures::DefaultIndexType) RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; index++)
 				{
 					sp.lastSentBitstream[index]=&emptyBs;
 					sp.pro[index]=replicaManager3->GetDefaultSendParameters();
@@ -576,13 +572,13 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3)
 						allIndices[z]=true;
 					}
 					if (SendSerialize(replica, allIndices, sp.outputBitstream, sp.messageTimestamp, sp.pro, replicaManager3->GetRakPeerInterface(), replicaManager3->GetWorldID())==SSICR_SENT_DATA)
-						lsr->replica->whenLastSerialized=RakNet::GetTime();
+						lsr->replica->whenLastSerialized=RakNet::GetTimeMS();
 				}
 			}
 			else if (constructionState==RM3CS_SEND_CONSTRUCTION)
 			{
 				OnConstructToThisConnection(index, replicaManager3);
-				constructedReplicasCulled.Push(lsr->replica,lsr->replica,__FILE__,__LINE__);
+				constructedReplicasCulled.Push(lsr->replica,lsr->replica,_FILE_AND_LINE_);
 			}
 			else if (constructionState==RM3CS_NEVER_CONSTRUCT)
 			{
@@ -606,7 +602,7 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3)
 				if (destructionState==RM3DS_SEND_DESTRUCTION)
 				{
 					OnSendDestructionFromQuery(index, replicaManager3);
-					destroyedReplicasCulled.Push(lsr->replica,lsr->replica,__FILE__,__LINE__);
+					destroyedReplicasCulled.Push(lsr->replica,lsr->replica,_FILE_AND_LINE_);
 				}
 				else if (destructionState==RM3DS_DO_NOT_QUERY_DESTRUCTION)
 				{
@@ -670,7 +666,7 @@ void ReplicaManager3::Update(void)
 
 	if (autoSerializeInterval>0)
 	{
-		RakNetTime time = RakNet::GetTime();
+		RakNet::Time time = RakNet::GetTimeMS();
 
 		if (time - lastAutoSerializeOccurance > autoSerializeInterval)
 		{
@@ -785,8 +781,6 @@ void ReplicaManager3::OnConstructionExisting(unsigned char *packetData, int pack
 	RakNet::BitStream bsIn(packetData,packetDataLength,false);
 	bsIn.IgnoreBytes(packetDataOffset);
 
-	if (networkIDManager==0)
-		networkIDManager=rakPeerInterface->GetNetworkIDManager();
 	RakAssert(networkIDManager);
 
 	NetworkID networkId;
@@ -818,14 +812,11 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 	RakNet::BitStream bsIn(packetData,packetDataLength,false);
 	bsIn.IgnoreBytes(packetDataOffset);
 	DataStructures::DefaultIndexType objectListSize, index, index2;
-	BitSize_t bitOffset;
+	BitSize_t bitOffset, bitOffset2;
 	Replica3 *replica;
-	uint32_t allocationNumber=0;
 	NetworkID networkId;
 	RakNetGUID creatingSystemGuid;
 
-	if (networkIDManager==0)
-		networkIDManager=rakPeerInterface->GetNetworkIDManager();
 	RakAssert(networkIDManager);
 
 	bsIn.Read(objectListSize);
@@ -833,6 +824,10 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 	{
 		bsIn.Read(bitOffset);
 		bsIn.Read(networkId);
+		bsIn.Read(creatingSystemGuid);
+		bsIn.Read(bitOffset2);
+
+		//printf("OnConstruction: %i\n",networkId.guid.g); // Removeme
 		Replica3* existingReplica = networkIDManager->GET_OBJECT_FROM_ID<Replica3*>(networkId);
 		if (existingReplica)
 		{
@@ -845,6 +840,7 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 			continue;
 		}
 
+		bsIn.AlignReadToByteBoundary();
 		replica = connection->AllocReplica(&bsIn, this);
 		if (replica==0)
 		{
@@ -852,29 +848,14 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 			continue;
 		}
 
+		// Go past the bitStream written to with WriteAllocationID(). Necessary in case the user didn't read out the bitStream the same way it was written
+		// bitOffset2 is already aligned
+		bsIn.SetReadOffset(bitOffset2);
+
 		replica->SetNetworkIDManager(networkIDManager);
-
-		if (networkId==UNASSIGNED_NETWORK_ID)
-		{
-			if (networkIDManager->IsNetworkIDAuthority()==false)
-			{
-				// Can't assign network ID
-				replica->replicaManager=0;
-				replica->DeallocReplica(connection);
-				bsIn.SetReadOffset(bitOffset);
-				continue;
-			}
-
-			bsIn.Read(allocationNumber);
-		}
-		else
-		{
-
-			replica->SetNetworkID(networkId);
-		}
+		replica->SetNetworkID(networkId);
 
 		replica->replicaManager=this;
-		bsIn.Read(creatingSystemGuid);
 		replica->creatingSystemGUID=creatingSystemGuid;
 
 		if (!replica->QueryRemoteConstruction(connection) ||
@@ -886,7 +867,7 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 				RakNet::BitStream bsOut;
 				bsOut.Write((MessageID)ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_REJECTED);
 				bsOut.Write(worldId);
-				bsOut.Write(allocationNumber);
+				bsOut.Write(networkId);
 				replica->SerializeConstructionRequestRejected(&bsOut,connection);
 				rakPeerInterface->Send(&bsOut, defaultSendParameters.priority, defaultSendParameters.reliability, defaultSendParameters.orderingChannel, connection->GetSystemAddress(), false, defaultSendParameters.sendReceipt);
 			}
@@ -906,7 +887,6 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 			RakNet::BitStream bsOut;
 			bsOut.Write((MessageID)ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_ACCEPTED);
 			bsOut.Write(worldId);
-			bsOut.Write(allocationNumber);
 			bsOut.Write(replica->GetNetworkID());
 			replica->SerializeConstructionRequestAccepted(&bsOut,connection);
 			rakPeerInterface->Send(&bsOut, defaultSendParameters.priority, defaultSendParameters.reliability, defaultSendParameters.orderingChannel, connection->GetSystemAddress(), false, defaultSendParameters.sendReceipt);
@@ -928,6 +908,7 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 
 	// Destructions
 	bool b = bsIn.Read(objectListSize);
+	(void) b;
 	RakAssert(b);
 	for (index=0; index < objectListSize; index++)
 	{
@@ -968,7 +949,7 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-PluginReceiveResult ReplicaManager3::OnSerialize(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, RakNetTime timestamp, unsigned char packetDataOffset)
+PluginReceiveResult ReplicaManager3::OnSerialize(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, RakNet::Time timestamp, unsigned char packetDataOffset)
 {
 	Connection_RM3 *connection = GetConnectionByGUID(senderGuid);
 	if (connection==0)
@@ -978,8 +959,6 @@ PluginReceiveResult ReplicaManager3::OnSerialize(Packet *packet, unsigned char *
 		connection->downloadGroup.Push(packet, __FILE__, __LINE__);
 		return RR_STOP_PROCESSING;
 	}
-	if (networkIDManager==0)
-		networkIDManager=rakPeerInterface->GetNetworkIDManager();
 	RakAssert(networkIDManager);
 	RakNet::BitStream bsIn(packetData,packetDataLength,false);
 	bsIn.IgnoreBytes(packetDataOffset);
@@ -992,6 +971,7 @@ PluginReceiveResult ReplicaManager3::OnSerialize(Packet *packet, unsigned char *
 	NetworkID networkId;
 	BitSize_t bitsUsed;
 	bsIn.Read(networkId);
+	//printf("OnSerialize: %i\n",networkId.guid.g); // Removeme
 	replica = networkIDManager->GET_OBJECT_FROM_ID<Replica3*>(networkId);
 	if (replica)
 	{
@@ -1074,18 +1054,13 @@ void ReplicaManager3::OnLocalConstructionRejected(unsigned char *packetData, int
 		return;
 	RakNet::BitStream bsIn(packetData,packetDataLength,false);
 	bsIn.IgnoreBytes(packetDataOffset);
-	uint32_t allocationNumber;
-	bsIn.Read(allocationNumber);
-	DataStructures::DefaultIndexType index;
-	for (index=0; index < userReplicaList.GetSize(); index++)
+	NetworkID networkId;
+	bsIn.Read(networkId);
+	Replica3 *nio = networkIDManager->GET_OBJECT_FROM_ID<Replica3*>(networkId);
+	if (nio)
 	{
-		if (userReplicaList[index]->GetAllocationNumber()==allocationNumber)
-		{
-			userReplicaList[index]->DeserializeConstructionRequestRejected(&bsIn,connection);
-			break;
-		}
+		nio->DeserializeConstructionRequestRejected(&bsIn,connection);
 	}
-
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1097,8 +1072,6 @@ void ReplicaManager3::OnLocalConstructionAccepted(unsigned char *packetData, int
 		return;
 	RakNet::BitStream bsIn(packetData,packetDataLength,false);
 	bsIn.IgnoreBytes(packetDataOffset);
-	uint32_t allocationNumber;
-	bsIn.Read(allocationNumber);
 	NetworkID assignedNetworkId;
 	bsIn.Read(assignedNetworkId);
 	DataStructures::DefaultIndexType index;
@@ -1107,47 +1080,42 @@ void ReplicaManager3::OnLocalConstructionAccepted(unsigned char *packetData, int
 	SerializeParameters sp;
 	sp.whenLastSerialized=0;
 	RakNet::BitStream emptyBs;
-	for (index=0; index < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; index++)
+	for (index=0; index < (DataStructures::DefaultIndexType) RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; index++)
 		sp.lastSentBitstream[index]=&emptyBs;
 	RM3SerializationResult res;
-	for (index=0; index < userReplicaList.GetSize(); index++)
+	replica = networkIDManager->GET_OBJECT_FROM_ID<Replica3 *>(assignedNetworkId);
+	if (replica)
 	{
-		if (userReplicaList[index]->GetAllocationNumber()==allocationNumber)
+		index2=connection->constructedReplicaList.GetIndexOf(replica);
+		if (index2!=(DataStructures::DefaultIndexType)-1)
 		{
-			replica=userReplicaList[index];
-			index2=connection->constructedReplicaList.GetIndexOf(replica);
-			if (index2!=(DataStructures::DefaultIndexType)-1)
+			LastSerializationResult *lsr = connection->constructedReplicaList[index2];
+
+			replica->SetNetworkID(assignedNetworkId);
+			replica->DeserializeConstructionRequestAccepted(&bsIn,connection);
+			sp.destinationConnection=connection;
+
+			// Immediately serialize
+			res = replica->Serialize(&sp);
+			if (res!=RM3SR_NEVER_SERIALIZE_FOR_THIS_CONNECTION &&
+				res!=RM3SR_DO_NOT_SERIALIZE &&
+				res!=RM3SR_SERIALIZED_UNIQUELY)
 			{
-				LastSerializationResult *lsr = connection->constructedReplicaList[index2];
-
-				replica->SetNetworkID(assignedNetworkId);
-				replica->DeserializeConstructionRequestAccepted(&bsIn,connection);
 				sp.destinationConnection=connection;
-
-				// Immediately serialize
-				res = replica->Serialize(&sp);
-				if (res!=RM3SR_NEVER_SERIALIZE_FOR_THIS_CONNECTION &&
-					res!=RM3SR_DO_NOT_SERIALIZE &&
-					res!=RM3SR_SERIALIZED_UNIQUELY)
+				sp.messageTimestamp=0;
+				for (int i=0; i < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; i++)
+					sp.pro[i]=defaultSendParameters;
+				bool allIndices[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS];
+				for (int z=0; z < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; z++)
 				{
-					sp.destinationConnection=connection;
-					sp.messageTimestamp=0;
-					for (int i=0; i < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; i++)
-						sp.pro[i]=defaultSendParameters;
-					bool allIndices[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS];
-					for (int z=0; z < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; z++)
-					{
-						allIndices[z]=true;
-					}
-					if (connection->SendSerialize(replica, allIndices, sp.outputBitstream, sp.messageTimestamp, sp.pro, rakPeerInterface, worldId)==SSICR_SENT_DATA)
-						lsr->replica->whenLastSerialized=RakNet::GetTime();
+					allIndices[z]=true;
 				}
-
-				// Start serialization queries
-				connection->queryToSerializeReplicaList.Push(lsr,lsr->replica,__FILE__,__LINE__);
-
-				return;
+				if (connection->SendSerialize(replica, allIndices, sp.outputBitstream, sp.messageTimestamp, sp.pro, rakPeerInterface, worldId)==SSICR_SENT_DATA)
+					lsr->replica->whenLastSerialized=RakNet::GetTimeMS();
 			}
+
+			// Start serialization queries
+			connection->queryToSerializeReplicaList.Push(lsr,lsr->replica,_FILE_AND_LINE_);
 		}
 	}
 }
@@ -1224,7 +1192,7 @@ void ReplicaManager3::BroadcastDestructionList(DataStructures::Multilist<ML_STAC
 void ReplicaManager3::BroadcastDestruction(Replica3 *replica, SystemAddress exclusionAddress)
 {
 	DataStructures::Multilist<ML_STACK, Replica3*> replicaList;
-	replicaList.Push(replica, __FILE__, __LINE__ );
+	replicaList.Push(replica, _FILE_AND_LINE_ );
 	BroadcastDestructionList(replicaList,exclusionAddress);
 }
 
@@ -1245,18 +1213,18 @@ Connection_RM3::Connection_RM3(SystemAddress _systemAddress, RakNetGUID _guid)
 
 Connection_RM3::~Connection_RM3()
 {
-	constructedReplicaList.ClearPointers(true,__FILE__,__LINE__);
-	queryToConstructReplicaList.ClearPointers(true,__FILE__,__LINE__);
+	constructedReplicaList.ClearPointers(true,_FILE_AND_LINE_);
+	queryToConstructReplicaList.ClearPointers(true,_FILE_AND_LINE_);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 void Connection_RM3::GetConstructedReplicas(DataStructures::Multilist<ML_STACK, Replica3*> &objectsTheyDoHave)
 {
-	objectsTheyDoHave.Clear(true,__FILE__,__LINE__);
+	objectsTheyDoHave.Clear(true,_FILE_AND_LINE_);
 	for (DataStructures::DefaultIndexType idx=0; idx < constructedReplicaList.GetSize(); idx++)
 	{
-		objectsTheyDoHave.Push(constructedReplicaList[idx]->replica, __FILE__, __LINE__ );
+		objectsTheyDoHave.Push(constructedReplicaList[idx]->replica, _FILE_AND_LINE_ );
 	}
 	objectsTheyDoHave.TagSorted();
 }
@@ -1269,7 +1237,7 @@ bool Connection_RM3::HasReplicaConstructed(RakNet::Replica3 *replica)
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void Connection_RM3::SendSerializeHeader(RakNet::Replica3 *replica, RakNetTime timestamp, RakNet::BitStream *bs, unsigned char worldId)
+void Connection_RM3::SendSerializeHeader(RakNet::Replica3 *replica, RakNet::Time timestamp, RakNet::BitStream *bs, unsigned char worldId)
 {
 	bs->Reset();
 
@@ -1291,7 +1259,7 @@ void Connection_RM3::ClearDownloadGroup(RakPeerInterface *rakPeerInterface)
 	downloadGroup.Clear(false,__FILE__,__LINE__);
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-SendSerializeIfChangedResult Connection_RM3::SendSerialize(RakNet::Replica3 *replica, bool indicesToSend[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNet::BitStream serializationData[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNetTime timestamp, PRO sendParameters[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakPeerInterface *rakPeer, unsigned char worldId)
+SendSerializeIfChangedResult Connection_RM3::SendSerialize(RakNet::Replica3 *replica, bool indicesToSend[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNet::BitStream serializationData[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNet::Time timestamp, PRO sendParameters[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakPeerInterface *rakPeer, unsigned char worldId)
 {
 	bool channelHasData;
 	BitSize_t sum=0;
@@ -1367,7 +1335,7 @@ SendSerializeIfChangedResult Connection_RM3::SendSerialize(RakNet::Replica3 *rep
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-SendSerializeIfChangedResult Connection_RM3::SendSerializeIfChanged(DataStructures::DefaultIndexType queryToSerializeIndex, SerializeParameters *sp, RakPeerInterface *rakPeer, unsigned char worldId, ReplicaManager3 *replicaManager)
+SendSerializeIfChangedResult Connection_RM3::SendSerializeIfChanged(DataStructures::DefaultIndexType queryToSerializeIndex, SerializeParameters *sp, RakNet::RakPeerInterface *rakPeer, unsigned char worldId, ReplicaManager3 *replicaManager)
 {
 	RakNet::Replica3 *replica = queryToSerializeReplicaList[queryToSerializeIndex]->replica;
 
@@ -1427,7 +1395,7 @@ SendSerializeIfChangedResult Connection_RM3::SendSerializeIfChanged(DataStructur
 		sp->outputBitstream[z].ResetReadPointer();
 		sum+=sp->outputBitstream[z].GetNumberOfBitsUsed();
 	}
-	
+
 	if (sum==0)
 	{
 		// Don't serialize this tick only
@@ -1526,12 +1494,13 @@ SendSerializeIfChangedResult Connection_RM3::SendSerializeIfChanged(DataStructur
 void Connection_RM3::OnLocalReference(Replica3* replica3, ReplicaManager3 *replicaManager)
 {
 	ConstructionMode constructionMode = QueryConstructionMode();
-	RakAssert(constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION || constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION)
+	RakAssert(constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION || constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION);
 	(void) replicaManager;
+	(void) constructionMode;
 
-	LastSerializationResult* lsr=RakNet::OP_NEW<LastSerializationResult>(__FILE__,__LINE__);
+	LastSerializationResult* lsr=RakNet::OP_NEW<LastSerializationResult>(_FILE_AND_LINE_);
 	lsr->replica=replica3;
-	queryToConstructReplicaList.Push(lsr,replica3,__FILE__,__LINE__);
+	queryToConstructReplicaList.Push(lsr,replica3,_FILE_AND_LINE_);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1546,15 +1515,15 @@ void Connection_RM3::OnDereference(Replica3* replica3, ReplicaManager3 *replicaM
 	if (idx!=(DataStructures::DefaultIndexType)-1)
 	{
 		lsr=constructedReplicaList[idx];
-		constructedReplicaList.RemoveAtIndex(idx,__FILE__,__LINE__);
+		constructedReplicaList.RemoveAtIndex(idx,_FILE_AND_LINE_);
 	}
-	
+
 	for (idx=0; idx < queryToConstructReplicaList.GetSize(); idx++)
 	{
 		if (queryToConstructReplicaList[idx]->replica==replica3)
 		{
 			lsr=queryToConstructReplicaList[idx];
-			queryToConstructReplicaList.RemoveAtIndex(idx,__FILE__,__LINE__);
+			queryToConstructReplicaList.RemoveAtIndex(idx,_FILE_AND_LINE_);
 			break;
 		}
 	}
@@ -1564,7 +1533,7 @@ void Connection_RM3::OnDereference(Replica3* replica3, ReplicaManager3 *replicaM
 		if (queryToSerializeReplicaList[idx]->replica==replica3)
 		{
 			lsr=queryToSerializeReplicaList[idx];
-			queryToSerializeReplicaList.RemoveAtIndex(idx,__FILE__,__LINE__);
+			queryToSerializeReplicaList.RemoveAtIndex(idx,_FILE_AND_LINE_);
 			break;
 		}
 	}
@@ -1574,7 +1543,7 @@ void Connection_RM3::OnDereference(Replica3* replica3, ReplicaManager3 *replicaM
 		if (queryToDestructReplicaList[idx]->replica==replica3)
 		{
 			lsr=queryToDestructReplicaList[idx];
-			queryToDestructReplicaList.RemoveAtIndex(idx,__FILE__,__LINE__);
+			queryToDestructReplicaList.RemoveAtIndex(idx,_FILE_AND_LINE_);
 			break;
 		}
 	}
@@ -1582,7 +1551,7 @@ void Connection_RM3::OnDereference(Replica3* replica3, ReplicaManager3 *replicaM
 	ValidateLists(replicaManager);
 
 	if (lsr)
-		RakNet::OP_DELETE(lsr,__FILE__,__LINE__);
+		RakNet::OP_DELETE(lsr,_FILE_AND_LINE_);
 
 	ValidateLists(replicaManager);
 }
@@ -1592,19 +1561,19 @@ void Connection_RM3::OnDereference(Replica3* replica3, ReplicaManager3 *replicaM
 void Connection_RM3::OnDownloadFromThisSystem(Replica3* replica3, ReplicaManager3 *replicaManager)
 {
 	ValidateLists(replicaManager);
-	LastSerializationResult* lsr=RakNet::OP_NEW<LastSerializationResult>(__FILE__,__LINE__);
+	LastSerializationResult* lsr=RakNet::OP_NEW<LastSerializationResult>(_FILE_AND_LINE_);
 	lsr->replica=replica3;
 
 	ConstructionMode constructionMode = QueryConstructionMode();
 	if (constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION || constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION)
 	{
-		queryToConstructReplicaList.RemoveAtKey(replica3,false,__FILE__,__LINE__);
-		queryToDestructReplicaList.Push(lsr,replica3,__FILE__,__LINE__);
+		queryToConstructReplicaList.RemoveAtKey(replica3,false,_FILE_AND_LINE_);
+		queryToDestructReplicaList.Push(lsr,replica3,_FILE_AND_LINE_);
 	}
 
-	constructedReplicaList.Push(lsr,replica3,__FILE__,__LINE__);
+	constructedReplicaList.Push(lsr,replica3,_FILE_AND_LINE_);
 	//assert(queryToSerializeReplicaList.GetIndexOf(replica3)==(DataStructures::DefaultIndexType)-1);
-	queryToSerializeReplicaList.Push(lsr,replica3,__FILE__,__LINE__);
+	queryToSerializeReplicaList.Push(lsr,replica3,_FILE_AND_LINE_);
 
 	ValidateLists(replicaManager);
 }
@@ -1626,12 +1595,13 @@ void Connection_RM3::OnDownloadFromOtherSystem(Replica3* replica3, ReplicaManage
 void Connection_RM3::OnNeverConstruct(DataStructures::DefaultIndexType queryToConstructIdx, ReplicaManager3 *replicaManager)
 {
 	ConstructionMode constructionMode = QueryConstructionMode();
-	RakAssert(constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION || constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION)
+	RakAssert(constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION || constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION);
+	(void) constructionMode;
 
 	ValidateLists(replicaManager);
 	LastSerializationResult* lsr = queryToConstructReplicaList[queryToConstructIdx];
-	queryToConstructReplicaList.RemoveAtIndex(queryToConstructIdx,__FILE__,__LINE__);
-	RakNet::OP_DELETE(lsr,__FILE__,__LINE__);
+	queryToConstructReplicaList.RemoveAtIndex(queryToConstructIdx,_FILE_AND_LINE_);
+	RakNet::OP_DELETE(lsr,_FILE_AND_LINE_);
 	ValidateLists(replicaManager);
 }
 
@@ -1640,18 +1610,19 @@ void Connection_RM3::OnNeverConstruct(DataStructures::DefaultIndexType queryToCo
 void Connection_RM3::OnConstructToThisConnection(DataStructures::DefaultIndexType queryToConstructIdx, ReplicaManager3 *replicaManager)
 {
 	ConstructionMode constructionMode = QueryConstructionMode();
-	RakAssert(constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION || constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION)
+	RakAssert(constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION || constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION);
+	(void) constructionMode;
 
 	ValidateLists(replicaManager);
 	LastSerializationResult* lsr = queryToConstructReplicaList[queryToConstructIdx];
-	queryToConstructReplicaList.RemoveAtIndex(queryToConstructIdx,__FILE__,__LINE__);
+	queryToConstructReplicaList.RemoveAtIndex(queryToConstructIdx,_FILE_AND_LINE_);
 	//assert(constructedReplicaList.GetIndexOf(lsr->replica)==(DataStructures::DefaultIndexType)-1);
-	constructedReplicaList.Push(lsr,lsr->replica,__FILE__,__LINE__);
+	constructedReplicaList.Push(lsr,lsr->replica,_FILE_AND_LINE_);
 	//assert(queryToDestructReplicaList.GetIndexOf(lsr->replica)==(DataStructures::DefaultIndexType)-1);
-	queryToDestructReplicaList.Push(lsr,lsr->replica,__FILE__,__LINE__);
+	queryToDestructReplicaList.Push(lsr,lsr->replica,_FILE_AND_LINE_);
 	//assert(queryToSerializeReplicaList.GetIndexOf(lsr->replica)==(DataStructures::DefaultIndexType)-1);
 	if (lsr->replica->GetNetworkID()!=UNASSIGNED_NETWORK_ID)
-		queryToSerializeReplicaList.Push(lsr,lsr->replica,__FILE__,__LINE__);
+		queryToSerializeReplicaList.Push(lsr,lsr->replica,_FILE_AND_LINE_);
 	ValidateLists(replicaManager);
 }
 
@@ -1662,11 +1633,11 @@ void Connection_RM3::OnConstructToThisConnection(Replica3 *replica, ReplicaManag
 	RakAssert(QueryConstructionMode()==QUERY_CONNECTION_FOR_REPLICA_LIST);
 	(void) replicaManager;
 
-	LastSerializationResult* lsr=RakNet::OP_NEW<LastSerializationResult>(__FILE__,__LINE__);
+	LastSerializationResult* lsr=RakNet::OP_NEW<LastSerializationResult>(_FILE_AND_LINE_);
 	lsr->replica=replica;
-	constructedReplicaList.Push(lsr,replica,__FILE__,__LINE__);
+	constructedReplicaList.Push(lsr,replica,_FILE_AND_LINE_);
 	if (lsr->replica->GetNetworkID()!=UNASSIGNED_NETWORK_ID)
-		queryToSerializeReplicaList.Push(lsr,lsr->replica,__FILE__,__LINE__);
+		queryToSerializeReplicaList.Push(lsr,lsr->replica,_FILE_AND_LINE_);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1674,7 +1645,7 @@ void Connection_RM3::OnConstructToThisConnection(Replica3 *replica, ReplicaManag
 void Connection_RM3::OnNeverSerialize(DataStructures::DefaultIndexType queryToSerializeIndex, ReplicaManager3 *replicaManager)
 {
 	ValidateLists(replicaManager);
-	queryToSerializeReplicaList.RemoveAtIndex(queryToSerializeIndex,__FILE__,__LINE__);
+	queryToSerializeReplicaList.RemoveAtIndex(queryToSerializeIndex,_FILE_AND_LINE_);
 	ValidateLists(replicaManager);
 }
 
@@ -1683,17 +1654,18 @@ void Connection_RM3::OnNeverSerialize(DataStructures::DefaultIndexType queryToSe
 void Connection_RM3::OnReplicaAlreadyExists(DataStructures::DefaultIndexType queryToConstructIdx, ReplicaManager3 *replicaManager)
 {
 	ConstructionMode constructionMode = QueryConstructionMode();
-	RakAssert(constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION || constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION)
+	RakAssert(constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION || constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION);
+	(void) constructionMode;
 
 	ValidateLists(replicaManager);
 	LastSerializationResult* lsr = queryToConstructReplicaList[queryToConstructIdx];
-	queryToConstructReplicaList.RemoveAtIndex(queryToConstructIdx,__FILE__,__LINE__);
+	queryToConstructReplicaList.RemoveAtIndex(queryToConstructIdx,_FILE_AND_LINE_);
 	//assert(constructedReplicaList.GetIndexOf(lsr->replica)==(DataStructures::DefaultIndexType)-1);
-	constructedReplicaList.Push(lsr,lsr->replica,__FILE__,__LINE__);
+	constructedReplicaList.Push(lsr,lsr->replica,_FILE_AND_LINE_);
 	//assert(queryToDestructReplicaList.GetIndexOf(lsr->replica)==(DataStructures::DefaultIndexType)-1);
-	queryToDestructReplicaList.Push(lsr,lsr->replica,__FILE__,__LINE__);
+	queryToDestructReplicaList.Push(lsr,lsr->replica,_FILE_AND_LINE_);
 	//assert(queryToSerializeReplicaList.GetIndexOf(lsr->replica)==(DataStructures::DefaultIndexType)-1);
-	queryToSerializeReplicaList.Push(lsr,lsr->replica,__FILE__,__LINE__);
+	queryToSerializeReplicaList.Push(lsr,lsr->replica,_FILE_AND_LINE_);
 	ValidateLists(replicaManager);
 }
 
@@ -1715,7 +1687,7 @@ void Connection_RM3::OnDownloadExisting(Replica3* replica3, ReplicaManager3 *rep
 				return;
 			}
 		}
-	}	
+	}
 	else
 	{
 		OnConstructToThisConnection(replica3, replicaManager);
@@ -1726,15 +1698,16 @@ void Connection_RM3::OnDownloadExisting(Replica3* replica3, ReplicaManager3 *rep
 void Connection_RM3::OnSendDestructionFromQuery(DataStructures::DefaultIndexType queryToDestructIdx, ReplicaManager3 *replicaManager)
 {
 	ConstructionMode constructionMode = QueryConstructionMode();
-	RakAssert(constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION || constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION)
+	RakAssert(constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION || constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION);
+	(void) constructionMode;
 
 	ValidateLists(replicaManager);
 	LastSerializationResult* lsr = queryToDestructReplicaList[queryToDestructIdx];
-	queryToDestructReplicaList.RemoveAtIndex(queryToDestructIdx,__FILE__,__LINE__);
-	queryToSerializeReplicaList.RemoveAtKey(lsr->replica,false,__FILE__,__LINE__);
-	constructedReplicaList.RemoveAtKey(lsr->replica,true,__FILE__,__LINE__);
+	queryToDestructReplicaList.RemoveAtIndex(queryToDestructIdx,_FILE_AND_LINE_);
+	queryToSerializeReplicaList.RemoveAtKey(lsr->replica,false,_FILE_AND_LINE_);
+	constructedReplicaList.RemoveAtKey(lsr->replica,true,_FILE_AND_LINE_);
 	//assert(queryToConstructReplicaList.GetIndexOf(lsr->replica)==(DataStructures::DefaultIndexType)-1);
-	queryToConstructReplicaList.Push(lsr,lsr->replica,__FILE__,__LINE__);
+	queryToConstructReplicaList.Push(lsr,lsr->replica,_FILE_AND_LINE_);
 	ValidateLists(replicaManager);
 }
 
@@ -1743,7 +1716,7 @@ void Connection_RM3::OnSendDestructionFromQuery(DataStructures::DefaultIndexType
 void Connection_RM3::OnDoNotQueryDestruction(DataStructures::DefaultIndexType queryToDestructIdx, ReplicaManager3 *replicaManager)
 {
 	ValidateLists(replicaManager);
-	queryToDestructReplicaList.RemoveAtIndex(queryToDestructIdx,__FILE__,__LINE__);
+	queryToDestructReplicaList.RemoveAtIndex(queryToDestructIdx,_FILE_AND_LINE_);
 	ValidateLists(replicaManager);
 }
 
@@ -1871,7 +1844,7 @@ void Connection_RM3::ValidateLists(ReplicaManager3 *replicaManager) const
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> &newObjects, DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> &deletedObjects, PRO sendParameters, RakPeerInterface *rakPeer, unsigned char worldId)
+void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> &newObjects, DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> &deletedObjects, PRO sendParameters, RakNet::RakPeerInterface *rakPeer, unsigned char worldId)
 {
 	if (newObjects.GetSize()==0 && deletedObjects.GetSize()==0)
 		return;
@@ -1879,7 +1852,7 @@ void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, Replic
 	// All construction and destruction takes place in the same network message
 	// Otherwise, if objects rely on each other being created the same tick to be valid, this won't always be true
 	//	DataStructures::Multilist<ML_STACK, LastSerializationResult* > serializedObjects;
-	BitSize_t offsetStart, offsetEnd;
+	BitSize_t offsetStart, offsetStart2, offsetEnd;
 	DataStructures::DefaultIndexType newListIndex, oldListIndex;
 	RakNet::BitStream bsOut;
 	NetworkID networkId;
@@ -1890,7 +1863,7 @@ void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, Replic
 		SerializeOnDownloadStarted(&bsOut);
 		rakPeer->Send(&bsOut,sendParameters.priority,RELIABLE_ORDERED,sendParameters.orderingChannel,systemAddress,false,sendParameters.sendReceipt);
 	}
-	
+
 
 	//	LastSerializationResult* lsr;
 	bsOut.Reset();
@@ -1901,13 +1874,19 @@ void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, Replic
 	for (newListIndex=0; newListIndex < newObjects.GetSize(); newListIndex++)
 	{
 		offsetStart=bsOut.GetWriteOffset();
-		bsOut.Write(offsetStart);
+		bsOut.Write(offsetStart); // overwritten to point to the end of the stream
 		networkId=newObjects[newListIndex]->GetNetworkID();
 		bsOut.Write(networkId);
-		newObjects[newListIndex]->WriteAllocationID(&bsOut);
-		if (networkId==UNASSIGNED_NETWORK_ID)
-			bsOut.Write(newObjects[newListIndex]->GetAllocationNumber());
 		bsOut.Write(newObjects[newListIndex]->creatingSystemGUID);
+		offsetStart2=bsOut.GetWriteOffset();
+		bsOut.Write(offsetStart2); // overwritten to point to after the call to WriteAllocationID
+		bsOut.AlignWriteToByteBoundary(); // Give the user an aligned bitStream in case they use memcpy
+		newObjects[newListIndex]->WriteAllocationID(this, &bsOut);
+		bsOut.AlignWriteToByteBoundary();  // Give the user an aligned bitStream in case they use memcpy
+		offsetEnd=bsOut.GetWriteOffset();
+		bsOut.SetWriteOffset(offsetStart2);
+		bsOut.Write(offsetEnd);
+		bsOut.SetWriteOffset(offsetEnd);
 		newObjects[newListIndex]->SerializeConstruction(&bsOut, this);
 		bsOut.AlignWriteToByteBoundary();
 		offsetEnd=bsOut.GetWriteOffset();
@@ -1952,7 +1931,7 @@ void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, Replic
 	}
 
 	sp.bitsWrittenSoFar=0;
-	RakNetTime t = RakNet::GetTime();
+	RakNet::Time t = RakNet::GetTimeMS();
 	for (newListIndex=0; newListIndex < newObjects.GetSize(); newListIndex++)
 	{
 		sp.destinationConnection=this;
@@ -1993,14 +1972,14 @@ void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, Replic
 		SerializeOnDownloadComplete(&bsOut);
 		rakPeer->Send(&bsOut,sendParameters.priority,RELIABLE_ORDERED,sendParameters.orderingChannel,systemAddress,false,sendParameters.sendReceipt);
 	}
-	
+
 	isFirstConstruction=false;
 
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void Connection_RM3::SendValidation(RakPeerInterface *rakPeer, unsigned char worldId)
+void Connection_RM3::SendValidation(RakNet::RakPeerInterface *rakPeer, unsigned char worldId)
 {
 	// Hijack to mean sendValidation
 	RakNet::BitStream bsOut;
@@ -2047,22 +2026,23 @@ RakNetGUID Replica3::GetCreatingSystemGUID(void) const
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RM3ConstructionState Replica3::QueryConstruction_ClientConstruction(RakNet::Connection_RM3 *destinationConnection)
+RM3ConstructionState Replica3::QueryConstruction_ClientConstruction(RakNet::Connection_RM3 *destinationConnection, bool isThisTheServer)
 {
 	(void) destinationConnection;
 	if (creatingSystemGUID==replicaManager->GetRakPeerInterface()->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
 		return RM3CS_SEND_CONSTRUCTION;
 	// Send back to the owner client too, because they couldn't assign the network ID
-	if (networkIDManager->IsNetworkIDAuthority())
+	if (isThisTheServer)
 		return RM3CS_SEND_CONSTRUCTION;
 	return RM3CS_NEVER_CONSTRUCT;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-bool Replica3::QueryRemoteConstruction_ClientConstruction(RakNet::Connection_RM3 *sourceConnection)
+bool Replica3::QueryRemoteConstruction_ClientConstruction(RakNet::Connection_RM3 *sourceConnection, bool isThisTheServer)
 {
 	(void) sourceConnection;
+	(void) isThisTheServer;
 
 	// OK to create
 	return true;
@@ -2070,21 +2050,21 @@ bool Replica3::QueryRemoteConstruction_ClientConstruction(RakNet::Connection_RM3
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RM3ConstructionState Replica3::QueryConstruction_ServerConstruction(RakNet::Connection_RM3 *destinationConnection)
+RM3ConstructionState Replica3::QueryConstruction_ServerConstruction(RakNet::Connection_RM3 *destinationConnection, bool isThisTheServer)
 {
 	(void) destinationConnection;
 
-	if (networkIDManager->IsNetworkIDAuthority())
+	if (isThisTheServer)
 		return RM3CS_SEND_CONSTRUCTION;
 	return RM3CS_NEVER_CONSTRUCT;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-bool Replica3::QueryRemoteConstruction_ServerConstruction(RakNet::Connection_RM3 *sourceConnection)
+bool Replica3::QueryRemoteConstruction_ServerConstruction(RakNet::Connection_RM3 *sourceConnection, bool isThisTheServer)
 {
 	(void) sourceConnection;
-	if (networkIDManager->IsNetworkIDAuthority())
+	if (isThisTheServer)
 		return false;
 	return true;
 }
@@ -2112,13 +2092,13 @@ bool Replica3::QueryRemoteConstruction_PeerToPeer(RakNet::Connection_RM3 *source
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RM3QuerySerializationResult Replica3::QuerySerialization_ClientSerializable(RakNet::Connection_RM3 *destinationConnection)
+RM3QuerySerializationResult Replica3::QuerySerialization_ClientSerializable(RakNet::Connection_RM3 *destinationConnection, bool isThisTheServer)
 {
 	// Owner client sends to all
 	if (creatingSystemGUID==replicaManager->GetRakPeerInterface()->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
 		return RM3QSR_CALL_SERIALIZE;
 	// Server sends to all but owner client
-	if (networkIDManager->IsNetworkIDAuthority() && destinationConnection->GetRakNetGUID()!=creatingSystemGUID)
+	if (isThisTheServer && destinationConnection->GetRakNetGUID()!=creatingSystemGUID)
 		return RM3QSR_CALL_SERIALIZE;
 	// Remote clients do not send
 	return RM3QSR_NEVER_CALL_SERIALIZE;
@@ -2126,11 +2106,11 @@ RM3QuerySerializationResult Replica3::QuerySerialization_ClientSerializable(RakN
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RM3QuerySerializationResult Replica3::QuerySerialization_ServerSerializable(RakNet::Connection_RM3 *destinationConnection)
+RM3QuerySerializationResult Replica3::QuerySerialization_ServerSerializable(RakNet::Connection_RM3 *destinationConnection, bool isThisTheServer)
 {
 	(void) destinationConnection;
 	// Server sends to all
-	if (networkIDManager->IsNetworkIDAuthority())
+	if (isThisTheServer)
 		return RM3QSR_CALL_SERIALIZE;
 
 	// Clients do not send

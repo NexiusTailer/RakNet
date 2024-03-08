@@ -38,7 +38,7 @@ namespace RakNet
 	bool RAK_DLL_EXPORT CanConnect(NATTypeDetectionResult type1, NATTypeDetectionResult type2);
 
 	/// Return a technical string representin the enumeration
-	RAK_DLL_EXPORT  const char * NATTypeDetectionResultToString(NATTypeDetectionResult type);
+	RAK_DLL_EXPORT const char * NATTypeDetectionResultToString(NATTypeDetectionResult type);
 
 	/// Return a friendly string representing the enumeration
 	/// None and relaxed can connect to anything

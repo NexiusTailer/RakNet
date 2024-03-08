@@ -14,6 +14,9 @@
 #include "DS_OrderedList.h"
 #include "Export.h"
 
+namespace RakNet
+{
+/// Forward declarations
 class TransportInterface;
 
 /// \internal
@@ -139,4 +142,7 @@ protected:
 	DataStructures::OrderedList<const char*, RegisteredCommand, RegisteredCommandComp> commandList;
 };
 
+} // namespace RakNet
+
 #endif
+

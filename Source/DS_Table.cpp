@@ -14,7 +14,7 @@ using namespace DataStructures;
 void ExtendRows(Table::Row* input, int index)
 {
 	(void) index;
-	input->cells.Insert(RakNet::OP_NEW<Table::Cell>(__FILE__, __LINE__), __FILE__, __LINE__ );
+	input->cells.Insert(RakNet::OP_NEW<Table::Cell>(_FILE_AND_LINE_), _FILE_AND_LINE_ );
 }
 void FreeRow(Table::Row* input, int index)
 {
@@ -23,9 +23,9 @@ void FreeRow(Table::Row* input, int index)
 	unsigned i;
 	for (i=0; i < input->cells.Size(); i++)
 	{
-		RakNet::OP_DELETE(input->cells[i], __FILE__, __LINE__);
+		RakNet::OP_DELETE(input->cells[i], _FILE_AND_LINE_);
 	}
-	RakNet::OP_DELETE(input, __FILE__, __LINE__);
+	RakNet::OP_DELETE(input, _FILE_AND_LINE_);
 }
 Table::Cell::Cell()
 {
@@ -44,10 +44,10 @@ Table::Cell& Table::Cell::operator = ( const Table::Cell& input )
 	i=input.i;
 	ptr=input.ptr;
 	if (c)
-		rakFree_Ex(c, __FILE__, __LINE__);
+		rakFree_Ex(c, _FILE_AND_LINE_);
 	if (input.c)
 	{
-		c = (char*) rakMalloc_Ex( (int) i, __FILE__, __LINE__ );
+		c = (char*) rakMalloc_Ex( (int) i, _FILE_AND_LINE_ );
 		memcpy(c, input.c, (int) i);
 	}
 	else
@@ -62,8 +62,8 @@ Table::Cell::Cell( const Table::Cell & input)
 	if (input.c)
 	{
 		if (c)
-			rakFree_Ex(c, __FILE__, __LINE__);
-		c =  (char*) rakMalloc_Ex( (int) i, __FILE__, __LINE__ );
+			rakFree_Ex(c, _FILE_AND_LINE_);
+		c =  (char*) rakMalloc_Ex( (int) i, _FILE_AND_LINE_ );
 		memcpy(c, input.c, (int) i);
 	}
 }
@@ -95,7 +95,7 @@ void Table::Cell::Set(const char *input)
 	if (input)
 	{
 		i=(int)strlen(input)+1;
-		c =  (char*) rakMalloc_Ex( (int) i, __FILE__, __LINE__ );
+		c =  (char*) rakMalloc_Ex( (int) i, _FILE_AND_LINE_ );
 		strcpy(c, input);
 	}
 	else
@@ -111,7 +111,7 @@ void Table::Cell::Set(const char *input, int inputLength)
 	Clear();
 	if (input)
 	{
-		c = (char*) rakMalloc_Ex( inputLength, __FILE__, __LINE__ );
+		c = (char*) rakMalloc_Ex( inputLength, _FILE_AND_LINE_ );
 		i=inputLength;
 		memcpy(c, input, inputLength);
 	}
@@ -220,7 +220,7 @@ void Table::Cell::Clear(void)
 {
 	if (isEmpty==false && c)
 	{
-		rakFree_Ex(c, __FILE__, __LINE__);
+		rakFree_Ex(c, _FILE_AND_LINE_);
 		c=0;
 	}
 	isEmpty=true;
@@ -270,7 +270,7 @@ unsigned Table::AddColumn(const char columnName[_TABLE_MAX_COLUMN_NAME_LENGTH], 
 		return (unsigned) -1;
 
 	// Add this column.
-	columns.Insert(Table::ColumnDescriptor(columnName, columnType), __FILE__, __LINE__);
+	columns.Insert(Table::ColumnDescriptor(columnName, columnType), _FILE_AND_LINE_);
 
 	// Extend the rows by one
 	rows.ForEachData(ExtendRows);
@@ -291,7 +291,7 @@ void Table::RemoveColumn(unsigned columnIndex)
 	{
 		for (i=0; i < cur->size; i++)
 		{
-			RakNet::OP_DELETE(cur->data[i]->cells[columnIndex], __FILE__, __LINE__);
+			RakNet::OP_DELETE(cur->data[i]->cells[columnIndex], _FILE_AND_LINE_);
 			cur->data[i]->cells.RemoveAtIndex(columnIndex);
 		}
 
@@ -335,77 +335,77 @@ unsigned Table::GetRowCount(void) const
 Table::Row* Table::AddRow(unsigned rowId)
 {
 	Row *newRow;
-	newRow = RakNet::OP_NEW<Row>( __FILE__, __LINE__ );
+	newRow = RakNet::OP_NEW<Row>( _FILE_AND_LINE_ );
 	if (rows.Insert(rowId, newRow)==false)
 	{
-		RakNet::OP_DELETE(newRow, __FILE__, __LINE__);
+		RakNet::OP_DELETE(newRow, _FILE_AND_LINE_);
 		return 0; // Already exists
 	}
 	unsigned rowIndex;
 	for (rowIndex=0; rowIndex < columns.Size(); rowIndex++)
-		newRow->cells.Insert( RakNet::OP_NEW<Table::Cell>(__FILE__, __LINE__), __FILE__, __LINE__ );
+		newRow->cells.Insert( RakNet::OP_NEW<Table::Cell>(_FILE_AND_LINE_), _FILE_AND_LINE_ );
 	return newRow;
 }
 Table::Row* Table::AddRow(unsigned rowId, DataStructures::List<Cell> &initialCellValues)
 {
-	Row *newRow = RakNet::OP_NEW<Row>( __FILE__, __LINE__ );
+	Row *newRow = RakNet::OP_NEW<Row>( _FILE_AND_LINE_ );
 	unsigned rowIndex;
 	for (rowIndex=0; rowIndex < columns.Size(); rowIndex++)
 	{
 		if (rowIndex < initialCellValues.Size() && initialCellValues[rowIndex].isEmpty==false)
 		{
 			Table::Cell *c;
-			c = RakNet::OP_NEW<Table::Cell>(__FILE__, __LINE__);
+			c = RakNet::OP_NEW<Table::Cell>(_FILE_AND_LINE_);
 			c->SetByType(initialCellValues[rowIndex].i,initialCellValues[rowIndex].c,initialCellValues[rowIndex].ptr,columns[rowIndex].columnType);
-			newRow->cells.Insert(c, __FILE__, __LINE__ );
+			newRow->cells.Insert(c, _FILE_AND_LINE_ );
 		}
 		else
-			newRow->cells.Insert(RakNet::OP_NEW<Table::Cell>(__FILE__, __LINE__), __FILE__, __LINE__ );
+			newRow->cells.Insert(RakNet::OP_NEW<Table::Cell>(_FILE_AND_LINE_), _FILE_AND_LINE_ );
 	}
 	rows.Insert(rowId, newRow);
 	return newRow;
 }
 Table::Row* Table::AddRow(unsigned rowId, DataStructures::List<Cell*> &initialCellValues, bool copyCells)
 {
-	Row *newRow = RakNet::OP_NEW<Row>( __FILE__, __LINE__ );
+	Row *newRow = RakNet::OP_NEW<Row>( _FILE_AND_LINE_ );
 	unsigned rowIndex;
 	for (rowIndex=0; rowIndex < columns.Size(); rowIndex++)
 	{
 		if (rowIndex < initialCellValues.Size() && initialCellValues[rowIndex] && initialCellValues[rowIndex]->isEmpty==false)
 		{
 			if (copyCells==false)
-				newRow->cells.Insert(RakNet::OP_NEW_4<Table::Cell>( __FILE__, __LINE__, initialCellValues[rowIndex]->i, initialCellValues[rowIndex]->c, initialCellValues[rowIndex]->ptr, columns[rowIndex].columnType), __FILE__, __LINE__);
+				newRow->cells.Insert(RakNet::OP_NEW_4<Table::Cell>( _FILE_AND_LINE_, initialCellValues[rowIndex]->i, initialCellValues[rowIndex]->c, initialCellValues[rowIndex]->ptr, columns[rowIndex].columnType), _FILE_AND_LINE_);
 			else
 			{
-				Table::Cell *c = RakNet::OP_NEW<Table::Cell>( __FILE__, __LINE__ );
-				newRow->cells.Insert(c, __FILE__, __LINE__);
+				Table::Cell *c = RakNet::OP_NEW<Table::Cell>( _FILE_AND_LINE_ );
+				newRow->cells.Insert(c, _FILE_AND_LINE_);
 				*c=*(initialCellValues[rowIndex]);
 			}
 		}
 		else
-			newRow->cells.Insert(RakNet::OP_NEW<Table::Cell>(__FILE__, __LINE__), __FILE__, __LINE__);
+			newRow->cells.Insert(RakNet::OP_NEW<Table::Cell>(_FILE_AND_LINE_), _FILE_AND_LINE_);
 	}
 	rows.Insert(rowId, newRow);
 	return newRow;
 }
 Table::Row* Table::AddRowColumns(unsigned rowId, Row *row, DataStructures::List<unsigned> columnIndices)
 {
-	Row *newRow = RakNet::OP_NEW<Row>( __FILE__, __LINE__ );
+	Row *newRow = RakNet::OP_NEW<Row>( _FILE_AND_LINE_ );
 	unsigned columnIndex;
 	for (columnIndex=0; columnIndex < columnIndices.Size(); columnIndex++)
 	{
 		if (row->cells[columnIndices[columnIndex]]->isEmpty==false)
 		{
-			newRow->cells.Insert(RakNet::OP_NEW_4<Table::Cell>( __FILE__, __LINE__, 
+			newRow->cells.Insert(RakNet::OP_NEW_4<Table::Cell>( _FILE_AND_LINE_, 
 				row->cells[columnIndices[columnIndex]]->i,
 				row->cells[columnIndices[columnIndex]]->c,
 				row->cells[columnIndices[columnIndex]]->ptr,
 				columns[columnIndex].columnType
-				), __FILE__, __LINE__);
+				), _FILE_AND_LINE_);
 		}
 		else
 		{
-			newRow->cells.Insert(RakNet::OP_NEW<Table::Cell>(__FILE__, __LINE__), __FILE__, __LINE__);
+			newRow->cells.Insert(RakNet::OP_NEW<Table::Cell>(_FILE_AND_LINE_), _FILE_AND_LINE_);
 		}
 	}
 	rows.Insert(rowId, newRow);
@@ -592,13 +592,13 @@ void Table::QueryTable(unsigned *columnIndicesSubset, unsigned numColumnSubset, 
 		for (i=0; i < numColumnSubset; i++)
 		{
 			if (columnIndicesSubset[i]<columns.Size())
-				columnIndicesToReturn.Insert(columnIndicesSubset[i], __FILE__, __LINE__);
+				columnIndicesToReturn.Insert(columnIndicesSubset[i], _FILE_AND_LINE_);
 		}
 	}
 	else
 	{
 		for (i=0; i < columns.Size(); i++)
-			columnIndicesToReturn.Insert(i, __FILE__, __LINE__);
+			columnIndicesToReturn.Insert(i, _FILE_AND_LINE_);
 	}
 
 	if (columnIndicesToReturn.Size()==0)
@@ -618,9 +618,9 @@ void Table::QueryTable(unsigned *columnIndicesSubset, unsigned numColumnSubset, 
 			if (inclusionFilters[i].columnName[0])
 				inclusionFilters[i].columnIndex=ColumnIndex(inclusionFilters[i].columnName);
 			if (inclusionFilters[i].columnIndex<columns.Size())
-				inclusionFilterColumnIndices.Insert(inclusionFilters[i].columnIndex, __FILE__, __LINE__);
+				inclusionFilterColumnIndices.Insert(inclusionFilters[i].columnIndex, _FILE_AND_LINE_);
 			else
-				inclusionFilterColumnIndices.Insert((unsigned)-1, __FILE__, __LINE__);
+				inclusionFilterColumnIndices.Insert((unsigned)-1, _FILE_AND_LINE_);
 		}
 	}
 
@@ -882,11 +882,11 @@ void Table::SortTable(Table::SortQuery *sortQueries, unsigned numSortQueries, Ta
 	{
 		if (sortQueries[i].columnIndex<columns.Size() && columns[sortQueries[i].columnIndex].columnType!=BINARY)
 		{
-			columnIndices.Insert(sortQueries[i].columnIndex, __FILE__, __LINE__);
+			columnIndices.Insert(sortQueries[i].columnIndex, _FILE_AND_LINE_);
 			anyValid=true;
 		}
 		else
-			columnIndices.Insert((unsigned)-1, __FILE__, __LINE__); // Means don't check this column
+			columnIndices.Insert((unsigned)-1, _FILE_AND_LINE_); // Means don't check this column
 	}
 
 	DataStructures::Page<unsigned, Row*, _TABLE_BPLUS_TREE_ORDER> *cur;
@@ -912,7 +912,7 @@ void Table::SortTable(Table::SortQuery *sortQueries, unsigned numSortQueries, Ta
 		for (i=0; i < (unsigned)cur->size; i++)
 		{
 			RakAssert(cur->data[i]);
-			orderedList.Insert(cur->data[i],cur->data[i], true, __FILE__,__LINE__);
+			orderedList.Insert(cur->data[i],cur->data[i], true, _FILE_AND_LINE_);
 		}
 		cur=cur->next;
 	}
@@ -1040,7 +1040,7 @@ void Table::Clear(void)
 {
 	rows.ForEachData(FreeRow);
 	rows.Clear();
-	columns.Clear(true, __FILE__, __LINE__);
+	columns.Clear(true, _FILE_AND_LINE_);
 }
 const List<Table::ColumnDescriptor>& Table::GetColumns(void) const
 {
@@ -1087,9 +1087,9 @@ void Table::DeleteRow(Table::Row *row)
 	unsigned rowIndex;
 	for (rowIndex=0; rowIndex < row->cells.Size(); rowIndex++)
 	{
-		RakNet::OP_DELETE(row->cells[rowIndex], __FILE__, __LINE__);
+		RakNet::OP_DELETE(row->cells[rowIndex], _FILE_AND_LINE_);
 	}
-	RakNet::OP_DELETE(row, __FILE__, __LINE__);
+	RakNet::OP_DELETE(row, _FILE_AND_LINE_);
 }
 Table& Table::operator = ( const Table& input )
 {

@@ -1,64 +1,65 @@
 #include "RoomsPlugin.h"
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
+
 #include "ProfanityFilter.h"
 #include "MessageIdentifiers.h"
 #include "Kbhit.h"
 #include <ctype.h>
+#include "Gets.h"
 
 struct SampleCallbacks : public RakNet::RoomsCallback
 {
 	// Results of calls
-	virtual void CreateRoom_Callback( SystemAddress senderAddress, RakNet::CreateRoom_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void EnterRoom_Callback( SystemAddress senderAddress, RakNet::EnterRoom_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void JoinByFilter_Callback( SystemAddress senderAddress, RakNet::JoinByFilter_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void LeaveRoom_Callback( SystemAddress senderAddress, RakNet::LeaveRoom_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void GetInvitesToParticipant_Callback( SystemAddress senderAddress, RakNet::GetInvitesToParticipant_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void SendInvite_Callback( SystemAddress senderAddress, RakNet::SendInvite_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void AcceptInvite_Callback( SystemAddress senderAddress, RakNet::AcceptInvite_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void StartSpectating_Callback( SystemAddress senderAddress, RakNet::StartSpectating_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void StopSpectating_Callback( SystemAddress senderAddress, RakNet::StopSpectating_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void GrantModerator_Callback( SystemAddress senderAddress, RakNet::GrantModerator_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void ChangeSlotCounts_Callback( SystemAddress senderAddress, RakNet::ChangeSlotCounts_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void SetCustomRoomProperties_Callback( SystemAddress senderAddress, RakNet::SetCustomRoomProperties_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void GetRoomProperties_Callback( SystemAddress senderAddress, RakNet::GetRoomProperties_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void ChangeRoomName_Callback( SystemAddress senderAddress, RakNet::ChangeRoomName_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void SetHiddenFromSearches_Callback( SystemAddress senderAddress, RakNet::SetHiddenFromSearches_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void SetDestroyOnModeratorLeave_Callback( SystemAddress senderAddress, RakNet::SetDestroyOnModeratorLeave_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void SetReadyStatus_Callback( SystemAddress senderAddress, RakNet::SetReadyStatus_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void GetReadyStatus_Callback( SystemAddress senderAddress, RakNet::GetReadyStatus_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void SetRoomLockState_Callback( SystemAddress senderAddress, RakNet::SetRoomLockState_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void GetRoomLockState_Callback( SystemAddress senderAddress, RakNet::GetRoomLockState_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void AreAllMembersReady_Callback( SystemAddress senderAddress, RakNet::AreAllMembersReady_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void KickMember_Callback( SystemAddress senderAddress, RakNet::KickMember_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void UnbanMember_Callback( SystemAddress senderAddress, RakNet::UnbanMember_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void GetBanReason_Callback( SystemAddress senderAddress, RakNet::GetBanReason_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void AddUserToQuickJoin_Callback( SystemAddress senderAddress, RakNet::AddUserToQuickJoin_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void RemoveUserFromQuickJoin_Callback( SystemAddress senderAddress, RakNet::RemoveUserFromQuickJoin_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void IsInQuickJoin_Callback( SystemAddress senderAddress, RakNet::IsInQuickJoin_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void SearchByFilter_Callback( SystemAddress senderAddress, RakNet::SearchByFilter_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void ChangeHandle_Callback( SystemAddress senderAddress, RakNet::ChangeHandle_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
-	virtual void Chat_Callback( SystemAddress senderAddress, RakNet::Chat_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void CreateRoom_Callback( RakNet::SystemAddress senderAddress, RakNet::CreateRoom_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void EnterRoom_Callback( RakNet::SystemAddress senderAddress, RakNet::EnterRoom_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void JoinByFilter_Callback( RakNet::SystemAddress senderAddress, RakNet::JoinByFilter_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void LeaveRoom_Callback( RakNet::SystemAddress senderAddress, RakNet::LeaveRoom_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void GetInvitesToParticipant_Callback( RakNet::SystemAddress senderAddress, RakNet::GetInvitesToParticipant_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void SendInvite_Callback( RakNet::SystemAddress senderAddress, RakNet::SendInvite_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void AcceptInvite_Callback( RakNet::SystemAddress senderAddress, RakNet::AcceptInvite_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void StartSpectating_Callback( RakNet::SystemAddress senderAddress, RakNet::StartSpectating_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void StopSpectating_Callback( RakNet::SystemAddress senderAddress, RakNet::StopSpectating_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void GrantModerator_Callback( RakNet::SystemAddress senderAddress, RakNet::GrantModerator_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void ChangeSlotCounts_Callback( RakNet::SystemAddress senderAddress, RakNet::ChangeSlotCounts_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void SetCustomRoomProperties_Callback( RakNet::SystemAddress senderAddress, RakNet::SetCustomRoomProperties_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void GetRoomProperties_Callback( RakNet::SystemAddress senderAddress, RakNet::GetRoomProperties_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void ChangeRoomName_Callback( RakNet::SystemAddress senderAddress, RakNet::ChangeRoomName_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void SetHiddenFromSearches_Callback( RakNet::SystemAddress senderAddress, RakNet::SetHiddenFromSearches_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void SetDestroyOnModeratorLeave_Callback( RakNet::SystemAddress senderAddress, RakNet::SetDestroyOnModeratorLeave_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void SetReadyStatus_Callback( RakNet::SystemAddress senderAddress, RakNet::SetReadyStatus_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void GetReadyStatus_Callback( RakNet::SystemAddress senderAddress, RakNet::GetReadyStatus_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void SetRoomLockState_Callback( RakNet::SystemAddress senderAddress, RakNet::SetRoomLockState_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void GetRoomLockState_Callback( RakNet::SystemAddress senderAddress, RakNet::GetRoomLockState_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void AreAllMembersReady_Callback( RakNet::SystemAddress senderAddress, RakNet::AreAllMembersReady_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void KickMember_Callback( RakNet::SystemAddress senderAddress, RakNet::KickMember_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void UnbanMember_Callback( RakNet::SystemAddress senderAddress, RakNet::UnbanMember_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void GetBanReason_Callback( RakNet::SystemAddress senderAddress, RakNet::GetBanReason_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void AddUserToQuickJoin_Callback( RakNet::SystemAddress senderAddress, RakNet::AddUserToQuickJoin_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void RemoveUserFromQuickJoin_Callback( RakNet::SystemAddress senderAddress, RakNet::RemoveUserFromQuickJoin_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void IsInQuickJoin_Callback( RakNet::SystemAddress senderAddress, RakNet::IsInQuickJoin_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void SearchByFilter_Callback( RakNet::SystemAddress senderAddress, RakNet::SearchByFilter_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void ChangeHandle_Callback( RakNet::SystemAddress senderAddress, RakNet::ChangeHandle_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
+	virtual void Chat_Callback( RakNet::SystemAddress senderAddress, RakNet::Chat_Func *callResult) {(void) senderAddress; callResult->PrintResult();}
 	// Notifications due to other room members
-	virtual void QuickJoinExpired_Callback( SystemAddress senderAddress, RakNet::QuickJoinExpired_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void QuickJoinEnteredRoom_Callback( SystemAddress senderAddress, RakNet::QuickJoinEnteredRoom_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void RoomMemberStartedSpectating_Callback( SystemAddress senderAddress, RakNet::RoomMemberStartedSpectating_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void RoomMemberStoppedSpectating_Callback( SystemAddress senderAddress, RakNet::RoomMemberStoppedSpectating_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void ModeratorChanged_Callback( SystemAddress senderAddress, RakNet::ModeratorChanged_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void SlotCountsSet_Callback( SystemAddress senderAddress, RakNet::SlotCountsSet_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void CustomRoomPropertiesSet_Callback( SystemAddress senderAddress, RakNet::CustomRoomPropertiesSet_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void RoomNameSet_Callback( SystemAddress senderAddress, RakNet::RoomNameSet_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void HiddenFromSearchesSet_Callback( SystemAddress senderAddress, RakNet::HiddenFromSearchesSet_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void RoomMemberReadyStatusSet_Callback( SystemAddress senderAddress, RakNet::RoomMemberReadyStatusSet_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void RoomLockStateSet_Callback( SystemAddress senderAddress, RakNet::RoomLockStateSet_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void RoomMemberKicked_Callback( SystemAddress senderAddress, RakNet::RoomMemberKicked_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void RoomMemberHandleSet_Callback( SystemAddress senderAddress, RakNet::RoomMemberHandleSet_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void RoomMemberLeftRoom_Callback( SystemAddress senderAddress, RakNet::RoomMemberLeftRoom_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void RoomMemberJoinedRoom_Callback( SystemAddress senderAddress, RakNet::RoomMemberJoinedRoom_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void RoomInvitationSent_Callback( SystemAddress senderAddress, RakNet::RoomInvitationSent_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void RoomInvitationWithdrawn_Callback( SystemAddress senderAddress, RakNet::RoomInvitationWithdrawn_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void RoomDestroyedOnModeratorLeft_Callback( SystemAddress senderAddress, RakNet::RoomDestroyedOnModeratorLeft_Notification *notification) {(void) senderAddress; notification->PrintResult();}
-	virtual void Chat_Callback( SystemAddress senderAddress, RakNet::Chat_Notification *notification) {(void) senderAddress; notification->PrintResult(); printf("Chat=%s\nFiltered=%s\n", notification->chatMessage.C_String(), notification->filteredChatMessage.C_String());}
+	virtual void QuickJoinExpired_Callback( RakNet::SystemAddress senderAddress, RakNet::QuickJoinExpired_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void QuickJoinEnteredRoom_Callback( RakNet::SystemAddress senderAddress, RakNet::QuickJoinEnteredRoom_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void RoomMemberStartedSpectating_Callback( RakNet::SystemAddress senderAddress, RakNet::RoomMemberStartedSpectating_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void RoomMemberStoppedSpectating_Callback( RakNet::SystemAddress senderAddress, RakNet::RoomMemberStoppedSpectating_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void ModeratorChanged_Callback( RakNet::SystemAddress senderAddress, RakNet::ModeratorChanged_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void SlotCountsSet_Callback( RakNet::SystemAddress senderAddress, RakNet::SlotCountsSet_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void CustomRoomPropertiesSet_Callback( RakNet::SystemAddress senderAddress, RakNet::CustomRoomPropertiesSet_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void RoomNameSet_Callback( RakNet::SystemAddress senderAddress, RakNet::RoomNameSet_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void HiddenFromSearchesSet_Callback( RakNet::SystemAddress senderAddress, RakNet::HiddenFromSearchesSet_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void RoomMemberReadyStatusSet_Callback( RakNet::SystemAddress senderAddress, RakNet::RoomMemberReadyStatusSet_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void RoomLockStateSet_Callback( RakNet::SystemAddress senderAddress, RakNet::RoomLockStateSet_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void RoomMemberKicked_Callback( RakNet::SystemAddress senderAddress, RakNet::RoomMemberKicked_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void RoomMemberHandleSet_Callback( RakNet::SystemAddress senderAddress, RakNet::RoomMemberHandleSet_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void RoomMemberLeftRoom_Callback( RakNet::SystemAddress senderAddress, RakNet::RoomMemberLeftRoom_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void RoomMemberJoinedRoom_Callback( RakNet::SystemAddress senderAddress, RakNet::RoomMemberJoinedRoom_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void RoomInvitationSent_Callback( RakNet::SystemAddress senderAddress, RakNet::RoomInvitationSent_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void RoomInvitationWithdrawn_Callback( RakNet::SystemAddress senderAddress, RakNet::RoomInvitationWithdrawn_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void RoomDestroyedOnModeratorLeft_Callback( RakNet::SystemAddress senderAddress, RakNet::RoomDestroyedOnModeratorLeft_Notification *notification) {(void) senderAddress; notification->PrintResult();}
+	virtual void Chat_Callback( RakNet::SystemAddress senderAddress, RakNet::Chat_Notification *notification) {(void) senderAddress; notification->PrintResult(); printf("Chat=%s\nFiltered=%s\n", notification->chatMessage.C_String(), notification->filteredChatMessage.C_String());}
 };
 
 static const char *GAME_IDENTIFIER="My Game";
@@ -80,7 +81,7 @@ void GetRoomName(RakNet::RakString &dest)
 {
 	char buff[256];
 	printf("Enter room name, or enter for default: ");
-	gets(buff);
+	Gets(buff,sizeof(buff));
 	if (buff[0]==0)
 		dest=ROOM_NAME;
 	else
@@ -106,22 +107,22 @@ void main(void)
 	// Do the unit test to make sure the core functionality is correct. The plugin just does networking
 	//RakNet::AllGamesRoomsContainer::UnitTest();
 
-	RakPeerInterface *client, *server;
+	RakNet::RakPeerInterface *client, *server;
 	RakNet::RoomsPlugin roomsPluginClient, roomsPluginServer;
-	client = RakNetworkFactory::GetRakPeerInterface();
-	server = RakNetworkFactory::GetRakPeerInterface();
-	SocketDescriptor sd1(0,0),sd2(1234,0);
-	client->Startup(1,0,&sd1, 1);
-	server->Startup(1,0,&sd2, 1);
+	client = RakNet::RakPeerInterface::GetInstance();
+	server = RakNet::RakPeerInterface::GetInstance();
+	RakNet::SocketDescriptor sd1(0,0),sd2(1234,0);
+	client->Startup(1,&sd1, 1);
+	server->Startup(1,&sd2, 1);
 	server->SetMaximumIncomingConnections(1);
 	client->AttachPlugin(&roomsPluginClient);
 	server->AttachPlugin(&roomsPluginServer);
-	ProfanityFilter profanityFilter;
+	RakNet::ProfanityFilter profanityFilter;
 	profanityFilter.AddWord("Crapola");
 	roomsPluginServer.SetProfanityFilter(&profanityFilter);
 	roomsPluginServer.roomsContainer.AddTitle(GAME_IDENTIFIER);
 	SampleCallbacks sampleCallbacks;
-	SystemAddress localAddress;
+	RakNet::SystemAddress localAddress;
 	localAddress.SetBinaryAddress("127.0.0.1");
 	localAddress.port=1234;
 	roomsPluginClient.SetServerAddress(localAddress);
@@ -159,7 +160,7 @@ void main(void)
 	printf("3. RoomChat\n");
 	printf("4. GetRoomProperties\n");
 
-	Packet *p;
+	RakNet::Packet *p;
 	char ch;
 	while (1)
 	{
@@ -179,9 +180,9 @@ void main(void)
 		{
 			if (p->data[0]==ID_NEW_INCOMING_CONNECTION)
 			{
-				roomsPluginServer.LoginRoomsParticipant("User1", p->systemAddress, p->guid, UNASSIGNED_SYSTEM_ADDRESS);
-				roomsPluginServer.LoginRoomsParticipant("User2", p->systemAddress, p->guid, UNASSIGNED_SYSTEM_ADDRESS);
-				roomsPluginServer.LoginRoomsParticipant("User3", p->systemAddress, p->guid, UNASSIGNED_SYSTEM_ADDRESS);
+				roomsPluginServer.LoginRoomsParticipant("User1", p->systemAddress, p->guid, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+				roomsPluginServer.LoginRoomsParticipant("User2", p->systemAddress, p->guid, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+				roomsPluginServer.LoginRoomsParticipant("User3", p->systemAddress, p->guid, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 			}
 			server->DeallocatePacket(p);
 		}
@@ -491,6 +492,6 @@ void main(void)
 		}
 	}
 
-	RakNetworkFactory::DestroyRakPeerInterface(client);
-	RakNetworkFactory::DestroyRakPeerInterface(server);
+	RakNet::RakPeerInterface::DestroyInstance(client);
+	RakNet::RakPeerInterface::DestroyInstance(server);
 }

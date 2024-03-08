@@ -56,7 +56,7 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo) {}
 
 // Store packets in the CPUThreadInput until at most this much time has elapsed. This is so
 // batch processing can occur on multiple image sources at once
-static const RakNetTime MAX_TIME_TO_BUFFER_PACKETS=1000;
+static const RakNet::TimeMS MAX_TIME_TO_BUFFER_PACKETS=1000;
 
 // WTF am I getting this?
 // 2>SQLiteServerLoggerPlugin.obj : error LNK2019: unresolved external symbol _GetSqlDataTypeName referenced in function "struct RakNet::SQLite3ServerPlugin::SQLExecThreadOutput __cdecl ExecSQLLoggingThread(struct RakNet::SQLite3ServerPlugin::SQLExecThreadInput,bool *,void *)" (?ExecSQLLoggingThread@@YA?AUExecThreadOutput@SQLite3ServerPlugin@RakNet@@UExecThreadInput@23@PA_NPAX@Z)
@@ -74,7 +74,7 @@ const char *GetSqlDataTypeName2(SQLLoggerPrimaryDataType idx) {return sqlDataTyp
 
 void CompressAsJpeg(char **cptrInOut, uint32_t *sizeInOut, uint16_t imageWidth, uint16_t imageHeight, int16_t linePitch, unsigned char input_components)
 {
-	RakNetTimeUS t1=RakNet::GetTimeUS();
+	RakNet::TimeUS t1=RakNet::GetTimeUS();
 
 	// Compress to jpg
 	// http://www.google.com/codesearch/p?hl=en#I-_InJ6STRE/gthumb-1.108/libgthumb/pixbuf-utils.c&q=jpeg_create_compress
@@ -99,7 +99,7 @@ void CompressAsJpeg(char **cptrInOut, uint32_t *sizeInOut, uint16_t imageWidth, 
 	cinfo.hack_use_input_components_as_RGB_PIXELSIZE=1;
 	jpeg_set_quality (&cinfo, 75, TRUE);
 	int jpegSizeAfterCompression = 0; //size of jpeg after compression
-	char * storage = (char*) rakMalloc_Ex(*sizeInOut+50000,__FILE__,__LINE__);
+	char * storage = (char*) rakMalloc_Ex(*sizeInOut+50000,_FILE_AND_LINE_);
 	jpeg_memory_dest(&cinfo,(JOCTET*)storage,*sizeInOut+50000,&jpegSizeAfterCompression);
 
 	JSAMPROW row_pointer[1];
@@ -115,12 +115,12 @@ void CompressAsJpeg(char **cptrInOut, uint32_t *sizeInOut, uint16_t imageWidth, 
 	jpeg_finish_compress (&cinfo);
 	jpeg_destroy_compress(&cinfo);
 
-	rakFree_Ex(*cptrInOut,__FILE__,__LINE__);
-	*cptrInOut = (char*) rakRealloc_Ex(storage, jpegSizeAfterCompression,__FILE__,__LINE__);
+	rakFree_Ex(*cptrInOut,_FILE_AND_LINE_);
+	*cptrInOut = (char*) rakRealloc_Ex(storage, jpegSizeAfterCompression,_FILE_AND_LINE_);
 	*sizeInOut=jpegSizeAfterCompression;
 
-	RakNetTimeUS t2=RakNet::GetTimeUS();
-	RakNetTimeUS diff=t2-t1;
+	RakNet::TimeUS t2=RakNet::GetTimeUS();
+	RakNet::TimeUS diff=t2-t1;
 }
 static bool needsDxtInit=true;
 static bool dxtCompressionSupported=false;
@@ -148,13 +148,13 @@ SQLiteServerLoggerPlugin::CPUThreadOutput* ExecCPULoggingThread(SQLiteServerLogg
 {
 	int i;
 	*returnOutput=true;
-	SQLiteServerLoggerPlugin::CPUThreadOutput *cpuThreadOutput = RakNet::OP_NEW<SQLiteServerLoggerPlugin::CPUThreadOutput>(__FILE__,__LINE__);
+	SQLiteServerLoggerPlugin::CPUThreadOutput *cpuThreadOutput = RakNet::OP_NEW<SQLiteServerLoggerPlugin::CPUThreadOutput>(_FILE_AND_LINE_);
 	cpuThreadOutput->arraySize=cpuThreadInput->arraySize;
-	//cpuThreadOutput->cpuOutputNodeArray=RakNet::OP_NEW_ARRAY<SQLiteServerLoggerPlugin::CPUThreadOutputNode*>(cpuThreadInput->arraySize,__FILE__,__LINE__);
+	//cpuThreadOutput->cpuOutputNodeArray=RakNet::OP_NEW_ARRAY<SQLiteServerLoggerPlugin::CPUThreadOutputNode*>(cpuThreadInput->arraySize,_FILE_AND_LINE_);
 	//printf("1. arraySize=%i, ",cpuThreadInput->arraySize);
 	for (i=0; i<cpuThreadInput->arraySize; i++)
 	{
-		cpuThreadOutput->cpuOutputNodeArray[i]=RakNet::OP_NEW<SQLiteServerLoggerPlugin::CPUThreadOutputNode>(__FILE__,__LINE__);
+		cpuThreadOutput->cpuOutputNodeArray[i]=RakNet::OP_NEW<SQLiteServerLoggerPlugin::CPUThreadOutputNode>(_FILE_AND_LINE_);
 		SQLiteServerLoggerPlugin::CPUThreadOutputNode *outputNode = cpuThreadOutput->cpuOutputNodeArray[i];
 		Packet *packet = cpuThreadInput->cpuInputArray[i].packet;
 		RakNet::RakString dbIdentifier = cpuThreadInput->cpuInputArray[i].dbIdentifier;
@@ -182,7 +182,7 @@ SQLiteServerLoggerPlugin::CPUThreadOutput* ExecCPULoggingThread(SQLiteServerLogg
 				bitStream.Read(columnName);
 				columnName.SQLEscape();
 				columnName.RemoveCharacter(' ');
-				outputNode->insertingColumnNames.Push(columnName, __FILE__, __LINE__ );
+				outputNode->insertingColumnNames.Push(columnName, _FILE_AND_LINE_ );
 			}
 		}
 
@@ -221,7 +221,7 @@ SQLiteServerLoggerPlugin::CPUThreadOutput* ExecCPULoggingThread(SQLiteServerLogg
 						outputNode->parameterList[parameterCountIndex].imageWidth,
 						outputNode->parameterList[parameterCountIndex].imageHeight);
 					int ddsHeaderSize = DXTCompressor::GetDDSHeaderSize();
-					outputData = (char*) rakMalloc_Ex(bufferSize + ddsHeaderSize, __FILE__, __LINE__ );
+					outputData = (char*) rakMalloc_Ex(bufferSize + ddsHeaderSize, _FILE_AND_LINE_ );
 					dxtCompressSuccess = DXTCompressor::CompressImageData(
 					DXT1,
 					outputNode->parameterList[parameterCountIndex].data.cptr,
@@ -231,7 +231,7 @@ SQLiteServerLoggerPlugin::CPUThreadOutput* ExecCPULoggingThread(SQLiteServerLogg
 
 					if (dxtCompressSuccess)
 					{
-						rakFree_Ex(outputNode->parameterList[parameterCountIndex].data.cptr,__FILE__,__LINE__);
+						rakFree_Ex(outputNode->parameterList[parameterCountIndex].data.cptr,_FILE_AND_LINE_);
 						DXTCompressor::WriteDDSHeader(DXT1,
 							outputNode->parameterList[parameterCountIndex].imageWidth,
 							outputNode->parameterList[parameterCountIndex].imageHeight,
@@ -252,7 +252,7 @@ SQLiteServerLoggerPlugin::CPUThreadOutput* ExecCPULoggingThread(SQLiteServerLogg
 					}
 					else
 					{
-						rakFree_Ex(outputData,__FILE__,__LINE__);
+						rakFree_Ex(outputData,_FILE_AND_LINE_);
 					}
 				}
 
@@ -319,7 +319,7 @@ SQLiteServerLoggerPlugin::CPUThreadOutput* ExecCPULoggingThread(SQLiteServerLogg
 	}
 
 //	printf("5. out1, ");
-	RakNet::OP_DELETE(cpuThreadInput,__FILE__,__LINE__);
+	RakNet::OP_DELETE(cpuThreadInput,_FILE_AND_LINE_);
 //	printf("6. out2\n");
 	return cpuThreadOutput;
 }
@@ -337,7 +337,7 @@ struct SQLPreparedStatements
 };
 void* SQLLoggerThreadAllocPreparedStatements()
 {
-	SQLPreparedStatements *s = RakNet::OP_NEW<SQLPreparedStatements>(__FILE__,__LINE__);
+	SQLPreparedStatements *s = RakNet::OP_NEW<SQLPreparedStatements>(_FILE_AND_LINE_);
 	return s;
 }
 void SQLLoggerThreadDeallocPreparedStatements(void* statementStruct)
@@ -346,7 +346,7 @@ void SQLLoggerThreadDeallocPreparedStatements(void* statementStruct)
 	if (s->selectNameFromMaster) sqlite3_finalize(s->selectNameFromMaster);
 	if (s->insertIntoFunctionCalls) sqlite3_finalize(s->insertIntoFunctionCalls);
 	if (s->insertIntoFunctionCallParameters) sqlite3_finalize(s->insertIntoFunctionCallParameters);
-	RakNet::OP_DELETE(s,__FILE__,__LINE__);
+	RakNet::OP_DELETE(s,_FILE_AND_LINE_);
 }
 void DeleteBlobOrText(void* v)
 {
@@ -602,8 +602,8 @@ SQLiteServerLoggerPlugin::SQLThreadOutput ExecSQLLoggingThread(SQLiteServerLogge
 			RakAssert(strcmp(sqlite3_column_name(pragmaTableInfo,typeColumn),"type")==0);
 			RakNet::RakString columnName = sqlite3_column_text(pragmaTableInfo,nameColumn);
 			RakNet::RakString columnType = sqlite3_column_text(pragmaTableInfo,typeColumn);
-			existingColumnNames.Push(columnName, __FILE__, __LINE__ );
-			existingColumnTypes.Push(columnType, __FILE__, __LINE__ );
+			existingColumnNames.Push(columnName, _FILE_AND_LINE_ );
+			existingColumnTypes.Push(columnType, _FILE_AND_LINE_ );
 
 			rc = sqlite3_step(pragmaTableInfo);
 		}
@@ -800,7 +800,7 @@ SQLiteServerLoggerPlugin::SQLiteServerLoggerPlugin()
 SQLiteServerLoggerPlugin::~SQLiteServerLoggerPlugin()
 {
 	StopCPUSQLThreads();
-	RakNet::OP_DELETE(cpuThreadInput,__FILE__,__LINE__);
+	RakNet::OP_DELETE(cpuThreadInput,_FILE_AND_LINE_);
 	CloseAllSessions();
 }
 void SQLiteServerLoggerPlugin::Update(void)
@@ -870,7 +870,7 @@ void SQLiteServerLoggerPlugin::Update(void)
 			if (idx==-1)
 			{
 				DeallocPacketUnified(outputNode->packet);
-				RakNet::OP_DELETE(outputNode,__FILE__,__LINE__);
+				RakNet::OP_DELETE(outputNode,_FILE_AND_LINE_);
 			}
 			else
 			{
@@ -880,12 +880,12 @@ void SQLiteServerLoggerPlugin::Update(void)
 					sassy.sessionName=outputNode->dbIdentifier;
 					sassy.systemAddress=outputNode->packet->systemAddress;
 					sassy.referencedPointer=dbHandles[idx].dbHandle;
-					RakNetTimeMS curTime = RakNet::GetTimeMS();
-					RakNetTimeMS dbAge = curTime - dbHandles[idx].whenCreated;
-//					RakNetTimeMS timeDelta = outputNode->clientSendingTime - curTime;
+					RakNet::TimeMS curTime = RakNet::GetTimeMS();
+					RakNet::TimeMS dbAge = curTime - dbHandles[idx].whenCreated;
+//					RakNet::TimeMS timeDelta = outputNode->clientSendingTime - curTime;
 					sassy.timestampDelta=dbAge - outputNode->clientSendingTime ;
 					// sassy.dbAgeWhenCreated=dbHandles[idx].whenCreated;					
-					loggedInSessions.Push(sassy, __FILE__, __LINE__ );
+					loggedInSessions.Push(sassy, _FILE_AND_LINE_ );
 					sessionIndex=loggedInSessions.Size()-1;
 				}
 
@@ -897,13 +897,13 @@ void SQLiteServerLoggerPlugin::Update(void)
 		}
 
 //		RakNet::OP_DELETE_ARRAY(cpuThreadOutput->cpuOutputNodeArray);
-		RakNet::OP_DELETE(cpuThreadOutput,__FILE__,__LINE__);
+		RakNet::OP_DELETE(cpuThreadOutput,_FILE_AND_LINE_);
 	}
 
 	while (sqlLoggerThreadPool.HasOutputFast() && sqlLoggerThreadPool.HasOutput())
 	{
 		hadOutput=true;
-		RakNet::OP_DELETE(sqlLoggerThreadPool.GetOutput().cpuOutputNode,__FILE__,__LINE__);
+		RakNet::OP_DELETE(sqlLoggerThreadPool.GetOutput().cpuOutputNode,_FILE_AND_LINE_);
 	}
 
 	if (hadOutput)
@@ -1056,7 +1056,7 @@ void SQLiteServerLoggerPlugin::CloseUnreferencedSessions(void)
 	for (j=0; j < loggedInSessions.Size(); j++)
 	{
 		if (sessionNames.GetIndexOf(loggedInSessions[j].referencedPointer)==-1)
-			sessionNames.Push(loggedInSessions[j].referencedPointer, __FILE__, __LINE__ );		
+			sessionNames.Push(loggedInSessions[j].referencedPointer, _FILE_AND_LINE_ );		
 	}
 
 	DataStructures::List<sqlite3*> unreferencedHandles;
@@ -1078,7 +1078,7 @@ void SQLiteServerLoggerPlugin::CloseUnreferencedSessions(void)
 
 			if (isReferenced==false)
 			{
-				unreferencedHandles.Push(dbHandles[i].dbHandle,__FILE__,__LINE__);
+				unreferencedHandles.Push(dbHandles[i].dbHandle,_FILE_AND_LINE_);
 			}
 		}
 	}
@@ -1104,7 +1104,7 @@ void SQLiteServerLoggerPlugin::CloseUnreferencedSessions(void)
 }
 void SQLiteServerLoggerPlugin::CloseAllSessions(void)
 {
-	loggedInSessions.Clear(false, __FILE__, __LINE__);
+	loggedInSessions.Clear(false, _FILE_AND_LINE_);
 	CloseUnreferencedSessions();
 }
 unsigned int SQLiteServerLoggerPlugin::CreateDBHandle(RakNet::RakString dbIdentifier)
@@ -1196,7 +1196,7 @@ void SQLiteServerLoggerPlugin::StopCPUSQLThreads(void)
 		{
 			DeallocPacketUnified(cpuThreadInput->cpuInputArray[j].packet);
 		}
-		RakNet::OP_DELETE(cpuThreadInput,__FILE__,__LINE__);
+		RakNet::OP_DELETE(cpuThreadInput,_FILE_AND_LINE_);
 	}
 	cpuLoggerThreadPool.ClearInput();
 	for (i=0; i < cpuLoggerThreadPool.OutputSize(); i++)
@@ -1208,19 +1208,19 @@ void SQLiteServerLoggerPlugin::StopCPUSQLThreads(void)
 			DeallocPacketUnified(cpuThreadOutputNode->packet);
 			for (k=0; k < cpuThreadOutputNode->parameterCount; k++)
 				cpuThreadOutputNode->parameterList[k].Free();
-			RakNet::OP_DELETE(cpuThreadOutputNode,__FILE__,__LINE__);
+			RakNet::OP_DELETE(cpuThreadOutputNode,_FILE_AND_LINE_);
 		}
-//		RakNet::OP_DELETE_ARRAY(cpuThreadOutput->cpuOutputNodeArray,__FILE__,__LINE__);
-		RakNet::OP_DELETE(cpuThreadOutput,__FILE__,__LINE__);
+//		RakNet::OP_DELETE_ARRAY(cpuThreadOutput->cpuOutputNodeArray,_FILE_AND_LINE_);
+		RakNet::OP_DELETE(cpuThreadOutput,_FILE_AND_LINE_);
 	}
 	cpuLoggerThreadPool.ClearOutput();
 
 	sqlLoggerThreadPool.StopThreads();
 	for (i=0; i < sqlLoggerThreadPool.InputSize(); i++)
-		RakNet::OP_DELETE(sqlLoggerThreadPool.GetInputAtIndex(i).cpuOutputNode,__FILE__,__LINE__);
+		RakNet::OP_DELETE(sqlLoggerThreadPool.GetInputAtIndex(i).cpuOutputNode,_FILE_AND_LINE_);
 	sqlLoggerThreadPool.ClearInput();
 	for (i=0; i < sqlLoggerThreadPool.OutputSize(); i++)
-		RakNet::OP_DELETE(sqlLoggerThreadPool.GetOutputAtIndex(i).cpuOutputNode,__FILE__,__LINE__);
+		RakNet::OP_DELETE(sqlLoggerThreadPool.GetOutputAtIndex(i).cpuOutputNode,_FILE_AND_LINE_);
 	sqlLoggerThreadPool.ClearOutput();
 }
 void SQLiteServerLoggerPlugin::GetProcessingStatus(ProcessingStatus *processingStatus)
@@ -1241,9 +1241,9 @@ SQLiteServerLoggerPlugin::CPUThreadInput *SQLiteServerLoggerPlugin::LockCpuThrea
 {
 	if (cpuThreadInput==0)
 	{
-		cpuThreadInput=RakNet::OP_NEW<CPUThreadInput>(__FILE__,__LINE__);
+		cpuThreadInput=RakNet::OP_NEW<CPUThreadInput>(_FILE_AND_LINE_);
 		cpuThreadInput->arraySize=0;
-		whenCpuThreadInputAllocated=RakNet::GetTime();
+		whenCpuThreadInputAllocated=RakNet::GetTimeMS();
 	}
 	return cpuThreadInput;
 }
@@ -1253,7 +1253,7 @@ void SQLiteServerLoggerPlugin::ClearCpuThreadInput(void)
 	{
 		for (int i=0; i < cpuThreadInput->arraySize; i++)
 			DeallocPacketUnified(cpuThreadInput->cpuInputArray[i].packet);
-		RakNet::OP_DELETE(cpuThreadInput,__FILE__,__LINE__);
+		RakNet::OP_DELETE(cpuThreadInput,_FILE_AND_LINE_);
 		cpuThreadInput=0;
 	}
 }
@@ -1270,7 +1270,7 @@ void SQLiteServerLoggerPlugin::CancelLockCpuThreadInput(void)
 {
 	if (cpuThreadInput->arraySize==0)
 	{
-		RakNet::OP_DELETE(cpuThreadInput,__FILE__,__LINE__);
+		RakNet::OP_DELETE(cpuThreadInput,_FILE_AND_LINE_);
 		cpuThreadInput=0;
 	}
 }
@@ -1293,7 +1293,7 @@ void SQLiteServerLoggerPlugin::PushCpuThreadInput(void)
 }
 void SQLiteServerLoggerPlugin::PushCpuThreadInputIfNecessary(void)
 {
-	RakNetTime curTime = RakNet::GetTime();
+	RakNet::TimeMS curTime = RakNet::GetTimeMS();
 	if (cpuThreadInput && curTime-whenCpuThreadInputAllocated>MAX_TIME_TO_BUFFER_PACKETS)
 		PushCpuThreadInput();
 }

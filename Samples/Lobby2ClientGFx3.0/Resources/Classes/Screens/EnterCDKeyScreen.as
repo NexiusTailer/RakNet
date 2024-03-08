@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 
@@ -25,7 +25,7 @@ class Screens.EnterCDKeyScreen extends Screen
 		cancelButton.addEventListener("click", this, "Cancel");
 		
 		//Add callbacks for C++
-		GameDelegate.addCallBack("c2f_CheckCDKeyResult", this, "c2f_CheckCDKeyResult");
+		ExternalInterface.addCallback("c2f_CheckCDKeyResult", this, c2f_CheckCDKeyResult);
 		
 		super.VOnFinishedLoading();
 	}
@@ -34,7 +34,7 @@ class Screens.EnterCDKeyScreen extends Screen
 	{
 		tfFailedMsg._visible = false;
 		ConsoleWindow.Trace("cdKeyEditBox.text = " + cdKeyEditBox.text);
-		GameDelegate.call("f2c_CheckCDKey", [cdKeyEditBox.text], _root);
+		ExternalInterface.call("f2c_CheckCDKey", cdKeyEditBox.text);
 	}
 	
 	public function Cancel():Void

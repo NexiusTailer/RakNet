@@ -224,7 +224,7 @@ protected:
 	{
 		RakNetGUID guid;
 		VariableListDeltaTracker variableListDeltaTracker;
-		DataStructures::OrderedList<uint32_t,ChangedVariablesList*,UpdatedVariablesListPtrComp> updatedVariablesHistory;
+		DataStructures::OrderedList<uint32_t,ChangedVariablesList*,VariableDeltaSerializer::UpdatedVariablesListPtrComp> updatedVariablesHistory;
 	};
 	/// A list of RemoteSystemVariableHistory indexed by guid, one per connection that we serialize to
 	/// List is added to when SerializeConstruction is called, and removed from when SerializeDestruction is called, or when a given connection is dropped

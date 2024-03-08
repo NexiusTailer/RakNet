@@ -6,7 +6,7 @@ Tests
 
 IsLocalIP
 SendLoopback
-IsConnected
+GetConnectionState
 GetLocalIP
 GetInternalID
 
@@ -26,40 +26,40 @@ Send
 RakPeerInterface Functions Explicitly Tested:
 IsLocalIP
 SendLoopback
-IsConnected
+GetConnectionState
 GetLocalIP
 GetInternalID
 */
-int LocalIsConnectedTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int LocalIsConnectedTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 
 	RakPeerInterface *server,*client;
-	destroyList.Clear(false,__FILE__,__LINE__);
+	destroyList.Clear(false,_FILE_AND_LINE_);
 
-	server=RakNetworkFactory::GetRakPeerInterface();
-	destroyList.Push(server,__FILE__,__LINE__);
-	client=RakNetworkFactory::GetRakPeerInterface();
-	destroyList.Push(client,__FILE__,__LINE__);
+	server=RakPeerInterface::GetInstance();
+	destroyList.Push(server,_FILE_AND_LINE_);
+	client=RakPeerInterface::GetInstance();
+	destroyList.Push(client,_FILE_AND_LINE_);
 
-	client->Startup(1,30,&SocketDescriptor(),1);
-	server->Startup(1,30,&SocketDescriptor(60000,0),1);
+	client->Startup(1,&SocketDescriptor(),1);
+	server->Startup(1,&SocketDescriptor(60000,0),1);
 	server->SetMaximumIncomingConnections(1);
 
 	SystemAddress serverAddress;
 
 	serverAddress.SetBinaryAddress("127.0.0.1");
 	serverAddress.port=60000;
-	RakNetTime entryTime=RakNet::GetTime();
+	TimeMS entryTime=GetTimeMS();
 	bool lastConnect=false;
 	if (isVerbose)
-		printf("Testing IsConnected\n");
+		printf("Testing GetConnectionState\n");
 
-	while(!client->IsConnected (serverAddress,false,false)&&RakNet::GetTime()-entryTime<5000)
+	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
 	{
 
-		if(!client->IsConnected (serverAddress,true,true))
+		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
-			lastConnect=client->Connect("127.0.0.1",serverAddress.port,0,0);
+			lastConnect=client->Connect("127.0.0.1",serverAddress.port,0,0)==CONNECTION_ATTEMPT_STARTED;
 		}
 
 		RakSleep(100);
@@ -73,7 +73,7 @@ int LocalIsConnectedTest::RunTest(DataStructures::List<RakNet::RakString> params
 		return 1;
 	}
 
-	if(!client->IsConnected (serverAddress,false,false))
+	if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
 	{
 		if (isVerbose)
 			DebugTools::ShowError("IsConnected did not detect connected client",!noPauses && isVerbose,__LINE__,__FILE__);
@@ -81,7 +81,7 @@ int LocalIsConnectedTest::RunTest(DataStructures::List<RakNet::RakString> params
 	}
 	client->CloseConnection (serverAddress,true,0,LOW_PRIORITY); 
 
-	if(!client->IsConnected (serverAddress,false,true))
+	if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,false,false,true))
 	{
 		DebugTools::ShowError("IsConnected did not detect disconnecting client",!noPauses && isVerbose,__LINE__,__FILE__);
 		return 3;
@@ -90,7 +90,7 @@ int LocalIsConnectedTest::RunTest(DataStructures::List<RakNet::RakString> params
 	RakSleep(1000);
 	client->Connect("127.0.0.1",serverAddress.port,0,0);
 
-	if(!client->IsConnected (serverAddress,true,false))
+	if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true))
 	{
 		DebugTools::ShowError("IsConnected did not detect connecting client",!noPauses && isVerbose,__LINE__,__FILE__);
 
@@ -98,12 +98,12 @@ int LocalIsConnectedTest::RunTest(DataStructures::List<RakNet::RakString> params
 
 	}
 
-	entryTime=RakNet::GetTime();
+	entryTime=GetTimeMS();
 
-	while(!client->IsConnected (serverAddress,false,false)&&RakNet::GetTime()-entryTime<5000)
+	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
 	{
 
-		if(!client->IsConnected (serverAddress,true,true))
+		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
 			client->Connect("127.0.0.1",serverAddress.port,0,0);
 		}
@@ -112,7 +112,7 @@ int LocalIsConnectedTest::RunTest(DataStructures::List<RakNet::RakString> params
 
 	}
 
-	if (!client->IsConnected (serverAddress,false,false))
+	if (!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
 	{
 		if (isVerbose)
 			DebugTools::ShowError("Client could not connect after 5 seconds\n",!noPauses && isVerbose,__LINE__,__FILE__);
@@ -144,8 +144,8 @@ int LocalIsConnectedTest::RunTest(DataStructures::List<RakNet::RakString> params
 	bool recievedPacket=false;
 	Packet *packet;
 
-	RakNetTime	stopWaiting = RakNet::GetTimeMS() + 1000;
-	while (RakNet::GetTimeMS()<stopWaiting)
+	TimeMS	stopWaiting = GetTimeMS() + 1000;
+	while (GetTimeMS()<stopWaiting)
 	{
 
 		for (packet=client->Receive(); packet; client->DeallocatePacket(packet), packet=client->Receive())
@@ -201,14 +201,14 @@ int LocalIsConnectedTest::RunTest(DataStructures::List<RakNet::RakString> params
 
 }
 
-RakNet::RakString LocalIsConnectedTest::GetTestName()
+RakString LocalIsConnectedTest::GetTestName()
 {
 
 	return "LocalIsConnectedTest";
 
 }
 
-RakNet::RakString LocalIsConnectedTest::ErrorCodeToString(int errorCode)
+RakString LocalIsConnectedTest::ErrorCodeToString(int errorCode)
 {
 
 	switch (errorCode)
@@ -267,6 +267,6 @@ void LocalIsConnectedTest::DestroyPeers()
 	int theSize=destroyList.Size();
 
 	for (int i=0; i < theSize; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+		RakPeerInterface::DestroyInstance(destroyList[i]);
 
 }

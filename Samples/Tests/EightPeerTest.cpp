@@ -21,7 +21,7 @@ All packets are not recieved.
 All packets are not in order.
 Disconnection.
 */
-int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int EightPeerTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 	const int peerNum= 8;
 	RakPeerInterface *peerList[peerNum];//A list of 8 peers
@@ -30,14 +30,14 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 	int lastNumberReceivedFromList[peerNum][peerNum];//Counter for me to keep track of last recieved sequence number
 	const int numPackets=100;
 	Packet *packet;
-	RakNet::BitStream bitStream;
-	destroyList.Clear(false,__FILE__,__LINE__);
+	BitStream bitStream;
+	destroyList.Clear(false,_FILE_AND_LINE_);
 
 	//Initializations of the arrays
 	for (int i=0;i<peerNum;i++)
 	{
-		peerList[i]=RakNetworkFactory::GetRakPeerInterface();
-		destroyList.Push(peerList[i],__FILE__,__LINE__);
+		peerList[i]=RakPeerInterface::GetInstance();
+		destroyList.Push(peerList[i],_FILE_AND_LINE_);
 		connectionAmount[i]=0;
 
 		for (int j=0;j<peerNum;j++)
@@ -46,7 +46,7 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 			lastNumberReceivedFromList[i][j]=0;
 		}
 
-		peerList[i]->Startup(peerNum*2, 30, &SocketDescriptor(60000+i,0), 1);
+		peerList[i]->Startup(peerNum*2, &SocketDescriptor(60000+i,0), 1);
 		peerList[i]->SetMaximumIncomingConnections(peerNum);
 
 	}
@@ -56,7 +56,7 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 	{
 		for (int j=i+1;j<peerNum;j++)//Start at i+1 so don't connect two of the same together.
 		{
-			if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
+			if (peerList[i]->Connect("127.0.0.1", 60000+j, 0,0)!=CONNECTION_ATTEMPT_STARTED)
 			{
 				if (isVerbose)
 				{
@@ -69,11 +69,11 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 	}
 
-	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
-	RakNetTime finishTimer=RakNet::GetTime();
+	TimeMS entryTime=GetTimeMS();//Loop entry time
+	TimeMS finishTimer=GetTimeMS();
 	bool initialConnectOver=false;//Our initial connect all has been done.
 
-	for (int k=0;k<numPackets||RakNet::GetTime()-finishTimer<5000;)//Quit after we send 100 messages while connected, if not all connected and not failure, otherwise fail after 20 seconds and exit
+	for (int k=0;k<numPackets||GetTimeMS()-finishTimer<5000;)//Quit after we send 100 messages while connected, if not all connected and not failure, otherwise fail after 20 seconds and exit
 	{
 		bool allConnected=true;//Start true, only one failed case makes it all fail
 		for (int i=0;i<peerNum;i++)//Make sure all peers are connected to eachother
@@ -84,7 +84,7 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 			}
 		}
 
-		if (RakNet::GetTime()-entryTime>20000 &&!initialConnectOver &&!allConnected)//failed for 20 seconds
+		if (GetTimeMS()-entryTime>20000 &&!initialConnectOver &&!allConnected)//failed for 20 seconds
 		{
 
 			if (isVerbose)
@@ -121,7 +121,7 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 			RakSleep(300);
 			if (k==numPackets)
 			{
-				finishTimer=RakNet::GetTime();
+				finishTimer=GetTimeMS();
 			}
 		}
 
@@ -306,14 +306,14 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 }
 
-RakNet::RakString EightPeerTest::GetTestName()
+RakString EightPeerTest::GetTestName()
 {
 
 	return "EightPeerTest";
 
 }
 
-RakNet::RakString EightPeerTest::ErrorCodeToString(int errorCode)
+RakString EightPeerTest::ErrorCodeToString(int errorCode)
 {
 
 	switch (errorCode)
@@ -363,6 +363,6 @@ void EightPeerTest::DestroyPeers()
 	int theSize=destroyList.Size();
 
 	for (int i=0; i < theSize; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+		RakPeerInterface::DestroyInstance(destroyList[i]);
 
 }

@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.6)
 
 IF(WIN32 AND NOT UNIX)
+	set(DISABLE_EXAMPLES "FALSE" CACHE BOOL "Disable examples?")
+	set(DISABLE_STATICLIB "FALSE" CACHE BOOL "Disable Static Library?")
+	set(DISABLE_DLL "FALSE" CACHE BOOL "Disable Dynamic Link?")
 	set(CMAKE_SUPPRESS_REGENERATION TRUE) #Gets rid of ZERO_CHECK 
 	set(CMAKE_USE_RELATIVE_PATHS TRUE)#Sets paths to relative for the windows projects
 	set(DISABLEDEPENDENCIES "FALSE" CACHE BOOL "Disable dependencies?")
@@ -19,6 +22,9 @@ IF(WIN32 AND NOT UNIX)
 	set(USEIRRKLANG "TRUE"	CACHE INTERNAL "HIDDEN" FORCE)#This is included for windows build, don't need to disable
 	set(WIN32NOTUNIX "TRUE" CACHE INTERNAL "HIDDEN" FORCE)
 ELSE(WIN32 AND NOT UNIX)
+	set(DISABLE_EXAMPLES "FALSE" CACHE BOOL "Disable examples?")
+	set(DISABLE_STATICLIB "FALSE" CACHE BOOL "Disable Static Library?")
+	set(DISABLE_DLL "FALSE" CACHE BOOL "Disable Dynamic Link?")
 	set(DISABLEDEPENDENCIES "FALSE" CACHE BOOL "Disable dependencies?")
 	set(USEFMOD "FALSE" CACHE BOOL "Enable projects that use FMOD?")
 	set(USEBOOST "TRUE" CACHE BOOL "Enable projects that use Boost?")
@@ -34,6 +40,12 @@ ELSE(WIN32 AND NOT UNIX)
         set(BUILDLOBBY2CLIENT "FALSE" CACHE BOOL "Build the Lobby2Client project?")
 	set(WIN32NOTUNIX "FALSE" CACHE INTERNAL "HIDDEN" FORCE)
 ENDIF(WIN32 AND NOT UNIX)
+
+message(STATUS "The examples,Static Library, and DLL can be disabled with the variables DISABLE_EXAMPLES, DISABLE_STATICLIB, or DISABLE_DLL set to TRUE. This will be cached set to FALSE to reverse the change.")
+
+IF(DISABLE_STATICLIB)
+	set (DISABLE_EXAMPLES TRUE)
+ENDIF(DISABLE_STATICLIB)
 
 project(RakNet)
 set (PS3ENABLED FALSE)
@@ -78,12 +90,14 @@ add_subdirectory(Source)
 add_subdirectory(Lib)
 
 IF (WIN32 AND NOT UNIX)
-	set(RAKNET_COMMON_LIBS LibStatic)
+	set(RAKNET_COMMON_LIBS RakNetStatic)
 ELSE(WIN32 AND NOT UNIX)
 	set(RAKNET_COMMON_LIBS RakNetStatic)
 ENDIF(WIN32 AND NOT UNIX)
 
 set(RAKNETHEADERFILES ${RakNet_SOURCE_DIR}/Source)
 
-add_subdirectory(DependentExtensions)
-add_subdirectory(Samples)
+IF(NOT DISABLE_EXAMPLES)
+	add_subdirectory(DependentExtensions)
+	add_subdirectory(Samples)
+ENDIF(NOT DISABLE_EXAMPLES)

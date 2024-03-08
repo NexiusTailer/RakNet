@@ -1,6 +1,8 @@
 #include "RakNetTypes.h"
 #include "FxGameDelegate.h"
 
+namespace RakNet {
+
 class AutopatcherClient;
 class FileListTransfer;
 class PacketizedTCP;
@@ -42,3 +44,4 @@ public:
 
 };
 
+} // namespace RakNet

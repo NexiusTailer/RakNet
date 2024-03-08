@@ -21,6 +21,9 @@
 
 //#include "ClientContextStruct.h"
 
+namespace RakNet
+{
+/// Forward declarations
 class RakPeer;
 
 class RAK_DLL_EXPORT SocketLayerOverride
@@ -61,7 +64,7 @@ public:
 	/// \param[in] port the port number 
 	/// \param[in] blockingSocket 
 	/// \return A new socket used for accepting clients 
-	static SOCKET CreateBoundSocket( unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned int sleepOn10048 );
+	static SOCKET CreateBoundSocket( unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned int sleepOn10048, unsigned int extraSocketOptions );
 	static SOCKET CreateBoundSocket_PS3Lobby( unsigned short port, bool blockingSocket, const char *forceHostAddress );
 
 	/// Returns if this specified port is in use, for UDP
@@ -70,11 +73,6 @@ public:
 	static bool IsPortInUse(unsigned short port, const char *hostAddress=0);
 
 	static const char* DomainNameToIP( const char *domainName );
-	
-	/// Start an asynchronous read using the specified socket.  The callback will use the specified SystemAddress (associated with this socket) and call either the client or the server callback (one or
-	/// the other should be 0)
-	/// \note Was used for deprecated IO completion ports.	
-	static bool AssociateSocketWithCompletionPortAndRead( SOCKET readSocket, unsigned int binaryAddress, unsigned short port, RakPeer* rakPeer );
 	
 	/// Write \a data of length \a length to \a writeSocket
 	/// \param[in] writeSocket The socket to write to
@@ -88,9 +86,9 @@ public:
 	/// \param[in] errorCode An error code if an error occured .
 	/// \param[in] connectionSocketIndex Which of the sockets in RakPeer we are using
 	/// \return Returns true if you successfully read data, false on error.
-	static int RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode, RakNetSmartPtr<RakNetSocket> rakNetSocket, unsigned short remotePortRakNetWasStartedOn_PS3 );
+	static int RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode, RakNetSmartPtr<RakNetSocket> rakNetSocket, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions );
 	// Newer version, for reads from a thread
-	static void RecvFromBlocking( const SOCKET s, RakPeer *rakPeer, unsigned short remotePortRakNetWasStartedOn_PS3, char *dataOut, int *bytesReadOut, SystemAddress *systemAddressOut, RakNetTimeUS *timeRead );
+	static void RecvFromBlocking( const SOCKET s, RakPeer *rakPeer, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, char *dataOut, int *bytesReadOut, SystemAddress *systemAddressOut, RakNet::TimeUS *timeRead );
 	
 	/// Read raw unprocessed data from the socket
 	/// \param[in] s the socket 
@@ -99,7 +97,7 @@ public:
 	/// \param[out]	bytesReadOut Number of bytes read, -1 if nothing was read
 	/// \param[out] systemAddressOut Who is sending the packet
 	/// \param[out]	timeRead Time that thre read occured
-	static void RawRecvFromNonBlocking( const SOCKET s, unsigned short remotePortRakNetWasStartedOn_PS3, char *dataOut, int *bytesReadOut, SystemAddress *systemAddressOut, RakNetTimeUS *timeRead );
+	static void RawRecvFromNonBlocking( const SOCKET s, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, char *dataOut, int *bytesReadOut, SystemAddress *systemAddressOut, RakNet::TimeUS *timeRead );
 
 
 	/// Given a socket and IP, retrieves the subnet mask, on linux the socket is unused
@@ -113,12 +111,12 @@ public:
 	/// \param[in] listenSocket the socket to set
 	static void SetNonBlocking( SOCKET listenSocket);
 
-
+#if !defined(_XBOX) && !defined(_X360)
 	/// Retrieve all local IP address in a string format.
 	/// \param[in] s The socket whose port we are referring to
 	/// \param[in] ipList An array of ip address in dotted notation.
 	static void GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
-
+#endif
 	
 	/// Call sendto (UDP obviously)
 	/// \param[in] s the socket
@@ -127,7 +125,7 @@ public:
 	/// \param[in] ip The address of the remote host in dotted notation.
 	/// \param[in] port The port number to send to.
 	/// \return 0 on success, nonzero on failure.
-	static int SendTo( SOCKET s, const char *data, int length, const char ip[ 16 ], unsigned short port, unsigned short remotePortRakNetWasStartedOn_PS3, const char *file, const long line );
+	static int SendTo( SOCKET s, const char *data, int length, const char ip[ 16 ], unsigned short port, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, const char *file, const long line );
 
 	/// Call sendto (UDP obviously)
 	/// It won't reach the recipient, except on a LAN
@@ -148,7 +146,7 @@ public:
 	/// \param[in] binaryAddress The address of the remote host in binary format.
 	/// \param[in] port The port number to send to.
 	/// \return 0 on success, nonzero on failure.
-	static int SendTo( SOCKET s, const char *data, int length, unsigned int binaryAddress, unsigned short port, unsigned short remotePortRakNetWasStartedOn_PS3, const char *file, const long line );
+	static int SendTo( SOCKET s, const char *data, int length, unsigned int binaryAddress, unsigned short port, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, const char *file, const long line );
 
 	/// Returns the local port, useful when passing 0 as the startup port.
 	/// \param[in] s The socket whose port we are referring to
@@ -161,7 +159,7 @@ public:
 	static SocketLayerOverride* GetSocketLayerOverride(void) {return slo;}
 
 	static int SendTo_PS3Lobby( SOCKET s, const char *data, int length, unsigned int binaryAddress, unsigned short port, unsigned short remotePortRakNetWasStartedOn_PS3 );
-	static int SendTo_360( SOCKET s, const char *data, int length, const char *voiceData, int voiceLength, unsigned int binaryAddress, unsigned short port );
+	static int SendTo_360( SOCKET s, const char *data, int length, const char *voiceData, int voiceLength, unsigned int binaryAddress, unsigned short port, unsigned int extraSocketOptions );
 	static int SendTo_PC( SOCKET s, const char *data, int length, unsigned int binaryAddress, unsigned short port, const char *file, const long line );
 
 
@@ -171,5 +169,7 @@ private:
 	static void SetSocketOptions( SOCKET listenSocket);
 	static SocketLayerOverride *slo;
 };
+
+} // namespace RakNet
 
 #endif

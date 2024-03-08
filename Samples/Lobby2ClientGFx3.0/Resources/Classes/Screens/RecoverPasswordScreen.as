@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 
@@ -41,8 +41,8 @@ class Screens.RecoverPasswordScreen extends Screen
 		btnSendAnswer.addEventListener("click", this, "f2c_GetPasswordByPasswordRecoveryAnswer");
 				
 		//Add callbacks for C++
-		GameDelegate.addCallBack("c2f_RecoverPasswordByUsername", this, "c2f_RecoverPasswordByUsername");
-		GameDelegate.addCallBack("c2f_GetPasswordByPasswordRecoveryAnswer", this, "c2f_GetPasswordByPasswordRecoveryAnswer");
+		ExternalInterface.addCallback("c2f_RecoverPasswordByUsername", this, c2f_RecoverPasswordByUsername);
+		ExternalInterface.addCallback("c2f_GetPasswordByPasswordRecoveryAnswer", this, c2f_GetPasswordByPasswordRecoveryAnswer);
 		
 		super.VOnFinishedLoading();
 	}
@@ -77,14 +77,14 @@ class Screens.RecoverPasswordScreen extends Screen
 	{
 		mTempUsername = this["tiUserName"].text;
 		//ConsoleWindow.Trace("f2c_RecoverPasswordByUsername.... username = " + );
-		GameDelegate.call("f2c_RecoverPasswordByUsername", [mTempUsername], _root);
+		ExternalInterface.call("f2c_RecoverPasswordByUsername", mTempUsername);
 	}
 	
 	//try to get password by answering the secret question
 	public function f2c_GetPasswordByPasswordRecoveryAnswer():Void
 	{
 		ConsoleWindow.Trace("calling f2c_GetPasswordByPasswordRecoveryAnswer.. answer = " + this["tiAnswer"].text);
-		GameDelegate.call("f2c_GetPasswordByPasswordRecoveryAnswer", [mTempUsername, this["tiAnswer"].text], _root);
+		ExternalInterface.call("f2c_GetPasswordByPasswordRecoveryAnswer", mTempUsername, this["tiAnswer"].text);
 	}
 
 	public function goBackToConnectedToServerFunc():Void

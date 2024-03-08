@@ -28,14 +28,14 @@ public:
 		temp.Write(varData);
 		if (nextWriteIndex>=variableList.Size())
 		{
-			variableList.Push(VariableLastValueNode(temp.GetData(),temp.GetNumberOfBytesUsed()),__FILE__,__LINE__);
+			variableList.Push(VariableLastValueNode(temp.GetData(),temp.GetNumberOfBytesUsed()),_FILE_AND_LINE_);
 			nextWriteIndex++;
 			return true; // Different because it's new
 		}
 
 		if (temp.GetNumberOfBytesUsed()!=variableList[nextWriteIndex].byteLength)
 		{
-			variableList[nextWriteIndex].lastData=(char*) rakRealloc_Ex(variableList[nextWriteIndex].lastData, temp.GetNumberOfBytesUsed(),__FILE__,__LINE__);
+			variableList[nextWriteIndex].lastData=(char*) rakRealloc_Ex(variableList[nextWriteIndex].lastData, temp.GetNumberOfBytesUsed(),_FILE_AND_LINE_);
 			variableList[nextWriteIndex].byteLength=temp.GetNumberOfBytesUsed();
 			memcpy(variableList[nextWriteIndex].lastData,temp.GetData(),temp.GetNumberOfBytesUsed());
 			nextWriteIndex++;

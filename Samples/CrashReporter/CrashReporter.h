@@ -50,6 +50,8 @@
 // #include "DbgHelp.h"
 // Link with Dbghelp.lib ws2_32.lib
 
+namespace RakNet {
+
 // Possible actions to take on a crash.  If you want to restart the app as well, see the CrashRelauncher sample.
 enum CrashReportAction
 {
@@ -118,5 +120,7 @@ public:
 	static void Start(CrashReportControls *input);
 	static CrashReportControls controls;
 };
+
+} // namespace RakNet
 
 #endif

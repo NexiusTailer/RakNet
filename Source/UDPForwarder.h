@@ -78,7 +78,7 @@ public:
 	/// \param[out] forwardingPort New opened port for forwarding
 	/// \param[out] forwardingSocket New opened socket for forwarding
 	/// \return UDPForwarderResult
-	UDPForwarderResult StartForwarding(SystemAddress source, SystemAddress destination, RakNetTimeMS timeoutOnNoDataMS, const char *forceHostAddress,
+	UDPForwarderResult StartForwarding(SystemAddress source, SystemAddress destination, RakNet::TimeMS timeoutOnNoDataMS, const char *forceHostAddress,
 		unsigned short *forwardingPort, SOCKET *forwardingSocket);
 
 	/// No longer forward datagrams from source to destination
@@ -111,9 +111,9 @@ public:
 		ForwardEntry();
 		~ForwardEntry();
 		SrcAndDest srcAndDest;
-		RakNetTimeMS timeLastDatagramForwarded;
+		RakNet::TimeMS timeLastDatagramForwarded;
 		SOCKET socket;
-		RakNetTimeMS timeoutOnNoDataMS;
+		RakNet::TimeMS timeoutOnNoDataMS;
 		bool updatedSourcePort, updatedDestPort;
 	};
 
@@ -128,7 +128,7 @@ public:
 
 		SystemAddress source;
 		SystemAddress destination;
-		RakNetTimeMS timeoutOnNoDataMS;
+		RakNet::TimeMS timeoutOnNoDataMS;
 		RakNet::RakString forceHostAddress;
 		unsigned short forwardingPort;
 		SOCKET forwardingSocket;
@@ -139,14 +139,14 @@ public:
 	DataStructures::Queue<ThreadOperation> threadOperationOutgoingQueue;
 #endif
 	void UpdateThreaded(void);
-	UDPForwarderResult StartForwardingThreaded(SystemAddress source, SystemAddress destination, RakNetTimeMS timeoutOnNoDataMS, const char *forceHostAddress,
+	UDPForwarderResult StartForwardingThreaded(SystemAddress source, SystemAddress destination, RakNet::TimeMS timeoutOnNoDataMS, const char *forceHostAddress,
 		unsigned short *forwardingPort, SOCKET *forwardingSocket);
 	void StopForwardingThreaded(SystemAddress source, SystemAddress destination);
 
 	DataStructures::Multilist<ML_ORDERED_LIST, ForwardEntry*, SrcAndDest> forwardList;
 	unsigned short maxForwardEntries;
 
-	UDPForwarderResult AddForwardingEntry(SrcAndDest srcAndDest, RakNetTimeMS timeoutOnNoDataMS, unsigned short *port, const char *forceHostAddress);
+	UDPForwarderResult AddForwardingEntry(SrcAndDest srcAndDest, RakNet::TimeMS timeoutOnNoDataMS, unsigned short *port, const char *forceHostAddress);
 
 
 	bool isRunning, threadRunning;

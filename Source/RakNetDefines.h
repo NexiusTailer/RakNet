@@ -5,16 +5,18 @@
 // The user should not edit this file
 #include "RakNetDefinesOverrides.h"
 
-/// Define __GET_TIME_64BIT to have RakNetTime use a 64, rather than 32 bit value.  A 32 bit value will overflow after about 5 weeks.
+/// Define __GET_TIME_64BIT to have RakNet::TimeMS use a 64, rather than 32 bit value.  A 32 bit value will overflow after about 5 weeks.
 /// However, this doubles the bandwidth use for sending times, so don't do it unless you have a reason to.
 /// Comment out if you are using the iPod Touch TG. See http://www.jenkinssoftware.com/forum/index.php?topic=2717.0
+/// This must be the same on all systems, or they won't connect
 #ifndef __GET_TIME_64BIT
 #define __GET_TIME_64BIT 1
 #endif
 
-/// Makes RakNet threadsafe
-/// Do not undefine!
-#define _RAKNET_THREADSAFE
+// Define _FILE_AND_LINE_ to "",0 if you want to strip out file and line info for memory tracking from the EXE
+#ifndef _FILE_AND_LINE_
+#define _FILE_AND_LINE_ __FILE__,__LINE__
+#endif
 
 /// Define __BITSTREAM_NATIVE_END to NOT support endian swapping in the BitStream class.  This is faster and is what you should use
 /// unless you actually plan to have different endianness systems connect to each other
@@ -59,35 +61,21 @@
 #define RAKNET_DEBUG_PRINTF printf
 #endif
 
-// 16 * 4 * 8 = 512 bit. Used for InitializeSecurity()
-#ifndef RAKNET_RSA_FACTOR_LIMBS
-#define RAKNET_RSA_FACTOR_LIMBS 16
-#endif
-
-// Enable to support peer to peer with NetworkIDs. Disable to save memory if doing client/server only
-#ifndef NETWORK_ID_SUPPORTS_PEER_TO_PEER
-#define NETWORK_ID_SUPPORTS_PEER_TO_PEER 1
-#endif
-
-// O(1) instead of O(log2n) but takes more memory if less than 1/3 of the mappings are used.
-// Only supported if NETWORK_ID_SUPPORTS_PEER_TO_PEER is commented out
-// #define NETWORK_ID_USE_PTR_TABLE
-
 // Maximum number of local IP addresses supported
 #ifndef MAXIMUM_NUMBER_OF_INTERNAL_IDS
 #define MAXIMUM_NUMBER_OF_INTERNAL_IDS 10
 #endif
 
 #ifndef RakAssert
-
-
-
+#if defined(_XBOX) || defined(X360)
+                                                              
+#else
 #if defined(_DEBUG)
 #define RakAssert(x) assert(x);
 #else
 #define RakAssert(x) 
 #endif
-
+#endif
 #endif
 
 /// This controls the amount of memory used per connection. If more than this many datagrams are sent without an ack, then the ack has no effect

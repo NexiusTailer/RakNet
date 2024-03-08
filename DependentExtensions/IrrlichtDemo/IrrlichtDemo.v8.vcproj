@@ -64,7 +64,7 @@
 				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib"
 				OutputFile="$(OutDir)/IrrlichtRakNetDemo.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(OGRE_HOME)\lib"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -92,7 +92,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine=""
+				CommandLine="copy C:\irrlicht-1.7.1\bin\Win32-VisualStudio\Irrlicht.dll .\"
 			/>
 		</Configuration>
 		<Configuration
@@ -142,7 +142,7 @@
 				AdditionalDependencies="./../../lib/RakNetLibStatic.lib ws2_32.lib"
 				OutputFile="$(OutDir)/IrrlichtRakNetDemo.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(OGRE_HOME)\lib"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -172,7 +172,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine=""
+				CommandLine="copy C:\irrlicht-1.7.1\bin\Win32-VisualStudio\Irrlicht.dll .\"
 			/>
 		</Configuration>
 	</Configurations>

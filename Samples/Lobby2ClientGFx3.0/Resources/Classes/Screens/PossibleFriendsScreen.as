@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 import mx.utils.Delegate;
@@ -43,11 +43,11 @@ class Screens.PossibleFriendsScreen extends ScreenWithPageNavigator
 		btnMyFriends.addEventListener("click", this, "ShowMyFriends");
 						
 		//Add callbacks for C++
-		GameDelegate.addCallBack("c2f_SendInviteResult", this, "c2f_SendInviteResult");
-		GameDelegate.addCallBack("c2f_AcceptInviteResult", this, "c2f_AcceptInviteResult");
-		GameDelegate.addCallBack("c2f_RejectInviteResult", this, "c2f_RejectInviteResult");
-		GameDelegate.addCallBack("c2f_GetFriendInvites", this, "c2f_GetFriendInvites");
-		//GameDelegate.addCallBack("c2f_GetFriends", this, "c2f_GetFriends");
+		ExternalInterface.addCallback("c2f_SendInviteResult", this, c2f_SendInviteResult);
+		ExternalInterface.addCallback("c2f_AcceptInviteResult", this, c2f_AcceptInviteResult);
+		ExternalInterface.addCallback("c2f_RejectInviteResult", this, c2f_RejectInviteResult);
+		ExternalInterface.addCallback("c2f_GetFriendInvites", this, c2f_GetFriendInvites);
+		//ExternalInterface.addCallback("c2f_GetFriends", this, c2f_GetFriends);
 		
 		mcMail._visible = false;
 		
@@ -115,7 +115,7 @@ class Screens.PossibleFriendsScreen extends ScreenWithPageNavigator
 	public function f2c_SendInvite():Void
 	{
 		ConsoleWindow.Trace("Attempting to send invitation: name = " + mcMail.GetToField() + ", subject = " + mcMail.GetSubjectField() + ", msg = " + mcMail.GetMsgField());
-		GameDelegate.call("f2c_SendInvite", [mcMail.GetToField(), mcMail.GetSubjectField(), mcMail.GetMsgField(), "0"], _root);
+		ExternalInterface.call("f2c_SendInvite", mcMail.GetToField(), mcMail.GetSubjectField(), mcMail.GetMsgField(), "0");
 		HideMail();
 	}
 
@@ -147,7 +147,7 @@ class Screens.PossibleFriendsScreen extends ScreenWithPageNavigator
 	public function f2c_AcceptInvite():Void
 	{
 		ConsoleWindow.Trace("f2c_AcceptInvite: name = " + mcMail.GetToField() + ", subject = " + mcMail.GetSubjectField() + ", msg = " + mcMail.GetMsgField());
-		GameDelegate.call("f2c_AcceptInvite", [mcMail.GetToField(), mcMail.GetSubjectField(), mcMail.GetMsgField(), "0"], _root);
+		ExternalInterface.call("f2c_AcceptInvite", mcMail.GetToField(), mcMail.GetSubjectField(), mcMail.GetMsgField(), "0");
 		HideMail();
 	}
 
@@ -179,7 +179,7 @@ class Screens.PossibleFriendsScreen extends ScreenWithPageNavigator
 	public function f2c_RejectInvite():Void
 	{
 		ConsoleWindow.Trace("f2c_RejectInvite: name = " + mcMail.GetToField() + ", subject = " + mcMail.GetSubjectField() + ", msg = " + mcMail.GetMsgField());
-		GameDelegate.call("f2c_RejectInvite", [mcMail.GetToField(), mcMail.GetSubjectField(), mcMail.GetMsgField(), "0"], _root);
+		ExternalInterface.call("f2c_RejectInvite", mcMail.GetToField(), mcMail.GetSubjectField(), mcMail.GetMsgField(), "0");
 		HideMail();
 	}
 
@@ -208,7 +208,7 @@ class Screens.PossibleFriendsScreen extends ScreenWithPageNavigator
 
 	public function f2c_GetFriendInvites():Void
 	{
-		GameDelegate.call("f2c_GetFriendInvites", [], _root);
+		ExternalInterface.call("f2c_GetFriendInvites");
 	}
 	
 	public function c2f_GetFriendInvites():Void

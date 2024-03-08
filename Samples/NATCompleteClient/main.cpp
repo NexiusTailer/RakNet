@@ -15,7 +15,7 @@
 #include "GetTime.h"
 #include "Router2.h"
 #include "UDPProxyClient.h"
-#include "RakNetworkFactory.h"
+#include "Gets.h"
 
 using namespace RakNet;
 
@@ -31,19 +31,17 @@ enum SampleResult
 	SUCCEEDED
 };
 
-#define SUPPORT_UPNP PENDING
-#define SUPPORT_NAT_TYPE_DETECTION PENDING
-#define SUPPORT_NAT_PUNCHTHROUGH PENDING
-#define SUPPORT_ROUTER2 PENDING
-#define SUPPORT_UDP_PROXY PENDING
-
-// #define SUPPORT_UPNP FAILED
-// #define SUPPORT_NAT_TYPE_DETECTION FAILED
-// #define SUPPORT_NAT_PUNCHTHROUGH FAILED
-// #define SUPPORT_ROUTER2 FAILED
+// #define SUPPORT_UPNP PENDING
+// #define SUPPORT_NAT_TYPE_DETECTION PENDING
+// #define SUPPORT_NAT_PUNCHTHROUGH PENDING
+// #define SUPPORT_ROUTER2 PENDING
 // #define SUPPORT_UDP_PROXY PENDING
-// #undef DEFAULT_SERVER_ADDRESS
-// #define DEFAULT_SERVER_ADDRESS "192.168.1.2"
+
+#define SUPPORT_UPNP FAILED
+#define SUPPORT_NAT_TYPE_DETECTION FAILED
+#define SUPPORT_NAT_PUNCHTHROUGH PENDING
+#define SUPPORT_ROUTER2 FAILED
+#define SUPPORT_UDP_PROXY FAILED
 
 
 struct SampleFramework
@@ -53,10 +51,10 @@ struct SampleFramework
 	virtual const char * QueryFunction(void)=0;
 	virtual const char * QuerySuccess(void)=0;
 	virtual bool QueryQuitOnSuccess(void)=0;
-	virtual void Init(RakPeerInterface *rakPeer)=0;
+	virtual void Init(RakNet::RakPeerInterface *rakPeer)=0;
 	virtual void ProcessPacket(Packet *packet)=0;
-	virtual void Update(RakPeerInterface *rakPeer)=0;
-	virtual void Shutdown(RakPeerInterface *rakPeer)=0;
+	virtual void Update(RakNet::RakPeerInterface *rakPeer)=0;
+	virtual void Shutdown(RakNet::RakPeerInterface *rakPeer)=0;
 
 	SampleResult sampleResult;
 };
@@ -69,24 +67,26 @@ struct UPNPFramework : public SampleFramework, public UPNPCallbackInterface
 	virtual const char * QueryFunction(void) {return "Use UPNP to open the router";}
 	virtual const char * QuerySuccess(void) {return "Other systems can now connect to you on the opened port.";}
 	virtual bool QueryQuitOnSuccess(void) {return true;}
-	virtual void Init(RakPeerInterface *rakPeer)
+	virtual void Init(RakNet::RakPeerInterface *rakPeer)
 	{
 		if (sampleResult==FAILED) return;
 
 		upnp = new UPNPPortForwarder;
-		upnp->OpenPortOnInterface(this,RAKPEER_PORT, "ALL");
+		DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
+		rakPeer->GetSockets(sockets);
+		upnp->OpenPortOnInterface(this,sockets[0]->boundAddress.port, "ALL");
 	}
 
 	virtual void ProcessPacket(Packet *packet)
 	{
 	}
-	virtual void Update(RakPeerInterface *rakPeer)
+	virtual void Update(RakNet::RakPeerInterface *rakPeer)
 	{
 		if (sampleResult==FAILED) return;
 
 		upnp->CallCallbacks();
 	}
-	virtual void Shutdown(RakPeerInterface *rakPeer)
+	virtual void Shutdown(RakNet::RakPeerInterface *rakPeer)
 	{
 		delete upnp;
 		upnp=0;
@@ -137,14 +137,14 @@ struct UPNPFramework : public SampleFramework, public UPNPCallbackInterface
 
 	UPNPPortForwarder *upnp;
 };
-SystemAddress SelectAmongConnectedSystems(RakPeerInterface *rakPeer, const char *hostName)
+SystemAddress SelectAmongConnectedSystems(RakNet::RakPeerInterface *rakPeer, const char *hostName)
 {
 	DataStructures::List<SystemAddress> addresses;
 	DataStructures::List<RakNetGUID> guids;
 	rakPeer->GetSystemList(addresses, guids);
 	if (addresses.Size()==0)
 	{
-		return UNASSIGNED_SYSTEM_ADDRESS;
+		return RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 	}
 	if (addresses.Size()>1)
 	{
@@ -155,35 +155,35 @@ SystemAddress SelectAmongConnectedSystems(RakPeerInterface *rakPeer, const char 
 			addresses[i].ToString(true, buff);
 			printf("%i. %s\n", i+1, buff);
 		}
-		gets(buff);
+		Gets(buff,sizeof(buff));
 		if (buff[0]==0)
 		{
-			return UNASSIGNED_SYSTEM_ADDRESS;
+			return RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 		}
 		unsigned int idx = atoi(buff);
 		if (idx<=0 || idx > addresses.Size())
 		{
-			return UNASSIGNED_SYSTEM_ADDRESS;
+			return RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 		}
 		return addresses[idx-1];
 	}
 	else
 		return addresses[0];
 };
-SystemAddress ConnectBlocking(RakPeerInterface *rakPeer, const char *hostName, const char *defaultAddress, const char *defaultPort)
+SystemAddress ConnectBlocking(RakNet::RakPeerInterface *rakPeer, const char *hostName, const char *defaultAddress, const char *defaultPort)
 {
 	char ipAddr[64];
 	if (defaultAddress==0 || defaultAddress[0]==0)
 		printf("Enter IP of system %s is running on: ", hostName);
 	else
 		printf("Enter IP of system %s, or press enter for default: ", hostName);
-	gets(ipAddr);
+	Gets(ipAddr,sizeof(ipAddr));
 	if (ipAddr[0]==0)
 	{
 		if (defaultAddress==0 || defaultAddress[0]==0)
 		{
 			printf("Failed. No address entered for %s.\n", hostName);
-			return UNASSIGNED_SYSTEM_ADDRESS;
+			return RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 		}
 		else
 		{
@@ -195,26 +195,26 @@ SystemAddress ConnectBlocking(RakPeerInterface *rakPeer, const char *hostName, c
 		printf("Enter port of system %s is running on: ", hostName);
 	else
 		printf("Enter port of system %s, or press enter for default: ", hostName);
-	gets(port);
+	Gets(port, sizeof(port));
 	if (port[0]==0)
 	{
 		if (defaultPort==0 || defaultPort[0]==0)
 		{
 			printf("Failed. No port entered for %s.\n", hostName);
-			return UNASSIGNED_SYSTEM_ADDRESS;
+			return RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 		}
 		else
 		{
 			strcpy(port, defaultPort);
 		}
 	}
-	if (rakPeer->Connect(ipAddr, atoi(port), 0, 0)==false)
+	if (rakPeer->Connect(ipAddr, atoi(port), 0, 0)!=RakNet::CONNECTION_ATTEMPT_STARTED)
 	{
 		printf("Failed connect call for %s.\n", hostName);
-		return UNASSIGNED_SYSTEM_ADDRESS;
+		return RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 	}
 	printf("Connecting...\n");
-	Packet *packet;
+	RakNet::Packet *packet;
 	while (1)
 	{
 		for (packet=rakPeer->Receive(); packet; rakPeer->DeallocatePacket(packet), packet=rakPeer->Receive())
@@ -225,7 +225,7 @@ SystemAddress ConnectBlocking(RakPeerInterface *rakPeer, const char *hostName, c
 			}
 			else
 			{
-				return UNASSIGNED_SYSTEM_ADDRESS;
+				return RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 			}
 			RakSleep(100);
 		}
@@ -240,15 +240,15 @@ struct NatTypeDetectionFramework : public SampleFramework
 	virtual const char * QueryFunction(void) {return "Determines router type to avoid NAT punch attempts that cannot\nsucceed.";}
 	virtual const char * QuerySuccess(void) {return "If our NAT type is Symmetric, we can skip NAT punch to other symmetric NATs.";}
 	virtual bool QueryQuitOnSuccess(void) {return false;}
-	virtual void Init(RakPeerInterface *rakPeer)
+	virtual void Init(RakNet::RakPeerInterface *rakPeer)
 	{
 		if (sampleResult==FAILED) return;
 
 		SystemAddress serverAddress=SelectAmongConnectedSystems(rakPeer, "NatTypeDetectionServer");
-		if (serverAddress==UNASSIGNED_SYSTEM_ADDRESS)
+		if (serverAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 		{
 			serverAddress=ConnectBlocking(rakPeer, "NatTypeDetectionServer", DEFAULT_SERVER_ADDRESS, DEFAULT_SERVER_PORT);
-			if (serverAddress==UNASSIGNED_SYSTEM_ADDRESS)
+			if (serverAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			{
 				printf("Failed to connect to a server.\n");
 				sampleResult=FAILED;
@@ -288,7 +288,7 @@ struct NatTypeDetectionFramework : public SampleFramework
 			sampleResult=SUCCEEDED;
 		}
 	}
-	virtual void Update(RakPeerInterface *rakPeer)
+	virtual void Update(RakNet::RakPeerInterface *rakPeer)
 	{
 		if (sampleResult==FAILED) return;
 
@@ -298,14 +298,14 @@ struct NatTypeDetectionFramework : public SampleFramework
 			sampleResult=FAILED;
 		}
 	}
-	virtual void Shutdown(RakPeerInterface *rakPeer)
+	virtual void Shutdown(RakNet::RakPeerInterface *rakPeer)
 	{
 		delete ntdc;
 		ntdc=0;
 	}
 
 	NatTypeDetectionClient *ntdc;
-	RakNetTimeMS timeout;
+	RakNet::TimeMS timeout;
 };
 
 struct NatPunchthoughClientFramework : public SampleFramework, public NatPunchthroughDebugInterface_Printf
@@ -317,25 +317,25 @@ struct NatPunchthoughClientFramework : public SampleFramework, public NatPunchth
 	virtual const char * QueryFunction(void) {return "Causes two systems to try to connect to each other at the same\ntime, to get through routers.";}
 	virtual const char * QuerySuccess(void) {return "We can now communicate with the other system, including connecting.";}
 	virtual bool QueryQuitOnSuccess(void) {return true;}
-	virtual void Init(RakPeerInterface *rakPeer)
+	virtual void Init(RakNet::RakPeerInterface *rakPeer)
 	{
 		if (sampleResult==FAILED) return;
 
 		SystemAddress serverAddress=SelectAmongConnectedSystems(rakPeer, "NatPunchthroughServer");
-		if (serverAddress==UNASSIGNED_SYSTEM_ADDRESS)
+		if (serverAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 		{
 			serverAddress=ConnectBlocking(rakPeer, "NatPunchthroughServer", DEFAULT_SERVER_ADDRESS, DEFAULT_SERVER_PORT);
-			if (serverAddress==UNASSIGNED_SYSTEM_ADDRESS)
+			if (serverAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			{
 				printf("Failed to connect to a server.\n");
 				sampleResult=FAILED;
 				return;
 			}
 		}
-
+		
 		char guid[128];
 		printf("Enter RakNetGuid of the remote system, which should have already connected\nto the server.\nOr press enter to just listen.\n");
-		gets(guid);
+		Gets(guid,sizeof(guid));
 		npClient = new NatPunchthroughClient;
 		npClient->SetDebugInterface(this);
 		rakPeer->AttachPlugin(npClient);
@@ -352,7 +352,7 @@ struct NatPunchthoughClientFramework : public SampleFramework, public NatPunchth
 		else
 		{
 			printf("Listening\n");
-			printf("My GUID is %s\n", rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
+			printf("My GUID is %s\n", rakPeer->GetMyGUID().ToString());
 			isListening=true;
 		}
 	}
@@ -408,7 +408,7 @@ struct NatPunchthoughClientFramework : public SampleFramework, public NatPunchth
 			sampleResult=SUCCEEDED;
 		}
 	}
-	virtual void Update(RakPeerInterface *rakPeer)
+	virtual void Update(RakNet::RakPeerInterface *rakPeer)
 	{
 		if (sampleResult==FAILED) return;
 
@@ -418,14 +418,14 @@ struct NatPunchthoughClientFramework : public SampleFramework, public NatPunchth
 			sampleResult=FAILED;
 		}
 	}
-	virtual void Shutdown(RakPeerInterface *rakPeer)
+	virtual void Shutdown(RakNet::RakPeerInterface *rakPeer)
 	{
 		delete npClient;
 		npClient=0;
 	}
 
 	NatPunchthroughClient *npClient;
-	RakNetTimeMS timeout;
+	RakNet::TimeMS timeout;
 	bool isListening;
 };
 
@@ -438,7 +438,7 @@ struct Router2Framework : public SampleFramework
 	virtual const char * QueryFunction(void) {return "Connect to a peer we cannot directly connect to using the\nbandwidth of a shared peer.";}
 	virtual const char * QuerySuccess(void) {return "Router2 assumes we will now connect to the other system.";}
 	virtual bool QueryQuitOnSuccess(void) {return true;}
-	virtual void Init(RakPeerInterface *rakPeer)
+	virtual void Init(RakNet::RakPeerInterface *rakPeer)
 	{
 		if (sampleResult==FAILED) return;
 
@@ -447,7 +447,7 @@ struct Router2Framework : public SampleFramework
 		do 
 		{
 			printf("Enter a number greater than or equal to 0: ");
-			gets(supportedStr);
+			Gets(supportedStr,sizeof(supportedStr));
 		} while (supportedStr[0]==0);
 		int supported=atoi(supportedStr);
 		if (supported<=0)
@@ -458,10 +458,10 @@ struct Router2Framework : public SampleFramework
 		}
 
 		SystemAddress peerAddress = SelectAmongConnectedSystems(rakPeer, "shared peer");
-		if (peerAddress==UNASSIGNED_SYSTEM_ADDRESS)
+		if (peerAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 		{
 			peerAddress=ConnectBlocking(rakPeer, "shared peer", "", RAKPEER_PORT_STR);
-			if (peerAddress==UNASSIGNED_SYSTEM_ADDRESS)
+			if (peerAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			{
 				printf("Failed to connect to a shared peer.\n");
 				sampleResult=FAILED;
@@ -474,7 +474,7 @@ struct Router2Framework : public SampleFramework
 		do 
 		{
 			printf("Enter RakNetGUID of destination system: ");
-			gets(guid);
+			Gets(guid,sizeof(guid));
 		} while (guid[0]==0);
 		RakNetGUID endpointGuid;
 		endpointGuid.FromString(guid);
@@ -487,7 +487,7 @@ struct Router2Framework : public SampleFramework
 	virtual void ProcessPacket(Packet *packet)
 	{
 	}
-	virtual void Update(RakPeerInterface *rakPeer)
+	virtual void Update(RakNet::RakPeerInterface *rakPeer)
 	{
 		if (sampleResult==FAILED) return;
 
@@ -497,13 +497,13 @@ struct Router2Framework : public SampleFramework
 			sampleResult=FAILED;
 		}
 	}
-	virtual void Shutdown(RakPeerInterface *rakPeer)
+	virtual void Shutdown(RakNet::RakPeerInterface *rakPeer)
 	{
 		delete router2;
 		router2=0;
 	}
 	Router2 *router2;
-	RakNetTimeMS timeout;
+	RakNet::TimeMS timeout;
 };
 struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientResultHandler
 {
@@ -513,16 +513,16 @@ struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientRe
 	virtual bool QueryRequiresServer(void) {return true;}
 	virtual const char * QueryFunction(void) {return "Connect to a peer using a shared server connection.";}
 	virtual const char * QuerySuccess(void) {return "We can now communicate with the other system, including connecting, within 5 seconds.";}
-	virtual bool QueryQuitOnSuccess(void) {return true;}
-	virtual void Init(RakPeerInterface *rakPeer)
+	virtual bool QueryQuitOnSuccess(void) {return false;}
+	virtual void Init(RakNet::RakPeerInterface *rakPeer)
 	{
 		if (sampleResult==FAILED) return;
 
 		SystemAddress serverAddress=SelectAmongConnectedSystems(rakPeer, "UDPProxyCoordinator");
-		if (serverAddress==UNASSIGNED_SYSTEM_ADDRESS)
+		if (serverAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 		{
 			serverAddress=ConnectBlocking(rakPeer, "UDPProxyCoordinator", DEFAULT_SERVER_ADDRESS, DEFAULT_SERVER_PORT);
-			if (serverAddress==UNASSIGNED_SYSTEM_ADDRESS)
+			if (serverAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			{
 				printf("Failed to connect to a server.\n");
 				sampleResult=FAILED;
@@ -535,7 +535,7 @@ struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientRe
 
 		char guid[128];
 		printf("Enter RakNetGuid of the remote system, which should have already connected\nto the server.\nOr press enter to just listen.\n");
-		gets(guid);
+		Gets(guid,sizeof(guid));
 		RakNetGUID targetGuid;
 		targetGuid.FromString(guid);
 
@@ -558,7 +558,7 @@ struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientRe
 	virtual void ProcessPacket(Packet *packet)
 	{
 	}
-	virtual void Update(RakPeerInterface *rakPeer)
+	virtual void Update(RakNet::RakPeerInterface *rakPeer)
 	{
 		if (sampleResult==FAILED) return;
 
@@ -568,7 +568,7 @@ struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientRe
 			sampleResult=FAILED;
 		}
 	}
-	virtual void Shutdown(RakPeerInterface *rakPeer)
+	virtual void Shutdown(RakNet::RakPeerInterface *rakPeer)
 	{
 		delete udpProxy;
 		udpProxy=0;
@@ -579,14 +579,16 @@ struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientRe
 	{
 		printf("Datagrams forwarded by proxy %s:%i to target %s.\n", proxyIPAddress, proxyPort, targetAddress.ToString(false));
 		printf("Connecting to proxy, which will be received by target.\n");
-		bool b = proxyClientPlugin->GetRakPeerInterface()->Connect(proxyIPAddress, proxyPort, 0, 0);
-		RakAssert(b);
+		ConnectionAttemptResult car = proxyClientPlugin->GetRakPeerInterface()->Connect(proxyIPAddress, proxyPort, 0, 0);
+		RakAssert(car==CONNECTION_ATTEMPT_STARTED);
 		sampleResult=SUCCEEDED;
 	}
 	virtual void OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort,
 		SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 	{
 		printf("Source %s has setup forwarding to us through proxy %s:%i.\n", sourceAddress.ToString(false), proxyIPAddress, proxyPort);
+
+		sampleResult=SUCCEEDED;
 	}
 	virtual void OnNoServersOnline(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 	{
@@ -609,7 +611,7 @@ struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientRe
 	}
 
 	UDPProxyClient *udpProxy;
-	RakNetTimeMS timeout;
+	RakNet::TimeMS timeout;
 	bool isListening;
 };
 void PrintPacketMessages(Packet *packet, RakPeerInterface *rakPeer)
@@ -620,6 +622,9 @@ void PrintPacketMessages(Packet *packet, RakPeerInterface *rakPeer)
 	case ID_DISCONNECTION_NOTIFICATION:
 		// Connection lost normally
 		printf("ID_DISCONNECTION_NOTIFICATION\n");
+		break;
+	case ID_NEW_INCOMING_CONNECTION:
+		printf("ID_NEW_INCOMING_CONNECTION\n");
 		break;
 	case ID_ALREADY_CONNECTED:
 		// Connection lost normally
@@ -645,10 +650,6 @@ void PrintPacketMessages(Packet *packet, RakPeerInterface *rakPeer)
 		break;
 	case ID_NO_FREE_INCOMING_CONNECTIONS:
 		printf("ID_NO_FREE_INCOMING_CONNECTIONS\n");
-		break;
-	case ID_MODIFIED_PACKET:
-		// Cheater!
-		printf("ID_MODIFIED_PACKET\n");
 		break;
 
 	case ID_INVALID_PASSWORD:
@@ -678,12 +679,12 @@ enum FeatureList
 };
 int main(void)
 {
-	RakPeerInterface *rakPeer=RakNetworkFactory::GetRakPeerInterface();
-	SocketDescriptor sd(RAKPEER_PORT,0);
-	if (rakPeer->Startup(32,10,&sd,1)==false)
+	RakNet::RakPeerInterface *rakPeer=RakNet::RakPeerInterface::GetInstance();
+	RakNet::SocketDescriptor sd(RAKPEER_PORT,0);
+	if (rakPeer->Startup(32,&sd,1)!=RakNet::RAKNET_STARTED)
 	{
 		printf("Failed to start rakPeer! Quitting\n");
-		RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+		RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 		return 1;
 	}
 	rakPeer->SetMaximumIncomingConnections(32);
@@ -743,7 +744,7 @@ int main(void)
 		while (1)
 		{
 			samples[(int) currentStage]->Update(rakPeer);
-			Packet *packet;
+			RakNet::Packet *packet;
 			for (packet=rakPeer->Receive(); packet; rakPeer->DeallocatePacket(packet), packet=rakPeer->Receive())
 			{
 				for (i=0; i < FEATURE_LIST_COUNT; i++)
@@ -770,7 +771,7 @@ int main(void)
 					{
 						printf("Connectivity not possible. Exiting\n");
 						rakPeer->Shutdown(100);
-						RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+						RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 						return 1;
 					}
 					else
@@ -801,16 +802,42 @@ int main(void)
 						}
 
 						rakPeer->Shutdown(100);
-						RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+						RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 						printf("Press enter to quit.\n");
 						char temp[32];
-						gets(temp);
+						Gets(temp,sizeof(temp));
 						return 1;
 					}
+
 					printf("Proceeding to next stage.\n");
 					int stageInt = (int) currentStage;
 					stageInt++;
-					currentStage=(FeatureList)stageInt;
+					if (stageInt<FEATURE_LIST_COUNT)
+					{
+						currentStage=(FeatureList)stageInt;
+					}
+					else
+					{
+						printf("Press any key to quit when done.\n");
+
+						while (!kbhit())
+						{
+							for (packet=rakPeer->Receive(); packet; rakPeer->DeallocatePacket(packet), packet=rakPeer->Receive())
+							{
+								for (i=0; i < FEATURE_LIST_COUNT; i++)
+								{
+									samples[i]->ProcessPacket(packet);
+								}
+
+								PrintPacketMessages(packet, rakPeer);
+							}
+							RakSleep(30);
+						}
+
+						rakPeer->Shutdown(100);
+						RakNet::RakPeerInterface::DestroyInstance(rakPeer);
+						return 1;
+					}
 					break;
 				}
 			}

@@ -21,7 +21,7 @@ Random timout detection fails.
 
 static const int NUMBER_OF_CLIENTS=9;
 
-int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 
 	RakPeerInterface *server;
@@ -41,22 +41,22 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 	serverID.binaryAddress=inet_addr("127.0.0.1");
 	serverID.port=serverPort;
 
-	server=RakNetworkFactory::GetRakPeerInterface();
-	destroyList.Clear(false,__FILE__,__LINE__);
-	destroyList.Push(server,__FILE__,__LINE__);
+	server=RakPeerInterface::GetInstance();
+	destroyList.Clear(false,_FILE_AND_LINE_);
+	destroyList.Push(server,_FILE_AND_LINE_);
 	//	server->InitializeSecurity(0,0,0,0);
 	SocketDescriptor socketDescriptor(serverPort,0);
-	server->Startup(NUMBER_OF_CLIENTS, 0, &socketDescriptor, 1);
+	server->Startup(NUMBER_OF_CLIENTS, &socketDescriptor, 1);
 	server->SetMaximumIncomingConnections(NUMBER_OF_CLIENTS);
 	server->SetTimeoutTime(2000,UNASSIGNED_SYSTEM_ADDRESS);
 
 	for (index=0; index < NUMBER_OF_CLIENTS; index++)
 	{
-		clients[index]=RakNetworkFactory::GetRakPeerInterface();
-		destroyList.Push(clients[index],__FILE__,__LINE__);
+		clients[index]=RakPeerInterface::GetInstance();
+		destroyList.Push(clients[index],_FILE_AND_LINE_);
 		SocketDescriptor socketDescriptor2(serverPort+1+index,0);
-		clients[index]->Startup(1,0, &socketDescriptor2, 1);
-		if (!clients[index]->Connect("127.0.0.1", serverPort, 0, 0))
+		clients[index]->Startup(1, &socketDescriptor2, 1);
+		if (clients[index]->Connect("127.0.0.1", serverPort, 0, 0)!=CONNECTION_ATTEMPT_STARTED)
 		{
 			DebugTools::ShowError("Connect function failed.",!noPauses && isVerbose,__LINE__,__FILE__);
 			return 2;
@@ -69,7 +69,7 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 			printf("%i. ", index);
 	}
 
-	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
+	TimeMS entryTime=GetTimeMS();//Loop entry time
 
 	int seed = 12345;
 	if (isVerbose)
@@ -81,7 +81,7 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 	bool dropTest=false;
 	RakTimer timeoutWaitTimer(1000);
 
-	while (RakNet::GetTime()-entryTime<30000)//run for 30 seconds.
+	while (GetTimeMS()-entryTime<30000)//run for 30 seconds.
 	{
 		// User input
 
@@ -151,9 +151,9 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 
 				clients[index]->GetConnectionList(0, &numberOfSystems);
 
-				if(!clients[index]->IsConnected (serverID,true,true) )//Are we connected or is there a pending operation ?
+				if(!CommonFunctions::ConnectionStateMatchesOptions (clients[index],serverID,true,true,true,true) )//Are we connected or is there a pending operation ?
 				{
-					if (!clients[index]->Connect("127.0.0.1", serverPort, 0, 0))
+					if (clients[index]->Connect("127.0.0.1", serverPort, 0, 0)!=CONNECTION_ATTEMPT_STARTED)
 					{
 
 						DebugTools::ShowError("Connect function failed.",!noPauses && isVerbose,__LINE__,__FILE__);
@@ -196,9 +196,9 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 					}
 					else
 					{
-						if(!clients[index]->IsConnected (serverID,true,true) )//Are we connected or is there a pending operation ?
+						if(!CommonFunctions::ConnectionStateMatchesOptions (clients[index],serverID,true,true,true,true) )//Are we connected or is there a pending operation ?
 						{
-							if (!clients[index]->Connect("127.0.0.1", serverPort, 0, 0))
+							if (clients[index]->Connect("127.0.0.1", serverPort, 0, 0)!=CONNECTION_ATTEMPT_STARTED)
 							{
 								DebugTools::ShowError("Connect function failed.",!noPauses && isVerbose,__LINE__,__FILE__);
 								return 2;
@@ -300,11 +300,6 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 						printf("%i: ID_NEW_INCOMING_CONNECTION from %i.\n",sender, p->systemAddress.port);
 					break;
 
-				case ID_MODIFIED_PACKET:
-					// Cheater!
-					if (isVerbose)
-						printf("%i: ID_MODIFIED_PACKET from %i.\n",sender, p->systemAddress.port);
-					break;
 
 				case ID_CONNECTION_LOST:
 					// Couldn't deliver a reliable packet - i.e. the other system was abnormally
@@ -359,13 +354,13 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 	return 0;
 }
 
-RakNet::RakString DroppedConnectionConvertTest::GetTestName()
+RakString DroppedConnectionConvertTest::GetTestName()
 {
 	return "DroppedConnectionConvertTest";
 
 }
 
-RakNet::RakString DroppedConnectionConvertTest::ErrorCodeToString(int errorCode)
+RakString DroppedConnectionConvertTest::ErrorCodeToString(int errorCode)
 {
 
 	switch (errorCode)
@@ -399,7 +394,7 @@ void DroppedConnectionConvertTest::DestroyPeers()
 	int theSize=destroyList.Size();
 
 	for (int i=0; i < theSize; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+		RakPeerInterface::DestroyInstance(destroyList[i]);
 
 }
 

@@ -1,5 +1,5 @@
 ﻿import flash.filters.GradientGlowFilter;
-import gfx.io.GameDelegate;
+import flash.external.*;
 import Screens.ProfileScreen;
 import Screens.RegisterAccountScreen;
 
@@ -60,7 +60,7 @@ class AccountInfo
 	{		
 		ConsoleWindow.Trace("AccountInfo.GetAccountInfoFromServer");
 		// Do not change the order the parameters are passed in as
-		GameDelegate.call("f2c_GetAccountDetails", [], _root);
+		ExternalInterface.call("f2c_GetAccountDetails");
 	}
 	
 	public function ServerSetAccountInfo( resultIdentifier:String, firstNameParam:String, middleNameParam:String, lastNameParam:String, raceParam:String, 

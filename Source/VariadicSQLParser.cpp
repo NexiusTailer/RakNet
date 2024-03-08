@@ -23,7 +23,7 @@ TypeMapping typeMappings[NUM_TYPE_MAPPINGS] =
 unsigned int GetTypeMappingIndex(char c)
 {
 	unsigned int i;
-	for (i=0; i < NUM_TYPE_MAPPINGS; i++ )
+	for (i=0; i < (unsigned int) NUM_TYPE_MAPPINGS; i++ )
 		if (typeMappings[i].inputType==c)
 			return i;
 	return (unsigned int)-1;
@@ -37,7 +37,7 @@ void VariadicSQLParser::GetTypeMappingIndices( const char *format, DataStructure
 	bool previousCharWasPercentSign;
 	unsigned int i;
 	unsigned int typeMappingIndex;
-	indices.Clear(false, __FILE__, __LINE__);
+	indices.Clear(false, _FILE_AND_LINE_);
 	unsigned int len = (unsigned int) strlen(format);
 	previousCharWasPercentSign=false;
 	for (i=0; i < len; i++)
@@ -50,7 +50,7 @@ void VariadicSQLParser::GetTypeMappingIndices( const char *format, DataStructure
 				IndexAndType iat;
 				iat.strIndex=i-1;
 				iat.typeMappingIndex=typeMappingIndex;
-				indices.Insert(iat, __FILE__, __LINE__ );
+				indices.Insert(iat, _FILE_AND_LINE_ );
 			}
 		}
 
@@ -63,8 +63,8 @@ void VariadicSQLParser::ExtractArguments( va_list argptr, const DataStructures::
 		return;
 
 	unsigned int i;
-	*argumentBinary=RakNet::OP_NEW_ARRAY<char *>(indices.Size(), __FILE__,__LINE__);
-	*argumentLengths=RakNet::OP_NEW_ARRAY<int>(indices.Size(), __FILE__,__LINE__);
+	*argumentBinary=RakNet::OP_NEW_ARRAY<char *>(indices.Size(), _FILE_AND_LINE_);
+	*argumentLengths=RakNet::OP_NEW_ARRAY<int>(indices.Size(), _FILE_AND_LINE_);
 
 	char **paramData=*argumentBinary;
 	int *paramLength=*argumentLengths;
@@ -79,7 +79,7 @@ void VariadicSQLParser::ExtractArguments( va_list argptr, const DataStructures::
 			{
 				int val = va_arg( argptr, int );
 				paramLength[i]=sizeof(val);
-				paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
+				paramData[i]=(char*) rakMalloc_Ex(paramLength[i], _FILE_AND_LINE_);
 				memcpy(paramData[i], &val, paramLength[i]);
 				if (RakNet::BitStream::IsNetworkOrder()==false) RakNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
 			}
@@ -88,7 +88,7 @@ void VariadicSQLParser::ExtractArguments( va_list argptr, const DataStructures::
 			{
 				char* val = va_arg( argptr, char* );
 				paramLength[i]=(int) strlen(val);
-				paramData[i]=(char*) rakMalloc_Ex(paramLength[i]+1, __FILE__, __LINE__);
+				paramData[i]=(char*) rakMalloc_Ex(paramLength[i]+1, _FILE_AND_LINE_);
 				memcpy(paramData[i], val, paramLength[i]+1);
 			}
 			break;
@@ -96,7 +96,7 @@ void VariadicSQLParser::ExtractArguments( va_list argptr, const DataStructures::
 			{
 				bool val = (va_arg( argptr, int )!=0);
 				paramLength[i]=sizeof(val);
-				paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
+				paramData[i]=(char*) rakMalloc_Ex(paramLength[i], _FILE_AND_LINE_);
 				memcpy(paramData[i], &val, paramLength[i]);
 				if (RakNet::BitStream::IsNetworkOrder()==false) RakNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
 			}
@@ -107,7 +107,7 @@ void VariadicSQLParser::ExtractArguments( va_list argptr, const DataStructures::
 				float val = (float) va_arg( argptr, double );
 				//float val = va_arg( argptr, float );
 				paramLength[i]=sizeof(val);
-				paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
+				paramData[i]=(char*) rakMalloc_Ex(paramLength[i], _FILE_AND_LINE_);
 				memcpy(paramData[i], &val, paramLength[i]);
 				if (RakNet::BitStream::IsNetworkOrder()==false) RakNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
 			}
@@ -116,7 +116,7 @@ void VariadicSQLParser::ExtractArguments( va_list argptr, const DataStructures::
 			{
 				double val = va_arg( argptr, double );
 				paramLength[i]=sizeof(val);
-				paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
+				paramData[i]=(char*) rakMalloc_Ex(paramLength[i], _FILE_AND_LINE_);
 				memcpy(paramData[i], &val, paramLength[i]);
 				if (RakNet::BitStream::IsNetworkOrder()==false) RakNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
 			}
@@ -125,7 +125,7 @@ void VariadicSQLParser::ExtractArguments( va_list argptr, const DataStructures::
 			{
 				char* val = va_arg( argptr, char* );
 				paramLength[i]=va_arg( argptr, unsigned int );
-				paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
+				paramData[i]=(char*) rakMalloc_Ex(paramLength[i], _FILE_AND_LINE_);
 				memcpy(paramData[i], val, paramLength[i]);
 			}
 			break;
@@ -140,7 +140,7 @@ void VariadicSQLParser::FreeArguments(const DataStructures::List<IndexAndType> &
 
 	unsigned int i;
 	for (i=0; i < indices.Size(); i++)
-		rakFree_Ex(argumentBinary[i],__FILE__,__LINE__);
-	RakNet::OP_DELETE_ARRAY(argumentBinary,__FILE__,__LINE__);
-	RakNet::OP_DELETE_ARRAY(argumentLengths,__FILE__,__LINE__);
+		rakFree_Ex(argumentBinary[i],_FILE_AND_LINE_);
+	RakNet::OP_DELETE_ARRAY(argumentBinary,_FILE_AND_LINE_);
+	RakNet::OP_DELETE_ARRAY(argumentLengths,_FILE_AND_LINE_);
 }

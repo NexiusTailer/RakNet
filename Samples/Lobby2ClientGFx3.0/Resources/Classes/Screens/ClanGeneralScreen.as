@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 import gfx.controls.CheckBox;
@@ -86,19 +86,19 @@ class Screens.ClanGeneralScreen extends ScreenWithPageNavigator
 		btnInvite.addEventListener("click", this, "ShowSendJoinInvitationMail");
 						
 		//Add callbacks for C++
-		GameDelegate.addCallBack("c2f_Clans_GetProperties", this, "c2f_Clans_GetProperties");
+		ExternalInterface.addCallback("c2f_Clans_GetProperties", this, c2f_Clans_GetProperties);
 		
-		GameDelegate.addCallBack("c2f_Clans_SetProperties", this, "c2f_Clans_SetProperties");
-		GameDelegate.addCallBack("c2f_Clans_SetMyMemberProperties", this, "c2f_Clans_SetMyMemberProperties");
-		GameDelegate.addCallBack("c2f_Clans_GrantLeader", this, "c2f_Clans_GrantLeader");
-		GameDelegate.addCallBack("c2f_Clans_SetSubleaderStatus", this, "c2f_Clans_SetSubleaderStatus");
-		GameDelegate.addCallBack("c2f_Clans_SetMemberRank", this, "c2f_Clans_SetMemberRank");
-		GameDelegate.addCallBack("c2f_Clans_ChangeHandle", this, "c2f_Clans_ChangeHandle");
-		GameDelegate.addCallBack("c2f_Clans_GetMembers", this, "c2f_Clans_GetMembers");
+		ExternalInterface.addCallback("c2f_Clans_SetProperties", this, c2f_Clans_SetProperties);
+		ExternalInterface.addCallback("c2f_Clans_SetMyMemberProperties", this, c2f_Clans_SetMyMemberProperties);
+		ExternalInterface.addCallback("c2f_Clans_GrantLeader", this, c2f_Clans_GrantLeader);
+		ExternalInterface.addCallback("c2f_Clans_SetSubleaderStatus", this, c2f_Clans_SetSubleaderStatus);
+		ExternalInterface.addCallback("c2f_Clans_SetMemberRank", this, c2f_Clans_SetMemberRank);
+		ExternalInterface.addCallback("c2f_Clans_ChangeHandle", this, c2f_Clans_ChangeHandle);
+		ExternalInterface.addCallback("c2f_Clans_GetMembers", this, c2f_Clans_GetMembers);
 		
-		GameDelegate.addCallBack("c2f_Clans_Leave", this, "c2f_Clans_Leave");
-		GameDelegate.addCallBack("c2f_Clans_SendJoinRequest", this, "c2f_Clans_SendJoinRequest");
-		GameDelegate.addCallBack("c2f_Clans_SendJoinInvitation", this, "c2f_Clans_SendJoinInvitation");
+		ExternalInterface.addCallback("c2f_Clans_Leave", this, c2f_Clans_Leave);
+		ExternalInterface.addCallback("c2f_Clans_SendJoinRequest", this, c2f_Clans_SendJoinRequest);
+		ExternalInterface.addCallback("c2f_Clans_SendJoinInvitation", this, c2f_Clans_SendJoinInvitation);
 		
 		super.VOnFinishedLoading();
 	}
@@ -130,8 +130,8 @@ class Screens.ClanGeneralScreen extends ScreenWithPageNavigator
 		
 		if ( tfClanName.text.length > 0 )
 		{
-			GameDelegate.call("f2c_Clans_GetProperties", [tfClanName.text], _root);		
-			GameDelegate.call("f2c_Clans_GetMembers", [tfClanName.text], _root);
+			ExternalInterface.call("f2c_Clans_GetProperties", tfClanName.text);		
+			ExternalInterface.call("f2c_Clans_GetMembers", tfClanName.text);
 		}		
 	}
 	
@@ -260,35 +260,35 @@ class Screens.ClanGeneralScreen extends ScreenWithPageNavigator
 
 	public function f2c_Clans_SetProperties():Void
 	{
-		GameDelegate.call("f2c_Clans_SetProperties", [clanHandle_EditBox.text,clans_Description_EditBox.text], _root);
+		ExternalInterface.call("f2c_Clans_SetProperties", clanHandle_EditBox.text,clans_Description_EditBox.text);
 	}
 
 	public function f2c_Clans_SetMyMemberProperties():Void
 	{
-		GameDelegate.call("f2c_Clans_SetMyMemberProperties", [clanHandle_EditBox.text,clans_Description_EditBox.text], _root);
+		ExternalInterface.call("f2c_Clans_SetMyMemberProperties", clanHandle_EditBox.text,clans_Description_EditBox.text);
 	}
 
 	public function f2c_Clans_GrantLeader():Void
 	{
-		GameDelegate.call("f2c_Clans_GrantLeader", [clanHandle_EditBox.text,clans_targetHandle_EditBox.text], _root);
+		ExternalInterface.call("f2c_Clans_GrantLeader", clanHandle_EditBox.text,clans_targetHandle_EditBox.text);
 	}
 
 	public function f2c_Clans_SetSubleaderStatus():Void
 	{
-		GameDelegate.call("f2c_Clans_SetSubleaderStatus", [clanHandle_EditBox.text,
+		ExternalInterface.call("f2c_Clans_SetSubleaderStatus", clanHandle_EditBox.text,
 						  clans_SetSubleaderStatus_targetHandle_EditBox.text,
-														   clans_SetSubleaderStatus_setToSubleader_Checkbox.selected], _root);
+														   clans_SetSubleaderStatus_setToSubleader_Checkbox.selected);
 	}
 
 	public function f2c_Clans_SetMemberRank():Void
 	{
-		GameDelegate.call("f2c_Clans_SetMemberRank", [clanHandle_EditBox.text,clans_SetMemberRank_targetHandle_EditBox.text,
-													  clans_SetMemberRank_newRank_EditBox.text], _root);
+		ExternalInterface.call("f2c_Clans_SetMemberRank", clanHandle_EditBox.text,clans_SetMemberRank_targetHandle_EditBox.text,
+													  clans_SetMemberRank_newRank_EditBox.text);
 	}
 
 	public function f2c_Clans_ChangeHandle():Void
 	{
-		GameDelegate.call("f2c_Clans_ChangeHandle", [clanHandle_EditBox.text,clans_ChangeHandle_newClanHandle_EditBox.text], _root);
+		ExternalInterface.call("f2c_Clans_ChangeHandle", clanHandle_EditBox.text,clans_ChangeHandle_newClanHandle_EditBox.text);
 	}
 
 	public function c2f_Clans_SetProperties(resultIdentifier:String):Void
@@ -453,7 +453,7 @@ class Screens.ClanGeneralScreen extends ScreenWithPageNavigator
 	{		
 		//emailStatus_EditBox.text (4th param), Kevin - The email system supports a numerical status for emails that is game-specific. 
 		//	For example, you might have 23 represent an email reporting match statistics.
-		GameDelegate.call("f2c_Clans_Leave", [
+		ExternalInterface.call("f2c_Clans_Leave", [
 											  tfClanName.text, mcMail.GetSubjectField(), mcMail.GetMsgField(), "0",
 											  mcMail.IsCheckBoxOn()], _root);
 		HideMail();
@@ -498,9 +498,9 @@ class Screens.ClanGeneralScreen extends ScreenWithPageNavigator
 	
 	public function SendJoinRequest():Void
 	{
-		GameDelegate.call("f2c_Clans_SendJoinRequest", [
+		ExternalInterface.call("f2c_Clans_SendJoinRequest", 
 											  tfClanName.text, mcMail.GetSubjectField(), mcMail.GetMsgField(), "0"
-												], _root);
+												);
 	}
 	
 
@@ -545,8 +545,8 @@ class Screens.ClanGeneralScreen extends ScreenWithPageNavigator
 	
 	public function SendJoinInvitation():Void
 	{		
-		GameDelegate.call("f2c_Clans_SendJoinInvitation", [tfClanName.text, mcMail.GetSubjectField(), mcMail.GetMsgField(), "0",
-														   tfUserToAdd.text], _root);
+		ExternalInterface.call("f2c_Clans_SendJoinInvitation", tfClanName.text, mcMail.GetSubjectField(), mcMail.GetMsgField(), "0",
+														   tfUserToAdd.text);
 	}
 	
 	public function c2f_Clans_SendJoinInvitation(resultIdentifier:String):Void

@@ -14,6 +14,9 @@
 #include "PacketLogger.h"
 #include "SingleProducerConsumer.h"
 
+namespace RakNet
+{
+
 /// \ingroup PACKETLOGGER_GROUP
 /// \brief Same as PacketLogger, but writes output in the user thread.
 class RAK_DLL_EXPORT ThreadsafePacketLogger : public PacketLogger
@@ -29,6 +32,8 @@ protected:
 
 	DataStructures::SingleProducerConsumer<char*> logMessages;
 };
+
+} // namespace RakNet
 
 #endif
 

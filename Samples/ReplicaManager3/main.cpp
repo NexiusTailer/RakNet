@@ -2,7 +2,7 @@
 
 #include "StringTable.h"
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
+
 #include <stdio.h>
 #include "Kbhit.h"
 #include <string.h>
@@ -18,6 +18,7 @@
 #include "Getche.h"
 #include "Rand.h"
 #include "VariableDeltaSerializer.h"
+#include "Gets.h"
 
 enum
 {
@@ -34,7 +35,7 @@ struct SampleReplica : public Replica3
 	SampleReplica() {var1Unreliable=0; var2Unreliable=0; var3Reliable=0; var4Reliable=0;}
 	~SampleReplica() {}
 	virtual RakNet::RakString GetName(void) const=0;
-	virtual void WriteAllocationID(RakNet::BitStream *allocationIdBitstream) const {
+	virtual void WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const {
 		allocationIdBitstream->Write(GetName());
 	}
 	void PrintStringInBitstream(RakNet::BitStream *bs)
@@ -45,6 +46,7 @@ struct SampleReplica : public Replica3
 		bs->Read(rakString);
 		printf("Receive: %s\n", rakString.C_String());
 	}
+
 	virtual void SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection)	{
 		
 		// variableDeltaSerializer is a helper class that tracks what variables were sent to what remote system
@@ -211,14 +213,14 @@ struct ClientCreatible_ClientSerialized : public SampleReplica {
 		return SampleReplica::Serialize(serializeParameters);
 	}
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {
-		return QueryConstruction_ClientConstruction(destinationConnection);
+		return QueryConstruction_ClientConstruction(destinationConnection,topology!=CLIENT);
 	}
 	virtual bool QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection) {
-		return QueryRemoteConstruction_ClientConstruction(sourceConnection);
+		return QueryRemoteConstruction_ClientConstruction(sourceConnection,topology!=CLIENT);
 	}
 
 	virtual RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3 *destinationConnection) {
-		return QuerySerialization_ClientSerializable(destinationConnection);
+		return QuerySerialization_ClientSerializable(destinationConnection,topology!=CLIENT);
 	}
 	virtual RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3 *droppedConnection) const {
 		return QueryActionOnPopConnection_Client(droppedConnection);
@@ -231,13 +233,13 @@ struct ServerCreated_ClientSerialized : public SampleReplica {
 		return SampleReplica::Serialize(serializeParameters);
 	}
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {
-		return QueryConstruction_ServerConstruction(destinationConnection);
+		return QueryConstruction_ServerConstruction(destinationConnection,topology!=CLIENT);
 	}
 	virtual bool QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection) {
-		return QueryRemoteConstruction_ServerConstruction(sourceConnection);
+		return QueryRemoteConstruction_ServerConstruction(sourceConnection,topology!=CLIENT);
 	}
 	virtual RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3 *destinationConnection) {
-		return QuerySerialization_ClientSerializable(destinationConnection);
+		return QuerySerialization_ClientSerializable(destinationConnection,topology!=CLIENT);
 	}
 	virtual RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3 *droppedConnection) const {
 		return QueryActionOnPopConnection_Server(droppedConnection);
@@ -252,13 +254,13 @@ struct ClientCreatible_ServerSerialized : public SampleReplica {
 		return SampleReplica::Serialize(serializeParameters);
 	}
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {
-		return QueryConstruction_ClientConstruction(destinationConnection);
+		return QueryConstruction_ClientConstruction(destinationConnection,topology!=CLIENT);
 	}
 	virtual bool QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection) {
-		return QueryRemoteConstruction_ClientConstruction(sourceConnection);
+		return QueryRemoteConstruction_ClientConstruction(sourceConnection,topology!=CLIENT);
 	}
 	virtual RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3 *destinationConnection) {
-		return QuerySerialization_ServerSerializable(destinationConnection);
+		return QuerySerialization_ServerSerializable(destinationConnection,topology!=CLIENT);
 	}
 	virtual RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3 *droppedConnection) const {
 		return QueryActionOnPopConnection_Client(droppedConnection);
@@ -274,13 +276,13 @@ struct ServerCreated_ServerSerialized : public SampleReplica {
 		return SampleReplica::Serialize(serializeParameters);
 	}
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {
-		return QueryConstruction_ServerConstruction(destinationConnection);
+		return QueryConstruction_ServerConstruction(destinationConnection,topology!=CLIENT);
 	}
 	virtual bool QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection) {
-		return QueryRemoteConstruction_ServerConstruction(sourceConnection);
+		return QueryRemoteConstruction_ServerConstruction(sourceConnection,topology!=CLIENT);
 	}
 	virtual RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3 *destinationConnection) {
-		return QuerySerialization_ServerSerializable(destinationConnection);
+		return QuerySerialization_ServerSerializable(destinationConnection,topology!=CLIENT);
 	}
 	virtual RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3 *droppedConnection) const {
 		return QueryActionOnPopConnection_Server(droppedConnection);
@@ -337,17 +339,17 @@ class ReplicaManager3Sample : public ReplicaManager3
 int main(void)
 {
 	char ch;
-	SocketDescriptor sd;
+	RakNet::SocketDescriptor sd;
 	char ip[128];
 	static const int SERVER_PORT=12345;
+
 
 	// ReplicaManager3 requires NetworkIDManager to lookup pointers from numbers.
 	NetworkIDManager networkIdManager;
 	// Each application has one instance of RakPeerInterface
-	RakPeerInterface *rakPeer;
+	RakNet::RakPeerInterface *rakPeer;
 	// The system that performs most of our functionality for this demo
 	ReplicaManager3Sample replicaManager;
-
 
 	printf("Demonstration of ReplicaManager3.\n");
 	printf("1. Demonstrates creating objects created by the server and client.\n");
@@ -357,7 +359,7 @@ int main(void)
 	printf("Start as (c)lient, (s)erver, (p)eer? ");
 	ch=getche();
 
-	rakPeer = RakNetworkFactory::GetRakPeerInterface();
+	rakPeer = RakNet::RakPeerInterface::GetInstance();
 	if (ch=='c' || ch=='C')
 	{
 		topology=CLIENT;
@@ -376,22 +378,18 @@ int main(void)
 			sd.port++;
 	}
 
-	// ObjectMemberRPC, AutoRPC for objects, and ReplicaManager3 require that you call SetNetworkIDManager()
-	rakPeer->SetNetworkIDManager(&networkIdManager);
-	// The network ID authority is the system that creates the common numerical identifier used to lookup pointers.
-	// For client/server this is the server
-	// For peer to peer this would be true on every system, and NETWORK_ID_SUPPORTS_PEER_TO_PEER should be defined in RakNetDefines.h
-	networkIdManager.SetIsNetworkIDAuthority(topology==SERVER||topology==P2P);
 	// Start RakNet, up to 32 connections if the server
-	rakPeer->Startup(32,100,&sd,1);
+	rakPeer->Startup(32,&sd,1);
 	rakPeer->AttachPlugin(&replicaManager);
+	replicaManager.SetNetworkIDManager(&networkIdManager);
 	rakPeer->SetMaximumIncomingConnections(32);
+	printf("\nMy GUID is %s\n", rakPeer->GetMyGUID().ToString());
 
 	printf("\n");
 	if (topology==CLIENT)
 	{
 		printf("Enter server IP: ");
-		gets(ip);
+		Gets(ip, sizeof(ip));
 		if (ip[0]==0)
 			strcpy(ip, "127.0.0.1");
 		rakPeer->Connect(ip,SERVER_PORT,0,0,0);
@@ -401,7 +399,7 @@ int main(void)
 	printf("Commands:\n(Q)uit\n'C'reate objects\n'R'andomly change variables in my objects\n'D'estroy my objects\n");
 
 	// Enter infinite loop to run the system
-	Packet *packet;
+	RakNet::Packet *packet;
 	bool quit=false;
 	while (!quit)
 	{
@@ -431,7 +429,7 @@ int main(void)
 				break;
 			case ID_ADVERTISE_SYSTEM:
 				// The conditional is needed because ID_ADVERTISE_SYSTEM may be from a system we are connected to, but replying on a different address.
-				if (rakPeer->GetSystemAddressFromGuid(packet->guid)==UNASSIGNED_SYSTEM_ADDRESS)
+				if (rakPeer->GetSystemAddressFromGuid(packet->guid)==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 				{
 					printf("Connecting to %s\n", packet->systemAddress.ToString(true));
 					rakPeer->Connect(packet->systemAddress.ToString(false), packet->systemAddress.port,0,0);
@@ -497,20 +495,20 @@ int main(void)
 				// 	A. Send a packet to tell other systems to delete these objects
 				// 	B. Delete these objects on my own system
 				replicaManager.GetReplicasCreatedByMe(replicaListOut);
-				replicaManager.BroadcastDestructionList(replicaListOut, UNASSIGNED_SYSTEM_ADDRESS);
-				replicaListOut.ClearPointers( true, __FILE__, __LINE__ );
+				replicaManager.BroadcastDestructionList(replicaListOut, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+				replicaListOut.ClearPointers( true, _FILE_AND_LINE_ );
 			}
 
 		}
 
 		RakSleep(30);
-		for (int i=0; i < 32; i++)
+		for (int i=0; i < 4; i++)
 		{
-			if (rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS,0).port!=SERVER_PORT+i)
+			if (rakPeer->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS,0).port!=SERVER_PORT+i)
 				rakPeer->AdvertiseSystem("255.255.255.255", SERVER_PORT+i, 0,0,0);
 		}
 	}
 
 	rakPeer->Shutdown(100,0);
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 }

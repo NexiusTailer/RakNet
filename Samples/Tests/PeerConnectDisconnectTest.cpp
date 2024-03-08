@@ -12,7 +12,7 @@ void PeerConnectDisconnectTest::WaitForConnectionRequestsToComplete(RakPeerInter
 			currentSystem.SetBinaryAddress("127.0.0.1");
 			currentSystem.port=60000+j;
 
-			while (peerList[i]->IsConnectionAttemptPending (currentSystem) )
+			while (CommonFunctions::ConnectionStateMatchesOptions (peerList[i],currentSystem,false,true,true) )
 			{
 				if (msgWasPrinted==false)
 				{
@@ -126,7 +126,7 @@ During the very first connect loop any connect returns false.
 Connect function returns false and peer is not connected to anything.
 
 */
-int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 
 	const int peerNum= 8;
@@ -135,15 +135,15 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 
 	SystemAddress currentSystem;
 
-	destroyList.Clear(false,__FILE__,__LINE__);
+	destroyList.Clear(false,_FILE_AND_LINE_);
 
 	//Initializations of the arrays
 	for (int i=0;i<peerNum;i++)
 	{
-		peerList[i]=RakNetworkFactory::GetRakPeerInterface();
-		destroyList.Push(peerList[i],__FILE__,__LINE__);
+		peerList[i]=RakPeerInterface::GetInstance();
+		destroyList.Push(peerList[i],_FILE_AND_LINE_);
 
-		peerList[i]->Startup(maxConnections, 30, &SocketDescriptor(60000+i,0), 1);
+		peerList[i]->Startup(maxConnections, &SocketDescriptor(60000+i,0), 1);
 		peerList[i]->SetMaximumIncomingConnections(maxConnections);
 
 	}
@@ -156,7 +156,7 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 		for (int j=i+1;j<peerNum;j++)//Start at i+1 so don't connect two of the same together.
 		{
 
-			if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
+			if (peerList[i]->Connect("127.0.0.1", 60000+j, 0,0)!=CONNECTION_ATTEMPT_STARTED)
 			{
 
 				if (isVerbose)
@@ -170,14 +170,14 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 
 	}
 
-	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
+	TimeMS entryTime=GetTimeMS();//Loop entry time
 
 	DataStructures::List< SystemAddress  > systemList;
 	DataStructures::List< RakNetGUID > guidList;
 
 	printf("Entering disconnect loop \n");
 
-	while(RakNet::GetTime()-entryTime<10000)//Run for 10 Secoonds
+	while(GetTimeMS()-entryTime<10000)//Run for 10 Secoonds
 	{
 
 		//Disconnect all peers IF connected to any
@@ -207,10 +207,10 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 
 				currentSystem.SetBinaryAddress("127.0.0.1");
 				currentSystem.port=60000+j;
-				if(!peerList[i]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
+				if(!CommonFunctions::ConnectionStateMatchesOptions (peerList[i],currentSystem,true,true,true,true) )//Are we connected or is there a pending operation ?
 				{
 
-					if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
+					if (peerList[i]->Connect("127.0.0.1", 60000+j, 0,0)!=CONNECTION_ATTEMPT_STARTED)
 					{
 
 						if (isVerbose)
@@ -243,11 +243,11 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 			currentSystem.SetBinaryAddress("127.0.0.1");
 			currentSystem.port=60000+j;
 
-			if(!peerList[i]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
+			if(!CommonFunctions::ConnectionStateMatchesOptions (peerList[i],currentSystem,true,true,true,true) )//Are we connected or is there a pending operation ?
 			{
 				printf("Calling Connect() for peer %i to peer %i.\n",i,j);
 
-				if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
+				if (peerList[i]->Connect("127.0.0.1", 60000+j, 0,0)!=CONNECTION_ATTEMPT_STARTED)
 				{
 					peerList[i]->GetSystemList(systemList,guidList);//Get connectionlist
 					int len=systemList.Size();
@@ -261,12 +261,12 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 			}
 			else
 			{
-				if (peerList[i]->IsConnected (currentSystem,true,false)==false)
-					printf("Not calling Connect() for peer %i to peer %i because IsConnected() returned true (isDisconnecting).\n",i,j);
-				else if (peerList[i]->IsConnected (currentSystem,false,true)==false)
-					printf("Not calling Connect() for peer %i to peer %i because IsConnected() returned true (isConnecting).\n",i,j);
-				else if (peerList[i]->IsConnected (currentSystem,false,false)==false)
-					printf("Not calling Connect() for peer %i to peer %i because IsConnected() returned true (isConnected).\n",i,j);
+				if (CommonFunctions::ConnectionStateMatchesOptions (peerList[i],currentSystem,false,false,false,true)==false)
+					printf("Not calling Connect() for peer %i to peer %i because it is disconnecting.\n",i,j);
+				else if (CommonFunctions::ConnectionStateMatchesOptions (peerList[i],currentSystem,false,true,true)==false)
+					printf("Not calling Connect() for peer %i to peer %i because it is connecting.\n",i,j);
+				else if (CommonFunctions::ConnectionStateMatchesOptions (peerList[i],currentSystem,true)==false)
+					printf("Not calling Connect() for peer %i to peer %i because it is connected).\n",i,j);
 			}
 		}	
 
@@ -303,14 +303,14 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 
 }
 
-RakNet::RakString PeerConnectDisconnectTest::GetTestName()
+RakString PeerConnectDisconnectTest::GetTestName()
 {
 
 	return "PeerConnectDisconnectTest";
 
 }
 
-RakNet::RakString PeerConnectDisconnectTest::ErrorCodeToString(int errorCode)
+RakString PeerConnectDisconnectTest::ErrorCodeToString(int errorCode)
 {
 
 	switch (errorCode)
@@ -347,6 +347,6 @@ void PeerConnectDisconnectTest::DestroyPeers()
 	int theSize=destroyList.Size();
 
 	for (int i=0; i < theSize; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+		RakPeerInterface::DestroyInstance(destroyList[i]);
 
 }

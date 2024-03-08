@@ -27,7 +27,7 @@
 <p><span class="RakNetBlueHeader">NAT Punchthrough Algorithm</span></p>
 <ol>
   <li> Peer P1 wants to connect to peer P2, both of whom are connected to a third Non-NAT system, F</li>
-  <li>Peer P1 calls SendPunchthrough() with the RakNetGUID (unique identifier) of P2 to F.</li>
+  <li>Peer P1 calls OpenNAT() with the RakNetGUID (unique identifier) of P2 to F.</li>
   <li>F returns failure if P2 is not connected, or already attempting punchthrough to P1.</li>
   <li>F remembers busy state of P1 and P2. If either P1 or P2 is busy, the request is pushed to a queue. Otherwise F requests most recently used external port from P1 and P2. P1 and P2 are flagged as busy.</li>
   <li>If either P1 or P2 do not respond punchthrough fails with ID_NAT_TARGET_UNRESPONSIVE and the busy flag is unset. Otherwise, F sends timestamped connection message to P1 and P2  simultaneously.</li>

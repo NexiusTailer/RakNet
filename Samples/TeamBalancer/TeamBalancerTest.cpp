@@ -5,7 +5,7 @@
 #include "Rand.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
-#include "RakNetworkFactory.h"
+
 #include "TeamBalancer.h"
 #include "FullyConnectedMesh2.h"
 #include "ConnectionGraph2.h"
@@ -14,9 +14,9 @@
 #include "RakSleep.h"
 
 static const int NUM_PEERS=4;
-RakPeerInterface *rakPeer[NUM_PEERS];
-FullyConnectedMesh2 fullyConnectedMeshPlugin[NUM_PEERS];
-ConnectionGraph2 connectionGraphPlugin[NUM_PEERS];
+RakNet::RakPeerInterface *rakPeer[NUM_PEERS];
+RakNet::FullyConnectedMesh2 fullyConnectedMeshPlugin[NUM_PEERS];
+RakNet::ConnectionGraph2 connectionGraphPlugin[NUM_PEERS];
 RakNet::TeamBalancer teamBalancerPlugin[NUM_PEERS];
 void GetTeams(int &team0, int &team1);
 void Wait(void);
@@ -26,7 +26,7 @@ int main(void)
 	int i;
 
 	for (i=0; i < NUM_PEERS; i++)
-		rakPeer[i]=RakNetworkFactory::GetRakPeerInterface();
+		rakPeer[i]=RakNet::RakPeerInterface::GetInstance();
 
 	printf("This project tests and demonstrates the team balancer mesh plugin.\n");
 	printf("It uses FullyConnectedMesh2 to test in a peer to peer enviroment");
@@ -48,8 +48,8 @@ int main(void)
 	// Initialize the peers
 	for (peerIndex=0; peerIndex < NUM_PEERS; peerIndex++)
 	{
-		SocketDescriptor socketDescriptor(60000+peerIndex,0);
-		rakPeer[peerIndex]->Startup(NUM_PEERS, 0, &socketDescriptor, 1);
+		RakNet::SocketDescriptor socketDescriptor(60000+peerIndex,0);
+		rakPeer[peerIndex]->Startup(NUM_PEERS, &socketDescriptor, 1);
 	}
 
 	// Give the threads time to properly start
@@ -67,18 +67,18 @@ int main(void)
 
 	RakSleep(200);
 
-	RakNetGUID hostGuid = fullyConnectedMeshPlugin[0].GetHostSystem();
+	RakNet::RakNetGUID hostGuid = fullyConnectedMeshPlugin[0].GetHostSystem();
 	printf("Host is %s\n", hostGuid.ToString());
 
 	// Two teams of the same size
 	DataStructures::List<unsigned short> teamLimits;
-	teamLimits.Push(NUM_PEERS/2,__FILE__,__LINE__);
-	teamLimits.Push(NUM_PEERS/2,__FILE__,__LINE__);
+	teamLimits.Push(NUM_PEERS/2,_FILE_AND_LINE_);
+	teamLimits.Push(NUM_PEERS/2,_FILE_AND_LINE_);
 
 	unsigned int hostIndex;
 	for (peerIndex=0; peerIndex < NUM_PEERS; peerIndex++)
 	{
-		if (hostGuid==rakPeer[peerIndex]->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
+		if (hostGuid==rakPeer[peerIndex]->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS))
 			hostIndex=peerIndex;
 		teamBalancerPlugin[peerIndex].SetHostGuid(hostGuid);
 		teamBalancerPlugin[peerIndex].SetTeamSizeLimits(teamLimits);
@@ -171,7 +171,7 @@ int main(void)
 
 	// Test host migration
 	hostIndex=(hostIndex+1)%4;
-	hostGuid=rakPeer[hostIndex]->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
+	hostGuid=rakPeer[hostIndex]->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 	teamBalancerPlugin[0].SetHostGuid(hostGuid);
 	teamBalancerPlugin[1].SetHostGuid(hostGuid);
 	teamBalancerPlugin[2].SetHostGuid(hostGuid);
@@ -272,7 +272,7 @@ int main(void)
 	RakAssert(team1==0);
 
 	for (i=0; i < NUM_PEERS; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(rakPeer[i]);
+		RakNet::RakPeerInterface::DestroyInstance(rakPeer[i]);
 
 	return 1;
 }
@@ -297,7 +297,7 @@ void Wait(void)
 	for (int count=0; count < 3; count++)
 	{
 		RakSleep(50);
-		Packet *packet;
+		RakNet::Packet *packet;
 		for (unsigned int i=0; i < NUM_PEERS; i++)
 		{
 			for (packet=rakPeer[i]->Receive(); packet; rakPeer[i]->DeallocatePacket(packet), packet=rakPeer[i]->Receive())

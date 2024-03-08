@@ -37,11 +37,16 @@ static const unsigned HASH_LENGTH=sizeof(unsigned int);
 #define PQEXECPARAM_FORMAT_TEXT		0
 #define PQEXECPARAM_FORMAT_BINARY	1
 
+using namespace RakNet;
+
 AutopatcherPostgreRepository::AutopatcherPostgreRepository()
 {
+	filePartConnection=0;
 }
 AutopatcherPostgreRepository::~AutopatcherPostgreRepository()
 {
+	if (filePartConnection)
+		PQfinish(filePartConnection);
 }
 bool AutopatcherPostgreRepository::CreateAutopatcherTables(void)
 {
@@ -437,7 +442,7 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 						patchLength=PQgetlength(patchResult, 0, 0);
 						// Bleh, get a stack overflow here
 						// char *temp = (char*) _alloca(patchLength+HASH_LENGTH);
-						char *temp = RakNet::OP_NEW_ARRAY<char>(patchLength + HASH_LENGTH, __FILE__, __LINE__ );
+						char *temp = RakNet::OP_NEW_ARRAY<char>(patchLength + HASH_LENGTH, _FILE_AND_LINE_ );
 						memcpy(temp, contentHash, HASH_LENGTH);
 						memcpy(temp+HASH_LENGTH, patch, patchLength);
 //						int len;
@@ -450,7 +455,7 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 					//	printf("\n");
 						patchList->AddFile(userFilename,userFilename, temp, HASH_LENGTH+patchLength, fileLengthInt, FileListNodeContext(PC_HASH_WITH_PATCH,0),false );
 						PQclear(patchResult);
-						RakNet::OP_DELETE_ARRAY(temp, __FILE__, __LINE__);
+						RakNet::OP_DELETE_ARRAY(temp, _FILE_AND_LINE_);
 					}
 				}
 				else
@@ -493,7 +498,7 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicationName, const char *applicationDirectory, const char *userName, FileListProgress *cb)
 {
 	FileList filesOnHarddrive;
-	filesOnHarddrive.SetCallback(cb);
+	filesOnHarddrive.AddCallback(cb);
 	filesOnHarddrive.AddFilesFromDirectory(applicationDirectory,"", true, true, true, FileListNodeContext(0,0));
 	if (filesOnHarddrive.fileList.Size()==0)
 	{
@@ -893,18 +898,26 @@ unsigned int AutopatcherPostgreRepository::GetFilePart( const char *filename, un
 
 	// Seems that substring is 1 based for its index, so add 1 to startReadBytes
 	sprintf(query, "SELECT substring(content from %i for %i) FROM FileVersionHistory WHERE fileId=%i;", startReadBytes+1,numBytesToRead,context.fileId);
-	//sqlCommandMutex.Lock();
-	result = PQexecParams(pgConn, query,0,0,0,0,0,PQEXECPARAM_FORMAT_BINARY);
-	if (IsResultSuccessful(result, false)==false)
-	{
-		//sqlCommandMutex.Unlock();
-		PQclear(result);
-		return 0;
-	}
-	//sqlCommandMutex.Unlock();
+	
+	// CREATE NEW CONNECTION JUST FOR THIS QUERY
+	// This is because the autopatcher is sharing this class, but this is called from multiple threads and mysql is not threadsafe
+	filePartConnectionMutex.Lock();
+	if (filePartConnection==0)
+		filePartConnection=PQconnectdb(_conninfo);
+
+	result = PQexecParams(filePartConnection, query,0,0,0,0,0,PQEXECPARAM_FORMAT_BINARY);
+
 	content = PQgetvalue(result, 0, 0);
 	contentLength=PQgetlength(result, 0, 0);
 	memcpy(preallocatedDestination,content,contentLength);
 	PQclear(result);
+
+	filePartConnectionMutex.Unlock();
+
+
 	return contentLength;
+}
+const int AutopatcherPostgreRepository::GetIncrementalReadChunkSize(void) const
+{
+	return 262144*4*16;
 }

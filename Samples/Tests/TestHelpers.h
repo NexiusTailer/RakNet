@@ -1,7 +1,8 @@
 #pragma once
 
+
 #include "RakString.h"
-#include "RakNetworkFactory.h"
+
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
 #include "BitStream.h"
@@ -11,6 +12,7 @@
 #include "CommonFunctions.h"
 #include "RakTimer.h"
 
+using namespace RakNet;
 class TestHelpers
 {
 public:

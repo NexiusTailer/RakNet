@@ -13,7 +13,7 @@ ByteQueue::ByteQueue()
 }
 ByteQueue::~ByteQueue()
 {
-	Clear(__FILE__, __LINE__);
+	Clear(_FILE_AND_LINE_);
 	
 
 }

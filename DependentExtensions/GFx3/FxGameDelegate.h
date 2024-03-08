@@ -187,6 +187,10 @@ public:
     //
     static void    Invoke(GFxMovieView* pmovieView, const char* methodName, 
                             FxResponseArgsBase& args);
+	
+	// KevinJ: Workaround interface changes
+	static void    Invoke2(GFxMovieView* pmovieView, const char* methodName, 
+		FxResponseArgsBase& args);
 
     //
     // ExternalInterface callback entry point

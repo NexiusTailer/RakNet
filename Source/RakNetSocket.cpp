@@ -1,6 +1,8 @@
 #include "RakNetSocket.h"
 #include "SocketIncludes.h"
 
+using namespace RakNet;
+
 RakNetSocket::RakNetSocket() {
 	s = (unsigned int)-1;
 #if defined (_WIN32) && defined(USE_WAIT_FOR_MULTIPLE_EVENTS)

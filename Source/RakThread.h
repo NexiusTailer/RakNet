@@ -13,8 +13,8 @@ namespace RakNet
 /// To define a thread, use RAK_THREAD_DECLARATION(functionName);
 #if defined(_WIN32_WCE)
 #define RAK_THREAD_DECLARATION(functionName) DWORD WINAPI functionName(LPVOID arguments)
-
-
+#elif defined(_XBOX) || defined(X360)
+                                                                                               
 #elif defined(_WIN32)
 #define RAK_THREAD_DECLARATION(functionName) unsigned __stdcall functionName( void* arguments )
 #else
@@ -41,8 +41,8 @@ public:
 	*/
 #if defined(_WIN32_WCE)
 	static int Create( LPTHREAD_START_ROUTINE start_address, void *arglist, int priority=0);
-
-
+#elif defined(_XBOX) || defined(X360)
+                                                                                              
 #elif defined(_WIN32)
 	static int Create( unsigned __stdcall start_address( void* ), void *arglist, int priority=0);
 #else

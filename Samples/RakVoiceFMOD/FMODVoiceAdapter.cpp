@@ -3,7 +3,7 @@
 #include <memory.h>
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
-#include "RakNetworkFactory.h"
+
 #include "FMODVoiceAdapter.h"
 #include "fmod_errors.h"
 
@@ -15,6 +15,7 @@
 // Number of RakVoice frames in the fmod sound
 #define FRAMES_IN_SOUND 4
 
+using namespace RakNet;
 
 FMODVoiceAdapter FMODVoiceAdapter::instance;
 
@@ -215,7 +216,7 @@ void FMODVoiceAdapter::BroadcastFrame(void *ptr)
 		rakVoice->SendFrame(rakVoice->GetRakPeerInterface()->GetGUIDFromIndex(i), ptr);
 	}
 #else
-	rakVoice->SendFrame(UNASSIGNED_SYSTEM_ADDRESS, ptr);
+	rakVoice->SendFrame(RakNet::UNASSIGNED_SYSTEM_ADDRESS, ptr);
 #endif
 
 }

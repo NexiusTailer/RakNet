@@ -19,6 +19,8 @@
 #include <stdlib.h>
 #include "LinuxStrings.h"
 
+using namespace RakNet;
+
 static const unsigned HASH_LENGTH=sizeof(unsigned int);
 
 struct FileInfo
@@ -42,10 +44,13 @@ struct FileInfo
 
 AutopatcherMySQLRepository::AutopatcherMySQLRepository()
 {
+	filePartConnection=0;
 }
 
 AutopatcherMySQLRepository::~AutopatcherMySQLRepository()
 {
+	if (filePartConnection)
+		mysql_close(filePartConnection);
 }
 bool AutopatcherMySQLRepository::CreateAutopatcherTables(void)
 {
@@ -394,7 +399,7 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 	MYSQL_BIND    bind[3];
 	char query[512];
 	FileList filesOnHarddrive;
-	filesOnHarddrive.SetCallback(cb);
+	filesOnHarddrive.AddCallback(cb);
 	int prepareResult;
 	my_bool falseVar=false;
 	RakNet::RakString escapedApplicationName = GetEscapedString(applicationName);
@@ -473,7 +478,7 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 			RakAssert(mysql_fetch_lengths (result) [1] == HASH_LENGTH);  // check the data is sensible
 			memcpy (fi.contentHash, row [1], HASH_LENGTH);
 		}
-	    newestFiles.Insert (fi, __FILE__, __LINE__ );
+	    newestFiles.Insert (fi, _FILE_AND_LINE_ );
 	}    
 	mysql_free_result(result);
 
@@ -758,27 +763,50 @@ unsigned int AutopatcherMySQLRepository::GetFilePart( const char *filename, unsi
 	char query[512];
 	sprintf(query, "SELECT substring(content from %i for %i) FROM FileVersionHistory WHERE fileId=%i;", startReadBytes+1,numBytesToRead,context.fileId);
 
-	MYSQL_RES * result = 0;
-//	getFilePartMutex.Lock();
-	if (!ExecuteBlockingCommand (query, &result))
-	{
-//		getFilePartMutex.Unlock();
-		return 0;
-	}
-	//sqlCommandMutex.Unlock();
+	// CREATE NEW CONNECTION JUST FOR THIS QUERY
+	// This is because the autopatcher is sharing this class, but this is called from multiple threads and mysql is not threadsafe
 
-	MYSQL_ROW row = mysql_fetch_row (result);	
-	if (row != 0)
+	MYSQL_RES * result;
+
+	char lastError[512];
+	filePartConnectionMutex.Lock();
+	if (filePartConnection==0)
 	{
-		const char * content = row [0];
-		unsigned long contentLength=mysql_fetch_lengths (result) [0];
-		memcpy(preallocatedDestination,content,contentLength);
-	//	getFilePartMutex.Unlock();
+		filePartConnection = mysql_init(0);
+		mysql_real_connect (filePartConnection, _host, _user, _passwd, _db, _port, _unix_socket, _clientflag);
+	}
+
+	if (mysql_query(filePartConnection, query)!=0)
+	{
+		strcpy (lastError, mysql_error (filePartConnection));
+	}
+	result = mysql_store_result (filePartConnection);
+
+	if (result)
+	{
+		// This has very poor performance with any size for GetIncrementalReadChunkSize, but especially for larger sizes
+		MYSQL_ROW row = mysql_fetch_row (result);	
+		if (row != 0)
+		{
+			const char * content = row [0];
+			unsigned long contentLength=mysql_fetch_lengths (result) [0];
+			memcpy(preallocatedDestination,content,contentLength);
+			mysql_free_result (result);
+
+			filePartConnectionMutex.Unlock();
+
+			return contentLength;
+		}
+
 		mysql_free_result (result);
-		return contentLength;
 	}
 
-//	getFilePartMutex.Unlock();
-	mysql_free_result (result);
+	filePartConnectionMutex.Unlock();
+
 	return 0;
+}
+const int AutopatcherMySQLRepository::GetIncrementalReadChunkSize(void) const
+{
+	// AutopatcherMySQLRepository::GetFilePart is extremely slow with larger files
+	return 262144*4;
 }

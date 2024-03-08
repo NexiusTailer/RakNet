@@ -6,7 +6,7 @@
 // ----------------------------------------------------------------------
 
 #include "MessageIdentifiers.h"
-#include "RakNetworkFactory.h"
+
 #include "RakPeerInterface.h"
 #include "RakNetStatistics.h"
 #include "RakNetTypes.h"
@@ -16,6 +16,7 @@
 #include <cstdio>
 #include <cstring>
 #include <stdlib.h>
+#include "RakNetTypes.h"
 #ifdef _WIN32
 #include "Kbhit.h"
 #include "WindowsIncludes.h" // Sleep
@@ -23,21 +24,28 @@
 #include "Kbhit.h"
 #include <unistd.h> // usleep
 #endif
+#include "Gets.h"
+
+#if LIBCAT_SECURITY==1
+#include "SecureHandshake.h" // Include header for secure handshake
+#endif
+
 // We copy this from Multiplayer.cpp to keep things all in one file for this example
-unsigned char GetPacketIdentifier(Packet *p);
+unsigned char GetPacketIdentifier(RakNet::Packet *p);
 
 int main(void)
 {
-	RakNetStatistics *rss;
+	RakNet::RakNetStatistics *rss;
 	// Pointers to the interfaces of our server and client.
 	// Note we can easily have both in the same program
-	RakPeerInterface *client=RakNetworkFactory::GetRakPeerInterface();
+	RakNet::RakPeerInterface *client=RakNet::RakPeerInterface::GetInstance();
 //	client->InitializeSecurity(0,0,0,0);
-	//PacketLogger packetLogger;
+	//RakNet::PacketLogger packetLogger;
 	//client->AttachPlugin(&packetLogger);
+
 	
 	// Holds packets
-	Packet* p;
+	RakNet::Packet* p;
 
 	// GetPacketIdentifier returns this
 	unsigned char packetIdentifier;
@@ -46,12 +54,12 @@ int main(void)
 	bool isServer;
 
 	// Record the first client that connects to us so we can pass it to the ping function
-	SystemAddress clientID=UNASSIGNED_SYSTEM_ADDRESS;
+	RakNet::SystemAddress clientID=RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 
 	// Crude interface
 
 	// Holds user data
-	char ip[30], serverPort[30], clientPort[30];
+	char ip[64], serverPort[30], clientPort[30];
 
 	// A client
 	isServer=false;
@@ -62,39 +70,48 @@ int main(void)
 
 	// Get our input
 	puts("Enter the client port to listen on");
-	gets(clientPort);
+	Gets(clientPort,sizeof(clientPort));
 	if (clientPort[0]==0)
 		strcpy(clientPort, "0");
 
 	puts("Enter IP to connect to");
-	gets(ip);
+	Gets(ip, sizeof(ip));
 	client->AllowConnectionResponseIPMigration(false);
 	if (ip[0]==0)
 		strcpy(ip, "127.0.0.1");
 	
 		
 	puts("Enter the port to connect to");
-	gets(serverPort);
+	Gets(serverPort,sizeof(serverPort));
 	if (serverPort[0]==0)
 		strcpy(serverPort, "1234");
 
 	// Connecting the client is very simple.  0 means we don't care about
 	// a connectionValidationInteger, and false for low priority threads
-	SocketDescriptor socketDescriptor(atoi(clientPort),0);
-	client->Startup(8,30,&socketDescriptor, 1);
+	RakNet::SocketDescriptor socketDescriptor(atoi(clientPort),0);
+	client->Startup(8,&socketDescriptor, 1);
 	client->SetOccasionalPing(true);
-	bool b = client->Connect(ip, atoi(serverPort), "Rumpelstiltskin", (int) strlen("Rumpelstiltskin"));	
 
-	if (b)
-		puts("Attempting connection");
-	else
-	{
-		puts("Bad connection attempt.  Terminating.");
-		exit(1);
-	}
+
+#if LIBCAT_SECURITY==1
+	char public_key[cat::EasyHandshake::PUBLIC_KEY_BYTES];
+	FILE *fp = fopen("publicKey.dat","rb");
+	fread(public_key,sizeof(public_key),1,fp);
+	fclose(fp);
+#endif
+
+#if LIBCAT_SECURITY==1
+	RakNet::PublicKey pk;
+	pk.remoteServerPublicKey=public_key;
+	pk.publicKeyMode=RakNet::PKM_USE_KNOWN_PUBLIC_KEY;
+	bool b = client->Connect(ip, atoi(serverPort), "Rumpelstiltskin", (int) strlen("Rumpelstiltskin"), &pk)==RakNet::CONNECTION_ATTEMPT_STARTED;	
+#else
+	RakNet::ConnectionAttemptResult car = client->Connect(ip, atoi(serverPort), "Rumpelstiltskin", (int) strlen("Rumpelstiltskin"));
+	RakAssert(car==RakNet::CONNECTION_ATTEMPT_STARTED);
+#endif
 
 	printf("My IP is %s\n", client->GetLocalIP(0));
-	printf("My GUID is %s\n", client->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
+	printf("My GUID is %s\n", client->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
 	puts("'quit' to quit. 'stat' to show stats. 'ping' to ping.\n'disconnect' to disconnect. 'connect' to reconnnect. Type to talk.");
 	
 	char message[2048];
@@ -113,9 +130,9 @@ int main(void)
 		if (kbhit())
 		{
 			// Notice what is not here: something to keep our network running.  It's
-			// fine to block on gets or anything we want
+			// fine to block on Gets or anything we want
 			// Because the network engine was painstakingly written using threads.
-			gets(message);
+			Gets(message,sizeof(message));
 
 			if (strcmp(message, "quit")==0)
 			{
@@ -138,7 +155,7 @@ int main(void)
 			{
 				printf("Enter index to disconnect: ");
 				char str[32];
-				gets(str);
+				Gets(str, sizeof(str));
 				if (str[0]==0)
 					strcpy(str,"0");
 				int index = atoi(str);
@@ -156,7 +173,7 @@ int main(void)
 
 			if (strcmp(message, "startup")==0)
 			{
-				bool b = client->Startup(8,30,&socketDescriptor, 1);
+				bool b = client->Startup(8,&socketDescriptor, 1)==RakNet::RAKNET_STARTED;
 				if (b)
 					printf("Started.\n");
 				else
@@ -168,10 +185,15 @@ int main(void)
 			if (strcmp(message, "connect")==0)
 			{
 				printf("Enter server port: ");
-				gets(serverPort);
+				Gets(serverPort,sizeof(serverPort));
 				if (serverPort[0]==0)
 					strcpy(serverPort, "1234");
-				bool b = client->Connect(ip, atoi(serverPort), "Rumpelstiltskin", (int) strlen("Rumpelstiltskin"));	
+
+#if LIBCAT_SECURITY==1
+				bool b = client->Connect(ip, atoi(serverPort), "Rumpelstiltskin", (int) strlen("Rumpelstiltskin"), &pk)==RakNet::CONNECTION_ATTEMPT_STARTED;	
+#else
+				bool b = client->Connect(ip, atoi(serverPort), "Rumpelstiltskin", (int) strlen("Rumpelstiltskin"))==RakNet::CONNECTION_ATTEMPT_STARTED;	
+#endif
 
 				if (b)
 					puts("Attempting connection");
@@ -185,7 +207,7 @@ int main(void)
 
 			if (strcmp(message, "ping")==0)
 			{
-				if (client->GetSystemAddressFromIndex(0)!=UNASSIGNED_SYSTEM_ADDRESS)
+				if (client->GetSystemAddressFromIndex(0)!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 					client->Ping(client->GetSystemAddressFromIndex(0));
 
 				continue;
@@ -193,7 +215,7 @@ int main(void)
 
 			if (strcmp(message, "getlastping")==0)
 			{
-				if (client->GetSystemAddressFromIndex(0)!=UNASSIGNED_SYSTEM_ADDRESS)
+				if (client->GetSystemAddressFromIndex(0)!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 					printf("Last ping is %i\n", client->GetLastPing(client->GetSystemAddressFromIndex(0)));
 
 				continue;
@@ -203,7 +225,7 @@ int main(void)
 			// strlen(message)+1 is to send the null terminator
 			// HIGH_PRIORITY doesn't actually matter here because we don't use any other priority
 			// RELIABLE_ORDERED means make sure the message arrives in the right order
-			client->Send(message, (int) strlen(message)+1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+			client->Send(message, (int) strlen(message)+1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 		}
 
 		// Get a packet from either the server or the client
@@ -247,10 +269,6 @@ int main(void)
 				// A real app should tell the user
 				printf("ID_NO_FREE_INCOMING_CONNECTIONS\n");
 				break;
-			case ID_MODIFIED_PACKET:
-				// Cheater!
-				printf("ID_MODIFIED_PACKET\n");
-				break;
 
 			case ID_INVALID_PASSWORD:
 				printf("ID_INVALID_PASSWORD\n");
@@ -279,7 +297,7 @@ int main(void)
 	client->Shutdown(300);
 
 	// We're done with the network
-	RakNetworkFactory::DestroyRakPeerInterface(client);
+	RakNet::RakPeerInterface::DestroyInstance(client);
 
 	return 0;
 }
@@ -287,15 +305,15 @@ int main(void)
 // Copied from Multiplayer.cpp
 // If the first byte is ID_TIMESTAMP, then we want the 5th byte
 // Otherwise we want the 1st byte
-unsigned char GetPacketIdentifier(Packet *p)
+unsigned char GetPacketIdentifier(RakNet::Packet *p)
 {
 	if (p==0)
 		return 255;
 
 	if ((unsigned char)p->data[0] == ID_TIMESTAMP)
 	{
-		assert(p->length > sizeof(unsigned char) + sizeof(unsigned long));
-		return (unsigned char) p->data[sizeof(unsigned char) + sizeof(unsigned long)];
+		RakAssert(p->length > sizeof(RakNet::MessageID) + sizeof(RakNet::Time));
+		return (unsigned char) p->data[sizeof(RakNet::MessageID) + sizeof(RakNet::Time)];
 	}
 	else
 		return (unsigned char) p->data[0];

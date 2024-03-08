@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.TextArea;
 import gfx.controls.Button;
@@ -33,13 +33,13 @@ class Screens.ClanInvitedRequestedScreen extends ScreenWithPageNavigator
 		btnBack.addEventListener("click", this, "Back");
 						
 		//Add callbacks for C++
-		GameDelegate.addCallBack("c2f_Clans_DownloadInvitationList", this, "c2f_Clans_DownloadInvitationList");
-		GameDelegate.addCallBack("c2f_Clans_DownloadRequestList", this, "c2f_Clans_DownloadRequestList");
-		GameDelegate.addCallBack("c2f_Clans_AcceptJoinRequest", this, "c2f_Clans_AcceptJoinRequest");
-		GameDelegate.addCallBack("c2f_Clans_RejectJoinRequest", this, "c2f_Clans_RejectJoinRequest");
-		GameDelegate.addCallBack("c2f_Clans_WithdrawJoinRequest", this, "c2f_Clans_WithdrawJoinRequest");
-		GameDelegate.addCallBack("c2f_Clans_AcceptJoinInvitation", this, "c2f_Clans_AcceptJoinInvitation");
-		GameDelegate.addCallBack("c2f_Clans_RejectJoinInvitation", this, "c2f_Clans_RejectJoinInvitation");
+		ExternalInterface.addCallback("c2f_Clans_DownloadInvitationList", this, c2f_Clans_DownloadInvitationList);
+		ExternalInterface.addCallback("c2f_Clans_DownloadRequestList", this, c2f_Clans_DownloadRequestList);
+		ExternalInterface.addCallback("c2f_Clans_AcceptJoinRequest", this, c2f_Clans_AcceptJoinRequest);
+		ExternalInterface.addCallback("c2f_Clans_RejectJoinRequest", this, c2f_Clans_RejectJoinRequest);
+		ExternalInterface.addCallback("c2f_Clans_WithdrawJoinRequest", this, c2f_Clans_WithdrawJoinRequest);
+		ExternalInterface.addCallback("c2f_Clans_AcceptJoinInvitation", this, c2f_Clans_AcceptJoinInvitation);
+		ExternalInterface.addCallback("c2f_Clans_RejectJoinInvitation", this, c2f_Clans_RejectJoinInvitation);
 				
 		super.VOnFinishedLoading();
 	}
@@ -76,8 +76,8 @@ class Screens.ClanInvitedRequestedScreen extends ScreenWithPageNavigator
 	private function DownloadLists():Void
 	{
 		ConsoleWindow.Trace("DownloadLists");
-		GameDelegate.call("f2c_Clans_DownloadInvitationList", [], _root);
-		GameDelegate.call("f2c_Clans_DownloadRequestList", [], _root);		
+		ExternalInterface.call("f2c_Clans_DownloadInvitationList");
+		ExternalInterface.call("f2c_Clans_DownloadRequestList");		
 	}
 	
 	public function c2f_Clans_DownloadInvitationList():Void
@@ -258,8 +258,8 @@ class Screens.ClanInvitedRequestedScreen extends ScreenWithPageNavigator
 		ConsoleWindow.Trace( "clan name = " + mcSelectedEntry.tfClanName.text + ", subject = " +  mcMail.GetSubjectField() + ", msg = " +  mcMail.GetMsgField() + 
 														", sender = " + 
 														   mcSelectedEntry.username + ", check box = " +  mcMail.IsCheckBoxOn() );
-		GameDelegate.call("f2c_Clans_AcceptJoinRequest", [mcSelectedEntry.tfClanName.text, mcMail.GetSubjectField(), mcMail.GetMsgField(), "0",
-														   mcSelectedEntry.username, mcMail.IsCheckBoxOn()], _root);
+		ExternalInterface.call("f2c_Clans_AcceptJoinRequest", mcSelectedEntry.tfClanName.text, mcMail.GetSubjectField(), mcMail.GetMsgField(), "0",
+														   mcSelectedEntry.username, mcMail.IsCheckBoxOn());
 		//HideMail();
 	}
 	
@@ -268,8 +268,8 @@ class Screens.ClanInvitedRequestedScreen extends ScreenWithPageNavigator
 		//ConsoleWindow.Trace( "clan name = " + mcSelectedEntry.tfClanName.text + ", subject = " +  mcMail.GetSubjectField() + ", msg = " +  mcMail.GetMsgField() + 
 		//												", sender = " + 
 		//												   mcSelectedEntry.username + ", check box = " +  mcMail.IsCheckBoxOn() );
-		GameDelegate.call("f2c_Clans_RejectJoinRequest", [mcSelectedEntry.tfClanName.text,  mcMail.GetSubjectField(), mcMail.GetMsgField(), "0",
-														   mcSelectedEntry.username], _root);
+		ExternalInterface.call("f2c_Clans_RejectJoinRequest", mcSelectedEntry.tfClanName.text,  mcMail.GetSubjectField(), mcMail.GetMsgField(), "0",
+														   mcSelectedEntry.username);
 		//HideMail();
 	}
 		
@@ -351,8 +351,8 @@ class Screens.ClanInvitedRequestedScreen extends ScreenWithPageNavigator
 	
 	public function WithdrawJoinRequest():Void
 	{		
-		GameDelegate.call("f2c_Clans_WithdrawJoinRequest", [mcSelectedEntry.tfClanName.text,  mcMail.GetSubjectField(), mcMail.GetMsgField(), "0"
-														  ], _root);
+		ExternalInterface.call("f2c_Clans_WithdrawJoinRequest", mcSelectedEntry.tfClanName.text,  mcMail.GetSubjectField(), mcMail.GetMsgField(), "0"
+														  );
 	}
 	
 	public function c2f_Clans_WithdrawJoinRequest(resultIdentifier:String):Void
@@ -399,8 +399,8 @@ class Screens.ClanInvitedRequestedScreen extends ScreenWithPageNavigator
 	public function AcceptJoinInvitation():Void
 	{		
 		ConsoleWindow.Trace("trying to accept join invitation... clan name = " + mcMail.GetToField());
-		GameDelegate.call("f2c_Clans_AcceptJoinInvitation", [mcMail.GetToField(), mcMail.GetSubjectField(), mcMail.GetMsgField(), "0",
-														   mcMail.IsCheckBoxOn()], _root);
+		ExternalInterface.call("f2c_Clans_AcceptJoinInvitation", mcMail.GetToField(), mcMail.GetSubjectField(), mcMail.GetMsgField(), "0",
+														   mcMail.IsCheckBoxOn());
 	}
 	
 	public function c2f_Clans_AcceptJoinInvitation(resultIdentifier:String):Void
@@ -428,8 +428,8 @@ class Screens.ClanInvitedRequestedScreen extends ScreenWithPageNavigator
 	public function RejectJoinInvitation():Void
 	{
 		ConsoleWindow.Trace("RejectJoinInvitation(), clan = " + mcMail.GetToField());
-		GameDelegate.call("f2c_Clans_RejectJoinInvitation", [mcMail.GetToField, mcMail.GetSubjectField(), mcMail.GetMsgField(), "0"
-														   ], _root);		
+		ExternalInterface.call("f2c_Clans_RejectJoinInvitation", mcMail.GetToField, mcMail.GetSubjectField(), mcMail.GetMsgField(), "0"
+														   );		
 	}
 	
 	public function c2f_Clans_RejectJoinInvitation(resultIdentifier:String):Void

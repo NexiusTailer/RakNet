@@ -5,7 +5,7 @@
 // Very basic chat engine example
 // ----------------------------------------------------------------------
 #include "MessageIdentifiers.h"
-#include "RakNetworkFactory.h"
+
 #include "RakPeerInterface.h"
 #include "RakPeerInterface.h"
 #include "RakNetTypes.h"
@@ -16,19 +16,20 @@
 #include <cstring>
 #include <stdlib.h>
 #include "RakSleep.h"
+#include "Gets.h"
 
 int main(void)
 {
 	// Pointers to the interfaces of our server and client.
 	// Note we can easily have both in the same program
-	RakPeerInterface *client;
-	RakPeerInterface *server;
+	RakNet::RakPeerInterface *client;
+	RakNet::RakPeerInterface *server;
 	bool b;
 	char str[256];
 	char serverPort[30], clientPort[30];
-	RakNetTime quitTime;
+	RakNet::TimeMS quitTime;
 	// Holds packets
-	Packet* p;	
+	RakNet::Packet* p;	
 
 	printf("A client / server sample showing how clients can broadcast offline packets\n");
 	printf("to find active servers.\n");
@@ -36,22 +37,22 @@ int main(void)
 
 	printf("Instructions:\nRun one or more servers on the same port.\nRun a client and it will get pongs from those servers.\n");
 	printf("Run as (s)erver or (c)lient?\n");
-	gets(str);
+	Gets(str, sizeof(str));
 
 	if (str[0]=='s' || str[0]=='S')
 	{
 		client=0;
-		server=RakNetworkFactory::GetRakPeerInterface();
+		server=RakNet::RakPeerInterface::GetInstance();
 		// A server
 		printf("Enter the server port\n");
-		gets(serverPort);
+		Gets(serverPort,sizeof(serverPort));
 		if (serverPort[0]==0)
 			strcpy(serverPort, "60001");
 
 		printf("Starting server.\n");
 		// The server has to be started to respond to pings.
-		SocketDescriptor socketDescriptor(atoi(serverPort),0);
-		b = server->Startup(2, 30, &socketDescriptor, 1);
+		RakNet::SocketDescriptor socketDescriptor(atoi(serverPort),0);
+		b = server->Startup(2, &socketDescriptor, 1)==RakNet::RAKNET_STARTED;
 		server->SetMaximumIncomingConnections(2);
 		if (b)
 			printf("Server started, waiting for connections.\n");
@@ -63,20 +64,20 @@ int main(void)
 	}
 	else
 	{
-		client=RakNetworkFactory::GetRakPeerInterface();
+		client=RakNet::RakPeerInterface::GetInstance();
 		server=0;
 
 		// Get our input
 		printf("Enter the client port to listen on, or 0\n");
-		gets(clientPort);
+		Gets(clientPort,sizeof(clientPort));
 		if (clientPort[0]==0)
 			strcpy(clientPort, "60000");
 		printf("Enter the port to ping\n");
-		gets(serverPort);
+		Gets(serverPort,sizeof(serverPort));
 		if (serverPort[0]==0)
 			strcpy(serverPort, "60001");
-		SocketDescriptor socketDescriptor(atoi(clientPort),0);
-		client->Startup(1, 30, &socketDescriptor, 1);
+		RakNet::SocketDescriptor socketDescriptor(atoi(clientPort),0);
+		client->Startup(1, &socketDescriptor, 1);
 
 		// Connecting the client is very simple.  0 means we don't care about
 		// a connectionValidationInteger, and false for low priority threads
@@ -87,17 +88,17 @@ int main(void)
 	}
 
 	printf("How many seconds to run this sample for?\n");
-	gets(str);
+	Gets(str, sizeof(str));
 	if (str[0]==0)
 	{
 		printf("Defaulting to 5 seconds\n");
-		quitTime = RakNet::GetTime() + 5000;
+		quitTime = RakNet::GetTimeMS() + 5000;
 	}
 	else
-		quitTime = RakNet::GetTime() + atoi(str) * 1000;
+		quitTime = RakNet::GetTimeMS() + atoi(str) * 1000;
 
 	// Loop for input
-	while (RakNet::GetTime() < quitTime)
+	while (RakNet::GetTimeMS() < quitTime)
 	{
 		if (server)
 			p = server->Receive();
@@ -113,11 +114,13 @@ int main(void)
 			server->DeallocatePacket(p);
 		else
 		{
-			if (p->data[0]==ID_PONG)
+			if (p->data[0]==ID_UNCONNECTED_PONG)
 			{
-				RakNetTime time;
-				memcpy((char*)&time, p->data+1, sizeof(RakNetTime));
-				printf("Got pong from %s with time %i\n", p->systemAddress.ToString(), RakNet::GetTime() - time);
+				RakNet::TimeMS time;
+				RakNet::BitStream bsIn(p->data,p->length,false);
+				bsIn.IgnoreBytes(1);
+				bsIn.Read(time);
+				printf("Got pong from %s with time %i\n", p->systemAddress.ToString(), RakNet::GetTimeMS() - time);
 			}
 			client->DeallocatePacket(p);
 		}
@@ -127,9 +130,9 @@ int main(void)
 
 	// We're done with the network
 	if (server)
-		RakNetworkFactory::DestroyRakPeerInterface(server);
+		RakNet::RakPeerInterface::DestroyInstance(server);
 	if (client)
-		RakNetworkFactory::DestroyRakPeerInterface(client);
+		RakNet::RakPeerInterface::DestroyInstance(client);
 
 	return 0;
 }

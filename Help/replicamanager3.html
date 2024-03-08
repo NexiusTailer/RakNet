@@ -133,10 +133,9 @@ VariableDeltaSerializer::SerializationContext serializationContext;<br>
   if (variableDeltaSerializer.DeserializeVariable(&amp;deserializationContext, var4Reliable))<br>
   printf(&quot;var4Reliable changed to %i\n&quot;, var4Reliable);<br>
   variableDeltaSerializer.EndDeserialize(&amp;deserializationContext);<br>
-  }</p>
-<p class="RakNetCode">&nbsp; </p>
+  } </p>
     <p><strong> Quick start:</strong><br>
-      </p>
+    </p>
     <ol>
       <li> Derive from Connection_RM3 and implement Connection_RM3::AllocReplica(). This is a factory function where given an identifier for a class (such as name) return an instance of that class. Should be able to return any networked object in your game.</li>
       <li> Derive from ReplicaManager3 and implement AllocConnection() and DeallocConnection() to return the class you created in step 1.</li>

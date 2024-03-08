@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 
@@ -37,56 +37,56 @@ class Screens.ClanQueryScreen extends Screen
 		clans_GetList_Button.addEventListener("click", this, "f2c_Clans_GetList");
 				
 		//Add callbacks for C++
-	//	GameDelegate.addCallBack("c2f_Clans_GetProperties", this, "c2f_Clans_GetProperties");
-		GameDelegate.addCallBack("c2f_Clans_GetMemberProperties", this, "c2f_Clans_GetMemberProperties");
-	//	GameDelegate.addCallBack("c2f_Clans_Get", this, "c2f_Clans_Get");
-		//GameDelegate.addCallBack("c2f_Clans_DownloadInvitationList", this, "c2f_Clans_DownloadInvitationList");
-		//GameDelegate.addCallBack("c2f_Clans_DownloadRequestList", this, "c2f_Clans_DownloadRequestList");
-	//	GameDelegate.addCallBack("c2f_Clans_GetBlacklist", this, "c2f_Clans_GetBlacklist");
-	//	GameDelegate.addCallBack("c2f_Clans_GetMembers", this, "c2f_Clans_GetMembers");
-	//	GameDelegate.addCallBack("c2f_Clans_GetList", this, "c2f_Clans_GetList");
+	//	ExternalInterface.addCallback("c2f_Clans_GetProperties", this, c2f_Clans_GetProperties);
+		ExternalInterface.addCallback("c2f_Clans_GetMemberProperties", this, c2f_Clans_GetMemberProperties);
+	//	ExternalInterface.addCallback("c2f_Clans_Get", this, c2f_Clans_Get);
+		//ExternalInterface.addCallback("c2f_Clans_DownloadInvitationList", this, c2f_Clans_DownloadInvitationList);
+		//ExternalInterface.addCallback("c2f_Clans_DownloadRequestList", this, c2f_Clans_DownloadRequestList);
+	//	ExternalInterface.addCallback("c2f_Clans_GetBlacklist", this, c2f_Clans_GetBlacklist);
+	//	ExternalInterface.addCallback("c2f_Clans_GetMembers", this, c2f_Clans_GetMembers);
+	//	ExternalInterface.addCallback("c2f_Clans_GetList", this, c2f_Clans_GetList);
 		
 		super.VOnFinishedLoading();
 	}
 	
 	public function f2c_Clans_GetProperties():Void
 	{
-//		GameDelegate.call("f2c_Clans_GetProperties", [clanHandle_EditBox.text], _root);
+//		ExternalInterface.call("f2c_Clans_GetProperties", clanHandle_EditBox.text);
 	}
 
 	public function f2c_Clans_GetMemberProperties():Void
 	{
-		GameDelegate.call("f2c_Clans_GetMemberProperties", [clans_GetMemberProperties_clanHandle_EditBox.text,
-															clans_GetMemberProperties_targetHandle_EditBox.text], _root);
+		ExternalInterface.call("f2c_Clans_GetMemberProperties", clans_GetMemberProperties_clanHandle_EditBox.text,
+															clans_GetMemberProperties_targetHandle_EditBox.text);
 	}
 
 	public function f2c_Clans_Get():Void
 	{
-//		GameDelegate.call("f2c_Clans_Get", [], _root);
+//		ExternalInterface.call("f2c_Clans_Get");
 	}
 
 	public function f2c_Clans_DownloadInvitationList():Void
 	{
-		GameDelegate.call("f2c_Clans_DownloadInvitationList", [], _root);
+		ExternalInterface.call("f2c_Clans_DownloadInvitationList");
 	}
 	public function f2c_Clans_DownloadRequestList():Void
 	{
-		GameDelegate.call("f2c_Clans_DownloadRequestList", [], _root);
+		ExternalInterface.call("f2c_Clans_DownloadRequestList");
 	}
 
 /*	public function f2c_Clans_GetBlacklist():Void
 	{
-		GameDelegate.call("f2c_Clans_GetBlacklist", [clanHandle_EditBox.text], _root);
+		ExternalInterface.call("f2c_Clans_GetBlacklist", clanHandle_EditBox.text);
 	}
 */
 	public function f2c_Clans_GetMembers():Void
 	{
-	//	GameDelegate.call("f2c_Clans_GetMembers", [clanHandle_EditBox.text], _root);
+	//	ExternalInterface.call("f2c_Clans_GetMembers", clanHandle_EditBox.text);
 	}
 
 	public function f2c_Clans_GetList():Void
 	{
-	//	GameDelegate.call("f2c_Clans_GetList", [], _root);
+	//	ExternalInterface.call("f2c_Clans_GetList");
 	}
 
 /*	public function c2f_Clans_GetProperties(resultIdentifier:String, clanDescription:String):Void

@@ -10,9 +10,9 @@
 struct TransformationHistoryCell
 {
 	TransformationHistoryCell();
-	TransformationHistoryCell(RakNetTime t, const Ogre::Vector3& pos, const Ogre::Vector3& vel, const Ogre::Quaternion& quat  );
+	TransformationHistoryCell(RakNet::TimeMS t, const Ogre::Vector3& pos, const Ogre::Vector3& vel, const Ogre::Quaternion& quat  );
 
-	RakNetTime time;
+	RakNet::TimeMS time;
 	Ogre::Vector3 position;
 	Ogre::Quaternion orientation;
 	Ogre::Vector3 velocity;
@@ -21,9 +21,9 @@ struct TransformationHistoryCell
 class TransformationHistory
 {
 public:
-	void Init(RakNetTime maxWriteInterval, RakNetTime maxHistoryTime);
-	void Write(const Ogre::Vector3 &position, const Ogre::Vector3 &velocity, const Ogre::Quaternion &orientation, RakNetTime curTimeMS);
-	void Overwrite(const Ogre::Vector3 &position, const Ogre::Vector3 &velocity, const Ogre::Quaternion &orientation, RakNetTime when);
+	void Init(RakNet::TimeMS maxWriteInterval, RakNet::TimeMS maxHistoryTime);
+	void Write(const Ogre::Vector3 &position, const Ogre::Vector3 &velocity, const Ogre::Quaternion &orientation, RakNet::TimeMS curTimeMS);
+	void Overwrite(const Ogre::Vector3 &position, const Ogre::Vector3 &velocity, const Ogre::Quaternion &orientation, RakNet::TimeMS when);
 	enum ReadResult
 	{
 		// We are reading so far in the past there is no data yet
@@ -35,12 +35,12 @@ public:
 	};
 	// Parameters are in/out, modified to reflect the history
 	ReadResult Read(Ogre::Vector3 *position, Ogre::Vector3 *velocity, Ogre::Quaternion *orientation,
-		RakNetTime when, RakNetTime curTime);
+		RakNet::TimeMS when, RakNet::TimeMS curTime);
 	void Clear(void);
 protected:
 	DataStructures::Queue<TransformationHistoryCell> history;
 	unsigned maxHistoryLength;
-	RakNetTime writeInterval;
+	RakNet::TimeMS writeInterval;
 };
 
 #endif

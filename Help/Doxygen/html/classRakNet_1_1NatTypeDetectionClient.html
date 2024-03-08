@@ -32,7 +32,7 @@
 <h1>RakNet::NatTypeDetectionClient Class Reference<br>
 <small>
 [<a class="el" href="group__NAT__TYPE__DETECTION__GROUP.html">NatTypeDetection</a>]</small>
-</h1><!-- doxytag: class="RakNet::NatTypeDetectionClient" --><!-- doxytag: inherits="PluginInterface2" -->Client code for NatTypeDetection.  
+</h1><!-- doxytag: class="RakNet::NatTypeDetectionClient" --><!-- doxytag: inherits="RakNet::PluginInterface2" -->Client code for NatTypeDetection.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;NatTypeDetectionClient.h&gt;</code>
@@ -43,7 +43,7 @@ Inheritance diagram for RakNet::NatTypeDetectionClient:</div>
 
 <p><center><img src="classRakNet_1_1NatTypeDetectionClient.png" usemap="#RakNet::NatTypeDetectionClient_map" border="0" alt=""></center>
 <map name="RakNet::NatTypeDetectionClient_map">
-<area href="classPluginInterface2.html" alt="PluginInterface2" shape="rect" coords="0,0,190,24">
+<area href="classRakNet_1_1PluginInterface2.html" alt="RakNet::PluginInterface2" shape="rect" coords="0,0,190,24">
 </map>
 </div>
 
@@ -51,21 +51,21 @@ Inheritance diagram for RakNet::NatTypeDetectionClient:</div>
 <a href="classRakNet_1_1NatTypeDetectionClient-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatTypeDetectionClient.html#7b8e57d2e0d65bea6f58d41d15c188f1">DetectNATType</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> _serverAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatTypeDetectionClient.html#7b8e57d2e0d65bea6f58d41d15c188f1">DetectNATType</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> _serverAddress)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="706c3f546daf15fa38abed920bb3fb4f"></a><!-- doxytag: member="RakNet::NatTypeDetectionClient::Update" ref="706c3f546daf15fa38abed920bb3fb4f" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatTypeDetectionClient.html#706c3f546daf15fa38abed920bb3fb4f">Update</a> (void)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update is called every time a packet is checked for . <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatTypeDetectionClient.html#264c0f60ebec5f2332821abc5c774f1e">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g89998adaafb29e5d879113b992161085">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatTypeDetectionClient.html#264c0f60ebec5f2332821abc5c774f1e">OnReceive</a> (<a class="el" href="structRakNet_1_1Packet.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatTypeDetectionClient.html#648af2c85dc2a357245c7ff073923527">OnClosedConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#gab440a9aec9ec5c84d009b2e1db9da24">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatTypeDetectionClient.html#648af2c85dc2a357245c7ff073923527">OnClosedConnection</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Client code for NatTypeDetection. 
 <p>
-See <a class="el" href="NatTypeDetectionServer_8h.html" title="Contains the NAT-type detection code for the server.">NatTypeDetectionServer.h</a> for algorithm To use, just connect to the server, and call DetectNAT You will get back ID_NAT_TYPE_DETECTION_RESULT with one of the enumerated values of NATTypeDetectionResult found in NATTypeDetectionCommon.h See also <a href="http://www.jenkinssoftware.com/raknet/manual/natpunchthrough.html">http://www.jenkinssoftware.com/raknet/manual/natpunchthrough.html</a> <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="classNatPunchthroughClient.html" title="Client code for NATPunchthrough.">NatPunchthroughClient</a> <p>
+See <a class="el" href="NatTypeDetectionServer_8h.html" title="Contains the NAT-type detection code for the server.">NatTypeDetectionServer.h</a> for algorithm To use, just connect to the server, and call DetectNAT You will get back ID_NAT_TYPE_DETECTION_RESULT with one of the enumerated values of NATTypeDetectionResult found in NATTypeDetectionCommon.h See also <a href="http://www.jenkinssoftware.com/raknet/manual/natpunchthrough.html">http://www.jenkinssoftware.com/raknet/manual/natpunchthrough.html</a> <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="classRakNet_1_1NatPunchthroughClient.html" title="Client code for NATPunchthrough.">NatPunchthroughClient</a> <p>
 <a class="el" href="classRakNet_1_1NatTypeDetectionServer.html" title="Server code for NatTypeDetection.">NatTypeDetectionServer</a> </dd></dl>
 <hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="7b8e57d2e0d65bea6f58d41d15c188f1"></a><!-- doxytag: member="RakNet::NatTypeDetectionClient::DetectNATType" ref="7b8e57d2e0d65bea6f58d41d15c188f1" args="(SystemAddress _serverAddress)" -->
@@ -75,7 +75,7 @@ See <a class="el" href="NatTypeDetectionServer_8h.html" title="Contains the NAT-
         <tr>
           <td class="memname">void RakNet::NatTypeDetectionClient::DetectNATType           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
           <td class="paramname"> <em>_serverAddress</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td></td>
@@ -100,19 +100,19 @@ Send the message to the server to detect the nat type Server must be running <a 
         <tr>
           <td class="memname">virtual void RakNet::NatTypeDetectionClient::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td>
           <td class="paramname"> <em>rakNetGUID</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#gab440a9aec9ec5c84d009b2e1db9da24">PI2_LostConnectionReason</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a>&nbsp;</td>
           <td class="paramname"> <em>lostConnectionReason</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -125,7 +125,7 @@ Send the message to the server to detect the nat type Server must be running <a 
 <div class="memdoc">
 
 <p>
-Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#4a7c586a8be0d977354a3cfd09bab6b7" title="Close the connection to another host (if we initiated the connection it will disconnect...">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
+Called when a connection is dropped because the user called <a class="el" href="classRakNet_1_1RakPeer.html#95e3806fce8552e322236abcf105cbf9" title="Close the connection to another host (if we initiated the connection it will disconnect...">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system whose connection was closed </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
@@ -133,7 +133,7 @@ Called when a connection is dropped because the user called <a class="el" href="
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface2.html#f14d27351aca9bfd5b4fc2ac1461ff14">PluginInterface2</a>.</p>
+<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#b6b48bb474e340ad27c8ef9b98fae051">RakNet::PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -142,9 +142,9 @@ Called when a connection is dropped because the user called <a class="el" href="
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a> RakNet::NatTypeDetectionClient::OnReceive           </td>
+          <td class="memname">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g89998adaafb29e5d879113b992161085">PluginReceiveResult</a> RakNet::NatTypeDetectionClient::OnReceive           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1Packet.html">Packet</a> *&nbsp;</td>
           <td class="paramname"> <em>packet</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [virtual]</code></td>
@@ -161,14 +161,14 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface2.html#bc50017a35682db5202a7562c58898ea">PluginInterface2</a>.</p>
+<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#a86f33263c1648f11b8a006469272639">RakNet::PluginInterface2</a>.</p>
 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/RakNet-3.x/Source/<a class="el" href="NatTypeDetectionClient_8h.html">NatTypeDetectionClient.h</a></ul>
+<li>d:/temp/RakNet4/Source/<a class="el" href="NatTypeDetectionClient_8h.html">NatTypeDetectionClient.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 22 08:28:36 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:29 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

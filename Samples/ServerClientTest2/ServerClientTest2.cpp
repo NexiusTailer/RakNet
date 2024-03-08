@@ -1,5 +1,5 @@
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
+
 #include "BitStream.h"
 #include <stdlib.h> // For atoi
 #include <cstring> // For strlen
@@ -12,6 +12,7 @@
 #include "RakAssert.h"
 #include "RakSleep.h"
 
+using namespace RakNet;
 
 #ifdef _WIN32
 #include "WindowsIncludes.h" // Sleep
@@ -33,25 +34,25 @@ class Client
 	public:
 		Client()
 		{
-			peer = RakNetworkFactory::GetRakPeerInterface();
+			peer = RakNet::RakPeerInterface::GetInstance();
 		}
 		~Client()
 		{
-			RakNetworkFactory::DestroyRakPeerInterface(peer);
+			RakNet::RakPeerInterface::DestroyInstance(peer);
 		}
 		void Startup(void)
 		{
-			SocketDescriptor socketDescriptor;
+			RakNet::SocketDescriptor socketDescriptor;
 			socketDescriptor.port=0;
 			nextSendTime=0;
-			bool b = peer->Startup(1,30,&socketDescriptor,1);
+			bool b = peer->Startup(1,&socketDescriptor,1)==RakNet::RAKNET_STARTED;
 			RakAssert(b);
 			isConnected=false;
 		}
 		void Connect(void)
 		{
 			bool b;
-			b=peer->Connect(remoteIPAddress, (unsigned short) SERVER_PORT, 0, 0, 0);
+			b=peer->Connect(remoteIPAddress, (unsigned short) SERVER_PORT, 0, 0, 0)!=RakNet::CONNECTION_ATTEMPT_STARTED;
 			if (b==false)
 			{
 				printf("Client connect call failed!\n");
@@ -62,7 +63,7 @@ class Client
 			peer->CloseConnection(peer->GetSystemAddressFromIndex(0),true,0);
 			isConnected=false;
 		}
-		void Update(RakNetTime curTime)
+		void Update(RakNet::TimeMS curTime)
 		{
 			Packet *p = peer->Receive();
 			while (p)
@@ -102,9 +103,6 @@ class Client
 					printf("Client Error: ID_CONNECTION_LOST\n");
 					isConnected=false;
 					break;
-				case ID_MODIFIED_PACKET:
-					printf("Client Error: ID_MODIFIED_PACKET\n");
-					break;
 				}
 				peer->DeallocatePacket(p);
 				p = peer->Receive();
@@ -113,14 +111,14 @@ class Client
 
 			if (curTime>nextSendTime && isConnected)
 			{
-				peer->Send((const char*)&randomData,RANDOM_DATA_SIZE,HIGH_PRIORITY,RELIABLE_ORDERED,0,UNASSIGNED_SYSTEM_ADDRESS,true);
+				peer->Send((const char*)&randomData,RANDOM_DATA_SIZE,HIGH_PRIORITY,RELIABLE_ORDERED,0,RakNet::UNASSIGNED_SYSTEM_ADDRESS,true);
 				nextSendTime=curTime+30;
 			}
 		}
 
 		bool isConnected;
 		RakPeerInterface *peer;
-		RakNetTime nextSendTime;
+		RakNet::TimeMS nextSendTime;
 };
 
 // Just listens for ID_USER_PACKET_ENUM and validates its integrity
@@ -129,17 +127,17 @@ class Server
 	public:
 		Server()
 		{
-			peer = RakNetworkFactory::GetRakPeerInterface();
+			peer = RakNet::RakPeerInterface::GetInstance();
 		}
 		~Server()
 		{
-			RakNetworkFactory::DestroyRakPeerInterface(peer);
+			RakNet::RakPeerInterface::DestroyInstance(peer);
 		}
 		void Start(void)
 		{
-			SocketDescriptor socketDescriptor;
+			RakNet::SocketDescriptor socketDescriptor;
 			socketDescriptor.port=(unsigned short) SERVER_PORT;
-			bool b = peer->Startup((unsigned short) NUM_CLIENTS,0,&socketDescriptor,1);
+			bool b = peer->Startup((unsigned short) NUM_CLIENTS,&socketDescriptor,1)==RakNet::RAKNET_STARTED;
 			RakAssert(b);
 			peer->SetMaximumIncomingConnections(NUM_CLIENTS);
 		}
@@ -147,11 +145,11 @@ class Server
 		{
 			unsigned i,count;
 			for (i=0,count=0; i < NUM_CLIENTS;i++)
-				if (peer->GetSystemAddressFromIndex(i)!=UNASSIGNED_SYSTEM_ADDRESS)
+				if (peer->GetSystemAddressFromIndex(i)!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 					count++;
 			return count;
 		}
-		void Update(RakNetTime curTime)
+		void Update(RakNet::TimeMS curTime)
 		{
 			Packet *p = peer->Receive();
 			while (p)
@@ -230,8 +228,8 @@ int main(void)
 		printf("Done.\n");
 	}
 	
-	RakNetTime endTime = RakNet::GetTime()+60000*5;
-	RakNetTime time = RakNet::GetTime();
+	RakNet::TimeMS endTime = RakNet::GetTimeMS()+60000*5;
+	RakNet::TimeMS time = RakNet::GetTimeMS();
 	while (time < endTime)
 	{
 		if (mode==0 || mode==2)
@@ -282,7 +280,7 @@ int main(void)
 				break;
 		}
 
-		time = RakNet::GetTime();
+		time = RakNet::GetTimeMS();
 		RakSleep(30);
 	}
 

@@ -1,5 +1,5 @@
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
+
 #include "BitStream.h"
 #include <stdlib.h> // For atoi
 #include <cstring> // For strlen
@@ -8,6 +8,7 @@
 #include "MessageIdentifiers.h"
 #include <stdio.h>
 #include "GetTime.h"
+using namespace RakNet;
 
 #ifdef _WIN32
 #include "WindowsIncludes.h" // Sleep
@@ -21,70 +22,6 @@
 
 #define NUM_PEERS 10
 #define CONNECTIONS_PER_SYSTEM 4
-
-void RPC1(RPCParameters *rpcParameters)
-{
-	unsigned short packetPort, interfacePort;
-	interfacePort=rpcParameters->recipient->GetInternalID().port;
-	memcpy((char*)&packetPort, rpcParameters->input, sizeof(unsigned short));
-#ifdef _VERIFY_RECIPIENTS
-	assert(packetPort==65535 || packetPort==interfacePort); // If this assert hits then the wrong recipient got the packet
-#endif
-#ifdef _DO_PRINTF
-	if (rpcParameters->input)
-		printf("RPC1: %s\n", rpcParameters->input);
-	else
-		printf("RPC1\n");
-#endif
-}
-
-void RPC2(RPCParameters *rpcParameters)
-{
-	unsigned short packetPort, interfacePort;
-	interfacePort=rpcParameters->recipient->GetInternalID().port;
-	memcpy((char*)&packetPort, rpcParameters->input, sizeof(unsigned short));
-#ifdef _VERIFY_RECIPIENTS
-	assert(packetPort==65535 || packetPort==interfacePort); // If this assert hits then the wrong recipient got the packet
-#endif
-#ifdef _DO_PRINTF
-	if (rpcParameters->input)
-		printf("RPC1: %s\n", rpcParameters->input);
-	else
-		printf("RPC1\n");
-#endif
-}
-
-void RPC3(RPCParameters *rpcParameters)
-{
-	unsigned short packetPort, interfacePort;
-	interfacePort=rpcParameters->recipient->GetInternalID().port;
-	memcpy((char*)&packetPort, rpcParameters->input, sizeof(unsigned short));
-#ifdef _VERIFY_RECIPIENTS
-	assert(packetPort==65535 || packetPort==interfacePort); // If this assert hits then the wrong recipient got the packet
-#endif
-#ifdef _DO_PRINTF
-	if (rpcParameters->input)
-		printf("RPC1: %s\n", rpcParameters->input);
-	else
-		printf("RPC1\n");
-#endif
-}
-
-void RPC4(RPCParameters *rpcParameters)
-{
-	unsigned short packetPort, interfacePort;
-	interfacePort=rpcParameters->recipient->GetInternalID().port;
-	memcpy((char*)&packetPort, rpcParameters->input, sizeof(unsigned short));
-#ifdef _VERIFY_RECIPIENTS
-	assert(packetPort==65535 || packetPort==interfacePort); // If this assert hits then the wrong recipient got the packet
-#endif
-#ifdef _DO_PRINTF
-	if (rpcParameters->input)
-		printf("RPC1: %s\n", rpcParameters->input);
-	else
-		printf("RPC1\n");
-#endif
-}
 
 int main(void)
 {
@@ -104,16 +41,11 @@ int main(void)
 
 	for (i=0; i < NUM_PEERS; i++)
 	{
-		peers[i]=RakNetworkFactory::GetRakPeerInterface();
+		peers[i]=RakNet::RakPeerInterface::GetInstance();
 		peers[i]->SetMaximumIncomingConnections(CONNECTIONS_PER_SYSTEM);
-		SocketDescriptor socketDescriptor(60000+i, 0);
-		peers[i]->Startup(NUM_PEERS, 0, &socketDescriptor, 1);
+		RakNet::SocketDescriptor socketDescriptor(60000+i, 0);
+		peers[i]->Startup(NUM_PEERS, &socketDescriptor, 1);
 		peers[i]->SetOfflinePingResponse("Offline Ping Data", (int)strlen("Offline Ping Data")+1);
-		peers[i]->ApplyNetworkSimulator(500,50,50);
-		REGISTER_STATIC_RPC(peers[i], RPC1);
-		REGISTER_STATIC_RPC(peers[i], RPC2);
-		REGISTER_STATIC_RPC(peers[i], RPC3);
-		REGISTER_STATIC_RPC(peers[i], RPC4);
 	}
 
 	for (i=0; i < NUM_PEERS; i++)
@@ -121,8 +53,8 @@ int main(void)
 		peers[i]->Connect("127.0.0.1", 60000+(randomMT()%NUM_PEERS), 0, 0);		
 	}
 
-	RakNetTime endTime = RakNet::GetTime()+600000;
-	while (RakNet::GetTime()<endTime)
+	RakNet::TimeMS endTime = RakNet::GetTimeMS()+600000;
+	while (RakNet::GetTimeMS()<endTime)
 	{
 		nextAction = frandomMT();
 
@@ -130,8 +62,8 @@ int main(void)
 		{
 			// Initialize
 			peerIndex=randomMT()%NUM_PEERS;
-			SocketDescriptor socketDescriptor(60000+peerIndex, 0);
-			peers[peerIndex]->Startup(NUM_PEERS, randomMT()%30, &socketDescriptor, 1);
+			RakNet::SocketDescriptor socketDescriptor(60000+peerIndex, 0);
+			peers[peerIndex]->Startup(NUM_PEERS, &socketDescriptor, 1);
 			peers[peerIndex]->Connect("127.0.0.1", 60000+randomMT() % NUM_PEERS, 0, 0);
 		}
 		else if (nextAction < .09f)
@@ -183,7 +115,7 @@ int main(void)
 			reliability=(PacketReliability)(randomMT()%((int)RELIABLE_SEQUENCED+1));
 			orderingChannel=randomMT()%32;
 			if ((randomMT()%NUM_PEERS)==0)
-				target=UNASSIGNED_SYSTEM_ADDRESS;
+				target=RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 			else
 				target=peers[peerIndex]->GetSystemAddressFromIndex(randomMT()%NUM_PEERS);
 
@@ -203,14 +135,12 @@ int main(void)
 		}
 		else if (nextAction < .18f)
 		{
-			// RPC
 			int dataLength;
 			PacketPriority priority;
 			PacketReliability reliability;
 			unsigned char orderingChannel;
 			SystemAddress target;
 			bool broadcast;
-			char RPCName[10];
 
 			data[0]=ID_USER_PACKET_ENUM+(randomMT()%10);
 			dataLength=3+(randomMT()%8000);
@@ -220,7 +150,7 @@ int main(void)
 			orderingChannel=randomMT()%32;
 			peerIndex=randomMT()%NUM_PEERS;
 			if ((randomMT()%NUM_PEERS)==0)
-				target=UNASSIGNED_SYSTEM_ADDRESS;
+				target=RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 			else
 				target=peers[peerIndex]->GetSystemAddressFromIndex(randomMT()%NUM_PEERS);
 			broadcast=(bool)(randomMT()%2);
@@ -233,8 +163,6 @@ int main(void)
 			memcpy((char*)data, (char*)&target.port, sizeof(unsigned short));
 #endif
 			data[dataLength-1]=0;
-			sprintf(RPCName, "RPC%i", (randomMT()%4)+1);
-			peers[peerIndex]->RPC(RPCName, data, dataLength*8, priority, reliability, orderingChannel, target, broadcast, 0, UNASSIGNED_NETWORK_ID,0);
 		}
 		else if (nextAction < .181f)
 		{
@@ -260,9 +188,7 @@ int main(void)
 		}
 		else if (nextAction < .24f)
 		{
-			// SetCompileFrequencyTable
-			peerIndex=randomMT()%NUM_PEERS;
-			peers[peerIndex]->SetCompileFrequencyTable(randomMT()%2);
+
 		}
 		else if (nextAction < .25f)
 		{
@@ -303,7 +229,7 @@ int main(void)
 
 
 	for (i=0; i < NUM_PEERS; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(peers[i]);
+		RakNet::RakPeerInterface::DestroyInstance(peers[i]);
 
 	return 0;
 }

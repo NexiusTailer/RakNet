@@ -15,16 +15,17 @@
 #include <stdlib.h>
 
 #include "SocketIncludes.h"
+#include "RakNetDefines.h"
 
-
-
-#if   defined(_WIN32)
+#if defined(_XBOX) || defined(X360)
+                            
+#elif defined(_WIN32)
 #include <winsock2.h> // htonl
 #include <memory.h>
 #include <cmath>
 #include <float.h>
-
-
+#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                        
 #else
 #include <arpa/inet.h>
 #include <memory.h>
@@ -41,13 +42,13 @@
 #define _copysign copysign
 #endif
 
-
-
 using namespace RakNet;
 
 #ifdef _MSC_VER
 #pragma warning( push )
 #endif
+
+STATIC_FACTORY_DEFINITIONS(BitStream,BitStream)
 
 BitStream::BitStream()
 {
@@ -55,7 +56,7 @@ BitStream::BitStream()
 	//numberOfBitsAllocated = 32 * 8;
 	numberOfBitsAllocated = BITSTREAM_STACK_ALLOCATION_SIZE * 8;
 	readOffset = 0;
-	//data = ( unsigned char* ) rakMalloc_Ex( 32, __FILE__, __LINE__ );
+	//data = ( unsigned char* ) rakMalloc_Ex( 32, _FILE_AND_LINE_ );
 	data = ( unsigned char* ) stackData;
 
 #ifdef _DEBUG	
@@ -76,7 +77,7 @@ BitStream::BitStream( const unsigned int initialBytesToAllocate )
 	}
 	else
 	{
-		data = ( unsigned char* ) rakMalloc_Ex( (size_t) initialBytesToAllocate, __FILE__, __LINE__ );
+		data = ( unsigned char* ) rakMalloc_Ex( (size_t) initialBytesToAllocate, _FILE_AND_LINE_ );
 		numberOfBitsAllocated = initialBytesToAllocate << 3;
 	}
 #ifdef _DEBUG
@@ -104,7 +105,7 @@ BitStream::BitStream( unsigned char* _data, const unsigned int lengthInBytes, bo
 			}
 			else
 			{
-				data = ( unsigned char* ) rakMalloc_Ex( (size_t) lengthInBytes, __FILE__, __LINE__ );
+				data = ( unsigned char* ) rakMalloc_Ex( (size_t) lengthInBytes, _FILE_AND_LINE_ );
 			}
 #ifdef _DEBUG
 			RakAssert( data );
@@ -130,7 +131,7 @@ void BitStream::SetNumberOfBitsAllocated( const BitSize_t lengthInBits )
 BitStream::~BitStream()
 {
 	if ( copyData && numberOfBitsAllocated > (BITSTREAM_STACK_ALLOCATION_SIZE << 3))
-		rakFree_Ex( data , __FILE__, __LINE__ );  // Use realloc and free so we are more efficient than delete and new for resizing
+		rakFree_Ex( data , _FILE_AND_LINE_ );  // Use realloc and free so we are more efficient than delete and new for resizing
 }
 
 void BitStream::Reset( void )
@@ -151,7 +152,7 @@ void BitStream::Reset( void )
 	//numberOfBitsAllocated=8;
 	readOffset = 0;
 
-	//data=(unsigned char*)rakMalloc_Ex(1, __FILE__, __LINE__);
+	//data=(unsigned char*)rakMalloc_Ex(1, _FILE_AND_LINE_);
 	// if (numberOfBitsAllocated>0)
 	//  memset(data, 0, BITS_TO_BYTES(numberOfBitsAllocated));
 }
@@ -397,7 +398,7 @@ bool BitStream::ReadAlignedBytesSafeAlloc( char **outByteArray, int &inputLength
 }
 bool BitStream::ReadAlignedBytesSafeAlloc( char ** outByteArray, unsigned int &inputLength, const unsigned int maxBytesToRead )
 {
-	rakFree_Ex(*outByteArray, __FILE__, __LINE__ );
+	rakFree_Ex(*outByteArray, _FILE_AND_LINE_ );
 	*outByteArray=0;
 	if (ReadCompressed(inputLength)==false)
 		return false;
@@ -405,7 +406,7 @@ bool BitStream::ReadAlignedBytesSafeAlloc( char ** outByteArray, unsigned int &i
 		inputLength=maxBytesToRead;
 	if (inputLength==0)
 		return true;
-	*outByteArray = (char*) rakMalloc_Ex( (size_t) inputLength, __FILE__, __LINE__ );
+	*outByteArray = (char*) rakMalloc_Ex( (size_t) inputLength, _FILE_AND_LINE_ );
 	return ReadAlignedBytes((unsigned char*) *outByteArray, inputLength);
 }
 
@@ -705,7 +706,7 @@ void BitStream::AddBitsAndReallocate( const BitSize_t numberOfBitsToWrite )
 		{
 			if (amountToAllocate > BITSTREAM_STACK_ALLOCATION_SIZE)
 			{
-				data = ( unsigned char* ) rakMalloc_Ex( (size_t) amountToAllocate, __FILE__, __LINE__ );
+				data = ( unsigned char* ) rakMalloc_Ex( (size_t) amountToAllocate, _FILE_AND_LINE_ );
 
 				// need to copy the stack data over to our new memory area too
 				memcpy ((void *)data, (void *)stackData, (size_t) BITS_TO_BYTES( numberOfBitsAllocated )); 
@@ -713,7 +714,7 @@ void BitStream::AddBitsAndReallocate( const BitSize_t numberOfBitsToWrite )
 		}
 		else
 		{
-			data = ( unsigned char* ) rakRealloc_Ex( data, (size_t) amountToAllocate, __FILE__, __LINE__ );
+			data = ( unsigned char* ) rakRealloc_Ex( data, (size_t) amountToAllocate, _FILE_AND_LINE_ );
 		}
 
 #ifdef _DEBUG
@@ -835,7 +836,7 @@ void BitStream::PrintBits( char *out ) const
 	}
 
 	unsigned int strIndex=0;
-	for ( BitSize_t counter = 0; counter < BITS_TO_BYTES( numberOfBitsUsed ); counter++ )
+	for ( BitSize_t counter = 0; counter < BITS_TO_BYTES( numberOfBitsUsed ) && strIndex < 2000 ; counter++ )
 	{
 		BitSize_t stop;
 
@@ -891,7 +892,7 @@ BitSize_t BitStream::CopyData( unsigned char** _data ) const
 	RakAssert( numberOfBitsUsed > 0 );
 #endif
 
-	*_data = (unsigned char*) rakMalloc_Ex( (size_t) BITS_TO_BYTES( numberOfBitsUsed ), __FILE__, __LINE__ );
+	*_data = (unsigned char*) rakMalloc_Ex( (size_t) BITS_TO_BYTES( numberOfBitsUsed ), _FILE_AND_LINE_ );
 	memcpy( *_data, data, sizeof(unsigned char) * (size_t) ( BITS_TO_BYTES( numberOfBitsUsed ) ) );
 	return numberOfBitsUsed;
 }
@@ -966,7 +967,7 @@ void BitStream::AssertCopyData( void )
 
 		if ( numberOfBitsAllocated > 0 )
 		{
-			unsigned char * newdata = ( unsigned char* ) rakMalloc_Ex( (size_t) BITS_TO_BYTES( numberOfBitsAllocated ), __FILE__, __LINE__ );
+			unsigned char * newdata = ( unsigned char* ) rakMalloc_Ex( (size_t) BITS_TO_BYTES( numberOfBitsAllocated ), _FILE_AND_LINE_ );
 #ifdef _DEBUG
 
 			RakAssert( data );
@@ -982,12 +983,12 @@ void BitStream::AssertCopyData( void )
 }
 bool BitStream::IsNetworkOrderInternal(void)
 {
-
-
-
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+             
+#else
 	static const bool isNetworkOrder=(htonl(12345) == 12345);
 	return isNetworkOrder;
-
+#endif
 }
 void BitStream::ReverseBytes(unsigned char *inByteArray, unsigned char *inOutByteArray, const unsigned int length)
 {

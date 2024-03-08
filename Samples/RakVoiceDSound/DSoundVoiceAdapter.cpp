@@ -5,6 +5,8 @@
 /// To test sending to myself
 //#define _TEST_LOOPBACK
 
+using namespace RakNet;
+
 DSoundVoiceAdapter DSoundVoiceAdapter::instance;
 
 DSoundVoiceAdapter::DSoundVoiceAdapter()
@@ -367,7 +369,7 @@ void DSoundVoiceAdapter::BroadcastFrame(void *ptr)
 		rakVoice->SendFrame(rakVoice->GetRakPeerInterface()->GetGUIDFromIndex(i), ptr);
 	}
 #else
-	rakVoice->SendFrame(UNASSIGNED_SYSTEM_ADDRESS, ptr);
+	rakVoice->SendFrame(RakNet::UNASSIGNED_SYSTEM_ADDRESS, ptr);
 #endif
 
 }

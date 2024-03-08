@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-<title>RakNet: d:/RakNet-3.x/Source/RPC4Plugin.h File Reference</title>
+<title>RakNet: d:/temp/RakNet4/Source/RPC4Plugin.h File Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -23,7 +23,7 @@
       <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><a class="el" href="dir_604b8536ae4240420803795590a868a7.html">d:</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_29af967a1a71b4feac23d6a82eef1f82.html">RakNet-3.x</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_6493bf94ae2653f49db339b26979caca.html">Source</a>
+  <div class="navpath"><a class="el" href="dir_604b8536ae4240420803795590a868a7.html">d:</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_1285d55ea74ca0518d26c0bad7eeef77.html">temp</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_5a659185e26bc1a39dad4c8f5eba72e1.html">RakNet4</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_66355861432170c4af14b5395280695f.html">Source</a>
   </div>
 </div>
 <div class="contents">
@@ -37,43 +37,30 @@
 <code>#include &quot;<a class="el" href="BitStream_8h.html">BitStream.h</a>&quot;</code><br>
 <code>#include &quot;RakString.h&quot;</code><br>
 <code>#include &quot;<a class="el" href="NetworkIDObject_8h.html">NetworkIDObject.h</a>&quot;</code><br>
-<code>#include &quot;DS_StringKeyedHash.h&quot;</code><br>
+<code>#include &quot;DS_Hash.h&quot;</code><br>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC4Plugin.html">RakNet::RPC4Plugin</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC4.html">RakNet::RPC4</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The <a class="el" href="classRakNet_1_1RPC4Plugin.html" title="The RPC4Plugin plugin is just an association between a C function pointer and a string...">RPC4Plugin</a> plugin is just an association between a C function pointer and a string.  <a href="classRakNet_1_1RPC4Plugin.html#_details">More...</a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The <a class="el" href="classRakNet_1_1RPC4.html" title="The RPC4 plugin is just an association between a C function pointer and a string...">RPC4</a> plugin is just an association between a C function pointer and a string.  <a href="classRakNet_1_1RPC4.html#_details">More...</a><br></td></tr>
 <tr><td colspan="2"><br><h2>Namespaces</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">namespace &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html">RakNet</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Forward declaration. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Simple class to send changes between directories. In essence, a simple autopatcher that can be used for transmitting levels, skins, etc. <br></td></tr>
 
 <p>
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RPC__PLUGIN__GROUP.html#gc20c52e6dc585406689d52db29925bba">RakNet::RPCErrorCodes</a> { <br>
-&nbsp;&nbsp;<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbadb2af6809c1b915b09b0e801a6e457dc">RakNet::RPC_ERROR_NETWORK_ID_MANAGER_UNAVAILABLE</a>, 
-<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bba22e0bebd27fb755abb7ebbe9bf894953">RakNet::RPC_ERROR_OBJECT_DOES_NOT_EXIST</a>, 
-<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bba263732b1e349f2f52ad6fd748cbb53ac">RakNet::RPC_ERROR_FUNCTION_INDEX_OUT_OF_RANGE</a>, 
-<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbac7f3cae6bae5b9b8a015acd2c9f51bc4">RakNet::RPC_ERROR_FUNCTION_NOT_REGISTERED</a>, 
+&nbsp;&nbsp;<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbac7f3cae6bae5b9b8a015acd2c9f51bc4">RakNet::RPC_ERROR_FUNCTION_NOT_REGISTERED</a>, 
+<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bba545d6db16bfd3bc07fcb37931d0c9311">RakNet::RPC_ERROR_NETWORK_ID_MANAGER_UNAVAILABLE</a>, 
+<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbacfcc9f9c9ee2bc51c832ed784369c695">RakNet::RPC_ERROR_OBJECT_DOES_NOT_EXIST</a>, 
+<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bba82a7d8cd24989c20e60bd165daa90434">RakNet::RPC_ERROR_FUNCTION_INDEX_OUT_OF_RANGE</a>, 
 <br>
-&nbsp;&nbsp;<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbad29431d24d20b9c1cc436682e9e652e9">RakNet::RPC_ERROR_FUNCTION_NO_LONGER_REGISTERED</a>, 
-<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbab48d57a5b5eec1457ed34ba1a1606e7c">RakNet::RPC_ERROR_CALLING_CPP_AS_C</a>, 
-<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbae21ae3459e569d6dccc56d9bfc404678">RakNet::RPC_ERROR_CALLING_C_AS_CPP</a>, 
-<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbaf473136a7263c8899307ce95858d7550">RakNet::RPC_ERROR_STACK_TOO_SMALL</a>, 
-<br>
-&nbsp;&nbsp;<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bba6b8add9cc5805c7f795cbf32220dd48d">RakNet::RPC_ERROR_STACK_DESERIALIZATION_FAILED</a>, 
-<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bba223194252267d3e4c7931d098763c2b8">RakNet::RPC_ERROR_INCORRECT_NUMBER_OF_PARAMETERS</a>, 
-<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbac7f3cae6bae5b9b8a015acd2c9f51bc4">RakNet::RPC_ERROR_FUNCTION_NOT_REGISTERED</a>, 
-<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbadb2af6809c1b915b09b0e801a6e457dc">RakNet::RPC_ERROR_NETWORK_ID_MANAGER_UNAVAILABLE</a>, 
-<br>
-&nbsp;&nbsp;<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bba22e0bebd27fb755abb7ebbe9bf894953">RakNet::RPC_ERROR_OBJECT_DOES_NOT_EXIST</a>, 
-<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bba263732b1e349f2f52ad6fd748cbb53ac">RakNet::RPC_ERROR_FUNCTION_INDEX_OUT_OF_RANGE</a>, 
-<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbac7f3cae6bae5b9b8a015acd2c9f51bc4">RakNet::RPC_ERROR_FUNCTION_NOT_REGISTERED</a>, 
-<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbad29431d24d20b9c1cc436682e9e652e9">RakNet::RPC_ERROR_FUNCTION_NO_LONGER_REGISTERED</a>, 
-<br>
-&nbsp;&nbsp;<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbab48d57a5b5eec1457ed34ba1a1606e7c">RakNet::RPC_ERROR_CALLING_CPP_AS_C</a>, 
-<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbae21ae3459e569d6dccc56d9bfc404678">RakNet::RPC_ERROR_CALLING_C_AS_CPP</a>
+&nbsp;&nbsp;<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbac7f3cae6bae5b9b8a015acd2c9f51bc4">RakNet::RPC_ERROR_FUNCTION_NOT_REGISTERED</a>, 
+<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bba75e078ea6d81ea2770b1c5cc9c394063">RakNet::RPC_ERROR_FUNCTION_NO_LONGER_REGISTERED</a>, 
+<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bba6d46b2cdb480d360367f4b0dbf156544">RakNet::RPC_ERROR_CALLING_CPP_AS_C</a>, 
+<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bba416f73eb117111cfba98688053ce66ef">RakNet::RPC_ERROR_CALLING_C_AS_CPP</a>
 <br>
  }</td></tr>
 
@@ -82,9 +69,9 @@
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Remote procedure call, supporting C functions only. No external dependencies required. 
 <p>
-This file is part of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> Copyright 2003 Jenkins Software LLC<p>
-Usage of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> is subject to the appropriate license agreement. </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 22 08:28:34 2011 for RakNet by&nbsp;
+This file is part of <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> Copyright 2003 Jenkins Software LLC<p>
+Usage of <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> is subject to the appropriate license agreement. </div>
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:27 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

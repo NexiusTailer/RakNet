@@ -14,6 +14,8 @@
 #include "FileOperations.h"
 #include "SimpleMutex.h"
 
+using namespace RakNet;
+
 CrashReportControls CrashReporter::controls;
 
 // More info at:

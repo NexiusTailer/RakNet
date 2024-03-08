@@ -24,8 +24,8 @@ RemoveRouterInterface
 AdvertiseSystem
 
 */
-int MiscellaneousTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
-{	destroyList.Clear(false,__FILE__,__LINE__);
+int MiscellaneousTestsTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
+{	destroyList.Clear(false,_FILE_AND_LINE_);
 
 RakPeerInterface *client,*server;
 
@@ -45,59 +45,18 @@ if (!CommonFunctions::WaitForMessageWithID(server,ID_ADVERTISE_SYSTEM,5000))
 	return 1;
 }
 
-RouterInterfaceTester * riTester= new RouterInterfaceTester();
-
-printf("Testing SetRouterInterface\n");
-
-client->SetRouterInterface(riTester);
-
-if (riTester->wasTriggered())
-{
-
-	if (isVerbose)
-		DebugTools::ShowError(errorList[2-1],!noPauses && isVerbose,__LINE__,__FILE__);
-
-	return 2;
-}
-
-TestHelpers::SendTestPacketDirected(client,"127.0.0.1",60001);
-
-if (!riTester->wasTriggered())
-{
-
-	if (isVerbose)
-		DebugTools::ShowError(errorList[3-1],!noPauses && isVerbose,__LINE__,__FILE__);
-
-	return 3;
-}
-
-printf("Testing RemoveRouterInterface\n");
-client->RemoveRouterInterface(riTester);
-riTester->Reset();
-
-TestHelpers::SendTestPacketDirected(client,"127.0.0.1",60001);
-
-if (riTester->wasTriggered())
-{
-
-	if (isVerbose)
-		DebugTools::ShowError(errorList[4-1],!noPauses && isVerbose,__LINE__,__FILE__);
-
-	return 4;
-}
-
 return 0;
 
 }
 
-RakNet::RakString MiscellaneousTestsTest::GetTestName()
+RakString MiscellaneousTestsTest::GetTestName()
 {
 
 	return "MiscellaneousTestsTest";
 
 }
 
-RakNet::RakString MiscellaneousTestsTest::ErrorCodeToString(int errorCode)
+RakString MiscellaneousTestsTest::ErrorCodeToString(int errorCode)
 {
 
 	if (errorCode>0&&(unsigned int)errorCode<=errorList.Size())
@@ -117,17 +76,17 @@ void MiscellaneousTestsTest::DestroyPeers()
 	int theSize=destroyList.Size();
 
 	for (int i=0; i < theSize; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+		RakPeerInterface::DestroyInstance(destroyList[i]);
 
 }
 
 MiscellaneousTestsTest::MiscellaneousTestsTest(void)
 {
 
-	errorList.Push("Did not recieve client advertise",__FILE__,__LINE__);
-	errorList.Push("The router interface should not be called because no send has happened yet",__FILE__,__LINE__);
-	errorList.Push("Router failed to trigger on failed directed send",__FILE__,__LINE__);
-	errorList.Push("Router was not properly removed",__FILE__,__LINE__);
+	errorList.Push("Did not recieve client advertise",_FILE_AND_LINE_);
+	errorList.Push("The router interface should not be called because no send has happened yet",_FILE_AND_LINE_);
+	errorList.Push("Router failed to trigger on failed directed send",_FILE_AND_LINE_);
+	errorList.Push("Router was not properly removed",_FILE_AND_LINE_);
 
 }
 

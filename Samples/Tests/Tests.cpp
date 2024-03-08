@@ -2,7 +2,9 @@
 
 #include "RakString.h"
 #include "DS_List.h"
+#include "Gets.h"
 
+using namespace RakNet;
 /*
 
 The TestInterface used in this was made to be able to be flexible
@@ -20,50 +22,49 @@ int main(int argc, char *argv[])
 	int passedTests=0;
 	DataStructures::List <TestInterface*> testList;//Pointer list
 	DataStructures::List <int> testResultList;//A list of pass and/or fail and the error codes
-	DataStructures::List <RakNet::RakString> testsToRun;//A list of tests to run
+	DataStructures::List <RakString> testsToRun;//A list of tests to run
 	DataStructures::List <int> testsToRunIndexes;//A list of tests to run by index
 
 	//Add all the tests to the test list
-	testList.Push(new EightPeerTest(),__FILE__,__LINE__);
-	testList.Push(new MaximumConnectTest(),__FILE__,__LINE__);
-	testList.Push(new PeerConnectDisconnectWithCancelPendingTest(),__FILE__,__LINE__);
-	testList.Push(new PeerConnectDisconnectTest(),__FILE__,__LINE__);
-	testList.Push(new ManyClientsOneServerBlockingTest(),__FILE__,__LINE__);
-	testList.Push(new ManyClientsOneServerNonBlockingTest(),__FILE__,__LINE__);
-	testList.Push(new ManyClientsOneServerDeallocateBlockingTest(),__FILE__,__LINE__);
-	testList.Push(new ReliableOrderedConvertedTest(),__FILE__,__LINE__);
-	testList.Push(new DroppedConnectionConvertTest(),__FILE__,__LINE__);
-	testList.Push(new ComprehensiveConvertTest(),__FILE__,__LINE__);
-	testList.Push(new CrossConnectionConvertTest(),__FILE__,__LINE__);
-	testList.Push(new PingTestsTest(),__FILE__,__LINE__);
-	testList.Push(new OfflineMessagesConvertTest(),__FILE__,__LINE__);
-	testList.Push(new CompressionConvertTest(),__FILE__,__LINE__);
-	testList.Push(new LocalIsConnectedTest(),__FILE__,__LINE__);
-	testList.Push(new SecurityFunctionsTest(),__FILE__,__LINE__);
-	testList.Push(new ConnectWithSocketTest(),__FILE__,__LINE__);
-	testList.Push(new SystemAddressAndGuidTest(),__FILE__,__LINE__);	
-	testList.Push(new PacketAndLowLevelTestsTest(),__FILE__,__LINE__);
-	testList.Push(new MiscellaneousTestsTest(),__FILE__,__LINE__);
+	testList.Push(new EightPeerTest(),_FILE_AND_LINE_);
+	testList.Push(new MaximumConnectTest(),_FILE_AND_LINE_);
+	testList.Push(new PeerConnectDisconnectWithCancelPendingTest(),_FILE_AND_LINE_);
+	testList.Push(new PeerConnectDisconnectTest(),_FILE_AND_LINE_);
+	testList.Push(new ManyClientsOneServerBlockingTest(),_FILE_AND_LINE_);
+	testList.Push(new ManyClientsOneServerNonBlockingTest(),_FILE_AND_LINE_);
+	testList.Push(new ManyClientsOneServerDeallocateBlockingTest(),_FILE_AND_LINE_);
+	testList.Push(new ReliableOrderedConvertedTest(),_FILE_AND_LINE_);
+	testList.Push(new DroppedConnectionConvertTest(),_FILE_AND_LINE_);
+	testList.Push(new ComprehensiveConvertTest(),_FILE_AND_LINE_);
+	testList.Push(new CrossConnectionConvertTest(),_FILE_AND_LINE_);
+	testList.Push(new PingTestsTest(),_FILE_AND_LINE_);
+	testList.Push(new OfflineMessagesConvertTest(),_FILE_AND_LINE_);
+	testList.Push(new LocalIsConnectedTest(),_FILE_AND_LINE_);
+	testList.Push(new SecurityFunctionsTest(),_FILE_AND_LINE_);
+	testList.Push(new ConnectWithSocketTest(),_FILE_AND_LINE_);
+	testList.Push(new SystemAddressAndGuidTest(),_FILE_AND_LINE_);	
+	testList.Push(new PacketAndLowLevelTestsTest(),_FILE_AND_LINE_);
+	testList.Push(new MiscellaneousTestsTest(),_FILE_AND_LINE_);
 
 	testListSize=testList.Size();
 
 	bool isVerbose=true;
 	bool disallowTestToPause=false;
 
-	DataStructures::List<RakNet::RakString> testcases;
+	DataStructures::List<RakString> testcases;
 
 	if (argc>1)//we have command line arguments
 	{
 
 		for (int p=1;p<argc;p++)
 		{
-			testsToRun.Push(argv[p],__FILE__,__LINE__);
+			testsToRun.Push(argv[p],_FILE_AND_LINE_);
 
 		}
 
 	}
 
-	DataStructures::List<RakNet::RakString> noParamsList;
+	DataStructures::List<RakString> noParamsList;
 
 	if (testsToRun.Size()==0&&testsToRunIndexes.Size()==0)
 	{
@@ -89,7 +90,7 @@ int main(int argc, char *argv[])
 	{
 		int TestsToRunSize= testsToRun.Size();
 
-		RakNet::RakString testName;
+		RakString testName;
 		for(int i=0;i<TestsToRunSize;i++)
 		{
 			testName=testsToRun[i];
@@ -100,7 +101,7 @@ int main(int argc, char *argv[])
 				if (testList[j]->GetTestName().StrICmp(testName)==0)
 				{
 
-					testsToRunIndexes.Push(j,__FILE__,__LINE__);
+					testsToRunIndexes.Push(j,_FILE_AND_LINE_);
 
 				}
 
@@ -141,7 +142,7 @@ int main(int argc, char *argv[])
 	}
 
 	printf("Press enter to continue \n");
-	gets(str);
+	Gets(str, sizeof(str));
 	//Cleanup
 	int len=testList.Size();
 
@@ -150,7 +151,7 @@ int main(int argc, char *argv[])
 		delete testList[i];
 
 	}
-	testList.Clear(false,__FILE__,__LINE__);
+	testList.Clear(false,_FILE_AND_LINE_);
 
 	return 0;
 }

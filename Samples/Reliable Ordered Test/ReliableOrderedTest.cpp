@@ -1,4 +1,4 @@
-#include "RakNetworkFactory.h"
+
 #include "RakPeerInterface.h"
 #include "GetTime.h"
 #include "MessageIdentifiers.h"
@@ -11,6 +11,10 @@
 #include "RakNetStatistics.h"
 #include "RakSleep.h"
 #include "RakMemoryOverride.h"
+#include <stdio.h>
+#include "Gets.h"
+
+using namespace RakNet;
 
 #ifdef _WIN32
 #include "Kbhit.h"
@@ -57,14 +61,14 @@ int main(int argc, char **argv)
 {
 	RakPeerInterface *sender, *receiver;
 	unsigned int packetNumber[32], receivedPacketNumber;
-	RakNetTime receivedTime;
+	RakNet::Time receivedTime;
 	char str[256];
 	char ip[32];
-	RakNetTime sendInterval, nextSend, currentTime, quitTime;
+	RakNet::Time sendInterval, nextSend, currentTime, quitTime;
 	unsigned short remotePort, localPort;
 	unsigned char streamNumber;
 	RakNet::BitStream bitStream;
-	Packet *packet;
+	RakNet::Packet *packet;
 	bool doSend=false;
 
 	for (int i=0; i < 32; i++)
@@ -74,7 +78,7 @@ int main(int argc, char **argv)
 	printf("Difficulty: Beginner\n\n");
 
 	printf("Act as (s)ender or (r)eceiver?\n");
-	gets(str);
+	Gets(str, sizeof(str));
 	if (str[0]==0)
 		return 1;
 
@@ -90,66 +94,66 @@ int main(int argc, char **argv)
 
 	if (str[0]=='s' || str[0]=='S')
 	{
-		sender = RakNetworkFactory::GetRakPeerInterface();
+		sender = RakNet::RakPeerInterface::GetInstance();
 		//sender->ApplyNetworkSimulator(.02, 100, 50);
 
 		receiver = 0;
 
 		printf("Enter number of ms to pass between sends: ");
-		gets(str);
+		Gets(str, sizeof(str));
 		if (str[0]==0)
 			sendInterval=30;
 		else
 			sendInterval=atoi(str);
 
 		printf("Enter remote IP: ");
-		gets(ip);
+		Gets(ip, sizeof(ip));
 		if (ip[0]==0)
 			strcpy(ip, "127.0.0.1");
 	//		strcpy(ip, "94.198.81.195");
 		
 		printf("Enter remote port: ");
-		gets(str);
+		Gets(str, sizeof(str));
 		if (str[0]==0)
 			strcpy(str, "60000");
 		remotePort=atoi(str);
 
 		printf("Enter local port: ");
-		gets(str);
+		Gets(str, sizeof(str));
 		if (str[0]==0)
 			strcpy(str, "0");
 		localPort=atoi(str);
 
 
 		printf("Connecting...\n");
-		SocketDescriptor socketDescriptor(localPort,0);
-		sender->Startup(1, 30, &socketDescriptor, 1);
+		RakNet::SocketDescriptor socketDescriptor(localPort,0);
+		sender->Startup(1, &socketDescriptor, 1);
 		sender->Connect(ip, remotePort, 0, 0);
 	}
 	else
 	{
-		receiver = RakNetworkFactory::GetRakPeerInterface();
+		receiver = RakNet::RakPeerInterface::GetInstance();
 		//receiver->ApplyNetworkSimulator(.02, 100, 50);
 		sender=0;
 
 		printf("Enter local port: ");
-		gets(str);
+		Gets(str, sizeof(str));
 		if (str[0]==0)
 			strcpy(str, "60000");
 		localPort=atoi(str);
 
 		printf("Waiting for connections...\n");
-		SocketDescriptor socketDescriptor(localPort,0);
-		receiver->Startup(1, 30, &socketDescriptor, 1);
+		RakNet::SocketDescriptor socketDescriptor(localPort,0);
+		receiver->Startup(1, &socketDescriptor, 1);
 		receiver->SetMaximumIncomingConnections(32);
 	}
 	
 	printf("How long to run this test for, in seconds?\n");
-	gets(str);
+	Gets(str, sizeof(str));
 	if (str[0]==0)
 		strcpy(str, "12000");
 	
-	currentTime = RakNet::GetTime();
+	currentTime = RakNet::GetTimeMS();
 	quitTime = atoi(str) * 1000 + currentTime;
 
 	nextSend=currentTime;
@@ -236,11 +240,11 @@ int main(int argc, char **argv)
 				bitStream.Write(pad, padLength);
 				delete [] pad;
 				// Send on a random priority with a random stream
-				// if (sender->Send(&bitStream, HIGH_PRIORITY, (PacketReliability) (RELIABLE + (randomMT() %2)) ,streamNumber, UNASSIGNED_SYSTEM_ADDRESS, true)==false)
-				if (sender->Send(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED ,streamNumber, UNASSIGNED_SYSTEM_ADDRESS, true)==0)
+				// if (sender->Send(&bitStream, HIGH_PRIORITY, (PacketReliability) (RELIABLE + (randomMT() %2)) ,streamNumber, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true)==false)
+				if (sender->Send(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED ,streamNumber, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true)==0)
 					packetNumber[streamNumber]--; // Didn't finish connecting yet?
 
-// 				if (sender->Send(&bitStream, HIGH_PRIORITY, UNRELIABLE_WITH_ACK_RECEIPT ,streamNumber, UNASSIGNED_SYSTEM_ADDRESS, true)==0)
+// 				if (sender->Send(&bitStream, HIGH_PRIORITY, UNRELIABLE_WITH_ACK_RECEIPT ,streamNumber, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true)==0)
 // 					packetNumber[streamNumber]--; // Didn't finish connecting yet?
 
 				
@@ -250,7 +254,7 @@ int main(int argc, char **argv)
 					rssSender=sender->GetStatistics(sender->GetSystemAddressFromIndex(0));
 					//printf("Snd: %i. %i waiting on ack. KBPS=%.1f. Ploss=%.1f. Bandwidth=%f.\n", packetNumber[streamNumber], rssSender->messagesOnResendQueue,rssSender->bitsPerSecondSent/1000, 100.0f * ( float ) rssSender->messagesTotalBitsResent / ( float ) rssSender->totalBitsSent, rssSender->estimatedLinkCapacityMBPS);
 
-					printf("Snd: %i at time %"PRINTF_64_BIT_MODIFIER"u\n", packetNumber[streamNumber], currentTime);
+					printf("Snd: %i at time %"PRINTF_64_BIT_MODIFIER"u with length %i\n", packetNumber[streamNumber], currentTime, bitStream.GetNumberOfBytesUsed());
 				}
 
 				nextSend+=sendInterval;
@@ -309,16 +313,16 @@ int main(int argc, char **argv)
 #else
 		usleep(0);
 #endif
-		currentTime=RakNet::GetTime();
+		currentTime=RakNet::GetTimeMS();
 	}
 
 	printf("Press any key to continue\n");
-	gets(str);
+	Gets(str, sizeof(str));
 
 	if (sender)
-		RakNetworkFactory::DestroyRakPeerInterface(sender);
+		RakNet::RakPeerInterface::DestroyInstance(sender);
 	if (receiver)
-		RakNetworkFactory::DestroyRakPeerInterface(receiver);
+		RakNet::RakPeerInterface::DestroyInstance(receiver);
 
 	if (fp)
 		fclose(fp);

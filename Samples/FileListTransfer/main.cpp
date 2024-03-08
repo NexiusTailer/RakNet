@@ -1,7 +1,7 @@
 #include "RakPeerInterface.h"
 #include "FileListTransfer.h"
 #include "RakSleep.h"
-#include "RakNetworkFactory.h"
+
 #include "MessageIdentifiers.h"
 #include "FileListTransferCBInterface.h"
 #include "FileOperations.h"
@@ -11,6 +11,7 @@
 #include "IncrementalReadInterface.h"
 #include "PacketizedTCP.h"
 #include <stdio.h>
+#include "Gets.h"
 
 RakNet::RakString file;
 RakNet::RakString fileCopy;
@@ -20,7 +21,7 @@ RakNet::RakString fileCopy;
 
 #define USE_TCP
 
-class TestCB : public FileListTransferCBInterface
+class TestCB : public RakNet::FileListTransferCBInterface
 {
 public:
 	bool OnFile(
@@ -77,12 +78,26 @@ public:
 } transferCallback;
 
 // Sender progress notification
-class TestFileListProgress : public FileListProgress
+class TestFileListProgress : public RakNet::FileListProgress
 {
-	virtual void OnFilePush(const char *fileName, unsigned int fileLengthBytes, unsigned int offset, unsigned int bytesBeingSent, bool done, SystemAddress targetSystem)
+	virtual void OnFilePush(const char *fileName, unsigned int fileLengthBytes, unsigned int offset, unsigned int bytesBeingSent, bool done, RakNet::SystemAddress targetSystem)
 	{
 		printf("Sending %s bytes=%i offset=%i\n", fileName, bytesBeingSent, offset);
 	}
+
+	virtual void OnFilePushesComplete( RakNet::SystemAddress systemAddress )
+	{
+		char str[32];
+		systemAddress.ToString(true, (char*) str);
+		RAKNET_DEBUG_PRINTF("File pushes complete to %s\n", str);	
+	}
+	virtual void OnSendAborted( RakNet::SystemAddress systemAddress )
+	{
+		char str[32];
+		systemAddress.ToString(true, (char*) str);
+		RAKNET_DEBUG_PRINTF("Send aborted to %s\n", str);	
+	}
+
 } testFileListProgress;
 
 int main()
@@ -94,20 +109,20 @@ int main()
 	printf("Difficulty: Intermediate\n\n");
 
 	TestCB testCB;
-	FileListTransfer flt1, flt2;
+	RakNet::FileListTransfer flt1, flt2;
 #ifdef USE_TCP
-	PacketizedTCP tcp1, tcp2;
+	RakNet::PacketizedTCP tcp1, tcp2;
 	tcp1.Start(60000,1);
 	tcp2.Start(60001,1);
 	tcp2.Connect("127.0.0.1",60000,false);
 	tcp1.AttachPlugin(&flt1);
 	tcp2.AttachPlugin(&flt2);
 #else
-	RakPeerInterface *peer1 = RakNetworkFactory::GetRakPeerInterface();
-	RakPeerInterface *peer2 = RakNetworkFactory::GetRakPeerInterface();
-	SocketDescriptor sd1(60000,0),sd2(60001,0);
-	peer1->Startup(1,0,&sd1,1);
-	peer2->Startup(1,0,&sd2,1);
+	RakNet::RakPeerInterface *peer1 = RakNet::RakPeerInterface::GetInstance();
+	RakNet::RakPeerInterface *peer2 = RakNet::RakPeerInterface::GetInstance();
+	RakNet::SocketDescriptor sd1(60000,0),sd2(60001,0);
+	peer1->Startup(1,&sd1,1);
+	peer2->Startup(1,&sd2,1);
 	peer1->SetMaximumIncomingConnections(1);
 	peer2->Connect("127.0.0.1",60000,0,0,0);
 	peer1->AttachPlugin(&flt1);
@@ -116,14 +131,16 @@ int main()
 	peer2->SetSplitMessageProgressInterval(9);
 #endif
 	// Print sending progress notifications
-	flt1.SetCallback(&testFileListProgress);
-	FileList fileList;
-	IncrementalReadInterface incrementalReadInterface;
+	flt1.AddCallback(&testFileListProgress);
+	// Run incremental reads in a thread so the read does not block the main thread
+	flt1.StartIncrementalReadThreads(1);
+	RakNet::FileList fileList;
+	RakNet::IncrementalReadInterface incrementalReadInterface;
 	printf("Enter complete filename with path to test:\n");
 	char str[256];
-	gets(str);
+	Gets(str, sizeof(str));
 	if (str[0]==0)
-		strcpy(str, "C:\\temp\\RakNet-3.x.zip");
+		strcpy(str, "D:\\RakNet4\\Lib\\RakNetLibStaticDebug.lib");
 	file=str;
 	fileCopy=file+"_copy";
 	// Reference this file, rather than add it in memory. Will send 1000 byte chunks. The reason to do this is so the whole file does not have to be in memory at once
@@ -134,8 +151,8 @@ int main()
 
 #ifdef USE_TCP
 #else
-		RakNetworkFactory::DestroyRakPeerInterface(peer1);
-		RakNetworkFactory::DestroyRakPeerInterface(peer1);
+		RakNet::RakPeerInterface::DestroyInstance(peer1);
+		RakNet::RakPeerInterface::DestroyInstance(peer2);
 #endif
 		return 1;
 	}
@@ -143,13 +160,13 @@ int main()
 	// Wait for the connection
 	printf("File added.\n");
 	RakSleep(100);
-	Packet *packet1, *packet2;
+	RakNet::Packet *packet1, *packet2;
 	while (1)
 	{
 #ifdef USE_TCP
-		SystemAddress sa;
+		RakNet::SystemAddress sa;
 		sa=tcp2.HasCompletedConnectionAttempt();
-		if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (sa!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 		{
 			flt2.SetupReceive(&testCB, false, sa);
 			break;
@@ -157,7 +174,7 @@ int main()
 #else
 		// Wait for the connection request to be accepted
 		packet2=peer2->Receive();
-		if (packet2->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
+		if (packet2 && packet2->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
 		{
 			flt2.SetupReceive(&testCB, false, packet2->systemAddress);
 			peer2->DeallocatePacket(packet2);
@@ -174,28 +191,29 @@ int main()
 #ifdef USE_TCP
 		packet1=tcp1.Receive();
 		packet2=tcp2.Receive();
-		SystemAddress sa;
+		RakNet::SystemAddress sa;
 		sa = tcp1.HasNewIncomingConnection();
-		if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
-			flt1.Send(&fileList,0,sa,0,HIGH_PRIORITY,0,false, &incrementalReadInterface, 2000000);
+		if (sa!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
+			flt1.Send(&fileList,0,sa,0,HIGH_PRIORITY,0, &incrementalReadInterface, 2000000);
 		tcp1.DeallocatePacket(packet1);
 		tcp2.DeallocatePacket(packet2);
 #else
 		packet1=peer1->Receive();
 		packet2=peer2->Receive();
 		if (packet1 && packet1->data[0]==ID_NEW_INCOMING_CONNECTION)
-			flt1.Send(&fileList,peer1,packet1->systemAddress,0,HIGH_PRIORITY,0,false, &incrementalReadInterface, 2000000);
+			flt1.Send(&fileList,peer1,packet1->systemAddress,0,HIGH_PRIORITY,0, &incrementalReadInterface, 2000000);
+		
 		peer1->DeallocatePacket(packet1);
 		peer2->DeallocatePacket(packet2);
 
 #endif
-		RakSleep(30);
+		RakSleep(0);
 	}
 	
 #ifdef USE_TCP
 #else
-	RakNetworkFactory::DestroyRakPeerInterface(peer1);
-	RakNetworkFactory::DestroyRakPeerInterface(peer1);
+	RakNet::RakPeerInterface::DestroyInstance(peer1);
+	RakNet::RakPeerInterface::DestroyInstance(peer1);
 #endif
 
 

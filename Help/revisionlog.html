@@ -376,17 +376,13 @@
 	ReplicaManager3::Connection_RM3 now supports QueryGroupDownloadMessages() feature, to give all construction and serialization messages in a single tick after initial download, rather than the download potentially spread over many ticks.
 	Fix lockup with isActiveMutex in TCPInterface::CloseConnection().
 	Fix bug where packets with higher priorities sent later than ones with lower priorities caused them to still send in order.<BR>
-	3.901 (6/16/2011)
-	Changes in prior checkin:
-	RakNetStatistics.cpp: Multiply packetloss by 100
-	ReliabilityLayer.cpp: Fix bug with reported per-second statistics overreporting packetloss
-	CCRakNetSlidingWindow: Improve congestion control algorithm to decrease average packetloss in the steady state
-	TCPInterface: Fix RemoteClient::Send returning 0 instead of bytes written when using SSL.
-	ReliabilityLayer.cpp: Fix broken RELIABLE_WITH_ACK_RECEIPT
-	ReliabilityLayer.cpp: Bugfix: If a duplicate ack arrived and more than DATAGRAM_MESSAGE_ID_ARRAY_LENGTH (512 by default) reliable messages had been sent or resent between the first ack and the duplicate, the wrong reliable message would be flagged as delivered. This would result in no further reliable messages would be returned to the user, although the connection would not be lost due to lost connection detection pings being unreliable.
-	SocketLayer.cpp: Comment out printf<BR>
-	3.902 (7/21/2011)
-	Fix for random connection loss on slow systems. This is due to threading causing the last time an ack was received to be higher than the current time, thereby falsely returning true for the AckTimeout() function.
+  4.0 (1/1/2011)
+  See 3.x_to_4.x_upgrade.txt in base directory for conversion notes.
+  SWIG and C# is now officially supported.
+  Consoles are now officially supported.
+  Autopatcher can now serve more users at a time than there are threads. AutopatcherServer has a callback to inform the user of the current application load. FileListTransfer now supports incremental reads in a thread.
+  NAT punchthrough now has a punch with TTL step to get past dual port-restricted routers
+  Added CloudServer/CloudClient plugins
   <br>
   <br>
   <BR>

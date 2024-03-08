@@ -15,8 +15,8 @@
 /// Software Foundation; either version 2 of the License, or (at your
 /// option) any later version.
 
-#ifndef __WEB_GAME_LIST
-#define __WEB_GAME_LIST
+#ifndef __PHP_DIRECTORY_SERVER_2
+#define __PHP_DIRECTORY_SERVER_2
 
 #include "Export.h"
 #include "RakString.h"
@@ -25,6 +25,8 @@
 #include "DS_Queue.h"
 #include "DS_Table.h"
 #include "DS_Map.h"
+
+namespace RakNet {
 
 struct SystemAddress;
 
@@ -126,9 +128,11 @@ private:
 	DataStructures::Table lastDownloadedTable;
 	DataStructures::Map<RakNet::RakString, RakNet::RakString> fields;
 	RakNet::RakString currentOperation;
-	RakNetTimeMS nextRepost;
+	RakNet::TimeMS nextRepost;
 
 };
+
+} // namespace RakNet
 
 #endif
 

@@ -10,6 +10,8 @@
 #include "RakPeerInterface.h"
 #include "BitStream.h"
 
+using namespace RakNet;
+
 PluginInterface2::PluginInterface2()
 {
 	rakPeerInterface=0;

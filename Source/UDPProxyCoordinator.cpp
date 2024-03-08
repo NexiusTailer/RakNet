@@ -35,6 +35,8 @@ bool operator==( const DataStructures::MLKeyRef<UDPProxyCoordinator::SenderAndTa
 	return inputKey.Get().senderClientAddress == cls->sata.senderClientAddress && inputKey.Get().targetClientAddress == cls->sata.targetClientAddress;
 }
 
+STATIC_FACTORY_DEFINITIONS(UDPProxyCoordinator,UDPProxyCoordinator);
+
 UDPProxyCoordinator::UDPProxyCoordinator()
 {
 
@@ -50,7 +52,7 @@ void UDPProxyCoordinator::SetRemoteLoginPassword(RakNet::RakString password)
 void UDPProxyCoordinator::Update(void)
 {
 	DataStructures::DefaultIndexType idx;
-	RakNetTime curTime = RakNet::GetTime();
+	RakNet::TimeMS curTime = RakNet::GetTimeMS();
 	ForwardingRequest *fw;
 	idx=0;
 	while (idx < forwardingRequestList.GetSize())
@@ -68,8 +70,8 @@ void UDPProxyCoordinator::Update(void)
 			curTime > fw->timeoutAfterSuccess)
 		{
 			// Forwarding request succeeded, we waited a bit to prevent duplicates. Can forget about the entry now.
-			RakNet::OP_DELETE(fw,__FILE__,__LINE__);
-			forwardingRequestList.RemoveAtIndex(idx,__FILE__,__LINE__);
+			RakNet::OP_DELETE(fw,_FILE_AND_LINE_);
+			forwardingRequestList.RemoveAtIndex(idx,_FILE_AND_LINE_);
 		}
 		else
 			idx++;
@@ -110,8 +112,8 @@ void UDPProxyCoordinator::OnClosedConnection(SystemAddress systemAddress, RakNet
 		if (forwardingRequestList[idx]->requestingAddress==systemAddress)
 		{
 			// Guy disconnected before the attempt completed
-			RakNet::OP_DELETE(forwardingRequestList[idx], __FILE__, __LINE__);
-			forwardingRequestList.RemoveAtIndex(idx, __FILE__, __LINE__ );
+			RakNet::OP_DELETE(forwardingRequestList[idx], _FILE_AND_LINE_);
+			forwardingRequestList.RemoveAtIndex(idx, _FILE_AND_LINE_ );
 		}
 		else
 			idx++;
@@ -133,7 +135,7 @@ void UDPProxyCoordinator::OnClosedConnection(SystemAddress systemAddress, RakNet
 		}
 
 		// Remove dead server
-		serverList.RemoveAtIndex(idx, __FILE__, __LINE__ );
+		serverList.RemoveAtIndex(idx, _FILE_AND_LINE_ );
 	}
 }
 void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *packet)
@@ -157,7 +159,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 		incomingBs.Read(targetGuid);
 		targetAddress=rakPeerInterface->GetSystemAddressFromGuid(targetGuid);
 	}
-	ForwardingRequest *fw = RakNet::OP_NEW<ForwardingRequest>(__FILE__,__LINE__);
+	ForwardingRequest *fw = RakNet::OP_NEW<ForwardingRequest>(_FILE_AND_LINE_);
 	fw->timeoutAfterSuccess=0;
 	incomingBs.Read(fw->timeoutOnNoDataMS);
 	bool hasServerSelectionBitstream;
@@ -182,7 +184,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 		outgoingBs.Write(sata.senderClientAddress);
 		outgoingBs.Write(targetAddress);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-		RakNet::OP_DELETE(fw, __FILE__, __LINE__);
+		RakNet::OP_DELETE(fw, _FILE_AND_LINE_);
 		return;
 	}
 
@@ -193,11 +195,11 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 		outgoingBs.Write(sata.senderClientAddress);
 		outgoingBs.Write(targetAddress);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-		RakNet::OP_DELETE(fw, __FILE__, __LINE__);
+		RakNet::OP_DELETE(fw, _FILE_AND_LINE_);
 		return;
 	}
 
-	if (rakPeerInterface->IsConnected(targetAddress)==false && usesAddress==false)
+	if (rakPeerInterface->GetConnectionState(targetAddress)!=IS_CONNECTED && usesAddress==false)
 	{
 		outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
 		outgoingBs.Write((MessageID)ID_UDP_PROXY_RECIPIENT_GUID_NOT_CONNECTED_TO_COORDINATOR);
@@ -205,7 +207,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 		outgoingBs.Write(targetAddress);
 		outgoingBs.Write(targetGuid);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-		RakNet::OP_DELETE(fw, __FILE__, __LINE__);
+		RakNet::OP_DELETE(fw, _FILE_AND_LINE_);
 		return;
 	}
 
@@ -225,22 +227,22 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 			outgoingBs.Write(serverList[idx]);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, sourceAddress, false);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, targetAddress, false);
-		fw->timeRequestedPings=RakNet::GetTime();
+		fw->timeRequestedPings=RakNet::GetTimeMS();
 		DataStructures::DefaultIndexType copyIndex;
 		for (copyIndex=0; copyIndex < serverList.GetSize(); copyIndex++)
-			fw->remainingServersToTry.Push(serverList[copyIndex], __FILE__, __LINE__ );
-		forwardingRequestList.InsertAtIndex(fw, insertionIndex, __FILE__, __LINE__ );
+			fw->remainingServersToTry.Push(serverList[copyIndex], _FILE_AND_LINE_ );
+		forwardingRequestList.InsertAtIndex(fw, insertionIndex, _FILE_AND_LINE_ );
 	}
 	else
 	{
 		fw->timeRequestedPings=0;
 		fw->currentlyAttemptedServerAddress=serverList[0];
-		forwardingRequestList.InsertAtIndex(fw, insertionIndex, __FILE__, __LINE__ );
+		forwardingRequestList.InsertAtIndex(fw, insertionIndex, _FILE_AND_LINE_ );
 		SendForwardingRequest(sourceAddress, targetAddress, fw->currentlyAttemptedServerAddress, fw->timeoutOnNoDataMS);
 	}
 }
 
-void UDPProxyCoordinator::SendForwardingRequest(SystemAddress sourceAddress, SystemAddress targetAddress, SystemAddress serverAddress, RakNetTimeMS timeoutOnNoDataMS)
+void UDPProxyCoordinator::SendForwardingRequest(SystemAddress sourceAddress, SystemAddress targetAddress, SystemAddress serverAddress, RakNet::TimeMS timeoutOnNoDataMS)
 {
 	RakNet::BitStream outgoingBs;
 	// Send request to desired server
@@ -287,7 +289,7 @@ void UDPProxyCoordinator::OnLoginRequestFromServerToCoordinator(Packet *packet)
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 		return;
 	}
-	serverList.InsertAtIndex(packet->systemAddress, insertionIndex, __FILE__, __LINE__ );
+	serverList.InsertAtIndex(packet->systemAddress, insertionIndex, _FILE_AND_LINE_ );
 	outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
 	outgoingBs.Write((MessageID)ID_UDP_PROXY_LOGIN_SUCCESS_FROM_COORDINATOR_TO_SERVER);
 	outgoingBs.Write(password);
@@ -339,9 +341,9 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, sata.targetClientAddress, false);
 
 		// 05/18/09 Keep the entry around for some time after success, so duplicates are reported if attempting forwarding from the target system before notification of success
-		fw->timeoutAfterSuccess=RakNet::GetTime()+fw->timeoutOnNoDataMS;
+		fw->timeoutAfterSuccess=RakNet::GetTimeMS()+fw->timeoutOnNoDataMS;
 		// forwardingRequestList.RemoveAtIndex(index);
-		// RakNet::OP_DELETE(fw,__FILE__,__LINE__);
+		// RakNet::OP_DELETE(fw,_FILE_AND_LINE_);
 
 		return;
 	}
@@ -360,8 +362,8 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 		outgoingBs.Write(sata.senderClientAddress);
 		outgoingBs.Write(sata.targetClientAddress);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, fw->requestingAddress, false);
-		forwardingRequestList.RemoveAtIndex(index,__FILE__,__LINE__);
-		RakNet::OP_DELETE(fw,__FILE__,__LINE__);
+		forwardingRequestList.RemoveAtIndex(index,_FILE_AND_LINE_);
+		RakNet::OP_DELETE(fw,_FILE_AND_LINE_);
 	}
 }
 void UDPProxyCoordinator::OnPingServersReplyFromClientToCoordinator(Packet *packet)
@@ -389,7 +391,7 @@ void UDPProxyCoordinator::OnPingServersReplyFromClientToCoordinator(Packet *pack
 		{
 			incomingBs.Read(swp.serverAddress);
 			incomingBs.Read(swp.ping);
-			fw->sourceServerPings.Push(swp, swp.ping, __FILE__, __LINE__);
+			fw->sourceServerPings.Push(swp, swp.ping, _FILE_AND_LINE_);
 		}
 	}
 	else
@@ -398,7 +400,7 @@ void UDPProxyCoordinator::OnPingServersReplyFromClientToCoordinator(Packet *pack
 		{
 			incomingBs.Read(swp.serverAddress);
 			incomingBs.Read(swp.ping);
-			fw->targetServerPings.Push(swp, swp.ping, __FILE__, __LINE__);
+			fw->targetServerPings.Push(swp, swp.ping, _FILE_AND_LINE_);
 		}
 	}
 
@@ -416,7 +418,7 @@ void UDPProxyCoordinator::TryNextServer(SenderAndTargetAddress sata, ForwardingR
 	bool pickedGoodServer=false;
 	while(fw->remainingServersToTry.GetSize()>0)
 	{
-		fw->currentlyAttemptedServerAddress=fw->remainingServersToTry.Pop(__FILE__, __LINE__ );
+		fw->currentlyAttemptedServerAddress=fw->remainingServersToTry.Pop(_FILE_AND_LINE_ );
 		if (serverList.GetIndexOf(fw->currentlyAttemptedServerAddress)!=(DataStructures::DefaultIndexType)-1)
 		{
 			pickedGoodServer=true;
@@ -427,8 +429,8 @@ void UDPProxyCoordinator::TryNextServer(SenderAndTargetAddress sata, ForwardingR
 	if (pickedGoodServer==false)
 	{
 		SendAllBusy(sata.senderClientAddress, sata.targetClientAddress, fw->requestingAddress);
-		forwardingRequestList.RemoveAtKey(sata,true,__FILE__,__LINE__);
-		RakNet::OP_DELETE(fw,__FILE__,__LINE__);
+		forwardingRequestList.RemoveAtKey(sata,true,_FILE_AND_LINE_);
+		RakNet::OP_DELETE(fw,_FILE_AND_LINE_);
 		return;
 	}
 
@@ -445,8 +447,8 @@ void UDPProxyCoordinator::SendAllBusy(SystemAddress senderClientAddress, SystemA
 }
 void UDPProxyCoordinator::Clear(void)
 {
-	serverList.Clear(true, __FILE__, __LINE__);
-	forwardingRequestList.ClearPointers(true, __FILE__, __LINE__);
+	serverList.Clear(true, _FILE_AND_LINE_);
+	forwardingRequestList.ClearPointers(true, _FILE_AND_LINE_);
 }
 void UDPProxyCoordinator::ForwardingRequest::OrderRemainingServersToTry(void)
 {
@@ -462,19 +464,19 @@ void UDPProxyCoordinator::ForwardingRequest::OrderRemainingServersToTry(void)
 		swp.serverAddress=remainingServersToTry[idx];
 		swp.ping=0;
 		if (sourceServerPings.GetSize())
-			swp.ping+=(unsigned short) sourceServerPings[idx].ping;
+			swp.ping+=(unsigned short) (sourceServerPings[idx].ping);
 		else
-			swp.ping+=(unsigned short) DEFAULT_CLIENT_UNRESPONSIVE_PING_TIME;
+			swp.ping+=(unsigned short) (DEFAULT_CLIENT_UNRESPONSIVE_PING_TIME);
 		if (targetServerPings.GetSize())
-			swp.ping+=(unsigned short) targetServerPings[idx].ping;
+			swp.ping+=(unsigned short) (targetServerPings[idx].ping);
 		else
-			swp.ping+=(unsigned short) DEFAULT_CLIENT_UNRESPONSIVE_PING_TIME;
-		swpList.Push(swp, swp.ping, __FILE__, __LINE__);
+			swp.ping+=(unsigned short) (DEFAULT_CLIENT_UNRESPONSIVE_PING_TIME);
+		swpList.Push(swp, swp.ping, _FILE_AND_LINE_);
 	}
-	remainingServersToTry.Clear(true, __FILE__, __LINE__ );
+	remainingServersToTry.Clear(true, _FILE_AND_LINE_ );
 	for (idx=0; idx < swpList.GetSize(); idx++)
 	{
-		remainingServersToTry.Push(swpList[idx].serverAddress, __FILE__, __LINE__ );
+		remainingServersToTry.Push(swpList[idx].serverAddress, _FILE_AND_LINE_ );
 	}
 }
 

@@ -11,15 +11,25 @@
 #ifndef __EMAIL_SENDER_H
 #define __EMAIL_SENDER_H
 
-class FileList;
-class TCPInterface;
 #include "RakNetTypes.h"
 #include "RakMemoryOverride.h"
+#include "Export.h"
+#include "Rand.h"
+#include "TCPInterface.h"
+
+namespace RakNet
+{
+/// Forward declarations
+class FileList;
+class TCPInterface;
 
 /// \brief Rudimentary class to send email from code.
-class EmailSender
+class RAK_DLL_EXPORT EmailSender
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(EmailSender)
+
 	/// \brief Sends an email.
 	/// \param[in] hostAddress The address of the email server.
 	/// \param[in] hostPort The port of the email server (usually 25)
@@ -35,11 +45,12 @@ public:
 	/// \return 0 on success, otherwise a string indicating the error message
 	const char *Send(const char *hostAddress, unsigned short hostPort, const char *sender, const char *recipient, const char *senderName, const char *recipientName, const char *subject, const char *body, FileList *attachedFiles, bool doPrintf, const char *password);
 
-	// \brief Returns how many bytes were written.
-	int Base64Encoding(const char *inputData, int dataLength, char *outputData, const char *base64Map);
 protected:
 	const char *GetResponse(TCPInterface *tcpInterface, const SystemAddress &emailServer, bool doPrintf);
+	RakNetRandom rakNetRandom;
 };
+
+} // namespace RakNet
 
 #endif
 

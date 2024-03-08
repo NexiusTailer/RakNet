@@ -40,6 +40,15 @@ bool MySQLInterface::Connect(const char *host,
 	if (IsConnected())
 		return false;
 
+	_host=host;
+	_user=user;
+	_passwd=passwd;
+	_db=db;
+	_port=port;
+	_unix_socket=unix_socket;
+	_clientflag=clientflag;
+
+
 	mySqlConnection = mysql_init(0);
 	return mysql_real_connect (mySqlConnection, host, user, passwd, db, port, unix_socket, clientflag) != 0;
 }

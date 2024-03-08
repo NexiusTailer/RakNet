@@ -12,7 +12,6 @@
 #include "CrossConnectionConvertTest.h"
 #include "PingTestsTest.h"
 #include "OfflineMessagesConvertTest.h"
-#include "CompressionConvertTest.h"
 #include "LocalIsConnectedTest.h"
 #include "SecurityFunctionsTest.h"
 #include "ConnectWithSocketTest.h"

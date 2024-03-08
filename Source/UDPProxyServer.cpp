@@ -9,6 +9,8 @@
 
 using namespace RakNet;
 
+STATIC_FACTORY_DEFINITIONS(UDPProxyServer,UDPProxyServer);
+
 UDPProxyServer::UDPProxyServer()
 {
 	resultHandler=0;
@@ -34,7 +36,7 @@ bool UDPProxyServer::LoginToCoordinator(RakNet::RakString password, SystemAddres
 	outgoingBs.Write((MessageID)ID_UDP_PROXY_LOGIN_REQUEST_FROM_SERVER_TO_COORDINATOR);
 	outgoingBs.Write(password);
 	rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, coordinatorAddress, false);
-	loggingInCoordinators.InsertAtIndex(coordinatorAddress, insertionIndex, __FILE__, __LINE__ );
+	loggingInCoordinators.InsertAtIndex(coordinatorAddress, insertionIndex, _FILE_AND_LINE_ );
 	return true;
 }
 void UDPProxyServer::Update(void)
@@ -64,7 +66,7 @@ PluginReceiveResult UDPProxyServer::OnReceive(Packet *packet)
 				DataStructures::DefaultIndexType removalIndex = loggingInCoordinators.GetIndexOf(packet->systemAddress);
 				if (removalIndex!=(DataStructures::DefaultIndexType)-1)
 				{
-					loggingInCoordinators.RemoveAtKey(packet->systemAddress, false, __FILE__, __LINE__ );
+					loggingInCoordinators.RemoveAtKey(packet->systemAddress, false, _FILE_AND_LINE_ );
 
 					RakNet::BitStream incomingBs(packet->data, packet->length, false);
 					incomingBs.IgnoreBytes(2);
@@ -86,7 +88,7 @@ PluginReceiveResult UDPProxyServer::OnReceive(Packet *packet)
 						break;
 					case ID_UDP_PROXY_LOGIN_SUCCESS_FROM_COORDINATOR_TO_SERVER:
 						RakAssert(loggedInCoordinators.GetIndexOf(packet->systemAddress)==(unsigned int)-1);
-						loggedInCoordinators.Push(packet->systemAddress, __FILE__, __LINE__);
+						loggedInCoordinators.Push(packet->systemAddress, _FILE_AND_LINE_);
 						if (resultHandler)
 							resultHandler->OnLoginSuccess(password, this);
 						break;
@@ -105,8 +107,8 @@ void UDPProxyServer::OnClosedConnection(SystemAddress systemAddress, RakNetGUID 
 	(void) lostConnectionReason;
 	(void) rakNetGUID;
 
-	loggingInCoordinators.RemoveAtKey(systemAddress,false, __FILE__, __LINE__ );
-	loggedInCoordinators.RemoveAtKey(systemAddress,false, __FILE__, __LINE__ );
+	loggingInCoordinators.RemoveAtKey(systemAddress,false, _FILE_AND_LINE_ );
+	loggedInCoordinators.RemoveAtKey(systemAddress,false, _FILE_AND_LINE_ );
 }
 void UDPProxyServer::OnRakPeerStartup(void)
 {
@@ -115,8 +117,8 @@ void UDPProxyServer::OnRakPeerStartup(void)
 void UDPProxyServer::OnRakPeerShutdown(void)
 {
 	udpForwarder.Shutdown();
-	loggingInCoordinators.Clear(true,__FILE__,__LINE__);
-	loggedInCoordinators.Clear(true,__FILE__,__LINE__);
+	loggingInCoordinators.Clear(true,_FILE_AND_LINE_);
+	loggedInCoordinators.Clear(true,_FILE_AND_LINE_);
 }
 void UDPProxyServer::OnAttach(void)
 {
@@ -134,7 +136,7 @@ void UDPProxyServer::OnForwardingRequestFromCoordinatorToServer(Packet *packet)
 	incomingBs.IgnoreBytes(2);
 	incomingBs.Read(sourceAddress);
 	incomingBs.Read(targetAddress);
-	RakNetTimeMS timeoutOnNoDataMS;
+	RakNet::TimeMS timeoutOnNoDataMS;
 	incomingBs.Read(timeoutOnNoDataMS);
 	RakAssert(timeoutOnNoDataMS > 0 && timeoutOnNoDataMS <= UDP_FORWARDER_MAXIMUM_TIMEOUT);
 

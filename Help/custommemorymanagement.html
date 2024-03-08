@@ -37,8 +37,9 @@ return malloc(size);<br>
   rakMalloc=MyMalloc;<br>
   // ...<br>
   }</p>
-<p>Then go to RakNetDefines.h and uncomment</p>
-<p class="RakNetCode">// #define _USE_RAK_MEMORY_OVERRIDE</p></TD>
+<p>Then edit the file RakNetDefinesOverrides.h and add </p>
+<p class="RakNetCode">#define _USE_RAK_MEMORY_OVERRIDE 1</p>
+<p>Alternatively, edit RakNetDefines.h _USE_RAK_MEMORY_OVERRIDE</p></TD>
 </TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92">
 <img src="spacer.gif" width="8" height="1"><span class="RakNetWhiteHeader">See Also</span></td>

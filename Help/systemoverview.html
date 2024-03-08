@@ -16,13 +16,13 @@
 <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
   <TD><strong class="RakNetBlueHeader">System Architecture</strong>
     <p>RakNet can be broadly defined as 3 libraries: network communication, plugin modules that use network communication, and supporting functionality.</p>
-    <p> Network communication is provided with two user classes. RakPeer.h, and TCPInterface.h. RakPeer is the primary class that games will use and is based on UDP. It provides functionality such as connections, connection management, congestion control, remote server detection, out of band messaging, connection statistics, latency and packetloss simulation, ban lists, and secure connectivity.</p>
+    <p> Network communication is provided with two user classes. RakPeer, and TCPInterface. RakPeer is the primary class that games will use and is based on UDP. It provides functionality such as connections, connection management, congestion control, remote server detection, out of band messaging, connection statistics, latency and packetloss simulation, ban lists, and secure connectivity.</p>
     <p>TCPInterface is a wrapper for TCP, and is used to communicate with external systems that are based on TCP. For example, the EmailSender class, used to report crashes from remote servers, interfaces with TCP. It is also supported by most plugin modules, and is particularly useful for file transfers such as with the autopatcher.</p>
     <p>Plugin modules in RakNet are classes that you 'attach' to an instance of RakPeer or PacketizedTCP. Attached plugins update automatically when the base class updates, and filter or inject messages into the network stream. Plugins provide automatic functionality, such as host determination in a peer to peer enviroment, file transfers, NAT traversal, voice communication, remote procedure calls, and game object replication.</p>
     <p>Supporting functionality includes crash reporting, email sending through Gmail pop servers, an SQL logging server, and PHP based server lists.</p>
     <p class="RakNetBlueHeader">RakPeer architecture</p>
     <p><b>RakPeer.h</b> provides the base 
-  functionality for UDP communication, and it is expected that most applications will use RakPeer as opposed to TCP.&nbsp; On start, RakPeer starts two threads - one thread to wait for incoming datagrams, and another to perform periodic updates, such as determing lost connections, or pings. The user specifies the maximum number of connections and an array of RemoteSystem structures is allocated to this size. Each connection or connection attempt is assigned to a Remote System structure, which contains a class to manage congestion control between the two systems. Connections are identified by SystemAddress or RakNetGuid, the latter of which is randomly generated and unique to all instances of RakPeer.</p>
+  functionality for UDP communication, and it is expected that most applications will use RakPeer as opposed to TCP.&nbsp; On start, RakPeer starts two threads - one thread to wait for incoming datagrams, and another to perform periodic updates, such as determing lost connections, or pings. The user specifies the maximum number of connections and an array of RemoteSystem structures is allocated to this size. Each connection or connection attempt is assigned to a Remote System structure, which contains a class to manage congestion control between the two systems. Connections are identified by SystemAddress or RakNetGuid, the latter of which is randomly generated and unique per instance of RakPeer.</p>
     <p>Connections are established through UDP messages that contain a connection request payload, and an 'offline message' identifier. The 'offline message' identifier is used to differentiate between actual offline messages, and connected messages that happen to match the profile of an offline message. Connection requests are sent repeatedly over a short timeframe to account for packetloss, and if supported uses a decreasing MTU for path MTU detection.</p>
     <p>When a connection requests arrives, RakPeer transmits internal state data, such as the RakNetGUID, and checks this connection against the ban list, repeat connection list, and other security measures. If the connection was flagged as secure, the secure connection protocol activates and additional data is sent. On success, the user is informed about this, either with ID_CONNECTION_REQUEST_ACCEPTED, or ID_NEW_INCOMING_CONNECTION. Failure conditions are also returned in a similar fashion.</p>
     <p>Outgoing messages from the user to connected systems are copied and internally buffered. If the outgoing message plus the header is larger than the MTU, the message is fragmented internally. On a periodic interval, outgong messages are aggreggated into a single datagram and sent according to the transmission contraints of congestion control and the MTU size. Datagrams that do not get an ACK are resent. NAKs are sent for missing datagram sequence numbers. Messages sent unreliably and cannot be sent within a user-defined threshold are deleted. Messages are sent in order of priority. Acks are not congestion controlled. However, resends and new sends are, with resends taking priority over new sends.</p>
@@ -32,18 +32,7 @@
 <p class="RakNetBlueHeader">Other systems</p>
 <p>The <b>NetworkIDObject</b> 
   class provides the ability for systems to refer to common objects and is used by 
-  object member remote function calls.&nbsp; It is a fairly simple system that has 
-  the server assign a number to objects as they are created.&nbsp; When a client 
-  creates an object, it is responsible for sending this event to the server, 
-  getting the number to use when the object is created on the server in turn, and 
-  then assigning this number to the object.&nbsp; This way systems can refer to 
-  objects on multiple systems which would otherwise be impossible since pointer 
-  addresses would probably not be the same.&nbsp; The easiest way to use this 
-  system is to derive from it.&nbsp; However, you can also include it as a member 
-  variable of your base class and call SetParent(parentClassPointer).&nbsp; The 
-  disadvantage of this architecture is that it relies on a single system being 
-  present to assign network IDs.&nbsp; This is addressed by having <b>
-    NetworkID</b>s be a <b>RakNetGUID / NetworkID </b>pair instead of a simple number by default.</p>
+  object member remote function calls.&nbsp; Each object has a 64 bit random number assigned and can be used to lookup pointers through a hash.</p>
 <p>The <b>
   <a href="systemaddresses.html">SystemAddress</a></b> structure is what RakNet uses to 
   represent remote systems.&nbsp; It is the binary encoding of the IP address 

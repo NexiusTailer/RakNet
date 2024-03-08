@@ -78,7 +78,7 @@ namespace DataStructures
 		Queue<queue_type>::Queue()
 	{
 		//allocation_size = 16;
-		//array = RakNet::OP_NEW_ARRAY<queue_type>(allocation_size, __FILE__, __LINE__ );
+		//array = RakNet::OP_NEW_ARRAY<queue_type>(allocation_size, _FILE_AND_LINE_ );
 		allocation_size = 0;
 		array=0;
 		head = 0;
@@ -89,7 +89,7 @@ namespace DataStructures
 		Queue<queue_type>::~Queue()
 	{
 		if (allocation_size>0)
-			RakNet::OP_DELETE_ARRAY(array, __FILE__, __LINE__);
+			RakNet::OP_DELETE_ARRAY(array, _FILE_AND_LINE_);
 	}
 
 	template <class queue_type>
@@ -253,7 +253,7 @@ namespace DataStructures
 
 		else
 		{
-			array = RakNet::OP_NEW_ARRAY<queue_type >( original_copy.Size() + 1 , __FILE__, __LINE__ );
+			array = RakNet::OP_NEW_ARRAY<queue_type >( original_copy.Size() + 1 , _FILE_AND_LINE_ );
 
 			for ( unsigned int counter = 0; counter < original_copy.Size(); ++counter )
 				array[ counter ] = original_copy.array[ ( original_copy.head + counter ) % ( original_copy.allocation_size ) ];
@@ -272,7 +272,7 @@ namespace DataStructures
 		if ( ( &original_copy ) == this )
 			return false;
 
-		Clear(__FILE__, __LINE__);
+		Clear(_FILE_AND_LINE_);
 
 		// Allocate memory for copy
 		if ( original_copy.Size() == 0 )
@@ -282,7 +282,7 @@ namespace DataStructures
 
 		else
 		{
-			array = RakNet::OP_NEW_ARRAY<queue_type >( original_copy.Size() + 1 , __FILE__, __LINE__ );
+			array = RakNet::OP_NEW_ARRAY<queue_type >( original_copy.Size() + 1 , _FILE_AND_LINE_ );
 
 			for ( unsigned int counter = 0; counter < original_copy.Size(); ++counter )
 				array[ counter ] = original_copy.array[ ( original_copy.head + counter ) % ( original_copy.allocation_size ) ];

@@ -1,8 +1,8 @@
-import gfx.io.GameDelegate;
+import flash.external.*;
 
 returnToTitleButton.addEventListener("click", this, "ReturnToTitle");
 function ReturnToTitle()
 {
 	// Disconnect from the server
-	GameDelegate.call("f2c_Logoff", [], this);
+	ExternalInterface.call("f2c_Logoff");
 }

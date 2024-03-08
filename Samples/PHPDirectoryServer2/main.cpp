@@ -16,6 +16,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
+#include "Gets.h"
 
 using namespace RakNet;
 
@@ -33,7 +34,7 @@ enum ReadResultEnum
 
 ReadResultEnum ReadResult(RakNet::RakString &httpResult)
 {
-	RakNetTimeMS endTime=RakNet::GetTimeMS()+10000;
+	RakNet::TimeMS endTime=RakNet::GetTimeMS()+10000;
 	httpResult.Clear();
 	while (RakNet::GetTimeMS()<endTime)
 	{
@@ -226,7 +227,7 @@ bool RunTest()
 	char ch[32];
 	printf("Warning, table must be clear before starting the test.\n");
 	printf("Press enter to start\n");
-	gets(ch);
+	Gets(ch,sizeof(ch));
 
 	printf("*** Testing initial table is empty.\n");
 	// Table should start emptyF
@@ -319,7 +320,7 @@ bool RunTest()
 	{PrintHttpResult(httpResult); return false;}
 	if (PassTestOnEmptyDownloadedTable()==false)
 		{PrintHttpResult(httpResult); return false;}
-	RakNetTimeMS startTime = RakNet::GetTimeMS();
+	RakNet::TimeMS startTime = RakNet::GetTimeMS();
 
 	printf("*** Testing 20 repeated downloads.\n");
 	//printf("Field columns\n");
@@ -388,6 +389,22 @@ void OutputBody(HTTPConnection& http, const char *path, const char *data, TCPInt
 
 void TestPHPDirectoryServer(int argc, char **argv)
 {
+	printf("PHP Directory server 2.\n");
+	printf("Similar to lightweight database, but uses common shared webservers.\n");
+	printf("Set columns and one row for your game, and upload it to a\nviewable and downloadable webpage.\n");
+	printf("Difficulty: Intermediate\n\n");
+
+	tcp = RakNet::OP_NEW<TCPInterface>(_FILE_AND_LINE_);
+	httpConnection = RakNet::OP_NEW<HTTPConnection>(_FILE_AND_LINE_);
+	phpDirectoryServer2 = RakNet::OP_NEW<PHPDirectoryServer2>(_FILE_AND_LINE_);
+
+
+
+//	RakNet::TimeMS lastTouched = 0;
+
+	// Start the TCP thread. This is used for general TCP communication, whether it is for webpages, sending emails, or telnet
+    tcp->Start(0, 64);
+
 	char website[256];
 	char pathToPHP[256];
 	if (argc==3)
@@ -398,12 +415,12 @@ void TestPHPDirectoryServer(int argc, char **argv)
 	else
 	{
 		printf("Enter website, e.g. jenkinssoftware.com:\n");
-		gets(website);
+		Gets(website,sizeof(website));
 		if (website[0]==0)
 			strcpy(website, "jenkinssoftware.com");
 
 		printf("Enter path to DirectoryServer.php, e.g. raknet/DirectoryServer.php:\n");
-		gets(pathToPHP);
+		Gets(pathToPHP,sizeof(pathToPHP));
 		if (pathToPHP[0]==0)
 			strcpy(pathToPHP, "raknet/DirectoryServer.php");
 	}
@@ -430,13 +447,13 @@ void TestPHPDirectoryServer(int argc, char **argv)
 	do 
 	{
 		printf("\nPress q to quit.\n");
-		gets(str);
+		Gets(str, sizeof(str));
 	} while (str[0]!='q');
 
 	// The destructor of each of these references the other, so delete in this order
-	RakNet::OP_DELETE(phpDirectoryServer2,__FILE__,__LINE__);
-	RakNet::OP_DELETE(httpConnection,__FILE__,__LINE__);
-	RakNet::OP_DELETE(tcp,__FILE__,__LINE__);
+	RakNet::OP_DELETE(phpDirectoryServer2,_FILE_AND_LINE_);
+	RakNet::OP_DELETE(httpConnection,_FILE_AND_LINE_);
+	RakNet::OP_DELETE(tcp,_FILE_AND_LINE_);
 }
 
 void TestGet(void)

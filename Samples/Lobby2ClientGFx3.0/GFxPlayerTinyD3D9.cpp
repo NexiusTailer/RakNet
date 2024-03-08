@@ -63,7 +63,7 @@ The sample illustrates the following concepts:
 #include "Lobby2Client.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
-#include "RakNetworkFactory.h"
+
 
 // ***** FxPlayerTiny Application Class
 
@@ -251,14 +251,14 @@ int FxPlayerTiny::Run()
 
 	// KevinJ: 1/3 functions, Init()
 	// Path to current exe is used to the patcher can restart itself if needed
-	Lobby2ClientGFx3Impl sampleImpl;
+	RakNet::Lobby2ClientGFx3Impl sampleImpl;
 	GPtr<FxDelegate> pDelegate = *new FxDelegate; 
 	pMovie->SetExternalInterface(pDelegate); 
 	RakNet::Lobby2Client lobby2Client;
 	RakNet::Lobby2MessageFactory messageFactory;
-	RakPeerInterface *rakPeer = RakNetworkFactory::GetRakPeerInterface();
-	SocketDescriptor sd;
-	rakPeer->Startup(1,30,&sd, 1);
+	RakNet::RakPeerInterface *rakPeer = RakNet::RakPeerInterface::GetInstance();
+	RakNet::SocketDescriptor sd;
+	rakPeer->Startup(1,&sd, 1);
 	rakPeer->AttachPlugin(&lobby2Client);
 	rakPeer->AttachPlugin(&sampleImpl);
 	lobby2Client.SetMessageFactory(&messageFactory);
@@ -292,7 +292,7 @@ int FxPlayerTiny::Run()
         }
 
 		// KevinJ: 2/3 functions, periodic update
-		Packet *p;
+		RakNet::Packet *p;
 		for (p=rakPeer->Receive(); p; rakPeer->DeallocatePacket(p), p=rakPeer->Receive())
 		{
 		}
@@ -300,7 +300,7 @@ int FxPlayerTiny::Run()
 
 	// KevinJ: 3/3 functions, Shutdown()
 	sampleImpl.Shutdown();
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 
     return 0;
 }

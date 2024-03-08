@@ -1,6 +1,7 @@
 #include "EmailSender.h"
 #include "FileList.h"
 #include <stdio.h>
+#include "Gets.h"
 
 int main()
 {
@@ -8,8 +9,8 @@ int main()
 	printf("TLS support (such as for Gmail) requires OPEN_SSL_CLIENT_SUPPORT to be defined\nin RakNetDefines.h.\n");
 	printf("Difficulty: Beginner\n\n");
 
-    FileList fileList;
-	EmailSender emailSender;
+	RakNet::FileList fileList;
+	RakNet::EmailSender emailSender;
 	const char *quote = "Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure.";
 //	const char base64Map[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 //	char output[1024];
@@ -19,19 +20,19 @@ int main()
 	char mailServer[128], senderUsername[128], receiver[128], password[128];
 	printf("Tests sending email.\n");
 	printf("Enter mail server: ");
-	gets(mailServer);
+	Gets(mailServer,sizeof(mailServer));
 	if (mailServer[0]==0)
 		strcpy(mailServer, "smtp.gmail.com");
 	printf("Enter email account username: ");
-	gets(senderUsername);
+	Gets(senderUsername,sizeof(senderUsername));
 	if (senderUsername[0]==0)
 		strcpy(senderUsername, "subspacegod@gmail.com");
 	printf("Enter receiver email address: ");
-	gets(receiver);
+	Gets(receiver,sizeof(receiver));
 	if (receiver[0]==0)
 		strcpy(receiver, "rakkar@rakkar.org");
 	printf("Enter password needed to send: ");
-	gets(password);
+	Gets(password,sizeof(password));
 
 
 	// http://mail.google.com/support/bin/answer.py?hl=en&answer=13287
@@ -59,7 +60,7 @@ int main()
 		printf("Success (probably).\n");
 	printf("Press enter to quit.\n");
 	char buff[256];
-	gets(buff);
+	Gets(buff,sizeof(buff));
 
 	return 0;
 }

@@ -1,10 +1,11 @@
-#include "RakNetworkFactory.h"
+
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h" // Enumerations
 #include "GetTime.h"
 #include "RakNetStatistics.h"
 #include <cstdio>
 #include <stdlib.h>
+#include "Gets.h"
 
 #ifdef _WIN32
 #include "WindowsIncludes.h" // Sleep
@@ -20,18 +21,18 @@ static const int SOURCE_SYSTEM_PORT=60002;
 
 int main(void)
 {
-	RakPeerInterface *localSystem;
-	Packet *p;
-	int systemType, threadSleepTimer;
+	RakNet::RakPeerInterface *localSystem;
+	RakNet::Packet *p;
+	int systemType;
 	unsigned char byteBlock[4096];
-	RakNetTime time, quitTime, nextStatsTime;
+	RakNet::TimeMS time, quitTime, nextStatsTime;
 	unsigned int packetsPerSecond, bytesPerPacket, num,index, bytesInPackets;
-	RakNetTime lastSendTime;
+	RakNet::TimeMS lastSendTime;
 	int sendMode;
 	int verbosityLevel;
 	unsigned int showStatsInterval;
 	bool connectionCompleted, incomingConnectionCompleted;
-	RakNetStatistics *rss;
+	RakNet::RakNetStatistics *rss;
 
 	printf("Loopback performance test.\n");
 	printf("This test measures the effective transfer rate of RakNet.\n\n");
@@ -41,7 +42,7 @@ int main(void)
 	printf("Difficulty: Intermediate\n\n");
 	printf("Which instance is this?  Enter 1, 2, or 3: ");
 	
-	gets((char*)byteBlock);
+	Gets((char*)byteBlock, sizeof(byteBlock));
 	systemType=byteBlock[0]-'0'-1;
 	if (systemType < 0 || systemType > 2)
 	{
@@ -49,29 +50,10 @@ int main(void)
 		return 1;
 	}
 
-	localSystem=RakNetworkFactory::GetRakPeerInterface();
-	/*
-	printf("Enter thread sleep timer:\n(0). Regular\n(1). High\n");
-	gets((char*)byteBlock);
-	if (byteBlock[0]==0)
-	{
-		printf("Defaulting to regular.\n");
-		threadSleepTimer=0;
-	}
-	else
-	{
-		if (byteBlock[0]<'0' || byteBlock[0]>'1')
-		{
-			printf("Error, you must enter 0, or 1\n.Quitting.\n");
-			return 1;
-		}
-		threadSleepTimer=byteBlock[0]-'0';
-	}
-	*/
-	threadSleepTimer=0;
+	localSystem=RakNet::RakPeerInterface::GetInstance();
 	
 	printf("How many seconds do you want to run the test for?\n");
-	gets((char*)byteBlock);
+	Gets((char*)byteBlock, sizeof(byteBlock));
 	if (byteBlock[0]==0)
 	{
 		printf("Defaulting to 90 seconds\n");
@@ -81,7 +63,7 @@ int main(void)
 		quitTime=atoi((char*)byteBlock);
 
 	printf("Enter statistics verbosity level, 0=lowest, 2=highest\n");
-	gets((char*)byteBlock);
+	Gets((char*)byteBlock, sizeof(byteBlock));
 	if (byteBlock[0]==0)
 	{
 		printf("Defaulting to verbosity level 1\n");
@@ -91,7 +73,7 @@ int main(void)
 		verbosityLevel=atoi((char*)byteBlock);
 
 	printf("How frequently to show statistics, in seconds?\n");
-	gets((char*)byteBlock);
+	Gets((char*)byteBlock, sizeof(byteBlock));
 	if (byteBlock[0]==0)
 	{
 		printf("Defaulting to 5 seconds\n");
@@ -104,8 +86,8 @@ int main(void)
 	{
 		printf("Initializing Raknet...\n");
 		// Destination.  Accept one connection and wait for further instructions.
-		SocketDescriptor socketDescriptor(DESTINATION_SYSTEM_PORT,0);
-		if (localSystem->Startup(1, threadSleepTimer,&socketDescriptor, 1)==false)
+		RakNet::SocketDescriptor socketDescriptor(DESTINATION_SYSTEM_PORT,0);
+		if (localSystem->Startup(1, &socketDescriptor, 1)!=RakNet::RAKNET_STARTED)
 		{
 			printf("Failed to initialize RakNet!.\nQuitting\n");
 			return 1;
@@ -121,7 +103,7 @@ int main(void)
 		printf("(2). RELIABLE\n");
 		printf("(3). RELIABLE_ORDERED\n");
 		printf("(4). RELIABLE_SEQUENCED\n");
-		gets((char*)byteBlock);
+		Gets((char*)byteBlock, sizeof(byteBlock));
 		if (byteBlock[0]==0)
 		{
 			printf("Defaulting to RELIABLE\n");
@@ -139,15 +121,15 @@ int main(void)
 
 		printf("Initializing Raknet...\n");
 		// Relay.  Accept one connection, initiate outgoing connection, wait for further instructions.
-		SocketDescriptor socketDescriptor(RELAY_SYSTEM_PORT,0);
-		if (localSystem->Startup(2, threadSleepTimer, &socketDescriptor, 1)==false)
+		RakNet::SocketDescriptor socketDescriptor(RELAY_SYSTEM_PORT,0);
+		if (localSystem->Startup(2, &socketDescriptor, 1)!=RakNet::RAKNET_STARTED)
 		{
 			printf("Failed to initialize RakNet!.\nQuitting\n");
 			return 1;
 		}
 		localSystem->SetMaximumIncomingConnections(1);
 		socketDescriptor.port=DESTINATION_SYSTEM_PORT;
-		if (localSystem->Connect("127.0.0.1", DESTINATION_SYSTEM_PORT, 0, 0)==false)
+		if (localSystem->Connect("127.0.0.1", DESTINATION_SYSTEM_PORT, 0, 0)!=RakNet::CONNECTION_ATTEMPT_STARTED)
 		{
 			printf("Connect call failed!.\nQuitting\n");
 			return 1;
@@ -158,7 +140,7 @@ int main(void)
 	else
 	{
 		printf("How many packets do you wish to send per second?\n");
-		gets((char*)byteBlock);
+		Gets((char*)byteBlock, sizeof(byteBlock));
 		if (byteBlock[0]==0)
 		{
 #ifdef _DEBUG
@@ -172,7 +154,7 @@ int main(void)
 		else
 			packetsPerSecond=atoi((char*)byteBlock);
 		printf("How many bytes per packet?\n");
-		gets((char*)byteBlock);
+		Gets((char*)byteBlock, sizeof(byteBlock));
 		if (byteBlock[0]==0)
 		{
 			printf("Defaulting to 400\n");
@@ -194,7 +176,7 @@ int main(void)
 		printf("(2). RELIABLE\n");
 		printf("(3). RELIABLE_ORDERED\n");
 		printf("(4). RELIABLE_SEQUENCED\n");
-		gets((char*)byteBlock);
+		Gets((char*)byteBlock, sizeof(byteBlock));
 		if (byteBlock[0]==0)
 		{
 			printf("Defaulting to RELIABLE\n");
@@ -212,13 +194,13 @@ int main(void)
 
 		printf("Initializing RakNet...\n");
 		// Sender.  Initiate outgoing connection to relay.
-		SocketDescriptor socketDescriptor(SOURCE_SYSTEM_PORT,0);
-		if (localSystem->Startup(1, threadSleepTimer, &socketDescriptor, 1)==false)
+		RakNet::SocketDescriptor socketDescriptor(SOURCE_SYSTEM_PORT,0);
+		if (localSystem->Startup(1, &socketDescriptor, 1)!=RakNet::RAKNET_STARTED)
 		{
 			printf("Failed to initialize RakNet!.\nQuitting\n");
 			return 1;
 		}
-		if (localSystem->Connect("127.0.0.1", RELAY_SYSTEM_PORT, 0, 0)==false)
+		if (localSystem->Connect("127.0.0.1", RELAY_SYSTEM_PORT, 0, 0)!=RakNet::CONNECTION_ATTEMPT_STARTED)
 		{
 			printf("Connect call failed!.\nQuitting\n");
 			return 1;
@@ -229,14 +211,14 @@ int main(void)
 
 	connectionCompleted=false;
 	incomingConnectionCompleted=false;
-	time = RakNet::GetTime();
+	time = RakNet::GetTimeMS();
 	lastSendTime=time;
 	nextStatsTime=time+2000; // First stat shows up in 2 seconds
 	bytesInPackets=0;
 
 	while (time < quitTime || (connectionCompleted==false && incomingConnectionCompleted==false))
 	{
-		time = RakNet::GetTime();
+		time = RakNet::GetTimeMS();
 		// Parse messages
 		while (1)
 		{
@@ -336,7 +318,7 @@ int main(void)
 			byteBlock[0]=255; // Relay all data with an identifier of 255
 			for (index=0; index < num; index++)
 			{
-				localSystem->Send((char*)byteBlock, bytesPerPacket, HIGH_PRIORITY, (PacketReliability)sendMode, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+				localSystem->Send((char*)byteBlock, bytesPerPacket, HIGH_PRIORITY, (PacketReliability)sendMode, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 			}
             
 			lastSendTime+= (1000 * num) / packetsPerSecond;
@@ -364,8 +346,8 @@ int main(void)
 	printf("Hit enter to continue.\n");
 
 	char buff[100];
-	gets(buff);
+	Gets(buff,sizeof(buff));
 
-	RakNetworkFactory::DestroyRakPeerInterface(localSystem);
+	RakNet::RakPeerInterface::DestroyInstance(localSystem);
 	return 0;
 }

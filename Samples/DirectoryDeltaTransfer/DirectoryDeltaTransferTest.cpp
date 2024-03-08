@@ -1,4 +1,4 @@
-#include "RakNetworkFactory.h"
+
 #include "GetTime.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
@@ -14,6 +14,7 @@
 #include "RakSleep.h"
 #include "IncrementalReadInterface.h"
 #include "PacketizedTCP.h"
+#include "Gets.h"
 
 #ifdef _WIN32
 #include "WindowsIncludes.h" // Sleep
@@ -21,9 +22,9 @@
 #include <unistd.h> // usleep
 #endif
 
-//#define USE_TCP
+// #define USE_TCP
 
-class TestCB : public FileListTransferCBInterface
+class TestCB : public RakNet::FileListTransferCBInterface
 {
 public:
 	bool OnFile(
@@ -65,24 +66,24 @@ int main(void)
 	char ch;
 
 #ifdef USE_TCP
-	PacketizedTCP tcp1;
+	RakNet::PacketizedTCP tcp1;
 #else
-	RakPeerInterface *rakPeer;
+	RakNet::RakPeerInterface *rakPeer;
 #endif
 
 	// directoryDeltaTransfer is the main plugin that does the work for this sample.
-	DirectoryDeltaTransfer directoryDeltaTransfer;
+	RakNet::DirectoryDeltaTransfer directoryDeltaTransfer;
 	// The fileListTransfer plugin is used by the DirectoryDeltaTransfer plugin and must also be registered (you could use this yourself too if you wanted, of course).
-	FileListTransfer fileListTransfer;
+	RakNet::FileListTransfer fileListTransfer;
 	// Read files in parts, rather than the whole file from disk at once
-	IncrementalReadInterface iri;
+	RakNet::IncrementalReadInterface iri;
 	directoryDeltaTransfer.SetDownloadRequestIncrementalReadInterface(&iri, 1000000);
 
 #ifdef USE_TCP
 	tcp1.AttachPlugin(&directoryDeltaTransfer);
 	tcp1.AttachPlugin(&fileListTransfer);
 #else
-	rakPeer = RakNetworkFactory::GetRakPeerInterface();
+	rakPeer = RakNet::RakPeerInterface::GetInstance();
 	rakPeer->AttachPlugin(&directoryDeltaTransfer);
 	rakPeer->AttachPlugin(&fileListTransfer);
 	// Get download progress notifications.  Handled by the plugin.
@@ -99,19 +100,19 @@ int main(void)
 	printf("Enter listen port. Enter for default. If running two instances on the\nsame computer, use 0 for the client.\n");
 	unsigned short localPort;
 	char str[256];
-	gets(str);
+	Gets(str, sizeof(str));
 	if (str[0]==0)
 		localPort=60000;
 	else
 		localPort=atoi(str);
-	SocketDescriptor socketDescriptor(localPort,0);
+	RakNet::SocketDescriptor socketDescriptor(localPort,0);
 #ifdef USE_TCP
 	bool b=tcp1.Start(localPort,1);
 	RakAssert(b);
 #else
-	if (rakPeer->Startup(8,30,&socketDescriptor, 1)==false)
+	if (rakPeer->Startup(8,&socketDescriptor, 1)!=RakNet::RAKNET_STARTED)
 	{
-		RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+		RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 		printf("RakNet initialize failed.  Possibly duplicate port.\n");
 		return 1;
 	}
@@ -126,27 +127,27 @@ int main(void)
 	printf("C(o)nnect to another system.\n");
 	printf("(Q)uit.\n");
 
-	SystemAddress sysAddrZero=UNASSIGNED_SYSTEM_ADDRESS;
-	RakNetTime nextStatTime = RakNet::GetTime() + 1000;
+	RakNet::SystemAddress sysAddrZero=RakNet::UNASSIGNED_SYSTEM_ADDRESS;
+	RakNet::TimeMS nextStatTime = RakNet::GetTimeMS() + 1000;
 
-	Packet *p;
+	RakNet::Packet *p;
 	while (1)
 	{
 		/*
 		if (//directoryDeltaTransfer.GetNumberOfFilesForUpload()>0 &&
-			RakNet::GetTime() > nextStatTime)
+			RakNet::GetTimeMS() > nextStatTime)
 		{
 			// If sending, periodically show connection stats
 			char statData[2048];
 			RakNetStatistics *statistics = rakPeer->GetStatistics(rakPeer->GetSystemAddressFromIndex(0));
 		//	if (statistics->messagesOnResendQueue>0 || statistics->internalOutputQueueSize>0)
-			if (rakPeer->GetSystemAddressFromIndex(0)!=UNASSIGNED_SYSTEM_ADDRESS)
+			if (rakPeer->GetSystemAddressFromIndex(0)!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			{
 				StatisticsToString(statistics, statData, 2);
 				printf("%s\n", statData);
 			}
 			
-			nextStatTime=RakNet::GetTime()+5000;
+			nextStatTime=RakNet::GetTimeMS()+5000;
 		}
 		*/
 
@@ -158,19 +159,19 @@ int main(void)
 #endif
 
 #ifdef USE_TCP
-		SystemAddress sa;
+		RakNet::SystemAddress sa;
 		sa=tcp1.HasNewIncomingConnection();
-		if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (sa!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 		{
 			printf("ID_NEW_INCOMING_CONNECTION\n");
 			sysAddrZero=sa;
 		}
-		if (tcp1.HasLostConnection()!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (tcp1.HasLostConnection()!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			printf("ID_DISCONNECTION_NOTIFICATION\n");
-		if (tcp1.HasFailedConnectionAttempt()!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (tcp1.HasFailedConnectionAttempt()!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			printf("ID_CONNECTION_ATTEMPT_FAILED\n");
 		sa=tcp1.HasCompletedConnectionAttempt();
-		if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (sa!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 		{
 			printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
 			sysAddrZero=sa;
@@ -212,7 +213,7 @@ int main(void)
 			if (ch=='s')
 			{
 				printf("Enter application directory\n");
-				gets(str);
+				Gets(str, sizeof(str));
 				if (str[0]==0)
 					strcpy(str, "C:/Temp");
 				directoryDeltaTransfer.SetApplicationDirectory(str);
@@ -221,7 +222,7 @@ int main(void)
 			else if (ch=='a')
 			{
 				printf("Enter uploads subdirectory\n");
-				gets(str);
+				Gets(str, sizeof(str));
 				directoryDeltaTransfer.AddUploadsFromSubdirectory(str);
 				printf("%i files for upload.\n", directoryDeltaTransfer.GetNumberOfFilesForUpload());
 			}
@@ -231,9 +232,9 @@ int main(void)
 				char outputSubdir[256];
 				printf("Enter remote subdirectory to download from.\n");
 				printf("This directory may be any uploaded directory, or a subdir therein.\n");
-				gets(subdir);
+				Gets(subdir,sizeof(subdir));
 				printf("Enter subdirectory to output to.\n");
-				gets(outputSubdir);
+				Gets(outputSubdir,sizeof(outputSubdir));
                 
 				unsigned short setId;
 
@@ -252,12 +253,12 @@ int main(void)
 			{
 				char host[256];
 				printf("Enter host IP: ");
-				gets(host);
+				Gets(host,sizeof(host));
 				if (host[0]==0)
 					strcpy(host, "127.0.0.1");
 				unsigned short remotePort;
 				printf("Enter host port: ");
-				gets(str);
+				Gets(str, sizeof(str));
 				if (str[0]==0)
 					remotePort=60000;
 				else
@@ -287,7 +288,7 @@ int main(void)
 
 #ifdef USE_TCP
 #else
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 #endif
 
 	return 0;

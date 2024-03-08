@@ -7,7 +7,7 @@
 
 
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
+
 #include "PacketLogger.h"
 #include "Rand.h"
 #include "Kbhit.h"
@@ -17,21 +17,23 @@
 #include "BitStream.h"
 #include "GetTime.h"
 
+using namespace RakNet;
+
 int main()
 {
 	printf("An internal test to test two peers connecting to each other\n");
 	printf("at the same time.  This causes bugs so I fix them here\n");
 
 	RakPeerInterface *rakPeer1, *rakPeer2;
-	rakPeer1=RakNetworkFactory::GetRakPeerInterface();
-	rakPeer2=RakNetworkFactory::GetRakPeerInterface();
+	rakPeer1=RakPeerInterface::GetInstance();
+	rakPeer2=RakPeerInterface::GetInstance();
 	rakPeer1->SetMaximumIncomingConnections(8);
 	rakPeer2->SetMaximumIncomingConnections(8);
 	
 	bool gotConnectionRequestAccepted[2];
 	bool gotNewIncomingConnection[2];
 	Packet *packet;
-	SocketDescriptor sd1(1000,0);
+	SocketDescriptor sd1(60000,0);
 	SocketDescriptor sd2(2000,0);
 	unsigned short numSystems[2];
 
@@ -44,11 +46,11 @@ int main()
 		numSystems[0]=0;
 		numSystems[1]=0;
 
-		rakPeer1->Startup(1,0,&sd1, 1);
-		rakPeer2->Startup(1,0,&sd2, 1);
+		rakPeer1->Startup(1,&sd1, 1);
+		rakPeer2->Startup(1,&sd2, 1);
 		RakSleep(100);
 		rakPeer1->Connect("127.0.0.1", 2000, 0, 0);
-		rakPeer2->Connect("127.0.0.1", 1000, 0, 0);
+		rakPeer2->Connect("127.0.0.1", 60000, 0, 0);
 		RakSleep(100);
 		for (packet=rakPeer1->Receive(); packet; rakPeer1->DeallocatePacket(packet), packet=rakPeer1->Receive())
 		{

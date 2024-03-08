@@ -15,6 +15,9 @@
 #include "PacketPriority.h"
 #include "FileList.h"
 
+namespace RakNet
+{
+
 class RakPeerInterface;
 struct Packet;
 class FileListTransfer;
@@ -99,5 +102,7 @@ protected:
 	FileList redownloadList, copyAndRestartList;
 	bool processThreadCompletion;
 };
+
+} // namespace RakNet
 
 #endif

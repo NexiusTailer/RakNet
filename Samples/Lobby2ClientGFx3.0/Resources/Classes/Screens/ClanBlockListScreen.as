@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 import gfx.controls.ScrollBar;
@@ -47,12 +47,12 @@ class Screens.ClanBlockListScreen extends ScreenWithPageNavigator
 		btnBack.addEventListener("click", this, "Back");
 				
 		//Add callbacks for C++
-	//	GameDelegate.addCallBack("c2f_StartIgnore", this, "c2f_StartIgnore");
-	//	GameDelegate.addCallBack("c2f_StopIgnore", this, "c2f_StopIgnore");
-	//	GameDelegate.addCallBack("c2f_GetIgnoreListResult", this, "c2f_GetIgnoreListResult");
-		GameDelegate.addCallBack("c2f_Clans_KickAndBlacklistUser", this, "c2f_Clans_KickAndBlacklistUser");
-		GameDelegate.addCallBack("c2f_Clans_UnblacklistUser", this, "c2f_Clans_UnblacklistUser");
-		GameDelegate.addCallBack("c2f_Clans_GetBlacklist", this, "c2f_Clans_GetBlacklist");
+	//	ExternalInterface.addCallback("c2f_StartIgnore", this, c2f_StartIgnore);
+	//	ExternalInterface.addCallback("c2f_StopIgnore", this, c2f_StopIgnore);
+	//	ExternalInterface.addCallback("c2f_GetIgnoreListResult", this, c2f_GetIgnoreListResult);
+		ExternalInterface.addCallback("c2f_Clans_KickAndBlacklistUser", this, c2f_Clans_KickAndBlacklistUser);
+		ExternalInterface.addCallback("c2f_Clans_UnblacklistUser", this, c2f_Clans_UnblacklistUser);
+		ExternalInterface.addCallback("c2f_Clans_GetBlacklist", this, c2f_Clans_GetBlacklist);
 		
 		super.VOnFinishedLoading();
 	}
@@ -101,15 +101,15 @@ class Screens.ClanBlockListScreen extends ScreenWithPageNavigator
 		if ( !mIsWaitingForResponseFromServer )
 		{
 			mIsWaitingForResponseFromServer = true;
-			//GameDelegate.call("f2c_StartIgnore", [ignoreUsernameEditBox.text], _root);		
+			//ExternalInterface.call("f2c_StartIgnore", ignoreUsernameEditBox.text);		
 			mUsernameOnHold = ignoreUsernameEditBox.text;
 			
-			GameDelegate.call("f2c_Clans_KickAndBlacklistUser", [tfClanName.text, mcMail.GetSubjectField(), mcMail.GetMsgField(), "0",
+			ExternalInterface.call("f2c_Clans_KickAndBlacklistUser", tfClanName.text, mcMail.GetSubjectField(), mcMail.GetMsgField(), "0",
 														   mcMail.GetToField(),
 														   true,
 														   mcMail.IsCheckBoxOn(),
 														   "Unknown Reason"   //The 'reason' field is sent to all clan members and is a short message or identifier. It is also stored in the database along with their username, so that if say a moderator later wanted to know why the guy was kicked, you could tell why. As it is defined by the application, this could be a text string, a phrase, a paragraph, or just some identifier.
-														   ], _root);
+														   );
 		}
 	}
 		
@@ -139,8 +139,8 @@ class Screens.ClanBlockListScreen extends ScreenWithPageNavigator
 		{
 			//f2c_StopIgnore( blockedUserEntry.tfUsername.text );
 			
-			GameDelegate.call("f2c_Clans_UnblacklistUser", [tfClanName.text, mcMail.GetSubjectField(), mcMail.GetMsgField(), "0",
-															   mUserToUnblock.tfUsername.text], _root);															   
+			ExternalInterface.call("f2c_Clans_UnblacklistUser", tfClanName.text, mcMail.GetSubjectField(), mcMail.GetMsgField(), "0",
+															   mUserToUnblock.tfUsername.text);															   
 			RemoveEntryFromList( mUserToUnblock, mMovieClipList );
 		}
 	}
@@ -149,14 +149,14 @@ class Screens.ClanBlockListScreen extends ScreenWithPageNavigator
 	{
 		if ( !mIsWaitingForResponseFromServer )
 		{
-			GameDelegate.call("f2c_StopIgnore", [_username], _root);		
+			ExternalInterface.call("f2c_StopIgnore", _username);		
 		}
 	}
 
 	public function f2c_GetIgnoreList():Void
 	{
-		//GameDelegate.call("f2c_GetIgnoreList", [], _root);
-		GameDelegate.call("f2c_Clans_GetBlacklist", [tfClanName.text], _root);
+		//ExternalInterface.call("f2c_GetIgnoreList");
+		ExternalInterface.call("f2c_Clans_GetBlacklist", tfClanName.text);
 	}
 
 	public function c2f_GetIgnoreListResult():Void

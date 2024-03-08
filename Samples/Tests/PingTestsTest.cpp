@@ -28,19 +28,19 @@ GetLowestPing
 SetOccasionalPing 
 */
 
-int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int PingTestsTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 
 	RakPeerInterface *sender,*sender2, *receiver;
-	destroyList.Clear(false,__FILE__,__LINE__);
+	destroyList.Clear(false,_FILE_AND_LINE_);
 
 	TestHelpers::StandardClientPrep(sender,destroyList);
 
 	TestHelpers::StandardClientPrep(sender2,destroyList);
 
-	receiver=RakNetworkFactory::GetRakPeerInterface();
-	destroyList.Push(receiver,__FILE__,__LINE__);
-	receiver->Startup(2, 30, &SocketDescriptor(60000,0), 1);
+	receiver=RakPeerInterface::GetInstance();
+	destroyList.Push(receiver,_FILE_AND_LINE_);
+	receiver->Startup(2, &SocketDescriptor(60000,0), 1);
 	receiver->SetMaximumIncomingConnections(2);
 	Packet * packet;
 
@@ -66,7 +66,7 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 	int lastPing=0;
 	int lowestPing=0;
-	RakNetTime nextPing=0;
+	TimeMS nextPing=0;
 
 	while(!timer.IsExpired())
 	{
@@ -83,13 +83,13 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 		}
 
-		if (RakNet::GetTimeMS()>nextPing)
+		if (GetTimeMS()>nextPing)
 		{
 			sender2->Ping(currentSystem);
-			nextPing=RakNet::GetTimeMS()+30;
+			nextPing=GetTimeMS()+30;
 		}
 
-		RakSleep(1);
+		RakSleep(3);
 	}
 
 	int averagePing=sender2->GetAveragePing(currentSystem);
@@ -174,7 +174,7 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 		}
 
-		RakSleep(1);
+		RakSleep(3);
 	}
 
 	averagePing=sender->GetAveragePing(currentSystem);
@@ -220,14 +220,14 @@ int PingTestsTest::TestAverageValue(int averagePing,int line,bool noPauses,bool 
 
 }
 
-RakNet::RakString PingTestsTest::GetTestName()
+RakString PingTestsTest::GetTestName()
 {
 
 	return "PingTestsTest";
 
 }
 
-RakNet::RakString PingTestsTest::ErrorCodeToString(int errorCode)
+RakString PingTestsTest::ErrorCodeToString(int errorCode)
 {
 
 	switch (errorCode)
@@ -281,6 +281,6 @@ void PingTestsTest::DestroyPeers()
 	int theSize=destroyList.Size();
 
 	for (int i=0; i < theSize; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+		RakPeerInterface::DestroyInstance(destroyList[i]);
 
 }

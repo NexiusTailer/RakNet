@@ -13,6 +13,8 @@
 
 using namespace RakNet;
 
+STATIC_FACTORY_DEFINITIONS(NatTypeDetectionClient,NatTypeDetectionClient);
+
 NatTypeDetectionClient::NatTypeDetectionClient()
 {
 	c2=INVALID_SOCKET;
@@ -51,14 +53,14 @@ void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress)
 }
 void NatTypeDetectionClient::OnCompletion(NATTypeDetectionResult result)
 {
-	Packet *p = rakPeerInterface->AllocatePacket(sizeof(MessageID)+sizeof(unsigned char)*2);
+	Packet *p = AllocatePacketUnified(sizeof(MessageID)+sizeof(unsigned char)*2);
 	printf("Returning nat detection result to the user\n");
 	p->data[0]=ID_NAT_TYPE_DETECTION_RESULT;
 	p->systemAddress=serverAddress;
 	p->systemAddress.systemIndex=(SystemIndex)-1;
 	p->guid=rakPeerInterface->GetGuidFromSystemAddress(serverAddress);
 	p->data[1]=(unsigned char) result;
-	p->bypassPlugins=true;
+	p->wasGeneratedLocally=true;
 	rakPeerInterface->PushBackPacket(p, true);
 
 	// Symmetric and port restricted are determined by server, so no need to notify server we are done

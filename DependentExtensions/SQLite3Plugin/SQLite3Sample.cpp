@@ -11,7 +11,7 @@
 #include "SQLite3ClientPlugin.h"
 #include "BitStream.h"
 #include "RakSleep.h"
-#include "RakNetworkFactory.h"
+#include "Gets.h"
 #include "Kbhit.h"
 #include "GetTime.h"
 
@@ -100,7 +100,7 @@ public:
 		SQLite3Plugin::Update();
 
 		// Once a second, remove all rows whose timestamp has not been updated in the last 30 seconds
-		RakNetTime curTime=RakNet::GetTime();
+		RakNet::TimeMS curTime=RakNet::GetTimeMS();
 		if (curTime > lastTimeRemovedDeadRows+1000 || curTime < lastTimeRemovedDeadRows) // < is to check overflow
 		{
 			lastTimeRemovedDeadRows = curTime;
@@ -116,7 +116,7 @@ public:
 	*/
 
 	RakNet::RakString connectionStateIdentifier;
-	RakNetTime lastTimeRemovedDeadRows;
+	RakNet::TimeMS lastTimeRemovedDeadRows;
 };
 
 int main(void)
@@ -126,10 +126,10 @@ int main(void)
 	printf("System is a basis from which to add more functionality (security, etc.)\n");
 	printf("Difficulty: Intermediate\n\n");
 
-	RakPeerInterface *rakClient=RakNetworkFactory::GetRakPeerInterface();
-	RakPeerInterface *rakServer=RakNetworkFactory::GetRakPeerInterface();
+	RakNet::RakPeerInterface *rakClient=RakNet::RakPeerInterface::GetInstance();
+	RakNet::RakPeerInterface *rakServer=RakNet::RakPeerInterface::GetInstance();
 	// Client just needs the base class to do sends
-	SQLite3ClientPlugin sqlite3ClientPlugin;
+	RakNet::SQLite3ClientPlugin sqlite3ClientPlugin;
 	// Server uses our sample derived class to track logins
 	ConnectionStatePlugin sqlite3ServerPlugin;
 	// Default result handler to print what happens on the client
@@ -150,16 +150,16 @@ int main(void)
 	sqlite3ServerPlugin.CreateConnectionStateTable(DATABASE_IDENTIFIER);
 
 	// Start and connect RakNet as usual
-	SocketDescriptor socketDescriptor(10000,0);
-	if (rakServer->Startup(1,30,&socketDescriptor, 1)==false)
+	RakNet::SocketDescriptor socketDescriptor(10000,0);
+	if (rakServer->Startup(1,&socketDescriptor, 1)!=RAKNET_STARTED)
 	{
 		printf("Start call failed!\n");
 		return 0;
 	}
 	rakServer->SetMaximumIncomingConnections(1);
 	socketDescriptor.port=0;
-	rakClient->Startup(1, 30, &socketDescriptor, 1);
-	if (rakClient->Connect("127.0.0.1", 10000, 0, 0)==false)
+	rakClient->Startup(1, &socketDescriptor, 1);
+	if (rakClient->Connect("127.0.0.1", 10000, 0, 0)!=RakNet::CONNECTION_ATTEMPT_STARTED)
 	{
 		printf("Connect call failed\n");
 		return 0;
@@ -176,7 +176,7 @@ int main(void)
 		{
 			printf("Enter query: ");
 			char query[512];
-			gets(query);
+			Gets(query,sizeof(query));
 			if (stricmp(query, "QUIT")==0)
 			{
 				printf("Bye\n");
@@ -200,8 +200,8 @@ int main(void)
 	rakClient->Shutdown(100,0);
 	rakServer->Shutdown(100,0);
 	
-	RakNetworkFactory::DestroyRakPeerInterface(rakClient);
-	RakNetworkFactory::DestroyRakPeerInterface(rakServer);
+	RakNet::RakPeerInterface::DestroyInstance(rakClient);
+	RakNet::RakPeerInterface::DestroyInstance(rakServer);
 
 	sqlite3_close(database);
 

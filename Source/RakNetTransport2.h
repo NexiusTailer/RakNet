@@ -5,6 +5,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_TelnetTransport==1
 
 #ifndef __RAKNET_TRANSPORT_2
 #define __RAKNET_TRANSPORT_2
@@ -15,12 +17,12 @@
 #include "PluginInterface2.h"
 #include "Export.h"
 
-class RakPeerInterface;
-class RakNetTransport;
 namespace RakNet
 {
-	class BitStream;
-}
+/// Forward declarations
+class BitStream;
+class RakPeerInterface;
+class RakNetTransport;
 
 /// \defgroup RAKNET_TRANSPORT_GROUP RakNetTransport
 /// \brief UDP based transport implementation for the ConsoleServer
@@ -34,6 +36,9 @@ namespace RakNet
 class RAK_DLL_EXPORT RakNetTransport2 : public TransportInterface, public PluginInterface2
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(RakNetTransport2)
+
 	RakNetTransport2();
     virtual ~RakNetTransport2();
 
@@ -90,4 +95,8 @@ protected:
 	DataStructures::Queue<Packet*> packetQueue;
 };
 
+} // namespace RakNet
+
 #endif
+
+#endif // _RAKNET_SUPPORT_*

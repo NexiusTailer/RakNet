@@ -20,11 +20,12 @@
 #include "RakString.h"
 #include "NatTypeDetectionCommon.h"
 
-class RakPeerInterface;
-struct Packet;
 
 namespace RakNet
 {
+/// Forward declarations
+class RakPeerInterface;
+struct Packet;
 
 /// \brief Server code for NatTypeDetection
 /// \details 
@@ -47,6 +48,10 @@ namespace RakNet
 class RAK_DLL_EXPORT NatTypeDetectionServer : public PluginInterface2
 {
 public:
+
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(NatTypeDetectionServer)
+
 	// Constructor
 	NatTypeDetectionServer();
 
@@ -90,8 +95,8 @@ public:
 	{
 		SystemAddress systemAddress;
 		NATDetectionState detectionState;
-		RakNetTimeMS nextStateTime;
-		RakNetTimeMS timeBetweenAttempts;
+		RakNet::TimeMS nextStateTime;
+		RakNet::TimeMS timeBetweenAttempts;
 		unsigned short c2Port;
 		RakNetGUID guid;
 	};

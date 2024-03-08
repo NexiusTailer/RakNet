@@ -205,14 +205,7 @@ void CCRakNetSlidingWindow::OnAck(CCTimeType curTime, CCTimeType rtt, bool hasBA
 		{
 			// Keep the number in range to avoid overflow
 			if (cwnd<10000000)
-			{
 				cwnd*=2;
-				if (cwnd>ssThresh && ssThresh!=0)
-				{
-					cwnd=ssThresh;
-					cwnd+=MAXIMUM_MTU_INCLUDING_UDP_HEADER*MAXIMUM_MTU_INCLUDING_UDP_HEADER/cwnd;
-				}
-			}
 		}
 	}
 	else

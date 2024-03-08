@@ -30,11 +30,12 @@
 #include <stdio.h> // Printf, for the sample code
 #include "Kbhit.h" // getch, for the sample code
 #include <DbgHelp.h>
+#include "Gets.h"
 
 void function1(int a)
 {
 	// Cause a global to be compiled in so I can test the watch value.  SocketLayer::I
-	SocketLayer::GetLocalPort(-1);
+	RakNet::SocketLayer::GetLocalPort(-1);
 
 
 	int *crashPtr=0;
@@ -69,7 +70,7 @@ void main(void)
 	printf("If so desired, it will generate a minidump which can be opened in visual studio\n");
 	printf("to debug the crash.\n\n");
 
-	CrashReportControls controls;
+	RakNet::CrashReportControls controls;
 	controls.actionToTake=0;
 
 	printf("Send an email? (y/n)\n");
@@ -77,65 +78,65 @@ void main(void)
 	{
 		printf("Attach the mini-dump to the email? (y/n)\n");
 		if (getch()=='y')
-			controls.actionToTake|=AOC_EMAIL_WITH_ATTACHMENT;
+			controls.actionToTake|=RakNet::AOC_EMAIL_WITH_ATTACHMENT;
 		else
-			controls.actionToTake|=AOC_EMAIL_NO_ATTACHMENT;
+			controls.actionToTake|=RakNet::AOC_EMAIL_NO_ATTACHMENT;
 	}
 	printf("Write mini-dump to disk? (y/n)\n");
 	if (getch()=='y')
-		controls.actionToTake|=AOC_WRITE_TO_DISK;
+		controls.actionToTake|=RakNet::AOC_WRITE_TO_DISK;
 	printf("Handle crashes in silent mode (no prompts)? (y/n)\n");
 	if (getch()=='y')
-		controls.actionToTake|=AOC_SILENT_MODE;
+		controls.actionToTake|=RakNet::AOC_SILENT_MODE;
 
-	if ((controls.actionToTake & AOC_EMAIL_WITH_ATTACHMENT) || (controls.actionToTake & AOC_EMAIL_NO_ATTACHMENT))
+	if ((controls.actionToTake & RakNet::AOC_EMAIL_WITH_ATTACHMENT) || (controls.actionToTake & RakNet::AOC_EMAIL_NO_ATTACHMENT))
 	{
-		if (controls.actionToTake & AOC_SILENT_MODE)
+		if (controls.actionToTake & RakNet::AOC_SILENT_MODE)
 		{
 			printf("Enter SMTP Server: ");
-			gets(controls.SMTPServer);
+			Gets(controls.SMTPServer,sizeof(controls.SMTPServer));
 			if (controls.SMTPServer[0]==0)
 				return;
 			printf("Enter SMTP account name: ");
-			gets(controls.SMTPAccountName);
+			Gets(controls.SMTPAccountName,sizeof(controls.SMTPAccountName));
 			if (controls.SMTPAccountName[0]==0)
 				return;
 			printf("Enter sender email address: ");
-			gets(controls.emailSender);
+			Gets(controls.emailSender,sizeof(controls.emailSender));
 		}
 
 		printf("Enter email recipient email address: ");
-		gets(controls.emailRecipient);
+		Gets(controls.emailRecipient,sizeof(controls.emailRecipient));
 		if (controls.emailRecipient[0]==0)
 			return;
 
 		printf("Enter subject prefix, if any: ");
-		gets(controls.emailSubjectPrefix);
+		Gets(controls.emailSubjectPrefix,sizeof(controls.emailSubjectPrefix));
 
-		if ((controls.actionToTake & AOC_SILENT_MODE)==0)
+		if ((controls.actionToTake & RakNet::AOC_SILENT_MODE)==0)
 		{
 			printf("Enter text to write in email body: ");
-			gets(controls.emailBody);
+			Gets(controls.emailBody,sizeof(controls.emailBody));
 		}
 	}
 	
-	if (controls.actionToTake & AOC_WRITE_TO_DISK)
+	if (controls.actionToTake & RakNet::AOC_WRITE_TO_DISK)
 	{
 		printf("Enter disk path to write to (ENTER for current directory): ");
-		gets(controls.pathToMinidump);
+		Gets(controls.pathToMinidump,sizeof(controls.pathToMinidump));
 	}
 
 	printf("Enter application name: ");
-	gets(controls.appName);
+	Gets(controls.appName,sizeof(controls.appName));
 	printf("Enter application version: ");
-	gets(controls.appVersion);
+	Gets(controls.appVersion,sizeof(controls.appVersion));
 
 	// MiniDumpNormal will not give you SocketLayer::I correctly but is small (like 15K)
 	// MiniDumpWithDataSegs is much bigger (391K) but does give you SocketLayer::I correctly.
 	controls.minidumpType=MiniDumpWithDataSegs;
 
 	// You must call Start before any crashes will be reported.
-	CrashReporter::Start(&controls);
+	RakNet::CrashReporter::Start(&controls);
 	printf("Crash reporter started.\n");
 
 // If you don't plan to debug the crash reporter itself, you can remove the __try within _DEBUG_CRASH_REPORTER

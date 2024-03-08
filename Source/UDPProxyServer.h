@@ -65,6 +65,9 @@ struct UDPProxyServerResultHandler
 class RAK_DLL_EXPORT UDPProxyServer : public PluginInterface2
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(UDPProxyServer)
+
 	UDPProxyServer();
 	~UDPProxyServer();
 

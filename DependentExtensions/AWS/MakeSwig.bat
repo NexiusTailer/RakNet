@@ -1,0 +1,1 @@
+swig -c++ -csharp -noexcept -namespace RakNet -I"../../Source" -I"AWSServer" -I"../Swig/SwigInterfaceFiles" -I"SimpleDB" -outdir RakNetSwigCSharpOutput -o RakNetSwigCPPOutput\RakNet_wrap.cxx RakNet_AWS.i

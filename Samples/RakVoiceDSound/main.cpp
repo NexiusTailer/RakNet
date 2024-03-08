@@ -9,13 +9,13 @@
 #include <memory.h>
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
-#include "RakNetworkFactory.h"
+
 #include "RakSleep.h"
 #include "RakVoice.h"
 #include "RakNetStatistics.h"
 #include "GetTime.h"
 #include "RakAssert.h"
-
+#include "Gets.h"
 #include "DSoundVoiceAdapter.h"
 
 // Reads and writes per second of the sound data
@@ -29,8 +29,8 @@
 // define sample type. Only short(16 bits sound) is supported at the moment.
 typedef short SAMPLE;
 
-RakPeerInterface *rakPeer=NULL;
-RakVoice rakVoice;
+RakNet::RakPeerInterface *rakPeer=NULL;
+RakNet::RakVoice rakVoice;
 
 struct myStat{
 	unsigned int time;
@@ -47,23 +47,23 @@ void LogStats(){
 		data[i] = data[i+1];
 	}
 
-	RakNetStatistics *rss=rakPeer->GetStatistics(rakPeer->GetSystemAddressFromIndex(0));
-	unsigned int currTime = RakNet::GetTime();
+	RakNet::RakNetStatistics *rss=rakPeer->GetStatistics(rakPeer->GetSystemAddressFromIndex(0));
+	unsigned int currTime = RakNet::GetTimeMS();
 
 	data[numStats-1].time = currTime;
-	data[numStats-1].bitsSent = BYTES_TO_BITS(rss->runningTotal[USER_MESSAGE_BYTES_SENT]);
-	data[numStats-1].bitsRec = BYTES_TO_BITS(rss->runningTotal[USER_MESSAGE_BYTES_RECEIVED_PROCESSED]);
+	data[numStats-1].bitsSent = BYTES_TO_BITS(rss->runningTotal[RakNet::USER_MESSAGE_BYTES_SENT]);
+	data[numStats-1].bitsRec = BYTES_TO_BITS(rss->runningTotal[RakNet::USER_MESSAGE_BYTES_RECEIVED_PROCESSED]);
 
 	float totalTime = (data[numStats-1].time - data[0].time) / 1000.f ;
 	unsigned int totalBitsSent = data[numStats-1].bitsSent - data[0].bitsSent;
 	unsigned int totalBitsRec = data[numStats-1].bitsRec - data[0].bitsRec;
 	float bpsSent = totalBitsSent/totalTime;
 	float bpsRec = totalBitsRec/totalTime;
-	float avgBpsSent = rss->valueOverLastSecond[USER_MESSAGE_BYTES_SENT];
-	float avgBpsRec = rss->valueOverLastSecond[USER_MESSAGE_BYTES_RECEIVED_PROCESSED];
+	float avgBpsSent = rss->valueOverLastSecond[RakNet::USER_MESSAGE_BYTES_SENT];
+	float avgBpsRec = rss->valueOverLastSecond[RakNet::USER_MESSAGE_BYTES_RECEIVED_PROCESSED];
 
-	printf("avgKbpsSent=%02.1f avgKbpsRec=%02.1f kbpsSent=%02.1f kbpsRec=%02.1f    \r", avgBpsSent/1000, avgBpsRec/1000, bpsSent/1000 , bpsRec/1000, rakVoice.GetBufferedBytesToReturn(UNASSIGNED_RAKNET_GUID));
-	//printf("MsgBuf=%6i SndBuf=%10i RcvBuf=%10i    \r", rakVoice.GetRakPeerInterface()->GetStatistics(UNASSIGNED_SYSTEM_ADDRESS)->messageSendBuffer[HIGH_PRIORITY], rakVoice.GetBufferedBytesToSend(UNASSIGNED_SYSTEM_ADDRESS), rakVoice.GetBufferedBytesToReturn(UNASSIGNED_SYSTEM_ADDRESS));
+	printf("avgKbpsSent=%02.1f avgKbpsRec=%02.1f kbpsSent=%02.1f kbpsRec=%02.1f    \r", avgBpsSent/1000, avgBpsRec/1000, bpsSent/1000 , bpsRec/1000, rakVoice.GetBufferedBytesToReturn(RakNet::UNASSIGNED_RAKNET_GUID));
+	//printf("MsgBuf=%6i SndBuf=%10i RcvBuf=%10i    \r", rakVoice.GetRakPeerInterface()->GetStatistics(RakNet::UNASSIGNED_SYSTEM_ADDRESS)->messageSendBuffer[HIGH_PRIORITY], rakVoice.GetBufferedBytesToSend(RakNet::UNASSIGNED_SYSTEM_ADDRESS), rakVoice.GetBufferedBytesToReturn(RakNet::UNASSIGNED_SYSTEM_ADDRESS));
 }
 
 // Prints the current encoder parameters
@@ -129,16 +129,16 @@ int main(void)
 	char ch;
 
 	char port[256];
-	rakPeer = RakNetworkFactory::GetRakPeerInterface();
+	rakPeer = RakNet::RakPeerInterface::GetInstance();
 #if defined(INTERACTIVE)
 	printf("Enter local port: ");
-	gets(port);
+	Gets(port, sizeof(port));
 	if (port[0]==0)
 #endif
 		strcpy(port, "60000");
-	SocketDescriptor socketDescriptor(atoi(port),0);
+	RakNet::SocketDescriptor socketDescriptor(atoi(port),0);
 
-	rakPeer->Startup(4, 30, &socketDescriptor, 1);
+	rakPeer->Startup(4, &socketDescriptor, 1);
 
 	rakPeer->SetMaximumIncomingConnections(4);
 	rakPeer->AttachPlugin(&rakVoice);
@@ -146,13 +146,13 @@ int main(void)
 	rakVoice.Init(SAMPLE_RATE, FRAMES_PER_BUFFER*sizeof(SAMPLE));
 
 	// Initialize our connection with DirectSound
-	if (!DSoundVoiceAdapter::Instance()->SetupAdapter(&rakVoice, GetConsoleHwnd(), DSSCL_EXCLUSIVE))
+	if (!RakNet::DSoundVoiceAdapter::Instance()->SetupAdapter(&rakVoice, GetConsoleHwnd(), DSSCL_EXCLUSIVE))
 	{
 		printf("An error occurred while initializing DirectSound.\n");
 		exit(-1);
 	}
 
-	Packet *p;
+	RakNet::Packet *p;
 	quit=false;
 #if defined(INTERACTIVE)
 	printf("(Q)uit. (C)onnect. (D)isconnect. (M)ute. ' ' for stats.\n");
@@ -202,11 +202,11 @@ int main(void)
 			{
 				char ip[256];
 				printf("\nEnter IP of remote system: ");
-				gets(ip);
+				Gets(ip, sizeof(ip));
 				if (ip[0]==0)
 					strcpy(ip, "127.0.0.1");
 				printf("\nEnter port of remote system: ");
-				gets(port);
+				Gets(port, sizeof(port));
 				if (port[0]==0)
 					strcpy(port, "60000");
 				rakPeer->Connect(ip, atoi(port), 0,0);
@@ -214,7 +214,7 @@ int main(void)
 			else if (ch=='m')
 			{
 				mute=!mute;
-				DSoundVoiceAdapter::Instance()->SetMute(mute);
+				RakNet::DSoundVoiceAdapter::Instance()->SetMute(mute);
 				if (mute)
 					printf("\nNow muted.\n");
 				else
@@ -227,7 +227,7 @@ int main(void)
 			else if (ch==' ')
 			{
 				char message[2048];
-				RakNetStatistics *rss=rakPeer->GetStatistics(rakPeer->GetSystemAddressFromIndex(0));
+				RakNet::RakNetStatistics *rss=rakPeer->GetStatistics(rakPeer->GetSystemAddressFromIndex(0));
 				StatisticsToString(rss, message, 2);
 				printf("%s", message);
 			}
@@ -260,17 +260,17 @@ int main(void)
 		}
 		
 		// Update our connection with DirectSound
-		DSoundVoiceAdapter::Instance()->Update();
+		RakNet::DSoundVoiceAdapter::Instance()->Update();
 
 		LogStats();
 		RakSleep(20);
 	}
 
 	// Release any FMOD resources we used, and shutdown FMOD itself
-	DSoundVoiceAdapter::Instance()->Release();
+	RakNet::DSoundVoiceAdapter::Instance()->Release();
 
 	rakPeer->Shutdown(300);
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 
 	return 0;
 }

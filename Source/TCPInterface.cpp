@@ -31,13 +31,18 @@ typedef int socklen_t;
 #ifdef _WIN32
 #include "WSAStartupSingleton.h"
 #endif
-
+namespace RakNet
+{
 RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop);
 RAK_THREAD_DECLARATION(ConnectionAttemptLoop);
-
+}
 #ifdef _MSC_VER
 #pragma warning( push )
 #endif
+
+using namespace RakNet;
+
+STATIC_FACTORY_DEFINITIONS(TCPInterface,TCPInterface);
 
 TCPInterface::TCPInterface()
 {
@@ -66,7 +71,7 @@ TCPInterface::~TCPInterface()
 	WSAStartupSingleton::Deref();
 #endif
 
-	RakNet::OP_DELETE_ARRAY(remoteClients,__FILE__,__LINE__);
+	RakNet::OP_DELETE_ARRAY(remoteClients,_FILE_AND_LINE_);
 
 	StringCompressor::RemoveReference();
 	RakNet::StringTable::RemoveReference();
@@ -80,12 +85,12 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 
 	if (threadPriority==-99999)
 	{
-
-
-#if   defined(_WIN32)
+#if defined(_XBOX) || defined(X360)
+                   
+#elif defined(_WIN32)
 		threadPriority=0;
-
-
+#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                      
 #else
 		threadPriority=1000;
 #endif
@@ -97,7 +102,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 	if (maxConnections==0)
 		maxConnections=1;
 	remoteClientsLength=maxConnections;
-	remoteClients=RakNet::OP_NEW_ARRAY<RemoteClient>(maxConnections,__FILE__,__LINE__);
+	remoteClients=RakNet::OP_NEW_ARRAY<RemoteClient>(maxConnections,_FILE_AND_LINE_);
 
 	if (maxIncomingConnections>0)
 	{
@@ -173,28 +178,28 @@ void TCPInterface::Stop(void)
 #endif
 	}
 	remoteClientsLength=0;
-	RakNet::OP_DELETE_ARRAY(remoteClients,__FILE__,__LINE__);
+	RakNet::OP_DELETE_ARRAY(remoteClients,_FILE_AND_LINE_);
 	remoteClients=0;
 
-	incomingMessages.Clear(__FILE__, __LINE__);
-	newIncomingConnections.Clear(__FILE__, __LINE__);
-	newRemoteClients.Clear(__FILE__, __LINE__);
-	lostConnections.Clear(__FILE__, __LINE__);
-	requestedCloseConnections.Clear(__FILE__, __LINE__);
-	failedConnectionAttempts.Clear(__FILE__, __LINE__);
-	completedConnectionAttempts.Clear(__FILE__, __LINE__);
-	failedConnectionAttempts.Clear(__FILE__, __LINE__);
+	incomingMessages.Clear(_FILE_AND_LINE_);
+	newIncomingConnections.Clear(_FILE_AND_LINE_);
+	newRemoteClients.Clear(_FILE_AND_LINE_);
+	lostConnections.Clear(_FILE_AND_LINE_);
+	requestedCloseConnections.Clear(_FILE_AND_LINE_);
+	failedConnectionAttempts.Clear(_FILE_AND_LINE_);
+	completedConnectionAttempts.Clear(_FILE_AND_LINE_);
+	failedConnectionAttempts.Clear(_FILE_AND_LINE_);
 	for (i=0; i < headPush.Size(); i++)
 		DeallocatePacket(headPush[i]);
-	headPush.Clear(__FILE__, __LINE__);
+	headPush.Clear(_FILE_AND_LINE_);
 	for (i=0; i < tailPush.Size(); i++)
 		DeallocatePacket(tailPush[i]);
-	tailPush.Clear(__FILE__, __LINE__);
+	tailPush.Clear(_FILE_AND_LINE_);
 
 #if OPEN_SSL_CLIENT_SUPPORT==1
 	SSL_CTX_free (ctx);
-	startSSL.Clear(__FILE__, __LINE__);
-	activeSSLConnections.Clear(false, __FILE__, __LINE__);
+	startSSL.Clear(_FILE_AND_LINE_);
+	activeSSLConnections.Clear(false, _FILE_AND_LINE_);
 #endif
 }
 SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort, bool block)
@@ -232,7 +237,7 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 			remoteClients[newRemoteClientIndex].isActiveMutex.Unlock();
 
 			failedConnectionAttemptMutex.Lock();
-			failedConnectionAttempts.Push(systemAddress, __FILE__, __LINE__ );
+			failedConnectionAttempts.Push(systemAddress, _FILE_AND_LINE_ );
 			failedConnectionAttemptMutex.Unlock();
 
 			return UNASSIGNED_SYSTEM_ADDRESS;
@@ -242,14 +247,14 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 		remoteClients[newRemoteClientIndex].systemAddress=systemAddress;
 
 		completedConnectionAttemptMutex.Lock();
-		completedConnectionAttempts.Push(remoteClients[newRemoteClientIndex].systemAddress, __FILE__, __LINE__ );
+		completedConnectionAttempts.Push(remoteClients[newRemoteClientIndex].systemAddress, _FILE_AND_LINE_ );
 		completedConnectionAttemptMutex.Unlock();
 
 		return remoteClients[newRemoteClientIndex].systemAddress;
 	}
 	else
 	{
-		ThisPtrPlusSysAddr *s = RakNet::OP_NEW<ThisPtrPlusSysAddr>( __FILE__, __LINE__ );
+		ThisPtrPlusSysAddr *s = RakNet::OP_NEW<ThisPtrPlusSysAddr>( _FILE_AND_LINE_ );
 		s->systemAddress.SetBinaryAddress(host);
 		s->systemAddress.port=remotePort;
 		s->systemAddress.systemIndex=(SystemIndex) newRemoteClientIndex;
@@ -259,8 +264,8 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 		int errorCode = RakNet::RakThread::Create(ConnectionAttemptLoop, s, threadPriority);
 		if (errorCode!=0)
 		{
-			RakNet::OP_DELETE(s, __FILE__, __LINE__);
-			failedConnectionAttempts.Push(s->systemAddress, __FILE__, __LINE__ );
+			RakNet::OP_DELETE(s, _FILE_AND_LINE_);
+			failedConnectionAttempts.Push(s->systemAddress, _FILE_AND_LINE_ );
 		}
 		return UNASSIGNED_SYSTEM_ADDRESS;
 	}	
@@ -279,12 +284,12 @@ void TCPInterface::StartSSLClient(SystemAddress systemAddress)
 		sharedSslMutex.Unlock();
 	}
 
-	SystemAddress *id = startSSL.Allocate( __FILE__, __LINE__ );
+	SystemAddress *id = startSSL.Allocate( _FILE_AND_LINE_ );
 	*id=systemAddress;
 	startSSL.Push(id);
 	unsigned index = activeSSLConnections.GetIndexOf(systemAddress);
 	if (index==(unsigned)-1)
-		activeSSLConnections.Insert(systemAddress,__FILE__,__LINE__);
+		activeSSLConnections.Insert(systemAddress,_FILE_AND_LINE_);
 }
 bool TCPInterface::IsSSLActive(SystemAddress systemAddress)
 {
@@ -405,20 +410,20 @@ void TCPInterface::DeallocatePacket( Packet *packet )
 		return;
 	if (packet->deleteData)
 	{
-		rakFree_Ex(packet->data, __FILE__, __LINE__ );
-		incomingMessages.Deallocate(packet, __FILE__,__LINE__);
+		rakFree_Ex(packet->data, _FILE_AND_LINE_ );
+		incomingMessages.Deallocate(packet, _FILE_AND_LINE_);
 	}
 	else
 	{
 		// Came from userspace AllocatePacket
-		rakFree_Ex(packet->data, __FILE__, __LINE__ );
-		RakNet::OP_DELETE(packet, __FILE__, __LINE__);
+		rakFree_Ex(packet->data, _FILE_AND_LINE_ );
+		RakNet::OP_DELETE(packet, _FILE_AND_LINE_);
 	}
 }
 Packet* TCPInterface::AllocatePacket(unsigned dataSize)
 {
-	Packet*p = RakNet::OP_NEW<Packet>(__FILE__,__LINE__);
-	p->data=(unsigned char*) rakMalloc_Ex(dataSize,__FILE__,__LINE__);
+	Packet*p = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
+	p->data=(unsigned char*) rakMalloc_Ex(dataSize,_FILE_AND_LINE_);
 	p->length=dataSize;
 	p->bitSize=BYTES_TO_BITS(dataSize);
 	p->deleteData=false;
@@ -430,9 +435,81 @@ Packet* TCPInterface::AllocatePacket(unsigned dataSize)
 void TCPInterface::PushBackPacket( Packet *packet, bool pushAtHead )
 {
 	if (pushAtHead)
-		headPush.Push(packet, __FILE__, __LINE__ );
+		headPush.Push(packet, _FILE_AND_LINE_ );
 	else
-		tailPush.Push(packet, __FILE__, __LINE__ );
+		tailPush.Push(packet, _FILE_AND_LINE_ );
+}
+int TCPInterface::Base64Encoding(const char *inputData, int dataLength, char *outputData)
+{
+	// http://en.wikipedia.org/wiki/Base64
+
+	int outputOffset, charCount;
+	int write3Count;
+	outputOffset=0;
+	charCount=0;
+	int j;
+
+	write3Count=dataLength/3;
+	for (j=0; j < write3Count; j++)
+	{
+		// 6 leftmost bits from first byte, shifted to bits 7,8 are 0
+		outputData[outputOffset++]=Base64Map()[inputData[j*3+0] >> 2];
+		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
+
+		// Remaining 2 bits from first byte, placed in position, and 4 high bits from the second byte, masked to ignore bits 7,8
+		outputData[outputOffset++]=Base64Map()[((inputData[j*3+0] << 4) | (inputData[j*3+1] >> 4)) & 63];
+		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
+
+		// 4 low bits from the second byte and the two high bits from the third byte, masked to ignore bits 7,8
+		outputData[outputOffset++]=Base64Map()[((inputData[j*3+1] << 2) | (inputData[j*3+2] >> 6)) & 63]; // Third 6 bits
+		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
+
+		// Last 6 bits from the third byte, masked to ignore bits 7,8
+		outputData[outputOffset++]=Base64Map()[inputData[j*3+2] & 63];
+		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
+	}
+
+	if (dataLength % 3==1)
+	{
+		// One input byte remaining
+		outputData[outputOffset++]=Base64Map()[inputData[j*3+0] >> 2];
+		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
+
+		// Remaining 2 bits from first byte, placed in position, and 4 high bits from the second byte, masked to ignore bits 7,8
+		outputData[outputOffset++]=Base64Map()[((inputData[j*3+0] << 4) | (inputData[j*3+1] >> 4)) & 63];
+		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
+
+		// Pad with two equals
+		outputData[outputOffset++]='=';
+		outputData[outputOffset++]='=';
+	}
+	else if (dataLength % 3==2)
+	{
+		// Two input bytes remaining
+
+		// 6 leftmost bits from first byte, shifted to bits 7,8 are 0
+		outputData[outputOffset++]=Base64Map()[inputData[j*3+0] >> 2];
+		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
+
+		// Remaining 2 bits from first byte, placed in position, and 4 high bits from the second byte, masked to ignore bits 7,8
+		outputData[outputOffset++]=Base64Map()[((inputData[j*3+0] << 4) | (inputData[j*3+1] >> 4)) & 63];
+		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
+
+		// 4 low bits from the second byte, followed by 00
+		outputData[outputOffset++]=Base64Map()[(inputData[j*3+1] << 2) & 63]; // Third 6 bits
+		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
+
+		// Pad with one equal
+		outputData[outputOffset++]='=';
+		//outputData[outputOffset++]='=';
+	}
+
+	// Append \r\n
+	outputData[outputOffset++]='\r';
+	outputData[outputOffset++]='\n';
+	outputData[outputOffset]=0;
+
+	return outputOffset;
 }
 SystemAddress TCPInterface::HasCompletedConnectionAttempt(void)
 {
@@ -459,7 +536,7 @@ SystemAddress TCPInterface::HasNewIncomingConnection(void)
 	if (out)
 	{
 		out2=*out;
-		newIncomingConnections.Deallocate(out, __FILE__,__LINE__);
+		newIncomingConnections.Deallocate(out, _FILE_AND_LINE_);
 		return *out;
 	}
 	else
@@ -474,7 +551,7 @@ SystemAddress TCPInterface::HasLostConnection(void)
 	if (out)
 	{
 		out2=*out;
-		lostConnections.Deallocate(out, __FILE__,__LINE__);
+		lostConnections.Deallocate(out, _FILE_AND_LINE_);
 		return *out;
 	}
 	else
@@ -536,12 +613,12 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort)
 {
 	sockaddr_in serverAddress;
 
-
+#if !defined(_XBOX) && !defined(_X360)
 	struct hostent * server;
 	server = gethostbyname(host);
 	if (server == NULL)
 		return (SOCKET) -1;
-
+#endif
 
 	SOCKET sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd < 0) 
@@ -556,8 +633,7 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort)
 	unsigned long nonblocking = 1;
 	ioctlsocket( sockfd, FIONBIO, &nonblocking );
 #elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-	int sock_opt=1;
-	setsockopt(sockfd, SOL_SOCKET, SO_NBIO, ( char * ) & sock_opt, sizeof ( sock_opt ) );
+                                                                                                        
 #else
 	fcntl( sockfd, F_SETFL, O_NONBLOCK );
 #endif
@@ -567,14 +643,14 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort)
 	setsockopt(sockfd, SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 
 
-
+#if !defined(_XBOX) && !defined(_X360)
 	memcpy((char *)&serverAddress.sin_addr.s_addr, (char *)server->h_addr, server->h_length);
-
-
-
+#else
+	serverAddress.sin_addr.s_addr = inet_addr( host );
+#endif
 
 	blockingSocketListMutex.Lock();
-	blockingSocketList.Insert(sockfd, __FILE__, __LINE__);
+	blockingSocketList.Insert(sockfd, _FILE_AND_LINE_);
 	blockingSocketListMutex.Unlock();
 
 	// This is blocking
@@ -595,13 +671,14 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort)
 
 	return sockfd;
 }
-RAK_THREAD_DECLARATION(ConnectionAttemptLoop)
+
+RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
 {
 	TCPInterface::ThisPtrPlusSysAddr *s = (TCPInterface::ThisPtrPlusSysAddr *) arguments;
 	SystemAddress systemAddress = s->systemAddress;
 	TCPInterface *tcpInterface = s->tcpInterface;
 	int newRemoteClientIndex=systemAddress.systemIndex;
-	RakNet::OP_DELETE(s, __FILE__, __LINE__);
+	RakNet::OP_DELETE(s, _FILE_AND_LINE_);
 
 	char str1[64];
 	systemAddress.ToString(false, str1);
@@ -613,7 +690,7 @@ RAK_THREAD_DECLARATION(ConnectionAttemptLoop)
 		tcpInterface->remoteClients[newRemoteClientIndex].isActiveMutex.Unlock();
 
 		tcpInterface->failedConnectionAttemptMutex.Lock();
-		tcpInterface->failedConnectionAttempts.Push(systemAddress, __FILE__, __LINE__ );
+		tcpInterface->failedConnectionAttempts.Push(systemAddress, _FILE_AND_LINE_ );
 		tcpInterface->failedConnectionAttemptMutex.Unlock();
 		return 0;
 	}
@@ -625,20 +702,20 @@ RAK_THREAD_DECLARATION(ConnectionAttemptLoop)
 	if (tcpInterface->threadRunning)
 	{
 		tcpInterface->completedConnectionAttemptMutex.Lock();
-		tcpInterface->completedConnectionAttempts.Push(systemAddress, __FILE__, __LINE__ );
+		tcpInterface->completedConnectionAttempts.Push(systemAddress, _FILE_AND_LINE_ );
 		tcpInterface->completedConnectionAttemptMutex.Unlock();
 	}	
 
 	return 0;
 }
 
-RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
+RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 {
 	TCPInterface * sts = ( TCPInterface * ) arguments;
 //	const int BUFF_SIZE=8096;
-	const int BUFF_SIZE=1048576;
+	const unsigned int BUFF_SIZE=1048576;
 	//char data[ BUFF_SIZE ];
-	char * data = (char*) rakMalloc_Ex(BUFF_SIZE,__FILE__,__LINE__);
+	char * data = (char*) rakMalloc_Ex(BUFF_SIZE,_FILE_AND_LINE_);
 	Packet *incomingMessage;
 	fd_set      readFD, exceptionFD, writeFD;
 	sts->threadRunning=true;
@@ -679,7 +756,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 					sts->remoteClients[i].isActiveMutex.Unlock();
 				}
 			}
-			sts->startSSL.Deallocate(sslSystemAddress,__FILE__,__LINE__);
+			sts->startSSL.Deallocate(sslSystemAddress,_FILE_AND_LINE_);
 		}
 #endif
 
@@ -727,11 +804,11 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 #ifdef _MSC_VER
 #pragma warning( disable : 4244 ) // warning C4127: conditional expression is constant
 #endif
-
-
-
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                                                                                        
+#else
 			selectResult=(int) select(largestDescriptor+1, &readFD, &writeFD, &exceptionFD, &tv);		
-
+#endif
 
 			if (selectResult<=0)
 				break;
@@ -757,7 +834,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 							sts->remoteClients[newRemoteClientIndex].isActiveMutex.Unlock();
 
 
-							SystemAddress *newConnectionSystemAddress=sts->newIncomingConnections.Allocate( __FILE__, __LINE__ );
+							SystemAddress *newConnectionSystemAddress=sts->newIncomingConnections.Allocate( _FILE_AND_LINE_ );
 							*newConnectionSystemAddress=sts->remoteClients[newRemoteClientIndex].systemAddress;
 							sts->newIncomingConnections.Push(newConnectionSystemAddress);
 
@@ -812,7 +889,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 						
 #endif
 						// Connection lost abruptly
-						SystemAddress *lostConnectionSystemAddress=sts->lostConnections.Allocate( __FILE__, __LINE__ );
+						SystemAddress *lostConnectionSystemAddress=sts->lostConnections.Allocate( _FILE_AND_LINE_ );
 						*lostConnectionSystemAddress=sts->remoteClients[i].systemAddress;
 						sts->lostConnections.Push(lostConnectionSystemAddress);
 						sts->remoteClients[i].isActiveMutex.Lock();
@@ -827,8 +904,8 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 							len = sts->remoteClients[i].Recv(data,BUFF_SIZE);
 							if (len>0)
 							{
-								incomingMessage=sts->incomingMessages.Allocate( __FILE__, __LINE__ );
-								incomingMessage->data = (unsigned char*) rakMalloc_Ex( len+1, __FILE__, __LINE__ );
+								incomingMessage=sts->incomingMessages.Allocate( _FILE_AND_LINE_ );
+								incomingMessage->data = (unsigned char*) rakMalloc_Ex( len+1, _FILE_AND_LINE_ );
 								memcpy(incomingMessage->data, data, len);
 								incomingMessage->data[len]=0; // Null terminate this so we can print it out as regular strings.  This is different from RakNet which does not do this.
 //								printf("RECV: %s\n",incomingMessage->data);
@@ -840,7 +917,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 							else
 							{
 								// Connection lost gracefully
-								SystemAddress *lostConnectionSystemAddress=sts->lostConnections.Allocate( __FILE__, __LINE__ );
+								SystemAddress *lostConnectionSystemAddress=sts->lostConnections.Allocate( _FILE_AND_LINE_ );
 								*lostConnectionSystemAddress=sts->remoteClients[i].systemAddress;
 								sts->lostConnections.Push(lostConnectionSystemAddress);
 								sts->remoteClients[i].isActiveMutex.Lock();
@@ -861,7 +938,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 							{
 								unsigned int contiguousLength;
 								char* contiguousBytesPointer = rc->outgoingData.PeekContiguousBytes(&contiguousLength);
-								if (contiguousLength < BUFF_SIZE && contiguousLength<bytesInBuffer)
+								if (contiguousLength < (unsigned int) BUFF_SIZE && contiguousLength<bytesInBuffer)
 								{
 									if (bytesInBuffer > BUFF_SIZE)
 										bytesAvailable=BUFF_SIZE;
@@ -892,10 +969,11 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 	}
 	sts->threadRunning=false;
 
-	rakFree_Ex(data,__FILE__,__LINE__);
+	rakFree_Ex(data,_FILE_AND_LINE_);
 
 	return 0;
 }
+
 void RemoteClient::SetActive(bool a)
 {
 	if (isActive != a)
@@ -930,13 +1008,13 @@ void RemoteClient::SendOrBuffer(const char **data, const unsigned int *lengths, 
 			{
 				// Push remainder
 				outgoingDataMutex.Lock();
-				outgoingData.WriteBytes(data[parameterIndex]+bytesSent,lengths[parameterIndex]-bytesSent,__FILE__,__LINE__);
+				outgoingData.WriteBytes(data[parameterIndex]+bytesSent,lengths[parameterIndex]-bytesSent,_FILE_AND_LINE_);
 				outgoingDataMutex.Unlock();
 			}
 		}
 		else
 		{
-			outgoingData.WriteBytes(data[parameterIndex],lengths[parameterIndex],__FILE__,__LINE__);
+			outgoingData.WriteBytes(data[parameterIndex],lengths[parameterIndex],_FILE_AND_LINE_);
 			outgoingDataMutex.Unlock();
 		}
 	}
@@ -966,7 +1044,9 @@ int RemoteClient::Send(const char *data, unsigned int length)
 	int err;
 	if (ssl)
 	{
-		return SSL_write (ssl, data, length);
+		err = SSL_write (ssl, data, length);
+		RakAssert(err>0);
+		return 0;
 	}
 	else
 		return send(socket, data, length, 0);

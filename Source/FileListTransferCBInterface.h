@@ -14,6 +14,9 @@
 #pragma warning( push )
 #endif
 
+namespace RakNet
+{
+
 /// \brief Used by FileListTransfer plugin as a callback for when we get a file.
 /// \details You get the last file when fileIndex==numberOfFilesInThisSet
 /// \sa FileListTransfer
@@ -140,6 +143,8 @@ public:
 	/// Otherwise it is up to you to delete it yourself.
 	virtual void OnDereference(void) {}
 };
+
+} // namespace RakNet
 
 #ifdef _MSC_VER
 #pragma warning( pop )

@@ -27,7 +27,7 @@ void BytePool::SetPageSize(int size)
 unsigned char *BytePool::Allocate(int bytesWanted, const char *file, unsigned int line)
 {
 #ifdef _DISABLE_BYTE_POOL
-	return rakMalloc_Ex(bytesWanted, __FILE__, __LINE__);
+	return rakMalloc_Ex(bytesWanted, _FILE_AND_LINE_);
 #endif
 	unsigned char *out;
 	if (bytesWanted <= 127)
@@ -79,14 +79,14 @@ unsigned char *BytePool::Allocate(int bytesWanted, const char *file, unsigned in
 		return ((unsigned char*) out)+1;
 	}
 
-	out = (unsigned char*) rakMalloc_Ex(bytesWanted+1, __FILE__, __LINE__);
+	out = (unsigned char*) rakMalloc_Ex(bytesWanted+1, _FILE_AND_LINE_);
 	out[0]=(unsigned char)255;
 	return out+1;
 }
 void BytePool::Release(unsigned char *data, const char *file, unsigned int line)
 {
 #ifdef _DISABLE_BYTE_POOL
-	_rakFree_Ex(data, __FILE__, __LINE__ );
+	_rakFree_Ex(data, _FILE_AND_LINE_ );
 #endif
 	unsigned char *realData = data-1;
 	switch (realData[0])

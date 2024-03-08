@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 import gfx.controls.CheckBox;
@@ -51,12 +51,12 @@ class Screens.LoginScreen extends Screen
 		mcForgotUsername.onPress = Delegate.create( this, ShowForgotUsername );
 		
 		//Add callbacks for C++
-		GameDelegate.addCallBack("c2f_SetStateEnterCDKey", this, "c2f_SetStateEnterCDKey");
-		GameDelegate.addCallBack("c2f_SetStateRegisterAccount", this, "c2f_SetStateRegisterAccount");
-		GameDelegate.addCallBack("c2f_DeleteAccountResult", this, "c2f_DeleteAccountResult");
-		GameDelegate.addCallBack("c2f_ChangeHandleResult", this, "c2f_ChangeHandleResult");
-		GameDelegate.addCallBack("c2f_NotifyLoginResultFailure", this, "c2f_NotifyLoginResultFailure");
-		GameDelegate.addCallBack("c2f_NotifyLoginResultSuccess", this, "c2f_NotifyLoginResultSuccess");
+		ExternalInterface.addCallback("c2f_SetStateEnterCDKey", this, c2f_SetStateEnterCDKey);
+		ExternalInterface.addCallback("c2f_SetStateRegisterAccount", this, c2f_SetStateRegisterAccount);
+		ExternalInterface.addCallback("c2f_DeleteAccountResult", this, c2f_DeleteAccountResult);
+		ExternalInterface.addCallback("c2f_ChangeHandleResult", this, c2f_ChangeHandleResult);
+		ExternalInterface.addCallback("c2f_NotifyLoginResultFailure", this, c2f_NotifyLoginResultFailure);
+		ExternalInterface.addCallback("c2f_NotifyLoginResultSuccess", this, c2f_NotifyLoginResultSuccess);
 		
 		super.VOnFinishedLoading();
 	}
@@ -68,7 +68,7 @@ class Screens.LoginScreen extends Screen
 	
 	public function f2c_ResetDatabase():Void
 	{
-		GameDelegate.call("f2c_ResetDatabase", [], _root);
+		ExternalInterface.call("f2c_ResetDatabase");
 	}
 	
 	public function recoverPasswordFunc():Void
@@ -79,24 +79,24 @@ class Screens.LoginScreen extends Screen
 	
 	public function f2c_DeleteAccount():Void
 	{
-		GameDelegate.call("f2c_DeleteAccount", [userNameEdit.text, passwordEdit.text], _root);
+		ExternalInterface.call("f2c_DeleteAccount", userNameEdit.text, passwordEdit.text);
 	}
 	
 	public function f2c_ChangeHandle():Void
 	{
-		GameDelegate.call("f2c_ChangeHandle", [userNameEdit.text, passwordEdit.text, changeHandleNewHandleEditBox.text], _root);
+		ExternalInterface.call("f2c_ChangeHandle", userNameEdit.text, passwordEdit.text, changeHandleNewHandleEditBox.text);
 	}
 
 	public function f2c_RegisterAccountStateQuery():Void
 	{
-		GameDelegate.call("f2c_RegisterAccountStateQuery", [userNameEdit.text, passwordEdit.text], _root);
+		ExternalInterface.call("f2c_RegisterAccountStateQuery", userNameEdit.text, passwordEdit.text);
 		// C++ will call either c2f_SetStateEnterCDKey or c2f_SetStateCreateAccount1
 	}
 	
 	public function f2c_LoginToAccount():Void
 	{
 		tfLoginFailed._visible=false;
-		GameDelegate.call("f2c_LoginToAccount", [userNameEdit.text, passwordEdit.text, savePassword.selected], _root);
+		ExternalInterface.call("f2c_LoginToAccount", userNameEdit.text, passwordEdit.text, savePassword.selected);
 		//_root.gotoAndPlay("LoggingIn");
 		//LobbyInterface.Instance.ShowScreen( ScreenID.LOGGING_IN );
 		if ( LobbyInterface.Instance.IsInFlashMode() )
@@ -107,7 +107,7 @@ class Screens.LoginScreen extends Screen
 	
 	public function f2c_DisconnectFromServer():Void
 	{
-		GameDelegate.call("f2c_DisconnectFromServer", [], _root);
+		ExternalInterface.call("f2c_DisconnectFromServer");
 	}
 	
 	public function c2f_SetStateEnterCDKey():Void

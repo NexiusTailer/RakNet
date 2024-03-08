@@ -11,9 +11,12 @@
 #ifndef __READY_EVENT_H
 #define __READY_EVENT_H
 
-class RakPeerInterface;
 #include "PluginInterface2.h"
 #include "DS_OrderedList.h"
+
+namespace RakNet {
+
+class RakPeerInterface;
 
 /// \defgroup READY_EVENT_GROUP ReadyEvent
 /// \brief Peer to peer synchronized ready and unready events
@@ -52,6 +55,9 @@ enum ReadyEventSystemStatus
 class ReadyEvent : public PluginInterface2
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(ReadyEvent)
+
 	// Constructor
 	ReadyEvent();
 
@@ -220,6 +226,8 @@ protected:
 	DataStructures::OrderedList<int, ReadyEventNode*, ReadyEvent::ReadyEventNodeComp> readyEventNodeList;
 	unsigned char channel;
 };
+
+} // namespace RakNet
 
 #endif
 

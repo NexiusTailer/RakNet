@@ -1,11 +1,16 @@
-#include "NativeFeatureIncludes.h"
-#include "RakNetworkFactory.h"
+
 #include "RakPeerInterface.h"
-#include "Router.h"
-#include "ConnectionGraph.h"
 #include "FileOperations.h"
 #include "RakMemoryOverride.h"
+#include "ConsoleServer.h"
+#include "LogCommandParser.h"
+#include "RakNetCommandParser.h"
+#include "PacketLogger.h"
 #include "DS_List.h"
+#include "SocketLayer.h"
+#include "RakSleep.h"
+
+using namespace RakNet;
 
 void* MyMalloc (size_t size)
 {
@@ -22,76 +27,57 @@ void MyFree (void *p)
 	free(p);
 }
 
-
-
 // This project is used to test the DLL system to make sure necessary classes are exported
 int main()
 {
 	// Just test allocation and deallocation across the DLL.  If it crashes it failed, otherwise it worked.
-	#if _RAKNET_SUPPORT_ReplicaManager==1
-		ConsoleServer* a=RakNetworkFactory::GetConsoleServer( );
-	#endif
-	#if _RAKNET_SUPPORT_ReplicaManager==1
-		ReplicaManager* b=RakNetworkFactory::GetReplicaManager( );
-	#endif
-	#if _RAKNET_SUPPORT_LogCommandParser==1
-		LogCommandParser* c=RakNetworkFactory::GetLogCommandParser( );
-		#if _RAKNET_SUPPORT_PacketLogger==1
-			PacketLogger* d=RakNetworkFactory::GetPacketLogger( );
-		#endif
-	#endif
-	#if _RAKNET_SUPPORT_RakNetCommandParser==1
-		RakNetCommandParser* e=RakNetworkFactory::GetRakNetCommandParser( );
-	#endif
-	RakPeerInterface * f=RakNetworkFactory::GetRakPeerInterface( );
+	ConsoleServer* a=ConsoleServer::GetInstance( );
+	LogCommandParser* c=LogCommandParser::GetInstance( );
+	PacketLogger* d=PacketLogger::GetInstance( );
+	RakNetCommandParser* e=RakNetCommandParser::GetInstance( );
+	RakPeerInterface * f=RakPeerInterface::GetInstance( );
 	SystemAddress sa = UNASSIGNED_SYSTEM_ADDRESS;
-	f->GetIndexFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
-	#if _RAKNET_SUPPORT_Router==1
-		Router *g=RakNetworkFactory::GetRouter( );
-	#endif
-	#if _RAKNET_SUPPORT_ConnectionGraph==1
-		ConnectionGraph *h=RakNetworkFactory::GetConnectionGraph( );
-	#endif
+
+	char ip_list[MAXIMUM_NUMBER_OF_INTERNAL_IDS][16];
+	unsigned int binary_addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
+	SocketLayer::GetMyIP(ip_list,binary_addresses);
+	
+	SocketDescriptor sd(5555,ip_list[0]);
+	if(f->Startup(32,&sd,1) != RAKNET_STARTED) {		
+			printf("NetworkNode::startup(): failed to start server\n");
+			return 0;
+		}
+	f->SetMaximumIncomingConnections(32);
+	
+	DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
+	f->GetSockets(sockets);
+	f->ReleaseSockets(sockets);
 
 	// See RakMemoryOverride.h
 	SetMalloc(MyMalloc);
 	SetRealloc(MyRealloc);
 	SetFree(MyFree);
 
-	char *cArray = RakNet::OP_NEW_ARRAY<char>(10,__FILE__,__LINE__);
-	RakNet::OP_DELETE_ARRAY(cArray,__FILE__,__LINE__);
+	char *cArray = RakNet::OP_NEW_ARRAY<char>(10,_FILE_AND_LINE_);
+	RakNet::OP_DELETE_ARRAY(cArray,_FILE_AND_LINE_);
 
 	DataStructures::List<int> intList;
-	intList.Push(5, __FILE__, __LINE__ );
+	intList.Push(5, _FILE_AND_LINE_ );
 	
-	f->GetMTUSize(UNASSIGNED_SYSTEM_ADDRESS);
+	f->GetMTUSize(RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 	SystemAddress p1;
 	SystemAddress p2;
 	p1=p2;
-	g->Update();
-	
-	#if _RAKNET_SUPPORT_ConsoleServer==1
-		RakNetworkFactory::DestroyConsoleServer(a);
-	#endif
-	#if _RAKNET_SUPPORT_ReplicaManager==1
-		RakNetworkFactory::DestroyReplicaManager(b);
-	#endif
-	#if _RAKNET_SUPPORT_LogCommandParser==1
-		RakNetworkFactory::DestroyLogCommandParser(c);
-		#if _RAKNET_SUPPORT_PacketLogger==1
-			RakNetworkFactory::DestroyPacketLogger(d);
-		#endif
-	#endif
-	#if _RAKNET_SUPPORT_RakNetCommandParser==1
-		RakNetworkFactory::DestroyRakNetCommandParser(e);
-	#endif
-	RakNetworkFactory::DestroyRakPeerInterface(f);
-	#if _RAKNET_SUPPORT_Router==1
-		RakNetworkFactory::DestroyRouter(g);
-	#endif
-	#if _RAKNET_SUPPORT_ConnectionGraph==1
-		RakNetworkFactory::DestroyConnectionGraph(h);
-	#endif
+
+	RakSleep(300);
+
+
+	ConsoleServer::DestroyInstance( a );
+	LogCommandParser::DestroyInstance( c );
+	PacketLogger::DestroyInstance( d );
+	RakNetCommandParser::DestroyInstance( e );
+	RakNet::RakPeerInterface::DestroyInstance( f );
+
 	return 0;
 }
 

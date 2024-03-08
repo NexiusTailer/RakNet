@@ -8,15 +8,10 @@
 // Uncomment below defines, and paste to NativeFeatureIncludesOverrides.h, to exclude plugins that you do not want to build into the static library, or DLL
 // These are not all the plugins, only those that are in the core library
 // Other plugins are located in DependentExtensions
-// #define _RAKNET_SUPPORT_AutoRPC 0
-// #define _RAKNET_SUPPORT_ConnectionGraph 0
 // #define _RAKNET_SUPPORT_ConnectionGraph2 0
 // #define _RAKNET_SUPPORT_DirectoryDeltaTransfer 0
 // #define _RAKNET_SUPPORT_FileListTransfer 0
-// #define _RAKNET_SUPPORT_FullyConnectedMesh 0
 // #define _RAKNET_SUPPORT_FullyConnectedMesh2 0
-// #define _RAKNET_SUPPORT_LightweightDatabaseClient 0
-// #define _RAKNET_SUPPORT_LightweightDatabaseServer 0
 // #define _RAKNET_SUPPORT_MessageFilter 0
 // #define _RAKNET_SUPPORT_NatPunchthroughClient 0
 // #define _RAKNET_SUPPORT_NatPunchthroughServer 0
@@ -24,10 +19,7 @@
 // #define _RAKNET_SUPPORT_NatTypeDetectionServer 0
 // #define _RAKNET_SUPPORT_PacketLogger 0
 // #define _RAKNET_SUPPORT_ReadyEvent 0
-// #define _RAKNET_SUPPORT_ReplicaManager 0
-// #define _RAKNET_SUPPORT_ReplicaManager2 0
 // #define _RAKNET_SUPPORT_ReplicaManager3 0
-// #define _RAKNET_SUPPORT_Router 0
 // #define _RAKNET_SUPPORT_Router2 0
 // #define _RAKNET_SUPPORT_RPC4Plugin 0
 // #define _RAKNET_SUPPORT_TeamBalancer 0
@@ -43,13 +35,11 @@
 // #define _RAKNET_SUPPORT_EmailSender 0
 // #define _RAKNET_SUPPORT_HTTPConnection 0
 // #define _RAKNET_SUPPORT_PacketizedTCP 0
+// #define _RAKNET_SUPPORT_TwoWayAuthentication 0
 
 // SET DEFAULTS IF UNDEFINED
-#ifndef _RAKNET_SUPPORT_AutoRPC
-#define _RAKNET_SUPPORT_AutoRPC 1
-#endif
-#ifndef _RAKNET_SUPPORT_ConnectionGraph
-#define _RAKNET_SUPPORT_ConnectionGraph 1
+#ifndef LIBCAT_SECURITY
+#define LIBCAT_SECURITY 0
 #endif
 #ifndef _RAKNET_SUPPORT_ConnectionGraph2
 #define _RAKNET_SUPPORT_ConnectionGraph2 1
@@ -65,12 +55,6 @@
 #endif
 #ifndef _RAKNET_SUPPORT_FullyConnectedMesh2
 #define _RAKNET_SUPPORT_FullyConnectedMesh2 1
-#endif
-#ifndef _RAKNET_SUPPORT_LightweightDatabaseClient
-#define _RAKNET_SUPPORT_LightweightDatabaseClient 1
-#endif
-#ifndef _RAKNET_SUPPORT_LightweightDatabaseServer
-#define _RAKNET_SUPPORT_LightweightDatabaseServer 1
 #endif
 #ifndef _RAKNET_SUPPORT_MessageFilter
 #define _RAKNET_SUPPORT_MessageFilter 1
@@ -93,17 +77,8 @@
 #ifndef _RAKNET_SUPPORT_ReadyEvent
 #define _RAKNET_SUPPORT_ReadyEvent 1
 #endif
-#ifndef _RAKNET_SUPPORT_ReplicaManager
-#define _RAKNET_SUPPORT_ReplicaManager 1
-#endif
-#ifndef _RAKNET_SUPPORT_ReplicaManager2
-#define _RAKNET_SUPPORT_ReplicaManager2 1
-#endif
 #ifndef _RAKNET_SUPPORT_ReplicaManager3
 #define _RAKNET_SUPPORT_ReplicaManager3 1
-#endif
-#ifndef _RAKNET_SUPPORT_Router
-#define _RAKNET_SUPPORT_Router 1
 #endif
 #ifndef _RAKNET_SUPPORT_Router2
 #define _RAKNET_SUPPORT_Router2 1
@@ -150,15 +125,23 @@
 #ifndef _RAKNET_SUPPORT_PacketizedTCP
 #define _RAKNET_SUPPORT_PacketizedTCP 1
 #endif
+#ifndef _RAKNET_SUPPORT_TwoWayAuthentication
+#define _RAKNET_SUPPORT_TwoWayAuthentication 1
+#endif
+#ifndef _RAKNET_SUPPORT_CloudClient
+#define _RAKNET_SUPPORT_CloudClient 1
+#endif
+#ifndef _RAKNET_SUPPORT_CloudServer
+#define _RAKNET_SUPPORT_CloudServer 1
+#endif
+#ifndef _RAKNET_SUPPORT_DynDNS
+#define _RAKNET_SUPPORT_DynDNS 1
+#endif
 
 // Take care of dependencies
 #if _RAKNET_SUPPORT_DirectoryDeltaTransfer==1
 #undef _RAKNET_SUPPORT_FileListTransfer
 #define _RAKNET_SUPPORT_FileListTransfer 1
-#endif
-#if _RAKNET_SUPPORT_FullyConnectedMesh==1 || _RAKNET_SUPPORT_Router==1
-#undef _RAKNET_SUPPORT_ConnectionGraph
-#define _RAKNET_SUPPORT_ConnectionGraph 1
 #endif
 #if _RAKNET_SUPPORT_FullyConnectedMesh2==1
 #undef _RAKNET_SUPPORT_ConnectionGraph2

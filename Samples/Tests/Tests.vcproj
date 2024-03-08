@@ -188,10 +188,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CompressionConvertTest.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\ConnectWithSocketTest.cpp"
 				>
 			</File>
@@ -272,10 +268,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RouterInterfaceTester.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\SecurityFunctionsTest.cpp"
 				>
 			</File>
@@ -307,10 +299,6 @@
 			</File>
 			<File
 				RelativePath=".\ComprehensiveConvertTest.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CompressionConvertTest.h"
 				>
 			</File>
 			<File

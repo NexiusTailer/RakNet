@@ -1,5 +1,5 @@
 /// \file
-/// \brief Tests multiple readers and writers on the same instance of RakPeer.  Define _RAKNET_THREADSAFE in RakNetDefines.h before running this.
+/// \brief Tests multiple readers and writers on the same instance of RakPeer.
 ///
 /// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
@@ -7,7 +7,7 @@
 
 
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
+
 #include "GetTime.h"
 #include "RakNetStatistics.h"
 #include "MessageIdentifiers.h"
@@ -17,6 +17,7 @@
 //#include <process.h>
 #include "RakThread.h"
 #include "RakSleep.h"
+using namespace RakNet;
 
 RakPeerInterface *peer1, *peer2;
 bool endThreads;
@@ -32,12 +33,12 @@ RAK_THREAD_DECLARATION(ProducerThread)
 	{
 //		printf("Thread %i writing...\n", i);
 		if (i&1)
-			peer1->Send(out, 2, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+			peer1->Send(out, 2, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 		else
-			peer2->Send(out, 2, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+			peer2->Send(out, 2, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 
 //		printf("Thread %i done writing\n", i);
-		RakSleep(0);
+		RakSleep(30);
 	}
 	
 	return 0;
@@ -46,7 +47,7 @@ RAK_THREAD_DECLARATION(ProducerThread)
 RAK_THREAD_DECLARATION(ConsumerThread)
 {
 	char i = *((char *) arguments);
-	Packet *p;
+	RakNet::Packet *p;
 	while (endThreads==false)
 	{
 //		printf("Thread %i reading...\n", i);
@@ -66,7 +67,7 @@ RAK_THREAD_DECLARATION(ConsumerThread)
 				peer2->DeallocatePacket(p);
 		}
 
-        RakSleep(0);		
+        RakSleep(30);		
 	}
 
 	return 0;
@@ -74,14 +75,14 @@ RAK_THREAD_DECLARATION(ConsumerThread)
 
 int main()
 {
-	peer1=RakNetworkFactory::GetRakPeerInterface();
-	peer2=RakNetworkFactory::GetRakPeerInterface();
+	peer1=RakNet::RakPeerInterface::GetInstance();
+	peer2=RakNet::RakPeerInterface::GetInstance();
 	peer1->SetMaximumIncomingConnections(1);
 	peer2->SetMaximumIncomingConnections(1);
-	SocketDescriptor socketDescriptor(1234,0);
-	peer1->Startup(1,0,&socketDescriptor, 1);
+	RakNet::SocketDescriptor socketDescriptor(1234,0);
+	peer1->Startup(1,&socketDescriptor, 1);
 	socketDescriptor.port=1235;
-	peer2->Startup(1,0,&socketDescriptor, 1);
+	peer2->Startup(1,&socketDescriptor, 1);
 	RakSleep(500);
 	peer1->Connect("127.0.0.1", 1235, 0, 0);
 	peer2->Connect("127.0.0.1", 1234, 0, 0);
@@ -89,15 +90,6 @@ int main()
 	printf("Tests multiple threads sharing the same instance of RakPeer\n");
 	printf("Difficulty: Beginner\n\n");
 
-	/*
-	printf("Did you define _RAKNET_THREADSAFE in RakNetDefines.h? (y/n) ");
-	char response[256];
-	gets(response);
-	if (response[0]!='y' || response[0]!='Y')
-	{
-		return;
-	}
-	*/
 
 
 	endThreads=false;
@@ -116,8 +108,8 @@ int main()
 	}
 
 	printf("Running test\n");
-	RakNetTime endTime = 60 * 1000 + RakNet::GetTime();
-	while (RakNet::GetTime() < endTime)
+	RakNet::TimeMS endTime = 60 * 1000 + RakNet::GetTimeMS();
+	while (RakNet::GetTimeMS() < endTime)
 	{
 
 		RakSleep(0);
@@ -125,8 +117,8 @@ int main()
 	endThreads=true;
 	printf("Test done!\n");
 
-	RakNetworkFactory::DestroyRakPeerInterface(peer1);
-	RakNetworkFactory::DestroyRakPeerInterface(peer2);
+	RakNet::RakPeerInterface::DestroyInstance(peer1);
+	RakNet::RakPeerInterface::DestroyInstance(peer2);
 
 	return 0;
 }

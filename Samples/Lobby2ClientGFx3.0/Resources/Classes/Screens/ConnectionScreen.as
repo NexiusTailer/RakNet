@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 import gfx.controls.ProgressBar;
@@ -31,9 +31,9 @@ class Screens.ConnectionScreen extends Screen
 		mcConnect.addEventListener("click", this, "f2c_Connect");
 		
 		//Add callbacks for C++
-		GameDelegate.addCallBack("c2f_NotifyConnectingToServer", this, "c2f_NotifyConnectingToServer");			
-		GameDelegate.addCallBack("c2f_NotifyConnectionResultFailure", this, "c2f_NotifyConnectionResultFailure");
-		GameDelegate.addCallBack("c2f_NotifyConnectionResultSuccess", this, "c2f_NotifyConnectionResultSuccess");
+		ExternalInterface.addCallback("c2f_NotifyConnectingToServer", this, c2f_NotifyConnectingToServer);			
+		ExternalInterface.addCallback("c2f_NotifyConnectionResultFailure", this, c2f_NotifyConnectionResultFailure);
+		ExternalInterface.addCallback("c2f_NotifyConnectionResultSuccess", this, c2f_NotifyConnectionResultSuccess);
 				
 		super.VOnFinishedLoading();
 	}
@@ -49,8 +49,8 @@ class Screens.ConnectionScreen extends Screen
 		new Tween( mcProgressBar.mcBar, "_xscale", None.easeNone, 0, 100, 6, true );	
 		//mcProgress.setProgress( 2, 6 );
 		ConsoleWindow.Trace("connecting to server");
-		//GameDelegate.call("f2c_Connect", ["127.0.0.1", "60481"], _root);
-		GameDelegate.call("f2c_Connect", [tfAddress.text, tfPort.text], _root);
+		//ExternalInterface.call("f2c_Connect", "127.0.0.1", "60481");
+		ExternalInterface.call("f2c_Connect", tfAddress.text, tfPort.text);
 		
 		if ( LobbyInterface.Instance.IsInFlashMode() )
 		{

@@ -62,7 +62,7 @@ The sample illustrates the following concepts:
 // Other
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
-#include "RakNetworkFactory.h"
+
 #include "Lobby2Client.h"
 #include "RoomsPlugin.h"
 #include "SocketLayer.h"
@@ -268,19 +268,19 @@ int FxPlayerTiny::Run()
     ZeroMemory(&msg, sizeof(msg));
 
 	// KevinJ: 1/3 functions, Init()
-	RoomsBrowserGFx3_RakNet sampleImpl;
+	RakNet::RoomsBrowserGFx3_RakNet sampleImpl;
 	GPtr<FxDelegate> pDelegate = *new FxDelegate; 
 	pMovie->SetExternalInterface(pDelegate); 
 	RakNet::Lobby2Client lobby2Client;
 	RakNet::RoomsPlugin roomsPlugin;
 	RakNet::Lobby2MessageFactory messageFactory;
-	RakPeerInterface *rakPeer = RakNetworkFactory::GetRakPeerInterface();
-	rakPeer->SetTimeoutTime(5000,UNASSIGNED_SYSTEM_ADDRESS);
+	RakNet::RakPeerInterface *rakPeer = RakNet::RakPeerInterface::GetInstance();
+	rakPeer->SetTimeoutTime(5000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 	unsigned short lanServerPort=5555;
-	SocketDescriptor sd(lanServerPort,0);
-	while (SocketLayer::IsPortInUse(sd.port)==true)
+	RakNet::SocketDescriptor sd(lanServerPort,0);
+	while (RakNet::SocketLayer::IsPortInUse(sd.port)==true)
 		sd.port++;
-	rakPeer->Startup(8,30,&sd, 1);
+	rakPeer->Startup(8,&sd, 1);
 	rakPeer->SetMaximumIncomingConnections(8);
 	rakPeer->AttachPlugin(&lobby2Client);
 	rakPeer->AttachPlugin(&roomsPlugin);
@@ -316,7 +316,7 @@ int FxPlayerTiny::Run()
         }
 
 		// KevinJ: 2/3 functions, periodic update
-		Packet *p;
+		RakNet::Packet *p;
 		for (p=rakPeer->Receive(); p; rakPeer->DeallocatePacket(p), p=rakPeer->Receive())
 		{
 		}
@@ -327,7 +327,7 @@ int FxPlayerTiny::Run()
 
 	// KevinJ: 3/3 functions, Shutdown()
 	sampleImpl.Shutdown();
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 
     return 0;
 }

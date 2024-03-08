@@ -197,7 +197,7 @@ namespace DataStructures
 		}
 		else
 		{
-			SaveLastSearch(key,mapNodeList.Insert(key,MapNode(key,data), true, __FILE__,__LINE__));
+			SaveLastSearch(key,mapNodeList.Insert(key,MapNode(key,data), true, _FILE_AND_LINE_));
 		}
 	}
 
@@ -229,7 +229,7 @@ namespace DataStructures
 		mapNodeList.GetIndexFromKey(key, &objectExists);
 		RakAssert(objectExists==false);
 #endif
-		SaveLastSearch(key,mapNodeList.Insert(key,MapNode(key,data), true, __FILE__,__LINE__));
+		SaveLastSearch(key,mapNodeList.Insert(key,MapNode(key,data), true, _FILE_AND_LINE_));
 	}
 
 	template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
@@ -273,7 +273,7 @@ namespace DataStructures
 	void Map<key_type, data_type, key_comparison_func>::Clear(void)
 	{
 		lastSearchIndexValid=false;
-		mapNodeList.Clear(false, __FILE__, __LINE__);
+		mapNodeList.Clear(false, _FILE_AND_LINE_);
 	}
 
 	template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>

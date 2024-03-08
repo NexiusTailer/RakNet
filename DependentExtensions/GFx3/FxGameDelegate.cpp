@@ -84,19 +84,33 @@ void FxDelegate::Invoke(GFxMovieView* pmovieView, const char* methodName,
     pv[0] = methodName;
     pmovieView->Invoke("call", pv, nv);
 }
+void FxDelegate::Invoke2(GFxMovieView* pmovieView, const char* methodName, 
+						FxResponseArgsBase& args)
+{
+	GFxValue* pv = NULL;
+	UInt nv = args.GetValues(&pv);
+	pmovieView->Invoke(methodName, NULL, pv+1, nv-1);
+}
 
 void FxDelegate::Callback(GFxMovieView* pmovieView, const char* methodName, const GFxValue* args, UInt argCount)
 {
-    GASSERT(argCount > 0);  // Must at least have a uid parameter
+	// KevinJ: With calling ExternalInterface from flash, this is apparently obsolete now
+ //   GASSERT(argCount > 0);  // Must at least have a uid parameter
 
     CallbackDefn* pcb = Callbacks.GetAlt(methodName);
     if (pcb != NULL) 
     {
-        FxDelegateArgs params(args[0], 
-                              pcb->pThis, 
-                              pmovieView, 
-                              &args[1], 
-                              argCount - 1);
+		// KevinJ: With calling ExternalInterface from flash, this is apparently obsolete now
+//         FxDelegateArgs params(args[0], 
+//                               pcb->pThis, 
+//                               pmovieView, 
+//                               &args[1], 
+//                               argCount - 1);
+		FxDelegateArgs params(GFxValue(), 
+			pcb->pThis, 
+			pmovieView, 
+			argCount>=1 ? &args[0] : NULL, 
+			argCount);
         pcb->pCallback(params);
     }
 }

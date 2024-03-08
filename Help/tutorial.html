@@ -48,16 +48,14 @@ new item. Under Visual C++ select code, then c++ file. Name the file main.cpp.<B
 1. Design
 </p>
 
-Lets make the chat server as basic as possible to begin with.  It will have two main modes: server and client.  The server will relay client messages.  The client will send chat messages.  Both of them will display chat messages as they arrive.  We'll hardcode most of the input variables so we don't clutter the code with non-networking stuff.  This could be done by writing the chat data directly to a packet.  However, we'll use <A HREF="remoteprocedurecalls.html">RPC calls</A> to avoid any chance of chat characters being mistaken for system messages.
+Lets make the chat server as basic as possible to begin with.  It will have two main modes: server and client.  The server will receive a client message.  The client will send a message on startup. We'll hardcode most of the input variables so we don't clutter the code with non-networking stuff.
 </TD></TR></TABLE>
 <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
   <TD>
 2. First compile
 </p>
 
-Create your main function.  Query the user as to whether they want to run a client or server.  Create the peer   instance, and call Startup with the appropriate parameters for a Server or Client.  Destroy the peer at the end.  This requires 2 of the files you copied earlier:<br>
--RakNetworkFactory which creates peer instances.<br>
--RakPeerInterface, which encompasses everything you might want to do with a peer<BR>
+Create your main function.  Query the user as to whether they want to run a client or server.  Create the peer instance, and call Startup with the appropriate parameters for a Server or Client.  Destroy the peer at the end.
 <BR>Try writing it on your own first.  When you are done,<BR>
 <B><A HREF="tutorialsample1.html" target="_blank">Display code sample 1</A></B><BR>
 <BR>
@@ -80,7 +78,7 @@ As you can see from the "char *data" member, all packets contain an array of byt
 You'll see there are quite a few pre-defined enumerations.  You should quickly read the comments on each of them.  We only care about the connectivity enumerations for now.  So your next programming step is as follows:
 <OL>
 <LI>Create a loop for the main body of your program.
-<LI>In that loop,  call Receive and store the pointer returned in a pointer variable of type Packet.
+<LI>In that loop, call Receive and store the pointer returned in a pointer variable of type Packet.
 <LI>If the packet variable is not 0 (which means no packets to read), check the first byte of Packet::data.  See which of the connectivity related enumerations this byte matches (a switch/case would be handy here).
 <LI>Print out the comment that goes along with that enumeration.
 <LI>As specified in the comments, when you are done with the Packet pointer deallocate it by passing it to the DeallocatePacket method.
@@ -107,10 +105,10 @@ Enter server IP or hit enter for 127.0.0.1<BR>
 Starting the client.<BR>
 Our connection request has been accepted.<BR>
 <BR>
-We are now ready to send user input.  As specified early on, we will use <A HREF="remoteprocedurecalls.html">remote procedure calls</A> for this.  Read that page to learn how to implement them and what the parameters mean.  You can also refer to the sample at <I>\Samples\Remote Procedure Calls</I>.  Lets make an RPC function called "PrintMessage".  All it does is print "Hello World".  We'll deal with user input later.
+We are now ready to send input.<BR>
 Your next programming steps are:
-  <OL><LI>Implement an RPC header called "PrintMessage".  Have it print "Hello world."  Both the client and server should be able to call it.
-<LI>When the client successfully connects, call the RPC function.  Leave the data and bitLength  parameters at 0 for now.
+  <OL><LI>Add a user defined enumeration to send as the first byte of your game messages.
+<LI>When the client successfully connects, send a string using RakString(). Read it on the server, and print it out.
 </OL>
   <p>When you are done,<BR>
       <B><A HREF="tutorialsample3.html" target="_blank">Display code sample 3</A></B><BR>
@@ -124,59 +122,6 @@ Your next programming steps are:
     A connection is incoming.<br>
     Hello World<BR>
     <BR>
-      Now we are ready to send a message from the client to the server, rather than just printing a hardcoded "Hello World".  If you take a look at the definition of RPC in RakPeerInterface you'll see that there are two overloaded versions.  One takes a pointer to a <A HREF="bitstreams.html">BitStream</A> while another takes an array with a length.  The BitStream is a utility class that, as the name indicates, allows you to write data to a stream.  You should refer to your RakNet download directory /Source/BitStream.h to familiarize yourself with the BitStream class and functions.  You can also refer to the sample at <I>Samples\BitStream</I>.  To keep things simple for this tutorial, we'll skip bitstreams for now and use arrays.  You may wish to glance at <A HREF="sendingpackets.html">Sending Packets</A> which has some relevance here.<BR>
-      <BR>
-    Your next programming steps are: </p>
-  <OL>
-<LI>Read an array from the client on connection.
-<LI>Pass that array to the RPC call.
-<LI>Print that array in the RPC function.
-</OL>
-When you are done,<BR>
-<B><A HREF="tutorialsample4.html" target="_blank">Display code sample 4</A></B><BR>
-<BR>
-Did you remember to multiply the number of bytes by 8 to pass the number of bits?  If so, congratulations, you are more careful than I am, who didn't read the documentation and wasted several minutes figuring out why only garbage appeared.<BR>
-<BR>
-As per our original design, we want the server to relay messages.  When the server gets the string, it should send the string back to the client.  You have enough information to do this already so give it a shot.<BR>
-<BR>
-<B>(Hint)</B> The PrintMessage function needs access to the server.<BR>
-<B>(Hint)</B> If it isn't apparent what the systemAddress sender field is for, refer to the section on <A HREF="systemaddresses.html">SystemAddresses</A>.<BR>
-<BR>
-When done,<BR>
-<B><A HREF="tutorialsample5.html" target="_blank">Display code sample 5</A></B><BR>
-<BR>
-This should be the output.  It's the same as before, except the client now also shows the message.<BR>
-<BR>
-<B>Client Output:</B><BR>
-(C)lient or (S)erver?<BR>
-c<BR>
-Enter server IP or hit enter for 127.0.0.1<BR>
-127.0.0.1<BR>
-Starting the client.<BR>
-Our connection request has been accepted.<BR>
-Enter a string to show on the server: This was typed on the client.
-<BR>
-This was typed on the client.<BR>
-<BR>
-<B>Server Output:</B><BR>
-(C)lient or (S)erver?<BR>
-s<BR>
-Starting the server.<BR>
-A connection is incoming.
-<BR>
-This was typed on the client.<BR>
-<BR>
-Almost done.  In practice, we don't want the person typing to see their own messages.  Also, we should provide a mechanism where you can type anytime, not just when you first connect.<BR>
-<BR>
-Try it out, then<BR>
-<B><A HREF="tutorialsample6.html" target="_blank">Display final code sample 6</A></B><BR>
-<BR>
-You'll have to run three instances of the program: 1 server and 2 clients to see anything happen.  While gets() is blocking no network messages will be parsed so you might have to hit enter to bypass it to see other messages.  In a real application you would use a nonblocking input function.  The included samples use kbhit() to detect keyboard input.<BR>
-<BR>
-Some additional things you can try out are:
-  <UL><LI>Write and read your data using bitstreams, instead of arrays.
-<LI>Improve the user interface.
-</UL>
 
 See the index for a list of major systems not covered here.  For further information on setting up your project, see the next page: <A HREF="compilersetup.html">Compiler setup</A>
 

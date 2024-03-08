@@ -4,7 +4,7 @@
 #include "GetTime.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
-#include "RakNetworkFactory.h"
+
 #include "RakNetTypes.h"
 #include "RakSleep.h"
 #include "FullyConnectedMesh2.h"
@@ -13,9 +13,12 @@
 #include "SocketLayer.h"
 #include "Kbhit.h"
 #include "PacketLogger.h"
+#include "Gets.h"
+
+using namespace RakNet;
 
 #define NUM_PEERS 8
-RakPeerInterface *rakPeer[NUM_PEERS];
+RakNet::RakPeerInterface *rakPeer[NUM_PEERS];
 
 int main()
 {
@@ -24,16 +27,16 @@ int main()
 
 	for (int i=0; i < NUM_PEERS; i++)
 	{
-		rakPeer[i]=RakNetworkFactory::GetRakPeerInterface();
+		rakPeer[i]=RakNet::RakPeerInterface::GetInstance();
 		rakPeer[i]->AttachPlugin(&fcm2[i]);
 		rakPeer[i]->AttachPlugin(&cg2[i]);
 		fcm2[i].SetAutoparticipateConnections(true);
-		SocketDescriptor sd;
+		RakNet::SocketDescriptor sd;
 		sd.port=60000+i;
-		rakPeer[i]->Startup(NUM_PEERS,0,&sd,1);
+		rakPeer[i]->Startup(NUM_PEERS,&sd,1);
 		rakPeer[i]->SetMaximumIncomingConnections(NUM_PEERS);
-		rakPeer[i]->SetTimeoutTime(1000,UNASSIGNED_SYSTEM_ADDRESS);
-		printf("Our guid is %s\n", rakPeer[i]->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
+		rakPeer[i]->SetTimeoutTime(1000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+		printf("Our guid is %s\n", rakPeer[i]->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
 	}
 
 	for (int i=0; i < NUM_PEERS; i++)
@@ -47,7 +50,7 @@ int main()
 	}
 
 	bool quit=false;
-	Packet *packet;
+	RakNet::Packet *packet;
 	char ch;
 	while (!quit)
 	{
@@ -82,10 +85,10 @@ int main()
 
 
 				case ID_FCM2_NEW_HOST:
-					if (packet->systemAddress==UNASSIGNED_SYSTEM_ADDRESS)
+					if (packet->systemAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 						printf("%i. Got new host (ourselves)\n", i);
 					else
-						printf("%i. Got new host %s\n", i, packet->systemAddress.ToString(true));
+						printf("%i. Got new host %s, %s\n", i, packet->systemAddress.ToString(true), packet->guid.ToString());
 					break;
 				}
 			}
@@ -108,16 +111,16 @@ int main()
 					weAreHost=fcm2[i].IsHostSystem();
 					hostGuid=fcm2[i].GetHostSystem();
 					if (weAreHost)
-						printf("%i. %iP myGuid=%s, hostGuid=%s (Y)\n",i, participantList, rakPeer[i]->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString(), hostGuid.ToString());
+						printf("%i. %iP myGuid=%s, hostGuid=%s (Y)\n",i, participantList, rakPeer[i]->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString(), hostGuid.ToString());
 					else
-						printf("%i. %iP myGuid=%s, hostGuid=%s (N)\n",i, participantList, rakPeer[i]->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString(), hostGuid.ToString());
+						printf("%i. %iP myGuid=%s, hostGuid=%s (N)\n",i, participantList, rakPeer[i]->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString(), hostGuid.ToString());
 				}
 			}
 			if (ch=='d' || ch=='D')
 			{
 				char str[32];
 				printf("Enter system index to disconnect.\n");
-				gets(str);
+				Gets(str, sizeof(str));
 				rakPeer[atoi(str)]->Shutdown(100);
 				printf("Done.\n");
 			}
@@ -134,7 +137,7 @@ int main()
 
 	for (int i=0; i < NUM_PEERS; i++)
 	{
-		RakNetworkFactory::DestroyRakPeerInterface(rakPeer[i]);
+		RakNet::RakPeerInterface::DestroyInstance(rakPeer[i]);
 	}
 	return 0;
 }

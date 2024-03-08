@@ -13,7 +13,10 @@
 #include "MySQLInterface.h"
 #include "Export.h"
 
+namespace RakNet
+{
 class FileListProgress;
+
 
 /// \ingroup Autopatcher
 ///  An implementation of the AutopatcherRepositoryInterface to use MySQL to store the relevant data
@@ -80,5 +83,14 @@ public:
 	/// \param[out] preallocatedDestination Write your data here
 	/// \return The number of bytes read, or 0 if none
 	virtual unsigned int GetFilePart( const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context);
+
+	/// \return Passed to FileListTransfer::Send() as the _chunkSize parameter.
+	virtual const int GetIncrementalReadChunkSize(void) const;
+
+	st_mysql *filePartConnection;
+	SimpleMutex filePartConnectionMutex;
 };
+
+} // namespace RakNet
+
 #endif

@@ -1,6 +1,6 @@
 ﻿import gfx.controls.Button;
 import mx.utils.Delegate;
-import gfx.io.GameDelegate;
+import flash.external.*;
 
 class MessageBox extends MovieClip
 {

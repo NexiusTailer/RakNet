@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 import mx.utils.Delegate;
@@ -49,12 +49,12 @@ class Screens.FriendScreen extends ScreenWithPageNavigator
 		btnPossibleFriends.addEventListener("click", this, "ShowPossibleFriends");
 						
 		//Add callbacks for C++
-		GameDelegate.addCallBack("c2f_SendInviteResult", this, "c2f_SendInviteResult");
-		GameDelegate.addCallBack("c2f_AcceptInviteResult", this, "c2f_AcceptInviteResult");
-		GameDelegate.addCallBack("c2f_RejectInviteResult", this, "c2f_RejectInviteResult");
-		GameDelegate.addCallBack("c2f_RemoveFriendResult", this, "c2f_RemoveFriendResult");
-		//GameDelegate.addCallBack("c2f_GetFriendInvites", this, "c2f_GetFriendInvites");
-		GameDelegate.addCallBack("c2f_GetFriends", this, "c2f_GetFriends");
+		ExternalInterface.addCallback("c2f_SendInviteResult", this, c2f_SendInviteResult);
+		ExternalInterface.addCallback("c2f_AcceptInviteResult", this, c2f_AcceptInviteResult);
+		ExternalInterface.addCallback("c2f_RejectInviteResult", this, c2f_RejectInviteResult);
+		ExternalInterface.addCallback("c2f_RemoveFriendResult", this, c2f_RemoveFriendResult);
+		//ExternalInterface.addCallback("c2f_GetFriendInvites", this, c2f_GetFriendInvites);
+		ExternalInterface.addCallback("c2f_GetFriends", this, c2f_GetFriends);
 		
 		mcMail._visible = false;
 		
@@ -123,7 +123,7 @@ class Screens.FriendScreen extends ScreenWithPageNavigator
 	public function f2c_SendInvite():Void
 	{
 		ConsoleWindow.Trace("Attempting to send invitation: name = " + mcMail.GetToField() + ", subject = " + mcMail.GetSubjectField() + ", msg = " + mcMail.GetMsgField());
-		GameDelegate.call("f2c_SendInvite", [mcMail.GetToField(), mcMail.GetSubjectField(), mcMail.GetMsgField(), "0"], _root);
+		ExternalInterface.call("f2c_SendInvite", mcMail.GetToField(), mcMail.GetSubjectField(), mcMail.GetMsgField(), "0");
 		HideMail();
 	}
 
@@ -154,7 +154,7 @@ class Screens.FriendScreen extends ScreenWithPageNavigator
 
 	public function f2c_AcceptInvite():Void
 	{
-		GameDelegate.call("f2c_AcceptInvite", [targetHandleEditBox.text, subjectEditBox.text, bodyEditBox.text, emailStatusEditBox.text], _root);
+		ExternalInterface.call("f2c_AcceptInvite", targetHandleEditBox.text, subjectEditBox.text, bodyEditBox.text, emailStatusEditBox.text);
 	}
 
 	public function c2f_AcceptInviteResult(resultIdentifier:String):Void
@@ -183,7 +183,7 @@ class Screens.FriendScreen extends ScreenWithPageNavigator
 
 	public function f2c_RejectInvite():Void
 	{
-		GameDelegate.call("f2c_RejectInvite", [targetHandleEditBox.text, subjectEditBox.text, bodyEditBox.text, emailStatusEditBox.text], _root);
+		ExternalInterface.call("f2c_RejectInvite", targetHandleEditBox.text, subjectEditBox.text, bodyEditBox.text, emailStatusEditBox.text);
 	}
 
 	public function c2f_RejectInviteResult(resultIdentifier:String):Void
@@ -210,7 +210,7 @@ class Screens.FriendScreen extends ScreenWithPageNavigator
 
 	public function f2c_RemoveFriend( _username:String ):Void
 	{
-		GameDelegate.call("f2c_RemoveFriend", [_username, "", "", ""], _root);
+		ExternalInterface.call("f2c_RemoveFriend", _username, "", "", "");
 	}
 
 	public function c2f_RemoveFriendResult(resultIdentifier:String):Void
@@ -238,12 +238,12 @@ class Screens.FriendScreen extends ScreenWithPageNavigator
 
 	public function f2c_GetFriendInvites():Void
 	{
-		GameDelegate.call("f2c_GetFriendInvites", [], _root);
+		ExternalInterface.call("f2c_GetFriendInvites");
 	}
 
 	public function f2c_GetFriends():Void
 	{
-		GameDelegate.call("f2c_GetFriends", [], _root);
+		ExternalInterface.call("f2c_GetFriends");
 	}
 
 	public function c2f_GetFriendInvites():Void

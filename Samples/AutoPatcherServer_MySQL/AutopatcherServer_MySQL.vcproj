@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="AutopatcherServer_MySQL"
 	ProjectGUID="{01A7ED79-2098-4BB5-B5A0-8293210BCB93}"
+	RootNamespace="AutopatcherServer_MySQL"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -98,7 +99,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;C:\Program Files (x86)\MySQL\MySQL Server 5.1\lib\opt\*.dll&quot; .\Debug"
+				CommandLine="copy &quot;C:\Program Files (x86)\MySQL\MySQL Server 5.1\bin\*.dll&quot; .\Debug"
 			/>
 		</Configuration>
 		<Configuration
@@ -182,7 +183,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;C:\Program Files (x86)\MySQL\MySQL Server 5.1\lib\opt\*.dll&quot; .\Release"
+				CommandLine="copy &quot;C:\Program Files (x86)\MySQL\MySQL Server 5.1\bin\*.dll&quot; .\Release"
 			/>
 		</Configuration>
 	</Configurations>

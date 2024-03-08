@@ -1,9 +1,14 @@
+#ifndef __ROOMS_BROWSER_GFX3_RAKNET
+#define __ROOMS_BROWSER_GFX3_RAKNET
+
 #include "WindowsIncludes.h"
 #include "RakNetTypes.h"
 #include "Lobby2Message.h"
 #include "PluginInterface2.h"
 #include "RoomsBrowserGFx3.h"
 #include "RoomsPlugin.h"
+
+namespace RakNet {
 
 /// This is data that should be set with RakPeerInterface::SetOfflinePingResponse()
 /// It should also be able to write this data to a LobbyServer instance
@@ -13,12 +18,12 @@ struct ServerAndRoomBrowserData
 	unsigned short maxPlayers;
 	RakNet::RakString mapName;
 	RakNet::RakString roomName;
-	RakNetGUID roomId;
+	RakNet::RakNetGUID roomId;
 	
 	/// For the LAN browser, it expects the offline ping response to be packed using the format from this structure
 	/// Therefore, to advertise that your server is available or updated, fill out the parameters in this structure, then call SetAsOfflinePingResponse()
 	/// When your server is no longer available, set the offline ping response to NULL
-	void SetAsOfflinePingResponse(RakPeerInterface *rakPeer);
+	void SetAsOfflinePingResponse(RakNet::RakPeerInterface *rakPeer);
 
 	/// Write to a RakNet table data structure, useful when creating the room or setting the room properties
 	/// Writes everything EXCEPT the list of players
@@ -137,7 +142,7 @@ public:
 
 	RakNet::Lobby2Client *lobby2Client;
 	RakNet::Lobby2MessageFactory *msgFactory;
-	RakPeerInterface *rakPeer;
+	RakNet::RakPeerInterface *rakPeer;
 	RakNet::RakString titleName;
 	RakNet::RakString titleSecretKey;
 	RakNet::RakString pathToXMLPropertyFile;
@@ -146,3 +151,6 @@ public:
 	unsigned short lanServerPort;
 };
 
+} // namespace RakNet
+
+#endif // __ROOMS_BROWSER_GFX3_RAKNET

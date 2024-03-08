@@ -37,7 +37,7 @@ void OverlayHelper::Startup(void)
 }
 void OverlayHelper::Shutdown(void)
 {
-	timedOverlays.Clear(false, __FILE__, __LINE__ );
+	timedOverlays.Clear(false, _FILE_AND_LINE_ );
 	if (globalOverlay)
 		OverlayManager::getSingleton().destroy(globalOverlay);
 }
@@ -84,7 +84,7 @@ Overlay* OverlayHelper::GetGlobalOverlay(void) const
 }
 void OverlayHelper::FadeOverlayElement(OverlayElement* element, unsigned int totalTime, unsigned int fadeTimeMS, float finalAlpha, bool deleteAfterFade)
 {
-	timedOverlays.Insert(TimedOverlay(element, totalTime, fadeTimeMS, finalAlpha,deleteAfterFade), __FILE__, __LINE__ );
+	timedOverlays.Insert(TimedOverlay(element, totalTime, fadeTimeMS, finalAlpha,deleteAfterFade), _FILE_AND_LINE_ );
 }
 OverlayContainer* OverlayHelper::CreatePanel(const char *instanceName, bool addToGlobalOverlay)
 {

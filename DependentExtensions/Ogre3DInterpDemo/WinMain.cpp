@@ -25,7 +25,7 @@
 #include "RakAssert.h"
 #include "StringTable.h"
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
+
 #include "BitStream.h"
 #include "MessageIdentifiers.h"
 #include "ReplicaManager3.h"
@@ -52,9 +52,9 @@ static const int DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES=250;
 // Demo variables
 static const int MIN_KERNELS=100;
 static const int KERNELS_VARIANCE=60;
-static const RakNetTime POP_COUNTDOWN_MIN_DELAY_MS=1000;
-static const RakNetTime POP_COUNTDOWN_VARIANCE_MS=5000;
-static const RakNetTime RESTART_TIMER_MS=14000;
+static const RakNet::TimeMS POP_COUNTDOWN_MIN_DELAY_MS=1000;
+static const RakNet::TimeMS POP_COUNTDOWN_VARIANCE_MS=5000;
+static const RakNet::TimeMS RESTART_TIMER_MS=14000;
 static const float POSITION_VARIANCE=100.0f;
 static const float PLANE_VELOCITY_VARIANCE=30.0f;
 static const float UPWARD_VELOCITY_MINIMUM=35.0f;
@@ -63,7 +63,7 @@ static const float DOWNWARD_ACCELERATION = -15.0f;
 
 bool isServer;
 Ogre::Entity *popcornKernel, *popcornPopped;
-RakPeerInterface *rakPeer;
+RakNet::RakPeerInterface *rakPeer;
 DataStructures::List<Popcorn*> popcornList;
 bool enableInterpolation;
 
@@ -103,27 +103,27 @@ public:
 	Ogre::Quaternion rotationalVelocity;
 	Ogre::Vector3 velocity;
 	Ogre::SceneNode *sceneNode;
-	RakNetTime popCountdown;
+	RakNet::TimeMS popCountdown;
 	Ogre::Vector3 visiblePosition;
 	Ogre::Quaternion visibleOrientation;
 	TransformationHistory transformationHistory;
 
-	virtual void WriteAllocationID(RakNet::BitStream *allocationIdBitstream) const
+	virtual void WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const
 	{
 		StringTable::Instance()->EncodeString("Popcorn", 128, allocationIdBitstream);
 	}
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3)
 	{
 		if (isServer)
-			return QueryConstruction_ServerConstruction(destinationConnection);
+			return QueryConstruction_ServerConstruction(destinationConnection, isServer);
 		else
-			return QueryConstruction_ClientConstruction(destinationConnection);
+			return QueryConstruction_ClientConstruction(destinationConnection, isServer);
 	}
 	virtual bool QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection){
 		if (isServer)
-			return QueryRemoteConstruction_ServerConstruction(sourceConnection);
+			return QueryRemoteConstruction_ServerConstruction(sourceConnection, isServer);
 		else
-			return QueryRemoteConstruction_ClientConstruction(sourceConnection);
+			return QueryRemoteConstruction_ClientConstruction(sourceConnection, isServer);
 	}
 	virtual void SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection){}
 	virtual bool DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection){return true;}
@@ -140,9 +140,9 @@ public:
 	virtual RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3 *destinationConnection)
 	{
 		if (isServer)
-			return QuerySerialization_ServerSerializable(destinationConnection);
+			return QuerySerialization_ServerSerializable(destinationConnection, isServer);
 		else
-			return QuerySerialization_ClientSerializable(destinationConnection);
+			return QuerySerialization_ClientSerializable(destinationConnection, isServer);
 	}
 	virtual RM3SerializationResult Serialize(RakNet::SerializeParameters *serializeParameters)
 	{
@@ -174,7 +174,7 @@ public:
 
 		// Every time we get a network packet, we write it to the transformation history class.
 		// This class, given a time in the past, can then return to us an interpolated position of where we should be in at that time
-		transformationHistory.Write(position,velocity,orientation,RakNet::GetTime());
+		transformationHistory.Write(position,velocity,orientation,RakNet::GetTimeMS());
 	}
 
 	virtual void SetToPopped(void)
@@ -193,7 +193,7 @@ public:
 		}		
 	}
 	
-	virtual void Update(RakNetTime timeElapsedMs)
+	virtual void Update(RakNet::TimeMS timeElapsedMs)
 	{
 		visiblePosition=position;
 		visibleOrientation=orientation;
@@ -225,7 +225,7 @@ public:
 					// Important: the first 3 parameters are in/out parameters, so set their values to the known current values before calling Read()
 					// We are subtracting DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES from the current time to get an interpolated position in the past
 					// Without this we wouldn't have a node to interpolate to, and wouldn't know where to go
-					transformationHistory.Read(&visiblePosition, 0, &visibleOrientation, RakNet::GetTime()-DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES,RakNet::GetTime());
+					transformationHistory.Read(&visiblePosition, 0, &visibleOrientation, RakNet::GetTimeMS()-DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES,RakNet::GetTimeMS());
 				}
 			}
 		}
@@ -263,7 +263,7 @@ public:
 		replicaManager3->Reference(p);
 		static int count=0;
 		count++;
-		popcornList.Insert(p, __FILE__, __LINE__ );
+		popcornList.Insert(p, _FILE_AND_LINE_ );
 		p->sceneNode = app->GetSceneManager()->getRootSceneNode()->createChildSceneNode();
 		p->sceneNode->attachObject(popcornKernel->clone(FormatString("%p",p)));
 
@@ -340,7 +340,7 @@ public:
 			mInputManager = 0;
 		}
 
-		RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+		RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 
 	}
 
@@ -406,7 +406,7 @@ public:
 		
 		if (isStarted==false)
 		{
-			SocketDescriptor sd;
+			RakNet::SocketDescriptor sd;
 
 			if(mKeyboard->isKeyDown(KC_S))
 			{
@@ -430,12 +430,12 @@ public:
 
 			if (isStarted)
 			{
-				networkIdManager.SetIsNetworkIDAuthority(isServer);
 				// Start RakNet, up to 32 connections if the server
-				rakPeer = RakNetworkFactory::GetRakPeerInterface();
-				rakPeer->Startup(isServer ? 32 : 1,100,&sd,1);
+				rakPeer = RakNet::RakPeerInterface::GetInstance();
+				rakPeer->Startup(isServer ? 32 : 1,&sd,1);
 				rakPeer->AttachPlugin(&replicaManager3);
-				rakPeer->SetNetworkIDManager(&networkIdManager);
+				replicaManager3.SetNetworkIDManager(&networkIdManager);
+				//rakPeer->SetNetworkIDManager(&networkIdManager);
 				// The server should allow systems to connect. Clients do not need to unless you want to use RakVoice or for some other reason want to transmit directly between systems.
 				if (isServer)
 					rakPeer->SetMaximumIncomingConnections(32);
@@ -450,7 +450,7 @@ public:
 
 		if (isStarted)
 		{
-			Packet *packet;
+			RakNet::Packet *packet;
 			for (packet = rakPeer->Receive(); packet; rakPeer->DeallocatePacket(packet), packet = rakPeer->Receive())
 			{
 				switch (packet->data[0])
@@ -565,7 +565,7 @@ public:
 	}
 
 protected:
-	virtual char * GetWindowTitle(void) const {return "Popcorn popper";}
+	virtual char * GetWindowTitle(void) const {return (char *)"Popcorn popper";}
 	void ShowMessage(const char *msg, float timescale=1.0f)
 	{
 		// Create a panel
@@ -603,7 +603,7 @@ protected:
 
 	NetworkIDManager networkIdManager;
 	bool isStarted;
-	RakNetTime popcornLifetimeCountdown;
+	RakNet::TimeMS popcornLifetimeCountdown;
 };
 
 
@@ -615,7 +615,7 @@ int main (int argc, char** argv)
 {
 	
 	HWND     hWnd;
-	RakNetTime curTime, lastTime, elapsed;
+	RakNet::TimeMS curTime, lastTime, elapsed;
 	app = new ExampleApp;
 	app->PreConfigure();
 	if (app->Configure()==false)
@@ -631,11 +631,11 @@ int main (int argc, char** argv)
 #endif
 
 	app->PostConfigure("resources.cfg",false);
-	lastTime=RakNet::GetTime();
+	lastTime=RakNet::GetTimeMS();
 
 	while (app->ShouldQuit()==false)
 	{
-		curTime=RakNet::GetTime();
+		curTime=RakNet::GetTimeMS();
 		elapsed = curTime-lastTime;
 		if (elapsed > 100)
 			elapsed=100; // Spike limiter

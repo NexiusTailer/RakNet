@@ -16,6 +16,10 @@
 #pragma warning( push )
 #endif
 
+using namespace RakNet;
+
+STATIC_FACTORY_DEFINITIONS(TelnetTransport,TelnetTransport);
+
 TelnetTransport::TelnetTransport()
 {
 	tcpInterface=0;
@@ -26,9 +30,9 @@ TelnetTransport::~TelnetTransport()
 {
 	Stop();
 	if (sendSuffix)
-		rakFree_Ex(sendSuffix, __FILE__, __LINE__ );
+		rakFree_Ex(sendSuffix, _FILE_AND_LINE_ );
 	if (sendPrefix)
-		rakFree_Ex(sendPrefix, __FILE__, __LINE__ );
+		rakFree_Ex(sendPrefix, _FILE_AND_LINE_ );
 }
 bool TelnetTransport::Start(unsigned short port, bool serverMode)
 {
@@ -43,9 +47,9 @@ void TelnetTransport::Stop(void)
 	tcpInterface->Stop();
 	unsigned i;
 	for (i=0; i < remoteClients.Size(); i++)
-		RakNet::OP_DELETE(remoteClients[i], __FILE__, __LINE__);
-	remoteClients.Clear(false, __FILE__, __LINE__);
-	RakNet::OP_DELETE(tcpInterface, __FILE__, __LINE__);
+		RakNet::OP_DELETE(remoteClients[i], _FILE_AND_LINE_);
+	remoteClients.Clear(false, _FILE_AND_LINE_);
+	RakNet::OP_DELETE(tcpInterface, _FILE_AND_LINE_);
 	tcpInterface=0;
 }
 void TelnetTransport::Send(  SystemAddress systemAddress, const char *data,... )
@@ -131,9 +135,9 @@ Packet* TelnetTransport::Receive( void )
 			for (int i=0; remoteClient->textInput[i]; i++)
 				remoteClient->textInput[i]=8;
 			strcat(remoteClient->textInput, remoteClient->lastSentTextInput);
-			tcpInterface->Send((const char *)remoteClient->textInput, strlen(remoteClient->textInput), p->systemAddress, false);
+			tcpInterface->Send((const char *)remoteClient->textInput, (unsigned int) strlen(remoteClient->textInput), p->systemAddress, false);
 			strcpy(remoteClient->textInput,remoteClient->lastSentTextInput);
-			remoteClient->cursorPosition=strlen(remoteClient->textInput);
+			remoteClient->cursorPosition=(unsigned int) strlen(remoteClient->textInput);
 		}
 		
 		return 0;
@@ -186,11 +190,11 @@ Packet* TelnetTransport::Receive( void )
 		if (gotLine && remoteClient->textInput[0])
 		{
 
-			Packet *reassembledLine = (Packet*) rakMalloc_Ex(sizeof(Packet), __FILE__, __LINE__);
+			Packet *reassembledLine = (Packet*) rakMalloc_Ex(sizeof(Packet), _FILE_AND_LINE_);
 			reassembledLine->length=(unsigned int) strlen(remoteClient->textInput);
 			memcpy(remoteClient->lastSentTextInput, remoteClient->textInput, reassembledLine->length+1);
 			RakAssert(reassembledLine->length < REMOTE_MAX_TEXT_INPUT);
-			reassembledLine->data= (unsigned char*) rakMalloc_Ex( reassembledLine->length+1, __FILE__, __LINE__ );
+			reassembledLine->data= (unsigned char*) rakMalloc_Ex( reassembledLine->length+1, _FILE_AND_LINE_ );
 			memcpy(reassembledLine->data, remoteClient->textInput, reassembledLine->length);
 #ifdef _PRINTF_DEBUG
 			memset(remoteClient->textInput, 0, REMOTE_MAX_TEXT_INPUT);
@@ -208,8 +212,8 @@ Packet* TelnetTransport::Receive( void )
 void TelnetTransport::DeallocatePacket( Packet *packet )
 {
 	if (tcpInterface==0) return;
-	rakFree_Ex(packet->data, __FILE__, __LINE__ );
-	rakFree_Ex(packet, __FILE__, __LINE__ );
+	rakFree_Ex(packet->data, _FILE_AND_LINE_ );
+	rakFree_Ex(packet, _FILE_AND_LINE_ );
 }
 SystemAddress TelnetTransport::HasNewIncomingConnection(void)
 {
@@ -261,7 +265,7 @@ SystemAddress TelnetTransport::HasNewIncomingConnection(void)
 #endif
 		}
 
-		remoteClients.Insert(remoteClient, __FILE__, __LINE__);
+		remoteClients.Insert(remoteClient, _FILE_AND_LINE_);
 	}
 	return newConnection;
 }
@@ -276,7 +280,7 @@ SystemAddress TelnetTransport::HasLostConnection(void)
 		{
 			if (remoteClients[i]->systemAddress==systemAddress)
 			{
-				RakNet::OP_DELETE(remoteClients[i], __FILE__, __LINE__);
+				RakNet::OP_DELETE(remoteClients[i], _FILE_AND_LINE_);
 				remoteClients[i]=remoteClients[remoteClients.Size()-1];
 				remoteClients.RemoveFromEnd();
 			}
@@ -292,12 +296,12 @@ void TelnetTransport::SetSendSuffix(const char *suffix)
 {
 	if (sendSuffix)
 	{
-		rakFree_Ex(sendSuffix, __FILE__, __LINE__ );
+		rakFree_Ex(sendSuffix, _FILE_AND_LINE_ );
 		sendSuffix=0;
 	}
 	if (suffix)
 	{
-		sendSuffix = (char*) rakMalloc_Ex(strlen(suffix)+1, __FILE__, __LINE__);
+		sendSuffix = (char*) rakMalloc_Ex(strlen(suffix)+1, _FILE_AND_LINE_);
 		strcpy(sendSuffix, suffix);
 	}
 }
@@ -305,12 +309,12 @@ void TelnetTransport::SetSendPrefix(const char *prefix)
 {
 	if (sendPrefix)
 	{
-		rakFree_Ex(sendPrefix, __FILE__, __LINE__ );
+		rakFree_Ex(sendPrefix, _FILE_AND_LINE_ );
 		sendPrefix=0;
 	}
 	if (prefix)
 	{
-		sendPrefix = (char*) rakMalloc_Ex(strlen(prefix)+1, __FILE__, __LINE__);
+		sendPrefix = (char*) rakMalloc_Ex(strlen(prefix)+1, _FILE_AND_LINE_);
 		strcpy(sendPrefix, prefix);
 	}
 }

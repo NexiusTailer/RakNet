@@ -102,6 +102,9 @@ struct UDPProxyClientResultHandler
 class RAK_DLL_EXPORT UDPProxyClient : public PluginInterface2
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(UDPProxyClient)
+
 	UDPProxyClient();
 	~UDPProxyClient();
 
@@ -122,11 +125,11 @@ public:
 	/// \param[in] timeoutOnNoData If no data is sent by the forwarded systems, how long before removing the forward entry from UDPForwarder? UDP_FORWARDER_MAXIMUM_TIMEOUT is the maximum value. Recommended high enough to not drop valid connections, but low enough to not waste forwarding slots on the proxy server.
 	/// \param[in] serverSelectionBitstream If you want to send data to UDPProxyCoordinator::GetBestServer(), write it here
 	/// \return true if the request was sent, false if we are not connected to proxyCoordinator
-	bool RequestForwarding(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddressAsSeenFromCoordinator, RakNetTimeMS timeoutOnNoDataMS, RakNet::BitStream *serverSelectionBitstream=0);
+	bool RequestForwarding(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddressAsSeenFromCoordinator, RakNet::TimeMS timeoutOnNoDataMS, RakNet::BitStream *serverSelectionBitstream=0);
 
 	/// Same as above, but specify the target with a GUID, in case you don't know what its address is to the coordinator
 	/// If requesting forwarding to a RakNet enabled system, then it is easier to use targetGuid instead of targetAddressAsSeenFromCoordinator
-	bool RequestForwarding(SystemAddress proxyCoordinator, SystemAddress sourceAddress, RakNetGUID targetGuid, RakNetTimeMS timeoutOnNoDataMS, RakNet::BitStream *serverSelectionBitstream=0);
+	bool RequestForwarding(SystemAddress proxyCoordinator, SystemAddress sourceAddress, RakNetGUID targetGuid, RakNet::TimeMS timeoutOnNoDataMS, RakNet::BitStream *serverSelectionBitstream=0);
 
 	/// \internal
 	virtual void Update(void);
@@ -146,7 +149,7 @@ public:
 	struct PingServerGroup
 	{
 		SenderAndTargetAddress sata;
-		RakNetTime startPingTime;
+		RakNet::TimeMS startPingTime;
 		SystemAddress coordinatorAddressForPings;
 		DataStructures::Multilist<ML_UNORDERED_LIST, ServerWithPing> serversToPing;
 		bool AreAllServersPinged(void) const;

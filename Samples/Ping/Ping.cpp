@@ -5,7 +5,7 @@
 // Very basic chat engine example
 // ----------------------------------------------------------------------
 #include "MessageIdentifiers.h"
-#include "RakNetworkFactory.h"
+
 #include "RakPeerInterface.h"
 #include "RakPeerInterface.h"
 #include "RakNetTypes.h"
@@ -15,6 +15,7 @@
 #include <cstdio>
 #include <cstring>
 #include <stdlib.h>
+#include "Gets.h"
 
 #ifdef WIN32
 #include "Kbhit.h"
@@ -26,16 +27,16 @@ int main(void)
 {
 	// Pointers to the interfaces of our server and client.
 	// Note we can easily have both in the same program
-	RakPeerInterface *client=RakNetworkFactory::GetRakPeerInterface();
-	RakPeerInterface *server=RakNetworkFactory::GetRakPeerInterface();
+	RakNet::RakPeerInterface *client=RakNet::RakPeerInterface::GetInstance();
+	RakNet::RakPeerInterface *server=RakNet::RakPeerInterface::GetInstance();
 
 	int i = server->GetNumberOfAddresses();
 
 	// Holds packets
-	Packet* p;
+	RakNet::Packet* p;
 
 	// Record the first client that connects to us so we can pass it to the ping function
-	SystemAddress clientID=UNASSIGNED_SYSTEM_ADDRESS;
+	RakNet::SystemAddress clientID=RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 	bool packetFromServer;
 	char portstring[30];
 
@@ -45,7 +46,7 @@ int main(void)
 
 	// A server
 	puts("Enter the server port to listen on");
-	gets(portstring);
+	Gets(portstring,sizeof(portstring));
 	if (portstring[0]==0)
 		strcpy(portstring,"60000");
 
@@ -53,15 +54,15 @@ int main(void)
 	puts("Enter offline ping response data (for return by a LAN discovery for example)");
 	puts("Hit enter for none.");
 	char enumData[512];
-	gets(enumData);
+	Gets(enumData,sizeof(enumData));
 	if (enumData[0])
 		server->SetOfflinePingResponse(enumData, (const unsigned int) strlen(enumData)+1);
 
 	puts("Starting server.");
 
 	// The server has to be started to respond to pings.
-	SocketDescriptor socketDescriptor(atoi(portstring),0);
-	bool b = server->Startup(2, 30, &socketDescriptor, 1);
+	RakNet::SocketDescriptor socketDescriptor(atoi(portstring),0);
+	bool b = server->Startup(2, &socketDescriptor, 1)==RakNet::RAKNET_STARTED;
 	server->SetMaximumIncomingConnections(2);
 	if (b)
 		puts("Server started, waiting for connections.");
@@ -72,7 +73,7 @@ int main(void)
 	}
 
 	socketDescriptor.port=0;
-	client->Startup(1,30,&socketDescriptor, 1);
+	client->Startup(1,&socketDescriptor, 1);
 
 	puts("'q' to quit, any other key to send a ping from the client.");
 	char buff[256];
@@ -83,24 +84,24 @@ int main(void)
 		if (kbhit())
 		{
 			// Holds user data
-			char ip[30], serverPort[30], clientPort[30];
+			char ip[64], serverPort[30], clientPort[30];
 
-			if (gets(buff)&&(buff[0]=='q'))
+			if (Gets(buff,sizeof(buff))&&(buff[0]=='q'))
 				break;
 			else
 			{
 
 				// Get our input
 				puts("Enter the client port to listen on, or 0");
-				gets(clientPort);
+				Gets(clientPort,sizeof(clientPort));
 				if (clientPort[0]==0)
 					strcpy(clientPort, "0");
 				puts("Enter IP to ping");
-				gets(ip);
+				Gets(ip, sizeof(ip));
 				if (ip[0]==0)
 					strcpy(ip, "127.0.0.1");
 				puts("Enter the port to ping");
-				gets(serverPort);
+				Gets(serverPort,sizeof(serverPort));
 				if (serverPort[0]==0)
 					strcpy(serverPort, "60000");
 
@@ -128,17 +129,19 @@ int main(void)
 		// Check if this is a network message packet
 		switch (p->data[0])
 		{
-			case ID_PONG:
-				RakNetTime time, dataLength;
-				RakNet::BitStream pong( p->data+1, sizeof(RakNetTime), false);
-				pong.Read(time);
-				dataLength = p->length - sizeof(unsigned char) - sizeof(RakNetTime);
-				printf("ID_PONG from SystemAddress:%u:%u.\n", p->systemAddress.binaryAddress, p->systemAddress.port);
+			case ID_UNCONNECTED_PONG:
+				unsigned int dataLength;
+				RakNet::TimeMS time;
+				RakNet::BitStream bsIn(p->data,p->length,false);
+				bsIn.IgnoreBytes(1);
+				bsIn.Read(time);
+				dataLength = p->length - sizeof(unsigned char) - sizeof(RakNet::TimeMS);
+				printf("ID_UNCONNECTED_PONG from SystemAddress:%u:%u.\n", p->systemAddress.binaryAddress, p->systemAddress.port);
 				printf("Time is %i\n",time);
-				printf("Ping is %i\n", (unsigned int)(RakNet::GetTime()-time));
+				printf("Ping is %i\n", (unsigned int)(RakNet::GetTimeMS()-time));
 				printf("Data is %i bytes long.\n", dataLength);
 				if (dataLength > 0)
-					printf("Data is %s\n", p->data+sizeof(unsigned char)+sizeof(RakNetTime));
+					printf("Data is %s\n", p->data+sizeof(unsigned char)+sizeof(RakNet::TimeMS));
 				break;
 			
 			// In this sample since the client is not running a game we can save CPU cycles by
@@ -154,8 +157,8 @@ int main(void)
 	}
 
 	// We're done with the network
-	RakNetworkFactory::DestroyRakPeerInterface(server);
-	RakNetworkFactory::DestroyRakPeerInterface(client);
+	RakNet::RakPeerInterface::DestroyInstance(server);
+	RakNet::RakPeerInterface::DestroyInstance(client);
 
 	return 0;
 }

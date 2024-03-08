@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Kbhit.h"
-#include "RakNetworkFactory.h"
+
 #include "GetTime.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
@@ -13,6 +13,7 @@
 #include "AutopatcherServer.h"
 #include "AutopatcherMySQLRepository.h"
 #include "PacketizedTCP.h"
+#include "Gets.h"
 
 #ifdef _WIN32
 #include "WindowsIncludes.h" // Sleep
@@ -22,28 +23,37 @@
 
 #define USE_TCP
 #define LISTEN_PORT 60000
-#define MAX_INCOMING_CONNECTIONS 8
+#define MAX_INCOMING_CONNECTIONS 128
 
 int main(int argc, char **argv)
 {
 	// Avoids the Error: Got a packet bigger than 'max_allowed_packet' bytes
 	printf("Important: Requires that you first set the DB schema and the max packet size on the server.\n");
 	printf("See DependentExtensions/AutopatcherMySQLRepository/readme.txt\n");
+	// // MySQL is extremely slow in AutopatcherMySQLRepository::GetFilePart
+	printf("WARNING: MySQL is an order of magnitude slower than PostgreSQL.\nRecommended you use AutopatcherServer_PostgreSQL instead.");
 
 	printf("Server starting... ");
-	AutopatcherServer autopatcherServer;
-	FLP_Printf progressIndicator;
-	FileListTransfer fileListTransfer;
+	RakNet::AutopatcherServer autopatcherServer;
+	// RakNet::FLP_Printf progressIndicator;
+	RakNet::FileListTransfer fileListTransfer;
 	// So only one thread runs per connection, we create an array of connection objects, and tell the autopatcher server to use one thread per item
-	static const int sqlConnectionObjectCount=4;
-	AutopatcherMySQLRepository connectionObject[sqlConnectionObjectCount];
-	AutopatcherRepositoryInterface *connectionObjectAddresses[sqlConnectionObjectCount];
+	static const int workerThreadCount=4; // Used for checking patches only
+	static const int sqlConnectionObjectCount=32; // Used for both checking patches and downloading
+	RakNet::AutopatcherMySQLRepository connectionObject[sqlConnectionObjectCount];
+	RakNet::AutopatcherRepositoryInterface *connectionObjectAddresses[sqlConnectionObjectCount];
 	for (int i=0; i < sqlConnectionObjectCount; i++)
 		connectionObjectAddresses[i]=&connectionObject[i];
-	fileListTransfer.SetCallback(&progressIndicator);
+	// fileListTransfer.AddCallback(&progressIndicator);
 	autopatcherServer.SetFileListTransferPlugin(&fileListTransfer);
+	// MySQL is extremely slow in AutopatcherMySQLRepository::GetFilePart so running tho incremental reads in a thread allows multiple concurrent users to read
+	// Without this, only one user would be sent files at a time basically
+	fileListTransfer.StartIncrementalReadThreads(sqlConnectionObjectCount);
+	autopatcherServer.SetMaxConurrentUsers(MAX_INCOMING_CONNECTIONS); // More users than this get queued up
+	RakNet::AutopatcherServerLoadNotifier_Printf loadNotifier;
+	autopatcherServer.SetLoadManagementCallback(&loadNotifier);
 #ifdef USE_TCP
-	PacketizedTCP packetizedTCP;
+	RakNet::PacketizedTCP packetizedTCP;
 	if (packetizedTCP.Start(LISTEN_PORT,MAX_INCOMING_CONNECTIONS)==false)
 	{
 		printf("Failed to start TCP. Is the port already in use?");
@@ -52,10 +62,10 @@ int main(int argc, char **argv)
 	packetizedTCP.AttachPlugin(&autopatcherServer);
 	packetizedTCP.AttachPlugin(&fileListTransfer);
 #else
-	RakPeerInterface *rakPeer;
-	rakPeer = RakNetworkFactory::GetRakPeerInterface();
-	SocketDescriptor socketDescriptor(LISTEN_PORT,0);
-	rakPeer->Startup(8,0,&socketDescriptor, 1);
+	RakNet::RakPeerInterface *rakPeer;
+	rakPeer = RakNet::RakPeerInterface::GetInstance();
+	RakNet::SocketDescriptor socketDescriptor(LISTEN_PORT,0);
+	rakPeer->Startup(MAX_INCOMING_CONNECTIONS,&socketDescriptor, 1);
 	rakPeer->SetMaximumIncomingConnections(MAX_INCOMING_CONNECTIONS);
 	rakPeer->AttachPlugin(&autopatcherServer);
 	rakPeer->AttachPlugin(&fileListTransfer);
@@ -66,7 +76,7 @@ int main(int argc, char **argv)
 	char password[128];
 	char username[256];
 	strcpy(username, "root");
-	gets(password);
+	Gets(password,sizeof(password));
 	if (password[0]==0)
 		strcpy(password,"aaaa");
 	char db[256];
@@ -77,7 +87,7 @@ int main(int argc, char **argv)
 	// Where 128 is the maximum size file in megabytes you'll ever add
 	// to MySQL\MySQL Server 5.1\my.ini in the [mysqld] section
 	// Be sure to restart the service after doing so
-	gets(db);
+	Gets(db,sizeof(db));
 	if (db[0]==0)
 		strcpy(db,"autopatcher");
 	for (int conIdx=0; conIdx < sqlConnectionObjectCount; conIdx++)
@@ -92,25 +102,25 @@ int main(int argc, char **argv)
 
 
 	printf("Starting threads\n");
-	autopatcherServer.StartThreads(sqlConnectionObjectCount, connectionObjectAddresses);
+	autopatcherServer.StartThreads(workerThreadCount, sqlConnectionObjectCount, connectionObjectAddresses);
 	printf("System ready for connections\n");
 
 	printf("(D)rop database\n(C)reate database.\n(A)dd application\n(U)pdate revision.\n(R)emove application\n(Q)uit\n");
 
 	char ch;
-	Packet *p;
+	RakNet::Packet *p;
 	while (1)
 	{
 #ifdef USE_TCP
-		SystemAddress notificationAddress;
+		RakNet::SystemAddress notificationAddress;
 		notificationAddress=packetizedTCP.HasCompletedConnectionAttempt();
-		if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
 		notificationAddress=packetizedTCP.HasNewIncomingConnection();
-		if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			printf("ID_NEW_INCOMING_CONNECTION\n");
 		notificationAddress=packetizedTCP.HasLostConnection();
-		if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			printf("ID_CONNECTION_LOST\n");
 
 		p=packetizedTCP.Receive();
@@ -157,7 +167,7 @@ int main(int argc, char **argv)
 			{
 				printf("Enter application name to add: ");
 				char appName[512];
-				gets(appName);
+				Gets(appName,sizeof(appName));
 				if (appName[0]==0)
 					strcpy(appName, "TestApp");
 
@@ -170,7 +180,7 @@ int main(int argc, char **argv)
 			{
 				printf("Enter application name to remove: ");
 				char appName[512];
-				gets(appName);
+				Gets(appName,sizeof(appName));
 				if (appName[0]==0)
 					strcpy(appName, "TestApp");
 
@@ -183,17 +193,17 @@ int main(int argc, char **argv)
 			{
 				printf("Enter application name: ");
 				char appName[512];
-				gets(appName);
+				Gets(appName,sizeof(appName));
 				if (appName[0]==0)
 					strcpy(appName, "TestApp");
 
 				printf("Enter application directory: ");
 				char appDir[512];
-				gets(appDir);
+				Gets(appDir,sizeof(appName));
 				if (appDir[0]==0)
 					strcpy(appDir, "C:/temp");
 
-				if (connectionObject[0].UpdateApplicationFiles(appName, appDir, username, &progressIndicator)==false)
+				if (connectionObject[0].UpdateApplicationFiles(appName, appDir, username, 0)==false)
 				{
 					printf("Error: %s\n", connectionObject[0].GetLastError());
 				}
@@ -212,6 +222,6 @@ int main(int argc, char **argv)
 #ifdef USE_TCP
 	packetizedTCP.Stop();
 #else
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 #endif
 }

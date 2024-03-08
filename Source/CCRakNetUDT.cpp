@@ -145,7 +145,7 @@ void CCRakNetUDT::Update(CCTimeType curTime, bool hasDataToSendOrResend)
 	/// 500 microseconds per byte
 	// printf("No incoming data, halving send rate\n");
 	SND*=2.0;
-	CapMinSnd(__FILE__,__LINE__);
+	CapMinSnd(_FILE_AND_LINE_);
 	ExpCount+=1.0;
 	if (ExpCount>8.0)
 	ExpCount=8.0;
@@ -396,7 +396,7 @@ void CCRakNetUDT::OnResend(CCTimeType curTime)
 	if (hadPacketlossThisBlock==false)
 	{
 		// Logging
-//		 printf("Sending SLOWER due to Resend, Rate=%f MBPS. Rtt=%i\n", GetLocalSendRate(),  lastRtt );
+		// printf("Sending SLOWER due to Resend, Rate=%f MBPS. Rtt=%i\n", GetLocalSendRate(),  lastRtt );
 
 		IncreaseTimeBetweenSends();
 		hadPacketlossThisBlock=true;
@@ -418,13 +418,13 @@ void CCRakNetUDT::OnNAK(CCTimeType curTime, DatagramSequenceNumberType nakSequen
 	if (hadPacketlossThisBlock==false)
 	{
 		// Logging
-// 		printf("Sending SLOWER due to NAK, Rate=%f MBPS. Rtt=%i\n", GetLocalSendRate(),  lastRtt );
-// 		if (pingsLastInterval.Size()>10)
-// 		{
-// 			for (int i=0; i < 10; i++)
-// 				printf("%i, ", pingsLastInterval[pingsLastInterval.Size()-1-i]/1000);
-// 		}
-// 		printf("\n");
+		//printf("Sending SLOWER due to NAK, Rate=%f MBPS. Rtt=%i\n", GetLocalSendRate(),  lastRtt );
+		if (pingsLastInterval.Size()>10)
+		{
+			for (int i=0; i < 10; i++)
+				printf("%i, ", pingsLastInterval[pingsLastInterval.Size()-1-i]/1000);
+		}
+		printf("\n");
 		IncreaseTimeBetweenSends();
 
 		hadPacketlossThisBlock=true;
@@ -441,7 +441,7 @@ void CCRakNetUDT::EndSlowStart(void)
 
 	isInSlowStart=false;
 	SND=1.0/AS;
-	CapMinSnd(__FILE__,__LINE__);
+	CapMinSnd(_FILE_AND_LINE_);
 
 	// printf("ENDING SLOW START\n");
 #if CC_TIME_TYPE_BYTES==4
@@ -505,7 +505,7 @@ bool CCRakNetUDT::OnGotPacket(DatagramSequenceNumberType datagramSequenceNumber,
 
 			//		if (mostRecentPacketArrivalHistory < (BytesPerMicrosecond)0.0035)
 			//		{
-			//			printf("%s:%i LIKELY BUG: Calculated packetArrivalHistory is below 28.8 Kbps modem\nReport to rakkar@jenkinssoftware.com with file and line number\n", __FILE__, __LINE__);
+			//			printf("%s:%i LIKELY BUG: Calculated packetArrivalHistory is below 28.8 Kbps modem\nReport to rakkar@jenkinssoftware.com with file and line number\n", _FILE_AND_LINE_);
 			//		}
 
 			packetArrivalHistoryContinuousGaps[packetArrivalHistoryContinuousGapsIndex++]=(int) interval;
@@ -658,18 +658,18 @@ void CCRakNetUDT::UpdateWindowSizeAndAckOnAckPerSyn(CCTimeType curTime, CCTimeTy
 		else if (slopeSum < -.10*average)
 		{
 			// Logging
-//			printf("Ping dropping. slope=%f%%. Rate=%f MBPS. Rtt=%i\n", 100.0*slopeSum/average, GetLocalSendRate(),  rtt );
+			//printf("Ping dropping. slope=%f%%. Rate=%f MBPS. Rtt=%i\n", 100.0*slopeSum/average, GetLocalSendRate(),  rtt );
 		}
 		else if (slopeSum > .10*average)
 		{
 			// Logging
-//			printf("Ping rising. slope=%f%%. Rate=%f MBPS. Rtt=%i\n", 100.0*slopeSum/average, GetLocalSendRate(),  rtt );
+			//printf("Ping rising. slope=%f%%. Rate=%f MBPS. Rtt=%i\n", 100.0*slopeSum/average, GetLocalSendRate(),  rtt );
 			IncreaseTimeBetweenSends();
 		}
 		else
 		{
 			// Logging
-//			printf("Ping stable. slope=%f%%. Rate=%f MBPS. Rtt=%i\n", 100.0*slopeSum/average, GetLocalSendRate(),  rtt );
+			//printf("Ping stable. slope=%f%%. Rate=%f MBPS. Rtt=%i\n", 100.0*slopeSum/average, GetLocalSendRate(),  rtt );
 
 			// No packetloss over time threshhold, and rtt decreased, so send faster
 			lastRttOnIncreaseSendRate=rtt;
@@ -745,7 +745,7 @@ void CCRakNetUDT::CapMinSnd(const char *file, int line)
 	if (SND > 500)
 	{
 		SND=500;
-		CC_DEBUG_PRINTF_3("%s:%i LIKELY BUG: SND has gotten below 500 microseconds between messages (28.8 modem)\nReport to rakkar@jenkinssoftware.com with file and line number\n", file, line);
+		CC_DEBUG_PRINTF_3("%s:%i LIKELY BUG: SND has gotten above 500 microseconds between messages (28.8 modem)\nReport to rakkar@jenkinssoftware.com with file and line number\n", file, line);
 	}
 }
 void CCRakNetUDT::IncreaseTimeBetweenSends(void)

@@ -11,10 +11,14 @@
 #ifndef __PACKET_LOGGER_H
 #define __PACKET_LOGGER_H
 
-class RakPeerInterface;
 #include "RakNetTypes.h"
 #include "PluginInterface2.h"
 #include "Export.h"
+
+namespace RakNet
+{
+/// Forward declarations
+class RakPeerInterface;
 
 /// \defgroup PACKETLOGGER_GROUP PacketLogger
 /// \brief Print out incoming messages to a target destination
@@ -27,6 +31,9 @@ class RakPeerInterface;
 class RAK_DLL_EXPORT PacketLogger : public PluginInterface2
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(PacketLogger)
+
 	PacketLogger();
 	virtual ~PacketLogger();
 
@@ -44,8 +51,8 @@ public:
 	virtual void OnDirectSocketSend(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress);
 	virtual void OnDirectSocketReceive(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress);
 	virtual void OnReliabilityLayerPacketError(const char *errorMessage, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress);
-	virtual void OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNetTime time, int isSend);
-	virtual void OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, RakNetTime time);
+	virtual void OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNet::TimeMS time, int isSend);
+	virtual void OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, RakNet::TimeMS time);
 	virtual void OnPushBackPacket(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress);
 
 	/// Logs out a header for all the data
@@ -84,6 +91,8 @@ protected:
 	char prefix[256];
 	char suffix[256];
 };
+
+} // namespace RakNet
 
 #endif
 

@@ -8,7 +8,7 @@ DebugTools::~DebugTools(void)
 {
 }
 
-void DebugTools::ShowError(RakNet::RakString errorString,bool pause, unsigned int lineNum,const char *fileName)
+void DebugTools::ShowError(RakString errorString,bool pause, unsigned int lineNum,const char *fileName)
 {
 
 	char pauseChar;

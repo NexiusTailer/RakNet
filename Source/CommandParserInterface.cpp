@@ -3,9 +3,9 @@
 #include <string.h>
 #include "RakAssert.h"
 #include <stdio.h>
-
-
-#if   defined(_WIN32)
+#if defined(_XBOX) || defined(X360)
+                            
+#elif defined(_WIN32)
 // IP_DONTFRAGMENT is different between winsock 1 and winsock 2.  Therefore, Winsock2.h must be linked againt Ws2_32.lib
 // winsock.h must be linked against WSock32.lib.  If these two are mixed up the flag won't work correctly
 #include <winsock2.h>
@@ -17,13 +17,15 @@
 
 #include "LinuxStrings.h"
 
+using namespace RakNet;
+
 #ifdef _MSC_VER
 #pragma warning( push )
 #endif
 
 const unsigned char CommandParserInterface::VARIABLE_NUMBER_OF_PARAMETERS=255;
 
-int RegisteredCommandComp( const char* const & key, const RegisteredCommand &data )
+int RakNet::RegisteredCommandComp( const char* const & key, const RegisteredCommand &data )
 {
 	return _stricmp(key,data.command);
 }
@@ -99,7 +101,7 @@ void CommandParserInterface::RegisterCommand(unsigned char parameterCount, const
 	rc.command=command;
 	rc.commandHelp=commandHelp;
 	rc.parameterCount=parameterCount;
-	commandList.Insert( command, rc, true, __FILE__, __LINE__);
+	commandList.Insert( command, rc, true, _FILE_AND_LINE_);
 }
 bool CommandParserInterface::GetRegisteredCommand(const char *command, RegisteredCommand *rc)
 {
@@ -145,14 +147,14 @@ void CommandParserInterface::ReturnResult(char *res, const char *command, Transp
 }
 void CommandParserInterface::ReturnResult(SystemAddress res, const char *command, TransportInterface *transport, SystemAddress systemAddress)
 {
-
+#if !defined(_XBOX) && !defined(_X360)
 	in_addr in;
 	in.s_addr = systemAddress.binaryAddress;
 	inet_ntoa( in );
 	transport->Send(systemAddress, "%s returned %s %i:%i\r\n", command,inet_ntoa( in ),res.binaryAddress, res.port);
-
-
-
+#else
+	transport->Send(systemAddress, "%s returned %i:%i\r\n", command,res.binaryAddress, res.port);
+#endif
 }
 SystemAddress CommandParserInterface::IntegersToSystemAddress(int binaryAddress, int port)
 {

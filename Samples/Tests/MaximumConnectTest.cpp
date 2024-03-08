@@ -26,7 +26,7 @@ SetMaximumIncomingConnections
 GetMaximumIncomingConnections 
 
 */
-int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int MaximumConnectTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 
 	const int peerNum= 8;
@@ -34,16 +34,16 @@ int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,b
 	RakPeerInterface *peerList[peerNum];//A list of 8 peers
 
 	Packet *packet;
-	destroyList.Clear(false,__FILE__,__LINE__);
+	destroyList.Clear(false,_FILE_AND_LINE_);
 
 	int connReturn;
 	//Initializations of the arrays
 	for (int i=0;i<peerNum;i++)
 	{
-		peerList[i]=RakNetworkFactory::GetRakPeerInterface();
-		destroyList.Push(peerList[i],__FILE__,__LINE__);
+		peerList[i]=RakPeerInterface::GetInstance();
+		destroyList.Push(peerList[i],_FILE_AND_LINE_);
 
-		peerList[i]->Startup(maxConnections, 30, &SocketDescriptor(60000+i,0), 1);
+		peerList[i]->Startup(maxConnections, &SocketDescriptor(60000+i,0), 1);
 		peerList[i]->SetMaximumIncomingConnections(maxConnections);
 
 		connReturn=peerList[i]->GetMaximumIncomingConnections();
@@ -69,7 +69,7 @@ int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,b
 		for (int j=i+1;j<peerNum;j++)//Start at i+1 so don't connect two of the same together.
 		{
 
-			if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
+			if (peerList[i]->Connect("127.0.0.1", 60000+j, 0,0)!=CONNECTION_ATTEMPT_STARTED)
 			{
 
 				if (isVerbose)
@@ -83,9 +83,9 @@ int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,b
 
 	}
 
-	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
+	TimeMS entryTime=GetTimeMS();//Loop entry time
 
-	while(RakNet::GetTime()-entryTime<20000)//Run for 20 Secoonds
+	while(GetTimeMS()-entryTime<20000)//Run for 20 Secoonds
 	{
 
 		for (int i=0;i<peerNum;i++)//Receive for all peers
@@ -196,14 +196,14 @@ int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,b
 
 }
 
-RakNet::RakString MaximumConnectTest::GetTestName()
+RakString MaximumConnectTest::GetTestName()
 {
 
 	return "MaximumConnectTest";
 
 }
 
-RakNet::RakString MaximumConnectTest::ErrorCodeToString(int errorCode)
+RakString MaximumConnectTest::ErrorCodeToString(int errorCode)
 {
 
 	switch (errorCode)
@@ -245,6 +245,6 @@ void MaximumConnectTest::DestroyPeers()
 	int theSize=destroyList.Size();
 
 	for (int i=0; i < theSize; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+		RakPeerInterface::DestroyInstance(destroyList[i]);
 
 }

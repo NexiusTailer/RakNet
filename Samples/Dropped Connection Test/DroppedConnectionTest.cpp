@@ -1,9 +1,10 @@
-#include "RakNetworkFactory.h"
+
 #include "RakPeerInterface.h"
 #include "Rand.h" // randomMT
 #include "MessageIdentifiers.h" // Enumerations
 #include "RakNetTypes.h" // SystemAddress
 #include <cstdio>
+using namespace RakNet;
 
 #ifdef _WIN32
 #include "Kbhit.h"
@@ -34,7 +35,7 @@ int main(void)
 	unsigned index, connectionCount;
 	unsigned char ch;
 	SystemAddress serverID;
-	Packet *p;
+	RakNet::Packet *p;
 	unsigned short numberOfSystems;
 	int sender;
 	
@@ -52,19 +53,19 @@ int main(void)
 
 	printf("Dropped Connection Test.\n");
 	
-	server=RakNetworkFactory::GetRakPeerInterface();
+	server=RakNet::RakPeerInterface::GetInstance();
 //	server->InitializeSecurity(0,0,0,0);
-	SocketDescriptor socketDescriptor(serverPort,0);
-	server->Startup(NUMBER_OF_CLIENTS, 0, &socketDescriptor, 1);
+	RakNet::SocketDescriptor socketDescriptor(serverPort,0);
+	server->Startup(NUMBER_OF_CLIENTS, &socketDescriptor, 1);
 	server->SetMaximumIncomingConnections(NUMBER_OF_CLIENTS);
 
 	for (index=0; index < NUMBER_OF_CLIENTS; index++)
 	{
-		clients[index]=RakNetworkFactory::GetRakPeerInterface();
-		SocketDescriptor socketDescriptor2(serverPort+1+index,0);
-		clients[index]->Startup(1,0, &socketDescriptor2, 1);
+		clients[index]=RakNet::RakPeerInterface::GetInstance();
+		RakNet::SocketDescriptor socketDescriptor2(serverPort+1+index,0);
+		clients[index]->Startup(1, &socketDescriptor2, 1);
 		clients[index]->Connect("127.0.0.1", serverPort, 0, 0);
-		clients[index]->SetTimeoutTime(5000,UNASSIGNED_SYSTEM_ADDRESS);
+		clients[index]->SetTimeoutTime(5000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 
 		#ifdef _WIN32
 				Sleep(10);
@@ -82,7 +83,7 @@ int main(void)
 		if (kbhit())
 		{
 #ifndef _WIN32
-			gets(buff);
+			Gets(buff,sizeof(buff));
 			ch=buff[0];
 #else
 			ch=getch();
@@ -196,11 +197,6 @@ int main(void)
 					printf("%i: ID_NEW_INCOMING_CONNECTION from %i.\n",sender, p->systemAddress.port);
 					break;
 
-				case ID_MODIFIED_PACKET:
-					// Cheater!
-					printf("%i: ID_MODIFIED_PACKET from %i.\n",sender, p->systemAddress.port);
-					break;
-
 				case ID_CONNECTION_LOST:
 					// Couldn't deliver a reliable packet - i.e. the other system was abnormally
 					// terminated
@@ -229,10 +225,10 @@ int main(void)
 		/*
 		// Have everyone send a reliable packet so dropped connections are noticed.
 		ch=255;
-		server->Send((char*)&ch, 1, HIGH_PRIORITY, RELIABLE, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+		server->Send((char*)&ch, 1, HIGH_PRIORITY, RELIABLE, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 
 		for (index=0; index < NUMBER_OF_CLIENTS; index++)
-			clients[index]->Send((char*)&ch, 1, HIGH_PRIORITY, RELIABLE, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+			clients[index]->Send((char*)&ch, 1, HIGH_PRIORITY, RELIABLE, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 			*/
 
 		// Sleep so this loop doesn't take up all the CPU time
@@ -245,8 +241,8 @@ int main(void)
 
 	}
 
-	RakNetworkFactory::DestroyRakPeerInterface(server);
+	RakNet::RakPeerInterface::DestroyInstance(server);
 	for (index=0; index < NUMBER_OF_CLIENTS; index++)
-		RakNetworkFactory::DestroyRakPeerInterface(clients[index]);
+		RakNet::RakPeerInterface::DestroyInstance(clients[index]);
 	return 1;
 }

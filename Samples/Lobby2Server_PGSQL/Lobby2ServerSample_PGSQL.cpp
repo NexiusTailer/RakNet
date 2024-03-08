@@ -1,6 +1,6 @@
 #include "Lobby2Message.h"
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
+
 #include "MessageIdentifiers.h"
 #include "Kbhit.h"
 #include "RakSleep.h"
@@ -9,6 +9,8 @@
 #include "ProfanityFilter.h"
 #include <ctype.h>
 #include <stdlib.h>
+#include "Gets.h"
+
 
 #ifdef __INTEGRATE_LOBBY2_WITH_ROOMS_PLUGIN
 #include "RoomsPlugin.h"
@@ -31,18 +33,18 @@ void main(void)
 	printf("Difficulty: Intermediate\n\n");
 
 	char serverPort[30];
-	RakPeerInterface *rakPeer=RakNetworkFactory::GetRakPeerInterface();
-	rakPeer->SetTimeoutTime(5000,UNASSIGNED_SYSTEM_ADDRESS);
-	//rakPeer->SetTimeoutTime(3000,UNASSIGNED_SYSTEM_ADDRESS);
-//	puts("Enter the rakPeer port to listen on");
+	RakNet::RakPeerInterface *rakPeer=RakNet::RakPeerInterface::GetInstance();
+	rakPeer->SetTimeoutTime(5000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+	//rakPeer->SetTimeoutTime(3000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+	puts("Enter the rakPeer port to listen on");
 	serverPort[0]=0;
-	//gets(serverPort);
+	Gets(serverPort,sizeof(serverPort));
 	if (serverPort[0]==0)
 		strcpy(serverPort, "61111");
 
-	SocketDescriptor socketDescriptor(atoi(serverPort),0);
+	RakNet::SocketDescriptor socketDescriptor(atoi(serverPort),0);
 	rakPeer->SetMaximumIncomingConnections(32);
-	if (rakPeer->Startup(32,30,&socketDescriptor, 1)==false)
+	if (rakPeer->Startup(32,&socketDescriptor, 1)!=RakNet::RAKNET_STARTED)
 	{
 		printf("Startup call failed\n");
 		return;
@@ -61,7 +63,7 @@ void main(void)
 	RakNet::RoomsPlugin roomsPluginServer;
 	rakPeer->AttachPlugin(&roomsPluginServer);
 	lobby2Server.SetRoomsPlugin(&roomsPluginServer);
-	ProfanityFilter profanityFilter;
+	RakNet::ProfanityFilter profanityFilter;
 	profanityFilter.AddWord("Penis");
 	roomsPluginServer.SetProfanityFilter(&profanityFilter);
 	roomsPluginServer.roomsContainer.AddTitle("Test Title Name");
@@ -72,7 +74,7 @@ void main(void)
 	char username[256];
 	strcpy(username, "postgres");
 	password[0]=0;
-	gets(password);
+	Gets(password,sizeof(password));
 	if (password[0]==0) strcpy(password, "aaaa");
 	strcpy(connectionString, "user=");
 	strcat(connectionString, username);
@@ -96,7 +98,7 @@ void main(void)
 	lobby2Server.SetConfigurationProperties(c);
 
 #ifdef _ALSO_ACT_AS_NAT_PUNCH_SERVER
-	NatPunchthroughServer natPunchthroughServer;
+	RakNet::NatPunchthroughServer natPunchthroughServer;
 	RakNet::UDPProxyCoordinator udpProxyCoordinator;
 	RakNet::UDPProxyServer udpProxyServer;
 	RakNet::NatTypeDetectionServer natTypeDetectionServer;
@@ -107,14 +109,14 @@ void main(void)
 	rakPeer->AttachPlugin(&natTypeDetectionServer);
 	char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
 	unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
-	SocketLayer::GetMyIP( ipList, binaryAddresses );
+	RakNet::SocketLayer::GetMyIP( ipList, binaryAddresses );
 	natTypeDetectionServer.Startup(ipList[1], ipList[2], ipList[3]);
 	// Login proxy server to proxy coordinator
 	// Normally the proxy server is on a different computer. Here, we login to our own IP address since the plugin is on the same system
-	udpProxyServer.LoginToCoordinator(COORDINATOR_PASSWORD, rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS));
+	udpProxyServer.LoginToCoordinator(COORDINATOR_PASSWORD, rakPeer->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS));
 #endif
 
-	Packet *packet;
+	RakNet::Packet *packet;
 	// Loop for input
 	while (1)
 	{
@@ -135,10 +137,6 @@ void main(void)
 				lobby2Server.AddAdminAddress(packet->systemAddress);
 				lobby2Server.AddRankingAddress(packet->systemAddress);
 				break;
-			case ID_MODIFIED_PACKET:
-				// Cheater!
-				printf("ID_MODIFIED_PACKET\n");
-				break;
 			case ID_CONNECTION_LOST:
 				// Couldn't deliver a reliable packet - i.e. the other system was abnormally
 				// terminated
@@ -153,5 +151,5 @@ void main(void)
 		//printf("%i ", lobby2Server.GetUsers().Size());
 	}
 
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 }

@@ -4,7 +4,9 @@
 #include "RakNetTypes.h"
 #include "RakNetDefines.h"
 #include "Export.h"
-// #include "SocketIncludes.h"
+
+namespace RakNet
+{
 
 struct RAK_DLL_EXPORT RakNetSocket
 {
@@ -15,13 +17,16 @@ struct RAK_DLL_EXPORT RakNetSocket
 	unsigned int s;
 	unsigned int userConnectionSocketIndex;
 	SystemAddress boundAddress;
+
 #if defined (_WIN32) && defined(USE_WAIT_FOR_MULTIPLE_EVENTS)
 	void* recvEvent;
 #endif
 	// Only need to set for the PS3, when using signaling.
 	// Connect with the port returned by signaling. Set this to whatever port RakNet was actually started on
 	unsigned short remotePortRakNetWasStartedOn_PS3;
-
+	unsigned int extraSocketOptions;
 };
+
+} // namespace RakNet
 
 #endif

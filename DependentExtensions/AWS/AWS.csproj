@@ -1,0 +1,195 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D6A33113-0C10-4B94-9FA1-2F74B5AB5760}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AWS</RootNamespace>
+    <AssemblyName>AWS</AssemblyName>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AWSSDK, Version=1.1.1.0, Culture=neutral, PublicKeyToken=cd2d24cd2bace800, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json.Net20, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web.Extensions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="assemblyinfo.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\AddressOrGUID.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\AWSSimpleDBInterface.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\BitStream.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\ByteQueue.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\Cell.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\ColumnDescriptor.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\CommandParserInterface.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\ConnectionAttemptResult.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\ConnectionGraph2.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\ConnectionState.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\DefaultMessageIDTypes.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\DirectoryDeltaTransfer.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\DownloadCompleteStruct.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\FileList.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\FileListNode.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\FileListNodeContext.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\FileListProgress.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\FileListTransfer.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\FileListTransferCBInterface.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\FileProgressStruct.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\FilterQuery.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\FLP_Printf.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\FullyConnectedMesh2.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\IncrementalReadInterface.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\LogCommandParser.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\MessageFilter.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\MultilistType.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\NatPunchthroughClient.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\NatPunchthroughDebugInterface.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\NatPunchthroughDebugInterface_PacketLogger.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\NatPunchthroughDebugInterface_Printf.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\NatPunchthroughServer.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\NatPunchthroughServerDebugInterface.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\NatPunchthroughServerDebugInterface_PacketLogger.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\NatPunchthroughServerDebugInterface_Printf.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\NatTypeDetectionClient.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\NatTypeDetectionServer.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\NetworkIDManager.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\NetworkIDObject.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\OnFileStruct.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\OutOfBandIdentifiers.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\Packet.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\PacketConsoleLogger.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\PacketFileLogger.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\PacketLogger.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\PacketPriority.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\PacketReliability.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\PluginInterface2.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\PluginReceiveResult.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\PublicKey.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\PublicKeyMode.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\PunchthroughConfiguration.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNet.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetBPlusTreeRow.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetGUID.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetListCell.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetListCellPointer.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetListColumnDescriptor.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetListFileListNode.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetListFilterQuery.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetListRakNetGUID.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetListRakString.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetListSortQuery.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetListSystemAddress.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetListTableRow.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetListUnsignedInt.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetListUnsignedShort.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetPageRow.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetPINVOKE.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetSocket.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakNetStatistics.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakPeer.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakPeerInterface.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RakString.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\ReadyEvent.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\ReadyEventSystemStatus.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RemoteSystemIndex.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\RNSPerSecondMetrics.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\Router2.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\Router2DebugInterface.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\Row.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SimpleMutex.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SocketDescriptor.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SortQuery.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\StartupResult.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SWIGTYPE_p_DataStructures__ListT_RakNetSmartPtrT_RakNet__RakNetSocket_t_t.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SWIGTYPE_p_DataStructures__ListT_RakNet__RakString_t.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SWIGTYPE_p_double.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SWIGTYPE_p_f_p_RakNet__RakPeerInterface_RakNet__AddressOrGUID_int_p_void_unsigned_char__void.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SWIGTYPE_p_f_p_RakNet__RakPeerInterface_RakNet__AddressOrGUID_int_p_void__void.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SWIGTYPE_p_p_char.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SWIGTYPE_p_RakNet__UDPForwarder__SrcAndDest.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SWIGTYPE_p_unsigned_char.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SWIGTYPE_p_unsigned_int.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SWIGTYPE_p_unsigned_long_long.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SWIGTYPE_p_unsigned_short.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SWIGTYPE_p_void.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\SystemAddress.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\Table.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\TeamBalancer.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\ThreadsafePacketLogger.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\TransportInterface.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\UDPForwarder.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\UDPForwarderResult.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\UDPProxyClient.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\UDPProxyClientResultHandler.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\UDPProxyCoordinator.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\UDPProxyServer.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\UDPProxyServerResultHandler.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\uint24_t.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\UnsignedIntPointer.cs" />
+    <Compile Include="RakNetSwigCSharpOutput\UnsignedShortPointer.cs" />
+    <Compile Include="SimpleDB\AWSSimpleDBImpl.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>copy $(ProjectDir)$(ConfigurationName)\RakNet.dll $(TargetDir)RakNet.dll</PostBuildEvent>
+  </PropertyGroup>
+</Project>

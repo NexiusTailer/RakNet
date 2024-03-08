@@ -12,7 +12,6 @@
 #ifndef __FULLY_CONNECTED_MESH_2_H
 #define __FULLY_CONNECTED_MESH_2_H
 
-class RakPeerInterface;
 #include "PluginInterface2.h"
 #include "RakMemoryOverride.h"
 #include "DS_Multilist.h"
@@ -22,18 +21,27 @@ class RakPeerInterface;
 
 typedef int64_t FCM2Guid;
 
+namespace RakNet
+{
+/// Forward declarations
+class RakPeerInterface;
+
 /// \brief Fully connected mesh plugin, revision 2
 /// \details This will connect RakPeer to all connecting peers, and all peers the connecting peer knows about.<BR>
 /// It will also calculate which system has been running longest, to find out who should be host, if you need one system to act as a host
-/// \pre You must also install the ConnectionGraph2 plugin
+/// \pre You must also install the ConnectionGraph2 plugin in order to use SetConnectOnNewRemoteConnection()
 /// \ingroup FULLY_CONNECTED_MESH_GROUP
 class RAK_DLL_EXPORT FullyConnectedMesh2 : public PluginInterface2
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(FullyConnectedMesh2)
+
 	FullyConnectedMesh2();
 	virtual ~FullyConnectedMesh2();
 
 	/// When the message ID_REMOTE_NEW_INCOMING_CONNECTION arrives, we try to connect to that system
+	/// If \a attemptConnection is false, you can manually connect to all systems listed in ID_REMOTE_NEW_INCOMING_CONNECTION with ConnectToRemoteNewIncomingConnections()
 	/// \param[in] attemptConnection If true, we try to connect to any systems we are notified about with ID_REMOTE_NEW_INCOMING_CONNECTION, which comes from the ConnectionGraph2 plugin. Defaults to true.
 	/// \param[in] pw The password to use to connect with. Only used if \a attemptConnection is true
 	void SetConnectOnNewRemoteConnection(bool attemptConnection, RakNet::RakString pw);
@@ -57,6 +65,7 @@ public:
 	bool IsConnectedHost(void) const;
 
 	/// \brief Automatically add new connections to the fully connected mesh.
+	/// Each remote system that you want to check should be added as a participant, either through SetAutoparticipateConnections() or by calling this function
 	/// \details Defaults to true.
 	/// \param[in] b As stated
 	void SetAutoparticipateConnections(bool b);
@@ -65,13 +74,25 @@ public:
 	void ResetHostCalculation(void);
 
 	/// \brief if SetAutoparticipateConnections() is called with false, then you need to use AddParticipant before these systems will be added to the mesh 
+	/// FullyConnectedMesh2 will track who is the who host among a fully connected mesh of participants
+	/// Each remote system that you want to check should be added as a participant, either through SetAutoparticipateConnections() or by calling this function
 	/// \param[in] participant The new participant
 	void AddParticipant(RakNetGUID rakNetGuid);
+
+	/// Connect to all systems from ID_REMOTE_NEW_INCOMING_CONNECTION
+	/// You can call this if SetConnectOnNewRemoteConnection is false
+	/// \param[in] packet The packet containing ID_REMOTE_NEW_INCOMING_CONNECTION
+	/// \param[in] connectionPassword Password passed to RakPeerInterface::Connect()
+	/// \param[in] connectionPasswordLength Password length passed to RakPeerInterface::Connect()
+	void ConnectToRemoteNewIncomingConnections(Packet *packet);
+
+	/// \brief Clear all memory and reset everything
+	void Clear(void);
 
 	unsigned int GetParticipantCount(void) const;
 	void GetParticipantCount(DataStructures::DefaultIndexType *participantListSize) const;
 	/// \internal
-	RakNetTimeUS GetElapsedRuntime(void);
+	RakNet::TimeUS GetElapsedRuntime(void);
 
 	/// \internal
 	virtual PluginReceiveResult OnReceive(Packet *packet);
@@ -99,8 +120,7 @@ public:
 	};
 
 protected:
-	void Clear(void);
-	void PushNewHost(const RakNetGUID &guid);
+	void PushNewHost(const RakNetGUID &guid, RakNetGUID oldHost);
 	void SendOurFCMGuid(SystemAddress addr);
 	void SendFCMGuidRequest(RakNetGUID rakNetGuid);
 	void SendConnectionCountResponse(SystemAddress addr, unsigned int responseTotalConnectionCount);
@@ -115,7 +135,7 @@ protected:
 	void IncrementTotalConnectionCount(unsigned int i);
 
 	// Used to track how long RakNet has been running. This is so we know who has been running longest
-	RakNetTimeUS startupTime;
+	RakNet::TimeUS startupTime;
 
 	// Option for SetAutoparticipateConnections
 	bool autoParticipateConnections;
@@ -140,6 +160,8 @@ protected:
 	RakNet::RakString connectionPassword;
 	bool connectOnNewRemoteConnections;
 };
+
+} // namespace RakNet
 
 /*
 Startup()

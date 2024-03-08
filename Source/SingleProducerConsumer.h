@@ -92,9 +92,9 @@ namespace DataStructures
 		SingleProducerConsumer<SingleProducerConsumerType>::SingleProducerConsumer()
 	{
 		// Preallocate
-		readPointer = RakNet::OP_NEW<DataPlusPtr>( __FILE__, __LINE__ );
+		readPointer = RakNet::OP_NEW<DataPlusPtr>( _FILE_AND_LINE_ );
 		writePointer=readPointer;
-		readPointer->next = RakNet::OP_NEW<DataPlusPtr>( __FILE__, __LINE__ );
+		readPointer->next = RakNet::OP_NEW<DataPlusPtr>( _FILE_AND_LINE_ );
 		int listSize;
 #ifdef _DEBUG
 		RakAssert(MINIMUM_LIST_SIZE>=3);
@@ -102,7 +102,7 @@ namespace DataStructures
 		for (listSize=2; listSize < MINIMUM_LIST_SIZE; listSize++)
 		{
 			readPointer=readPointer->next;
-			readPointer->next = RakNet::OP_NEW<DataPlusPtr>( __FILE__, __LINE__ );
+			readPointer->next = RakNet::OP_NEW<DataPlusPtr>( _FILE_AND_LINE_ );
 		}
 		readPointer->next->next=writePointer; // last to next = start
 		readPointer=writePointer;
@@ -119,10 +119,10 @@ namespace DataStructures
 		while (readPointer!=writeAheadPointer)
 		{
 			next=readPointer->next;
-			RakNet::OP_DELETE((char*) readPointer, __FILE__, __LINE__);
+			RakNet::OP_DELETE((char*) readPointer, _FILE_AND_LINE_);
 			readPointer=next;
 		}
-		RakNet::OP_DELETE((char*) readPointer, __FILE__, __LINE__);
+		RakNet::OP_DELETE((char*) readPointer, _FILE_AND_LINE_);
 	}
 
 	template <class SingleProducerConsumerType>
@@ -132,7 +132,7 @@ namespace DataStructures
 			writeAheadPointer->next->readyToRead==true)
 		{
 			volatile DataPlusPtr *originalNext=writeAheadPointer->next;
-			writeAheadPointer->next=RakNet::OP_NEW<DataPlusPtr>(__FILE__, __LINE__);
+			writeAheadPointer->next=RakNet::OP_NEW<DataPlusPtr>(_FILE_AND_LINE_);
 			RakAssert(writeAheadPointer->next);
 			writeAheadPointer->next->next=originalNext;
 		}
@@ -225,7 +225,7 @@ namespace DataStructures
 #ifdef _DEBUG
 			RakAssert(writePointer!=readPointer);
 #endif
-			RakNet::OP_DELETE((char*) writePointer, __FILE__, __LINE__);
+			RakNet::OP_DELETE((char*) writePointer, _FILE_AND_LINE_);
 			writePointer=next;
 		}
 

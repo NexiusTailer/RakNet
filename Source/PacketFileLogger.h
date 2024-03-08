@@ -14,6 +14,9 @@
 #include "PacketLogger.h"
 #include <stdio.h>
 
+namespace RakNet
+{
+
 /// \ingroup PACKETLOGGER_GROUP
 /// \brief Packetlogger that outputs to a file
 class RAK_DLL_EXPORT  PacketFileLogger : public PacketLogger
@@ -26,6 +29,8 @@ public:
 protected:
 	FILE *packetLogFile;
 };
+
+} // namespace RakNet
 
 #endif
 

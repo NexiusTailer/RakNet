@@ -107,6 +107,7 @@ void Lobby2Callbacks::MessageResult(Console_SearchRooms *message) {ExecuteDefaul
 void Lobby2Callbacks::MessageResult(Console_GetRoomDetails *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_GetLobbyMemberData *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_CreateRoom *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Console_SignIntoRoom *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_SetRoomSearchProperties *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_UpdateRoomParameters *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_JoinRoom *message) {ExecuteDefaultResult(message);}
@@ -115,6 +116,11 @@ void Lobby2Callbacks::MessageResult(Console_SendLobbyInvitationToRoom *message) 
 void Lobby2Callbacks::MessageResult(Console_SendGUIInvitationToRoom *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_SendDataMessageToUser *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_SendRoomChatMessage *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Console_ShowFriendsUI *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Console_EndGame *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Console_StartGame *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Console_ShowPartyUI *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Console_ShowMessagesUI *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Client_RemoteLogin *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Client_IgnoreStatus *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Friends_StatusChange *message) {ExecuteDefaultResult(message);}
@@ -153,11 +159,15 @@ void Lobby2Callbacks::MessageResult(Notification_Console_ChatEvent *message) {Ex
 void Lobby2Callbacks::MessageResult(Notification_Console_MuteListChanged *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_Local_Users_Changed *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_ReceivedDataMessageFromUser *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Notification_Console_MemberJoinedParty *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Notification_Console_MemberLeftParty *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Notification_Console_Game_Started *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Notification_Console_Game_Ended *message) {ExecuteDefaultResult(message);}
 
 Lobby2Message::Lobby2Message() {refCount=1; requestId=(unsigned int)-1; callbackId=(unsigned char)-1;
-
-
-
+#if defined(_XBOX) || defined(X360)
+                                                   
+#endif
 }
 void Lobby2Message::SerializeBase(bool writeToBitstream, bool serializeOutput, BitStream *bitStream)
 {
@@ -269,7 +279,7 @@ bool Lobby2Message::ValidateEmailAddress( RakString *text )
 	return true;
 }
 bool Lobby2Message::PrevalidateInput(void) {return true;}
-bool Lobby2Message::ClientImpl( Lobby2Client *client) { (void)client; return true; }
+bool Lobby2Message::ClientImpl( RakNet::Lobby2Plugin *client) { (void)client; return true; }
 bool Lobby2Message::ServerPreDBMemoryImpl( Lobby2Server *server, RakString userHandle ) { (void)server; (void)userHandle; return false; }
 void Lobby2Message::ServerPostDBMemoryImpl( Lobby2Server *server, RakString userHandle ) { (void)server; (void)userHandle; }
 bool Lobby2Message::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface ) { (void)command; (void)databaseInterface; resultCode=L2RC_COUNT; return true; }
@@ -312,10 +322,10 @@ void BinaryDataBlock::Serialize(bool writeToBitstream, BitStream *bitStream)
 	if (writeToBitstream==false)
 	{
 		if (binaryData)
-			rakFree_Ex(binaryData, __FILE__, __LINE__ );
+			rakFree_Ex(binaryData, _FILE_AND_LINE_ );
 
 		if (binaryDataLength<=L2_MAX_BINARY_DATA_LENGTH)
-			binaryData = (char*) rakMalloc_Ex(binaryDataLength, __FILE__, __LINE__);
+			binaryData = (char*) rakMalloc_Ex(binaryDataLength, _FILE_AND_LINE_);
 		else
 			binaryData=0;
 	}
@@ -331,10 +341,35 @@ void PendingInvite::Serialize(bool writeToBitstream, BitStream *bitStream)
 	bitStream->Serialize(writeToBitstream, body);
 	binaryData->Serialize(writeToBitstream, bitStream);		
 }
+
+FriendInfo::FriendInfo() {}
+FriendInfo::FriendInfo(const FriendInfo& input) {usernameAndStatus = input.usernameAndStatus;}
+FriendInfo& FriendInfo::operator = ( const FriendInfo& input )
+{
+	usernameAndStatus = input.usernameAndStatus;
+	return *this;
+}
+
+UsernameAndOnlineStatus::UsernameAndOnlineStatus() {isOnline=false; uid=0;}
+UsernameAndOnlineStatus::UsernameAndOnlineStatus(const UsernameAndOnlineStatus& input) {
+	handle=input.handle;
+	isOnline=input.isOnline;
+	uid=input.uid;
+	presence=input.presence;
+}
+UsernameAndOnlineStatus& UsernameAndOnlineStatus::operator = ( const UsernameAndOnlineStatus& input )
+{
+	handle=input.handle;
+	isOnline=input.isOnline;
+	uid=input.uid;
+	presence=input.presence;
+	return *this;
+}
 void UsernameAndOnlineStatus::Serialize(bool writeToBitstream, BitStream *bitStream)
 {
 	bitStream->Serialize(writeToBitstream, handle);
 	bitStream->Serialize(writeToBitstream, isOnline);
+	bitStream->Serialize(writeToBitstream, uid);
 	presence.Serialize(bitStream,writeToBitstream);
 }
 void EmailResult::Serialize(bool writeToBitstream, BitStream *bitStream)
@@ -374,7 +409,7 @@ void SubmittedMatch::Serialize(bool writeToBitstream, BitStream *bitStream)
 		else
 		{
 			obj.Serialize(writeToBitstream, bitStream);
-			matchParticipants.Insert(obj, __FILE__, __LINE__ );
+			matchParticipants.Insert(obj, _FILE_AND_LINE_ );
 		}
 	}
 }
@@ -396,7 +431,7 @@ void ClanInfo::Serialize(bool writeToBitstream, BitStream *bitStream)
 		else
 		{
 			bitStream->Serialize(writeToBitstream, obj);
-			clanMembersOtherThanLeader.Insert(obj, __FILE__, __LINE__ );
+			clanMembersOtherThanLeader.Insert(obj, _FILE_AND_LINE_ );
 		}
 	}
 }
@@ -477,7 +512,7 @@ void System_RegisterProfanity::Serialize( bool writeToBitstream, bool serializeO
 		else
 		{
 			bitStream->Serialize(writeToBitstream, obj);
-			profanityWords.Insert(obj, __FILE__, __LINE__);
+			profanityWords.Insert(obj, _FILE_AND_LINE_);
 		}
 	}
 }
@@ -532,7 +567,7 @@ void CDKey_Add::Serialize( bool writeToBitstream, bool serializeOutput, BitStrea
 		else
 		{
 			bitStream->Serialize(writeToBitstream, obj);
-			cdKeys.Insert(obj, __FILE__, __LINE__);
+			cdKeys.Insert(obj, _FILE_AND_LINE_);
 		}
 	}
 }
@@ -825,7 +860,7 @@ void Client_GetIgnoreList::Serialize( bool writeToBitstream, bool serializeOutpu
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				ignoredHandles.Insert(obj, __FILE__, __LINE__);
+				ignoredHandles.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 	}
@@ -975,7 +1010,7 @@ void Friends_GetInvites::Serialize( bool writeToBitstream, bool serializeOutput,
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				invitesSent.Insert(obj, __FILE__, __LINE__);
+				invitesSent.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 		listSize = (unsigned short) invitesReceived.Size();
@@ -990,7 +1025,7 @@ void Friends_GetInvites::Serialize( bool writeToBitstream, bool serializeOutput,
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				invitesReceived.Insert(obj, __FILE__, __LINE__);
+				invitesReceived.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 	}
@@ -1013,7 +1048,7 @@ void Friends_GetFriends::Serialize( bool writeToBitstream, bool serializeOutput,
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				myFriends.Insert(obj, __FILE__, __LINE__);
+				myFriends.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 	}
@@ -1079,7 +1114,7 @@ void BookmarkedUsers_Get::Serialize( bool writeToBitstream, bool serializeOutput
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				bookmarkedUsers.Insert(obj, __FILE__, __LINE__);
+				bookmarkedUsers.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 	}
@@ -1104,7 +1139,7 @@ void Emails_Send::Serialize( bool writeToBitstream, bool serializeOutput, BitStr
 		else
 		{
 			bitStream->Serialize(writeToBitstream, obj);
-			recipients.Insert(obj, __FILE__, __LINE__);
+			recipients.Insert(obj, _FILE_AND_LINE_);
 		}
 	}
 }
@@ -1162,7 +1197,7 @@ void Emails_Get::Serialize( bool writeToBitstream, bool serializeOutput, BitStre
 			else
 			{
 				obj.Serialize( writeToBitstream, bitStream );
-				emailResults.Insert(obj, __FILE__, __LINE__);
+				emailResults.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 	}
@@ -1234,7 +1269,7 @@ void Ranking_GetMatches::Serialize( bool writeToBitstream, bool serializeOutput,
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				submittedMatches.Insert(obj, __FILE__, __LINE__);
+				submittedMatches.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 	}
@@ -1561,7 +1596,7 @@ void Clans_Get::Serialize( bool writeToBitstream, bool serializeOutput, BitStrea
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				clans.Insert(obj, __FILE__, __LINE__);
+				clans.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 	}
@@ -1662,7 +1697,7 @@ void Clans_DownloadInvitationList::Serialize( bool writeToBitstream, bool serial
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				invitationsSentToMe.Insert(obj, __FILE__, __LINE__);
+				invitationsSentToMe.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 
@@ -1678,7 +1713,7 @@ void Clans_DownloadInvitationList::Serialize( bool writeToBitstream, bool serial
 			{
 				ClanJoinInvite obj;
 				obj.Serialize(writeToBitstream, bitStream);
-				usersThatHaveAnInvitationFromClansThatIAmAMemberOf.Insert(obj, __FILE__, __LINE__);
+				usersThatHaveAnInvitationFromClansThatIAmAMemberOf.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 	}
@@ -1781,7 +1816,7 @@ void Clans_DownloadRequestList::Serialize( bool writeToBitstream, bool serialize
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				joinRequestsToMyClan.Insert(obj, __FILE__, __LINE__);
+				joinRequestsToMyClan.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 
@@ -1797,7 +1832,7 @@ void Clans_DownloadRequestList::Serialize( bool writeToBitstream, bool serialize
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				joinRequestsFromMe.Insert(obj, __FILE__, __LINE__);
+				joinRequestsFromMe.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 	}
@@ -1865,7 +1900,7 @@ void Clans_GetBlacklist::Serialize( bool writeToBitstream, bool serializeOutput,
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				blacklistedUsers.Insert(obj, __FILE__, __LINE__);
+				blacklistedUsers.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 	}
@@ -1899,7 +1934,7 @@ void Clans_GetMembers::Serialize( bool writeToBitstream, bool serializeOutput, B
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				clanMembersOtherThanLeader.Insert(obj, __FILE__, __LINE__);
+				clanMembersOtherThanLeader.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 	}
@@ -1929,7 +1964,7 @@ void Clans_GetList::Serialize( bool writeToBitstream, bool serializeOutput, BitS
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				clanNames.Insert(obj, __FILE__, __LINE__);
+				clanNames.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 	}
@@ -2035,7 +2070,7 @@ void Clans_GetBoards::Serialize( bool writeToBitstream, bool serializeOutput, Bi
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				clanBoardsNames.Insert(obj, __FILE__, __LINE__);
+				clanBoardsNames.Insert(obj, _FILE_AND_LINE_);
 			}
 		}
 	}
@@ -2213,7 +2248,7 @@ void RakNet::Notification_Clans_Destroyed::Serialize( bool writeToBitstream, boo
 }
 
 
-bool RakNet::Client_StartIgnore::ClientImpl( Lobby2Client *client )
+bool RakNet::Client_StartIgnore::ClientImpl( RakNet::Lobby2Plugin *client )
 {
 	(void)client;
 //	if (resultCode==L2RC_SUCCESS)
@@ -2221,7 +2256,7 @@ bool RakNet::Client_StartIgnore::ClientImpl( Lobby2Client *client )
 	return true;
 }
 
-bool RakNet::Client_StopIgnore::ClientImpl( Lobby2Client *client )
+bool RakNet::Client_StopIgnore::ClientImpl( RakNet::Lobby2Plugin *client )
 {
 	(void)client;
 //	if (resultCode==L2RC_SUCCESS)
@@ -2229,7 +2264,7 @@ bool RakNet::Client_StopIgnore::ClientImpl( Lobby2Client *client )
 	return true;
 }
 
-bool RakNet::Client_GetIgnoreList::ClientImpl( Lobby2Client *client )
+bool RakNet::Client_GetIgnoreList::ClientImpl( RakNet::Lobby2Plugin *client )
 {
 	(void)client;
 //	if (resultCode==L2RC_SUCCESS)

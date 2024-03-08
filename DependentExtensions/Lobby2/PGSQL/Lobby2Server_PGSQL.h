@@ -14,6 +14,8 @@ class RAK_DLL_EXPORT Lobby2Server_PGSQL : public RakNet::Lobby2Server
 public:	
 	Lobby2Server_PGSQL();
 	virtual ~Lobby2Server_PGSQL();
+
+	STATIC_FACTORY_DECLARATIONS(Lobby2Server_PGSQL)
 	
 	/// ConnectTo to the database \a numWorkerThreads times using the connection string
 	/// \param[in] conninfo See the postgre docs

@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 import gfx.controls.CheckBox;
@@ -56,9 +56,9 @@ class Screens.RegisterAccountScreen3 extends Screen
 		updateAccountButton.addEventListener("click", this, "f2c_UpdateAccount");
 		
 		//Add callbacks for C++
-		GameDelegate.addCallBack("c2f_ValidateHandleResult", this, "c2f_ValidateHandleResult");
-		GameDelegate.addCallBack("c2f_RegisterAccountResult", this, "c2f_RegisterAccountResult");
-		GameDelegate.addCallBack("c2f_UpdateAccountResult", this, "c2f_UpdateAccountResult");
+		ExternalInterface.addCallback("c2f_ValidateHandleResult", this, c2f_ValidateHandleResult);
+		ExternalInterface.addCallback("c2f_RegisterAccountResult", this, c2f_RegisterAccountResult);
+		ExternalInterface.addCallback("c2f_UpdateAccountResult", this, c2f_UpdateAccountResult);
 		
 		super.VOnFinishedLoading();
 	}
@@ -112,7 +112,7 @@ class Screens.RegisterAccountScreen3 extends Screen
 			var registrationScreen2 = LobbyInterface.Instance.GetScreen( ScreenID.REGISTER_ACCOUNT_BILLING );	
 					
 			// Do not change the order the parameters are passed in as
-			GameDelegate.call("f2c_RegisterAccount",
+			ExternalInterface.call("f2c_RegisterAccount",
 			[
 			 registrationScreen1.GetFirstName(), registrationScreen1.GetMiddleInitial(), registrationScreen1.GetLastName(),
 			 registrationScreen1.GetSelectedRace(), registrationScreen1.GetIsMale(), registrationScreen1.GetStreetAddress(),
@@ -134,10 +134,10 @@ class Screens.RegisterAccountScreen3 extends Screen
 			 "fav movies...",
 			 "fav books...",
 			 "fav quotes..."
-			 ], _root);		 
+			 ]);		 
 		}
 		 /*
-		GameDelegate.call("f2c_RegisterAccount",
+		ExternalInterface.call("f2c_RegisterAccount",
 		[
 		 "first name", "m", "lastname",
 		 registrationScreen1.GetSelectedRace(), registrationScreen1.GetIsMale(), registrationScreen1.GetStreetAddress(),
@@ -151,7 +151,7 @@ class Screens.RegisterAccountScreen3 extends Screen
 		 password.text, GetSelectedSecretQuestion(), passwordRecoveryAnswer.text,
 		 "", "", "Age in days?",
 		 handle.text
-		 ], _root);*/
+		 ]);*/
 	}
 	
 	public function f2c_UpdateAccount():Void
@@ -191,7 +191,7 @@ class Screens.RegisterAccountScreen3 extends Screen
 			ConsoleWindow.Trace("passwordRecoveryAnswer.text = " + passwordRecoveryAnswer.text);
 			*/
 			// Do not change the order the parameters are passed in as
-			GameDelegate.call("f2c_UpdateAccount",
+			ExternalInterface.call("f2c_UpdateAccount",
 			[
 			 registrationScreen1.GetFirstName(), registrationScreen1.GetMiddleInitial(), registrationScreen1.GetLastName(),
 			 registrationScreen1.GetSelectedRace(), registrationScreen1.GetIsMale(), registrationScreen1.GetStreetAddress(),
@@ -212,7 +212,7 @@ class Screens.RegisterAccountScreen3 extends Screen
 			 ProfileScreen.Instance.GetFavoriteMovies(),
 			 ProfileScreen.Instance.GetFavoriteBooks(),
 			 ProfileScreen.Instance.GetFavoriteQuotes()
-			 ], _root);
+			 ]);
 					 
 		//	AccountInfo.Instance.GetAccountInfoFromServer();
 			//LobbyInterface.Instance.ShowScreen( ScreenID.PROFILE );
@@ -228,7 +228,7 @@ class Screens.RegisterAccountScreen3 extends Screen
 	{
 		mcCheckmark.gotoAndStop("Hide");
 		tfRegistrationStatus._visible = false;
-		GameDelegate.call("f2c_ValidateHandle",	[handle.text], _root);
+		ExternalInterface.call("f2c_ValidateHandle", handle.text);
 	}
 
 	public function c2f_ValidateHandleResult(resultIdentifier:String):Void

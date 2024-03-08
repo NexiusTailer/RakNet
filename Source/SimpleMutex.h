@@ -10,15 +10,19 @@
 #define __SIMPLE_MUTEX_H
 
 #include "RakMemoryOverride.h"
-
-
-#if   defined(_WIN32)
+#if defined(_XBOX) || defined(X360)
+                            
+#elif defined(_WIN32)
 #include "WindowsIncludes.h"
 #else
 #include <pthread.h>
 #include <sys/types.h>
 #endif
 #include "Export.h"
+
+namespace RakNet
+{
+
 /// \brief An easy to use mutex.
 /// 
 /// I wrote this because the version that comes with Windows is too complicated and requires too much code to use.
@@ -48,6 +52,8 @@ private:
 	// Not threadsafe
 	//	bool isInitialized;
 };
+
+} // namespace RakNet
 
 #endif
 

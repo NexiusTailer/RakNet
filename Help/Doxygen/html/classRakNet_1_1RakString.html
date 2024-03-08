@@ -204,11 +204,6 @@ static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#106cc085fe4ec70bb5cc42724f42c2f2">DeserializeCompressed</a> (char *str, <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *bs, bool readLanguageId=false)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Static version of the <a class="el" href="classRakNet_1_1RakString.html#8d30ae45770db0b21f15a0a58466cd8e">DeserializeCompressed()</a> function. <br></td></tr>
-<tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="06ec155fa754785178a46e6cfc5698d3"></a><!-- doxytag: member="RakNet::RakString::nPos" ref="06ec155fa754785178a46e6cfc5698d3" args="" -->
-static unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#06ec155fa754785178a46e6cfc5698d3">nPos</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Means undefined position. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 String class. 
@@ -316,7 +311,7 @@ Deserialize compressed string, written by SerializeCompressed <dl compact><dt><b
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true if the deserialization was successful </dd></dl>
-<dl class="pre" compact><dt><b>Precondition:</b></dt><dd><a class="el" href="classStringCompressor.html#2f022ecc1ff2bd74015a54e8261e442e" title="Used so I can allocate and deallocate this singleton at runtime.">StringCompressor::AddReference</a> must have been called to instantiate the class (Happens automatically from <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads and opens the listen port.">RakPeer::Startup()</a>) </dd></dl>
+<dl class="pre" compact><dt><b>Precondition:</b></dt><dd><a class="el" href="classRakNet_1_1StringCompressor.html#b9b84180fd8150a0af933c1000a8bf02" title="Used so I can allocate and deallocate this singleton at runtime.">StringCompressor::AddReference</a> must have been called to instantiate the class (Happens automatically from <a class="el" href="classRakNet_1_1RakPeer.html#de24b8bf50eb756f54a208c2841f5e0d" title="Starts the network threads and opens the listen port.">RakPeer::Startup()</a>) </dd></dl>
 
 </div>
 </div><p>
@@ -456,18 +451,18 @@ Serialize to a bitstream, uncompressed (slightly faster) <dl compact><dt><b>Para
 Serialize to a bitstream, compressed (better bandwidth usage) <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>bs</em>&nbsp;</td><td>Bitstream to serialize to </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>languageId</em>&nbsp;</td><td>languageId to pass to the <a class="el" href="classStringCompressor.html" title="Writes and reads strings to and from bitstreams.">StringCompressor</a> class </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>languageId</em>&nbsp;</td><td>languageId to pass to the <a class="el" href="classRakNet_1_1StringCompressor.html" title="Writes and reads strings to and from bitstreams.">StringCompressor</a> class </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>writeLanguageId</em>&nbsp;</td><td>encode the languageId variable in the stream. If false, 0 is assumed, and DeserializeCompressed will not look for this variable in the stream (saves bandwidth) </td></tr>
   </table>
 </dl>
-<dl class="pre" compact><dt><b>Precondition:</b></dt><dd><a class="el" href="classStringCompressor.html#2f022ecc1ff2bd74015a54e8261e442e" title="Used so I can allocate and deallocate this singleton at runtime.">StringCompressor::AddReference</a> must have been called to instantiate the class (Happens automatically from <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads and opens the listen port.">RakPeer::Startup()</a>) </dd></dl>
+<dl class="pre" compact><dt><b>Precondition:</b></dt><dd><a class="el" href="classRakNet_1_1StringCompressor.html#b9b84180fd8150a0af933c1000a8bf02" title="Used so I can allocate and deallocate this singleton at runtime.">StringCompressor::AddReference</a> must have been called to instantiate the class (Happens automatically from <a class="el" href="classRakNet_1_1RakPeer.html#de24b8bf50eb756f54a208c2841f5e0d" title="Starts the network threads and opens the listen port.">RakPeer::Startup()</a>) </dd></dl>
 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/RakNet-3.x/Source/RakString.h</ul>
+<li>d:/temp/RakNet4/Source/RakString.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 22 08:28:36 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:29 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

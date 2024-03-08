@@ -3,10 +3,9 @@
 #include "RakNetDefines.h"
 #include "RakSleep.h"
 
-
-
-
-#if   defined(_WIN32)
+#if defined(_XBOX) || defined(X360)
+                                                  
+#elif defined(_WIN32)
 #include "WindowsIncludes.h"
 #include <stdio.h>
 	#if !defined(_WIN32_WCE)
@@ -29,9 +28,9 @@ int RakThread::Create( void* start_address( void* ), void *arglist, int priority
 #ifdef _WIN32
 	HANDLE threadHandle;
 	unsigned threadID = 0;
-
-
-#if   defined (_WIN32_WCE)
+#if defined(_XBOX) || defined(X360)
+                                                                                         
+#elif defined (_WIN32_WCE)
 	threadHandle = CreateThread(NULL,MAX_ALLOCA_STACK_ALLOCATION*2,start_address,arglist,0,(DWORD*)&threadID);
 	SetThreadPriority(threadHandle, priority);
 #else
@@ -56,13 +55,11 @@ int RakThread::Create( void* start_address( void* ), void *arglist, int priority
 	param.sched_priority=priority;
 	pthread_attr_init( &attr );
 	pthread_attr_setschedparam(&attr, &param);
-
-
-
-
-
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                                                                                                                                                                  
+#else
 	pthread_attr_setstacksize(&attr, MAX_ALLOCA_STACK_ALLOCATION*2);
-
+#endif
 	pthread_attr_setdetachstate( &attr, PTHREAD_CREATE_DETACHED );
 	int res = pthread_create( &threadHandle, &attr, start_address, arglist );
 	RakAssert(res==0 && "pthread_create in RakThread.cpp failed.")

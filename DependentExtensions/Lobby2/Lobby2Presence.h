@@ -3,6 +3,10 @@
 
 #include "RakString.h"
 
+#if defined(_XBOX) || defined(X360)
+                            
+#endif
+
 namespace RakNet
 {
 	class BitStream;
@@ -12,6 +16,8 @@ namespace RakNet
 	struct Lobby2Presence
 	{
 		Lobby2Presence();
+		Lobby2Presence(const Lobby2Presence& input);
+		Lobby2Presence& operator = ( const Lobby2Presence& input );
 		~Lobby2Presence();
 		void Serialize(RakNet::BitStream *bitStream, bool writeToBitstream);
 
@@ -44,14 +50,20 @@ namespace RakNet
 		/// Visibility flag. This is not enforced by the server, so if you want a user's presence to be not visible, just don't display it on the client
 		bool isVisible;
 
-		/// Although game name is also present in the titleName member of Client_Login, this is the visible name returned by presence queries
-		/// That is because Client_Login::titleName member is optional, for example for lobbies that support multiple titles.
+		/// Although game name is also present in the titleNameOrID member of Client_Login, this is the visible name returned by presence queries
+		/// That is because Client_Login::titleNameOrID member is optional, for example for lobbies that support multiple titles.
 		/// Set by the user (you) or leave blank if desired.
-		RakString titleName;
+		RakString titleNameOrID;
+
+#if defined(_XBOX) || defined(X360)
+                                                                      
+#endif
 
 		/// Anything you want
 		RakString statusString;
 	};
+
+
 }
 
 #endif

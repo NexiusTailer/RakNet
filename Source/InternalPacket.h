@@ -30,6 +30,8 @@
 #include "CCRakNetSlidingWindow.h"
 #endif
 
+namespace RakNet {
+
 typedef uint16_t SplitPacketIdType;
 typedef uint32_t SplitPacketIndexType;
 
@@ -41,7 +43,7 @@ typedef uint24_t MessageNumberType;
 /// were to wrap, the newly wrapped values would no longer be in use.  Warning: Too large of a value wastes bandwidth!
 typedef MessageNumberType OrderingIndexType;
 
-typedef RakNetTimeUS RemoteSystemTimeType;
+typedef RakNet::TimeUS RemoteSystemTimeType;
 
 struct InternalPacketFixedSizeTransmissionHeader
 {
@@ -86,9 +88,9 @@ struct InternalPacket : public InternalPacketFixedSizeTransmissionHeader
 	/// Was this packet number used this update to track windowing drops or increases?  Each packet number is only used once per update.
 //	bool allowWindowUpdate;
 	///When this packet was created
-	RakNetTimeUS creationTime;
+	RakNet::TimeUS creationTime;
 	///The resendNext time to take action on this packet
-	RakNetTimeUS nextActionTime;
+	RakNet::TimeUS nextActionTime;
 	// Size of the header when encoded into a bitstream
 	BitSize_t headerLength;
 	/// Buffer is a pointer to the actual data, assuming this packet has data at all
@@ -114,6 +116,8 @@ struct InternalPacket : public InternalPacketFixedSizeTransmissionHeader
 	// Linked list implementation so I can remove from the list via a pointer, without finding it in the list
 	InternalPacket *resendPrev, *resendNext,*unreliablePrev,*unreliableNext;
 };
+
+} // namespace RakNet
 
 #endif
 

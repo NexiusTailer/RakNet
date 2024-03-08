@@ -20,6 +20,8 @@
 #pragma warning( push )
 #endif
 
+using namespace RakNet;
+
 #include "SuperFastHash.h"
 static const unsigned HASH_LENGTH=sizeof(unsigned int);
 
@@ -79,7 +81,7 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 		input->prePatchLength = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
 		input->postPatchFile=0;
-		input->prePatchFile= (char*) rakMalloc_Ex(input->prePatchLength, __FILE__, __LINE__);
+		input->prePatchFile= (char*) rakMalloc_Ex(input->prePatchLength, _FILE_AND_LINE_);
 		fread(input->prePatchFile, input->prePatchLength, 1, fp);
 		fclose(fp);
 
@@ -132,6 +134,8 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 	return input;
 }
 // -----------------------------------------------------------------
+namespace RakNet
+{
 class AutopatcherClientCallback : public FileListTransferCBInterface
 {
 public:
@@ -163,24 +167,24 @@ public:
 		{
 			info = threadPool.GetInputAtIndex(i);
 			if (info->prePatchFile)
-				rakFree_Ex(info->prePatchFile, __FILE__, __LINE__ );
+				rakFree_Ex(info->prePatchFile, _FILE_AND_LINE_ );
 			if (info->postPatchFile)
-				rakFree_Ex(info->postPatchFile, __FILE__, __LINE__ );
+				rakFree_Ex(info->postPatchFile, _FILE_AND_LINE_ );
 			if (info->onFileStruct.fileData)
-				rakFree_Ex(info->onFileStruct.fileData, __FILE__, __LINE__ );
-			RakNet::OP_DELETE(info, __FILE__, __LINE__);
+				rakFree_Ex(info->onFileStruct.fileData, _FILE_AND_LINE_ );
+			RakNet::OP_DELETE(info, _FILE_AND_LINE_);
 		}
 		threadPool.ClearInput();
 		for (i=0; i < threadPool.OutputSize(); i++)
 		{
 			info = threadPool.GetOutputAtIndex(i);
 			if (info->prePatchFile)
-				rakFree_Ex(info->prePatchFile, __FILE__, __LINE__ );
+				rakFree_Ex(info->prePatchFile, _FILE_AND_LINE_ );
 			if (info->postPatchFile)
-				rakFree_Ex(info->postPatchFile, __FILE__, __LINE__ );
+				rakFree_Ex(info->postPatchFile, _FILE_AND_LINE_ );
 			if (info->onFileStruct.fileData)
-				rakFree_Ex(info->onFileStruct.fileData, __FILE__, __LINE__ );
-			RakNet::OP_DELETE(info, __FILE__, __LINE__);
+				rakFree_Ex(info->onFileStruct.fileData, _FILE_AND_LINE_ );
+			RakNet::OP_DELETE(info, _FILE_AND_LINE_);
 		}
 		threadPool.ClearOutput();
 	}
@@ -203,7 +207,7 @@ public:
 					else
 					{
 						// Regular file in use but we can write the temporary file.  Restart and copy it over the existing
-						rakFree_Ex(threadInfo->onFileStruct.fileData, __FILE__, __LINE__ );
+						rakFree_Ex(threadInfo->onFileStruct.fileData, _FILE_AND_LINE_ );
 						threadInfo->onFileStruct.fileData=threadInfo->postPatchFile;
 						onFileCallback->OnFile(&threadInfo->onFileStruct);
 						threadInfo->onFileStruct.fileData=0;
@@ -218,7 +222,7 @@ public:
 					}
 					else
 					{
-						rakFree_Ex(threadInfo->onFileStruct.fileData, __FILE__, __LINE__ );
+						rakFree_Ex(threadInfo->onFileStruct.fileData, _FILE_AND_LINE_ );
 						threadInfo->onFileStruct.fileData=threadInfo->postPatchFile;
 						threadInfo->onFileStruct.byteLengthOfThisFile=threadInfo->postPatchLength;
 						onFileCallback->OnFile(&threadInfo->onFileStruct);
@@ -254,7 +258,7 @@ public:
 					}
 					else
 					{
-						rakFree_Ex(threadInfo->onFileStruct.fileData, __FILE__, __LINE__ );
+						rakFree_Ex(threadInfo->onFileStruct.fileData, _FILE_AND_LINE_ );
 						threadInfo->onFileStruct.fileData=threadInfo->postPatchFile;
 						onFileCallback->OnFile(&threadInfo->onFileStruct);
 						threadInfo->onFileStruct.fileData=0;
@@ -264,12 +268,12 @@ public:
 			}
 
 			if (threadInfo->prePatchFile)
-				rakFree_Ex(threadInfo->prePatchFile, __FILE__, __LINE__ );
+				rakFree_Ex(threadInfo->prePatchFile, _FILE_AND_LINE_ );
 			if (threadInfo->postPatchFile)
-				rakFree_Ex(threadInfo->postPatchFile, __FILE__, __LINE__ );
+				rakFree_Ex(threadInfo->postPatchFile, _FILE_AND_LINE_ );
 			if (threadInfo->onFileStruct.fileData)
-				rakFree_Ex(threadInfo->onFileStruct.fileData, __FILE__, __LINE__ );
-			RakNet::OP_DELETE(threadInfo, __FILE__, __LINE__);
+				rakFree_Ex(threadInfo->onFileStruct.fileData, _FILE_AND_LINE_ );
+			RakNet::OP_DELETE(threadInfo, _FILE_AND_LINE_);
 		}
 
 		// If both input and output are empty, we are done.
@@ -304,7 +308,7 @@ public:
 	}
 	virtual bool OnFile(OnFileStruct *onFileStruct)
 	{
-		AutopatcherClientThreadInfo *inStruct = RakNet::OP_NEW<AutopatcherClientThreadInfo>( __FILE__, __LINE__ );
+		AutopatcherClientThreadInfo *inStruct = RakNet::OP_NEW<AutopatcherClientThreadInfo>( _FILE_AND_LINE_ );
 		inStruct->prePatchFile=0;
 		inStruct->postPatchFile=0;
 		memcpy(&(inStruct->onFileStruct), onFileStruct, sizeof(OnFileStruct));
@@ -331,6 +335,7 @@ public:
 		}
 	}
 };
+}
 AutopatcherClient::AutopatcherClient()
 {
 	serverId=UNASSIGNED_SYSTEM_ADDRESS;
@@ -406,8 +411,8 @@ bool AutopatcherClient::PatchApplication(const char *_applicationName, const cha
 
 	RakNet::BitStream outBitStream;
 	outBitStream.Write((unsigned char)ID_AUTOPATCHER_GET_CHANGELIST_SINCE_DATE);
-	stringCompressor->EncodeString(applicationName, 512, &outBitStream);
-	stringCompressor->EncodeString(lastUpdateDate, 64, &outBitStream);
+	StringCompressor::Instance()->EncodeString(applicationName, 512, &outBitStream);
+	StringCompressor::Instance()->EncodeString(lastUpdateDate, 64, &outBitStream);
     SendUnified(&outBitStream, priority, RELIABLE_ORDERED, orderingChannel, host, false);
 	return true;
 }
@@ -426,7 +431,7 @@ void AutopatcherClient::Update(void)
 		{
 			RakNet::BitStream outBitStream;
 			AutopatcherClientCallback *transferCallback;
-			transferCallback = RakNet::OP_NEW<AutopatcherClientCallback>( __FILE__, __LINE__ );
+			transferCallback = RakNet::OP_NEW<AutopatcherClientCallback>( _FILE_AND_LINE_ );
 			strcpy(transferCallback->applicationDirectory, applicationDirectory);
 			transferCallback->onFileCallback=userCB;
 			transferCallback->client=this;
@@ -435,7 +440,7 @@ void AutopatcherClient::Update(void)
 			// Ask for patches for the files in the list that are different from what we have.
 			outBitStream.Write((unsigned char)ID_AUTOPATCHER_GET_PATCH);
 			outBitStream.Write(setId);
-			stringCompressor->EncodeString(applicationName, 512, &outBitStream);
+			StringCompressor::Instance()->EncodeString(applicationName, 512, &outBitStream);
 			redownloadList.Serialize(&outBitStream);
 			SendUnified(&outBitStream, priority, RELIABLE_ORDERED, orderingChannel, serverId, false);
 			redownloadList.Clear();
@@ -533,7 +538,7 @@ PluginReceiveResult AutopatcherClient::OnCreationList(Packet *packet)
 	if (remoteFileList.Deserialize(&inBitStream)==false)
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 
-	stringCompressor->DecodeString(serverDate, 128, &inBitStream);
+	StringCompressor::Instance()->DecodeString(serverDate, 128, &inBitStream);
 	RakAssert(serverDate[0]);
 
 	// Go through the list of hashes.  For each file we already have, remove it from the list.
@@ -547,7 +552,7 @@ PluginReceiveResult AutopatcherClient::OnCreationList(Packet *packet)
 
 	// Prepare the transfer plugin to get a file list.
 	AutopatcherClientCallback *transferCallback;
-	transferCallback = RakNet::OP_NEW<AutopatcherClientCallback>( __FILE__, __LINE__ );
+	transferCallback = RakNet::OP_NEW<AutopatcherClientCallback>( _FILE_AND_LINE_ );
 	strcpy(transferCallback->applicationDirectory, applicationDirectory);
 	transferCallback->onFileCallback=userCB;
 	transferCallback->client=this;
@@ -556,7 +561,7 @@ PluginReceiveResult AutopatcherClient::OnCreationList(Packet *packet)
 	// Ask for patches for the files in the list that are different from what we have.
 	outBitStream.Write((unsigned char)ID_AUTOPATCHER_GET_PATCH);
 	outBitStream.Write(setId);
-	stringCompressor->EncodeString(applicationName, 512, &outBitStream);
+	StringCompressor::Instance()->EncodeString(applicationName, 512, &outBitStream);
 	missingOrChanged.Serialize(&outBitStream);
 	SendUnified(&outBitStream, priority, RELIABLE_ORDERED, orderingChannel, packet->systemAddress, false);
 
@@ -581,7 +586,7 @@ PluginReceiveResult AutopatcherClient::OnDownloadFinished(Packet *packet)
 	inBitStream.IgnoreBits(8);
 	// This may have been created internally, with no serverDate written (line 469 or so)
 	if (inBitStream.GetNumberOfUnreadBits()>7)
-		stringCompressor->DecodeString(serverDate, 128, &inBitStream);
+		StringCompressor::Instance()->DecodeString(serverDate, 128, &inBitStream);
 	RakAssert(serverDate[0]);
 	serverId=packet->systemAddress;
 	serverIdIndex=packet->systemAddress.systemIndex;
@@ -594,7 +599,7 @@ PluginReceiveResult AutopatcherClient::OnDownloadFinishedInternal(Packet *packet
 	inBitStream.IgnoreBits(8);
 	serverId=packet->systemAddress;
 	serverIdIndex=packet->systemAddress.systemIndex;
-	stringCompressor->DecodeString(serverDate, 128, &inBitStream);
+	StringCompressor::Instance()->DecodeString(serverDate, 128, &inBitStream);
 	RakAssert(serverDate[0]);
 
 	return RR_STOP_PROCESSING_AND_DEALLOCATE;

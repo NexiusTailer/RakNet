@@ -12,6 +12,8 @@
 // It is because this project depends on Fmod.  If you don't have FMOD you can't use it.
 #include "fmod.hpp"
 
+namespace RakNet {
+
 /// \brief Connects FMOD with RakVoice.
 class FMODVoiceAdapter {
 
@@ -68,5 +70,7 @@ private:
 	unsigned int lastPlayPos;
 	unsigned int lastRecordingPos;
 };
+
+} // namespace RakNet
 
 #endif

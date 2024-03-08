@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./../../Source"
+				AdditionalIncludeDirectories="D:\RakNet4\DependentExtensions\UPNP;D:\RakNet4\DependentExtensions\XML;./../../Source"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -186,12 +186,44 @@
 				RelativePath=".\main.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\Source\RakMemoryOverride.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\UPNP\UPNPNATInternal.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\UPNP\UPNPPortForwarder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\XML\xmlParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\XML\xmlParser.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\Source\RakMemoryOverride.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\UPNP\UPNPNATInternal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\UPNP\UPNPPortForwarder.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\readme.txt"

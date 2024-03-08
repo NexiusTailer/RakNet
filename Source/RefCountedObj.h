@@ -18,7 +18,7 @@ class RefCountedObj
 		RefCountedObj() {refCount=1;}
 		virtual ~RefCountedObj() {}
 		void AddRef(void) {refCount++;}
-		void Deref(void) {if (--refCount==0) RakNet::OP_DELETE(this, __FILE__, __LINE__);}
+		void Deref(void) {if (--refCount==0) RakNet::OP_DELETE(this, _FILE_AND_LINE_);}
 		int refCount;
 };
 

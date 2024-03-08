@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 
@@ -37,7 +37,7 @@ class Screens.LoggedInScreen extends Screen
 	public function f2c_Logoff():Void
 	{
 		ConsoleWindow.Trace("LoggedinScreen calling login");
-		GameDelegate.call("f2c_Logoff", [], _root);
+		ExternalInterface.call("f2c_Logoff");
 		//_root.gotoAndPlay("ConnectedToServer");
 		LobbyInterface.Instance.SetLoginState( false );
 		LobbyInterface.Instance.ShowScreen( ScreenID.LOGIN );

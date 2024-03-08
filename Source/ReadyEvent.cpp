@@ -11,7 +11,9 @@
 #pragma warning( push )
 #endif
 
-int ReadyEvent::RemoteSystemCompBySystemAddress( const SystemAddress &key, const RemoteSystem &data )
+using namespace RakNet;
+
+int RakNet::ReadyEvent::RemoteSystemCompBySystemAddress( const SystemAddress &key, const RemoteSystem &data )
 {
 	if (key < data.systemAddress)
 		return -1;
@@ -21,7 +23,7 @@ int ReadyEvent::RemoteSystemCompBySystemAddress( const SystemAddress &key, const
 		return 1;
 }
 
-int ReadyEvent::ReadyEventNodeComp( const int &key, ReadyEvent::ReadyEventNode * const &data )
+int RakNet::ReadyEvent::ReadyEventNodeComp( const int &key, ReadyEvent::ReadyEventNode * const &data )
 {
 	if (key < data->eventId)
 		return -1;
@@ -31,6 +33,7 @@ int ReadyEvent::ReadyEventNodeComp( const int &key, ReadyEvent::ReadyEventNode *
 		return 1;
 }
 
+STATIC_FACTORY_DEFINITIONS(ReadyEvent,ReadyEvent);
 
 ReadyEvent::ReadyEvent()
 {
@@ -81,7 +84,7 @@ bool ReadyEvent::DeleteEvent(int eventId)
 	unsigned eventIndex = readyEventNodeList.GetIndexFromKey(eventId, &objectExists);
 	if (objectExists)
 	{
-		RakNet::OP_DELETE(readyEventNodeList[eventIndex], __FILE__, __LINE__);
+		RakNet::OP_DELETE(readyEventNodeList[eventIndex], _FILE_AND_LINE_);
 		readyEventNodeList.RemoveAtIndex(eventIndex);
 		return true;
 	}
@@ -187,7 +190,7 @@ bool ReadyEvent::RemoveFromWaitList(int eventId, SystemAddress address)
 		if (address==UNASSIGNED_SYSTEM_ADDRESS)
 		{
 			// Remove all waiters
-			readyEventNodeList[eventIndex]->systemList.Clear(false, __FILE__, __LINE__);
+			readyEventNodeList[eventIndex]->systemList.Clear(false, _FILE_AND_LINE_);
 			UpdateReadyStatus(eventIndex);
 		}
 		else
@@ -304,7 +307,7 @@ bool ReadyEvent::AddToWaitListInternal(unsigned eventIndex, SystemAddress addres
 		rs.lastReceivedStatus=ID_READY_EVENT_UNSET;
 		rs.lastSentStatus=ID_READY_EVENT_UNSET;
 		rs.systemAddress=address;
-		ren->systemList.InsertAtIndex(rs,systemIndex, __FILE__,__LINE__);
+		ren->systemList.InsertAtIndex(rs,systemIndex, _FILE_AND_LINE_);
 
 		SendReadyStateQuery(ren->eventId, address);
 		return true;
@@ -433,20 +436,20 @@ void ReadyEvent::Clear(void)
 	unsigned i;
 	for (i=0; i < readyEventNodeList.Size(); i++)
 	{
-		RakNet::OP_DELETE(readyEventNodeList[i], __FILE__, __LINE__);
+		RakNet::OP_DELETE(readyEventNodeList[i], _FILE_AND_LINE_);
 	}
-	readyEventNodeList.Clear(false, __FILE__, __LINE__);
+	readyEventNodeList.Clear(false, _FILE_AND_LINE_);
 }
 
 unsigned ReadyEvent::CreateNewEvent(int eventId, bool isReady)
 {
-	ReadyEventNode *ren = RakNet::OP_NEW<ReadyEventNode>( __FILE__, __LINE__ );
+	ReadyEventNode *ren = RakNet::OP_NEW<ReadyEventNode>( _FILE_AND_LINE_ );
 	ren->eventId=eventId;
 	if (isReady==false)
 		ren->eventStatus=ID_READY_EVENT_UNSET;
 	else
 		ren->eventStatus=ID_READY_EVENT_SET;
-	return readyEventNodeList.Insert(eventId, ren, true, __FILE__,__LINE__);
+	return readyEventNodeList.Insert(eventId, ren, true, _FILE_AND_LINE_);
 }
 void ReadyEvent::UpdateReadyStatus(unsigned eventIndex)
 {
@@ -546,7 +549,7 @@ void ReadyEvent::PushCompletionPacket(unsigned eventId)
 	// Not necessary
 	/*
 	// Pass a packet to the user that we are now completed, as setting ourselves to signaled was the last thing being waited on
-	Packet *p = rakPeerInterface->AllocatePacket(sizeof(MessageID)+sizeof(int));
+	Packet *p = AllocatePacketUnified(sizeof(MessageID)+sizeof(int));
 	RakNet::BitStream bs(p->data, sizeof(MessageID)+sizeof(int), false);
 	bs.SetWriteOffset(0);
 	bs.Write((MessageID)ID_READY_EVENT_ALL_SET);

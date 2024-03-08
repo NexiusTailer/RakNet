@@ -65,13 +65,13 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#293a2c18871dc91410953e931d90ca52">DeserializeOnDownloadComplete</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#4282ffedd8130d793f32ea5bfa2ba0b3">GetSystemAddress</a> (void) const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#4282ffedd8130d793f32ea5bfa2ba0b3">GetSystemAddress</a> (void) const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#d3f7cec74bfac88a3ae095664e6a29c0">GetRakNetGUID</a> (void) const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#d3f7cec74bfac88a3ae095664e6a29c0">GetRakNetGUID</a> (void) const </td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#adc711493e2022956fe51ea8592b57d2">QueryGroupDownloadMessages</a> (void) const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return whether or not downloads to our system should all be processed the same tick (call to <a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7" title="Gets a message from the incoming message queue.">RakPeer::Receive()</a> ).  <a href="#adc711493e2022956fe51ea8592b57d2"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return whether or not downloads to our system should all be processed the same tick (call to <a class="el" href="classRakNet_1_1RakPeer.html#46d90fb903e747f76d63eb3a96543740" title="Gets a message from the incoming message queue.">RakPeer::Receive()</a> ).  <a href="#adc711493e2022956fe51ea8592b57d2"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="classRakNet_1_1Connection__RM3.html#1d176e2d5c47c15ca341d8efaecb637e">ConstructionMode</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#918f5c8d69e2ede6c9469fd9ade96d32">QueryConstructionMode</a> (void) const </td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Queries how to get the list of objects that exist on remote systems.  <a href="#918f5c8d69e2ede6c9469fd9ade96d32"></a><br></td></tr>
@@ -139,11 +139,11 @@ Do not call <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c
 <p>
 Class factory to create a <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instance, given a user-defined identifier. 
 <p>
-Identifier is returned by <a class="el" href="classRakNet_1_1Replica3.html#5a5fa47314cf6ae149b8601e757840e8" title="Write a unique identifer that can be read on a remote system to create an object...">Replica3::WriteAllocationID()</a> for what type of class to create.<br>
+Identifier is returned by <a class="el" href="classRakNet_1_1Replica3.html#da0458bb521a455f23e08742c9e1b0b9" title="Write a unique identifer that can be read on a remote system to create an object...">Replica3::WriteAllocationID()</a> for what type of class to create.<br>
  This is called when you download a replica from another system.<br>
  See Replica3::Dealloc for the corresponding destruction message.<br>
  Return 0 if unable to create the intended object. Note, in that case the other system will still think we have the object and will try to serialize object updates to us. Generally, you should not send objects the other system cannot create.<br>
- <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="classRakNet_1_1Replica3.html#5a5fa47314cf6ae149b8601e757840e8" title="Write a unique identifer that can be read on a remote system to create an object...">Replica3::WriteAllocationID()</a>. Sample implementation:<br>
+ <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="classRakNet_1_1Replica3.html#da0458bb521a455f23e08742c9e1b0b9" title="Write a unique identifer that can be read on a remote system to create an object...">Replica3::WriteAllocationID()</a>. Sample implementation:<br>
  {<a class="el" href="classRakNet_1_1RakString.html" title="String class.">RakNet::RakString</a> typeName; allocationIdBitstream-&gt;Read(typeName); if (typeName=="Soldier") return new Soldier; return 0;}<br>
  </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -238,7 +238,7 @@ Get list of all replicas that are constructed for this connection.
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structRakNetGUID.html">RakNetGUID</a> RakNet::Connection_RM3::GetRakNetGUID           </td>
+          <td class="memname"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> RakNet::Connection_RM3::GetRakNetGUID           </td>
           <td>(</td>
           <td class="paramtype">void&nbsp;</td>
           <td class="paramname">          </td>
@@ -250,7 +250,7 @@ Get list of all replicas that are constructed for this connection.
 <div class="memdoc">
 
 <p>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>Returns the <a class="el" href="structRakNetGUID.html">RakNetGUID</a> passed to the constructor of this object </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>Returns the <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> passed to the constructor of this object </dd></dl>
 
 </div>
 </div><p>
@@ -259,7 +259,7 @@ Get list of all replicas that are constructed for this connection.
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structSystemAddress.html">SystemAddress</a> RakNet::Connection_RM3::GetSystemAddress           </td>
+          <td class="memname"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> RakNet::Connection_RM3::GetSystemAddress           </td>
           <td>(</td>
           <td class="paramtype">void&nbsp;</td>
           <td class="paramname">          </td>
@@ -342,7 +342,7 @@ The default of calling QueryConstruction for every known object is easy to use, 
 <div class="memdoc">
 
 <p>
-Return whether or not downloads to our system should all be processed the same tick (call to <a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7" title="Gets a message from the incoming message queue.">RakPeer::Receive()</a> ). 
+Return whether or not downloads to our system should all be processed the same tick (call to <a class="el" href="classRakNet_1_1RakPeer.html#46d90fb903e747f76d63eb3a96543740" title="Gets a message from the incoming message queue.">RakPeer::Receive()</a> ). 
 <p>
 Normally the system will send ID_REPLICA_MANAGER_DOWNLOAD_STARTED, ID_REPLICA_MANAGER_CONSTRUCTION for all downloaded objects, ID_REPLICA_MANAGER_SERIALIZE for each downloaded object, and lastly ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE. This enables the application to show a downloading splash screen on ID_REPLICA_MANAGER_DOWNLOAD_STARTED, a progress bar, and to close the splash screen and activate all objects on ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE However, if the application was not set up for this then it would result in incomplete objects spread out over time, and cause problems If you return true from <a class="el" href="classRakNet_1_1Connection__RM3.html#adc711493e2022956fe51ea8592b57d2" title="Return whether or not downloads to our system should all be processed the same tick...">QueryGroupDownloadMessages()</a>, then these messages will be returned all in one tick, returned only when the download is complete <dl class="note" compact><dt><b>Note:</b></dt><dd>ID_REPLICA_MANAGER_DOWNLOAD_STARTED calls the callback <a class="el" href="classRakNet_1_1Connection__RM3.html#cf23e94dddb214cf0d631fe074cd4467">DeserializeOnDownloadStarted()</a> <p>
 ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE calls the callback <a class="el" href="classRakNet_1_1Connection__RM3.html#293a2c18871dc91410953e931d90ca52">DeserializeOnDownloadComplete()</a> </dd></dl>
@@ -444,9 +444,9 @@ When a new connection connects, before sending any objects, <a class="el" href="
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/RakNet-3.x/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
+<li>d:/temp/RakNet4/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 22 08:28:36 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:29 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

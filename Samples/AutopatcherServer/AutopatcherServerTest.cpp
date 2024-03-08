@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Kbhit.h"
-#include "RakNetworkFactory.h"
+
 #include "GetTime.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
@@ -11,6 +11,7 @@
 #include "FileListTransfer.h"
 #include "FileList.h" // FLP_Printf
 #include "PacketizedTCP.h"
+#include "Gets.h"
 
 // Server only includes
 #include "AutopatcherServer.h"
@@ -25,24 +26,30 @@
 
 #define USE_TCP
 #define LISTEN_PORT 60000
-#define MAX_INCOMING_CONNECTIONS 8
+#define MAX_INCOMING_CONNECTIONS 128
 
 int main(int argc, char **argv)
 {
 	printf("Server starting... ");
-	AutopatcherServer autopatcherServer;
-	FLP_Printf progressIndicator;
-	FileListTransfer fileListTransfer;
-	// So only one thread runs per connection, we create an array of connection objects, and tell the autopatcher server to use one thread per item
-	static const int sqlConnectionObjectCount=4;
-	AutopatcherPostgreRepository connectionObject[sqlConnectionObjectCount];
-	AutopatcherRepositoryInterface *connectionObjectAddresses[sqlConnectionObjectCount];
+	RakNet::AutopatcherServer autopatcherServer;
+	// RakNet::FLP_Printf progressIndicator;
+	RakNet::FileListTransfer fileListTransfer;
+	static const int workerThreadCount=4; // Used for checking patches only
+	static const int sqlConnectionObjectCount=32; // Used for both checking patches and downloading
+	RakNet::AutopatcherPostgreRepository connectionObject[sqlConnectionObjectCount];
+	RakNet::AutopatcherRepositoryInterface *connectionObjectAddresses[sqlConnectionObjectCount];
 	for (int i=0; i < sqlConnectionObjectCount; i++)
 		connectionObjectAddresses[i]=&connectionObject[i];
-	fileListTransfer.SetCallback(&progressIndicator);
+//	fileListTransfer.AddCallback(&progressIndicator);
 	autopatcherServer.SetFileListTransferPlugin(&fileListTransfer);
+	// PostgreSQL is fast, so this may not be necessary, or could use fewer threads
+	// This is used to read increments of large files concurrently, thereby serving users downloads as other users read from the DB
+	fileListTransfer.StartIncrementalReadThreads(sqlConnectionObjectCount);
+	autopatcherServer.SetMaxConurrentUsers(MAX_INCOMING_CONNECTIONS); // More users than this get queued up
+	RakNet::AutopatcherServerLoadNotifier_Printf loadNotifier;
+	autopatcherServer.SetLoadManagementCallback(&loadNotifier);
 #ifdef USE_TCP
-	PacketizedTCP packetizedTCP;
+	RakNet::PacketizedTCP packetizedTCP;
 	if (packetizedTCP.Start(LISTEN_PORT,MAX_INCOMING_CONNECTIONS)==false)
 	{
 		printf("Failed to start TCP. Is the port already in use?");
@@ -51,10 +58,10 @@ int main(int argc, char **argv)
 	packetizedTCP.AttachPlugin(&autopatcherServer);
 	packetizedTCP.AttachPlugin(&fileListTransfer);
 #else
-	RakPeerInterface *rakPeer;
-	rakPeer = RakNetworkFactory::GetRakPeerInterface();
-	SocketDescriptor socketDescriptor(LISTEN_PORT,0);
-	rakPeer->Startup(8,0,&socketDescriptor, 1);
+	RakNet::RakPeerInterface *rakPeer;
+	rakPeer = RakNet::RakPeerInterface::GetInstance();
+	RakNet::SocketDescriptor socketDescriptor(LISTEN_PORT,0);
+	rakPeer->Startup(MAX_INCOMING_CONNECTIONS,&socketDescriptor, 1);
 	rakPeer->SetMaximumIncomingConnections(MAX_INCOMING_CONNECTIONS);
 	rakPeer->AttachPlugin(&autopatcherServer);
 	rakPeer->AttachPlugin(&fileListTransfer);
@@ -82,25 +89,27 @@ int main(int argc, char **argv)
 
 	printf("Database connection suceeded.\n");
 	printf("Starting threads\n");
-	autopatcherServer.StartThreads(sqlConnectionObjectCount,connectionObjectAddresses);
+	// 4 Worker threads, which is CPU intensive
+	// A greater number of SQL connections, which read files incrementally for large downloads
+	autopatcherServer.StartThreads(workerThreadCount,sqlConnectionObjectCount, connectionObjectAddresses);
 	printf("System ready for connections\n");
 
 	printf("(D)rop database\n(C)reate database.\n(A)dd application\n(U)pdate revision.\n(R)emove application\n(Q)uit\n");
 
 	char ch;
-	Packet *p;
+	RakNet::Packet *p;
 	while (1)
 	{
 #ifdef USE_TCP
-		SystemAddress notificationAddress;
+		RakNet::SystemAddress notificationAddress;
 		notificationAddress=packetizedTCP.HasCompletedConnectionAttempt();
-		if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
 		notificationAddress=packetizedTCP.HasNewIncomingConnection();
-		if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			printf("ID_NEW_INCOMING_CONNECTION\n");
 		notificationAddress=packetizedTCP.HasLostConnection();
-		if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			printf("ID_CONNECTION_LOST\n");
 
 		p=packetizedTCP.Receive();
@@ -144,7 +153,7 @@ int main(int argc, char **argv)
 			{
 				printf("Enter application name to add: ");
 				char appName[512];
-				gets(appName);
+				Gets(appName,sizeof(appName));
 				if (appName[0]==0)
 					strcpy(appName, "TestApp");
 
@@ -157,7 +166,7 @@ int main(int argc, char **argv)
 			{
 				printf("Enter application name to remove: ");
 				char appName[512];
-				gets(appName);
+				Gets(appName,sizeof(appName));
 				if (appName[0]==0)
 					strcpy(appName, "TestApp");
 
@@ -170,17 +179,17 @@ int main(int argc, char **argv)
 			{
 				printf("Enter application name: ");
 				char appName[512];
-				gets(appName);
+				Gets(appName,sizeof(appName));
 				if (appName[0]==0)
 					strcpy(appName, "TestApp");
 
 				printf("Enter application directory: ");
 				char appDir[512];
-				gets(appDir);
+				Gets(appDir,sizeof(appDir));
 				if (appDir[0]==0)
 					strcpy(appDir, "C:/temp");
 
-				if (connectionObject[0].UpdateApplicationFiles(appName, appDir, username, &progressIndicator)==false)
+				if (connectionObject[0].UpdateApplicationFiles(appName, appDir, username, 0)==false)
 				{
 					printf("%s", connectionObject[0].GetLastError());
 				}
@@ -198,7 +207,7 @@ int main(int argc, char **argv)
 #ifdef USE_TCP
 	packetizedTCP.Stop();
 #else
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 #endif
 
 

@@ -82,6 +82,9 @@ protected:
 	bool isConnected;
 	char lastError[1024];
 
+	// Connection parameters
+	RakNet::RakString _conninfo;
+
 	//	DataStructures::List<RakNet::RakString> preparedStatements;
 	DataStructures::List<RakNet::RakString> preparedQueries;
 };

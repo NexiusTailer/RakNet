@@ -10,7 +10,13 @@
 #define __PLUGIN_INTERFACE_2_H
 
 #include "NativeFeatureIncludes.h"
+#include "RakNetTypes.h"
+#include "Export.h"
+#include "PacketPriority.h"
 
+namespace RakNet {
+
+/// Forward declarations
 class RakPeerInterface;
 class PacketizedTCP;
 struct Packet;
@@ -35,10 +41,6 @@ enum PluginReceiveResult
 	RR_STOP_PROCESSING,
 };
 
-#include "RakNetTypes.h"
-#include "Export.h"
-#include "PacketPriority.h"
-
 /// Reasons why a connection was lost
 /// \ingroup PLUGIN_INTERFACE_GROUP
 enum PI2_LostConnectionReason
@@ -60,11 +62,14 @@ enum PI2_FailedConnectionAttemptReason
 	FCAR_CONNECTION_ATTEMPT_FAILED,
 	FCAR_ALREADY_CONNECTED,
 	FCAR_NO_FREE_INCOMING_CONNECTIONS,
-	FCAR_RSA_PUBLIC_KEY_MISMATCH,
+	FCAR_SECURITY_PUBLIC_KEY_MISMATCH,
 	FCAR_CONNECTION_BANNED,
 	FCAR_INVALID_PASSWORD,
 	FCAR_INCOMPATIBLE_PROTOCOL,
-	FCAR_IP_RECENTLY_CONNECTED
+	FCAR_IP_RECENTLY_CONNECTED,
+	FCAR_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY,
+	FCAR_OUR_SYSTEM_REQUIRES_SECURITY,
+	FCAR_PUBLIC_KEY_MISMATCH,
 };
 
 /// RakNet's plugin system. Each plugin processes the following events:
@@ -81,11 +86,9 @@ public:
 	virtual ~PluginInterface2();
 
 	/// Called when the interface is attached
-	/// \param[in] peer the instance of RakPeer that is calling Receive
 	virtual void OnAttach(void) {}
 
 	/// Called when the interface is detached
-	/// \param[in] peer the instance of RakPeer that is calling Receive
 	virtual void OnDetach(void) {}
 
 	/// Update is called every time a packet is checked for .
@@ -140,15 +143,15 @@ public:
 	/// \param[in] internalPacket The user message, along with all send data.
 	/// \param[in] frameNumber The number of frames sent or received so far for this player depending on \a isSend .  Indicates the frame of this user message.
 	/// \param[in] remoteSystemAddress The player we sent or got this packet from
-	/// \param[in] time The current time as returned by RakNet::GetTime()
+	/// \param[in] time The current time as returned by RakNet::GetTimeMS()
 	/// \param[in] isSend Is this callback representing a send event or receive event?
-	virtual void OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNetTime time, int isSend) {(void) internalPacket; (void) frameNumber; (void) remoteSystemAddress; (void) time; (void) isSend;}
+	virtual void OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNet::TimeMS time, int isSend) {(void) internalPacket; (void) frameNumber; (void) remoteSystemAddress; (void) time; (void) isSend;}
 
 	/// Called when we get an ack for a message we reliabily sent
 	/// \param[in] messageNumber The numerical identifier for which message this is
 	/// \param[in] remoteSystemAddress The player we sent or got this packet from
-	/// \param[in] time The current time as returned by RakNet::GetTime()
-	virtual void OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, RakNetTime time) {(void) messageNumber; (void) remoteSystemAddress; (void) time;}
+	/// \param[in] time The current time as returned by RakNet::GetTimeMS()
+	virtual void OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, RakNet::TimeMS time) {(void) messageNumber; (void) remoteSystemAddress; (void) time;}
 
 	/// System called RakPeerInterface::PushBackPacket
 	/// \param[in] data The data being sent
@@ -180,6 +183,8 @@ protected:
 	PacketizedTCP *packetizedTCP;
 #endif
 };
+
+} // namespace RakNet
 
 #endif
 

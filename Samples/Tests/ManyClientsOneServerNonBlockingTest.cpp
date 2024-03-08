@@ -28,7 +28,7 @@ During the very first connect loop any connect returns false.
 Connect function returns false and peer is not connected to anything.
 
 */
-int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 
 	const int clientNum= 256;
@@ -40,21 +40,21 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 	//SystemAddress currentSystem;
 
 	Packet *packet;
-	destroyList.Clear(false,__FILE__,__LINE__);
+	destroyList.Clear(false,_FILE_AND_LINE_);
 
 	//Initializations of the arrays
 	for (int i=0;i<clientNum;i++)
 	{
-		clientList[i]=RakNetworkFactory::GetRakPeerInterface();
-		destroyList.Push(clientList[i],__FILE__,__LINE__);
+		clientList[i]=RakPeerInterface::GetInstance();
+		destroyList.Push(clientList[i],_FILE_AND_LINE_);
 
-		clientList[i]->Startup(1,30,&SocketDescriptor(), 1);
+		clientList[i]->Startup(1,&SocketDescriptor(), 1);
 
 	}
 
-	server=RakNetworkFactory::GetRakPeerInterface();
-	destroyList.Push(server,__FILE__,__LINE__);
-	server->Startup(clientNum, 30, &SocketDescriptor(60000,0), 1);
+	server=RakPeerInterface::GetInstance();
+	destroyList.Push(server,_FILE_AND_LINE_);
+	server->Startup(clientNum, &SocketDescriptor(60000,0), 1);
 	server->SetMaximumIncomingConnections(clientNum);
 
 	//Connect all the clients to the server
@@ -62,7 +62,7 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 	for (int i=0;i<clientNum;i++)
 	{
 
-		if (!clientList[i]->Connect("127.0.0.1", 60000, 0,0))
+		if (clientList[i]->Connect("127.0.0.1", 60000, 0,0)!=CONNECTION_ATTEMPT_STARTED)
 		{
 
 			if (isVerbose)
@@ -74,7 +74,7 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 	}
 
-	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
+	TimeMS entryTime=GetTimeMS();//Loop entry time
 
 	DataStructures::List< SystemAddress  > systemList;
 	DataStructures::List< RakNetGUID > guidList;
@@ -82,7 +82,7 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 	if (isVerbose)
 		printf("Entering disconnect loop \n");
 
-	while(RakNet::GetTime()-entryTime<10000)//Run for 10 Secoonds
+	while(GetTimeMS()-entryTime<10000)//Run for 10 Secoonds
 	{
 
 		//Disconnect all clients IF connected to any from client side
@@ -109,10 +109,10 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 			currentSystem.SetBinaryAddress("127.0.0.1");
 			currentSystem.port=60000;
-			if(!clientList[i]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
+			if(!CommonFunctions::ConnectionStateMatchesOptions (clientList[i],currentSystem,true,true,true,true) )//Are we connected or is there a pending operation ?
 			{
 
-				if (!clientList[i]->Connect("127.0.0.1", 60000, 0,0))
+				if (clientList[i]->Connect("127.0.0.1", 60000, 0,0)!=CONNECTION_ATTEMPT_STARTED)
 				{
 
 					if (isVerbose)
@@ -277,9 +277,9 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 		RakSleep(0);//If needed for testing
 	}
 
-	entryTime=RakNet::GetTime();
+	entryTime=GetTimeMS();
 
-	while(RakNet::GetTime()-entryTime<2000)//Run for 2 Secoonds to process incoming disconnects
+	while(GetTimeMS()-entryTime<2000)//Run for 2 Secoonds to process incoming disconnects
 	{
 
 		//Server receive
@@ -441,10 +441,10 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 		currentSystem.SetBinaryAddress("127.0.0.1");
 		currentSystem.port=60000;
 
-		if(!clientList[i]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
+		if(!CommonFunctions::ConnectionStateMatchesOptions (clientList[i],currentSystem,true,true,true,true) )//Are we connected or is there a pending operation ?
 		{
 
-			if (!clientList[i]->Connect("127.0.0.1", 60000, 0,0))
+			if (clientList[i]->Connect("127.0.0.1", 60000, 0,0)!=CONNECTION_ATTEMPT_STARTED)
 			{
 
 				clientList[i]->GetSystemList(systemList,guidList);//Get connectionlist
@@ -460,9 +460,9 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 	}
 
-	entryTime=RakNet::GetTime();
+	entryTime=GetTimeMS();
 
-	while(RakNet::GetTime()-entryTime<5000)//Run for 5 Secoonds
+	while(GetTimeMS()-entryTime<5000)//Run for 5 Secoonds
 	{
 
 		//Server receive
@@ -646,14 +646,14 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 }
 
-RakNet::RakString ManyClientsOneServerNonBlockingTest::GetTestName()
+RakString ManyClientsOneServerNonBlockingTest::GetTestName()
 {
 
 	return "ManyClientsOneServerNonBlockingTest";
 
 }
 
-RakNet::RakString ManyClientsOneServerNonBlockingTest::ErrorCodeToString(int errorCode)
+RakString ManyClientsOneServerNonBlockingTest::ErrorCodeToString(int errorCode)
 {
 
 	switch (errorCode)
@@ -691,6 +691,6 @@ void ManyClientsOneServerNonBlockingTest::DestroyPeers()
 	int theSize=destroyList.Size();
 
 	for (int i=0; i < theSize; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+		RakPeerInterface::DestroyInstance(destroyList[i]);
 
 }

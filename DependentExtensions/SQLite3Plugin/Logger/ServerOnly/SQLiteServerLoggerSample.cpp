@@ -2,7 +2,7 @@
 #include "SQLiteServerLoggerPlugin.h"
 #include "BitStream.h"
 #include "RakSleep.h"
-#include "RakNetworkFactory.h"
+
 #include "Kbhit.h"
 #include "GetTime.h"
 #include "PacketizedTCP.h"
@@ -12,7 +12,7 @@ int main(void)
 {
 	printf("Demonstration of SQLiteServerLoggerPlugin.\n");
 
-	PacketizedTCP packetizedTCP;
+	RakNet::PacketizedTCP packetizedTCP;
 	RakNet::SQLiteServerLoggerPlugin loggerPlugin;
 // 	printf("Enable DXT compression (y/n)? ");
 // 	loggerPlugin.SetEnableDXTCompression(getche()=='y');
@@ -22,7 +22,7 @@ int main(void)
 	/*
 //	printf("Enter path to DB file to create, or enter for memory.\n");
 	char filePath[256];
-//	gets(filePath);
+	Gets(filePath,sizeof(filePath));
 	filePath[0]=0;
 	if (filePath[0]==0)
 		strcpy(filePath, "C:\\EchoChamber\\logger.sqlite");
@@ -41,19 +41,19 @@ int main(void)
 	RakNet::SQLiteServerLoggerPlugin::ProcessingStatus processingStatusOld;
 	memset(&processingStatusOld,0,sizeof(processingStatusOld));
 
-	SystemAddress sa;
+	RakNet::SystemAddress sa;
 	while (quit==false || isProcessing==true)
 	{
-		Packet *p;
+		RakNet::Packet *p;
 		for (p = packetizedTCP.Receive(); p; packetizedTCP.DeallocatePacket(p), p = packetizedTCP.Receive())
 		{
 			;
 		}
 		sa = packetizedTCP.HasNewIncomingConnection();
-		if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (sa!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			printf("New incoming connection from %s\n", sa.ToString(true));
 		sa = packetizedTCP.HasLostConnection();
-		if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (sa!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			printf("Lost connection from %s\n", sa.ToString(true));
 		sa = packetizedTCP.HasFailedConnectionAttempt();
 		sa = packetizedTCP.HasCompletedConnectionAttempt();

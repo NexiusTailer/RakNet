@@ -14,6 +14,10 @@
 #include "TransportInterface.h"
 #include "DS_List.h"
 #include "Export.h"
+
+namespace RakNet
+{
+/// Forward declarations
 class TCPInterface;
 struct TelnetClient;
 
@@ -24,6 +28,9 @@ struct TelnetClient;
 class RAK_DLL_EXPORT TelnetTransport : public TransportInterface
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(TelnetTransport)
+
 	TelnetTransport();
 	virtual ~TelnetTransport();
 	bool Start(unsigned short port, bool serverMode);
@@ -57,6 +64,8 @@ protected:
 	char *sendSuffix, *sendPrefix;
 
 };
+
+} // namespace RakNet
 
 #endif
 

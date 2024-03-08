@@ -4,6 +4,8 @@
 #include "ThreadsafePacketLogger.h"
 #include <string.h>
 
+using namespace RakNet;
+
 ThreadsafePacketLogger::ThreadsafePacketLogger()
 {
 
@@ -13,7 +15,7 @@ ThreadsafePacketLogger::~ThreadsafePacketLogger()
 	char **msg;
 	while ((msg = logMessages.ReadLock()) != 0)
 	{
-		rakFree_Ex((*msg), __FILE__, __LINE__ );
+		rakFree_Ex((*msg), _FILE_AND_LINE_ );
 	}
 }
 void ThreadsafePacketLogger::Update(void)
@@ -22,13 +24,13 @@ void ThreadsafePacketLogger::Update(void)
 	while ((msg = logMessages.ReadLock()) != 0)
 	{
 		WriteLog(*msg);
-		rakFree_Ex((*msg), __FILE__, __LINE__ );
+		rakFree_Ex((*msg), _FILE_AND_LINE_ );
 	}
 }
 void ThreadsafePacketLogger::AddToLog(const char *str)
 {
 	char **msg = logMessages.WriteLock();
-	*msg = (char*) rakMalloc_Ex( strlen(str)+1, __FILE__, __LINE__ );
+	*msg = (char*) rakMalloc_Ex( strlen(str)+1, _FILE_AND_LINE_ );
 	strcpy(*msg, str);
 	logMessages.WriteUnlock();
 }

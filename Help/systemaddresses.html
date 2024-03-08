@@ -34,7 +34,8 @@ Some item in the gameworld, such as a mine, belongs to a particular player and y
   1.  The recipient of a packet automatically knows the SystemAddress of any system that sends a packet to it because it determines this from the sender's IP/Port combination.  The sender does not need to encode its own SystemAddress in the data structure if all you need is for the server to know what the SystemAddress is.  The SystemAdddress of the originating sender is automatically passed to the programmer in the Packet structure that is returned by Receive.<BR>
   <BR>
   2.  When using the client server model, clients DO NOT know the SystemAddress of who originally sent the packet.  As far as a client is concerned all packets originate with the server.  Therefore if it is necessary that a client know the SystemAddress of another client you must add a SystemAddress field into the data struct.  You can either have the sending client fill this field in, or you can have the server fill it out when it gets the packet from the original sender.</p>
-<p>3. The system address for a particular instance of RakPeer won't change over the course of the connection. However, is not necessarily the same to all other systems (such as if that system were behind a symmetric NAT). For a unique identifier, use rakNetGUID, found in the Packet structure. RakPeerInterface has functions to operate on RakNetGUID.<BR>
+<p>3. The system address for a particular instance of RakPeer won't change over the course of the connection, with the exception of the <a href="router.html">Router2</a> plugin. However, is not necessarily the same to all other systems (such as if that system were behind a symmetric NAT). For a unique identifier, use rakNetGUID, found in the Packet structure. RakPeerInterface has functions to operate on RakNetGUID.</p>
+<p>4. It is preferred that you refer to remote systems by RakNetGUID, instead of SystemAddress. RakNetGUID is a unique identifier for an instance of RakPeer, while SystemAddress is not. And it is necessary to exclusively use RakNetGUID if you plan to use the <a href="router.html">Router2</a> plugin.<BR>
   <BR>
   <BR>
 </p></TD>
@@ -44,7 +45,8 @@ Some item in the gameworld, such as a mine, belongs to a particular player and y
 </tr></table>
 <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
 
-<A HREF="index.html">Index</A><BR>
+<A HREF="index.html">Index</A><br>
+<a href="router.html">Router2</a><BR>
 
 </TD></TR></TABLE>
 </BODY>

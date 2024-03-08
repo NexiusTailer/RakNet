@@ -45,10 +45,10 @@
 <a href="classRakNet_1_1VariableDeltaSerializer-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#e755cec2f8482621b134f1537a818d98">BeginUnreliableAckedSerialize</a> (SerializationContext *context, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> _guid, <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *_bitStream, uint32_t _sendReceipt)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#e755cec2f8482621b134f1537a818d98">BeginUnreliableAckedSerialize</a> (SerializationContext *context, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> _guid, <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *_bitStream, uint32_t _sendReceipt)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Call before doing one or more SerializeVariable calls when the data will be sent UNRELIABLE_WITH_ACK_RECEIPT The last value of each variable will be saved per remote system. Additionally, a history of <em>_sendReceipts</em> is stored to determine what to resend on packetloss. When variables are lost, they will be flagged dirty and always resent to the system that lost it Disadvantages: Every variable for every remote system is copied internally, in addition to a history list of what variables changed for which <em>_sendReceipt</em>. Very memory and CPU intensive for multiple connections. Advantages: When data needs to be resent by <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a>, <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> can only resend the value it currently has. This allows the application to control the resend, sending the most recent value of the variable. The end result is that bandwidth is used more efficiently because old data is never sent.  <a href="#e755cec2f8482621b134f1537a818d98"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#d3c9911d1d42bd432d622c98097f14a3">BeginUniqueSerialize</a> (SerializationContext *context, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> _guid, <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *_bitStream)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Call before doing one or more SerializeVariable calls when the data will be sent UNRELIABLE_WITH_ACK_RECEIPT The last value of each variable will be saved per remote system. Additionally, a history of <em>_sendReceipts</em> is stored to determine what to resend on packetloss. When variables are lost, they will be flagged dirty and always resent to the system that lost it Disadvantages: Every variable for every remote system is copied internally, in addition to a history list of what variables changed for which <em>_sendReceipt</em>. Very memory and CPU intensive for multiple connections. Advantages: When data needs to be resent by <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a>, <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> can only resend the value it currently has. This allows the application to control the resend, sending the most recent value of the variable. The end result is that bandwidth is used more efficiently because old data is never sent.  <a href="#e755cec2f8482621b134f1537a818d98"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#d3c9911d1d42bd432d622c98097f14a3">BeginUniqueSerialize</a> (SerializationContext *context, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> _guid, <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *_bitStream)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Call before doing one or more SerializeVariable calls for data that may be sent differently to every remote system (such as an invisibility flag that only teammates can see) The last value of each variable will be saved per remote system. Unlike <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#e755cec2f8482621b134f1537a818d98" title="Call before doing one or more SerializeVariable calls when the data will be sent...">BeginUnreliableAckedSerialize()</a>, send receipts are not necessary Disadvantages: Every variable for every remote system is copied internally. Very memory and CPU intensive for multiple connections. Advantages: When data is sent differently depending on the recipient, this system can make things easier to use and is as efficient as it can be.  <a href="#d3c9911d1d42bd432d622c98097f14a3"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#3ba21dc59bc10fa337c02d79a785e344">BeginIdenticalSerialize</a> (SerializationContext *context, bool _isFirstSerializeToThisSystem, <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *_bitStream)</td></tr>
@@ -62,13 +62,13 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Call when you receive the <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> written by <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#5d0c0024c5f84342372811a3ec1b54ca">SerializeVariable()</a>, before calling <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#35fbe67a2fd7c19d44b2fd71a4e3eaa3">DeserializeVariable()</a>.  <a href="#5cea057c2704378cc1268af235ff7b1e"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#a004336b73a3e8f2a0ea37526ca06249">EndDeserialize</a> (DeserializationContext *context)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#36242a91f3fd4891d20b804792b60daf">AddRemoteSystemVariableHistory</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> guid)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#36242a91f3fd4891d20b804792b60daf">AddRemoteSystemVariableHistory</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> guid)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#a11acde48680b36f5312c1729c057a26">RemoveRemoteSystemVariableHistory</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> guid)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#a11acde48680b36f5312c1729c057a26">RemoveRemoteSystemVariableHistory</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> guid)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#d82bd595c1111ef536285f401138ebb4">OnPreSerializeTick</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#55fc78fe99dae4f7727fa190429ec255">OnMessageReceipt</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> guid, uint32_t receiptId, bool messageArrived)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#55fc78fe99dae4f7727fa190429ec255">OnMessageReceipt</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> guid, uint32_t receiptId, bool messageArrived)</td></tr>
 
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class VarType &gt; </td></tr>
 <tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#5d0c0024c5f84342372811a3ec1b54ca">SerializeVariable</a> (SerializationContext *context, const VarType &amp;variable)</td></tr>
@@ -100,7 +100,7 @@ On the receiver:<p>
         <tr>
           <td class="memname">void RakNet::VariableDeltaSerializer::AddRemoteSystemVariableHistory           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td>
           <td class="paramname"> <em>guid</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td></td>
@@ -213,7 +213,7 @@ Call before doing one or more SerializeVariable calls for data that is sent with
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td>
           <td class="paramname"> <em>_guid</em>, </td>
         </tr>
         <tr>
@@ -258,7 +258,7 @@ Call before doing one or more SerializeVariable calls for data that may be sent 
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td>
           <td class="paramname"> <em>_guid</em>, </td>
         </tr>
         <tr>
@@ -283,7 +283,7 @@ Call before doing one or more SerializeVariable calls for data that may be sent 
 <div class="memdoc">
 
 <p>
-Call before doing one or more SerializeVariable calls when the data will be sent UNRELIABLE_WITH_ACK_RECEIPT The last value of each variable will be saved per remote system. Additionally, a history of <em>_sendReceipts</em> is stored to determine what to resend on packetloss. When variables are lost, they will be flagged dirty and always resent to the system that lost it Disadvantages: Every variable for every remote system is copied internally, in addition to a history list of what variables changed for which <em>_sendReceipt</em>. Very memory and CPU intensive for multiple connections. Advantages: When data needs to be resent by <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a>, <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> can only resend the value it currently has. This allows the application to control the resend, sending the most recent value of the variable. The end result is that bandwidth is used more efficiently because old data is never sent. 
+Call before doing one or more SerializeVariable calls when the data will be sent UNRELIABLE_WITH_ACK_RECEIPT The last value of each variable will be saved per remote system. Additionally, a history of <em>_sendReceipts</em> is stored to determine what to resend on packetloss. When variables are lost, they will be flagged dirty and always resent to the system that lost it Disadvantages: Every variable for every remote system is copied internally, in addition to a history list of what variables changed for which <em>_sendReceipt</em>. Very memory and CPU intensive for multiple connections. Advantages: When data needs to be resent by <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a>, <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> can only resend the value it currently has. This allows the application to control the resend, sending the most recent value of the variable. The end result is that bandwidth is used more efficiently because old data is never sent. 
 <p>
 <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Upon getting ID_SND_RECEIPT_LOSS or ID_SND_RECEIPT_ACKED call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#55fc78fe99dae4f7727fa190429ec255">OnMessageReceipt()</a> <p>
 <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#36242a91f3fd4891d20b804792b60daf">AddRemoteSystemVariableHistory()</a> and RemoveRemoteSystemVariableHistory() must be called for new and lost connections </dd></dl>
@@ -292,7 +292,7 @@ Call before doing one or more SerializeVariable calls when the data will be sent
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>context</em>&nbsp;</td><td>Holds the context of this group of serialize calls. This can be a stack object just passed to the function. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_guid</em>&nbsp;</td><td>Which system we are sending to </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_bitSteam</em>&nbsp;</td><td>Which bitStream to write to </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_sendReceipt</em>&nbsp;</td><td>Returned from <a class="el" href="classRakPeer.html#71721eb4963b3aa7d39816d9e21438b7">RakPeer::IncrementNextSendReceipt()</a> and passed to the Send() or SendLists() function. Identifies this update for ID_SND_RECEIPT_LOSS and ID_SND_RECEIPT_ACKED </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_sendReceipt</em>&nbsp;</td><td>Returned from <a class="el" href="classRakNet_1_1RakPeer.html#9232bd1bc9c1a223ecef8682133f95ac">RakPeer::IncrementNextSendReceipt()</a> and passed to the Send() or SendLists() function. Identifies this update for ID_SND_RECEIPT_LOSS and ID_SND_RECEIPT_ACKED </td></tr>
   </table>
 </dl>
 
@@ -396,7 +396,7 @@ Call after <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#e755c
         <tr>
           <td class="memname">void RakNet::VariableDeltaSerializer::OnMessageReceipt           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td>
           <td class="paramname"> <em>guid</em>, </td>
         </tr>
         <tr>
@@ -460,7 +460,7 @@ uint32_t msgNumber; memcpy(&amp;msgNumber, packet-&gt;data+1, 4); DataStructures
         <tr>
           <td class="memname">void RakNet::VariableDeltaSerializer::RemoveRemoteSystemVariableHistory           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td>
           <td class="paramname"> <em>guid</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td></td>
@@ -535,9 +535,9 @@ A list of RemoteSystemVariableHistory indexed by guid, one per connection that w
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/RakNet-3.x/Source/VariableDeltaSerializer.h</ul>
+<li>d:/temp/RakNet4/Source/VariableDeltaSerializer.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 22 08:28:37 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:30 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

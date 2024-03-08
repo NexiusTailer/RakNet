@@ -9,12 +9,10 @@
 #ifndef __ROOMS_PLUGIN_H
 #define __ROOMS_PLUGIN_H
 
-class RakPeerInterface;
 #include "RakNetTypes.h"
 #include "PluginInterface2.h"
 #include "DS_OrderedList.h"
 #include "Export.h"
-#include "ConnectionGraph.h"
 #include "RoomsContainer.h"
 #include "PacketPriority.h"
 #include "BitStream.h"
@@ -36,6 +34,7 @@ class RakPeerInterface;
 
 namespace RakNet
 {
+	class RakPeerInterface;
 
 /// \brief Base class for rooms functionality
 /// \details Operations performed on rooms are not in the RoomsPlugin - instead, each structure encapsulates one operation
@@ -665,7 +664,7 @@ struct RoomMemberLeftRoom_Notification : public RoomsPluginNotification {
 /// \ingroup ROOMS_NOTIFICATIONS
 struct RoomMemberJoinedRoom_Notification : public RoomsPluginNotification {
 	RoomMemberJoinedRoom_Notification() {joinedRoomResult=0;}
-	~RoomMemberJoinedRoom_Notification() {if (joinedRoomResult!=0) RakNet::OP_DELETE(joinedRoomResult, __FILE__, __LINE__);}
+	~RoomMemberJoinedRoom_Notification() {if (joinedRoomResult!=0) RakNet::OP_DELETE(joinedRoomResult, _FILE_AND_LINE_);}
 	RoomID roomId;
 	JoinedRoomResult *joinedRoomResult;
 	virtual void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
@@ -868,12 +867,12 @@ public:
 	/// \param[in] userName A unique string identifying the user
 	/// \param[in] roomsParticipantAddress The address of the user
 	/// \param[in] guid The guid of the user
-	/// \param[in] loginServerAddress The server adding this user. Use UNASSIGNED_SYSTEM_ADDRESS for not applicable. Otherwise, the address must previously have been added using AddLoginServerAddress() or the function will fail.
+	/// \param[in] loginServerAddress The server adding this user. Use RakNet::UNASSIGNED_SYSTEM_ADDRESS for not applicable. Otherwise, the address must previously have been added using AddLoginServerAddress() or the function will fail.
 	bool LoginRoomsParticipant(RakNet::RakString userName, SystemAddress roomsParticipantAddress, RakNetGUID guid, SystemAddress loginServerAddress);
 
 	/// \brief Removes a participant from the system
 	/// \param[in] userName A unique string identifying the user
-	/// \param[in] loginServerAddress The server removing. Use UNASSIGNED_SYSTEM_ADDRESS for not applicable. Otherwise, the address must previously have been added using AddLoginServerAddress() or the function will fail.
+	/// \param[in] loginServerAddress The server removing. Use RakNet::UNASSIGNED_SYSTEM_ADDRESS for not applicable. Otherwise, the address must previously have been added using AddLoginServerAddress() or the function will fail.
 	bool LogoffRoomsParticipant(RakNet::RakString userName, SystemAddress loginServerAddress);
 
 	/// \brief Clear all users
@@ -943,7 +942,7 @@ protected:
 	DataStructures::List<RoomsCallback *> roomsCallback;
 	PacketPriority packetPriority;
 	ProfanityFilter *profanityFilter;
-	RakNetTime lastUpdateTime;
+	RakNet::TimeMS lastUpdateTime;
 
 	// Client data
 	SystemAddress serverAddress;

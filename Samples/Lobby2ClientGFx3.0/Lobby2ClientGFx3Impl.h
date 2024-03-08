@@ -1,3 +1,6 @@
+#ifndef __LOBBY_2_CLIENT_GFX3_IMPL_H
+#define __LOBBY_2_CLIENT_GFX3_IMPL_H
+
 #include "WindowsIncludes.h"
 #include "RakNetTypes.h"
 #include "FxGameDelegate.h"
@@ -11,6 +14,8 @@ void functionName(const FxDelegateArgs& pparams) \
 	((className*)pparams.GetHandler())->functionName(pparams);  \
 } \
 void className::functionName(const FxDelegateArgs& pparams)
+
+namespace RakNet {
 
 // GFxPlayerTinyD3D9.cpp has an instance of this class, and callls the corresponding 3 function
 // This keeps the patching code out of the GFx sample as much as possible
@@ -165,6 +170,9 @@ public:
 
 	RakNet::Lobby2Client *lobby2Client;
 	RakNet::Lobby2MessageFactory *messageFactory;
-	RakPeerInterface *rakPeer;
+	RakNet::RakPeerInterface *rakPeer;
 };
 
+} // namespace RakNet
+
+#endif // __LOBBY_2_CLIENT_GFX3_IMPL_H

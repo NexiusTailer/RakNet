@@ -32,7 +32,7 @@
 <h1>RakNet::UDPProxyClient Class Reference<br>
 <small>
 [<a class="el" href="group__UDP__PROXY__GROUP.html">UDPProxy</a>]</small>
-</h1><!-- doxytag: class="RakNet::UDPProxyClient" --><!-- doxytag: inherits="PluginInterface2" -->Communicates with <a class="el" href="classRakNet_1_1UDPProxyCoordinator.html" title="Middleman between UDPProxyServer and UDPProxyClient, maintaining a list of UDPProxyServer...">UDPProxyCoordinator</a>, in order to find a <a class="el" href="classRakNet_1_1UDPProxyServer.html" title="UDPProxyServer to control our instance of UDPForwarder.">UDPProxyServer</a> to forward our datagrams.  
+</h1><!-- doxytag: class="RakNet::UDPProxyClient" --><!-- doxytag: inherits="RakNet::PluginInterface2" -->Communicates with <a class="el" href="classRakNet_1_1UDPProxyCoordinator.html" title="Middleman between UDPProxyServer and UDPProxyClient, maintaining a list of UDPProxyServer...">UDPProxyCoordinator</a>, in order to find a <a class="el" href="classRakNet_1_1UDPProxyServer.html" title="UDPProxyServer to control our instance of UDPForwarder.">UDPProxyServer</a> to forward our datagrams.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;UDPProxyClient.h&gt;</code>
@@ -43,7 +43,7 @@ Inheritance diagram for RakNet::UDPProxyClient:</div>
 
 <p><center><img src="classRakNet_1_1UDPProxyClient.png" usemap="#RakNet::UDPProxyClient_map" border="0" alt=""></center>
 <map name="RakNet::UDPProxyClient_map">
-<area href="classPluginInterface2.html" alt="PluginInterface2" shape="rect" coords="0,0,148,24">
+<area href="classRakNet_1_1PluginInterface2.html" alt="RakNet::PluginInterface2" shape="rect" coords="0,0,150,24">
 </map>
 </div>
 
@@ -53,37 +53,37 @@ Inheritance diagram for RakNet::UDPProxyClient:</div>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyClient.html#8fc30b0a5224d0efe7ed9fe2ff9841d1">SetResultHandler</a> (<a class="el" href="structRakNet_1_1UDPProxyClientResultHandler.html">UDPProxyClientResultHandler</a> *rh)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">RequestForwarding</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> proxyCoordinator, <a class="el" href="structSystemAddress.html">SystemAddress</a> sourceAddress, <a class="el" href="structSystemAddress.html">SystemAddress</a> targetAddressAsSeenFromCoordinator, RakNetTimeMS timeoutOnNoDataMS, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *serverSelectionBitstream=0)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyClient.html#94ee5defadaa018d15de5ed2498625ad">RequestForwarding</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> proxyCoordinator, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> sourceAddress, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> targetAddressAsSeenFromCoordinator, RakNet::TimeMS timeoutOnNoDataMS, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *serverSelectionBitstream=0)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyClient.html#18fd4a2dcbd9a485bef6d945a9c31753">RequestForwarding</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> proxyCoordinator, <a class="el" href="structSystemAddress.html">SystemAddress</a> sourceAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> targetGuid, RakNetTimeMS timeoutOnNoDataMS, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *serverSelectionBitstream=0)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyClient.html#94193970bef43ead993f1dfb734d3f73">RequestForwarding</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> proxyCoordinator, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> sourceAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> targetGuid, RakNet::TimeMS timeoutOnNoDataMS, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *serverSelectionBitstream=0)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0ef9ece963dde728a09c78f849683daf"></a><!-- doxytag: member="RakNet::UDPProxyClient::Update" ref="0ef9ece963dde728a09c78f849683daf" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyClient.html#0ef9ece963dde728a09c78f849683daf">Update</a> (void)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update is called every time a packet is checked for . <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyClient.html#92e2cefd0e42ee8a86fde60e32cd53c2">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g89998adaafb29e5d879113b992161085">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyClient.html#92e2cefd0e42ee8a86fde60e32cd53c2">OnReceive</a> (<a class="el" href="structRakNet_1_1Packet.html">Packet</a> *packet)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c310e4654dd16088934f393345c2dc5c"></a><!-- doxytag: member="RakNet::UDPProxyClient::OnRakPeerShutdown" ref="c310e4654dd16088934f393345c2dc5c" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyClient.html#c310e4654dd16088934f393345c2dc5c">OnRakPeerShutdown</a> (void)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="Main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Communicates with <a class="el" href="classRakNet_1_1UDPProxyCoordinator.html" title="Middleman between UDPProxyServer and UDPProxyClient, maintaining a list of UDPProxyServer...">UDPProxyCoordinator</a>, in order to find a <a class="el" href="classRakNet_1_1UDPProxyServer.html" title="UDPProxyServer to control our instance of UDPForwarder.">UDPProxyServer</a> to forward our datagrams. 
 <p>
 When NAT Punchthrough fails, it is possible to use a non-NAT system to forward messages from us to the recipient, and vice-versa.<br>
  The class to forward messages is <a class="el" href="classRakNet_1_1UDPForwarder.html" title="Forwards UDP datagrams. Independent of RakNet&#39;s protocol.">UDPForwarder</a>, and it is triggered over the network via the <a class="el" href="classRakNet_1_1UDPProxyServer.html" title="UDPProxyServer to control our instance of UDPForwarder.">UDPProxyServer</a> plugin.<br>
- The <a class="el" href="classRakNet_1_1UDPProxyClient.html" title="Communicates with UDPProxyCoordinator, in order to find a UDPProxyServer to forward...">UDPProxyClient</a> connects to <a class="el" href="classRakNet_1_1UDPProxyCoordinator.html" title="Middleman between UDPProxyServer and UDPProxyClient, maintaining a list of UDPProxyServer...">UDPProxyCoordinator</a> to get a list of servers running <a class="el" href="classRakNet_1_1UDPProxyServer.html" title="UDPProxyServer to control our instance of UDPForwarder.">UDPProxyServer</a>, and the coordinator will relay our forwarding request <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="classNatPunchthroughServer.html" title="Server code for NATPunchthrough.">NatPunchthroughServer</a> <p>
-<a class="el" href="classNatPunchthroughClient.html" title="Client code for NATPunchthrough.">NatPunchthroughClient</a> </dd></dl>
+ The <a class="el" href="classRakNet_1_1UDPProxyClient.html" title="Communicates with UDPProxyCoordinator, in order to find a UDPProxyServer to forward...">UDPProxyClient</a> connects to <a class="el" href="classRakNet_1_1UDPProxyCoordinator.html" title="Middleman between UDPProxyServer and UDPProxyClient, maintaining a list of UDPProxyServer...">UDPProxyCoordinator</a> to get a list of servers running <a class="el" href="classRakNet_1_1UDPProxyServer.html" title="UDPProxyServer to control our instance of UDPForwarder.">UDPProxyServer</a>, and the coordinator will relay our forwarding request <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="classRakNet_1_1NatPunchthroughServer.html" title="Server code for NATPunchthrough.">NatPunchthroughServer</a> <p>
+<a class="el" href="classRakNet_1_1NatPunchthroughClient.html" title="Client code for NATPunchthrough.">NatPunchthroughClient</a> </dd></dl>
 <hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="92e2cefd0e42ee8a86fde60e32cd53c2"></a><!-- doxytag: member="RakNet::UDPProxyClient::OnReceive" ref="92e2cefd0e42ee8a86fde60e32cd53c2" args="(Packet *packet)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a> RakNet::UDPProxyClient::OnReceive           </td>
+          <td class="memname">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g89998adaafb29e5d879113b992161085">PluginReceiveResult</a> RakNet::UDPProxyClient::OnReceive           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1Packet.html">Packet</a> *&nbsp;</td>
           <td class="paramname"> <em>packet</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [virtual]</code></td>
@@ -100,36 +100,36 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface2.html#bc50017a35682db5202a7562c58898ea">PluginInterface2</a>.</p>
+<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#a86f33263c1648f11b8a006469272639">RakNet::PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="18fd4a2dcbd9a485bef6d945a9c31753"></a><!-- doxytag: member="RakNet::UDPProxyClient::RequestForwarding" ref="18fd4a2dcbd9a485bef6d945a9c31753" args="(SystemAddress proxyCoordinator, SystemAddress sourceAddress, RakNetGUID targetGuid, RakNetTimeMS timeoutOnNoDataMS, RakNet::BitStream *serverSelectionBitstream=0)" -->
+<a class="anchor" name="94193970bef43ead993f1dfb734d3f73"></a><!-- doxytag: member="RakNet::UDPProxyClient::RequestForwarding" ref="94193970bef43ead993f1dfb734d3f73" args="(SystemAddress proxyCoordinator, SystemAddress sourceAddress, RakNetGUID targetGuid, RakNet::TimeMS timeoutOnNoDataMS, RakNet::BitStream *serverSelectionBitstream=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool RakNet::UDPProxyClient::RequestForwarding           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
           <td class="paramname"> <em>proxyCoordinator</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
           <td class="paramname"> <em>sourceAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td>
           <td class="paramname"> <em>targetGuid</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">RakNetTimeMS&nbsp;</td>
+          <td class="paramtype">RakNet::TimeMS&nbsp;</td>
           <td class="paramname"> <em>timeoutOnNoDataMS</em>, </td>
         </tr>
         <tr>
@@ -148,35 +148,35 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Same as above, but specify the target with a GUID, in case you don't know what its address is to the coordinator If requesting forwarding to a <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> enabled system, then it is easier to use targetGuid instead of targetAddressAsSeenFromCoordinator 
+Same as above, but specify the target with a GUID, in case you don't know what its address is to the coordinator If requesting forwarding to a <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> enabled system, then it is easier to use targetGuid instead of targetAddressAsSeenFromCoordinator 
 </div>
 </div><p>
-<a class="anchor" name="d4b7228417d0971ce1dbbe021da0a4cb"></a><!-- doxytag: member="RakNet::UDPProxyClient::RequestForwarding" ref="d4b7228417d0971ce1dbbe021da0a4cb" args="(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddressAsSeenFromCoordinator, RakNetTimeMS timeoutOnNoDataMS, RakNet::BitStream *serverSelectionBitstream=0)" -->
+<a class="anchor" name="94ee5defadaa018d15de5ed2498625ad"></a><!-- doxytag: member="RakNet::UDPProxyClient::RequestForwarding" ref="94ee5defadaa018d15de5ed2498625ad" args="(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddressAsSeenFromCoordinator, RakNet::TimeMS timeoutOnNoDataMS, RakNet::BitStream *serverSelectionBitstream=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool RakNet::UDPProxyClient::RequestForwarding           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
           <td class="paramname"> <em>proxyCoordinator</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
           <td class="paramname"> <em>sourceAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
           <td class="paramname"> <em>targetAddressAsSeenFromCoordinator</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">RakNetTimeMS&nbsp;</td>
+          <td class="paramtype">RakNet::TimeMS&nbsp;</td>
           <td class="paramname"> <em>timeoutOnNoDataMS</em>, </td>
         </tr>
         <tr>
@@ -195,15 +195,15 @@ Same as above, but specify the target with a GUID, in case you don't know what i
 <div class="memdoc">
 
 <p>
-Sends a request to proxyCoordinator to find a server and have that server setup <a class="el" href="classRakNet_1_1UDPForwarder.html#e22b3da12aa093783cf3ccd9b6a689f9">UDPForwarder::StartForwarding()</a> on our address to <em>targetAddressAsSeenFromCoordinator</em> The forwarded datagrams can be from any UDP source, not just <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Must be connected to <em>proxyCoordinator</em> <p>
+Sends a request to proxyCoordinator to find a server and have that server setup <a class="el" href="classRakNet_1_1UDPForwarder.html#85fcfcc3af19a6e22b9225b3eb7c4688">UDPForwarder::StartForwarding()</a> on our address to <em>targetAddressAsSeenFromCoordinator</em> The forwarded datagrams can be from any UDP source, not just <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Must be connected to <em>proxyCoordinator</em> <p>
 Systems running <a class="el" href="classRakNet_1_1UDPProxyServer.html" title="UDPProxyServer to control our instance of UDPForwarder.">UDPProxyServer</a> must be connected to <em>proxyCoordinator</em> and logged in via UDPProxyCoordinator::LoginServer() or <a class="el" href="classRakNet_1_1UDPProxyServer.html#32edaff2aec11cce6a138897b0e2a158">UDPProxyServer::LoginToCoordinator()</a> </dd></dl>
 <dl class="note" compact><dt><b>Note:</b></dt><dd>May still fail, if all proxy servers have no open connections. <p>
-RakNet's protocol will ensure a message is sent at least every 5 seconds, so if routing <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> messages, it is a reasonable value for timeoutOnNoDataMS, plus an extra few seconds for latency. </dd></dl>
+RakNet's protocol will ensure a message is sent at least every 5 seconds, so if routing <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> messages, it is a reasonable value for timeoutOnNoDataMS, plus an extra few seconds for latency. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>proxyCoordinator</em>&nbsp;</td><td>System we are connected to that is running the <a class="el" href="classRakNet_1_1UDPProxyCoordinator.html" title="Middleman between UDPProxyServer and UDPProxyClient, maintaining a list of UDPProxyServer...">UDPProxyCoordinator</a> plugin </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>sourceAddress</em>&nbsp;</td><td>External IP address of the system we want to forward messages from. This does not have to be our own system. To specify our own system, you can pass UNASSIGNED_SYSTEM_ADDRESS which the coordinator will treat as our external IP address. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>targetAddressAsSeenFromCoordinator</em>&nbsp;</td><td>External IP address of the system we want to forward messages to. If this system is connected to <a class="el" href="classRakNet_1_1UDPProxyCoordinator.html" title="Middleman between UDPProxyServer and UDPProxyClient, maintaining a list of UDPProxyServer...">UDPProxyCoordinator</a> at this address using <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a>, that system will ping the server and thus open the router for incoming communication. In any other case, you are responsible for doing your own network communication to have that system ping the server. See also targetGuid in the other version of <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">RequestForwarding()</a>, to avoid the need to know the IP address to the coordinator of the destination. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>targetAddressAsSeenFromCoordinator</em>&nbsp;</td><td>External IP address of the system we want to forward messages to. If this system is connected to <a class="el" href="classRakNet_1_1UDPProxyCoordinator.html" title="Middleman between UDPProxyServer and UDPProxyClient, maintaining a list of UDPProxyServer...">UDPProxyCoordinator</a> at this address using <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a>, that system will ping the server and thus open the router for incoming communication. In any other case, you are responsible for doing your own network communication to have that system ping the server. See also targetGuid in the other version of <a class="el" href="classRakNet_1_1UDPProxyClient.html#94ee5defadaa018d15de5ed2498625ad">RequestForwarding()</a>, to avoid the need to know the IP address to the coordinator of the destination. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>timeoutOnNoData</em>&nbsp;</td><td>If no data is sent by the forwarded systems, how long before removing the forward entry from <a class="el" href="classRakNet_1_1UDPForwarder.html" title="Forwards UDP datagrams. Independent of RakNet&#39;s protocol.">UDPForwarder</a>? UDP_FORWARDER_MAXIMUM_TIMEOUT is the maximum value. Recommended high enough to not drop valid connections, but low enough to not waste forwarding slots on the proxy server. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>serverSelectionBitstream</em>&nbsp;</td><td>If you want to send data to UDPProxyCoordinator::GetBestServer(), write it here </td></tr>
   </table>
@@ -229,7 +229,7 @@ RakNet's protocol will ensure a message is sent at least every 5 seconds, so if 
 <div class="memdoc">
 
 <p>
-Receives the results of calling <a class="el" href="classRakNet_1_1UDPProxyClient.html#d4b7228417d0971ce1dbbe021da0a4cb">RequestForwarding()</a> Set before calling RequestForwarding or you won't know what happened <dl compact><dt><b>Parameters:</b></dt><dd>
+Receives the results of calling <a class="el" href="classRakNet_1_1UDPProxyClient.html#94ee5defadaa018d15de5ed2498625ad">RequestForwarding()</a> Set before calling RequestForwarding or you won't know what happened <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>resultHandler</em>&nbsp;</td><td></td></tr>
   </table>
@@ -238,9 +238,9 @@ Receives the results of calling <a class="el" href="classRakNet_1_1UDPProxyClien
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/RakNet-3.x/Source/<a class="el" href="UDPProxyClient_8h.html">UDPProxyClient.h</a></ul>
+<li>d:/temp/RakNet4/Source/<a class="el" href="UDPProxyClient_8h.html">UDPProxyClient.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 22 08:28:37 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:30 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

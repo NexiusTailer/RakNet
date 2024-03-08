@@ -246,7 +246,7 @@ int FxPlayerTiny::Run()
 
 	// KevinJ: 1/3 functions, Init()
 	// Path to current exe is used to the patcher can restart itself if needed
-	AutopatcherClientGFx3Impl acgi;
+	RakNet::AutopatcherClientGFx3Impl acgi;
 	char buff[512];
 	GetModuleFileName(0, buff, 512);
 	GPtr<FxDelegate> pDelegate = *new FxDelegate; 

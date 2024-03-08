@@ -1,6 +1,6 @@
-import gfx.io.GameDelegate;
+import flash.external.*;
 
-GameDelegate.addCallBack("c2f_NotifyServerConnectionLost", this, "c2f_NotifyServerConnectionLost");
+ExternalInterface.addCallback("c2f_NotifyServerConnectionLost", this, c2f_NotifyServerConnectionLost);
 function c2f_NotifyServerConnectionLost(reason:String):Void
 {
 	trace("Server connection lost. Reason=" + reason);

@@ -55,17 +55,17 @@ All packets are not in order.
 
 */
 
-int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 
 	RakPeerInterface *sender, *receiver;
 	unsigned int packetNumberSender[32],packetNumberReceiver[32], receivedPacketNumberReceiver, receivedTimeReceiver;
 	char str[256];
 	char ip[32];
-	RakNetTime sendInterval, nextSend, currentTime, quitTime;
+	TimeMS sendInterval, nextSend, currentTime, quitTime;
 	unsigned short remotePort, localPort;
 	unsigned char streamNumberSender,streamNumberReceiver;
-	RakNet::BitStream bitStream;
+	BitStream bitStream;
 	Packet *packet;
 	bool doSend=false;
 
@@ -87,10 +87,10 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 	else
 	*/
 	fp=0;
-	destroyList.Clear(false,__FILE__,__LINE__);
+	destroyList.Clear(false,_FILE_AND_LINE_);
 
-	sender =RakNetworkFactory::GetRakPeerInterface();
-	destroyList.Push(	sender ,__FILE__,__LINE__);
+	sender =RakPeerInterface::GetInstance();
+	destroyList.Push(	sender ,_FILE_AND_LINE_);
 	//sender->ApplyNetworkSimulator(.02, 100, 50);
 
 	/*
@@ -103,19 +103,19 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 
 	/*
 	printf("Enter remote IP: ");
-	gets(ip);
+	Gets(ip, sizeof(ip));
 	if (ip[0]==0)*/
 	strcpy(ip, "127.0.0.1");
 
 	/*
 	printf("Enter remote port: ");
-	gets(str);
+	Gets(str, sizeof(str));
 	if (str[0]==0)*/
 	strcpy(str, "60000");
 	remotePort=atoi(str);
 	/*
 	printf("Enter local port: ");
-	gets(str);
+	Gets(str, sizeof(str));
 	if (str[0]==0)*/
 	strcpy(str, "0");
 	localPort=atoi(str);
@@ -123,15 +123,15 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 	if (isVerbose)
 		printf("Connecting...\n");
 
-	sender->Startup(1, 30, &SocketDescriptor(localPort,0), 1);
+	sender->Startup(1, &SocketDescriptor(localPort,0), 1);
 	sender->Connect(ip, remotePort, 0, 0);
 
-	receiver =RakNetworkFactory::GetRakPeerInterface();
-	destroyList.Push(	receiver ,__FILE__,__LINE__);
+	receiver =RakPeerInterface::GetInstance();
+	destroyList.Push(	receiver ,_FILE_AND_LINE_);
 
 	/*
 	printf("Enter local port: ");
-	gets(str);
+	Gets(str, sizeof(str));
 	if (str[0]==0)*/
 	strcpy(str, "60000");
 	localPort=atoi(str);
@@ -139,7 +139,7 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 	if (isVerbose)
 		printf("Waiting for connections...\n");
 
-	receiver->Startup(32, 30, &SocketDescriptor(localPort,0), 1);
+	receiver->Startup(32, &SocketDescriptor(localPort,0), 1);
 	receiver->SetMaximumIncomingConnections(32);
 
 	//	if (sender)
@@ -148,11 +148,11 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 	//		receiver->ApplyNetworkSimulator(128000, 50, 100);
 
 	/*printf("How long to run this test for, in seconds?\n");
-	gets(str);
+	Gets(str, sizeof(str));
 	if (str[0]==0)*/
 	strcpy(str, "12");
 
-	currentTime = RakNet::GetTime();
+	currentTime = GetTimeMS();
 	quitTime = atoi(str) * 1000 + currentTime;
 
 	nextSend=currentTime;
@@ -320,7 +320,7 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 
 		RakSleep(0);
 
-		currentTime=RakNet::GetTime();
+		currentTime=GetTimeMS();
 	}
 
 	if (isVerbose)
@@ -344,17 +344,17 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 	return 0;
 }
 
-RakNet::RakString ReliableOrderedConvertedTest::GetTestName()
+RakString ReliableOrderedConvertedTest::GetTestName()
 {
 
 	return "ReliableOrderedConvertedTest";
 
 }
 
-RakNet::RakString ReliableOrderedConvertedTest::ErrorCodeToString(int errorCode)
+RakString ReliableOrderedConvertedTest::ErrorCodeToString(int errorCode)
 {
 
-	RakNet::RakString returnString;
+	RakString returnString;
 
 	switch (errorCode)
 	{
@@ -387,6 +387,6 @@ void ReliableOrderedConvertedTest::DestroyPeers()
 	int theSize=destroyList.Size();
 
 	for (int i=0; i < theSize; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+		RakPeerInterface::DestroyInstance(destroyList[i]);
 
 }

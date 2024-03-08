@@ -22,7 +22,7 @@ namespace RakNet
 		virtual ~SQLiteClientLogger_RakNetStatistics();
 		virtual void Update(void);
 	protected:
-		RakNetTimeUS lastUpdate;
+		RakNet::TimeUS lastUpdate;
 	};
 }
 

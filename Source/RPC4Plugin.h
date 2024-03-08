@@ -12,15 +12,13 @@
 #ifndef __RPC_4_PLUGIN_H
 #define __RPC_4_PLUGIN_H
 
-class RakPeerInterface;
-class NetworkIDManager;
 #include "PluginInterface2.h"
 #include "PacketPriority.h"
 #include "RakNetTypes.h"
 #include "BitStream.h"
 #include "RakString.h"
 #include "NetworkIDObject.h"
-#include "DS_StringKeyedHash.h"
+#include "DS_Hash.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -33,6 +31,10 @@ class NetworkIDManager;
 
 namespace RakNet
 {
+/// Forward declarations
+class RakPeerInterface;
+class NetworkIDManager;
+
 	/// \brief Error codes returned by a remote system as to why an RPC function call cannot execute
 	/// \details Error code follows packet ID ID_RPC_REMOTE_ERROR, that is packet->data[1]<BR>
 	/// Name of the function will be appended starting at packet->data[2]
@@ -43,18 +45,22 @@ namespace RakNet
 		RPC_ERROR_FUNCTION_NOT_REGISTERED,
 	};
 
-	/// \brief The RPC4Plugin plugin is just an association between a C function pointer and a string.
+	/// \brief The RPC4 plugin is just an association between a C function pointer and a string.
 	/// \details It is for users that want to use RPC, but do not want to use boost.
 	/// You do not have the automatic serialization or other features of RPC3, and C++ member calls are not supported.
+	/// \note You cannot use RPC4 at the same time as RPC3Plugin
 	/// \ingroup RPC_PLUGIN_GROUP
-	class RPC4Plugin : public PluginInterface2
+	class RPC4 : public PluginInterface2
 	{
 	public:
+		// GetInstance() and DestroyInstance(instance*)
+		STATIC_FACTORY_DECLARATIONS(RPC4)
+
 		// Constructor
-		RPC4Plugin();
+		RPC4();
 
 		// Destructor
-		virtual ~RPC4Plugin();
+		virtual ~RPC4();
 
 		/// \brief Register a function pointer to be callable from a remote system
 		/// \details The hash of the function name will be stored as an association with the function pointer
@@ -91,7 +97,7 @@ namespace RakNet
 		// --------------------------------------------------------------------------------------------
 		virtual PluginReceiveResult OnReceive(Packet *packet);
 
-		DataStructures::StringKeyedHash<void ( * ) ( RakNet::BitStream *, Packet * ),64> registeredFunctions;
+		DataStructures::Hash<RakNet::RakString, void ( * ) ( RakNet::BitStream *, Packet * ),64, RakNet::RakString::ToInteger> registeredFunctions;
 
 	};
 

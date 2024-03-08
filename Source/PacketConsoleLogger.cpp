@@ -1,9 +1,10 @@
 #include "NativeFeatureIncludes.h"
 #if _RAKNET_SUPPORT_LogCommandParser==1 && _RAKNET_SUPPORT_PacketLogger==1
-
 #include "PacketConsoleLogger.h"
 #include "LogCommandParser.h"
 #include <stdio.h>
+
+using namespace RakNet;
 
 PacketConsoleLogger::PacketConsoleLogger()
 {

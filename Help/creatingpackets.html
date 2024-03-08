@@ -132,7 +132,7 @@ Packets with structs</td>
   struct structName<br>
   {<br>
   unsigned char useTimeStamp; // Assign ID_TIMESTAMP to this<br>
-  RakNetTime timeStamp; // Put the system time in here returned by RakNet::GetTime() or some other method that returns a similar value<br>
+  RakNet::Time timeStamp; // Put the system time in here returned by RakNet::GetTime() or some other method that returns a similar value<br>
   unsigned char typeId; // Your type here<br>
   // Your data here<br>
   };<br>
@@ -144,7 +144,7 @@ Packets with structs</td>
   struct structName<br>
   {<br>
   unsigned char useTimeStamp; // Assign ID_TIMESTAMP to this<br>
-  RakNetTime timeStamp; // Put the system time in here returned by RakNet::GetTime()<br>
+  RakNet::Time timeStamp; // Put the system time in here returned by RakNet::GetTime()<br>
   unsigned char typeId; // You should put here an enum you defined after the last one defined in MessageIdentifiers.h, lets say ID_SET_TIMED_MINE<br>
   float x,y,z; // Mine position<br>
   NetworkID networkId; // NetworkID of the mine, used as a common method to refer to the mine on different computers<br>
@@ -221,7 +221,7 @@ Packets with Bitstreams</span></td>
   instead. We have all the same data as before.<br>
   <br>
   <span class="RakNetCode">    MessageID useTimeStamp; // Assign this to ID_TIMESTAMP<br>
-    RakNetTime timeStamp; // Put the system time in here returned by RakNet::GetTime()<br>
+    RakNet::Time timeStamp; // Put the system time in here returned by RakNet::GetTime()<br>
     MessageID typeId; // This will be assigned to a type I've added after ID_USER_PACKET_ENUM, lets say ID_SET_TIMED_MINE<br>
     useTimeStamp = ID_TIMESTAMP;<br>
     timeStamp = RakNet::GetTime();<br>
@@ -243,7 +243,7 @@ Packets with Bitstreams</span></td>
   at 0,0,0 for some reason. We can then do this instead:<br>
   <span class="RakNetCode"><br>
     unsigned char useTimeStamp; // Assign this to ID_TIMESTAMP<br>
-    RakNetTime timeStamp; // Put the system time in here returned by RakNet::GetTime()<br>
+    RakNet::Time timeStamp; // Put the system time in here returned by RakNet::GetTime()<br>
     unsigned char typeId; // This will be assigned to a type I've added after ID_USER_PACKET_ENUM, lets say ID_SET_TIMED_MINE<br>
     useTimeStamp = ID_TIMESTAMP;<br>
     timeStamp = RakNet::GetTime();<br>

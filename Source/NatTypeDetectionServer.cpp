@@ -13,6 +13,8 @@
 
 using namespace RakNet;
 
+STATIC_FACTORY_DEFINITIONS(NatTypeDetectionServer,NatTypeDetectionServer);
+
 NatTypeDetectionServer::NatTypeDetectionServer()
 {
 	s1p2=s2p3=s3p4=s4p5=INVALID_SOCKET;
@@ -66,7 +68,7 @@ void NatTypeDetectionServer::Shutdown()
 void NatTypeDetectionServer::Update(void)
 {
 	int i=0;
-	RakNetTimeMS time = RakNet::GetTime();
+	RakNet::TimeMS time = RakNet::GetTimeMS();
 	RakNet::BitStream bs;
 	SystemAddress boundAddress;
 
@@ -115,7 +117,7 @@ void NatTypeDetectionServer::Update(void)
 		}
 		else
 		{
-			RakAssert("Didn't read GUID in Update in NatTypeDetectionServer.cpp. Message format error" && 0);
+		//	RakAssert("Didn't read GUID in Update in NatTypeDetectionServer.cpp. Message format error" && 0);
 		}
 
 		len=NatTypeRecvFrom(data, s3p4, senderAddr);
@@ -220,7 +222,7 @@ void NatTypeDetectionServer::OnDetectionRequest(Packet *packet)
 		bsIn.Read(nda.c2Port);
 		nda.nextStateTime=0;
 		nda.timeBetweenAttempts=rakPeerInterface->GetLastPing(nda.systemAddress)*3+50;
-		natDetectionAttempts.Push(nda, __FILE__, __LINE__);
+		natDetectionAttempts.Push(nda, _FILE_AND_LINE_);
 	}
 	else
 	{

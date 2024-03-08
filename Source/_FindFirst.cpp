@@ -7,9 +7,9 @@
 #include "DS_List.h"
 
 #include <sys/stat.h>
-
+#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
 #include <fnmatch.h>
-
+#endif
 
 static DataStructures::List< _findinfo_t* > fileInfo;
 	
@@ -44,11 +44,11 @@ long _findfirst(const char *name, _finddata_t *f)
         
 	if(!dir) return -1;
 
-	_findinfo_t* fi = RakNet::OP_NEW<_findinfo_t>( __FILE__, __LINE__ );
+	_findinfo_t* fi = RakNet::OP_NEW<_findinfo_t>( _FILE_AND_LINE_ );
 	fi->filter    = filter;
 	fi->dirName   = nameCopy;  // we need to remember this for stat()
 	fi->openedDir = dir;
-	fileInfo.Insert(fi, __FILE__, __LINE__);
+	fileInfo.Insert(fi, _FILE_AND_LINE_);
 
         long ret = fileInfo.Size()-1;
 
@@ -58,36 +58,9 @@ long _findfirst(const char *name, _finddata_t *f)
         else return ret;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+#else
 int _findnext(long h, _finddata_t *f)
 {
 	RakAssert(h >= 0 && h < (long)fileInfo.Size());
@@ -132,7 +105,7 @@ int _findnext(long h, _finddata_t *f)
 
 	return -1;
 }
-
+#endif
 
 
 
@@ -153,7 +126,7 @@ int _findclose(long h)
     _findinfo_t* fi = fileInfo[h];
     closedir(fi->openedDir);
     fileInfo.RemoveAtIndex(h);
-    RakNet::OP_DELETE(fi, __FILE__, __LINE__);
+    RakNet::OP_DELETE(fi, _FILE_AND_LINE_);
     return 0;   
 }
 #endif

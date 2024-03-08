@@ -1,5 +1,4 @@
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
 #include <stdio.h>
 #include "Kbhit.h"
 #include <string.h>
@@ -13,6 +12,7 @@
 #include "RakAssert.h"
 #include "SocketLayer.h"
 #include "Getche.h"
+#include "Gets.h"
 
 using namespace RakNet;
 
@@ -101,11 +101,11 @@ int main(void)
 
 	endpointGuid=UNASSIGNED_RAKNET_GUID;
 	char str[64], str2[64];
-	rakPeer=RakNetworkFactory::GetRakPeerInterface();
+	rakPeer=RakNet::RakPeerInterface::GetInstance();
 
 	rakPeer->SetMaximumIncomingConnections(32);
 	SocketDescriptor sd(0,0);
-	rakPeer->Startup(32,0,&sd,1);
+	rakPeer->Startup(32,&sd,1);
 	printf("Enter 'c' to connect, 'r' to start routing, 'q' to quit.\n");
 
 	rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString(str);
@@ -132,7 +132,7 @@ int main(void)
 				do
 				{
 					printf("Enter destination guid: ");
-					gets(str2);
+					Gets(str2,sizeof(str2));
 				} while (str2[0]==0);				
 
 				RakNetGUID destinationGuid;
@@ -142,13 +142,13 @@ int main(void)
 			if (ch=='c')
 			{
 				printf("Enter IP address to connect to: ");
-				gets(str);
+				Gets(str,sizeof(str));
 				if (str[0]==0)
 					strcpy(str, "127.0.0.1");
 				do
 				{
 					printf("Enter port to connect to: ");
-					gets(str2);
+					Gets(str2,sizeof(str2));
 				} while (str2[0]==0);
 
 				// Connect
@@ -160,6 +160,6 @@ int main(void)
 		ReadAllPackets();
 	}
 
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 	delete router2Plugin;
 }

@@ -14,7 +14,7 @@ Connect fails without pending ops or current connection.
 
 */
 
-int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int ComprehensiveConvertTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 
 	static const int CONNECTIONS_PER_SYSTEM =4;
@@ -49,14 +49,11 @@ int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> pa
 		//autoRpcs[i].RegisterFunction("RPC2", RPC2, false);
 		//autoRpcs[i].RegisterFunction("RPC3", RPC3, false);
 		//autoRpcs[i].RegisterFunction("RPC4", RPC4, false);
-		peers[i]=RakNetworkFactory::GetRakPeerInterface();
+		peers[i]=RakPeerInterface::GetInstance();
 		peers[i]->SetMaximumIncomingConnections(CONNECTIONS_PER_SYSTEM);
 		SocketDescriptor socketDescriptor(60000+i, 0);
-		peers[i]->Startup(NUM_PEERS, 0, &socketDescriptor, 1);
+		peers[i]->Startup(NUM_PEERS, &socketDescriptor, 1);
 		peers[i]->SetOfflinePingResponse("Offline Ping Data", (int)strlen("Offline Ping Data")+1);
-		peers[i]->ApplyNetworkSimulator(500,50,50);
-
-		//		peers[i]->AttachPlugin(&autoRpc[i]);
 
 	}
 
@@ -67,9 +64,10 @@ int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> pa
 
 		currentSystem.SetBinaryAddress("127.0.0.1");
 		currentSystem.port=60000+portAdd;
-		if(!peers[i]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
+		if(!CommonFunctions::ConnectionStateMatchesOptions (peers[i],currentSystem,true,true,true,true) )//Are we connected or is there a pending operation ?
 		{
-			if (!peers[i]->Connect("127.0.0.1", 60000+portAdd, 0, 0))
+			ConnectionAttemptResult resultReturn = peers[i]->Connect("127.0.0.1", 60000+portAdd, 0, 0);
+			if (resultReturn!=CONNECTION_ATTEMPT_STARTED && resultReturn!=ALREADY_CONNECTED_TO_ENDPOINT)
 			{
 				DebugTools::ShowError("Problem while calling connect.\n",!noPauses && isVerbose,__LINE__,__FILE__);
 				return 1;
@@ -80,8 +78,8 @@ int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> pa
 
 	}
 
-	RakNetTime endTime = RakNet::GetTime()+10000;
-	while (RakNet::GetTime()<endTime)
+	TimeMS endTime = GetTimeMS()+10000;
+	while (GetTimeMS()<endTime)
 	{
 		nextAction = frandomMT();
 
@@ -90,14 +88,17 @@ int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> pa
 			// Initialize
 			peerIndex=randomMT()%NUM_PEERS;
 			SocketDescriptor socketDescriptor(60000+peerIndex, 0);
-			peers[peerIndex]->Startup(NUM_PEERS, randomMT()%30, &socketDescriptor, 1);
+			peers[peerIndex]->Startup(NUM_PEERS, &socketDescriptor, 1);
 			portAdd=randomMT()%NUM_PEERS;
 
 			currentSystem.SetBinaryAddress("127.0.0.1");
 			currentSystem.port=60000+portAdd;
-			if(!peers[peerIndex]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
+			
+			
+			if(!CommonFunctions::ConnectionStateMatchesOptions (peers[peerIndex],currentSystem,true,true,true,true) )//Are we connected or is there a pending operation ?
 			{
-				if(!peers[peerIndex]->Connect("127.0.0.1", 60000+portAdd, 0, 0))
+				ConnectionAttemptResult resultReturn = peers[peerIndex]->Connect("127.0.0.1", 60000+portAdd, 0, 0);
+				if (resultReturn!=CONNECTION_ATTEMPT_STARTED && resultReturn!=ALREADY_CONNECTED_TO_ENDPOINT)
 				{
 					DebugTools::ShowError("Problem while calling connect.\n",!noPauses && isVerbose,__LINE__,__FILE__);
 					return 1;
@@ -114,9 +115,10 @@ int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> pa
 
 			currentSystem.SetBinaryAddress("127.0.0.1");
 			currentSystem.port=60000+portAdd;
-			if(!peers[peerIndex]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
+			if(!CommonFunctions::ConnectionStateMatchesOptions (peers[peerIndex],currentSystem,true,true,true,true) )//Are we connected or is there a pending operation ?
 			{
-				if (!peers[peerIndex]->Connect("127.0.0.1", 60000+portAdd, 0, 0))
+				ConnectionAttemptResult resultReturn = peers[peerIndex]->Connect("127.0.0.1", 60000+portAdd, 0, 0);
+				if (resultReturn!=CONNECTION_ATTEMPT_STARTED && resultReturn!=ALREADY_CONNECTED_TO_ENDPOINT)
 				{
 					DebugTools::ShowError("Problem while calling connect.\n",!noPauses && isVerbose,__LINE__,__FILE__);
 					return 1;
@@ -247,7 +249,6 @@ int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> pa
 		{
 			// SetCompileFrequencyTable
 			peerIndex=randomMT()%NUM_PEERS;
-			peers[peerIndex]->SetCompileFrequencyTable((randomMT()%2)>0);
 		}
 		else if (nextAction < .25f)
 		{
@@ -293,18 +294,18 @@ void ComprehensiveConvertTest::DestroyPeers()
 {
 
 for (int i=0; i < NUM_PEERS; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(peers[i]);
+		RakPeerInterface::DestroyInstance(peers[i]);
 
 }
 
-RakNet::RakString ComprehensiveConvertTest::GetTestName()
+RakString ComprehensiveConvertTest::GetTestName()
 {
 
 	return "ComprehensiveConvertTest";
 
 }
 
-RakNet::RakString ComprehensiveConvertTest::ErrorCodeToString(int errorCode)
+RakString ComprehensiveConvertTest::ErrorCodeToString(int errorCode)
 {
 
 	switch (errorCode)

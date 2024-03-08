@@ -1,11 +1,11 @@
-import gfx.io.GameDelegate;
+﻿import flash.external.*;
 
 function f2c_LeaveRoom()
 {
-	GameDelegate.call("f2c_LeaveRoom", [], this);
+	ExternalInterface.call("f2c_LeaveRoom");
 }
 
-GameDelegate.addCallBack("c2f_LeaveRoom", this, "c2f_LeaveRoom");
+ExternalInterface.addCallback("c2f_LeaveRoom", this, c2f_LeaveRoom);
 function c2f_LeaveRoom(resultCode:String):Void
 {
 	if (resultCode=="REC_SUCCESS")
@@ -27,10 +27,10 @@ function c2f_LeaveRoom(resultCode:String):Void
 inviteFriendButton.addEventListener("click", this, "f2c_SendInvite");
 function f2c_SendInvite()
 {
-	GameDelegate.call("f2c_SendInvite", [playerNameTextInput.text,false], this);
+	ExternalInterface.call("f2c_SendInvite", playerNameTextInput.text,false);
 }
 
-GameDelegate.addCallBack("c2f_SendInvite", this, "c2f_SendInvite");
+ExternalInterface.addCallback("c2f_SendInvite", this, c2f_SendInvite);
 function c2f_SendInvite(resultCode:String, inviteeName:String, inviteToSpectatorSlot:Boolean ):Void
 {
 	if (resultCode=="REC_SUCCESS")
@@ -58,10 +58,10 @@ function c2f_SendInvite(resultCode:String, inviteeName:String, inviteToSpectator
 startSpectatingButton.addEventListener("click", this, "f2c_StartSpectating");
 function f2c_StartSpectating()
 {
-	GameDelegate.call("f2c_StartSpectating", [], this);
+	ExternalInterface.call("f2c_StartSpectating");
 }
 
-GameDelegate.addCallBack("c2f_StartSpectating", this, "c2f_StartSpectating");
+ExternalInterface.addCallback("c2f_StartSpectating", this, c2f_StartSpectating);
 function c2f_StartSpectating(resultCode:String):Void
 {
 	if (resultCode=="REC_SUCCESS")
@@ -84,10 +84,10 @@ function c2f_StartSpectating(resultCode:String):Void
 stopSpectatingButton.addEventListener("click", this, "f2c_StopSpectating");
 function f2c_StopSpectating()
 {
-	GameDelegate.call("f2c_StopSpectating", [], this);
+	ExternalInterface.call("f2c_StopSpectating");
 }
 
-GameDelegate.addCallBack("c2f_StopSpectating", this, "c2f_StopSpectating");
+ExternalInterface.addCallback("c2f_StopSpectating", this, c2f_StopSpectating);
 function c2f_StopSpectating(resultCode:String):Void
 {
 	if (resultCode=="REC_SUCCESS")
@@ -109,10 +109,10 @@ function c2f_StopSpectating(resultCode:String):Void
 makeModeratorButton.addEventListener("click", this, "f2c_GrantModerator");
 function f2c_GrantModerator()
 {
-	GameDelegate.call("f2c_GrantModerator", [playerNameTextInput.text], this);
+	ExternalInterface.call("f2c_GrantModerator", playerNameTextInput.text);
 }
 
-GameDelegate.addCallBack("c2f_GrantModerator", this, "c2f_GrantModerator");
+ExternalInterface.addCallback("c2f_GrantModerator", this, c2f_GrantModerator);
 function c2f_GrantModerator(resultCode:String, newModerator:String):Void
 {
 	if (resultCode=="REC_SUCCESS")
@@ -139,14 +139,14 @@ unreadyButton.addEventListener("click", this, "f2c_SetReadyStatus_false");
 
 function f2c_SetReadyStatus_true()
 {
-	GameDelegate.call("f2c_SetReadyStatus", [true], this);
+	ExternalInterface.call("f2c_SetReadyStatus", true);
 }
 function f2c_SetReadyStatus_false()
 {
-	GameDelegate.call("f2c_SetReadyStatus", [false], this);
+	ExternalInterface.call("f2c_SetReadyStatus", false);
 }
 
-GameDelegate.addCallBack("c2f_SetReadyStatus", this, "c2f_SetReadyStatus");
+ExternalInterface.addCallback("c2f_SetReadyStatus", this, c2f_SetReadyStatus);
 function c2f_SetReadyStatus():Void
 {
 	var resultCode:String = arguments[0];
@@ -182,10 +182,10 @@ function c2f_SetReadyStatus():Void
 
 function f2c_GetReadyStatus()
 {
-	GameDelegate.call("f2c_GetReadyStatus", [], this);
+	ExternalInterface.call("f2c_GetReadyStatus");
 }
 
-GameDelegate.addCallBack("c2f_GetReadyStatus", this, "c2f_GetReadyStatus");
+ExternalInterface.addCallback("c2f_GetReadyStatus", this, c2f_GetReadyStatus);
 function c2f_GetReadyStatus(resultCode:String):Void
 {
 	if (resultCode=="REC_SUCCESS")
@@ -221,17 +221,17 @@ function f2c_SetRoomLockState_Locked()
 // NOT_LOCKED
 // PLAYERS_LOCKED
 // ALL_LOCKED
-	GameDelegate.call("f2c_SetRoomLockState", ["ALL_LOCKED"], this);
+	ExternalInterface.call("f2c_SetRoomLockState", "ALL_LOCKED");
 }
 function f2c_SetRoomLockState_Unlocked()
 {
 // NOT_LOCKED
 // PLAYERS_LOCKED
 // ALL_LOCKED
-	GameDelegate.call("f2c_SetRoomLockState", ["NOT_LOCKED"], this);
+	ExternalInterface.call("f2c_SetRoomLockState", "NOT_LOCKED");
 }
 
-GameDelegate.addCallBack("c2f_SetRoomLockState", this, "c2f_SetRoomLockState");
+ExternalInterface.addCallback("c2f_SetRoomLockState", this, c2f_SetRoomLockState);
 function c2f_SetRoomLockState(resultCode:String, roomLockState:String):Void
 {
 	if (resultCode=="REC_SUCCESS")
@@ -260,10 +260,10 @@ function c2f_SetRoomLockState(resultCode:String, roomLockState:String):Void
 
 function f2c_GetRoomLockState()
 {
-	GameDelegate.call("f2c_GetRoomLockState", [], this);
+	ExternalInterface.call("f2c_GetRoomLockState");
 }
 
-GameDelegate.addCallBack("c2f_GetRoomLockState", this, "c2f_GetRoomLockState");
+ExternalInterface.addCallback("c2f_GetRoomLockState", this, c2f_GetRoomLockState);
 function c2f_GetRoomLockState(resultCode:String, roomLockState:String):Void
 {
 	if (resultCode=="REC_SUCCESS")
@@ -296,10 +296,10 @@ function c2f_GetRoomLockState(resultCode:String, roomLockState:String):Void
 
 function f2c_AreAllMembersReady()
 {
-	GameDelegate.call("f2c_AreAllMembersReady", [], this);
+	ExternalInterface.call("f2c_AreAllMembersReady");
 }
 
-GameDelegate.addCallBack("c2f_AreAllMembersReady", this, "c2f_AreAllMembersReady");
+ExternalInterface.addCallback("c2f_AreAllMembersReady", this, c2f_AreAllMembersReady);
 function c2f_AreAllMembersReady(resultCode:String, allReady:Boolean):Void
 {
 	if (resultCode=="REC_SUCCESS")
@@ -320,10 +320,10 @@ kickSelectedPlayerButton.addEventListener("click", this, "f2c_KickMember");
 function f2c_KickMember()
 {
 	var memberName:String = roomMembersScrollingList.dataProvider[roomMembersScrollingList.selectedIndex];
-	GameDelegate.call("f2c_KickMember", [memberName,"Reason goes here"], this);
+	ExternalInterface.call("f2c_KickMember", memberName,"Reason goes here");
 }
 
-GameDelegate.addCallBack("c2f_KickMember", this, "c2f_KickMember");
+ExternalInterface.addCallback("c2f_KickMember", this, c2f_KickMember);
 function c2f_KickMember(resultCode:String, kickedMember:String, reason:String):Void
 {
 	if (resultCode=="REC_SUCCESS")
@@ -346,9 +346,9 @@ function c2f_KickMember(resultCode:String, kickedMember:String, reason:String):V
 sendChatMessageButton.addEventListener("click", this, "f2c_Room_Chat_Func");
 function f2c_Room_Chat_Func()
 {
-	GameDelegate.call("f2c_Room_Chat_Func", [chatTextInput.text], this);
+	ExternalInterface.call("f2c_Room_Chat_Func", chatTextInput.text);
 }
-GameDelegate.addCallBack("c2f_Chat_Callback", this, "c2f_Chat_Callback");
+ExternalInterface.addCallback("c2f_Chat_Callback", this, c2f_Chat_Callback);
 function c2f_Chat_Callback(resultCode:String, chatRecipient:String, chatTextInput:String):Void
 {
 	if (resultCode=="REC_SUCCESS")
@@ -370,7 +370,7 @@ function c2f_Chat_Callback(resultCode:String, chatRecipient:String, chatTextInpu
 	}
 }
 
-GameDelegate.addCallBack("c2f_Chat_Notification", this, "c2f_Chat_Notification");
+ExternalInterface.addCallback("c2f_Chat_Notification", this, c2f_Chat_Notification);
 function c2f_Chat_Notification(sender:String, chatRecipient:String, chatTextInput:String, profanityFilteredTextInput:String ):Void
 {
 	chatTextArea.text+=sender + " << " + chatTextInput + "\n";
@@ -378,9 +378,9 @@ function c2f_Chat_Notification(sender:String, chatRecipient:String, chatTextInpu
 startGameButton.addEventListener("click", this, "f2c_StartGame");
 function f2c_StartGame()
 {
-	GameDelegate.call("f2c_StartGame", [], this);
+	ExternalInterface.call("f2c_StartGame");
 }
-GameDelegate.addCallBack("c2f_StartGame", this, "c2f_StartGame");
+ExternalInterface.addCallback("c2f_StartGame", this, c2f_StartGame);
 function c2f_StartGame( resultCode:String ):Void
 {
 	// Result of asking C++ to start the game
@@ -398,26 +398,26 @@ function c2f_StartGame( resultCode:String ):Void
 
 	}
 }
-GameDelegate.addCallBack("c2f_StartGame_Notification", this, "c2f_StartGame_Notification");
+ExternalInterface.addCallback("c2f_StartGame_Notification", this, c2f_StartGame_Notification);
 function c2f_StartGame_Notification( ):Void
 {
 	// Tell actionscript that C++ start the game
 }
 
-GameDelegate.addCallBack("c2f_RoomMemberStartedSpectating_Callback", this, "c2f_RoomMemberStartedSpectating_Callback")
+ExternalInterface.addCallback("c2f_RoomMemberStartedSpectating_Callback", this, c2f_RoomMemberStartedSpectating_Callback)
 function c2f_RoomMemberStartedSpectating_Callback( userName:String ):Void
 {
 }
-GameDelegate.addCallBack("c2f_RoomMemberStoppedSpectating_Callback", this, "c2f_RoomMemberStoppedSpectating_Callback")
+ExternalInterface.addCallback("c2f_RoomMemberStoppedSpectating_Callback", this, c2f_RoomMemberStoppedSpectating_Callback)
 function c2f_RoomMemberStoppedSpectating_Callback( userName:String ):Void
 {
 }
 
-GameDelegate.addCallBack("c2f_ModeratorChanged_Callback", this, "c2f_ModeratorChanged_Callback")
+ExternalInterface.addCallback("c2f_ModeratorChanged_Callback", this, c2f_ModeratorChanged_Callback)
 function c2f_ModeratorChanged_Callback( newModerator:String, oldModerator:String ):Void
 {
 }
-GameDelegate.addCallBack("c2f_RoomMemberReadyStatusSet_Callback", this, "c2f_RoomMemberReadyStatusSet_Callback")
+ExternalInterface.addCallback("c2f_RoomMemberReadyStatusSet_Callback", this, c2f_RoomMemberReadyStatusSet_Callback)
 function c2f_RoomMemberReadyStatusSet_Callback( ):Void
 {
 	var isReady:Boolean = arguments[0];
@@ -439,7 +439,7 @@ function c2f_RoomMemberReadyStatusSet_Callback( ):Void
 		var roomMemberName = arguments[argumentIndex++];
 	}	
 }
-GameDelegate.addCallBack("c2f_RoomLockStateSet_Callback", this, "c2f_RoomLockStateSet_Callback")
+ExternalInterface.addCallback("c2f_RoomLockStateSet_Callback", this, c2f_RoomLockStateSet_Callback)
 function c2f_RoomLockStateSet_Callback(  roomLockState:String ):Void
 {
 	// NOT_LOCKED
@@ -480,23 +480,23 @@ function AddToRoomMembersList(roomMember:String)
 	roomMembersScrollingList.dataProvider.push(roomMember);
 	roomMembersScrollingList.dataProvider.invalidate();
 }
-GameDelegate.addCallBack("c2f_RoomMemberKicked_Callback", this, "c2f_RoomMemberKicked_Callback")
+ExternalInterface.addCallback("c2f_RoomMemberKicked_Callback", this, c2f_RoomMemberKicked_Callback)
 function c2f_RoomMemberKicked_Callback( roomMember:String, moderator:String, reason:String ):Void
 {
 	RemoveFromRoomMembersList(roomMember);
 	
 }
-GameDelegate.addCallBack("c2f_RoomMemberLeftRoom_Callback", this, "c2f_RoomMemberLeftRoom_Callback")
+ExternalInterface.addCallback("c2f_RoomMemberLeftRoom_Callback", this, c2f_RoomMemberLeftRoom_Callback)
 function c2f_RoomMemberLeftRoom_Callback( roomMember:String ):Void
 {
 	RemoveFromRoomMembersList(roomMember);
 }
-GameDelegate.addCallBack("c2f_RoomMemberJoinedRoom_Callback", this, "c2f_RoomMemberJoinedRoom_Callback")
+ExternalInterface.addCallback("c2f_RoomMemberJoinedRoom_Callback", this,c2f_RoomMemberJoinedRoom_Callback)
 function c2f_RoomMemberJoinedRoom_Callback( acceptedInvitorName:String, acceptedInvitorAddress:String, joiningMemberName:String, joiningMemberAddress:String ):Void
 {
 	AddToRoomMembersList(joiningMemberName);
 }
-GameDelegate.addCallBack("c2f_RoomDestroyedOnModeratorLeft_Callback", this, "c2f_RoomDestroyedOnModeratorLeft_Callback")
+ExternalInterface.addCallback("c2f_RoomDestroyedOnModeratorLeft_Callback", this, c2f_RoomDestroyedOnModeratorLeft_Callback)
 function c2f_RoomDestroyedOnModeratorLeft_Callback( oldModerator:String ):Void
 {
 	trace("The room was destroyed.");
@@ -505,9 +505,9 @@ function c2f_RoomDestroyedOnModeratorLeft_Callback( oldModerator:String ):Void
 
 function f2c_GetRoomProperties()
 {
-	GameDelegate.call("f2c_GetRoomProperties", [], this);
+	ExternalInterface.call("f2c_GetRoomProperties");
 }
-GameDelegate.addCallBack("c2f_GetRoomProperties", this, "c2f_GetRoomProperties")
+ExternalInterface.addCallback("c2f_GetRoomProperties", this, c2f_GetRoomProperties)
 function c2f_GetRoomProperties( ):Void
 {
 	var resultCode:String = arguments[0];

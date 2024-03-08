@@ -5,7 +5,7 @@
 #include "Rand.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
-#include "RakNetworkFactory.h"
+
 #include "FullyConnectedMesh2.h"
 #include "ConnectionGraph2.h"
 #include <assert.h>
@@ -13,9 +13,9 @@
 #include "RakSleep.h"
 
 static const int NUM_PEERS=8;
-RakPeerInterface *rakPeer[NUM_PEERS];
-FullyConnectedMesh2 fullyConnectedMeshPlugin[NUM_PEERS];
-ConnectionGraph2 connectionGraphPlugin[NUM_PEERS];
+RakNet::RakPeerInterface *rakPeer[NUM_PEERS];
+RakNet::FullyConnectedMesh2 fullyConnectedMeshPlugin[NUM_PEERS];
+RakNet::ConnectionGraph2 connectionGraphPlugin[NUM_PEERS];
 void PrintConnections(void);
 
 int main(void)
@@ -23,7 +23,7 @@ int main(void)
 	int i;
 
 	for (i=0; i < NUM_PEERS; i++)
-		rakPeer[i]=RakNetworkFactory::GetRakPeerInterface();
+		rakPeer[i]=RakNet::RakPeerInterface::GetInstance();
 
 	printf("This project tests and demonstrates the fully connected mesh plugin.\n");
 	printf("No data is actually sent so it's mostly a sample of how to use a plugin.\n");
@@ -44,8 +44,8 @@ int main(void)
 	// Initialize the peers
 	for (peerIndex=0; peerIndex < NUM_PEERS; peerIndex++)
 	{
-		SocketDescriptor socketDescriptor(60000+peerIndex,0);
-		rakPeer[peerIndex]->Startup(NUM_PEERS, 0, &socketDescriptor, 1);
+		RakNet::SocketDescriptor socketDescriptor(60000+peerIndex,0);
+		rakPeer[peerIndex]->Startup(NUM_PEERS, &socketDescriptor, 1);
 	}
 
 	// Give the threads time to properly start
@@ -71,8 +71,8 @@ int main(void)
 	// Reinitialize the peers
 	for (peerIndex=0; peerIndex < NUM_PEERS; peerIndex++)
 	{
-		SocketDescriptor socketDescriptor(60000+peerIndex,0);
-		rakPeer[peerIndex]->Startup(NUM_PEERS, 0,&socketDescriptor, 1 );
+		RakNet::SocketDescriptor socketDescriptor(60000+peerIndex,0);
+		rakPeer[peerIndex]->Startup(NUM_PEERS,&socketDescriptor, 1 );
 	}
 
 	printf("Connecting each peer to a central peer.\n");
@@ -93,8 +93,8 @@ int main(void)
 	// Reinitialize the peers
 	for (peerIndex=0; peerIndex < NUM_PEERS; peerIndex++)
 	{
-		SocketDescriptor socketDescriptor(60000+peerIndex,0);
-		rakPeer[peerIndex]->Startup(NUM_PEERS, 0, &socketDescriptor, 1);
+		RakNet::SocketDescriptor socketDescriptor(60000+peerIndex,0);
+		rakPeer[peerIndex]->Startup(NUM_PEERS, &socketDescriptor, 1);
 	}
 
 	printf("Cross connecting each pair of peers, then first and last peer.\n");
@@ -119,12 +119,12 @@ int main(void)
 	// Reinitialize the peers
 	for (peerIndex=0; peerIndex < NUM_PEERS; peerIndex++)
 	{
-		SocketDescriptor socketDescriptor(60000+peerIndex,0);
-		rakPeer[peerIndex]->Startup(NUM_PEERS, 0, &socketDescriptor, 1);
+		RakNet::SocketDescriptor socketDescriptor(60000+peerIndex,0);
+		rakPeer[peerIndex]->Startup(NUM_PEERS, &socketDescriptor, 1);
 	}
 
 
-	unsigned int seed = (unsigned int) RakNet::GetTime(); 
+	unsigned int seed = (unsigned int) RakNet::GetTimeMS(); 
 	seedMT(seed);
 	printf("Connecting each peer to a random peer with seed %u.\n", seed);
 	int connectTo=0;
@@ -142,7 +142,7 @@ int main(void)
 	PrintConnections();
 
 	for (i=0; i < NUM_PEERS; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(rakPeer[i]);
+		RakNet::RakPeerInterface::DestroyInstance(rakPeer[i]);
 
 	return 1;
 }
@@ -151,8 +151,8 @@ void PrintConnections()
 {
 	int i,j;
 	char ch=0;
-	SystemAddress systemAddress;
-	Packet *packet;
+	RakNet::SystemAddress systemAddress;
+	RakNet::Packet *packet;
 	printf("Connecting.  Press space to see status or c to continue.\n");
 
 	while (ch!='c' && ch!='C')
@@ -172,7 +172,7 @@ void PrintConnections()
 					for (j=0; j < (int)fullyConnectedMeshPlugin[i].GetMeshPeerListSize(); j++)
 					{
 						systemAddress=fullyConnectedMeshPlugin[i].GetPeerIDAtIndex(j);
-						if (systemAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+						if (systemAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 							printf("%i ", systemAddress.port);
 					}
 
@@ -183,7 +183,7 @@ void PrintConnections()
 					for (j=0; j < NUM_PEERS; j++)
 					{
 						systemAddress=rakPeer[i]->GetSystemAddressFromIndex(j);
-						if (systemAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+						if (systemAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 							printf("%i ", systemAddress.port);
 					}
 
@@ -196,14 +196,14 @@ void PrintConnections()
 					for (connCount=0, j=0; j < NUM_PEERS; j++)
 					{
 						systemAddress=rakPeer[i]->GetSystemAddressFromIndex(j);
-						if (systemAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+						if (systemAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 							connCount++;
 					}
 					/*
 					for (meshCount=0, j=0; j < (int)fullyConnectedMeshPlugin[i].GetMeshPeerListSize(); j++)
 					{
 						systemAddress=fullyConnectedMeshPlugin[i].GetPeerIDAtIndex(j);
-						if (systemAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+						if (systemAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 							meshCount++;
 					}
 					*/

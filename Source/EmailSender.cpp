@@ -3,7 +3,6 @@
 
 // Useful sites
 // http://www.faqs.org\rfcs\rfc2821.html
-// http://en.wikipedia.org/wiki/Base64
 // http://www2.rad.com\networks/1995/mime/examples.htm
 
 #include "EmailSender.h"
@@ -14,17 +13,20 @@
 #include "BitStream.h"
 #include <stdio.h>
 
-
-
-
+#if defined(_XBOX) || defined(X360)
+                            
+#endif
 
 #include "RakSleep.h"
 
-static const char base64Map[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+using namespace RakNet;
+
+
+STATIC_FACTORY_DEFINITIONS(EmailSender,EmailSender);
 
 const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, const char *sender, const char *recipient, const char *senderName, const char *recipientName, const char *subject, const char *body, FileList *attachedFiles, bool doPrintf, const char *password)
 {
-	Packet *packet;
+	RakNet::Packet *packet;
 	char query[1024];
 	TCPInterface tcpInterface;
 	SystemAddress emailServer;
@@ -36,9 +38,9 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 #if  OPEN_SSL_CLIENT_SUPPORT==1
 	tcpInterface.StartSSLClient(emailServer);
 #endif
-	RakNetTime timeoutTime = RakNet::GetTime()+3000;
+	RakNet::TimeMS timeoutTime = RakNet::GetTimeMS()+3000;
 	packet=0;
-	while (RakNet::GetTime() < timeoutTime)
+	while (RakNet::GetTimeMS() < timeoutTime)
 	{
 		packet = tcpInterface.Receive();
 		if (packet)
@@ -87,7 +89,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 			return response;
 		if (password==0)
 			return "Password needed";
-		char *outputData = RakNet::OP_NEW_ARRAY<char >((const int) (strlen(sender)+strlen(password)+2)*3, __FILE__, __LINE__ );
+		char *outputData = RakNet::OP_NEW_ARRAY<char >((const int) (strlen(sender)+strlen(password)+2)*3, _FILE_AND_LINE_ );
 		RakNet::BitStream bs;
 		char zero=0;
 		bs.Write(&zero,1);
@@ -97,7 +99,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 		bs.Write(password,(const unsigned int)strlen(password));
 		bs.Write(&zero,1);
 		//bs.Write("not.my.real.password",(const unsigned int)strlen("not.my.real.password"));
-		Base64Encoding((const char*)bs.GetData(), bs.GetNumberOfBytesUsed(), outputData, base64Map);
+		TCPInterface::Base64Encoding((const char*)bs.GetData(), bs.GetNumberOfBytesUsed(), outputData);
 		sprintf(query, "AUTH PLAIN %s", outputData);
 		tcpInterface.Send(query, (unsigned int)strlen(query), emailServer,false);
 		response=GetResponse(&tcpInterface, emailServer, doPrintf);
@@ -153,10 +155,10 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 	int i,j;
 	if (attachedFiles && attachedFiles->fileList.Size())
 	{
-		seedMT((unsigned int) RakNet::GetTime());
+		rakNetRandom.SeedMT((unsigned int) RakNet::GetTimeMS());
 		// Random multipart message boundary
 		for (i=0; i < boundarySize; i++)
-			boundary[i]=base64Map[randomMT()%64];
+			boundary[i]=TCPInterface::Base64Map()[rakNetRandom.RandomMT()%64];
 		boundary[boundarySize]=0;
 	}
 
@@ -179,7 +181,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 	char *newBody;
 	int bodyLength;
 	bodyLength=(int)strlen(body);
-	newBody = (char*) rakMalloc_Ex( bodyLength*3, __FILE__, __LINE__ );
+	newBody = (char*) rakMalloc_Ex( bodyLength*3, _FILE_AND_LINE_ );
 	if (bodyLength>0)
 		newBody[0]=body[0];
 	for (i=1, j=1; i < bodyLength; i++)
@@ -248,7 +250,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 	newBody[j++]='\n';
 	tcpInterface.Send(newBody, j, emailServer,false);
 
-	rakFree_Ex(newBody, __FILE__, __LINE__ );
+	rakFree_Ex(newBody, _FILE_AND_LINE_ );
 	int outputOffset;
 
 	// What a pain in the rear.  I have to map the binary to printable characters using 6 bits per character.
@@ -263,13 +265,13 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 			sprintf(query, "Content-Type: APPLICATION/Octet-Stream; SizeOnDisk=%i; name=\"%s\"\r\nContent-Transfer-Encoding: BASE64\r\nContent-Description: %s\r\n\r\n", attachedFiles->fileList[i].dataLengthBytes, attachedFiles->fileList[i].filename.C_String(), attachedFiles->fileList[i].filename.C_String());
 			tcpInterface.Send(query, (unsigned int)strlen(query), emailServer,false);
 
-			newBody = (char*) rakMalloc_Ex( (size_t) (attachedFiles->fileList[i].dataLengthBytes*3)/2, __FILE__, __LINE__ );
+			newBody = (char*) rakMalloc_Ex( (size_t) (attachedFiles->fileList[i].dataLengthBytes*3)/2, _FILE_AND_LINE_ );
 
-			outputOffset=Base64Encoding(attachedFiles->fileList[i].data, (int) attachedFiles->fileList[i].dataLengthBytes, newBody, base64Map);
+			outputOffset=TCPInterface::Base64Encoding(attachedFiles->fileList[i].data, (int) attachedFiles->fileList[i].dataLengthBytes, newBody);
 
 			// Send the base64 mapped file.
 			tcpInterface.Send(newBody, outputOffset, emailServer,false);
-			rakFree_Ex(newBody, __FILE__, __LINE__ );
+			rakFree_Ex(newBody, _FILE_AND_LINE_ );
 
 		}
 
@@ -303,9 +305,9 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 
 const char *EmailSender::GetResponse(TCPInterface *tcpInterface, const SystemAddress &emailServer, bool doPrintf)
 {
-	Packet *packet;
-	RakNetTime timeout;
-	timeout=RakNet::GetTime()+5000;
+	RakNet::Packet *packet;
+	RakNet::TimeMS timeout;
+	timeout=RakNet::GetTimeMS()+5000;
 #ifdef _MSC_VER
 	#pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
 #endif
@@ -350,81 +352,11 @@ const char *EmailSender::GetResponse(TCPInterface *tcpInterface, const SystemAdd
 			if (strstr((const char*)packet->data, "553"))
 				return "Failed on error code 553";
 		}
-		if (RakNet::GetTime() > timeout)
+		if (RakNet::GetTimeMS() > timeout)
 			return "Timed out";
 		RakSleep(100);
 	}
 }
 
-int EmailSender::Base64Encoding(const char *inputData, int dataLength, char *outputData, const char *base64Map)
-{
-	int outputOffset, charCount;
-	int write3Count;
-	outputOffset=0;
-	charCount=0;
-	int j;
-
-	write3Count=dataLength/3;
-	for (j=0; j < write3Count; j++)
-	{
-		// 6 leftmost bits from first byte, shifted to bits 7,8 are 0
-		outputData[outputOffset++]=base64Map[inputData[j*3+0] >> 2];
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// Remaining 2 bits from first byte, placed in position, and 4 high bits from the second byte, masked to ignore bits 7,8
-		outputData[outputOffset++]=base64Map[((inputData[j*3+0] << 4) | (inputData[j*3+1] >> 4)) & 63];
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// 4 low bits from the second byte and the two high bits from the third byte, masked to ignore bits 7,8
-		outputData[outputOffset++]=base64Map[((inputData[j*3+1] << 2) | (inputData[j*3+2] >> 6)) & 63]; // Third 6 bits
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// Last 6 bits from the third byte, masked to ignore bits 7,8
-		outputData[outputOffset++]=base64Map[inputData[j*3+2] & 63];
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-	}
-
-	if (dataLength % 3==1)
-	{
-		// One input byte remaining
-		outputData[outputOffset++]=base64Map[inputData[j*3+0] >> 2];
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// Remaining 2 bits from first byte, placed in position, and 4 high bits from the second byte, masked to ignore bits 7,8
-		outputData[outputOffset++]=base64Map[((inputData[j*3+0] << 4) | (inputData[j*3+1] >> 4)) & 63];
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// Pad with two equals
-		outputData[outputOffset++]='=';
-		outputData[outputOffset++]='=';
-	}
-	else if (dataLength % 3==2)
-	{
-		// Two input bytes remaining
-
-		// 6 leftmost bits from first byte, shifted to bits 7,8 are 0
-		outputData[outputOffset++]=base64Map[inputData[j*3+0] >> 2];
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// Remaining 2 bits from first byte, placed in position, and 4 high bits from the second byte, masked to ignore bits 7,8
-		outputData[outputOffset++]=base64Map[((inputData[j*3+0] << 4) | (inputData[j*3+1] >> 4)) & 63];
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// 4 low bits from the second byte, followed by 00
-		outputData[outputOffset++]=base64Map[(inputData[j*3+1] << 2) & 63]; // Third 6 bits
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// Pad with one equal
-		outputData[outputOffset++]='=';
-		//outputData[outputOffset++]='=';
-	}
-
-	// Append \r\n
-	outputData[outputOffset++]='\r';
-	outputData[outputOffset++]='\n';
-	outputData[outputOffset]=0;
-
-	return outputOffset;
-}
 
 #endif // _RAKNET_SUPPORT_*

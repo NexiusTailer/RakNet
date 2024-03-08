@@ -319,10 +319,6 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\readme.txt"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

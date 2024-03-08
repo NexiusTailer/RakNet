@@ -9,11 +9,9 @@
 #include "IntervalTimer.h"
 #include "RoomTypes.h"
 
-class ProfanityFilter;
-
 namespace RakNet
 {
-
+class ProfanityFilter;
 class Room;
 class PerGameRoomList;
 class PerGameRoomsContainer;
@@ -193,8 +191,8 @@ struct RoomDescriptor
 	
 	void Clear(void)
 	{
-		roomMemberList.Clear(false, __FILE__, __LINE__);
-		banList.Clear(false, __FILE__, __LINE__);
+		roomMemberList.Clear(false, _FILE_AND_LINE_);
+		banList.Clear(false, _FILE_AND_LINE_);
 		roomProperties.Clear();
 	}
 	void FromRoom(Room *room, AllGamesRoomsContainer *agrc);
@@ -249,7 +247,7 @@ struct RoomMember
 	~RoomMember();
 	RoomsParticipant* roomsParticipant;
 	RoomMemberMode roomMemberMode;
-	RakNetTime joinTime;
+	RakNet::TimeMS joinTime;
 	bool isReady;
 	// Internal - set to false when a new member is added. When the other members have been told about this member, it is set to true
 	bool newMemberNotificationProcessed;
@@ -297,7 +295,7 @@ struct NetworkedQuickJoinUser
 	NetworkedQuickJoinUser() {timeout=60000; minimumPlayers=2;}
 
 	// How long to wait for
-	RakNetTime timeout;
+	RakNet::TimeMS timeout;
 	// What queries to join the room on.
 	RoomQuery query;
 	// Minimum number of slots to join
@@ -314,7 +312,7 @@ struct QuickJoinUser
 	NetworkedQuickJoinUser networkedQuickJoinUser;
 
 	// Total amount of time spent waiting
-	RakNetTime totalTimeWaiting;
+	RakNet::TimeMS totalTimeWaiting;
 
 	// Which user
 	RoomsParticipant* roomsParticipant;
@@ -408,7 +406,7 @@ class AllGamesRoomsContainer
 		DataStructures::List<QuickJoinUser*> &timeoutExpired,
 		DataStructures::List<JoinedRoomResult> &joinedRoomMembers,
 		DataStructures::List<QuickJoinUser*> &dereferencedPointers,
-		RakNetTime elapsedTime);
+		RakNet::TimeMS elapsedTime);
 
 	// Quick join - Store a list of all members waiting to quick join.
 	// Quick join ends when
@@ -486,7 +484,7 @@ public:
 	unsigned ProcessQuickJoins( DataStructures::List<QuickJoinUser*> &timeoutExpired,
 		DataStructures::List<JoinedRoomResult> &joinedRooms,
 		DataStructures::List<QuickJoinUser*> &dereferencedPointers,
-		RakNetTime elapsedTime,
+		RakNet::TimeMS elapsedTime,
 		RoomID startingRoomId);
 
 	// Sort an input list of rooms

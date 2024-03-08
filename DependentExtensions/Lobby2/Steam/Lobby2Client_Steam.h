@@ -11,7 +11,7 @@ namespace RakNet
 {
 struct Lobby2Message;
 
-#define STEAM_UNUSED_PORT 0
+#define STEAM_UNUSED_PORT 1
 
 class RAK_DLL_EXPORT Lobby2Client_Steam : public RakNet::Lobby2Plugin, public SocketLayerOverride
 {
@@ -52,6 +52,8 @@ public:
 	virtual void OnRakPeerShutdown(void);
 	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	virtual void OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason);
+	virtual void OnAttach(void);
+	virtual void OnDetach(void);
 
 	struct RoomMember
 	{
@@ -64,8 +66,8 @@ protected:
 	void CallCBWithResultCode(Lobby2Message *msg, Lobby2ResultCode rc);
 	void PushDeferredCallback(Lobby2Message *msg);
 	void CallRoomCallbacks(void);
-	void NotifyNewMember(uint64_t memberId);
-	void NotifyDroppedMember(uint64_t memberId);
+	void NotifyNewMember(uint64_t memberId, SystemAddress remoteSystem);
+	void NotifyDroppedMember(uint64_t memberId, SystemAddress remoteSystem);
 	void CallCompletedCallbacks(void);
 
 	STEAM_CALLBACK( Lobby2Client_Steam, OnLobbyDataUpdatedCallback, LobbyDataUpdate_t, m_CallbackLobbyDataUpdated );

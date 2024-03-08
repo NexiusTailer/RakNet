@@ -3,25 +3,35 @@
 #include <stdlib.h>
 #include "GetTime.h"
 #include "Rand.h"
-#include "RSACrypt.h"
-#include "DataBlockEncryptor.h"
 #include "Rand.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
-#include "RakNetworkFactory.h"
+
 #include "RakNetTypes.h"
+#include "NativeFeatureIncludes.h"
 #include <assert.h>
 #include "RakSleep.h"
 #include "BitStream.h"
+#include "SecureHandshake.h" // Include header for secure handshake
+#include "Gets.h"
+using namespace RakNet;
+
+#if LIBCAT_SECURITY!=1
+#error "Define LIBCAT_SECURITY 1 in NativeFeatureIncludesOverrides.h to enable Encryption"
+#endif
 
 void PrintOptions(void)
 {
-	printf("1. Generate RSA keys and save to disk.\n");
-	printf("2. Load RSA keys from disk.\n");
+	printf("1. Generate keys and save to disk.\n");
+	printf("2. Load keys from disk.\n");
 	printf("3. Test peers with key.\n");
+	printf("4. Test peers with key and use two-way authentication.\n");
 	printf("(H)elp.\n");
 	printf("(Q)uit.\n");
 }
+
+#define TEST_SERVER_ADDRSTR "127.0.0.1"
+#define TEST_SERVER_PORT 6842
 
 RakPeerInterface *rakPeer1, *rakPeer2;
 
@@ -29,29 +39,57 @@ void PrintPacketHeader(Packet *packet)
 {
 	switch (packet->data[0])
 	{
-		case ID_RSA_PUBLIC_KEY_MISMATCH:
-			printf("Public key mismatch.\nThe connecting system's public key does not\nmatch what the sender sent.\n");
+		case ID_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY:
+			printf("Connection request failed - Remote system requires secure connections, pass a public key to RakPeerInterface::Connect()\n");
+			break;
+		case ID_OUR_SYSTEM_REQUIRES_SECURITY:
+			printf("Connection request failed - We passed a public key to RakPeerInterface::Connect(), but the other system did not have security turned on\n");
+			break;
+		case ID_PUBLIC_KEY_MISMATCH:
+			printf("Connection request failed - Wrong public key passed to Connect().\n");
 			break;
 		case ID_CONNECTION_REQUEST_ACCEPTED:
 			printf("Connection request accepted.\n");
 			break;
+		case ID_CONNECTION_ATTEMPT_FAILED:
+			printf("Connection request FAILED.\n");
+			break;
 		case ID_NEW_INCOMING_CONNECTION:
 			{
+				char client_public_key[cat::EasyHandshake::PUBLIC_KEY_BYTES];
+
 				printf("New incoming connection.\n");
+
+				if (rakPeer1->GetClientPublicKeyFromSystemAddress(packet->systemAddress, client_public_key))
+				{
+					printf("Client public key:\n");
+					for (int ii = 0; ii < (int)sizeof(client_public_key); ++ii)
+						printf("%02x ", (cat::u8)client_public_key[ii]);
+					printf("\n");
+				}
+				else
+				{
+					printf("Server: New connected client provided no public key. (This is an error if you are doing two-way authentication)\n");
+				}
+
+				// Transmit test message
 				RakNet::BitStream testBlockLargerThanMTU;
 				testBlockLargerThanMTU.Write((MessageID) ID_USER_PACKET_ENUM);
 				testBlockLargerThanMTU.PadWithZeroToByteLength(10000);
-				rakPeer2->Send(&testBlockLargerThanMTU, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+				rakPeer1->Send(&testBlockLargerThanMTU, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 			}
-			break;
-		case ID_MODIFIED_PACKET:
-			printf("Packet checksum invalid.  Either RSA decrypt function gave the wrong value\nor the packet was tampered with.\n");
 			break;
 		case ID_USER_PACKET_ENUM:
 			printf("Got test message\n");
 			break;
+		case ID_DISCONNECTION_NOTIFICATION:
+			printf("RakPeer - The system specified in Packet::systemAddress has disconnected from us.  For the client, this would mean the server has shutdown.\n");
+			break;
 		default:
-			printf("%s\n", packet->data);
+			printf("Got type %i : ", (int)packet->data[0]);
+			for (int ii = 0; ii < (int)packet->length; ++ii)
+				printf("%02x ", (cat::u8)packet->data[ii]);
+			printf("\n");
 			break;
 	}
 }
@@ -59,83 +97,61 @@ void PrintPacketHeader(Packet *packet)
 int main(void)
 {
 	char str[256];
-	bool keyLoaded; // Does D,E,N have values?
+	bool keyLoaded;
 
-	// RSACrypt is a class that handles RSA encryption/decryption internally
-	RSACrypt rsacrypt;
-
-	uint32_t e;
-	uint32_t modulus[RAKNET_RSA_FACTOR_LIMBS];
-	// e and modulus form the public key
-
-	// p,q is the private key
-	uint32_t p[RAKNET_RSA_FACTOR_LIMBS/2],q[RAKNET_RSA_FACTOR_LIMBS/2];
-
-	/*
-	// RSACrypt is a class that handles RSA encryption/decryption internally
-	big::RSACrypt<RSA_BIT_SIZE> rsacrypt;
-
-	// These are the sizes necessary for e,n,p,q
-	// e,n is the public key
-	// p,q is the private key
-	big::u32 e;
-	RSA_BIT_SIZE n;
-	BIGHALFSIZE(RSA_BIT_SIZE, p);
-	BIGHALFSIZE(RSA_BIT_SIZE, q);
-	*/
-
+	bool doTwoWayAuthentication;
 	FILE *fp;
-	RakNetTime time;
-	rakPeer1=RakNetworkFactory::GetRakPeerInterface();
-	rakPeer2=RakNetworkFactory::GetRakPeerInterface();
+	rakPeer1=RakPeerInterface::GetInstance();
+	rakPeer2=RakPeerInterface::GetInstance();
 	Packet *packet;
 	bool peer1GotMessage, peer2GotMessage;
-
-	seedMT((unsigned int) RakNet::GetTimeMS());
 
 	keyLoaded=false;
 
 	printf("Demonstrates how to setup RakNet to use secure connections\n");
-	printf("Also shows how to read and write RSA keys to and from disk\n");
+	printf("Also shows how to read and write keys to and from disk\n");
 	printf("Difficulty: Intermediate\n\n");
 
 	printf("Select option:\n");
 	PrintOptions();
 
+	cat::EasyHandshake handshake;
+	char public_key[cat::EasyHandshake::PUBLIC_KEY_BYTES];
+	char private_key[cat::EasyHandshake::PRIVATE_KEY_BYTES];
+
+	// Optional: used only for two-way authentication mode (a slower mode not recommended for normal client-server or peer-peer connections)
+	char client_public_key[cat::EasyHandshake::PUBLIC_KEY_BYTES];
+	char client_private_key[cat::EasyHandshake::PRIVATE_KEY_BYTES];
+
 	while (1)
 	{
-		gets(str);
+		Gets(str, sizeof(str));
 
 		if (str[0]=='1')
 		{
-			printf("Generating %i bit key. This will take a while...\n", RAKNET_RSA_FACTOR_LIMBS*32);
-			rsacrypt.generatePrivateKey(RAKNET_RSA_FACTOR_LIMBS);
-			e=rsacrypt.getPublicExponent();
-			rsacrypt.getPublicModulus(modulus);
-			rsacrypt.getPrivateP(p);
-			rsacrypt.getPrivateQ(q);
+			printf("Generating keys...");
 
-
-			/*
-            printf("Generating %i byte key.  This will take a while...\n", sizeof(RSA_BIT_SIZE));
-			rsacrypt.generateKeys();
-			rsacrypt.getPublicKey(e,n);
-			rsacrypt.getPrivateKey(p,q);
-			*/
+			// Generate a (public, private) server key pair
+			if (!handshake.GenerateServerKey(public_key, private_key))
+			{
+				printf("ERROR:Unable to generate server keys for some reason!\n");
+				keyLoaded=false;
+			}
+			else
+			{
 			keyLoaded=true;
-			printf("Key generated.  Save to disk? (y/n)\n");
-			gets(str);
+			printf("Keys generated.  Save to disk? (y/n)\n");
+
+			Gets(str, sizeof(str));
 			if (str[0]=='y' || str[0]=='Y')
 			{
-				printf("Enter filename to save public keys to: ");
-				gets(str);
+					printf("Enter filename to save public key to: ");
+				Gets(str, sizeof(str));
                 if (str[0])
 				{
 					printf("Writing public key... ");
 					fp=fopen(str, "wb");
-					fwrite((char*)&e, sizeof(e), 1, fp);
-					fwrite((char*)modulus, sizeof(modulus), 1, fp);
-					//fwrite((char*)n, sizeof(n), 1, fp);
+						fwrite(public_key, sizeof(public_key), 1, fp);
 					fclose(fp);
 					printf("Done.\n");
 				}
@@ -143,57 +159,51 @@ int main(void)
 					printf("\nKey not written.\n");
 
 				printf("Enter filename to save private key to: ");
-				gets(str);
+				Gets(str, sizeof(str));
 				if (str[0])
 				{
 					printf("Writing private key... ");
 					fp=fopen(str, "wb");
-					fwrite(p, sizeof(p),1,fp);
-					fwrite(q, sizeof(q), 1, fp);
-					//fwrite(p, sizeof(RSA_BIT_SIZE)/2,1,fp);
-					//fwrite(q, sizeof(RSA_BIT_SIZE)/2, 1, fp);
+						fwrite(private_key, sizeof(private_key), 1, fp);
 					fclose(fp);
 					printf("Done.\n");
 				}
 				else
 					printf("\nKey not written.\n");
 			}
+			}
 			PrintOptions();
 		}
 		else if (str[0]=='2')
 		{
-			printf("Enter filename to load public keys from: ");
-			gets(str);
+			printf("Enter filename to load public key from: ");
+			Gets(str, sizeof(str));
 			if (str[0])
 			{
 				fp=fopen(str, "rb");
 				if (fp)
 				{
-					printf("Loading public keys... ");
-					fread((char*)(&e), sizeof(e), 1, fp);
-					fread((char*)(modulus), sizeof(modulus), 1, fp);
+					printf("Loading public key... ");
+					fread(public_key, sizeof(public_key), 1, fp);
 					fclose(fp);
 					printf("Done.\n");
 
 					printf("Enter filename to load private key from: ");
-					gets(str);
+					Gets(str, sizeof(str));
 					if (str[0])
 					{
 						fp=fopen(str, "rb");
 						if (fp)
 						{
 							printf("Loading private key... ");
-							fread(p, sizeof(p), 1, fp);
-							fread(q, sizeof(q), 1, fp);
-							//fread(p, sizeof(RSA_BIT_SIZE)/2, 1, fp);
-							//fread(q, sizeof(RSA_BIT_SIZE)/2, 1, fp);
+							fread(private_key, sizeof(private_key), 1, fp);
 							fclose(fp);
 							printf("Done.\n");
 							keyLoaded=true;
 						}
 						else
 						{
-							printf("Failed to open %s.\n", str);
+							printf("ERROR:Failed to open %s.\n", str);
 						}
 					}
 					else
@@ -201,7 +211,7 @@ int main(void)
 				}
 				else
 				{
-					printf("Failed to open %s.\n", str);
+					printf("ERROR:Failed to open %s.\n", str);
 				}
 			}
 			else
@@ -209,91 +219,146 @@ int main(void)
 
 			PrintOptions();
 		}
-		else if (str[0]=='3')
+		else if (str[0]=='3' || str[0] == '4')
 		{
+			bool run_test = true;
+
+			// NOTE: Reiterating, normally you should not use two-way authentication for client-server or peer-peer applications
+			// as it only makes sense for server-server connections that rarely occur or if you know what you are doing.
+			doTwoWayAuthentication = (str[0] == '4');
+
 			if (keyLoaded)
 			{
-				printf("(G)enerate new keys automatically or use (e)xisting?\n");
-				gets(str);
-				if (str[0]=='g' || str[0]=='G')
+				// Tell Peer1 to use the key pair
+				if (!rakPeer1->InitializeSecurity(public_key, private_key, doTwoWayAuthentication))
 				{
-					printf("Generating 32 byte keys.  Please wait.\n");
-					rakPeer1->InitializeSecurity(0,0,0,0);
-					printf("Keys generated.\n");
-				}
-				else
-				{
-					rakPeer1->InitializeSecurity(0,0,(char*)p, (char*)q);
-					printf("Tell the connecting system the public keys in advance?\n(Y)es, better security.\n(N)o, worse security but everything works automatically.\n");
-					gets(str);
-					if (str[0]=='y' || str[0]=='Y')
-					{
-						printf("Using preloaded keys for the connecting system.\n");
-						//rakPeer2->InitializeSecurity((char*)&e, (char*)n, 0, 0);
-						rakPeer2->InitializeSecurity((char*)&e, (char*)modulus, 0, 0);
-					}
-					else
-					{
-						printf("Relying on server to transmit public keys to the connecting system.\n");
+					printf("ERROR:Public/private keys are invalid!\n");
 
-						// Clear out any old saved public keys
-						rakPeer2->DisableSecurity();
-					}
+					run_test = false;
 				}
 			}
 			else
 			{
-				printf("Generating key automatically on host.  Please wait.\n");
-				rakPeer1->InitializeSecurity(0, 0, 0, 0);
+				printf("Generating server keys...");
 
-				// Clear out any old saved public keys
-				rakPeer2->DisableSecurity();
-				printf("Key generation complete.\n");
+				// Generate a (public, private) server key pair
+				if (!handshake.GenerateServerKey(public_key, private_key))
+				{
+					printf("ERROR:Unable to generate server keys for some reason!\n");
+
+					run_test = false;
+				}
+				else
+				{
+					printf("Key generation complete.\n");
+
+					// Tell Peer1 to use the key pair
+					if (!rakPeer1->InitializeSecurity(public_key, private_key, doTwoWayAuthentication))
+					{
+						printf("ERROR:Public/private keys are invalid!\n");
+
+						run_test = false;
+					}
+				}
+
+				if (str[0] == '4')
+				{
+					printf("Generating client keys...");
+
+					// Generate a (public, private) server key pair
+					if (!handshake.GenerateServerKey(client_public_key, client_private_key))
+					{
+						printf("ERROR:Unable to generate client keys for some reason!\n");
+
+						run_test = false;
+					}
+					else
+					{
+						printf("Key generation complete.\n");
+					}
+				}
 			}
-			
-			printf("Initializing peers.\n");
-			SocketDescriptor socketDescriptor(1234,0);
-			rakPeer1->Startup(8,0,&socketDescriptor, 1);
-			rakPeer1->SetMaximumIncomingConnections(8);
-			socketDescriptor.port=0;
-			rakPeer2->Startup(1,0,&socketDescriptor, 1);
-			rakPeer2->Connect("127.0.0.1", 1234, 0, 0);
-			printf("Running connection for 5 seconds.\n");
 
-			peer1GotMessage=false;
-			peer2GotMessage=false;
-			time = RakNet::GetTime() + 5000;
-			while (RakNet::GetTime() < time)
+			if (!run_test)
 			{
-				packet=rakPeer1->Receive();
-				if (packet)
-				{
-					peer1GotMessage=true;
-					printf("Host got: ");
-					PrintPacketHeader(packet);
-					rakPeer1->DeallocatePacket(packet);
-				}
-				packet=rakPeer2->Receive();
-				if (packet)
-				{
-					peer2GotMessage=true;
-					printf("Connecting system got: ");
-					PrintPacketHeader(packet);
-					rakPeer2->DeallocatePacket(packet);
-				}
-
-				RakSleep(30);
+				printf("Unable to run test due to error\n");
 			}
+			else
+			{
+				printf("Initializing peers.\n");
+				SocketDescriptor socketDescriptor(TEST_SERVER_PORT,0);
+				rakPeer1->Startup(8,&socketDescriptor, 1);
+				rakPeer1->SetMaximumIncomingConnections(8);
+				socketDescriptor.port=0;
+				rakPeer2->Startup(1,&socketDescriptor, 1);
+				printf("Connecting to server with known public key...\n");
 
-			if (peer1GotMessage==false)
-				printf("Error, host got no packets.\n");
-			if (peer2GotMessage==false)
-				printf("Error, connecting system got no packets.\n");
+				// Pass in the public key on Connect()
+				PublicKey pk;
+				pk.remoteServerPublicKey = public_key;
 
-			if (peer1GotMessage && peer2GotMessage)
-				printf("Test successful as long as you got no error messages.\n");
-			rakPeer2->Shutdown(0);
-			rakPeer1->Shutdown(0);
+				if (str[0] == '4')
+				{
+					pk.publicKeyMode = PKM_USE_TWO_WAY_AUTHENTICATION; // Optional not recommended mode
+					pk.myPublicKey = client_public_key;
+					pk.myPrivateKey = client_private_key;
+				}
+				else
+				{
+					pk.publicKeyMode = PKM_USE_KNOWN_PUBLIC_KEY; // Recommended mode
+				}
+
+				if (CONNECTION_ATTEMPT_STARTED != rakPeer2->Connect(TEST_SERVER_ADDRSTR, TEST_SERVER_PORT, 0, 0, &pk))
+				{
+					printf("ERROR: Connect() returned false - invalid public key most likely\n");
+				}
+				printf("Running connection for 12 seconds.\n");
+
+				peer1GotMessage=false;
+				peer2GotMessage=false;
+				TimeMS time = RakNet::GetTimeMS() + 12000;
+				while (RakNet::GetTimeMS() < time)
+				{
+					packet=rakPeer1->Receive();
+					if (packet)
+					{
+						peer1GotMessage=true;
+						printf("Host got: ");
+						PrintPacketHeader(packet);
+						if (doTwoWayAuthentication)
+						{
+							char client_public_key_copy[cat::EasyHandshake::PUBLIC_KEY_BYTES];
+							RakAssert(rakPeer1->GetClientPublicKeyFromSystemAddress(packet->systemAddress, client_public_key_copy)==true)
+						}
+						rakPeer1->DeallocatePacket(packet);
+					}
+					packet=rakPeer2->Receive();
+					if (packet)
+					{
+						peer2GotMessage=true;
+						printf("Connecting system got: ");
+						PrintPacketHeader(packet);
+						if (doTwoWayAuthentication)
+						{
+							char client_public_key_copy[cat::EasyHandshake::PUBLIC_KEY_BYTES];
+							RakAssert(rakPeer2->GetClientPublicKeyFromSystemAddress(packet->systemAddress, client_public_key_copy)==true)
+						}
+						rakPeer2->DeallocatePacket(packet);
+					}
+
+					RakSleep(30);
+				}
+
+				if (peer1GotMessage==false)
+						printf("ERROR: Host got no packets\n");
+				if (peer2GotMessage==false)
+						printf("ERROR: Connecting system got no packets\n");
+
+				if (peer1GotMessage && peer2GotMessage)
+						printf("Test successful as long as you got no error messages\n");
+				rakPeer2->Shutdown(0);
+				rakPeer1->Shutdown(0);
+			}
 			PrintOptions();
 		}
 		else if (str[0]=='h' || str[0]=='H')
@@ -306,6 +371,6 @@ int main(void)
 		str[0]=0;
 	}
 
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer1);
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer2);
+	RakPeerInterface::DestroyInstance(rakPeer1);
+	RakPeerInterface::DestroyInstance(rakPeer2);
 }

@@ -8,6 +8,45 @@ CommonFunctions::~CommonFunctions(void)
 {
 }
 
+bool CommonFunctions::ConnectionStateMatchesOptions(RakPeerInterface *peer,SystemAddress currentSystem,bool isConnected,bool isConnecting,bool isPending,bool isDisconnecting,bool isNotConnected,bool isLoopBack , bool isSilentlyDisconnecting)
+{
+	ConnectionState connectionState=peer->GetConnectionState(currentSystem);
+	switch(connectionState)
+	{
+	case IS_CONNECTED:
+		return isConnected;
+		break;
+
+	case IS_CONNECTING:
+		return isConnecting;
+		break;
+
+	case IS_PENDING:
+		return isPending;
+		break;
+
+	case IS_DISCONNECTING:
+		return isDisconnecting;
+		break;
+
+	case IS_LOOPBACK:
+		return isLoopBack;
+		break;
+
+	case IS_NOT_CONNECTED:
+		return isNotConnected;
+		break;
+
+	case IS_SILENTLY_DISCONNECTING:
+		return isSilentlyDisconnecting;
+		break;
+
+	default:
+		return false;
+		break;
+	}
+}
+
 bool CommonFunctions::WaitAndConnect(RakPeerInterface *peer,char* ip,unsigned short int port,int millisecondsToWait)
 {
 
@@ -15,12 +54,12 @@ bool CommonFunctions::WaitAndConnect(RakPeerInterface *peer,char* ip,unsigned sh
 
 	connectToAddress.SetBinaryAddress(ip);
 	connectToAddress.port=port;
-	RakNetTime entryTime=RakNet::GetTime();
+	TimeMS entryTime=GetTimeMS();
 
-	while(!peer->IsConnected (connectToAddress,false,false)&&RakNet::GetTime()-entryTime<millisecondsToWait)
+	while(!CommonFunctions::ConnectionStateMatchesOptions (peer,connectToAddress,true)&&GetTimeMS()-entryTime<millisecondsToWait)
 	{
 
-		if(!peer->IsConnected (connectToAddress,true,true))
+		if(!CommonFunctions::ConnectionStateMatchesOptions (peer,connectToAddress,true,true,true,true))
 		{
 			peer->Connect(ip,port,0,0);
 		}
@@ -29,7 +68,7 @@ bool CommonFunctions::WaitAndConnect(RakPeerInterface *peer,char* ip,unsigned sh
 
 	}
 
-	if (peer->IsConnected (connectToAddress,false,false))
+	if (ConnectionStateMatchesOptions (peer,connectToAddress,true))
 	{
 		return 1;
 	}
@@ -44,7 +83,7 @@ void CommonFunctions::DisconnectAndWait(RakPeerInterface *peer,char* ip,unsigned
 	targetAddress.SetBinaryAddress(ip);
 	targetAddress.port=port;
 
-	while(peer->IsConnected (targetAddress,true,true))//disconnect client
+	while(CommonFunctions::ConnectionStateMatchesOptions (peer,targetAddress,true,true,true,true))//disconnect client
 	{
 
 		peer->CloseConnection (targetAddress,true,0,LOW_PRIORITY); 

@@ -83,7 +83,7 @@ void UDPForwarder::Shutdown(void)
 		RakSleep(30);
 #endif
 
-	forwardList.ClearPointers(true,__FILE__,__LINE__);
+	forwardList.ClearPointers(true,_FILE_AND_LINE_);
 }
 void UDPForwarder::Update(void)
 {
@@ -103,7 +103,7 @@ void UDPForwarder::UpdateThreaded(void)
 	tv.tv_sec=0;
 	tv.tv_usec=0;
 
-	RakNetTimeMS curTime = RakNet::GetTimeMS();
+	RakNet::TimeMS curTime = RakNet::GetTimeMS();
 
 	SOCKET largestDescriptor=0;
 	DataStructures::DefaultIndexType i;
@@ -115,8 +115,8 @@ void UDPForwarder::UpdateThreaded(void)
 		if (curTime > forwardList[i]->timeLastDatagramForwarded && // Account for timestamp wrap
 			curTime > forwardList[i]->timeLastDatagramForwarded+forwardList[i]->timeoutOnNoDataMS)
 		{
-			RakNet::OP_DELETE(forwardList[i],__FILE__,__LINE__);
-			forwardList.RemoveAtIndex(i,__FILE__,__LINE__);
+			RakNet::OP_DELETE(forwardList[i],_FILE_AND_LINE_);
+			forwardList.RemoveAtIndex(i,_FILE_AND_LINE_);
 		}
 		else
 			i++;
@@ -137,11 +137,11 @@ void UDPForwarder::UpdateThreaded(void)
 			largestDescriptor = forwardList[i]->socket;
 	}
 
-
-
-
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                                                                    
+#else
 	selectResult=(int) select((int) largestDescriptor+1, &readFD, 0, 0, &tv);
-
+#endif
 
 	char data[ MAXIMUM_MTU_SIZE ];
 	sockaddr_in sa;
@@ -157,7 +157,7 @@ void UDPForwarder::UpdateThreaded(void)
 			forwardEntry = forwardList[i];
 			// I do this because I'm updating the forwardList, and don't want to lose FD_ISSET as the list is no longer in order
 			if (FD_ISSET(forwardEntry->socket, &readFD))
-				entriesToRead.Push(forwardEntry,__FILE__,__LINE__);
+				entriesToRead.Push(forwardEntry,_FILE_AND_LINE_);
 		}
 
 		while (entriesToRead.IsEmpty()==false)
@@ -173,7 +173,7 @@ void UDPForwarder::UpdateThreaded(void)
 
 			if (receivedDataLen<0)
 			{
-#if defined(_WIN32) && defined(_DEBUG) 
+#if defined(_WIN32) && defined(_DEBUG) && !defined(_XBOX) && !defined(X360)
 				DWORD dwIOError = WSAGetLastError();
 
 				if (dwIOError!=WSAECONNRESET && dwIOError!=WSAEINTR && dwIOError!=WSAETIMEDOUT)
@@ -202,9 +202,9 @@ void UDPForwarder::UpdateThreaded(void)
 					DataStructures::DefaultIndexType index;
 					SrcAndDest srcAndDest(forwardEntry->srcAndDest.dest, forwardEntry->srcAndDest.source);
 					index=forwardList.GetIndexOf(srcAndDest);
-					forwardList.RemoveAtIndex(index,__FILE__,__LINE__);
+					forwardList.RemoveAtIndex(index,_FILE_AND_LINE_);
 					forwardEntry->srcAndDest.source.port=portnum;
-					forwardList.Push(forwardEntry,forwardEntry->srcAndDest,__FILE__,__LINE__);
+					forwardList.Push(forwardEntry,forwardEntry->srcAndDest,_FILE_AND_LINE_);
 				}
 			}
 			
@@ -236,9 +236,9 @@ void UDPForwarder::UpdateThreaded(void)
 					DataStructures::DefaultIndexType index;
 					SrcAndDest srcAndDest(forwardEntry->srcAndDest.source, forwardEntry->srcAndDest.dest);
 					index=forwardList.GetIndexOf(srcAndDest);
-					forwardList.RemoveAtIndex(index,__FILE__,__LINE__);
+					forwardList.RemoveAtIndex(index,_FILE_AND_LINE_);
 					forwardEntry->srcAndDest.dest.port=portnum;
-					forwardList.Push(forwardEntry,forwardEntry->srcAndDest,__FILE__,__LINE__);
+					forwardList.Push(forwardEntry,forwardEntry->srcAndDest,_FILE_AND_LINE_);
 				}
 			}
 
@@ -278,7 +278,7 @@ int UDPForwarder::GetUsedForwardEntries(void) const
 {
 	return (int) forwardList.GetSize();
 }
-UDPForwarderResult UDPForwarder::AddForwardingEntry(SrcAndDest srcAndDest, RakNetTimeMS timeoutOnNoDataMS, unsigned short *port, const char *forceHostAddress)
+UDPForwarderResult UDPForwarder::AddForwardingEntry(SrcAndDest srcAndDest, RakNet::TimeMS timeoutOnNoDataMS, unsigned short *port, const char *forceHostAddress)
 {
 	DataStructures::DefaultIndexType insertionIndex;
 	insertionIndex = forwardList.GetInsertionIndex(srcAndDest);
@@ -287,7 +287,7 @@ UDPForwarderResult UDPForwarder::AddForwardingEntry(SrcAndDest srcAndDest, RakNe
 		int sock_opt;
 		sockaddr_in listenerSocketAddress;
 		listenerSocketAddress.sin_port = 0;
-		ForwardEntry *fe = RakNet::OP_NEW<UDPForwarder::ForwardEntry>(__FILE__,__LINE__);
+		ForwardEntry *fe = RakNet::OP_NEW<UDPForwarder::ForwardEntry>(_FILE_AND_LINE_);
 		fe->srcAndDest=srcAndDest;
 		fe->timeoutOnNoDataMS=timeoutOnNoDataMS;
 		fe->socket = socket( AF_INET, SOCK_DGRAM, 0 );
@@ -316,21 +316,20 @@ UDPForwarderResult UDPForwarder::AddForwardingEntry(SrcAndDest srcAndDest, RakNe
 		int ret = bind( fe->socket, ( struct sockaddr * ) & listenerSocketAddress, sizeof( listenerSocketAddress ) );
 		if (ret==-1)
 		{
-			RakNet::OP_DELETE(fe,__FILE__,__LINE__);
+			RakNet::OP_DELETE(fe,_FILE_AND_LINE_);
 			return UDPFORWARDER_BIND_FAILED;
 		}
 
-		DataStructures::DefaultIndexType oldSize = forwardList.GetSize();
-		forwardList.InsertAtIndex(fe,insertionIndex,__FILE__,__LINE__);
+//		DataStructures::DefaultIndexType oldSize = forwardList.GetSize();
+		forwardList.InsertAtIndex(fe,insertionIndex,_FILE_AND_LINE_);
 		RakAssert(forwardList.GetIndexOf(fe->srcAndDest)!=(unsigned int) -1);
-		RakAssert(forwardList.GetSize()==oldSize+1);
 		*port = SocketLayer::GetLocalPort ( fe->socket );
 		return UDPFORWARDER_SUCCESS;
 	}
 
 	return UDPFORWARDER_FORWARDING_ALREADY_EXISTS;
 }
-UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source, SystemAddress destination, RakNetTimeMS timeoutOnNoDataMS, const char *forceHostAddress,
+UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source, SystemAddress destination, RakNet::TimeMS timeoutOnNoDataMS, const char *forceHostAddress,
 								  unsigned short *forwardingPort, SOCKET *forwardingSocket)
 {
 	// Invalid parameters?
@@ -345,7 +344,7 @@ UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source, SystemAdd
 	threadOperation.forceHostAddress=forceHostAddress;
 	threadOperation.operation=ThreadOperation::TO_START_FORWARDING;
 	threadOperationIncomingMutex.Lock();
-	threadOperationIncomingQueue.Push(threadOperation, __FILE__, __LINE__ );
+	threadOperationIncomingQueue.Push(threadOperation, _FILE_AND_LINE_ );
 	threadOperationIncomingMutex.Unlock();
 
 	while (1)
@@ -370,7 +369,7 @@ UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source, SystemAdd
 #endif
 
 }
-UDPForwarderResult UDPForwarder::StartForwardingThreaded(SystemAddress source, SystemAddress destination, RakNetTimeMS timeoutOnNoDataMS, const char *forceHostAddress,
+UDPForwarderResult UDPForwarder::StartForwardingThreaded(SystemAddress source, SystemAddress destination, RakNet::TimeMS timeoutOnNoDataMS, const char *forceHostAddress,
 								  unsigned short *forwardingPort, SOCKET *forwardingSocket)
 {
 	SrcAndDest srcAndDest(source, destination);
@@ -398,7 +397,7 @@ void UDPForwarder::StopForwarding(SystemAddress source, SystemAddress destinatio
 	threadOperation.destination=destination;
 	threadOperation.operation=ThreadOperation::TO_STOP_FORWARDING;
 	threadOperationIncomingMutex.Lock();
-	threadOperationIncomingQueue.Push(threadOperation, __FILE__, __LINE__ );
+	threadOperationIncomingQueue.Push(threadOperation, _FILE_AND_LINE_ );
 	threadOperationIncomingMutex.Unlock();
 #else
 	StopForwardingThreaded(source, destination);
@@ -411,8 +410,8 @@ void UDPForwarder::StopForwardingThreaded(SystemAddress source, SystemAddress de
 	DataStructures::DefaultIndexType idx = forwardList.GetIndexOf(srcAndDest);
 	if (idx!=(DataStructures::DefaultIndexType)-1)
 	{
-		RakNet::OP_DELETE(forwardList[idx],__FILE__,__LINE__);
-		forwardList.RemoveAtIndex(idx,__FILE__,__LINE__);
+		RakNet::OP_DELETE(forwardList[idx],_FILE_AND_LINE_);
+		forwardList.RemoveAtIndex(idx,_FILE_AND_LINE_);
 	}
 }
 #ifdef UDP_FORWARDER_EXECUTE_THREADED
@@ -433,7 +432,7 @@ RAK_THREAD_DECLARATION(UpdateUDPForwarder)
 				threadOperation.result=udpForwarder->StartForwardingThreaded(threadOperation.source, threadOperation.destination, threadOperation.timeoutOnNoDataMS,
 					threadOperation.forceHostAddress, &threadOperation.forwardingPort, &threadOperation.forwardingSocket);
 				udpForwarder->threadOperationOutgoingMutex.Lock();
-				udpForwarder->threadOperationOutgoingQueue.Push(threadOperation, __FILE__, __LINE__ );
+				udpForwarder->threadOperationOutgoingQueue.Push(threadOperation, _FILE_AND_LINE_ );
 				udpForwarder->threadOperationOutgoingMutex.Unlock();
 			}
 			else
@@ -447,8 +446,11 @@ RAK_THREAD_DECLARATION(UpdateUDPForwarder)
 		udpForwarder->threadOperationIncomingMutex.Unlock();
 
 		udpForwarder->UpdateThreaded();
+
+		// 12/1/2010 Do not change from 0
+		// See http://www.jenkinssoftware.com/forum/index.php?topic=4033.0;topicseen
 		// Avoid 100% reported CPU usage
-		RakSleep(15);
+		RakSleep(0);
 	}
 	udpForwarder->threadRunning=false;
 	return 0;

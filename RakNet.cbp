@@ -186,6 +186,42 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\CloudClient.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\CloudClient.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\CloudCommon.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\CloudCommon.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\CloudServer.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\CloudServer.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\CommandParserInterface.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="debug"/>
@@ -266,6 +302,13 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\DS_ByteQueue.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\DS_Hash.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -451,6 +494,18 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\DynDNS.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\DynDNS.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\EmailSender.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="debug"/>
@@ -627,6 +682,18 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\Getche.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\Gets.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\Gets.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -860,6 +927,20 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\NativeFeatureIncludes.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\NativeFeatureIncludesOverrides.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\NativeTypes.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -997,6 +1078,18 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\PluginInterface2.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\RPC4Plugin.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\RPC4Plugin.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -1412,6 +1505,18 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\SecureHandshake.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\SecureHandshake.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\SendToThread.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="debug"/>
@@ -1603,6 +1708,18 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\TwoWayAuthentication.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\TwoWayAuthentication.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\UDPForwarder.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="debug"/>
@@ -1652,6 +1769,30 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\UDPProxyServer.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\VariableDeltaSerializer.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\VariableDeltaSerializer.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\VariableListDeltaTracker.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\VariableListDeltaTracker.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

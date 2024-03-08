@@ -43,19 +43,19 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SerializeParameters.html#3f827fa6ae16ed1f35efddf5696ae4e9">lastSentBitstream</a> [RM3_NUM_OUTPUT_BITSTREAM_CHANNELS]</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">RakNetTime&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SerializeParameters.html#aecbe1e740707f88e2bda424a6157123">messageTimestamp</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">RakNet::Time&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SerializeParameters.html#ad0e0e02623bdf80d4e46b468b39a614">messageTimestamp</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PRO&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SerializeParameters.html#3470c71391a99302bf89160c1c5a0c39">pro</a> [RM3_NUM_OUTPUT_BITSTREAM_CHANNELS]</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0faf31c40a78967d002d7deb2adfbf0b"></a><!-- doxytag: member="RakNet::SerializeParameters::destinationConnection" ref="0faf31c40a78967d002d7deb2adfbf0b" args="" -->
 <a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SerializeParameters.html#0faf31c40a78967d002d7deb2adfbf0b">destinationConnection</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Passed to <a class="el" href="classRakPeerInterface.html#36b7517ac2e6e420736ed8758c125397">RakPeerInterface::Send()</a>. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Passed to <a class="el" href="classRakNet_1_1RakPeerInterface.html#543ec5be9cf5f73f5c8733d1829789f9">RakPeerInterface::Send()</a>. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">BitSize_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SerializeParameters.html#c69a7436aa2040a35ba5c43079609321">bitsWrittenSoFar</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">RakNetTime&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SerializeParameters.html#8f1eb1f8a53b4b10619ea1d48de06cd0">whenLastSerialized</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">RakNet::Time&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SerializeParameters.html#9a81ebdebd1a5ed7726824d9da09cd61">whenLastSerialized</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">RakNetTime&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SerializeParameters.html#a9bc6a92cf76c0ff74d1cc9fbc338385">curTime</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">RakNet::Time&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SerializeParameters.html#d5a913a764faa0bf58e7503efbfd7233">curTime</a></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -75,12 +75,12 @@ Parameters passed to <a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b
 For prior serializations this tick, for the same connection, how many bits have we written so far? Use this to limit how many objects you send to update per-tick if desired 
 </div>
 </div><p>
-<a class="anchor" name="a9bc6a92cf76c0ff74d1cc9fbc338385"></a><!-- doxytag: member="RakNet::SerializeParameters::curTime" ref="a9bc6a92cf76c0ff74d1cc9fbc338385" args="" -->
+<a class="anchor" name="d5a913a764faa0bf58e7503efbfd7233"></a><!-- doxytag: member="RakNet::SerializeParameters::curTime" ref="d5a913a764faa0bf58e7503efbfd7233" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">RakNetTime <a class="el" href="structRakNet_1_1SerializeParameters.html#a9bc6a92cf76c0ff74d1cc9fbc338385">RakNet::SerializeParameters::curTime</a>          </td>
+          <td class="memname">RakNet::Time <a class="el" href="structRakNet_1_1SerializeParameters.html#d5a913a764faa0bf58e7503efbfd7233">RakNet::SerializeParameters::curTime</a>          </td>
         </tr>
       </table>
 </div>
@@ -105,19 +105,19 @@ Current time, in milliseconds. curTime - whenLastSerialized is how long it has b
 Last bitstream we sent for this replica to this system. Read, but DO NOT MODIFY 
 </div>
 </div><p>
-<a class="anchor" name="aecbe1e740707f88e2bda424a6157123"></a><!-- doxytag: member="RakNet::SerializeParameters::messageTimestamp" ref="aecbe1e740707f88e2bda424a6157123" args="" -->
+<a class="anchor" name="ad0e0e02623bdf80d4e46b468b39a614"></a><!-- doxytag: member="RakNet::SerializeParameters::messageTimestamp" ref="ad0e0e02623bdf80d4e46b468b39a614" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">RakNetTime <a class="el" href="structRakNet_1_1SerializeParameters.html#aecbe1e740707f88e2bda424a6157123">RakNet::SerializeParameters::messageTimestamp</a>          </td>
+          <td class="memname">RakNet::Time <a class="el" href="structRakNet_1_1SerializeParameters.html#ad0e0e02623bdf80d4e46b468b39a614">RakNet::SerializeParameters::messageTimestamp</a>          </td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-Set to non-zero to transmit a timestamp with this message. Defaults to 0 Use <a class="el" href="namespaceRakNet.html#aa2d77435e0bf2c56c77f6f41739d4b4" title="Returns the value from QueryPerformanceCounter. This is the function RakNet uses...">RakNet::GetTime()</a> for this 
+Set to non-zero to transmit a timestamp with this message. Defaults to 0 Use <a class="el" href="namespaceRakNet.html#45ef68c020ce6b8086e7a412b5767a04">RakNet::GetTime()</a> for this 
 </div>
 </div><p>
 <a class="anchor" name="d7ab99674d6452c3d5a5ea6301da4a75"></a><!-- doxytag: member="RakNet::SerializeParameters::outputBitstream" ref="d7ab99674d6452c3d5a5ea6301da4a75" args="[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS]" -->
@@ -147,15 +147,15 @@ Write your output for serialization here If nothing is written, the serializatio
 <div class="memdoc">
 
 <p>
-Passed to <a class="el" href="classRakPeerInterface.html#36b7517ac2e6e420736ed8758c125397">RakPeerInterface::Send()</a>. Defaults to <a class="el" href="classRakNet_1_1ReplicaManager3.html#fcbcfde423edca9e386f59c2f054e753">ReplicaManager3::SetDefaultPacketPriority()</a>. Passed to <a class="el" href="classRakPeerInterface.html#36b7517ac2e6e420736ed8758c125397">RakPeerInterface::Send()</a>. Defaults to <a class="el" href="classRakNet_1_1ReplicaManager3.html#3909030c3ad377e9b2ac1afc0e78889f">ReplicaManager3::SetDefaultPacketReliability()</a>. Passed to <a class="el" href="classRakPeerInterface.html#36b7517ac2e6e420736ed8758c125397">RakPeerInterface::Send()</a>. Defaults to <a class="el" href="classRakNet_1_1ReplicaManager3.html#7e01d9098c06ad5c9eac71506fad6b13">ReplicaManager3::SetDefaultOrderingChannel()</a>. 
+Passed to <a class="el" href="classRakNet_1_1RakPeerInterface.html#543ec5be9cf5f73f5c8733d1829789f9">RakPeerInterface::Send()</a>. Defaults to <a class="el" href="classRakNet_1_1ReplicaManager3.html#fcbcfde423edca9e386f59c2f054e753">ReplicaManager3::SetDefaultPacketPriority()</a>. Passed to <a class="el" href="classRakNet_1_1RakPeerInterface.html#543ec5be9cf5f73f5c8733d1829789f9">RakPeerInterface::Send()</a>. Defaults to <a class="el" href="classRakNet_1_1ReplicaManager3.html#3909030c3ad377e9b2ac1afc0e78889f">ReplicaManager3::SetDefaultPacketReliability()</a>. Passed to <a class="el" href="classRakNet_1_1RakPeerInterface.html#543ec5be9cf5f73f5c8733d1829789f9">RakPeerInterface::Send()</a>. Defaults to <a class="el" href="classRakNet_1_1ReplicaManager3.html#7e01d9098c06ad5c9eac71506fad6b13">ReplicaManager3::SetDefaultOrderingChannel()</a>. 
 </div>
 </div><p>
-<a class="anchor" name="8f1eb1f8a53b4b10619ea1d48de06cd0"></a><!-- doxytag: member="RakNet::SerializeParameters::whenLastSerialized" ref="8f1eb1f8a53b4b10619ea1d48de06cd0" args="" -->
+<a class="anchor" name="9a81ebdebd1a5ed7726824d9da09cd61"></a><!-- doxytag: member="RakNet::SerializeParameters::whenLastSerialized" ref="9a81ebdebd1a5ed7726824d9da09cd61" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">RakNetTime <a class="el" href="structRakNet_1_1SerializeParameters.html#8f1eb1f8a53b4b10619ea1d48de06cd0">RakNet::SerializeParameters::whenLastSerialized</a>          </td>
+          <td class="memname">RakNet::Time <a class="el" href="structRakNet_1_1SerializeParameters.html#9a81ebdebd1a5ed7726824d9da09cd61">RakNet::SerializeParameters::whenLastSerialized</a>          </td>
         </tr>
       </table>
 </div>
@@ -166,9 +166,9 @@ When this object was last serialized to the connection 0 means never
 </div>
 </div><p>
 <hr>The documentation for this struct was generated from the following file:<ul>
-<li>d:/RakNet-3.x/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
+<li>d:/temp/RakNet4/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 22 08:28:36 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:29 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

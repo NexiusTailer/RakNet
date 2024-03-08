@@ -19,16 +19,6 @@
 #include "DS_Map.h"
 #include "PacketPriority.h"
 
-class RakPeerInterface;
-class FileList;
-struct Packet;
-struct InternalPacket;
-struct DownloadRequest;
-class FileListTransfer;
-class FileListTransferCBInterface;
-class FileListProgress;
-class IncrementalReadInterface;
-
 /// \defgroup DIRECTORY_DELTA_TRANSFER_GROUP DirectoryDeltaTransfer
 /// \brief Simple class to send changes between directories
 /// \details
@@ -50,9 +40,25 @@ class IncrementalReadInterface;
 /// While pathToApplication can be anything you want, applicationSubdirectory must match either partially or fully between systems.
 /// \ingroup DIRECTORY_DELTA_TRANSFER_GROUP
 
+namespace RakNet
+{
+/// Forward declarations
+class RakPeerInterface;
+class FileList;
+struct Packet;
+struct InternalPacket;
+struct DownloadRequest;
+class FileListTransfer;
+class FileListTransferCBInterface;
+class FileListProgress;
+class IncrementalReadInterface;
+
 class RAK_DLL_EXPORT DirectoryDeltaTransfer : public PluginInterface2
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(DirectoryDeltaTransfer)
+
 	// Constructor
 	DirectoryDeltaTransfer();
 
@@ -104,12 +110,6 @@ public:
 	/// \return How many files are available for upload
 	unsigned GetNumberOfFilesForUpload(void) const;
 
-	/// \brief Set if we should compress outgoing sends or not.
-	/// \details Defaults to false, because this results in a noticeable freeze on large requests.
-	/// You can set this to true if you only send small files though
-	/// \param[in] compress True to compress, false to not.
-	void SetCompressOutgoingSends(bool compress);
-
 	/// \brief Normally, if a remote system requests files, those files are all loaded into memory and sent immediately.
 	/// \details This function allows the files to be read in incremental chunks, saving memory
 	/// \param[in] _incrementalReadInterface If a file in \a fileList has no data, filePullInterface will be used to read the file in chunks of size \a chunkSize
@@ -126,10 +126,11 @@ protected:
 	FileList *availableUploads;
 	PacketPriority priority;
 	char orderingChannel;
-	bool compressOutgoingSends;
 	IncrementalReadInterface *incrementalReadInterface;
 	unsigned int chunkSize;
 };
+
+} // namespace RakNet
 
 #endif
 

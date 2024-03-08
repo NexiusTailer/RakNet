@@ -30,6 +30,8 @@
 
 using namespace RakNet;
 
+STATIC_FACTORY_DEFINITIONS(HTTPConnection,HTTPConnection);
+
 HTTPConnection::HTTPConnection() : connectionState(CS_NONE)
 {
 	tcp=0;
@@ -49,7 +51,7 @@ void HTTPConnection::Post(const char *remote_path, const char *data, const char 
 	op.data=data;
 	op.remotePath=remote_path;
 	op.isPost=true;
-	outgoingCommand.Push(op, __FILE__, __LINE__ );
+	outgoingCommand.Push(op, _FILE_AND_LINE_ );
 	//printf("Adding outgoing post\n");
 }
 
@@ -58,7 +60,7 @@ void HTTPConnection::Get(const char *path)
 	OutgoingCommand op;
 	op.remotePath=path;
 	op.isPost=false;
-	outgoingCommand.Push(op, __FILE__, __LINE__ );
+	outgoingCommand.Push(op, _FILE_AND_LINE_ );
 }
 
 bool HTTPConnection::HasBadResponse(int *code, RakNet::RakString *data)
@@ -123,7 +125,7 @@ void HTTPConnection::Update(void)
 			{
 				if (incomingData.IsEmpty()==false)
 				{
-					results.Push(incomingData, __FILE__, __LINE__ );
+					results.Push(incomingData, _FILE_AND_LINE_ );
 				}
 				incomingData.Clear();
 				tcp->CloseConnection(server);
@@ -172,6 +174,7 @@ void HTTPConnection::Update(void)
 				request.Set("GET %s\r\n", host.C_String());
 			}
 			
+		//	printf(request.C_String());
 	//		request.URLEncode();
 			tcp->Send(request.C_String(), (unsigned int) request.GetLength(), server,false);
 			connectionState=CS_PROCESSING;
@@ -220,7 +223,7 @@ void HTTPConnection::ProcessTCPPacket(Packet *packet)
 
 			if(response_code > 299)
 			{
-				badResponses.Push(BadResponse(packet->data, response_code), __FILE__, __LINE__ );
+				badResponses.Push(BadResponse(packet->data, response_code), _FILE_AND_LINE_ );
 				//printf("Closed connection (Bad response 2)\n");
 				CloseConnection();
 				return;

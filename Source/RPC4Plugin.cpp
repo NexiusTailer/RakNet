@@ -8,41 +8,43 @@
 
 using namespace RakNet;
 
-RPC4Plugin::RPC4Plugin()
+STATIC_FACTORY_DEFINITIONS(RPC4,RPC4);
+
+RPC4::RPC4()
 {
 
 }
-RPC4Plugin::~RPC4Plugin()
+RPC4::~RPC4()
 {
 
 }
-bool RPC4Plugin::RegisterFunction(const char* uniqueID, void ( *functionPointer ) ( RakNet::BitStream *userData, Packet *packet ))
+bool RPC4::RegisterFunction(const char* uniqueID, void ( *functionPointer ) ( RakNet::BitStream *userData, Packet *packet ))
 {
-	DataStructures::StringKeyedHashIndex skhi = registeredFunctions.GetIndexOf(uniqueID);
+	DataStructures::HashIndex skhi = registeredFunctions.GetIndexOf(uniqueID);
 	if (skhi.IsInvalid()==false)
 		return false;
 
-	registeredFunctions.Push(uniqueID,functionPointer,__FILE__,__LINE__);
+	registeredFunctions.Push(uniqueID,functionPointer,_FILE_AND_LINE_);
 	return true;
 }
-bool RPC4Plugin::UnregisterFunction(const char* uniqueID)
+bool RPC4::UnregisterFunction(const char* uniqueID)
 {
 	void ( *f ) ( RakNet::BitStream *, Packet * );
-	return registeredFunctions.Pop(f,uniqueID,__FILE__,__LINE__);
+	return registeredFunctions.Pop(f,uniqueID,_FILE_AND_LINE_);
 }
-void RPC4Plugin::CallLoopback( const char* uniqueID, RakNet::BitStream * bitStream )
+void RPC4::CallLoopback( const char* uniqueID, RakNet::BitStream * bitStream )
 {
 	Packet *p=0;
 
-	DataStructures::StringKeyedHashIndex skhi = registeredFunctions.GetIndexOf(uniqueID);
+	DataStructures::HashIndex skhi = registeredFunctions.GetIndexOf(uniqueID);
 
 	if (skhi.IsInvalid()==true)
 	{
 		if (rakPeerInterface) 
-			p=rakPeerInterface->AllocatePacket(sizeof(MessageID)+sizeof(unsigned char)+strlen(uniqueID)+1);
+			p=AllocatePacketUnified(sizeof(MessageID)+sizeof(unsigned char)+(unsigned int) strlen(uniqueID)+1);
 #if _RAKNET_SUPPORT_PacketizedTCP==1
 		else
-			p=packetizedTCP->AllocatePacket(sizeof(MessageID)+sizeof(unsigned char)+strlen(uniqueID)+1);
+			p=packetizedTCP->AllocatePacket(sizeof(MessageID)+sizeof(unsigned char)+(unsigned int) strlen(uniqueID)+1);
 #endif
 
 		if (rakPeerInterface)
@@ -64,7 +66,7 @@ void RPC4Plugin::CallLoopback( const char* uniqueID, RakNet::BitStream * bitStre
 	}
 
 	RakNet::BitStream out;
-	out.Write((MessageID) ID_RPC_4_PLUGIN);
+	out.Write((MessageID) ID_RPC_PLUGIN);
 	out.WriteCompressed(uniqueID);
 	if (bitStream)
 	{
@@ -72,7 +74,7 @@ void RPC4Plugin::CallLoopback( const char* uniqueID, RakNet::BitStream * bitStre
 		out.Write(bitStream);
 	}
 	if (rakPeerInterface) 
-		p=rakPeerInterface->AllocatePacket(out.GetNumberOfBytesUsed());
+		p=AllocatePacketUnified(out.GetNumberOfBytesUsed());
 #if _RAKNET_SUPPORT_PacketizedTCP==1
 	else
 		p=packetizedTCP->AllocatePacket(out.GetNumberOfBytesUsed());
@@ -90,10 +92,10 @@ void RPC4Plugin::CallLoopback( const char* uniqueID, RakNet::BitStream * bitStre
 	PushBackPacketUnified(p,false);
 	return;
 }
-void RPC4Plugin::Call( const char* uniqueID, RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast )
+void RPC4::Call( const char* uniqueID, RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast )
 {
 	RakNet::BitStream out;
-	out.Write((MessageID) ID_RPC_4_PLUGIN);
+	out.Write((MessageID) ID_RPC_PLUGIN);
 	out.WriteCompressed(uniqueID);
 	if (bitStream)
 	{
@@ -102,21 +104,21 @@ void RPC4Plugin::Call( const char* uniqueID, RakNet::BitStream * bitStream, Pack
 	}
 	SendUnified(&out,priority,reliability,orderingChannel,systemIdentifier,broadcast);
 }
-PluginReceiveResult RPC4Plugin::OnReceive(Packet *packet)
+PluginReceiveResult RPC4::OnReceive(Packet *packet)
 {
-	if (packet->data[0]==ID_RPC_4_PLUGIN)
+	if (packet->data[0]==ID_RPC_PLUGIN)
 	{
 		RakNet::BitStream bsIn(packet->data,packet->length,false);
 		bsIn.IgnoreBytes(1);
 		RakNet::RakString functionName;
 		bsIn.ReadCompressed(functionName);
-		DataStructures::StringKeyedHashIndex skhi = registeredFunctions.GetIndexOf(functionName.C_String());
+		DataStructures::HashIndex skhi = registeredFunctions.GetIndexOf(functionName.C_String());
 		if (skhi.IsInvalid())
 		{
 			RakNet::BitStream bsOut;
 			bsOut.Write((unsigned char) ID_RPC_REMOTE_ERROR);
 			bsOut.Write((unsigned char) RPC_ERROR_FUNCTION_NOT_REGISTERED);
-			bsOut.Write(functionName.C_String(),functionName.GetLength()+1);
+			bsOut.Write(functionName.C_String(),(unsigned int) functionName.GetLength()+1);
 			SendUnified(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
 			return RR_STOP_PROCESSING_AND_DEALLOCATE;
 		}

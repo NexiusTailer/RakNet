@@ -4,6 +4,8 @@
 #include "DS_List.h"
 #include "RakString.h"
 
+namespace RakNet {
+
 class ProfanityFilter
 {
 public:
@@ -28,5 +30,7 @@ private:
 	static char BANCHARS[];
 	static char WORDCHARS[];
 };
+
+} // namespace RakNet
 
 #endif // __PROFANITY__H__

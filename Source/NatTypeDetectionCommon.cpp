@@ -44,6 +44,8 @@ const char *RakNet::NATTypeDetectionResultToString(NATTypeDetectionResult type)
 		return "In Progress";
 	case NAT_TYPE_SUPPORTS_UPNP:
 		return "Supports UPNP";
+	case NAT_TYPE_COUNT:
+		return "NAT_TYPE_COUNT";
 	}
 	return "Error, unknown enum in NATTypeDetectionResult";
 }
@@ -71,20 +73,21 @@ const char *RakNet::NATTypeDetectionResultToStringFriendly(NATTypeDetectionResul
 		return "In Progress";
 	case NAT_TYPE_SUPPORTS_UPNP:
 		return "Supports UPNP";
+	case NAT_TYPE_COUNT:
+		return "NAT_TYPE_COUNT";
 	}
 	return "Error, unknown enum in NATTypeDetectionResult";
 }
 
 
-SOCKET RakNet::CreateNonblockingBoundSocket(const char *bindAddr)
+SOCKET RakNet::CreateNonblockingBoundSocket(const char *bindAddr )
 {
-	SOCKET s = SocketLayer::CreateBoundSocket( 0, false, bindAddr, true );
+	SOCKET s = SocketLayer::CreateBoundSocket( 0, false, bindAddr, true, 0 );
 	#ifdef _WIN32
 		unsigned long nonblocking = 1;
 		ioctlsocket( s, FIONBIO, &nonblocking );
-
-
-
+	#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                                                                                                     
 	#else
 		fcntl( s, F_SETFL, O_NONBLOCK );
 	#endif

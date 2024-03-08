@@ -1,13 +1,12 @@
 #pragma once
 
-//struct InternalPacket;
-//class RakPeerInterface;
 #include "RakNetTypes.h"
 #include "PluginInterface2.h"
 #include "PacketPriority.h"
 #include "MessageIdentifiers.h"
 #include "InternalPacket.h"
 
+using namespace RakNet;
 class PacketChangerPlugin: public PluginInterface2
 {
 public:
@@ -68,15 +67,15 @@ public:
 	/// \param[in] internalPacket The user message, along with all send data.
 	/// \param[in] frameNumber The number of frames sent or received so far for this player depending on \a isSend .  Indicates the frame of this user message.
 	/// \param[in] remoteSystemAddress The player we sent or got this packet from
-	/// \param[in] time The current time as returned by RakNet::GetTime()
+	/// \param[in] time The current time as returned by GetTimeMS()
 	/// \param[in] isSend Is this callback representing a send event or receive event?
-	void OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNetTime time, int isSend);// {(void) internalPacket; (void) frameNumber; (void) remoteSystemAddress; (void) time; (void) isSend;}
+	void OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, TimeMS time, int isSend);// {(void) internalPacket; (void) frameNumber; (void) remoteSystemAddress; (void) time; (void) isSend;}
 
 	/// Called when we get an ack for a message we reliabily sent
 	/// \param[in] messageNumber The numerical identifier for which message this is
 	/// \param[in] remoteSystemAddress The player we sent or got this packet from
-	/// \param[in] time The current time as returned by RakNet::GetTime()
-	void OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, RakNetTime time) {(void) messageNumber; (void) remoteSystemAddress; (void) time;}
+	/// \param[in] time The current time as returned by GetTimeMS()
+	void OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, TimeMS time) {(void) messageNumber; (void) remoteSystemAddress; (void) time;}
 
 	/// System called RakPeerInterface::PushBackPacket
 	/// \param[in] data The data being sent

@@ -1,4 +1,4 @@
-#include "RakNetworkFactory.h"
+
 #include "RakPeerInterface.h"
 #include "GetTime.h"
 #include "MessageIdentifiers.h"
@@ -7,6 +7,9 @@
 #include <memory.h>
 #include <cstring>
 #include <stdlib.h>
+#include "Gets.h"
+
+using namespace RakNet;
 
 #ifdef WIN32
 #include "Kbhit.h"
@@ -24,9 +27,9 @@ int main(void)
 	int localPort, remotePort;
 	int packetSize;
 	int sendinterval;
-	RakNetTime time;
-	Packet *p;
-	RakNetTime lastPacketReceipt, lastNotification, lastSend;
+	RakNet::TimeMS time;
+	RakNet::Packet *p;
+	RakNet::TimeMS lastPacketReceipt, lastNotification, lastSend;
 	#ifndef _WIN32
 	char buff[256];
 	#endif
@@ -39,7 +42,7 @@ int main(void)
 
 	printf("Start relay (s)erver or start (c)lient?\n");
 #ifndef _WIN32
-	gets(buff);
+	Gets(buff,sizeof(buff));
 	ch=buff[0];
 #else
 	ch=getch();
@@ -47,18 +50,18 @@ int main(void)
 	if (ch=='s' || ch=='S')
 	{
 		printf("Acting as server.\n");
-		rakServer=RakNetworkFactory::GetRakPeerInterface();
+		rakServer=RakNet::RakPeerInterface::GetInstance();
 		rakClient=0;
 	}
 	else
 	{
 		printf("Acting as client.\n");
-		rakClient=RakNetworkFactory::GetRakPeerInterface();
+		rakClient=RakNet::RakPeerInterface::GetInstance();
 		rakServer=0;
 	}
 
 	printf("Enter local port: ");
-	gets(str);
+	Gets(str, sizeof(str));
 	if (str[0]==0)
 	{
 		if (rakServer)
@@ -71,59 +74,24 @@ int main(void)
 
 	if (rakServer)
 	{
-		printf("(H)igh priority thread or (R)egular?\n");
-#ifndef _WIN32
-		gets(buff);
-		ch=buff[0];
-#else
-		ch=getch();
-#endif
-		if (ch=='h' || ch=='H')
-		{
-			SocketDescriptor socketDescriptor(localPort,0);
-			rakServer->Startup(100, 0, &socketDescriptor, 1);			
-			printf("Server started under high priority\n");
-		}
-		else
-		{
-			SocketDescriptor socketDescriptor(localPort,0);
-			rakServer->Startup(100, 30, &socketDescriptor, 1);
-			printf("Server started under regular priority\n");
-		}
+		RakNet::SocketDescriptor socketDescriptor(localPort,0);
+		rakServer->Startup(100, &socketDescriptor, 1);
 		rakServer->SetMaximumIncomingConnections(100);
 	}
 	else
 	{
 		printf("Enter remote IP: ");
-		gets(remoteIP);
+		Gets(remoteIP,sizeof(remoteIP));
 		if (remoteIP[0]==0)
 			strcpy(remoteIP, "127.0.0.1");
 		printf("Enter remote port: ");
-		gets(str);
+		Gets(str, sizeof(str));
 		if (str[0]==0)
 			remotePort=60000;
 		else
 			remotePort=atoi(str);
-		printf("(H)igh priority thread or (R)egular?\n");
-#ifndef _WIN32
-		gets(buff);
-		ch=buff[0];
-#else
-		ch=getch();
-#endif
-		
-		if (ch=='h' || ch=='H')
-		{
-			SocketDescriptor socketDescriptor(localPort,0);
-			rakClient->Startup(1, 0, &socketDescriptor, 1);
-			printf("Client started under high priority\n");
-		}
-		else
-		{
-			SocketDescriptor socketDescriptor(localPort,0);
-			rakClient->Startup(1, 30, &socketDescriptor, 1);
-			printf("Client started under regular priority.  Attempting connection...\n");
-		}
+		RakNet::SocketDescriptor socketDescriptor(localPort,0);
+		rakClient->Startup(1, &socketDescriptor, 1);
 		rakClient->Connect(remoteIP, remotePort, 0, 0);
 	}
 
@@ -131,17 +99,17 @@ int main(void)
 
 	sendinterval=128;
 	packetSize=64;
-	lastPacketReceipt=lastNotification=RakNet::GetTime();
+	lastPacketReceipt=lastNotification=RakNet::GetTimeMS();
 	lastSend=0;
 
 	while (1)
 	{
-		time=RakNet::GetTime();
+		time=RakNet::GetTimeMS();
 
 		if (kbhit())
 		{
 #ifndef _WIN32
-			gets(buff);
+			Gets(buff,sizeof(buff));
 			ch=buff[0];
 #else
 			ch=getch();
@@ -206,7 +174,7 @@ int main(void)
 
 		if (p)
 		{
-			lastPacketReceipt=RakNet::GetTime();
+			lastPacketReceipt=RakNet::GetTimeMS();
 
 			switch (p->data[0])
 			{
@@ -221,11 +189,6 @@ int main(void)
 			case ID_NEW_INCOMING_CONNECTION:
 				// Somebody connected.  We have their IP now
 				printf("ID_NEW_INCOMING_CONNECTION\n");
-				break;
-
-			case ID_MODIFIED_PACKET:
-				// Cheater!
-				printf("ID_MODIFIED_PACKET\n");
 				break;
 
 			case ID_CONNECTION_LOST:
@@ -249,15 +212,15 @@ int main(void)
 			(rakClient && rakClient->NumberOfConnections()>0))
 		{
 			// Do sends
-			if (lastSend + (RakNetTime)sendinterval < time)
+			if (lastSend + (RakNet::TimeMS)sendinterval < time)
 			{
 				if (rakServer)
 				{
-					rakServer->Send((char*)randomData, packetSize, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+					rakServer->Send((char*)randomData, packetSize, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 				}
 				else if (rakClient)
 				{
-					rakClient->Send((char*)randomData, packetSize, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+					rakClient->Send((char*)randomData, packetSize, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 				}
 
 				lastSend=time;
@@ -272,9 +235,9 @@ int main(void)
 	}
 
 	if (rakServer)
-		RakNetworkFactory::DestroyRakPeerInterface(rakServer);
+		RakNet::RakPeerInterface::DestroyInstance(rakServer);
 	else
-		RakNetworkFactory::DestroyRakPeerInterface(rakClient);
+		RakNet::RakPeerInterface::DestroyInstance(rakClient);
 
 	return 1;
 }

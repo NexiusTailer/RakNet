@@ -10,8 +10,10 @@
 #include <string.h>
 #include <stdio.h>
 
-
-#if   defined(_WIN32)
+#if defined(_XBOX) || defined(X360)
+#elif defined(_WIN32)
+#include <stdlib.h>
+// extern __int64 _strtoui64(const char*, char**, int); // needed for Code::Blocks. Does not compile on Visual Studio 2010
 // IP_DONTFRAGMENT is different between winsock 1 and winsock 2.  Therefore, Winsock2.h must be linked againt Ws2_32.lib
 // winsock.h must be linked against WSock32.lib.  If these two are mixed up the flag won't work correctly
 #include <winsock2.h>
@@ -24,9 +26,36 @@
 #include <string.h> // strncasecmp
 #include "Itoa.h"
 #include "SocketLayer.h"
+#include "SuperFastHash.h"
 #include <stdlib.h>
 
-bool NonNumericHostString( const char *host )
+using namespace RakNet;
+
+AddressOrGUID::AddressOrGUID( Packet *packet )
+{
+	rakNetGuid=packet->guid;
+	systemAddress=packet->systemAddress;
+}
+
+unsigned long AddressOrGUID::ToInteger( const AddressOrGUID &aog )
+{
+	if (aog.rakNetGuid!=UNASSIGNED_RAKNET_GUID)
+		return RakNetGUID::ToInteger(aog.rakNetGuid);
+	return SystemAddress::ToInteger(aog.systemAddress);
+}
+const char *AddressOrGUID::ToString(bool writePort) const
+{
+	if (rakNetGuid!=UNASSIGNED_RAKNET_GUID)
+		return rakNetGuid.ToString();
+	return systemAddress.ToString(writePort);
+}
+void AddressOrGUID::ToString(bool writePort, char *dest) const
+{
+	if (rakNetGuid!=UNASSIGNED_RAKNET_GUID)
+		return rakNetGuid.ToString(dest);
+	return systemAddress.ToString(writePort,dest);
+}
+bool RakNet::NonNumericHostString( const char *host )
 {
 	if ( host[ 0 ] >= '0' && host[ 0 ] <= '9' )
 		return false;
@@ -37,7 +66,7 @@ bool NonNumericHostString( const char *host )
 	return true;
 }
 
-SocketDescriptor::SocketDescriptor() {port=0; hostAddress[0]=0; remotePortRakNetWasStartedOn_PS3=0;}
+SocketDescriptor::SocketDescriptor() {port=0; hostAddress[0]=0; remotePortRakNetWasStartedOn_PS3=0; extraSocketOptions=0;}
 SocketDescriptor::SocketDescriptor(unsigned short _port, const char *_hostAddress)
 {
 	remotePortRakNetWasStartedOn_PS3=0;
@@ -46,6 +75,7 @@ SocketDescriptor::SocketDescriptor(unsigned short _port, const char *_hostAddres
 		strcpy(hostAddress, _hostAddress);
 	else
 		hostAddress[0]=0;
+	extraSocketOptions=0;
 }
 
 // Defaults to not in peer to peer mode for NetworkIDs.  This only sends the localSystemAddress portion in the BitStream class
@@ -74,6 +104,11 @@ bool SystemAddress::operator<( const SystemAddress& right ) const
 {
 	return ( ( binaryAddress < right.binaryAddress ) || ( ( binaryAddress == right.binaryAddress ) && ( port < right.port ) ) );
 }
+unsigned long SystemAddress::ToInteger( const SystemAddress &sa )
+{
+	unsigned int lastHash = SuperFastHashIncremental ((const char*) & sa.binaryAddress, 4, 4 );
+	return SuperFastHashIncremental ((const char*) & sa.port, 2, lastHash );
+}
 const char *SystemAddress::ToString(bool writePort) const
 {
 	static unsigned char strIndex=0;
@@ -92,21 +127,11 @@ void SystemAddress::ToString(bool writePort, char *dest) const
 		return;
 	}
 
-
-
-
-
-
-
-
-
-
-
-	
+#if defined(_XBOX) || defined(X360)
+                                                                                                                                                                                           
+#else
 	in_addr in;
 	in.s_addr = binaryAddress;
-//	cellSysmoduleLoadModule(CELL_SYSMODULE_NETCTL);
-//	sys_net_initialize_network();
 	const char *ntoaStr = inet_ntoa( in );
 	strcpy(dest, ntoaStr);
 	if (writePort)
@@ -114,11 +139,14 @@ void SystemAddress::ToString(bool writePort, char *dest) const
 		strcat(dest, ":");
 		Itoa(port, dest+strlen(dest), 10);
 	}
-
+#endif
 }
 SystemAddress::SystemAddress() {*this=UNASSIGNED_SYSTEM_ADDRESS; systemIndex=(SystemIndex)-1;}
 SystemAddress::SystemAddress(const char *a, unsigned short b) {SetBinaryAddress(a); port=b; systemIndex=(SystemIndex)-1;};
 SystemAddress::SystemAddress(unsigned int a, unsigned short b) {binaryAddress=a; port=b; systemIndex=(SystemIndex)-1;};
+#if defined(_XBOX) || defined(X360)
+                                                                                                                                                                                                                                                                                                                                                
+#endif
 #ifdef _MSC_VER
 #pragma warning( disable : 4996 )  // The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strnicmp. See online help for details.
 #endif
@@ -159,6 +187,8 @@ void SystemAddress::SetBinaryAddress(const char *str)
 		//	port=UNASSIGNED_SYSTEM_ADDRESS.port;
 		for (index=0; str[index] && str[index]!=':' && index<22; index++)
 		{
+			if (str[index]!='.' && (str[index]<'0' || str[index]>'9'))
+				break;
 			IPPart[index]=str[index];
 		}
 		IPPart[index]=0;
@@ -167,26 +197,22 @@ void SystemAddress::SetBinaryAddress(const char *str)
 		{
 			index++;
 			for (portIndex=0; portIndex<10 && str[index] && index < 22+10; index++, portIndex++)
+			{
+				if (str[index]<'0' || str[index]>'9')
+					break;
+
 				portPart[portIndex]=str[index];
+			}
 			portPart[portIndex]=0;
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
+#if defined(_XBOX) || defined(X360)
+                                                                                                                                                                                                                                                                  
+#else
 		if (IPPart[0])
 			binaryAddress=inet_addr(IPPart);
 
-
+#endif
 
 		if (portPart[0])
 			port=(unsigned short) atoi(portPart);
@@ -195,98 +221,6 @@ void SystemAddress::SetBinaryAddress(const char *str)
 
 }
 
-NetworkID& NetworkID::operator = ( const NetworkID& input )
-{
-#if NETWORK_ID_SUPPORTS_PEER_TO_PEER==1
-	systemAddress = input.systemAddress;
-	guid = input.guid;
-#endif
-	localSystemAddress = input.localSystemAddress;
-	return *this;
-}
-
-bool NetworkID::operator==( const NetworkID& right ) const
-{
-#if NETWORK_ID_SUPPORTS_PEER_TO_PEER==1
-//	if (NetworkID::peerToPeerMode)
-	{
-		if (guid!=UNASSIGNED_RAKNET_GUID)
-			return guid == right.guid && localSystemAddress == right.localSystemAddress;
-		else
-			return systemAddress == right.systemAddress && localSystemAddress == right.localSystemAddress;
-	}
-#else
-//	else
-		return localSystemAddress==right.localSystemAddress;
-#endif
-}
-
-bool NetworkID::operator!=( const NetworkID& right ) const
-{
-#if NETWORK_ID_SUPPORTS_PEER_TO_PEER==1
-//	if (NetworkID::peerToPeerMode)
-	{
-		if (guid!=UNASSIGNED_RAKNET_GUID)
-			return guid != right.guid || localSystemAddress != right.localSystemAddress;
-		else
-			return systemAddress != right.systemAddress || localSystemAddress != right.localSystemAddress;
-	}
-#else
-//	else
-		return localSystemAddress!=right.localSystemAddress;
-#endif
-}
-
-bool NetworkID::operator>( const NetworkID& right ) const
-{
-#if NETWORK_ID_SUPPORTS_PEER_TO_PEER==1
-//	if (NetworkID::peerToPeerMode)
-	{
-		if (guid!=UNASSIGNED_RAKNET_GUID)
-			return ( ( guid > right.guid ) || ( ( guid == right.guid ) && ( localSystemAddress > right.localSystemAddress ) ) );
-		else
-			return ( ( systemAddress > right.systemAddress ) || ( ( systemAddress == right.systemAddress ) && ( localSystemAddress > right.localSystemAddress ) ) );
-	}
-#else
-//	else
-		return localSystemAddress>right.localSystemAddress;
-#endif
-}
-
-bool NetworkID::operator<( const NetworkID& right ) const
-{
-#if NETWORK_ID_SUPPORTS_PEER_TO_PEER==1
-//	if (NetworkID::peerToPeerMode)
-	{
-		if (guid!=UNASSIGNED_RAKNET_GUID)
-			return ( ( guid < right.guid ) || ( ( guid == right.guid ) && ( localSystemAddress < right.localSystemAddress ) ) );
-		else
-			return ( ( systemAddress < right.systemAddress ) || ( ( systemAddress == right.systemAddress ) && ( localSystemAddress < right.localSystemAddress ) ) );
-	}
-#else
-	//else
-		return localSystemAddress<right.localSystemAddress;
-#endif
-}
-bool NetworkID::IsPeerToPeerMode(void)
-{
-#if NETWORK_ID_SUPPORTS_PEER_TO_PEER==1
-	return true;
-#else
-	return false;
-#endif
-//	return peerToPeerMode;
-}
-void NetworkID::SetPeerToPeerMode(bool isPeerToPeer)
-{
-	(void) isPeerToPeer;
-
-	// deprecated, define NETWORK_ID_SUPPORTS_PEER_TO_PEER instead for true, comment out for false
-	// This is in RakNetDefines.h
-	RakAssert(0);
-
-//	peerToPeerMode=isPeerToPeer;
-}
 bool RakNetGUID::operator==( const RakNetGUID& right ) const
 {
 	return g==right.g;
@@ -327,16 +261,20 @@ bool RakNetGUID::FromString(const char *source)
 	if (source==0)
 		return false;
 
-
-
-#if   defined(WIN32)
-	g=_atoi64(source);
-
-
+#if defined(_XBOX) || defined(_X360)
+                           
+#elif defined(WIN32)
+	g=_strtoui64(source, NULL, 10);
+#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                         
 #else
 	// Changed from g=strtoull(source,0,10); for android
 	g=strtoull(source, (char **)NULL, 10);
 #endif
 	return true;
 
+}
+unsigned long RakNetGUID::ToInteger( const RakNetGUID &g )
+{
+	return ((unsigned long) (g.g >> 32)) ^ ((unsigned long) (g.g & 0xFFFFFFFF));
 }

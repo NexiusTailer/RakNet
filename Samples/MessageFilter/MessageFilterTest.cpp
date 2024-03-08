@@ -1,5 +1,5 @@
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
+
 #include "MessageFilter.h"
 #include "MessageIdentifiers.h"
 #include "RakSleep.h"
@@ -8,13 +8,13 @@
 int main()
 {
 	// The message filter parses all incoming messages and only allows messages of a certain type
-	MessageFilter messageFilter;
-	RakPeerInterface *peer1, *peer2;
+	RakNet::MessageFilter messageFilter;
+	RakNet::RakPeerInterface *peer1, *peer2;
 
 	char message;
-	Packet *packet;
-	peer1=RakNetworkFactory::GetRakPeerInterface();
-	peer2=RakNetworkFactory::GetRakPeerInterface();
+	RakNet::Packet *packet;
+	peer1=RakNet::RakPeerInterface::GetInstance();
+	peer2=RakNet::RakPeerInterface::GetInstance();
 
 	// Set up the filter rules.
 	// All new connections go to filter 0
@@ -27,11 +27,11 @@ int main()
 	peer1->AttachPlugin(&messageFilter);
 
 	// Connect the systems to each other
-	SocketDescriptor socketDescriptor(60000,0);
-	peer1->Startup(1,0,&socketDescriptor, 1);
+	RakNet::SocketDescriptor socketDescriptor(60000,0);
+	peer1->Startup(1,&socketDescriptor, 1);
 	peer1->SetMaximumIncomingConnections(1);
 	socketDescriptor.port=60001;
-	peer2->Startup(1,0,&socketDescriptor, 1);
+	peer2->Startup(1,&socketDescriptor, 1);
 	peer2->Connect("127.0.0.1", 60000,0,0);
 
 	// Wait for the connection to complete
@@ -52,11 +52,11 @@ int main()
 
 	// Have peer 2 send a disallowed message, then the allowed message.
 	message=ID_USER_PACKET_ENUM+1;
-	peer2->Send(&message, 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+	peer2->Send(&message, 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 
 	// Allowed message
 	message=ID_USER_PACKET_ENUM;
-	peer2->Send(&message, 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+	peer2->Send(&message, 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 
 	RakSleep(1000);
 
@@ -71,7 +71,7 @@ int main()
 			printf("ID_USER_PACKET_ENUM\n");
 			printf("User switched to group 1\n");
 			// Switch the sender to group 1 now so that ID_USER_PACKET_ENUM+1 is allowed.
-			messageFilter.SetSystemFilterSet(packet->systemAddress, 1);
+			messageFilter.SetSystemFilterSet(packet, 1);
 			break;
 		case ID_USER_PACKET_ENUM+1:
 			printf("ID_USER_PACKET_ENUM+1\n");
@@ -84,9 +84,9 @@ int main()
 
 	// Have peer 2 send the messages again.
 	message=ID_USER_PACKET_ENUM+1;
-	peer2->Send(&message, 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+	peer2->Send(&message, 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 	message=ID_USER_PACKET_ENUM;
-	peer2->Send(&message, 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+	peer2->Send(&message, 1, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 
 	RakSleep(1000);
 
@@ -109,7 +109,7 @@ int main()
 	}
 
 	printf("Done.\n");
-	RakNetworkFactory::DestroyRakPeerInterface(peer1);
-	RakNetworkFactory::DestroyRakPeerInterface(peer2);
+	RakNet::RakPeerInterface::DestroyInstance(peer1);
+	RakNet::RakPeerInterface::DestroyInstance(peer2);
 	return 0;
 }

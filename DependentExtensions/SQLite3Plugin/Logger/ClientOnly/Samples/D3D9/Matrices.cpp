@@ -262,7 +262,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
     RegisterClassEx( &wc );
 
 	// Connect to the server if it is running, to store screenshots
-	PacketizedTCP packetizedTCP;
+	RakNet::PacketizedTCP packetizedTCP;
 	RakNet::SQLiteClientLoggerPlugin loggerPlugin;
 	packetizedTCP.AttachPlugin(&loggerPlugin);
 	packetizedTCP.Start(0,0);

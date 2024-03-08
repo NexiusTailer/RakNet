@@ -26,8 +26,6 @@
 #include <cstdio>
 #include "Itoa.h"
 
-
-
 // Column with this header contains the name of the game, passed to UploadTable()
 static const char *GAME_NAME_COMMAND="__GAME_NAME";
 // Column with this header contains the port of the game, passed to UploadTable()
@@ -179,7 +177,7 @@ HTTPReadResult PHPDirectoryServer2::ProcessHTTPRead(RakNet::RakString httpRead)
 			if (isCommand)
 			{
 				buff[buffIndex]=0;
-				columns.Push(RakString::NonVariadic(buff), __FILE__, __LINE__);
+				columns.Push(RakString::NonVariadic(buff), _FILE_AND_LINE_);
 				isCommand=false;
 				if (buff[0]!=0)
 					resultCode=HTTP_RESULT_GOT_TABLE;
@@ -187,7 +185,7 @@ HTTPReadResult PHPDirectoryServer2::ProcessHTTPRead(RakNet::RakString httpRead)
 			else
 			{
 				buff[buffIndex]=0;
-				values.Push(RakString::NonVariadic(buff), __FILE__, __LINE__);
+				values.Push(RakString::NonVariadic(buff), _FILE_AND_LINE_);
 				isCommand=true;
 			}
 			buffIndex=0;
@@ -196,11 +194,11 @@ HTTPReadResult PHPDirectoryServer2::ProcessHTTPRead(RakNet::RakString httpRead)
 		{
 			buff[buffIndex]=0;
 			buffIndex=0;
-			values.Push(RakString::NonVariadic(buff), __FILE__, __LINE__);
+			values.Push(RakString::NonVariadic(buff), _FILE_AND_LINE_);
 			isCommand=true;
 			PushColumnsAndValues(columns, values);
-			columns.Clear(true, __FILE__, __LINE__);
-			values.Clear(true, __FILE__, __LINE__);
+			columns.Clear(true, _FILE_AND_LINE_);
+			values.Clear(true, _FILE_AND_LINE_);
 
 		}
 		else
@@ -213,7 +211,7 @@ HTTPReadResult PHPDirectoryServer2::ProcessHTTPRead(RakNet::RakString httpRead)
 	if (buff[0] && columns.Size()==values.Size()+1)
 	{
 		buff[buffIndex]=0;
-		values.Push(RakString::NonVariadic(buff), __FILE__, __LINE__);
+		values.Push(RakString::NonVariadic(buff), _FILE_AND_LINE_);
 	}
 
 	PushColumnsAndValues(columns, values);
@@ -284,7 +282,7 @@ void PHPDirectoryServer2::Update(void)
 	if (nextRepost==0 || fields.Size()==0)
 		return;
 
-	RakNetTimeMS time = GetTimeMS();
+	RakNet::TimeMS time = GetTimeMS();
 
 	// Entry deletes itself after 60 seconds, so keep reposting if set to do so
 	if (time > nextRepost)

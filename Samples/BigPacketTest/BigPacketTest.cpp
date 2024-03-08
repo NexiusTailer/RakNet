@@ -1,5 +1,4 @@
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
 #include "BitStream.h"
 #include <stdlib.h> // For atoi
 #include <cstring> // For strlen
@@ -9,17 +8,15 @@
 #include "MTUSize.h"
 #include <stdio.h>
 #include "Kbhit.h"
-
-#ifdef _COMPATIBILITY_1
-#include "Compatibility1Includes.h" // Developers of a certain platform will know what to do here.
-#else
 #include "RakSleep.h"
-#endif
+#include "Gets.h"
 
 bool quit;
 bool sentPacket=false;
 
 #define BIG_PACKET_SIZE 100000000
+
+using namespace RakNet;
 
 RakPeerInterface *client, *server;
 char *text;
@@ -38,58 +35,61 @@ int main(void)
 
 	printf("Enter 's' to run as server, 'c' to run as client, space to run local.\n");
 	ch=' ';
-	gets(text);
+	Gets(text,BIG_PACKET_SIZE);
 	ch=text[0];
 
 	if (ch=='c')
 	{
-		client=RakNetworkFactory::GetRakPeerInterface();
+		client=RakNet::RakPeerInterface::GetInstance();
 		printf("Working as client\n");
 		printf("Enter remote IP: ");
-		gets(text);
+		Gets(text,BIG_PACKET_SIZE);
 		if (text[0]==0)
 			strcpy(text, "127.0.0.1");
 		//	strcpy(text, "94.198.81.195"); // dx in Europe
 	}
 	else if (ch=='s')
 	{
-		server=RakNetworkFactory::GetRakPeerInterface();
+		server=RakNet::RakPeerInterface::GetInstance();
 		printf("Working as server\n");
 	}
 	else
 	{
-		client=RakNetworkFactory::GetRakPeerInterface();
-		server=RakNetworkFactory::GetRakPeerInterface();;
+		client=RakNet::RakPeerInterface::GetInstance();
+		server=RakNet::RakPeerInterface::GetInstance();;
 		strcpy(text, "127.0.0.1");
 	}
 	if (client)
 	{
-		client->SetTimeoutTime(2000,UNASSIGNED_SYSTEM_ADDRESS);
-		SocketDescriptor socketDescriptor(0,0);
-		client->Startup(1, 10, &socketDescriptor, 1);
+		client->SetTimeoutTime(5000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+		RakNet::SocketDescriptor socketDescriptor(0,0);
+		client->Startup(1, &socketDescriptor, 1);
 		client->SetSplitMessageProgressInterval(10000); // Get ID_DOWNLOAD_PROGRESS notifications
 		client->Connect(text, 60000, 0, 0);
+	//	client->SetPerConnectionOutgoingBandwidthLimit(28800);
 	}
 	if (server)
 	{
-		server->SetTimeoutTime(2000,UNASSIGNED_SYSTEM_ADDRESS);
-		SocketDescriptor socketDescriptor(60000,0);
+		server->SetTimeoutTime(5000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+		RakNet::SocketDescriptor socketDescriptor(60000,0);
 		server->SetMaximumIncomingConnections(4);
-		server->Startup(4, 10, &socketDescriptor, 1);
+		server->Startup(4, &socketDescriptor, 1);
+	//	server->SetPerConnectionOutgoingBandwidthLimit(28800);
 	}
 	RakSleep(500);
 
+
 	// Always apply the network simulator on two systems, never just one, with half the values on each.
 	// Otherwise the flow control gets confused.
-	//if (client)
-	// client->ApplyNetworkSimulator(128000, 0, 0);
-	//if (server)
-	//	server->ApplyNetworkSimulator(128000, 0, 0);
+// 	if (client)
+// 		client->ApplyNetworkSimulator(.01, 0, 0);
+// 	if (server)
+// 		server->ApplyNetworkSimulator(.01, 0, 0);
 
-	RakNetTime start,stop;
+	RakNet::TimeMS start,stop;
 
-	RakNetTime nextStatTime = RakNet::GetTime() + 1000;
-	Packet *packet;
+	RakNet::TimeMS nextStatTime = RakNet::GetTimeMS() + 1000;
+	RakNet::Packet *packet;
 	start=RakNet::GetTimeMS();
 	while (!quit)
 	{
@@ -110,7 +110,7 @@ int main(void)
 						text[0]=(unsigned char) 255;
 					server->Send(text, BIG_PACKET_SIZE, LOW_PRIORITY, RELIABLE_ORDERED_WITH_ACK_RECEIPT, 0, packet->systemAddress, false);
 					// Keep the stat from updating until the messages move to the thread or it quits right away
-					nextStatTime=RakNet::GetTime()+1000;
+					nextStatTime=RakNet::GetTimeMS()+1000;
 				}
 				if (packet->data[0]==ID_CONNECTION_LOST)
 					printf("ID_CONNECTION_LOST from %s\n", packet->systemAddress.ToString());
@@ -130,7 +130,7 @@ int main(void)
 					printf("Sending medium priority message\n");
 					char t[1];
 					t[0]=(unsigned char) 254;
-					server->Send(t, 1, MEDIUM_PRIORITY, RELIABLE_ORDERED, 1, UNASSIGNED_SYSTEM_ADDRESS, true);
+					server->Send(t, 1, MEDIUM_PRIORITY, RELIABLE_ORDERED, 1, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 				}
 			}
 		}
@@ -207,9 +207,9 @@ int main(void)
 			}
 		}
 
-		if (RakNet::GetTime() > nextStatTime)
+		if (RakNet::GetTimeMS() > nextStatTime)
 		{
-			nextStatTime=RakNet::GetTime()+1000;
+			nextStatTime=RakNet::GetTimeMS()+1000;
 			RakNetStatistics rssSender;
 			RakNetStatistics rssReceiver;
 			if (server)
@@ -228,7 +228,7 @@ int main(void)
 					}
 				}
 			}
-			if (client && server==0)
+			if (client && server==0 && client->GetGUIDFromIndex(0)!=UNASSIGNED_RAKNET_GUID)
 			{
 				client->GetStatistics(client->GetSystemAddressFromIndex(0), &rssReceiver);
 				StatisticsToString(&rssReceiver, text,2);
@@ -238,7 +238,7 @@ int main(void)
 
 		RakSleep(100);
 	}
-	stop=RakNet::GetTime();
+	stop=RakNet::GetTimeMS();
 	double seconds = (double)(stop-start)/1000.0;
 
 	if (server)
@@ -249,11 +249,11 @@ int main(void)
 	}
 
 	printf("%i bytes per second (%.2f seconds). Press enter to quit\n", (int)((double)(BIG_PACKET_SIZE) / seconds ), seconds) ;
-	gets(text);
+	Gets(text,BIG_PACKET_SIZE);
 
 	delete []text;
-	RakNetworkFactory::DestroyRakPeerInterface(client);
-	RakNetworkFactory::DestroyRakPeerInterface(server);
+	RakNet::RakPeerInterface::DestroyInstance(client);
+	RakNet::RakPeerInterface::DestroyInstance(server);
 
 	return 0;
 }

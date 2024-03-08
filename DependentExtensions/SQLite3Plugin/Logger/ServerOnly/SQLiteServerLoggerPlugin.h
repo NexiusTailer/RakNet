@@ -104,19 +104,19 @@ namespace RakNet
 			RakNet::RakString sessionName;
 			SystemAddress systemAddress;
 			sqlite3 *referencedPointer;
-			RakNetTimeMS timestampDelta;
-//			RakNetTimeMS dbAgeWhenCreated;
+			RakNet::TimeMS timestampDelta;
+//			RakNet::TimeMS dbAgeWhenCreated;
 		};
 		DataStructures::List<SessionNameAndSystemAddress> loggedInSessions;
 
 		// An incoming data packet, and when it arrived
 		struct CPUThreadInputNode
 		{
-			Packet *packet;
-		//	RakNetTimeMS whenMessageArrived;
+			RakNet::Packet *packet;
+		//	RakNet::TimeMS whenMessageArrived;
 			// Time difference from their time to server time, plus the age of the database at the time the session was created
 			// Applied to CPUThreadOutputNode::clientSendingTime before being passed to SQL
-			RakNetTimeMS timestampDelta;
+			RakNet::TimeMS timestampDelta;
 			RakNet::RakString dbIdentifier;
 		};
 		// As packets arrive, they are added to a CPUThreadInput structure.
@@ -133,14 +133,14 @@ namespace RakNet
 		// Images are now in compressed format, should the parameter list indeed have a query
 		struct CPUThreadOutputNode
 		{
-			Packet *packet; // Passthrough
-//			RakNetTimeMS whenMessageArrived; // Passthrough
+			RakNet::Packet *packet; // Passthrough
+//			RakNet::TimeMS whenMessageArrived; // Passthrough
 			RakNet::RakString dbIdentifier; // Passthrough
 			// SystemAddress systemAddress;
 			char ipAddressString[32];
 			RakNet::RakString tableName;
 			RakNet::RakString file;
-			RakNetTimeMS clientSendingTime;
+			RakNet::TimeMS clientSendingTime;
 			unsigned char parameterCount;
 			bool isFunctionCall;
 			DataStructures::List<RakNet::RakString> insertingColumnNames;
@@ -187,7 +187,7 @@ namespace RakNet
 		void StopCPUSQLThreads(void);
 
 		CPUThreadInput *cpuThreadInput;
-		RakNetTime whenCpuThreadInputAllocated;
+		RakNet::TimeMS whenCpuThreadInputAllocated;
 		bool dxtCompressionEnabled;
 
 	};

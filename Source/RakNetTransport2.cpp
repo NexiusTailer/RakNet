@@ -1,5 +1,8 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_TelnetTransport==1
+
 #include "RakNetTransport2.h"
-#include "RakNetworkFactory.h"
+
 #include "RakPeerInterface.h"
 #include "BitStream.h"
 #include "MessageIdentifiers.h"
@@ -11,6 +14,10 @@
 #ifdef _MSC_VER
 #pragma warning( push )
 #endif
+
+using namespace RakNet;
+
+STATIC_FACTORY_DEFINITIONS(RakNetTransport2,RakNetTransport2);
 
 RakNetTransport2::RakNetTransport2()
 {
@@ -27,14 +34,14 @@ bool RakNetTransport2::Start(unsigned short port, bool serverMode)
 }
 void RakNetTransport2::Stop(void)
 {
-	newConnections.Clear(__FILE__, __LINE__);
-	lostConnections.Clear(__FILE__, __LINE__);
+	newConnections.Clear(_FILE_AND_LINE_);
+	lostConnections.Clear(_FILE_AND_LINE_);
 	for (unsigned int i=0; i < packetQueue.Size(); i++)
 	{
-		rakFree_Ex(packetQueue[i]->data,__FILE__,__LINE__);
-		RakNet::OP_DELETE(packetQueue[i],__FILE__,__LINE__);
+		rakFree_Ex(packetQueue[i]->data,_FILE_AND_LINE_);
+		RakNet::OP_DELETE(packetQueue[i],_FILE_AND_LINE_);
 	}
-	packetQueue.Clear(__FILE__, __LINE__);
+	packetQueue.Clear(_FILE_AND_LINE_);
 }
 void RakNetTransport2::Send( SystemAddress systemAddress, const char *data, ... )
 {
@@ -77,8 +84,8 @@ SystemAddress RakNetTransport2::HasLostConnection(void)
 }
 void RakNetTransport2::DeallocatePacket( Packet *packet )
 {
-	rakFree_Ex(packet->data, __FILE__, __LINE__ );
-	RakNet::OP_DELETE(packet, __FILE__, __LINE__ );
+	rakFree_Ex(packet->data, _FILE_AND_LINE_ );
+	RakNet::OP_DELETE(packet, _FILE_AND_LINE_ );
 }
 PluginReceiveResult RakNetTransport2::OnReceive(Packet *packet)
 {
@@ -89,13 +96,13 @@ PluginReceiveResult RakNetTransport2::OnReceive(Packet *packet)
 			if (packet->length==sizeof(MessageID))
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 
-			Packet *p = RakNet::OP_NEW<Packet>(__FILE__,__LINE__);
+			Packet *p = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
 			*p=*packet;
 			p->bitSize-=8;
 			p->length--;
-			p->data=(unsigned char*) rakMalloc_Ex(p->length,__FILE__,__LINE__);
+			p->data=(unsigned char*) rakMalloc_Ex(p->length,_FILE_AND_LINE_);
 			memcpy(p->data, packet->data+1, p->length);
-			packetQueue.Push(p, __FILE__, __LINE__ );
+			packetQueue.Push(p, _FILE_AND_LINE_ );
 
 		}
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -106,14 +113,16 @@ void RakNetTransport2::OnClosedConnection(SystemAddress systemAddress, RakNetGUI
 {
 	(void) rakNetGUID;
 	(void) lostConnectionReason;
-	lostConnections.Push(systemAddress, __FILE__, __LINE__ );
+	lostConnections.Push(systemAddress, _FILE_AND_LINE_ );
 }
 void RakNetTransport2::OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
 {
 	(void) rakNetGUID;
 	(void) isIncoming;
-	newConnections.Push(systemAddress, __FILE__, __LINE__ );
+	newConnections.Push(systemAddress, _FILE_AND_LINE_ );
 }
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

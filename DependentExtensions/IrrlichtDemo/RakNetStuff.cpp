@@ -1,5 +1,5 @@
 #include "RakNetStuff.h"
-#include "RakNetworkFactory.h"
+
 #include "NetworkIDManager.h"
 #include "CDemo.h"
 #include "RakNetTime.h"
@@ -75,24 +75,23 @@ void InstantiateRakNetClasses(void)
 {
 	static const int MAX_PLAYERS=32;
 	static const unsigned short TCP_PORT=0;
-	static const RakNetTime UDP_SLEEP_TIMER=30;
+	static const RakNet::TimeMS UDP_SLEEP_TIMER=30;
 
 	// Basis of all UDP communications
-	rakPeer=RakNetworkFactory::GetRakPeerInterface();
+	rakPeer=RakNet::RakPeerInterface::GetInstance();
 	// Using fixed port so we can use AdvertiseSystem and connect on the LAN if the server is not available.
-	SocketDescriptor sd(1234,0);
+	RakNet::SocketDescriptor sd(1234,0);
 	while (SocketLayer::IsPortInUse(sd.port)==true)
 		sd.port++;
 	// +1 is for the connection to the NAT punchthrough server
-	rakPeer->Startup(MAX_PLAYERS+1,UDP_SLEEP_TIMER,&sd,1);
+	rakPeer->Startup(MAX_PLAYERS+1,&sd,1);
 	rakPeer->SetMaximumIncomingConnections(MAX_PLAYERS);
 	// ReplicaManager3 replies on NetworkIDManager. It assigns numbers to objects so they can be looked up over the network
 	// It's a class in case you wanted to have multiple worlds, then you could have multiple instances of NetworkIDManager
 	networkIDManager=new NetworkIDManager;
-	networkIDManager->SetIsNetworkIDAuthority(true);
-	rakPeer->SetNetworkIDManager(networkIDManager);
 	// Automatically sends around new / deleted / changed game objects
 	replicaManager3=new ReplicaManager3Irrlicht;
+	replicaManager3->SetNetworkIDManager(networkIDManager);
 	rakPeer->AttachPlugin(replicaManager3);
 	// Automatically destroy connections, but don't create them so we have more control over when a system is considered ready to play
 	replicaManager3->SetAutoManageConnections(false,true);
@@ -107,25 +106,27 @@ void InstantiateRakNetClasses(void)
 	rakPeer->AttachPlugin(udpProxyClient);
 	// All the rest is to connect to http://www.jenkinssoftware.com/raknet/DirectoryServer.php and upload/download the player list so we know about other people
 	tcpInterface=new TCPInterface;
-	tcpInterface->Start(TCP_PORT,0);
+	bool tcpStarted=tcpInterface->Start(TCP_PORT,0);
+	RakAssert(tcpStarted);
 	httpConnection=new HTTPConnection;
 	httpConnection->Init(tcpInterface, "jenkinssoftware.com");
 	phpDirectoryServer2=new PHPDirectoryServer2;
 	phpDirectoryServer2->Init(httpConnection, "/raknet/DirectoryServer.php");
-	phpDirectoryServer2->SetField("RakNetGUID",rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
+	phpDirectoryServer2->SetField("RakNetGUID",rakPeer->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
 	// Upload our own game instance
-	//phpDirectoryServer2->UploadAndDownloadTable("a", "a", "IrrlichtDemo", rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port, true);
+	phpDirectoryServer2->UploadAndDownloadTable("a", "a", "IrrlichtDemo", rakPeer->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS).port, true);
 	// Connect to the NAT punchthrough server
-	rakPeer->Connect(DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP, DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_PORT,0,0);
+	ConnectionAttemptResult car = rakPeer->Connect(DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP, DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_PORT,0,0);
+	RakAssert(car==CONNECTION_ATTEMPT_STARTED);
 	// Advertise ourselves on the lAN if the NAT punchthrough server is not available
-	for (int i=0; i < 8; i++)
-		rakPeer->AdvertiseSystem("255.255.255.255", 1234+i, 0,0,0);
+ 	for (int i=0; i < 8; i++)
+ 		rakPeer->AdvertiseSystem("255.255.255.255", 1234+i, 0,0,0);
 }
 void DeinitializeRakNetClasses(void)
 {
 	// Shutdown so the server knows we stopped
 	rakPeer->Shutdown(100,0);
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 	delete networkIDManager;
 	delete replicaManager3;
 	delete natPunchthroughClient;
@@ -160,7 +161,7 @@ RM3SerializationResult BaseIrrlichtReplica::Serialize(RakNet::SerializeParameter
 void BaseIrrlichtReplica::Deserialize(RakNet::DeserializeParameters *deserializeParameters)
 {
 }
-void BaseIrrlichtReplica::Update(RakNetTime curTime)
+void BaseIrrlichtReplica::Update(RakNet::TimeMS curTime)
 {
 }
 PlayerReplica::PlayerReplica()
@@ -169,14 +170,14 @@ PlayerReplica::PlayerReplica()
 	rotationDeltaPerMS=0.0f;
 	isMoving=false;
 	deathTimeout=0;
-	lastUpdate=RakNet::GetTime();
-	playerList.Push(this,__FILE__,__LINE__);
+	lastUpdate=RakNet::GetTimeMS();
+	playerList.Push(this,_FILE_AND_LINE_);
 }
 PlayerReplica::~PlayerReplica()
 {
-	playerList.RemoveAtKey(this,true,__FILE__,__LINE__);
+	playerList.RemoveAtKey(this,true,_FILE_AND_LINE_);
 }
-void PlayerReplica::WriteAllocationID(RakNet::BitStream *allocationIdBitstream) const
+void PlayerReplica::WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const
 {
 	allocationIdBitstream->Write(RakNet::RakString("PlayerReplica"));
 }
@@ -259,12 +260,12 @@ void PlayerReplica::Deserialize(RakNet::DeserializeParameters *deserializeParame
 	float rotationOffset;
 	rotationOffset=GetRotationDifference(rotationAroundYAxis,model->getRotation().Y);
 	rotationDeltaPerMS = rotationOffset / INTERP_TIME_MS;
-	interpEndTime = RakNet::GetTime() + (RakNetTime) INTERP_TIME_MS;
+	interpEndTime = RakNet::GetTimeMS() + (RakNet::TimeMS) INTERP_TIME_MS;
 }
-void PlayerReplica::Update(RakNetTime curTime)
+void PlayerReplica::Update(RakNet::TimeMS curTime)
 {
 	// Is a locally created object?
-	if (creatingSystemGUID==rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
+	if (creatingSystemGUID==rakPeer->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS))
 	{
 		// Local player has no mesh to interpolate
 		// Input our camera position as our player position
@@ -280,7 +281,7 @@ void PlayerReplica::Update(RakNetTime curTime)
 	}
 
 	// Update interpolation
-	RakNetTime elapsed = curTime-lastUpdate;
+	RakNet::TimeMS elapsed = curTime-lastUpdate;
 	if (elapsed<=1)
 		return;
 	if (elapsed>100)
@@ -369,16 +370,16 @@ void PlayerReplica::PlayAttackAnimation(void)
 }
 bool PlayerReplica::IsDead(void) const
 {
-	return deathTimeout > RakNet::GetTime();
+	return deathTimeout > RakNet::GetTimeMS();
 }
 BallReplica::BallReplica()
 {
-	creationTime=RakNet::GetTime();
+	creationTime=RakNet::GetTimeMS();
 }
 BallReplica::~BallReplica()
 {
 }
-void BallReplica::WriteAllocationID(RakNet::BitStream *allocationIdBitstream) const 
+void BallReplica::WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const 
 {
 	allocationIdBitstream->Write(RakNet::RakString("BallReplica"));
 }
@@ -425,10 +426,10 @@ void BallReplica::Deserialize(RakNet::DeserializeParameters *deserializeParamete
 {
 	BaseIrrlichtReplica::Deserialize(deserializeParameters);
 }
-void BallReplica::Update(RakNetTime curTime)
+void BallReplica::Update(RakNet::TimeMS curTime)
 {
 	// Is a locally created object?
-	if (creatingSystemGUID==rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
+	if (creatingSystemGUID==rakPeer->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS))
 	{
 		// Destroy if shot expired
 		if (curTime > shotLifetime)
@@ -443,7 +444,7 @@ void BallReplica::Update(RakNetTime curTime)
 	// Keep at the same position as the visible effect
 	// Deterministic, so no need to actually transmit position
 	// The variable position is the origin that the ball was created at. For the player, it is their actual position
-	RakNetTime elapsedTime;
+	RakNet::TimeMS elapsedTime;
 	// Due to ping variances and timestamp miscalculations, it's possible with very low pings to get a slightly negative time, so we have to check
 	if (curTime>=creationTime)
 		elapsedTime = curTime - creationTime;
@@ -452,7 +453,7 @@ void BallReplica::Update(RakNetTime curTime)
 	irr::core::vector3df updatedPosition = position + shotDirection * (float) elapsedTime * SHOT_SPEED;
 
 	// See if the bullet hit us
-	if (creatingSystemGUID!=rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
+	if (creatingSystemGUID!=rakPeer->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS))
 	{
 		if (playerReplica->IsDead()==false)
 		{

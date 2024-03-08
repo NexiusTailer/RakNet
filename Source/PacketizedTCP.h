@@ -16,9 +16,15 @@
 #include "PluginInterface2.h"
 #include "DS_Map.h"
 
+namespace RakNet
+{
+
 class RAK_DLL_EXPORT PacketizedTCP : public TCPInterface
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(PacketizedTCP)
+
 	PacketizedTCP();
 	virtual ~PacketizedTCP();
 
@@ -75,6 +81,8 @@ protected:
 	// Mirrors single producer / consumer, but processes them in Receive() before returning to user
 	DataStructures::Queue<SystemAddress> _newIncomingConnections, _lostConnections, _failedConnectionAttempts, _completedConnectionAttempts;
 };
+
+} // namespace RakNet
 
 #endif
 

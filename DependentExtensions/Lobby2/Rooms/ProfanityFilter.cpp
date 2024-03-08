@@ -10,6 +10,8 @@
 #else
 #endif
 
+using namespace RakNet;
+
 char ProfanityFilter::BANCHARS[] = "!@#$%^&*()";
 char ProfanityFilter::WORDCHARS[] = "abcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -90,5 +92,5 @@ int ProfanityFilter::Count()
 }
 void ProfanityFilter::AddWord(RakNet::RakString newWord)
 {
-	words.Insert(newWord, __FILE__, __LINE__ );
+	words.Insert(newWord, _FILE_AND_LINE_ );
 }

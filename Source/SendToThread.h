@@ -22,6 +22,7 @@ public:
 		unsigned int binaryAddress;
 		unsigned short port;
 		unsigned short remotePortRakNetWasStartedOn_PS3;
+		unsigned int extraSocketOptions;
 		char data[MAXIMUM_MTU_SIZE];
 		unsigned short dataWriteOffset;
 	};

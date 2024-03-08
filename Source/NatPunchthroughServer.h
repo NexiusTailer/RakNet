@@ -19,6 +19,9 @@
 #include "DS_OrderedList.h"
 #include "RakString.h"
 
+namespace RakNet
+{
+/// Forward declarations
 class RakPeerInterface;
 struct Packet;
 #if _RAKNET_SUPPORT_PacketLogger==1
@@ -67,6 +70,9 @@ struct RAK_DLL_EXPORT NatPunchthroughServerDebugInterface_PacketLogger : public 
 class RAK_DLL_EXPORT NatPunchthroughServer : public PluginInterface2
 {
 public:
+
+	STATIC_FACTORY_DECLARATIONS(NatPunchthroughServer)
+
 	// Constructor
 	NatPunchthroughServer();
 
@@ -94,7 +100,7 @@ public:
 		ConnectionAttempt() {sender=0; recipient=0; startTime=0; attemptPhase=NAT_ATTEMPT_PHASE_NOT_STARTED;}
 		User *sender, *recipient;
 		uint16_t sessionId;
-		RakNetTime startTime;
+		RakNet::Time startTime;
 		enum
 		{
 			NAT_ATTEMPT_PHASE_NOT_STARTED,
@@ -114,7 +120,7 @@ public:
 		void DeleteConnectionAttempt(ConnectionAttempt *ca);
 		void LogConnectionAttempts(RakNet::RakString &rs);
 	};
-	RakNetTime lastUpdate;
+	RakNet::Time lastUpdate;
 	static int NatPunchthroughUserComp( const RakNetGUID &key, User * const &data );
 protected:
 	void OnNATPunchthroughRequest(Packet *packet);
@@ -130,6 +136,8 @@ protected:
 	NatPunchthroughServerDebugInterface *natPunchthroughServerDebugInterface;
 
 };
+
+} // namespace RakNet
 
 #endif
 

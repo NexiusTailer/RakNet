@@ -3,15 +3,17 @@
 
 using namespace RakNet;
 
-bool Client_Login_Steam::ClientImpl( Lobby2Client *client)
+bool Client_Login_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 {
+	(void) client;
+
 	if ( !SteamAPI_Init() )
 		resultCode=L2RC_GENERAL_ERROR;
 	else
 		resultCode=L2RC_SUCCESS;
 	return true; // Done immediately
 }
-bool Client_Logoff_Steam::ClientImpl( Lobby2Client *client)
+bool Client_Logoff_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 {
 	Lobby2Client_Steam *steam = (Lobby2Client_Steam *)client;
 	steam->NotifyLeaveRoom();
@@ -21,19 +23,23 @@ bool Client_Logoff_Steam::ClientImpl( Lobby2Client *client)
 
 	return true; // Done immediately
 }
-bool Console_SearchRooms_Steam::ClientImpl( Lobby2Client *client)
+bool Console_SearchRooms_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 {
+	(void) client;
+
 	requestId = SteamMatchmaking()->RequestLobbyList();
 	m_SteamCallResultLobbyMatchList.Set( requestId, (RakNet::Lobby2Client_Steam*) client, &Lobby2Client_Steam::OnLobbyMatchListCallback );
 	return false; // Asynch
 }
-bool Console_GetRoomDetails_Steam::ClientImpl( Lobby2Client *client)
+bool Console_GetRoomDetails_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 {
+	(void) client;
+
 	SteamMatchmaking()->RequestLobbyData( roomId );
 
 	return false; // Asynch
 }
-bool Console_CreateRoom_Steam::ClientImpl( Lobby2Client *client)
+bool Console_CreateRoom_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 {
 	if (roomIsPublic)
 		requestId = SteamMatchmaking()->CreateLobby( k_ELobbyTypePublic, 10  );
@@ -45,7 +51,7 @@ bool Console_CreateRoom_Steam::ClientImpl( Lobby2Client *client)
 
 	return false; // Asynch
 }
-bool Console_JoinRoom_Steam::ClientImpl( Lobby2Client *client)
+bool Console_JoinRoom_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 {
 	requestId = SteamMatchmaking()->JoinLobby( roomId  );
 
@@ -54,7 +60,7 @@ bool Console_JoinRoom_Steam::ClientImpl( Lobby2Client *client)
 
 	return false; // Asynch
 }
-bool Console_LeaveRoom_Steam::ClientImpl( Lobby2Client *client)
+bool Console_LeaveRoom_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 {
 	SteamMatchmaking()->LeaveLobby( roomId );
 
@@ -64,8 +70,10 @@ bool Console_LeaveRoom_Steam::ClientImpl( Lobby2Client *client)
 	resultCode=L2RC_SUCCESS;
 	return true; // Synchronous
 }
-bool Console_SendRoomChatMessage_Steam::ClientImpl( Lobby2Client *client)
+bool Console_SendRoomChatMessage_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 {
+	(void) client;
+
 	SteamMatchmaking()->SendLobbyChatMsg(roomId, message.C_String(), (int) message.GetLength()+1);
 
 	// ISteamMatchmaking.h

@@ -66,7 +66,7 @@ namespace DataStructures
 	template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>
 	OrderedList<key_type, data_type, default_comparison_function>::~OrderedList()
 	{
-		Clear(false, __FILE__, __LINE__);
+		Clear(false, _FILE_AND_LINE_);
 	}
 
 	template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>

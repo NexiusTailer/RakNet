@@ -1,11 +1,11 @@
 #include "IntervalTimer.h"
 
-void IntervalTimer::SetPeriod(RakNetTime period) {basePeriod=period; remaining=0;}
-bool IntervalTimer::UpdateInterval(RakNetTime elapsed)
+void IntervalTimer::SetPeriod(RakNet::TimeMS period) {basePeriod=period; remaining=0;}
+bool IntervalTimer::UpdateInterval(RakNet::TimeMS elapsed)
 {
 	if (elapsed >= remaining)
 	{
-		RakNetTime difference = elapsed-remaining;
+		RakNet::TimeMS difference = elapsed-remaining;
 		if (difference >= basePeriod)
 		{
 			remaining=basePeriod;

@@ -43,8 +43,8 @@ Inheritance diagram for RakNet::Lobby2Client:</div>
 
 <p><center><img src="classRakNet_1_1Lobby2Client.png" usemap="#RakNet::Lobby2Client_map" border="0" alt=""></center>
 <map name="RakNet::Lobby2Client_map">
-<area href="classRakNet_1_1Lobby2Plugin.html" alt="RakNet::Lobby2Plugin" shape="rect" coords="0,56,135,80">
-<area href="classPluginInterface2.html" alt="PluginInterface2" shape="rect" coords="0,0,135,24">
+<area href="classRakNet_1_1Lobby2Plugin.html" alt="RakNet::Lobby2Plugin" shape="rect" coords="0,56,150,80">
+<area href="classRakNet_1_1PluginInterface2.html" alt="RakNet::PluginInterface2" shape="rect" coords="0,0,150,24">
 </map>
 </div>
 
@@ -53,7 +53,7 @@ Inheritance diagram for RakNet::Lobby2Client:</div>
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6fcabb02010caf3076044a38b9bab820"></a><!-- doxytag: member="RakNet::Lobby2Client::SetServerAddress" ref="6fcabb02010caf3076044a38b9bab820" args="(SystemAddress addr)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#6fcabb02010caf3076044a38b9bab820">SetServerAddress</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> addr)</td></tr>
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#6fcabb02010caf3076044a38b9bab820">SetServerAddress</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> addr)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the address of the server. When you call <a class="el" href="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f" title="Send a command to the server.">SendMsg()</a> the packet will be sent to this address. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f">SendMsg</a> (<a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> *msg)</td></tr>
@@ -64,9 +64,9 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Same as <a class="el" href="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f" title="Send a command to the server.">SendMsg()</a> Also calls Dealloc on the message factory. <br></td></tr>
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#b6bd157a6a8d6e71961e94c8ec10e817">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g89998adaafb29e5d879113b992161085">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#b6bd157a6a8d6e71961e94c8ec10e817">OnReceive</a> (<a class="el" href="structRakNet_1_1Packet.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#5093b0e3583e6a66415b0060c16c4c1a">OnClosedConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#gab440a9aec9ec5c84d009b2e1db9da24">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#5093b0e3583e6a66415b0060c16c4c1a">OnClosedConnection</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -97,19 +97,19 @@ Wait for the result of the operation to be sent to your callback. The message wi
         <tr>
           <td class="memname">void RakNet::Lobby2Client::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td>
           <td class="paramname"> <em>rakNetGUID</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#gab440a9aec9ec5c84d009b2e1db9da24">PI2_LostConnectionReason</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a>&nbsp;</td>
           <td class="paramname"> <em>lostConnectionReason</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -122,7 +122,7 @@ Wait for the result of the operation to be sent to your callback. The message wi
 <div class="memdoc">
 
 <p>
-Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#4a7c586a8be0d977354a3cfd09bab6b7" title="Close the connection to another host (if we initiated the connection it will disconnect...">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
+Called when a connection is dropped because the user called <a class="el" href="classRakNet_1_1RakPeer.html#95e3806fce8552e322236abcf105cbf9" title="Close the connection to another host (if we initiated the connection it will disconnect...">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system whose connection was closed </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
@@ -130,7 +130,7 @@ Called when a connection is dropped because the user called <a class="el" href="
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface2.html#f14d27351aca9bfd5b4fc2ac1461ff14">PluginInterface2</a>.</p>
+<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#b6b48bb474e340ad27c8ef9b98fae051">RakNet::PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -139,9 +139,9 @@ Called when a connection is dropped because the user called <a class="el" href="
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a> RakNet::Lobby2Client::OnReceive           </td>
+          <td class="memname"><a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g89998adaafb29e5d879113b992161085">PluginReceiveResult</a> RakNet::Lobby2Client::OnReceive           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1Packet.html">Packet</a> *&nbsp;</td>
           <td class="paramname"> <em>packet</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [protected, virtual]</code></td>
@@ -158,7 +158,7 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface2.html#bc50017a35682db5202a7562c58898ea">PluginInterface2</a>.</p>
+<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#a86f33263c1648f11b8a006469272639">RakNet::PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -191,9 +191,9 @@ Send a command to the server.
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/RakNet-3.x/DependentExtensions/Lobby2/Lobby2Client.h</ul>
+<li>d:/temp/RakNet4/DependentExtensions/Lobby2/Lobby2Client.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 22 08:28:37 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:30 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

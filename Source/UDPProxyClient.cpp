@@ -15,6 +15,7 @@ bool operator<( const DataStructures::MLKeyRef<UDPProxyClient::ServerWithPing> &
 bool operator>( const DataStructures::MLKeyRef<UDPProxyClient::ServerWithPing> &inputKey, const UDPProxyClient::ServerWithPing &cls ) {return inputKey.Get().serverAddress > cls.serverAddress;}
 bool operator==( const DataStructures::MLKeyRef<UDPProxyClient::ServerWithPing> &inputKey, const UDPProxyClient::ServerWithPing &cls ) {return inputKey.Get().serverAddress == cls.serverAddress;}
 
+STATIC_FACTORY_DEFINITIONS(UDPProxyClient,UDPProxyClient);
 
 UDPProxyClient::UDPProxyClient()
 {
@@ -28,9 +29,11 @@ void UDPProxyClient::SetResultHandler(UDPProxyClientResultHandler *rh)
 {
 	resultHandler=rh;
 }
-bool UDPProxyClient::RequestForwarding(SystemAddress proxyCoordinator, SystemAddress sourceAddress, RakNetGUID targetGuid, RakNetTimeMS timeoutOnNoDataMS, RakNet::BitStream *serverSelectionBitstream)
+bool UDPProxyClient::RequestForwarding(SystemAddress proxyCoordinator, SystemAddress sourceAddress, RakNetGUID targetGuid, RakNet::TimeMS timeoutOnNoDataMS, RakNet::BitStream *serverSelectionBitstream)
 {
-	if (rakPeerInterface->IsConnected(proxyCoordinator,false,false)==false)
+	// Return false if not connected 
+	ConnectionState cs = rakPeerInterface->GetConnectionState(proxyCoordinator);
+	if (cs!=IS_CONNECTED)
 		return false;
 
 	// Pretty much a bug not to set the result handler, as otherwise you won't know if the operation succeeed or not
@@ -58,9 +61,11 @@ bool UDPProxyClient::RequestForwarding(SystemAddress proxyCoordinator, SystemAdd
 
 	return true;
 }
-bool UDPProxyClient::RequestForwarding(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddressAsSeenFromCoordinator, RakNetTimeMS timeoutOnNoDataMS, RakNet::BitStream *serverSelectionBitstream)
+bool UDPProxyClient::RequestForwarding(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddressAsSeenFromCoordinator, RakNet::TimeMS timeoutOnNoDataMS, RakNet::BitStream *serverSelectionBitstream)
 {
-	if (rakPeerInterface->IsConnected(proxyCoordinator,false,false)==false)
+	// Return false if not connected 
+	ConnectionState cs = rakPeerInterface->GetConnectionState(proxyCoordinator);
+	if (cs!=IS_CONNECTED)
 		return false;
 
 	// Pretty much a bug not to set the result handler, as otherwise you won't know if the operation succeeed or not
@@ -96,13 +101,13 @@ void UDPProxyClient::Update(void)
 		PingServerGroup *psg = pingServerGroups[idx1];
 
 		if (psg->serversToPing.GetSize() > 0 && 
-			RakNet::GetTime() > psg->startPingTime+DEFAULT_UNRESPONSIVE_PING_TIME)
+			RakNet::GetTimeMS() > psg->startPingTime+DEFAULT_UNRESPONSIVE_PING_TIME)
 		{
 			// If they didn't reply within DEFAULT_UNRESPONSIVE_PING_TIME, just give up on them
 			psg->SendPingedServersToCoordinator(rakPeerInterface);
 
-			RakNet::OP_DELETE(psg,__FILE__,__LINE__);
-			pingServerGroups.RemoveAtIndex(idx1, __FILE__, __LINE__ );
+			RakNet::OP_DELETE(psg,_FILE_AND_LINE_);
+			pingServerGroups.RemoveAtIndex(idx1, _FILE_AND_LINE_ );
 		}
 		else
 			idx1++;
@@ -111,7 +116,7 @@ void UDPProxyClient::Update(void)
 }
 PluginReceiveResult UDPProxyClient::OnReceive(Packet *packet)
 {
-	if (packet->data[0]==ID_PONG)
+	if (packet->data[0]==ID_UNCONNECTED_PONG)
 	{
 		DataStructures::DefaultIndexType idx1, idx2;
 		PingServerGroup *psg;
@@ -124,9 +129,9 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet *packet)
 				{
 					RakNet::BitStream bsIn(packet->data,packet->length,false);
 					bsIn.IgnoreBytes(sizeof(MessageID));
-					RakNetTime sentTime;
+					RakNet::TimeMS sentTime;
 					bsIn.Read(sentTime);
-					RakNetTime curTime=RakNet::GetTime();
+					RakNet::TimeMS curTime=RakNet::GetTimeMS();
 					int ping;
 					if (curTime>sentTime)
 						ping=(int) (curTime-sentTime);
@@ -138,8 +143,8 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet *packet)
 					if (psg->AreAllServersPinged())
 					{
 						psg->SendPingedServersToCoordinator(rakPeerInterface);
-						RakNet::OP_DELETE(psg,__FILE__,__LINE__);
-						pingServerGroups.RemoveAtIndex(idx1, __FILE__, __LINE__ );
+						RakNet::OP_DELETE(psg,_FILE_AND_LINE_);
+						pingServerGroups.RemoveAtIndex(idx1, _FILE_AND_LINE_ );
 					}
 
 					return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -233,12 +238,12 @@ void UDPProxyClient::OnPingServers(Packet *packet)
 	RakNet::BitStream incomingBs(packet->data, packet->length, false);
 	incomingBs.IgnoreBytes(2);
 
-	PingServerGroup *psg = RakNet::OP_NEW<PingServerGroup>(__FILE__,__LINE__);
+	PingServerGroup *psg = RakNet::OP_NEW<PingServerGroup>(_FILE_AND_LINE_);
 	
 	ServerWithPing swp;
 	incomingBs.Read(psg->sata.senderClientAddress);
 	incomingBs.Read(psg->sata.targetClientAddress);
-	psg->startPingTime=RakNet::GetTime();
+	psg->startPingTime=RakNet::GetTimeMS();
 	psg->coordinatorAddressForPings=packet->systemAddress;
 	unsigned short serverListSize;
 	incomingBs.Read(serverListSize);
@@ -249,11 +254,11 @@ void UDPProxyClient::OnPingServers(Packet *packet)
 	{
 		incomingBs.Read(swp.serverAddress);
 		swp.ping=DEFAULT_UNRESPONSIVE_PING_TIME;
-		psg->serversToPing.Push(swp, __FILE__, __LINE__ );
+		psg->serversToPing.Push(swp, _FILE_AND_LINE_ );
 		swp.serverAddress.ToString(false,ipStr);
 		rakPeerInterface->Ping(ipStr,swp.serverAddress.port,false,0);
 	}
-	pingServerGroups.Push(psg,__FILE__,__LINE__);
+	pingServerGroups.Push(psg,_FILE_AND_LINE_);
 }
 
 bool UDPProxyClient::PingServerGroup::AreAllServersPinged(void) const
@@ -286,7 +291,7 @@ void UDPProxyClient::PingServerGroup::SendPingedServersToCoordinator(RakPeerInte
 }
 void UDPProxyClient::Clear(void)
 {
-	pingServerGroups.ClearPointers(false,__FILE__,__LINE__);
+	pingServerGroups.ClearPointers(false,_FILE_AND_LINE_);
 }
 
 

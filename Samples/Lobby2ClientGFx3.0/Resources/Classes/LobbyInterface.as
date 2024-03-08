@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 
 class LobbyInterface extends MovieClip
 {
@@ -40,8 +40,8 @@ class LobbyInterface extends MovieClip
 		ConsoleWindow.Trace("LobbyInterface.Initialize()....");
 		mAccountInfo = new AccountInfo();
 		
-		GameDelegate.addCallBack("c2f_NotifyConnectionLost", this, "c2f_NotifyConnectionLost");
-		GameDelegate.addCallBack("c2f_GetAccountDetailsResult", mAccountInfo, "ServerSetAccountInfo");		
+		ExternalInterface.addCallback("c2f_NotifyConnectionLost", this, c2f_NotifyConnectionLost);
+		ExternalInterface.addCallback("c2f_GetAccountDetailsResult", mAccountInfo, ServerSetAccountInfo);		
 		return true;
 	}	
 	

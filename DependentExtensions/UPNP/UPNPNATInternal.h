@@ -16,6 +16,8 @@
 
 #pragma   warning(disable: 4251) 
 
+namespace RakNet {
+
 /// \defgroup UPNP_GROUP
 /// \brief Collection of classes for UPNP
 
@@ -28,11 +30,11 @@ class RAK_DLL_EXPORT UPNPNATInternal
 public:
 
 	UPNPNATInternal();
-	UPNPNATInternal(RakNet::RakString whichInterface, RakNetTime connectToRouterTimeout=1000);
+	UPNPNATInternal(RakNet::RakString whichInterface, RakNet::Time connectToRouterTimeout=1000);
 	~UPNPNATInternal(void);
 
 	/// Restart the system
-	void Restart(RakNet::RakString whichInterface, RakNetTime connectToRouterTimeout=1000);
+	void Restart(RakNet::RakString whichInterface, RakNet::Time connectToRouterTimeout=1000);
 
 	/// Finds a UPNP router. For private RAKNET use, do not use.
 	/// \return Success if found, otherwise fails
@@ -105,7 +107,7 @@ private:
 		NAT_ERROR
 	} NAT_STAT;
 	NAT_STAT status;
-	RakNetTime timeOut;
+	RakNet::Time timeOut;
 	RakNet::RakString serviceType;
 	RakNet::RakString describeUrl;
 	RakNet::RakString controlUrl;
@@ -116,5 +118,6 @@ private:
 	RakNet::RakString mappingInfo;
 };
 
-#endif
+} // namespace RakNet
 
+#endif

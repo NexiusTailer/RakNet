@@ -18,9 +18,9 @@ SendToThread::SendToThreadBlock* SendToWorkerThread(SendToThread::SendToThreadBl
 {
 	(void) perThreadData;
 	*returnOutput=false;
-	RakNetTimeUS *mostRecentTime=(RakNetTimeUS *)input->data;
+	RakNet::TimeUS *mostRecentTime=(RakNet::TimeUS *)input->data;
 	*mostRecentTime=RakNet::GetTimeUS();
-	SocketLayer::SendTo(input->s, input->data, input->dataWriteOffset, input->binaryAddress, input->port, input->remotePortRakNetWasStartedOn_PS3);
+	SocketLayer::SendTo(input->s, input->data, input->dataWriteOffset, input->binaryAddress, input->port, input->remotePortRakNetWasStartedOn_PS3, input->extraSocketOptions);
 	SendToThread::objectQueue.Push(input);
 	return 0;
 }
@@ -55,7 +55,7 @@ void SendToThread::Deref(void)
 				objectQueue.Push(info);
 			}
 			threadPool.ClearInput();
-			objectQueue.Clear(__FILE__, __LINE__);
+			objectQueue.Clear(_FILE_AND_LINE_);
 		}
 	}
 }

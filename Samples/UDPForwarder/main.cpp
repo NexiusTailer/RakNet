@@ -2,7 +2,7 @@
 #include "RakSleep.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "RakNetworkFactory.h"
+
 #include <string.h>
 #include "Kbhit.h"
 #include "MessageIdentifiers.h"
@@ -12,12 +12,12 @@
 
 int main()
 {
-	RakPeerInterface *rakPeer[2];
-	rakPeer[0]=RakNetworkFactory::GetRakPeerInterface();
-	rakPeer[1]=RakNetworkFactory::GetRakPeerInterface();
-	SocketDescriptor sd1(50000,0),sd2(50002,0);
-	rakPeer[0]->Startup(1,0,&sd1, 1);
-	rakPeer[1]->Startup(1,0,&sd2, 1);
+	RakNet::RakPeerInterface *rakPeer[2];
+	rakPeer[0]=RakNet::RakPeerInterface::GetInstance();
+	rakPeer[1]=RakNet::RakPeerInterface::GetInstance();
+	RakNet::SocketDescriptor sd1(50000,0),sd2(50002,0);
+	rakPeer[0]->Startup(1,&sd1, 1);
+	rakPeer[1]->Startup(1,&sd2, 1);
 	rakPeer[1]->SetMaximumIncomingConnections(1);
 	RakNet::UDPForwarder udpForwarder;
 	
@@ -30,12 +30,12 @@ int main()
 	udpForwarder.Startup();
 
 	// RakNet will send a message at least every 5 seconds. Add another second to account for thread latency
-	const RakNetTime timeoutOnNoDataMS=6000;
+	const RakNet::TimeMS timeoutOnNoDataMS=6000;
 
 	// Address is probably 192.168.0.1. Fix it to be 127.0.0.1.
 	// Only necessary to do this when connecting through the loopback on the local system. In a real system we'd stick with the external IP
-	SystemAddress peer0Addr = rakPeer[0]->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS);
-	SystemAddress peer1Addr = rakPeer[1]->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS);
+	RakNet::SystemAddress peer0Addr = rakPeer[0]->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+	RakNet::SystemAddress peer1Addr = rakPeer[1]->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 	peer0Addr.SetBinaryAddress("127.0.0.1");
 	peer1Addr.SetBinaryAddress("127.0.0.1");
 
@@ -50,7 +50,7 @@ int main()
 	rakPeer[0]->Connect("127.0.0.1", fowardPort, 0, 0);
 	
 	printf("'q'uit.\n");
-	Packet *p;
+	RakNet::Packet *p;
 	while (1)
 	{
 		for (int i=0; i < 2 ; i++)
@@ -90,7 +90,7 @@ int main()
 
 	rakPeer[0]->Shutdown(100,0);
 	rakPeer[1]->Shutdown(100,0);
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer[0]);
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer[1]);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer[0]);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer[1]);
 	return 0;
 }

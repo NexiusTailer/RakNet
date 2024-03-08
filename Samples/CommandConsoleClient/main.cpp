@@ -1,5 +1,5 @@
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
+
 #include "MessageIdentifiers.h"
 #include "BitStream.h"
 #include <stdio.h>
@@ -17,13 +17,15 @@
 #define stricmp strcasecmp
 #endif
 
+#include "Gets.h"
+
 
 int main()
 {
-	Packet *packet;
-	RakPeerInterface *rakPeer;
+	RakNet::Packet *packet;
+	RakNet::RakPeerInterface *rakPeer;
 	bool isConnected=false;
-	rakPeer=RakNetworkFactory::GetRakPeerInterface();
+	rakPeer=RakNet::RakPeerInterface::GetInstance();
 	char command[512];
 	printf("This sample demonstrates connecting to the command console.\n");
 	printf("using the RakNet transport protocol\n");
@@ -41,7 +43,7 @@ int main()
 	{
 		if (kbhit())
 		{
-			gets(command);
+			Gets(command,sizeof(command));
 
 			if (stricmp(command, "/quit")==0)
 			{
@@ -76,29 +78,29 @@ int main()
 					char localPort[64];
 					printf("Enter remote IP: ");
 					do {
-						gets(ip);
+						Gets(ip, sizeof(ip));
 					} while(ip[0]==0);
 					printf("Enter remote port: ");
 					do {
-						gets(remotePort);
+						Gets(remotePort,sizeof(remotePort));
 					} while(remotePort[0]==0);
 					printf("Enter local port (enter for 0): ");
-					gets(localPort);
+					Gets(localPort,sizeof(localPort));
 					if (localPort[0]==0)
 					{
 						strcpy(localPort, "0");
 					}
 					printf("Enter console password (enter for none): ");
-					gets(password);
-					SocketDescriptor socketDescriptor((int) atoi(localPort),0);
-					if (rakPeer->Startup(1, 100, &socketDescriptor, 1))
+					Gets(password,sizeof(password));
+					RakNet::SocketDescriptor socketDescriptor((int) atoi(localPort),0);
+					if (rakPeer->Startup(1, &socketDescriptor, 1)==RakNet::RAKNET_STARTED)
 					{
 						int passwordLen;
 						if (password[0])
 							passwordLen=(int) strlen(password)+1;
 						else
 							passwordLen=0;
-						if (rakPeer->Connect(ip, (int) atoi(remotePort), password, passwordLen))
+						if (rakPeer->Connect(ip, (int) atoi(remotePort), password, passwordLen)==RakNet::CONNECTION_ATTEMPT_STARTED)
 							printf("Connecting...\nNote: if the password is wrong the other system will ignore us.\n");
 						else
 						{
@@ -118,7 +120,7 @@ int main()
 					RakNet::BitStream str;
 					str.Write((unsigned char) ID_TRANSPORT_STRING);
 					str.Write(command, (int) strlen(command)+1);
-					rakPeer->Send(&str, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+					rakPeer->Send(&str, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 				}
 				else
 				{
@@ -171,4 +173,6 @@ int main()
 		usleep(30 * 1000);
 #endif
 	}
+
+	return 0;
 }

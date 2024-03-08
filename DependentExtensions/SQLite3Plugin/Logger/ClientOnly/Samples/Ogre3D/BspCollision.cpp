@@ -46,7 +46,7 @@ protected:
 	PacketizedTCP packetizedTCP;
 	RakNet::SQLiteClientLoggerPlugin loggerPlugin;
 	Ogre3D_DX9_BackbufferGrabber backbufferGrabber;
-	RakNetTimeMS lastScreenshotTime;
+	RakNet::TimeMS lastScreenshotTime;
 
 	// Also save the world * so we can log it out
 	World* mWorld;
@@ -114,7 +114,7 @@ public:
 		// RakNet: Send screenshot and FPS info to server if connected, at most once every 30 milliseconds
 		// This is constrained so we don't overflow the server with screenshots
 		// Also only do it if we connected to the server
-		RakNetTimeMS timeSinceLastLog=RakNet::GetTimeMS()-lastScreenshotTime;
+		RakNet::TimeMS timeSinceLastLog=RakNet::GetTimeMS()-lastScreenshotTime;
 		if (packetizedTCP.GetConnectionCount()>0 && timeSinceLastLog>30)
 		{
 			RakNet::RGBImageBlob blob;

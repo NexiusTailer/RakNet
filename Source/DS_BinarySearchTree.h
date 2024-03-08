@@ -61,7 +61,7 @@ namespace DataStructures
 	 * A.Add(10);
 	 * A.Add(15);
 	 * A.Add(5);
-	 * int* array = RakNet::OP_NEW<int >(A.Size(), __FILE__, __LINE__ );
+	 * int* array = RakNet::OP_NEW<int >(A.Size(), _FILE_AND_LINE_ );
 	 * A.DisplayInorder(array);
 	 * array[0]; // returns 5
 	 * array[1]; // returns 10
@@ -208,14 +208,14 @@ namespace DataStructures
 	void AVLBalancedBinarySearchTree<BinarySearchTreeType>::Add ( const BinarySearchTreeType& input )
 	{
 	
-		typename BinarySearchTree<BinarySearchTreeType>::node * current = BinarySearchTree<BinarySearchTreeType>::Add ( input, __FILE__,__LINE__ );
+		typename BinarySearchTree<BinarySearchTreeType>::node * current = BinarySearchTree<BinarySearchTreeType>::Add ( input, _FILE_AND_LINE_ );
 		BalanceTree( current, true );
 	}
 	
 	template <class BinarySearchTreeType>
 	void AVLBalancedBinarySearchTree<BinarySearchTreeType>::Del( const BinarySearchTreeType& input )
 	{
-		typename BinarySearchTree<BinarySearchTreeType>::node * current = BinarySearchTree<BinarySearchTreeType>::Del( input, __FILE__,__LINE__ );
+		typename BinarySearchTree<BinarySearchTreeType>::node * current = BinarySearchTree<BinarySearchTreeType>::Del( input, _FILE_AND_LINE_ );
 		BalanceTree( current, false );
 		
 	}
@@ -369,7 +369,7 @@ namespace DataStructures
 	template <class BinarySearchTreeType>
 	AVLBalancedBinarySearchTree<BinarySearchTreeType>::~AVLBalancedBinarySearchTree()
 	{
-		this->Clear(__FILE__,__LINE__);
+		this->Clear(_FILE_AND_LINE_);
 	}
 	
 	template <class BinarySearchTreeType>
@@ -418,7 +418,7 @@ namespace DataStructures
 	template <class BinarySearchTreeType>
 	BinarySearchTree<BinarySearchTreeType>::~BinarySearchTree()
 	{
-		this->Clear(__FILE__,__LINE__);
+		this->Clear(_FILE_AND_LINE_);
 	}
 	
 	template <class BinarySearchTreeType>
@@ -630,7 +630,7 @@ namespace DataStructures
 						current = current->left;
 					}
 					
-					// Replace the value held by the node to RakNet::OP_DELETE(with the value pointed to by current, __FILE__, __LINE__);
+					// Replace the value held by the node to RakNet::OP_DELETE(with the value pointed to by current, _FILE_AND_LINE_);
 					*( node_to_delete->item ) = *( current->item );
 					
 					// Delete current.
@@ -1002,7 +1002,7 @@ namespace DataStructures
 			{
 				current = tree_queue.Pop();
 				
-				Add ( *( current->item ), __FILE__, __LINE__ )
+				Add ( *( current->item ), _FILE_AND_LINE_ )
 				
 				;
 				
@@ -1027,7 +1027,7 @@ namespace DataStructures
 		if ( ( &original_copy ) == this )
 			return *this;
 			
-		Clear( __FILE__, __LINE__ );  // Remove the current tree
+		Clear( _FILE_AND_LINE_ );  // Remove the current tree
 		
 		// This is a copy of the constructor.  A bug in Visual C++ made it so if I just put the constructor call here the variable assignments were ignored.
 		BinarySearchTree_size = 0;
@@ -1054,7 +1054,7 @@ namespace DataStructures
 			{
 				current = tree_queue.Pop();
 				
-				Add ( *( current->item ), __FILE__, __LINE__ )
+				Add ( *( current->item ), _FILE_AND_LINE_ )
 				
 				;
 				

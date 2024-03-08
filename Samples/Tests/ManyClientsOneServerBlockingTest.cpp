@@ -11,7 +11,7 @@ void ManyClientsOneServerBlockingTest::WaitForConnectionRequestsToComplete(RakPe
 		currentSystem.SetBinaryAddress("127.0.0.1");
 		currentSystem.port=60000;
 
-		while (clientList[i]->IsConnectionAttemptPending (currentSystem) )
+		while (CommonFunctions::ConnectionStateMatchesOptions (clientList[i],currentSystem,false,true,true) )
 		{
 			if (msgWasPrinted==false)
 			{
@@ -192,7 +192,7 @@ During the very first connect loop any connect returns false.
 Connect function returns false and peer is not connected to anything and does not have anything pending.
 
 */
-int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 
 	const int clientNum= 256;
@@ -202,22 +202,22 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 
 	SystemAddress currentSystem;
 
-	destroyList.Clear(false,__FILE__,__LINE__);
+	destroyList.Clear(false,_FILE_AND_LINE_);
 
 	//Initializations of the arrays
 	for (int i=0;i<clientNum;i++)
 	{
 
-		clientList[i]=RakNetworkFactory::GetRakPeerInterface();
-		destroyList.Push(clientList[i],__FILE__,__LINE__);
+		clientList[i]=RakPeerInterface::GetInstance();
+		destroyList.Push(clientList[i],_FILE_AND_LINE_);
 
-		clientList[i]->Startup(1,30,&SocketDescriptor(), 1);
+		clientList[i]->Startup(1,&SocketDescriptor(), 1);
 
 	}
 
-	server=RakNetworkFactory::GetRakPeerInterface();
-	destroyList.Push(server,__FILE__,__LINE__);
-	server->Startup(clientNum, 30, &SocketDescriptor(60000,0), 1);
+	server=RakPeerInterface::GetInstance();
+	destroyList.Push(server,_FILE_AND_LINE_);
+	server->Startup(clientNum, &SocketDescriptor(60000,0), 1);
 	server->SetMaximumIncomingConnections(clientNum);
 
 	//Connect all the clients to the server
@@ -225,7 +225,7 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 	for (int i=0;i<clientNum;i++)
 	{
 
-		if (!clientList[i]->Connect("127.0.0.1", 60000, 0,0))
+		if (clientList[i]->Connect("127.0.0.1", 60000, 0,0)!=CONNECTION_ATTEMPT_STARTED)
 		{
 
 			if (isVerbose)
@@ -237,14 +237,14 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 
 	}
 
-	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
+	TimeMS entryTime=GetTimeMS();//Loop entry time
 
 	DataStructures::List< SystemAddress  > systemList;
 	DataStructures::List< RakNetGUID > guidList;
 
 	printf("Entering disconnect loop \n");
 
-	while(RakNet::GetTime()-entryTime<10000)//Run for 10 Secoonds
+	while(GetTimeMS()-entryTime<10000)//Run for 10 Secoonds
 	{
 
 		//Disconnect all clients IF connected to any from client side
@@ -271,10 +271,10 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 
 			currentSystem.SetBinaryAddress("127.0.0.1");
 			currentSystem.port=60000;
-			if(!clientList[i]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
+			if(!CommonFunctions::ConnectionStateMatchesOptions (clientList[i],currentSystem,true,true,true,true) )//Are we connected or is there a pending operation ?
 			{
 
-				if (!clientList[i]->Connect("127.0.0.1", 60000, 0,0))
+				if (clientList[i]->Connect("127.0.0.1", 60000, 0,0)!=CONNECTION_ATTEMPT_STARTED)
 				{
 
 					if (isVerbose)
@@ -303,11 +303,11 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 		currentSystem.SetBinaryAddress("127.0.0.1");
 		currentSystem.port=60000;
 
-		if(!clientList[i]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
+		if(!CommonFunctions::ConnectionStateMatchesOptions (clientList[i],currentSystem,true,true,true,true) )//Are we connected or is there a pending operation ?
 		{
 			printf("Calling Connect() for client %i.\n",i);
 
-			if (!clientList[i]->Connect("127.0.0.1", 60000, 0,0))
+			if (clientList[i]->Connect("127.0.0.1", 60000, 0,0)!=CONNECTION_ATTEMPT_STARTED)
 			{
 				clientList[i]->GetSystemList(systemList,guidList);//Get connectionlist
 				int len=systemList.Size();
@@ -321,12 +321,12 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 		}
 		else
 		{
-			if (clientList[i]->IsConnected (currentSystem,true,false)==false)
-				printf("Not calling Connect() for client %i because IsConnected() returned true (isDisconnecting).\n",i);
-			else if (clientList[i]->IsConnected (currentSystem,false,true)==false)
-				printf("Not calling Connect() for client %i  because IsConnected() returned true (isConnecting).\n",i);
-			else if (clientList[i]->IsConnected (currentSystem,false,false)==false)
-				printf("Not calling Connect() for client %i because IsConnected() returned true (isConnected).\n",i);
+			if (CommonFunctions::ConnectionStateMatchesOptions (clientList[i],currentSystem,false,false,false,true)==false)
+				printf("Not calling Connect() for client %i because it is disconnecting.\n",i);
+			else if (CommonFunctions::ConnectionStateMatchesOptions (clientList[i],currentSystem,false,true,true)==false)
+				printf("Not calling Connect() for client %i  because it is connecting.\n",i);
+			else if (CommonFunctions::ConnectionStateMatchesOptions (clientList[i],currentSystem,true)==false)
+				printf("Not calling Connect() for client %i because it is connected).\n",i);
 		}
 
 	}
@@ -364,14 +364,14 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 
 }
 
-RakNet::RakString ManyClientsOneServerBlockingTest::GetTestName()
+RakString ManyClientsOneServerBlockingTest::GetTestName()
 {
 
 	return "ManyClientsOneServerBlockingTest";
 
 }
 
-RakNet::RakString ManyClientsOneServerBlockingTest::ErrorCodeToString(int errorCode)
+RakString ManyClientsOneServerBlockingTest::ErrorCodeToString(int errorCode)
 {
 
 	switch (errorCode)
@@ -409,6 +409,6 @@ void ManyClientsOneServerBlockingTest::DestroyPeers()
 	int theSize=destroyList.Size();
 
 	for (int i=0; i < theSize; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+		RakPeerInterface::DestroyInstance(destroyList[i]);
 
 }

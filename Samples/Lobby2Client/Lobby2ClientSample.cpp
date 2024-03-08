@@ -1,6 +1,6 @@
 #include "Lobby2Message.h"
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
+
 #include "MessageIdentifiers.h"
 #include "Lobby2Client.h"
 #include "Kbhit.h"
@@ -10,12 +10,13 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include "LinuxStrings.h"
+#include "Gets.h"
 
 static const int NUM_CONNECTIONS=2;
 RakNet::Lobby2Client lobby2Client[NUM_CONNECTIONS];
 RakNet::Lobby2MessageFactory messageFactory;
 RakNet::RakString testUserName[NUM_CONNECTIONS];
-RakPeerInterface *rakPeer[NUM_CONNECTIONS];
+RakNet::RakPeerInterface *rakPeer[NUM_CONNECTIONS];
 struct AutoExecutionPlanNode
 {
 	AutoExecutionPlanNode() {}
@@ -70,39 +71,39 @@ int main()
 	/// Do all these operations in this order once we are logged in.
 	/// This is for easier testing.
 	/// This plan will create the database, register two users, and log them both in
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_CreateDatabase), __FILE__, __LINE__ );
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_CreateTitle), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_CreateDatabase), _FILE_AND_LINE_ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_CreateTitle), _FILE_AND_LINE_ );
 
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_CDKey_Add), __FILE__, __LINE__ );
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_RegisterProfanity), __FILE__, __LINE__ );
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_RegisterAccount), __FILE__, __LINE__ );
-	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_RegisterAccount), __FILE__, __LINE__ );
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_SetEmailAddressValidated), __FILE__, __LINE__ );
-	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_System_SetEmailAddressValidated), __FILE__, __LINE__ );
-// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_Login), __FILE__, __LINE__ );
-// 	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_Login), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_CDKey_Add), _FILE_AND_LINE_ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_RegisterProfanity), _FILE_AND_LINE_ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_RegisterAccount), _FILE_AND_LINE_ );
+	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_RegisterAccount), _FILE_AND_LINE_ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_SetEmailAddressValidated), _FILE_AND_LINE_ );
+	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_System_SetEmailAddressValidated), _FILE_AND_LINE_ );
+// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_Login), _FILE_AND_LINE_ );
+// 	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_Login), _FILE_AND_LINE_ );
 // 	/// Create 2 clans
-// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Create), __FILE__, __LINE__ );
-// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Create), __FILE__, __LINE__ );
+// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Create), _FILE_AND_LINE_ );
+// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Create), _FILE_AND_LINE_ );
 // 	// Invite to both
-// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_SendJoinInvitation), __FILE__, __LINE__ );
-// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_SendJoinInvitation), __FILE__, __LINE__ );
-// 	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Clans_RejectJoinInvitation), __FILE__, __LINE__ );
+// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_SendJoinInvitation), _FILE_AND_LINE_ );
+// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_SendJoinInvitation), _FILE_AND_LINE_ );
+// 	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Clans_RejectJoinInvitation), _FILE_AND_LINE_ );
 // 	// Download invitations this clan has sent
-// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_DownloadInvitationList), __FILE__, __LINE__ );
+// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_DownloadInvitationList), _FILE_AND_LINE_ );
 
 	/*
 
-	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_SetPresence), __FILE__, __LINE__ );
-	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_GetAccountDetails), __FILE__, __LINE__ );
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_PerTitleIntegerStorage), __FILE__, __LINE__ );
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_PerTitleIntegerStorage), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_SetPresence), _FILE_AND_LINE_ );
+	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_GetAccountDetails), _FILE_AND_LINE_ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_PerTitleIntegerStorage), _FILE_AND_LINE_ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_PerTitleIntegerStorage), _FILE_AND_LINE_ );
 
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_StartIgnore), __FILE__, __LINE__ );
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_GetIgnoreList), __FILE__, __LINE__ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_StartIgnore), _FILE_AND_LINE_ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_GetIgnoreList), _FILE_AND_LINE_ );
 
-	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Friends_SendInvite), __FILE__, __LINE__);
-	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Friends_AcceptInvite), __FILE__, __LINE__);
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Friends_SendInvite), _FILE_AND_LINE_);
+	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Friends_AcceptInvite), _FILE_AND_LINE_);
 
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Ranking_SubmitMatch));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Ranking_SubmitMatch));
@@ -110,8 +111,8 @@ int main()
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Ranking_GetRating));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Ranking_WipeRatings));
 	*/
-// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Create), __FILE__, __LINE__ );
-// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Get), __FILE__, __LINE__ );
+// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Create), _FILE_AND_LINE_ );
+// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Get), _FILE_AND_LINE_ );
 	/*
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_SetProperties));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_SetMyMemberProperties));
@@ -165,32 +166,32 @@ int main()
 		*/
 	
 
-	char ip[30], serverPort[30], clientPort[30];
+	char ip[64], serverPort[30], clientPort[30];
 	int i;
 	for (i=0; i < NUM_CONNECTIONS; i++)
-		rakPeer[i]=RakNetworkFactory::GetRakPeerInterface();
-//	puts("Enter the rakPeer1 port to listen on");
+		rakPeer[i]=RakNet::RakPeerInterface::GetInstance();
+	puts("Enter the rakPeer1 port to listen on");
 	clientPort[0]=0;
-	SocketDescriptor socketDescriptor(atoi(clientPort),0);
-	//gets(clientPort);
+	RakNet::SocketDescriptor socketDescriptor(atoi(clientPort),0);
+	Gets(clientPort,sizeof(clientPort));
 	if (clientPort[0]==0)
 		strcpy(clientPort, "0");
 
-//	puts("Enter IP to connect to");;
+	puts("Enter IP to connect to");;
 	ip[0]=0;
-	//gets(ip)
+	Gets(ip,sizeof(ip));
 	if (ip[0]==0)
 		strcpy(ip, "127.0.0.1");
 
-//	puts("Enter the port to connect to");
+	puts("Enter the port to connect to");
 	serverPort[0]=0;
-	//gets(serverPort);
+	Gets(serverPort,sizeof(serverPort));
 	if (serverPort[0]==0)
 		strcpy(serverPort, "61111");
 
 	for (i=0; i < NUM_CONNECTIONS; i++)
 	{
-		rakPeer[i]->Startup(1,30,&socketDescriptor, 1);
+		rakPeer[i]->Startup(1,&socketDescriptor, 1);
 		rakPeer[i]->Connect(ip, atoi(serverPort), 0,0);
 
 		rakPeer[i]->AttachPlugin(&lobby2Client[i]);
@@ -199,13 +200,13 @@ int main()
 		testUserName[i]=RakNet::RakString("user%i", i);
 	}
 
-	Packet *packet;
+	RakNet::Packet *packet;
 	// Loop for input
 	while (1)
 	{
 		for (i=0; i < NUM_CONNECTIONS; i++)
 		{
-			RakPeerInterface *peer = rakPeer[i];
+			RakNet::RakPeerInterface *peer = rakPeer[i];
 			for (packet=peer->Receive(); packet; peer->DeallocatePacket(packet), packet=peer->Receive())
 			{
 				switch (packet->data[0])
@@ -228,10 +229,6 @@ int main()
 					// Sorry, the server is full.  I don't do anything here but
 					// A real app should tell the user
 					printf("ID_NO_FREE_INCOMING_CONNECTIONS\n");
-					break;
-				case ID_MODIFIED_PACKET:
-					// Cheater!
-					printf("ID_MODIFIED_PACKET\n");
 					break;
 				case ID_INVALID_PASSWORD:
 					printf("ID_INVALID_PASSWORD\n");
@@ -302,7 +299,7 @@ int main()
 
 			printf("Enter message number or 'quit' to quit.\n");
 			char str[128];
-			gets(str);
+			Gets(str, sizeof(str));
 			if (_stricmp(str, "quit")==0)
 			{
 				printf("Quitting.\n");
@@ -325,7 +322,7 @@ int main()
 	}
 
 	for (i=0; i < NUM_CONNECTIONS; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(rakPeer[i]);
+		RakNet::RakPeerInterface::DestroyInstance(rakPeer[i]);
 	return 0;
 }
 /// In a real application these parameters would be filled out from application data
@@ -367,9 +364,9 @@ void ExecuteCommand(RakNet::Lobby2MessageID command, RakNet::RakString userName,
 	case RakNet::L2MID_System_RegisterProfanity:
 		{
 			RakNet::System_RegisterProfanity *arg = (RakNet::System_RegisterProfanity *) m;
-			arg->profanityWords.Insert("Bodily Functions", __FILE__, __LINE__ );
-			arg->profanityWords.Insert("Racial Epithet", __FILE__, __LINE__ );
-			arg->profanityWords.Insert("Euphemism treadmill", __FILE__, __LINE__ );
+			arg->profanityWords.Insert("Bodily Functions", _FILE_AND_LINE_ );
+			arg->profanityWords.Insert("Racial Epithet", _FILE_AND_LINE_ );
+			arg->profanityWords.Insert("Euphemism treadmill", _FILE_AND_LINE_ );
 		}
 		break;
 	case RakNet::L2MID_System_BanUser:
@@ -390,8 +387,8 @@ void ExecuteCommand(RakNet::Lobby2MessageID command, RakNet::RakString userName,
 	case RakNet::L2MID_CDKey_Add:
 		{
 			RakNet::CDKey_Add *arg = (RakNet::CDKey_Add *) m;
-			arg->cdKeys.Insert("Test CD Key", __FILE__, __LINE__ );
-			arg->cdKeys.Insert("Test CD Key 2", __FILE__, __LINE__ );
+			arg->cdKeys.Insert("Test CD Key", _FILE_AND_LINE_ );
+			arg->cdKeys.Insert("Test CD Key 2", _FILE_AND_LINE_ );
 			arg->titleName="Test Title Name";
 		}
 		break;
@@ -432,7 +429,7 @@ void ExecuteCommand(RakNet::Lobby2MessageID command, RakNet::RakString userName,
 			RakNet::Client_SetPresence *arg = (RakNet::Client_SetPresence *) m;
 			arg->presence.isVisible=true;
 			arg->presence.status=RakNet::Lobby2Presence::IN_LOBBY;
-			arg->presence.titleName="Test Title Name";
+//			arg->presence.titleName="Test Title Name";
 		}
 		break;
 	case RakNet::L2MID_Client_RegisterAccount:
@@ -635,8 +632,8 @@ void ExecuteCommand(RakNet::Lobby2MessageID command, RakNet::RakString userName,
 	case RakNet::L2MID_Emails_Send:
 		{
 			RakNet::Emails_Send *arg = (RakNet::Emails_Send *) m;
-			arg->recipients.Insert(RakNet::RakString("user%i", instanceNumber+1), __FILE__, __LINE__ );
-			arg->recipients.Insert(RakNet::RakString("user%i", instanceNumber+2), __FILE__, __LINE__ );
+			arg->recipients.Insert(RakNet::RakString("user%i", instanceNumber+1), _FILE_AND_LINE_ );
+			arg->recipients.Insert(RakNet::RakString("user%i", instanceNumber+2), _FILE_AND_LINE_ );
 			arg->subject="L2MID_Emails_Send subject";
 			arg->body="L2MID_Emails_Send body";
 			arg->status=0;
@@ -673,8 +670,8 @@ void ExecuteCommand(RakNet::Lobby2MessageID command, RakNet::RakString userName,
 			arg->gameType="Match game type";
 			arg->titleName="Test Title Name";
 			arg->submittedMatch.matchNote="Ranking match note";
-			arg->submittedMatch.matchParticipants.Insert(RakNet::MatchParticipant("user0", 5.0f), __FILE__, __LINE__ );
-			arg->submittedMatch.matchParticipants.Insert(RakNet::MatchParticipant("user1", 10.0f), __FILE__, __LINE__ );
+			arg->submittedMatch.matchParticipants.Insert(RakNet::MatchParticipant("user0", 5.0f), _FILE_AND_LINE_ );
+			arg->submittedMatch.matchParticipants.Insert(RakNet::MatchParticipant("user1", 10.0f), _FILE_AND_LINE_ );
 		}
 		break;
 

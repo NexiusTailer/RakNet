@@ -20,11 +20,12 @@
 #include "RakString.h"
 #include "NatTypeDetectionCommon.h"
 
+namespace RakNet
+{
+/// Forward declarations
 class RakPeerInterface;
 struct Packet;
 
-namespace RakNet
-{
 	/// \brief Client code for NatTypeDetection
 	/// \details See NatTypeDetectionServer.h for algorithm
 	/// To use, just connect to the server, and call DetectNAT
@@ -36,6 +37,10 @@ namespace RakNet
 	class RAK_DLL_EXPORT NatTypeDetectionClient : public PluginInterface2
 	{
 	public:
+
+		// GetInstance() and DestroyInstance(instance*)
+		STATIC_FACTORY_DECLARATIONS(NatTypeDetectionClient)
+
 		// Constructor
 		NatTypeDetectionClient();
 

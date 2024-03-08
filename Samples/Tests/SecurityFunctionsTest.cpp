@@ -5,7 +5,7 @@ Description:
 
 Tests:
 virtual void RakPeerInterface::AddToSecurityExceptionList  	(  	const char *   	 ip  	 )   	
-virtual void RakPeerInterface::AddToBanList  	(  	const char *   	 IP, 		RakNetTime  	milliseconds = 0	  	) 	
+virtual void RakPeerInterface::AddToBanList  	(  	const char *   	 IP, 		TimeMS  	milliseconds = 0	  	) 	
 virtual void RakPeerInterface::GetIncomingPassword  	(  	char *   	 passwordData, 		int *  	passwordDataLength	  	) 
 virtual void RakPeerInterface::InitializeSecurity  	(  	const char *   	 pubKeyE, 		const char *  	pubKeyN, 		const char *  	privKeyP, 		const char *  	privKeyQ	  	) 			
 virtual bool RakPeerInterface::IsBanned  	(  	const char *   	 IP  	 )   	 
@@ -56,16 +56,16 @@ IsInSecurityExceptionList //Disabled because of RakNetStatistics changes
 RemoveFromSecurityExceptionList //Disabled because of RakNetStatistics changes 	  
 
 */
-int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int SecurityFunctionsTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 
 	char thePassword[]="password";
-	server=RakNetworkFactory::GetRakPeerInterface();
+	server=RakPeerInterface::GetInstance();
 
-	client=RakNetworkFactory::GetRakPeerInterface();
+	client=RakPeerInterface::GetInstance();
 
-	client->Startup(1,30,&SocketDescriptor(),1);
-	server->Startup(1,30,&SocketDescriptor(60000,0),1);
+	client->Startup(1,&SocketDescriptor(),1);
+	server->Startup(1,&SocketDescriptor(60000,0),1);
 	server->SetMaximumIncomingConnections(1);
 	server->SetIncomingPassword(thePassword,(int)strlen(thePassword));
 
@@ -89,15 +89,15 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 	serverAddress.SetBinaryAddress("127.0.0.1");
 	serverAddress.port=60000;
-	RakNetTime entryTime=RakNet::GetTime();
+	TimeMS entryTime=GetTimeMS();
 
 	if (isVerbose)
 		printf("Testing if  no password is rejected\n");
 
-	while(!client->IsConnected (serverAddress,false,false)&&RakNet::GetTime()-entryTime<5000)
+	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
 	{
 
-		if(!client->IsConnected (serverAddress,true,true))
+		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
 			client->Connect("127.0.0.1",serverAddress.port,0,0);
 		}
@@ -106,7 +106,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 	}
 
-	if (client->IsConnected (serverAddress,false,false))
+	if (CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
 	{
 		if (isVerbose)
 			DebugTools::ShowError("Client connected with no password\n",!noPauses && isVerbose,__LINE__,__FILE__);
@@ -117,11 +117,11 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 		printf("Testing if incorrect password is rejected\n");
 
 	char badPass[]="badpass";
-	entryTime=RakNet::GetTime();
-	while(!client->IsConnected (serverAddress,false,false)&&RakNet::GetTime()-entryTime<5000)
+	entryTime=GetTimeMS();
+	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
 	{
 
-		if(!client->IsConnected (serverAddress,true,true))
+		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
 			client->Connect("127.0.0.1",serverAddress.port,badPass,(int)strlen(badPass));
 		}
@@ -130,7 +130,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 	}
 
-	if (client->IsConnected (serverAddress,false,false))
+	if (CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
 	{
 		if (isVerbose)
 			DebugTools::ShowError("Client connected with wrong password\n",!noPauses && isVerbose,__LINE__,__FILE__);
@@ -140,11 +140,11 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 	if (isVerbose)
 		printf("Testing if correct password is accepted\n");
 
-	entryTime=RakNet::GetTime();
-	while(!client->IsConnected (serverAddress,false,false)&&RakNet::GetTime()-entryTime<5000)
+	entryTime=GetTimeMS();
+	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
 	{
 
-		if(!client->IsConnected (serverAddress,true,true))
+		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
 			client->Connect("127.0.0.1",serverAddress.port,thePassword,(int)strlen(thePassword));
 		}
@@ -153,14 +153,14 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 	}
 
-	if (!client->IsConnected (serverAddress,false,false))
+	if (!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
 	{
 		if (isVerbose)
 			DebugTools::ShowError("Client failed to connect with correct password\n",!noPauses && isVerbose,__LINE__,__FILE__);
 		return 3;
 	}
 
-	while(client->IsConnected (serverAddress,true,true))//disconnect client
+	while(CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))//disconnect client
 	{
 
 		client->CloseConnection (serverAddress,true,0,LOW_PRIORITY); 
@@ -171,11 +171,11 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 	server->AddToBanList("127.0.0.1",0);
 
-	entryTime=RakNet::GetTime();
-	while(!client->IsConnected (serverAddress,false,false)&&RakNet::GetTime()-entryTime<5000)
+	entryTime=GetTimeMS();
+	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
 	{
 
-		if(!client->IsConnected (serverAddress,true,true))
+		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
 			client->Connect("127.0.0.1",serverAddress.port,thePassword,(int)strlen(thePassword));
 		}
@@ -193,7 +193,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 	}
 
-	if (client->IsConnected (serverAddress,false,false))
+	if (CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
 	{
 		if (isVerbose)
 			DebugTools::ShowError("Client was banned but connected anyways\n",!noPauses && isVerbose,__LINE__,__FILE__);
@@ -213,11 +213,11 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 	}
 
-	entryTime=RakNet::GetTime();
-	while(!client->IsConnected (serverAddress,false,false)&&RakNet::GetTime()-entryTime<5000)
+	entryTime=GetTimeMS();
+	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
 	{
 
-		if(!client->IsConnected (serverAddress,true,true))
+		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
 			client->Connect("127.0.0.1",serverAddress.port,thePassword,(int)strlen(thePassword));
 		}
@@ -226,14 +226,14 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 	}
 
-	if (!client->IsConnected (serverAddress,false,false))
+	if (!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
 	{
 		if (isVerbose)
 			DebugTools::ShowError("Client failed to connect after banlist removal\n",!noPauses && isVerbose,__LINE__,__FILE__);
 		return 8;
 	}
 
-	while(client->IsConnected (serverAddress,true,true))//disconnect client
+	while(CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))//disconnect client
 	{
 
 		client->CloseConnection (serverAddress,true,0,LOW_PRIORITY); 
@@ -244,11 +244,11 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 	server->AddToBanList("127.0.0.1",0);
 
-	entryTime=RakNet::GetTime();
-	while(!client->IsConnected (serverAddress,false,false)&&RakNet::GetTime()-entryTime<5000)
+	entryTime=GetTimeMS();
+	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
 	{
 
-		if(!client->IsConnected (serverAddress,true,true))
+		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
 			client->Connect("127.0.0.1",serverAddress.port,thePassword,(int)strlen(thePassword));
 		}
@@ -266,7 +266,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 	}
 
-	if (client->IsConnected (serverAddress,false,false))
+	if (CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
 	{
 		if (isVerbose)
 			DebugTools::ShowError("Client was banned but connected anyways\n",!noPauses && isVerbose,__LINE__,__FILE__);
@@ -286,11 +286,11 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 	}
 
-	entryTime=RakNet::GetTime();
-	while(!client->IsConnected (serverAddress,false,false)&&RakNet::GetTime()-entryTime<5000)
+	entryTime=GetTimeMS();
+	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
 	{
 
-		if(!client->IsConnected (serverAddress,true,true))
+		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
 			client->Connect("127.0.0.1",serverAddress.port,thePassword,(int)strlen(thePassword));
 		}
@@ -299,14 +299,14 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 	}
 
-	if (!client->IsConnected (serverAddress,false,false))
+	if (!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
 	{
 		if (isVerbose)
 			DebugTools::ShowError("Client failed to connect after banlist removal with clear function\n",!noPauses && isVerbose,__LINE__,__FILE__);
 		return 9;
 	}
 
-	while(client->IsConnected (serverAddress,true,true))//disconnect client
+	while(CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))//disconnect client
 	{
 
 		client->CloseConnection (serverAddress,true,0,LOW_PRIORITY); 
@@ -319,7 +319,8 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 	//-----------------------------
 
-	// RSACrypt is a class that handles RSA encryption/decryption internally
+	// RSACrypt is a using namespace RakNet;
+class that handles RSA encryption/decryption internally
 
 	RSACrypt rsacrypt;
 
@@ -335,8 +336,8 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 	rsacrypt.getPrivateP(p);
 	rsacrypt.getPrivateQ(q);
 
-	RakNetworkFactory::DestroyRakPeerInterface(server);
-	server=RakNetworkFactory::GetRakPeerInterface();
+	RakPeerInterface::DestroyInstance(server);
+	server=RakPeerInterface::GetInstance();
 
 	server->InitializeSecurity(0,0,(char*)p, (char*)q);
 	server->Startup(1,30,&SocketDescriptor(60000,0),1);
@@ -346,11 +347,11 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 	if (isVerbose)
 		printf("Testing if client connects encrypted\n");
 
-	entryTime=RakNet::GetTime();
-	while(!client->IsConnected (serverAddress,false,false)&&RakNet::GetTime()-entryTime<5000)
+	entryTime=GetTimeMS();
+	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
 	{
 
-		if(!client->IsConnected (serverAddress,true,true))
+		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
 			client->Connect("127.0.0.1",serverAddress.port,thePassword,strlen(thePassword));
 		}
@@ -365,8 +366,8 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 	client->Send(str2,(int) strlen(str2)+1, HIGH_PRIORITY, RELIABLE_ORDERED ,0, UNASSIGNED_SYSTEM_ADDRESS, true);
 
 	Packet *packet;
-	entryTime=RakNet::GetTime();
-	while(RakNet::GetTime()-entryTime<1000)
+	entryTime=GetTimeMS();
+	while(GetTimeMS()-entryTime<1000)
 	{
 		for (packet=server->Receive(); packet;server->DeallocatePacket(packet), packet=server->Receive())
 		{
@@ -385,16 +386,16 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 		return 10;
 	}
 
-	while(client->IsConnected (serverAddress,true,true))//disconnect client
+	while(CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))//disconnect client
 	{
 
 		client->CloseConnection (serverAddress,true,0,LOW_PRIORITY); 
 	}
 
 	//Destroy to clear statistics
-	RakNetworkFactory::DestroyRakPeerInterface(client);
+	RakPeerInterface::DestroyInstance(client);
 
-	client=RakNetworkFactory::GetRakPeerInterface();
+	client=RakPeerInterface::GetInstance();
 
 	client->Startup(1,30,&SocketDescriptor(),1);
 
@@ -410,11 +411,11 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 		return 12;
 	}
 
-	entryTime=RakNet::GetTime();
-	while(!client->IsConnected (serverAddress,false,false)&&RakNet::GetTime()-entryTime<5000)
+	entryTime=GetTimeMS();
+	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
 	{
 
-		if(!client->IsConnected (serverAddress,true,true))
+		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
 			client->Connect("127.0.0.1",serverAddress.port,thePassword,strlen(thePassword));
 		}
@@ -429,8 +430,8 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 	//	Packet *packet;
 
-	entryTime=RakNet::GetTime();
-	while(RakNet::GetTime()-entryTime<1000)
+	entryTime=GetTimeMS();
+	while(GetTimeMS()-entryTime<1000)
 	{
 		for (packet=server->Receive(); packet;server->DeallocatePacket(packet), packet=server->Receive())
 		{
@@ -450,7 +451,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 	if (isVerbose)
 		printf("Testing RemoveFromSecurityExceptionList\n");
 
-	while(client->IsConnected (serverAddress,true,true))//disconnect client
+	while(CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))//disconnect client
 	{
 
 		client->CloseConnection (serverAddress,true,0,LOW_PRIORITY); 
@@ -461,11 +462,11 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 	if (isVerbose)
 		printf("Testing if client connects encrypted\n");
 
-	entryTime=RakNet::GetTime();
-	while(!client->IsConnected (serverAddress,false,false)&&RakNet::GetTime()-entryTime<5000)
+	entryTime=GetTimeMS();
+	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
 	{
 
-		if(!client->IsConnected (serverAddress,true,true))
+		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
 			client->Connect("127.0.0.1",serverAddress.port,thePassword,strlen(thePassword));
 		}
@@ -478,8 +479,8 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 	client->Send(str2,(int) strlen(str2)+1, HIGH_PRIORITY, RELIABLE_ORDERED ,0, UNASSIGNED_SYSTEM_ADDRESS, true);
 	client->Send(str2,(int) strlen(str2)+1, HIGH_PRIORITY, RELIABLE_ORDERED ,0, UNASSIGNED_SYSTEM_ADDRESS, true);
 
-	entryTime=RakNet::GetTime();
-	while(RakNet::GetTime()-entryTime<1000)
+	entryTime=GetTimeMS();
+	while(GetTimeMS()-entryTime<1000)
 	{
 		for (packet=server->Receive(); packet;server->DeallocatePacket(packet), packet=server->Receive())
 		{
@@ -502,14 +503,14 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakNet::RakString> param
 
 }
 
-RakNet::RakString SecurityFunctionsTest::GetTestName()
+RakString SecurityFunctionsTest::GetTestName()
 {
 
 	return "SecurityFunctionsTest";
 
 }
 
-RakNet::RakString SecurityFunctionsTest::ErrorCodeToString(int errorCode)
+RakString SecurityFunctionsTest::ErrorCodeToString(int errorCode)
 {
 
 	switch (errorCode)
@@ -584,7 +585,7 @@ SecurityFunctionsTest::~SecurityFunctionsTest(void)
 void SecurityFunctionsTest::DestroyPeers()
 {
 
-RakNetworkFactory::DestroyRakPeerInterface(client);
-RakNetworkFactory::DestroyRakPeerInterface(server);
+RakPeerInterface::DestroyInstance(client);
+RakPeerInterface::DestroyInstance(server);
 
 }

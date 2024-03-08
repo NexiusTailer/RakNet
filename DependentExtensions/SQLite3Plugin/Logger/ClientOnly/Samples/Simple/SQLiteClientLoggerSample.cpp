@@ -2,7 +2,7 @@
 #include "SQLiteClientLoggerPlugin.h"
 #include "BitStream.h"
 #include "RakSleep.h"
-#include "RakNetworkFactory.h"
+
 #include "Kbhit.h"
 #include "GetTime.h"
 #include "PacketizedTCP.h"
@@ -14,12 +14,12 @@ int main(void)
 {
 	printf("Demonstration of SQLiteClientLoggerPlugin.\n");
 
-	PacketizedTCP packetizedTCP;
+	RakNet::PacketizedTCP packetizedTCP;
 	RakNet::SQLiteClientLoggerPlugin loggerPlugin;
 	packetizedTCP.AttachPlugin(&loggerPlugin);
 	packetizedTCP.Start(0,0);
 	printf("Connecting.\n");
-	SystemAddress serverAddress = packetizedTCP.Connect("127.0.0.1", 38123, true);
+	RakNet::SystemAddress serverAddress = packetizedTCP.Connect("127.0.0.1", 38123, true);
 	printf("Connected.\n");
 
 

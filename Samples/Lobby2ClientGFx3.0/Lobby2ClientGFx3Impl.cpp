@@ -1,7 +1,7 @@
 // Common includes
 #include <stdio.h>
 #include <stdlib.h>
-#include "RakNetworkFactory.h"
+
 #include "GetTime.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
@@ -56,7 +56,7 @@ ACTIONSCRIPT_CALLABLE_FUNCTION(Lobby2ClientGFx3Impl, f2c_Connect)
 		);
 
 	FxResponseArgs<0> rargs;
-	FxDelegate::Invoke(movie, "c2f_NotifyConnectingToServer", rargs);
+	FxDelegate::Invoke2(movie, "c2f_NotifyConnectingToServer", rargs);
 }
 ACTIONSCRIPT_CALLABLE_FUNCTION(Lobby2ClientGFx3Impl, f2c_RecoverPasswordByUsername)
 {
@@ -77,12 +77,12 @@ ACTIONSCRIPT_CALLABLE_FUNCTION(Lobby2ClientGFx3Impl, f2c_RegisterAccountStateQue
 	if (needsCdKeyToLogin)
 	{
 		FxResponseArgs<0> rargs;
-		FxDelegate::Invoke(movie, "c2f_SetStateEnterCDKey", rargs);
+		FxDelegate::Invoke2(movie, "c2f_SetStateEnterCDKey", rargs);
 	}
 	else
 	{
 		FxResponseArgs<0> rargs;
-		FxDelegate::Invoke(movie, "c2f_SetStateRegisterAccount", rargs);
+		FxDelegate::Invoke2(movie, "c2f_SetStateRegisterAccount", rargs);
 	}
 }
 ACTIONSCRIPT_CALLABLE_FUNCTION(Lobby2ClientGFx3Impl, f2c_DeleteAccount)
@@ -195,7 +195,7 @@ ACTIONSCRIPT_CALLABLE_FUNCTION(Lobby2ClientGFx3Impl, f2c_RegisterAccount)
 
 	RakNet::BitStream serializedBinaryData;
 	WriteAccountBinaryData(&serializedBinaryData, pparams, index);
-	m1->createAccountParameters.binaryData = RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);
+	m1->createAccountParameters.binaryData = RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);
 	m1->createAccountParameters.binaryData->binaryData=(char*) serializedBinaryData.GetData();
 	m1->createAccountParameters.binaryData->binaryDataLength=serializedBinaryData.GetNumberOfBytesUsed();
 	lobby2Client->SendMsg(m1);
@@ -330,7 +330,7 @@ ACTIONSCRIPT_CALLABLE_FUNCTION(Lobby2ClientGFx3Impl, f2c_SendEmail)
 	for (index=0; index < 8; index++)
 	{
 		if (pparams[index].GetString() && pparams[index].GetString()[0])
-			m1->recipients.Push(RakNet::RakString(pparams[index].GetString()), __FILE__,__LINE__);
+			m1->recipients.Push(RakNet::RakString(pparams[index].GetString()), _FILE_AND_LINE_);
 	}
 	m1->subject=pparams[index++].GetString();
 	m1->body=pparams[index++].GetString();
@@ -570,7 +570,7 @@ void Lobby2ClientGFx3Impl::MessageResult(Client_ValidateHandle *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_ValidateHandleResult", rargs);
+	FxDelegate::Invoke2(movie, "c2f_ValidateHandleResult", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Client_RegisterAccount *message)
 {
@@ -578,7 +578,7 @@ void Lobby2ClientGFx3Impl::MessageResult(Client_RegisterAccount *message)
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
 	rargs.Add(message->userName.C_String());
 	rargs.Add(message->createAccountParameters.password.C_String());
-	FxDelegate::Invoke(movie, "c2f_RegisterAccountResult", rargs);
+	FxDelegate::Invoke2(movie, "c2f_RegisterAccountResult", rargs);
 
 	// TODO - once the GUI is implemented, comment this out to make sure the implemtor handled not having a valid email address
 	__L2_ALLOCATE_AND_DEFINE(messageFactory, System_SetEmailAddressValidated, m1);
@@ -590,7 +590,7 @@ void Lobby2ClientGFx3Impl::MessageResult(Client_UpdateAccount *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_UpdateAccountResult", rargs);
+	FxDelegate::Invoke2(movie, "c2f_UpdateAccountResult", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(CDKey_GetStatus *message)
 {
@@ -600,20 +600,20 @@ void Lobby2ClientGFx3Impl::MessageResult(CDKey_GetStatus *message)
 	rargs.Add(message->activationDate.C_String());
 	rargs.Add(message->wasStolen);
 	rargs.Add(message->usable);
-	FxDelegate::Invoke(movie, "c2f_CheckCDKeyResult", rargs);
+	FxDelegate::Invoke2(movie, "c2f_CheckCDKeyResult", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(System_DeleteAccount *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_DeleteAccountResult", rargs);
+	FxDelegate::Invoke2(movie, "c2f_DeleteAccountResult", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Client_Login *message)
 {
 	if (message->resultCode==L2RC_SUCCESS)
 	{
 		FxResponseArgs<0> rargs;
-		FxDelegate::Invoke(movie, "c2f_NotifyLoginResultSuccess", rargs);
+		FxDelegate::Invoke2(movie, "c2f_NotifyLoginResultSuccess", rargs);
 	}
 	else
 	{
@@ -632,7 +632,7 @@ void Lobby2ClientGFx3Impl::MessageResult(Client_Login *message)
 			break;
 		}
 
-		FxDelegate::Invoke(movie, "c2f_NotifyLoginResultFailure", rargs);
+		FxDelegate::Invoke2(movie, "c2f_NotifyLoginResultFailure", rargs);
 	}
 
 	
@@ -649,7 +649,7 @@ void Lobby2ClientGFx3Impl::MessageResult(System_CreateDatabase *message)
 void Lobby2ClientGFx3Impl::MessageResult(System_CreateTitle *message)
 {
 	__L2_ALLOCATE_AND_DEFINE(messageFactory, CDKey_Add, m3);
-	m3->cdKeys.Insert("Test CD Key", __FILE__, __LINE__);
+	m3->cdKeys.Insert("Test CD Key", _FILE_AND_LINE_);
 	m3->titleName="Test Title Name";
 	lobby2Client->SendMsgAndDealloc(m3);
 }
@@ -659,7 +659,7 @@ void Lobby2ClientGFx3Impl::MessageResult(Client_ChangeHandle *message)
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
 	rargs.Add(message->userName.C_String());
 	rargs.Add(message->newHandle.C_String());
-	FxDelegate::Invoke(movie, "c2f_ChangeHandleResult", rargs);
+	FxDelegate::Invoke2(movie, "c2f_ChangeHandleResult", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Client_GetAccountDetails *message)
 {
@@ -692,26 +692,26 @@ void Lobby2ClientGFx3Impl::MessageResult(Client_GetAccountDetails *message)
 
 	RakNet::BitStream serializedBinaryData((unsigned char*) message->createAccountParameters.binaryData->binaryData, message->createAccountParameters.binaryData->binaryDataLength,false);
 	ReadAccountBinaryData(rargs,&serializedBinaryData);
-	FxDelegate::Invoke(movie, "c2f_GetAccountDetailsResult", rargs);
+	FxDelegate::Invoke2(movie, "c2f_GetAccountDetailsResult", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(RakNet::Client_StartIgnore *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_StartIgnore", rargs);
+	FxDelegate::Invoke2(movie, "c2f_StartIgnore", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(RakNet::Client_StopIgnore *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_StopIgnore", rargs);
+	FxDelegate::Invoke2(movie, "c2f_StopIgnore", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(RakNet::Client_GetIgnoreList *message)
 {
 	FxResponseArgsList rargs;
 	for (unsigned int i=0; i < message->ignoredHandles.Size(); i++)
 		rargs.Add(message->ignoredHandles[i].C_String());
-	FxDelegate::Invoke(movie, "c2f_GetIgnoreListResult", rargs);
+	FxDelegate::Invoke2(movie, "c2f_GetIgnoreListResult", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(RakNet::Client_GetPasswordRecoveryQuestionByHandle *message)
 {
@@ -721,7 +721,7 @@ void Lobby2ClientGFx3Impl::MessageResult(RakNet::Client_GetPasswordRecoveryQuest
 	rargs.Add(message->userName.C_String());
 	rargs.Add(message->emailAddress.C_String());
 	rargs.Add(message->passwordRecoveryQuestion.C_String());
-	FxDelegate::Invoke(movie, "c2f_RecoverPasswordByUsername", rargs);
+	FxDelegate::Invoke2(movie, "c2f_RecoverPasswordByUsername", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(RakNet::Client_GetPasswordByPasswordRecoveryAnswer *message)
 {
@@ -730,31 +730,31 @@ void Lobby2ClientGFx3Impl::MessageResult(RakNet::Client_GetPasswordByPasswordRec
 	rargs.Add(message->userName.C_String());
 	rargs.Add(message->passwordRecoveryAnswer.C_String());
 	rargs.Add(message->password.C_String());
-	FxDelegate::Invoke(movie, "c2f_GetPasswordByPasswordRecoveryAnswer", rargs);
+	FxDelegate::Invoke2(movie, "c2f_GetPasswordByPasswordRecoveryAnswer", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Friends_SendInvite *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_SendInviteResult", rargs);
+	FxDelegate::Invoke2(movie, "c2f_SendInviteResult", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Friends_AcceptInvite *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_AcceptInviteResult", rargs);
+	FxDelegate::Invoke2(movie, "c2f_AcceptInviteResult", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Friends_RejectInvite *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_RejectInviteResult", rargs);
+	FxDelegate::Invoke2(movie, "c2f_RejectInviteResult", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Friends_Remove *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_RemoveFriendResult", rargs);
+	FxDelegate::Invoke2(movie, "c2f_RemoveFriendResult", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Friends_GetInvites *message)
 {
@@ -765,32 +765,32 @@ void Lobby2ClientGFx3Impl::MessageResult(Friends_GetInvites *message)
 		rargs.Add(message->invitesSent[i].usernameAndStatus.handle.C_String());
 	for (unsigned int i=0; i < message->invitesReceived.Size(); i++)
 		rargs.Add(message->invitesReceived[i].usernameAndStatus.handle.C_String());
-	FxDelegate::Invoke(movie, "c2f_GetFriendInvites", rargs);
+	FxDelegate::Invoke2(movie, "c2f_GetFriendInvites", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Friends_GetFriends *message)
 {
 	FxResponseArgsList rargs;
 	for (unsigned int i=0; i < message->myFriends.Size(); i++)
 		rargs.Add(message->myFriends[i].usernameAndStatus.handle.C_String());
-	FxDelegate::Invoke(movie, "c2f_GetFriends", rargs);
+	FxDelegate::Invoke2(movie, "c2f_GetFriends", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Emails_Send *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_SendEmail", rargs);
+	FxDelegate::Invoke2(movie, "c2f_SendEmail", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Emails_Delete *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_DeleteEmail", rargs);
+	FxDelegate::Invoke2(movie, "c2f_DeleteEmail", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Emails_SetStatus *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_UpdateEmail", rargs);
+	FxDelegate::Invoke2(movie, "c2f_UpdateEmail", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Emails_Get *message)
 {
@@ -808,20 +808,20 @@ void Lobby2ClientGFx3Impl::MessageResult(Emails_Get *message)
 		rargs.Add(message->emailResults[i].creationDate.C_String());
 	}
 
-	FxDelegate::Invoke(movie, "c2f_GetEmails", rargs);
+	FxDelegate::Invoke2(movie, "c2f_GetEmails", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Clans_Create *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_Create", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_Create", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_SetProperties *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_SetProperties", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_SetProperties", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_GetProperties *message)
@@ -829,35 +829,35 @@ void Lobby2ClientGFx3Impl::MessageResult(Clans_GetProperties *message)
 	FxResponseArgs<2> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
 	rargs.Add(message->description.C_String());
-	FxDelegate::Invoke(movie, "c2f_Clans_GetProperties", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_GetProperties", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_SetMyMemberProperties *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_SetMyMemberProperties", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_SetMyMemberProperties", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_GrantLeader *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_GrantLeader", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_GrantLeader", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_SetSubleaderStatus *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_SetSubleaderStatus", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_SetSubleaderStatus", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_SetMemberRank *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_SetMemberRank", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_SetMemberRank", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_GetMemberProperties *message)
@@ -887,14 +887,14 @@ void Lobby2ClientGFx3Impl::MessageResult(Clans_GetMemberProperties *message)
 	}
 	rargs.Add(message->banReason.C_String());
 
-	FxDelegate::Invoke(movie, "c2f_Clans_GetMemberProperties", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_GetMemberProperties", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_ChangeHandle *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_ChangeHandle", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_ChangeHandle", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_Leave *message)
@@ -903,7 +903,7 @@ void Lobby2ClientGFx3Impl::MessageResult(Clans_Leave *message)
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
 	rargs.Add(message->wasDissolved);
 	rargs.Add(message->newClanLeader.C_String());
-	FxDelegate::Invoke(movie, "c2f_Clans_Leave", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_Leave", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_Get *message)
@@ -920,35 +920,35 @@ void Lobby2ClientGFx3Impl::MessageResult(Clans_Get *message)
 		for (unsigned int j=0; j < message->clans[i].clanMembersOtherThanLeader.Size(); j++)
 			rargs.Add(message->clans[i].clanMembersOtherThanLeader[j].C_String());
 	}
-	FxDelegate::Invoke(movie, "c2f_Clans_Get", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_Get", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_SendJoinInvitation *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_SendJoinInvitation", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_SendJoinInvitation", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_WithdrawJoinInvitation *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_WithdrawJoinInvitation", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_WithdrawJoinInvitation", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_AcceptJoinInvitation *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_AcceptJoinInvitation", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_AcceptJoinInvitation", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_RejectJoinInvitation *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_RejectJoinInvitation", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_RejectJoinInvitation", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_DownloadInvitationList *message)
@@ -969,7 +969,7 @@ void Lobby2ClientGFx3Impl::MessageResult(Clans_DownloadInvitationList *message)
 		rargs.Add(message->usersThatHaveAnInvitationFromClansThatIAmAMemberOf[i].joinRequestTarget.C_String());
 	}
 
-	FxDelegate::Invoke(movie, "c2f_Clans_DownloadInvitationList", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_DownloadInvitationList", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_SendJoinRequest *message)
@@ -977,28 +977,28 @@ void Lobby2ClientGFx3Impl::MessageResult(Clans_SendJoinRequest *message)
 	FxResponseArgs<2> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
 	rargs.Add(message->clanJoined);
-	FxDelegate::Invoke(movie, "c2f_Clans_SendJoinRequest", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_SendJoinRequest", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_WithdrawJoinRequest *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_WithdrawJoinRequest", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_WithdrawJoinRequest", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_AcceptJoinRequest *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_AcceptJoinRequest", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_AcceptJoinRequest", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_RejectJoinRequest *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_RejectJoinRequest", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_RejectJoinRequest", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_DownloadRequestList *message)
@@ -1020,21 +1020,21 @@ void Lobby2ClientGFx3Impl::MessageResult(Clans_DownloadRequestList *message)
 		rargs.Add(message->joinRequestsFromMe[i].joinRequestSender.C_String());
 	}
 
-	FxDelegate::Invoke(movie, "c2f_Clans_DownloadRequestList", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_DownloadRequestList", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_KickAndBlacklistUser *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_KickAndBlacklistUser", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_KickAndBlacklistUser", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_UnblacklistUser *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
-	FxDelegate::Invoke(movie, "c2f_Clans_UnblacklistUser", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_UnblacklistUser", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_GetBlacklist *message)
@@ -1043,7 +1043,7 @@ void Lobby2ClientGFx3Impl::MessageResult(Clans_GetBlacklist *message)
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
 	for (unsigned int i=0; i < message->blacklistedUsers.Size(); i++)
 		rargs.Add(message->blacklistedUsers[i].C_String());
-	FxDelegate::Invoke(movie, "c2f_Clans_GetBlacklist", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_GetBlacklist", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_GetMembers *message)
@@ -1053,7 +1053,7 @@ void Lobby2ClientGFx3Impl::MessageResult(Clans_GetMembers *message)
 	rargs.Add(message->clanLeader.C_String());
 	for (unsigned int i=0; i < message->clanMembersOtherThanLeader.Size(); i++)
 		rargs.Add(message->clanMembersOtherThanLeader[i].C_String());
-	FxDelegate::Invoke(movie, "c2f_Clans_GetMembers", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_GetMembers", rargs);
 }
 
 void Lobby2ClientGFx3Impl::MessageResult(Clans_GetList *message)
@@ -1062,20 +1062,20 @@ void Lobby2ClientGFx3Impl::MessageResult(Clans_GetList *message)
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
 	for (unsigned int i=0; i < message->clanNames.Size(); i++)
 		rargs.Add(message->clanNames[i].C_String());
-	FxDelegate::Invoke(movie, "c2f_Clans_GetList", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Clans_GetList", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_Client_RemoteLogin *message)
 {
 	FxResponseArgs<1> rargs;
 	rargs.Add(message->handle.C_String());
-	FxDelegate::Invoke(movie, "c2f_Notification_Client_RemoteLogin", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_Client_RemoteLogin", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_Client_IgnoreStatus *message)
 {
 	FxResponseArgs<2> rargs;
 	rargs.Add(message->nowIgnored);
 	rargs.Add(message->otherHandle.C_String());
-	FxDelegate::Invoke(movie, "c2f_Notification_Client_IgnoreStatus", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_Client_IgnoreStatus", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_Friends_StatusChange *message)
 {
@@ -1108,21 +1108,21 @@ void Lobby2ClientGFx3Impl::MessageResult(Notification_Friends_StatusChange *mess
 		break;
 	}
 	rargs.Add(message->otherHandle.C_String());
-	FxDelegate::Invoke(movie, "c2f_Notification_Friends_StatusChange", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_Friends_StatusChange", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_User_ChangedHandle *message)
 {
 	FxResponseArgs<2> rargs;
 	rargs.Add(message->oldHandle.C_String());
 	rargs.Add(message->newHandle.C_String());
-	FxDelegate::Invoke(movie, "c2f_Notification_User_ChangedHandle", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_User_ChangedHandle", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_Friends_CreatedClan *message)
 {
 	FxResponseArgs<2> rargs;
 	rargs.Add(message->otherHandle.C_String());
 	rargs.Add(message->clanName.C_String());
-	FxDelegate::Invoke(movie, "c2f_Notification_Friends_CreatedClan", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_Friends_CreatedClan", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_Emails_Received *message)
 {
@@ -1130,7 +1130,7 @@ void Lobby2ClientGFx3Impl::MessageResult(Notification_Emails_Received *message)
 	rargs.Add(message->sender.C_String());
 	rargs.Add(message->subject.C_String());
 	rargs.Add((Double)message->emailId);
-	FxDelegate::Invoke(movie, "c2f_Notification_Emails_Received", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_Emails_Received", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_GrantLeader *message)
 {
@@ -1138,7 +1138,7 @@ void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_GrantLeader *message
 	rargs.Add(message->clanHandle.C_String());
 	rargs.Add(message->newLeader.C_String());
 	rargs.Add(message->oldLeader.C_String());
-	FxDelegate::Invoke(movie, "c2f_Notification_Clans_GrantLeader", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_Clans_GrantLeader", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_SetSubleaderStatus *message)
 {
@@ -1147,7 +1147,7 @@ void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_SetSubleaderStatus *
 	rargs.Add(message->targetHandle.C_String());
 	rargs.Add(message->leaderHandle.C_String());
 	rargs.Add(message->setToSubleader);
-	FxDelegate::Invoke(movie, "c2f_Notification_Clans_SetSubleaderStatus", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_Clans_SetSubleaderStatus", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_SetMemberRank *message)
 {
@@ -1156,7 +1156,7 @@ void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_SetMemberRank *messa
 	rargs.Add(message->targetHandle.C_String());
 	rargs.Add(message->leaderHandle.C_String());
 	rargs.Add((Double)message->newRank);
-	FxDelegate::Invoke(movie, "c2f_Notification_Clans_SetMemberRank", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_Clans_SetMemberRank", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_ChangeHandle *message)
 {
@@ -1164,14 +1164,14 @@ void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_ChangeHandle *messag
 	rargs.Add(message->oldClanHandle.C_String());
 	rargs.Add(message->newClanHandle.C_String());
 	rargs.Add(message->leaderHandle.C_String());
-	FxDelegate::Invoke(movie, "c2f_Notification_Clans_ChangeHandle", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_Clans_ChangeHandle", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_Leave *message)
 {
 	FxResponseArgs<2> rargs;
 	rargs.Add(message->clanHandle.C_String());
 	rargs.Add(message->targetHandle.C_String());
-	FxDelegate::Invoke(movie, "c2f_Notification_Clans_Leave", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_Clans_Leave", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_PendingJoinStatus *message)
 {
@@ -1203,14 +1203,14 @@ void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_PendingJoinStatus *m
 		break;
 	}
 
-	FxDelegate::Invoke(movie, "c2f_Notification_Clans_PendingJoinStatus", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_Clans_PendingJoinStatus", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_NewClanMember *message)
 {
 	FxResponseArgs<2> rargs;
 	rargs.Add(message->clanHandle.C_String());
 	rargs.Add(message->targetHandle.C_String());
-	FxDelegate::Invoke(movie, "c2f_Notification_Clans_NewClanMember", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_Clans_NewClanMember", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_KickAndBlacklistUser *message)
 {
@@ -1220,7 +1220,7 @@ void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_KickAndBlacklistUser
 	rargs.Add(message->blacklistingUserHandle.C_String());
 	rargs.Add(message->targetHandleWasKicked);
 	rargs.Add(message->reason.C_String());
-	FxDelegate::Invoke(movie, "c2f_Notification_Clans_KickAndBlacklistUser", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_Clans_KickAndBlacklistUser", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_UnblacklistUser *message)
 {
@@ -1228,14 +1228,14 @@ void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_UnblacklistUser *mes
 	rargs.Add(message->clanHandle.C_String());
 	rargs.Add(message->targetHandle.C_String());
 	rargs.Add(message->unblacklistingUserHandle.C_String());
-	FxDelegate::Invoke(movie, "c2f_Notification_Clans_UnblacklistUser", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_Clans_UnblacklistUser", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Notification_Clans_Destroyed *message)
 {
 	FxResponseArgs<2> rargs;
 	rargs.Add(message->clanHandle.C_String());
 	rargs.Add(message->oldClanLeader.C_String());
-	FxDelegate::Invoke(movie, "c2f_Notification_Clans_Destroyed", rargs);
+	FxDelegate::Invoke2(movie, "c2f_Notification_Clans_Destroyed", rargs);
 }
 void Lobby2ClientGFx3Impl::Accept(CallbackProcessor* cbreg)
 {
@@ -1316,7 +1316,7 @@ void Lobby2ClientGFx3Impl::OnClosedConnection(SystemAddress systemAddress, RakNe
 			rargs.Add("LCR_CONNECTION_LOST");
 			break;
 		}
-		FxDelegate::Invoke(movie, "c2f_NotifyConnectionLost", rargs);
+		FxDelegate::Invoke2(movie, "c2f_NotifyConnectionLost", rargs);
 	}
 }
 void Lobby2ClientGFx3Impl::OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
@@ -1325,7 +1325,7 @@ void Lobby2ClientGFx3Impl::OnNewConnection(SystemAddress systemAddress, RakNetGU
 	{
 		// is connected
 		FxResponseArgs<0> rargs;
-		FxDelegate::Invoke(movie, "c2f_NotifyConnectionResultSuccess", rargs);
+		FxDelegate::Invoke2(movie, "c2f_NotifyConnectionResultSuccess", rargs);
 	}
 }
 void Lobby2ClientGFx3Impl::OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason)
@@ -1337,25 +1337,40 @@ void Lobby2ClientGFx3Impl::OnFailedConnectionAttempt(Packet *packet, PI2_FailedC
 		switch(failedConnectionAttemptReason)
 		{
 		case FCAR_CONNECTION_ATTEMPT_FAILED:
-			rargs.Add("CONNECTION_ATTEMPT_FAILED");
+			rargs.Add("FCAR_CONNECTION_ATTEMPT_FAILED");
 			break;
 		case FCAR_ALREADY_CONNECTED:
-			rargs.Add("ALREADY_CONNECTED");
+			rargs.Add("FCAR_ALREADY_CONNECTED");
 			break;
 		case FCAR_NO_FREE_INCOMING_CONNECTIONS:
-			rargs.Add("NO_FREE_INCOMING_CONNECTIONS");
+			rargs.Add("FCAR_NO_FREE_INCOMING_CONNECTIONS");
 			break;
-		case FCAR_RSA_PUBLIC_KEY_MISMATCH:
-			rargs.Add("RSA_PUBLIC_KEY_MISMATCH");
+		case FCAR_SECURITY_PUBLIC_KEY_MISMATCH:
+			rargs.Add("FCAR_SECURITY_PUBLIC_KEY_MISMATCH");
 			break;
 		case FCAR_CONNECTION_BANNED:
-			rargs.Add("CONNECTION_BANNED");
+			rargs.Add("FCAR_CONNECTION_BANNED");
 			break;
 		case FCAR_INVALID_PASSWORD:
-			rargs.Add("INVALID_PASSWORD");
+			rargs.Add("FCAR_INVALID_PASSWORD");
+			break;
+		case FCAR_INCOMPATIBLE_PROTOCOL:
+			rargs.Add("FCAR_INCOMPATIBLE_PROTOCOL");
+			break;
+		case FCAR_IP_RECENTLY_CONNECTED:
+			rargs.Add("FCAR_IP_RECENTLY_CONNECTED");
+			break;
+		case FCAR_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY:
+			rargs.Add("FCAR_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY");
+			break;
+		case FCAR_OUR_SYSTEM_REQUIRES_SECURITY:
+			rargs.Add("FCAR_OUR_SYSTEM_REQUIRES_SECURITY");
+			break;
+		case FCAR_PUBLIC_KEY_MISMATCH:
+			rargs.Add("FCAR_PUBLIC_KEY_MISMATCH");
 			break;
 		}
-		FxDelegate::Invoke(movie, "c2f_NotifyConnectionResultFailure", rargs);
+		FxDelegate::Invoke2(movie, "c2f_NotifyConnectionResultFailure", rargs);
 	}
 }
 

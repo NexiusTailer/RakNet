@@ -67,7 +67,7 @@ namespace DataStructures
 	template  <class weight_type, class data_type, bool isMaxHeap>
 		Heap<weight_type, data_type, isMaxHeap>::~Heap()
 	{
-		//Clear(true, __FILE__,__LINE__);
+		//Clear(true, _FILE_AND_LINE_);
 	}
 
 	template  <class weight_type, class data_type, bool isMaxHeap>

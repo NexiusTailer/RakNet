@@ -1,7 +1,7 @@
 ﻿import gfx.controls.TextArea;
 import gfx.controls.Button;
 import Screens.RegisterAccountScreen3;
-import gfx.io.GameDelegate;
+import flash.external.*;
 
 class Screens.ProfileScreen extends Screen
 {
@@ -123,7 +123,7 @@ class Screens.ProfileScreen extends Screen
 	public function f2c_UpdateAccount():Void
 	{									
 		// Do not change the order the parameters are passed in as
-		GameDelegate.call("f2c_UpdateAccount",
+		ExternalInterface.call("f2c_UpdateAccount",
 		[
 		 AccountInfo.Instance.GetFirstName(), AccountInfo.Instance.GetMiddleName(), AccountInfo.Instance.GetLastName(),
 		 AccountInfo.Instance.GetRace(), AccountInfo.Instance.GetIsMale(), AccountInfo.Instance.GetHomeAddress1(),
@@ -144,6 +144,6 @@ class Screens.ProfileScreen extends Screen
 		 GetFavoriteMovies(),
 		 GetFavoriteBooks(),
 		 GetFavoriteQuotes()
-		 ], _root);					 
+		 ]);					 
 	}
 }

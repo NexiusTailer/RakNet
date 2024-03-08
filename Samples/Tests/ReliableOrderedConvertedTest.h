@@ -1,8 +1,9 @@
 #pragma once
 
+
 #include "TestInterface.h"
 
-#include "RakNetworkFactory.h"
+
 #include "RakPeerInterface.h"
 #include "GetTime.h"
 #include "MessageIdentifiers.h"
@@ -18,14 +19,15 @@
 
 #include "DebugTools.h"
 
+using namespace RakNet;
 class ReliableOrderedConvertedTest : public TestInterface
 {
 public:
 	ReliableOrderedConvertedTest(void);
 	~ReliableOrderedConvertedTest(void);
-	int RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses);//should return 0 if no error, or the error number
-	RakNet::RakString GetTestName();
-	RakNet::RakString ErrorCodeToString(int errorCode);
+	int RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses);//should return 0 if no error, or the error number
+	RakString GetTestName();
+	RakString ErrorCodeToString(int errorCode);
 	void DestroyPeers();
 protected:
 	void *LoggedMalloc(size_t size, const char *file, unsigned int line);

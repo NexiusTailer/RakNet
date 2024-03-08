@@ -47,6 +47,8 @@ bool PostgreSQLInterface::Connect(const char *conninfo)
 {
 	if (isConnected==false)
 	{
+		_conninfo=conninfo;
+
 		pgConn=PQconnectdb(conninfo);
 		ConnStatusType status = PQstatus(pgConn);
 		isConnected=status==CONNECTION_OK;
@@ -258,7 +260,7 @@ bool PostgreSQLInterface::PQGetValueFromBinary(char **output, int *outputLength,
 		}
 		else
 		{
-			*output = (char*) rakMalloc_Ex(*outputLength,__FILE__,__LINE__);
+			*output = (char*) rakMalloc_Ex(*outputLength,_FILE_AND_LINE_);
 			memcpy(*output, PQgetvalue(result, rowIndex, columnIndex), *outputLength);
 			return true;
 		}
@@ -474,8 +476,8 @@ void PostgreSQLInterface::EncodeQueryInput(const char *colName, const char *str,
 	if (writeEmpty==false && (str==0 || str[0]==0))
 		return;
 
-	static char *emptyStr="";
-	static char *emptyDate="01/01/01";
+	static char *emptyStr=(char*)"";
+	static char *emptyDate=(char*)"01/01/01";
 
 	if (paramTypeStr.IsEmpty()==false)
 	{
@@ -536,13 +538,13 @@ void PostgreSQLInterface::EncodeQueryUpdate(const char *colName, const RakNet::R
 RakNet::RakString PostgreSQLInterface::GetEscapedString(const char *input) const
 {
 	unsigned long len = (unsigned long) strlen(input);
-	char *fn = (char*) rakMalloc_Ex(len*2+1,__FILE__,__LINE__);
+	char *fn = (char*) rakMalloc_Ex(len*2+1,_FILE_AND_LINE_);
 	int error;
 	PQescapeStringConn(pgConn, fn, input, len, &error);
 	RakNet::RakString output;
 	// Use assignment so it doesn't parse printf escape strings
 	output = fn;
-	rakFree_Ex(fn,__FILE__,__LINE__);
+	rakFree_Ex(fn,_FILE_AND_LINE_);
 	return output;
 }
 
@@ -566,7 +568,7 @@ PGresult * PostgreSQLInterface::QueryVariadic( const char * input, ... )
 
 	// Find out how many params there are
 	// Find out the type of each param (%f, %s)
-	indices.Clear(false, __FILE__, __LINE__);
+	indices.Clear(false, _FILE_AND_LINE_);
 	GetTypeMappingIndices( input, indices );
 
 	if (preparedQueryIndex==preparedQueries.Size())
@@ -601,7 +603,7 @@ PGresult * PostgreSQLInterface::QueryVariadic( const char * input, ... )
 		if (IsResultSuccessful(result, false))
 		{
 			PQclear(result);
-			preparedQueries.Insert(inputStr, __FILE__, __LINE__);
+			preparedQueries.Insert(inputStr, _FILE_AND_LINE_);
 		}
 		else
 		{
@@ -624,12 +626,12 @@ PGresult * PostgreSQLInterface::QueryVariadic( const char * input, ... )
 	int *paramLength;
 	int *paramFormat;
 	ExtractArguments(argptr, indices, &paramData, &paramLength);
-	paramFormat=RakNet::OP_NEW_ARRAY<int>(indices.Size(),__FILE__,__LINE__);
+	paramFormat=RakNet::OP_NEW_ARRAY<int>(indices.Size(),_FILE_AND_LINE_);
 	for (unsigned int i=0; i < indices.Size(); i++)
 		paramFormat[i]=PQEXECPARAM_FORMAT_BINARY;
 	result = PQexecPrepared(pgConn, RakNet::RakString("PGSQL_ExecuteVariadic_%i", preparedQueryIndex), indices.Size(), paramData, paramLength, paramFormat, PQEXECPARAM_FORMAT_BINARY );
 	VariadicSQLParser::FreeArguments(indices, paramData, paramLength);
-	RakNet::OP_DELETE_ARRAY(paramFormat,__FILE__,__LINE__);
+	RakNet::OP_DELETE_ARRAY(paramFormat,_FILE_AND_LINE_);
 	va_end(argptr);
 
 	if (IsResultSuccessful(result, false)==false)

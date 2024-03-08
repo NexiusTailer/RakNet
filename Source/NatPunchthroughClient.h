@@ -28,6 +28,9 @@
 // Buffalo WHR-HP-G54 OK
 // Netgear WGR614 ok
 
+namespace RakNet
+{
+/// Forward declarations
 class RakPeerInterface;
 struct Packet;
 #if _RAKNET_SUPPORT_PacketLogger==1
@@ -54,8 +57,8 @@ struct RAK_DLL_EXPORT PunchthroughConfiguration
 	}
 
 	/// How much time between each UDP send
-	RakNetTimeMS TIME_BETWEEN_PUNCH_ATTEMPTS_INTERNAL;
-	RakNetTimeMS TIME_BETWEEN_PUNCH_ATTEMPTS_EXTERNAL;
+	RakNet::Time TIME_BETWEEN_PUNCH_ATTEMPTS_INTERNAL;
+	RakNet::Time TIME_BETWEEN_PUNCH_ATTEMPTS_EXTERNAL;
 
 	/// How many tries for one port before giving up and going to the next port
 	int UDP_SENDS_PER_PORT_INTERNAL;
@@ -120,6 +123,10 @@ struct RAK_DLL_EXPORT NatPunchthroughDebugInterface_PacketLogger : public NatPun
 class RAK_DLL_EXPORT NatPunchthroughClient : public PluginInterface2
 {
 public:
+
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(NatPunchthroughClient)
+
 	NatPunchthroughClient();
 	~NatPunchthroughClient();
 
@@ -193,7 +200,7 @@ protected:
 
 	struct SendPing
 	{
-		RakNetTime nextActionTime;
+		RakNet::Time nextActionTime;
 		SystemAddress targetAddress;
 		SystemAddress facilitator;
 		SystemAddress internalIds[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
@@ -208,8 +215,11 @@ protected:
 		{
 			TESTING_INTERNAL_IPS,
 			WAITING_FOR_INTERNAL_IPS_RESPONSE,
-			TESTING_EXTERNAL_IPS_FROM_FACILITATOR_PORT,
-			TESTING_EXTERNAL_IPS_FROM_1024,
+			SEND_WITH_TTL,
+			TESTING_EXTERNAL_IPS_FACILITATOR_PORT_TO_FACILITATOR_PORT,
+			TESTING_EXTERNAL_IPS_1024_TO_FACILITATOR_PORT,
+			TESTING_EXTERNAL_IPS_FACILITATOR_PORT_TO_1024,
+			TESTING_EXTERNAL_IPS_1024_TO_1024,
 			WAITING_AFTER_ALL_ATTEMPTS,
 
 			// The trendnet remaps the remote port to 1024.
@@ -231,7 +241,11 @@ protected:
 		RakNetGUID guid;
 	};
 	DataStructures::List<AddrAndGuid> failedAttemptList;
+
+	void IncrementExternalAttemptCount(RakNet::Time time, RakNet::Time delta);
 };
+
+} // namespace RakNet
 
 #endif
 

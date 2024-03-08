@@ -1,4 +1,4 @@
-#include "RakNetworkFactory.h"
+
 #include "RakPeerInterface.h"
 #include "GetTime.h"
 #include "MessageIdentifiers.h"
@@ -12,21 +12,23 @@
 #include "RakSleep.h"
 #include "RakMemoryOverride.h"
 
+using namespace RakNet;
+
 int main(int argc, char **argv)
 {
 	RakPeerInterface *sender, *receiver;
 
 	printf("This project tests sending messages of various sizes.\n");
-	sender = RakNetworkFactory::GetRakPeerInterface();
-	receiver = RakNetworkFactory::GetRakPeerInterface();
-	SocketDescriptor sd1(1234,0),sd2(1235,0);
-	receiver->Startup(32, 30, &sd1, 1);
+	sender = RakNet::RakPeerInterface::GetInstance();
+	receiver = RakNet::RakPeerInterface::GetInstance();
+	RakNet::SocketDescriptor sd1(1234,0),sd2(1235,0);
+	receiver->Startup(32, &sd1, 1);
 	receiver->SetMaximumIncomingConnections(32);
-	sender->Startup(1, 30, &sd2, 1);
+	sender->Startup(1, &sd2, 1);
 	sender->Connect("127.0.0.1", 1234, 0, 0);
 	RakSleep(100);
 
-	char data[4000];
+	unsigned char data[4000];
 	data[0]=ID_USER_PACKET_ENUM;
 	for (unsigned int i=1; i < 4000; i++)
 		data[i]=i%256;
@@ -38,13 +40,13 @@ int main(int argc, char **argv)
 		receiveCount=0;
 		for (sum=0; sum < 4000; sum+=stride)
 		{
-			sender->Send(data,stride,HIGH_PRIORITY,RELIABLE_ORDERED,0,UNASSIGNED_SYSTEM_ADDRESS,true);
+			sender->Send((const char*) data,stride,HIGH_PRIORITY,RELIABLE_ORDERED,0,RakNet::UNASSIGNED_SYSTEM_ADDRESS,true);
 			sendCount++;
 		}
 
 		RakSleep(100);
 
-		Packet *p;
+		RakNet::Packet *p;
 		for (p=sender->Receive(); p; sender->DeallocatePacket(p), p=sender->Receive())
 			;    
 		for (p=receiver->Receive(); p; receiver->DeallocatePacket(p), p=receiver->Receive())
@@ -64,9 +66,9 @@ int main(int argc, char **argv)
 	}
 
 	if (sender)
-		RakNetworkFactory::DestroyRakPeerInterface(sender);
+		RakNet::RakPeerInterface::DestroyInstance(sender);
 	if (receiver)
-		RakNetworkFactory::DestroyRakPeerInterface(receiver);
+		RakNet::RakPeerInterface::DestroyInstance(receiver);
 
 	return 1;
 }

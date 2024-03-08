@@ -1,5 +1,5 @@
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
+
 #include "BitStream.h"
 #include "MessageIdentifiers.h"
 #include "GetTime.h"
@@ -9,16 +9,16 @@ using namespace RakNet;
 #include <cstdio>
 #include <memory.h>
 #include <cstring>
-
+#include "Gets.h"
 #include "Kbhit.h"
 
 
 int main(void)
 {
-	char serverIP[30];
+	char serverIP[64];
 
-	RakPeerInterface *rakClient=RakNetworkFactory::GetRakPeerInterface();
-	RakPeerInterface *rakServer=RakNetworkFactory::GetRakPeerInterface();
+	RakPeerInterface *rakClient=RakNet::RakPeerInterface::GetInstance();
+	RakPeerInterface *rakServer=RakNet::RakPeerInterface::GetInstance();
 	rakClient->SetOccasionalPing(true);
 	rakServer->SetOccasionalPing(true);
 
@@ -41,12 +41,12 @@ int main(void)
 		{
 			// Run as a client.  If you don't have another machine, just run 2 instances of this program and use "127.0.0.1"
 			puts ("Enter server IP\n");
-			gets(serverIP);
+			Gets(serverIP,sizeof(serverIP));
 			if (serverIP[0]==0)
 				strcpy(serverIP, "127.0.0.1");
 
-			SocketDescriptor socketDescriptor(0,0);
-			rakClient->Startup(1, 0, &socketDescriptor, 1);
+			RakNet::SocketDescriptor socketDescriptor(0,0);
+			rakClient->Startup(1, &socketDescriptor, 1);
 			rakClient->Connect(serverIP, 2100, 0, 0);
 			printf("Connecting client\n");
 			isServer=false;
@@ -55,8 +55,8 @@ int main(void)
 		else if (ch=='s')
 		{
 			// Run as a server.
-			SocketDescriptor socketDescriptor(2100,0);
-			rakServer->Startup(32,0,&socketDescriptor, 1);
+			RakNet::SocketDescriptor socketDescriptor(2100,0);
+			rakServer->Startup(32,&socketDescriptor, 1);
 			rakServer->SetMaximumIncomingConnections(32);
 			printf("Server started\n");
 			isServer=true;
@@ -71,8 +71,8 @@ int main(void)
 	}
 
 	printf("Entering main loop.  Press 'q' to quit\n'c' to send from the client.\n's' to send from the server.\n");
-	Packet *packet;
-	RakNetTime time;
+	RakNet::Packet *packet;
+	RakNet::Time time;
 	ch=0;
 	bool packetFromServer;
 	while (1)
@@ -80,7 +80,7 @@ int main(void)
 		if (kbhit())
 		{
 #ifndef _WIN32
-			gets(buff);
+			Gets(buff,sizeof(buff));
 			ch=buff[0];
 #else
 			ch=getch();
@@ -90,7 +90,7 @@ int main(void)
 		if (ch=='q')
 			break;
 
-		if (ch=='c' && rakClient->GetSystemAddressFromIndex(0)!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (ch=='c' && rakClient->GetSystemAddressFromIndex(0)!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 		{
 			BitStream bitStream;
 
@@ -101,7 +101,7 @@ int main(void)
 			
 			time=RakNet::GetTime();
 			bitStream.Write(time);
-			rakClient->Send(&bitStream, HIGH_PRIORITY, RELIABLE, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+			rakClient->Send(&bitStream, HIGH_PRIORITY, RELIABLE, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 			printf("Sending message from client at time %i\n", time);
 		}
 		else if (ch=='s' && rakServer->IsActive())
@@ -111,7 +111,7 @@ int main(void)
 
 			time=RakNet::GetTime();
 			bitStream.Write(time);
-			rakServer->Send(&bitStream, HIGH_PRIORITY, RELIABLE, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+			rakServer->Send(&bitStream, HIGH_PRIORITY, RELIABLE, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 			printf("Sending packet from server at time %i\n", time);
 		}
 
@@ -129,7 +129,7 @@ int main(void)
 		if (packet && packet->data[0]==ID_TIMESTAMP)
 		{
 			// Write the bytes after the first to a variable.  That is the time the packet was sent.
-			RakNet::BitStream timeBS(packet->data+1, sizeof(RakNetTime), false);
+			RakNet::BitStream timeBS(packet->data+1, sizeof(RakNet::Time), false);
 			timeBS.Read(time);
 			printf("Time difference is %i\n", RakNet::GetTime() - time);
 		}
@@ -151,8 +151,8 @@ int main(void)
 	rakServer->Shutdown(0);
 	rakClient->Shutdown(0);
 
-	RakNetworkFactory::DestroyRakPeerInterface(rakClient);
-	RakNetworkFactory::DestroyRakPeerInterface(rakServer);
+	RakNet::RakPeerInterface::DestroyInstance(rakClient);
+	RakNet::RakPeerInterface::DestroyInstance(rakServer);
 
 	return 0;
 }

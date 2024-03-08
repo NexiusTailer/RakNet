@@ -6,7 +6,7 @@ using namespace RakNet;
 
 Lobby2Client::Lobby2Client()
 {
-	serverAddress=UNASSIGNED_SYSTEM_ADDRESS;
+	serverAddress=RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 }
 Lobby2Client::~Lobby2Client()
 {
@@ -108,7 +108,7 @@ bool Lobby2Client::IsInIgnoreList(RakNet::RakString user) const
 }
 void Lobby2Client::ClearIgnoreList(void)
 {
-	ignoreList.Clear(__FILE__, __LINE__);
+	ignoreList.Clear(_FILE_AND_LINE_);
 }
 const DataStructures::OrderedList<RakNet::RakString, RakNet::RakString>* Lobby2Client::GetIgnoreList(void) const
 {

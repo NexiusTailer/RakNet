@@ -56,9 +56,9 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPForwarder.html#905a55dfed3c5580971c1324cf014fbf">GetUsedForwardEntries</a> (void) const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">UDPForwarderResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPForwarder.html#e22b3da12aa093783cf3ccd9b6a689f9">StartForwarding</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> source, <a class="el" href="structSystemAddress.html">SystemAddress</a> destination, RakNetTimeMS timeoutOnNoDataMS, const char *forceHostAddress, unsigned short *forwardingPort, SOCKET *forwardingSocket)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">UDPForwarderResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPForwarder.html#85fcfcc3af19a6e22b9225b3eb7c4688">StartForwarding</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> source, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> destination, RakNet::TimeMS timeoutOnNoDataMS, const char *forceHostAddress, unsigned short *forwardingPort, SOCKET *forwardingSocket)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPForwarder.html#4611e9e3408e73980c5978e972a2dbd8">StopForwarding</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> source, <a class="el" href="structSystemAddress.html">SystemAddress</a> destination)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPForwarder.html#4611e9e3408e73980c5978e972a2dbd8">StopForwarding</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> source, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> destination)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -131,26 +131,26 @@ Sets the maximum number of forwarding entries allowed Set according to your avai
 
 </div>
 </div><p>
-<a class="anchor" name="e22b3da12aa093783cf3ccd9b6a689f9"></a><!-- doxytag: member="RakNet::UDPForwarder::StartForwarding" ref="e22b3da12aa093783cf3ccd9b6a689f9" args="(SystemAddress source, SystemAddress destination, RakNetTimeMS timeoutOnNoDataMS, const char *forceHostAddress, unsigned short *forwardingPort, SOCKET *forwardingSocket)" -->
+<a class="anchor" name="85fcfcc3af19a6e22b9225b3eb7c4688"></a><!-- doxytag: member="RakNet::UDPForwarder::StartForwarding" ref="85fcfcc3af19a6e22b9225b3eb7c4688" args="(SystemAddress source, SystemAddress destination, RakNet::TimeMS timeoutOnNoDataMS, const char *forceHostAddress, unsigned short *forwardingPort, SOCKET *forwardingSocket)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">UDPForwarderResult RakNet::UDPForwarder::StartForwarding           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
           <td class="paramname"> <em>source</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
           <td class="paramname"> <em>destination</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">RakNetTimeMS&nbsp;</td>
+          <td class="paramtype">RakNet::TimeMS&nbsp;</td>
           <td class="paramname"> <em>timeoutOnNoDataMS</em>, </td>
         </tr>
         <tr>
@@ -182,7 +182,7 @@ Sets the maximum number of forwarding entries allowed Set according to your avai
 
 <p>
 Forwards datagrams from source to destination, and vice-versa Does nothing if this forward entry already exists via a previous call <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Call <a class="el" href="classRakNet_1_1UDPForwarder.html#33db580779b6bc0c52e82c18c9f82e0e">Startup()</a> </dd></dl>
-<dl class="note" compact><dt><b>Note:</b></dt><dd>RakNet's protocol will ensure a message is sent at least every 15 seconds, so if routing <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> messages, it is a reasonable value for timeoutOnNoDataMS, plus an some extra seconds for latency </dd></dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>RakNet's protocol will ensure a message is sent at least every 15 seconds, so if routing <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> messages, it is a reasonable value for timeoutOnNoDataMS, plus an some extra seconds for latency </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>source</em>&nbsp;</td><td>The source IP and port </td></tr>
@@ -224,13 +224,13 @@ Starts the system. Required to call before StartForwarding
         <tr>
           <td class="memname">void RakNet::UDPForwarder::StopForwarding           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
           <td class="paramname"> <em>source</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
           <td class="paramname"> <em>destination</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -273,9 +273,9 @@ Call on a regular basis, unless using UDP_FORWARDER_EXECUTE_THREADED. Will call 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/RakNet-3.x/Source/<a class="el" href="UDPForwarder_8h.html">UDPForwarder.h</a></ul>
+<li>d:/temp/RakNet4/Source/<a class="el" href="UDPForwarder_8h.html">UDPForwarder.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 22 08:28:37 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:30 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

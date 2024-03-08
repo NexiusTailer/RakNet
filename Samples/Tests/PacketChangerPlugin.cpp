@@ -8,7 +8,7 @@ PacketChangerPlugin::~PacketChangerPlugin(void)
 {
 }
 
-void PacketChangerPlugin::OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNetTime time, int isSend)
+void PacketChangerPlugin::OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, TimeMS time, int isSend)
 {
 
 	internalPacket->data[0]=ID_USER_PACKET_ENUM+2;

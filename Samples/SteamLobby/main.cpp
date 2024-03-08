@@ -6,17 +6,17 @@
 #include "RakSleep.h"
 #include "RakNetTypes.h"
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
 #include "GetTime.h"
 #include "MessageIdentifiers.h"
 #include <windows.h>
 #include <Kbhit.h>
+#include "Gets.h"
 
 using namespace RakNet;
 
 Lobby2MessageFactory_Steam *messageFactory;
 Lobby2Client_Steam *lobby2Client;
-RakPeerInterface *rakPeer;
+RakNet::RakPeerInterface *rakPeer;
 CSteamID lastRoom;
 
 void PrintCommands(void)
@@ -34,13 +34,22 @@ void PrintCommands(void)
 
 struct SteamResults : public RakNet::Lobby2Callbacks
 {
-	virtual void MessageResult(RakNet::Notification_Console_RoomMemberConnectivityUpdate *message)
+	virtual void MessageResult(RakNet::Notification_Console_MemberJoinedRoom *message)
 	{
-		RakNet::Notification_Console_RoomMemberConnectivityUpdate_Steam *msgSteam = (RakNet::Notification_Console_RoomMemberConnectivityUpdate_Steam *) message;
+		RakNet::Notification_Console_MemberJoinedRoom_Steam *msgSteam = (RakNet::Notification_Console_MemberJoinedRoom_Steam *) message;
 		RakNet::RakString msg;
 		msgSteam->DebugMsg(msg);
 		printf("%s\n", msg.C_String());
-		rakPeer->Connect(msgSteam->remoteSystem.ToString(false), msgSteam->remoteSystem.port, 0, 0);
+		// Guy with the lower ID connects to the guy with the higher ID
+		uint64_t mySteamId=SteamUser()->GetSteamID().ConvertToUint64();
+		if (mySteamId < msgSteam->srcMemberId)
+		{
+			// Steam's NAT punch is implicit, so it takes a long time to connect. Give it extra time
+			unsigned int sendConnectionAttemptCount=24;
+			unsigned int timeBetweenSendConnectionAttemptsMS=500;
+			ConnectionAttemptResult car = rakPeer->Connect(msgSteam->remoteSystem.ToString(false), msgSteam->remoteSystem.port, 0, 0, 0, 0, sendConnectionAttemptCount, timeBetweenSendConnectionAttemptsMS);
+			RakAssert(car==CONNECTION_ATTEMPT_STARTED);
+		}
 	}
 
 	virtual void MessageResult(RakNet::Console_SearchRooms *message)
@@ -75,14 +84,14 @@ int main(int argc, char **argv)
 	}
 
 	SteamResults steamResults;
-	rakPeer = RakNetworkFactory::GetRakPeerInterface();
+	rakPeer = RakNet::RakPeerInterface::GetInstance();
 	messageFactory = new Lobby2MessageFactory_Steam;
 	lobby2Client = new Lobby2Client_Steam("1.0");
 	lobby2Client->AddCallbackInterface(&steamResults);
 	lobby2Client->SetMessageFactory(messageFactory);
 	rakPeer->AttachPlugin(lobby2Client);
 	SocketDescriptor sd(1234,0);
-	rakPeer->Startup(32,0,&sd,1);
+	rakPeer->Startup(32,&sd,1);
 	rakPeer->SetMaximumIncomingConnections(32);
 	RakNet::Lobby2Message* msg = messageFactory->Alloc(RakNet::L2MID_Client_Login);
 	lobby2Client->SendMsg(msg);
@@ -101,7 +110,7 @@ int main(int argc, char **argv)
 	char ch;
 	while(!quit)
 	{
-		Packet *p;
+		RakNet::Packet *p;
 		for (p=rakPeer->Receive(); p; rakPeer->DeallocatePacket(p), p=rakPeer->Receive())
 		{
 			switch (p->data[0])
@@ -134,11 +143,6 @@ int main(int argc, char **argv)
 				// A real app should tell the user
 				printf("ID_NO_FREE_INCOMING_CONNECTIONS\n");
 				break;
-			case ID_MODIFIED_PACKET:
-				// Cheater!
-				printf("ID_MODIFIED_PACKET\n");
-				break;
-
 			case ID_INVALID_PASSWORD:
 				printf("ID_INVALID_PASSWORD\n");
 				break;
@@ -155,7 +159,7 @@ int main(int argc, char **argv)
 				break;
 
 			case ID_NEW_INCOMING_CONNECTION:
-				printf("ID_NEW_INCOMING_CONNECTION");
+				printf("ID_NEW_INCOMING_CONNECTION\n");
 				break;
 
 			default:
@@ -225,7 +229,7 @@ int main(int argc, char **argv)
 					RakNet::Console_JoinRoom_Steam* msg = (RakNet::Console_JoinRoom_Steam*) messageFactory->Alloc(RakNet::L2MID_Console_JoinRoom);
 					printf("Enter room id, or enter for %"PRINTF_64_BIT_MODIFIER"u: ", lastRoom.ConvertToUint64());
 					char str[256];
-					gets(str);
+					Gets(str, sizeof(str));
 					if (str[0]==0)
 					{
 						msg->roomId=lastRoom.ConvertToUint64();
@@ -304,7 +308,7 @@ int main(int argc, char **argv)
 	RakNet::Lobby2Message* logoffMsg = messageFactory->Alloc(RakNet::L2MID_Client_Logoff);
 	lobby2Client->SendMsg(logoffMsg);
 	messageFactory->Dealloc(logoffMsg);
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 
 	return 1;
 }

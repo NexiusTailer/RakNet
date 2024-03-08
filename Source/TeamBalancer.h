@@ -12,7 +12,6 @@
 #ifndef __TEAM_BALANCER_H
 #define __TEAM_BALANCER_H
 
-class RakPeerInterface;
 #include "PluginInterface2.h"
 #include "RakMemoryOverride.h"
 #include "NativeTypes.h"
@@ -21,6 +20,8 @@ class RakPeerInterface;
 
 namespace RakNet
 {
+/// Forward declarations
+class RakPeerInterface;
 
 /// \defgroup TEAM_BALANCER_GROUP TeamBalancer
 /// \brief Set and network team selection (supports peer to peer or client/server)
@@ -40,6 +41,9 @@ typedef unsigned char TeamId;
 class RAK_DLL_EXPORT TeamBalancer : public PluginInterface2
 {
 public:
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(TeamBalancer)
+
 	TeamBalancer();
 	virtual ~TeamBalancer();
 

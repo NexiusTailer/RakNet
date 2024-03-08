@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Kbhit.h"
-#include "RakNetworkFactory.h"
+
 #include "GetTime.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
@@ -19,11 +19,12 @@
 
 #include "AutopatcherClientGFx3Impl.h"
 
+using namespace RakNet;
 
 static const char *AUTOPATCHER_LAST_UPDATE_FILE="autopatcherLastUpdate.txt";
 static const char *AUTOPATCHER_RESTART_FILE="autopatcherRestart.txt";
 
-class TestCB : public FileListTransferCBInterface
+class TestCB : public RakNet::FileListTransferCBInterface
 {
 public:
 	virtual bool OnFile(OnFileStruct *onFileStruct)
@@ -58,7 +59,7 @@ public:
 
 		FxResponseArgs<1> args;
 		args.Add(GFxValue(buff));
-		FxDelegate::Invoke(autopatcherClient->movie, "addToPatchNotesText", args);
+		FxDelegate::Invoke2(autopatcherClient->movie, "addToPatchNotesText", args);
 
 		FxResponseArgs<5> args2;
 		args2.Add(GFxValue(buff));
@@ -66,7 +67,7 @@ public:
 		args2.Add(GFxValue(1.0));
 		args2.Add(GFxValue((double)onFileStruct->bytesDownloadedForThisSet));
 		args2.Add(GFxValue((double)onFileStruct->byteLengthOfThisSet));
-		FxDelegate::Invoke(autopatcherClient->movie, "updateProgressBars", args2);
+		FxDelegate::Invoke2(autopatcherClient->movie, "updateProgressBars", args2);
 
 		// Return false for the file data to be deallocated automatically
 		return false;
@@ -87,7 +88,7 @@ public:
 		args2.Add(GFxValue((double)fps->onFileStruct->byteLengthOfThisFile));
 		args2.Add(GFxValue((double)fps->onFileStruct->bytesDownloadedForThisSet));
 		args2.Add(GFxValue((double)fps->onFileStruct->byteLengthOfThisSet));
-		FxDelegate::Invoke(autopatcherClient->movie, "updateProgressBars", args2);
+		FxDelegate::Invoke2(autopatcherClient->movie, "updateProgressBars", args2);
 	}
 
 	AutopatcherClientGFx3Impl *autopatcherClient;
@@ -111,9 +112,9 @@ void AutopatcherClientGFx3Impl::Init(const char *_pathToThisExe, GPtr<FxDelegate
 	movie=pMovie;
 	strcpy(pathToThisExe,_pathToThisExe);
 
-	autopatcherClient=RakNet::OP_NEW<AutopatcherClient>(__FILE__,__LINE__);
-	fileListTransfer=RakNet::OP_NEW<FileListTransfer>(__FILE__,__LINE__);
-	packetizedTCP=RakNet::OP_NEW<PacketizedTCP>(__FILE__,__LINE__);
+	autopatcherClient=RakNet::OP_NEW<AutopatcherClient>(_FILE_AND_LINE_);
+	fileListTransfer=RakNet::OP_NEW<FileListTransfer>(_FILE_AND_LINE_);
+	packetizedTCP=RakNet::OP_NEW<PacketizedTCP>(_FILE_AND_LINE_);
 	autopatcherClient->SetFileListTransferPlugin(fileListTransfer);
 	
 	packetizedTCP->AttachPlugin(autopatcherClient);
@@ -122,23 +123,23 @@ void AutopatcherClientGFx3Impl::Init(const char *_pathToThisExe, GPtr<FxDelegate
 }
 void AutopatcherClientGFx3Impl::Update(void)
 {
-	Packet *p;
+	RakNet::Packet *p;
 
 	SystemAddress notificationAddress;
 	notificationAddress=packetizedTCP->HasCompletedConnectionAttempt();
-	if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+	if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 	{
 		UpdateConnectResult(true);
 		serverAddress=notificationAddress;
 	}
 	notificationAddress=packetizedTCP->HasFailedConnectionAttempt();
-	if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+	if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 	{
 		UpdateConnectResult(false);
 	}
 	notificationAddress=packetizedTCP->HasNewIncomingConnection();
 	notificationAddress=packetizedTCP->HasLostConnection();
-	if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+	if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 	{
 		UpdateConnectResult(false);
 	}
@@ -151,29 +152,29 @@ void AutopatcherClientGFx3Impl::Update(void)
 			char buff[256];
 			RakNet::BitStream temp(p->data, p->length, false);
 			temp.IgnoreBits(8);
-			stringCompressor->DecodeString(buff, 256, &temp);
+			StringCompressor::Instance()->DecodeString(buff, 256, &temp);
 
 			// Error.
-			FxDelegate::Invoke(movie, "gotoCompletionMenu", FxResponseArgs<0>());
+			FxDelegate::Invoke2(movie, "gotoCompletionMenu", FxResponseArgs<0>());
 
 			FxResponseArgs<1> args2;
 			args2.Add(GFxValue(buff));
-			FxDelegate::Invoke(movie, "setCompletionMessage", args2);
+			FxDelegate::Invoke2(movie, "setCompletionMessage", args2);
 		}
 		else if (p->data[0]==ID_AUTOPATCHER_FINISHED)
 		{
-			FxDelegate::Invoke(movie, "gotoCompletionMenu", FxResponseArgs<0>());
+			FxDelegate::Invoke2(movie, "gotoCompletionMenu", FxResponseArgs<0>());
 
 			SaveLastUpdateDate();
 		}
 		else if (p->data[0]==ID_AUTOPATCHER_RESTART_APPLICATION)
 		{
-			FxDelegate::Invoke(movie, "gotoCompletionMenu", FxResponseArgs<0>());
+			FxDelegate::Invoke2(movie, "gotoCompletionMenu", FxResponseArgs<0>());
 
 			FxResponseArgs<1> args2;
 			RakNet::RakString completionMsg("Launch \"AutopatcherClientRestarter.exe %s\"\nQuit this application immediately after to unlock files.\n", AUTOPATCHER_RESTART_FILE);
 			args2.Add(GFxValue(completionMsg.C_String()));
-			FxDelegate::Invoke(movie, "setCompletionMessage", args2);
+			FxDelegate::Invoke2(movie, "setCompletionMessage", args2);
 
 			SaveLastUpdateDate();
 		}
@@ -192,9 +193,9 @@ void AutopatcherClientGFx3Impl::Shutdown(void)
 	movie.Clear();
 	if (packetizedTCP)
 		packetizedTCP->Stop();
-	RakNet::OP_DELETE(autopatcherClient,__FILE__,__LINE__);
-	RakNet::OP_DELETE(fileListTransfer,__FILE__,__LINE__);
-	RakNet::OP_DELETE(packetizedTCP,__FILE__,__LINE__);
+	RakNet::OP_DELETE(autopatcherClient,_FILE_AND_LINE_);
+	RakNet::OP_DELETE(fileListTransfer,_FILE_AND_LINE_);
+	RakNet::OP_DELETE(packetizedTCP,_FILE_AND_LINE_);
 	autopatcherClient=0;
 	fileListTransfer=0;
 	packetizedTCP=0;
@@ -231,13 +232,13 @@ void AutopatcherClientGFx3Impl::PressedPatch(const FxDelegateArgs& pparams)
 	transferCallback.autopatcherClient=prt;
 	if (prt->autopatcherClient->PatchApplication(appName, appDir, lastUpdateDate, prt->serverAddress, &transferCallback, restartFile, prt->pathToThisExe))
 	{
-		FxDelegate::Invoke(prt->movie, "gotoPatchMenu", FxResponseArgs<0>());
+		FxDelegate::Invoke2(prt->movie, "gotoPatchMenu", FxResponseArgs<0>());
 	}
 	else
 	{
 		prt->packetizedTCP->Stop();
 		//prt->UpdateConnectResult("Failed to start patching");
-		FxDelegate::Invoke(prt->movie, "gotoPatchStartMenu", FxResponseArgs<0>());
+		FxDelegate::Invoke2(prt->movie, "gotoPatchStartMenu", FxResponseArgs<0>());
 	}
 }
 void AutopatcherClientGFx3Impl::OpenSite(const FxDelegateArgs& pparams)
@@ -274,7 +275,7 @@ void AutopatcherClientGFx3Impl::UpdateConnectResult( bool isConnected )
 {
 	FxResponseArgs<1> args;
 	args.Add(GFxValue(isConnected));
-	FxDelegate::Invoke(movie, "ConnectResult", args);
+	FxDelegate::Invoke2(movie, "ConnectResult", args);
 }
 
 void AutopatcherClientGFx3Impl::Accept(CallbackProcessor* cbreg)
@@ -319,7 +320,7 @@ void AutopatcherClientGFx3Impl::LoadLastUpdateDate(char *out, const char *appDir
 }
 void AutopatcherClientGFx3Impl::GotoMainMenu(void)
 {
-	FxDelegate::Invoke(movie, "gotoMainMenu", FxResponseArgs<0>());
+	FxDelegate::Invoke2(movie, "gotoMainMenu", FxResponseArgs<0>());
 	autopatcherClient->Clear();
 	packetizedTCP->Stop();
 }

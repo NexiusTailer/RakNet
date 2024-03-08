@@ -24,28 +24,28 @@ GetOfflinePingResponse
 AdvertiseSystem
 Ping
 */
-int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 
 	bool recievedProperOfflineData=false;
 	bool recievedProperPingData=false;
 
 	int nextTest;
-	destroyList.Clear(false,__FILE__,__LINE__);
+	destroyList.Clear(false,_FILE_AND_LINE_);
 
-	RakPeerInterface *peer1=RakNetworkFactory::GetRakPeerInterface();
-	destroyList.Push( peer1,__FILE__,__LINE__);
-	RakPeerInterface *peer2=RakNetworkFactory::GetRakPeerInterface();
-	destroyList.Push(peer2,__FILE__,__LINE__);
+	RakPeerInterface *peer1=RakPeerInterface::GetInstance();
+	destroyList.Push( peer1,_FILE_AND_LINE_);
+	RakPeerInterface *peer2=RakPeerInterface::GetInstance();
+	destroyList.Push(peer2,_FILE_AND_LINE_);
 
 	bool sentPacket=false;
 	nextTest=0;
 
 	peer1->SetMaximumIncomingConnections(1);
 	SocketDescriptor socketDescriptor(60001, 0);
-	peer1->Startup(1, 0, &socketDescriptor, 1);
+	peer1->Startup(1, &socketDescriptor, 1);
 	socketDescriptor.port=60002;
-	peer2->Startup(1, 0, &socketDescriptor, 1);
+	peer2->Startup(1, &socketDescriptor, 1);
 	char * pingResponseData=0;
 	unsigned int  responseLen=0;
 	peer1->SetOfflinePingResponse("Offline Ping Data", (int)strlen("Offline Ping Data")+1);
@@ -74,9 +74,9 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 		printf("Sending advertise system from %s\n", peer1->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
 	peer1->AdvertiseSystem("127.0.0.1", 60002,"hello world", (int)strlen("hello world")+1);
 
-	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
+	TimeMS entryTime=GetTimeMS();//Loop entry time
 
-	while (nextTest!=2&&RakNet::GetTime()-entryTime<10000)// run for 10 seconds
+	while (nextTest!=2&&GetTimeMS()-entryTime<10000)// run for 10 seconds
 	{
 		peer1->DeallocatePacket(peer1->Receive());
 		Packet *packet = peer2->Receive();
@@ -115,22 +115,22 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 				peer2->Ping("127.0.0.1", 60001, false);
 				nextTest++;
 			}
-			else if (packet->data[0]==ID_PONG)
+			else if (packet->data[0]==ID_UNCONNECTED_PONG)
 			{
 				// Peer or client. Response from a ping for an unconnected system.
-				RakNetTime packetTime, dataLength;
-				RakNetTime curTime = RakNet::GetTime();
-				memcpy( ( char* ) & packetTime, packet->data + sizeof( unsigned char ), sizeof( RakNetTime ) );
-				dataLength = packet->length - sizeof( unsigned char ) - sizeof( RakNetTime );
+				TimeMS packetTime, dataLength;
+				TimeMS curTime = GetTimeMS();
+				memcpy( ( char* ) & packetTime, packet->data + sizeof( unsigned char ), sizeof( TimeMS ) );
+				dataLength = packet->length - sizeof( unsigned char ) - sizeof( TimeMS );
 				if (peer2->IsLocalIP(packet->systemAddress.ToString(false)))
 				{
 					if (isVerbose)
-						printf("ID_PONG from our own");
+						printf("ID_UNCONNECTED_PONG from our own");
 				}
 				else
 				{
 					if (isVerbose)
-						printf( "ID_PONG from");
+						printf( "ID_UNCONNECTED_PONG from");
 				}
 				if (isVerbose)
 				{
@@ -138,7 +138,7 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 					printf("Was sent from GUID %s\n", packet->guid.ToString());
 				}
 
-				const char * recString=(const char *)(packet->data + sizeof( unsigned char ) + sizeof( RakNetTime ));
+				const char * recString=(const char *)(packet->data + sizeof( unsigned char ) + sizeof( TimeMS ));
 				if ( dataLength > 0 )
 				{
 					printf( "Data is %s\n",recString );
@@ -155,7 +155,7 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 					recievedProperPingData=true;
 				}
 				nextTest++;
-				// ProcessUnhandledPacket(packet, ID_PONG,interfaceType);
+				// ProcessUnhandledPacket(packet, ID_UNCONNECTED_PONG,interfaceType);
 			}
 			peer2->DeallocatePacket(packet);
 		}
@@ -185,14 +185,14 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 
 }
 
-RakNet::RakString OfflineMessagesConvertTest::GetTestName()
+RakString OfflineMessagesConvertTest::GetTestName()
 {
 
 	return "OfflineMessagesConvertTest";
 
 }
 
-RakNet::RakString OfflineMessagesConvertTest::ErrorCodeToString(int errorCode)
+RakString OfflineMessagesConvertTest::ErrorCodeToString(int errorCode)
 {
 
 	switch (errorCode)
@@ -238,6 +238,6 @@ void OfflineMessagesConvertTest::DestroyPeers()
 	int theSize=destroyList.Size();
 
 	for (int i=0; i < theSize; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+		RakPeerInterface::DestroyInstance(destroyList[i]);
 
 }

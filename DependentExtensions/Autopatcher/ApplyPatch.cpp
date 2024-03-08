@@ -63,7 +63,7 @@ static void errx(int i, ...)
 #endif
 
 
-static off_t offtin(u_char *buf)
+static off_t offtin(unsigned char *buf)
 {
 	off_t y;
 
@@ -92,9 +92,9 @@ bool ApplyPatch(char *old, unsigned int oldsize, char **_new, unsigned int *news
 //	int fd;
 //	ssize_t oldsize,newsize;
 	ssize_t bzctrllen,bzdatalen;
-	//u_char header[32];
-	u_char buf[8];
-//	u_char *old, *_new;
+	//unsigned char header[32];
+	unsigned char buf[8];
+//	unsigned char *old, *_new;
 	off_t oldpos,newpos;
 	off_t ctrl[3];
 //	off_t lenread;
@@ -137,9 +137,9 @@ bool ApplyPatch(char *old, unsigned int oldsize, char **_new, unsigned int *news
 		return false;
 
 	/* Read lengths from header */
-	bzctrllen=offtin((u_char*)patch+8);
-	bzdatalen=offtin((u_char*)patch+16);
-	*newsize=offtin((u_char*)patch+24);
+	bzctrllen=offtin((unsigned char*)patch+8);
+	bzdatalen=offtin((unsigned char*)patch+16);
+	*newsize=offtin((unsigned char*)patch+24);
 	if((bzctrllen<0) || (bzdatalen<0) || (*newsize<0))
 	//	errx(1,"Corrupt patch\n",0);
 		return false;
@@ -183,11 +183,11 @@ bool ApplyPatch(char *old, unsigned int oldsize, char **_new, unsigned int *news
 
 //	if(((fd=open(argv[1],O_RDONLY | _O_BINARY,0))<0) ||
 //		((oldsize=lseek(fd,0,SEEK_END))==-1) ||
-//		((old=(u_char*)malloc(oldsize+1))==NULL) ||
+//		((old=(unsigned char*)malloc(oldsize+1))==NULL) ||
 //		(lseek(fd,0,SEEK_SET)!=0) ||
 //		(read(fd,old,oldsize)!=oldsize) ||
 //		(close(fd)==-1)) err(1,"%s",argv[1]);
-//	if((_new=(u_char*)malloc(newsize+1))==NULL) err(1,NULL);
+//	if((_new=(unsigned char*)malloc(newsize+1))==NULL) err(1,NULL);
 	*_new = new char[*newsize+1];
 
 	oldpos=0;newpos=0;
@@ -308,8 +308,8 @@ int PATCH_main(int argc,char * argv[])
 	int fd;
 	ssize_t oldsize,newsize;
 	ssize_t bzctrllen,bzdatalen;
-	u_char header[32],buf[8];
-	u_char *old, *_new;
+	unsigned char header[32],buf[8];
+	unsigned char *old, *_new;
 	off_t oldpos,newpos;
 	off_t ctrl[3];
 	off_t lenread;
@@ -382,11 +382,11 @@ int PATCH_main(int argc,char * argv[])
 
 	if(((fd=open(argv[1],O_RDONLY|O_BINARY,0))<0) ||
 		((oldsize=lseek(fd,0,SEEK_END))==-1) ||
-		((old=(u_char*)malloc(oldsize+1))==NULL) ||
+		((old=(unsigned char*)malloc(oldsize+1))==NULL) ||
 		(lseek(fd,0,SEEK_SET)!=0) ||
 		(read(fd,old,oldsize)!=oldsize) ||
 		(close(fd)==-1)) err(1,"%s",argv[1]);
-	if((_new=(u_char*)malloc(newsize+1))==NULL) err(1,NULL);
+	if((_new=(unsigned char*)malloc(newsize+1))==NULL) err(1,NULL);
 
 	oldpos=0;newpos=0;
 	while(newpos<newsize) {

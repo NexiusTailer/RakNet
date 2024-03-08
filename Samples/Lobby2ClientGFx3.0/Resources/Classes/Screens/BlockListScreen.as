@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 import gfx.controls.TextInput;
 import gfx.controls.Button;
 import gfx.controls.ScrollBar;
@@ -40,9 +40,9 @@ class Screens.BlockListScreen extends ScreenWithPageNavigator
 		mcScrollBar.addEventListener("scroll", this, "OnScroll");
 				
 		//Add callbacks for C++
-		GameDelegate.addCallBack("c2f_StartIgnore", this, "c2f_StartIgnore");
-		GameDelegate.addCallBack("c2f_StopIgnore", this, "c2f_StopIgnore");
-		GameDelegate.addCallBack("c2f_GetIgnoreListResult", this, "c2f_GetIgnoreListResult");
+		ExternalInterface.addCallback("c2f_StartIgnore", this, c2f_StartIgnore);
+		ExternalInterface.addCallback("c2f_StopIgnore", this, c2f_StopIgnore);
+		ExternalInterface.addCallback("c2f_GetIgnoreListResult", this, c2f_GetIgnoreListResult);
 		
 		super.VOnFinishedLoading();
 	}
@@ -87,7 +87,7 @@ class Screens.BlockListScreen extends ScreenWithPageNavigator
 		if ( !mIsWaitingForResponseFromServer )
 		{
 			mIsWaitingForResponseFromServer = true;
-			GameDelegate.call("f2c_StartIgnore", [ignoreUsernameEditBox.text], _root);		
+			ExternalInterface.call("f2c_StartIgnore", ignoreUsernameEditBox.text);		
 			mUsernameOnHold = ignoreUsernameEditBox.text;
 		}
 	}
@@ -130,7 +130,7 @@ class Screens.BlockListScreen extends ScreenWithPageNavigator
 	{
 		if ( !mIsWaitingForResponseFromServer )
 		{
-			GameDelegate.call("f2c_StopIgnore", [_username], _root);
+			ExternalInterface.call("f2c_StopIgnore", _username);
 		}
 	}
 
@@ -158,7 +158,7 @@ class Screens.BlockListScreen extends ScreenWithPageNavigator
 
 	public function f2c_GetIgnoreList():Void
 	{
-		GameDelegate.call("f2c_GetIgnoreList", [], _root);
+		ExternalInterface.call("f2c_GetIgnoreList");
 	}
 
 	public function c2f_GetIgnoreListResult():Void

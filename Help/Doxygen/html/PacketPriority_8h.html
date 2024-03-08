@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-<title>RakNet: d:/RakNet-3.x/Source/PacketPriority.h File Reference</title>
+<title>RakNet: d:/temp/RakNet4/Source/PacketPriority.h File Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -23,7 +23,7 @@
       <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><a class="el" href="dir_604b8536ae4240420803795590a868a7.html">d:</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_29af967a1a71b4feac23d6a82eef1f82.html">RakNet-3.x</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_6493bf94ae2653f49db339b26979caca.html">Source</a>
+  <div class="navpath"><a class="el" href="dir_604b8536ae4240420803795590a868a7.html">d:</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_1285d55ea74ca0518d26c0bad7eeef77.html">temp</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_5a659185e26bc1a39dad4c8f5eba72e1.html">RakNet4</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_66355861432170c4af14b5395280695f.html">Source</a>
   </div>
 </div>
 <div class="contents">
@@ -59,8 +59,8 @@
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 This file contains enumerations for packet priority and reliability enumerations. 
 <p>
-This file is part of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> Copyright 2003 Jenkins Software LLC<p>
-Usage of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> is subject to the appropriate license agreement. <hr><h2>Enumeration Type Documentation</h2>
+This file is part of <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> Copyright 2003 Jenkins Software LLC<p>
+Usage of <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> is subject to the appropriate license agreement. <hr><h2>Enumeration Type Documentation</h2>
 <a class="anchor" name="659378374e516180f93640c79f59705c"></a><!-- doxytag: member="PacketPriority.h::PacketPriority" ref="659378374e516180f93640c79f59705c" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -108,7 +108,7 @@ Do not reorder, I check on &gt;= UNRELIABLE_WITH_ACK_RECEIPT </dd></dl>
 <dl compact><dt><b>Enumerator: </b></dt><dd>
 <table border="0" cellspacing="2" cellpadding="0">
 <tr><td valign="top"><em><a class="anchor" name="e41fa01235e99dced384d137fa874a7eeb409c363ddaeb3201fd95e9bee56696"></a><!-- doxytag: member="UNRELIABLE" ref="e41fa01235e99dced384d137fa874a7eeb409c363ddaeb3201fd95e9bee56696" args="" -->UNRELIABLE</em>&nbsp;</td><td>
-Same as regular UDP, except that it will also discard duplicate datagrams. <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> adds (6 to 17) + 21 bits of overhead, 16 of which is used to detect duplicate packets and 6 to 17 of which is used for message length. </td></tr>
+Same as regular UDP, except that it will also discard duplicate datagrams. <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> adds (6 to 17) + 21 bits of overhead, 16 of which is used to detect duplicate packets and 6 to 17 of which is used for message length. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="e41fa01235e99dced384d137fa874a7eb6a8eb609ec1adbd5af421cf2acbedf5"></a><!-- doxytag: member="UNRELIABLE_SEQUENCED" ref="e41fa01235e99dced384d137fa874a7eb6a8eb609ec1adbd5af421cf2acbedf5" args="" -->UNRELIABLE_SEQUENCED</em>&nbsp;</td><td>
 Regular UDP with a sequence counter. Out of order messages will be discarded. This adds an additional 13 bits on top what is used for UNRELIABLE. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="e41fa01235e99dced384d137fa874a7ebc6ba98e9404532481e43eea39731929"></a><!-- doxytag: member="RELIABLE" ref="e41fa01235e99dced384d137fa874a7ebc6ba98e9404532481e43eea39731929" args="" -->RELIABLE</em>&nbsp;</td><td>
@@ -118,22 +118,22 @@ This message is reliable and will arrive in the order you sent it. Messages will
 <tr><td valign="top"><em><a class="anchor" name="e41fa01235e99dced384d137fa874a7ee1fc3633b353730ff448e5b6675f7085"></a><!-- doxytag: member="RELIABLE_SEQUENCED" ref="e41fa01235e99dced384d137fa874a7ee1fc3633b353730ff448e5b6675f7085" args="" -->RELIABLE_SEQUENCED</em>&nbsp;</td><td>
 This message is reliable and will arrive in the sequence you sent it. Out or order messages will be dropped. Same overhead as UNRELIABLE_SEQUENCED. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="e41fa01235e99dced384d137fa874a7e4a623962051043733acde3e595e1cce0"></a><!-- doxytag: member="UNRELIABLE_WITH_ACK_RECEIPT" ref="e41fa01235e99dced384d137fa874a7e4a623962051043733acde3e595e1cce0" args="" -->UNRELIABLE_WITH_ACK_RECEIPT</em>&nbsp;</td><td>
-Same as UNRELIABLE, however the user will get either ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS based on the result of sending this message when calling <a class="el" href="classRakPeerInterface.html#b92ff92041d251011bc166f6abdf119d">RakPeerInterface::Receive()</a>. Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. </td></tr>
+Same as UNRELIABLE, however the user will get either ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS based on the result of sending this message when calling RakPeerInterface::Receive(). Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="e41fa01235e99dced384d137fa874a7ecd15d4c4a2cea8b4c4459f1d3c09d95f"></a><!-- doxytag: member="RELIABLE_WITH_ACK_RECEIPT" ref="e41fa01235e99dced384d137fa874a7ecd15d4c4a2cea8b4c4459f1d3c09d95f" args="" -->RELIABLE_WITH_ACK_RECEIPT</em>&nbsp;</td><td>
-Same as UNRELIABLE_SEQUENCED. The user will also get ID_SND_RECEIPT_ACKED after the message is delivered when calling <a class="el" href="classRakPeerInterface.html#b92ff92041d251011bc166f6abdf119d">RakPeerInterface::Receive()</a>. Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. 
+Same as UNRELIABLE_SEQUENCED. The user will also get ID_SND_RECEIPT_ACKED after the message is delivered when calling RakPeerInterface::Receive(). Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. 
 <p>
-Same as UNRELIABLE_SEQUENCED, however the user will get either ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS based on the result of sending this message when calling <a class="el" href="classRakPeerInterface.html#b92ff92041d251011bc166f6abdf119d">RakPeerInterface::Receive()</a>. Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. 05/04/10 You can't have sequenced and ack receipts, because you don't know if the other system discarded the message, meaning you don't know if the message was processed </td></tr>
+Same as UNRELIABLE_SEQUENCED, however the user will get either ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS based on the result of sending this message when calling RakPeerInterface::Receive(). Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. 05/04/10 You can't have sequenced and ack receipts, because you don't know if the other system discarded the message, meaning you don't know if the message was processed </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="e41fa01235e99dced384d137fa874a7ee94727e3abc9217e16c1c19f1e8f850a"></a><!-- doxytag: member="RELIABLE_ORDERED_WITH_ACK_RECEIPT" ref="e41fa01235e99dced384d137fa874a7ee94727e3abc9217e16c1c19f1e8f850a" args="" -->RELIABLE_ORDERED_WITH_ACK_RECEIPT</em>&nbsp;</td><td>
-Same as RELIABLE_ORDERED_ACK_RECEIPT. The user will also get ID_SND_RECEIPT_ACKED after the message is delivered when calling <a class="el" href="classRakPeerInterface.html#b92ff92041d251011bc166f6abdf119d">RakPeerInterface::Receive()</a>. Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. </td></tr>
+Same as RELIABLE_ORDERED_ACK_RECEIPT. The user will also get ID_SND_RECEIPT_ACKED after the message is delivered when calling RakPeerInterface::Receive(). Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="e41fa01235e99dced384d137fa874a7ef49e4584ca35290efd854922f4cad6be"></a><!-- doxytag: member="NUMBER_OF_RELIABILITIES" ref="e41fa01235e99dced384d137fa874a7ef49e4584ca35290efd854922f4cad6be" args="" -->NUMBER_OF_RELIABILITIES</em>&nbsp;</td><td>
-Same as RELIABLE_SEQUENCED. The user will also get ID_SND_RECEIPT_ACKED after the message is delivered when calling <a class="el" href="classRakPeerInterface.html#b92ff92041d251011bc166f6abdf119d">RakPeerInterface::Receive()</a>. Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. 05/04/10 You can't have sequenced and ack receipts, because you don't know if the other system discarded the message, meaning you don't know if the message was processed </td></tr>
+Same as RELIABLE_SEQUENCED. The user will also get ID_SND_RECEIPT_ACKED after the message is delivered when calling RakPeerInterface::Receive(). Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. 05/04/10 You can't have sequenced and ack receipts, because you don't know if the other system discarded the message, meaning you don't know if the message was processed </td></tr>
 </table>
 </dl>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 22 08:28:34 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:27 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

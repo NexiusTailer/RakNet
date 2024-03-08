@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Kbhit.h"
-#include "RakNetworkFactory.h"
+
 #include "GetTime.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
@@ -15,10 +15,10 @@
 #include "FileListTransfer.h"
 #include "AutopatcherClient.h"
 #include "AutopatcherPatchContext.h"
-
+#include "Gets.h"
 #include "RakSleep.h"
 
-class TestCB : public FileListTransferCBInterface
+class TestCB : public RakNet::FileListTransferCBInterface
 {
 public:
 	virtual bool OnFile(OnFileStruct *onFileStruct)
@@ -72,9 +72,9 @@ int main(int argc, char **argv)
 	printf("Difficulty: Intermediate\n\n");
 
 	printf("Client starting...");
-	SystemAddress serverAddress=UNASSIGNED_SYSTEM_ADDRESS;
-	AutopatcherClient autopatcherClient;
-	FileListTransfer fileListTransfer;
+	RakNet::SystemAddress serverAddress=RakNet::UNASSIGNED_SYSTEM_ADDRESS;
+	RakNet::AutopatcherClient autopatcherClient;
+	RakNet::FileListTransfer fileListTransfer;
 	autopatcherClient.SetFileListTransferPlugin(&fileListTransfer);
 	unsigned short localPort=0;
 	if (argc>=6)
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 		localPort=atoi(argv[5]);
 	}
 #ifdef USE_TCP
-	PacketizedTCP packetizedTCP;
+	RakNet::PacketizedTCP packetizedTCP;
 	if (packetizedTCP.Start(localPort,1)==false)
 	{
 		printf("Failed to start TCP. Is the port already in use?");
@@ -91,10 +91,10 @@ int main(int argc, char **argv)
 	packetizedTCP.AttachPlugin(&autopatcherClient);
 	packetizedTCP.AttachPlugin(&fileListTransfer);
 #else
-	RakPeerInterface *rakPeer;
-	rakPeer = RakNetworkFactory::GetRakPeerInterface();
-	SocketDescriptor socketDescriptor(localPort,0);
-	rakPeer->Startup(1,0,&socketDescriptor, 1);
+	RakNet::RakPeerInterface *rakPeer;
+	rakPeer = RakNet::RakPeerInterface::GetInstance();
+	RakNet::SocketDescriptor socketDescriptor(localPort,0);
+	rakPeer->Startup(1,&socketDescriptor, 1);
 	// Plugin will send us downloading progress notifications if a file is split to fit under the MTU 10 or more times
 	rakPeer->SetSplitMessageProgressInterval(10);
 	rakPeer->AttachPlugin(&autopatcherClient);
@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 	if (argc<2)
 	{
 		printf("Enter server IP: ");
-		gets(buff);
+		Gets(buff,sizeof(buff));
 		if (buff[0]==0)
 			//	strcpy(buff, "94.198.81.195");
 			strcpy(buff, "127.0.0.1");
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
 	if (argc<3)
 	{
 		printf("Enter application directory: ");
-		gets(appDir);
+		Gets(appDir,sizeof(appDir));
 		if (appDir[0]==0)
 		{
 			strcpy(appDir, "C:/temp2");
@@ -136,7 +136,7 @@ int main(int argc, char **argv)
 	if (argc<4)
 	{
 		printf("Enter application name: ");
-		gets(appName);
+		Gets(appName,sizeof(appName));
 		if (appName[0]==0)
 			strcpy(appName, "TestApp");
 	}
@@ -151,22 +151,22 @@ int main(int argc, char **argv)
 		printf("Hit 'q' to quit, 'c' to cancel the patch.\n");
 
 	char ch;
-	Packet *p;
+	RakNet::Packet *p;
 	while (1)
 	{
 #ifdef USE_TCP
-		SystemAddress notificationAddress;
+		RakNet::SystemAddress notificationAddress;
 		notificationAddress=packetizedTCP.HasCompletedConnectionAttempt();
-		if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 		{
 			printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
 			serverAddress=notificationAddress;
 		}
 		notificationAddress=packetizedTCP.HasNewIncomingConnection();
-		if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			printf("ID_NEW_INCOMING_CONNECTION\n");
 		notificationAddress=packetizedTCP.HasLostConnection();
-		if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+		if (notificationAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 			printf("ID_CONNECTION_LOST\n");
 
 
@@ -178,7 +178,7 @@ int main(int argc, char **argv)
 				char buff[256];
 				RakNet::BitStream temp(p->data, p->length, false);
 				temp.IgnoreBits(8);
-				stringCompressor->DecodeString(buff, 256, &temp);
+				RakNet::StringCompressor::Instance()->DecodeString(buff, 256, &temp);
 				printf("ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR\n");
 				printf("%s\n", buff);
 			}
@@ -205,12 +205,14 @@ int main(int argc, char **argv)
 			}
 			else if (p->data[0]==ID_CONNECTION_ATTEMPT_FAILED)
 				printf("ID_CONNECTION_ATTEMPT_FAILED\n");
+			else if (p->data[0]==ID_NO_FREE_INCOMING_CONNECTIONS)
+				printf("ID_NO_FREE_INCOMING_CONNECTIONS\n");
 			else if (p->data[0]==ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR)
 			{
 				char buff[256];
 				RakNet::BitStream temp(p->data, p->length, false);
 				temp.IgnoreBits(8);
-				stringCompressor->DecodeString(buff, 256, &temp);
+				RakNet::StringCompressor::Instance()->DecodeString(buff, 256, &temp);
 				printf("ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR\n");
 				printf("%s\n", buff);
 			}
@@ -247,7 +249,7 @@ int main(int argc, char **argv)
 			rakPeer->CloseConnection(serverAddress, true);
 #endif
 		}
-		else if (ch=='p' || (serverAddress!=UNASSIGNED_SYSTEM_ADDRESS && patchImmediately==true))
+		else if (ch=='p' || (serverAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS && patchImmediately==true))
 		{
 			patchImmediately=false;
 			char lastUpdateDate[128];
@@ -255,7 +257,7 @@ int main(int argc, char **argv)
 			strcpy(restartFile, appDir);
 			strcat(restartFile, "/autopatcherRestart.txt");
 		//	printf("Enter last update date (only newer updates retrieved) or nothing to get all updates\n");
-		//	gets(lastUpdateDate);
+			//	Gets(lastUpdateDate,sizeof(lastUpdateDate));
 			lastUpdateDate[0]=0;
 
 			if (autopatcherClient.PatchApplication(appName, appDir, lastUpdateDate, serverAddress, &transferCallback, restartFile, argv[0]))
@@ -283,7 +285,7 @@ int main(int argc, char **argv)
 	packetizedTCP.Stop();
 #else
 	rakPeer->Shutdown(500,0);
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 #endif
 	return 1;
 }

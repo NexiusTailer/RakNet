@@ -17,16 +17,16 @@ int PerRowCallback(void *userArgument, int argc, char **argv, char **azColName)
 	if (outputTable->columnNames.GetSize()==0)
 	{
 		for (idx=0; idx < (DataStructures::DefaultIndexType) argc; idx++)
-			outputTable->columnNames.Push(azColName[idx], __FILE__, __LINE__ );
+			outputTable->columnNames.Push(azColName[idx], _FILE_AND_LINE_ );
 	}
-	SQLite3Row *row = RakNet::OP_NEW<SQLite3Row>(__FILE__,__LINE__);
-	outputTable->rows.Push(row,__FILE__,__LINE__);
+	SQLite3Row *row = RakNet::OP_NEW<SQLite3Row>(_FILE_AND_LINE_);
+	outputTable->rows.Push(row,_FILE_AND_LINE_);
 	for (idx=0; idx < (DataStructures::DefaultIndexType) argc; idx++)
 	{
 		if (argv[idx])
-			row->entries.Push(argv[idx], __FILE__, __LINE__ );
+			row->entries.Push(argv[idx], _FILE_AND_LINE_ );
 		else
-			row->entries.Push("", __FILE__, __LINE__ );
+			row->entries.Push("", _FILE_AND_LINE_ );
 	}
 	return 0;
 }
@@ -49,7 +49,7 @@ bool SQLite3ServerPlugin::AddDBHandle(RakNet::RakString dbIdentifier, sqlite3 *d
 	ndbh.dbIdentifier=dbIdentifier;
 	ndbh.dbAutoCreated=dbAutoCreated;
 	ndbh.whenCreated=RakNet::GetTimeMS();
-	dbHandles.InsertAtIndex(ndbh,idx,__FILE__,__LINE__);
+	dbHandles.InsertAtIndex(ndbh,idx,_FILE_AND_LINE_);
 	
 #ifdef SQLite3_STATEMENT_EXECUTE_THREADED
 	if (sqlThreadPool.WasStarted()==false)
@@ -68,7 +68,7 @@ void SQLite3ServerPlugin::RemoveDBHandle(RakNet::RakString dbIdentifier, bool al
 			printf("Closed %s\n", dbIdentifier.C_String());
 			sqlite3_close(dbHandles[idx].dbHandle);
 		}
-		dbHandles.RemoveAtIndex(idx,__FILE__,__LINE__);
+		dbHandles.RemoveAtIndex(idx,_FILE_AND_LINE_);
 #ifdef SQLite3_STATEMENT_EXECUTE_THREADED
 	if (dbHandles.GetSize()==0)
 		StopThreads();
@@ -87,7 +87,7 @@ void SQLite3ServerPlugin::RemoveDBHandle(sqlite3 *dbHandle, bool alsoCloseConnec
 				printf("Closed %s\n", dbHandles[idx].dbIdentifier.C_String());
 				sqlite3_close(dbHandles[idx].dbHandle);
 			}
-			dbHandles.RemoveAtIndex(idx,__FILE__,__LINE__);
+			dbHandles.RemoveAtIndex(idx,_FILE_AND_LINE_);
 #ifdef SQLite3_STATEMENT_EXECUTE_THREADED
 			if (dbHandles.GetSize()==0)
 				StopThreads();
@@ -105,7 +105,7 @@ void SQLite3ServerPlugin::Update(void)
 		output = sqlThreadPool.GetOutput();
 		RakNet::BitStream bsOut((unsigned char*) output.data, output.length,false);
 		SendUnified(&bsOut, MEDIUM_PRIORITY,RELIABLE_ORDERED,0,output.sender,false);
-		rakFree_Ex(output.data,__FILE__,__LINE__);
+		rakFree_Ex(output.data,_FILE_AND_LINE_);
 	}
 }
 SQLite3ServerPlugin::SQLExecThreadOutput ExecStatementThread(SQLite3ServerPlugin::SQLExecThreadInput threadInput, bool *returnOutput, void* perThreadData)
@@ -142,11 +142,11 @@ SQLite3ServerPlugin::SQLExecThreadOutput ExecStatementThread(SQLite3ServerPlugin
 	outputTable.Serialize(&bsOut);
 
 	// Free input data
-	rakFree_Ex(threadInput.data,__FILE__,__LINE__);
+	rakFree_Ex(threadInput.data,_FILE_AND_LINE_);
 
 	// Copy to output data
 	SQLite3ServerPlugin::SQLExecThreadOutput threadOutput;
-	threadOutput.data=(char*) rakMalloc_Ex(bsOut.GetNumberOfBytesUsed(),__FILE__,__LINE__);
+	threadOutput.data=(char*) rakMalloc_Ex(bsOut.GetNumberOfBytesUsed(),_FILE_AND_LINE_);
 	memcpy(threadOutput.data,bsOut.GetData(),bsOut.GetNumberOfBytesUsed());
 	threadOutput.length=bsOut.GetNumberOfBytesUsed();
 	threadOutput.sender=threadInput.sender;	
@@ -192,7 +192,7 @@ PluginReceiveResult SQLite3ServerPlugin::OnReceive(Packet *packet)
 #ifdef SQLite3_STATEMENT_EXECUTE_THREADED
 					// Push to the thread
 					SQLExecThreadInput input;
-					input.data=(char*) rakMalloc_Ex(packet->length, __FILE__,__LINE__);
+					input.data=(char*) rakMalloc_Ex(packet->length, _FILE_AND_LINE_);
 					memcpy(input.data,packet->data,packet->length);
 					input.dbHandle=dbHandles[idx].dbHandle;
 					input.length=packet->length;
@@ -242,12 +242,12 @@ void SQLite3ServerPlugin::StopThreads(void)
 	unsigned int i;
 	for (i=0; i < sqlThreadPool.InputSize(); i++)
 	{
-		RakNet::OP_DELETE(sqlThreadPool.GetInputAtIndex(i).data, __FILE__, __LINE__);
+		RakNet::OP_DELETE(sqlThreadPool.GetInputAtIndex(i).data, _FILE_AND_LINE_);
 	}
 	sqlThreadPool.ClearInput();
 	for (i=0; i < sqlThreadPool.OutputSize(); i++)
 	{
-		RakNet::OP_DELETE(sqlThreadPool.GetOutputAtIndex(i).data, __FILE__, __LINE__);
+		RakNet::OP_DELETE(sqlThreadPool.GetOutputAtIndex(i).data, _FILE_AND_LINE_);
 	}
 	sqlThreadPool.ClearOutput();
 #endif

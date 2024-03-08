@@ -45,6 +45,15 @@ protected:
 	st_mysql *mySqlConnection;
 	char lastError[1024];
 
+	// Copy of connection parameters
+	RakNet::RakString _host;
+	RakNet::RakString _user;
+	RakNet::RakString _passwd;
+	RakNet::RakString _db;
+	unsigned int _port;
+	RakNet::RakString _unix_socket;
+	unsigned long _clientflag;
+
 };
 
 #endif

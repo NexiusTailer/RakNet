@@ -63,7 +63,7 @@ Inheritance diagram for RakNet::Client_GetIgnoreList:</div>
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Client__GetIgnoreList.html#3288936251acb857753b0d844a189b28">Serialize</a> (bool writeToBitstream, bool serializeOutput, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Overridable serialization of the contents of this message. Defaults to SerializeBase(). <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Client__GetIgnoreList.html#45b3571e7ab84b3a1caf8a8eb6d5b62e">ClientImpl</a> (<a class="el" href="classRakNet_1_1Lobby2Client.html">Lobby2Client</a> *client)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Client__GetIgnoreList.html#d85033e9a71e0c39497d30fab6149133">ClientImpl</a> (<a class="el" href="classRakNet_1_1Lobby2Plugin.html">RakNet::Lobby2Plugin</a> *client)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -90,14 +90,14 @@ Should this message not be processed on the server if the requesting user discon
 
 </div>
 </div><p>
-<a class="anchor" name="45b3571e7ab84b3a1caf8a8eb6d5b62e"></a><!-- doxytag: member="RakNet::Client_GetIgnoreList::ClientImpl" ref="45b3571e7ab84b3a1caf8a8eb6d5b62e" args="(Lobby2Client *client)" -->
+<a class="anchor" name="d85033e9a71e0c39497d30fab6149133"></a><!-- doxytag: member="RakNet::Client_GetIgnoreList::ClientImpl" ref="d85033e9a71e0c39497d30fab6149133" args="(RakNet::Lobby2Plugin *client)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">virtual bool RakNet::Client_GetIgnoreList::ClientImpl           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakNet_1_1Lobby2Client.html">Lobby2Client</a> *&nbsp;</td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1Lobby2Plugin.html">RakNet::Lobby2Plugin</a> *&nbsp;</td>
           <td class="paramname"> <em>client</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [virtual]</code></td>
@@ -109,7 +109,7 @@ Should this message not be processed on the server if the requesting user discon
 <p>
 Override to do any <a class="el" href="classRakNet_1_1Lobby2Client.html" title="Class used to send commands to Lobby2Server.">Lobby2Client</a> functionality when the message is returned from the server (usually nothing). <dl class="return" compact><dt><b>Returns:</b></dt><dd>True to call CallCallback immediately. False to defer for some reason (always true on the PC) </dd></dl>
 
-<p>Reimplemented from <a class="el" href="structRakNet_1_1Lobby2Message.html#8a291719d4a9ba938b52efdfbee88e70">RakNet::Lobby2Message</a>.</p>
+<p>Reimplemented from <a class="el" href="structRakNet_1_1Lobby2Message.html#73681a9a5bcfe6d7344cb7500c1bae72">RakNet::Lobby2Message</a>.</p>
 
 </div>
 </div><p>
@@ -180,9 +180,9 @@ Is this message something that should only be run by a system with ranking uploa
 </div>
 </div><p>
 <hr>The documentation for this struct was generated from the following file:<ul>
-<li>d:/RakNet-3.x/DependentExtensions/Lobby2/Lobby2Message.h</ul>
+<li>d:/temp/RakNet4/DependentExtensions/Lobby2/Lobby2Message.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 22 08:28:37 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:31 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -13,11 +13,56 @@
 #include "NativeTypes.h"
 #include "RakNetTime.h"
 #include "Export.h"
+#include "SocketIncludes.h"
 
-/// Forward declaration
-namespace RakNet
+namespace RakNet {
+/// Forward declarations
+class RakPeerInterface;
+class BitStream;
+struct Packet;
+
+enum StartupResult
 {
-	class BitStream;
+	RAKNET_STARTED,
+	RAKNET_ALREADY_STARTED,
+	INVALID_SOCKET_DESCRIPTORS,
+	INVALID_MAX_CONNECTIONS,
+	SOCKET_PORT_ALREADY_IN_USE,
+	SOCKET_FAILED_TO_BIND,
+	SOCKET_FAILED_TEST_SEND,
+	FAILED_TO_CREATE_NETWORK_THREAD,
+};
+
+
+enum ConnectionAttemptResult
+{
+	CONNECTION_ATTEMPT_STARTED,
+	INVALID_PARAMETER,
+	CANNOT_RESOLVE_DOMAIN_NAME,
+	ALREADY_CONNECTED_TO_ENDPOINT,
+	CONNECTION_ATTEMPT_ALREADY_IN_PROGRESS,
+	SECURITY_INITIALIZATION_FAILED
+};
+
+/// Returned from RakPeerInterface::GetConnectionState()
+enum ConnectionState
+{
+	/// Not applicable, because the passed address is the loopback address
+	IS_LOOPBACK,
+	/// Connect() was called, but the process hasn't started yet
+	IS_PENDING,
+	/// Processing the connection attempt
+	IS_CONNECTING,
+	/// Is connected and able to communicate
+	IS_CONNECTED,
+	/// Was connected, but will disconnect as soon as the remaining messages are delivered
+	IS_DISCONNECTING,
+	/// A connection attempt failed and will be aborted
+	IS_SILENTLY_DISCONNECTING,
+	/// No longer connected
+	IS_DISCONNECTED,
+	/// Was never connected, or else was disconnected long enough ago that the entry has been discarded
+	IS_NOT_CONNECTED,
 };
 
 /// Given a number of bits, return how many bytes are needed to represent that.
@@ -42,6 +87,44 @@ typedef uint32_t BitSize_t;
 #define PRINTF_64_BIT_MODIFIER "ll"
 #endif
 
+/// Used with the PublicKey structure
+enum PublicKeyMode
+{
+	/// The connection is insecure. You can also just pass 0 for the pointer to PublicKey in RakPeerInterface::Connect()
+	PKM_INSECURE_CONNECTION,
+
+	/// Accept whatever public key the server gives us. This is vulnerable to man in the middle, but does not require
+	/// distribution of the public key in advance of connecting.
+	PKM_ACCEPT_ANY_PUBLIC_KEY,
+
+	/// Use a known remote server public key. PublicKey::remoteServerPublicKey must be non-zero.
+	/// This is the recommended mode for secure connections.
+	PKM_USE_KNOWN_PUBLIC_KEY,
+
+	/// Use a known remote server public key AND provide a public key for the connecting client.
+	/// PublicKey::remoteServerPublicKey, myPublicKey and myPrivateKey must be all be non-zero.
+	/// The server must cooperate for this mode to work.
+	/// I recommend not using this mode except for server-to-server communication as it significantly increases the CPU requirements during connections for both sides.
+	/// Furthermore, when it is used, a connection password should be used as well to avoid DoS attacks.
+	PKM_USE_TWO_WAY_AUTHENTICATION
+};
+
+/// Passed to RakPeerInterface::Connect()
+struct RAK_DLL_EXPORT PublicKey
+{
+	/// How to interpret the public key, see above
+	PublicKeyMode publicKeyMode;
+
+	/// Pointer to a public key of length cat::EasyHandshake::PUBLIC_KEY_BYTES. See the Encryption sample.
+	char *remoteServerPublicKey;
+
+	/// (Optional) Pointer to a public key of length cat::EasyHandshake::PUBLIC_KEY_BYTES
+	char *myPublicKey;
+
+	/// (Optional) Pointer to a private key of length cat::EasyHandshake::PRIVATE_KEY_BYTES
+	char *myPrivateKey;
+};
+
 /// Describes the local socket to use for RakPeer::Startup
 struct RAK_DLL_EXPORT SocketDescriptor
 {
@@ -55,8 +138,12 @@ struct RAK_DLL_EXPORT SocketDescriptor
 	char hostAddress[32];
 
 	// Only need to set for the PS3, when using signaling.
-	// Connect with the port returned by signaling. Set this to whatever port RakNet was actually started on
+	// Call RakPeer::Connect with the port returned by signaling.
+	// Set remotePortRakNetWasStartedOn_PS3 to whatever port RakNet was actually started on
 	unsigned short remotePortRakNetWasStartedOn_PS3;
+
+	// XBOX only: set IPPROTO_VDP if you want to use VDP. If enabled, this socket does not support broadcast to 255.255.255.255
+	unsigned int extraSocketOptions;
 };
 
 extern bool NonNumericHostString( const char *host );
@@ -70,6 +157,9 @@ struct RAK_DLL_EXPORT SystemAddress
 	SystemAddress();
 	explicit SystemAddress(const char *a, unsigned short b);
 	explicit SystemAddress(unsigned int a, unsigned short b);
+#if defined(_XBOX) || defined(X360)
+                                                                                                                                          
+#endif
 
 	///The peer address from inet_addr.
 	uint32_t binaryAddress;
@@ -78,6 +168,7 @@ struct RAK_DLL_EXPORT SystemAddress
 	// Used internally for fast lookup. Optional (use -1 to do regular lookup). Don't transmit this.
 	SystemIndex systemIndex;
 	static int size() {return (int) sizeof(uint32_t)+sizeof(unsigned short);}
+	static unsigned long ToInteger( const SystemAddress &sa );
 
 	// Return the systemAddress as a string in the format <IP>:<Port>
 	// Returns a static string
@@ -106,40 +197,6 @@ struct RAK_DLL_EXPORT SystemAddress
 	bool operator < ( const SystemAddress& right ) const;
 };
 
-
-/// Size of SystemAddress data
-#define SystemAddress_Size 6
-
-class RakPeerInterface;
-
-/// All RPC functions have the same parameter list - this structure.
-/// \deprecated use RakNet::RPC3 instead
-struct RPCParameters
-{
-	/// The data from the remote system
-	unsigned char *input;
-
-	/// How many bits long \a input is
-	BitSize_t numberOfBitsOfData;
-
-	/// Which system called this RPC
-	SystemAddress sender;
-
-	/// Which instance of RakPeer (or a derived RakPeer or RakPeer) got this call
-	RakPeerInterface *recipient;
-
-	RakNetTime remoteTimestamp;
-
-	/// The name of the function that was called.
-	char *functionName;
-
-	/// You can return values from RPC calls by writing them to this BitStream.
-	/// This is only sent back if the RPC call originally passed a BitStream to receive the reply.
-	/// If you do so and your send is reliable, it will block until you get a reply or you get disconnected from the system you are sending to, whichever is first.
-	/// If your send is not reliable, it will block for triple the ping time, or until you are disconnected, or you get a reply, whichever is first.
-	RakNet::BitStream *replyToSender;
-};
-
 /// Uniquely identifies an instance of RakPeer. Use RakPeer::GetGuidFromSystemAddress() and RakPeer::GetSystemAddressFromGuid() to go between SystemAddress and RakNetGUID
 /// Use RakPeer::GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS) to get your own GUID
 struct RAK_DLL_EXPORT RakNetGUID
@@ -161,6 +218,8 @@ struct RAK_DLL_EXPORT RakNetGUID
 
 	bool FromString(const char *source);
 
+	static unsigned long ToInteger( const RakNetGUID &g );
+
 	RakNetGUID& operator = ( const RakNetGUID& input )
 	{
 		g=input.g;
@@ -170,7 +229,7 @@ struct RAK_DLL_EXPORT RakNetGUID
 
 	// Used internally for fast lookup. Optional (use -1 to do regular lookup). Don't transmit this.
 	SystemIndex systemIndex;
-	static const int size() {return (int) sizeof(uint64_t);}
+	static int size() {return (int) sizeof(uint64_t);}
 
 	bool operator==( const RakNetGUID& right ) const;
 	bool operator!=( const RakNetGUID& right ) const;
@@ -201,6 +260,9 @@ struct RAK_DLL_EXPORT AddressOrGUID
 	SystemIndex GetSystemIndex(void) const {if (rakNetGuid!=UNASSIGNED_RAKNET_GUID) return rakNetGuid.systemIndex; else return systemAddress.systemIndex;}
 	bool IsUndefined(void) const {return rakNetGuid==UNASSIGNED_RAKNET_GUID && systemAddress==UNASSIGNED_SYSTEM_ADDRESS;}
 	void SetUndefined(void) {rakNetGuid=UNASSIGNED_RAKNET_GUID; systemAddress=UNASSIGNED_SYSTEM_ADDRESS;}
+	static unsigned long ToInteger( const AddressOrGUID &aog );
+	const char *ToString(bool writePort=true) const;
+	void ToString(bool writePort, char *dest) const;
 
 	AddressOrGUID() {}
 	AddressOrGUID( const AddressOrGUID& input )
@@ -213,6 +275,7 @@ struct RAK_DLL_EXPORT AddressOrGUID
 		rakNetGuid=UNASSIGNED_RAKNET_GUID;
 		systemAddress=input;
 	}
+	AddressOrGUID( Packet *packet );
 	AddressOrGUID( const RakNetGUID& input )
 	{
 		rakNetGuid=input;
@@ -238,48 +301,11 @@ struct RAK_DLL_EXPORT AddressOrGUID
 		systemAddress=UNASSIGNED_SYSTEM_ADDRESS;
 		return *this;
 	}
+
+	inline bool operator==( const AddressOrGUID& right ) const {return (rakNetGuid!=UNASSIGNED_RAKNET_GUID && rakNetGuid==right.rakNetGuid) || (systemAddress!=UNASSIGNED_SYSTEM_ADDRESS && systemAddress==right.systemAddress);}
 };
 
-struct RAK_DLL_EXPORT NetworkID
-{
-	// This is done because we don't know the global constructor order
-	NetworkID()
-		:
-#if NETWORK_ID_SUPPORTS_PEER_TO_PEER
-	guid((uint64_t)-1), systemAddress(0xFFFFFFFF, 0xFFFF),
-#endif // NETWORK_ID_SUPPORTS_PEER_TO_PEER
-		localSystemAddress(65535)
-	{
-	}
-	~NetworkID() {} 
-
-	/// \deprecated Use NETWORK_ID_SUPPORTS_PEER_TO_PEER in RakNetDefines.h
-	// Set this to true to use peer to peer mode for NetworkIDs.
-	// Obviously the value of this must match on all systems.
-	// True, and this will write the systemAddress portion with network sends.  Takes more bandwidth, but NetworkIDs can be locally generated
-	// False, and only localSystemAddress is used.
-//	static bool peerToPeerMode;
-
-#if NETWORK_ID_SUPPORTS_PEER_TO_PEER==1
-
-	RakNetGUID guid;
-
-	// deprecated: Use guid instead
-	// In peer to peer, we use both systemAddress and localSystemAddress
-	// In client / server, we only use localSystemAddress
-	SystemAddress systemAddress;
-#endif
-	unsigned short localSystemAddress;
-
-	NetworkID& operator = ( const NetworkID& input );
-
-	static bool IsPeerToPeerMode(void);
-	static void SetPeerToPeerMode(bool isPeerToPeer);
-	bool operator==( const NetworkID& right ) const;
-	bool operator!=( const NetworkID& right ) const;
-	bool operator > ( const NetworkID& right ) const;
-	bool operator < ( const NetworkID& right ) const;
-};
+typedef uint64_t NetworkID;
 
 /// This represents a user message from another system.
 struct Packet
@@ -311,101 +337,16 @@ struct Packet
 
 	/// @internal
 	/// If true, this message is meant for the user, not for the plugins, so do not process it through plugins
-	bool bypassPlugins;
+	bool wasGeneratedLocally;
 };
 
 ///  Index of an unassigned player
 const SystemIndex UNASSIGNED_PLAYER_INDEX = 65535;
 
 /// Unassigned object ID
-const NetworkID UNASSIGNED_NETWORK_ID;
+const NetworkID UNASSIGNED_NETWORK_ID = (uint64_t) -1;
 
 const int PING_TIMES_ARRAY_SIZE = 5;
-
-/// \brief RPC Function Implementation
-/// \Deprecated Use RPC3
-/// \details The Remote Procedure Call Subsystem provide the RPC paradigm to
-/// RakNet user. It consists in providing remote function call over the
-/// network.  A call to a remote function require you to prepare the
-/// data for each parameter (using BitStream) for example.
-///
-/// Use the following C function prototype for your callbacks
-/// @code
-/// void functionName(RPCParameters *rpcParms);
-/// @endcode
-/// If you pass input data, you can parse the input data in two ways.
-/// 1.
-/// Cast input to a struct (such as if you sent a struct)
-/// i.e. MyStruct *s = (MyStruct*) input;
-/// Make sure that the sizeof(MyStruct) is equal to the number of bytes passed!
-/// 2.
-/// Create a BitStream instance with input as data and the number of bytes
-/// i.e. BitStream myBitStream(input, (numberOfBitsOfData-1)/8+1)
-/// (numberOfBitsOfData-1)/8+1 is how convert from bits to bytes
-/// Full example:
-/// @code
-/// void MyFunc(RPCParameters *rpcParms) {}
-/// RakPeer *rakClient;
-/// REGISTER_AS_REMOTE_PROCEDURE_CALL(rakClient, MyFunc);
-/// This would allow MyFunc to be called from the server using  (for example)
-/// rakServer->RPC("MyFunc", 0, clientID, false);
-/// @endcode
-
-
-/// \def REGISTER_STATIC_RPC
-/// \ingroup RAKNET_RPC
-/// Register a C function as a Remote procedure.
-/// \param[in] networkObject Your instance of RakPeer, RakPeer, or RakPeer
-/// \param[in] functionName The name of the C function to call
-/// \attention 12/01/05 REGISTER_AS_REMOTE_PROCEDURE_CALL renamed to REGISTER_STATIC_RPC.  Delete the old name sometime in the future
-//#pragma deprecated(REGISTER_AS_REMOTE_PROCEDURE_CALL)
-//#define REGISTER_AS_REMOTE_PROCEDURE_CALL(networkObject, functionName) REGISTER_STATIC_RPC(networkObject, functionName)
-/// \deprecated Use RakNet::RPC3 instead
-#define REGISTER_STATIC_RPC(networkObject, functionName) (networkObject)->RegisterAsRemoteProcedureCall((#functionName),(functionName))
-
-/// \def CLASS_MEMBER_ID
-/// \ingroup RAKNET_RPC
-/// \brief Concatenate two strings
-
-/// \def REGISTER_CLASS_MEMBER_RPC
-/// \ingroup RAKNET_RPC
-/// \brief Register a member function of an instantiated object as a Remote procedure call.
-/// \details RPC member Functions MUST be marked __cdecl!
-/// \sa ObjectMemberRPC.cpp
-/// \b CLASS_MEMBER_ID is a utility macro to generate a unique signature for a class and function pair and can be used for the Raknet functions RegisterClassMemberRPC(...) and RPC(...)
-/// \b REGISTER_CLASS_MEMBER_RPC is a utility macro to more easily call RegisterClassMemberRPC
-/// \param[in] networkObject Your instance of RakPeer, RakPeer, or RakPeer
-/// \param[in] className The class containing the function
-/// \param[in] functionName The name of the function (not in quotes, just the name)
-/// \deprecated Use RakNet::RPC3 instead
-#define CLASS_MEMBER_ID(className, functionName) #className "_" #functionName
-/// \deprecated Use RakNet::RPC3 instead
-#define REGISTER_CLASS_MEMBER_RPC(networkObject, className, functionName) {union {void (__cdecl className::*cFunc)( RPCParameters *rpcParms ); void* voidFunc;}; cFunc=&className::functionName; networkObject->RegisterClassMemberRPC(CLASS_MEMBER_ID(className, functionName),voidFunc);}
-
-/// \def UNREGISTER_AS_REMOTE_PROCEDURE_CALL
-/// \brief Only calls UNREGISTER_STATIC_RPC
-
-/// \def UNREGISTER_STATIC_RPC
-/// \ingroup RAKNET_RPC
-/// Unregisters a remote procedure call
-/// RPC member Functions MUST be marked __cdecl!  See the ObjectMemberRPC example.
-/// \param[in] networkObject The object that manages the function
-/// \param[in] functionName The function name
-// 12/01/05 UNREGISTER_AS_REMOTE_PROCEDURE_CALL Renamed to UNREGISTER_STATIC_RPC.  Delete the old name sometime in the future
-//#pragma deprecated(UNREGISTER_AS_REMOTE_PROCEDURE_CALL)
-//#define UNREGISTER_AS_REMOTE_PROCEDURE_CALL(networkObject,functionName) UNREGISTER_STATIC_RPC(networkObject,functionName)
-/// \deprecated Use RakNet::RPC3 instead
-#define UNREGISTER_STATIC_RPC(networkObject,functionName) (networkObject)->UnregisterAsRemoteProcedureCall((#functionName))
-
-/// \def UNREGISTER_CLASS_INST_RPC
-/// \ingroup RAKNET_RPC
-/// \deprecated Use the AutoRPC plugin instead
-/// \brief Unregisters a member function of an instantiated object as a Remote procedure call.
-/// \param[in] networkObject The object that manages the function
-/// \param[in] className The className that was originally passed to REGISTER_AS_REMOTE_PROCEDURE_CALL
-/// \param[in] functionName The function name
-/// \deprecated Use RakNet::RPC3 instead
-#define UNREGISTER_CLASS_MEMBER_RPC(networkObject, className, functionName) (networkObject)->UnregisterAsRemoteProcedureCall((#className "_" #functionName))
 
 struct RAK_DLL_EXPORT uint24_t
 {
@@ -447,5 +388,7 @@ struct RAK_DLL_EXPORT uint24_t
 	inline const uint24_t operator/( const uint32_t &other ) const { return uint24_t(val/other); }
 	inline const uint24_t operator*( const uint32_t &other ) const { return uint24_t(val*other); }
 };
+
+} // namespace RakNet
 
 #endif

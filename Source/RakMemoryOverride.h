@@ -13,11 +13,9 @@
 #include "RakNetDefines.h"
 #include <new>
 
-
-
-
-
-
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                                                                             
+#endif
 
 #include "RakAlloca.h"
 

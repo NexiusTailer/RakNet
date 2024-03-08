@@ -41,7 +41,7 @@ added to the project of the target language.<br>
 <br>
 </span>Mono is a cross platform implementation of the .Net
 framework. This allows you to compile C# and other .Net code and run
-them on platforms that originally are not .Net compatable like Linux.<br>
+them on platforms that originally are not .Net compatible like Linux.<br>
 <br>
 <span class="RakNetBlueHeader">Choices to Make.<br>
 <br>
@@ -52,14 +52,14 @@ On Windows batch tools are provided make the
 process easier.
 These tools are located under the Swig Directory under
 DependentExtensions. For Linux&nbsp;the tools will
-use Wget to pull down Swig and install verision 1.3.40 if Swig is not
+use Wget to pull down Swig and install version 2.0.00 if Swig is not
 installed.<br>
 <br>
 You may also download Swig yourself and compile them by specifying the
 options manually. In the manual portion the options used&nbsp;will
 be explained.<br>
 <br>
-<span class="RakNetBlueHeader">Step Summery<br>
+<span class="RakNetBlueHeader">Step Summary<br>
 <br>
 </span><span style="font-weight: bold;">Manually:<br>
 </span>
@@ -77,14 +77,14 @@ project"</li>
 <br>
 *Windows<br>
 <br>
--Using DLL_Swig project<br>
+-Using DLL_Swig\RakNet.sln solution<br>
 </span>
 <ol>
 <li>Download Swig, see section "Downloading
 Swig"</li>
 <li>If you do not plan on
 using&nbsp;SQLiteClientLoggerPlugin,
-DependentExtensions\Swig\DLL_Swig\DLL_Swig.sln already contains a DLL
+DependentExtensions\Swig\DLL_Swig\RakNet.sln already contains a DLL
 project that makes the Swig files, builds the DLL, and copies it to the
 C# sample. Perform a rebuild on
 this.</li>
@@ -241,9 +241,8 @@ PATH_TO_SWIG is an unquoted path with a trailing slash to
 the&nbsp;Swig directory Example: C:\Swig\. If you added swig to
 your path variable then&nbsp;PATH_TO_SWIG is not needed and can be
 ignored.</li>
-<li>Type MakeSwig.bat
-PATH_TO_RAKNETSOURCE&nbsp;PATH_TO_SWIG
-hit enter<br>
+<li>Enter MakeSwig.bat
+PATH_TO_RAKNETSOURCE&nbsp;PATH_TO_SWIG. For example, MakeSwig.bat c:\RakNet\Source c:\swigwin-1.3.40 <br>
 </li>
 <a href='javascript:toggleDisplay("ExtraInstructions1");'>Click
 to toggle extra instructions for SQLiteClientLoggerPlugin</a>
@@ -327,8 +326,7 @@ the swig directory. For example C:\RakNet\DependentExtensions\Swig</li>
 <li>Type cd&nbsp;PATH_TO_RAKNET_SWIG_FILES hit enter</li>
 <li>In the next command PATH_TO_RAKNETSOURCE is the path
 to the swig source directory. For example: C:\RakNet\Source</li>
-<li>Type C:\Swig\swig -c++ -csharp&nbsp; -I"
-PATH_TO_RAKNETSOURCE"
+<li>Type C:\Swig\swig -c++ -csharp -namespace RakNet -I"PATH_TO_RAKNETSOURCE"
 -I"SwigInterfaceFiles" -outdir SwigOutput\SwigCSharpOutput -o
 SwigOutput\CplusDLLIncludes\RakNet_wrap.cxx SwigInterfaceFiles\RakNet.i
 hit enter</li>
@@ -338,8 +336,7 @@ to toggle extra instructions for SQLiteClientLoggerPlugin</a>
 SQLiteClientLoggerPlugin skip #6</li>
 <li>PATH_TO_SQLITEPLUGIN is the path to the SQLite plugin
 directory. EX: C:\RakNet\DependentExtensions\SQLite3Plugin</li>
-<li>Type C:\Swig\swig -c++ -csharp&nbsp; -I"
-PATH_TO_RAKNETSOURCE" -I"SwigInterfaceFiles" -I"PATH_TO_SQLITEPLUGIN"
+<li>Type C:\Swig\swig -c++ -csharp -namespace RakNet -I"PATH_TO_RAKNETSOURCE" -I"SwigInterfaceFiles" -I"PATH_TO_SQLITEPLUGIN"
 -DSWIG_ADDITIONAL_SQL_LITE -outdir SwigOutput\SwigCSharpOutput -o
 SwigOutput\CplusDLLIncludes\RakNet_wrap.cxx SwigInterfaceFiles\RakNet.i
 hit enter&nbsp;</li>
@@ -360,7 +357,7 @@ the swig directory. For example
 <li>Type cd&nbsp;PATH_TO_RAKNET_SWIG_FILES hit enter</li>
 <li>In the next command PATH_TO_RAKNETSOURCE is the path
 to the swig source directory. For example: /home/usr/RakNet/Source</li>
-<li>Type swig -c++ -csharp&nbsp;
+<li>Type swig -c++ -csharp -namespace RakNet
 -I"PATH_TO_RAKNETSOURCE"
 -I"SwigInterfaceFiles" -outdir SwigOutput/SwigCSharpOutput -o
 SwigOutput/CplusDLLIncludes/RakNet_wrap.cxx SwigInterfaceFiles/RakNet.i
@@ -372,7 +369,7 @@ SQLiteClientLoggerPlugin skip #6</li>
 <li>PATH_TO_SQLITEPLUGIN is the path to the SQLite plugin
 directory.
 EX:&nbsp;/home/usr/RakNet/DependentExtensions/SQLite3Plugin</li>
-<li>Type swig -c++ -csharp&nbsp;
+<li>Type swig -c++ -csharp -namespace RakNet
 -I"PATH_TO_RAKNETSOURCE"
 -I"SwigInterfaceFiles" -I"PATH_TO_SQLITEPLUGIN"
 -DSWIG_ADDITIONAL_SQL_LITE -outdir SwigOutput/SwigCSharpOutput -o
@@ -390,6 +387,10 @@ This must come first. This means that the source files are C++ not C.<br>
 <span style="font-weight: bold;"><br>
 </span>This is the target language. Currently the files are
 made for C# and may not work with the other options.<br>
+<br>
+<span style="font-weight: bold;">-namespace RakNet</span><br>
+<span style="font-weight: bold;"><br>
+</span>This puts the generated files in the C# namespace RakNet<br>
 <span style="font-weight: bold;"><br>
 -I"PATH_TO_RAKNETSOURCE"
 </span><br>
@@ -448,7 +449,7 @@ the Swig Wrapped DLL Project</td>
 <span style="font-weight: bold;"><br>
 </span>Note: If you do not plan on
 using&nbsp;SQLiteClientLoggerPlugin,
-DependentExtensions\Swig\DLL_Swig\DLL_Swig.sln already contains a DLL
+DependentExtensions\Swig\DLL_Swig\RakNet.sln already contains a DLL
 project that makes the Swig files, builds the DLL, and copies it to the
 C# sample. You do not need to run these steps if you use that project.
 In that case, run the solution, rebuild the project, and goto "Creating
@@ -462,7 +463,7 @@ this. In MSVC 7 you would create an empty project, then under
 Application Settings you check DLL and empty project.</li>
 <li>Add the source files under the /Source directory to
 the project.</li>
-<li>Add <span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">RakNet.cxx
+<li>Add <span style="font-size: 12pt;">RakNet.cxx
 from&nbsp;Swigtools/CplusDLLIncludes</span></li>
 <a href='javascript:toggleDisplay("ExtraInstructions5");'>Click
 to toggle extra instructions for SQLiteClientLoggerPlugin</a>
@@ -481,26 +482,26 @@ SQLite3Plugin\Logger\ClientOnly, SQLite3Plugin\Logger, SQLite3Plugin</li>
 </div>
 <li>Add to "Additional Include Directories" your
 directory with the source files.</li>
-<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Import
+<li>Import
 ws2_32.lib, or wsock32.lib if you don't have Winsock 2 installed. In
 MSVC 7 you can right click on the project, select configuration
 properties / linker / input / additional dependencies and type
 "ws2_32.lib" in there.</font></li>
-<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Set
+<li>Set
 your project to use multi-threaded runtime libraries. In MSVC 7 you can
 right click on the project, select configuration properties / C/C++ /
 Code Generation / Runtime Library and change it to Multi-threaded (/MT).</font></li>
-<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Add
+<li>Add
 _RAKNET_DLL to the Preprocessor Definitions. In VS Project Properties
 -&gt; Configuration Properties -&gt; C/C++ -&gt;
 PreProcessor -&gt; Preprocessor Definitions</font></li>
-<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Set
+<li>Set
 the character set to "not set".In VS Project Properties -&gt;
 Configuration Properties -&gt; General-&gt; Character Set </font></li>
-<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Optionally
+<li>Optionally
 set your <a href="preprocessordirectives.html">preprocessor
 directives.</a></font></li>
-<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Then
+<li>Then
 hit F7 or the equivalent to build your DLL and Lib.</font></li>
 </ol>
 <table>
@@ -646,6 +647,7 @@ should be an column called "Configuration", cycle through all the items
 except for &lt;New&gt; and &lt;Edit&gt; and make sure
 that #20 is true.</li>
 <li>Do #20-21 for each item in the list.</li>
+<li><b>Make sure you have "using RakNet;" at the top of the files using RakNet. If this tutorial was followed the generated files are in the RakNet namespace.</b></li>
 </ol>
 <table>
 <tbody>
@@ -705,6 +707,7 @@ it to RakNet with no extension if it is not already.<br>
 <li>Copy the files in Swigtools/SwigCSharpOutput into
 your project directory.</li>
 <li>Create your main C# .cs file in that folder.</li>
+<li><b>Make sure you have "using RakNet;" at the top of the files using RakNet. If this tutorial was followed the generated files are in the RakNet namespace.</b></li>
 </ol>
 <span class="RakNetBlueHeader">Building the Project</span>
 <ol>
@@ -767,9 +770,10 @@ Information<br>
 <td><span class="RakNetBlueHeader">Important Information<br>
 </span>
 <ol>
-<li>RakPeer,RakString,FullyConnectedMesh2,NetworkIDObject,UDPForwarder, and
+<li>RakPeer,RakString,FullyConnectedMesh2,UDPForwarder, and
 UDPProxyCoordinator need to be released before the program ends.Any item that go out of scope before program end just needs to be garbage collected, so items not in main or global generally do not have issues. For these just call the GC before program end.For globals and items in main the items can be released with
-the Dispose method if new was used, if a RakNetworkFactory method was used to create use RakNetworkFactory to destroy the object.<br>
+the Dispose method if new was used, or DestroyInstance if
+CreateInstance was used.<br>
 </li>
 </ol>
 <br>

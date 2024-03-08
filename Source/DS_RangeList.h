@@ -48,18 +48,18 @@ namespace DataStructures
 		void Clear(void);
 		unsigned Size(void) const;
 		unsigned RangeSum(void) const;
-		BitSize_t Serialize(RakNet::BitStream *in, BitSize_t maxBits, bool clearSerialized);
+		RakNet::BitSize_t Serialize(RakNet::BitStream *in, RakNet::BitSize_t maxBits, bool clearSerialized);
 		bool Deserialize(RakNet::BitStream *out);
 
 		DataStructures::OrderedList<range_type, RangeNode<range_type> , RangeNodeComp<range_type> > ranges;
 	};
 
 	template <class range_type>
-	BitSize_t RangeList<range_type>::Serialize(RakNet::BitStream *in, BitSize_t maxBits, bool clearSerialized)
+	RakNet::BitSize_t RangeList<range_type>::Serialize(RakNet::BitStream *in, RakNet::BitSize_t maxBits, bool clearSerialized)
 	{
 		RakAssert(ranges.Size() < (unsigned short)-1);
 		RakNet::BitStream tempBS;
-		BitSize_t bitsWritten;
+		RakNet::BitSize_t bitsWritten;
 		unsigned short countWritten;
 		unsigned i;
 		countWritten=0;
@@ -85,7 +85,7 @@ namespace DataStructures
 		}
 
 		in->AlignWriteToByteBoundary();
-		BitSize_t before=in->GetWriteOffset();
+		RakNet::BitSize_t before=in->GetWriteOffset();
 		in->Write(countWritten);
 		bitsWritten+=in->GetWriteOffset()-before;
 	//	RAKNET_DEBUG_PRINTF("%i ", in->GetNumberOfBitsUsed());
@@ -107,7 +107,7 @@ namespace DataStructures
 	template <class range_type>
 	bool RangeList<range_type>::Deserialize(RakNet::BitStream *out)
 	{
-		ranges.Clear(true, __FILE__, __LINE__);
+		ranges.Clear(true, _FILE_AND_LINE_);
 		unsigned short count;
 		out->AlignReadToByteBoundary();
 		out->Read(count);
@@ -131,7 +131,7 @@ namespace DataStructures
 				max=min;
 
 
-			ranges.InsertAtEnd(RangeNode<range_type>(min,max), __FILE__,__LINE__);
+			ranges.InsertAtEnd(RangeNode<range_type>(min,max), _FILE_AND_LINE_);
 		}
 		return true;
 	}
@@ -153,7 +153,7 @@ namespace DataStructures
 	{
 		if (ranges.Size()==0)
 		{
-			ranges.Insert(index, RangeNode<range_type>(index, index), true, __FILE__,__LINE__);
+			ranges.Insert(index, RangeNode<range_type>(index, index), true, _FILE_AND_LINE_);
 			return;
 		}
 
@@ -166,7 +166,7 @@ namespace DataStructures
 			else if (index > ranges[insertionIndex-1].maxIndex+(range_type)1)
 			{
 				// Insert at end
-				ranges.Insert(index, RangeNode<range_type>(index, index), true, __FILE__,__LINE__);
+				ranges.Insert(index, RangeNode<range_type>(index, index), true, _FILE_AND_LINE_);
 			}
 
 			return;
@@ -175,7 +175,7 @@ namespace DataStructures
 		if (index < ranges[insertionIndex].minIndex-(range_type)1)
 		{
 			// Insert here
-			ranges.InsertAtIndex(RangeNode<range_type>(index, index), insertionIndex, __FILE__,__LINE__);
+			ranges.InsertAtIndex(RangeNode<range_type>(index, index), insertionIndex, _FILE_AND_LINE_);
 
 			return;
 		}
@@ -213,7 +213,7 @@ namespace DataStructures
 	template <class range_type>
 	void RangeList<range_type>::Clear(void)
 	{
-		ranges.Clear(true, __FILE__, __LINE__);
+		ranges.Clear(true, _FILE_AND_LINE_);
 	}
 
 	template <class range_type>

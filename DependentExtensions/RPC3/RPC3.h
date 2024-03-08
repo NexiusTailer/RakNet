@@ -11,17 +11,13 @@
 
 // Most of the internals of the boost code to make this work
 #include "RPC3_Boost.h"
-
-class RakPeerInterface;
-class NetworkIDManager;
 #include "PluginInterface2.h"
-//#include "DS_Map.h"
 #include "PacketPriority.h"
 #include "RakNetTypes.h"
 #include "BitStream.h"
 #include "RakString.h"
 #include "NetworkIDObject.h"
-#include "DS_StringKeyedHash.h"
+#include "DS_Hash.h"
 #include "DS_OrderedList.h"
 
 #ifdef _MSC_VER
@@ -35,6 +31,8 @@ class NetworkIDManager;
 
 namespace RakNet
 {
+class RakPeerInterface;
+class NetworkIDManager;
 
 /// \ingroup RPC_3_GROUP
 #define RPC3_REGISTER_FUNCTION(RPC3Instance, _FUNCTION_PTR_ ) (RPC3Instance)->RegisterFunction((#_FUNCTION_PTR_), (_FUNCTION_PTR_))
@@ -76,6 +74,7 @@ enum RPCErrorCodes
 /// <LI>Pointers to classes that derive from NetworkID are automatically looked up using NetworkIDManager
 /// <LI>Types are written to BitStream, meaning built-in serialization operations are performed, including endian swapping
 /// <LI>Types can customize autoserialization by providing an implementation of operator << and operator >> to and from BitStream
+/// \note You cannot use RPC4Plugin at the same time as RPC3
 /// \ingroup RPC_3_GROUP
 class RPC3 : public PluginInterface2
 {
@@ -101,7 +100,7 @@ public:
 		if (IsFunctionRegistered(uniqueIdentifier)) return false;
 		_RPC3::FunctionPointer fp;
 		fp= _RPC3::GetBoundPointer(functionPtr);
-		localFunctions.Push(uniqueIdentifier,RakNet::OP_NEW_1<LocalRPCFunction>( __FILE__, __LINE__, fp ),__FILE__, __LINE__);
+		localFunctions.Push(uniqueIdentifier,RakNet::OP_NEW_1<LocalRPCFunction>( _FILE_AND_LINE_, fp ),_FILE_AND_LINE_);
 		return true;
 	}
 
@@ -142,18 +141,18 @@ public:
 		_RPC3::FunctionPointer fp;
 		fp= _RPC3::GetBoundPointer(functionPtr);
 		LocalSlotObject lso(objectInstanceId, nextSlotRegistrationCount++, callPriority, _RPC3::GetBoundPointer(functionPtr));
-		DataStructures::StringKeyedHashIndex idx = GetLocalSlotIndex(sharedIdentifier);
+		DataStructures::HashIndex idx = GetLocalSlotIndex(sharedIdentifier);
 		LocalSlot *localSlot;
 		if (idx.IsInvalid())
 		{
-			localSlot = RakNet::OP_NEW<LocalSlot>(__FILE__,__LINE__);
-			localSlots.Push(sharedIdentifier, localSlot,__FILE__,__LINE__);
+			localSlot = RakNet::OP_NEW<LocalSlot>(_FILE_AND_LINE_);
+			localSlots.Push(sharedIdentifier, localSlot,_FILE_AND_LINE_);
 		}
 		else
 		{
 			localSlot=localSlots.ItemAtIndex(idx);
 		}
-		localSlot->slotObjects.Insert(lso,lso,true,__FILE__,__LINE__);
+		localSlot->slotObjects.Insert(lso,lso,true,_FILE_AND_LINE_);
 	}
 
 	/// Unregisters a function pointer to be callable given an identifier for the pointer
@@ -169,7 +168,7 @@ public:
 	/// Send or stop sending a timestamp with all following calls to Call()
 	/// Use GetLastSenderTimestamp() to read the timestamp.
 	/// \param[in] timeStamp Non-zero to pass this timestamp using the ID_TIMESTAMP system. 0 to clear passing a timestamp.
-	void SetTimestamp(RakNetTime timeStamp);
+	void SetTimestamp(RakNet::TimeMS timeStamp);
 
 	/// Set parameters to pass to RakPeer::Send() for all following calls to Call()
 	/// Deafults to HIGH_PRIORITY, RELIABLE_ORDERED, ordering channel 0
@@ -179,7 +178,7 @@ public:
 	void SetSendParams(PacketPriority priority, PacketReliability reliability, char orderingChannel);
 
 	/// Set system to send to for all following calls to Call()
-	/// Defaults to UNASSIGNED_SYSTEM_ADDRESS, broadcast=true
+	/// Defaults to RakNet::UNASSIGNED_SYSTEM_ADDRESS, broadcast=true
 	/// \param[in] systemAddress See RakPeer::Send()
 	/// \param[in] broadcast See RakPeer::Send()
 	void SetRecipientAddress(SystemAddress systemAddress, bool broadcast);
@@ -195,7 +194,7 @@ public:
 
 	/// If the last received function call has a timestamp included, it is stored and can be retrieved with this function.
 	/// \return 0 if the last call did not have a timestamp, else non-zero
-	RakNetTime GetLastSenderTimestamp(void) const;
+	RakNet::TimeMS GetLastSenderTimestamp(void) const;
 
 	/// Returns the system address of the last system to send us a received function call
 	/// Equivalent to the old system RPCParameters::sender
@@ -344,15 +343,15 @@ public:
 	struct CallExplicitParameters
 	{
 		CallExplicitParameters(
-			NetworkID _networkID=UNASSIGNED_NETWORK_ID, SystemAddress _systemAddress=UNASSIGNED_SYSTEM_ADDRESS,
-			bool _broadcast=true, RakNetTime _timeStamp=0, PacketPriority _priority=HIGH_PRIORITY,
+			NetworkID _networkID=UNASSIGNED_NETWORK_ID, SystemAddress _systemAddress=RakNet::UNASSIGNED_SYSTEM_ADDRESS,
+			bool _broadcast=true, RakNet::TimeMS _timeStamp=0, PacketPriority _priority=HIGH_PRIORITY,
 			PacketReliability _reliability=RELIABLE_ORDERED, char _orderingChannel=0
 			) : networkID(_networkID), systemAddress(_systemAddress), broadcast(_broadcast), timeStamp(_timeStamp), priority(_priority), reliability(_reliability), orderingChannel(_orderingChannel)
 		{}
 		NetworkID networkID;
 		SystemAddress systemAddress;
 		bool broadcast;
-		RakNetTime timeStamp;
+		RakNet::TimeMS timeStamp;
 		PacketPriority priority;
 		PacketReliability reliability;
 		char orderingChannel;
@@ -676,14 +675,14 @@ public:
 	struct SignalExplicitParameters
 	{
 		SignalExplicitParameters(
-			SystemAddress _systemAddress=UNASSIGNED_SYSTEM_ADDRESS,
-			bool _broadcast=true, RakNetTime _timeStamp=0, PacketPriority _priority=HIGH_PRIORITY,
+			SystemAddress _systemAddress=RakNet::UNASSIGNED_SYSTEM_ADDRESS,
+			bool _broadcast=true, RakNet::TimeMS _timeStamp=0, PacketPriority _priority=HIGH_PRIORITY,
 			PacketReliability _reliability=RELIABLE_ORDERED, char _orderingChannel=0
 			) : systemAddress(_systemAddress), broadcast(_broadcast), timeStamp(_timeStamp), priority(_priority), reliability(_reliability), orderingChannel(_orderingChannel)
 		{}
 		SystemAddress systemAddress;
 		bool broadcast;
-		RakNetTime timeStamp;
+		RakNet::TimeMS timeStamp;
 		PacketPriority priority;
 		PacketReliability reliability;
 		char orderingChannel;
@@ -817,7 +816,7 @@ public:
 	bool SendCallOrSignal(RakString uniqueIdentifier, char parameterCount, RakNet::BitStream *serializedParameters, bool isCall);
 
 	/// Call a given signal with a bitstream representing the parameter list
-	void InvokeSignal(DataStructures::StringKeyedHashIndex functionIndex, RakNet::BitStream *serializedParameters, bool temporarilySetUSA);
+	void InvokeSignal(DataStructures::HashIndex functionIndex, RakNet::BitStream *serializedParameters, bool temporarilySetUSA);
 
 
 	protected:
@@ -835,18 +834,18 @@ public:
 	void Clear(void);
 
 	void SendError(SystemAddress target, unsigned char errorCode, const char *functionName);
-	DataStructures::StringKeyedHashIndex GetLocalFunctionIndex(RPCIdentifier identifier);
-	DataStructures::StringKeyedHashIndex GetLocalSlotIndex(const char *sharedIdentifier);
+	DataStructures::HashIndex GetLocalFunctionIndex(RPCIdentifier identifier);
+	DataStructures::HashIndex GetLocalSlotIndex(const char *sharedIdentifier);
 //	bool GetRemoteFunctionIndex(SystemAddress systemAddress, RPCIdentifier identifier, unsigned int *outerIndex, unsigned int *innerIndex, bool isCall);
 
-	DataStructures::StringKeyedHash<LocalSlot*,256> localSlots;
-	DataStructures::StringKeyedHash<LocalRPCFunction*,256> localFunctions;
+	DataStructures::Hash<RakNet::RakString, LocalSlot*,256, RakNet::RakString::ToInteger> localSlots;
+	DataStructures::Hash<RakNet::RakString, LocalRPCFunction*,256, RakNet::RakString::ToInteger> localFunctions;
 
 // 	DataStructures::List<LocalSlot*> localSlots;
 // 	DataStructures::List<LocalRPCFunction> localFunctions;
 
 //	DataStructures::Map<SystemAddress, DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, RPC3::RemoteRPCFunctionComp> *> remoteFunctions, remoteSlots;
-	RakNetTime outgoingTimestamp;
+	RakNet::TimeMS outgoingTimestamp;
 	PacketPriority outgoingPriority;
 	PacketReliability outgoingReliability;
 	char outgoingOrderingChannel;
@@ -855,7 +854,7 @@ public:
 	NetworkID outgoingNetworkID;
 	RakNet::BitStream outgoingExtraData;
 
-	RakNetTime incomingTimeStamp;
+	RakNet::TimeMS incomingTimeStamp;
 	SystemAddress incomingSystemAddress;
 	RakNet::BitStream incomingExtraData;
 

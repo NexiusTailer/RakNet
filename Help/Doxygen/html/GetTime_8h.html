@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-<title>RakNet: d:/RakNet-3.x/Source/GetTime.h File Reference</title>
+<title>RakNet: d:/temp/RakNet4/Source/GetTime.h File Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -23,11 +23,11 @@
       <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><a class="el" href="dir_604b8536ae4240420803795590a868a7.html">d:</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_29af967a1a71b4feac23d6a82eef1f82.html">RakNet-3.x</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_6493bf94ae2653f49db339b26979caca.html">Source</a>
+  <div class="navpath"><a class="el" href="dir_604b8536ae4240420803795590a868a7.html">d:</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_1285d55ea74ca0518d26c0bad7eeef77.html">temp</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_5a659185e26bc1a39dad4c8f5eba72e1.html">RakNet4</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_66355861432170c4af14b5395280695f.html">Source</a>
   </div>
 </div>
 <div class="contents">
-<h1>GetTime.h File Reference</h1>Returns the value from QueryPerformanceCounter. This is the function <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> uses to represent time.  
+<h1>GetTime.h File Reference</h1>Returns the value from QueryPerformanceCounter. This is the function <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> uses to represent time. This time won't match the time returned by GetTimeCount(). See <a href="http://www.jenkinssoftware.com/forum/index.php?topic=2798.0.">http://www.jenkinssoftware.com/forum/index.php?topic=2798.0.</a>  
 <a href="#_details">More...</a>
 <p>
 <code>#include &quot;Export.h&quot;</code><br>
@@ -37,22 +37,31 @@
 <tr><td colspan="2"><br><h2>Namespaces</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">namespace &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html">RakNet</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Forward declaration. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Simple class to send changes between directories. In essence, a simple autopatcher that can be used for transmitting levels, skins, etc. <br></td></tr>
 
 <p>
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">RakNetTime RAK_DLL_EXPORT&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#aa2d77435e0bf2c56c77f6f41739d4b4">RakNet::GetTime</a> (void)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">RakNet::Time RAK_DLL_EXPORT&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#45ef68c020ce6b8086e7a412b5767a04">RakNet::GetTime</a> (void)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the value from QueryPerformanceCounter. This is the function <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> uses to represent time. Should be renamed GetTimeMS.  <a href="#aa2d77435e0bf2c56c77f6f41739d4b4"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">RakNetTimeUS RAK_DLL_EXPORT&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#e83fee0c0efb646482d2901b2f6cc017">RakNet::GetTimeNS</a> (void)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">RakNet::TimeMS RAK_DLL_EXPORT&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#da73d8160aa36bffbba9e3eb092147cc">RakNet::GetTimeMS</a> (void)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">RakNet::TimeUS RAK_DLL_EXPORT&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#0eb59672707865b233dd68a54db6c59f">RakNet::GetTimeUS</a> (void)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9da89622bfe0aa11286137d97cacd535"></a><!-- doxytag: member="GetTime.h::GreaterThan" ref="9da89622bfe0aa11286137d97cacd535" args="(RakNet::Time a, RakNet::Time b)" -->
+RAK_DLL_EXPORT bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#9da89622bfe0aa11286137d97cacd535">RakNet::GreaterThan</a> (RakNet::Time a, RakNet::Time b)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">a &gt; b? <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e0757a047bdddd79a52a8fc5f71e22f1"></a><!-- doxytag: member="GetTime.h::LessThan" ref="e0757a047bdddd79a52a8fc5f71e22f1" args="(RakNet::Time a, RakNet::Time b)" -->
+RAK_DLL_EXPORT bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#e0757a047bdddd79a52a8fc5f71e22f1">RakNet::LessThan</a> (RakNet::Time a, RakNet::Time b)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">a &lt; b? <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Returns the value from QueryPerformanceCounter. This is the function <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> uses to represent time. 
+Returns the value from QueryPerformanceCounter. This is the function <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> uses to represent time. This time won't match the time returned by GetTimeCount(). See <a href="http://www.jenkinssoftware.com/forum/index.php?topic=2798.0.">http://www.jenkinssoftware.com/forum/index.php?topic=2798.0.</a> 
 <p>
-This file is part of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> Copyright 2003 Jenkins Software LLC<p>
-Usage of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> is subject to the appropriate license agreement. </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 22 08:28:33 2011 for RakNet by&nbsp;
+This file is part of <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> Copyright 2003 Jenkins Software LLC<p>
+Usage of <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> is subject to the appropriate license agreement. </div>
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:27 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

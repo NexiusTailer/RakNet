@@ -36,16 +36,16 @@ public:
 protected:
 
 	MemoryPool<structureType> memoryPool;
-	SimpleMutex memoryPoolMutex;
+	RakNet::SimpleMutex memoryPoolMutex;
 	Queue<structureType*> queue;
-	SimpleMutex queueMutex;
+	RakNet::SimpleMutex queueMutex;
 };
 	
 template <class structureType>
 void ThreadsafeAllocatingQueue<structureType>::Push(structureType *s)
 {
 	queueMutex.Lock();
-	queue.Push(s, __FILE__, __LINE__ );
+	queue.Push(s, _FILE_AND_LINE_ );
 	queueMutex.Unlock();
 }
 

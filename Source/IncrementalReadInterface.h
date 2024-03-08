@@ -4,6 +4,9 @@
 #include "FileListNodeContext.h"
 #include "Export.h"
 
+namespace RakNet
+{
+
 class RAK_DLL_EXPORT IncrementalReadInterface
 {
 public:
@@ -19,5 +22,7 @@ public:
 	/// \return The number of bytes read, or 0 if none
 	virtual unsigned int GetFilePart( const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context);
 };
+
+} // namespace RakNet
 
 #endif

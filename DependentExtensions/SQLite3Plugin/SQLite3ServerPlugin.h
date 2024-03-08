@@ -70,7 +70,7 @@ public:
 		RakNet::RakString dbIdentifier;
 		sqlite3 *dbHandle;
 		bool dbAutoCreated;
-		RakNetTimeMS whenCreated;
+		RakNet::TimeMS whenCreated;
 	};
 
 #ifdef SQLite3_STATEMENT_EXECUTE_THREADED
@@ -82,9 +82,9 @@ public:
 		char *data;
 		unsigned int length;
 		SystemAddress sender;
-		RakNetTimeMS whenMessageArrived;
+		RakNet::TimeMS whenMessageArrived;
 		sqlite3 *dbHandle;
-		Packet *packet;
+		RakNet::Packet *packet;
 	};
 
 	/// \internal
@@ -94,7 +94,7 @@ public:
 		char *data;
 		unsigned int length;
 		SystemAddress sender;
-		Packet *packet;
+		RakNet::Packet *packet;
 	};
 #endif // SQLite3_STATEMENT_EXECUTE_THREADED
 

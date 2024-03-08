@@ -17,46 +17,45 @@
 <BR><BR>
 The target of this exercise was to add the following features to sample 2:
 <OL>
-<LI>Implement code to handle ID_RECEIVED_STATIC_DATA
-<LI>Implement an RPC header called "PrintMessage".  Have it print "Hello world."  Both the client and server should be able to call it.
-<LI>When the client successfully connects, call the RPC function.
+<LI>When the client successfully connects, send a custom user message.
+<LI>The first byte of custom messages should always start after the enumeration ID_USER_PACKET_ENUM, defined in MessageIdentifiers.h. Otherwise, RakNet would confuse its own identifiers with your game identifiers.
+<LI>Read the custom message in our packet processing loop. The native RakString type can read and write to the BitStream class. You would not be able to do this using std::string.
 </OL>
 New code over sample 2 is in bold.
 </FONT>
 <PRE><FONT FACE="Geneva, Verdana, Arial, Helvetica, sans-serif" size="1" CLASS="G10" COLOR="#111122">
-
 #include &lt;stdio.h&gt;
 #include &lt;string.h&gt;
-#include "RakNetworkFactory.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
+<strong>#include "BitStream.h"
+#include "RakNetTypes.h"  // MessageID</strong>
 
 #define MAX_CLIENTS 10
 #define SERVER_PORT 60000
 
-<strong>
-void PrintMessage(RPCParameters *rpcParameters)
+enum GameMessages
 {
-	printf("Hello World!\n");
-}
-</strong>
-
+	ID_GAME_MESSAGE_1=ID_USER_PACKET_ENUM+1
+};
 
 int main(void)
 {
 	char str[512];
-	RakPeerInterface *peer = RakNetworkFactory::GetRakPeerInterface();
+
+	RakNet::RakPeerInterface *peer = RakNet::RakPeerInterface::GetInstance();
 	bool isServer;
-	Packet *packet;
-	
+	RakNet::Packet *packet;
+
 	printf("(C) or (S)erver?\n");
 	gets(str);
+
 	if ((str[0]=='c')||(str[0]=='C'))
 	{
-		peer-&gt;Startup(1,30,&amp;SocketDescriptor(), 1);
+		peer-&gt;Startup(1,&RakNet::SocketDescriptor(), 1);
 		isServer = false;
 	} else {
-		peer-&gt;Startup(MAX_CLIENTS, 30, &amp;SocketDescriptor(SERVER_PORT,0), 1);
+		peer-&gt;Startup(MAX_CLIENTS,  &RakNet::SocketDescriptor(SERVER_PORT,0), 1);
 		isServer = true;
 	}
 
@@ -73,17 +72,12 @@ int main(void)
 		}
 		printf("Starting the client.\n");
 		peer-&gt;Connect(str, SERVER_PORT, 0,0);
-	}
 
-	<strong>
-	REGISTER_STATIC_RPC(peer, PrintMessage);
-	</strong>
+	}
 
 	while (1)
 	{
-		packet=peer-&gt;Receive();
-
-		if (packet)
+		for (packet=peer-&gt;Receive(); packet; peer-&gt;DeallocatePacket(packet), packet=peer-&gt;Receive())
 		{
 			switch (packet-&gt;data[0])
 			{
@@ -97,12 +91,17 @@ int main(void)
 				printf("Another client has connected.\n");
 				break;
 			case ID_CONNECTION_REQUEST_ACCEPTED:
-				printf("Our connection request has been accepted.\n");
-				<strong>
-				peer-&gt;RPC("PrintMessage",0,0,HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true, 0, UNASSIGNED_NETWORK_ID, 0);
-				</strong>
-				break;
+				<strong>{
+					printf("Our connection request has been accepted.\n");
 
+					// Use a BitStream to write a custom user message
+					// Bitstreams are easier to use than sending casted structures, and handle endian swapping automatically
+					RakNet::BitStream bsOut;
+					bsOut.Write((RakNet::MessageID)ID_GAME_MESSAGE_1);
+					bsOut.Write("Hello world");
+					peer-&gt;Send(&amp;bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet-&gt;systemAddress,false);
+				}</strong>
+				break;
 			case ID_NEW_INCOMING_CONNECTION:
 				printf("A connection is incoming.\n");
 				break;
@@ -123,21 +122,34 @@ int main(void)
 					printf("Connection lost.\n");
 				}
 				break;
+				<strong>
+			case ID_GAME_MESSAGE_1:
+				{
+					RakNet::RakString rs;
+					RakNet::BitStream bsIn(packet-&gt;data,packet-&gt;length,false);
+					bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
+					bsIn.Read(rs);
+					printf("%s\n", rs.C_String());
+				}
+			</strong>
 			default:
 				printf("Message with identifier %i has arrived.\n", packet-&gt;data[0]);
 				break;
 			}
-
-			peer-&gt;DeallocatePacket(packet);
 		}
 	}
-	
-	RakNetworkFactory::DestroyRakPeerInterface(peer);
+
+
+	RakNet::RakPeerInterface::DestroyInstance(peer);
 
 	return 0;
 }
 
 </FONT></PRE>
-</TD></TR></TABLE>
+</TD></TR>
+  <TR>
+    <TD>&nbsp;</TD>
+  </TR>
+</TABLE>
 </BODY>
 </HTML>

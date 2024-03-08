@@ -10,6 +10,9 @@ namespace RakNet
 	class BitStream;
 }
 
+namespace RakNet
+{
+
 class RAK_DLL_EXPORT TableSerializer
 {
 public:
@@ -32,6 +35,8 @@ public:
 	static bool DeserializeFilterQueryList(RakNet::BitStream *out, DataStructures::Table::FilterQuery **query, unsigned int *numQueries, unsigned int maxQueries, int allocateExtraQueries=0);
 	static void DeallocateQueryList(DataStructures::Table::FilterQuery *query, unsigned int numQueries);
 };
+
+} // namespace RakNet
 
 #endif
 

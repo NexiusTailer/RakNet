@@ -11,14 +11,19 @@
 #ifndef __MESSAGE_FILTER_PLUGIN_H
 #define __MESSAGE_FILTER_PLUGIN_H
 
-class RakPeerInterface;
 #include "RakNetTypes.h"
 #include "PluginInterface2.h"
 #include "DS_OrderedList.h"
+#include "DS_Hash.h"
 #include "Export.h"
 
 /// MessageIdentifier (ID_*) values shoudln't go higher than this.  Change it if you do.
 #define MESSAGE_FILTER_MAX_MESSAGE_ID 256
+
+namespace RakNet
+{
+/// Forward declarations
+class RakPeerInterface;
 
 /// \internal Has to be public so some of the shittier compilers can use it.
 int RAK_DLL_EXPORT MessageFilterStrComp( char *const &key,char *const &data );
@@ -29,16 +34,15 @@ struct FilterSet
 	bool banOnFilterTimeExceed;
 	bool kickOnDisallowedMessage;
 	bool banOnDisallowedMessage;
-	RakNetTime disallowedMessageBanTimeMS;
-	RakNetTime timeExceedBanTimeMS;
-	RakNetTime maxMemberTimeMS;
-	void (*invalidMessageCallback)(RakPeerInterface *peer, SystemAddress systemAddress, int filterSetID, void *userData, unsigned char messageID);
+	RakNet::TimeMS disallowedMessageBanTimeMS;
+	RakNet::TimeMS timeExceedBanTimeMS;
+	RakNet::TimeMS maxMemberTimeMS;
+	void (*invalidMessageCallback)(RakPeerInterface *peer, AddressOrGUID systemAddress, int filterSetID, void *userData, unsigned char messageID);
 	void *disallowedCallbackUserData;
-	void (*timeoutCallback)(RakPeerInterface *peer, SystemAddress systemAddress, int filterSetID, void *userData);
+	void (*timeoutCallback)(RakPeerInterface *peer, AddressOrGUID systemAddress, int filterSetID, void *userData);
 	void *timeoutUserData;
 	int filterSetID;
 	bool allowedIDs[MESSAGE_FILTER_MAX_MESSAGE_ID];
-	DataStructures::OrderedList<char *, char *, MessageFilterStrComp> allowedRPCs;
 };
 
 /// \internal Has to be public so some of the shittier compilers can use it.
@@ -47,13 +51,9 @@ int RAK_DLL_EXPORT FilterSetComp( const int &key, FilterSet * const &data );
 /// \internal Has to be public so some of the shittier compilers can use it.
 struct FilteredSystem
 {
-	SystemAddress systemAddress;
 	FilterSet *filter;
-	RakNetTime timeEnteredThisSet;
+	RakNet::TimeMS timeEnteredThisSet;
 };
-
-/// \internal Has to be public so some of the shittier compilers can use it.
-int RAK_DLL_EXPORT FilteredSystemComp( const SystemAddress &key, const FilteredSystem &data );
 
 /// \defgroup MESSAGEFILTER_GROUP MessageFilter
 /// \brief Remote incoming packets from unauthorized systems
@@ -62,7 +62,7 @@ int RAK_DLL_EXPORT FilteredSystemComp( const SystemAddress &key, const FilteredS
 
 /// \brief Assigns systems to FilterSets.  Each FilterSet limits what kinds of messages are allowed.
 /// \details The MessageFilter plugin is used for security where you limit what systems can send what kind of messages.<BR>
-/// You implicitly define FilterSets, and add allowed message IDs and RPC calls to these FilterSets.<BR>
+/// You implicitly define FilterSets, and add allowed message IDs to these FilterSets.<BR>
 /// You then add systems to these filters, such that those systems are limited to sending what the filters allows.<BR>
 /// You can automatically assign systems to a filter.<BR>
 /// You can automatically kick and possibly ban users that stay in a filter too long, or send the wrong message.<BR>
@@ -72,6 +72,10 @@ int RAK_DLL_EXPORT FilteredSystemComp( const SystemAddress &key, const FilteredS
 class RAK_DLL_EXPORT MessageFilter : public PluginInterface2
 {
 public:
+
+	// GetInstance() and DestroyInstance(instance*)
+	STATIC_FACTORY_DECLARATIONS(MessageFilter)
+
 	MessageFilter();
 	virtual ~MessageFilter();
 
@@ -93,12 +97,6 @@ public:
 	/// \param[in] filterSetID A user defined ID to represent a filter set.  If no filter with this ID exists, one will be created with default settings.
 	void SetAllowMessageID(bool allow, int messageIDStart, int messageIDEnd,int filterSetID);
 
-	/// Allow an RPC function, by name
-	/// \param[in] allow True to allow an RPC call with this function name, false to disallow.  All RPCs are disabled by default.
-	/// \param[in] functionName the function name of the RPC call.  Must match the function name exactly, including case.
-	/// \param[in] filterSetID A user defined ID to represent a filter set.  If no filter with this ID exists, one will be created with default settings.
-	void SetAllowRPC(bool allow, const char *functionName, int filterSetID);
-
 	/// What action to take on a disallowed message.  You can kick or not.  You can add them to the ban list for some time
 	/// By default no action is taken.  The message is simply ignored.
 	/// param[in] 0 for permanent ban, >0 for ban time in milliseconds.
@@ -106,19 +104,19 @@ public:
 	/// \param[in] banOnDisallowed ban the system that sent a disallowed message.  See \a banTimeMS for the ban duration
 	/// \param[in] banTimeMS Passed to the milliseconds parameter of RakPeer::AddToBanList.
 	/// \param[in] filterSetID A user defined ID to represent a filter set.  If no filter with this ID exists, one will be created with default settings.
-	void SetActionOnDisallowedMessage(bool kickOnDisallowed, bool banOnDisallowed, RakNetTime banTimeMS, int filterSetID);
+	void SetActionOnDisallowedMessage(bool kickOnDisallowed, bool banOnDisallowed, RakNet::TimeMS banTimeMS, int filterSetID);
 
 	/// Set a user callback to be called on an invalid message for a particular filterSet
 	/// \param[in] filterSetID A user defined ID to represent a filter set.  If no filter with this ID exists, one will be created with default settings.
 	/// \param[in] userData A pointer passed with the callback
 	/// \param[in] invalidMessageCallback A pointer to a C function to be called back with the specified parameters.
-	void SetDisallowedMessageCallback(int filterSetID, void *userData, void (*invalidMessageCallback)(RakPeerInterface *peer, SystemAddress systemAddress, int filterSetID, void *userData, unsigned char messageID));
+	void SetDisallowedMessageCallback(int filterSetID, void *userData, void (*invalidMessageCallback)(RakPeerInterface *peer, AddressOrGUID addressOrGUID, int filterSetID, void *userData, unsigned char messageID));
 
 	/// Set a user callback to be called when a user is disconnected due to SetFilterMaxTime
 	/// \param[in] filterSetID A user defined ID to represent a filter set.  If no filter with this ID exists, one will be created with default settings.
 	/// \param[in] userData A pointer passed with the callback
 	/// \param[in] invalidMessageCallback A pointer to a C function to be called back with the specified parameters.
-	void SetTimeoutCallback(int filterSetID, void *userData, void (*invalidMessageCallback)(RakPeerInterface *peer, SystemAddress systemAddress, int filterSetID, void *userData));
+	void SetTimeoutCallback(int filterSetID, void *userData, void (*invalidMessageCallback)(RakPeerInterface *peer, AddressOrGUID addressOrGUID, int filterSetID, void *userData));
 
 	/// Limit how long a connection can stay in a particular filterSetID. After this time, the connection is kicked and possibly banned.
 	/// By default there is no limit to how long a connection can stay in a particular filter set.
@@ -126,29 +124,23 @@ public:
 	/// \param[in] banOnExceed True or false to ban the system, or not, when \a allowedTimeMS is exceeded
 	/// \param[in] banTimeMS Passed to the milliseconds parameter of RakPeer::AddToBanList.
 	/// \param[in] filterSetID A user defined ID to represent a filter set.  If no filter with this ID exists, one will be created with default settings.
-	void SetFilterMaxTime(int allowedTimeMS, bool banOnExceed, RakNetTime banTimeMS, int filterSetID);
+	void SetFilterMaxTime(int allowedTimeMS, bool banOnExceed, RakNet::TimeMS banTimeMS, int filterSetID);
 
 	/// Get the filterSetID a system is using.  Returns -1 for none.
-	/// \param[in] systemAddress The system we are referring to
-	int GetSystemFilterSet(SystemAddress systemAddress);
+	/// \param[in] addressOrGUID The system we are referring to
+	int GetSystemFilterSet(AddressOrGUID addressOrGUID);
 
 	/// Assign a system to a filter set.
 	/// Systems are automatically added to filter sets (or not) based on SetAutoAddNewConnectionsToFilter()
 	/// This function is used to change the filter set a system is using, to add it to a new filter set, or to remove it from all existin filter sets.
-	/// \param[in] systemAddress The system we are referring to
+	/// \param[in] addressOrGUID The system we are referring to
 	/// \param[in] filterSetID A user defined ID to represent a filter set.  If no filter with this ID exists, one will be created with default settings.  If -1, the system will be removed from all filter sets.
-	void SetSystemFilterSet(SystemAddress systemAddress, int filterSetID);
+	void SetSystemFilterSet(AddressOrGUID addressOrGUID, int filterSetID);
 
 	/// Returns the number of systems subscribed to a particular filter set
 	/// Using anything other than -1 for \a filterSetID is slow, so you should store the returned value.
 	/// \param[in] filterSetID The filter set to limit to.  Use -1 for none (just returns the total number of filter systems in that case).
 	unsigned GetSystemCount(int filterSetID) const;
-
-	/// Returns a system subscribed to a particular filter set,by index.
-	/// index should be between 0 and the GetSystemCount(filterSetID)-1;
-	/// \param[in] filterSetID The filter set to limit to.  Use -1 for none (just indexes all the filtered systems in that case).
-	/// \param[in] index A number between 0 and GetSystemCount(filterSetID)-1;
-	SystemAddress GetSystemByIndex(int filterSetID, unsigned index);
 
 	/// Returns the total number of filter sets.
 	/// \return The total number of filter sets.
@@ -175,13 +167,17 @@ protected:
 	void Clear(void);
 	void DeallocateFilterSet(FilterSet *filterSet);
 	FilterSet* GetFilterSetByID(int filterSetID);
-	void OnInvalidMessage(FilterSet *filterSet, SystemAddress systemAddress, unsigned char messageID);
+	void OnInvalidMessage(FilterSet *filterSet, AddressOrGUID systemAddress, unsigned char messageID);
 
 	DataStructures::OrderedList<int, FilterSet*, FilterSetComp> filterList;
-	DataStructures::OrderedList<SystemAddress, FilteredSystem, FilteredSystemComp> systemList;
+	// Change to guid
+	DataStructures::Hash<AddressOrGUID, FilteredSystem, 2048, AddressOrGUID::ToInteger> systemList;
 
 	int autoAddNewConnectionsToFilter;
+	RakNet::Time whenLastTimeoutCheck;
 };
+
+} // namespace RakNet
 
 #endif
 

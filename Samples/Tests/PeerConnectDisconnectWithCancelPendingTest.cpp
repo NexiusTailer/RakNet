@@ -31,7 +31,7 @@ Connect function returns false and peer is not connected to anything.
 Pending request is not canceled.
 
 */
-int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
+int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 
 	const int peerNum= 8;
@@ -41,15 +41,15 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 	SystemAddress currentSystem;
 
 	Packet *packet;
-	destroyList.Clear(false,__FILE__,__LINE__);
+	destroyList.Clear(false,_FILE_AND_LINE_);
 
 	//Initializations of the arrays
 	for (int i=0;i<peerNum;i++)
 	{
-		peerList[i]=RakNetworkFactory::GetRakPeerInterface();
-		destroyList.Push(peerList[i],__FILE__,__LINE__);
+		peerList[i]=RakPeerInterface::GetInstance();
+		destroyList.Push(peerList[i],_FILE_AND_LINE_);
 
-		peerList[i]->Startup(maxConnections, 30, &SocketDescriptor(60000+i,0), 1);
+		peerList[i]->Startup(maxConnections, &SocketDescriptor(60000+i,0), 1);
 		peerList[i]->SetMaximumIncomingConnections(maxConnections);
 
 	}
@@ -62,7 +62,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 		for (int j=i+1;j<peerNum;j++)//Start at i+1 so don't connect two of the same together.
 		{
 
-			if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
+			if (peerList[i]->Connect("127.0.0.1", 60000+j, 0,0)!=CONNECTION_ATTEMPT_STARTED)
 			{
 
 				if (isVerbose)
@@ -76,7 +76,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 	}
 
-	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
+	TimeMS entryTime=GetTimeMS();//Loop entry time
 
 	DataStructures::List< SystemAddress  > systemList;
 	DataStructures::List< RakNetGUID > guidList;
@@ -84,7 +84,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 	printf("Entering disconnect loop \n");
 	bool printedYet;
 
-	while(RakNet::GetTime()-entryTime<10000)//Run for 10 Secoonds
+	while(GetTimeMS()-entryTime<10000)//Run for 10 Secoonds
 	{
 
 		//Disconnect all peers IF connected to any
@@ -129,7 +129,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 			for (int j=i+1;j<peerNum;j++)//Start at i+1 so don't connect two of the same together.
 			{
 
-				if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
+				if (peerList[i]->Connect("127.0.0.1", 60000+j, 0,0)!=CONNECTION_ATTEMPT_STARTED)
 				{
 
 					currentSystem.SetBinaryAddress("127.0.0.1");
@@ -139,7 +139,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 					int len=systemList.Size();
 
-					if(peerList[i]->IsConnectionAttemptPending(currentSystem))//Did we drop the pending connection? 
+					if(CommonFunctions::ConnectionStateMatchesOptions (peerList[i],currentSystem,false,true,true))//Did we drop the pending connection? 
 					{
 						if (isVerbose)
 							DebugTools::ShowError("Did not cancel the pending request \n",!noPauses && isVerbose,__LINE__,__FILE__);
@@ -148,7 +148,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 					}
 
-					if (!peerList[i]->IsConnected (currentSystem,true,true))
+					if (!CommonFunctions::ConnectionStateMatchesOptions (peerList[i],currentSystem,true,true,true,true))
 					{
 						if (isVerbose)
 							DebugTools::ShowError("Problem while calling connect. \n",!noPauses && isVerbose,__LINE__,__FILE__);
@@ -244,7 +244,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 		RakSleep(0);//If needed for testing
 	}
 
-	while(RakNet::GetTime()-entryTime<2000)//Run for 2 Secoonds to process incoming disconnects
+	while(GetTimeMS()-entryTime<2000)//Run for 2 Secoonds to process incoming disconnects
 	{
 
 		for (int i=0;i<peerNum;i++)//Receive for all peers
@@ -341,7 +341,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 			peerList[i]->CancelConnectionAttempt(currentSystem);  	//Make sure a connection is not pending before trying to connect.
 
-			if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
+			if (peerList[i]->Connect("127.0.0.1", 60000+j, 0,0)!=CONNECTION_ATTEMPT_STARTED)
 			{
 
 				peerList[i]->GetSystemList(systemList,guidList);//Get connectionlist
@@ -362,9 +362,9 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 	}
 
-	entryTime=RakNet::GetTime();
+	entryTime=GetTimeMS();
 
-	while(RakNet::GetTime()-entryTime<5000)//Run for 5 Secoonds
+	while(GetTimeMS()-entryTime<5000)//Run for 5 Secoonds
 	{
 
 		for (int i=0;i<peerNum;i++)//Receive for all peers
@@ -470,14 +470,14 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 }
 
-RakNet::RakString PeerConnectDisconnectWithCancelPendingTest::GetTestName()
+RakString PeerConnectDisconnectWithCancelPendingTest::GetTestName()
 {
 
 	return "PeerConnectDisconnectWithCancelPendingTest";
 
 }
 
-RakNet::RakString PeerConnectDisconnectWithCancelPendingTest::ErrorCodeToString(int errorCode)
+RakString PeerConnectDisconnectWithCancelPendingTest::ErrorCodeToString(int errorCode)
 {
 
 	switch (errorCode)
@@ -519,6 +519,6 @@ void PeerConnectDisconnectWithCancelPendingTest::DestroyPeers()
 	int theSize=destroyList.Size();
 
 	for (int i=0; i < theSize; i++)
-		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+		RakPeerInterface::DestroyInstance(destroyList[i]);
 
 }

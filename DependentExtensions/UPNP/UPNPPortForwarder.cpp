@@ -6,7 +6,10 @@ using namespace RakNet;
 RAK_THREAD_DECLARATION(QueryUPNPSupportThread);
 RAK_THREAD_DECLARATION(OpenPortOnInterfaceThread);
 
-/*
+// #define USE_WS2_TCP_IP
+
+#ifdef USE_WS2_TCP_IP
+
 #if defined(_XBOX) || defined(X360)
 #elif defined(_WIN32)
 #include "WSAStartupSingleton.h"
@@ -15,7 +18,8 @@ RAK_THREAD_DECLARATION(OpenPortOnInterfaceThread);
 #include <iphlpapi.h>
 #pragma comment(lib, "IPHLPAPI.lib")
 #endif
-*/
+
+#endif
 
 void AddToIpList(char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], const char *in)
 {
@@ -57,7 +61,7 @@ void GetGateways(char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ])
 
 	// Allocate a 15 KB buffer to start with.
 	outBufLen = 15000;
-	pAddresses = (IP_ADAPTER_ADDRESSES *) rakMalloc_Ex(outBufLen,__FILE__,__LINE__);
+	pAddresses = (IP_ADAPTER_ADDRESSES *) rakMalloc_Ex(outBufLen,_FILE_AND_LINE_);
 
 	dwRetVal = GetAdaptersAddresses(AF_UNSPEC, 0, NULL, pAddresses, &outBufLen);
 
@@ -116,7 +120,7 @@ void GetGateways(char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ])
 		}
 	}
 
-	rakFree_Ex(pAddresses,__FILE__,__LINE__);
+	rakFree_Ex(pAddresses,_FILE_AND_LINE_);
 	*/
 /*
 	PIP_ADAPTER_INFO pAdapterInfo;
@@ -130,10 +134,10 @@ void GetGateways(char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ])
 
 
 	ULONG ulOutBufLen = sizeof (IP_ADAPTER_INFO);
-	pAdapterInfo = (IP_ADAPTER_INFO *) rakMalloc_Ex(sizeof (IP_ADAPTER_INFO),__FILE__,__LINE__);
+	pAdapterInfo = (IP_ADAPTER_INFO *) rakMalloc_Ex(sizeof (IP_ADAPTER_INFO),_FILE_AND_LINE_);
 	if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW) {
-		rakFree_Ex(pAdapterInfo,__FILE__,__LINE__);
-		pAdapterInfo = (IP_ADAPTER_INFO *) rakMalloc_Ex(ulOutBufLen,__FILE__,__LINE__);
+		rakFree_Ex(pAdapterInfo,_FILE_AND_LINE_);
+		pAdapterInfo = (IP_ADAPTER_INFO *) rakMalloc_Ex(ulOutBufLen,_FILE_AND_LINE_);
 		if (pAdapterInfo == NULL) {
 			printf("Error allocating memory needed to call GetAdaptersinfo\n");
 			return;
@@ -156,7 +160,7 @@ void GetGateways(char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ])
 
 	}
 	if (pAdapterInfo)
-		rakFree_Ex(pAdapterInfo,__FILE__,__LINE__);
+		rakFree_Ex(pAdapterInfo,_FILE_AND_LINE_);
 
 
 #else
@@ -168,11 +172,11 @@ void GetGateways(char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ])
 
 
 #if defined(_XBOX) || defined(X360)
-static const int THREAD_PRIORITY=0;
+                                   
 #elif defined(_WIN32)
 static const int THREAD_PRIORITY=0;
 #elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-static const int THREAD_PRIORITY=1000;
+                                      
 #else
 static const int THREAD_PRIORITY=1000;
 #endif
@@ -200,7 +204,7 @@ UPNPPortForwarder::~UPNPPortForwarder(void)
 
 void UPNPPortForwarder::QueryUPNPSupport(UPNPCallbackInterface *callBack,RakNet::RakString interfaceIp)
 {
-	QueryUPNPSupportInput *fupnpi = OP_NEW<QueryUPNPSupportInput>(__FILE__,__LINE__);
+	QueryUPNPSupportInput *fupnpi = OP_NEW<QueryUPNPSupportInput>(_FILE_AND_LINE_);
 	fupnpi->interfaceQueried=interfaceIp;
 	fupnpi->upnpPortForwarder=this;
 	fupnpi->callBack=callBack;
@@ -209,14 +213,14 @@ void UPNPPortForwarder::QueryUPNPSupport(UPNPCallbackInterface *callBack,RakNet:
 
 void UPNPPortForwarder::OpenPortOnInterface(UPNPCallbackInterface *callBack,int internalPort,RakNet::RakString interfaceIp,int portToOpenOnRouter, RakNet::RakString mappingName, UPNPProtocolType protocol)
 {
-	OpenPortResult *opr = openedPorts.Allocate(__FILE__,__LINE__);
+	OpenPortResult *opr = openedPorts.Allocate(_FILE_AND_LINE_);
 	opr->internalPort=internalPort;
 	opr->interfaceIp=interfaceIp;
 	if (portToOpenOnRouter==-1)
 		opr->portToOpenOnRouter=internalPort;
 	else
 		opr->portToOpenOnRouter=portToOpenOnRouter;
-	seedMT((unsigned int)RakNet::GetTime()+internalPort+opr->portToOpenOnRouter);
+	seedMT((unsigned int)RakNet::GetTimeMS()+internalPort+opr->portToOpenOnRouter);
 	if (mappingName=="")
 	{
 		mappingName="UPNPRAKNET";
@@ -236,14 +240,14 @@ void UPNPPortForwarder::CallCallbacks(void)
 	while ((r1 = foundInterfaces.Pop())!=0)
 	{
 		r1->callBack->QueryUPNPSupport_Result(r1);
-		foundInterfaces.Deallocate(r1,__FILE__,__LINE__);
+		foundInterfaces.Deallocate(r1,_FILE_AND_LINE_);
 	}
 
 	OpenPortResult *r2;
 	while ((r2 = openedPorts.Pop())!=0)
 	{
 		r2->callBack->OpenPortOnInterface_Result(r2);
-		openedPorts.Deallocate(r2,__FILE__,__LINE__);
+		openedPorts.Deallocate(r2,_FILE_AND_LINE_);
 	}
 }
 
@@ -252,7 +256,7 @@ RAK_THREAD_DECLARATION(QueryUPNPSupportThread)
 	UPNPNATInternal upnp;
 
 	QueryUPNPSupportInput *fupnpi = ( QueryUPNPSupportInput * ) arguments;
-	QueryUPNPSupportResult *result = fupnpi->upnpPortForwarder->foundInterfaces.Allocate(__FILE__,__LINE__);
+	QueryUPNPSupportResult *result = fupnpi->upnpPortForwarder->foundInterfaces.Allocate(_FILE_AND_LINE_);
 	result->callBack=fupnpi->callBack;
 
 	char ipList[MAXIMUM_NUMBER_OF_INTERNAL_IDS][16];
@@ -272,7 +276,7 @@ RAK_THREAD_DECLARATION(QueryUPNPSupportThread)
 		if (strcmp(ipList[i],"127.0.0.1")!=0 &&
 			strcmp(ipList[i],"0.0.0.0")!=0
 			)//Skip localhost
-			result->interfacesQueried.Push(ipList[i],__FILE__,__LINE__);
+			result->interfacesQueried.Push(ipList[i],_FILE_AND_LINE_);
 	}
 
 	if (result->interfacesQueried.Size()==0)
@@ -288,7 +292,7 @@ RAK_THREAD_DECLARATION(QueryUPNPSupportThread)
 		if (upnp.Discovery())
 		{
 			fupnpi->callBack->UPNPStatusUpdate("Found.\n");
-			result->interfacesFound.Push(result->interfacesQueried[i],__FILE__,__LINE__);
+			result->interfacesFound.Push(result->interfacesQueried[i],_FILE_AND_LINE_);
 		}
 		else
 		{
@@ -298,10 +302,19 @@ RAK_THREAD_DECLARATION(QueryUPNPSupportThread)
 
 	fupnpi->upnpPortForwarder->foundInterfaces.Push(result);
 
-	RakNet::OP_DELETE(fupnpi,__FILE__,__LINE__);
+	RakNet::OP_DELETE(fupnpi,_FILE_AND_LINE_);
 
 	return 0;
 }
+
+/*
+// GetAdaptersInfo
+#if defined(_WIN32) && !defined(_XBOX) && !defined(X360)
+#pragma comment(lib, "IPHLPAPI.lib")
+#include <winsock2.h>
+#include <iphlpapi.h>
+#endif
+*/
 
 RAK_THREAD_DECLARATION(OpenPortOnInterfaceThread)
 {
@@ -311,8 +324,49 @@ RAK_THREAD_DECLARATION(OpenPortOnInterfaceThread)
 	char ipList[MAXIMUM_NUMBER_OF_INTERNAL_IDS][16];
 	if (opr->interfaceIp=="ALL")
 	{
+
+		// UPNPNATInternal just broadcasts
+#if defined (USE_WS2_TCP_IP) && defined(_WIN32) && !defined(_XBOX) && !defined(X360)
+		unsigned int ipListIndex=0;
+
+		PIP_ADAPTER_INFO pAdapterInfo;
+		PIP_ADAPTER_INFO pAdapter = NULL;
+
+		ULONG ulOutBufLen = sizeof (IP_ADAPTER_INFO);
+		pAdapterInfo = (IP_ADAPTER_INFO *) rakMalloc_Ex(sizeof (IP_ADAPTER_INFO), _FILE_AND_LINE_);
+		if (pAdapterInfo == NULL) {
+			RAKNET_DEBUG_PRINTF("Error allocating memory needed to call GetAdaptersinfo\n");
+			return 1;
+		}
+		// Make an initial call to GetAdaptersInfo to get
+		// the necessary size into the ulOutBufLen variable
+		if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW) {
+			rakFree_Ex(pAdapterInfo, _FILE_AND_LINE_);
+			pAdapterInfo = (IP_ADAPTER_INFO *) rakMalloc_Ex(ulOutBufLen, _FILE_AND_LINE_);
+			if (pAdapterInfo == NULL) {
+				RAKNET_DEBUG_PRINTF("Error allocating memory needed to call GetAdaptersinfo\n");
+				return 1;
+			}
+		}
+
+		if ((GetAdaptersInfo(pAdapterInfo, &ulOutBufLen)) == NO_ERROR) {
+			pAdapter = pAdapterInfo;
+			while (pAdapter && ipListIndex<16) {
+				strcpy(ipList[ipListIndex], pAdapter->GatewayList.IpAddress.String);
+
+				pAdapter = pAdapter->Next;
+				ipListIndex++;
+			}
+		}
+
+		if (pAdapterInfo)
+			rakFree_Ex(pAdapterInfo, _FILE_AND_LINE_);
+
+		ipList[ipListIndex][0]=0;
+#else
 		unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
 		SocketLayer::GetMyIP(ipList, binaryAddresses);
+#endif
 	}
 	else
 	{
@@ -325,7 +379,7 @@ RAK_THREAD_DECLARATION(OpenPortOnInterfaceThread)
 		if (strcmp(ipList[i],"127.0.0.1")!=0 &&
 			strcmp(ipList[i],"0.0.0.0")!=0
 			)//Skip localhost
-			opr->interfacesQueried.Push(ipList[i],__FILE__,__LINE__);
+			opr->interfacesQueried.Push(ipList[i],_FILE_AND_LINE_);
 	}
 
 	if (opr->interfacesQueried.Size()==0)
@@ -340,16 +394,16 @@ RAK_THREAD_DECLARATION(OpenPortOnInterfaceThread)
 		upnp.Restart(opr->interfacesQueried[i].C_String(), 1000);
 		if (upnp.Discovery())
 		{
-			opr->interfacesFound.Push(opr->interfacesQueried[i],__FILE__,__LINE__);
+			opr->interfacesFound.Push(opr->interfacesQueried[i],_FILE_AND_LINE_);
 			if (upnp.AddPortMapping(opr->mappingName.C_String(),opr->interfacesQueried[i].C_String(),opr->portToOpenOnRouter,opr->internalPort,(char*)(opr->protocol==UDP ? "UDP" : "TCP")))
 			{
 				opr->callBack->UPNPStatusUpdate("Opened.\n");
-				opr->succeeded.Push(true,__FILE__,__LINE__);
+				opr->succeeded.Push(true,_FILE_AND_LINE_);
 			}
 			else
 			{
 				opr->callBack->UPNPStatusUpdate("Not opened.\n");
-				opr->succeeded.Push(false,__FILE__,__LINE__);
+				opr->succeeded.Push(false,_FILE_AND_LINE_);
 			}
 		}
 		else

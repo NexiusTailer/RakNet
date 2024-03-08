@@ -1,12 +1,13 @@
-import gfx.io.GameDelegate;
+import flash.external.*;
+
 
 sendInviteButton.addEventListener("click", this, "Friends_SendInvite");
 function Friends_SendInvite()
 {
-	GameDelegate.call("f2c_Friends_SendInvite", [usernameTextInput.text], this);
+	ExternalInterface.call("f2c_Friends_SendInvite", usernameTextInput.text);
 }
 
-GameDelegate.addCallBack("c2f_Friends_SendInvite", this, "c2f_Friends_SendInvite");
+ExternalInterface.addCallback("c2f_Friends_SendInvite", this, c2f_Friends_SendInvite);
 function c2f_Friends_SendInvite(resultCode:String, userHandle:String):Void
 {
 	if (resultCode=="L2RC_SUCCESS")
@@ -29,10 +30,10 @@ function c2f_Friends_SendInvite(resultCode:String, userHandle:String):Void
 removeButton.addEventListener("click", this, "Friends_Remove");
 function Friends_Remove()
 {
-	GameDelegate.call("f2c_Friends_Remove", [usernameTextInput.text], this);
+	ExternalInterface.call("f2c_Friends_Remove", usernameTextInput.text);
 }
 
-GameDelegate.addCallBack("c2f_Friends_Remove", this, "c2f_Friends_Remove");
+ExternalInterface.addCallback("c2f_Friends_Remove", this, c2f_Friends_Remove);
 function c2f_Friends_Remove(resultCode:String, targetHandle:String):Void
 {
 	if (resultCode=="L2RC_SUCCESS")
@@ -53,10 +54,10 @@ function c2f_Friends_Remove(resultCode:String, targetHandle:String):Void
 acceptInviteButton.addEventListener("click", this, "Friends_AcceptInvite");
 function Friends_AcceptInvite( )
 {
-	GameDelegate.call("f2c_Friends_AcceptInvite", [usernameTextInput.text], this);
+	ExternalInterface.call("f2c_Friends_AcceptInvite", usernameTextInput.text);
 }
 
-GameDelegate.addCallBack("c2f_Friends_AcceptInvite", this, "c2f_Friends_AcceptInvite");
+ExternalInterface.addCallback("c2f_Friends_AcceptInvite", this, c2f_Friends_AcceptInvite);
 function c2f_Friends_AcceptInvite(resultCode:String, userHandle:String, onlineStatusSetToVisible:Boolean, loggedInTitle:String, status:String):Void
 {
 	if (resultCode=="L2RC_SUCCESS")
@@ -77,10 +78,10 @@ function c2f_Friends_AcceptInvite(resultCode:String, userHandle:String, onlineSt
 rejectInviteButton.addEventListener("click", this, "Friends_RejectInvite");
 function Friends_RejectInvite()
 {
-	GameDelegate.call("f2c_Friends_RejectInvite", [usernameTextInput.text], this);
+	ExternalInterface.call("f2c_Friends_RejectInvite", usernameTextInput.text);
 }
 
-GameDelegate.addCallBack("c2f_Friends_RejectInvite", this, "c2f_Friends_RejectInvite");
+ExternalInterface.addCallback("c2f_Friends_RejectInvite", this, c2f_Friends_RejectInvite);
 function c2f_Friends_RejectInvite(resultCode:String, targetHandle:String):Void
 {
 	if (resultCode=="L2RC_SUCCESS")

@@ -34,6 +34,9 @@ namespace RakNet
 	class RAK_DLL_EXPORT UDPProxyCoordinator : public PluginInterface2
 	{
 	public:
+		// GetInstance() and DestroyInstance(instance*)
+		STATIC_FACTORY_DECLARATIONS(UDPProxyCoordinator)
+
 		UDPProxyCoordinator();
 		virtual ~UDPProxyCoordinator();
 
@@ -61,8 +64,8 @@ namespace RakNet
 
 		struct ForwardingRequest
 		{
-			RakNetTimeMS timeoutOnNoDataMS;
-			RakNetTimeMS timeoutAfterSuccess;
+			RakNet::TimeMS timeoutOnNoDataMS;
+			RakNet::TimeMS timeoutAfterSuccess;
 			SenderAndTargetAddress sata;
 			SystemAddress requestingAddress; // Which system originally sent the network message to start forwarding
 			SystemAddress currentlyAttemptedServerAddress;
@@ -70,7 +73,7 @@ namespace RakNet
 			RakNet::BitStream serverSelectionBitstream;
 
 			DataStructures::Multilist<ML_STACK, ServerWithPing, unsigned short> sourceServerPings, targetServerPings;
-			RakNetTime timeRequestedPings;
+			RakNet::TimeMS timeRequestedPings;
 			// Order based on sourceServerPings and targetServerPings
 			void OrderRemainingServersToTry(void);
 		
@@ -85,7 +88,7 @@ namespace RakNet
 		void SendAllBusy(SystemAddress senderClientAddress, SystemAddress targetClientAddress, SystemAddress requestingAddress);
 		void Clear(void);
 
-		void SendForwardingRequest(SystemAddress sourceAddress, SystemAddress targetAddress, SystemAddress serverAddress, RakNetTimeMS timeoutOnNoDataMS);
+		void SendForwardingRequest(SystemAddress sourceAddress, SystemAddress targetAddress, SystemAddress serverAddress, RakNet::TimeMS timeoutOnNoDataMS);
 
 		// Logged in servers
 		DataStructures::Multilist<ML_UNORDERED_LIST, SystemAddress> serverList;

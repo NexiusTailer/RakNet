@@ -4,7 +4,6 @@
 #include "GetTime.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
-#include "RakNetworkFactory.h"
 #include "RakNetTypes.h"
 #include "RakSleep.h"
 #include "FullyConnectedMesh2.h"
@@ -13,32 +12,35 @@
 #include "SocketLayer.h"
 #include "Kbhit.h"
 #include "PacketLogger.h"
+#include "BitStream.h"
 
-RakPeerInterface *rakPeer;
+using namespace RakNet;
+
+RakNet::RakPeerInterface *rakPeer;
 
 int main()
 {
 	FullyConnectedMesh2 fcm2;
 	ConnectionGraph2 cg2;
-	rakPeer=RakNetworkFactory::GetRakPeerInterface();
+	rakPeer=RakNet::RakPeerInterface::GetInstance();
 	rakPeer->AttachPlugin(&fcm2);
 	rakPeer->AttachPlugin(&cg2);
 	fcm2.SetAutoparticipateConnections(true);
-	SocketDescriptor sd;
+	RakNet::SocketDescriptor sd;
 	sd.port=60000;
 	while (SocketLayer::IsPortInUse(sd.port)==true)
 		sd.port++;
-	rakPeer->Startup(8,0,&sd,1);
+	rakPeer->Startup(8,&sd,1);
 	rakPeer->SetMaximumIncomingConnections(8);
-	rakPeer->SetTimeoutTime(1000,UNASSIGNED_SYSTEM_ADDRESS);
-	printf("Our guid is %s\n", rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
+	rakPeer->SetTimeoutTime(1000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+	printf("Our guid is %s\n", rakPeer->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
 
 //	PacketLogger packetLogger;
 //	rakPeer->AttachPlugin(&packetLogger);
 //	packetLogger.SetLogDirectMessages(false);
 
 	bool quit=false;
-	Packet *packet;
+	RakNet::Packet *packet;
 	char ch;
 	while (!quit)
 	{
@@ -74,11 +76,41 @@ int main()
 				break;
 
 			case ID_FCM2_NEW_HOST:
-				if (packet->systemAddress==UNASSIGNED_SYSTEM_ADDRESS)
-					printf("Got new host (ourselves)\n");
+				{
+				if (packet->systemAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
+					printf("Got new host (ourselves)");
 				else
-					printf("Got new host %s\n", packet->systemAddress.ToString(true));
+					printf("Got new host %s, GUID=%s", packet->systemAddress.ToString(true), packet->guid.ToString());
+					RakNet::BitStream bs(packet->data,packet->length,false);
+					bs.IgnoreBytes(1);
+					RakNetGUID oldHost;
+					bs.Read(oldHost);
+					// If the old host is different, then this message was due to losing connection to the host.
+					if (oldHost!=packet->guid)
+						printf(". Oldhost Guid=%s\n", oldHost.ToString());
+					else
+						printf("\n");
+				}
 				break;
+
+// 			case ID_REMOTE_NEW_INCOMING_CONNECTION:
+// 				{
+// 					uint32_t count;
+// 					RakNet::BitStream bsIn(packet->data, packet->length,false);
+// 					bsIn.IgnoreBytes(1);
+// 					bsIn.Read(count);
+// 					SystemAddress sa;
+// 					RakNetGUID guid;
+// 					printf("ID_REMOTE_NEW_INCOMING_CONNECTION from %s\n", packet->systemAddress.ToString(true));
+// 					for (uint32_t i=0; i < count; i++)
+// 					{
+// 						bsIn.Read(sa);
+// 						bsIn.Read(guid);
+// 
+// 						printf("%s ", sa.ToString(true));
+// 					}
+// 					printf("\n");
+// 				}
 			}
 		}
 
@@ -101,11 +133,11 @@ int main()
 		RakSleep(30);
 		for (int i=0; i < 32; i++)
 		{
-			if (rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS,0).port!=60000+i)
+			if (rakPeer->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS,0).port!=60000+i)
 				rakPeer->AdvertiseSystem("255.255.255.255", 60000+i, 0,0,0);
 		}
 	}
 
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 	return 0;
 }

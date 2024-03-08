@@ -1,6 +1,6 @@
 #include "RPC3.h"
 #include "RakPeerInterface.h"
-#include "RakNetworkFactory.h"
+
 #include <stdio.h>
 #include "Kbhit.h"
 #include <string.h>
@@ -12,6 +12,7 @@
 #include "NetworkIDObject.h"
 #include "NetworkIDManager.h"
 #include "GetTime.h"
+#include "Gets.h"
 
 // This has to be a pointer, because it uses UNASSIGNED_NETWORK_ID, initialized globally
 RakNet::RPC3 *rpc3Inst;
@@ -47,7 +48,7 @@ public:
 	B() {b=2;} int b;
 	virtual void ClassMemberFunc(A *a1, A &a2, C *c1, D *d1, RakNet::BitStream *bs1, RakNet::BitStream &bs2, RakNet::RPC3 *rpc3Inst);
 };
-class C : public A, public B, public NetworkIDObject {
+class C : public A, public B, public RakNet::NetworkIDObject {
 public:
 	C() {c=3;} int c;
 	virtual void ClassMemberFunc(A *a1, A &a2, C *c1, D *d1, RakNet::BitStream *bs1, RakNet::BitStream &bs2, RakNet::RPC3 *rpc3Inst);
@@ -55,7 +56,7 @@ public:
 	virtual void TestSlot(void) {printf("C::TestSlot\n");}
 };
 
-class D : public B, public NetworkIDObject {
+class D : public B, public RakNet::NetworkIDObject {
 public:
 	D() {for (int i=0; i < 10; i++) tenBytes[i]=i;}
 	char tenBytes[10];
@@ -153,29 +154,28 @@ int main(void)
 	printf("Difficulty: Intermediate\n\n");
 
 	DataStructures::OrderedList<int,int> ol;
-	ol.Insert(3,3,false,__FILE__,__LINE__);
-	ol.Insert(4,4,false,__FILE__,__LINE__);
-	ol.Insert(5,5,false,__FILE__,__LINE__);
-	ol.Insert(4,4,false,__FILE__,__LINE__);
+	ol.Insert(3,3,false,_FILE_AND_LINE_);
+	ol.Insert(4,4,false,_FILE_AND_LINE_);
+	ol.Insert(5,5,false,_FILE_AND_LINE_);
+	ol.Insert(4,4,false,_FILE_AND_LINE_);
 	bool objectExists;
 	int idx = ol.GetIndexFromKey(4,&objectExists);
 
-	RakPeerInterface *rakPeer;
-	SystemAddress tempAddr = UNASSIGNED_SYSTEM_ADDRESS;
+	RakNet::RakPeerInterface *rakPeer;
+	RakNet::SystemAddress tempAddr = RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 	A a;
 	B b;
 	C c;
 	D d;
 
 	NormalizedVector normalizedVector;
-	RakNetTime stage2=0;
-	NetworkIDManager networkIDManager;
-	networkIDManager.SetIsNetworkIDAuthority(true);
+	RakNet::TimeMS stage2=0;
+	RakNet::NetworkIDManager networkIDManager;
 	rpc3Inst = new RakNet::RPC3;
 	rpc3Inst->SetNetworkIDManager(&networkIDManager);
-	NetworkID idZero, idOne;
-	idZero.localSystemAddress=0;
-	idOne.localSystemAddress=1;
+	RakNet::NetworkID idZero, idOne;
+	idZero=0;
+	idOne=1;
 	rpc3Inst->SetNetworkIDManager(&networkIDManager);
 	c.SetNetworkIDManager(&networkIDManager);
 	d.SetNetworkIDManager(&networkIDManager);
@@ -196,24 +196,24 @@ int main(void)
 	printf("(S)erver or (C)lient?: ");
 	bool isServer;
 	char str[256];
-	gets(str);
+	Gets(str, sizeof(str));
 	if (str[0]=='s' || str[0]=='S')
 		isServer=true;
 	else
 		isServer=false;
 
-	rakPeer = RakNetworkFactory::GetRakPeerInterface();
+	rakPeer = RakNet::RakPeerInterface::GetInstance();
 	if (isServer)
 	{
-		SocketDescriptor socketDescriptor(50000,0);
-		rakPeer->Startup(10, 30, &socketDescriptor, 1);
+		RakNet::SocketDescriptor socketDescriptor(50000,0);
+		rakPeer->Startup(10, &socketDescriptor, 1);
 		rakPeer->SetMaximumIncomingConnections(10);
 		printf("Server started.\n");
 	}
 	else
 	{
-		SocketDescriptor socketDescriptor(0,0);
-		rakPeer->Startup(1, 30, &socketDescriptor, 1);
+		RakNet::SocketDescriptor socketDescriptor(0,0);
+		rakPeer->Startup(1, &socketDescriptor, 1);
 
 		// Send out a LAN broadcast to find other instances on the same computer
 		rakPeer->Ping( "255.255.255.255", 50000, true, 0 );
@@ -222,7 +222,7 @@ int main(void)
 	}
 	rakPeer->AttachPlugin(rpc3Inst);
 
-	Packet *p;
+	RakNet::Packet *p;
 	while (1)
 	{
 		for (p=rakPeer->Receive(); p; rakPeer->DeallocatePacket(p), p=rakPeer->Receive())
@@ -241,7 +241,7 @@ int main(void)
 			case ID_NO_FREE_INCOMING_CONNECTIONS:
 				printf("ID_NO_FREE_INCOMING_CONNECTIONS\n");
 				break;
-			case ID_PONG:
+			case ID_UNCONNECTED_PONG:
 				// Found the server
 				rakPeer->Connect(p->systemAddress.ToString(false),p->systemAddress.port,0,0,0);
 				break;
@@ -261,7 +261,7 @@ int main(void)
 				for (int i=0; i < sizeof(intArray)/sizeof(int); i++)
 					intArray[i]=i;
 				CFunc(rs, intArray,&c,"Test string",&normalizedVector,normalizedVector,0);
-				stage2=RakNet::GetTime()+500;
+				stage2=RakNet::GetTimeMS()+500;
 				break;
 			}				
 			case ID_RPC_REMOTE_ERROR:
@@ -296,7 +296,7 @@ int main(void)
 			}
 		}
 
-		if (stage2 && stage2 < RakNet::GetTime())
+		if (stage2 && stage2 < RakNet::GetTimeMS())
 		{
 			stage2=0;
 
@@ -316,7 +316,7 @@ int main(void)
 	}
 
 	rakPeer->Shutdown(100,0);
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 	delete rpc3Inst;
 
 	return 1;

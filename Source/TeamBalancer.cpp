@@ -17,6 +17,8 @@ enum TeamBalancerOperations
 	ID_REQUEST_SPECIFIC_TEAM
 };
 
+STATIC_FACTORY_DEFINITIONS(TeamBalancer,TeamBalancer);
+
 TeamBalancer::TeamBalancer()
 {
 	hostGuid=UNASSIGNED_RAKNET_GUID;
@@ -57,16 +59,16 @@ void TeamBalancer::SetTeamSizeLimits(const DataStructures::List<unsigned short> 
 	// Just update the internal list. Currently active teams are not affected
 	teamLimits=_teamLimits;
 
-	teamMemberCounts.Clear(true,__FILE__,__LINE__);
+	teamMemberCounts.Clear(true,_FILE_AND_LINE_);
 	if (_teamLimits.Size()>0)
-		teamMemberCounts.Replace(0,0,_teamLimits.Size()-1,__FILE__,__LINE__);
+		teamMemberCounts.Replace(0,0,_teamLimits.Size()-1,_FILE_AND_LINE_);
 }
 void TeamBalancer::SetTeamSizeLimits(unsigned short *values, int valuesLength)
 {
 	RakAssert(valuesLength>0);
-	teamMemberCounts.Clear(true,__FILE__,__LINE__);
+	teamMemberCounts.Clear(true,_FILE_AND_LINE_);
 	for (int i=0; i < valuesLength; i++)
-		teamMemberCounts.Push(values[i],__FILE__,__LINE__);
+		teamMemberCounts.Push(values[i],_FILE_AND_LINE_);
 }
 void TeamBalancer::SetDefaultAssignmentAlgorithm(DefaultAssigmentAlgorithm daa)
 {
@@ -474,9 +476,9 @@ unsigned int TeamBalancer::AddTeamMember(const TeamMember &tm)
 
 	RakAssert(tm.currentTeam!=UNASSIGNED_TEAM_ID);
 
-	teamMembers.Push(tm,__FILE__,__LINE__);
+	teamMembers.Push(tm,_FILE_AND_LINE_);
 	if (teamMemberCounts.Size()<tm.currentTeam)
-		teamMemberCounts.Replace(1,0,tm.currentTeam,__FILE__,__LINE__);
+		teamMemberCounts.Replace(1,0,tm.currentTeam,_FILE_AND_LINE_);
 	else
 		teamMemberCounts[tm.currentTeam]=teamMemberCounts[tm.currentTeam]+1;
 	return teamMembers.Size()-1;
@@ -533,9 +535,9 @@ unsigned int TeamBalancer::GetMemberIndexToSwitchTeams(const DataStructures::Lis
 			if (teamMembers[i].currentTeam==sourceTeamNumbers[j])
 			{
 				if (teamMembers[i].requestedTeam==targetTeamNumber)
-					preferredSwapIndices.Push(i,__FILE__,__LINE__);
+					preferredSwapIndices.Push(i,_FILE_AND_LINE_);
 				else
-					potentialSwapIndices.Push(i,__FILE__,__LINE__);
+					potentialSwapIndices.Push(i,_FILE_AND_LINE_);
 			}
 		}
 	}
@@ -563,11 +565,11 @@ void TeamBalancer::SwitchMemberTeam(unsigned int teamMemberIndex, TeamId destina
 }
 void TeamBalancer::GetOverpopulatedTeams(DataStructures::List<TeamId> &overpopulatedTeams, int maxTeamSize)
 {
-	overpopulatedTeams.Clear(true,__FILE__,__LINE__);
+	overpopulatedTeams.Clear(true,_FILE_AND_LINE_);
 	for (TeamId i=0; i < teamMemberCounts.Size(); i++)
 	{
 		if (teamMemberCounts[i]>=maxTeamSize)
-			overpopulatedTeams.Push(i,__FILE__,__LINE__);
+			overpopulatedTeams.Push(i,_FILE_AND_LINE_);
 	}
 }
 void TeamBalancer::NotifyTeamAssigment(unsigned int teamMemberIndex)
@@ -707,7 +709,7 @@ TeamId TeamBalancer::MoveMemberThatWantsToJoinTeamInternal(TeamId teamId)
 	for (TeamId i=0; i < teamMembers.Size(); i++)
 	{
 		if (teamMembers[i].requestedTeam==teamId)
-			membersThatWantToJoinTheTeam.Push(i,__FILE__,__LINE__);
+			membersThatWantToJoinTheTeam.Push(i,_FILE_AND_LINE_);
 	}
 
 	if (membersThatWantToJoinTheTeam.Size()>0)

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-<title>RakNet: d:/RakNet-3.x/Source/RakNetTypes.h File Reference</title>
+<title>RakNet: d:/temp/RakNet4/Source/RakNetTypes.h File Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -23,37 +23,39 @@
       <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><a class="el" href="dir_604b8536ae4240420803795590a868a7.html">d:</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_29af967a1a71b4feac23d6a82eef1f82.html">RakNet-3.x</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_6493bf94ae2653f49db339b26979caca.html">Source</a>
+  <div class="navpath"><a class="el" href="dir_604b8536ae4240420803795590a868a7.html">d:</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_1285d55ea74ca0518d26c0bad7eeef77.html">temp</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_5a659185e26bc1a39dad4c8f5eba72e1.html">RakNet4</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_66355861432170c4af14b5395280695f.html">Source</a>
   </div>
 </div>
 <div class="contents">
-<h1>RakNetTypes.h File Reference</h1>Types used by <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a>, most of which involve user code.  
+<h1>RakNetTypes.h File Reference</h1>Types used by <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a>, most of which involve user code.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &quot;RakNetDefines.h&quot;</code><br>
 <code>#include &quot;NativeTypes.h&quot;</code><br>
 <code>#include &quot;RakNetTime.h&quot;</code><br>
 <code>#include &quot;Export.h&quot;</code><br>
+<code>#include &quot;SocketIncludes.h&quot;</code><br>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Classes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSocketDescriptor.html">SocketDescriptor</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1PublicKey.html">RakNet::PublicKey</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Describes the local socket to use for <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads and opens the listen port.">RakPeer::Startup</a>.  <a href="structSocketDescriptor.html#_details">More...</a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSystemAddress.html">SystemAddress</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Passed to <a class="el" href="classRakNet_1_1RakPeerInterface.html#451dd5d225277fe5806d3d700551fb76" title="Connect to the specified host (ip or domain name) and server port. Calling Connect...">RakPeerInterface::Connect()</a>.  <a href="structRakNet_1_1PublicKey.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SocketDescriptor.html">RakNet::SocketDescriptor</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Network address for a system.  <a href="structSystemAddress.html#_details">More...</a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRPCParameters.html">RPCParameters</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Describes the local socket to use for <a class="el" href="classRakNet_1_1RakPeer.html#de24b8bf50eb756f54a208c2841f5e0d" title="Starts the network threads and opens the listen port.">RakPeer::Startup</a>.  <a href="structRakNet_1_1SocketDescriptor.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SystemAddress.html">RakNet::SystemAddress</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNetGUID.html">RakNetGUID</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Network address for a system.  <a href="structRakNet_1_1SystemAddress.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNet::RakNetGUID</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structPacket.html">Packet</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Packet.html">RakNet::Packet</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This represents a user message from another system.  <a href="structPacket.html#_details">More...</a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This represents a user message from another system.  <a href="structRakNet_1_1Packet.html#_details">More...</a><br></td></tr>
 <tr><td colspan="2"><br><h2>Namespaces</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">namespace &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html">RakNet</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Forward declaration. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Simple class to send changes between directories. In essence, a simple autopatcher that can be used for transmitting levels, skins, etc. <br></td></tr>
 
 <p>
 <tr><td colspan="2"><br><h2>Defines</h2></td></tr>
@@ -61,67 +63,56 @@
 #define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="RakNetTypes_8h.html#c5eb6b4755b74c50cb76155d08b6e2ff">BITS_TO_BYTES</a>(x)&nbsp;&nbsp;&nbsp;(((x)+7)&gt;&gt;3)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Given a number of bits, return how many bytes are needed to represent that. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f44082518967c6e39aee335dd063830c"></a><!-- doxytag: member="RakNetTypes.h::SystemAddress_Size" ref="f44082518967c6e39aee335dd063830c" args="" -->
-#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="RakNetTypes_8h.html#f44082518967c6e39aee335dd063830c">SystemAddress_Size</a>&nbsp;&nbsp;&nbsp;6</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Size of <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> data. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#ge8725bfeccab05a3422cde0923f176b3">REGISTER_STATIC_RPC</a>(networkObject, functionName)&nbsp;&nbsp;&nbsp;(networkObject)-&gt;RegisterAsRemoteProcedureCall((#functionName),(functionName))</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">RPC Function Implementation  Use RPC3.  <a href="group__RAKNET__RPC.html#ge8725bfeccab05a3422cde0923f176b3"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="gcdb86b76f825bec13557202fff8fbab1"></a><!-- doxytag: member="RakNetTypes.h::CLASS_MEMBER_ID" ref="gcdb86b76f825bec13557202fff8fbab1" args="(className, functionName)" -->
-#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#gcdb86b76f825bec13557202fff8fbab1">CLASS_MEMBER_ID</a>(className, functionName)&nbsp;&nbsp;&nbsp;#className &quot;_&quot; #functionName</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Concatenate two strings. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#g70705f68c378bfaf9d854de1fe55431d">REGISTER_CLASS_MEMBER_RPC</a>(networkObject, className, functionName)&nbsp;&nbsp;&nbsp;{union {void (__cdecl className::*cFunc)( <a class="el" href="structRPCParameters.html">RPCParameters</a> *rpcParms ); void* voidFunc;}; cFunc=&amp;className::functionName; networkObject-&gt;RegisterClassMemberRPC(CLASS_MEMBER_ID(className, functionName),voidFunc);}</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Register a member function of an instantiated object as a Remote procedure call.  <a href="group__RAKNET__RPC.html#g70705f68c378bfaf9d854de1fe55431d"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#gdf209f7aefd451d95a1f322bd80295ed">UNREGISTER_STATIC_RPC</a>(networkObject, functionName)&nbsp;&nbsp;&nbsp;(networkObject)-&gt;UnregisterAsRemoteProcedureCall((#functionName))</td></tr>
-
 <tr><td colspan="2"><br><h2>Typedefs</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="RakNetTypes_8h.html#10193f64787b4075d5f09c92db851a16">UniqueIDType</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#707ca8f7aef0ea1fe295e1028af90c8c">RakNet::UniqueIDType</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="98f2e12048b8213dd193eb909ca14b43"></a><!-- doxytag: member="RakNetTypes.h::MessageID" ref="98f2e12048b8213dd193eb909ca14b43" args="" -->
-typedef unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="RakNetTypes_8h.html#98f2e12048b8213dd193eb909ca14b43">MessageID</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1b2f3bf4bad2bb6a8360a12295fbed0c"></a><!-- doxytag: member="RakNetTypes.h::MessageID" ref="1b2f3bf4bad2bb6a8360a12295fbed0c" args="" -->
+typedef unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#1b2f3bf4bad2bb6a8360a12295fbed0c">RakNet::MessageID</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">First byte of a network message. <br></td></tr>
-<tr><td colspan="2"><br><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="399695277f90b63f7c8254fca22102c0"></a><!-- doxytag: member="RakNetTypes.h::UNASSIGNED_SYSTEM_ADDRESS" ref="399695277f90b63f7c8254fca22102c0" args="(0xFFFFFFFF, 0xFFFF)" -->
-const <a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="RakNetTypes_8h.html#399695277f90b63f7c8254fca22102c0">UNASSIGNED_SYSTEM_ADDRESS</a> (0xFFFFFFFF, 0xFFFF)</td></tr>
+<tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#84a0fb005391f71130dd341f77f62138">RakNet::ConnectionState</a> { <br>
+&nbsp;&nbsp;<a class="el" href="namespaceRakNet.html#84a0fb005391f71130dd341f77f62138079917bd5524de1e8bd050e0308495e0">RakNet::IS_LOOPBACK</a>, 
+<a class="el" href="namespaceRakNet.html#84a0fb005391f71130dd341f77f6213841122f01ef32b9c407cddd0e9182876b">RakNet::IS_PENDING</a>, 
+<a class="el" href="namespaceRakNet.html#84a0fb005391f71130dd341f77f621382b53e3b7cb8ed3e43207fe5ed08893af">RakNet::IS_CONNECTING</a>, 
+<a class="el" href="namespaceRakNet.html#84a0fb005391f71130dd341f77f62138d547bfb144fa5b169991b179fda0d007">RakNet::IS_CONNECTED</a>, 
+<br>
+&nbsp;&nbsp;<a class="el" href="namespaceRakNet.html#84a0fb005391f71130dd341f77f6213852bfe2ab90f28b8ebff543809829f7f0">RakNet::IS_DISCONNECTING</a>, 
+<a class="el" href="namespaceRakNet.html#84a0fb005391f71130dd341f77f62138fe8d758dec1c59c14662ea85b5ff883e">RakNet::IS_SILENTLY_DISCONNECTING</a>, 
+<a class="el" href="namespaceRakNet.html#84a0fb005391f71130dd341f77f6213882261f4327b53e538c68b233d09aa9ea">RakNet::IS_DISCONNECTED</a>, 
+<a class="el" href="namespaceRakNet.html#84a0fb005391f71130dd341f77f62138e10c6ccb6cfa04d2f55306773457456b">RakNet::IS_NOT_CONNECTED</a>
+<br>
+ }</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Index of an invalid <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a>. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returned from RakPeerInterface::GetConnectionState().  <a href="namespaceRakNet.html#84a0fb005391f71130dd341f77f62138">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#415b479158fd361610df230a53b35b02">RakNet::PublicKeyMode</a> { <a class="el" href="namespaceRakNet.html#415b479158fd361610df230a53b35b023f17d85881df517153e6a1b08a4bc165">RakNet::PKM_INSECURE_CONNECTION</a>, 
+<a class="el" href="namespaceRakNet.html#415b479158fd361610df230a53b35b0246fe00b3d7ebc580008d591e9b16d505">RakNet::PKM_ACCEPT_ANY_PUBLIC_KEY</a>, 
+<a class="el" href="namespaceRakNet.html#415b479158fd361610df230a53b35b0262028368b6f6f9ec461c6d982aca2e89">RakNet::PKM_USE_KNOWN_PUBLIC_KEY</a>, 
+<a class="el" href="namespaceRakNet.html#415b479158fd361610df230a53b35b02dd05a6daf150749ca2def6a48a4dd968">RakNet::PKM_USE_TWO_WAY_AUTHENTICATION</a>
+ }</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Used with the PublicKey structure.  <a href="namespaceRakNet.html#415b479158fd361610df230a53b35b02">More...</a><br></td></tr>
+<tr><td colspan="2"><br><h2>Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="59a6bc5e96781717452fe5b10844d6a9"></a><!-- doxytag: member="RakNetTypes.h::UNASSIGNED_SYSTEM_ADDRESS" ref="59a6bc5e96781717452fe5b10844d6a9" args="(0xFFFFFFFF, 0xFFFF)" -->
+const SystemAddress&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#59a6bc5e96781717452fe5b10844d6a9">RakNet::UNASSIGNED_SYSTEM_ADDRESS</a> (0xFFFFFFFF, 0xFFFF)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Index of an invalid <a class="el" href="structRakNet_1_1SystemAddress.html" title="Network address for a system.">SystemAddress</a>. <br></td></tr>
 <tr><td colspan="2"><br><h2>Variables</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="88789704d3e9955d326f499fbff08b9c"></a><!-- doxytag: member="RakNetTypes.h::UNASSIGNED_PLAYER_INDEX" ref="88789704d3e9955d326f499fbff08b9c" args="" -->
-const SystemIndex&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="RakNetTypes_8h.html#88789704d3e9955d326f499fbff08b9c">UNASSIGNED_PLAYER_INDEX</a> = 65535</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="763ec1cdea3634fd4364f003419ec7af"></a><!-- doxytag: member="RakNetTypes.h::UNASSIGNED_PLAYER_INDEX" ref="763ec1cdea3634fd4364f003419ec7af" args="" -->
+const SystemIndex&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#763ec1cdea3634fd4364f003419ec7af">RakNet::UNASSIGNED_PLAYER_INDEX</a> = 65535</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Index of an unassigned player. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5baac42a30fed5c6c877564259bc19c6"></a><!-- doxytag: member="RakNetTypes.h::UNASSIGNED_NETWORK_ID" ref="5baac42a30fed5c6c877564259bc19c6" args="" -->
-const NetworkID&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="RakNetTypes_8h.html#5baac42a30fed5c6c877564259bc19c6">UNASSIGNED_NETWORK_ID</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3fd38ad7440c9f89899a9f54335d5f24"></a><!-- doxytag: member="RakNetTypes.h::UNASSIGNED_NETWORK_ID" ref="3fd38ad7440c9f89899a9f54335d5f24" args="" -->
+const NetworkID&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#3fd38ad7440c9f89899a9f54335d5f24">RakNet::UNASSIGNED_NETWORK_ID</a> = (uint64_t) -1</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Unassigned object ID. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Types used by <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a>, most of which involve user code. 
+Types used by <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a>, most of which involve user code. 
 <p>
-This file is part of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> Copyright 2003 Jenkins Software LLC<p>
-Usage of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> is subject to the appropriate license agreement. <hr><h2>Typedef Documentation</h2>
-<a class="anchor" name="10193f64787b4075d5f09c92db851a16"></a><!-- doxytag: member="RakNetTypes.h::UniqueIDType" ref="10193f64787b4075d5f09c92db851a16" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef unsigned char <a class="el" href="RakNetTypes_8h.html#10193f64787b4075d5f09c92db851a16">UniqueIDType</a>          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="NetworkIDObject_8h.html" title="A class you can derive from to make it easier to represent every networked object...">NetworkIDObject.h</a> </dd></dl>
-
-</div>
-</div><p>
-</div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 22 08:28:34 2011 for RakNet by&nbsp;
+This file is part of <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> Copyright 2003 Jenkins Software LLC<p>
+Usage of <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> is subject to the appropriate license agreement. </div>
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:27 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

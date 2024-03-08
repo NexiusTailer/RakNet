@@ -7,11 +7,18 @@
 #include <stdio.h>
 #include "stdarg.h"
 
-class SimpleMutex;
+
+#ifdef _WIN32
+#if defined(_XBOX) || defined(X360)
+                            
+#endif
+#include "WindowsIncludes.h"
+#endif
 
 namespace RakNet
 {
-
+/// Forward declarations
+class SimpleMutex;
 class BitStream;
 
 /// \brief String class
@@ -60,6 +67,12 @@ public:
 	/// Character index. Do not use to change the string however.
 	unsigned char operator[] ( const unsigned int position ) const;
 
+#ifdef _WIN32
+	// Return as Wide char
+	// Deallocate with DeallocWideChar
+	WCHAR * ToWideChar(void);
+	void DeallocWideChar(WCHAR * w);
+#endif
 	
 	///String class find replacement
 	///Searches the string for the content specified in stringToFind and returns the position of the first occurrence in the string.
@@ -263,10 +276,6 @@ public:
 	/// \internal
 	/// List of free objects to reduce memory reallocations
 	static DataStructures::List<SharedString*> freeList;
-
-	/// Means undefined position
-	static unsigned int nPos;
-
 
 	static int RakStringComp( RakString const &key, RakString const &data );
 

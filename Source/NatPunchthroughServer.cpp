@@ -10,6 +10,8 @@
 #include "GetTime.h"
 #include "PacketLogger.h"
 
+using namespace RakNet;
+
 void NatPunchthroughServerDebugInterface_Printf::OnServerMessage(const char *msg)
 {
 	printf("%s\n", msg);
@@ -29,7 +31,7 @@ void NatPunchthroughServer::User::DeleteConnectionAttempt(NatPunchthroughServer:
 	unsigned int index = connectionAttempts.GetIndexOf(ca);
 	if ((unsigned int)index!=(unsigned int)-1)
 	{
-		RakNet::OP_DELETE(ca,__FILE__,__LINE__);
+		RakNet::OP_DELETE(ca,_FILE_AND_LINE_);
 		connectionAttempts.RemoveAtIndex(index);
 	}
 }
@@ -91,7 +93,7 @@ void NatPunchthroughServer::User::LogConnectionAttempts(RakNet::RakString &rs)
 	}
 }
 
-int NatPunchthroughServer::NatPunchthroughUserComp( const RakNetGUID &key, User * const &data )
+int RakNet::NatPunchthroughServer::NatPunchthroughUserComp( const RakNetGUID &key, User * const &data )
 {
 	if (key < data->guid)
 		return -1;
@@ -99,6 +101,8 @@ int NatPunchthroughServer::NatPunchthroughUserComp( const RakNetGUID &key, User 
 		return 1;
 	return 0;
 }
+
+STATIC_FACTORY_DEFINITIONS(NatPunchthroughServer,NatPunchthroughServer);
 
 NatPunchthroughServer::NatPunchthroughServer()
 {
@@ -123,7 +127,7 @@ NatPunchthroughServer::~NatPunchthroughServer()
 				otherUser=connectionAttempt->sender;
 			otherUser->DeleteConnectionAttempt(connectionAttempt);
 		}
-		RakNet::OP_DELETE(user,__FILE__,__LINE__);
+		RakNet::OP_DELETE(user,_FILE_AND_LINE_);
 		users[0]=users[users.Size()-1];
 		users.RemoveAtIndex(users.Size()-1);
 	}
@@ -137,7 +141,7 @@ void NatPunchthroughServer::Update(void)
 	ConnectionAttempt *connectionAttempt;
 	User *user, *recipient;
 	unsigned int i,j;
-	RakNetTime time = RakNet::GetTime();
+	RakNet::Time time = RakNet::GetTime();
 	if (time > lastUpdate+250)
 	{
 		lastUpdate=time;
@@ -261,13 +265,13 @@ void NatPunchthroughServer::OnClosedConnection(SystemAddress systemAddress, RakN
 			if (connectionAttempt->attemptPhase==ConnectionAttempt::NAT_ATTEMPT_PHASE_GETTING_RECENT_PORTS)
 			{
 				otherUser->isReady=true;
-				freedUpInProgressUsers.Insert(otherUser, __FILE__, __LINE__ );
+				freedUpInProgressUsers.Insert(otherUser, _FILE_AND_LINE_ );
 			}
 
 			otherUser->DeleteConnectionAttempt(connectionAttempt);
 		}
 
-		RakNet::OP_DELETE(users[i], __FILE__, __LINE__);
+		RakNet::OP_DELETE(users[i], _FILE_AND_LINE_);
 		users.RemoveAtIndex(i);
 
 		for (i=0; i < freedUpInProgressUsers.Size(); i++)
@@ -282,12 +286,12 @@ void NatPunchthroughServer::OnNewConnection(SystemAddress systemAddress, RakNetG
 	(void) systemAddress;
 	(void) isIncoming;
 
-	User *user = RakNet::OP_NEW<User>(__FILE__,__LINE__);
+	User *user = RakNet::OP_NEW<User>(_FILE_AND_LINE_);
 	user->guid=rakNetGUID;
 	user->mostRecentPort=0;
 	user->systemAddress=systemAddress;
 	user->isReady=true;
-	users.Insert(rakNetGUID, user, true, __FILE__,__LINE__);
+	users.Insert(rakNetGUID, user, true, _FILE_AND_LINE_);
 }
 void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
 {
@@ -302,7 +306,7 @@ void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
 	i = users.GetIndexFromKey(senderGuid, &objectExists);
 	RakAssert(objectExists);
 
-	ConnectionAttempt *ca = RakNet::OP_NEW<ConnectionAttempt>(__FILE__,__LINE__);
+	ConnectionAttempt *ca = RakNet::OP_NEW<ConnectionAttempt>(_FILE_AND_LINE_);
 	ca->sender=users[i];
 	ca->sessionId=sessionId++;
 	i = users.GetIndexFromKey(recipientGuid, &objectExists);
@@ -311,7 +315,7 @@ void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
 		outgoingBs.Write((MessageID)ID_NAT_TARGET_NOT_CONNECTED);
 		outgoingBs.Write(recipientGuid);
 		rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
-		RakNet::OP_DELETE(ca,__FILE__,__LINE__);
+		RakNet::OP_DELETE(ca,_FILE_AND_LINE_);
 		return;
 	}
 	ca->recipient=users[i];
@@ -320,12 +324,12 @@ void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
 		outgoingBs.Write((MessageID)ID_NAT_ALREADY_IN_PROGRESS);
 		outgoingBs.Write(recipientGuid);
 		rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
-		RakNet::OP_DELETE(ca,__FILE__,__LINE__);
+		RakNet::OP_DELETE(ca,_FILE_AND_LINE_);
 		return;
 	}
 
-	ca->sender->connectionAttempts.Insert(ca, __FILE__, __LINE__ );
-	ca->recipient->connectionAttempts.Insert(ca, __FILE__, __LINE__ );
+	ca->sender->connectionAttempts.Insert(ca, _FILE_AND_LINE_ );
+	ca->recipient->connectionAttempts.Insert(ca, _FILE_AND_LINE_ );
 
 	StartPunchthroughForUser(ca->sender);
 }
@@ -370,7 +374,7 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 	{
 		user=users[i];
 		user->mostRecentPort=mostRecentPort;
-		RakNetTime time = RakNet::GetTime();
+		RakNet::Time time = RakNet::GetTime();
 
 		for (j=0; j < user->connectionAttempts.Size(); j++)
 		{
@@ -391,7 +395,7 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 				// Pick a time far enough in the future that both systems will have gotten the message
 				int targetPing = rakPeerInterface->GetAveragePing(recipientTargetAddress);
 				int senderPing = rakPeerInterface->GetAveragePing(senderSystemAddress);
-				RakNetTime simultaneousAttemptTime;
+				RakNet::Time simultaneousAttemptTime;
 				if (targetPing==-1 || senderPing==-1)
 					simultaneousAttemptTime = time + 1500;
 				else
@@ -402,7 +406,6 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 					else
 						simultaneousAttemptTime = time + (largerPing * 4);
 				}
-
 
 				if (natPunchthroughServerDebugInterface)
 				{

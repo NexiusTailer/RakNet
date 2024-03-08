@@ -1,4 +1,4 @@
-﻿import gfx.io.GameDelegate;
+﻿import flash.external.*;
 
 updateButton.addEventListener("click", this, "UpdateRoomsList");
 function UpdateRoomsList()
@@ -7,10 +7,10 @@ function UpdateRoomsList()
 	
 	lobbyRoomsScrollingList.dataProvider=[];
 	
-	GameDelegate.call("f2c_UpdateRoomsList", [isNetUpdate], this);
+	ExternalInterface.call("f2c_UpdateRoomsList", isNetUpdate);
 	
 	// If the platform requires friends in the scaleform UI, this will update it.
-	GameDelegate.call("f2c_QueryPlatform", [], this, "c2f_QueryPlatform_Lobby_Callback");
+	ExternalInterface.call("f2c_QueryPlatform","c2f_QueryPlatform_Lobby_Callback");
 }
 
 netRadioButton.addEventListener("click", this, "UpdateRoomsList");
@@ -20,14 +20,14 @@ function JoinRoom()
 {
 	// 0th element is the unique room id, used as a search flag for when joining a room
 	// How do I tell if lobbyRoomsScrollingList has a selection active?
-	GameDelegate.call("f2c_JoinByFilter", [
+	ExternalInterface.call("f2c_JoinByFilter", 
 		Boolean(lobbyRoomsScrollingList.dataProvider[lobbyRoomsScrollingList.selectedIndex][0]), // isFromNetwork
 		Number(lobbyRoomsScrollingList.dataProvider[lobbyRoomsScrollingList.selectedIndex][1]), // guid
 		String(lobbyRoomsScrollingList.dataProvider[lobbyRoomsScrollingList.selectedIndex][2]) // IP address
-	], this);
+	);
 }
 
-GameDelegate.addCallBack("c2f_JoinByFilter", this, "c2f_JoinByFilter");
+ExternalInterface.addCallback("c2f_JoinByFilter", this, c2f_JoinByFilter);
 function c2f_JoinByFilter( resultCode:String ):Void
 {
 	if (resultCode=="REC_SUCCESS")
@@ -64,7 +64,7 @@ function ManageFriends()
 logoffButton.addEventListener("click", this, "Logoff");
 function Logoff()
 {
-	GameDelegate.call("f2c_Logoff", [], this);
+	ExternalInterface.call("f2c_Logoff");
 }
 
 chatTextInput.addEventListener("textChange", this, "UpdateSendButton");
@@ -82,11 +82,11 @@ function Chat_Func()
 {
 	if (chatTextInput.text.length>0 && chatRecipient.text.length>0)
 	{
-		GameDelegate.call("f2c_Directed_Chat_Func", [chatRecipient.text, chatTextInput.text], this);
+		ExternalInterface.call("f2c_Directed_Chat_Func", chatRecipient.text, chatTextInput.text);
 	}
 }
 
-GameDelegate.addCallBack("c2f_Chat_Callback", this, "c2f_Chat_Callback");
+ExternalInterface.addCallback("c2f_Chat_Callback", this, c2f_Chat_Callback);
 function c2f_Chat_Callback(resultCode:String, chatRecipient:String, chatTextInput:String):Void
 {
 	if (resultCode=="REC_SUCCESS")
@@ -107,13 +107,13 @@ function c2f_Chat_Callback(resultCode:String, chatRecipient:String, chatTextInpu
 	}
 }
 
-GameDelegate.addCallBack("c2f_Chat_Notification", this, "c2f_Chat_Notification");
+ExternalInterface.addCallback("c2f_Chat_Notification", this, c2f_Chat_Notification);
 function c2f_Chat_Notification(sender:String, chatRecipient:String, chatTextInput:String, profanityFilteredTextInput:String ):Void
 {
 	chatTextArea.text+=sender + " << " + chatTextInput + "\n";
 }
 
-GameDelegate.addCallBack("c2f_Client_Logoff", this, "c2f_Client_Logoff");
+ExternalInterface.addCallback("c2f_Client_Logoff", this, c2f_Client_Logoff);
 function c2f_Client_Logoff(resultCode:String):Void
 {
 	gotoAndStop("Main");
@@ -122,7 +122,7 @@ function c2f_Client_Logoff(resultCode:String):Void
 function UpdateFriendsList()
 {
 	lobbyFriendsScrollingList.dataProvider=[];
-	GameDelegate.call("f2c_UpdateFriendsList", [], this);
+	ExternalInterface.call("f2c_UpdateFriendsList");
 }
 
 function c2f_QueryPlatform_Lobby_Callback(platform:String):Void
@@ -151,7 +151,7 @@ function c2f_QueryPlatform_Lobby_Callback(platform:String):Void
 		lanRadioButton.visible=false;
 	}
 }
-GameDelegate.addCallBack("c2f_AddSingleRoom", this, "c2f_AddSingleRoom");
+ExternalInterface.addCallback("c2f_AddSingleRoom", this, c2f_AddSingleRoom);
 function c2f_AddSingleRoom():Void
 {
 	var roomIsFromServer = arguments[0];
@@ -167,7 +167,7 @@ function c2f_AddSingleRoom():Void
 	
 }
 
-GameDelegate.addCallBack("c2f_SearchByFilter_Callback", this, "c2f_SearchByFilter_Callback");
+ExternalInterface.addCallback("c2f_SearchByFilter_Callback", this, c2f_SearchByFilter_Callback);
 function c2f_SearchByFilter_Callback():Void
 {
 	// push statements below do not work unless I clear the list first. I don't know why though.
@@ -201,7 +201,7 @@ function c2f_SearchByFilter_Callback():Void
 	}	
 }
 
-GameDelegate.addCallBack("c2f_Friends_GetInvites", this, "c2f_Friends_GetInvites");
+ExternalInterface.addCallback("c2f_Friends_GetInvites", this, c2f_Friends_GetInvites);
 function c2f_Friends_GetInvites():Void
 {
 	var resultCode:String = arguments[0];
@@ -246,7 +246,7 @@ function c2f_Friends_GetInvites():Void
 	}
 }
 
-GameDelegate.addCallBack("c2f_Friends_GetFriends", this, "c2f_Friends_GetFriends");
+ExternalInterface.addCallback("c2f_Friends_GetFriends", this, c2f_Friends_GetFriends);
 function c2f_Friends_GetFriends():Void
 {	
 	var resultCode:String = arguments[0];
@@ -275,17 +275,17 @@ function c2f_Friends_GetFriends():Void
 	}
 }
 
-GameDelegate.addCallBack("c2f_Notification_Friends_PresenceUpdate", this, "c2f_Notification_Friends_PresenceUpdate");
+ExternalInterface.addCallback("c2f_Notification_Friends_PresenceUpdate", this, c2f_Notification_Friends_PresenceUpdate);
 function c2f_Notification_Friends_PresenceUpdate(otherHandle:String, onlineStatusSetToVisible:Boolean, loggedInTitle:String, status:String):Void
 {
 	trace("c2f_Notification_Friends_PresenceUpdate, " + otherHandle + ", " + onlineStatusSetToVisible + ", " + loggedInTitle + ", " + status);
 	
 	// Update the friends list if the platform requires it
-	GameDelegate.call("f2c_QueryPlatform", [], this, "c2f_QueryPlatform_Lobby_Callback");
+	ExternalInterface.call("f2c_QueryPlatform","c2f_QueryPlatform_Lobby_Callback");
 }
 
 // LAN connection attempt failed
-GameDelegate.addCallBack("c2f_NotifyFailedConnectionAttempt", this, "c2f_NotifyFailedConnectionAttempt");
+ExternalInterface.addCallback("c2f_NotifyFailedConnectionAttempt", this, c2f_NotifyFailedConnectionAttempt);
 function c2f_NotifyFailedConnectionAttempt(resultCode:String, systemAddress:String):Void
 {
 	// Result codes are:
@@ -299,7 +299,7 @@ function c2f_NotifyFailedConnectionAttempt(resultCode:String, systemAddress:Stri
 	gotoAndStop("Main");
 }
 
-GameDelegate.addCallBack("c2f_NotifyNewConnection", this, "c2f_NotifyNewConnection");
+ExternalInterface.addCallback("c2f_NotifyNewConnection", this, c2f_NotifyNewConnection);
 function c2f_NotifyNewConnection(systemAddress:String, rakNetGuid:String, isIncoming:Boolean):Void
 {
 	trace("c2f_NotifyNewConnection, " + systemAddress + ", " + rakNetGuid + ", " + isIncoming);
@@ -308,7 +308,7 @@ function c2f_NotifyNewConnection(systemAddress:String, rakNetGuid:String, isInco
 }
 
 
-GameDelegate.addCallBack("c2f_Notification_Friends_StatusChange", this, "c2f_Notification_Friends_StatusChange");
+ExternalInterface.addCallback("c2f_Notification_Friends_StatusChange", this, c2f_Notification_Friends_StatusChange);
 function c2f_Notification_Friends_StatusChange(operation:String, otherHandle:String, onlineStatusSetToVisible:Boolean, loggedInTitle:String, status:String):Void
 {
 	// operation can be:
@@ -323,15 +323,15 @@ function c2f_Notification_Friends_StatusChange(operation:String, otherHandle:Str
 	trace("c2f_Notification_Friends_StatusChange, " + operation + ", " + otherHandle + ", " + onlineStatusSetToVisible + ", " + loggedInTitle + ", " + status);
 	
 	// If the platform requires friends in the scaleform UI, this will update it.
-	GameDelegate.call("f2c_QueryPlatform", [], this, "c2f_QueryPlatform_Lobby_Callback");
+	ExternalInterface.call("f2c_QueryPlatform","c2f_QueryPlatform_Lobby_Callback");
 }
 
-GameDelegate.addCallBack("c2f_RoomInvitationSent_Callback", this, "c2f_RoomInvitationSent_Callback")
+ExternalInterface.addCallback("c2f_RoomInvitationSent_Callback", this, c2f_RoomInvitationSent_Callback)
 function c2f_RoomInvitationSent_Callback( invitorName:String, inviteToSpectatorSlot:Boolean ):Void
 {
 	trace("You got a room invitation from " + invitorName);
 }
-GameDelegate.addCallBack("c2f_RoomInvitationWithdrawn_Callback", this, "c2f_RoomInvitationWithdrawn_Callback")
+ExternalInterface.addCallback("c2f_RoomInvitationWithdrawn_Callback", this, c2f_RoomInvitationWithdrawn_Callback)
 function c2f_RoomInvitationWithdrawn_Callback( invitorName:String, invitorAddress:String ):Void
 {
 	trace("Your room invitation was withdrawn from " + invitorName);

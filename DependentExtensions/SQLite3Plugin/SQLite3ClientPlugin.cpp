@@ -54,17 +54,17 @@ SQLite3ClientPlugin::~SQLite3ClientPlugin()
 }
 void SQLite3ClientPlugin::AddResultHandler(SQLite3PluginResultInterface *res)
 {
-	resultHandlers.Push(res,__FILE__,__LINE__);
+	resultHandlers.Push(res,_FILE_AND_LINE_);
 }
 void SQLite3ClientPlugin::RemoveResultHandler(SQLite3PluginResultInterface *res)
 {
 	DataStructures::DefaultIndexType idx = resultHandlers.GetIndexOf(res);
 	if (idx!=-1)
-		resultHandlers.RemoveAtIndex(idx,__FILE__,__LINE__);
+		resultHandlers.RemoveAtIndex(idx,_FILE_AND_LINE_);
 }
 void SQLite3ClientPlugin::ClearResultHandlers(void)
 {
-	resultHandlers.Clear(true,__FILE__,__LINE__);
+	resultHandlers.Clear(true,_FILE_AND_LINE_);
 }
 unsigned int SQLite3ClientPlugin::_sqlite3_exec(RakNet::RakString dbIdentifier, RakNet::RakString inputStatement,
 										  PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress)

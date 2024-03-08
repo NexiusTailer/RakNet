@@ -1,8 +1,10 @@
 #pragma once
 
+
 #include "RakNetTime.h"
 #include "GetTime.h"
 
+using namespace RakNet;
 class RakTimer
 {
 public:
@@ -17,5 +19,5 @@ public:
 private:
 	int timerLength;//Modified by SetTimerLength
 	int pauseOffset;
-	RakNetTime startTime;
+	TimeMS startTime;
 };
