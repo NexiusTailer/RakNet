@@ -6,13 +6,11 @@ RakTimer::RakTimer(void)
 	Start();
 }
 
-
 RakTimer::RakTimer(int lengthInMilliseconds)
 {
 	timerLength=lengthInMilliseconds;
 	Start();
 }
-
 
 RakTimer::~RakTimer(void)
 {
@@ -26,11 +24,10 @@ RakTimer::~RakTimer(void)
 	{
 		startTime=RakNet::GetTime();
 
-
 	}
     void RakTimer::Pause()
 	{
-	pauseOffset=RakNet::GetTime()-startTime;
+	pauseOffset=(int)(RakNet::GetTime()-startTime);
 	}
 	void RakTimer::Resume()
 	{
@@ -39,7 +36,6 @@ RakTimer::~RakTimer(void)
 
 	bool RakTimer::IsExpired()
 	{
-
 
 	return (RakNet::GetTime()-startTime>timerLength);
 	

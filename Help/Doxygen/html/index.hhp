@@ -116,6 +116,7 @@ ReplicaManager3_8h.html
 Rijndael_8h.html
 Router_8h.html
 Router2_8h.html
+RPC4Plugin_8h.html
 RPCMap_8h.html
 RPCNode_8h.html
 SimpleMutex_8h.html
@@ -154,6 +155,7 @@ group__REPLICA__MANAGER__2__GROUP.html
 group__REPLICA__MANAGER__GROUP3.html
 group__ROUTER__GROUP.html
 group__ROUTER__2__GROUP.html
+group__RPC__PLUGIN__GROUP.html
 group__RAKNET__RPC.html
 group__TEAM__BALANCER__GROUP.html
 group__UDP__PROXY__GROUP.html
@@ -316,8 +318,6 @@ classPacketOutputWindowLogger.html
 classPacketOutputWindowLogger-members.html
 classPluginInterface2.html
 classPluginInterface2-members.html
-structRakNetBandwidth.html
-structRakNetBandwidth-members.html
 classRakNetCommandParser.html
 classRakNetCommandParser-members.html
 structRakNetGUID.html
@@ -462,6 +462,8 @@ classRakNet_1_1Replica3.html
 classRakNet_1_1Replica3-members.html
 classRakNet_1_1Router2.html
 classRakNet_1_1Router2-members.html
+classRakNet_1_1RPC4Plugin.html
+classRakNet_1_1RPC4Plugin-members.html
 classRakNet_1_1StringTable.html
 classRakNet_1_1StringTable-members.html
 classRakNet_1_1TeamBalancer.html
@@ -478,6 +480,10 @@ structRakNet_1_1UDPProxyServerResultHandler.html
 structRakNet_1_1UDPProxyServerResultHandler-members.html
 classRakNet_1_1UDPProxyServer.html
 classRakNet_1_1UDPProxyServer-members.html
+classRakNet_1_1VariableDeltaSerializer.html
+classRakNet_1_1VariableDeltaSerializer-members.html
+classRakNet_1_1VariableListDeltaTracker.html
+classRakNet_1_1VariableListDeltaTracker-members.html
 classRakNet_1_1Lobby2Client.html
 classRakNet_1_1Lobby2Client-members.html
 structRakNet_1_1Lobby2Message.html

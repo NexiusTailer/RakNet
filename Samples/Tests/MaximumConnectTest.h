@@ -1,7 +1,6 @@
 #pragma once
 #include "TestInterface.h"
 
-
 #include "RakString.h"
 #include "RakNetworkFactory.h"
 #include "RakPeerInterface.h"
@@ -12,8 +11,6 @@
 #include "RakNetTime.h"
 #include "GetTime.h"
 #include "DebugTools.h"
-
-
 
 class MaximumConnectTest : public TestInterface
 {

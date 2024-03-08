@@ -14,7 +14,6 @@ void DebugTools::ShowError(RakNet::RakString errorString,bool pause, unsigned in
 	char pauseChar;
 	fflush(stdin);
 
-
 	printf("%s\nFile:%s \nLine: %i\n",errorString.C_String(),fileName,lineNum);
 
 	if (pause)

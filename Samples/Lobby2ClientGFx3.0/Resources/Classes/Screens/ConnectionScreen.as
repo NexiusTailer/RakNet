@@ -14,6 +14,9 @@ class Screens.ConnectionScreen extends Screen
 	
 	private var tfConnectionFailed:TextField;
 	
+	private var tfAddress:TextField;
+	private var tfPort:TextField;
+	
 	public function ConnectionScreen() 
 	{
 		ConsoleWindow.Trace("Constructing ConnectionScreen");							
@@ -46,7 +49,8 @@ class Screens.ConnectionScreen extends Screen
 		new Tween( mcProgressBar.mcBar, "_xscale", None.easeNone, 0, 100, 6, true );	
 		//mcProgress.setProgress( 2, 6 );
 		ConsoleWindow.Trace("connecting to server");
-		GameDelegate.call("f2c_Connect", ["127.0.0.1", "10000"], _root);
+		//GameDelegate.call("f2c_Connect", ["127.0.0.1", "60481"], _root);
+		GameDelegate.call("f2c_Connect", [tfAddress.text, tfPort.text], _root);
 		
 		if ( LobbyInterface.Instance.IsInFlashMode() )
 		{

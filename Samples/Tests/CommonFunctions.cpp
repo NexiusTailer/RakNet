@@ -8,9 +8,8 @@ CommonFunctions::~CommonFunctions(void)
 {
 }
 
-bool CommonFunctions::WaitAndConnect(RakPeerInterface *peer,char* ip,short int port,int millisecondsToWait)
+bool CommonFunctions::WaitAndConnect(RakPeerInterface *peer,char* ip,unsigned short int port,int millisecondsToWait)
 {
-
 
 	SystemAddress connectToAddress;
 
@@ -20,7 +19,6 @@ bool CommonFunctions::WaitAndConnect(RakPeerInterface *peer,char* ip,short int p
 
 	while(!peer->IsConnected (connectToAddress,false,false)&&RakNet::GetTime()-entryTime<millisecondsToWait)
 	{
-
 
 		if(!peer->IsConnected (connectToAddress,true,true))
 		{
@@ -39,13 +37,12 @@ bool CommonFunctions::WaitAndConnect(RakPeerInterface *peer,char* ip,short int p
 	return 0;
 }
 
-void CommonFunctions::DisconnectAndWait(RakPeerInterface *peer,char* ip,short int port)
+void CommonFunctions::DisconnectAndWait(RakPeerInterface *peer,char* ip,unsigned short int port)
 {
 	SystemAddress targetAddress;
 
 	targetAddress.SetBinaryAddress(ip);
 	targetAddress.port=port;
-
 
 	while(peer->IsConnected (targetAddress,true,true))//disconnect client
 	{
@@ -54,7 +51,6 @@ void CommonFunctions::DisconnectAndWait(RakPeerInterface *peer,char* ip,short in
 	}
 
 }
-
 
 bool CommonFunctions::WaitForMessageWithID(RakPeerInterface *reciever,int id,int millisecondsToWait)
 {
@@ -77,7 +73,6 @@ bool CommonFunctions::WaitForMessageWithID(RakPeerInterface *reciever,int id,int
 		}
 
 	}
-
 
 	return false;
 }
@@ -102,7 +97,6 @@ Packet *CommonFunctions::WaitAndReturnMessageWithID(RakPeerInterface *reciever,i
 		}
 
 	}
-
 
 	return 0;
 }

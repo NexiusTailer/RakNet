@@ -51,7 +51,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">BitSize_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#bcc7d50f16310d422dcdb3eaee55c7db">Receive</a> (unsigned char **data)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#6c849140cb402532c48edf42422a98e5">Send</a> (char *data, BitSize_t numberOfBitsToSend, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, CCTimeType currentTime)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#443507154f9a5f99353a32a45ccc9e9d">Send</a> (char *data, BitSize_t numberOfBitsToSend, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, CCTimeType currentTime, uint32_t receipt)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#5ff2c02e480013e16ea5c23d3c438574">Update</a> (SOCKET s, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, int MTUSize, CCTimeType time, unsigned bitsPerSecondLimit, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classPluginInterface2.html">PluginInterface2</a> * &gt; &amp;messageHandlerList, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3)</td></tr>
 
@@ -299,7 +299,7 @@ This allocates bytes and writes a user-level message to those bytes. <dl compact
 
 </div>
 </div><p>
-<a class="anchor" name="6c849140cb402532c48edf42422a98e5"></a><!-- doxytag: member="ReliabilityLayer::Send" ref="6c849140cb402532c48edf42422a98e5" args="(char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, CCTimeType currentTime)" -->
+<a class="anchor" name="443507154f9a5f99353a32a45ccc9e9d"></a><!-- doxytag: member="ReliabilityLayer::Send" ref="443507154f9a5f99353a32a45ccc9e9d" args="(char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, CCTimeType currentTime, uint32_t receipt)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -349,7 +349,13 @@ This allocates bytes and writes a user-level message to those bytes. <dl compact
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">CCTimeType&nbsp;</td>
-          <td class="paramname"> <em>currentTime</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>currentTime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&nbsp;</td>
+          <td class="paramname"> <em>receipt</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -371,6 +377,7 @@ Puts data on the send queue <dl compact><dt><b>Parameters:</b></dt><dd>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>makeDataCopy</em>&nbsp;</td><td>If true <em>data</em> will be copied. Otherwise, only a pointer will be stored. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>MTUSize</em>&nbsp;</td><td>maximum datagram size </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>currentTime</em>&nbsp;</td><td>Current time, as per <a class="el" href="namespaceRakNet.html#aa2d77435e0bf2c56c77f6f41739d4b4" title="Returns the value from QueryPerformanceCounter. This is the function RakNet uses...">RakNet::GetTime()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>receipt</em>&nbsp;</td><td>This number will be returned back with ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS and is only returned with the reliability types that contain RECEIPT in the name </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True or false for success or failure. </dd></dl>
@@ -505,7 +512,7 @@ Call once per game cycle. Handles internal lists and actually does the send. <dl
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="ReliabilityLayer_8h.html">ReliabilityLayer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Apr 12 08:48:30 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 4 21:11:27 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -13,6 +13,8 @@ import mx.utils.Delegate;
 //Login Infomation
 class Screens.RegisterAccountScreen3 extends Screen
 {	
+	private static var mInstance:RegisterAccountScreen3;
+	
 	private var password:TextInput;
 	private var passwordConfirm:TextInput;
 	private var passwordRecoveryQuestion:DropdownMenu;
@@ -33,11 +35,14 @@ class Screens.RegisterAccountScreen3 extends Screen
 		
 	public function RegisterAccountScreen3() 
 	{
+		mInstance = this;
 		ConsoleWindow.Trace("Constructing RegisterAccountScreen3");				
 		
-		mScreenId = ScreenID.REGISTER_ACCOUNT_LOGIN;		
+		mScreenId = ScreenID.REGISTER_ACCOUNT_LOGIN;
 		mScreenTabId = ScreenTab.ID_REGISTRATION;
 	}
+	
+	public static function get Instance():RegisterAccountScreen3 { return mInstance; }
 	
 	public function VOnFinishedLoading():Void
 	{		
@@ -162,8 +167,29 @@ class Screens.RegisterAccountScreen3 extends Screen
 			var registrationScreen1 = LobbyInterface.Instance.GetScreen( ScreenID.REGISTER_ACCOUNT_PERSONAL );	
 			var registrationScreen2 = LobbyInterface.Instance.GetScreen( ScreenID.REGISTER_ACCOUNT_BILLING );	
 			
-			ConsoleWindow.Trace("update account : ");
-			
+		/*	ConsoleWindow.Trace("update account : ");
+			ConsoleWindow.Trace("first name = " + registrationScreen1.GetFirstName());
+			ConsoleWindow.Trace("GetMiddleInitial name = " + registrationScreen1.GetMiddleInitial());
+			ConsoleWindow.Trace("GetLastName = " + registrationScreen1.GetLastName());
+			ConsoleWindow.Trace("GetSelectedRace = " + registrationScreen1.GetSelectedRace());
+			ConsoleWindow.Trace("GetIsMale = " + registrationScreen1.GetIsMale());
+			ConsoleWindow.Trace("GetStreetAddress = " + registrationScreen1.GetStreetAddress());
+			ConsoleWindow.Trace("GetStreetAddress2 = " + registrationScreen1.GetStreetAddress2());
+			ConsoleWindow.Trace("GetCity = " + registrationScreen1.GetCity());
+			ConsoleWindow.Trace("GetSelectedState = " + registrationScreen1.GetSelectedState());
+			ConsoleWindow.Trace("United States = ");
+			ConsoleWindow.Trace("GetZipCode = " + registrationScreen1.GetZipCode());
+			ConsoleWindow.Trace("billing GetStreetAddress1 = " + registrationScreen2.GetStreetAddress1());
+			ConsoleWindow.Trace("billing GetStreetAddress2 = " + registrationScreen2.GetStreetAddress2());
+			ConsoleWindow.Trace("billing GetCity = " + registrationScreen2.GetCity());
+			ConsoleWindow.Trace("billing GetSelectedState = " + registrationScreen2.GetSelectedState());
+			ConsoleWindow.Trace("United States ");
+			ConsoleWindow.Trace("billing GetZipCode = " + registrationScreen2.GetZipCode());
+			ConsoleWindow.Trace("GetEmail = " + registrationScreen1.GetEmail());
+			ConsoleWindow.Trace("password.text = " + password.text);
+			ConsoleWindow.Trace("GetSelectedSecretQuestion = " + GetSelectedSecretQuestion());
+			ConsoleWindow.Trace("passwordRecoveryAnswer.text = " + passwordRecoveryAnswer.text);
+			*/
 			// Do not change the order the parameters are passed in as
 			GameDelegate.call("f2c_UpdateAccount",
 			[
@@ -188,7 +214,7 @@ class Screens.RegisterAccountScreen3 extends Screen
 			 ProfileScreen.Instance.GetFavoriteQuotes()
 			 ], _root);
 					 
-			AccountInfo.Instance.GetAccountInfoFromServer();
+		//	AccountInfo.Instance.GetAccountInfoFromServer();
 			//LobbyInterface.Instance.ShowScreen( ScreenID.PROFILE );
 		}
 	}
@@ -333,6 +359,7 @@ class Screens.RegisterAccountScreen3 extends Screen
 	
 	private function PopulateFromAccountInfo():Void
 	{
+		ConsoleWindow.Trace("received account info... password.text = " + password.text);
 		handle.text = AccountInfo.Instance.GetUserName();
 		password.text = AccountInfo.Instance.GetPassword();
 		passwordConfirm.text = AccountInfo.Instance.GetPassword();

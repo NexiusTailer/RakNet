@@ -63,6 +63,37 @@ struct SplitPacketChannel//<SplitPacketChannel>
 };
 int RAK_DLL_EXPORT SplitPacketChannelComp( SplitPacketIdType const &key, SplitPacketChannel* const &data );
 
+// Helper class
+struct BPSTracker
+{
+	BPSTracker();
+	~BPSTracker();
+	void Reset(const char *file, unsigned int line);
+	void Push1(CCTimeType time, uint64_t value1);
+//	void Push2(RakNetTimeUS time, uint64_t value1, uint64_t value2);
+	uint64_t GetBPS1(CCTimeType time);
+//	uint64_t GetBPS2(RakNetTimeUS time);
+//	void GetBPS1And2(RakNetTimeUS time, uint64_t &out1, uint64_t &out2);
+	uint64_t GetTotal1(void) const;
+//	uint64_t GetTotal2(void) const;
+
+	struct TimeAndValue2
+	{
+		TimeAndValue2();
+		~TimeAndValue2();
+		TimeAndValue2(CCTimeType t, uint64_t v1);
+	//	TimeAndValue2(RakNetTimeUS t, uint64_t v1, uint64_t v2);
+	//	uint64_t value1, value2;
+		uint64_t value1;
+		CCTimeType time;
+	};
+
+	uint64_t total1, lastSec1;
+//	uint64_t total2, lastSec2;
+	DataStructures::Queue<TimeAndValue2> dataQueue;
+	void ClearExpired1(CCTimeType time);
+//	void ClearExpired2(RakNetTimeUS time);
+};
 
 /// Datagram reliable, ordered, unordered and sequenced sends.  Flow control.  Message splitting, reassembly, and coalescence.
 class ReliabilityLayer//<ReliabilityLayer>
@@ -118,8 +149,9 @@ public:
 	/// \param[in] makeDataCopy If true \a data will be copied.  Otherwise, only a pointer will be stored.
 	/// \param[in] MTUSize maximum datagram size
 	/// \param[in] currentTime Current time, as per RakNet::GetTime()
+	/// \param[in] receipt This number will be returned back with ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS and is only returned with the reliability types that contain RECEIPT in the name
 	/// \return True or false for success or failure.
-	bool Send( char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, CCTimeType currentTime );
+	bool Send( char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, CCTimeType currentTime, uint32_t receipt );
 
 	/// Call once per game cycle.  Handles internal lists and actually does the send.
 	/// \param[in] s the communication  end point
@@ -148,8 +180,6 @@ public:
 	/// Get Statistics
 	/// \return A pointer to a static struct, filled out with current statistical information.
 	RakNetStatistics * const GetStatistics( RakNetStatistics *rns );
-
-	RakNetBandwidth * const GetBandwidth( RakNetBandwidth *b );
 
 	///Are we waiting for any data to be sent out or be processed by the player?
 	bool IsOutgoingDataWaiting(void);
@@ -182,7 +212,7 @@ private:
 	/// \param[in] s The socket used for sending data
 	/// \param[in] systemAddress The address and port to send to
 	/// \param[in] bitStream The data to send.
-	void SendBitStream( SOCKET s, SystemAddress systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3);
+	void SendBitStream( SOCKET s, SystemAddress systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, CCTimeType currentTime);
 
 	///Parse an internalPacket and create a bitstream to represent this data
 	/// \return Returns number of bits used
@@ -325,7 +355,7 @@ private:
 	InternalPacket *unreliableLinkedListHead;
 	void RemoveFromUnreliableLinkedList(InternalPacket *internalPacket);
 	void AddToUnreliableLinkedList(InternalPacket *internalPacket);
-	unsigned int numPacketsOnResendBuffer;
+//	unsigned int numPacketsOnResendBuffer;
 	//unsigned int blockWindowIncreaseUntilTime;
 	//	DataStructures::RangeList<DatagramSequenceNumberType> acknowlegements;
 	// Resend list is a tree of packets we need to resend
@@ -349,12 +379,14 @@ private:
 	reliabilityHeapWeightType outgoingPacketBufferNextWeights[NUMBER_OF_PRIORITIES];
 	void InitHeapWeights(void);
 	reliabilityHeapWeightType GetNextWeight(int priorityLevel);
-	unsigned int messageInSendBuffer[NUMBER_OF_PRIORITIES];
-	double bytesInSendBuffer[NUMBER_OF_PRIORITIES];
+//	unsigned int messageInSendBuffer[NUMBER_OF_PRIORITIES];
+//	double bytesInSendBuffer[NUMBER_OF_PRIORITIES];
 
 
     DataStructures::OrderedList<SplitPacketIdType, SplitPacketChannel*, SplitPacketChannelComp> splitPacketChannelList;
-	MessageNumberType sendReliableMessageNumberIndex, internalOrderIndex;
+
+	MessageNumberType sendReliableMessageNumberIndex;
+	MessageNumberType internalOrderIndex;
 	//unsigned int windowSize;
 	RakNet::BitStream updateBitStream;
 	OrderingIndexType waitingForOrderedPacketWriteIndex[ NUMBER_OF_ORDERED_STREAMS ], waitingForSequencedPacketWriteIndex[ NUMBER_OF_ORDERED_STREAMS ];
@@ -436,17 +468,14 @@ private:
 
 	RakNet::CCRakNetUDT congestionManager;
 	uint32_t unacknowledgedBytes;
-
-	CCTimeType resetHistogramTime;
-	uint32_t bytesReceivedThisHistogram, bytesSentThisHistogram, bytesReceivedLastHistogram, bytesSentLastHistogram;
-
+	
 	bool ResendBufferOverflow(void) const;
 	void ValidateResendList(void) const;
 	void ResetPacketsAndDatagrams(void);
 	void PushPacket(CCTimeType time, InternalPacket *internalPacket, bool isReliable);
 	void PushDatagram(void);
 	bool TagMostRecentPushAsSecondOfPacketPair(void);
-	void ClearPacketsAndDatagrams(void);
+	void ClearPacketsAndDatagrams(bool releaseToInternalPacketPoolIfNeedsAck);
 	void MoveToListHead(InternalPacket *internalPacket);
 	void RemoveFromList(InternalPacket *internalPacket, bool modifyUnacknowledgedBytes);
 	void AddToListTail(InternalPacket *internalPacket, bool modifyUnacknowledgedBytes);
@@ -491,17 +520,7 @@ private:
 	void FreeInternalPacketData(InternalPacket *internalPacket, const char *file, unsigned int line);
 	DataStructures::MemoryPool<InternalPacketRefCountedData> refCountedDataPool;
 
-
-
-	void InitPacketlossTracker(void);
-	void AddToBitsRecentlySent(int b);
-	void AddToBitsRecentlyResent(int b);
-	float GetContinuousPacketloss(void);
-	// Positive = sent, negative = resent
-	int bitsRecentlySent[512];
-	unsigned short bitTrackerWriteIndex;
-	BitSize_t bitsRecentlySentSum;
-	BitSize_t bitsRecentlyResentSum;
+	BPSTracker bpsMetrics[RNS_PER_SECOND_METRICS_COUNT];
 };
 
 #endif

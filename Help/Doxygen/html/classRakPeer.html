@@ -102,18 +102,22 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#2f3e89dc1baf72e449911b7c674403fc">GetConnectionList</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> *remoteSystems, unsigned short *numberOfSystems) const </td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Fills the array remoteSystems with the <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> of all the systems we are connected to.  <a href="#2f3e89dc1baf72e449911b7c674403fc"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#f1ba142c575e8a7b656a76b937a810ff">Send</a> (const char *data, const int length, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual uint32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#826f37d914c04365cb3276e7d8598f88">GetNextSendReceipt</a> (void)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sends a block of data to the specified system that you are connected to.  <a href="#f1ba142c575e8a7b656a76b937a810ff"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual uint32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#71721eb4963b3aa7d39816d9e21438b7">IncrementNextSendReceipt</a> (void)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">uint32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#cf41cc0dc46e2d9678504eed199a4815">Send</a> (const char *data, const int length, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, uint32_t forceReceipt=0)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sends a block of data to the specified system that you are connected to.  <a href="#cf41cc0dc46e2d9678504eed199a4815"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#888819dc988a3282c41db84ee0a00b6e">SendLoopback</a> (const char *data, const int length)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">"Send" to yourself rather than a remote system.  <a href="#888819dc988a3282c41db84ee0a00b6e"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#7eda4083a0a9aabb7f6791200ae5a076">Send</a> (const <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">uint32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#add1f66541b69c13191bd6b0a7e8daee">Send</a> (const <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, uint32_t forceReceipt=0)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sends a block of data to the specified system that you are connected to.  <a href="#7eda4083a0a9aabb7f6791200ae5a076"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#603cc617f28ed334a814931b58ff70d1">SendList</a> (const char **data, const int *lengths, const int numParameters, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sends a block of data to the specified system that you are connected to.  <a href="#add1f66541b69c13191bd6b0a7e8daee"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">uint32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#70b2284bc6d741be7429570f3f3222bf">SendList</a> (const char **data, const int *lengths, const int numParameters, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, uint32_t forceReceipt=0)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sends multiple blocks of data, concatenating them automatically.  <a href="#603cc617f28ed334a814931b58ff70d1"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sends multiple blocks of data, concatenating them automatically.  <a href="#70b2284bc6d741be7429570f3f3222bf"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7">Receive</a> (void)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets a message from the incoming message queue.  <a href="#79fddb1f74db30833fc08687c1310ce7"></a><br></td></tr>
@@ -309,8 +313,6 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#cadf76822078525c95a6b5359ade892e">GetStatistics</a> (const int index, <a class="el" href="structRakNetStatistics.html">RakNetStatistics</a> *rns)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the network statistics of the system at the given index in the remoteSystemList.  <a href="#cadf76822078525c95a6b5359ade892e"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structRakNetBandwidth.html">RakNetBandwidth</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#6766d74df6d1a725dd8a94ae1a0ecb71">GetBandwidth</a> (const <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetBandwidth.html">RakNetBandwidth</a> *output)</td></tr>
-
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6110dab280bb90fd0d90f5cbc8ffd886"></a><!-- doxytag: member="RakPeer::GetReceiveBufferSize" ref="6110dab280bb90fd0d90f5cbc8ffd886" args="(void)" -->
 virtual unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#6110dab280bb90fd0d90f5cbc8ffd886">GetReceiveBufferSize</a> (void)</td></tr>
 
@@ -387,6 +389,8 @@ RSACrypt&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#8dc645e7f22a90abe45dfc3fdc74044f">allowConnectionResponseIPMigration</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">How long it has been since things were updated by a call to receiveUpdate thread uses this to determine how long to sleep for.  <a href="#8dc645e7f22a90abe45dfc3fdc74044f"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classSimpleMutex.html">SimpleMutex</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#576b14709afe3ab4084b0bba460d6cb7">sendReceiptSerialMutex</a></td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Main interface for network communications. 
@@ -618,7 +622,7 @@ Normally this should be false, but may be necessary when connecting to servers w
 <p>
 Adds simulated ping and packet loss to the outgoing data flow. 
 <p>
-To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and maxSendBPS values on each. <dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000026">Deprecated:</a></b></dt><dd>Use <a href="http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0">http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0</a> instead. </dd></dl>
+To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and maxSendBPS values on each. <dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000025">Deprecated:</a></b></dt><dd>Use <a href="http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0">http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0</a> instead. </dd></dl>
 <dl class="note" compact><dt><b>Note:</b></dt><dd>You can exclude network simulator code with the define _RELEASE to decrease code size. <p>
 Doesn't work past version 3.6201 </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -1172,44 +1176,6 @@ Returns the average of all ping times read for the specific system or -1 if none
 
 </div>
 </div><p>
-<a class="anchor" name="6766d74df6d1a725dd8a94ae1a0ecb71"></a><!-- doxytag: member="RakPeer::GetBandwidth" ref="6766d74df6d1a725dd8a94ae1a0ecb71" args="(const SystemAddress systemAddress, RakNetBandwidth *output)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structRakNetBandwidth.html">RakNetBandwidth</a>* RakPeer::GetBandwidth           </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structRakNetBandwidth.html">RakNetBandwidth</a> *&nbsp;</td>
-          <td class="paramname"> <em>output</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Returns a simpler version of GetStatistics, used to check bandwidth utilization for a given connection <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Which system to check the bandwidth for. If UNASSIGNED_SYSTEM_ADDRESS, returns the average among all systems </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>output</em>&nbsp;</td><td>Structure to write to </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>Returns <em>output</em> </dd></dl>
-
-<p>Implements <a class="el" href="classRakPeerInterface.html#cf23cc4f0f8de310fcc4eb7cbe51b90c">RakPeerInterface</a>.</p>
-
-</div>
-</div><p>
 <a class="anchor" name="c4aff573e1973d4a12c42090b23c0d41"></a><!-- doxytag: member="RakPeer::GetBestClockDifferential" ref="c4aff573e1973d4a12c42090b23c0d41" args="(const SystemAddress systemAddress) const " -->
 <div class="memitem">
 <div class="memproto">
@@ -1711,6 +1677,30 @@ Returns the current MTU size.
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>Returns the value passed to SetNetworkIDManager or 0 if never called. </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#9f0b16758bb5bf43c0bd53dc1882ab61">RakPeerInterface</a>.</p>
+
+</div>
+</div><p>
+<a class="anchor" name="826f37d914c04365cb3276e7d8598f88"></a><!-- doxytag: member="RakPeer::GetNextSendReceipt" ref="826f37d914c04365cb3276e7d8598f88" args="(void)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual uint32_t RakPeer::GetNextSendReceipt           </td>
+          <td>(</td>
+          <td class="paramtype">void&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns the next uint32_t that <a class="el" href="classRakPeer.html#cf41cc0dc46e2d9678504eed199a4815" title="Sends a block of data to the specified system that you are connected to.">Send()</a> will return <dl class="note" compact><dt><b>Note:</b></dt><dd>If using <a class="el" href="classRakPeer.html" title="Main interface for network communications.">RakPeer</a> from multiple threads, this may not be accurate for your thread. Use <a class="el" href="classRakPeer.html#71721eb4963b3aa7d39816d9e21438b7">IncrementNextSendReceipt()</a> in that case. </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>The next uint32_t that <a class="el" href="classRakPeer.html#cf41cc0dc46e2d9678504eed199a4815" title="Sends a block of data to the specified system that you are connected to.">Send()</a> or SendList will return </dd></dl>
+
+<p>Implements <a class="el" href="classRakPeerInterface.html#3841b0ec64542e4771542911d4388437">RakPeerInterface</a>.</p>
 
 </div>
 </div><p>
@@ -2228,6 +2218,30 @@ Handles an RPC reply packet. The reply packet has data returned from an RPC call
 
 </div>
 </div><p>
+<a class="anchor" name="71721eb4963b3aa7d39816d9e21438b7"></a><!-- doxytag: member="RakPeer::IncrementNextSendReceipt" ref="71721eb4963b3aa7d39816d9e21438b7" args="(void)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual uint32_t RakPeer::IncrementNextSendReceipt           </td>
+          <td>(</td>
+          <td class="paramtype">void&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns the next uint32_t that <a class="el" href="classRakPeer.html#cf41cc0dc46e2d9678504eed199a4815" title="Sends a block of data to the specified system that you are connected to.">Send()</a> will return, and increments the value by one <dl class="note" compact><dt><b>Note:</b></dt><dd>If using <a class="el" href="classRakPeer.html" title="Main interface for network communications.">RakPeer</a> from multiple threads, pass this to forceReceipt in the send function </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>The next uint32_t that <a class="el" href="classRakPeer.html#cf41cc0dc46e2d9678504eed199a4815" title="Sends a block of data to the specified system that you are connected to.">Send()</a> or SendList will return </dd></dl>
+
+<p>Implements <a class="el" href="classRakPeerInterface.html#6950d7bf4b8abd6a13e9743b4324ba6f">RakPeerInterface</a>.</p>
+
+</div>
+</div><p>
 <a class="anchor" name="adcb268bdcd4751c304c8156c28eb66d"></a><!-- doxytag: member="RakPeer::InitializeSecurity" ref="adcb268bdcd4751c304c8156c28eb66d" args="(const char *pubKeyE, const char *pubKeyN, const char *privKeyP, const char *privKeyQ)" -->
 <div class="memitem">
 <div class="memproto">
@@ -2715,18 +2729,18 @@ Remove a specific connection previously added via AddToSecurityExceptionList.
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000025">Deprecated:</a></b></dt><dd>This was added without considering proper architecture </dd></dl>
+<dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000024">Deprecated:</a></b></dt><dd>This was added without considering proper architecture </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#182a8feaf7813b259028120f0405d69a">RakPeerInterface</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="7eda4083a0a9aabb7f6791200ae5a076"></a><!-- doxytag: member="RakPeer::Send" ref="7eda4083a0a9aabb7f6791200ae5a076" args="(const RakNet::BitStream *bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast)" -->
+<a class="anchor" name="add1f66541b69c13191bd6b0a7e8daee"></a><!-- doxytag: member="RakPeer::Send" ref="add1f66541b69c13191bd6b0a7e8daee" args="(const RakNet::BitStream *bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, uint32_t forceReceipt=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool RakPeer::Send           </td>
+          <td class="memname">uint32_t RakPeer::Send           </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *&nbsp;</td>
           <td class="paramname"> <em>bitStream</em>, </td>
@@ -2759,7 +2773,13 @@ Remove a specific connection previously added via AddToSecurityExceptionList.
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&nbsp;</td>
-          <td class="paramname"> <em>broadcast</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>broadcast</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&nbsp;</td>
+          <td class="paramname"> <em>forceReceipt</em> = <code>0</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -2781,21 +2801,22 @@ Same as the above version, but takes a BitStream as input. <dl compact><dt><b>Pa
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>Channel to order the messages on, when using ordered or sequenced messages. Messages are only ordered relative to other messages on the same stream. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemIdentifier</em>&nbsp;</td><td>System Address or <a class="el" href="structRakNetGUID.html">RakNetGUID</a> to send this packet to, or in the case of broadcasting, the address not to send it to. Use UNASSIGNED_SYSTEM_ADDRESS to specify none. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>forceReceipt</em>&nbsp;</td><td>If 0, will automatically determine the receipt number to return. If non-zero, will return what you give it. </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>False on bad input. True otherwise. </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>0 on bad input. Otherwise a number that identifies this message. If <em>reliability</em> is a type that returns a receipt, on a later call to <a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7" title="Gets a message from the incoming message queue.">Receive()</a> you will get ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS with bytes 1-4 inclusive containing this number </dd></dl>
 <dl class="note" compact><dt><b>Note:</b></dt><dd>COMMON MISTAKE: When writing the first byte, bitStream-&gt;Write((unsigned char) ID_MY_TYPE) be sure it is casted to a byte, and you are not writing a 4 byte enumeration. </dd></dl>
 
-<p>Implements <a class="el" href="classRakPeerInterface.html#13b6818209af326ecaba9af93705121c">RakPeerInterface</a>.</p>
+<p>Implements <a class="el" href="classRakPeerInterface.html#3c53433c70462e543664087ac73e5347">RakPeerInterface</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="f1ba142c575e8a7b656a76b937a810ff"></a><!-- doxytag: member="RakPeer::Send" ref="f1ba142c575e8a7b656a76b937a810ff" args="(const char *data, const int length, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast)" -->
+<a class="anchor" name="cf41cc0dc46e2d9678504eed199a4815"></a><!-- doxytag: member="RakPeer::Send" ref="cf41cc0dc46e2d9678504eed199a4815" args="(const char *data, const int length, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, uint32_t forceReceipt=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool RakPeer::Send           </td>
+          <td class="memname">uint32_t RakPeer::Send           </td>
           <td>(</td>
           <td class="paramtype">const char *&nbsp;</td>
           <td class="paramname"> <em>data</em>, </td>
@@ -2834,7 +2855,13 @@ Same as the above version, but takes a BitStream as input. <dl compact><dt><b>Pa
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&nbsp;</td>
-          <td class="paramname"> <em>broadcast</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>broadcast</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&nbsp;</td>
+          <td class="paramname"> <em>forceReceipt</em> = <code>0</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -2859,20 +2886,21 @@ The first byte should be a message identifier starting at ID_USER_PACKET_ENUM. <
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>When using ordered or sequenced messages, the channel to order these on. Messages are only ordered relative to other messages on the same stream. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemIdentifier</em>&nbsp;</td><td>Who to send this packet to, or in the case of broadcasting who not to send it to. Pass either a <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> structure or a <a class="el" href="structRakNetGUID.html">RakNetGUID</a> structure. Use UNASSIGNED_SYSTEM_ADDRESS or to specify none </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>forceReceipt</em>&nbsp;</td><td>If 0, will automatically determine the receipt number to return. If non-zero, will return what you give it. </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>False on bad input. True otherwise. </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>0 on bad input. Otherwise a number that identifies this message. If <em>reliability</em> is a type that returns a receipt, on a later call to <a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7" title="Gets a message from the incoming message queue.">Receive()</a> you will get ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS with bytes 1-4 inclusive containing this number </dd></dl>
 
-<p>Implements <a class="el" href="classRakPeerInterface.html#616de5a586b570f497005f43c587f153">RakPeerInterface</a>.</p>
+<p>Implements <a class="el" href="classRakPeerInterface.html#36b7517ac2e6e420736ed8758c125397">RakPeerInterface</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="603cc617f28ed334a814931b58ff70d1"></a><!-- doxytag: member="RakPeer::SendList" ref="603cc617f28ed334a814931b58ff70d1" args="(const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast)" -->
+<a class="anchor" name="70b2284bc6d741be7429570f3f3222bf"></a><!-- doxytag: member="RakPeer::SendList" ref="70b2284bc6d741be7429570f3f3222bf" args="(const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, uint32_t forceReceipt=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool RakPeer::SendList           </td>
+          <td class="memname">uint32_t RakPeer::SendList           </td>
           <td>(</td>
           <td class="paramtype">const char **&nbsp;</td>
           <td class="paramname"> <em>data</em>, </td>
@@ -2917,7 +2945,13 @@ The first byte should be a message identifier starting at ID_USER_PACKET_ENUM. <
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&nbsp;</td>
-          <td class="paramname"> <em>broadcast</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>broadcast</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&nbsp;</td>
+          <td class="paramname"> <em>forceReceipt</em> = <code>0</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -2942,12 +2976,13 @@ This function only works when connected. <dl compact><dt><b>Parameters:</b></dt>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>Channel to order the messages on, when using ordered or sequenced messages. Messages are only ordered relative to other messages on the same stream. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemIdentifier</em>&nbsp;</td><td>System Address or <a class="el" href="structRakNetGUID.html">RakNetGUID</a> to send this packet to, or in the case of broadcasting, the address not to send it to. Use UNASSIGNED_SYSTEM_ADDRESS to specify none. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>forceReceipt</em>&nbsp;</td><td>If 0, will automatically determine the receipt number to return. If non-zero, will return what you give it. </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>False on bad input. True otherwise. </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>0 on bad input. Otherwise a number that identifies this message. If <em>reliability</em> is a type that returns a receipt, on a later call to <a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7" title="Gets a message from the incoming message queue.">Receive()</a> you will get ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS with bytes 1-4 inclusive containing this number </dd></dl>
 <dl class="note" compact><dt><b>Note:</b></dt><dd>Doesn't support the router plugin. </dd></dl>
 
-<p>Implements <a class="el" href="classRakPeerInterface.html#4a5b563f41a9d4307932ccdf45103384">RakPeerInterface</a>.</p>
+<p>Implements <a class="el" href="classRakPeerInterface.html#1295b843f4717c95c0a30cbb97425773">RakPeerInterface</a>.</p>
 
 </div>
 </div><p>
@@ -3291,7 +3326,7 @@ Limits how much outgoing bandwidth can be used per-connection. This limit does n
 <p>
 ------------------------------------------- Deprecated ------------------------- 
 <p>
-------------------------------------------- Deprecated -------------------------  <dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000024">Deprecated:</a></b></dt><dd>This was added without considering proper architecture </dd></dl>
+------------------------------------------- Deprecated -------------------------  <dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000023">Deprecated:</a></b></dt><dd>This was added without considering proper architecture </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#6204c74161a09c737b1ddc03579f971e">RakPeerInterface</a>.</p>
 
@@ -3663,10 +3698,25 @@ Do we occasionally ping the other systems?
 This is an array of pointers to RemoteSystemStruct This allows us to preallocate the list when starting, so we don't have to allocate or delete at runtime. Another benefit is that is lets us add and remove active players simply by setting systemAddress and moving elements in the list by copying pointers variables without affecting running threads, even if they are in the reliability layer 
 </div>
 </div><p>
+<a class="anchor" name="576b14709afe3ab4084b0bba460d6cb7"></a><!-- doxytag: member="RakPeer::sendReceiptSerialMutex" ref="576b14709afe3ab4084b0bba460d6cb7" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classSimpleMutex.html">SimpleMutex</a> <a class="el" href="classRakPeer.html#576b14709afe3ab4084b0bba460d6cb7">RakPeer::sendReceiptSerialMutex</a><code> [protected]</code>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+This is used to return a number to the user when they call Send identifying the message This number will be returned back with ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS and is only returned with the reliability types that contain RECEIPT in the name 
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="RakPeer_8h.html">RakPeer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Apr 12 08:48:30 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 4 21:11:27 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

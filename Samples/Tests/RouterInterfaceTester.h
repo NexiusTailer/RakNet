@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "RakNetTypes.h"
 #include "PluginInterface2.h"
 #include "DS_OrderedList.h"

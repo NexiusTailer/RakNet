@@ -1,14 +1,9 @@
 #include "MaximumConnectTest.h"
 
-
-
-
-
 /*
 What is being done here is having 8 peers all connect to eachother over the max defined connection.
 
 It runs the connect, wait 20 seconds then see the current connections.
-
 
 Success conditions:
 All extra connections Refused.
@@ -38,15 +33,8 @@ int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,b
 	const int maxConnections=4;//Max allowed connections for test
 	RakPeerInterface *peerList[peerNum];//A list of 8 peers
 
-
-
-
-
 	Packet *packet;
 	destroyList.Clear(false,__FILE__,__LINE__);
-
-
-
 
 	int connReturn;
 	//Initializations of the arrays
@@ -55,13 +43,8 @@ int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,b
 		peerList[i]=RakNetworkFactory::GetRakPeerInterface();
 		destroyList.Push(peerList[i],__FILE__,__LINE__);
 
-
-
-
-
 		peerList[i]->Startup(maxConnections, 30, &SocketDescriptor(60000+i,0), 1);
 		peerList[i]->SetMaximumIncomingConnections(maxConnections);
-
 
 		connReturn=peerList[i]->GetMaximumIncomingConnections();
 		if (connReturn!=maxConnections)
@@ -78,12 +61,7 @@ int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,b
 
 	}
 
-
-
-
 	//Connect all the peers together
-
-
 
 	for (int i=0;i<peerNum;i++)
 	{
@@ -97,7 +75,6 @@ int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,b
 				if (isVerbose)
 					DebugTools::ShowError("Problem while calling connect.\n",!noPauses && isVerbose,__LINE__,__FILE__);
 
-
 				return 1;//This fails the test, don't bother going on.
 
 			}
@@ -106,22 +83,13 @@ int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,b
 
 	}
 
-
-
 	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
-
-
 
 	while(RakNet::GetTime()-entryTime<20000)//Run for 20 Secoonds
 	{
 
-
-
-
-
 		for (int i=0;i<peerNum;i++)//Receive for all peers
 		{
-
 
 			packet=peerList[i]->Receive();
 
@@ -150,7 +118,6 @@ int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,b
 					if (isVerbose)              
 						printf("Our connection request has been accepted.\n");
 
-
 					break;
 				case ID_CONNECTION_ATTEMPT_FAILED:
 					if (isVerbose)
@@ -167,7 +134,6 @@ int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,b
 					if (isVerbose)              
 						printf("The server is full.\n");
 
-
 					break;
 
 				case ID_ALREADY_CONNECTED:
@@ -175,7 +141,6 @@ int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,b
 						printf("Already connected\n");//Shouldn't happen
 
 					break;
-
 
 				case ID_DISCONNECTION_NOTIFICATION:
 					if (isVerbose)
@@ -203,7 +168,6 @@ int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,b
 	DataStructures::List< SystemAddress  > systemList;
 	DataStructures::List< RakNetGUID > guidList;
 
-
 	for (int i=0;i<peerNum;i++)
 	{
 
@@ -211,7 +175,6 @@ int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,b
 		int connNum=guidList.Size();//Get the number of connections for the current peer
 		if (connNum>maxConnections)//Did we connect to more?
 		{
-
 
 			if (isVerbose)
 			{
@@ -221,25 +184,17 @@ int MaximumConnectTest::RunTest(DataStructures::List<RakNet::RakString> params,b
 
 			}
 
-
-
 			return 2;
-
 
 		}
 
-
 	}
-
-
 
 	if (isVerbose)
 		printf("Pass\n");
 	return 0;
 
 }
-
-
 
 RakNet::RakString MaximumConnectTest::GetTestName()
 {
@@ -274,11 +229,7 @@ RakNet::RakString MaximumConnectTest::ErrorCodeToString(int errorCode)
 		return "Undefined Error";
 	}
 
-
 }
-
-
-
 
 MaximumConnectTest::MaximumConnectTest(void)
 {

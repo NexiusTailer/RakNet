@@ -84,12 +84,20 @@ Inheritance diagram for RakNet::Replica3:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual RM3ActionOnPopConnection&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#d20f4bd0d47c1710d9f848bb6a2b75f2">QueryActionOnPopConnection</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *droppedConnection) const =0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The system is asking what to do with this replica when the connection is dropped.  <a href="#d20f4bd0d47c1710d9f848bb6a2b75f2"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1b300e3e57286644ca2abcfa413ed048"></a><!-- doxytag: member="RakNet::Replica3::OnPoppedConnection" ref="1b300e3e57286644ca2abcfa413ed048" args="(RakNet::Connection_RM3 *droppedConnection)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#1b300e3e57286644ca2abcfa413ed048">OnPoppedConnection</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *droppedConnection)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Notification called for each of our replicas when a connection is popped. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#cf667862eb0f6ff14ce29c4a7146ccab">DeallocReplica</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *sourceConnection)=0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Override with {delete this;}.  <a href="#cf667862eb0f6ff14ce29c4a7146ccab"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g9a29b413d7f2b9cb21c16457631d3aef">RM3QuerySerializationResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#ea6ea21dd0f668abd09d0196eac0a336">QuerySerialization</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection)=0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Implement with <a class="el" href="classRakNet_1_1Replica3.html#b5d74a28b5a9d490f5e9dd371018d961" title="Default call for QuerySerialization(). Use if the values you are serializing are...">QuerySerialization_ClientSerializable()</a>, <a class="el" href="classRakNet_1_1Replica3.html#12b8aedf56afebfa043b16979792c9bd" title="Default call for QuerySerialization(). Use if the values you are serializing are...">QuerySerialization_ServerSerializable()</a>, or <a class="el" href="classRakNet_1_1Replica3.html#eb9991d03deedec70fe5cc61de4739c6" title="Default call for QuerySerialization(). Use if the values you are serializing are...">QuerySerialization_PeerToPeer()</a>.  <a href="#ea6ea21dd0f668abd09d0196eac0a336"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1f633cb586ee48c3f3026f1af1053ba6"></a><!-- doxytag: member="RakNet::Replica3::OnUserReplicaPreSerializeTick" ref="1f633cb586ee48c3f3026f1af1053ba6" args="(void)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#1f633cb586ee48c3f3026f1af1053ba6">OnUserReplicaPreSerializeTick</a> (void)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called for each replica owned by the user, once per Serialization tick, before <a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b22441365145bf552f89e09" title="Serialize our class to a bitstream.">Serialize()</a> is called. If you want to do some kind of operation on the <a class="el" href="classReplica.html" title="The interface to derive your game&#39;s networked classes from.">Replica</a> objects that you own, just before Serialization(), then overload this function. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g993da25eb23b67455e2438971c51429c">RM3SerializationResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b22441365145bf552f89e09">Serialize</a> (<a class="el" href="structRakNet_1_1SerializeParameters.html">RakNet::SerializeParameters</a> *serializeParameters)=0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Serialize our class to a bitstream.  <a href="#6e59b6a75b22441365145bf552f89e09"></a><br></td></tr>
@@ -979,7 +987,7 @@ GUID of the system that first called Reference() on this object. Transmitted aut
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Apr 12 08:48:31 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 4 21:11:28 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

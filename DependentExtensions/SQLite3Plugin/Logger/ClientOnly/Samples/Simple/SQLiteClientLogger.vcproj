@@ -190,6 +190,22 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\Optional\SQLiteClientLogger_PacketLogger.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\Optional\SQLiteClientLogger_PacketLogger.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\Optional\SQLiteClientLogger_RNSLogger.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\Optional\SQLiteClientLogger_RNSLogger.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\SQLiteClientLoggerPlugin.cpp"
 			>
 		</File>

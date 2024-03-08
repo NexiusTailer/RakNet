@@ -13,7 +13,7 @@ static const char *sqlDataTypeNames[SQLLPDT_COUNT] =
 	"BLOB",
 };
 
-const char *GetSqlDataTypeName(SQLLoggerPrimaryDataType idx) {return sqlDataTypeNames[(int)idx];}
+extern "C" const char *GetSqlDataTypeName(SQLLoggerPrimaryDataType idx) {return sqlDataTypeNames[(int)idx];}
 
 void LogParameter::Serialize(RakNet::BitStream *bs) const
 {

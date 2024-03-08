@@ -1,6 +1,5 @@
 #include "DroppedConnectionConvertTest.h"
 
-
 /*
 Description:
 
@@ -8,11 +7,9 @@ Tests silently dropping multiple instances of RakNet. This is used to test that 
 
 Randomly tests the timout detections to see if the connections are dropped.
 
-
 Success conditions:
 Clients connect and reconnect normally and do not have an extra connection.
 Random timout detection passes.
-
 
 Failure conditions:
 Client has more than one connection.
@@ -43,7 +40,6 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 	unsigned short serverPort = 20000;
 	serverID.binaryAddress=inet_addr("127.0.0.1");
 	serverID.port=serverPort;
-
 
 	server=RakNetworkFactory::GetRakPeerInterface();
 	destroyList.Clear(false,__FILE__,__LINE__);
@@ -85,7 +81,6 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 	bool dropTest=false;
 	RakTimer timeoutWaitTimer(1000);
 
-
 	while (RakNet::GetTime()-entryTime<30000)//run for 30 seconds.
 	{
 		// User input
@@ -118,7 +113,6 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 				}
 			}
 
-
 			if (connectionCount!=numberOfSystems2)
 			{
 				if (isVerbose)
@@ -129,10 +123,8 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 		}
 		dropTest=false;
 
-
 		switch(randomTest)
 		{
-
 
 		case 0:
 			{
@@ -166,7 +158,6 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 
 						DebugTools::ShowError("Connect function failed.",!noPauses && isVerbose,__LINE__,__FILE__);
 						return 2;
-
 
 					}
 				}
@@ -219,7 +210,6 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 			}
 			break;
 
-
 		case 3:
 			{
 
@@ -268,9 +258,6 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 			printf("%i clients are actually connected.\n", connectionCount);
 		if (isVerbose)
 			printf("server->NumberOfConnections==%i.\n", server->NumberOfConnections());
-
-
-
 
 		//}
 
@@ -369,8 +356,6 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString
 
 	}
 
-
-
 	return 0;
 }
 
@@ -390,7 +375,6 @@ RakNet::RakString DroppedConnectionConvertTest::ErrorCodeToString(int errorCode)
 		return "No error";
 		break;
 
-
 	case 1:
 		return "Client has more than one connection";
 		break;
@@ -399,7 +383,6 @@ RakNet::RakString DroppedConnectionConvertTest::ErrorCodeToString(int errorCode)
 		return "Connect failed";
 		break;
 
-
 	case 3:
 		return "Timeout not detected";
 		break;
@@ -407,7 +390,6 @@ RakNet::RakString DroppedConnectionConvertTest::ErrorCodeToString(int errorCode)
 	default:
 		return "Undefined Error";
 	}
-
 
 }
 

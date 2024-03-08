@@ -1,7 +1,5 @@
 #include "OfflineMessagesConvertTest.h"
 
-
-
 /*
 Description:
 Description: Tests / Demonstrates sending messages to systems you are not connected to.
@@ -10,12 +8,8 @@ Success conditions:
 Proper offline response.
 Proper offline ping response.
 
-
-
-
 Failure conditions:
 Any success conditions failed
-
 
 RakPeerInterface Functions used, tested indirectly by its use:
 GetGuidFromSystemAddress
@@ -36,7 +30,6 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 	bool recievedProperOfflineData=false;
 	bool recievedProperPingData=false;
 
-
 	int nextTest;
 	destroyList.Clear(false,__FILE__,__LINE__);
 
@@ -44,11 +37,9 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 	destroyList.Push( peer1,__FILE__,__LINE__);
 	RakPeerInterface *peer2=RakNetworkFactory::GetRakPeerInterface();
 	destroyList.Push(peer2,__FILE__,__LINE__);
-	char text[1024];
+
 	bool sentPacket=false;
 	nextTest=0;
-
-
 
 	peer1->SetMaximumIncomingConnections(1);
 	SocketDescriptor socketDescriptor(60001, 0);
@@ -60,7 +51,6 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 	peer1->SetOfflinePingResponse("Offline Ping Data", (int)strlen("Offline Ping Data")+1);
 	peer1->GetOfflinePingResponse(&pingResponseData,&responseLen);
 
-
 	if(strcmp(pingResponseData,"Offline Ping Data")!=0)
 	{
 		if (isVerbose)
@@ -68,9 +58,7 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 
 		return 5;
 
-
 	}
-
 
 	if (isVerbose)
 		printf("Peer 1 guid = %s\n", peer1->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
@@ -86,9 +74,7 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 		printf("Sending advertise system from %s\n", peer1->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
 	peer1->AdvertiseSystem("127.0.0.1", 60002,"hello world", (int)strlen("hello world")+1);
 
-
 	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
-
 
 	while (nextTest!=2&&RakNet::GetTime()-entryTime<10000)// run for 10 seconds
 	{
@@ -103,8 +89,6 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 					if (isVerbose)
 						printf("Got Advertise system with data: %s\n", packet->data+1);
 
-
-
 					if(strcmp((const char*)(packet->data+1),"hello world")==0)
 					{
 						recievedProperOfflineData=true;
@@ -114,7 +98,6 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 						if (isVerbose)
 							DebugTools::ShowError("Got Advertise system with unexpected data\n",!noPauses && isVerbose,__LINE__,__FILE__);
 
-
 						return 1;
 					}
 				}
@@ -122,7 +105,6 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 				{
 					if (isVerbose)
 						DebugTools::ShowError("Got Advertise system with unexpected data\n",!noPauses && isVerbose,__LINE__,__FILE__);
-
 
 					return 1;
 				}
@@ -167,7 +149,6 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 						if (isVerbose)
 							DebugTools::ShowError("Received wrong offline ping response\n",!noPauses && isVerbose,__LINE__,__FILE__);
 
-
 						return 2;
 					}
 
@@ -181,8 +162,6 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 
 		RakSleep(30);
 	}
-
-
 
 	if (!recievedProperOfflineData)
 	{
@@ -199,16 +178,12 @@ int OfflineMessagesConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 		return 4;
 	}
 
-
 	
 	
-
 
 	return 0;
 
 }
-
-
 
 RakNet::RakString OfflineMessagesConvertTest::GetTestName()
 {
@@ -243,16 +218,11 @@ RakNet::RakString OfflineMessagesConvertTest::ErrorCodeToString(int errorCode)
 		return "GetOfflinePingResponse failed.";
 		break;
 
-
-
 	default:
 		return "Undefined Error";
 	}
 
-
 }
-
-
 
 OfflineMessagesConvertTest::OfflineMessagesConvertTest(void)
 {
@@ -261,7 +231,6 @@ OfflineMessagesConvertTest::OfflineMessagesConvertTest(void)
 OfflineMessagesConvertTest::~OfflineMessagesConvertTest(void)
 {
 }
-
 
 void OfflineMessagesConvertTest::DestroyPeers()
 {

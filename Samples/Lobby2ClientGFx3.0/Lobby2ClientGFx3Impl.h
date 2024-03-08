@@ -151,6 +151,9 @@ public:
 	virtual void MessageResult(RakNet::Notification_Clans_UnblacklistUser *message);
 	virtual void MessageResult(RakNet::Notification_Clans_Destroyed *message);
 
+
+	static void	OpenSite(const FxDelegateArgs& pparams);
+
 	// PluginInterface2
 	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);

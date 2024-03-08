@@ -2,7 +2,6 @@
 
 #include "TestInterface.h"
 
-
 #include "RakString.h"
 #include "RakNetworkFactory.h"
 #include "RakPeerInterface.h"
@@ -16,11 +15,6 @@
 #include "CommonFunctions.h"
 #include "TestHelpers.h"
 #include "PacketChangerPlugin.h"
-
-
-
-
-
 
 class PacketAndLowLevelTestsTest : public TestInterface
 {
@@ -37,6 +31,5 @@ protected:
 private:
 	DataStructures::List <RakNet::RakString> errorList;
 	DataStructures::List <RakPeerInterface *> destroyList;
-
 
 };

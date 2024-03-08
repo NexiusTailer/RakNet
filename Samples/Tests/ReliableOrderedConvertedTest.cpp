@@ -1,8 +1,5 @@
 #include "ReliableOrderedConvertedTest.h"
 
-
-
-
 FILE *fp;
 int memoryUsage=0;
 
@@ -10,7 +7,7 @@ char lastError[512];
 
 void* ReliableOrderedConvertedTest::LoggedMalloc(size_t size, const char *file, unsigned int line)
 {
-	memoryUsage+=size;
+	memoryUsage+=(int)size;
 	if (fp)
 		fprintf(fp,"Alloc %s:%i %i bytes %i total\n", file,line,size,memoryUsage);
 	char *p = (char*) malloc(size+sizeof(size));
@@ -22,7 +19,7 @@ void ReliableOrderedConvertedTest::LoggedFree(void *p, const char *file, unsigne
 	char *realP=(char*)p-sizeof(size_t);
 	size_t allocatedSize;
 	memcpy(&allocatedSize,realP,sizeof(size_t));
-	memoryUsage-=allocatedSize;
+	memoryUsage-=(int)allocatedSize;
 	if (fp)
 		fprintf(fp,"Free %s:%i %i bytes %i total\n", file,line,allocatedSize,memoryUsage);
 	free(realP);
@@ -32,8 +29,8 @@ void* ReliableOrderedConvertedTest::LoggedRealloc(void *p, size_t size, const ch
 	char *realP=(char*)p-sizeof(size_t);
 	size_t allocatedSize;
 	memcpy(&allocatedSize,realP,sizeof(size_t));
-	memoryUsage-=allocatedSize;
-	memoryUsage+=size;
+	memoryUsage-=(int)allocatedSize;
+	memoryUsage+=(int)size;
 	p = realloc(realP,size+sizeof(size));
 	memcpy(p,&size,sizeof(size));
 	if (fp)
@@ -41,15 +38,12 @@ void* ReliableOrderedConvertedTest::LoggedRealloc(void *p, size_t size, const ch
 	return (char*)p+sizeof(size);
 }
 
-
-
 /*
 What is being done here is having a server connect to a client.
 
 Packets are sent at 30 millisecond intervals for 12 seconds.
 
 Length and sequence are checked for each packet.
-
 
 Success conditions:
 All packets are correctly recieved in order.
@@ -65,7 +59,7 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 {
 
 	RakPeerInterface *sender, *receiver;
-	unsigned int packetNumberSender[32], receivedPacketNumberSender, receivedTimeSender,packetNumberReceiver[32], receivedPacketNumberReceiver, receivedTimeReceiver;
+	unsigned int packetNumberSender[32],packetNumberReceiver[32], receivedPacketNumberReceiver, receivedTimeReceiver;
 	char str[256];
 	char ip[32];
 	RakNetTime sendInterval, nextSend, currentTime, quitTime;
@@ -82,7 +76,6 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 
 	}
 
-
 	/*
 	if (argc==2)
 	{
@@ -96,20 +89,15 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 	fp=0;
 	destroyList.Clear(false,__FILE__,__LINE__);
 
-
 	sender =RakNetworkFactory::GetRakPeerInterface();
 	destroyList.Push(	sender ,__FILE__,__LINE__);
 	//sender->ApplyNetworkSimulator(.02, 100, 50);
-
-
-
 
 	/*
 	if (str[0]==0)
 	sendInterval=30;
 	else
 	sendInterval=atoi(str);*///possible future params
-
 
 	sendInterval=30;
 
@@ -138,10 +126,8 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 	sender->Startup(1, 30, &SocketDescriptor(localPort,0), 1);
 	sender->Connect(ip, remotePort, 0, 0);
 
-
 	receiver =RakNetworkFactory::GetRakPeerInterface();
 	destroyList.Push(	receiver ,__FILE__,__LINE__);
-
 
 	/*
 	printf("Enter local port: ");
@@ -156,12 +142,10 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 	receiver->Startup(32, 30, &SocketDescriptor(localPort,0), 1);
 	receiver->SetMaximumIncomingConnections(32);
 
-
 	//	if (sender)
 	//		sender->ApplyNetworkSimulator(128000, 50, 100);
 	//	if (receiver)
 	//		receiver->ApplyNetworkSimulator(128000, 50, 100);
-
 
 	/*printf("How long to run this test for, in seconds?\n");
 	gets(str);
@@ -173,12 +157,9 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 
 	nextSend=currentTime;
 
-
-
 	while (currentTime < quitTime)
 		//while (1)
 	{
-
 
 		packet = sender->Receive();
 		while (packet)
@@ -234,13 +215,10 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 			if (sender->Send(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED ,streamNumberSender, UNASSIGNED_SYSTEM_ADDRESS, true)==false)
 				packetNumberSender[streamNumberSender]--; // Didn't finish connecting yet?
 
-
-
 			RakNetStatistics *rssSender;
 			rssSender=sender->GetStatistics(sender->GetSystemAddressFromIndex(0));
 			if (isVerbose)
-				printf("Snd: %i. %i waiting on ack. KBPS=%.1f. Ploss=%.1f. Bandwidth=%f.\n", packetNumberSender[streamNumberSender], rssSender->messagesOnResendQueue,rssSender->bitsPerSecondSent/1000, 100.0f * ( float ) rssSender->messagesTotalBitsResent / ( float ) rssSender->totalBitsSent, rssSender->estimatedLinkCapacityMBPS);
-
+				printf("Snd: %i.\n", packetNumberSender[streamNumberSender]);
 
 			nextSend+=sendInterval;
 
@@ -280,8 +258,6 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 					//WARNING: If you modify the below code make sure the whole string remains in bounds, sprintf will NOT do it for you. 
 					//The error string is 512 in length
 
-
-
 					//Note: Removed buffer checking because chance is insignificant, left code if wanted in future. Needs limits.h ISO C standard.
 
 					/*
@@ -294,13 +270,10 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 					maxIntWorkingCopy/=10;
 					}
 
-
-
 					if (strlen(lastError)>maxIntCharLen* 3 +27)//512 should be a good len for now
 					{*/
 
 					sprintf(lastError,"Expecting %i got %i (channel %i).",packetNumberReceiver[streamNumberReceiver], receivedPacketNumberReceiver, streamNumberReceiver);
-
 
 					/*
 					}
@@ -309,7 +282,6 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 					sprintf(lastError,"Did not get what was expected. More details can be given if the error string buffer size is increased.");
 
 					}*/
-
 
 					if (isVerbose)
 					{
@@ -324,8 +296,6 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 						printf("Server stats %s\n", message);
 						StatisticsToString(rssReceiver, message, 2);
 						printf("Client stats%s", message);
-
-
 
 						DebugTools::ShowError(lastError,!noPauses && isVerbose,__LINE__,__FILE__);
 					}
@@ -344,12 +314,9 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 					break;
 			}
 
-
 			receiver->DeallocatePacket(packet);
 			packet = receiver->Receive();
 		}
-
-
 
 		RakSleep(0);
 
@@ -371,18 +338,11 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakNet::RakString
 		printf("Client stats%s", message);
 	}
 
-
-
 	if (fp)
 		fclose(fp);
 
-
-
-
 	return 0;
 }
-
-
 
 RakNet::RakString ReliableOrderedConvertedTest::GetTestName()
 {
@@ -391,14 +351,10 @@ RakNet::RakString ReliableOrderedConvertedTest::GetTestName()
 
 }
 
-
-
 RakNet::RakString ReliableOrderedConvertedTest::ErrorCodeToString(int errorCode)
 {
 
-
 	RakNet::RakString returnString;
-
 
 	switch (errorCode)
 	{

@@ -1,8 +1,5 @@
 #include "PingTestsTest.h"
 
-
-
-
 /*
 Description:
 Tests out:
@@ -11,13 +8,10 @@ virtual int 	GetLastPing (const SystemAddress systemAddress) const =0
 virtual int 	GetLowestPing (const SystemAddress systemAddress) const =0
 virtual void 	SetOccasionalPing (bool doPing)=0
 
-
 Ping is tested in CrossConnectionConvertTest,SetOfflinePingResponse and GetOfflinePingResponse tested in OfflineMessagesConvertTest
 
 Success conditions:
 Currently is that GetAveragePing and SetOccasionalPing works
-
-
 
 Failure conditions:
 
@@ -37,7 +31,6 @@ SetOccasionalPing
 int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
 {
 
-
 	RakPeerInterface *sender,*sender2, *receiver;
 	destroyList.Clear(false,__FILE__,__LINE__);
 
@@ -51,12 +44,10 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 	receiver->SetMaximumIncomingConnections(2);
 	Packet * packet;
 
-
 	SystemAddress currentSystem;
 
 	currentSystem.SetBinaryAddress("127.0.0.1");
 	currentSystem.port=60000;
-
 
 	printf("Connecting sender2\n");
 	if (!TestHelpers::WaitAndConnectTwoPeersLocally(sender2,receiver,5000))
@@ -65,16 +56,13 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 		if (isVerbose)
 			DebugTools::ShowError("Could not connect after 5 seconds\n",!noPauses && isVerbose,__LINE__,__FILE__);
 
-
 		return 2;
 
 	}
 
-
 	printf("Getting ping data for lastping and lowestping\n");
 	sender2->SetOccasionalPing(false);//Test the lowest ping and such without  occassionalping,occasional ping comes later
 	RakTimer timer(1500);
-
 
 	int lastPing=0;
 	int lowestPing=0;
@@ -87,7 +75,6 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 			if (isVerbose)
 				printf("Receive packet id %i\n",packet->data[0]);
 		}
-
 
 		for (packet=sender2->Receive();packet;sender2->DeallocatePacket(packet),packet=sender2->Receive())
 		{
@@ -118,7 +105,6 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 	if (isVerbose)
 		printf("Lowest Ping time %i\n",lowestPing);
 
-
 	int returnVal=TestAverageValue(averagePing,__LINE__, noPauses, isVerbose);
 
 	if (returnVal!=0)
@@ -126,7 +112,6 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 		return returnVal;
 	}
-
 
 	if (lastPing>100)//100 MS for localhost?
 	{
@@ -145,7 +130,6 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 		return 4;
 	}
 
-
 	if (lastPing<lowestPing)
 	{
 
@@ -157,16 +141,12 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 	CommonFunctions::DisconnectAndWait(sender2,"127.0.0.1",60000);//Eliminate variables.
 
-
-
-
 	printf("Connecting sender\n");
 	if (!TestHelpers::WaitAndConnectTwoPeersLocally(sender,receiver,5000))
 	{
 
 		if (isVerbose)
 			DebugTools::ShowError("Could not connect after 5 seconds\n",!noPauses && isVerbose,__LINE__,__FILE__);
-
 
 		return 2;
 
@@ -213,14 +193,11 @@ int PingTestsTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 }
 
-
-
 int PingTestsTest::TestAverageValue(int averagePing,int line,bool noPauses,bool isVerbose)
 {
 
 	if (averagePing<0)
 	{
-
 
 		if (isVerbose)
 			DebugTools::ShowError("Problem with the average ping time,should never be less than zero in this test\n",!noPauses && isVerbose,line,__FILE__);
@@ -229,11 +206,8 @@ int PingTestsTest::TestAverageValue(int averagePing,int line,bool noPauses,bool 
 
 	}
 
-
-
 	if (averagePing>10)//Average Ping should not be greater than 10MS for localhost. Command line pings typically give < 1ms
 	{
-
 
 		if (isVerbose)
 			DebugTools::ShowError("Average Ping should not be greater than 10MS for localhost. Command line pings typically give < 1ms\n",!noPauses && isVerbose,line,__FILE__);
@@ -283,7 +257,6 @@ RakNet::RakString PingTestsTest::ErrorCodeToString(int errorCode)
 		return "There is a problem if the lastping is lower than the lowestping stat";
 		break;
 
-
 	case 6:
 		return "Average Ping should not be greater than 10MS for localhost. Command line pings typically give < 1ms";
 		break;
@@ -292,10 +265,7 @@ RakNet::RakString PingTestsTest::ErrorCodeToString(int errorCode)
 		return "Undefined Error";
 	}
 
-
 }
-
-
 
 PingTestsTest::PingTestsTest(void)
 {

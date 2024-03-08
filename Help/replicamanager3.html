@@ -33,6 +33,108 @@
       </ul>
     <p>The solution to most of these problems is usually straightforward, yet still requires a significant amount of work and debugging, with several dozen lines of code per object.</p>
     <p>ReplicaManager3 is designed to be a generic, overridable plugin that handles as many of these details as possible automatically. ReplicaManager3 automatically creates and destroys objects, downloads the world to new players, manages players, and automatically serializes as needed. It also includes the advanced ability to automatically relay messages, and to automatically serialize your objects when the serialized member data changes.</p>
+    <p><strong>Methods of object serialization:</strong></p>
+    <p><strong>Manual sends on dirty flags</strong><br>
+      <em>Description</em>: When a variable changes, it's up to you to set some flag that the  variable has changed. The next Serialize() tick, you send all variables  with dirty flags set<br>
+<em>Pros</em>: fast, memory efficient<br>
+<em>Cons</em>: All replicated variables must change through accessors so the  flags can be set. So it's labor intensive on the programmer as you have  to program it to set the dirty flags, and bugs will likely be made during the process</p>
+    <p><em>Example</em><br>
+      <br>
+      <span class="RakNetCode">void SetHealth(float newHealth) {if (health==newHealth) return; health=newHealth; serializeHealth=true;}<br>
+        void SetScore(float newScore) {if (score==newScore) return; score=newScore; serializeScore=true;}<br>
+        virtual RM3SerializationResult Serialize(SerializeParameters *serializeParameters)<br>
+        {<br>
+        bool anyVariablesNeedToBeSent=false;
+        <br>
+        if (serializeHealth==true)<br>
+        {<br>
+        serializeParameters-&gt;outputBitstream[0]-&gt;Write(true);<br>
+        serializeParameters-&gt;outputBitstream[0]-&gt;Write(health);<br>
+        anyVariablesNeedToBeSent=true;<br>
+        }<br>
+        else<br>
+        {<br>
+        serializeParameters-&gt;outputBitstream[0]-&gt;Write(false);<br>
+        }<br>
+        if (serializeScore==true)<br>
+        {<br>
+        serializeParameters-&gt;outputBitstream[0]-&gt;Write(true);<br>
+        serializeParameters-&gt;outputBitstream[0]-&gt;Write(score);<br>
+        anyVariablesNeedToBeSent=true;<br>
+        }<br>
+        else<br>
+        {<br>
+        serializeParameters-&gt;outputBitstream[0]-&gt;Write(false);<br>
+        }      <br>
+        if 
+        (anyVariablesNeedToBeSent==false)<br>
+        serializeParameters-&gt;outputBitstream[0]-&gt;Reset();<br>
+        // Won't send anything if the bitStream is empty (was Reset()). 
+        RM3SR_SERIALIZED_ALWAYS skips default memory compare<br>
+        return 
+        RM3SR_SERIALIZED_ALWAYS;<br>
+        }</span></p>
+    <p class="RakNetCode">virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters)<br>
+{<br>
+bool healthWasChanged, scoreWasChanged;<br>
+deserializeParameters-&gt;serializationBitstream[0]-&gt;Read(healthWasChanged);<br>
+if (healthWasChanged)<br>
+    deserializeParameters-&gt;serializationBitstream[0]-&gt;Read(health); <br>
+      deserializeParameters-&gt;serializationBitstream[0]-&gt;Read(scoreWasChanged);<br>
+if (scoreWasChanged)<br>
+      deserializeParameters-&gt;serializationBitstream[0]-&gt;Read(score);    <br>
+      }</p>
+<p><strong>Serializing based on the object changing</strong><br>
+      <em>Description</em>: This is what ReplicaManager3 comes with. If the object's state for a  bitStream channel change at all, the entire channel is resent<br>
+      <em>Pros:</em> Easy to use for the programmer<br>
+      <em>Cons:</em> Some variables will be sent unneeded, using more bandwidth than necessary. Moderate CPU and memory usage</p>
+<p><em>Example</em></p>
+<p><span class="RakNetCode">void SetHealth(float newHealth) {health=newHealth;}<br>
+virtual RM3SerializationResult Serialize(SerializeParameters *serializeParameters)<br>
+{<br>
+serializeParameters-&gt;outputBitstream[0]-&gt;Write(health);<br>
+serializeParameters-&gt;outputBitstream[0]-&gt;Write(score);<br>
+// Memory compares against last outputBitstream write. If changed, writes everything on the changed channel(s), which can be wasteful in this case if only health or score changed, and not both
+</span><span class="RakNetCode"><br>
+  ieturn 
+  RM3SR_BROADCAST_IDENTICALLY;<br>
+  }</span><br>
+  <span class="RakNetCode">virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters)<br>
+    {<br>
+    deserializeParameters-&gt;serializationBitstream[0]-&gt;Read(health); <br>
+    deserializeParameters-  &gt;serializationBitstream[0]-&gt;Read(score);  </span><span class="RakNetCode"><br>
+  }</span></p>
+<p><br>
+  <strong>Serializing per-variable</strong><br>
+  <em>Description</em>: The optional module I was talking about. Every variable is copied internally and compared to the last state<br>
+  <em>Pros:</em> Maximum bandwidth savings<br>
+  <em>Cons:</em> Heavy CPU and memory usage</p>
+<p><em>Example (also see ReplicaManager3 sample project)</em></p>
+<p class="RakNetCode">virtual RM3SerializationResult Serialize(SerializeParameters *serializeParameters)	{<br>
+VariableDeltaSerializer::SerializationContext serializationContext;<br>
+ // All variables to be sent using a different mode go on different channels<br>
+  serializeParameters-&gt;pro[0].reliability=RELIABLE_ORDERED;<br>
+  variableDeltaSerializer.BeginIdenticalSerialize(<br>
+  &amp;serializationContext,<br>
+  serializeParameters-&gt;whenLastSerialized==0,<br>
+  &amp;serializeParameters-&gt;outputBitstream[0]<br>
+  );<br>
+  variableDeltaSerializer.SerializeVariable(&amp;serializationContext, var3Reliable);<br>
+  variableDeltaSerializer.SerializeVariable(&amp;serializationContext, var4Reliable);<br>
+  variableDeltaSerializer.EndSerialize(&amp;serializationContext);<br>
+  return RM3SR_SERIALIZED_ALWAYS_IDENTICALLY;<br>
+  }<br>
+  <br>
+  virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters) {<br>
+   VariableDeltaSerializer::DeserializationContext deserializationContext;<br>
+   variableDeltaSerializer.BeginDeserialize(&amp;deserializationContext, &amp;deserializeParameters-&gt;serializationBitstream[0]);<br>
+  if (variableDeltaSerializer.DeserializeVariable(&amp;deserializationContext, var3Reliable))<br>
+  printf(&quot;var3Reliable changed to %i\n&quot;, var3Reliable);<br>
+  if (variableDeltaSerializer.DeserializeVariable(&amp;deserializationContext, var4Reliable))<br>
+  printf(&quot;var4Reliable changed to %i\n&quot;, var4Reliable);<br>
+  variableDeltaSerializer.EndDeserialize(&amp;deserializationContext);<br>
+  }</p>
+<p class="RakNetCode">&nbsp; </p>
     <p><strong> Quick start:</strong><br>
       </p>
     <ol>
@@ -46,7 +148,11 @@
     <p>For a full list of functions with detailed documentation on each parameter, see ReplicaManager3.h.</p>
     <p>The primary sample is located at <I>Samples\ReplicaManager3</I>.<BR>
       </p></TD>
-</TR></TABLE>
+</TR>
+  <TR>
+    <TD>&nbsp;</TD>
+  </TR>
+</TABLE>
 
 <table width="100%" border="0"><tr>
   <td bgcolor="#2c5d92" class="RakNetWhiteHeader">

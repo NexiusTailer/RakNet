@@ -41,7 +41,7 @@ namespace DataStructures
 		void Push(const char *key, const data_type &input, const char *file, unsigned int line );
 		data_type* Peek(const char *key );
 		bool Pop(data_type& out, const char *key, const char *file, unsigned int line );
-		bool Remove(const char *key, const char *file, unsigned int line );
+		bool RemoveAtIndex(StringKeyedHashIndex index, const char *file, unsigned int line );
 		StringKeyedHashIndex GetIndexOf(const char *key);
 		data_type& ItemAtIndex(const StringKeyedHashIndex &index);
 		RakNet::RakString KeyAtIndex(const StringKeyedHashIndex &index);
@@ -120,7 +120,7 @@ namespace DataStructures
 			{
 				// Delete last item
 				out=node->data;
-				ClearIndex(hashIndex);
+				ClearIndex(hashIndex,__FILE__,__LINE__);
 				return true;
 			}
 			else
@@ -140,6 +140,7 @@ namespace DataStructures
 
 		Node *last=node;
 		node=node->next;
+
 		while (node!=0)
 		{
 			// First item does not match, but subsequent item might
@@ -152,16 +153,51 @@ namespace DataStructures
 				RakNet::OP_DELETE(node,file,line);
 				return true;
 			}
+			last=node;
 			node=node->next;
 		}
 		return false;
 	}
 
 	template <class data_type, unsigned int HASH_SIZE>
-	bool StringKeyedHash<data_type, HASH_SIZE>::Remove(const char *key, const char *file, unsigned int line )
+	bool StringKeyedHash<data_type, HASH_SIZE>::RemoveAtIndex(StringKeyedHashIndex index, const char *file, unsigned int line )
 	{
-		data_type& unused;
-		return Pop(unused,file,line);
+		if (index.IsInvalid())
+			return false;
+
+		Node *node = nodeList[index.primaryIndex];
+		if (node==0)
+			return false;
+		if (node->next==0)
+		{
+			// Delete last item
+			ClearIndex(index.primaryIndex);
+			return true;
+		}
+		else if (index.secondaryIndex==0)
+		{
+			// First item does match, but more than one item
+			nodeList[index.primaryIndex]=node->next;
+			RakNet::OP_DELETE(node,file,line);
+			return true;
+		}
+
+		Node *last=node;
+		node=node->next;
+		--index.secondaryIndex;
+
+		while (index.secondaryIndex!=0)
+		{
+			last=node;
+			node=node->next;
+			--index.secondaryIndex;
+		}
+
+		// Skip over subsequent item
+		last->next=node->next;
+		// Delete existing item
+		RakNet::OP_DELETE(node,file,line);
+		return true;
 	}
 
 	template <class data_type, unsigned int HASH_SIZE>

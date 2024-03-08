@@ -313,6 +313,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\Getche.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\GetTime.cpp"
 				>
 			</File>
@@ -373,7 +377,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\NATTypeDetectionClient.cpp"
+				RelativePath="..\..\Source\NatTypeDetectionClient.cpp"
 				>
 			</File>
 			<File
@@ -406,6 +410,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\PacketLogger.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\PacketOutputWindowLogger.cpp"
 				>
 			</File>
 			<File
@@ -505,6 +513,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\RPC4Plugin.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\RPCMap.cpp"
 				>
 			</File>
@@ -582,6 +594,14 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\UDPProxyServer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\VariableDeltaSerializer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\VariableListDeltaTracker.cpp"
 				>
 			</File>
 			<File
@@ -719,6 +739,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\DS_Multilist.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\DS_OrderedChannelHeap.h"
 				>
 			</File>
@@ -815,6 +839,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\Getche.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\GetTime.h"
 				>
 			</File>
@@ -895,7 +923,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\NATTypeDetectionClient.h"
+				RelativePath="..\..\Source\NatTypeDetectionClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\NatTypeDetectionCommon.h"
 				>
 			</File>
 			<File
@@ -927,6 +959,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\PacketOutputWindowLogger.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\PacketPool.h"
 				>
 			</File>
@@ -947,6 +983,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\PS3Includes.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\RakAlloca.h"
 				>
 			</File>
@@ -964,6 +1004,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\RakNetDefines.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\RakNetDefinesOverrides.h"
 				>
 			</File>
 			<File
@@ -1087,6 +1131,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\RPC4Plugin.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\RPCMap.h"
 				>
 			</File>
@@ -1192,6 +1240,14 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\UDPProxyServer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\VariableDeltaSerializer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\VariableListDeltaTracker.h"
 				>
 			</File>
 			<File

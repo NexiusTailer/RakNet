@@ -41,8 +41,8 @@ class Screens.RegisterAccountScreen2 extends Screen
 	
 	public function OnShow():Void
 	{		
-		cbSameAsHomeAddress.selected = false;
 		billingState.dataProvider = LobbyInterface.Instance.GetScreen( ScreenID.REGISTER_ACCOUNT_PERSONAL )["GetStateList"]();
+		cbSameAsHomeAddress.selected = false;
 		if ( LobbyInterface.Instance.IsLoggedIn() )
 		{
 			gotoAndStop("Update");			
@@ -102,7 +102,7 @@ class Screens.RegisterAccountScreen2 extends Screen
 	
 	public function GetSelectedState():String
 	{
-		return billingState.dataProvider[billingState.selectedIndex];
+		return LobbyInterface.Instance.GetScreen( ScreenID.REGISTER_ACCOUNT_PERSONAL )["GetStateList"]()[billingState.selectedIndex];
 	}
 	
 	public function GetZipCode():String

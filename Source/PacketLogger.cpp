@@ -74,7 +74,7 @@ unsigned int splitPacketId, unsigned int splitPacketIndex, unsigned int splitPac
 	char localtime[128];
 	GetLocalTime(localtime);
 
-	sprintf(into, "%s,%s%s,%s,%5u,%5u,%s,%u,%"PRINTF_TIME_MODIFIER"u,%s,%s,%i,%i,%i,%i,%s,"
+	sprintf(into, "%s,%s%s,%s,%5u,%5u,%s,%u,%"PRINTF_64_BIT_MODIFIER"u,%s,%s,%i,%i,%i,%i,%s,"
 					, localtime
 					, prefix
 					, dir
@@ -133,7 +133,7 @@ void PacketLogger::OnAck(unsigned int messageNumber, SystemAddress remoteSystemA
 	char localtime[128];
 	GetLocalTime(localtime);
 
-	sprintf(str, "%s,Rcv,Ack,%i,,,,%"PRINTF_TIME_MODIFIER"u,%s,%s,,,,,,"
+	sprintf(str, "%s,Rcv,Ack,%i,,,,%"PRINTF_64_BIT_MODIFIER"u,%s,%s,,,,,,"
 					, localtime
 					, messageNumber
 					, (unsigned long long) time
@@ -153,7 +153,7 @@ void PacketLogger::OnPushBackPacket(const char *data, const BitSize_t bitsUsed, 
 	char localtime[128];
 	GetLocalTime(localtime);
 
-	sprintf(str, "%s,Lcl,PBP,,,%s,%i,%"PRINTF_TIME_MODIFIER"u,%s,%s,,,,,,"
+	sprintf(str, "%s,Lcl,PBP,,,%s,%i,%"PRINTF_64_BIT_MODIFIER"u,%s,%s,,,,,,"
 					, localtime
 					, BaseIDTOString(data[0])
 					, bitsUsed
@@ -218,7 +218,7 @@ void PacketLogger::WriteMiscellaneous(const char *type, const char *msg)
 	char localtime[128];
 	GetLocalTime(localtime);
 
-	sprintf(str, "%s,Lcl,%s,,,,,%"PRINTF_TIME_MODIFIER"u,%s,,,,,,,%s"
+	sprintf(str, "%s,Lcl,%s,,,,,%"PRINTF_64_BIT_MODIFIER"u,%s,,,,,,,%s"
 					, localtime
 					, type
 					, (unsigned long long) time
@@ -360,10 +360,10 @@ const char* PacketLogger::BaseIDTOString(unsigned char Id)
 		"ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING",
 		"ID_TEAM_BALANCER_TEAMS_LOCKED",
 		"ID_TEAM_BALANCER_TEAM_ASSIGNED",
-		"ID_RESERVED_1",
-		"ID_RESERVED_2",
-		"ID_RESERVED_3",
-		"ID_RESERVED_4",
+		"ID_LIGHTSPEED_INTEGRATION",
+		"ID_RPC_4_PLUGIN",
+		"ID_SND_RECEIPT_ACKED",
+		"ID_SND_RECEIPT_LOSS",
 		"ID_RESERVED_5",
 		"ID_RESERVED_6",
 		"ID_RESERVED_7",

@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "RakNetTypes.h"
 #include "PluginInterface2.h"
 #include "PacketPriority.h"
@@ -85,7 +84,6 @@ public:
 	/// \param[in] bitsUsed How many bits long \a data is
 	/// \param[in] remoteSystemAddress The player we sent or got this packet from
 	void OnPushBackPacket(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress) {(void) data; (void) bitsUsed; (void) remoteSystemAddress;}
-
 
 private:
 	RakTimer timer;

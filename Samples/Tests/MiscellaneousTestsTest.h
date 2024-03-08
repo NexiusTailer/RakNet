@@ -2,7 +2,6 @@
 
 #include "TestInterface.h"
 
-
 #include "RakString.h"
 #include "RakNetworkFactory.h"
 #include "RakPeerInterface.h"
@@ -16,12 +15,6 @@
 #include "CommonFunctions.h"
 #include "TestHelpers.h"
 #include "RouterInterfaceTester.h"
-
-
-
-
-
-
 
 class MiscellaneousTestsTest : public TestInterface
 {
@@ -37,6 +30,5 @@ public:
 private:
 	DataStructures::List <RakNet::RakString> errorList;
 	DataStructures::List <RakPeerInterface *> destroyList;
-
 
 };

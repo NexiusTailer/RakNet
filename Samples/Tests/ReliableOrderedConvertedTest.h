@@ -16,9 +16,7 @@
 #include "RakSleep.h"
 #include "RakMemoryOverride.h"
 
-
 #include "DebugTools.h"
-
 
 class ReliableOrderedConvertedTest : public TestInterface
 {

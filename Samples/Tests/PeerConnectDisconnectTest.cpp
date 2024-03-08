@@ -1,6 +1,5 @@
 #include "PeerConnectDisconnectTest.h"
 
-
 void PeerConnectDisconnectTest::WaitForConnectionRequestsToComplete(RakPeerInterface **peerList, int peerNum, bool isVerbose)
 {
 	SystemAddress currentSystem;
@@ -60,7 +59,6 @@ void PeerConnectDisconnectTest::WaitAndPrintResults(RakPeerInterface **peerList,
 				if (isVerbose)              
 					printf("Our connection request has been accepted.\n");
 
-
 				break;
 			case ID_CONNECTION_ATTEMPT_FAILED:
 				if (isVerbose)
@@ -77,7 +75,6 @@ void PeerConnectDisconnectTest::WaitAndPrintResults(RakPeerInterface **peerList,
 				if (isVerbose)              
 					printf("The server is full.\n");
 
-
 				break;
 
 			case ID_ALREADY_CONNECTED:
@@ -85,7 +82,6 @@ void PeerConnectDisconnectTest::WaitAndPrintResults(RakPeerInterface **peerList,
 					printf("Already connected\n");
 
 				break;
-
 
 			case ID_DISCONNECTION_NOTIFICATION:
 				if (isVerbose)
@@ -110,7 +106,6 @@ What is being done here is having 8 peers all connect to eachother, disconnect, 
 
 Do this for about 10 seconds. Then allow them all to connect for one last time.
 
-
 Good ideas for changes:
 After the last check run a eightpeers like test an add the conditions
 of that test as well.
@@ -119,7 +114,6 @@ Make sure that if we initiate the connection we get a proper message
 and if not we get a proper message. Add proper conditions.
 
 Randomize sending the disconnect notes
-
 
 Success conditions:
 All connected normally.
@@ -139,15 +133,9 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 	const int maxConnections=peerNum*3;//Max allowed connections for test set to times 3 to eliminate problem variables
 	RakPeerInterface *peerList[peerNum];//A list of 8 peers
 
-
 	SystemAddress currentSystem;
 
-	Packet *packet;
 	destroyList.Clear(false,__FILE__,__LINE__);
-
-
-
-
 
 	//Initializations of the arrays
 	for (int i=0;i<peerNum;i++)
@@ -155,20 +143,12 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 		peerList[i]=RakNetworkFactory::GetRakPeerInterface();
 		destroyList.Push(peerList[i],__FILE__,__LINE__);
 
-
-
-
 		peerList[i]->Startup(maxConnections, 30, &SocketDescriptor(60000+i,0), 1);
 		peerList[i]->SetMaximumIncomingConnections(maxConnections);
 
 	}
 
-
-
-
 	//Connect all the peers together
-
-
 
 	for (int i=0;i<peerNum;i++)
 	{
@@ -190,21 +170,15 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 
 	}
 
-
-
 	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
 
 	DataStructures::List< SystemAddress  > systemList;
 	DataStructures::List< RakNetGUID > guidList;
 
-
-
 	printf("Entering disconnect loop \n");
-
 
 	while(RakNet::GetTime()-entryTime<10000)//Run for 10 Secoonds
 	{
-
 
 		//Disconnect all peers IF connected to any
 		for (int i=0;i<peerNum;i++)
@@ -216,18 +190,12 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 			for (int j=0;j<len;j++)//Disconnect them all
 			{
 
-
 				peerList[i]->CloseConnection (systemList[j],true,0,LOW_PRIORITY); 	
 			}
 
-
 		}
 
-
-
-
 		RakSleep(100);
-
 
 		//Connect
 
@@ -242,18 +210,13 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 				if(!peerList[i]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
 				{
 
-
 					if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
 					{
-
-
 
 						if (isVerbose)
 							DebugTools::ShowError("Problem while calling connect.\n",!noPauses && isVerbose,__LINE__,__FILE__);
 
-
 						return 1;//This fails the test, don't bother going on.
-
 
 					}
 				}
@@ -262,13 +225,11 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 
 		}
 
-
 		WaitAndPrintResults(peerList,peerNum,isVerbose);
 
 	}
 
 	WaitAndPrintResults(peerList,peerNum,isVerbose);
-
 
 	printf("Connecting peers\n");
 
@@ -291,15 +252,10 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 					peerList[i]->GetSystemList(systemList,guidList);//Get connectionlist
 					int len=systemList.Size();
 
-
-
-
 					if (isVerbose)
 						DebugTools::ShowError("Problem while calling connect.\n",!noPauses && isVerbose,__LINE__,__FILE__);
 
-
 					return 1;//This fails the test, don't bother going on.
-
 
 				}
 			}
@@ -326,26 +282,18 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 		if (connNum!=peerNum-1)//Did we connect to all?
 		{
 
-
 			if (isVerbose)
 			{
 				printf("Not all peers reconnected normally.\nFailed on peer number %i with %i peers\n",i,connNum);
 
-
 				DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
 			}
 
-
-
-
 			return 2;
-
 
 		}
 
-
 	}
-
 
 	
 
@@ -354,8 +302,6 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 	return 0;
 
 }
-
-
 
 RakNet::RakString PeerConnectDisconnectTest::GetTestName()
 {
@@ -385,7 +331,6 @@ RakNet::RakString PeerConnectDisconnectTest::ErrorCodeToString(int errorCode)
 	default:
 		return "Undefined Error";
 	}
-
 
 }
 

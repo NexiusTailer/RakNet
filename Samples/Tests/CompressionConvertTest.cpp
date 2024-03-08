@@ -1,14 +1,12 @@
 #include "CompressionConvertTest.h"
 
-
 int CompressionConvertTest::RunAndSave(bool isVerbose,bool noPauses,FILE *serverToClientFrequencyTableFilePointer,FILE *clientToServerFrequencyTableFilePointer,bool destructionTest)
 {
 
 	// Pointers to the interfaces of our server and client.
 	// Note we can easily have both in the same program
 
-	char serverToClientFrequencyTableFilename[100], clientToServerFrequencyTableFilename[100];
-	char buff[256];
+	char serverToClientFrequencyTableFilename[100];
 
 	rakClient=RakNetworkFactory::GetRakPeerInterface();
 	rakServer=RakNetworkFactory::GetRakPeerInterface();
@@ -20,12 +18,9 @@ int CompressionConvertTest::RunAndSave(bool isVerbose,bool noPauses,FILE *server
 
 	int i = rakServer->GetNumberOfAddresses();
 
-
-
 	// We are generating compression layers for both the client and the server just to demonstrate it
 	// in practice you would only do one or the other depending on whether you wanted to run as a client or as a server
 	// Note that both the client and the server both need both frequency tables and they must be the same
-
 
 	if (serverToClientFrequencyTableFilePointer!=0)
 	{
@@ -51,7 +46,6 @@ int CompressionConvertTest::RunAndSave(bool isVerbose,bool noPauses,FILE *server
 		fclose(serverToClientFrequencyTableFilePointer);
 	}
 
-
 	if (clientToServerFrequencyTableFilePointer!=0)
 	{
 		unsigned int frequencyData[256];
@@ -75,7 +69,6 @@ int CompressionConvertTest::RunAndSave(bool isVerbose,bool noPauses,FILE *server
 
 		fclose(clientToServerFrequencyTableFilePointer);
 	}
-
 
 	if (destructionTest)
 	{
@@ -110,12 +103,9 @@ int CompressionConvertTest::RunAndSave(bool isVerbose,bool noPauses,FILE *server
 		}
 	}
 
-
 	{
 		// Holds user data
 		char portstring[30];
-
-
 
 		strcpy(portstring, "60000");
 		if (isVerbose)
@@ -143,7 +133,6 @@ int CompressionConvertTest::RunAndSave(bool isVerbose,bool noPauses,FILE *server
 
 		bool b= rakClient->Startup(1, 30, &SocketDescriptor(60001,0), 1);
 
-
 		if (b)
 		{
 			if (isVerbose)
@@ -162,10 +151,8 @@ int CompressionConvertTest::RunAndSave(bool isVerbose,bool noPauses,FILE *server
 	serverAddress.port=60000;
 	RakNetTime entryTime=RakNet::GetTime();
 
-
 	while(!rakClient->IsConnected (serverAddress,false,false)&&RakNet::GetTime()-entryTime<5000)
 	{
-
 
 		if(!rakClient->IsConnected (serverAddress,true,true))
 		{
@@ -183,10 +170,9 @@ int CompressionConvertTest::RunAndSave(bool isVerbose,bool noPauses,FILE *server
 	}
 	char message[400];
 
-
 	entryTime=RakNet::GetTime();
 
-	if (isVerbose);
+	if (isVerbose)
 	printf("Starting data collection\n");
 
 	while (RakNet::GetTime()-entryTime<2000)//2 seconds
@@ -197,7 +183,6 @@ int CompressionConvertTest::RunAndSave(bool isVerbose,bool noPauses,FILE *server
 			// fine to block on gets or anything we want
 			// Because the network engine was painstakingly written using threads.
 			strcpy(message," Test data: ccccccccccccccccccc");
-
 
 			// Message now holds what we want to broadcast
 
@@ -269,10 +254,8 @@ int CompressionConvertTest::RunAndSave(bool isVerbose,bool noPauses,FILE *server
 	rakServer->Shutdown(100);
 	rakClient->Shutdown(100);
 
-
 	if(destructionTest)//Because we destroyed the data that we pulled from file, the ratio should be 0 because we just generated scratch data and didn't have any to use
 	{
-
 
 		if (rakClient->GetCompressionRatio()!=0)
 		{
@@ -291,9 +274,7 @@ int CompressionConvertTest::RunAndSave(bool isVerbose,bool noPauses,FILE *server
 
 	}
 
-
 	if (!destructionTest){
-
 
 		strcpy(serverToClientFrequencyTableFilename, "c2s");
 
@@ -301,13 +282,10 @@ int CompressionConvertTest::RunAndSave(bool isVerbose,bool noPauses,FILE *server
 		if (serverToClientFrequencyTableFilePointer==0)
 		{
 
-
-
 			if (isVerbose)
 			{
 				printf("Can't open %s for writing\n", serverToClientFrequencyTableFilename);
 				DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
-
 
 			}
 			return 17;
@@ -318,30 +296,22 @@ int CompressionConvertTest::RunAndSave(bool isVerbose,bool noPauses,FILE *server
 
 			// Get the frequency table generated during the run
 
-
 			rakClient->GetOutgoingFrequencyTable(frequencyData);
 
 			fwrite(frequencyData, sizeof(unsigned int), 256, serverToClientFrequencyTableFilePointer);
 			fclose(serverToClientFrequencyTableFilePointer);
 		}
 
-
-
-
 		strcpy(serverToClientFrequencyTableFilename, "s2c");
-
-
 
 		serverToClientFrequencyTableFilePointer = fopen(serverToClientFrequencyTableFilename, "wb");
 		if (serverToClientFrequencyTableFilePointer==0)
 		{
 
-
 			if (isVerbose)
 			{
 				printf("Can't open %s fow writing\n", serverToClientFrequencyTableFilename);
 				DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
-
 
 			}
 			return 18;
@@ -353,8 +323,6 @@ int CompressionConvertTest::RunAndSave(bool isVerbose,bool noPauses,FILE *server
 			// Get the frequency table generated during the run
 
 			rakServer->GetOutgoingFrequencyTable(frequencyData);
-
-
 
 			fwrite(frequencyData, sizeof(unsigned int), 256, serverToClientFrequencyTableFilePointer);
 			fclose(serverToClientFrequencyTableFilePointer);
@@ -370,11 +338,8 @@ int CompressionConvertTest::RunAndSave(bool isVerbose,bool noPauses,FILE *server
 /*
 Description:
 
-
 Success conditions:
 Generates and uses compressesion properly.
-
-
 
 Failure conditions:
 Problem reading frequency data
@@ -389,8 +354,6 @@ Cant open file s2s after it is generated
 Client fails to connect after alloted time
 Fails to delete input layer
 Fails to delete output layer
-
-
 
 RakPeerInterface Functions used, tested indirectly by its use:
 Startup
@@ -416,7 +379,7 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 	{
 		printf("Compression data collection run 1\n");
 	}
-	returnValue=RunAndSave(isVerbose,noPauses,0,0,false);
+	returnValue=RunAndSave(isVerbose,noPauses,0,0,false)>0;
 
 	if (returnValue!=0)
 	{
@@ -427,11 +390,8 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 	FILE *serverToClientFrequencyTableFilePointer, *clientToServerFrequencyTableFilePointer;
 	char serverToClientFrequencyTableFilename[100], clientToServerFrequencyTableFilename[100];
 
-
-
 	strcpy(serverToClientFrequencyTableFilename, "s2c");
 	serverToClientFrequencyTableFilePointer = fopen(serverToClientFrequencyTableFilename, "rb");
-
 
 	strcpy(clientToServerFrequencyTableFilename, "c2s");
 	clientToServerFrequencyTableFilePointer = fopen(clientToServerFrequencyTableFilename, "rb");
@@ -439,7 +399,7 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 	{
 		printf("Compression data collection run 2\n");
 	}
-	returnValue=RunAndSave(isVerbose,noPauses,serverToClientFrequencyTableFilePointer,clientToServerFrequencyTableFilePointer,false);
+	returnValue=RunAndSave(isVerbose,noPauses,serverToClientFrequencyTableFilePointer,clientToServerFrequencyTableFilePointer,false)>0;
 	if (returnValue!=0)
 	{
 		return returnValue;
@@ -447,7 +407,6 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 	DestroyPeers();
 	strcpy(serverToClientFrequencyTableFilename, "s2c");
 	serverToClientFrequencyTableFilePointer = fopen(serverToClientFrequencyTableFilename, "rb");
-
 
 	strcpy(clientToServerFrequencyTableFilename, "c2s");
 	clientToServerFrequencyTableFilePointer = fopen(clientToServerFrequencyTableFilename, "rb");
@@ -455,7 +414,7 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 	{
 		printf("Compression data collection run 3\n");
 	}
-	returnValue=RunAndSave(isVerbose,noPauses,serverToClientFrequencyTableFilePointer,clientToServerFrequencyTableFilePointer,false);
+	returnValue=RunAndSave(isVerbose,noPauses,serverToClientFrequencyTableFilePointer,clientToServerFrequencyTableFilePointer,false)>0;
 	if (returnValue!=0)
 	{
 		return returnValue;
@@ -465,14 +424,13 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 	strcpy(serverToClientFrequencyTableFilename, "s2c");
 	serverToClientFrequencyTableFilePointer = fopen(serverToClientFrequencyTableFilename, "rb");
 
-
 	strcpy(clientToServerFrequencyTableFilename, "c2s");
 	clientToServerFrequencyTableFilePointer = fopen(clientToServerFrequencyTableFilename, "rb");
 	if (isVerbose)
 	{
 		printf("Compression data collection run and destruction, no data save\n");
 	}
-	returnValue=RunAndSave(isVerbose,noPauses,serverToClientFrequencyTableFilePointer,clientToServerFrequencyTableFilePointer,true);
+	returnValue=RunAndSave(isVerbose,noPauses,serverToClientFrequencyTableFilePointer,clientToServerFrequencyTableFilePointer,true)>0;
 	if (returnValue!=0)
 	{
 		return returnValue;
@@ -481,8 +439,6 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 
 	// Pointers to the interfaces of our server and client.
 	// Note we can easily have both in the same program
-
-	char buff[256];
 
 	rakClient=RakNetworkFactory::GetRakPeerInterface();
 	rakServer=RakNetworkFactory::GetRakPeerInterface();
@@ -536,7 +492,6 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 		fclose(serverToClientFrequencyTableFilePointer);
 	}
 
-
 	strcpy(clientToServerFrequencyTableFilename, "c2s");
 	clientToServerFrequencyTableFilePointer = fopen(clientToServerFrequencyTableFilename, "rb");
 	if (clientToServerFrequencyTableFilePointer==0)
@@ -570,17 +525,9 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 		fclose(clientToServerFrequencyTableFilePointer);
 	}
 
-
-
-
-
-
-
 	{
 		// Holds user data
 		char portstring[30];
-
-
 
 		strcpy(portstring, "60000");
 		puts("Starting server.");
@@ -607,7 +554,6 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 
 		bool b= rakClient->Startup(1, 30, &SocketDescriptor(60001,0), 1);
 
-
 		if (b)
 		{
 			if (isVerbose)
@@ -626,10 +572,8 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 	serverAddress.port=60000;
 	RakNetTime entryTime=RakNet::GetTime();
 
-
 	while(!rakClient->IsConnected (serverAddress,false,false)&&RakNet::GetTime()-entryTime<5000)
 	{
-
 
 		if(!rakClient->IsConnected (serverAddress,true,true))
 		{
@@ -648,7 +592,6 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 
 	char message[400];
 
-
 	entryTime=RakNet::GetTime();
 	// Loop for input
 	while (RakNet::GetTime()-entryTime<10000)//10 seconds
@@ -659,7 +602,6 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 			// fine to block on gets or anything we want
 			// Because the network engine was painstakingly written using threads.
 			strcpy(message," Test data: ccccccccccccccccccc");
-
 
 			// Message now holds what we want to broadcast
 
@@ -729,7 +671,6 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 		}
 	}
 
-
 	float serverCompress=rakServer->GetCompressionRatio();
 	float serverDecompress= rakServer->GetDecompressionRatio();
 	float clientCompress=rakClient->GetCompressionRatio();
@@ -741,10 +682,8 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 		printf("Client: Compression ratio=%f. Decompression ratio=%f\n",clientCompress ,clientDecompress );
 	}
 
-
 	if(serverDecompress==1||serverDecompress==0)//Tested and always should be not 0 or 1
 	{
-
 
 		if (isVerbose)
 			DebugTools::ShowError("Problem with the server decompress ratio\n",!noPauses && isVerbose,__LINE__,__FILE__);
@@ -757,7 +696,6 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 			DebugTools::ShowError("Problem with the server compress ratio\n",!noPauses && isVerbose,__LINE__,__FILE__);
 		return 5;
 	}
-
 
 	if(clientCompress==1||clientCompress==0)//Tested and always should be not 0 or 1
 	{
@@ -774,39 +712,20 @@ int CompressionConvertTest::RunTest(DataStructures::List<RakNet::RakString> para
 		return 7;
 	}
 
-
 	rakServer->Shutdown(100);
 	rakClient->Shutdown(100);
 
-
-
-
-
-
-
-
-
-
 	strcpy(serverToClientFrequencyTableFilename, "c2s");
 
-
-
 	remove(serverToClientFrequencyTableFilename);
-
 
 	strcpy(serverToClientFrequencyTableFilename, "s2c");
 
-
 	remove(serverToClientFrequencyTableFilename);
-
-
-
-
 
 	return 0;
 
 }
-
 
 void CompressionConvertTest::DestroyPeers()
 {
@@ -814,7 +733,6 @@ void CompressionConvertTest::DestroyPeers()
 	RakNetworkFactory::DestroyRakPeerInterface(rakServer);
 	RakNetworkFactory::DestroyRakPeerInterface(rakClient);
 }
-
 
 RakNet::RakString CompressionConvertTest::GetTestName()
 {
@@ -892,15 +810,11 @@ RakNet::RakString CompressionConvertTest::ErrorCodeToString(int errorCode)
 		return "Failed to delete a server compression layer";
 		break;
 
-
 	default:
 		return "Undefined Error";
 	}
 
-
 }
-
-
 
 CompressionConvertTest::CompressionConvertTest(void)
 {

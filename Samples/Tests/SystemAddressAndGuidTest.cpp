@@ -1,7 +1,5 @@
 #include "SystemAddressAndGuidTest.h"
 
-
-
 /*
 Description:
 Tests:
@@ -16,8 +14,6 @@ virtual SystemAddress RakPeerInterface::GetExternalID  	(  	const SystemAddress 
 
 Success conditions:
 All functions pass test.
-
-
 
 Failure conditions:
 Any function fails.
@@ -38,8 +34,6 @@ GetSystemAddressFromGuid failed to return correct values
 GetGuidFromSystemAddress failed to return correct values
 GetGUIDFromIndex failed to return correct values
 GetExternalID failed to return correct values
-
-
 
 RakPeerInterface Functions used, tested indirectly by its use. List may not be complete:
 Startup
@@ -64,18 +58,14 @@ GetExternalID
 int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
 {
 
-
 	RakPeerInterface *server,*client;
 	destroyList.Clear(false,__FILE__,__LINE__);
-
 
 	printf("Testing IsActive\n");
 	client=RakNetworkFactory::GetRakPeerInterface();
 	destroyList.Push(	client,__FILE__,__LINE__);
 	if (client->IsActive())
 	{
-
-
 
 		if (isVerbose)
 			DebugTools::ShowError(errorList[1-1],!noPauses && isVerbose,__LINE__,__FILE__);
@@ -85,10 +75,8 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 
 	client->Startup(1,30,&SocketDescriptor(60001,0),1);
 
-
 	if (!client->IsActive())
 	{
-
 
 		if (isVerbose)
 			DebugTools::ShowError(errorList[2-1],!noPauses && isVerbose,__LINE__,__FILE__);
@@ -102,8 +90,6 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 	if (!TestHelpers::WaitAndConnectTwoPeersLocally(client,server,5000))
 	{
 
-
-
 		if (isVerbose)
 			DebugTools::ShowError(errorList[3-1],!noPauses && isVerbose,__LINE__,__FILE__);
 
@@ -113,32 +99,26 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 	DataStructures::List< SystemAddress  > systemList;
 	DataStructures::List< RakNetGUID > guidList;
 
-
 	printf("Test GetSystemList and NumberOfConnections\n");
 
 	client->GetSystemList(systemList,guidList);//Get connectionlist
 	int len=systemList.Size();
 	int len2=guidList.Size();
 
-
 	int conNum=client->NumberOfConnections();
 
 	printf("Test if systemList size matches guidList size \n");
-
 
 	if (len2!=len)
 	{
 
 		printf("system list size is %i and guid size is %i ",len,len2);
 
-
-
 		if (isVerbose)
 			DebugTools::ShowError(errorList[4-1],!noPauses && isVerbose,__LINE__,__FILE__);
 
 		return 4;
 	}
-
 
 	printf("Test returned list size against NumberofConnections return value\n");
 	if (conNum!=len)
@@ -147,13 +127,9 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 		if (conNum==1||len==1)
 		{
 
-
 			if (conNum!=1)
 			{
 				printf("system list size is %i and NumberOfConnections return is %i ",len,conNum);
-
-
-
 
 				if (isVerbose)
 					DebugTools::ShowError(errorList[5-1],!noPauses && isVerbose,__LINE__,__FILE__);
@@ -167,8 +143,6 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 
 				printf("system list size is %i and NumberOfConnections return is %i ",len,conNum);
 
-
-
 				if (isVerbose)
 					DebugTools::ShowError(errorList[6-1],!noPauses && isVerbose,__LINE__,__FILE__);
 
@@ -180,7 +154,6 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 		{
 			printf("system list size is %i and NumberOfConnections return is %i ",len,conNum);
 
-
 			if (isVerbose)
 				DebugTools::ShowError(errorList[7-1],!noPauses && isVerbose,__LINE__,__FILE__);
 
@@ -188,43 +161,30 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 
 		}
 
-
-
 	}
 	else
 	{
 
-
 		if (conNum!=1)
 		{
 			printf("system list size is %i and NumberOfConnections return is %i ",len,conNum);
-
-
 
 			if (isVerbose)
 				DebugTools::ShowError(errorList[8-1],!noPauses && isVerbose,__LINE__,__FILE__);
 
 			return 8;
 
-
 		}
 
 	}
-
-
-
 
 	printf("Test GetSystemListValues of the system and guid list\n");
 	SystemAddress serverAddress;
 	serverAddress.SetBinaryAddress("127.0.0.1");
 	serverAddress.port=60000;
 
-
-
 	if (!compareSystemAddresses(systemList[0],serverAddress))
 	{
-
-
 
 		if (isVerbose)
 			DebugTools::ShowError(errorList[10-1],!noPauses && isVerbose,__LINE__,__FILE__);
@@ -238,8 +198,6 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 	if (guidList[0]!=serverGuid)
 	{
 
-
-
 		if (isVerbose)
 			DebugTools::ShowError(errorList[11-1],!noPauses && isVerbose,__LINE__,__FILE__);
 
@@ -247,12 +205,9 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 
 	}
 
-
 	printf("Test GetSystemAddressFromIndex\n");
 	if (!compareSystemAddresses(client->GetSystemAddressFromIndex(0),serverAddress))
 	{
-
-
 
 		if (isVerbose)
 			DebugTools::ShowError(errorList[12-1],!noPauses && isVerbose,__LINE__,__FILE__);
@@ -264,8 +219,6 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 	if (!compareSystemAddresses(client->GetSystemAddressFromGuid(serverGuid),serverAddress))
 	{
 
-
-
 		if (isVerbose)
 			DebugTools::ShowError(errorList[13-1],!noPauses && isVerbose,__LINE__,__FILE__);
 
@@ -275,8 +228,6 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 	printf("Test GetGuidFromSystemAddress\n");
 	if (client->GetGuidFromSystemAddress(serverAddress)!=serverGuid)
 	{
-
-
 
 		if (isVerbose)
 			DebugTools::ShowError(errorList[14-1],!noPauses && isVerbose,__LINE__,__FILE__);
@@ -289,8 +240,6 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 	if (client->GetGUIDFromIndex(0)!=serverGuid)
 	{
 
-
-
 		if (isVerbose)
 			DebugTools::ShowError(errorList[15-1],!noPauses && isVerbose,__LINE__,__FILE__);
 
@@ -302,13 +251,10 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 	clientAddress.SetBinaryAddress("127.0.0.1");
 	clientAddress.port=60001;
 
-
 	printf("Test GetExternalID, automatic testing is not only required for this\nbecause of it's nature\nShould be supplemented by internet tests\n");
 
 	if (!compareSystemAddresses(client->GetExternalID(serverAddress),clientAddress))
 	{
-
-
 
 		if (isVerbose)
 			DebugTools::ShowError(errorList[16-1],!noPauses && isVerbose,__LINE__,__FILE__);
@@ -316,23 +262,15 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakNet::RakString> pa
 		return 16;
 	}
 
-
 	
 	
-
-
-
 
 	return 0;
 
 }
 
-
-
 RakNet::RakString SystemAddressAndGuidTest::GetTestName()
 {
-
-
 
 	return "SystemAddressAndGuidTest";
 
@@ -341,7 +279,7 @@ RakNet::RakString SystemAddressAndGuidTest::GetTestName()
 RakNet::RakString SystemAddressAndGuidTest::ErrorCodeToString(int errorCode)
 {
 
-	if (errorCode>0&&errorCode<=errorList.Size())
+	if (errorCode>0&&(unsigned int)errorCode<=errorList.Size())
 	{
 		return errorList[errorCode-1];
 	}
@@ -350,9 +288,7 @@ RakNet::RakString SystemAddressAndGuidTest::ErrorCodeToString(int errorCode)
 		return "Undefined Error";
 	}	
 
-
 }
-
 
 bool SystemAddressAndGuidTest::compareSystemAddresses(SystemAddress ad1,SystemAddress ad2)
 {

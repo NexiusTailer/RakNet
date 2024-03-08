@@ -14,13 +14,13 @@
 #pragma warning( push )
 #endif
 
-/// \deprecated. Use FileListTransferCBInterface2
 /// \brief Used by FileListTransfer plugin as a callback for when we get a file.
 /// \details You get the last file when fileIndex==numberOfFilesInThisSet
 /// \sa FileListTransfer
 class FileListTransferCBInterface
 {
 public:
+	// Note: If this structure is changed the struct in the swig files need to be changed as well
 	struct OnFileStruct
 	{
 		/// \brief The index into the set of files, from 0 to numberOfFilesInThisSet
@@ -56,6 +56,7 @@ public:
 		FileListNodeContext context;
 	};
 
+	// Note: If this structure is changed the struct in the swig files need to be changed as well
 	struct FileProgressStruct
 	{
 		/// \param[out] onFileStruct General information about this file, such as the filename and the first \a partLength bytes. You do NOT need to save this data yourself. The complete file will arrive normally.

@@ -336,10 +336,16 @@ enum DefaultMessageIDTypes
 	/// Gamebryo Lightspeed
 	ID_LIGHTSPEED_INTEGRATION,
 
+	/// Plugin based replacement for old RPC system, no boost required, but only works with C functions
+	ID_RPC_4_PLUGIN,
+
+	/// If RakPeerInterface::Send() is called where PacketReliability contains _WITH_ACK_RECEIPT, then on a later call to RakPeerInterface::Receive() you will get ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS. The message will be 5 bytes long, and bytes 1-4 inclusive will contain a number in native order containing a number that identifies this message. This number will be returned by RakPeerInterface::Send() or RakPeerInterface::SendList(). ID_SND_RECEIPT_ACKED means that the message arrived
+	ID_SND_RECEIPT_ACKED,
+
+	/// If RakPeerInterface::Send() is called where PacketReliability contains _WITH_ACK_RECEIPT, then on a later call to RakPeerInterface::Receive() you will get ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS. The message will be 5 bytes long, and bytes 1-4 inclusive will contain a number in native order containing a number that identifies this message. This number will be returned by RakPeerInterface::Send() or RakPeerInterface::SendList(). ID_SND_RECEIPT_LOSS means that an ack for the message did not arrive (it may or may not have been delivered, probably not). On disconnect or shutdown, you will not get ID_SND_RECEIPT_LOSS for unsent messages, you should consider those messages as all lost.
+	ID_SND_RECEIPT_LOSS,
+
 	// So I can add more without changing user enumerations
-	ID_RESERVED_2,
-	ID_RESERVED_3,
-	ID_RESERVED_4,
 	ID_RESERVED_5,
 	ID_RESERVED_6,
 	ID_RESERVED_7,

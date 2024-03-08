@@ -14,7 +14,6 @@ public:
 	PacketChangerPlugin(void);
 	~PacketChangerPlugin(void);
 
-
 	/// \param[in] peer the instance of RakPeer that is calling Receive
 	void OnAttach(void) {}
 

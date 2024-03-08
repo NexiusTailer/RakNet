@@ -59,7 +59,7 @@ Inheritance diagram for LightweightDatabaseClient:</div>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 The client interface to the simple database included with <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a>, useful for a server browser or a lobby server. 
 <p>
-<dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000006">Deprecated:</a></b></dt><dd>Use <a class="el" href="classRakNet_1_1SQLite3ClientPlugin.html">RakNet::SQLite3ClientPlugin</a> found at <a class="el" href="SQLite3ClientPlugin_8h.html" title="Contains code to call sqlite3_exec over a network that does not support shared file...">DependentExtensions/SQLite3Plugin/SQLite3ClientPlugin.h</a> </dd></dl>
+<dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000005">Deprecated:</a></b></dt><dd>Use <a class="el" href="classRakNet_1_1SQLite3ClientPlugin.html">RakNet::SQLite3ClientPlugin</a> found at <a class="el" href="SQLite3ClientPlugin_8h.html" title="Contains code to call sqlite3_exec over a network that does not support shared file...">DependentExtensions/SQLite3Plugin/SQLite3ClientPlugin.h</a> </dd></dl>
 <hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="f1b72660433092063d3d632712432467"></a><!-- doxytag: member="LightweightDatabaseClient::QueryTable" ref="f1b72660433092063d3d632712432467" args="(const char *tableName, const char *queryPassword, const char **columnNamesSubset, unsigned char numColumnSubset, DatabaseFilter *filter, unsigned char numFilters, unsigned *rowIds, unsigned char numRowIDs, SystemAddress systemAddress, bool broadcast)" -->
 <div class="memitem">
@@ -147,7 +147,7 @@ Sends a query to a remote table. The remote system should return ID_DATABASE_QUE
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rowIds</em>&nbsp;</td><td>Which particular rows to return. Pass 0 for all rows. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>numRowIDs</em>&nbsp;</td><td>The number of elements in the rowIds array </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Which system to send to. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>Broadcast or not. Same as the parameter in <a class="el" href="classRakPeer.html#f1ba142c575e8a7b656a76b937a810ff" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>Broadcast or not. Same as the parameter in <a class="el" href="classRakPeer.html#cf41cc0dc46e2d9678504eed199a4815" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send</a> </td></tr>
   </table>
 </dl>
 
@@ -203,7 +203,7 @@ Removes a remote row, assuming the server allows row removal. No response is ret
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>removePassword</em>&nbsp;</td><td>Password to remove rows from the remote table, if any. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rowId</em>&nbsp;</td><td>The rowID of the existing row. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Which system to send to. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>Broadcast or not. Same as the parameter in <a class="el" href="classRakPeer.html#f1ba142c575e8a7b656a76b937a810ff" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>Broadcast or not. Same as the parameter in <a class="el" href="classRakPeer.html#cf41cc0dc46e2d9678504eed199a4815" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send</a> </td></tr>
   </table>
 </dl>
 
@@ -287,7 +287,7 @@ Sets one or more values in a new or existing row, assuming the server allows row
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>cellUpdates</em>&nbsp;</td><td>An array of <a class="el" href="structDatabaseCellUpdate.html" title="The value to write to a cell in a remote database.">DatabaseCellUpdate</a> structures containing the values to write to the remote row. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>numCellUpdates</em>&nbsp;</td><td>The number of elements in the cellUpdates array </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Which system to send to. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>Broadcast or not. Same as the parameter in <a class="el" href="classRakPeer.html#f1ba142c575e8a7b656a76b937a810ff" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>Broadcast or not. Same as the parameter in <a class="el" href="classRakPeer.html#cf41cc0dc46e2d9678504eed199a4815" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send</a> </td></tr>
   </table>
 </dl>
 
@@ -296,7 +296,7 @@ Sets one or more values in a new or existing row, assuming the server allows row
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="LightweightDatabaseClient_8h.html">LightweightDatabaseClient.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Apr 12 08:48:29 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 4 21:11:26 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -93,7 +93,6 @@ namespace DataStructures
 		void ForEachLeaf(void (*func)(Page<KeyType, DataType, order> * leaf, int index));
 		void ForEachData(void (*func)(DataType input, int index));
 		void PrintGraph(void);
-		void ValidateTree(void);
 	protected:
 		void ValidateTreeRecursive(Page<KeyType, DataType, order> *cur);
 		void DeleteFromPageAtIndex(const int index, Page<KeyType, DataType, order> *cur);
@@ -1002,28 +1001,6 @@ namespace DataStructures
 	}
 
 	template<class KeyType, class DataType, int order>
-		void BPlusTree<KeyType, DataType, order>::ValidateTree(void)
-	{
-		int i, last=-9999;
-		DataStructures::Page<KeyType, DataType, order> *cur = GetListHead();
-		while (cur)
-		{
-			RakAssert(cur->size>0);
-			for (i=0; i < cur->size; i++)
-			{
-				RakAssert(cur->data[i]==cur->keys[i]);
-				if (last!=-9999)
-				{
-					RakAssert(cur->data[i]>last);
-				}
-				last=cur->data[i];
-			}
-			cur=cur->next;
-		}
-		if (root && root->isLeaf==false)
-			ValidateTreeRecursive(root);
-	}
-	template<class KeyType, class DataType, int order>
 	void BPlusTree<KeyType, DataType, order>::ValidateTreeRecursive(Page<KeyType, DataType, order> *cur)
 	{
 		RakAssert(cur==root || cur->size>=order/2);
@@ -1047,8 +1024,8 @@ namespace DataStructures
 	void BPlusTree<KeyType, DataType, order>::PrintGraph(void)
 	{
 		DataStructures::Queue<DataStructures::Page<KeyType, DataType, order> *> queue;
-		queue.Push(root);
-		queue.Push(0);
+		queue.Push(root,__FILE__,__LINE__);
+		queue.Push(0,__FILE__,__LINE__);
 		DataStructures::Page<KeyType, DataType, order> *ptr;
 		int i,j;
 		if (root)
@@ -1075,9 +1052,9 @@ namespace DataStructures
 					for (j=0; j < ptr->children[i]->size; j++)
 						RAKNET_DEBUG_PRINTF("%i ", ptr->children[i]->keys[j]);
 					RAKNET_DEBUG_PRINTF(") ");
-					queue.Push(ptr->children[i]);
+					queue.Push(ptr->children[i],__FILE__,__LINE__);
 				}
-			 	queue.Push(0);
+			 	queue.Push(0,__FILE__,__LINE__);
 				RAKNET_DEBUG_PRINTF(" -- ");
 			}
 		}

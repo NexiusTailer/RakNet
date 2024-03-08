@@ -179,6 +179,7 @@ int main(int argc, char **argv)
 #endif
 		if (sender)
 		{
+			uint32_t msgNumber;
 			packet = sender->Receive();
 			while (packet)
 			{
@@ -202,6 +203,14 @@ int main(int argc, char **argv)
 				case ID_CONNECTION_ATTEMPT_FAILED:
 					printf("Connection attempt failed\n");
 					break;
+				case ID_SND_RECEIPT_ACKED:
+					memcpy(&msgNumber, packet->data+1, 4);
+					printf("Msg #%i was delivered.\n", msgNumber);
+					break;
+				case ID_SND_RECEIPT_LOSS:
+					memcpy(&msgNumber, packet->data+1, 4);
+					printf("Msg #%i was probably not delivered.\n", msgNumber);
+					break;
 				}
 
 				sender->DeallocatePacket(packet);
@@ -220,20 +229,26 @@ int main(int argc, char **argv)
 				bitStream.Write(currentTime);
 				char *pad;
 				int padLength = (randomMT() % 5000) + 1;
+				//int padLength = (randomMT() % 128) + 1;
 				pad = new char [padLength];
 				bitStream.Write(pad, padLength);
 				delete [] pad;
 				// Send on a random priority with a random stream
 				// if (sender->Send(&bitStream, HIGH_PRIORITY, (PacketReliability) (RELIABLE + (randomMT() %2)) ,streamNumber, UNASSIGNED_SYSTEM_ADDRESS, true)==false)
-				if (sender->Send(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED ,streamNumber, UNASSIGNED_SYSTEM_ADDRESS, true)==false)
+				if (sender->Send(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED ,streamNumber, UNASSIGNED_SYSTEM_ADDRESS, true)==0)
 					packetNumber[streamNumber]--; // Didn't finish connecting yet?
+
+// 				if (sender->Send(&bitStream, HIGH_PRIORITY, UNRELIABLE_WITH_ACK_RECEIPT ,streamNumber, UNASSIGNED_SYSTEM_ADDRESS, true)==0)
+// 					packetNumber[streamNumber]--; // Didn't finish connecting yet?
 
 				
 				if (sender)
 				{
 					RakNetStatistics *rssSender;
 					rssSender=sender->GetStatistics(sender->GetSystemAddressFromIndex(0));
-					printf("Snd: %i. %i waiting on ack. KBPS=%.1f. Ploss=%.1f. Bandwidth=%f.\n", packetNumber[streamNumber], rssSender->messagesOnResendQueue,rssSender->bitsPerSecondSent/1000, 100.0f * ( float ) rssSender->messagesTotalBitsResent / ( float ) rssSender->totalBitsSent, rssSender->estimatedLinkCapacityMBPS);
+					//printf("Snd: %i. %i waiting on ack. KBPS=%.1f. Ploss=%.1f. Bandwidth=%f.\n", packetNumber[streamNumber], rssSender->messagesOnResendQueue,rssSender->bitsPerSecondSent/1000, 100.0f * ( float ) rssSender->messagesTotalBitsResent / ( float ) rssSender->totalBitsSent, rssSender->estimatedLinkCapacityMBPS);
+
+					printf("Snd: %i.\n", packetNumber[streamNumber]);
 				}
 
 				nextSend+=sendInterval;

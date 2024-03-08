@@ -327,7 +327,9 @@ Fix RPC3 with writing bitstream pointers.
 ReplicaManager3 now supports different send modes per bitstream channel. Also now stores store lastSerializationResult when using RM3SR_SERIALIZED_ALWAYS.
 Update ConnectionGraph2 to also store the remote system connection list in memory, and allow access by the user.
 PacketLogger will now log internal message receive errors.
-Consolodate NAT traversal plugins into NATCompleteServer and NATCompleteClient samples. Remove old NAT samples.
+Consolodate NAT traversal plugins into NATCompleteServer and NATCompleteClient samples. Remove old NAT samples.<BR>
+3.731 (05/01/2010) Document TeamBalancer and Steam lobby plugins. Fix crash with calling RakPeer::DetachPlugin(). Fix bug to return ID_SND_RECEIPT_ACKED only once for messages over the MTU. Rewrite RakNetStatistics to return more relevant and up to date information, including metrics per second. Add VariableDeltaSerializer, an optional helper class with ReplicaManager3 that can serialize changes per-variable, rather than relying on the default of serializing the entire object.<BR>
+
  </TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
 <img src="spacer.gif" width="8" height="1">See Also</td>

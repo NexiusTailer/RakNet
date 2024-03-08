@@ -222,7 +222,7 @@ int main(int argc, char **argv)
 					}
 
 					RakNet::Console_JoinRoom_Steam* msg = (RakNet::Console_JoinRoom_Steam*) messageFactory->Alloc(RakNet::L2MID_Console_JoinRoom);
-					printf("Enter room id, or enter for %"PRINTF_TIME_MODIFIER"u: ", lastRoom.ConvertToUint64());
+					printf("Enter room id, or enter for %"PRINTF_64_BIT_MODIFIER"u: ", lastRoom.ConvertToUint64());
 					char str[256];
 					gets(str);
 					if (str[0]==0)
@@ -276,7 +276,7 @@ int main(int argc, char **argv)
 					lobby2Client->GetRoomMembers(roomMembers);
 					for (DataStructures::DefaultIndexType i=0; i < roomMembers.GetSize(); i++)
 					{
-						printf("%i. %s ID=%"PRINTF_TIME_MODIFIER"u\n", i+1, lobby2Client->GetRoomMemberName(roomMembers[i]), roomMembers[i]);
+						printf("%i. %s ID=%"PRINTF_64_BIT_MODIFIER"u\n", i+1, lobby2Client->GetRoomMemberName(roomMembers[i]), roomMembers[i]);
 					}
 				}
 				break;

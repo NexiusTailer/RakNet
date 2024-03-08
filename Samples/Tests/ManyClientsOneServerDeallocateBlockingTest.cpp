@@ -1,6 +1,5 @@
 #include "ManyClientsOneServerDeallocateBlockingTest.h"
 
-
 void ManyClientsOneServerDeallocateBlockingTest::WaitForConnectionRequestsToComplete(RakPeerInterface **clientList, int clientNum, bool isVerbose)
 {
 	SystemAddress currentSystem;
@@ -35,7 +34,6 @@ void ManyClientsOneServerDeallocateBlockingTest::WaitAndPrintResults(RakPeerInte
 	if (isVerbose)
 		printf("For server\n");
 
-
 	for (packet=server->Receive(); packet;server->DeallocatePacket(packet), packet=server->Receive())
 	{
 		switch (packet->data[0])
@@ -58,7 +56,6 @@ void ManyClientsOneServerDeallocateBlockingTest::WaitAndPrintResults(RakPeerInte
 			if (isVerbose)              
 				printf("Our connection request has been accepted.\n");
 
-
 			break;
 		case ID_CONNECTION_ATTEMPT_FAILED:
 			if (isVerbose)
@@ -75,7 +72,6 @@ void ManyClientsOneServerDeallocateBlockingTest::WaitAndPrintResults(RakPeerInte
 			if (isVerbose)              
 				printf("The server is full.\n");
 
-
 			break;
 
 		case ID_ALREADY_CONNECTED:
@@ -83,7 +79,6 @@ void ManyClientsOneServerDeallocateBlockingTest::WaitAndPrintResults(RakPeerInte
 				printf("Already connected\n");
 
 			break;
-
 
 		case ID_DISCONNECTION_NOTIFICATION:
 			if (isVerbose)
@@ -130,7 +125,6 @@ void ManyClientsOneServerDeallocateBlockingTest::WaitAndPrintResults(RakPeerInte
 				if (isVerbose)              
 					printf("Our connection request has been accepted.\n");
 
-
 				break;
 			case ID_CONNECTION_ATTEMPT_FAILED:
 				if (isVerbose)
@@ -147,7 +141,6 @@ void ManyClientsOneServerDeallocateBlockingTest::WaitAndPrintResults(RakPeerInte
 				if (isVerbose)              
 					printf("The server is full.\n");
 
-
 				break;
 
 			case ID_ALREADY_CONNECTED:
@@ -155,7 +148,6 @@ void ManyClientsOneServerDeallocateBlockingTest::WaitAndPrintResults(RakPeerInte
 					printf("Already connected\n");
 
 				break;
-
 
 			case ID_DISCONNECTION_NOTIFICATION:
 				if (isVerbose)
@@ -211,7 +203,6 @@ During the very first connect loop any connect returns false.
 
 Connect function returns false and peer is not connected to anything,pending a connection, or disconnecting.
 
-
 GetTimeoutTime does not match the set timeout.
 
 RakPeerInterface Functions used, tested indirectly by its use:
@@ -234,19 +225,7 @@ IsConnected
 int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
 {
 
-	
-
-
-
-
-
 	SystemAddress currentSystem;
-
-	Packet *packet;
-
-
-
-
 
 	//Initializations of the arrays
 	for (int i=0;i<clientNum;i++)
@@ -256,14 +235,7 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 
 		clientList[i]->Startup(1,30,&SocketDescriptor(), 1);
 
-
-
-
-
-
 	}
-
-
 
 	server=RakNetworkFactory::GetRakPeerInterface();
 	server->Startup(clientNum, 30, &SocketDescriptor(60000,0), 1);
@@ -272,7 +244,7 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 	const int timeoutTime=1000;
 	server->SetTimeoutTime(timeoutTime,UNASSIGNED_SYSTEM_ADDRESS);
 
-	int retTimeout=server->GetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
+	int retTimeout=(int)server->GetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
 	if (retTimeout!=timeoutTime)
 	{
 
@@ -283,16 +255,10 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 
 	}
 
-
-
 	//Connect all the clients to the server
-
-
 
 	for (int i=0;i<clientNum;i++)
 	{
-
-
 
 		if (!clientList[i]->Connect("127.0.0.1", 60000, 0,0))
 		{
@@ -300,30 +266,22 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 			if (isVerbose)
 				DebugTools::ShowError("Problem while calling connect.\n",!noPauses && isVerbose,__LINE__,__FILE__);
 
-
 			return 1;//This fails the test, don't bother going on.
 
 		}
 
-
-
 	}
-
-
 
 	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
 
 	DataStructures::List< SystemAddress  > systemList;
 	DataStructures::List< RakNetGUID > guidList;
 
-
 	if (isVerbose)
 		printf("Entering disconnect loop \n");
 
-
 	while(RakNet::GetTime()-entryTime<30000)//Run for 30 Secoonds
 	{
-
 
 		//Deallocate client IF connected
 		for (int i=0;i<clientNum;i++)
@@ -335,7 +293,6 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 			if(len>=1)
 			{
 
-
 				RakNetworkFactory::DestroyRakPeerInterface(clientList[i]);
 				clientList[i]=RakNetworkFactory::GetRakPeerInterface();
 	
@@ -343,53 +300,38 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 				clientList[i]->Startup(1,30,&SocketDescriptor(), 1);
 			}
 
-
 		}
 
-
-
-
 		RakSleep(2000);//Allow connections to timeout.
-
 
 		//Connect
 
 		for (int i=0;i<clientNum;i++)
 		{
 
-
-
 			currentSystem.SetBinaryAddress("127.0.0.1");
 			currentSystem.port=60000;
 			if(!clientList[i]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
 			{
 
-
 				if (!clientList[i]->Connect("127.0.0.1", 60000, 0,0))
 				{
-
-
 
 					if (isVerbose)
 						DebugTools::ShowError("Problem while calling connect. \n",!noPauses && isVerbose,__LINE__,__FILE__);
 
 					return 1;//This fails the test, don't bother going on.
 
-
 				}
 			}
 
-
-
 		}
-
 
 		WaitAndPrintResults(clientList,clientNum,isVerbose,server);
 
 	}
 
 	WaitAndPrintResults(clientList,clientNum,isVerbose,server);
-
 
 	printf("Connecting clients\n");
 
@@ -399,7 +341,6 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 
 	for (int i=0;i<clientNum;i++)
 	{
-
 
 		currentSystem.SetBinaryAddress("127.0.0.1");
 		currentSystem.port=60000;
@@ -413,14 +354,10 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 				clientList[i]->GetSystemList(systemList,guidList);//Get connectionlist
 				int len=systemList.Size();
 
-
-
-
 				if (isVerbose)
 					DebugTools::ShowError("Problem while calling connect. \n",!noPauses && isVerbose,__LINE__,__FILE__);
 
 				return 1;//This fails the test, don't bother going on.
-
 
 			}
 		}
@@ -434,7 +371,6 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 				printf("Not calling Connect() for client %i because IsConnected() returned true (isConnected).\n",i);
 		}
 
-
 	}
 
 	WaitAndPrintResults(clientList,clientNum,isVerbose,server);
@@ -447,33 +383,24 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 		if (connNum!=1)//Did we connect all?
 		{
 
-
 			if (isVerbose)
 			{
 				printf("Not all clients reconnected normally.\nFailed on client number %i\n",i);
 
-
 				DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
 			}
 
-
 			return 2;
-
 
 		}
 
-
 	}
-
-
 
 	if (isVerbose)
 		printf("Pass\n");
 	return 0;
 
 }
-
-
 
 RakNet::RakString ManyClientsOneServerDeallocateBlockingTest::GetTestName()
 {
@@ -500,7 +427,6 @@ RakNet::RakString ManyClientsOneServerDeallocateBlockingTest::ErrorCodeToString(
 		return "Peers did not connect normally";
 		break;
 
-
 	case 3:
 		return "GetTimeoutTime did not match the timeout that was set";
 		break;
@@ -508,7 +434,6 @@ RakNet::RakString ManyClientsOneServerDeallocateBlockingTest::ErrorCodeToString(
 	default:
 		return "Undefined Error";
 	}
-
 
 }
 
@@ -520,15 +445,11 @@ ManyClientsOneServerDeallocateBlockingTest::~ManyClientsOneServerDeallocateBlock
 {
 }
 
-
 void ManyClientsOneServerDeallocateBlockingTest::DestroyPeers()
 {
 
-
-
 	for (int i=0; i < clientNum; i++)
 		RakNetworkFactory::DestroyRakPeerInterface(clientList[i]);
-
 
 	RakNetworkFactory::DestroyRakPeerInterface(server);
 

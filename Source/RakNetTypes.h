@@ -37,9 +37,9 @@ typedef unsigned char MessageID;
 typedef uint32_t BitSize_t;
 
 #if defined(_MSC_VER) && _MSC_VER > 0
-#define PRINTF_TIME_MODIFIER "I64"
+#define PRINTF_64_BIT_MODIFIER "I64"
 #else
-#define PRINTF_TIME_MODIFIER "ll"
+#define PRINTF_64_BIT_MODIFIER "ll"
 #endif
 
 /// Describes the local socket to use for RakPeer::Startup

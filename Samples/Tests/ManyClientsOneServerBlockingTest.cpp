@@ -34,7 +34,6 @@ void ManyClientsOneServerBlockingTest::WaitAndPrintResults(RakPeerInterface **cl
 	if (isVerbose)
 		printf("For server\n");
 
-
 	for (packet=server->Receive(); packet;server->DeallocatePacket(packet), packet=server->Receive())
 	{
 		switch (packet->data[0])
@@ -57,7 +56,6 @@ void ManyClientsOneServerBlockingTest::WaitAndPrintResults(RakPeerInterface **cl
 			if (isVerbose)              
 				printf("Our connection request has been accepted.\n");
 
-
 			break;
 		case ID_CONNECTION_ATTEMPT_FAILED:
 			if (isVerbose)
@@ -74,7 +72,6 @@ void ManyClientsOneServerBlockingTest::WaitAndPrintResults(RakPeerInterface **cl
 			if (isVerbose)              
 				printf("The server is full.\n");
 
-
 			break;
 
 		case ID_ALREADY_CONNECTED:
@@ -82,7 +79,6 @@ void ManyClientsOneServerBlockingTest::WaitAndPrintResults(RakPeerInterface **cl
 				printf("Already connected\n");
 
 			break;
-
 
 		case ID_DISCONNECTION_NOTIFICATION:
 			if (isVerbose)
@@ -98,8 +94,6 @@ void ManyClientsOneServerBlockingTest::WaitAndPrintResults(RakPeerInterface **cl
 			break;
 		}
 	}
-
-
 
 	// Log all events per peer
 	for (int i=0;i<clientNum;i++)//Receive for all peers
@@ -129,7 +123,6 @@ void ManyClientsOneServerBlockingTest::WaitAndPrintResults(RakPeerInterface **cl
 				if (isVerbose)              
 					printf("Our connection request has been accepted.\n");
 
-
 				break;
 			case ID_CONNECTION_ATTEMPT_FAILED:
 				if (isVerbose)
@@ -146,7 +139,6 @@ void ManyClientsOneServerBlockingTest::WaitAndPrintResults(RakPeerInterface **cl
 				if (isVerbose)              
 					printf("The server is full.\n");
 
-
 				break;
 
 			case ID_ALREADY_CONNECTED:
@@ -154,7 +146,6 @@ void ManyClientsOneServerBlockingTest::WaitAndPrintResults(RakPeerInterface **cl
 					printf("Already connected\n");
 
 				break;
-
 
 			case ID_DISCONNECTION_NOTIFICATION:
 				if (isVerbose)
@@ -190,7 +181,6 @@ and if not we get a proper message. Add proper conditions.
 
 Randomize sending the disconnect notes
 
-
 Success conditions:
 All connected normally.
 
@@ -210,16 +200,9 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 	RakPeerInterface *clientList[clientNum];//A list of clients
 	RakPeerInterface *server;
 
-
-
 	SystemAddress currentSystem;
 
-	Packet *packet;
 	destroyList.Clear(false,__FILE__,__LINE__);
-
-
-
-
 
 	//Initializations of the arrays
 	for (int i=0;i<clientNum;i++)
@@ -230,30 +213,17 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 
 		clientList[i]->Startup(1,30,&SocketDescriptor(), 1);
 
-
-
-
-
-
 	}
-
-
 
 	server=RakNetworkFactory::GetRakPeerInterface();
 	destroyList.Push(server,__FILE__,__LINE__);
 	server->Startup(clientNum, 30, &SocketDescriptor(60000,0), 1);
 	server->SetMaximumIncomingConnections(clientNum);
 
-
-
 	//Connect all the clients to the server
-
-
 
 	for (int i=0;i<clientNum;i++)
 	{
-
-
 
 		if (!clientList[i]->Connect("127.0.0.1", 60000, 0,0))
 		{
@@ -261,30 +231,21 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 			if (isVerbose)
 				DebugTools::ShowError("Problem while calling connect.\n",!noPauses && isVerbose,__LINE__,__FILE__);
 
-
 			return 1;//This fails the test, don't bother going on.
 
 		}
 
-
-
 	}
-
-
 
 	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
 
 	DataStructures::List< SystemAddress  > systemList;
 	DataStructures::List< RakNetGUID > guidList;
 
-
-
 	printf("Entering disconnect loop \n");
-
 
 	while(RakNet::GetTime()-entryTime<10000)//Run for 10 Secoonds
 	{
-
 
 		//Disconnect all clients IF connected to any from client side
 		for (int i=0;i<clientNum;i++)
@@ -296,50 +257,35 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 			for (int j=0;j<len;j++)//Disconnect them all
 			{
 
-
 				clientList[i]->CloseConnection (systemList[j],true,0,LOW_PRIORITY); 	
 			}
 
-
 		}
 
-
-
-
 		RakSleep(100);
-
 
 		//Connect
 
 		for (int i=0;i<clientNum;i++)
 		{
 
-
-
 			currentSystem.SetBinaryAddress("127.0.0.1");
 			currentSystem.port=60000;
 			if(!clientList[i]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
 			{
 
-
 				if (!clientList[i]->Connect("127.0.0.1", 60000, 0,0))
 				{
-
-
 
 					if (isVerbose)
 						DebugTools::ShowError("Problem while calling connect. \n",!noPauses && isVerbose,__LINE__,__FILE__);
 
 					return 1;//This fails the test, don't bother going on.
 
-
 				}
 			}
 
-
-
 		}
-
 
 		WaitAndPrintResults(clientList,clientNum,isVerbose,server);
 
@@ -347,14 +293,12 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 
 	WaitAndPrintResults(clientList,clientNum,isVerbose,server);
 
-
 	printf("Connecting clients\n");
 
 	//Connect
 
 	for (int i=0;i<clientNum;i++)
 	{
-
 
 		currentSystem.SetBinaryAddress("127.0.0.1");
 		currentSystem.port=60000;
@@ -368,14 +312,10 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 				clientList[i]->GetSystemList(systemList,guidList);//Get connectionlist
 				int len=systemList.Size();
 
-
-
-
 				if (isVerbose)
 					DebugTools::ShowError("Problem while calling connect. \n",!noPauses && isVerbose,__LINE__,__FILE__);
 
 				return 1;//This fails the test, don't bother going on.
-
 
 			}
 		}
@@ -389,7 +329,6 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 				printf("Not calling Connect() for client %i because IsConnected() returned true (isConnected).\n",i);
 		}
 
-
 	}
 
 	WaitAndPrintResults(clientList,clientNum,isVerbose,server);
@@ -402,11 +341,9 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 		if (connNum!=1)//Did we connect all?
 		{
 
-
 			if (isVerbose)
 			{
 				printf("Not all clients reconnected normally.\nFailed on client number %i\n",i);
-
 
 				DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
 			}
@@ -415,13 +352,9 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 
 			return 2;
 
-
 		}
 
-
 	}
-
-
 
 	
 
@@ -430,8 +363,6 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 	return 0;
 
 }
-
-
 
 RakNet::RakString ManyClientsOneServerBlockingTest::GetTestName()
 {
@@ -462,7 +393,6 @@ RakNet::RakString ManyClientsOneServerBlockingTest::ErrorCodeToString(int errorC
 		return "Undefined Error";
 	}
 
-
 }
 
 ManyClientsOneServerBlockingTest::ManyClientsOneServerBlockingTest(void)
@@ -472,7 +402,6 @@ ManyClientsOneServerBlockingTest::ManyClientsOneServerBlockingTest(void)
 ManyClientsOneServerBlockingTest::~ManyClientsOneServerBlockingTest(void)
 {
 }
-
 
 void ManyClientsOneServerBlockingTest::DestroyPeers()
 {

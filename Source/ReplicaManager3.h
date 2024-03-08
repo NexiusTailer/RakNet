@@ -40,6 +40,9 @@ struct PRO
 	/// Passed to RakPeerInterface::Send(). Defaults to ReplicaManager3::SetDefaultOrderingChannel().
 	char orderingChannel;
 
+	/// Passed to RakPeerInterface::Send(). Defaults to 0.
+	uint32_t sendReceipt;
+
 	bool operator==( const PRO& right ) const;
 	bool operator!=( const PRO& right ) const;
 };
@@ -772,6 +775,9 @@ public:
 	/// \details Return QueryActionOnPopConnection_Client, QueryActionOnPopConnection_Server, or QueryActionOnPopConnection_PeerToPeer
 	virtual RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3 *droppedConnection) const=0;
 
+	/// Notification called for each of our replicas when a connection is popped
+	void OnPoppedConnection(RakNet::Connection_RM3 *droppedConnection) {(void) droppedConnection;}
+
 	/// \brief Override with {delete this;}
 	/// \details 
 	/// <OL>
@@ -790,6 +796,10 @@ public:
 	/// If more than one system can serialize the same object then you will need to override to return true, and control the serialization result from Replica3::Serialize(). Be careful not to send back the same data to the system that just sent to you!
 	/// \return True to allow calling Replica3::Serialize() for this connection, false to not call.
 	virtual RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3 *destinationConnection)=0;
+
+	/// \brief Called for each replica owned by the user, once per Serialization tick, before Serialize() is called.
+	/// If you want to do some kind of operation on the Replica objects that you own, just before Serialization(), then overload this function
+	virtual void OnUserReplicaPreSerializeTick(void) {}
 
 	/// \brief Serialize our class to a bitstream
 	/// \details User should implement this function to write the contents of this class to SerializationParamters::serializationBitstream.<BR>
@@ -898,7 +908,6 @@ public:
 	RakNetTime whenLastSerialized;
 	bool forceSendUntilNextUpdate;
 };
-
 
 } // namespace RakNet
 

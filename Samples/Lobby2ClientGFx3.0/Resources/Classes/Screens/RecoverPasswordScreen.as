@@ -11,6 +11,10 @@ class Screens.RecoverPasswordScreen extends Screen
 	private var bForgotPassword:Boolean;
 	private var btnBack:Button;
 	
+	private var btnSendEmail:Button;
+	private var btnSendUsername:Button;
+	private var btnSendAnswer:Button;
+	
 	private static var mInstance:RecoverPasswordScreen;
 		
 	public function RecoverPasswordScreen() 
@@ -31,9 +35,10 @@ class Screens.RecoverPasswordScreen extends Screen
 	public function VOnFinishedLoading():Void
 	{		
 		//Add click event for buttons
-		recoverPasswordByUsername.addEventListener("click", this, "f2c_RecoverPasswordByUsername");
 		goBackToConnectedToServer.addEventListener("click", this, "goBackToConnectedToServerFunc");
 		btnBack.addEventListener("click", this, "Back");
+		btnSendUsername.addEventListener("click", this, "f2c_RecoverPasswordByUsername");
+		btnSendAnswer.addEventListener("click", this, "f2c_GetPasswordByPasswordRecoveryAnswer");
 				
 		//Add callbacks for C++
 		GameDelegate.addCallBack("c2f_RecoverPasswordByUsername", this, "c2f_RecoverPasswordByUsername");
@@ -51,18 +56,34 @@ class Screens.RecoverPasswordScreen extends Screen
 	{
 		if ( bForgotPassword )
 		{
-			ConsoleWindow.Trace("hm...");
+			btnSendEmail._visible = false;
+			btnSendUsername._visible = true;
+			btnSendAnswer._visible = false;
 			gotoAndStop("Password1");
 		}
 		else
 		{
+			btnSendEmail._visible = true;
+			btnSendUsername._visible = false;
+			btnSendAnswer._visible = false;
 			gotoAndStop("Username");
 		}
 	}
 	
+	//gets user recovery question 
+	private var mTempUsername:String;
 	public function f2c_RecoverPasswordByUsername():Void
 	{
-		GameDelegate.call("f2c_RecoverPasswordByUsername", [userNameEdit.text], _root);
+		mTempUsername = this["tiUserName"].text;
+		//ConsoleWindow.Trace("f2c_RecoverPasswordByUsername.... username = " + );
+		GameDelegate.call("f2c_RecoverPasswordByUsername", [mTempUsername], _root);
+	}
+	
+	//try to get password by answering the secret question
+	public function f2c_GetPasswordByPasswordRecoveryAnswer():Void
+	{
+		//ConsoleWindow.Trace("f2c_GetPasswordByPasswordRecoveryAnswer.. answer = " + this["tiAnswer"].text);
+		GameDelegate.call("f2c_GetPasswordByPasswordRecoveryAnswer", [mTempUsername, this["tiAnswer"].text], _root);
 	}
 
 	public function goBackToConnectedToServerFunc():Void
@@ -71,20 +92,41 @@ class Screens.RecoverPasswordScreen extends Screen
 		LobbyInterface.Instance.ShowScreen( ScreenID.LOGIN );
 	}
 
-	public function c2f_RecoverPasswordByUsername(resultIdentifier:String, username:String, emailaddr:String ):Void
+	public function c2f_RecoverPasswordByUsername(resultIdentifier:String, username:String, email:String, secretQuestion:String ):Void
 	{
+		ConsoleWindow.Trace("c2f_RecoverPasswordByUsername..." + arguments);
+		
 		switch (resultIdentifier)
 		{
-			case "L2RC_UNKNOWN_USER":
+			case "SUCCESS":
+				gotoAndStop("Password2");
+				btnSendEmail._visible = false;
+				btnSendUsername._visible = false;
+				btnSendAnswer._visible = true;
+				this["tfSecretQuestion"].text = secretQuestion;
 			break;
-			
-			case "L2RC_DATABASE_CONSTRAINT_FAILURE":
+		}
+		
+		if ( resultIdentifier != "SUCCESS" )
+		{
+			LobbyInterface.Instance.CreateMessageBox( resultIdentifier );
+		}
+	}
+
+	public function c2f_GetPasswordByPasswordRecoveryAnswer(resultIdentifier:String, username:String, secretAnswer:String, password:String ):Void
+	{
+		ConsoleWindow.Trace("c2f_GetPasswordByPasswordRecoveryAnswer..." + arguments);
+		
+		switch (resultIdentifier)
+		{
+			case "SUCCESS":
 			break;
-			
-			case "L2RC_SUCCESS":
-				// Not yet implemented to actually email you
-			break;
-		}	
+		}
+		
+		if ( resultIdentifier != "SUCCESS" )
+		{
+			LobbyInterface.Instance.CreateMessageBox( resultIdentifier );
+		}
 	}
 	
 	public function Back():Void

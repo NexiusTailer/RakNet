@@ -264,8 +264,8 @@ Send the FileList structure to another system, which must have previously called
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakPeer</em>&nbsp;</td><td>The instance of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> to use to send the message. Pass 0 to use the instance the plugin is attached to </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>recipient</em>&nbsp;</td><td>The address of the system to send to </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>setID</em>&nbsp;</td><td>The return value of <a class="el" href="classFileListTransfer.html#c130a7a61507e899ba48d5f010e0218a" title="Allows one corresponding Send() call from another system to arrive.">SetupReceive()</a> which was previously called on <em>recipient</em> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>Passed to <a class="el" href="classRakPeerInterface.html#616de5a586b570f497005f43c587f153">RakPeerInterface::Send()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>Passed to <a class="el" href="classRakPeerInterface.html#616de5a586b570f497005f43c587f153">RakPeerInterface::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>Passed to <a class="el" href="classRakPeerInterface.html#36b7517ac2e6e420736ed8758c125397">RakPeerInterface::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>Passed to <a class="el" href="classRakPeerInterface.html#36b7517ac2e6e420736ed8758c125397">RakPeerInterface::Send()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>compressData</em>&nbsp;</td><td>deprecated, unsupported </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_incrementalReadInterface</em>&nbsp;</td><td>If a file in <em>fileList</em> has no data, filePullInterface will be used to read the file in chunks of size <em>chunkSize</em> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_chunkSize</em>&nbsp;</td><td>How large of a block of a file to send at once </td></tr>
@@ -349,7 +349,7 @@ Allows one corresponding <a class="el" href="classFileListTransfer.html#0f3979ce
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="FileListTransfer_8h.html">FileListTransfer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Apr 12 08:48:29 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 4 21:11:26 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

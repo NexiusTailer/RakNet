@@ -16,6 +16,8 @@
 #include "GetTime.h"
 #include "SocketLayer.h"
 #include "Getche.h"
+#include "Rand.h"
+#include "VariableDeltaSerializer.h"
 
 enum
 {
@@ -29,11 +31,13 @@ using namespace RakNet;
 
 struct SampleReplica : public Replica3
 {
+	SampleReplica() {var1Unreliable=0; var2Unreliable=0; var3Reliable=0; var4Reliable=0;}
+	~SampleReplica() {}
 	virtual RakNet::RakString GetName(void) const=0;
 	virtual void WriteAllocationID(RakNet::BitStream *allocationIdBitstream) const {
 		allocationIdBitstream->Write(GetName());
 	}
-	void PrintOutput(RakNet::BitStream *bs)
+	void PrintStringInBitstream(RakNet::BitStream *bs)
 	{
 		if (bs->GetNumberOfBitsUsed()==0)
 			return;
@@ -42,55 +46,161 @@ struct SampleReplica : public Replica3
 		printf("Receive: %s\n", rakString.C_String());
 	}
 	virtual void SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection)	{
+		
+		// variableDeltaSerializer is a helper class that tracks what variables were sent to what remote system
+		// This call adds another remote system to track
+		variableDeltaSerializer.AddRemoteSystemVariableHistory(destinationConnection->GetRakNetGUID());
+
 		constructionBitstream->Write(GetName() + RakNet::RakString(" SerializeConstruction"));
 	}
 	virtual bool DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {
-		PrintOutput(constructionBitstream);
+		PrintStringInBitstream(constructionBitstream);
 		return true;
 	}
 	virtual void SerializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *destinationConnection)	{
+		
+		// variableDeltaSerializer is a helper class that tracks what variables were sent to what remote system
+		// This call removes a remote system
+		variableDeltaSerializer.RemoveRemoteSystemVariableHistory(destinationConnection->GetRakNetGUID());
+
 		destructionBitstream->Write(GetName() + RakNet::RakString(" SerializeDestruction"));
+		
 	}
 	virtual bool DeserializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *sourceConnection) {
-		PrintOutput(destructionBitstream);
+		PrintStringInBitstream(destructionBitstream);
 		return true;
 	}
 	virtual void DeallocReplica(RakNet::Connection_RM3 *sourceConnection) {
 		delete this;
 	}
+
+	/// Overloaded Replica3 function
+	virtual void OnUserReplicaPreSerializeTick(void)
+	{
+		/// Required by VariableDeltaSerializer::BeginIdenticalSerialize()
+		variableDeltaSerializer.OnPreSerializeTick();
+	}
+
 	virtual RM3SerializationResult Serialize(SerializeParameters *serializeParameters)	{
-		RakNetTime time = RakNet::GetTime()/1000;
 
-		if (time%2) // Swap channels randomly for testing
-			serializeParameters->outputBitstream[0].Write(GetName() + RakNet::RakString(" Channel 0. Serialize. Time = %i", time));
-		else
-			serializeParameters->outputBitstream[1].Write(GetName() + RakNet::RakString(" Channel 1. Serialize. Time = %i", time));
+		VariableDeltaSerializer::SerializationContext serializationContext;
 
-		// Each channel can have its own reliability
-		serializeParameters->outputBitstream[2].Write("Third output channel.");
-		serializeParameters->pro[2].reliability=UNRELIABLE;
+		// Put all variables to be sent unreliably on the same channel, then specify the send type for that channel
+		serializeParameters->pro[0].reliability=UNRELIABLE_WITH_ACK_RECEIPT;
+		// Sending unreliably with an ack receipt requires the receipt number, and that you inform the system of ID_SND_RECEIPT_ACKED and ID_SND_RECEIPT_LOSS
+		serializeParameters->pro[0].sendReceipt=replicaManager->GetRakPeerInterface()->IncrementNextSendReceipt();
 
-		return RM3SR_BROADCAST_IDENTICALLY;
+		// Begin writing all variables to be sent UNRELIABLE_WITH_ACK_RECEIPT 
+		variableDeltaSerializer.BeginUnreliableAckedSerialize(
+			&serializationContext,
+			serializeParameters->destinationConnection->GetRakNetGUID(),
+			&serializeParameters->outputBitstream[0],
+			serializeParameters->pro[0].sendReceipt
+			);
+		// Write each variable
+		variableDeltaSerializer.SerializeVariable(&serializationContext, var1Unreliable);
+		// Write each variable
+		variableDeltaSerializer.SerializeVariable(&serializationContext, var2Unreliable);
+		// Tell the system this is the last variable to be written
+		variableDeltaSerializer.EndSerialize(&serializationContext);
+
+		// All variables to be sent using a different mode go on different channels
+		serializeParameters->pro[1].reliability=RELIABLE_ORDERED;
+
+		// Same as above, all variables to be sent with a particular reliability are sent in a batch
+		// We use BeginIdenticalSerialize instead of BeginSerialize because the reliable variables have the same values sent to all systems. This is memory-saving optimization
+		variableDeltaSerializer.BeginIdenticalSerialize(
+			&serializationContext,
+			serializeParameters->whenLastSerialized==0,
+			&serializeParameters->outputBitstream[1]
+			);
+		variableDeltaSerializer.SerializeVariable(&serializationContext, var3Reliable);
+		variableDeltaSerializer.SerializeVariable(&serializationContext, var4Reliable);
+		variableDeltaSerializer.EndSerialize(&serializationContext);
+
+		// This return type makes is to ReplicaManager3 itself does not do a memory compare. we entirely control serialization ourselves here.
+		// Use RM3SR_SERIALIZED_ALWAYS instead of RM3SR_SERIALIZED_ALWAYS_IDENTICALLY to support sending different data to different system, which is needed when using unreliable and dirty variable resends
+		return RM3SR_SERIALIZED_ALWAYS;
 	}
 	virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters) {
-		PrintOutput(&deserializeParameters->serializationBitstream[0]);
-		PrintOutput(&deserializeParameters->serializationBitstream[1]);
-		PrintOutput(&deserializeParameters->serializationBitstream[2]);
+
+		VariableDeltaSerializer::DeserializationContext deserializationContext;
+
+		// Deserialization is written similar to serialization
+		// Note that the Serialize() call above uses two different reliability types. This results in two separate Send calls
+		// So Deserialize is potentially called twice from a single Serialize
+		variableDeltaSerializer.BeginDeserialize(&deserializationContext, &deserializeParameters->serializationBitstream[0]);
+		if (variableDeltaSerializer.DeserializeVariable(&deserializationContext, var1Unreliable))
+			printf("var1Unreliable changed to %i\n", var1Unreliable);
+		if (variableDeltaSerializer.DeserializeVariable(&deserializationContext, var2Unreliable))
+			printf("var2Unreliable changed to %i\n", var2Unreliable);
+		variableDeltaSerializer.EndDeserialize(&deserializationContext);
+
+		variableDeltaSerializer.BeginDeserialize(&deserializationContext, &deserializeParameters->serializationBitstream[1]);
+		if (variableDeltaSerializer.DeserializeVariable(&deserializationContext, var3Reliable))
+			printf("var3Reliable changed to %i\n", var3Reliable);
+		if (variableDeltaSerializer.DeserializeVariable(&deserializationContext, var4Reliable))
+			printf("var4Reliable changed to %i\n", var4Reliable);
+		variableDeltaSerializer.EndDeserialize(&deserializationContext);
 	}
 
 	virtual void SerializeConstructionRequestAccepted(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *requestingConnection)	{
 		serializationBitstream->Write(GetName() + RakNet::RakString(" SerializeConstructionRequestAccepted"));
 	}
 	virtual void DeserializeConstructionRequestAccepted(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *acceptingConnection) {
-		PrintOutput(serializationBitstream);
+		PrintStringInBitstream(serializationBitstream);
 	}
 	virtual void SerializeConstructionRequestRejected(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *requestingConnection)	{
 		serializationBitstream->Write(GetName() + RakNet::RakString(" SerializeConstructionRequestRejected"));
 	}
 	virtual void DeserializeConstructionRequestRejected(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *rejectingConnection) {
-		PrintOutput(serializationBitstream);
+		PrintStringInBitstream(serializationBitstream);
 	}
 
+	void OnPoppedConnection(RakNet::Connection_RM3 *droppedConnection)
+	{
+		// Same as in SerializeDestruction(), no longer track this system
+		variableDeltaSerializer.RemoveRemoteSystemVariableHistory(droppedConnection->GetRakNetGUID());
+	}
+	void NotifyReplicaOfMessageDeliveryStatus(RakNetGUID guid, uint32_t receiptId, bool messageArrived)
+	{
+		// When using UNRELIABLE_WITH_ACK_RECEIPT, the system tracks which variables were updated with which sends
+		// So it is then necessary to inform the system of messages arriving or lost
+		// Lost messages will flag each variable sent in that update as dirty, meaning the next Serialize() call will resend them with the current values
+		variableDeltaSerializer.OnMessageReceipt(guid,receiptId,messageArrived);
+	}
+	void RandomizeVariables(void)
+	{
+		if (randomMT()%2)
+		{
+			var1Unreliable=randomMT();
+			printf("var1Unreliable changed to %i\n", var1Unreliable);
+		}
+		if (randomMT()%2)
+		{
+			var2Unreliable=randomMT();
+			printf("var2Unreliable changed to %i\n", var2Unreliable);
+		}
+		if (randomMT()%2)
+		{
+			var3Reliable=randomMT();
+			printf("var3Reliable changed to %i\n", var3Reliable);
+		}
+		if (randomMT()%2)
+		{
+			var4Reliable=randomMT();
+			printf("var4Reliable changed to %i\n", var4Reliable);
+		}
+	}
+
+	// Demonstrate per-variable synchronization
+	// We manually test each variable to the last synchronized value and only send those values that change
+	int var1Unreliable,var2Unreliable,var3Reliable,var4Reliable;
+
+	// Class to save and compare the states of variables this Serialize() to the last Serialize()
+	// If the value is different, true is written to the bitStream, followed by the value. Otherwise false is written.
+	// It also tracks which variables changed which Serialize() call, so if an unreliable message was lost (ID_SND_RECEIPT_LOSS) those variables are flagged 'dirty' and resent
+	VariableDeltaSerializer variableDeltaSerializer;
 };
 
 struct ClientCreatible_ClientSerialized : public SampleReplica {
@@ -159,13 +269,8 @@ struct ServerCreated_ServerSerialized : public SampleReplica {
 	{
 		if (topology==CLIENT)
 			return RM3SR_DO_NOT_SERIALIZE;
-		RakNetTime time = RakNet::GetTime()/1000;
 
-		if (time%2) // Swap channels randomly for testing
-			serializeParameters->outputBitstream[0].Write(GetName() + RakNet::RakString(" Serialize. Channel 0. Time = %i", time));
-		else
-			serializeParameters->outputBitstream[1].Write(GetName() + RakNet::RakString(" Serialize. Channel 1. Time = %i", time));
-		return RM3SR_BROADCAST_IDENTICALLY;
+		return SampleReplica::Serialize(serializeParameters);
 	}
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {
 		return QueryConstruction_ServerConstruction(destinationConnection);
@@ -289,7 +394,7 @@ int main(void)
 		printf("Connecting...\n");
 	}
 
-	printf("Commands:\n(Q)uit\n'C'reate objects\n'D'estroy my objects\n");
+	printf("Commands:\n(Q)uit\n'C'reate objects\n'R'andomly change variables in my objects\n'D'estroy my objects\n");
 
 	// Enter infinite loop to run the system
 	Packet *packet;
@@ -328,6 +433,21 @@ int main(void)
 					rakPeer->Connect(packet->systemAddress.ToString(false), packet->systemAddress.port,0,0);
 				}
 				break;
+			case ID_SND_RECEIPT_LOSS:
+			case ID_SND_RECEIPT_ACKED:
+				{
+					uint32_t msgNumber;
+					memcpy(&msgNumber, packet->data+1, 4);
+
+					DataStructures::Multilist<ML_STACK, Replica3*> replicaListOut;
+					replicaManager.GetReplicasCreatedByMe(replicaListOut);
+					DataStructures::DefaultIndexType idx;
+					for (idx=0; idx < replicaListOut.GetSize(); idx++)
+					{
+						((SampleReplica*)replicaListOut[idx])->NotifyReplicaOfMessageDeliveryStatus(packet->guid,msgNumber, packet->data[0]==ID_SND_RECEIPT_ACKED);
+					}
+				}
+				break;
 			}
 		}
 
@@ -353,6 +473,16 @@ int main(void)
 				{
 				//	for (int i=0; i < 20; i++)
 						replicaManager.Reference(new P2PReplica);
+				}
+			}
+			if (ch=='r' || ch=='R')
+			{
+				DataStructures::Multilist<ML_STACK, Replica3*> replicaListOut;
+				replicaManager.GetReplicasCreatedByMe(replicaListOut);
+				DataStructures::DefaultIndexType idx;
+				for (idx=0; idx < replicaListOut.GetSize(); idx++)
+				{
+					((SampleReplica*)replicaListOut[idx])->RandomizeVariables();
 				}
 			}
 			if (ch=='d' || ch=='D')

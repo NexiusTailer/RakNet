@@ -1,8 +1,5 @@
 #include "EightPeerTest.h"
 
-
-
-
 /*
 What is being done here is having 8 peers all connect to eachother and be
 connected. Then it check if they all connect. If so send data in ordered reliable mode for 100
@@ -16,8 +13,6 @@ shouldn't be significant at this number but the recieve speed it part of the tes
 Success conditions:
 Peers connect and receive all packets in order.
 No disconnections allowed in this version of the test.
-
-
 
 Failure conditions:
 
@@ -44,7 +39,6 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 		peerList[i]=RakNetworkFactory::GetRakPeerInterface();
 		destroyList.Push(peerList[i],__FILE__,__LINE__);
 		connectionAmount[i]=0;
-
 
 		for (int j=0;j<peerNum;j++)
 		{
@@ -109,7 +103,6 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 			{
 
 				bitStream.Reset();
-
 
 				bitStream.Write((unsigned char) (ID_USER_PACKET_ENUM+1));
 
@@ -219,7 +212,6 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 					break;
 
-
 				case ID_DISCONNECTION_NOTIFICATION:
 					if (isVerbose)
 					{
@@ -243,7 +235,6 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 
 					break;
 				default:
-
 
 					if (packet->data[0]==ID_USER_PACKET_ENUM+1)
 					{
@@ -285,10 +276,6 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 		RakSleep(0);//If needed for testing
 	}
 
-
-
-
-
 	for (int i=0;i<peerNum;i++)
 	{
 
@@ -308,20 +295,16 @@ int EightPeerTest::RunTest(DataStructures::List<RakNet::RakString> params,bool i
 					}
 					return 5;
 
-
 				}
 
 			}
 		}
 	}
 
-
 	printf("All packets recieved in order,pass\n");
 	return 0;
 
 }
-
-
 
 RakNet::RakString EightPeerTest::GetTestName()
 {
@@ -344,16 +327,13 @@ RakNet::RakString EightPeerTest::ErrorCodeToString(int errorCode)
 		return "Connect function returned failure.";
 		break;
 
-
 	case 2:
 		return "Peers failed to connect.";
 		break;
 
-
 	case 3:
 		return "There was a disconnection.";
 		break;
-
 
 	case 4:
 		return "Not ordered.";
@@ -367,10 +347,7 @@ RakNet::RakString EightPeerTest::ErrorCodeToString(int errorCode)
 		return "Undefined Error";
 	}
 
-
 }
-
-
 
 EightPeerTest::EightPeerTest(void)
 {
@@ -379,7 +356,6 @@ EightPeerTest::EightPeerTest(void)
 EightPeerTest::~EightPeerTest(void)
 {
 }
-
 
 void EightPeerTest::DestroyPeers()
 {

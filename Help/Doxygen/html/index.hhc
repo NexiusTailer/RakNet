@@ -67,6 +67,9 @@
       <LI><OBJECT type="text/sitemap"><param name="Name" value="Router2"><param name="Local" value="group__ROUTER__2__GROUP.html"><param name="ImageNumber" value="11"></OBJECT>
         <UL>
         </UL>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="RPC"><param name="Local" value="group__RPC__PLUGIN__GROUP.html"><param name="ImageNumber" value="11"></OBJECT>
+        <UL>
+        </UL>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="TeamBalancer"><param name="Local" value="group__TEAM__BALANCER__GROUP.html"><param name="ImageNumber" value="11"></OBJECT>
         <UL>
         </UL>
@@ -287,7 +290,6 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::QueueLinkedList< QueueType >"><param name="Local" value="classDataStructures_1_1QueueLinkedList.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::QuickJoinEnteredRoom_Notification"><param name="Local" value="structRakNet_1_1QuickJoinEnteredRoom__Notification.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::QuickJoinExpired_Notification"><param name="Local" value="structRakNet_1_1QuickJoinExpired__Notification.html"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNetBandwidth"><param name="Local" value="structRakNetBandwidth.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNetCommandParser"><param name="Local" value="classRakNetCommandParser.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNetGUID"><param name="Local" value="structRakNetGUID.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNetStatistics"><param name="Local" value="structRakNetStatistics.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -340,6 +342,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::Router2"><param name="Local" value="classRakNet_1_1Router2.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RouterInterface"><param name="Local" value="classRouterInterface.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::RPC3"><param name="Local" value="classRakNet_1_1RPC3.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::RPC4Plugin"><param name="Local" value="classRakNet_1_1RPC4Plugin.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RPCParameters"><param name="Local" value="structRPCParameters.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::SearchByFilter_Func"><param name="Local" value="structRakNet_1_1SearchByFilter__Func.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="SendDownloadCompleteInterface"><param name="Local" value="classSendDownloadCompleteInterface.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -396,6 +399,8 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::UDPProxyServer"><param name="Local" value="classRakNet_1_1UDPProxyServer.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::UDPProxyServerResultHandler"><param name="Local" value="structRakNet_1_1UDPProxyServerResultHandler.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::UnbanMember_Func"><param name="Local" value="structRakNet_1_1UnbanMember__Func.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::VariableDeltaSerializer"><param name="Local" value="classRakNet_1_1VariableDeltaSerializer.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::VariableListDeltaTracker"><param name="Local" value="classRakNet_1_1VariableListDeltaTracker.html"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Class Hierarchy"><param name="Local" value="hierarchy.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
@@ -603,6 +608,7 @@
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::RoomsPlugin"><param name="Local" value="classRakNet_1_1RoomsPlugin.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::Router2"><param name="Local" value="classRakNet_1_1Router2.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::RPC3"><param name="Local" value="classRakNet_1_1RPC3.html"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::RPC4Plugin"><param name="Local" value="classRakNet_1_1RPC4Plugin.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::SQLite3ClientPlugin"><param name="Local" value="classRakNet_1_1SQLite3ClientPlugin.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::SQLite3ServerPlugin"><param name="Local" value="classRakNet_1_1SQLite3ServerPlugin.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::TeamBalancer"><param name="Local" value="classRakNet_1_1TeamBalancer.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -617,7 +623,6 @@
     </UL>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::Queue< queue_type >"><param name="Local" value="classDataStructures_1_1Queue.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::QueueLinkedList< QueueType >"><param name="Local" value="classDataStructures_1_1QueueLinkedList.html"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNetBandwidth"><param name="Local" value="structRakNetBandwidth.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNetGUID"><param name="Local" value="structRakNetGUID.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNetStatistics"><param name="Local" value="structRakNetStatistics.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakPeerInterface"><param name="Local" value="classRakPeerInterface.html"><param name="ImageNumber" value="1"></OBJECT>
@@ -723,6 +728,8 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::UDPForwarder"><param name="Local" value="classRakNet_1_1UDPForwarder.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::UDPProxyClientResultHandler"><param name="Local" value="structRakNet_1_1UDPProxyClientResultHandler.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::UDPProxyServerResultHandler"><param name="Local" value="structRakNet_1_1UDPProxyServerResultHandler.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::VariableDeltaSerializer"><param name="Local" value="classRakNet_1_1VariableDeltaSerializer.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::VariableListDeltaTracker"><param name="Local" value="classRakNet_1_1VariableListDeltaTracker.html"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Class Members"><param name="Local" value="functions.html"><param name="ImageNumber" value="11"></OBJECT>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Namespace List"><param name="Local" value="namespaces.html"><param name="ImageNumber" value="1"></OBJECT>
@@ -835,6 +842,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="c:/RakNet/Source/Rijndael.h"><param name="Local" value="Rijndael_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="c:/RakNet/Source/Router.h"><param name="Local" value="Router_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="c:/RakNet/Source/Router2.h"><param name="Local" value="Router2_8h.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="c:/RakNet/Source/RPC4Plugin.h"><param name="Local" value="RPC4Plugin_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="c:/RakNet/Source/RPCMap.h"><param name="Local" value="RPCMap_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="c:/RakNet/Source/RPCNode.h"><param name="Local" value="RPCNode_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="c:/RakNet/Source/SimpleMutex.h"><param name="Local" value="SimpleMutex_8h.html"><param name="ImageNumber" value="11"></OBJECT>

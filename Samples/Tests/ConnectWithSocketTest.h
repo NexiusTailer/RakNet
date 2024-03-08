@@ -2,7 +2,6 @@
 
 #include "TestInterface.h"
 
-
 #include "RakString.h"
 #include "RakNetworkFactory.h"
 #include "RakPeerInterface.h"
@@ -15,11 +14,6 @@
 #include "DebugTools.h"
 #include "TestHelpers.h"
 #include "CommonFunctions.h"
-
-
-
-
-
 
 class ConnectWithSocketTest : public TestInterface
 {

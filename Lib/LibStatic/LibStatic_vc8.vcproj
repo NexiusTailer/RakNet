@@ -474,6 +474,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\RPC4Plugin.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\RPCMap.cpp"
 				>
 			</File>
@@ -547,6 +551,14 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\UDPProxyServer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\VariableDeltaSerializer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\VariableListDeltaTracker.cpp"
 				>
 			</File>
 			<File
@@ -1064,11 +1076,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\RPC4Plugin.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\RPCMap.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\Source\RPCNode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\RPCPlugin.h"
 				>
 			</File>
 			<File
@@ -1165,6 +1185,14 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\UDPProxyServer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\VariableDeltaSerializer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\VariableListDeltaTracker.h"
 				>
 			</File>
 			<File

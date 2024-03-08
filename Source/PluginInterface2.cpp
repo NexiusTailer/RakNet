@@ -52,7 +52,7 @@ bool PluginInterface2::SendListUnified( const char **data, const int *lengths, c
 {
 	if (rakPeerInterface)
 	{
-		return rakPeerInterface->SendList(data,lengths,numParameters,priority,reliability,orderingChannel,systemIdentifier,broadcast);
+		return rakPeerInterface->SendList(data,lengths,numParameters,priority,reliability,orderingChannel,systemIdentifier,broadcast)!=0;
 	}
 	else
 	{

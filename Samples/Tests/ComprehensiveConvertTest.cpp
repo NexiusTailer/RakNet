@@ -1,9 +1,5 @@
 #include "ComprehensiveConvertTest.h"
 
-
-
-
-
 /*
 Description: Does a little bit of everything forever. This is an internal sample just to see if RakNet crashes or leaks memory over a long period of time.
 
@@ -13,17 +9,10 @@ RPC  replacement tests when RPC3 includes work.
 Success conditions:
 No failures.
 
-
-
 Failure conditions:
 Connect fails without pending ops or current connection.
 
 */
-
-
-
-
-
 
 int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
 {
@@ -36,11 +25,7 @@ int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> pa
 
 	//	return 55;
 
-
 	//	AutoRPC autoRpcs[NUM_PEERS];
-
-
-
 
 	//AutoRPC autoRpcs[NUM_PEERS];
 
@@ -49,7 +34,6 @@ int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> pa
 	float nextAction;
 	int i;
 	int portAdd;
-
 
 	char data[8096];
 
@@ -72,11 +56,7 @@ int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> pa
 		peers[i]->SetOfflinePingResponse("Offline Ping Data", (int)strlen("Offline Ping Data")+1);
 		peers[i]->ApplyNetworkSimulator(500,50,50);
 
-
-
 		//		peers[i]->AttachPlugin(&autoRpc[i]);
-
-
 
 	}
 
@@ -191,7 +171,7 @@ int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> pa
 			else
 				target=peers[peerIndex]->GetSystemAddressFromIndex(randomMT()%NUM_PEERS);
 
-			broadcast=(bool)(randomMT()%2);
+			broadcast=(randomMT()%2)>0;
 #ifdef _VERIFY_RECIPIENTS
 			broadcast=false; // Temporarily in so I can check recipients
 #endif
@@ -227,7 +207,7 @@ int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> pa
 				target=UNASSIGNED_SYSTEM_ADDRESS;
 			else
 				target=peers[peerIndex]->GetSystemAddressFromIndex(randomMT()%NUM_PEERS);
-			broadcast=(bool)(randomMT()%2);
+			broadcast=(randomMT()%2)>0;
 #ifdef _VERIFY_RECIPIENTS
 			broadcast=false; // Temporarily in so I can check recipients
 #endif
@@ -247,13 +227,13 @@ int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> pa
 			SystemAddress target;
 			peerIndex=randomMT()%NUM_PEERS;
 			target=peers[peerIndex]->GetSystemAddressFromIndex(randomMT()%NUM_PEERS);
-			peers[peerIndex]->CloseConnection(target, (bool)(randomMT()%2), 0);
+			peers[peerIndex]->CloseConnection(target, (randomMT()%2)>0, 0);
 		}
 		else if (nextAction < .20f)
 		{
 			// Offline Ping
 			peerIndex=randomMT()%NUM_PEERS;
-			peers[peerIndex]->Ping("127.0.0.1", 60000+(randomMT()%NUM_PEERS), (bool)(randomMT()%2));
+			peers[peerIndex]->Ping("127.0.0.1", 60000+(randomMT()%NUM_PEERS), (randomMT()%2)>0);
 		}
 		else if (nextAction < .21f)
 		{
@@ -267,7 +247,7 @@ int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> pa
 		{
 			// SetCompileFrequencyTable
 			peerIndex=randomMT()%NUM_PEERS;
-			peers[peerIndex]->SetCompileFrequencyTable(randomMT()%2);
+			peers[peerIndex]->SetCompileFrequencyTable((randomMT()%2)>0);
 		}
 		else if (nextAction < .25f)
 		{
@@ -299,11 +279,9 @@ int ComprehensiveConvertTest::RunTest(DataStructures::List<RakNet::RakString> pa
 		for (i=0; i < NUM_PEERS; i++)
 			peers[i]->DeallocatePacket(peers[i]->Receive());
 
-
 		RakSleep(0);
 
 	}
-
 
 	
 
@@ -318,8 +296,6 @@ for (int i=0; i < NUM_PEERS; i++)
 		RakNetworkFactory::DestroyRakPeerInterface(peers[i]);
 
 }
-
-
 
 RakNet::RakString ComprehensiveConvertTest::GetTestName()
 {
@@ -346,10 +322,7 @@ RakNet::RakString ComprehensiveConvertTest::ErrorCodeToString(int errorCode)
 		return "Undefined Error";
 	}
 
-
 }
-
-
 
 ComprehensiveConvertTest::ComprehensiveConvertTest(void)
 {

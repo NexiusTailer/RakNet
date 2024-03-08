@@ -162,7 +162,11 @@
 &nbsp;&nbsp;<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3cd0390148288ade2da494f4ba266b2b4">ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING</a>, 
 <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3e388bbb96d3a716b3b0f2f7b7a3cc6de">ID_TEAM_BALANCER_TEAMS_LOCKED</a>, 
 <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd342266a19aa17158f228bf0baaec39e6d">ID_TEAM_BALANCER_TEAM_ASSIGNED</a>, 
-<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3c5eade8d2878375aec8badfe66f0558a">ID_LIGHTSPEED_INTEGRATION</a>
+<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3c5eade8d2878375aec8badfe66f0558a">ID_LIGHTSPEED_INTEGRATION</a>, 
+<br>
+&nbsp;&nbsp;<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd363a1c4ab2783eef020e4f06450a19564">ID_RPC_4_PLUGIN</a>, 
+<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3ea254aecc756b8f68b9b0b75ebefa246">ID_SND_RECEIPT_ACKED</a>, 
+<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3ad5680905e97e2219ee27b671c6a7fb0">ID_SND_RECEIPT_LOSS</a>
 <br>
  }</td></tr>
 
@@ -405,13 +409,19 @@ Cannot switch to the desired team because all teams are locked. However, if some
 Team balancer plugin informing you of your team. Byte 1 contains the team you requested to join. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd3c5eade8d2878375aec8badfe66f0558a"></a><!-- doxytag: member="ID_LIGHTSPEED_INTEGRATION" ref="c1b471af280629f5ace02e586d5bcfd3c5eade8d2878375aec8badfe66f0558a" args="" -->ID_LIGHTSPEED_INTEGRATION</em>&nbsp;</td><td>
 Gamebryo Lightspeed. </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd363a1c4ab2783eef020e4f06450a19564"></a><!-- doxytag: member="ID_RPC_4_PLUGIN" ref="c1b471af280629f5ace02e586d5bcfd363a1c4ab2783eef020e4f06450a19564" args="" -->ID_RPC_4_PLUGIN</em>&nbsp;</td><td>
+Plugin based replacement for old RPC system, no boost required, but only works with C functions. </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd3ea254aecc756b8f68b9b0b75ebefa246"></a><!-- doxytag: member="ID_SND_RECEIPT_ACKED" ref="c1b471af280629f5ace02e586d5bcfd3ea254aecc756b8f68b9b0b75ebefa246" args="" -->ID_SND_RECEIPT_ACKED</em>&nbsp;</td><td>
+If <a class="el" href="classRakPeerInterface.html#36b7517ac2e6e420736ed8758c125397">RakPeerInterface::Send()</a> is called where PacketReliability contains _WITH_ACK_RECEIPT, then on a later call to <a class="el" href="classRakPeerInterface.html#b92ff92041d251011bc166f6abdf119d">RakPeerInterface::Receive()</a> you will get ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS. The message will be 5 bytes long, and bytes 1-4 inclusive will contain a number in native order containing a number that identifies this message. This number will be returned by <a class="el" href="classRakPeerInterface.html#36b7517ac2e6e420736ed8758c125397">RakPeerInterface::Send()</a> or <a class="el" href="classRakPeerInterface.html#1295b843f4717c95c0a30cbb97425773">RakPeerInterface::SendList()</a>. ID_SND_RECEIPT_ACKED means that the message arrived. </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd3ad5680905e97e2219ee27b671c6a7fb0"></a><!-- doxytag: member="ID_SND_RECEIPT_LOSS" ref="c1b471af280629f5ace02e586d5bcfd3ad5680905e97e2219ee27b671c6a7fb0" args="" -->ID_SND_RECEIPT_LOSS</em>&nbsp;</td><td>
+If <a class="el" href="classRakPeerInterface.html#36b7517ac2e6e420736ed8758c125397">RakPeerInterface::Send()</a> is called where PacketReliability contains _WITH_ACK_RECEIPT, then on a later call to <a class="el" href="classRakPeerInterface.html#b92ff92041d251011bc166f6abdf119d">RakPeerInterface::Receive()</a> you will get ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS. The message will be 5 bytes long, and bytes 1-4 inclusive will contain a number in native order containing a number that identifies this message. This number will be returned by <a class="el" href="classRakPeerInterface.html#36b7517ac2e6e420736ed8758c125397">RakPeerInterface::Send()</a> or <a class="el" href="classRakPeerInterface.html#1295b843f4717c95c0a30cbb97425773">RakPeerInterface::SendList()</a>. ID_SND_RECEIPT_LOSS means that an ack for the message did not arrive (it may or may not have been delivered, probably not). On disconnect or shutdown, you will not get ID_SND_RECEIPT_LOSS for unsent messages, you should consider those messages as all lost. </td></tr>
 </table>
 </dl>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Apr 12 08:48:28 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 4 21:11:25 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

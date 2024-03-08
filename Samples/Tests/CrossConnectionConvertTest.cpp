@@ -1,15 +1,10 @@
 #include "CrossConnectionConvertTest.h"
 
-
-
 /*
 Description: Tests what happens if two instances of RakNet connect to each other at the same time. This has caused handshaking problems in the past.
 
-
 Success conditions:
 Everything connects and sends normally.
-
-
 
 Failure conditions:
 Expected values from ping/pong do not occur within expected time.
@@ -17,13 +12,9 @@ Expected values from ping/pong do not occur within expected time.
 int CrossConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
 {
 
-
 	static const unsigned short SERVER_PORT=1234;
 	//	char serverMode[32];
-	bool isServer;
 	char serverIP[64];
-
-
 
 	strcpy(serverIP,"127.0.0.1");	
 
@@ -42,10 +33,7 @@ int CrossConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 	server->Startup(1,0,&SocketDescriptor(SERVER_PORT,0), 1);
 	server->SetMaximumIncomingConnections(1);
 
-
 	client->Startup(1,0,&SocketDescriptor(0,0), 1);
-
-
 
 	client->Ping(serverIP,SERVER_PORT,false);
 
@@ -56,8 +44,6 @@ int CrossConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 	RakNetTime connectionAttemptTime=0,connectionResultDeterminationTime=0,nextTestStartTime=0;
 
 	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
-
-
 
 	bool printedYet=false;
 	while(RakNet::GetTime()-entryTime<10000)//Run for 10 Secoonds
@@ -116,8 +102,6 @@ int CrossConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 				gotNotification=false;
 			}
 		}
-
-
 
 		printedYet=false;
 		for (p=client->Receive(); p; client->DeallocatePacket(p), p=client->Receive())
@@ -191,12 +175,10 @@ int CrossConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 				return 1;
 			}
 
-
 			SystemAddress sa;
 			sa.SetBinaryAddress(serverIP);
 			sa.port=SERVER_PORT;
 			client->CancelConnectionAttempt(sa);
-
 
 			sa.SetBinaryAddress(clientIP);
 			sa.port=clientPort;
@@ -220,12 +202,9 @@ int CrossConnectionConvertTest::RunTest(DataStructures::List<RakNet::RakString> 
 	if (isVerbose)
 		printf("Test succeeded.\n");
 
-
 	return 0;
 
 }
-
-
 
 RakNet::RakString CrossConnectionConvertTest::GetTestName()
 {
@@ -252,9 +231,7 @@ RakNet::RakString CrossConnectionConvertTest::ErrorCodeToString(int errorCode)
 		return "Undefined Error";
 	}
 
-
 }
-
 
 void CrossConnectionConvertTest::DestroyPeers()
 {
@@ -265,8 +242,6 @@ void CrossConnectionConvertTest::DestroyPeers()
 		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
 
 }
-
-
 
 CrossConnectionConvertTest::CrossConnectionConvertTest(void)
 {

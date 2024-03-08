@@ -2,7 +2,6 @@
 
 #include "TestInterface.h"
 
-
 #include "RakString.h"
 #include "RakNetworkFactory.h"
 #include "RakPeerInterface.h"
@@ -16,7 +15,6 @@
 #include "TestHelpers.h"
 #include "CommonFunctions.h"
 #include "RakTimer.h"
-
 
 class PingTestsTest : public TestInterface
 {

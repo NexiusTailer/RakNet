@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "RakString.h"
 #include "RakNetworkFactory.h"
 #include "RakPeerInterface.h"

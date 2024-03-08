@@ -1,18 +1,12 @@
 #include "ManyClientsOneServerNonBlockingTest.h"
 
-
-
-
-
 /*
 What is being done here is having 256 clients connect to one server, disconnect, connect again.
 
 Do this for about 10 seconds. Then allow them all to connect for one last time.
 
-
 This one has a nonblocking recieve so doesn't wait for connects or anything.
 Just rapid connecting disconnecting.
-
 
 Good ideas for changes:
 After the last check run a eightpeers like test an add the conditions
@@ -22,7 +16,6 @@ Make sure that if we initiate the connection we get a proper message
 and if not we get a proper message. Add proper conditions.
 
 Randomize sending the disconnect notes
-
 
 Success conditions:
 All connected normally.
@@ -44,18 +37,10 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 	RakPeerInterface *server;//The server
 	SystemAddress currentSystem;
 
-
-
-
-
 	//SystemAddress currentSystem;
 
 	Packet *packet;
 	destroyList.Clear(false,__FILE__,__LINE__);
-
-
-
-
 
 	//Initializations of the arrays
 	for (int i=0;i<clientNum;i++)
@@ -65,31 +50,17 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 		clientList[i]->Startup(1,30,&SocketDescriptor(), 1);
 
-
-
-
-
-
 	}
-
-
 
 	server=RakNetworkFactory::GetRakPeerInterface();
 	destroyList.Push(server,__FILE__,__LINE__);
 	server->Startup(clientNum, 30, &SocketDescriptor(60000,0), 1);
 	server->SetMaximumIncomingConnections(clientNum);
 
-
-
-
 	//Connect all the clients to the server
-
-
 
 	for (int i=0;i<clientNum;i++)
 	{
-
-
 
 		if (!clientList[i]->Connect("127.0.0.1", 60000, 0,0))
 		{
@@ -97,30 +68,22 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 			if (isVerbose)
 				DebugTools::ShowError("Problem while calling connect.\n",!noPauses && isVerbose,__LINE__,__FILE__);
 
-
 			return 1;//This fails the test, don't bother going on.
 
 		}
 
-
-
 	}
-
-
 
 	RakNetTime entryTime=RakNet::GetTime();//Loop entry time
 
 	DataStructures::List< SystemAddress  > systemList;
 	DataStructures::List< RakNetGUID > guidList;
 
-
 	if (isVerbose)
 		printf("Entering disconnect loop \n");
 
-
 	while(RakNet::GetTime()-entryTime<10000)//Run for 10 Secoonds
 	{
-
 
 		//Disconnect all clients IF connected to any from client side
 		for (int i=0;i<clientNum;i++)
@@ -132,54 +95,37 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 			for (int j=0;j<len;j++)//Disconnect them all
 			{
 
-
 				clientList[i]->CloseConnection (systemList[j],true,0,LOW_PRIORITY); 	
 			}
 
-
 		}
 
-
-
-
 		//RakSleep(100);
-
 
 		//Connect
 
 		for (int i=0;i<clientNum;i++)
 		{
 
-
-
 			currentSystem.SetBinaryAddress("127.0.0.1");
 			currentSystem.port=60000;
 			if(!clientList[i]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
 			{
 
-
 				if (!clientList[i]->Connect("127.0.0.1", 60000, 0,0))
 				{
-
-
 
 					if (isVerbose)
 						DebugTools::ShowError("Problem while calling connect. \n",!noPauses && isVerbose,__LINE__,__FILE__);
 
 					return 1;//This fails the test, don't bother going on.
 
-
 				}
 			}
 
-
-
 		}
 
-
 		//Server receive
-
-
 
 		packet=server->Receive();
 
@@ -188,9 +134,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 		while(packet)
 		{
-
-
-
 
 			switch (packet->data[0])
 			{
@@ -212,7 +155,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 				if (isVerbose)              
 					printf("Our connection request has been accepted.\n");
 
-
 				break;
 			case ID_CONNECTION_ATTEMPT_FAILED:
 				if (isVerbose)
@@ -229,7 +171,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 				if (isVerbose)              
 					printf("The server is full.\n");
 
-
 				break;
 
 			case ID_ALREADY_CONNECTED:
@@ -237,7 +178,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 					printf("Already connected\n");
 
 				break;
-
 
 			case ID_DISCONNECTION_NOTIFICATION:
 				if (isVerbose)
@@ -259,11 +199,8 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 			packet = server->Receive();
 		}
 
-
-
 		for (int i=0;i<clientNum;i++)//Receive for all peers
 		{
-
 
 			packet=clientList[i]->Receive();
 
@@ -272,8 +209,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 			while(packet)
 			{
-
-
 
 				switch (packet->data[0])
 				{
@@ -295,7 +230,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 					if (isVerbose)              
 						printf("Our connection request has been accepted.\n");
 
-
 					break;
 				case ID_CONNECTION_ATTEMPT_FAILED:
 					if (isVerbose)
@@ -312,7 +246,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 					if (isVerbose)              
 						printf("The server is full.\n");
 
-
 					break;
 
 				case ID_ALREADY_CONNECTED:
@@ -320,7 +253,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 						printf("Already connected\n");
 
 					break;
-
 
 				case ID_DISCONNECTION_NOTIFICATION:
 					if (isVerbose)
@@ -350,9 +282,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 	while(RakNet::GetTime()-entryTime<2000)//Run for 2 Secoonds to process incoming disconnects
 	{
 
-
-
-
 		//Server receive
 
 		packet=server->Receive();
@@ -362,8 +291,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 		while(packet)
 		{
-
-
 
 			switch (packet->data[0])
 			{
@@ -385,7 +312,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 				if (isVerbose)              
 					printf("Our connection request has been accepted.\n");
 
-
 				break;
 			case ID_CONNECTION_ATTEMPT_FAILED:
 				if (isVerbose)
@@ -402,7 +328,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 				if (isVerbose)              
 					printf("The server is full.\n");
 
-
 				break;
 
 			case ID_ALREADY_CONNECTED:
@@ -410,7 +335,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 					printf("Already connected\n");
 
 				break;
-
 
 			case ID_DISCONNECTION_NOTIFICATION:
 				if (isVerbose)
@@ -435,15 +359,12 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 		for (int i=0;i<clientNum;i++)//Receive for all peers
 		{
 
-
 			packet=clientList[i]->Receive();
 			if (isVerbose&&packet)
 				printf("For peer %i\n",i);
 
 			while(packet)
 			{
-
-
 
 				switch (packet->data[0])
 				{
@@ -465,7 +386,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 					if (isVerbose)              
 						printf("Our connection request has been accepted.\n");
 
-
 					break;
 				case ID_CONNECTION_ATTEMPT_FAILED:
 					if (isVerbose)
@@ -482,7 +402,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 					if (isVerbose)              
 						printf("The server is full.\n");
 
-
 					break;
 
 				case ID_ALREADY_CONNECTED:
@@ -490,7 +409,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 						printf("Already connected\n");
 
 					break;
-
 
 				case ID_DISCONNECTION_NOTIFICATION:
 					if (isVerbose)
@@ -520,39 +438,25 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 	for (int i=0;i<clientNum;i++)
 	{
 
-
-
-
 		currentSystem.SetBinaryAddress("127.0.0.1");
 		currentSystem.port=60000;
 
 		if(!clientList[i]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
 		{
 
-
-
 			if (!clientList[i]->Connect("127.0.0.1", 60000, 0,0))
 			{
-
 
 				clientList[i]->GetSystemList(systemList,guidList);//Get connectionlist
 				int len=systemList.Size();
 
-
-
-
-
 				if (isVerbose)
 					DebugTools::ShowError("Problem while calling connect. \n",!noPauses && isVerbose,__LINE__,__FILE__);
 
-
 				return 1;//This fails the test, don't bother going on.
-
 
 			}
 		}
-
-
 
 	}
 
@@ -560,12 +464,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 	while(RakNet::GetTime()-entryTime<5000)//Run for 5 Secoonds
 	{
-
-
-
-
-
-
 
 		//Server receive
 
@@ -575,8 +473,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 		while(packet)
 		{
-
-
 
 			switch (packet->data[0])
 			{
@@ -598,7 +494,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 				if (isVerbose)              
 					printf("Our connection request has been accepted.\n");
 
-
 				break;
 			case ID_CONNECTION_ATTEMPT_FAILED:
 				if (isVerbose)
@@ -615,7 +510,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 				if (isVerbose)              
 					printf("The server is full.\n");
 
-
 				break;
 
 			case ID_ALREADY_CONNECTED:
@@ -623,7 +517,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 					printf("Already connected\n");
 
 				break;
-
 
 			case ID_DISCONNECTION_NOTIFICATION:
 				if (isVerbose)
@@ -645,15 +538,12 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 			packet = server->Receive();
 		}
 
-
 		for (int i=0;i<clientNum;i++)//Receive for all clients
 		{
-
 
 			packet=clientList[i]->Receive();
 			if (isVerbose&&packet)
 				printf("For peer %i\n",i);
-
 
 			while(packet)
 			{
@@ -678,7 +568,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 					if (isVerbose)              
 						printf("Our connection request has been accepted.\n");
 
-
 					break;
 				case ID_CONNECTION_ATTEMPT_FAILED:
 					if (isVerbose)
@@ -695,7 +584,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 					if (isVerbose)              
 						printf("The server is full.\n");
 
-
 					break;
 
 				case ID_ALREADY_CONNECTED:
@@ -703,7 +591,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 						printf("Already connected\n");
 
 					break;
-
 
 				case ID_DISCONNECTION_NOTIFICATION:
 					if (isVerbose)
@@ -728,8 +615,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 		RakSleep(0);//If needed for testing
 	}
 
-
-
 	for (int i=0;i<clientNum;i++)
 	{
 
@@ -738,10 +623,8 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 		if (connNum!=1)//Did we connect to all?
 		{
 
-
 			if (isVerbose)
 				printf("Not all clients reconnected normally.\nFailed on clients number %i\n",i);
-
 
 			if (isVerbose)
 				DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
@@ -751,13 +634,9 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 			return 2;
 
-
 		}
 
-
 	}
-
-
 
 	
 
@@ -766,8 +645,6 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 	return 0;
 
 }
-
-
 
 RakNet::RakString ManyClientsOneServerNonBlockingTest::GetTestName()
 {
@@ -798,9 +675,7 @@ RakNet::RakString ManyClientsOneServerNonBlockingTest::ErrorCodeToString(int err
 		return "Undefined Error";
 	}
 
-
 }
-
 
 ManyClientsOneServerNonBlockingTest::ManyClientsOneServerNonBlockingTest(void)
 {
@@ -809,7 +684,6 @@ ManyClientsOneServerNonBlockingTest::ManyClientsOneServerNonBlockingTest(void)
 ManyClientsOneServerNonBlockingTest::~ManyClientsOneServerNonBlockingTest(void)
 {
 }
-
 
 void ManyClientsOneServerNonBlockingTest::DestroyPeers()
 {

@@ -100,8 +100,10 @@ struct InternalPacket : public InternalPacketFixedSizeTransmissionHeader
 	InternalPacketRefCountedData *refCountedData;
 	/// How many attempts we made at sending this message
 	unsigned char timesSent;
-	///The priority level of this packet
+	/// The priority level of this packet
 	PacketPriority priority;
+	/// If the reliability type requires a receipt, then return this number with it
+	uint32_t sendReceiptSerial;
 
 	// Used for the resend queue
 	// Linked list implementation so I can remove from the list via a pointer, without finding it in the list

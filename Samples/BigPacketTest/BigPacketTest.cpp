@@ -108,7 +108,7 @@ int main(void)
 					}
 					else
 						text[0]=(unsigned char) 255;
-					server->Send(text, BIG_PACKET_SIZE, LOW_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+					server->Send(text, BIG_PACKET_SIZE, LOW_PRIORITY, RELIABLE_ORDERED_WITH_ACK_RECEIPT, 0, packet->systemAddress, false);
 					// Keep the stat from updating until the messages move to the thread or it quits right away
 					nextStatTime=RakNet::GetTime()+1000;
 				}
@@ -210,8 +210,8 @@ int main(void)
 		if (RakNet::GetTime() > nextStatTime)
 		{
 			nextStatTime=RakNet::GetTime()+1000;
-			RakNetBandwidth rssSender;
-			RakNetBandwidth rssReceiver;
+			RakNetStatistics rssSender;
+			RakNetStatistics rssReceiver;
 			if (server)
 			{
 				unsigned int i;
@@ -221,8 +221,8 @@ int main(void)
 				{
 					for (i=0; i < numSystems; i++)
 					{
-						server->GetBandwidth(server->GetSystemAddressFromIndex(i), &rssSender);
-						BandwidthToString(&rssSender, text);
+						server->GetStatistics(server->GetSystemAddressFromIndex(i), &rssSender);
+						StatisticsToString(&rssSender, text,2);
 						printf("==== System %i ====\n", i+1);
 						printf("%s\n\n", text);
 					}
@@ -230,8 +230,8 @@ int main(void)
 			}
 			if (client && server==0)
 			{
-				client->GetBandwidth(client->GetSystemAddressFromIndex(0), &rssReceiver);
-				BandwidthToString(&rssReceiver, text);
+				client->GetStatistics(client->GetSystemAddressFromIndex(0), &rssReceiver);
+				StatisticsToString(&rssReceiver, text,2);
 				printf("%s\n\n", text);
 			}
 		}

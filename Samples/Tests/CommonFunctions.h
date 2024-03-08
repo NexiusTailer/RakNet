@@ -18,9 +18,9 @@ public:
 	CommonFunctions(void);
 	~CommonFunctions(void);
 
-	static bool WaitAndConnect(RakPeerInterface *peer,char* ip,short int port,int millisecondsToWait);
+	static bool WaitAndConnect(RakPeerInterface *peer,char* ip,unsigned short int port,int millisecondsToWait);
 	static bool WaitForMessageWithID(RakPeerInterface *reciever,int id,int millisecondsToWait);
 	static Packet * WaitAndReturnMessageWithID(RakPeerInterface *reciever,int id,int millisecondsToWait);
-	static void DisconnectAndWait(RakPeerInterface *peer,char* ip,short int port);
+	static void DisconnectAndWait(RakPeerInterface *peer,char* ip,unsigned short int port);
 
 };

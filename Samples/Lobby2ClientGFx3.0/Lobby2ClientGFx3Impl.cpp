@@ -1294,6 +1294,8 @@ void Lobby2ClientGFx3Impl::Accept(CallbackProcessor* cbreg)
 	cbreg->Process( "f2c_Clans_GetMembers", &::f2c_Clans_GetMembers );
 	cbreg->Process( "f2c_Clans_GetList", &::f2c_Clans_GetList );
 
+	cbreg->Process( "openSite", &Lobby2ClientGFx3Impl::OpenSite );
+
 
 }
 void Lobby2ClientGFx3Impl::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
@@ -1355,5 +1357,12 @@ void Lobby2ClientGFx3Impl::OnFailedConnectionAttempt(SystemAddress systemAddress
 		}
 		FxDelegate::Invoke(movie, "c2f_NotifyConnectionResultFailure", rargs);
 	}
+}
+
+void Lobby2ClientGFx3Impl::OpenSite(const FxDelegateArgs& pparams)
+{
+	Lobby2ClientGFx3Impl* prt = (Lobby2ClientGFx3Impl*)pparams.GetHandler();
+	const char *siteType = pparams[0].GetString();
+	ShellExecute(NULL, "open", siteType,NULL, NULL, SW_SHOWNORMAL);
 }
 

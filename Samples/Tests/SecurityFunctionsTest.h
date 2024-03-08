@@ -2,7 +2,6 @@
 
 #include "TestInterface.h"
 
-
 #include "RakString.h"
 #include "RakNetworkFactory.h"
 #include "RakPeerInterface.h"
@@ -14,11 +13,6 @@
 #include "GetTime.h"
 #include "DebugTools.h"
 #include "RSACrypt.h"
-
-
-
-
-
 
 class SecurityFunctionsTest : public TestInterface
 {

@@ -3,20 +3,15 @@
 #include "RakString.h"
 #include "DS_List.h"
 
-
 /*
 
 The TestInterface used in this was made to be able to be flexible
 when adding new test cases. While I do not use the paramslist, it is available.
 
-
 */
 
 int main(int argc, char *argv[])
 {
-
-
-
 
 	int returnVal;
 	char str[512];
@@ -27,7 +22,6 @@ int main(int argc, char *argv[])
 	DataStructures::List <int> testResultList;//A list of pass and/or fail and the error codes
 	DataStructures::List <RakNet::RakString> testsToRun;//A list of tests to run
 	DataStructures::List <int> testsToRunIndexes;//A list of tests to run by index
-
 
 	//Add all the tests to the test list
 	testList.Push(new EightPeerTest(),__FILE__,__LINE__);
@@ -51,21 +45,15 @@ int main(int argc, char *argv[])
 	testList.Push(new PacketAndLowLevelTestsTest(),__FILE__,__LINE__);
 	testList.Push(new MiscellaneousTestsTest(),__FILE__,__LINE__);
 
-
 	testListSize=testList.Size();
-
 
 	bool isVerbose=true;
 	bool disallowTestToPause=false;
 
-
 	DataStructures::List<RakNet::RakString> testcases;
-
 
 	if (argc>1)//we have command line arguments
 	{
-
-
 
 		for (int p=1;p<argc;p++)
 		{
@@ -73,13 +61,7 @@ int main(int argc, char *argv[])
 
 		}
 
-
-
 	}
-
-
-
-
 
 	DataStructures::List<RakNet::RakString> noParamsList;
 
@@ -107,7 +89,6 @@ int main(int argc, char *argv[])
 	{
 		int TestsToRunSize= testsToRun.Size();
 
-
 		RakNet::RakString testName;
 		for(int i=0;i<TestsToRunSize;i++)
 		{
@@ -125,13 +106,9 @@ int main(int argc, char *argv[])
 
 			}
 
-
-
 		}
 
-
 	}
-
 
 	if (testsToRunIndexes.Size()!=0)//Run selected indexes
 	{
@@ -175,9 +152,6 @@ int main(int argc, char *argv[])
 	}
 	testList.Clear(false,__FILE__,__LINE__);
 
-
 	return 0;
 }
-
-
 

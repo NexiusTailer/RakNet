@@ -47,6 +47,8 @@ void main(void)
 		printf("Startup call failed\n");
 		return;
 	}
+	else
+		printf("Started on port %i\n", socketDescriptor.port);
 	// Attach the plugin Lobby2Server
 	// The class factory will create messages with server functionality
 	RakNet::Lobby2Server_PGSQL lobby2Server;

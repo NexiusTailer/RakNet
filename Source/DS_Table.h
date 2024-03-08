@@ -51,6 +51,7 @@ namespace DataStructures
 		
 		
 		/// Holds the actual data in the table
+		// Note: If this structure is changed the struct in the swig files need to be changed as well
 		struct RAK_DLL_EXPORT Cell
 		{
 			Cell();
@@ -99,6 +100,7 @@ namespace DataStructures
 
 		/// Stores the name and type of the column
 		/// \internal
+		// Note: If this structure is changed the struct in the swig files need to be changed as well
 		struct RAK_DLL_EXPORT ColumnDescriptor
 		{
 			ColumnDescriptor();
@@ -110,6 +112,7 @@ namespace DataStructures
 		};
 
 		/// Stores the list of cells for this row, and a special flag used for internal sorting
+		// Note: If this structure is changed the struct in the swig files need to be changed as well
 		struct RAK_DLL_EXPORT Row
 		{
 			// list of cells
@@ -139,6 +142,7 @@ namespace DataStructures
 		};
 
 		// Compare the cell value for a row at columnName to the cellValue using operation.
+		// Note: If this structure is changed the struct in the swig files need to be changed as well
 		struct RAK_DLL_EXPORT FilterQuery
 		{
 			FilterQuery();
@@ -160,6 +164,7 @@ namespace DataStructures
 		};
 		
 		// Sort on increasing or decreasing order for a particular column
+		// Note: If this structure is changed the struct in the swig files need to be changed as well
 		struct RAK_DLL_EXPORT SortQuery
 		{
 			/// The index of the table column we are sorting on

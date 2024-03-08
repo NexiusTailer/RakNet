@@ -180,6 +180,16 @@ int CCRakNetUDT::GetTransmissionBandwidth(CCTimeType curTime, CCTimeType timeSin
 		return bytesCanSendThisTick;
 	return 0;
 }
+uint64_t CCRakNetUDT::GetBytesPerSecondLimitByCongestionControl(void) const
+{
+	if (isInSlowStart)
+		return 0;
+#if CC_TIME_TYPE_BYTES==4
+	return (uint64_t) ((double)1.0/(SND*1000.0));
+#else
+	return (uint64_t) ((double)1.0/(SND*1000000.0));
+#endif
+}
 // ----------------------------------------------------------------------------------------------------------------------------
 bool CCRakNetUDT::ShouldSendACKs(CCTimeType curTime, CCTimeType estimatedTimeToNextTick)
 {

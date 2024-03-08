@@ -2,7 +2,6 @@
 
 #include "TestInterface.h"
 
-
 #include "RakString.h"
 #include "RakNetworkFactory.h"
 #include "RakPeerInterface.h"
@@ -20,10 +19,6 @@
 #include "Rand.h"
 #include <stdio.h>
 
-
-
-
-
 class ComprehensiveConvertTest : public TestInterface
 {
 public:
@@ -36,10 +31,5 @@ public:
 private:
 	static const int NUM_PEERS =10;
 	RakPeerInterface *peers[NUM_PEERS];
-
-
-
-
-
 
 };
