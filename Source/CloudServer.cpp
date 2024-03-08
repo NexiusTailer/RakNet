@@ -325,9 +325,19 @@ void CloudServer::OnPostRequest(Packet *packet)
 		cloudData->dataLengthBytes=dataLengthBytes;
 		cloudData->isUploaded=true;
 		if (forceAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+		{
 			cloudData->serverSystemAddress=forceAddress;
+			cloudData->serverSystemAddress.SetPort(rakPeerInterface->GetExternalID(packet->systemAddress).GetPort());
+		}
 		else
+		{
 			cloudData->serverSystemAddress=rakPeerInterface->GetExternalID(packet->systemAddress);
+		}
+		if (cloudData->serverSystemAddress.GetPort()==0)
+		{
+			// Fix localhost port
+			cloudData->serverSystemAddress.SetPort(rakPeerInterface->GetSocket(UNASSIGNED_SYSTEM_ADDRESS)->boundAddress.GetPort());
+		}
 		cloudData->clientSystemAddress=packet->systemAddress;
 		cloudData->serverGUID=rakPeerInterface->GetMyGUID();
 		cloudData->clientGUID=packet->guid;
@@ -340,9 +350,20 @@ void CloudServer::OnPostRequest(Packet *packet)
 		if (cloudDataAlreadyUploaded==false)
 		{
 			if (forceAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+			{
 				cloudData->serverSystemAddress=forceAddress;
+				cloudData->serverSystemAddress.SetPort(rakPeerInterface->GetExternalID(packet->systemAddress).GetPort());
+			}
 			else
+			{
 				cloudData->serverSystemAddress=rakPeerInterface->GetExternalID(packet->systemAddress);
+			}
+			if (cloudData->serverSystemAddress.GetPort()==0)
+			{
+				// Fix localhost port
+				cloudData->serverSystemAddress.SetPort(rakPeerInterface->GetSocket(UNASSIGNED_SYSTEM_ADDRESS)->boundAddress.GetPort());
+			}
+
 			cloudData->clientSystemAddress=packet->systemAddress;
 		}
 

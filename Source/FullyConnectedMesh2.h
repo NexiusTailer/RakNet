@@ -42,6 +42,7 @@ public:
 
 	/// When the message ID_REMOTE_NEW_INCOMING_CONNECTION arrives, we try to connect to that system
 	/// If \a attemptConnection is false, you can manually connect to all systems listed in ID_REMOTE_NEW_INCOMING_CONNECTION with ConnectToRemoteNewIncomingConnections()
+	/// \note This will not work on any console. It will also not work if NAT punchthrough is needed. Generally, this should be false and you should connect manually. It is here for legacy reasons.
 	/// \param[in] attemptConnection If true, we try to connect to any systems we are notified about with ID_REMOTE_NEW_INCOMING_CONNECTION, which comes from the ConnectionGraph2 plugin. Defaults to true.
 	/// \param[in] pw The password to use to connect with. Only used if \a attemptConnection is true
 	void SetConnectOnNewRemoteConnection(bool attemptConnection, RakNet::RakString pw);
@@ -72,6 +73,7 @@ public:
 	void SetAutoparticipateConnections(bool b);
 
 	/// Clear our own host order, and recalculate as if we had just reconnected
+	/// Call this to reset the running time of the host just before joining/creating a game room for networking
 	void ResetHostCalculation(void);
 
 	/// \brief if SetAutoparticipateConnections() is called with false, then you need to use AddParticipant before these systems will be added to the mesh 

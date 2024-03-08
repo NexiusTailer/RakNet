@@ -16,7 +16,7 @@
 
 #define IRRLICHT_MEDIA_PATH "IrrlichtMedia/"
 
-#ifdef __WIN32__
+#ifdef _WIN32__
 #include "WindowsIncludes.h" // Prevent 'fd_set' : 'struct' type redefinition
 #include <windows.h>
 #endif
@@ -27,7 +27,7 @@ using namespace irr;
 
 // Included in RakNet download with permission by Nikolaus Gebhardt
 #ifdef USE_IRRKLANG
-	#if defined(__WIN32__) || defined(WIN32) || defined(_WIN32)
+	#if defined(_WIN32__) || defined(WIN32) || defined(_WIN32)
 		#include <irrKlang-1.1.3/irrKlang.h>
 	#else
 		#include "irrKlang.h"

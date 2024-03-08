@@ -159,7 +159,7 @@ bool SocketLayer::IsSocketFamilySupported(const char *hostAddress, unsigned shor
 	}
 	else
 	{
-#if (defined(__GNUC__) || defined(__GCCXML__)) && !defined(__WIN32)
+#if (defined(__GNUC__) || defined(__GCCXML__)) && !defined(_WIN32)
 		printf("IsSocketFamilySupported failed. hostAddress=%s. %s\n", hostAddress, gai_strerror(error));
 #endif
 	}
@@ -444,7 +444,7 @@ SOCKET SocketLayer::CreateBoundSocket_Old( unsigned short port, bool blockingSoc
 		RAKNET_DEBUG_PRINTF( "bind(...) failed:Error code - %d\n%s", (unsigned int) dwIOError, (char*) messageBuffer );
 		//Free the buffer.
 		LocalFree( messageBuffer );
-#elif (defined(__GNUC__) || defined(__GCCXML__) || defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)) && !defined(__WIN32)
+#elif (defined(__GNUC__) || defined(__GCCXML__) || defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)) && !defined(_WIN32)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 #endif
 
@@ -523,7 +523,7 @@ SOCKET SocketLayer::CreateBoundSocket( unsigned short port, bool blockingSocket,
 	RAKNET_DEBUG_PRINTF( "bind(...) failed:Error code - %d\n%s", (unsigned int) dwIOError, (char*) messageBuffer );
 	//Free the buffer.
 	LocalFree( messageBuffer );
-#elif defined(__GNUC__)  || defined(__GCCXML__) && !defined(__WIN32)
+#elif defined(__GNUC__)  || defined(__GCCXML__) && !defined(_WIN32)
 	switch (ret)
 	{
 	case EBADF:

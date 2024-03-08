@@ -111,8 +111,13 @@ PluginReceiveResult NatTypeDetectionClient::OnReceive(Packet *packet)
 			}
 			break;
 		case ID_NAT_TYPE_DETECTION_RESULT:
-			OnCompletion((NATTypeDetectionResult)packet->data[1]);
-			return RR_STOP_PROCESSING_AND_DEALLOCATE;
+			if (packet->wasGeneratedLocally==false)
+			{
+				OnCompletion((NATTypeDetectionResult)packet->data[1]);
+				return RR_STOP_PROCESSING_AND_DEALLOCATE;
+			}
+			else
+				break;
 		case ID_NAT_TYPE_DETECTION_REQUEST:
 			OnTestPortRestricted(packet);
 			return RR_STOP_PROCESSING_AND_DEALLOCATE;

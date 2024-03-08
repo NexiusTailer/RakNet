@@ -444,6 +444,16 @@ int CloudServerHelper::JoinCloud(
 	forceAddress.FromString(myPublicIP,RakNet::CloudServerHelper::serverPort);
 	cloudServer->ForceExternalSystemAddress(forceAddress);
 
-	OnConnectionCountChange(rakPeer, cloudClient);
+	if (result==ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_SUCCESS)
+	{
+		OnConnectionCountChange(rakPeer, cloudClient);
+	}
+	else
+	{
+		RakNet::BitStream bs;
+		CloudKey cloudKey(CLOUD_SERVER_CONNECTION_COUNT_PRIMARY_KEY,0);
+		bs.WriteCasted<unsigned short>(0);
+		cloudClient->Post(&cloudKey, bs.GetData(), bs.GetNumberOfBytesUsed(), rakPeer->GetMyGUID());
+	}
 	return 0;
 }

@@ -475,13 +475,23 @@ PluginReceiveResult ReplicaManager3::OnReceive(Packet *packet)
 		OnLocalConstructionAccepted(packet->data, packet->length, packet->guid, packetDataOffset);
 		break;
 	case ID_REPLICA_MANAGER_DOWNLOAD_STARTED:
-		if (incomingWorldId!=worldId)
-			return RR_CONTINUE_PROCESSING;
-		return OnDownloadStarted(packet, packet->data, packet->length, packet->guid, packetDataOffset);
+		if (packet->wasGeneratedLocally==false)
+		{
+			if (incomingWorldId!=worldId)
+				return RR_CONTINUE_PROCESSING;
+			return OnDownloadStarted(packet, packet->data, packet->length, packet->guid, packetDataOffset);
+		}
+		else
+			break;
 	case ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE:
-		if (incomingWorldId!=worldId)
-			return RR_CONTINUE_PROCESSING;
-		return OnDownloadComplete(packet, packet->data, packet->length, packet->guid, packetDataOffset);
+		if (packet->wasGeneratedLocally==false)
+		{
+			if (incomingWorldId!=worldId)
+				return RR_CONTINUE_PROCESSING;
+			return OnDownloadComplete(packet, packet->data, packet->length, packet->guid, packetDataOffset);
+		}
+		else
+			break;
 	case ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING:
 		if (incomingWorldId!=worldId)
 			return RR_CONTINUE_PROCESSING;
@@ -2013,7 +2023,7 @@ Replica3::~Replica3()
 
 void Replica3::BroadcastDestruction(void)
 {
-	if (replicaManager)
+	if (replicaManager) // If 0, then this replica is not referenced by ReplicaManager3. BroadcastDestruction() may have been called already for this Replica. You can debug it on the sender by putting a breakpoint in Replica3::SerializeDestruction(). That should not be called for the replica that should not be getting deleted. On the recipient, you will get Replica3::PreDestruction().
 		replicaManager->BroadcastDestruction(this,UNASSIGNED_SYSTEM_ADDRESS);
 }
 

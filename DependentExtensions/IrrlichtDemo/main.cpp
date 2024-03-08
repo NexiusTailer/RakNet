@@ -2,7 +2,7 @@
 // This file is not documented.
 
 #include <irrlicht.h>
-#ifdef __WIN32__
+#ifdef _WIN32__
 #include "WindowsIncludes.h" // Prevent 'fd_set' : 'struct' type redefinition
 #include <windows.h>
 #endif

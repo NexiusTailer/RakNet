@@ -5,7 +5,7 @@
 #define __C_MAIN_MENU_H_INCLUDED__
 
 #include <irrlicht.h>
-#ifdef __WIN32__
+#ifdef _WIN32__
 #include "WindowsIncludes.h" // Prevent 'fd_set' : 'struct' type redefinition
 #endif
 #include "IGUIEditBox.h"

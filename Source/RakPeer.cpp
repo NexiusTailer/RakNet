@@ -1246,8 +1246,10 @@ Packet* RakPeer::Receive( void )
 		else
 			msgId=packet->data[0];
 
-		if (packet->wasGeneratedLocally)
-			return packet;
+		// Some locally generated packets need to be processed by plugins, for example ID_FCM2_NEW_HOST
+		// The plugin itself should intercept these messages generated remotely
+// 		if (packet->wasGeneratedLocally)
+// 			return packet;
 
 		for (i=0; i < messageHandlerList.Size(); i++)
 		{

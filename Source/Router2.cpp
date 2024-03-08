@@ -372,7 +372,10 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
         }
 	}
 	else if (packet->data[0]==ID_ROUTER_2_FORWARDING_NO_PATH)
-		return RR_STOP_PROCESSING_AND_DEALLOCATE;
+	{
+		if (packet->wasGeneratedLocally==false)
+			return RR_STOP_PROCESSING_AND_DEALLOCATE;
+	}
 
 	return RR_CONTINUE_PROCESSING;
 }

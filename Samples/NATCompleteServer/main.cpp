@@ -408,7 +408,14 @@ int main()
 	RakNet::RakPeerInterface *rakPeer=RakNet::RakPeerInterface::GetInstance();
 	SystemAddress ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ];
 	SocketLayer::GetMyIP( ipList );
-	RakNet::SocketDescriptor sd(RAKPEER_PORT,ipList[0].ToString(false));
+	printf("IPs:\n");
+	unsigned int i;
+	for (i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS && ipList[i]!=UNASSIGNED_SYSTEM_ADDRESS; i++)
+	{
+		printf("%i. %s\n", i+1, ipList[i].ToString(false));
+	}
+	
+	RakNet::SocketDescriptor sd(RAKPEER_PORT,0);
 	if (rakPeer->Startup(32,&sd,1)!=RakNet::RAKNET_STARTED)
 	{
 		RakNet::SocketDescriptor sd2(RAKPEER_PORT,0);
@@ -419,10 +426,12 @@ int main()
 			return 1;
 		}
 	}
+	printf("\n");
+
 	rakPeer->SetMaximumIncomingConnections(32);
 
 	SampleFramework *samples[FEATURE_LIST_COUNT];
-	unsigned int i=0;
+	i=0;
 	samples[i++] = new NatTypeDetectionServerFramework;
 	samples[i++] = new NatPunchthroughServerFramework;
 	samples[i++] = new UDPProxyCoordinatorFramework;
