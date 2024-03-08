@@ -4643,6 +4643,8 @@ void RakPeer::CloseConnectionInternal( const SystemAddress target, bool sendDisc
 					// Found the index to stop
 					remoteSystemList[ i ].isActive = false;
 
+					remoteSystemList[ i ].guid=UNASSIGNED_RAKNET_GUID;
+
 					// Reserve this reliability layer for ourselves
 					//remoteSystemList[ i ].systemAddress = UNASSIGNED_SYSTEM_ADDRESS;
 
@@ -4974,42 +4976,27 @@ void RakPeer::GenerateGUID(void)
                                                                                                                                                      
 #elif defined(_WIN32)
 	myGuid.g=RakNet::GetTimeUS();
+
+	RakNetTimeUS lastTime, thisTime;
+	int j;
+	// Sleep a small random time, then use the last 4 bits as a source of randomness
+	for (j=0; j < 8; j++)
+	{
+		lastTime = RakNet::GetTimeUS();
+		RakSleep(1);
+		RakSleep(0);
+		thisTime = RakNet::GetTimeUS();
+		RakNetTimeUS diff = thisTime-lastTime;
+		unsigned int diff4Bits = (unsigned int) (diff & 15);
+		diff4Bits <<= 32-4;
+		diff4Bits >>= j*4;
+		((char*)&myGuid.g)[j] ^= diff4Bits;
+	}
+
 #else
 	struct timeval tv;
 	gettimeofday(&tv, NULL); 
 	myGuid.g=tv.tv_usec + tv.tv_sec * 1000000;
-
-	/*
-	unsigned int i,j;
-	// Warning - not unique if restarts of the system start at 0
-	guid.g[0]=(unsigned int) (RakNet::GetTimeUS() & 0xFFFFFFFF);
-
-	// Warning - not unique if two systems start the same second
-	time_t t = time(0);
-	guid.g[1]= (uint32_t)(t & 0xFFFFFFFF);
-
-	// Warning - not unique if system is not multitasking
-	RakNetTimeUS lastTime, thisTime;
-	for (i=2; i < sizeof(guid.g) / sizeof(guid.g[0]); i++)
-	{
-		RakSleep(1);
-		RakSleep(0);
-		guid.g[i]=(unsigned int) (RakNet::GetTimeUS() & 0xFFFFFFFF);
-		// Sleep a small random time, then use the last 4 bits as a source of randomness
-		for (j=0; j < (sizeof(guid.g[0])*8 / 4) - 1; j++)
-		{
-			lastTime = RakNet::GetTimeUS();
-			RakSleep(1);
-			RakSleep(0);
-			thisTime = RakNet::GetTimeUS();
-			RakNetTimeUS diff = thisTime-lastTime;
-			unsigned int diff4Bits = (unsigned int) (diff & 15);
-			diff4Bits <<= 32-4;
-			diff4Bits >>= j*4;
-			guid.g[i] ^= diff4Bits;
-		}
-	}
-	*/
 #endif
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -5329,7 +5316,7 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 			//			if (rakPeer->mySystemAddress[0].port!=60481)
 			//				return;
 
-			unsigned i;
+			unsigned int i;
 			//RAKNET_DEBUG_PRINTF("%i:IOCR, ", __LINE__);
 			char remoteProtocol=data[1];
 			if (remoteProtocol!=RAKNET_PROTOCOL_VERSION)
@@ -5351,6 +5338,7 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 				rakPeer->messageHandlerList[i]->OnDirectSocketReceive(data, length*8, systemAddress);
 
 			RakNetGUID guid;
+			RakNet::BitStream bsOut;
 			RakNet::BitStream bs((unsigned char*) data, length, false);
 			bs.IgnoreBytes(sizeof(MessageID)*2);
 			bs.Read(guid);
@@ -5359,33 +5347,55 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 			SystemAddress bindingAddress;
 			bs.Read(bindingAddress);
 
-			RakPeer::RemoteSystemStruct *rss=0;
-			// protocol 4 does not write the guid
-			// If this GUID is already connected, use that slot and return ALREADY_CONNECTED
-			// This prevents connecting from different source ports with the same GUID, which messes up newer plugins which assuming one guid per connection (such as NATPunchthrough)
-			rss = rakPeer->GetRemoteSystemFromGUID(guid);
+			bool IPAddrInUse = rakPeer->GetRemoteSystemFromSystemAddress( systemAddress, true, true ) != 0;
+			bool GUIDInUse = rakPeer->GetRemoteSystemFromGUID(guid) != 0;
 
-			if (rss==0)
+			if (IPAddrInUse==true)
 			{
-				// If this guy is already connected and they initiated the connection, ignore the connection request
-				rss = rakPeer->GetRemoteSystemFromSystemAddress( systemAddress, true, true );
+				if (GUIDInUse==true)
+				{
+					// Duplicate connection request packet
+					bsOut.Write((MessageID)ID_OPEN_CONNECTION_REPLY);
+					bsOut.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
+					bsOut.Write(rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
+					bsOut.Write(systemAddress);
+					bsOut.PadWithZeroToByteLength(length); // Pad to the same MTU
+					for (i=0; i < rakPeer->messageHandlerList.Size(); i++)
+						rakPeer->messageHandlerList[i]->OnDirectSocketSend((const char*) bsOut.GetData(), bsOut.GetNumberOfBitsUsed(), systemAddress);
+					SocketLayer::SetDoNotFragment(rakNetSocket->s, 1);
+					SocketLayer::Instance()->SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3 );
+					SocketLayer::SetDoNotFragment(rakNetSocket->s, 0);
+					return true;
+				}
+				else
+				{
+					// Different instance of RakNet from the same IP address.
+					bsOut.Write((MessageID)ID_ALREADY_CONNECTED);
+					bsOut.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
+					bsOut.Write(guid);
+					for (i=0; i < rakPeer->messageHandlerList.Size(); i++)
+						rakPeer->messageHandlerList[i]->OnDirectSocketSend((const char*) bsOut.GetData(), bsOut.GetNumberOfBitsUsed(), systemAddress);
+					SocketLayer::Instance()->SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3 );
+
+					return true;
+				}
+			}
+			else
+			{
+				if (GUIDInUse==true)
+				{
+					// Same GUID, but different IP.
+					bsOut.Write((MessageID)ID_ALREADY_CONNECTED);
+					bsOut.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
+					bsOut.Write(guid);
+					for (i=0; i < rakPeer->messageHandlerList.Size(); i++)
+						rakPeer->messageHandlerList[i]->OnDirectSocketSend((const char*) bsOut.GetData(), bsOut.GetNumberOfBitsUsed(), systemAddress);
+					SocketLayer::Instance()->SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3 );
+
+					return true;
+				}
 			}
 
-			RakNet::BitStream bsOut;
-			if (rss)
-			{
-				bsOut.Write((MessageID)ID_ALREADY_CONNECTED);
-				bsOut.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
-				bsOut.Write(guid);
-
-				unsigned i;
-				for (i=0; i < rakPeer->messageHandlerList.Size(); i++)
-					rakPeer->messageHandlerList[i]->OnDirectSocketSend((const char*) bsOut.GetData(), bsOut.GetNumberOfBitsUsed(), systemAddress);
-				SocketLayer::Instance()->SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3 );
-
-
-				return true;
-			}
 			if (rakPeer->AllowIncomingConnections()==false)
 			{
 				bsOut.Write((MessageID)ID_NO_FREE_INCOMING_CONNECTIONS);
@@ -5399,7 +5409,7 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 			}
 
 			bool thisIPConnectedRecently=false;
-			rss=rakPeer->AssignSystemAddressToRemoteSystemList(systemAddress, RakPeer::RemoteSystemStruct::UNVERIFIED_SENDER, rakNetSocket, &thisIPConnectedRecently, bindingAddress, length+UDP_HEADER_SIZE);
+			rakPeer->AssignSystemAddressToRemoteSystemList(systemAddress, RakPeer::RemoteSystemStruct::UNVERIFIED_SENDER, rakNetSocket, &thisIPConnectedRecently, bindingAddress, length+UDP_HEADER_SIZE);
 
 			if (thisIPConnectedRecently==true)
 			{

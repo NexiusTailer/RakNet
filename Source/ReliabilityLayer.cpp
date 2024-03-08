@@ -1411,7 +1411,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 
 						// Put the packet back into the resend list at the correct spot
 						// Don't make a copy since I'm reinserting an allocated struct
-						InsertPacketIntoResendList( internalPacket, time, false, false, false );
+						InsertPacketIntoResendList( internalPacket, time, false, false );
  
 						// Removeme
 //						printf("Resend:%i ", internalPacket->reliableMessageNumber);
@@ -1531,7 +1531,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 
 							//		printf("pre:%i ", unacknowledgedBytes);
 
-							InsertPacketIntoResendList( internalPacket, time, false, true, true);
+							InsertPacketIntoResendList( internalPacket, time, true, true);
 
 
 							//		printf("post:%i ", unacknowledgedBytes);
@@ -2081,7 +2081,7 @@ InternalPacket* ReliabilityLayer::CreateInternalPacketFromBitStream( RakNet::Bit
 	}
 
 	// Allocate memory to hold our data
-	internalPacket->data = (unsigned char*) rakMalloc_Ex( (size_t) BITS_TO_BYTES( internalPacket->dataBitLength ), __FILE__, __LINE__ );
+	AllocInternalPacketData(internalPacket, BITS_TO_BYTES( internalPacket->dataBitLength ),  __FILE__, __LINE__ );
 	RakAssert(BITS_TO_BYTES( internalPacket->dataBitLength )<MAXIMUM_MTU_SIZE);
 
 	if (internalPacket->data == 0)
@@ -2374,7 +2374,7 @@ void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacke
 		// Write data, splitPacketChannelList[index]->splitPacketList[0]->data
 		InternalPacket *progressIndicator = AllocateFromInternalPacketPool();
 		unsigned int length = sizeof(MessageID) + sizeof(unsigned int)*2 + sizeof(unsigned int) + (unsigned int) BITS_TO_BYTES(splitPacketChannelList[index]->firstPacket->dataBitLength);
-		progressIndicator->data = (unsigned char*) rakMalloc_Ex( length, __FILE__, __LINE__ );
+		AllocInternalPacketData(progressIndicator, length,  __FILE__, __LINE__ );
 		progressIndicator->dataBitLength=BYTES_TO_BITS(length);
 		progressIndicator->data[0]=(MessageID)ID_DOWNLOAD_PROGRESS;
 		progressIndicator->allocationScheme=InternalPacket::NORMAL;
@@ -2495,7 +2495,7 @@ InternalPacket * ReliabilityLayer::CreateInternalPacketCopy( InternalPacket *ori
 
 	if ( dataByteLength > 0 )
 	{
-		copy->data = (unsigned char*) rakMalloc_Ex( BITS_TO_BYTES(dataByteLength ), __FILE__, __LINE__ );
+		AllocInternalPacketData(copy, BITS_TO_BYTES(dataByteLength ),  __FILE__, __LINE__ );
 		memcpy( copy->data, original->data + dataByteOffset, dataByteLength );
 	}
 	else
@@ -2567,24 +2567,13 @@ void ReliabilityLayer::AddToOrderingList( InternalPacket * internalPacket )
 //-------------------------------------------------------------------------------------------------------
 // Inserts a packet into the resend list in order
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::InsertPacketIntoResendList( InternalPacket *internalPacket, CCTimeType time, bool makeCopyOfInternalPacket, bool firstResend, bool modifyUnacknowledgedBytes )
+void ReliabilityLayer::InsertPacketIntoResendList( InternalPacket *internalPacket, CCTimeType time, bool firstResend, bool modifyUnacknowledgedBytes )
 {
-	(void) makeCopyOfInternalPacket;
 	(void) firstResend;
 	(void) time;
 	(void) internalPacket;
 
-	if (makeCopyOfInternalPacket)
-	{
-		InternalPacket *pool=AllocateFromInternalPacketPool();
-		memcpy(pool, internalPacket, sizeof(InternalPacket));
-		AddToListTail(pool, modifyUnacknowledgedBytes);
-	}
-	else
-	{
-		AddToListTail(internalPacket, modifyUnacknowledgedBytes);
-	}
-
+	AddToListTail(internalPacket, modifyUnacknowledgedBytes);
 	RakAssert(internalPacket->nextActionTime!=0);
 
 }
@@ -2922,6 +2911,8 @@ InternalPacket* ReliabilityLayer::AllocateFromInternalPacketPool(void)
 	ip->messageNumberAssigned=false;
 	ip->nextActionTime = 0;
 	ip->splitPacketCount = 0;
+	ip->allocationScheme=InternalPacket::NORMAL;
+	ip->data=0;
 	return ip;
 }
 //-------------------------------------------------------------------------------------------------------
@@ -2930,7 +2921,6 @@ void ReliabilityLayer::ReleaseToInternalPacketPool(InternalPacket *ip)
 	internalPacketPool.Release(ip, __FILE__,__LINE__);
 }
 //-------------------------------------------------------------------------------------------------------
-static int r=0;
 void ReliabilityLayer::RemoveFromUnreliableLinkedList(InternalPacket *internalPacket)
 {
 	if (internalPacket->reliability==UNRELIABLE || internalPacket->reliability==UNRELIABLE_SEQUENCED)

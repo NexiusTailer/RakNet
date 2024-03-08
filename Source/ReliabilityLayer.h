@@ -248,7 +248,7 @@ private:
 	void AddToOrderingList( InternalPacket * internalPacket );
 
 	/// Inserts a packet into the resend list in order
-	void InsertPacketIntoResendList( InternalPacket *internalPacket, CCTimeType time, bool makeCopyOfInternalPacket, bool firstResend, bool modifyUnacknowledgedBytes );
+	void InsertPacketIntoResendList( InternalPacket *internalPacket, CCTimeType time, bool firstResend, bool modifyUnacknowledgedBytes );
 
 	/// Memory handling
 	void FreeMemory( bool freeAllImmediately );
