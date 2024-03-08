@@ -1,6 +1,6 @@
 // How to patch
-// 1. Create a new server instance
-// 2. Connect to the new instance through remote desktop. Immediately set max concurrent users to 0. Wait for users to finish patching, if any started.
+// 1. Create a new server instance using the most recent image (optional)
+// 2. Connect to the new (or any existing) instance through remote desktop. Immediately set max concurrent users to 0. Wait for users to finish patching, if any started.
 // 3. Update the patch
 // 4. Image the server
 // 5. Wait for the image to complete (press l to check, or use Rackspace control panel. Takes like half an hour).
@@ -286,6 +286,8 @@ public:
 						printf("Using image id %s for new servers\n", spawningImageId);
 					}
 				}
+				else
+					printf("Aborted.");
 			}
 
 			json_decref(root);
@@ -508,7 +510,7 @@ public:
 		return true;
 	}
 	void UpdateHostIPAsynch(void) {
-		if (cshState!=AP_RUNNING)
+		if (appState!=AP_RUNNING)
 			return;
 
 		// RakString url("%s/domains/domainId/records/recordId");
@@ -521,6 +523,7 @@ public:
 
 		json_t *jsonObject = json_object();
 		json_object_set(jsonObject, "data", json_string(rakPeer->GetLocalIP(0)));
+		printf("Setting DNS to %s\n", rakPeer->GetLocalIP(0));
 		// TESTING HACK
 		// json_object_set(jsonObject, "data", json_string("198.61.202.20"));
 		json_object_set(jsonObject, "name", json_string(patcherHostSubdomainURL));
@@ -822,7 +825,7 @@ int main(int argc, char **argv)
 	int workerThreadCount;
 	int sqlConnectionObjectCount;
 
-	if (argc<7) workerThreadCount=8;
+	if (argc<7) workerThreadCount=4;
 	else workerThreadCount=atoi(argv[6]);
 
 	if (argc<8) sqlConnectionObjectCount=8;
@@ -857,7 +860,7 @@ int main(int argc, char **argv)
 	// PostgreSQL is fast, so this may not be necessary, or could use fewer threads
 	// This is used to read increments of large files concurrently, thereby serving users downloads as other users read from the DB
 	fileListTransfer.StartIncrementalReadThreads(sqlConnectionObjectCount);
-	autopatcherServer->SetMaxConurrentUsers(sqlConnectionObjectCount); // More users than this get queued up
+	autopatcherServer->SetMaxConurrentUsers(workerThreadCount); // More users than this get queued up
 	AutopatcherLoadNotifier autopatcherLoadNotifier;
 	autopatcherServer->SetLoadManagementCallback(&autopatcherLoadNotifier);
 	packetizedTCP.AttachPlugin(autopatcherServer);
@@ -972,11 +975,11 @@ int main(int argc, char **argv)
 		while (p)
 		{
 			if (p->data[0]==ID_NEW_INCOMING_CONNECTION)
-				printf("ID_NEW_INCOMING_CONNECTION\n");
+				printf("ID_NEW_INCOMING_CONNECTION (TCP) from %s\n", p->systemAddress.ToString(true));
 			else if (p->data[0]==ID_DISCONNECTION_NOTIFICATION)
-				printf("ID_DISCONNECTION_NOTIFICATION\n");
+				printf("ID_DISCONNECTION_NOTIFICATION (TCP) from %s\n", p->systemAddress.ToString(true));
 			else if (p->data[0]==ID_CONNECTION_LOST)
-				printf("ID_CONNECTION_LOST\n");
+				printf("ID_CONNECTION_LOST (TCP) from %s\n", p->systemAddress.ToString(true));
 			else if (p->data[0]==ID_FCM2_NEW_HOST)
 			{
 				if (appState==AP_RUNNING)
@@ -1050,26 +1053,24 @@ int main(int argc, char **argv)
 					bsIn.Read(connCount);
 					printf("%i. Server found at %s with %i connections\n", rowIndex+1, row->serverSystemAddress.ToString(true), connCount);
 
-					if (row->serverGUID==p->guid)
-						totalConnections+=connCount-1;
-					else
-						totalConnections=connCount;
+					totalConnections+=connCount;
 				}
 
 				const int MAX_SERVERS_EVER=32;
-				int overload = cloudQueryResult.rowsReturned.Size() * cloudServerHelper->allowedIncomingConnections - totalConnections;
-				if (overload > cloudServerHelper->allowedIncomingConnections &&
+				int available = cloudQueryResult.rowsReturned.Size() * sqlConnectionObjectCount - totalConnections;
+				if (available < 0 &&
 					cloudQueryResult.rowsReturned.Size() < MAX_SERVERS_EVER // no more than MAX_SERVERS_EVER servers ever, to control costs
 					)
 				{
-					int newServersNeeded = overload / cloudServerHelper->allowedIncomingConnections;
+					int newServersNeeded = -available / sqlConnectionObjectCount;
 					if (newServersNeeded > 4)
 						newServersNeeded = 4; // Do not start more than 4 servers at a time
-					if (cloudQueryResult.rowsReturned.Size() + newServersNeeded > 32)
+					if (cloudQueryResult.rowsReturned.Size() + newServersNeeded > MAX_SERVERS_EVER)
 					{
 						newServersNeeded = MAX_SERVERS_EVER - cloudQueryResult.rowsReturned.Size();
 					}
-					cloudServerHelper->SpawnServers(newServersNeeded);
+					if (newServersNeeded>0)
+						cloudServerHelper->SpawnServers(newServersNeeded);
 				}
 
 				cloudClient.DeallocateWithDefaultAllocator(&cloudQueryResult);
@@ -1145,7 +1146,7 @@ int main(int argc, char **argv)
 				if (connectionObject[0].CreateAutopatcherTables()==false)
 					printf("%s", connectionObject[0].GetLastError());
 				else
-					printf("Created tables.");
+					printf("Created tables.\n");
 
 				if (connectionObject[0].AddApplication(cloudServerHelper->patcherHostSubdomainURL, username)==false)
 					printf("%s", connectionObject[0].GetLastError());
@@ -1211,11 +1212,12 @@ int main(int argc, char **argv)
 			}
 			else if (ch=='u')
 			{
-				printf("Enter application name: ");
+				// printf("Enter application name: ");
 				char appName[512];
-				Gets(appName,sizeof(appName));
-				if (appName[0]==0)
-					strcpy(appName, "TestApp");
+				strcpy(appName, cloudServerHelper->patcherHostSubdomainURL);
+// 				Gets(appName,sizeof(appName));
+// 				if (appName[0]==0)
+// 					strcpy(appName, "TestApp");
 
 				printf("Enter application directory: ");
 				char appDir[512];

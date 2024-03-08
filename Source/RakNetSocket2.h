@@ -258,6 +258,15 @@ public:
 	virtual RNS2BindResult Bind( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line )=0;
 };
 
+// For CFSocket
+// https://developer.apple.com/library/mac/#documentation/CoreFOundation/Reference/CFSocketRef/Reference/reference.html
+// Reason: http://sourceforge.net/p/open-dis/discussion/683284/thread/0929d6a0
+#if defined(__APPLE__)
+#import <CoreFoundation/CoreFoundation.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#endif
+
 // Every platform that uses Berkley sockets, except native client, can compile some common functions
 class RNS2_Berkley : public IRNS2_Berkley
 {
@@ -296,8 +305,14 @@ protected:
 	volatile bool endThreads;
 	// Constructor not called!
 
+#if defined(__APPLE__)
+	// http://sourceforge.net/p/open-dis/discussion/683284/thread/0929d6a0
+	CFSocketRef             _cfSocket;
+#endif
+
 	static RAK_THREAD_DECLARATION(RecvFromLoop);
 };
+
 
 
 
@@ -321,8 +336,6 @@ protected:
 	static RNS2SendResult Send_Windows_Linux_360NoVDP( RNS2Socket rns2Socket, RNS2_SendParameters *sendParameters, const char *file, unsigned int line );
 };
 #endif
-
-
 
 
 

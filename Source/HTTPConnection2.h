@@ -55,7 +55,7 @@ public:
 	/// \param[in] ipVersion 4 for IPV4, 6 for IPV6
 	/// \param[in] useAddress Assume we are connected to this address and send to it, rather than do a lookup
 	/// \return false if host is not a valid IP address or domain name
-	bool TransmitRequest(RakString stringToTransmit, RakString host, unsigned short port=80, int ipVersion=4, SystemAddress useAddress=UNASSIGNED_SYSTEM_ADDRESS);
+	bool TransmitRequest(const char* stringToTransmit, const char* host, unsigned short port=80, int ipVersion=4, SystemAddress useAddress=UNASSIGNED_SYSTEM_ADDRESS);
 
 	/// \brief Check for and return a response from a prior call to TransmitRequest()
 	/// As TCP is stream based, you may get a webserver reply over several calls to TCPInterface::Receive()

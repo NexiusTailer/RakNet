@@ -68,6 +68,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				OutputFile="$(OutDir)\$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				IgnoreDefaultLibraryNames="LIBC.lib LIBCMT.lib MSVCRT.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -135,6 +136,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				OutputFile="$(OutDir)\$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				IgnoreDefaultLibraryNames="LIBC.lib LIBCMT.lib MSVCRT.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -202,6 +204,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				OutputFile="$(OutDir)\$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				IgnoreDefaultLibraryNames="LIBC.lib LIBCMT.lib MSVCRT.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -270,6 +273,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				OutputFile="$(OutDir)\$(ProjectName)_$(ConfigurationName)_$(PlatformName).lib"
+				IgnoreDefaultLibraryNames="LIBC.lib LIBCMT.lib MSVCRT.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

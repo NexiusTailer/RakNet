@@ -75,7 +75,7 @@ int main(void)
 					{
 						RakNetGUID g;
 						g.FromString(guid);
-						relayPlugin->AddParticipant(name, g);
+						relayPlugin->AddParticipantOnServer(name, g);
 						printf("Done\n");
 					}
 					else
@@ -130,11 +130,15 @@ int main(void)
 			}
 			else if (packet->data[0]==ID_RELAY_PLUGIN_FROM_RELAY)
 			{
-				RakString msgRs;
+				BitStream msgRs;
+				RakString senderRs;
 				BitStream bsIn(packet->data, packet->length, false);
 				bsIn.IgnoreBytes(sizeof(MessageID));
-				bsIn.Read(msgRs);
-				printf("Got relayed message: %s\n", msgRs.C_String());
+				bsIn.Read(senderRs);
+				bsIn.Read(&msgRs);
+				RakString message;
+				msgRs.Read(message);
+				printf("Got relayed message: %s\n", message.C_String());
 			}
 		}
 

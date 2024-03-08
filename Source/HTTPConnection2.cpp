@@ -15,7 +15,7 @@ HTTPConnection2::~HTTPConnection2()
 {
 
 }
-bool HTTPConnection2::TransmitRequest(RakString stringToTransmit, RakString host, unsigned short port, int ipVersion, SystemAddress useAddress)
+bool HTTPConnection2::TransmitRequest(const char* stringToTransmit, const char* host, unsigned short port, int ipVersion, SystemAddress useAddress)
 {
 	Request request;
 	request.host=host;
@@ -27,7 +27,7 @@ bool HTTPConnection2::TransmitRequest(RakString stringToTransmit, RakString host
 	}
 	else
 	{
-		if (request.hostEstimatedAddress.FromString(host.C_String(), '|', ipVersion)==false)
+		if (request.hostEstimatedAddress.FromString(host, '|', ipVersion)==false)
 			return false;
 	}
 	request.hostEstimatedAddress.SetPortHostOrder(port);
@@ -56,7 +56,7 @@ bool HTTPConnection2::TransmitRequest(RakString stringToTransmit, RakString host
 
 		if (ipVersion!=6)
 		{
-			tcpInterface->Connect(host.C_String(), port, false, AF_INET);
+			tcpInterface->Connect(host, port, false, AF_INET);
 		}
 		else
 		{

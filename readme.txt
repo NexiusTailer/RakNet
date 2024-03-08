@@ -1,4 +1,4 @@
-RakNet 4.066
+RakNet 4.067
 Copyright 2002-2005 Kevin Jenkins (rakkar@jenkinssoftware.com).
 This API and the code herein created by and wholly and privately owned by Kevin Jenkins except where specifically indicated otherwise.
 Licensed under the "RakNet" brand by Jenkins Software and subject to the terms of the relevant licensing agreement available at http://www.jenkinssoftware.com
@@ -260,6 +260,11 @@ _RAKNET_SUPPORT_UDPForwarder=0
 Consoles
 -----------------------------------------
 Contact rakkar@jenkinssoftware.com for code with Console support.
+
+-----------------------------------------
+Unreal engine
+-----------------------------------------
+See https://udn.epicgames.com/lists/showpost.php?list=unprog3&id=37697&lessthan=&show=20
 
 -----------------------------------------
 Package notes

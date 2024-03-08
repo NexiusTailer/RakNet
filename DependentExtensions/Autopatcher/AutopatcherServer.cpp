@@ -124,6 +124,8 @@ void AutopatcherServer::SetFileListTransferPlugin(FileListTransfer *flt)
 }
 void AutopatcherServer::StartThreads(int numThreads, int numSQLConnections, AutopatcherRepositoryInterface **sqlConnectionPtrArray)
 {
+	RakAssert(numSQLConnections >= numThreads);
+
 	connectionPoolMutex.Lock();
 	for (int i=0; i < numSQLConnections; i++)
 	{
@@ -249,8 +251,14 @@ void AutopatcherServer::OnClosedConnection(const SystemAddress &systemAddress, R
 	}
 	patchingUsersMutex.Unlock();
 
-	while (userRequestWaitingQueue.Size())
-		DeallocPacketUnified(AbortOffWaitingQueue());
+	i=0;
+	while (i < userRequestWaitingQueue.Size())
+	{
+		if (userRequestWaitingQueue[i]->systemAddress==systemAddress)
+			userRequestWaitingQueue.RemoveAtIndex(i);
+		else
+			i++;
+	}
 }
 void AutopatcherServer::RemoveFromThreadPool(SystemAddress systemAddress)
 {

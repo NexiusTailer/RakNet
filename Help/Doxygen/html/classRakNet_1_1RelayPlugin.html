@@ -82,9 +82,15 @@ Public Member Functions</h2></td></tr>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RelayPlugin.html#ad6c129d0be47d82443245a9c32a6ddd8">~RelayPlugin</a> ()</td></tr>
 <tr class="memdesc:ad6c129d0be47d82443245a9c32a6ddd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br/></td></tr>
 <tr class="separator:ad6c129d0be47d82443245a9c32a6ddd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a51d98025c19ffecc84e7591ed50d63"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RelayPlugin.html#a5a51d98025c19ffecc84e7591ed50d63">AddParticipant</a> (const <a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;key, const <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &amp;guid)</td></tr>
-<tr class="memdesc:a5a51d98025c19ffecc84e7591ed50d63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward messages from any system, to the system specified by the combination of key and guid. The sending system only needs to know the key.  <a href="#a5a51d98025c19ffecc84e7591ed50d63"></a><br/></td></tr>
-<tr class="separator:a5a51d98025c19ffecc84e7591ed50d63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7cf51ac75d9b8df23dc339e829c4f5e6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RelayPlugin.html#a7cf51ac75d9b8df23dc339e829c4f5e6">AddParticipantOnServer</a> (const <a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;key, const <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &amp;guid)</td></tr>
+<tr class="memdesc:a7cf51ac75d9b8df23dc339e829c4f5e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward messages from any system, to the system specified by the combination of key and guid. The sending system only needs to know the key.  <a href="#a7cf51ac75d9b8df23dc339e829c4f5e6"></a><br/></td></tr>
+<tr class="separator:a7cf51ac75d9b8df23dc339e829c4f5e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51987baa3095d72ca8195a69ecb73793"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RelayPlugin.html#a51987baa3095d72ca8195a69ecb73793">SetAcceptAddParticipantRequests</a> (bool accept)</td></tr>
+<tr class="memdesc:a51987baa3095d72ca8195a69ecb73793"><td class="mdescLeft">&#160;</td><td class="mdescRight">If true, then if the client calls <a class="el" href="classRakNet_1_1RelayPlugin.html#a8f0d6808a2fed5dcfabb1c2435ae736e" title="Request from the client for the server to call AddParticipantOnServer()">AddParticipantRequestFromClient()</a>, the server will call <a class="el" href="classRakNet_1_1RelayPlugin.html#a7cf51ac75d9b8df23dc339e829c4f5e6" title="Forward messages from any system, to the system specified by the combination of key and guid...">AddParticipantOnServer()</a> automatically Defaults to false.  <a href="#a51987baa3095d72ca8195a69ecb73793"></a><br/></td></tr>
+<tr class="separator:a51987baa3095d72ca8195a69ecb73793"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f0d6808a2fed5dcfabb1c2435ae736e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RelayPlugin.html#a8f0d6808a2fed5dcfabb1c2435ae736e">AddParticipantRequestFromClient</a> (const <a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;key, const <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &amp;relayPluginServerGuid)</td></tr>
+<tr class="memdesc:a8f0d6808a2fed5dcfabb1c2435ae736e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request from the client for the server to call <a class="el" href="classRakNet_1_1RelayPlugin.html#a7cf51ac75d9b8df23dc339e829c4f5e6" title="Forward messages from any system, to the system specified by the combination of key and guid...">AddParticipantOnServer()</a>  <a href="#a8f0d6808a2fed5dcfabb1c2435ae736e"></a><br/></td></tr>
+<tr class="separator:a8f0d6808a2fed5dcfabb1c2435ae736e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a716c42c6328210eb75c05e5a5f2b93a4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RelayPlugin.html#a716c42c6328210eb75c05e5a5f2b93a4">SendToParticipant</a> (const <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &amp;relayPluginServerGuid, const <a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;key, <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *bitStream, <a class="el" href="PacketPriority_8h.html#a659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#ae41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel)</td></tr>
 <tr class="memdesc:a716c42c6328210eb75c05e5a5f2b93a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request that the server relay <em>bitStream</em> to the system designated by <em>key</em>.  <a href="#a716c42c6328210eb75c05e5a5f2b93a4"></a><br/></td></tr>
 <tr class="separator:a716c42c6328210eb75c05e5a5f2b93a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -135,12 +141,12 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A simple class to relay messages from one system to another through an intermediary. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a5a51d98025c19ffecc84e7591ed50d63"></a>
+<a class="anchor" id="a7cf51ac75d9b8df23dc339e829c4f5e6"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool RakNet::RelayPlugin::AddParticipant </td>
+          <td class="memname">bool RakNet::RelayPlugin::AddParticipantOnServer </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;&#160;</td>
           <td class="paramname"><em>key</em>, </td>
@@ -168,6 +174,42 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the participant was added. False if the target <em>guid</em> is not connected </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a8f0d6808a2fed5dcfabb1c2435ae736e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::RelayPlugin::AddParticipantRequestFromClient </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;&#160;</td>
+          <td class="paramname"><em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &amp;&#160;</td>
+          <td class="paramname"><em>relayPluginServerGuid</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Request from the client for the server to call <a class="el" href="classRakNet_1_1RelayPlugin.html#a7cf51ac75d9b8df23dc339e829c4f5e6" title="Forward messages from any system, to the system specified by the combination of key and guid...">AddParticipantOnServer()</a> </p>
+<dl class="section pre"><dt>Precondition</dt><dd>The server must have called SetAcceptAddParticipantRequests(true) or the request will be ignored </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>A string to identify out system. Passed to <em>key</em> on <a class="el" href="classRakNet_1_1RelayPlugin.html#a7cf51ac75d9b8df23dc339e829c4f5e6" title="Forward messages from any system, to the system specified by the combination of key and guid...">AddParticipantOnServer()</a> </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">relayPluginServerGuid</td><td>the <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> of the system running <a class="el" href="classRakNet_1_1RelayPlugin.html" title="A simple class to relay messages from one system to another through an intermediary.">RelayPlugin</a> </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -308,11 +350,35 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">relayPluginServerGuid</td><td>the <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> of the system running <a class="el" href="classRakNet_1_1RelayPlugin.html" title="A simple class to relay messages from one system to another through an intermediary.">RelayPlugin</a> </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>The key value passed to <a class="el" href="classRakNet_1_1RelayPlugin.html#a5a51d98025c19ffecc84e7591ed50d63" title="Forward messages from any system, to the system specified by the combination of key and guid...">AddParticipant()</a> earlier on the server. If this was not done, the server will not relay the message (it will be silently discarded). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>The key value passed to AddParticipant() earlier on the server. If this was not done, the server will not relay the message (it will be silently discarded). </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">bitStream</td><td>The data to relay </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">priority</td><td>See the parameter of the same name in <a class="el" href="classRakNet_1_1RakPeerInterface.html#a543ec5be9cf5f73f5c8733d1829789f9">RakPeerInterface::Send()</a> </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">reliability</td><td>See the parameter of the same name in <a class="el" href="classRakNet_1_1RakPeerInterface.html#a543ec5be9cf5f73f5c8733d1829789f9">RakPeerInterface::Send()</a> </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">orderingChannel</td><td>See the parameter of the same name in <a class="el" href="classRakNet_1_1RakPeerInterface.html#a543ec5be9cf5f73f5c8733d1829789f9">RakPeerInterface::Send()</a> </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a51987baa3095d72ca8195a69ecb73793"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::RelayPlugin::SetAcceptAddParticipantRequests </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>accept</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>If true, then if the client calls <a class="el" href="classRakNet_1_1RelayPlugin.html#a8f0d6808a2fed5dcfabb1c2435ae736e" title="Request from the client for the server to call AddParticipantOnServer()">AddParticipantRequestFromClient()</a>, the server will call <a class="el" href="classRakNet_1_1RelayPlugin.html#a7cf51ac75d9b8df23dc339e829c4f5e6" title="Forward messages from any system, to the system specified by the combination of key and guid...">AddParticipantOnServer()</a> automatically Defaults to false. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">accept</td><td>true to accept, false to not. </td></tr>
   </table>
   </dd>
 </dl>
@@ -325,7 +391,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 10 2013 22:18:32 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jan 30 2013 10:07:03 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

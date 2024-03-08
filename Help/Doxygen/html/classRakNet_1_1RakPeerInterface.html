@@ -237,6 +237,8 @@ virtual unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el
 <tr class="separator:a09ef1181af600ec2c255a295154fe367"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0832004c529aa9a0844b61eaf1374b3c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a0832004c529aa9a0844b61eaf1374b3c">SetUserUpdateThread</a> (void(*_userUpdateThreadPtr)(<a class="el" href="classRakNet_1_1RakPeerInterface.html">RakPeerInterface</a> *, void *), void *_userUpdateThreadData)=0</td></tr>
 <tr class="separator:a0832004c529aa9a0844b61eaf1374b3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b70ebc4e2852362b366e8738624ec44"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a6b70ebc4e2852362b366e8738624ec44">SetIncomingDatagramEventHandler</a> (bool(*_incomingDatagramEventHandler)(RNS2RecvStruct *))=0</td></tr>
+<tr class="separator:a6b70ebc4e2852362b366e8738624ec44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03910361629f5cbabe0df0612a1f2709"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a03910361629f5cbabe0df0612a1f2709">ApplyNetworkSimulator</a> (float packetloss, unsigned short minExtraPing, unsigned short extraPingVariance)=0</td></tr>
 <tr class="separator:a03910361629f5cbabe0df0612a1f2709"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95daeb743853a4406182e47668c0f33b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a95daeb743853a4406182e47668c0f33b">SetPerConnectionOutgoingBandwidthLimit</a> (unsigned maxBitsPerSecond)=0</td></tr>
@@ -2795,6 +2797,33 @@ LIBCAT_SECURITY must be defined to 1 in NativeFeatureIncludes.h for this functio
 
 </div>
 </div>
+<a class="anchor" id="a6b70ebc4e2852362b366e8738624ec44"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void RakNet::RakPeerInterface::SetIncomingDatagramEventHandler </td>
+          <td>(</td>
+          <td class="paramtype">bool(*)(RNS2RecvStruct *)&#160;</td>
+          <td class="paramname"><em>_incomingDatagramEventHandler</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Set a C callback to be called whenever a datagram arrives Return true from the callback to have <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> handle the datagram. Return false and <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> will ignore the datagram. This can be used to filter incoming datagrams by system, or to share a recvfrom socket with <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> RNS2RecvStruct will only remain valid for the duration of the call </p>
+
+<p>Implemented in <a class="el" href="classRakNet_1_1RakPeer.html#a959a1dc3d239d3c5114bc781144d3b73">RakNet::RakPeer</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="ad18a28a99420006d020125eea1ded4ed"></a>
 <div class="memitem">
 <div class="memproto">
@@ -3297,7 +3326,7 @@ On Android, add the necessary permission to your application's androidmanifest.x
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 10 2013 22:18:32 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jan 30 2013 10:07:02 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

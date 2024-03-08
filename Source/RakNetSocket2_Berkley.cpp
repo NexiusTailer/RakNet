@@ -43,6 +43,7 @@ void RNS2_Berkley::SetNonBlockingSocket(unsigned long nonblocking)
 
 
 #else
+	if (nonblocking)
 		fcntl( rns2Socket, F_SETFL, O_NONBLOCK );
 #endif
 }

@@ -281,6 +281,13 @@ bool IRNS2_Berkley::IsPortInUse(unsigned short port, const char *hostAddress, un
 	return bindResult==BR_FAILED_TO_BIND_SOCKET;
 }
 
+#if defined(__APPLE__)
+void SocketReadCallback(CFSocketRef s, CFSocketCallBackType type, CFDataRef address, const void *data, void *info)
+// This C routine is called by CFSocket when there's data waiting on our 
+// UDP socket.  It just redirects the call to Objective-C code.
+{ }
+#endif
+
 RNS2BindResult RNS2_Berkley::BindShared( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line ) {
 	RNS2BindResult br;
 #if RAKNET_SUPPORT_IPV6==1
@@ -302,6 +309,21 @@ RNS2BindResult RNS2_Berkley::BindShared( RNS2_BerkleyBindParameters *bindParamet
 		return BR_FAILED_SEND_TEST;
 
 	memcpy(&binding, bindParameters, sizeof(RNS2_BerkleyBindParameters));
+
+#if defined(__APPLE__)
+	const CFSocketContext   context = { 0, this, NULL, NULL, NULL };
+	_cfSocket = CFSocketCreateWithNative(NULL, rns2Socket, kCFSocketReadCallBack, SocketReadCallback, &context);
+
+	/*
+	rls = CFSocketCreateRunLoopSource(NULL, self->_cfSocket, 0);
+	assert(rls != NULL);
+
+	CFRunLoopAddSource(CFRunLoopGetCurrent(), rls, kCFRunLoopDefaultMode);
+
+	CFRelease(rls);
+	*/
+#endif
+
 	return br;
 }
 
@@ -353,10 +375,15 @@ RNS2_Berkley::RNS2_Berkley()
 }
 RNS2_Berkley::~RNS2_Berkley()
 {
+#if defined(__APPLE__)
+	CFSocketInvalidate(_cfSocket);
+#endif
+
 	if (rns2Socket!=INVALID_SOCKET)
 	{
 		closesocket__(rns2Socket);
 	}
+
 }
 int RNS2_Berkley::CreateRecvPollingThread(int threadPriority)
 {
@@ -399,9 +426,6 @@ void RNS2_Berkley::BlockOnStopRecvPollingThread(void)
 const RNS2_BerkleyBindParameters *RNS2_Berkley::GetBindings(void) const {return &binding;}
 RNS2Socket RNS2_Berkley::GetSocket(void) const {return rns2Socket;}
 // See RakNetSocket2_Berkley.cpp for WriteSharedIPV4, BindSharedIPV4And6 and other implementations
-
-
-
 
 
 

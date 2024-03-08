@@ -48,7 +48,18 @@ public:
 	/// \param[in] key A string to identify the target's RakNetGUID. This is so the sending system does not need to know the RakNetGUID of the target system. The key should be unique among all guids added. If the key is not unique, only one system will be sent to (at random).
 	/// \param[in] guid The RakNetGuid of the system to send to. If this system disconnects, it is removed from the internal hash 
 	/// \return true if the participant was added. False if the target \a guid is not connected
-	bool AddParticipant(const RakString &key, const RakNetGUID &guid);
+	bool AddParticipantOnServer(const RakString &key, const RakNetGUID &guid);
+
+	/// \brief If true, then if the client calls AddParticipantRequestFromClient(), the server will call AddParticipantOnServer() automatically
+	/// Defaults to false
+	/// \param[in] accept true to accept, false to not.
+	void SetAcceptAddParticipantRequests(bool accept);
+
+	/// \brief Request from the client for the server to call AddParticipantOnServer()
+	/// \pre The server must have called SetAcceptAddParticipantRequests(true) or the request will be ignored
+	/// \param[in] key A string to identify out system. Passed to \a key on AddParticipantOnServer()
+	/// \param[in] relayPluginServerGuid the RakNetGUID of the system running RelayPlugin
+	void AddParticipantRequestFromClient(const RakString &key, const RakNetGUID &relayPluginServerGuid);
 
 	/// \brief Request that the server relay \a bitStream to the system designated by \a key
 	/// \param[in] relayPluginServerGuid the RakNetGUID of the system running RelayPlugin
@@ -74,6 +85,7 @@ protected:
 
 	DataStructures::Hash<RakString, StrAndGuid*, 8096, RakNet::RakString::ToInteger> strToGuidHash;
 	DataStructures::Hash<RakNetGUID, StrAndGuid*, 8096, RakNet::RakNetGUID::ToUint32> guidToStrHash;
+	bool acceptAddParticipantRequests;
 
 };
 

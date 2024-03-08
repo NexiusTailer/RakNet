@@ -419,6 +419,7 @@ void RakString::Replace(unsigned index, unsigned count, unsigned char c)
 		index++;
 		countIndex++;
 	}
+
 }
 void RakString::SetChar( unsigned index, unsigned char c )
 {
@@ -675,6 +676,8 @@ void RakString::RemoveCharacter(char c)
 			Clone();
 	}
 	sharedString->c_str[writeIndex]=0;
+	if (writeIndex==0)
+		Clear();
 }
 int RakString::StrCmp(const RakString &rhs) const
 {
@@ -963,18 +966,20 @@ RakNet::RakString& RakString::SQLEscape(void)
 	}
 	return *this;
 }
-RakNet::RakString RakString::FormatForPUTOrPost(const char* type, RakString uri, RakString contentType, RakString body, RakString extraHeaders)
+RakNet::RakString RakString::FormatForPUTOrPost(const char* type, const char* uri, const char* contentType, const char* body, const char* extraHeaders)
 {
 	RakString out;
 	RakString host;
 	RakString remotePath;
 	RakNet::RakString header;
+	RakString uriRs;
+	uriRs = uri;
+	uriRs.SplitURI(header, host, remotePath);
 
-	uri.SplitURI(header, host, remotePath);
 	if (host.IsEmpty() || remotePath.IsEmpty())
 		return out;
 
-	if (extraHeaders.IsEmpty()==false)
+	if (extraHeaders!=0 && extraHeaders[0])
 	{
 		out.Set("%s %s HTTP/1.1\r\n"
 			"%s\r\n"
@@ -985,11 +990,11 @@ RakNet::RakString RakString::FormatForPUTOrPost(const char* type, RakString uri,
 			"%s",
 			type,
 			remotePath.C_String(),
-			extraHeaders.C_String(),
+			extraHeaders,
 			host.C_String(),
-			contentType.C_String(),
-			body.GetLength(),
-			body.C_String());
+			contentType,
+			strlen(body),
+			body);
 	}
 	else
 	{
@@ -1002,40 +1007,42 @@ RakNet::RakString RakString::FormatForPUTOrPost(const char* type, RakString uri,
 			type,
 			remotePath.C_String(),
 			host.C_String(),
-			contentType.C_String(),
-			body.GetLength(),
-			body.C_String());
+			contentType,
+			strlen(body),
+			body);
 	}
 
 	return out;
 }
-RakString RakString::FormatForPOST(RakString uri, RakString contentType, RakString body, RakString extraHeaders)
+RakString RakString::FormatForPOST(const char* uri, const char* contentType, const char* body, const char* extraHeaders)
 {
 	return FormatForPUTOrPost("POST", uri, contentType, body, extraHeaders);
 }
-RakString RakString::FormatForPUT(RakString uri, RakString contentType, RakString body, RakString extraHeaders)
+RakString RakString::FormatForPUT(const char* uri, const char* contentType, const char* body, const char* extraHeaders)
 {
 	return FormatForPUTOrPost("PUT", uri, contentType, body, extraHeaders);
 }
-RakString RakString::FormatForGET(RakString uri, RakString extraHeaders)
+RakString RakString::FormatForGET(const char* uri, const char* extraHeaders)
 {
 	RakString out;
 	RakString host;
 	RakString remotePath;
 	RakNet::RakString header;
+	RakNet::RakString uriRs;
+	uriRs = uri;
 
-	uri.SplitURI(header, host, remotePath);
+	uriRs.SplitURI(header, host, remotePath);
 	if (host.IsEmpty() || remotePath.IsEmpty())
 		return out;
 
-	if (extraHeaders.IsEmpty()==false)
+	if (extraHeaders && extraHeaders[0])
 	{
 		out.Set("GET %s HTTP/1.1\r\n"
 			"%s\r\n"
 			"Host: %s\r\n"
 			"\r\n",
 			remotePath.C_String(),
-			extraHeaders.C_String(),
+			extraHeaders,
 			host.C_String());
 	}
 	else
@@ -1051,18 +1058,20 @@ RakString RakString::FormatForGET(RakString uri, RakString extraHeaders)
 
 	return out;
 }
-RakString RakString::FormatForDELETE(RakString uri, RakString extraHeaders)
+RakString RakString::FormatForDELETE(const char* uri, const char* extraHeaders)
 {
 	RakString out;
 	RakString host;
 	RakString remotePath;
 	RakNet::RakString header;
+	RakNet::RakString uriRs;
+	uriRs = uri;
 
-	uri.SplitURI(header, host, remotePath);
+	uriRs.SplitURI(header, host, remotePath);
 	if (host.IsEmpty() || remotePath.IsEmpty())
 		return out;
 
-	if (extraHeaders.IsEmpty()==false)
+	if (extraHeaders && extraHeaders[0])
 	{
 		out.Set("DELETE %s HTTP/1.1\r\n"
 			"%s\r\n"
@@ -1070,8 +1079,9 @@ RakString RakString::FormatForDELETE(RakString uri, RakString extraHeaders)
 			"Host: %s\r\n"
 			"Connection: close\r\n"
 			"\r\n",
-			remotePath.C_String(),
-			host.C_String());
+			extraHeaders,
+			remotePath,
+			host);
 	}
 	else
 	{
@@ -1080,8 +1090,8 @@ RakString RakString::FormatForDELETE(RakString uri, RakString extraHeaders)
 			"Host: %s\r\n"
 			"Connection: close\r\n"
 			"\r\n",
-			remotePath.C_String(),
-			host.C_String());
+			remotePath,
+			host);
 	}
 
 	return out;

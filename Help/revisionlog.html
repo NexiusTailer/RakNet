@@ -619,10 +619,20 @@ Added nackl_sdk solution and project.
 Fixed SWIG not working, by removing usage of RakNetSocket.
 Use natpunch.jenkinssoftware.com instead of a hardcoded IP for the public test server.
 4.066 (1/10/13)
-Add windows store 8 support. No TCP support, RakPeer only. IPV4 only. See readme.txt for information on this.
-Rename the output of the LibStatic and DLL projects.
+Added windows store 8 support. No TCP support, RakPeer only. IPV4 only. See readme.txt for information on this.
+Renamed the output of the LibStatic and DLL projects.
 IOS fixes.
 BitStream now has a private assigment operator.
+4.067 (1/26/13)
+Fix PS3 which was broken in 4.066.
+Update Vita project to VS2010, and fix functionality, which was broken at an unknown time by a prior SDK release.
+Fix RNS2_Berkley::SetNonBlockingSocket for non-windows platforms.
+Added CFSocket when __APPLE__ to wakeup 3g antenna (may not work).
+Added RakNet_IOS_XCode.
+Added RakPeer::SetIncomingDatagramEventHandler() so that an can application can selectively prevent RakPeer from handling datagrams, for example datagrams from an external application. When used in conjunction with RakPeer::GetSockets() for sendto calls, the same socket can be shared between RakPeer and an external application.
+Add AddParticipantRequestFromClient to RelayPlugin.
+Add missing Windows Store 8 files to DependentExtensions.
+Updated readme.txt about Unreal Engine integrations
 </pre>
 <BR>
 </p></TD></TR></TABLE>

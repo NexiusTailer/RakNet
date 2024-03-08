@@ -12,7 +12,7 @@ STATIC_FACTORY_DEFINITIONS(RelayPlugin,RelayPlugin);
 
 RelayPlugin::RelayPlugin()
 {
-
+	acceptAddParticipantRequests=false;
 }
 
 RelayPlugin::~RelayPlugin()
@@ -25,11 +25,22 @@ RelayPlugin::~RelayPlugin()
 		RakNet::OP_DELETE(itemList[i], _FILE_AND_LINE_);
 }
 
-bool RelayPlugin::AddParticipant(const RakString &key, const RakNetGUID &guid)
+bool RelayPlugin::AddParticipantOnServer(const RakString &key, const RakNetGUID &guid)
 {
 	ConnectionState cs = rakPeerInterface->GetConnectionState(guid);
 	if (cs!=IS_CONNECTED)
 		return false;
+
+	if (strToGuidHash.HasData(key)==true)
+		return false; // Name already in use
+
+	// If GUID is already in use, remove existing
+	StrAndGuid *strAndGuidExisting;
+	if (guidToStrHash.Pop(strAndGuidExisting, guid, _FILE_AND_LINE_))
+	{
+		strToGuidHash.Remove(strAndGuidExisting->str, _FILE_AND_LINE_);
+		RakNet::OP_DELETE(strAndGuidExisting, _FILE_AND_LINE_);
+	}
 
 	StrAndGuid *strAndGuid = RakNet::OP_NEW<StrAndGuid>(_FILE_AND_LINE_);
 	strAndGuid->guid=guid;
@@ -39,6 +50,19 @@ bool RelayPlugin::AddParticipant(const RakString &key, const RakNetGUID &guid)
 	guidToStrHash.Push(guid, strAndGuid, _FILE_AND_LINE_);
 
 	return true;
+}
+
+void RelayPlugin::SetAcceptAddParticipantRequests(bool accept)
+{
+	acceptAddParticipantRequests=accept;
+}
+void RelayPlugin::AddParticipantRequestFromClient(const RakString &key, const RakNetGUID &relayPluginServerGuid)
+{
+	BitStream bsOut;
+	bsOut.WriteCasted<MessageID>(ID_RELAY_PLUGIN_ADD_CLIENT);
+	bsOut.WriteCompressed(key);
+	bsOut.Write(relayPluginServerGuid);
+	SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, relayPluginServerGuid, false);
 }
 
 // Send a message to a server running RelayPlugin, to forward a message to the system identified by \a key
@@ -76,12 +100,37 @@ PluginReceiveResult RelayPlugin::OnReceive(Packet *packet)
 			BitStream bsData;
 			bsIn.Read(&bsData);
 			StrAndGuid **strAndGuid = strToGuidHash.Peek(key);
-			if (strAndGuid)
+			StrAndGuid **strAndGuidSender = guidToStrHash.Peek(packet->guid);
+			if (strAndGuid && strAndGuidSender)
 			{
 				BitStream bsOut;
 				bsOut.WriteCasted<MessageID>(ID_RELAY_PLUGIN_FROM_RELAY);
+				bsOut.Write( (*strAndGuidSender)->str );
 				bsOut.Write(bsData);
 				SendUnified(&bsOut, priority, reliability, orderingChannel, (*strAndGuid)->guid, false);
+			}
+
+			return RR_STOP_PROCESSING_AND_DEALLOCATE;
+		}
+
+	case ID_RELAY_PLUGIN_ADD_CLIENT:
+		{
+			BitStream bsIn(packet->data, packet->length, false);
+			bsIn.IgnoreBytes(sizeof(MessageID));
+			RakString key;
+			bsIn.ReadCompressed(key);
+			RakNetGUID guid;
+			bsIn.Read(guid);
+			if (acceptAddParticipantRequests)
+			{
+				BitStream bsOut;
+				bsOut.WriteCasted<MessageID>(ID_RELAY_PLUGIN_ADD_CLIENT_RESPONSE);
+				if (AddParticipantOnServer(key, guid))
+					bsOut.Write(true);
+				else
+					bsOut.Write(false);
+				bsOut.WriteCompressed(key);
+				SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 			}
 
 			return RR_STOP_PROCESSING_AND_DEALLOCATE;

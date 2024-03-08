@@ -13,6 +13,10 @@
 
 using namespace RakNet;
 
+#ifndef INVALID_SOCKET
+#define INVALID_SOCKET -1
+#endif
+
 /*
 Algorithm:
 

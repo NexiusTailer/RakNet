@@ -69,6 +69,7 @@ IGNORERAKPEERANDINTERFACE(ConnectWithSocket)
 IGNORERAKPEERANDINTERFACE(SetRouterInterface)
 IGNORERAKPEERANDINTERFACE(RemoveRouterInterface)
 IGNORERAKPEERANDINTERFACE(GetConnectionList( SystemAddress *remoteSystems, unsigned short *numberOfSystems ) const)
+IGNORERAKPEERANDINTERFACE(SetIncomingDatagramEventHandler( bool (*_incomingDatagramEventHandler)(RNS2RecvStruct *) ))
 
 //RakPeer only
 //Swig doesn't know how to handle friend functions, so even if it is in the protected section 

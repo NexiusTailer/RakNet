@@ -1,0 +1,118 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{789693DB-948F-497B-9D27-6CE720AB886A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib_sample_debug_utilities", "Samples\Vita\common\source\sample_utilities\sample_debug_utilities.vcxproj", "{6ACED909-3C2B-4863-B76F-B09D389EAF0C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib_sample_utilities", "Samples\Vita\common\source\sample_utilities\sample_utilities.vcxproj", "{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BigPacketTest", "Samples\Vita\BigPacketTest\BigPacketTest.vcxproj", "{7E5171E8-D9C1-45DC-A02A-3962AC802254}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "simple", "Samples\Vita\system\tutorial_sample_utilities\simple\simple.vcxproj", "{A2C57BF8-8368-4780-8576-36B90919356F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|PSVita = Debug|PSVita
+		Debug|Win32 = Debug|Win32
+		PSP2 Debug|Mixed Platforms = PSP2 Debug|Mixed Platforms
+		PSP2 Debug|PSVita = PSP2 Debug|PSVita
+		PSP2 Debug|Win32 = PSP2 Debug|Win32
+		PSP2 Release|Mixed Platforms = PSP2 Release|Mixed Platforms
+		PSP2 Release|PSVita = PSP2 Release|PSVita
+		PSP2 Release|Win32 = PSP2 Release|Win32
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|PSVita = Release|PSVita
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.Debug|Mixed Platforms.ActiveCfg = Debug|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.Debug|Mixed Platforms.Build.0 = Debug|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.Debug|PSVita.ActiveCfg = Debug|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.Debug|PSVita.Build.0 = Debug|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.Debug|Win32.ActiveCfg = Debug|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.PSP2 Debug|Mixed Platforms.ActiveCfg = Debug|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.PSP2 Debug|Mixed Platforms.Build.0 = Debug|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.PSP2 Debug|PSVita.ActiveCfg = Debug|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.PSP2 Debug|PSVita.Build.0 = Debug|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.PSP2 Debug|Win32.ActiveCfg = Debug|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.PSP2 Release|Mixed Platforms.ActiveCfg = Release|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.PSP2 Release|Mixed Platforms.Build.0 = Release|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.PSP2 Release|PSVita.ActiveCfg = Release|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.PSP2 Release|PSVita.Build.0 = Release|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.PSP2 Release|Win32.ActiveCfg = Release|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.Release|Mixed Platforms.ActiveCfg = Release|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.Release|Mixed Platforms.Build.0 = Release|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.Release|PSVita.ActiveCfg = Release|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.Release|PSVita.Build.0 = Release|PSVita
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C}.Release|Win32.ActiveCfg = Release|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.Debug|Mixed Platforms.ActiveCfg = Debug|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.Debug|Mixed Platforms.Build.0 = Debug|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.Debug|PSVita.ActiveCfg = Debug|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.Debug|PSVita.Build.0 = Debug|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.Debug|Win32.ActiveCfg = Debug|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.PSP2 Debug|Mixed Platforms.ActiveCfg = Debug|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.PSP2 Debug|Mixed Platforms.Build.0 = Debug|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.PSP2 Debug|PSVita.ActiveCfg = Debug|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.PSP2 Debug|PSVita.Build.0 = Debug|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.PSP2 Debug|Win32.ActiveCfg = Debug|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.PSP2 Release|Mixed Platforms.ActiveCfg = Release|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.PSP2 Release|Mixed Platforms.Build.0 = Release|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.PSP2 Release|PSVita.ActiveCfg = Release|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.PSP2 Release|PSVita.Build.0 = Release|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.PSP2 Release|Win32.ActiveCfg = Release|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.Release|Mixed Platforms.ActiveCfg = Release|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.Release|Mixed Platforms.Build.0 = Release|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.Release|PSVita.ActiveCfg = Release|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.Release|PSVita.Build.0 = Release|PSVita
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E}.Release|Win32.ActiveCfg = Release|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.Debug|Mixed Platforms.ActiveCfg = Debug|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.Debug|Mixed Platforms.Build.0 = Debug|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.Debug|PSVita.ActiveCfg = Debug|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.Debug|PSVita.Build.0 = Debug|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.Debug|Win32.ActiveCfg = Debug|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.PSP2 Debug|Mixed Platforms.ActiveCfg = Debug|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.PSP2 Debug|Mixed Platforms.Build.0 = Debug|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.PSP2 Debug|PSVita.ActiveCfg = Debug|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.PSP2 Debug|PSVita.Build.0 = Debug|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.PSP2 Debug|Win32.ActiveCfg = Debug|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.PSP2 Release|Mixed Platforms.ActiveCfg = Release|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.PSP2 Release|Mixed Platforms.Build.0 = Release|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.PSP2 Release|PSVita.ActiveCfg = Release|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.PSP2 Release|PSVita.Build.0 = Release|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.PSP2 Release|Win32.ActiveCfg = Release|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.Release|Mixed Platforms.ActiveCfg = Release|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.Release|Mixed Platforms.Build.0 = Release|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.Release|PSVita.ActiveCfg = Release|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.Release|PSVita.Build.0 = Release|PSVita
+		{7E5171E8-D9C1-45DC-A02A-3962AC802254}.Release|Win32.ActiveCfg = Release|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.Debug|Mixed Platforms.ActiveCfg = Debug|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.Debug|Mixed Platforms.Build.0 = Debug|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.Debug|PSVita.ActiveCfg = Debug|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.Debug|PSVita.Build.0 = Debug|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.Debug|Win32.ActiveCfg = Debug|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.PSP2 Debug|Mixed Platforms.ActiveCfg = Debug|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.PSP2 Debug|Mixed Platforms.Build.0 = Debug|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.PSP2 Debug|PSVita.ActiveCfg = Debug|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.PSP2 Debug|PSVita.Build.0 = Debug|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.PSP2 Debug|Win32.ActiveCfg = Debug|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.PSP2 Release|Mixed Platforms.ActiveCfg = Release|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.PSP2 Release|Mixed Platforms.Build.0 = Release|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.PSP2 Release|PSVita.ActiveCfg = Release|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.PSP2 Release|PSVita.Build.0 = Release|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.PSP2 Release|Win32.ActiveCfg = Release|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.Release|Mixed Platforms.ActiveCfg = Release|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.Release|Mixed Platforms.Build.0 = Release|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.Release|PSVita.ActiveCfg = Release|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.Release|PSVita.Build.0 = Release|PSVita
+		{A2C57BF8-8368-4780-8576-36B90919356F}.Release|Win32.ActiveCfg = Release|PSVita
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6ACED909-3C2B-4863-B76F-B09D389EAF0C} = {789693DB-948F-497B-9D27-6CE720AB886A}
+		{F0DD8AC0-9DC1-4C86-BB2A-87C7A774170E} = {789693DB-948F-497B-9D27-6CE720AB886A}
+	EndGlobalSection
+EndGlobal

@@ -408,9 +408,10 @@ enum DefaultMessageIDTypes
 	ID_RELAY_PLUGIN_TO_RELAY,
 	ID_RELAY_PLUGIN_FROM_RELAY,
 
-	// So I can add more without changing user enumerations
-	ID_RESERVED_1,
-	ID_RESERVED_2,
+	// RelayPlugin::AddParticipantRequestFromClient()
+	ID_RELAY_PLUGIN_ADD_CLIENT,
+	// Result of RelayPlugin::AddParticipantRequestFromClient(). Use bitStream to read one byte, true for success, false for failure (name in use). Use bitStream with ReadCompressed on a RakString to read the original name specified
+	ID_RELAY_PLUGIN_ADD_CLIENT_RESPONSE,
 	ID_RESERVED_3,
 	ID_RESERVED_4,
 	ID_RESERVED_5,
