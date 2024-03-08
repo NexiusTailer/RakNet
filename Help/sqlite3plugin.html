@@ -18,8 +18,7 @@
 <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
   <TD>
     <p><span class="RakNetBlueHeader">Store  game or session data over the internet with SQLite</span></p>
-    <p>Games usually need a  server to store session information, such as all games running, or all players in a game, or both. This is called a master server and is provided by commercial services, usually along with a high fee. However, at heart these services just provide you with a database table similar to the one below.</p>
-    <p><img src="DirectoryServerListing.jpg" alt="Directory Server Listing" width="512" height="128"></p>
+    
     <p>Previous versions of RakNet provided this service with the class <a href="lightweightdatabase.html">LightweightDatabase.</a> It is a C++ implementation of a database,using a proprietary interface. However, this proved to have performance issues and was harder to use and less flexible than SQL. As a replacement, SQLite3Plugin was written. It allows clients to execute SQL statements on a remote system (a master server) running SQLite.</p>
 <p>Why not use SQLite directly? By default, SQLite only works with file handles. Games need to execute statements over an actual internet connection. The SQLite3Plugin solves this, by using either PacketizedTCP or RakPeerInterface to transmit the statements, parse the results into a structure, and send it back to the user. Since it's a RakNet plugin, you also have access to event callbacks when players connect and disconnect, and information about those players.</p>
 <p>SQLite is public domain software, and is included in the RakNet distribution at DependentExtensions\SQLite3Plugin</p>

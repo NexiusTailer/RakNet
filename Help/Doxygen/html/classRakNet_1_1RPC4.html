@@ -223,7 +223,7 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000007">Deprecated:</a></b></dt><dd>, use <a class="el" href="classRakNet_1_1RPC4.html#afd3487232245b9d7d7d9e332bf09155d">Signal()</a> Send to the specified remote instance of <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a>. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000008">Deprecated:</a></b></dt><dd>, use <a class="el" href="classRakNet_1_1RPC4.html#afd3487232245b9d7d7d9e332bf09155d">Signal()</a> Send to the specified remote instance of <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a>. </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">uniqueID</td><td>Identifier originally passed to <a class="el" href="classRakNet_1_1RPC4.html#a62122f90344dbfc064f9b14e0f565b23" title="Register a function pointer to be callable from a remote system.">RegisterFunction()</a> on the remote system(s) </td></tr>
@@ -334,7 +334,7 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000006">Deprecated:</a></b></dt><dd>Use <a class="el" href="classRakNet_1_1RPC4.html#a923fe77794363d8ec6094da98fd40d03">RegisterSlot()</a> and <a class="el" href="classRakNet_1_1RPC4.html#afd3487232245b9d7d7d9e332bf09155d">Signal()</a> with your own <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> as the send target Send to the attached instance of <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a>. See <a class="el" href="classRakNet_1_1RakPeerInterface.html#ab8e39273dd7fb89d4b29a01bca32f82c">RakPeerInterface::SendLoopback()</a> </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000007">Deprecated:</a></b></dt><dd>Use <a class="el" href="classRakNet_1_1RPC4.html#a923fe77794363d8ec6094da98fd40d03">RegisterSlot()</a> and <a class="el" href="classRakNet_1_1RPC4.html#afd3487232245b9d7d7d9e332bf09155d">Signal()</a> with your own <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> as the send target Send to the attached instance of <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a>. See <a class="el" href="classRakNet_1_1RakPeerInterface.html#ab8e39273dd7fb89d4b29a01bca32f82c">RakPeerInterface::SendLoopback()</a> </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">Identifier</td><td>originally passed to <a class="el" href="classRakNet_1_1RPC4.html#a62122f90344dbfc064f9b14e0f565b23" title="Register a function pointer to be callable from a remote system.">RegisterFunction()</a> on the local system </td></tr>
@@ -404,7 +404,7 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </div><div class="memdoc">
 
 <p>Register a function pointer to be callable from a remote system. </p>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000004">Deprecated:</a></b></dt><dd>Use RegisterSlot </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000005">Deprecated:</a></b></dt><dd>Use RegisterSlot </dd></dl>
 <p>The hash of the function name will be stored as an association with the function pointer When a call is made to call this function from the <em><a class="el" href="classRakNet_1_1RPC4.html#afcf702778c734ec2cd0a0513e77fb380">Call()</a></em> or <a class="el" href="classRakNet_1_1RPC4.html#a94a6c4503e9639d65e052a685d458878">CallLoopback()</a> function, the function pointer will be invoked with the passed bitStream to <a class="el" href="classRakNet_1_1RPC4.html#afcf702778c734ec2cd0a0513e77fb380">Call()</a> and the actual <a class="el" href="structRakNet_1_1Packet.html" title="This represents a user message from another system.">Packet</a> that <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher that can be used f...">RakNet</a> got. </p>
 <dl class="section see"><dt>See Also</dt><dd>RegisterPacketCallback() </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
@@ -441,7 +441,7 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000005">Deprecated:</a></b></dt><dd>Use RegisterSlot and invoke on self only when the packet you want arrives When a <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher that can be used f...">RakNet</a> <a class="el" href="structRakNet_1_1Packet.html" title="This represents a user message from another system.">Packet</a> with the specified identifier is returned, execute <a class="el" href="classRakNet_1_1RPC4.html#a94a6c4503e9639d65e052a685d458878">CallLoopback()</a> on a function previously registered with <a class="el" href="classRakNet_1_1RPC4.html#a62122f90344dbfc064f9b14e0f565b23" title="Register a function pointer to be callable from a remote system.">RegisterFunction()</a> For example, you could call "OnClosedConnection" whenever you get ID_DISCONNECTION_NOTIFICATION or ID_CONNECTION_LOST </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000006">Deprecated:</a></b></dt><dd>Use RegisterSlot and invoke on self only when the packet you want arrives When a <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher that can be used f...">RakNet</a> <a class="el" href="structRakNet_1_1Packet.html" title="This represents a user message from another system.">Packet</a> with the specified identifier is returned, execute <a class="el" href="classRakNet_1_1RPC4.html#a94a6c4503e9639d65e052a685d458878">CallLoopback()</a> on a function previously registered with <a class="el" href="classRakNet_1_1RPC4.html#a62122f90344dbfc064f9b14e0f565b23" title="Register a function pointer to be callable from a remote system.">RegisterFunction()</a> For example, you could call "OnClosedConnection" whenever you get ID_DISCONNECTION_NOTIFICATION or ID_CONNECTION_LOST </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">uniqueID</td><td>Identifier passed to <a class="el" href="classRakNet_1_1RPC4.html#a62122f90344dbfc064f9b14e0f565b23" title="Register a function pointer to be callable from a remote system.">RegisterFunction()</a> </td></tr>
@@ -658,7 +658,7 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Nov 15 2012 18:33:18 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Dec 5 2012 00:32:35 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

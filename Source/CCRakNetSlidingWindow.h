@@ -54,11 +54,11 @@ else use congestion avoidance
 /// Set to 4 if you are using the iPod Touch TG. See http://www.jenkinssoftware.com/forum/index.php?topic=2717.0
 #define CC_TIME_TYPE_BYTES 8
 
-
+#if CC_TIME_TYPE_BYTES==8
 typedef RakNet::TimeUS CCTimeType;
-
-
-
+#else
+typedef RakNet::TimeMS CCTimeType;
+#endif
 
 typedef RakNet::uint24_t DatagramSequenceNumberType;
 typedef double BytesPerMicrosecond;

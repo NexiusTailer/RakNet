@@ -5,6 +5,7 @@
 #include "SocketLayer.h"
 #include "DynDNS.h"
 #include "GetTime.h"
+#include "Base64Encoder.h"
 
 using namespace RakNet;
 
@@ -82,7 +83,7 @@ void DynDNS::UpdateHostIP(const char *dnsHost, const char *newIPAddress, const c
 	getString+="Host: members.dyndns.org\n";
 	getString+="Authorization: Basic ";
 	char outputData[512];
-	TCPInterface::Base64Encoding(usernameAndPassword, (int) strlen(usernameAndPassword), outputData);
+	Base64Encoding(usernameAndPassword, (int) strlen(usernameAndPassword), outputData);
 	getString+=outputData;
 	getString+="User-Agent: Jenkins Software LLC - PC - 1.0\n\n";
 }

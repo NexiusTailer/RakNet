@@ -23,6 +23,7 @@
 #include "DS_ByteQueue.h"
 #include "DS_ThreadsafeAllocatingQueue.h"
 #include "LocklessTypes.h"
+#include "PluginInterface2.h"
 
 #if OPEN_SSL_CLIENT_SUPPORT==1
 #include <openssl/crypto.h>
@@ -85,7 +86,7 @@ public:
 	virtual bool ReceiveHasPackets( void );
 
 	/// Returns data received
-	Packet* Receive( void );
+	virtual Packet* Receive( void );
 
 	/// Disconnects a player/address
 	void CloseConnection( SystemAddress systemAddress );
@@ -121,15 +122,23 @@ public:
 	// Push a packet back to the queue
 	virtual void PushBackPacket( Packet *packet, bool pushAtHead );
 
-	static const char *Base64Map(void) {return "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";}
-
-	/// \brief Returns how many bytes were written.
-	static int Base64Encoding(const char *inputData, int dataLength, char *outputData);
-
 	/// Returns if Start() was called successfully
 	bool WasStarted(void) const;
 
+	void AttachPlugin( PluginInterface2 *plugin );
+	void DetachPlugin( PluginInterface2 *plugin );
 protected:
+
+	Packet* ReceiveInt( void );
+
+#if defined(WINDOWS_STORE_RT)
+	bool CreateListenSocket_WinStore8(unsigned short port, unsigned short maxIncomingConnections, unsigned short socketFamily);
+#else
+	bool CreateListenSocket(unsigned short port, unsigned short maxIncomingConnections, unsigned short socketFamily);
+#endif
+
+	// Plugins
+	DataStructures::List<PluginInterface2*> messageHandlerList;
 
 	RakNet::LocklessUint32_t isStarted, threadRunning;
 	__TCPSOCKET__ listenSocket;

@@ -16,7 +16,7 @@ PluginInterface2::PluginInterface2()
 {
 	rakPeerInterface=0;
 #if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
-	packetizedTCP=0;
+	tcpInterface=0;
 #endif
 }
 PluginInterface2::~PluginInterface2()
@@ -31,9 +31,9 @@ void PluginInterface2::SendUnified( const RakNet::BitStream * bitStream, PacketP
 		return;
 	}
 #if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
-	else if (packetizedTCP)
+	else if (tcpInterface)
 	{
-		packetizedTCP->Send((const char*) bitStream->GetData(), bitStream->GetNumberOfBytesUsed(), systemIdentifier.systemAddress, broadcast);
+		tcpInterface->Send((const char*) bitStream->GetData(), bitStream->GetNumberOfBytesUsed(), systemIdentifier.systemAddress, broadcast);
 		return;
 	}
 #endif
@@ -65,9 +65,9 @@ void PluginInterface2::SendUnified( const char * data, const int length, PacketP
 		return;
 	}
 #if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
-	else if (packetizedTCP)
+	else if (tcpInterface)
 	{
-		packetizedTCP->Send(data, length, systemIdentifier.systemAddress, broadcast);
+		tcpInterface->Send(data, length, systemIdentifier.systemAddress, broadcast);
 		return;
 	}
 #endif
@@ -98,9 +98,9 @@ Packet *PluginInterface2::AllocatePacketUnified(unsigned dataSize)
 		return rakPeerInterface->AllocatePacket(dataSize);
 	}
 #if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
-	else if (packetizedTCP)
+	else if (tcpInterface)
 	{
-		return packetizedTCP->AllocatePacket(dataSize);
+		return tcpInterface->AllocatePacket(dataSize);
 	}
 #endif
 
@@ -121,9 +121,9 @@ void PluginInterface2::PushBackPacketUnified(Packet *packet, bool pushAtHead)
 		return;
 	}
 #if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
-	else if (packetizedTCP)
+	else if (tcpInterface)
 	{
-		packetizedTCP->PushBackPacket(packet,pushAtHead);
+		tcpInterface->PushBackPacket(packet,pushAtHead);
 		return;
 	}
 #endif
@@ -139,9 +139,9 @@ void PluginInterface2::DeallocPacketUnified(Packet *packet)
 		return;
 	}
 #if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
-	else if (packetizedTCP)
+	else if (tcpInterface)
 	{
-		packetizedTCP->DeallocatePacket(packet);
+		tcpInterface->DeallocatePacket(packet);
 		return;
 	}
 #endif
@@ -156,9 +156,9 @@ bool PluginInterface2::SendListUnified( const char **data, const int *lengths, c
 		return rakPeerInterface->SendList(data,lengths,numParameters,priority,reliability,orderingChannel,systemIdentifier,broadcast)!=0;
 	}
 #if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
-	else if (packetizedTCP)
+	else if (tcpInterface)
 	{
-		return packetizedTCP->SendList(data,lengths,numParameters,systemIdentifier.systemAddress,broadcast );
+		return tcpInterface->SendList(data,(const unsigned int *) lengths,numParameters,systemIdentifier.systemAddress,broadcast );
 	}
 #endif
 
@@ -203,10 +203,10 @@ void PluginInterface2::SetRakPeerInterface( RakPeerInterface *ptr )
 {
 	rakPeerInterface=ptr;
 }
-#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
-void PluginInterface2::SetPacketizedTCP( PacketizedTCP *ptr )
+#if _RAKNET_SUPPORT_TCPInterface==1
+void PluginInterface2::SetTCPInterface( TCPInterface *ptr )
 {
-	packetizedTCP=ptr;
+	tcpInterface=ptr;
 }
 #endif
 RakNetGUID PluginInterface2::GetMyGUIDUnified(void) const

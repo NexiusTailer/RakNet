@@ -7,6 +7,7 @@
 #include "LinuxStrings.h"
 #include "StringCompressor.h"
 #include "SimpleMutex.h"
+#include <stdlib.h>
 
 using namespace RakNet;
 
@@ -941,7 +942,7 @@ RakNet::RakString& RakString::SQLEscape(void)
 	}
 	return *this;
 }
-RakString RakString::FormatForPOST(RakString &uri, RakString &contentType, unsigned int port, RakString &body)
+RakString RakString::FormatForPOST(RakString uri, RakString contentType, RakString body)
 {
 	RakString out;
 	RakString host;
@@ -952,22 +953,23 @@ RakString RakString::FormatForPOST(RakString &uri, RakString &contentType, unsig
 	if (host.IsEmpty() || remotePath.IsEmpty())
 		return out;
 	
-	out.Set("POST %s HTTP/1.0\r\n"
-		"Host: %s:%i\r\n"
+	out.Set("POST %s HTTP/1.1\r\n"
+		"Host: %s\r\n"
+//		"Connection: Keep-Alive\r\n"
+//		"Connection: close\r\n"
 		"Content-Type: %s\r\n"
 		"Content-Length: %u\r\n"
 		"\r\n"
 		"%s",
 		remotePath.C_String(),
 		host.C_String(),
-		port,
 		contentType.C_String(),
 		body.GetLength(),
 		body.C_String());
 
 	return out;
 }
-RakString RakString::FormatForGET(RakString &uri, unsigned int port)
+RakString RakString::FormatForGET(RakString uri)
 {
 	RakString out;
 	RakString host;
@@ -978,12 +980,34 @@ RakString RakString::FormatForGET(RakString &uri, unsigned int port)
 	if (host.IsEmpty() || remotePath.IsEmpty())
 		return out;
 
-	out.Set("GET %s HTTP/1.0\r\n"
-		"Host: %s:%i\r\n"
+	out.Set("GET %s HTTP/1.1\r\n"
+		"Host: %s\r\n"
+//		"Connection: Keep-Alive\r\n"
+//		"Connection: close\r\n"
 		"\r\n",
 		remotePath.C_String(),
-		host.C_String(),
-		port);
+		host.C_String());
+
+	return out;
+}
+RakString RakString::FormatForDELETE(RakString uri)
+{
+	RakString out;
+	RakString host;
+	RakString remotePath;
+	RakNet::RakString header;
+
+	uri.SplitURI(header, host, remotePath);
+	if (host.IsEmpty() || remotePath.IsEmpty())
+		return out;
+
+	out.Set("DELETE %s HTTP/1.1\r\n"
+		"Content-Length: 0\r\n"
+		"Host: %s\r\n"
+		"Connection: close\r\n"
+		"\r\n",
+		remotePath.C_String(),
+		host.C_String());
 
 	return out;
 }
@@ -1284,6 +1308,15 @@ unsigned long RakString::ToInteger(const char *str)
 unsigned long RakString::ToInteger(const RakString &rs)
 {
 	return RakString::ToInteger(rs.C_String());
+}
+int RakString::ReadIntFromSubstring(const char *str, size_t pos, size_t n)
+{
+	char tmp[32];
+	if (n >= 32)
+		return 0;
+	for (size_t i=0; i < n; i++)
+		tmp[i]=str[i+pos];
+	return atoi(tmp);
 }
 void RakString::AppendBytes(const char *bytes, unsigned int count)
 {

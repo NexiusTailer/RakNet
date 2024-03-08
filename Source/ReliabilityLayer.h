@@ -40,6 +40,7 @@
 #include "SecureHandshake.h"
 #include "PluginInterface2.h"
 #include "Rand.h"
+#include "RakNetSocket2.h"
 
 #if USE_SLIDING_WINDOW_CONGESTION_CONTROL!=1
 #include "CCRakNetUDT.h"
@@ -148,7 +149,7 @@ public:
 	/// \retval false Modified packet
 	bool HandleSocketReceiveFromConnectedPlayer(
 		const char *buffer, unsigned int length, SystemAddress &systemAddress, DataStructures::List<PluginInterface2*> &messageHandlerList, int MTUSize,
-		RakNetSocket *s, RakNetRandom *rnr, CCTimeType timeRead, BitStream &updateBitStream);
+		RakNetSocket2 *s, RakNetRandom *rnr, CCTimeType timeRead, BitStream &updateBitStream);
 
 	/// This allocates bytes and writes a user-level message to those bytes.
 	/// \param[out] data The message
@@ -175,7 +176,7 @@ public:
 	/// \param[in] time current system time
 	/// \param[in] maxBitsPerSecond if non-zero, enforces that outgoing bandwidth does not exceed this amount
 	/// \param[in] messageHandlerList A list of registered plugins
-	void Update( RakNetSocket *s, SystemAddress &systemAddress, int MTUSize, CCTimeType time,
+	void Update( RakNetSocket2 *s, SystemAddress &systemAddress, int MTUSize, CCTimeType time,
 		unsigned bitsPerSecondLimit,
 		DataStructures::List<PluginInterface2*> &messageHandlerList,
 		RakNetRandom *rnr, BitStream &updateBitStream);
@@ -208,9 +209,9 @@ public:
 	bool AckTimeout(RakNet::Time curTime);
 	CCTimeType GetNextSendTime(void) const;
 	CCTimeType GetTimeBetweenPackets(void) const;
-
-
-
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
+	CCTimeType GetAckPing(void) const;
+#endif
 	RakNet::TimeMS GetTimeLastDatagramArrived(void) const {return timeLastDatagramArrived;}
 
 	// If true, will update time between packets quickly based on ping calculations
@@ -224,7 +225,7 @@ private:
 	/// \param[in] s The socket used for sending data
 	/// \param[in] systemAddress The address and port to send to
 	/// \param[in] bitStream The data to send.
-	void SendBitStream( RakNetSocket *s, SystemAddress &systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, CCTimeType currentTime);
+	void SendBitStream( RakNetSocket2 *s, SystemAddress &systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, CCTimeType currentTime);
 
 	///Parse an internalPacket and create a bitstream to represent this data
 	/// \return Returns number of bits used
@@ -276,7 +277,7 @@ private:
 
 	/// Take all split chunks with the specified splitPacketId and try to reconstruct a packet. If we can, allocate and return it.  Otherwise return 0
 	InternalPacket * BuildPacketFromSplitPacketList( SplitPacketIdType splitPacketId, CCTimeType time,
-		RakNetSocket *s, SystemAddress &systemAddress, RakNetRandom *rnr, BitStream &updateBitStream);
+		RakNetSocket2 *s, SystemAddress &systemAddress, RakNetRandom *rnr, BitStream &updateBitStream);
 	InternalPacket * BuildPacketFromSplitPacketList( SplitPacketChannel *splitPacketChannel, CCTimeType time );
 
 	/// Delete any unreliable split packets that have long since expired
@@ -475,9 +476,9 @@ private:
 
 	CCTimeType lastUpdateTime;
 	CCTimeType timeBetweenPackets, nextSendTime;
-
-
-
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
+	CCTimeType ackPing;
+#endif
 //	CCTimeType ackPingSamples[ACK_PING_SAMPLES_SIZE]; // Must be range of unsigned char to wrap ackPingIndex properly
 	CCTimeType ackPingSum;
 	unsigned char ackPingIndex;
@@ -499,7 +500,7 @@ private:
 #ifdef _DEBUG
 	struct DataAndTime//<InternalPacket>
 	{
-		RakNetSocket *s;
+		RakNetSocket2 *s;
 		char data[ MAXIMUM_MTU_SIZE ];
 		unsigned int length;
 		RakNet::TimeMS sendTime;
@@ -541,7 +542,7 @@ private:
 	void PopListHead(bool modifyUnacknowledgedBytes);
 	bool IsResendQueueEmpty(void) const;
 	void SortSplitPacketList(DataStructures::List<InternalPacket*> &data, unsigned int leftEdge, unsigned int rightEdge) const;
-	void SendACKs(RakNetSocket *s, SystemAddress &systemAddress, CCTimeType time, RakNetRandom *rnr, BitStream &updateBitStream);
+	void SendACKs(RakNetSocket2 *s, SystemAddress &systemAddress, CCTimeType time, RakNetRandom *rnr, BitStream &updateBitStream);
 
 	DataStructures::List<InternalPacket*> packetsToSendThisUpdate;
 	DataStructures::List<bool> packetsToDeallocThisUpdate;

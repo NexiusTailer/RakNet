@@ -252,7 +252,7 @@ void RPC4::CallLoopback( const char* uniqueID, RakNet::BitStream * bitStream )
 			p=AllocatePacketUnified(sizeof(MessageID)+sizeof(unsigned char)+(unsigned int) strlen(uniqueID)+1);
 #if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
 		else
-			p=packetizedTCP->AllocatePacket(sizeof(MessageID)+sizeof(unsigned char)+(unsigned int) strlen(uniqueID)+1);
+			p=tcpInterface->AllocatePacket(sizeof(MessageID)+sizeof(unsigned char)+(unsigned int) strlen(uniqueID)+1);
 #endif
 
 		if (rakPeerInterface)
@@ -288,7 +288,7 @@ void RPC4::CallLoopback( const char* uniqueID, RakNet::BitStream * bitStream )
 		p=AllocatePacketUnified(out.GetNumberOfBytesUsed());
 #if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
 	else
-		p=packetizedTCP->AllocatePacket(out.GetNumberOfBytesUsed());
+		p=tcpInterface->AllocatePacket(out.GetNumberOfBytesUsed());
 #endif
 
 	if (rakPeerInterface)

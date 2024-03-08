@@ -496,7 +496,7 @@ void Lobby2Client_Steam_Impl::NotifyLeaveRoom(void)
 	ClearRoom();
 }
 
-int Lobby2Client_Steam_Impl::RakNetSendTo( SOCKET s, const char *data, int length, const SystemAddress &systemAddress )
+int Lobby2Client_Steam_Impl::RakNetSendTo( const char *data, int length, const SystemAddress &systemAddress )
 {
 	bool objectExists;
 	unsigned int i = roomMembersByAddr.GetIndexFromKey(systemAddress, &objectExists);
@@ -509,16 +509,15 @@ int Lobby2Client_Steam_Impl::RakNetSendTo( SOCKET s, const char *data, int lengt
 	}
 	else if (systemAddress.GetPort()!=STEAM_UNUSED_PORT)
 	{
-		return SocketLayer::SendTo_PC(s,data,length,systemAddress,_FILE_AND_LINE_);
+	//	return SocketLayer::SendTo_PC(s,data,length,systemAddress,_FILE_AND_LINE_);
+		return -1;
 	}
 	return 0;
 }
 
-int Lobby2Client_Steam_Impl::RakNetRecvFrom( const SOCKET sIn, RakPeer *rakPeerIn, char dataOut[ MAXIMUM_MTU_SIZE ], SystemAddress *senderOut, bool calledFromMainThread)
+int Lobby2Client_Steam_Impl::RakNetRecvFrom( char dataOut[ MAXIMUM_MTU_SIZE ], SystemAddress *senderOut, bool calledFromMainThread)
 {
 	(void) calledFromMainThread;
-	(void) rakPeerIn;
-	(void) sIn;
 
 	uint32 pcubMsgSize;
 	if (SteamNetworking() && SteamNetworking()->IsP2PPacketAvailable(&pcubMsgSize))
@@ -584,9 +583,15 @@ void Lobby2Client_Steam_Impl::OnFailedConnectionAttempt(Packet *packet, PI2_Fail
 void Lobby2Client_Steam_Impl::OnAttach(void)
 {
 	nextFreeSystemAddress=(uint32_t) rakPeerInterface->GetMyGUID().g;
-	SocketLayer::SetSocketLayerOverride(this);
+
+	// If this asserts, call RakPeer::Startup() before attaching Lobby2Client_Steam
+	DataStructures::List<RakNetSocket2* > sockets;
+	rakPeerInterface->GetSockets(sockets);
+	((RNS2_Windows*)sockets[0])->SetSocketLayerOverride(this);
 }
 void Lobby2Client_Steam_Impl::OnDetach(void)
 {
-	SocketLayer::SetSocketLayerOverride(0);
+	DataStructures::List<RakNetSocket2* > sockets;
+	rakPeerInterface->GetSockets(sockets);
+	((RNS2_Windows*)sockets[0])->SetSocketLayerOverride(this);
 }

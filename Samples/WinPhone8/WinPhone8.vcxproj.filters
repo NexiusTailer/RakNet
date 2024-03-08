@@ -44,7 +44,13 @@
     <ClCompile Include="CubeRenderer.cpp" />
     <ClCompile Include="Direct3DBase.cpp" />
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="..\..\DependentExtensions\WinPhone8\ThreadEmulation.cpp">
+      <Filter>RakNetExtra</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\_FindFirst.cpp">
+      <Filter>RakNet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Base64Encoder.cpp">
       <Filter>RakNet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\BitStream.cpp">
@@ -140,6 +146,9 @@
     <ClCompile Include="..\..\Source\HTTPConnection.cpp">
       <Filter>RakNet</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\HTTPConnection2.cpp">
+      <Filter>RakNet</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\IncrementalReadInterface.cpp">
       <Filter>RakNet</Filter>
     </ClCompile>
@@ -209,6 +218,30 @@
     <ClCompile Include="..\..\Source\RakNetSocket.cpp">
       <Filter>RakNet</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\RakNetSocket2.cpp">
+      <Filter>RakNet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\RakNetSocket2_360_720.cpp">
+      <Filter>RakNet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\RakNetSocket2_Berkley.cpp">
+      <Filter>RakNet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\RakNetSocket2_NativeClient.cpp">
+      <Filter>RakNet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\RakNetSocket2_PS3_PS4.cpp">
+      <Filter>RakNet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\RakNetSocket2_Vita.cpp">
+      <Filter>RakNet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\RakNetSocket2_Windows_Linux.cpp">
+      <Filter>RakNet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\RakNetSocket2_Windows_Linux_360.cpp">
+      <Filter>RakNet</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\RakNetStatistics.cpp">
       <Filter>RakNet</Filter>
     </ClCompile>
@@ -234,9 +267,6 @@
       <Filter>RakNet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Rand.cpp">
-      <Filter>RakNet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\rdlmalloc.cpp">
       <Filter>RakNet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ReadyEvent.cpp">
@@ -332,9 +362,6 @@
     <ClCompile Include="..\..\Source\WSAStartupSingleton.cpp">
       <Filter>RakNet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\DependentExtensions\WinPhone8\ThreadEmulation.cpp">
-      <Filter>RakNetExtra</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WinPhone8.h" />
@@ -343,6 +370,9 @@
     <ClInclude Include="Direct3DBase.h" />
     <ClInclude Include="BasicTimer.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="..\..\DependentExtensions\WinPhone8\ThreadEmulation.h">
+      <Filter>RakNetExtra</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\_FindFirst.h">
       <Filter>RakNet</Filter>
     </ClInclude>
@@ -350,6 +380,9 @@
       <Filter>RakNet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\AutopatcherRepositoryInterface.h">
+      <Filter>RakNet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Base64Encoder.h">
       <Filter>RakNet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\BitStream.h">
@@ -508,6 +541,9 @@
     <ClInclude Include="..\..\Source\HTTPConnection.h">
       <Filter>RakNet</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\HTTPConnection2.h">
+      <Filter>RakNet</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\IncrementalReadInterface.h">
       <Filter>RakNet</Filter>
     </ClInclude>
@@ -622,6 +658,9 @@
     <ClInclude Include="..\..\Source\RakNetSocket.h">
       <Filter>RakNet</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\RakNetSocket2.h">
+      <Filter>RakNet</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\RakNetStatistics.h">
       <Filter>RakNet</Filter>
     </ClInclude>
@@ -656,12 +695,6 @@
       <Filter>RakNet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Rand.h">
-      <Filter>RakNet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\rdlmalloc.h">
-      <Filter>RakNet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\rdlmalloc-options.h">
       <Filter>RakNet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ReadyEvent.h">
@@ -790,17 +823,9 @@
     <ClInclude Include="..\..\Source\XBox360Includes.h">
       <Filter>RakNet</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\DependentExtensions\WinPhone8\ThreadEmulation.h">
-      <Filter>RakNetExtra</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="WMAppManifest.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\..\Source\CMakeLists.txt">
-      <Filter>RakNet</Filter>
-    </Text>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Source\RakNet.vcproj">

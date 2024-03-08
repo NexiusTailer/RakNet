@@ -5,10 +5,10 @@
 /// Usage of RakNet is subject to the appropriate license agreement.
 
 
-#if defined(_WIN32) 
+#if defined(_WIN32)
 #include "WindowsIncludes.h"
 
- #if !defined(WINDOWS_PHONE_8) 
+ #if !defined(WINDOWS_PHONE_8)
 		// To call timeGetTime
 		// on Code::Blocks, this needs to be libwinmm.a instead
 		#pragma comment(lib, "Winmm.lib")
@@ -129,7 +129,7 @@ RakNet::TimeMS RakNet::GetTimeMS( void )
 
 
 
-#if   defined(_WIN32) 
+#if   defined(_WIN32)
 RakNet::TimeUS GetTimeUS_Windows( void )
 {
 	if ( initialized == false)
@@ -170,7 +170,7 @@ RakNet::TimeUS GetTimeUS_Windows( void )
 	return curTime;
 #endif // #if defined(GET_TIME_SPIKE_LIMIT) && GET_TIME_SPIKE_LIMIT>0
 }
-#elif defined(__GNUC__)  || defined(__GCCXML__) ||  defined(__S3E__)
+#elif defined(__GNUC__)  || defined(__GCCXML__) || defined(__S3E__)
 RakNet::TimeUS GetTimeUS_Linux( void )
 {
 	timeval tp;

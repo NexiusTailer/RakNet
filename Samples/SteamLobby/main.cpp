@@ -93,11 +93,11 @@ int main(int argc, char **argv)
 	lobby2Client = Lobby2Client_Steam::GetInstance();
 	lobby2Client->AddCallbackInterface(&steamResults);
 	lobby2Client->SetMessageFactory(messageFactory);
-	rakPeer->AttachPlugin(lobby2Client);
 	SocketDescriptor sd(1234,0);
 	rakPeer->Startup(32,&sd,1);
 	rakPeer->SetMaximumIncomingConnections(32);
 	rakPeer->AttachPlugin(fcm2);
+	rakPeer->AttachPlugin(lobby2Client);
 	// Connect manually in Notification_Console_MemberJoinedRoom
 	fcm2->SetConnectOnNewRemoteConnection(false, "");
 	RakNet::Lobby2Message* msg = messageFactory->Alloc(RakNet::L2MID_Client_Login);

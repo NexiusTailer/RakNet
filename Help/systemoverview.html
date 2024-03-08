@@ -15,11 +15,11 @@
 </tr></table>
 <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
   <TD><strong class="RakNetBlueHeader">System Architecture</strong>
-    <p>RakNet can be has code that falls into three categories: network communication, plugins that use network communication, and general game functionality.</p>
-    <p> Network communication is provided by two user classes. RakPeer, and TCPInterface. RakPeer is the primary class that games will use and is based on UDP. It provides functionality such as connections, connection management, congestion control, remote server detection, out of band messaging, connection statistics, latency and packetloss simulation, ban lists, and secure connectivity.</p>
-    <p>TCPInterface is a wrapper for TCP, and is used to communicate with external systems that are based on TCP. For example, the EmailSender class, used to report crashes from remote servers, interfaces with TCP. It is also supported by most plugin modules, and is suggested for file transfers such as with the autopatcher.</p>
-    <p>Plugins in RakNet are classes that you 'attach' to an instance of RakPeer or PacketizedTCP. Attached plugins update automatically when Receive() is called on the attachee, and filter or inject messages into the network stream. Functionality includes host determination in a peer to peer enviroment, file transfers, NAT traversal, voice communication, remote procedure calls, and game object replication.</p>
-    <p>General game functionality includes crash reporting, email sending through Gmail pop servers, an SQL logging server, and PHP based server lists.</p>
+    <p>RakNet has code that falls into three categories: network communication, plugins that use network communication, and general game functionality.</p>
+    <p> Network communication is provided by two user classes. RakPeerInterface, and TCPInterface. RakPeerInterface is the primary class that games will use and is based on UDP. It provides functionality such as connections, connection management, congestion control, remote server detection, out of band messaging, connection statistics, latency and packetloss simulation, ban lists, and secure connectivity.</p>
+    <p>TCPInterface is a wrapper for TCP, and is used to communicate with external systems that are based on TCP. For example, the <a href="emailsender.html">EmailSender</a> class, used to report crashes from remote servers, interfaces with TCP. It is also supported by most plugin modules, and is suggested for file transfers such as with the autopatcher.</p>
+    <p>Plugins in RakNet are classes that you 'attach' to an instance of RakPeer or PacketizedTCP. This uses <a href="http://en.wikipedia.org/wiki/Chain-of-responsibility_pattern">chain of responsibility</a> design pattern. Attached plugins update automatically when Receive() is called on the attachee, and filter or inject messages into the network stream. Functionality includes host determination in a peer to peer enviroment, file transfers, NAT traversal, voice communication, remote procedure calls, and game object replication.</p>
+    <p>General game functionality includes the <a href="http://masterserver2.raknet.com/">master server</a>, crash reporting, email sending through Gmail pop servers, and an SQL logging server.</p>
     <p class="RakNetBlueHeader">RakPeer internal architecture</p>
     <p><b>RakPeer.h</b> provides the base 
   functionality for UDP communication, and it is expected that most applications will use RakPeer as opposed to TCP.&nbsp; On start, RakPeer starts two threads - one thread to wait for incoming datagrams, and another to perform periodic updates, such as determing lost connections, or pings. The user specifies the maximum number of connections and an array of RemoteSystem structures is internally allocated to this size. Each connection or connection attempt is assigned to a Remote System structure, which contains a class to manage congestion control between the two systems. Connections are identified by SystemAddress or RakNetGuid, the latter of which is randomly generated and unique per instance of RakPeer.</p>
@@ -58,10 +58,13 @@ Next page: <A HREF="detailedimplementation.html">Detailed Implementation</A>
 </tr></table>
 
 <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
-  <TD><p class="RakNetBlueHeader">Post 3.6201, using new congestion control</p>
+  <TD>
+  
+  
+  <p class="RakNetBlueHeader">Post 3.6201, using new congestion control</p>
     <p><strong>Per datagram:</strong><br>
       1 byte for bitflags<br>
-      4 bytes for timestamp, used to calculate RTT for congestion control<br>
+      4 bytes for timestamp, used to calculate RTT for congestion control. RakNet version 4 does not transmit this field.<br>
       3 bytes for sequence number, used to lookup datagrams for ACKs</p>
     <p><strong>Per message:</strong><br>
       1 byte for bitflags<br>
@@ -100,7 +103,6 @@ Next page: <A HREF="detailedimplementation.html">Detailed Implementation</A>
 <A HREF="index.html">Index</A><BR>
 <A HREF="compilersetup.html">Compiler Setup</A><BR>
 <A HREF="detailedimplementation.html">Detailed Implementation</A><BR>
-<A HREF="introduction.html">Introduction</A><BR>
 <A HREF="tutorial.html">Tutorial</A><BR>
 <A HREF="RakNetUML.jpg">UML Diagram</A><BR>
 

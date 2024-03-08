@@ -135,6 +135,7 @@
     <ClInclude Include="..\..\DependentExtensions\WinPhone8\ThreadEmulation.h" />
     <ClInclude Include="..\..\Source\AutopatcherPatchContext.h" />
     <ClInclude Include="..\..\Source\AutopatcherRepositoryInterface.h" />
+    <ClInclude Include="..\..\Source\Base64Encoder.h" />
     <ClInclude Include="..\..\Source\BitStream.h" />
     <ClInclude Include="..\..\Source\CCRakNetSlidingWindow.h" />
     <ClInclude Include="..\..\Source\CCRakNetUDT.h" />
@@ -187,6 +188,7 @@
     <ClInclude Include="..\..\Source\gettimeofday.h" />
     <ClInclude Include="..\..\Source\GridSectorizer.h" />
     <ClInclude Include="..\..\Source\HTTPConnection.h" />
+    <ClInclude Include="..\..\Source\HTTPConnection2.h" />
     <ClInclude Include="..\..\Source\IncrementalReadInterface.h" />
     <ClInclude Include="..\..\Source\InternalPacket.h" />
     <ClInclude Include="..\..\Source\Itoa.h" />
@@ -225,6 +227,7 @@
     <ClInclude Include="..\..\Source\RakNetDefinesOverrides.h" />
     <ClInclude Include="..\..\Source\RakNetSmartPtr.h" />
     <ClInclude Include="..\..\Source\RakNetSocket.h" />
+    <ClInclude Include="..\..\Source\RakNetSocket2.h" />
     <ClInclude Include="..\..\Source\RakNetStatistics.h" />
     <ClInclude Include="..\..\Source\RakNetTime.h" />
     <ClInclude Include="..\..\Source\RakNetTransport2.h" />
@@ -237,8 +240,6 @@
     <ClInclude Include="..\..\Source\RakThread.h" />
     <ClInclude Include="..\..\Source\RakWString.h" />
     <ClInclude Include="..\..\Source\Rand.h" />
-    <ClInclude Include="..\..\Source\rdlmalloc-options.h" />
-    <ClInclude Include="..\..\Source\rdlmalloc.h" />
     <ClInclude Include="..\..\Source\ReadyEvent.h" />
     <ClInclude Include="..\..\Source\RefCountedObj.h" />
     <ClInclude Include="..\..\Source\ReliabilityLayer.h" />
@@ -291,6 +292,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\DependentExtensions\WinPhone8\ThreadEmulation.cpp" />
+    <ClCompile Include="..\..\Source\Base64Encoder.cpp" />
     <ClCompile Include="..\..\Source\BitStream.cpp" />
     <ClCompile Include="..\..\Source\CCRakNetSlidingWindow.cpp" />
     <ClCompile Include="..\..\Source\CCRakNetUDT.cpp" />
@@ -322,6 +324,7 @@
     <ClCompile Include="..\..\Source\gettimeofday.cpp" />
     <ClCompile Include="..\..\Source\GridSectorizer.cpp" />
     <ClCompile Include="..\..\Source\HTTPConnection.cpp" />
+    <ClCompile Include="..\..\Source\HTTPConnection2.cpp" />
     <ClCompile Include="..\..\Source\IncrementalReadInterface.cpp" />
     <ClCompile Include="..\..\Source\Itoa.cpp" />
     <ClCompile Include="..\..\Source\LinuxStrings.cpp" />
@@ -345,6 +348,14 @@
     <ClCompile Include="..\..\Source\RakMemoryOverride.cpp" />
     <ClCompile Include="..\..\Source\RakNetCommandParser.cpp" />
     <ClCompile Include="..\..\Source\RakNetSocket.cpp" />
+    <ClCompile Include="..\..\Source\RakNetSocket2.cpp" />
+    <ClCompile Include="..\..\Source\RakNetSocket2_360_720.cpp" />
+    <ClCompile Include="..\..\Source\RakNetSocket2_Berkley.cpp" />
+    <ClCompile Include="..\..\Source\RakNetSocket2_NativeClient.cpp" />
+    <ClCompile Include="..\..\Source\RakNetSocket2_PS3_PS4.cpp" />
+    <ClCompile Include="..\..\Source\RakNetSocket2_Vita.cpp" />
+    <ClCompile Include="..\..\Source\RakNetSocket2_Windows_Linux.cpp" />
+    <ClCompile Include="..\..\Source\RakNetSocket2_Windows_Linux_360.cpp" />
     <ClCompile Include="..\..\Source\RakNetStatistics.cpp" />
     <ClCompile Include="..\..\Source\RakNetTransport2.cpp" />
     <ClCompile Include="..\..\Source\RakNetTypes.cpp" />
@@ -354,7 +365,6 @@
     <ClCompile Include="..\..\Source\RakThread.cpp" />
     <ClCompile Include="..\..\Source\RakWString.cpp" />
     <ClCompile Include="..\..\Source\Rand.cpp" />
-    <ClCompile Include="..\..\Source\rdlmalloc.cpp" />
     <ClCompile Include="..\..\Source\ReadyEvent.cpp" />
     <ClCompile Include="..\..\Source\ReliabilityLayer.cpp" />
     <ClCompile Include="..\..\Source\ReplicaManager3.cpp" />
@@ -401,9 +411,6 @@
     <FxCompile Include="SimpleVertexShader.hlsl">
       <ShaderType>Vertex</ShaderType>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\..\Source\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Source\RakNet.vcproj" />

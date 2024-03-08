@@ -24,7 +24,8 @@
 	  <p><span class="RakNetBlueHeader">NAT Punchthrough Overview</span></p>
 <p>	    The NatPunchthroughClient.cpp plugin requires a user hosted server, not behind NAT, running NatPunchthroughServer.cpp that both clients can connect to. The server will find the external IP address of each client, and tell both clients to connect to that address at the same time. If that fails, each client will attempt to estimate the ports used by the other. If that fails, the process repeats once again, in case later port estimation opened a prior port. If that also fails, the plugin returns ID_NAT_PUNCHTHROUGH_FAILED.      </p>
 <p>Note 1: If you publish through Steam, we also provide <a href="steamlobby.html">SteamLobby</a>, which uses servers hosted by Valve, in which case NATPunchthrough is not necessary.<br>
-  Note 2: NAT Punchthrough is not necessary if exclusively using <a href="ipv6support.html">IPV6</a>. </p>
+  Note 2: NAT Punchthrough is not necessary if exclusively using <a href="ipv6support.html">IPV6</a>.<br>
+  Note 3: If your game is client/server only, you may simply enforce that servers must support UPNP. See <em>DependentExtensions\miniupnpc-1.6.20120410</em>. Most routers support this these days, and assuming UPNP passes, anyone can connect to you.</p>
 <p><span class="RakNetBlueHeader">NAT Punchthrough Algorithm</span></p>
 <ol>
   <li> Peer P1 wants to connect to peer P2, both of whom are connected to a third Non-NAT system, F</li>

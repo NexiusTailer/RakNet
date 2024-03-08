@@ -159,8 +159,6 @@ class DisplayHTMLPage : public RakNet::RackspaceEventCallback_Default
 
 int main()
 {
-	printf("TODO Rename RackspaceConsole.\nAdd RackspaceServerManager, uses CloudClient to monitor load, reboot lost servers.\n");
-
 #if OPEN_SSL_CLIENT_SUPPORT!=1
 	printf("RakNet must be built with OPEN_SSL_CLIENT_SUPPORT");
 	return 1;

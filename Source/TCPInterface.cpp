@@ -83,6 +83,85 @@ TCPInterface::~TCPInterface()
 	StringCompressor::RemoveReference();
 	RakNet::StringTable::RemoveReference();
 }
+#if !defined(WINDOWS_STORE_RT)
+bool TCPInterface::CreateListenSocket(unsigned short port, unsigned short maxIncomingConnections, unsigned short socketFamily)
+{
+	(void) socketFamily;
+#if RAKNET_SUPPORT_IPV6!=1
+	listenSocket = socket__(AF_INET, SOCK_STREAM, 0);
+	if ((int)listenSocket ==-1)
+		return false;
+
+	struct sockaddr_in serverAddress;
+	memset(&serverAddress,0,sizeof(sockaddr_in));
+	serverAddress.sin_family = AF_INET;
+
+	serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
+
+	serverAddress.sin_port = htons(port);
+
+	RakNetSocket rns;
+	rns.s=listenSocket;
+	SocketLayer::SetSocketOptions(&rns, false, false);
+	rns.s=0;
+
+	if (bind__(listenSocket,(struct sockaddr *) &serverAddress,sizeof(serverAddress)) < 0)
+		return false;
+
+	listen__(listenSocket, maxIncomingConnections);
+#else
+	struct addrinfo hints;
+	memset(&hints, 0, sizeof (addrinfo)); // make sure the struct is empty
+	hints.ai_family = socketFamily;     // don't care IPv4 or IPv6
+	hints.ai_socktype = SOCK_STREAM; // TCP sockets
+	hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
+	struct addrinfo *servinfo=0, *aip;  // will point to the results
+	char portStr[32];
+	Itoa(port,portStr,10);
+
+	getaddrinfo(0, portStr, &hints, &servinfo);
+	for (aip = servinfo; aip != NULL; aip = aip->ai_next)
+	{
+		// Open socket. The address type depends on what
+		// getaddrinfo() gave us.
+		listenSocket = socket__(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
+		if (listenSocket != 0)
+		{
+			int ret = bind__( listenSocket, aip->ai_addr, (int) aip->ai_addrlen );
+			if (ret>=0)
+			{
+				break;
+			}
+			else
+			{
+				closesocket__(listenSocket);
+				listenSocket=0;
+			}
+		}
+	}
+
+	if (listenSocket==0)
+		return false;
+
+	RakNetSocket rns;
+	rns.s=listenSocket;
+	SocketLayer::SetSocketOptions(&rns, false, false);
+	rns.s=0;
+
+	listen__(listenSocket, maxIncomingConnections);
+#endif // #if RAKNET_SUPPORT_IPV6!=1
+
+	return true;
+}
+#endif
+
+#if defined(WINDOWS_STORE_RT)
+bool TCPInterface::CreateListenSocket_WinStore8(unsigned short port, unsigned short maxIncomingConnections, unsigned short socketFamily)
+{
+	listenSocket = WinRTCreateStreamSocket(AF_INET, SOCK_STREAM, 0);
+	return true;
+}
+#endif
 bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnections, unsigned short maxConnections, int _threadPriority, unsigned short socketFamily)
 {
 #ifdef __native_client__
@@ -117,70 +196,16 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 	remoteClients=RakNet::OP_NEW_ARRAY<RemoteClient>(maxConnections,_FILE_AND_LINE_);
 
 
-#if RAKNET_SUPPORT_IPV6!=1
-	if (maxIncomingConnections>0)
-	{
-#if defined(WINDOWS_STORE_RT)
-		listenSocket = WinRTCreateStreamSocket(AF_INET, SOCK_STREAM, 0);
-#else
-		listenSocket = socket__(AF_INET, SOCK_STREAM, 0);
-		if ((int)listenSocket ==-1)
-			return false;
-#endif
-		struct sockaddr_in serverAddress;
-		memset(&serverAddress,0,sizeof(sockaddr_in));
-		serverAddress.sin_family = AF_INET;
-
-		serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
-
-		serverAddress.sin_port = htons(port);
-
-		if (bind__(listenSocket,(struct sockaddr *) &serverAddress,sizeof(serverAddress)) < 0)
-			return false;
-
-		listen__(listenSocket, maxIncomingConnections);
-	}
-#else
 	listenSocket=0;
 	if (maxIncomingConnections>0)
 	{
-		struct addrinfo hints;
-		memset(&hints, 0, sizeof (addrinfo)); // make sure the struct is empty
-		hints.ai_family = socketFamily;     // don't care IPv4 or IPv6
-		hints.ai_socktype = SOCK_STREAM; // TCP sockets
-		hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
-		struct addrinfo *servinfo=0, *aip;  // will point to the results
-		char portStr[32];
-		Itoa(port,portStr,10);
-
-		getaddrinfo(0, portStr, &hints, &servinfo);
-		for (aip = servinfo; aip != NULL; aip = aip->ai_next)
-		{
-			// Open socket. The address type depends on what
-			// getaddrinfo() gave us.
-			listenSocket = socket__(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
-			if (listenSocket != 0)
-			{
-				int ret = bind__( listenSocket, aip->ai_addr, (int) aip->ai_addrlen );
-				if (ret>=0)
-				{
-					break;
-				}
-				else
-				{
-					closesocket__(listenSocket);
-					listenSocket=0;
-				}
-			}
-		}
-
-		if (listenSocket==0)
-			return false;
-
-		listen__(listenSocket, maxIncomingConnections);
+#if defined(WINDOWS_STORE_RT)
+		CreateListenSocket_WinStore8(port, maxIncomingConnections, socketFamily);
+#else
+		CreateListenSocket(port, maxIncomingConnections, socketFamily);
+#endif
 	}
-#endif // #if RAKNET_SUPPORT_IPV6!=1
-	
+
 
 	// Start the update thread
 	int errorCode;
@@ -197,17 +222,24 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 
 	while (threadRunning.GetValue()==0)
 		RakSleep(0);
+	
+	unsigned int i;
+	for (i=0; i < messageHandlerList.Size(); i++)
+		messageHandlerList[i]->OnRakPeerStartup();
 
 	return true;
 #endif  // __native_client__
 }
 void TCPInterface::Stop(void)
 {
+	unsigned int i;
+	for (i=0; i < messageHandlerList.Size(); i++)
+		messageHandlerList[i]->OnRakPeerShutdown();
+
 #ifndef __native_client__
 	if (isStarted.GetValue()==0)
 		return;
 
-	unsigned i;
 #if OPEN_SSL_CLIENT_SUPPORT==1
 	for (i=0; i < remoteClientsLength; i++)
 		remoteClients[i].DisconnectSSL();
@@ -452,6 +484,37 @@ bool TCPInterface::ReceiveHasPackets( void )
 }
 Packet* TCPInterface::Receive( void )
 {
+	unsigned int i;
+	for (i=0; i < messageHandlerList.Size(); i++)
+		messageHandlerList[i]->Update();
+
+	Packet* outgoingPacket = ReceiveInt();
+
+	if (outgoingPacket)
+	{
+		PluginReceiveResult pluginResult;
+		for (i=0; i < messageHandlerList.Size(); i++)
+		{
+			pluginResult=messageHandlerList[i]->OnReceive(outgoingPacket);
+			if (pluginResult==RR_STOP_PROCESSING_AND_DEALLOCATE)
+			{
+				DeallocatePacket( outgoingPacket );
+				outgoingPacket=0; // Will do the loop again and get another packet
+				break; // break out of the enclosing for
+			}
+			else if (pluginResult==RR_STOP_PROCESSING)
+			{
+				outgoingPacket=0;
+				break;
+			}
+		}
+	}
+	
+
+	return outgoingPacket;
+}
+Packet* TCPInterface::ReceiveInt( void )
+{
 	if (isStarted.GetValue()==0)
 		return 0;
 	if (headPush.IsEmpty()==false)
@@ -463,13 +526,44 @@ Packet* TCPInterface::Receive( void )
 		return tailPush.Pop();
 	return 0;
 }
+
+
+void TCPInterface::AttachPlugin( PluginInterface2 *plugin )
+{
+	if (messageHandlerList.GetIndexOf(plugin)==MAX_UNSIGNED_LONG)
+	{
+		messageHandlerList.Insert(plugin, _FILE_AND_LINE_);
+		plugin->SetTCPInterface(this);
+		plugin->OnAttach();
+	}
+}
+void TCPInterface::DetachPlugin( PluginInterface2 *plugin )
+{
+	if (plugin==0)
+		return;
+
+	unsigned int index;
+	index = messageHandlerList.GetIndexOf(plugin);
+	if (index!=MAX_UNSIGNED_LONG)
+	{
+		messageHandlerList[index]->OnDetach();
+		// Unordered list so delete from end for speed
+		messageHandlerList[index]=messageHandlerList[messageHandlerList.Size()-1];
+		messageHandlerList.RemoveFromEnd();
+		plugin->SetTCPInterface(0);
+	}
+}
 void TCPInterface::CloseConnection( SystemAddress systemAddress )
 {
 	if (isStarted.GetValue()==0)
 		return;
 	if (systemAddress==UNASSIGNED_SYSTEM_ADDRESS)
 		return;
-	
+
+	unsigned int i;
+	for (i=0; i < messageHandlerList.Size(); i++)
+		messageHandlerList[i]->OnClosedConnection(systemAddress, UNASSIGNED_RAKNET_GUID, LCR_CLOSED_BY_USER);
+
 	if (systemAddress.systemIndex<remoteClientsLength && remoteClients[systemAddress.systemIndex].systemAddress==systemAddress)
 	{
 		remoteClients[systemAddress.systemIndex].isActiveMutex.Lock();
@@ -537,78 +631,6 @@ bool TCPInterface::WasStarted(void) const
 {
 	return threadRunning.GetValue()>0;
 }
-int TCPInterface::Base64Encoding(const char *inputData, int dataLength, char *outputData)
-{
-	// http://en.wikipedia.org/wiki/Base64
-
-	int outputOffset, charCount;
-	int write3Count;
-	outputOffset=0;
-	charCount=0;
-	int j;
-
-	write3Count=dataLength/3;
-	for (j=0; j < write3Count; j++)
-	{
-		// 6 leftmost bits from first byte, shifted to bits 7,8 are 0
-		outputData[outputOffset++]=Base64Map()[inputData[j*3+0] >> 2];
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// Remaining 2 bits from first byte, placed in position, and 4 high bits from the second byte, masked to ignore bits 7,8
-		outputData[outputOffset++]=Base64Map()[((inputData[j*3+0] << 4) | (inputData[j*3+1] >> 4)) & 63];
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// 4 low bits from the second byte and the two high bits from the third byte, masked to ignore bits 7,8
-		outputData[outputOffset++]=Base64Map()[((inputData[j*3+1] << 2) | (inputData[j*3+2] >> 6)) & 63]; // Third 6 bits
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// Last 6 bits from the third byte, masked to ignore bits 7,8
-		outputData[outputOffset++]=Base64Map()[inputData[j*3+2] & 63];
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-	}
-
-	if (dataLength % 3==1)
-	{
-		// One input byte remaining
-		outputData[outputOffset++]=Base64Map()[inputData[j*3+0] >> 2];
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// Remaining 2 bits from first byte, placed in position, and 4 high bits from the second byte, masked to ignore bits 7,8
-		outputData[outputOffset++]=Base64Map()[((inputData[j*3+0] << 4) | (inputData[j*3+1] >> 4)) & 63];
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// Pad with two equals
-		outputData[outputOffset++]='=';
-		outputData[outputOffset++]='=';
-	}
-	else if (dataLength % 3==2)
-	{
-		// Two input bytes remaining
-
-		// 6 leftmost bits from first byte, shifted to bits 7,8 are 0
-		outputData[outputOffset++]=Base64Map()[inputData[j*3+0] >> 2];
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// Remaining 2 bits from first byte, placed in position, and 4 high bits from the second byte, masked to ignore bits 7,8
-		outputData[outputOffset++]=Base64Map()[((inputData[j*3+0] << 4) | (inputData[j*3+1] >> 4)) & 63];
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// 4 low bits from the second byte, followed by 00
-		outputData[outputOffset++]=Base64Map()[(inputData[j*3+1] << 2) & 63]; // Third 6 bits
-		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-
-		// Pad with one equal
-		outputData[outputOffset++]='=';
-		//outputData[outputOffset++]='=';
-	}
-
-	// Append \r\n
-	outputData[outputOffset++]='\r';
-	outputData[outputOffset++]='\n';
-	outputData[outputOffset]=0;
-
-	return outputOffset;
-}
 SystemAddress TCPInterface::HasCompletedConnectionAttempt(void)
 {
 	SystemAddress sysAddr=UNASSIGNED_SYSTEM_ADDRESS;
@@ -616,6 +638,14 @@ SystemAddress TCPInterface::HasCompletedConnectionAttempt(void)
 	if (completedConnectionAttempts.IsEmpty()==false)
 		sysAddr=completedConnectionAttempts.Pop();
 	completedConnectionAttemptMutex.Unlock();
+
+	if (sysAddr!=UNASSIGNED_SYSTEM_ADDRESS)
+	{
+		unsigned int i;
+		for (i=0; i < messageHandlerList.Size(); i++)
+			messageHandlerList[i]->OnNewConnection(sysAddr, UNASSIGNED_RAKNET_GUID, true);
+	}
+
 	return sysAddr;
 }
 SystemAddress TCPInterface::HasFailedConnectionAttempt(void)
@@ -625,6 +655,21 @@ SystemAddress TCPInterface::HasFailedConnectionAttempt(void)
 	if (failedConnectionAttempts.IsEmpty()==false)
 		sysAddr=failedConnectionAttempts.Pop();
 	failedConnectionAttemptMutex.Unlock();
+
+	if (sysAddr!=UNASSIGNED_SYSTEM_ADDRESS)
+	{
+		unsigned int i;
+		for (i=0; i < messageHandlerList.Size(); i++)
+		{
+			Packet p;
+			p.systemAddress=sysAddr;
+			p.data=0;
+			p.length=0;
+			p.bitSize=0;
+			messageHandlerList[i]->OnFailedConnectionAttempt(&p, FCAR_CONNECTION_ATTEMPT_FAILED);
+		}
+	}
+
 	return sysAddr;
 }
 SystemAddress TCPInterface::HasNewIncomingConnection(void)
@@ -635,6 +680,11 @@ SystemAddress TCPInterface::HasNewIncomingConnection(void)
 	{
 		out2=*out;
 		newIncomingConnections.Deallocate(out, _FILE_AND_LINE_);
+
+		unsigned int i;
+		for (i=0; i < messageHandlerList.Size(); i++)
+			messageHandlerList[i]->OnNewConnection(out2, UNASSIGNED_RAKNET_GUID, true);
+
 		return *out;
 	}
 	else
@@ -650,6 +700,11 @@ SystemAddress TCPInterface::HasLostConnection(void)
 	{
 		out2=*out;
 		lostConnections.Deallocate(out, _FILE_AND_LINE_);
+
+		unsigned int i;
+		for (i=0; i < messageHandlerList.Size(); i++)
+			messageHandlerList[i]->OnClosedConnection(out2, UNASSIGNED_RAKNET_GUID, LCR_DISCONNECTION_NOTIFICATION);
+
 		return *out;
 	}
 	else
@@ -1131,7 +1186,8 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 									bytesSent=rc->Send(contiguousBytesPointer,contiguousLength);
 								}
 
-								rc->outgoingData.IncrementReadOffset(bytesSent);
+								if (bytesSent>0)
+									rc->outgoingData.IncrementReadOffset(bytesSent);
 								bytesInBuffer=rc->outgoingData.GetBytesWritten();
 							}
 							rc->outgoingDataMutex.Unlock();

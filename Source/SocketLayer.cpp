@@ -16,9 +16,11 @@
 
 using namespace RakNet;
 
+/*
 #if defined(__native_client__)
 using namespace pp;
 #endif
+*/
 
 #if USE_SLIDING_WINDOW_CONGESTION_CONTROL!=1
 #include "CCRakNetUDT.h"
@@ -26,7 +28,7 @@ using namespace pp;
 #include "CCRakNetSlidingWindow.h"
 #endif
 
-SocketLayerOverride *SocketLayer::slo=0;
+//SocketLayerOverride *SocketLayer::slo=0;
 
 #ifdef _WIN32
 #else
@@ -85,12 +87,13 @@ namespace RakNet
 #include <stdio.h>
 #endif
 
+
+/*
 #ifdef __native_client__
 
 namespace RakNet
 {
 
-	/*
 // Native Client only allows one SendTo call to be in-flight at once, so if a
 // send is still in progress and we haven't gotten a callback yet, we queue up
 // up to one packet in the socket implementation to be sent immediately as soon
@@ -126,19 +129,19 @@ SocketImpl::SocketImpl()
 SocketImpl::~SocketImpl()
 {
 	if(s != 0)
-		((PPB_UDPSocket_Private_0_3*) pp::Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))->Close(s);
+		((PPB_UDPSocket_Private_0_4*) pp::Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))->Close(s);
 }
 
 void CloseSocket(RakNetSocket *s)
 {
 	RakNet::OP_DELETE(s, _FILE_AND_LINE_);
 	}
-	*/
 
 }  // namespace RakNet
 
 #endif  // __native_client__
 
+*/
 
 
 // http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html#ip4to6
@@ -310,9 +313,9 @@ bool SocketLayer::IsPortInUse(unsigned short port, const char *hostAddress, unsi
 }
 void SocketLayer::SetDoNotFragment( RakNetSocket* listenSocket, int opt )
 {
-#if defined(IP_DONTFRAGMENT )
+#if defined( IP_DONTFRAGMENT )
 
-#if defined(_WIN32) &&  !defined(_DEBUG) 
+#if defined(_WIN32) && !defined(_DEBUG)
 	// If this assert hit you improperly linked against WSock32.h
 	RakAssert(IP_DONTFRAGMENT==14);
 #endif
@@ -321,7 +324,7 @@ void SocketLayer::SetDoNotFragment( RakNetSocket* listenSocket, int opt )
 
 	if ( listenSocket->SetSockOpt( listenSocket->GetBoundAddress().GetIPPROTO(), IP_DONTFRAGMENT, ( char * ) & opt, sizeof ( opt ) ) == -1 )
 	{
-#if defined(_WIN32) && defined(_DEBUG) && !defined(WINDOWS_PHONE_8) 
+#if defined(_WIN32) && defined(_DEBUG) && !defined(WINDOWS_PHONE_8)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -350,7 +353,7 @@ void SocketLayer::SetNonBlocking( RakNetSocket* listenSocket)
 #endif
 }
 
-void SocketLayer::SetSocketOptions( RakNetSocket* listenSocket, bool blockingSocket)
+void SocketLayer::SetSocketOptions( RakNetSocket* listenSocket, bool blockingSocket, bool setBroadcast)
 {
 #ifdef __native_client__
 	(void) listenSocket;
@@ -407,28 +410,32 @@ void SocketLayer::SetSocketOptions( RakNetSocket* listenSocket, bool blockingSoc
 
 	// TODO - teston ipv6
 
-	// Note: Fails with VDP but not xbox
-	// Set broadcast capable
-	sock_opt=1;
-	if ( listenSocket->SetSockOpt( SOL_SOCKET, SO_BROADCAST, ( char * ) & sock_opt, sizeof( sock_opt ) ) == -1 )
+	if (setBroadcast)
 	{
+		// Note: Fails with VDP but not xbox
+		// Set broadcast capable
+		sock_opt=1;
+		if ( listenSocket->SetSockOpt( SOL_SOCKET, SO_BROADCAST, ( char * ) & sock_opt, sizeof( sock_opt ) ) == -1 )
+		{
 #if defined(_WIN32) && defined(_DEBUG)
-#if   !defined(WINDOWS_PHONE_8)
-	DWORD dwIOError = GetLastError();
-	// On Vista, can get WSAEACCESS (10013)
-	// See http://support.microsoft.com/kb/819124
-	// http://blogs.msdn.com/wndp/archive/2007/03/19/winsock-so-exclusiveaddruse-on-vista.aspx
-	// http://msdn.microsoft.com/en-us/library/ms740621(VS.85).aspx
-	LPVOID messageBuffer;
-	FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
-		( LPTSTR ) & messageBuffer, 0, NULL );
-	// something has gone wrong here...
-	RAKNET_DEBUG_PRINTF( "setsockopt__(SO_BROADCAST) failed:Error code - %d\n%s", dwIOError, messageBuffer );
-	//Free the buffer.
-	LocalFree( messageBuffer );
+#if  !defined(WINDOWS_PHONE_8)
+			DWORD dwIOError = GetLastError();
+			// On Vista, can get WSAEACCESS (10013)
+			// See http://support.microsoft.com/kb/819124
+			// http://blogs.msdn.com/wndp/archive/2007/03/19/winsock-so-exclusiveaddruse-on-vista.aspx
+			// http://msdn.microsoft.com/en-us/library/ms740621(VS.85).aspx
+			LPVOID messageBuffer;
+			FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+				NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
+				( LPTSTR ) & messageBuffer, 0, NULL );
+			// something has gone wrong here...
+			RAKNET_DEBUG_PRINTF( "setsockopt__(SO_BROADCAST) failed:Error code - %d\n%s", dwIOError, messageBuffer );
+			//Free the buffer.
+			LocalFree( messageBuffer );
 #endif
 #endif
+
+		}
 
 	}
 
@@ -592,6 +599,7 @@ RakNetSocket *SocketLayer::CreateBoundSocket_PSP2( unsigned short port, bool blo
 	return 0;
 
 }
+/*
 #ifdef __native_client__
 struct SocketAndBuffer
 {
@@ -607,7 +615,7 @@ void onRecvFrom(void* pData, int32_t dataSize);
 void ChromeRecvFrom(SocketAndBuffer *sab)
 {	
 	PP_CompletionCallback cc = PP_MakeCompletionCallback(onRecvFrom, sab);
-	((PPB_UDPSocket_Private_0_3*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))->RecvFrom(sab->chromeSocket->s, sab->buffer, MAXIMUM_MTU_SIZE, cc);
+	((PPB_UDPSocket_Private_0_4*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))->RecvFrom(sab->chromeSocket->s, sab->buffer, MAXIMUM_MTU_SIZE, cc);
 }
 
 void onSendTo(void* pData, int32_t dataSize)
@@ -627,7 +635,7 @@ void onSendTo(void* pData, int32_t dataSize)
 		int bufSize = s->nextSendSize;
 		s->nextSendSize = 0;
 		PP_CompletionCallback cc = PP_MakeCompletionCallback(onSendTo, s);
-		((PPB_UDPSocket_Private_0_3*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))->SendTo(s->s, s->nextSendBuffer, bufSize, &s->nextSendAddr, cc);
+		((PPB_UDPSocket_Private_0_4*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))->SendTo(s->s, s->nextSendBuffer, bufSize, &s->nextSendAddr, cc);
 	}
 	else
 	{
@@ -657,7 +665,7 @@ void onRecvFrom(void* pData, int32_t dataSize)
 
 			// Reissue call
 			PP_CompletionCallback cc = PP_MakeCompletionCallback(onRecvFrom, sab);
-			((PPB_UDPSocket_Private_0_3*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))->RecvFrom(sab->chromeSocket->s, sab->buffer, MAXIMUM_MTU_SIZE, cc);
+			((PPB_UDPSocket_Private_0_4*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))->RecvFrom(sab->chromeSocket->s, sab->buffer, MAXIMUM_MTU_SIZE, cc);
 		}
 
 		return;
@@ -667,7 +675,7 @@ void onRecvFrom(void* pData, int32_t dataSize)
 	sab->timeRead=RakNet::GetTimeUS();
 	PP_NetAddress_Private addr;
 	bool ok=false;
-	if(((PPB_UDPSocket_Private_0_3*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))->GetRecvFromAddress(sab->chromeSocket->s, &addr) == PP_TRUE)
+	if(((PPB_UDPSocket_Private_0_4*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))->GetRecvFromAddress(sab->chromeSocket->s, &addr) == PP_TRUE)
 	{
 		PP_NetAddressFamily_Private family = NetAddressPrivate::GetFamily(addr);
 		if (family == PP_NETADDRESSFAMILY_IPV4)
@@ -731,12 +739,17 @@ void onSocketBound(void* pData, int32_t dataSize)
 }
 RakNetSocket* CreateChromeSocket(RakPeer *peer, unsigned short port, const char *forceHostAddress, _PP_Instance_ chromeInstance, bool is_ipv6)
 {
-	if(Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))
+	if(Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))
 	{
 		RakNetSocket *s = RakNetSocket::Create(chromeInstance);
 		// RakNet::OP_NEW<SocketImpl>(_FILE_AND_LINE_);
-		//s->s = ((PPB_UDPSocket_Private_0_3*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))->Create(chromeInstance);
+		//s->s = ((PPB_UDPSocket_Private_0_4*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))->Create(chromeInstance);
 		RAKNET_DEBUG_PRINTF("CreateChromeSocket(%d,%s,0x%08x,%d) ==> 0x%08x\n", port, forceHostAddress?forceHostAddress:"(null)",chromeInstance,is_ipv6, s->s);
+		
+		// Enable the broadcast feature on the socket (must happen before the
+		// bind call)
+		((PPB_UDPSocket_Private_0_4*) pp::Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))->SetSocketFeature(s->s, PP_UDPSOCKETFEATURE_BROADCAST, PP_MakeBool(PP_TRUE));
+		
 		PP_NetAddress_Private client_addr;
 		uint8_t ipv6[16], ipv4[4];
 		if (forceHostAddress)
@@ -773,18 +786,32 @@ RakNetSocket* CreateChromeSocket(RakPeer *peer, unsigned short port, const char 
 		csc->s=s;
 		RAKNET_DEBUG_PRINTF("attempting to bind to %s\n", NetAddressPrivate::Describe(client_addr, true).c_str());
 		PP_CompletionCallback cc = PP_MakeCompletionCallback(onSocketBound, csc);
-		((PPB_UDPSocket_Private_0_3*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))->Bind(s->s, &client_addr, cc);
+		((PPB_UDPSocket_Private_0_4*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))->Bind(s->s, &client_addr, cc);
 		return s;
 	}
 	return 0;
 }
 #endif
+*/
+#if defined(WINDOWS_STORE_RT)
+RakNetSocket* SocketLayer::CreateWindowsStore8Socket( RakPeer *peer, unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned int sleepOn10048, unsigned int extraSocketOptions, _PP_Instance_ chromeInstance )
+{
+	// Create the socket
+	Windows::Networking::Sockets::DatagramSocket udpSocket = ref new DatagramSocket();
 
+	// Set socket options
+
+	// Bind the socket
+
+	return true;
+}
+#endif
 // void onSocketBound(void* pData, int32_t dataSize)
-RakNetSocket *SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned int sleepOn10048, unsigned int extraSocketOptions, _PP_Instance_ chromeInstance )
+RakNetSocket *SocketLayer::CreateBoundSocket_IPV4( RakPeer *peer, unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned int sleepOn10048, unsigned int extraSocketOptions, _PP_Instance_ chromeInstance )
 {
 #ifdef __native_client__
-	return CreateChromeSocket(peer,port,forceHostAddress,chromeInstance,false);
+//	return CreateChromeSocket(peer,port,forceHostAddress,chromeInstance,false);
+	return 0;
 #else
 	(void) peer;
 	(void) chromeInstance;
@@ -805,7 +832,7 @@ RakNetSocket *SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short 
 
 	if ( listenSocket == 0 )
 	{
-#if defined(_WIN32) &&  defined(_DEBUG) && !defined(WINDOWS_PHONE_8) 
+#if defined(_WIN32) && defined(_DEBUG) && !defined(WINDOWS_PHONE_8)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -826,7 +853,7 @@ RakNetSocket *SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short 
 	listenSocket->SetExtraSocketOptions(extraSocketOptions);
 	listenSocket->SetChromeInstance(chromeInstance);
 
-	SetSocketOptions(listenSocket, blockingSocket);
+	SetSocketOptions(listenSocket, blockingSocket, true);
 
 	// Fill in the rest of the address structure
 	listenerSocketAddress.sin_family = AF_INET;
@@ -867,7 +894,7 @@ RakNetSocket *SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short 
 
 		RakNet::OP_DELETE(listenSocket,_FILE_AND_LINE_);
 
-#if defined(_WIN32) 
+#if defined(_WIN32)
 		DWORD dwIOError = GetLastError();
 		if (dwIOError==10048)
 		{
@@ -886,7 +913,7 @@ RakNetSocket *SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short 
 			listenSocket->SetExtraSocketOptions(extraSocketOptions);
 			listenSocket->SetChromeInstance(chromeInstance);
 
-			SetSocketOptions(listenSocket, blockingSocket);
+			SetSocketOptions(listenSocket, blockingSocket, true);
 
 			// Fill in the rest of the address structure
 			listenerSocketAddress.sin_family = AF_INET;
@@ -908,7 +935,7 @@ RakNetSocket *SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short 
 				return listenSocket;
 		}
 
-  #if !defined(WINDOWS_PHONE_8) 
+ #if !defined(WINDOWS_PHONE_8)
 		dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -919,7 +946,7 @@ RakNetSocket *SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short 
 		//Free the buffer.
 		LocalFree( messageBuffer );
 		#endif
-#elif (defined(__GNUC__) || defined(__GCCXML__)  ) && !defined(_WIN32)
+#elif (defined(__GNUC__) || defined(__GCCXML__) ) && !defined(_WIN32)
 		switch (ret)
 		{
 		case EBADF:
@@ -961,30 +988,18 @@ RakNetSocket *SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short 
 
 #endif
 }
-RakNetSocket *SocketLayer::CreateBoundSocket( RakPeer *peer, unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned int sleepOn10048, unsigned int extraSocketOptions, unsigned short socketFamily, _PP_Instance_ chromeInstance )
+#if RAKNET_SUPPORT_IPV6==1
+RakNetSocket *SocketLayer::CreateBoundSocket_SupportIPV4And6( RakPeer *peer, unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned int sleepOn10048, unsigned int extraSocketOptions, unsigned short socketFamily, _PP_Instance_ chromeInstance )
 {
-	(void) peer;
-	(void) blockingSocket;
-	(void) extraSocketOptions;
-	(void) socketFamily;
-	(void) chromeInstance;
-
-#if RAKNET_SUPPORT_IPV6!=1
-	return CreateBoundSocket_Old(peer,port,blockingSocket,forceHostAddress,sleepOn10048,extraSocketOptions, chromeInstance);
-#else
-
-#ifdef __native_client__
-	return CreateChromeSocket(peer,port,forceHostAddress,chromeInstance,true);
-#else
-	(void) blockingSocket;
-#endif
-
-
 #ifdef _WIN32
 	// Vista has a bug where it returns WSAEADDRINUSE (10048) if you create, shutdown, then rebind the socket port unless you wait a while first.
 	if (sleepOn10048==0)
 		RakSleep(100);
 #endif
+
+	(void) chromeInstance;
+	(void) extraSocketOptions;
+	(void) peer;
 
 	int ret=0;
 	RakNetSocket* listenSocket;
@@ -1022,8 +1037,8 @@ RakNetSocket *SocketLayer::CreateBoundSocket( RakPeer *peer, unsigned short port
 				memcpy(&addr6, aip->ai_addr, sizeof(addr6));
 
 				freeaddrinfo(servinfo); // free the linked-list
-				
-				SetSocketOptions(listenSocket, blockingSocket);
+
+				SetSocketOptions(listenSocket, blockingSocket, true);
 				return listenSocket;
 			}
 			else
@@ -1033,7 +1048,7 @@ RakNetSocket *SocketLayer::CreateBoundSocket( RakPeer *peer, unsigned short port
 		}
 	}
 
-#if defined(_WIN32) 
+#if defined(_WIN32)
 	DWORD dwIOError = GetLastError();
 	LPVOID messageBuffer;
 	FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -1078,10 +1093,32 @@ RakNetSocket *SocketLayer::CreateBoundSocket( RakPeer *peer, unsigned short port
 	}
 #endif
 
+	return 0;
+}
+#endif // RAKNET_SUPPORT_IPV6==1
+RakNetSocket *SocketLayer::CreateBoundSocket( RakPeer *peer, unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned int sleepOn10048, unsigned int extraSocketOptions, unsigned short socketFamily, _PP_Instance_ chromeInstance )
+{
+	(void) peer;
+	(void) blockingSocket;
+	(void) extraSocketOptions;
+	(void) socketFamily;
+	(void) chromeInstance;
+
+#ifdef __native_client__
+	// eturn CreateChromeSocket(peer,port,forceHostAddress,chromeInstance,true);
+	return 0;
+#elif defined(WINDOWS_STORE_RT)
+	return CreateWindowsStore8Socket(peer,port,blockingSocket,forceHostAddress,sleepOn10048,extraSocketOptions, chromeInstance);
+#else
+	(void) blockingSocket;
+
+	#if RAKNET_SUPPORT_IPV6!=1
+		return CreateBoundSocket_IPV4(peer,port,blockingSocket,forceHostAddress,sleepOn10048,extraSocketOptions, chromeInstance);
+	#else
+		return CreateBoundSocket_SupportIPV4And6(peer,port,blockingSocket,forceHostAddress,sleepOn10048,extraSocketOptions, socketFamily, chromeInstance);
+	#endif
 
 #endif
-
-	return 0;
 }
 const char* SocketLayer::DomainNameToIP_Old( const char *domainName )
 {
@@ -1240,7 +1277,12 @@ void SocketLayer::Write( RakNetSocket*writeSocket, const char* data, const int l
 	writeSocket->Send( data, length, 0 );
 #endif
 }
-void SocketLayer::RecvFromBlocking_Old( RakNetSocket *s, RakPeer *rakPeer, char *dataOut, int *bytesReadOut, SystemAddress *systemAddressOut, RakNet::TimeUS *timeRead )
+#if defined(WINDOWS_STORE_RT)
+void SocketLayer::RecvFromBlocking_WindowsStore8( RakNetSocket *s, RakPeer *rakPeer, char *dataOut, int *bytesReadOut, SystemAddress *systemAddressOut, RakNet::TimeUS *timeRead )
+{
+}
+#endif
+void SocketLayer::RecvFromBlocking_IPV4( RakNetSocket *s, RakPeer *rakPeer, char *dataOut, int *bytesReadOut, SystemAddress *systemAddressOut, RakNet::TimeUS *timeRead )
 {
 	(void) rakPeer;
 
@@ -1315,31 +1357,9 @@ void SocketLayer::RecvFromBlocking_Old( RakNetSocket *s, RakPeer *rakPeer, char 
 
 #endif // __native_client__
 }
-
-void SocketLayer::RecvFromBlocking( RakNetSocket *s, RakPeer *rakPeer, char *dataOut, int *bytesReadOut, SystemAddress *systemAddressOut, RakNet::TimeUS *timeRead )
+#if RAKNET_SUPPORT_IPV6==1
+void SocketLayer::RecvFromBlockingIPV4And6( RakNetSocket *s, RakPeer *rakPeer, char *dataOut, int *bytesReadOut, SystemAddress *systemAddressOut, RakNet::TimeUS *timeRead )
 {
-#ifdef __native_client__
-	if (sabHead)
-	{
-		// Actually nonblocking in this case
-		*bytesReadOut = sabHead->dataSize;
-		memcpy(dataOut, sabHead->buffer, sabHead->dataSize);
-		*systemAddressOut=sabHead->recvFromAddress;
-		*timeRead = sabHead->timeRead;
-		SocketAndBuffer *sabNext=sabHead->next;
-		RakNet::OP_DELETE(sabHead, _FILE_AND_LINE_);
-		sabHead=sabNext;
-	}
-	else
-	{
-		*bytesReadOut=0;
-	}
-	return;
-#endif
-
-#if RAKNET_SUPPORT_IPV6!=1
-	RecvFromBlocking_Old(s,rakPeer,dataOut,bytesReadOut,systemAddressOut,timeRead);
-#else
 	(void) rakPeer;
 	sockaddr_storage their_addr;
 	sockaddr* sockAddrPtr;
@@ -1397,17 +1417,51 @@ void SocketLayer::RecvFromBlocking( RakNetSocket *s, RakPeer *rakPeer, char *dat
 		{
 			memcpy(&systemAddressOut->address.addr4,(sockaddr_in *)&their_addr,sizeof(sockaddr_in));
 			systemAddressOut->debugPort=ntohs(systemAddressOut->address.addr4.sin_port);
-		//	systemAddressOut->address.addr4.sin_port=ntohs( systemAddressOut->address.addr4.sin_port );
+			//	systemAddressOut->address.addr4.sin_port=ntohs( systemAddressOut->address.addr4.sin_port );
 		}
 		else
 		{
 			memcpy(&systemAddressOut->address.addr6,(sockaddr_in6 *)&their_addr,sizeof(sockaddr_in6));
 			systemAddressOut->debugPort=ntohs(systemAddressOut->address.addr6.sin6_port);
-		//	systemAddressOut->address.addr6.sin6_port=ntohs( systemAddressOut->address.addr6.sin6_port );
+			//	systemAddressOut->address.addr6.sin6_port=ntohs( systemAddressOut->address.addr6.sin6_port );
 		}
 	}
+}
+#endif
+void SocketLayer::RecvFromBlocking( RakNetSocket *s, RakPeer *rakPeer, char *dataOut, int *bytesReadOut, SystemAddress *systemAddressOut, RakNet::TimeUS *timeRead )
+{
+	/*
+#ifdef __native_client__
+	if (sabHead)
+	{
+		// Actually nonblocking in this case
+		*bytesReadOut = sabHead->dataSize;
+		memcpy(dataOut, sabHead->buffer, sabHead->dataSize);
+		*systemAddressOut=sabHead->recvFromAddress;
+		*timeRead = sabHead->timeRead;
+		SocketAndBuffer *sabNext=sabHead->next;
+		RakNet::OP_DELETE(sabHead, _FILE_AND_LINE_);
+		sabHead=sabNext;
+	}
+	else
+	{
+		*bytesReadOut=0;
+	}
+	return;
+#endif
+	*/
 
-#endif // defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
+#if defined(WINDOWS_STORE_RT)
+	return RecvFromBlocking_WindowsStore8(s, rakPeer, dataOut, bytesReadOut, systemAddressOut, timeRead);
+#else
+
+	#if RAKNET_SUPPORT_IPV6!=1
+		RecvFromBlocking_IPV4(s,rakPeer,dataOut,bytesReadOut,systemAddressOut,timeRead);
+	#else
+		RecvFromBlockingIPV4And6(s,rakPeer,dataOut,bytesReadOut,systemAddressOut,timeRead);
+	#endif // defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
+#endif
+
 }
 
 int SocketLayer::SendTo_PS3Lobby( RakNetSocket *s, const char *data, int length, const SystemAddress &systemAddress )
@@ -1511,9 +1565,17 @@ int SocketLayer::SendTo_360( RakNetSocket *s, const char *data, int length, cons
 
 	return len;
 }
+#if defined(WINDOWS_STORE_RT)
+int SocketLayer::SendTo_WindowsStore8( RakNetSocket *s, const char *data, int length, const SystemAddress &systemAddress, const char *file, const long line )
+{
+
+	return 1;
+}
+#endif
 int SocketLayer::SendTo_PC( RakNetSocket *s, const char *data, int length, const SystemAddress &systemAddress, const char *file, const long line )
 {
 #ifdef __native_client__
+	/*
 	// Assuming data does not have to remain valid until callback called
 	PP_NetAddress_Private client_addr;
 #if RAKNET_SUPPORT_IPV6==1
@@ -1528,7 +1590,7 @@ int SocketLayer::SendTo_PC( RakNetSocket *s, const char *data, int length, const
 	{
 		s->sendInProgress = true;
 		PP_CompletionCallback cc = PP_MakeCompletionCallback(onSendTo, s);
-		return ((PPB_UDPSocket_Private_0_3*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))->SendTo(s->s, data, length, &client_addr, cc);
+		return ((PPB_UDPSocket_Private_0_4*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))->SendTo(s->s, data, length, &client_addr, cc);
 	}
 	else if (s->nextSendSize == 0)
 	{
@@ -1544,6 +1606,8 @@ int SocketLayer::SendTo_PC( RakNetSocket *s, const char *data, int length, const
 		// Send in progress and no room in queue
 		return -1;
 	}
+	*/
+	return -1;
 #else
 	// TODO
 	// http://www.linuxquestions.org/questions/linux-software-2/ipv6-linux-sendto-problems-519485/
@@ -1609,17 +1673,17 @@ int SocketLayer::SendTo( RakNetSocket *s, const char *data, int length, SystemAd
 {
 	int len=0;
 	RakAssert(length<=MAXIMUM_MTU_SIZE-UDP_HEADER_SIZE);
-#if   !defined(__S3E__)
+#if  !defined(__S3E__)
 	RakAssert(systemAddress.address.addr4.sin_family!=AF_MAX);
 #endif
-
-	if (slo)
-	{
-		len = slo->RakNetSendTo(s,data,length,systemAddress);
-		if ( len != -1 )
-			return 0;
-		return 1;
-	}
+// 
+// 	if (slo)
+// 	{
+// 		len = slo->RakNetSendTo(data,length,systemAddress);
+// 		if ( len != -1 )
+// 			return 0;
+// 		return 1;
+// 	}
 
 	if ( s == 0 )
 	{
@@ -1639,10 +1703,13 @@ int SocketLayer::SendTo( RakNetSocket *s, const char *data, int length, SystemAd
 	{
 
 
+#if defined(WINDOWS_STORE_RT)
+		len = SendTo_WindowsStore8(s,data,length,systemAddress,file,line);
 
 
 
 
+#endif
 		len = SendTo_PC(s,data,length,systemAddress,file,line);
 
 	}
@@ -1663,7 +1730,7 @@ int SocketLayer::SendTo( RakNetSocket *s, const char *data, int length, SystemAd
 	}
 	else if ( dwIOError != WSAEWOULDBLOCK && dwIOError != WSAEADDRNOTAVAIL)
 	{
-#if defined(_WIN32) &&  defined(_DEBUG) 
+#if defined(_WIN32) && defined(_DEBUG) && !defined(WINDOWS_PHONE_8)
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 			NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
@@ -1691,16 +1758,16 @@ int SocketLayer::SendTo( RakNetSocket *s, const char *data, int length, SystemAd
 // }
 int SocketLayer::SendToTTL( RakNetSocket *s, const char *data, int length, SystemAddress &systemAddress, int ttl )
 {
-	if (slo)
-		return slo->RakNetSendTo(s,data,length,systemAddress);
+// 	if (slo)
+// 		return slo->RakNetSendTo(data,length,systemAddress);
 
-#if   !defined(__native_client__)
+#if  !defined(__native_client__)
 	int oldTTL;
 	socklen_t opLen=sizeof(oldTTL);
 	// Get the current TTL
 	if (s->GetSockOpt(systemAddress.GetIPPROTO(), IP_TTL, ( char * ) & oldTTL, &opLen ) == -1)
 	{
-#if defined(_WIN32) && defined(_DEBUG) && !defined(WINDOWS_PHONE_8) 
+#if defined(_WIN32) && defined(_DEBUG) && !defined(WINDOWS_PHONE_8)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -1718,7 +1785,7 @@ int SocketLayer::SendToTTL( RakNetSocket *s, const char *data, int length, Syste
 	if (s->SetSockOpt(systemAddress.GetIPPROTO(), IP_TTL, ( char * ) & newTTL, sizeof ( newTTL ) ) == -1)
 	{
 
-#if defined(_WIN32) && defined(_DEBUG) && !defined(WINDOWS_PHONE_8) 
+#if defined(_WIN32) && defined(_DEBUG) && !defined(WINDOWS_PHONE_8)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -1924,7 +1991,7 @@ void GetMyIP_Win32( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 	char ac[ 80 ];
 	if ( gethostname( ac, sizeof( ac ) ) == -1 )
 	{
-  #if defined(_WIN32) && !defined(WINDOWS_PHONE_8) 
+ #if defined(_WIN32) && !defined(WINDOWS_PHONE_8)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -1966,7 +2033,7 @@ void GetMyIP_Win32( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 
 	if ( phe == 0 )
 	{
- #if defined(_WIN32) && !defined(WINDOWS_PHONE_8) 
+ #if defined(_WIN32) && !defined(WINDOWS_PHONE_8)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -2033,7 +2100,7 @@ void SocketLayer::GetSystemAddress_Old ( RakNetSocket *s, SystemAddress *systemA
 	socklen_t len = sizeof(sa);
 	if (s->GetSockName((sockaddr*)&sa, &len)!=0)
 	{
-#if defined(_WIN32) &&  defined(_DEBUG) && !defined(WINDOWS_PHONE_8) 
+#if defined(_WIN32) && defined(_DEBUG) && !defined(WINDOWS_PHONE_8)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -2064,7 +2131,7 @@ void SocketLayer::GetSystemAddress ( RakNetSocket *s, SystemAddress *systemAddre
 
 	if (s->GetSockName( (struct sockaddr *)&ss, &slen)!=0)
 	{
- #if defined(_WIN32) &&  defined(_DEBUG)
+ #if defined(_WIN32) && defined(_DEBUG)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -2105,10 +2172,10 @@ void SocketLayer::GetSystemAddress ( RakNetSocket *s, SystemAddress *systemAddre
 #endif // #if RAKNET_SUPPORT_IPV6!=1
 }
 
-void SocketLayer::SetSocketLayerOverride(SocketLayerOverride *_slo)
-{
-	slo=_slo;
-}
+// void SocketLayer::SetSocketLayerOverride(SocketLayerOverride *_slo)
+// {
+// 	slo=_slo;
+// }
 
 bool SocketLayer::GetFirstBindableIP(char firstBindable[128], int ipProto)
 {

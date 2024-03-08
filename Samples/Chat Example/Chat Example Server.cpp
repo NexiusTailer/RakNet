@@ -108,7 +108,7 @@ int main(void)
 	server->SetOccasionalPing(true);
 	server->SetUnreliableTimeout(1000);
 
-	DataStructures::List< RakNet::RakNetSocket* > sockets;
+	DataStructures::List< RakNet::RakNetSocket2* > sockets;
 	server->GetSockets(sockets);
 	printf("Socket addresses used by RakNet:\n");
 	for (unsigned int i=0; i < sockets.Size(); i++)

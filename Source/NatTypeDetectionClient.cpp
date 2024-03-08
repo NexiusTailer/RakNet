@@ -34,12 +34,13 @@ void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress)
 
 	if (c2==0)
 	{
-		DataStructures::List<RakNetSocket* > sockets;
+		DataStructures::List<RakNetSocket2* > sockets;
 		rakPeerInterface->GetSockets(sockets);
-		SystemAddress sockAddr;
-		SocketLayer::GetSystemAddress(sockets[0], &sockAddr);
+		//SystemAddress sockAddr;
+		//SocketLayer::GetSystemAddress(sockets[0], &sockAddr);
 		char str[64];
-		sockAddr.ToString(false,str);
+		//sockAddr.ToString(false,str);
+		sockets[0]->GetBoundAddress().ToString(false,str);
 		c2=CreateNonblockingBoundSocket(str
 #ifdef __native_client__
 			, sockets[0]->chromeInstance
@@ -148,7 +149,7 @@ void NatTypeDetectionClient::OnTestPortRestricted(Packet *packet)
 	unsigned short s3p4Port;
 	bsIn.Read(s3p4Port);
 
-	DataStructures::List<RakNetSocket* > sockets;
+	DataStructures::List<RakNetSocket2* > sockets;
 	rakPeerInterface->GetSockets(sockets);
 	SystemAddress s3p4Addr = sockets[0]->GetBoundAddress();
 	s3p4Addr.FromStringExplicitPort(s3p4StrAddress.C_String(), s3p4Port);
@@ -158,7 +159,14 @@ void NatTypeDetectionClient::OnTestPortRestricted(Packet *packet)
 	RakNet::BitStream bsOut;
 	bsOut.Write((MessageID) NAT_TYPE_PORT_RESTRICTED);
 	bsOut.Write(rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
-	SocketLayer::SendTo_PC( sockets[0], (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), s3p4Addr, __FILE__, __LINE__ );
+//	SocketLayer::SendTo_PC( sockets[0], (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), s3p4Addr, __FILE__, __LINE__ );
+
+	RNS2_SendParameters bsp;
+	bsp.data = (char*) bsOut.GetData();
+	bsp.length = bsOut.GetNumberOfBytesUsed();
+	bsp.systemAddress=s3p4Addr;
+	sockets[0]->Send(&bsp, _FILE_AND_LINE_);
+
 }
 void NatTypeDetectionClient::Shutdown(void)
 {

@@ -63,16 +63,18 @@ void AddressOrGUID::ToString(bool writePort, char *dest) const
 }
 bool RakNet::NonNumericHostString( const char *host )
 {
-	if ( host[ 0 ] >= '0' && host[ 0 ] <= '9' )
-		return false;
-
-	if ( (host[ 0 ] == '-') && ( host[ 1 ] >= '0' && host[ 1 ] <= '9' ) )
-		return false;
-
-	if ( strstr(host,":") )
-		return false;
-
-	return true;
+	// Return false if IP address. Return true if domain
+	unsigned int i=0;
+	while (host[i])
+	{
+		// IPV4: 94.198.81.195
+		// IPV6: fe80::7c:31f7:fec4:27de%14
+		if ((host[i]>='g' && host[i]<='z') ||
+			(host[i]>='A' && host[i]<='Z'))
+			return true;
+		++i;
+	}
+	return false;
 }
 
 SocketDescriptor::SocketDescriptor() {
@@ -429,7 +431,7 @@ void SystemAddress::FixForIPVersion(const SystemAddress &boundAddressToSocket)
 // 		}
 	}
 }
-void SystemAddress::SetBinaryAddress(const char *str, char portDelineator)
+bool SystemAddress::SetBinaryAddress(const char *str, char portDelineator)
 {
 	if ( NonNumericHostString( str ) )
 	{
@@ -449,7 +451,7 @@ void SystemAddress::SetBinaryAddress(const char *str, char portDelineator)
 			{
 				SetPort((unsigned short) atoi(str+9));
 			}
-			return;
+			return true;
 		}
 
 		const char *ip = ( char* ) SocketLayer::DomainNameToIP( str );
@@ -460,6 +462,11 @@ void SystemAddress::SetBinaryAddress(const char *str, char portDelineator)
 
 			address.addr4.sin_addr.s_addr=inet_addr__(ip);
 
+		}
+		else
+		{
+			*this = UNASSIGNED_SYSTEM_ADDRESS;
+			return false;
 		}
 	}
 	else
@@ -524,14 +531,14 @@ void SystemAddress::SetBinaryAddress(const char *str, char portDelineator)
 		}
 		//#endif
 	}
+	return true;
 }
 
 bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersion)
 {
 #if RAKNET_SUPPORT_IPV6!=1
 	(void) ipVersion;
-	SetBinaryAddress(str,portDelineator);
-	return true;
+	return SetBinaryAddress(str,portDelineator);
 #else
 	if (str==0)
 	{

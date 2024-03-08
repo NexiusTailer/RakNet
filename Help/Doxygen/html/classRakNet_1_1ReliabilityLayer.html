@@ -73,14 +73,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a52cf9a398cfe611e1af920a19e65787a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36dcac9c07138222392a4c1314c23a8f"><td class="memItemLeft" align="right" valign="top">RakNet::TimeMS&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#a36dcac9c07138222392a4c1314c23a8f">GetTimeoutTime</a> (void)</td></tr>
 <tr class="separator:a36dcac9c07138222392a4c1314c23a8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62847d08d37ca9c2533820519b9e95bd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#a62847d08d37ca9c2533820519b9e95bd">HandleSocketReceiveFromConnectedPlayer</a> (const char *buffer, unsigned int length, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1PluginInterface2.html">PluginInterface2</a> * &gt; &amp;messageHandlerList, int MTUSize, RakNetSocket *s, RakNetRandom *rnr, CCTimeType timeRead, <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> &amp;updateBitStream)</td></tr>
-<tr class="separator:a62847d08d37ca9c2533820519b9e95bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4705443cbdb957b9351cfffdd23a81b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#ad4705443cbdb957b9351cfffdd23a81b">HandleSocketReceiveFromConnectedPlayer</a> (const char *buffer, unsigned int length, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1PluginInterface2.html">PluginInterface2</a> * &gt; &amp;messageHandlerList, int MTUSize, RakNetSocket2 *s, RakNetRandom *rnr, CCTimeType timeRead, <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> &amp;updateBitStream)</td></tr>
+<tr class="separator:ad4705443cbdb957b9351cfffdd23a81b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9dcac79ba7f4f69424c586f267dbf0a1"><td class="memItemLeft" align="right" valign="top">BitSize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#a9dcac79ba7f4f69424c586f267dbf0a1">Receive</a> (unsigned char **data)</td></tr>
 <tr class="separator:a9dcac79ba7f4f69424c586f267dbf0a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c0cec3e2e22dc8a5e66906f659e226a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#a1c0cec3e2e22dc8a5e66906f659e226a">Send</a> (char *data, BitSize_t numberOfBitsToSend, <a class="el" href="PacketPriority_8h.html#a659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#ae41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, CCTimeType currentTime, uint32_t receipt)</td></tr>
 <tr class="separator:a1c0cec3e2e22dc8a5e66906f659e226a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47a49b8c0f03451dda5ba226cc1af49d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#a47a49b8c0f03451dda5ba226cc1af49d">Update</a> (RakNetSocket *s, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, int MTUSize, CCTimeType time, unsigned bitsPerSecondLimit, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1PluginInterface2.html">PluginInterface2</a> * &gt; &amp;messageHandlerList, RakNetRandom *rnr, <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> &amp;updateBitStream)</td></tr>
-<tr class="separator:a47a49b8c0f03451dda5ba226cc1af49d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab49b383b349560bbb4f72643db3e1ea0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#ab49b383b349560bbb4f72643db3e1ea0">Update</a> (RakNetSocket2 *s, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, int MTUSize, CCTimeType time, unsigned bitsPerSecondLimit, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1PluginInterface2.html">PluginInterface2</a> * &gt; &amp;messageHandlerList, RakNetRandom *rnr, <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> &amp;updateBitStream)</td></tr>
+<tr class="separator:ab49b383b349560bbb4f72643db3e1ea0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aefec7668d83301e70d97f2a5f174b6f3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#aefec7668d83301e70d97f2a5f174b6f3">IsDeadConnection</a> (void) const </td></tr>
 <tr class="separator:aefec7668d83301e70d97f2a5f174b6f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c641454132f1b0d79969100e46dbf3f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4c641454132f1b0d79969100e46dbf3f"></a>
@@ -144,7 +144,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a62847d08d37ca9c2533820519b9e95bd"></a>
+<a class="anchor" id="ad4705443cbdb957b9351cfffdd23a81b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -181,7 +181,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">RakNetSocket *&#160;</td>
+          <td class="paramtype">RakNetSocket2 *&#160;</td>
           <td class="paramname"><em>s</em>, </td>
         </tr>
         <tr>
@@ -397,14 +397,14 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a47a49b8c0f03451dda5ba226cc1af49d"></a>
+<a class="anchor" id="ab49b383b349560bbb4f72643db3e1ea0"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void RakNet::ReliabilityLayer::Update </td>
           <td>(</td>
-          <td class="paramtype">RakNetSocket *&#160;</td>
+          <td class="paramtype">RakNetSocket2 *&#160;</td>
           <td class="paramname"><em>s</em>, </td>
         </tr>
         <tr>
@@ -477,7 +477,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Nov 15 2012 18:33:17 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Dec 5 2012 00:32:35 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

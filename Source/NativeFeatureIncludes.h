@@ -35,6 +35,7 @@
 // #define _RAKNET_SUPPORT_RakNetCommandParser 0
 // #define _RAKNET_SUPPORT_EmailSender 0
 // #define _RAKNET_SUPPORT_HTTPConnection 0
+// #define _RAKNET_SUPPORT_HTTPConnection2 0
 // #define _RAKNET_SUPPORT_PacketizedTCP 0
 // #define _RAKNET_SUPPORT_TwoWayAuthentication 0
 
@@ -126,6 +127,9 @@
 #ifndef _RAKNET_SUPPORT_HTTPConnection
 #define _RAKNET_SUPPORT_HTTPConnection 1
 #endif
+#ifndef _RAKNET_SUPPORT_HTTPConnection2
+#define _RAKNET_SUPPORT_HTTPConnection2 1
+#endif
 #ifndef _RAKNET_SUPPORT_PacketizedTCP
 #define _RAKNET_SUPPORT_PacketizedTCP 1
 #endif
@@ -158,22 +162,22 @@
 #endif
 
 // Take care of dependencies
-
+#if _RAKNET_SUPPORT_DirectoryDeltaTransfer==1
 #undef _RAKNET_SUPPORT_FileListTransfer
 #define _RAKNET_SUPPORT_FileListTransfer 1
-
-
+#endif
+#if _RAKNET_SUPPORT_FullyConnectedMesh2==1
 #undef _RAKNET_SUPPORT_ConnectionGraph2
 #define _RAKNET_SUPPORT_ConnectionGraph2 1
-
-
+#endif
+#if _RAKNET_SUPPORT_TelnetTransport==1
 #undef _RAKNET_SUPPORT_PacketizedTCP
 #define _RAKNET_SUPPORT_PacketizedTCP 1
-
-
+#endif
+#if _RAKNET_SUPPORT_PacketizedTCP==1 || _RAKNET_SUPPORT_EmailSender==1 || _RAKNET_SUPPORT_HTTPConnection==1
 #undef _RAKNET_SUPPORT_TCPInterface
 #define _RAKNET_SUPPORT_TCPInterface 1
-
+#endif
 
 
 

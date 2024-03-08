@@ -20,4 +20,10 @@ copy D:\chromiumtrunk\src\ppapi\cpp\private\*.h D:\nacl_sdk\pepper_canary\includ
 4) Enable the experimental UDP apis in Chrome
 go to about:flags and enable "NaCl Socket API"
 
-5. Build as in make.bat
+5. Install the visual studio update
+http://mainroach.blogspot.com/2012/10/official-nacl-vs2010-add-in-available.html
+D:\nacl_sdk>naclsdk install vs_addin
+D:\nacl_sdk>cd vs_addin
+D:\nacl_sdk\vs_addin>install.bat
+
+6. Build as in make.bat

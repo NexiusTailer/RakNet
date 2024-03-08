@@ -157,9 +157,15 @@ public:
 	/// Equivalent to assignment operator
 	static RakNet::RakString NonVariadic(const char *str);
 
-	/// Has the string into an unsigned int
+	/// Hash the string into an unsigned int
 	static unsigned long ToInteger(const char *str);
 	static unsigned long ToInteger(const RakString &rs);
+
+	/// \brief Read an integer out of a substring
+	/// \param[in] str The string
+	/// \param[in] pos The position on str where the integer starts
+	/// \param[in] n How many chars to copy
+	static int ReadIntFromSubstring(const char *str, size_t pos, size_t n);
 
 	// Like strncat, but for a fixed length
 	void AppendBytes(const char *bytes, unsigned int count);
@@ -204,19 +210,21 @@ public:
 	RakNet::RakString& SQLEscape(void);
 
 	/// Format as a POST command that can be sent to a webserver
-	/// \param[in] uri For example, jenkinssoftware.com/raknet/DirectoryServer.php?query=download&downloadPassword=a
-	/// \param[in] contentType For example, application/x-www-form-urlencoded
-	/// \param[in] port Port you plan to send to. Use 80 if you don't know.
+	/// \param[in] uri For example, masterserver2.raknet.com/testServer
+	/// \param[in] contentType For example, text/plain; charset=UTF-8
 	/// \param[in] body Body of the post
 	/// \return Formatted string
-	static RakNet::RakString FormatForPOST(RakString &uri, RakString &contentType, unsigned int port, RakString &body);
+	static RakNet::RakString FormatForPOST(RakString uri, RakString contentType, RakString body);
 
-	/// Format as a GET comand that can be sent to a webserver
-	/// \param[in] uri For example, jenkinssoftware.com/raknet/DirectoryServer.php?query=download&downloadPassword=a
-	/// \param[in] contentType For example, application/x-www-form-urlencoded
-	/// \param[in] port Port you plan to send to. Use 80 if you don't know.
+	/// Format as a GET command that can be sent to a webserver
+	/// \param[in] uri For example, masterserver2.raknet.com/testServer?__gameId=comprehensivePCGame
 	/// \return Formatted string
-	static RakNet::RakString FormatForGET(RakString &uri, unsigned int port);
+	static RakNet::RakString FormatForGET(RakString uri);
+
+	/// Format as a DELETE command that can be sent to a webserver
+	/// \param[in] uri For example, masterserver2.raknet.com/testServer?__gameId=comprehensivePCGame&__rowId=1
+	/// \return Formatted string
+	static RakNet::RakString FormatForDELETE(RakString uri);
 
 	/// Fix to be a file path, ending with /
 	RakNet::RakString& MakeFilePath(void);

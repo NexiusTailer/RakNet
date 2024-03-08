@@ -28,7 +28,7 @@ who to connect to<br>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">LAN Broadcast</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Using the CloudServer/CloudClient plugins</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Using the Lobby server or RoomsPlugin</li>
-<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Using DirectoryServer.php</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Using MasterServer2</li>
 </ol>
 <span class="RakNetBlueHeader">Option 1: Direct IP Entry</span><br>
 <br>
@@ -95,8 +95,7 @@ already know.</li>
     custom user data. Change this value and recompile if your data is
     larger than this define.<br>
     </span><br>
-    <span style="font-style: italic;">Advantages:</span><br>
-</p>
+    <span style="font-style: italic;">Advantages:</span></p>
 <ul>
   <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">You can join games automatically on program startup,
     no GUI or user interaction required</li>
@@ -110,9 +109,19 @@ already know.</li>
 <p><span class="RakNetBlueHeader">Option 3: Using the CloudServer/CloudClient plugins</span><br>
   <br>
 The <a href="cloudcomputing.html">CloudServer/CloudClient</a> plugin can act as a directory server without modification.</p>
+<p><span style="font-style: italic;">Advantages:</span></p>
+<ul>
+  <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Customizable</li>
+  <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">You can subscribe to update notifications when memory has been updated from another system</li>
+</ul>
+<span style="font-style: italic;"><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Disadvantages:</span><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2"><br>
+<ul>
+  <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Only scales to a few hundred users</li>
+  <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">You have to host your own server</li>
+</ul>
 <p><span class="RakNetBlueHeader">Option 4: Using the Lobby server or RoomsPlugin</span><br>
   <br>
-  The lobby server provides a database driven service for players to
+  If you are not using a service that already provides a lobby, on the PC we provide database code that has similar functionality. The lobby server provides a database driven service for players to
   interact and start games. It provides features such as friends,
   matchmaking, emails, ranking, instant messenging, quick match, rooms,
   and room moderation.<br>
@@ -121,8 +130,7 @@ The <a href="cloudcomputing.html">CloudServer/CloudClient</a> plugin can act as 
   and <span style="font-weight: bold;">Lobby2Client</span>
   for a demonstration of how to use this feature.<br>
   <br>
-  <span style="font-style: italic;">Advantages:<br>
-    </span>
+  <span style="font-style: italic;">Advantages:    </span>
 </p>
 <ul>
   <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">The most flexible solution for players to join games</li>
@@ -138,20 +146,22 @@ plugin, and the server must have database support</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Feature is relatively large and complex compared to a
   simple game listing, requiring a good investment in time and programming</li>
 </ul>
-<p><span class="RakNetBlueHeader">Option 5: DirectoryServer.php</span><br>
+<p><span class="RakNetBlueHeader">Option 5: MasterServer2</span><br>
   <br>
-DirectoryServer.php and related code can be found at Samples\PHPDirectoryServer2. It is a cheap way to list games, by using your web server to store when a game was uploaded, and string based information about that game. For more information, see the <a href="phpdirectoryserver.html">manual page</a> on this feature.<br>
+We host a master server for our customers. See <A HREF="http://masterserver2.raknet.com/">this page</A> for more details.
+<br>
 <br>
 <span style="font-style: italic;">Advantages:
 </span>
 <ul>
-  <li>Doesn't require a dedicated server, just a webpage</li>
+  <li>Fast</li>
+  <li>Easy to use</li>
+  <li>You do not have to host a server</li>
 </ul>
 <span style="font-style: italic;">Disadvantages:<br>
 </span>
 <ul>
-  <li>Inflexible</li>
-  <li>Sometimes unreliable (may require multiple queries)</li>
+  <li>Special licensing if you need the server sources</li>
 </ul>
 <span class="RakNetBlueHeader">Initiate
 connection attempt<span style="font-weight: normal;"><br>
@@ -191,8 +201,7 @@ ID_CONNECTION_ATTEMPT_FAILED, ID_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY, ID_OUR_SYSTE
 <p class="RakNetBlueHeader">Troubleshooting ID_CONNECTION_ATTEMPT_FAILED</p>
 <p> ID_CONNECTION_ATTEMPT_FAILED is
   the generic message meaning no communication was established with the remote system. Possible
-  reasons include:<br>
-</p>
+  reasons include:</p>
 <ul>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">The IP address is wrong</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">That system is not running RakNet, or

@@ -105,9 +105,9 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:a451dd5d225277fe5806d3d700551fb76"><td class="memItemLeft" align="right" valign="top">virtual ConnectionAttemptResult&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a451dd5d225277fe5806d3d700551fb76">Connect</a> (const char *host, unsigned short remotePort, const char *passwordData, int passwordDataLength, <a class="el" href="structRakNet_1_1PublicKey.html">PublicKey</a> *publicKey=0, unsigned connectionSocketIndex=0, unsigned sendConnectionAttemptCount=12, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNet::TimeMS timeoutTime=0)=0</td></tr>
 <tr class="memdesc:a451dd5d225277fe5806d3d700551fb76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect to the specified host (ip or domain name) and server port. Calling Connect and not calling SetMaximumIncomingConnections acts as a dedicated client. Calling both acts as a true peer. This is a non-blocking connection. You know the connection is successful when <a class="el" href="classRakNet_1_1RakPeerInterface.html#a33744f90a202b8e57d6a825d6af080cc">GetConnectionState()</a> returns IS_CONNECTED or <a class="el" href="classRakNet_1_1RakPeerInterface.html#a1c50453d9dee600920aeabd62ad7c119">Receive()</a> gets a message with the type identifier ID_CONNECTION_REQUEST_ACCEPTED. If the connection is not successful, such as a rejected connection or no response then neither of these things will happen.  <a href="#a451dd5d225277fe5806d3d700551fb76"></a><br/></td></tr>
 <tr class="separator:a451dd5d225277fe5806d3d700551fb76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a105e6803d0b288b94508dc2298cae8b7"><td class="memItemLeft" align="right" valign="top">virtual ConnectionAttemptResult&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a105e6803d0b288b94508dc2298cae8b7">ConnectWithSocket</a> (const char *host, unsigned short remotePort, const char *passwordData, int passwordDataLength, RakNetSocket *socket, <a class="el" href="structRakNet_1_1PublicKey.html">PublicKey</a> *publicKey=0, unsigned sendConnectionAttemptCount=12, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNet::TimeMS timeoutTime=0)=0</td></tr>
-<tr class="memdesc:a105e6803d0b288b94508dc2298cae8b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect to the specified host (ip or domain name) and server port, using a shared socket from another instance of <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher that can be used f...">RakNet</a>.  <a href="#a105e6803d0b288b94508dc2298cae8b7"></a><br/></td></tr>
-<tr class="separator:a105e6803d0b288b94508dc2298cae8b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a818333f4aa6365dc1db5b1e3c4c31f64"><td class="memItemLeft" align="right" valign="top">virtual ConnectionAttemptResult&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a818333f4aa6365dc1db5b1e3c4c31f64">ConnectWithSocket</a> (const char *host, unsigned short remotePort, const char *passwordData, int passwordDataLength, RakNetSocket2 *socket, <a class="el" href="structRakNet_1_1PublicKey.html">PublicKey</a> *publicKey=0, unsigned sendConnectionAttemptCount=12, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNet::TimeMS timeoutTime=0)=0</td></tr>
+<tr class="memdesc:a818333f4aa6365dc1db5b1e3c4c31f64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect to the specified host (ip or domain name) and server port, using a shared socket from another instance of <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher that can be used f...">RakNet</a>.  <a href="#a818333f4aa6365dc1db5b1e3c4c31f64"></a><br/></td></tr>
+<tr class="separator:a818333f4aa6365dc1db5b1e3c4c31f64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f4acefdc022555862fd386e31f9a22b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a4f4acefdc022555862fd386e31f9a22b">Shutdown</a> (unsigned int blockDuration, unsigned char orderingChannel=0, <a class="el" href="PacketPriority_8h.html#a659378374e516180f93640c79f59705c">PacketPriority</a> disconnectionNotificationPriority=<a class="el" href="PacketPriority_8h.html#a659378374e516180f93640c79f59705cadb8ee22a232a2787f32ba28da55c43c1">LOW_PRIORITY</a>)=0</td></tr>
 <tr class="memdesc:a4f4acefdc022555862fd386e31f9a22b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect to the specified network ID (Platform specific console function)  <a href="#a4f4acefdc022555862fd386e31f9a22b"></a><br/></td></tr>
 <tr class="separator:a4f4acefdc022555862fd386e31f9a22b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -231,10 +231,10 @@ virtual unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el
 <tr class="separator:a29c5527b07a3ddc32083d8ec1e24318b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e38bdd227138f640a942102813ce779"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structRakNet_1_1Packet.html">Packet</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a3e38bdd227138f640a942102813ce779">AllocatePacket</a> (unsigned dataSize)=0</td></tr>
 <tr class="separator:a3e38bdd227138f640a942102813ce779"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b6a28b1fd86773ee946c6d99226c8d0"><td class="memItemLeft" align="right" valign="top">virtual RakNetSocket *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a7b6a28b1fd86773ee946c6d99226c8d0">GetSocket</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> target)=0</td></tr>
-<tr class="separator:a7b6a28b1fd86773ee946c6d99226c8d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a103bdff946d78a006250188140e59c1f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a103bdff946d78a006250188140e59c1f">GetSockets</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; RakNetSocket * &gt; &amp;sockets)=0</td></tr>
-<tr class="separator:a103bdff946d78a006250188140e59c1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adae8cd6baaa718eb5a818f5271a58122"><td class="memItemLeft" align="right" valign="top">virtual RakNetSocket2 *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#adae8cd6baaa718eb5a818f5271a58122">GetSocket</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> target)=0</td></tr>
+<tr class="separator:adae8cd6baaa718eb5a818f5271a58122"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09ef1181af600ec2c255a295154fe367"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a09ef1181af600ec2c255a295154fe367">GetSockets</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; RakNetSocket2 * &gt; &amp;sockets)=0</td></tr>
+<tr class="separator:a09ef1181af600ec2c255a295154fe367"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0832004c529aa9a0844b61eaf1374b3c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a0832004c529aa9a0844b61eaf1374b3c">SetUserUpdateThread</a> (void(*_userUpdateThreadPtr)(<a class="el" href="classRakNet_1_1RakPeerInterface.html">RakPeerInterface</a> *, void *), void *_userUpdateThreadData)=0</td></tr>
 <tr class="separator:a0832004c529aa9a0844b61eaf1374b3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03910361629f5cbabe0df0612a1f2709"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a03910361629f5cbabe0df0612a1f2709">ApplyNetworkSimulator</a> (float packetloss, unsigned short minExtraPing, unsigned short extraPingVariance)=0</td></tr>
@@ -516,7 +516,7 @@ static uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el"
 </table>
 </div><div class="memdoc">
 <p>Adds simulated ping and packet loss to the outgoing data flow. To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and packetloss value on each. You can exclude network simulator code with the _RELEASE #define to decrease code size </p>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000002">Deprecated:</a></b></dt><dd>Use <a href="http://www.jenkinssoftware.com/forum/index.php?topic=1671.0">http://www.jenkinssoftware.com/forum/index.php?topic=1671.0</a> instead. </dd></dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000003">Deprecated:</a></b></dt><dd>Use <a href="http://www.jenkinssoftware.com/forum/index.php?topic=1671.0">http://www.jenkinssoftware.com/forum/index.php?topic=1671.0</a> instead. </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Doesn't work past version 3.6201 </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -755,7 +755,7 @@ It is possible to immediately get back ID_CONNECTION_ATTEMPT_FAILED if you excee
 
 </div>
 </div>
-<a class="anchor" id="a105e6803d0b288b94508dc2298cae8b7"></a>
+<a class="anchor" id="a818333f4aa6365dc1db5b1e3c4c31f64"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -789,7 +789,7 @@ It is possible to immediately get back ID_CONNECTION_ATTEMPT_FAILED if you excee
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">RakNetSocket *&#160;</td>
+          <td class="paramtype">RakNetSocket2 *&#160;</td>
           <td class="paramname"><em>socket</em>, </td>
         </tr>
         <tr>
@@ -846,7 +846,7 @@ It is possible to immediately get back ID_CONNECTION_ATTEMPT_FAILED if you excee
 <dl class="section return"><dt>Returns</dt><dd>CONNECTION_ATTEMPT_STARTED on successful initiation. Otherwise, an appropriate enumeration indicating failure. </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>CONNECTION_ATTEMPT_STARTED does not mean you are already connected! </dd></dl>
 
-<p>Implemented in <a class="el" href="classRakNet_1_1RakPeer.html#a92e07b9c02d383e5b8c230100e11a35a">RakNet::RakPeer</a>.</p>
+<p>Implemented in <a class="el" href="classRakNet_1_1RakPeer.html#a8852b99f2d8919bee57fd457477292a0">RakNet::RakPeer</a>.</p>
 
 </div>
 </div>
@@ -1566,7 +1566,7 @@ It is possible to immediately get back ID_CONNECTION_ATTEMPT_FAILED if you excee
 
 </div>
 </div>
-<a class="anchor" id="a7b6a28b1fd86773ee946c6d99226c8d0"></a>
+<a class="anchor" id="adae8cd6baaa718eb5a818f5271a58122"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -1574,7 +1574,7 @@ It is possible to immediately get back ID_CONNECTION_ATTEMPT_FAILED if you excee
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual RakNetSocket* RakNet::RakPeerInterface::GetSocket </td>
+          <td class="memname">virtual RakNetSocket2* RakNet::RakPeerInterface::GetSocket </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&#160;</td>
           <td class="paramname"><em>target</em></td><td>)</td>
@@ -1587,7 +1587,7 @@ It is possible to immediately get back ID_CONNECTION_ATTEMPT_FAILED if you excee
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Get the socket used with a particular active connection The smart pointer reference counts the RakNetSocket object, so the socket will remain active as long as the smart pointer does, even if <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher that can be used f...">RakNet</a> were to shutdown or close the connection. </p>
+<p>Get the socket used with a particular active connection The smart pointer reference counts the RakNetSocket2 object, so the socket will remain active as long as the smart pointer does, even if <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher that can be used f...">RakNet</a> were to shutdown or close the connection. </p>
 <dl class="section note"><dt>Note</dt><dd>This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so. </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1597,11 +1597,11 @@ It is possible to immediately get back ID_CONNECTION_ATTEMPT_FAILED if you excee
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A smart pointer object containing the socket information about the socket. Be sure to check IsNull() which is returned if the update thread is unresponsive, shutting down, or if this system is not connected </dd></dl>
 
-<p>Implemented in <a class="el" href="classRakNet_1_1RakPeer.html#af6c1b860a5dc1ff19f703a279634b768">RakNet::RakPeer</a>.</p>
+<p>Implemented in <a class="el" href="classRakNet_1_1RakPeer.html#ab69ef5d63339d36dc99b905586a23151">RakNet::RakPeer</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a103bdff946d78a006250188140e59c1f"></a>
+<a class="anchor" id="a09ef1181af600ec2c255a295154fe367"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -1611,7 +1611,7 @@ It is possible to immediately get back ID_CONNECTION_ATTEMPT_FAILED if you excee
         <tr>
           <td class="memname">virtual void RakNet::RakPeerInterface::GetSockets </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; RakNetSocket * &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; RakNetSocket2 * &gt; &amp;&#160;</td>
           <td class="paramname"><em>sockets</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1626,12 +1626,12 @@ It is possible to immediately get back ID_CONNECTION_ATTEMPT_FAILED if you excee
 <dl class="section note"><dt>Note</dt><dd>This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so. </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">sockets</td><td>List of RakNetSocket structures in use. Sockets will not be closed until <em>sockets</em> goes out of scope </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">sockets</td><td>List of RakNetSocket2 structures in use. Sockets will not be closed until <em>sockets</em> goes out of scope </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classRakNet_1_1RakPeer.html#aecf627eb035ab1ac1451b14ef208c741">RakNet::RakPeer</a>.</p>
+<p>Implemented in <a class="el" href="classRakNet_1_1RakPeer.html#a35c353846b88cb39d4c8d12ba4f5ca42">RakNet::RakPeer</a>.</p>
 
 </div>
 </div>
@@ -3297,7 +3297,7 @@ On Android, add the necessary permission to your application's androidmanifest.x
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Nov 15 2012 18:33:17 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Dec 5 2012 00:32:35 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

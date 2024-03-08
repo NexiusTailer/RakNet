@@ -9,9 +9,9 @@
 #include "SimpleMutex.h"
 #include "Lobby2Presence.h"
 
-#if   defined(_DURANGO_COMPILE_WITH_XTL) 
-#include "XBOX360Includes.h"
-#endif
+
+
+
 
 #pragma once
 
@@ -337,9 +337,9 @@ struct Lobby2Message
 	uint64_t requestId;
 
 
-#if   defined(_DURANGO_COMPILE_WITH_XTL) 
-	XOVERLAPPED        m_Overlapped;
-#endif
+
+
+
 
 private:
 

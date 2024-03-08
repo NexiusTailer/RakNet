@@ -21,17 +21,25 @@
 #include "miniupnpc.h"
 #include "upnpcommands.h"
 #include "upnperrors.h"
-#include "CloudClient.h"
+#include "TCPInterface.h"
 #include "ReadyEvent.h"
 #include "PacketLogger.h"
 #include "RPC4Plugin.h"
 #include "Kbhit.h"
+#include "HttpConnection2.h"
+// See http://www.digip.org/jansson/doc/2.4/
+// This is used to make it easier to parse the JSON returned from the master server
+#include "jansson.h"
 
 #define DEFAULT_SERVER_PORT "61111"
 // Public test server
 #define DEFAULT_SERVER_ADDRESS "94.198.81.195"
-#define NAT_TYPE_DETECTION_SERVER 1
-#define USE_UPNP 1
+#define NAT_TYPE_DETECTION_SERVER 0
+#define USE_UPNP 0
+#define MASTER_SERVER_ADDRESS "masterserver2.raknet.com"
+//#define MASTER_SERVER_ADDRESS "localhost"
+#define MASTER_SERVER_PORT 80
+//#define MASTER_SERVER_PORT 8888
 
 using namespace RakNet;
 
@@ -54,10 +62,9 @@ ReplicaManager3 *replicaManager3;
 // Required?: Required to use ReplicaManager3, and some form of this is required for almost every game
 NetworkIDManager *networkIDManager;
 
-// Purpose: Upload game sessions to the cloud for other players to search for.
-// Required?: Steam and consoles provide server solutions, so usually not if you are releasing only on those platforms. If you are hosting your own servers, or want to expand upon what Steam can do, then it is needed.
-// See the project CloudServer for a working demo on how to start servers on the cloud, using DynDNS to point to the current server host in order to support server host migration in case of a server crash
-CloudClient *cloudClient;
+// Purpose: Connect to RakNet's hosted master server
+// Required?: Steam and consoles provide server solutions, so usually not if you are releasing only on those platforms.
+TCPInterface *tcp;
 
 // Purpose: If UPNP fails, used to connect across routers.
 // Required?: Steam and consoles provide server solutions that do this automatically. Otherwise, if UPNP fails you need this.
@@ -82,6 +89,10 @@ ReadyEvent *readyEvent;
 // Required?: Yes, for peer to peer games that need a session host. Not necessary for client/server
 FullyConnectedMesh2 *fullyConnectedMesh2;
 
+// Purpose: Helper class to parse http connection events
+// Required?: Technically no since you could parse the strings yourself. But it's a lot of work otherwise.
+HTTPConnection2 *httpConnection2;
+
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Sample game classes using ReplicaManager3
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -89,7 +100,7 @@ FullyConnectedMesh2 *fullyConnectedMesh2;
 // Forward declarations
 class User;
 class Team;
-void PostRoomToCloud(void);
+void PostRoomToMaster(void);
 
 // Game contains the list of objects, and serializes if the game is locked, the name of the game, and if it is in gameplay or in the lobby
 // Game is created on startup, rather than over the network, so is replicated as a static object.
@@ -110,8 +121,8 @@ public:
 		IN_GAME,
 		EXIT_SAMPLE,
 	};
-	Game() {myNatType=NAT_TYPE_UNKNOWN; Reset();}
-	virtual ~Game() {}
+	Game() {myNatType=NAT_TYPE_UNKNOWN; masterServerRow=-1; Reset(); whenToNextUpdateMasterServer=0; masterServerQueryResult=0;}
+	virtual ~Game() {if (masterServerQueryResult) json_decref(masterServerQueryResult);}
 	virtual void WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const {}
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {
 		if (fullyConnectedMesh2->IsConnectedHost())
@@ -127,12 +138,14 @@ public:
 		constructionBitstream->Write(gameName);
 		constructionBitstream->Write(lockGame);
 		constructionBitstream->Write(gameInLobby);
+		constructionBitstream->Write(masterServerRow);
 	}
 	virtual void DeserializeConstructionExisting(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection)
 	{
 		constructionBitstream->Read(gameName);
 		constructionBitstream->Read(lockGame);
 		constructionBitstream->Read(gameInLobby);
+		constructionBitstream->Read(masterServerRow);
 		printf("Downloaded game. locked=%i. inLobby=%i\n", lockGame, gameInLobby);
 	}
 	virtual void SerializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *destinationConnection) {}
@@ -149,6 +162,7 @@ public:
 	{
 		serializeParameters->outputBitstream[0].Write(lockGame);
 		serializeParameters->outputBitstream[0].Write(gameInLobby);
+		serializeParameters->outputBitstream[0].Write(masterServerRow);
 		return RM3SR_BROADCAST_IDENTICALLY;
 	}
 	virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters)
@@ -181,6 +195,7 @@ public:
 					game->EnterPhase(Game::IN_GAME);
 				}
 			}
+			deserializeParameters->serializationBitstream[0].Read(masterServerRow);
 		}
 	}
 	void EnterPhase(Phase newPhase)
@@ -191,7 +206,7 @@ public:
 		case CONNECTING_TO_SERVER:
 			{
 				char port[256];
-				printf("Enter server address, or enter for default: ");
+				printf("Enter address of server running the NATCompleteServer project.\nEnter for default: ");
 				Gets(game->serverIPAddr, 256);
 				if (game->serverIPAddr[0]==0)
 					strcpy(game->serverIPAddr, DEFAULT_SERVER_ADDRESS);
@@ -210,7 +225,7 @@ public:
 		#ifdef NAT_TYPE_DETECTION_SERVER
 		case DETERMINE_NAT_TYPE:
 				printf("Determining NAT type...\n");
-				natTypeDetectionClient->DetectNATType(masterServerAddress);
+				natTypeDetectionClient->DetectNATType(natPunchServerAddress);
 			break;
 		#endif
 		case SEARCH_FOR_GAMES:
@@ -237,11 +252,9 @@ public:
 	{
 		printf("Downloading rooms...\n");
 
-		CloudQuery cloudQuery;
-		// The primary and secondary keys are arbitrary and chosen by the application
-		RakNet::CloudKey cloudKey("ComprehensiveGame_Rooms",0);
-		cloudQuery.keys.Push(cloudKey,_FILE_AND_LINE_);
-		cloudClient->Get(&cloudQuery, masterServerGuid); // Returns ID_CLOUD_GET_RESPONSE
+		RakString rsRequest = RakString::FormatForGET(
+			MASTER_SERVER_ADDRESS "/testServer?__gameId=comprehensivePCGame");
+		httpConnection2->TransmitRequest(rsRequest, MASTER_SERVER_ADDRESS, MASTER_SERVER_PORT);
 	}
 
 	// ---------------------------------------------------------------------------------
@@ -253,6 +266,10 @@ public:
 	bool lockGame;
 	// Game is either in the lobby or in gameplay
 	bool gameInLobby;
+	// Which row of the master server our game was uploaded to
+	// Returned from the POST request
+	// This is serialized so if the host migrates, the new host takes over that row. Otherwise, a new row would be written for the same game.
+	int masterServerRow;
 
 	// ---------------------------------------------------------------------------------
 	// Not serialized variables
@@ -260,13 +277,41 @@ public:
 	// Store what type of router I am behind
 	RakNet::NATTypeDetectionResult myNatType;
 	Phase phase;
-	// Master server runs RakNet project NatCompleteServer with NAT_TYPE_DETECTION_SERVER, NAT_PUNCHTHROUGH_SERVER, and CLOUD_SERVER
-	RakNetGUID masterServerGuid;
-	SystemAddress masterServerAddress;
+	// NAT punchthrough server runs RakNet project NatCompleteServer with NAT_TYPE_DETECTION_SERVER, and NAT_PUNCHTHROUGH_SERVER
+	RakNetGUID natPunchServerGuid;
+	SystemAddress natPunchServerAddress;
 	char serverIPAddr[256];
 	// Just tracks what other objects have been created
 	DataStructures::List<User*> users;
 	DataStructures::List<Team*> teams;
+
+	// Master server has to be refreshed periodically so it knows we didn't crash
+	RakNet::Time whenToNextUpdateMasterServer;
+
+	// Helper function to store and read the JSON from the GET request
+	void SetMasterServerQueryResult(json_t *root)
+	{
+		if (masterServerQueryResult)
+			json_decref(masterServerQueryResult);
+		masterServerQueryResult = root;
+	}
+
+	json_t* GetMasterServerQueryResult(void)
+	{
+		if (masterServerQueryResult)
+		{
+			void *iter = json_object_iter(masterServerQueryResult);
+			return json_object_iter_value(iter);
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	// The GET request returns a string. I use http://www.digip.org/jansson/ to parse the string, and store the results.
+	json_t *masterServerQueryResult;
+	json_t *jsonArray;
 
 } *game;
 
@@ -341,12 +386,9 @@ public:
 class User : public Replica3
 {
 public:
-	User() {game->users.Push(this, _FILE_AND_LINE_); tmTeamMember.SetOwner(this);}
+	User() {game->users.Push(this, _FILE_AND_LINE_); tmTeamMember.SetOwner(this); natType=NAT_TYPE_UNKNOWN;}
 	virtual ~User() {
 		game->users.RemoveAtIndex(game->users.GetIndexOf(this));
-		// Update the cloud user count as users leave
-		if (fullyConnectedMesh2->IsConnectedHost())
-			PostRoomToCloud();
 	}
 	virtual void WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const {allocationIdBitstream->Write("User");}
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3)
@@ -383,9 +425,9 @@ public:
 		else
 			printf(" on team %s\n", ((Team*)(tmTeamMember.GetCurrentTeam()->GetOwner()))->teamName.C_String());
 
-		// Update the cloud user count as new users join
+		// Update the user count on the master server as new users join
 		if (fullyConnectedMesh2->IsConnectedHost())
-			PostRoomToCloud();
+			PostRoomToMaster();
 	}
 
 	virtual void SerializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *destinationConnection) {}
@@ -433,9 +475,6 @@ public:
 	virtual void DeallocConnection(Connection_RM3 *connection) const {delete connection;}
 };
 
-// Holds result of last query
-RakNet::CloudQueryResult cloudQueryResult;
-
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Helper functions
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -451,58 +490,17 @@ void InGameChat(RakNet::BitStream *userData, Packet *packet)
 RPC4GlobalRegistration __InGameChat("InGameChat", InGameChat, 0);
 
 // Write roomName and a list of NATTypeDetectionResult to a bitStream
-void SerializeToBitStream(BitStream *bsOut, RakString &roomName, DataStructures::List<NATTypeDetectionResult> &natTypes)
+void SerializeToJSON(RakString &outputString, RakString &roomName, DataStructures::List<NATTypeDetectionResult> &natTypes)
 {
-	bsOut->Write(roomName);
-	bsOut->WriteCasted<unsigned short>(natTypes.Size());
+	outputString.Set("'roomName': '%s', 'guid': '%s', 'natTypes' : [ ", roomName.C_String(), rakPeer->GetMyGUID().ToString());
 	for (unsigned short i=0; i < natTypes.Size(); i++)
 	{
-		bsOut->WriteCasted<unsigned char>(natTypes[i]);
+		if (i!=0)
+			outputString += ", ";
+		RakString appendStr("{'type': %i}", natTypes[i]);
+		outputString += appendStr;
 	}
-}
-
-// Read roomName and a list of NATTypeDetectionResult from a bitStream
-void DeserializeFromBitStream(RakNet::CloudQueryRow *row, RakString &roomName, DataStructures::List<NATTypeDetectionResult> &natTypes)
-{
-	RakNet::BitStream bsIn(row->data, row->length, false);
-	bsIn.Read(roomName);
-	unsigned short natTypesCount;
-	bsIn.Read(natTypesCount);
-	for (unsigned short i=0; i < natTypesCount; i++)
-	{
-		NATTypeDetectionResult ntdr;
-		bsIn.ReadCasted<unsigned char>(ntdr);
-		natTypes.Push(ntdr, _FILE_AND_LINE_);
-	}
-}
-
-// Print out a downloaded row (room) from a cloud query
-void PrintRow(RakNet::CloudQueryRow *row)
-{
-	printf("Room at address %s, guid %s", row->clientSystemAddress.ToString(true), row->clientGUID.ToString());
-	if (row->clientGUID==rakPeer->GetMyGUID())
-		printf(" (Ourselves)");
-	printf("\n");
-
-	RakString roomName;
-	DataStructures::List<NATTypeDetectionResult> natTypes;
-	DeserializeFromBitStream(row, roomName, natTypes);
-	printf("Room name: %s. Players: %i\n", roomName.C_String(), natTypes.Size());
-
-#ifdef NAT_TYPE_DETECTION_SERVER
-	// If NatTypeDetection is enabled, we can filter out rooms that cannot be joined
-	bool joinable=true;
-	for (unsigned int i=0; i < natTypes.Size(); i++)
-	{
-		if (CanConnect(game->myNatType, natTypes[i])==false)
-		{
-			joinable=false;
-			break;
-		}
-	}
-
-	printf("Joinable=%i\n", joinable);
-#endif
+	outputString += " ] ";
 }
 
 // A system has connected and is ready to participate in the game
@@ -520,28 +518,49 @@ void RegisterGameParticipant(RakNetGUID guid)
 // Upload details about the current game state to the cloud
 // This is the responsibility of the system that initially created that room.
 // If that system disconnects, the new host, as determined by FullyConnectedMesh2 will reupload the room
-void PostRoomToCloud(void)
+void PostRoomToMaster(void)
 {
 	BitStream bsOut;
+	RakString jsonSerializedRoom;
 	DataStructures::List<NATTypeDetectionResult> natTypes;
 	for (unsigned int i=0; i < game->users.Size(); i++)
 		natTypes.Push(game->users[i]->natType, _FILE_AND_LINE_);
-	SerializeToBitStream(&bsOut, game->gameName, natTypes);
-	RakNet::CloudKey cloudKey("ComprehensiveGame_Rooms",0);
-	cloudClient->Post(&cloudKey, bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), game->masterServerGuid);
+	SerializeToJSON(jsonSerializedRoom, game->gameName, natTypes);
+
+	RakString rowStr;
+	if (game->masterServerRow!=-1)
+		rowStr.Set("\"__rowId\": %i,", game->masterServerRow);
+
+	// See http://masterserver2.raknet.com/
+	RakString rsRequest = RakString::FormatForPOST(
+		(const char*) MASTER_SERVER_ADDRESS "/testServer",
+		"text/plain; charset=UTF-8",
+		RakString("{'__gameId': 'comprehensivePCGame', '__clientReqId': '0', %s '__timeoutSec': '30', %s }", rowStr.C_String(), jsonSerializedRoom.C_String()));
+
+	// Refresh the room again slightly less than every 30 seconds
+	game->whenToNextUpdateMasterServer = RakNet::GetTime() + 30000 - 1000;
+
+	httpConnection2->TransmitRequest(rsRequest, MASTER_SERVER_ADDRESS, MASTER_SERVER_PORT);
+
 	printf("Posted game session. In room.\n");
 }
 void ReleaseRoomFromCloud(void)
 {
-	RakNet::CloudKey cloudKey("ComprehensiveGame_Rooms",0);
-	DataStructures::List<CloudKey> keys;
-	keys.Push(cloudKey, _FILE_AND_LINE_);
-	cloudClient->Release(keys, game->masterServerGuid);
+	RakString rsRequest = RakString::FormatForDELETE(
+		RakString(MASTER_SERVER_ADDRESS "/testServer?__gameId=comprehensivePCGame&__rowId=%i", game->masterServerRow));
+	httpConnection2->TransmitRequest(rsRequest, MASTER_SERVER_ADDRESS, MASTER_SERVER_PORT);
+	game->masterServerRow=-1;
 }
 
 void CreateRoom(void)
 {
-	if (cloudQueryResult.rowsReturned.Size()>=1)
+	size_t arraySize;
+	if (game->GetMasterServerQueryResult())
+		arraySize = json_array_size(game->GetMasterServerQueryResult());
+	else
+		arraySize = 0;
+	
+	if (arraySize > 0)
 	{
 		printf("Enter room name: ");
 		char rn[128];
@@ -552,11 +571,11 @@ void CreateRoom(void)
 	}
 	else
 	{
-		game->gameName = "First Room";
+		game->gameName = "Default room name";
 	}
-
+	
 	// Upload the room to the server
-	PostRoomToCloud();
+	PostRoomToMaster();
 
 	// Room owner creates two teams and registers them for replication
 	Team *team1 = new Team;
@@ -599,7 +618,7 @@ void OpenUPNP(void)
 		if (UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))==1)
 		{
 			// Use same external and internal ports
-			DataStructures::List<RakNetSocket* > sockets;
+			DataStructures::List<RakNetSocket2* > sockets;
 			rakPeer->GetSockets(sockets);
 			char iport[32];
 			Itoa(sockets[0]->GetBoundAddress().GetPort(),iport,10);
@@ -658,7 +677,7 @@ int main(void)
 	teamManager=TeamManager::GetInstance();
 	fullyConnectedMesh2=FullyConnectedMesh2::GetInstance();
 	networkIDManager = NetworkIDManager::GetInstance();
-	cloudClient = CloudClient::GetInstance();
+	tcp = TCPInterface::GetInstance();
 	natPunchthroughClient = NatPunchthroughClient::GetInstance();
 #ifdef NAT_TYPE_DETECTION_SERVER
 	natTypeDetectionClient = NatTypeDetectionClient::GetInstance();
@@ -666,13 +685,13 @@ int main(void)
 	rpc4 = RPC4::GetInstance();
 	readyEvent = ReadyEvent::GetInstance();
 	replicaManager3=new SampleRM3;
+	httpConnection2 = HTTPConnection2::GetInstance();
 
 	// ---------------------------------------------------------------------------------------------------------------------
 	// Attach plugins
 	// ---------------------------------------------------------------------------------------------------------------------
 	rakPeer->AttachPlugin(fullyConnectedMesh2);
 	rakPeer->AttachPlugin(teamManager);
-	rakPeer->AttachPlugin(cloudClient);
 	rakPeer->AttachPlugin(natPunchthroughClient);
 #ifdef NAT_TYPE_DETECTION_SERVER
 	rakPeer->AttachPlugin(natTypeDetectionClient);
@@ -680,6 +699,8 @@ int main(void)
 	rakPeer->AttachPlugin(rpc4);
 	rakPeer->AttachPlugin(readyEvent);
 	rakPeer->AttachPlugin(replicaManager3);
+	/// TCPInterface supports plugins too
+	tcp->AttachPlugin(httpConnection2);
 
 	// ---------------------------------------------------------------------------------------------------------------------
 	// Setup plugins: Disable automatically adding new connections. Allocate initial objects and register for replication
@@ -722,8 +743,11 @@ int main(void)
 	rakPeer->SetTimeoutTime(30000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 	printf("Our guid is %s\n", rakPeer->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
 	printf("Started on %s\n", rakPeer->GetMyBoundAddress().ToString(true));
+
+	// Start TCPInterface and begin connecting to the NAT punchthrough server
+	tcp->Start(0,0,1);
 	
-	// Connect to master server
+	// Connect to hosting server
 	game->EnterPhase(Game::CONNECTING_TO_SERVER);
 
 	// ---------------------------------------------------------------------------------------------------------------------
@@ -748,11 +772,11 @@ int main(void)
 
 					if (game->phase==Game::CONNECTING_TO_SERVER)
 					{
-						game->masterServerAddress=packet->systemAddress;
-						game->masterServerGuid=packet->guid;
+						game->natPunchServerAddress=packet->systemAddress;
+						game->natPunchServerGuid=packet->guid;
 
 						// ---------------------------------------------------------------------------------------------------------------------
-						// PC self-hosted servers only: Use master server to determine NAT type. Attempt to open router if needed.
+						// PC self-hosted servers only: Use the NAT punch server to determine NAT type. Attempt to open router if needed.
 						// ---------------------------------------------------------------------------------------------------------------------
 						if (NAT_TYPE_DETECTION_SERVER)
 						{
@@ -793,7 +817,7 @@ int main(void)
 				}
 				else
 				{
-					if (packet->guid==game->masterServerGuid)
+					if (packet->guid==game->natPunchServerGuid)
 					{
 						printf("Server connection lost. Reason %s.\nGame session is no longer searchable.\n", PacketLogger::BaseIDTOString(packet->data[0]));
 					}
@@ -833,7 +857,9 @@ int main(void)
 					{
 						if (oldHost!=UNASSIGNED_RAKNET_GUID)
 						{
-							PostRoomToCloud();
+							if (game->phase==Game::IN_LOBBY_WAITING_FOR_HOST)
+								game->phase=Game::IN_LOBBY_WITH_HOST;
+							PostRoomToMaster();
 							printf("ID_FCM2_NEW_HOST: Taking over as host from the old host.\nNew options:\n");
 						}
 						else
@@ -947,24 +973,6 @@ int main(void)
 				break;
 
 
-			case ID_CLOUD_GET_RESPONSE:
-				{
-					cloudClient->DeallocateWithDefaultAllocator(&cloudQueryResult);
-					cloudClient->OnGetReponse(&cloudQueryResult, packet);
-					unsigned int rowIndex;
-
-					for (rowIndex=0; rowIndex < cloudQueryResult.rowsReturned.Size(); rowIndex++)
-					{
-						RakNet::CloudQueryRow *row = cloudQueryResult.rowsReturned[rowIndex];
-						printf("%i. ", rowIndex);
-						PrintRow(row);
-					}
-
-					printf("(J)oin room\n");
-					printf("(C)reate room\n");
-					printf("(S)earch rooms\n");
-				}
-				break;
 			
 			case ID_NAT_TYPE_DETECTION_RESULT:
 				{
@@ -1032,7 +1040,7 @@ int main(void)
 					DataStructures::List<RakNetGUID> guids;
 					fullyConnectedMesh2->GetVerifiedJoinRequiredProcessingList(packet->guid, addresses, guids);
 					for (unsigned int i=0; i < guids.Size(); i++)
-						natPunchthroughClient->OpenNAT(guids[i], game->masterServerAddress);
+						natPunchthroughClient->OpenNAT(guids[i], game->natPunchServerAddress);
 				}
 				break;
 
@@ -1109,6 +1117,82 @@ int main(void)
 			}
 		}
 
+		// The following code is TCP operations for talking to the master server, and parsing the reply
+		SystemAddress sa;
+		sa = tcp->HasCompletedConnectionAttempt();
+		sa = tcp->HasFailedConnectionAttempt();
+		sa = tcp->HasLostConnection();
+		for (packet = tcp->Receive(); packet; tcp->DeallocatePacket(packet), packet = tcp->Receive())
+			;
+
+		RakString stringTransmitted;
+		RakString hostTransmitted;
+		RakString responseReceived;
+		SystemAddress hostReceived;
+		int contentOffset;
+		if (httpConnection2->GetResponse(stringTransmitted, hostTransmitted, responseReceived, hostReceived, contentOffset))
+		{
+			if (responseReceived.IsEmpty()==false)
+			{
+				if (contentOffset==-1)
+				{
+					// No content
+					printf(responseReceived.C_String());
+				}
+				else
+				{
+					json_error_t error;
+					json_t *root = json_loads(responseReceived.C_String() + contentOffset, JSON_REJECT_DUPLICATES, &error);
+					if (!root)
+					{
+						printf("Error parsing JSON\n", __LINE__);
+					}
+					else
+					{
+						void *iter = json_object_iter(root);
+						const char *firstKey = json_object_iter_key(iter);
+						if (stricmp(firstKey, "GET")==0)
+						{
+							game->SetMasterServerQueryResult(root);
+
+							json_t* jsonArray = json_object_iter_value(iter);
+							size_t arraySize = json_array_size(jsonArray);
+							for (unsigned int i=0; i < arraySize; i++)
+							{
+								json_t* object = json_array_get(jsonArray, i);
+								json_t* roomNameVal = json_object_get(object, "roomName");
+								RakAssert(roomNameVal->type==JSON_STRING);
+								json_t* natTypesVal = json_object_get(object, "natTypes");
+								RakAssert(natTypesVal->type==JSON_ARRAY);
+								size_t natTypesSize = json_array_size(natTypesVal);
+								printf("Room name: %s. Players: %i\n", json_string_value(roomNameVal), natTypesSize);
+							}
+
+							if (arraySize==0)
+								printf("No rooms.\n");
+
+
+							printf("(J)oin room\n");
+							printf("(C)reate room\n");
+							printf("(S)earch rooms\n");
+						}
+						else
+						{
+							RakAssert(stricmp(firstKey, "POST")==0);
+
+							json_t* jsonObject = json_object_iter_value(iter);
+							json_t* val1 = json_object_get(jsonObject, "__rowId");
+							RakAssert(val1->type==JSON_INTEGER);
+							game->masterServerRow = (int) json_integer_value(val1);
+
+							printf("Session posted to row %i\n", game->masterServerRow);
+						}
+
+					}
+				}
+			}
+		}
+
 		if (kbhit())
 		{
 			ch=getch();
@@ -1125,15 +1209,22 @@ int main(void)
 				}
 				else if (ch=='j' || ch=='J')
 				{
+					size_t arraySize;
+					json_t *queryResult = game->GetMasterServerQueryResult();
+					if (queryResult)
+						arraySize = json_array_size(queryResult);
+					else
+						arraySize = 0;
+
 					// Join room
-					if (cloudQueryResult.rowsReturned.Size()==0)
+					if (arraySize==0)
 					{
 						printf("No rooms to join.\n");
 					}
 					else
 					{
 						int index;
-						if (cloudQueryResult.rowsReturned.Size()>1)
+						if (arraySize>1)
 						{
 							printf("Enter index of room to join.\n");
 							char indexstr[64];
@@ -1145,16 +1236,26 @@ int main(void)
 							index = 0;
 						}
 
-						if (index < 0 || (unsigned int) index >= cloudQueryResult.rowsReturned.Size())
+						if (index < 0 || (unsigned int) index >= arraySize)
 						{
 							printf("Index out of range.\n");
 						}
 						else
 						{
-							CloudQueryRow *row = cloudQueryResult.rowsReturned[index];
-							// Connect to the session host using NATPunchthrough
-							natPunchthroughClient->OpenNAT(row->clientGUID, game->masterServerAddress);
-							game->EnterPhase(Game::NAT_PUNCH_TO_GAME_HOST);
+							json_t* object = json_array_get(queryResult, index);
+							json_t* guidVal = json_object_get(object, "guid");
+							RakAssert(guidVal->type==JSON_STRING);
+							RakNetGUID clientGUID;
+							clientGUID.FromString(json_string_value(guidVal));
+							if (clientGUID!=rakPeer->GetMyGUID())
+							{
+								natPunchthroughClient->OpenNAT(clientGUID, game->natPunchServerAddress);
+								game->EnterPhase(Game::NAT_PUNCH_TO_GAME_HOST);
+							}
+							else
+							{
+								printf("Cannot join your own room\n");
+							}
 						}
 					}
 				}
@@ -1266,10 +1367,25 @@ int main(void)
 				else if (ch=='q' || ch=='Q')
 				{
 					printf("Quitting.\n");
-					// Disconnecting from the master server automatically releases from cloud
+
+					RakString rspost = RakString::FormatForGET(
+						RakString(MASTER_SERVER_ADDRESS "/testServer?row=%i", game->masterServerRow));
+					httpConnection2->TransmitRequest(rspost, MASTER_SERVER_ADDRESS, MASTER_SERVER_PORT);
+
 					game->EnterPhase(Game::EXIT_SAMPLE);
 				}
 			}
+		}
+
+		// The game host updates the master server
+		RakNet::Time t = RakNet::GetTime();
+		if (((fullyConnectedMesh2->IsConnectedHost() || game->users.Size()==1) &&
+			t > game->whenToNextUpdateMasterServer) &&
+			game->phase == Game::IN_LOBBY_WITH_HOST ||
+			game->phase == Game::IN_GAME
+			)
+		{
+			PostRoomToMaster();
 		}
 
 		RakSleep(30);
@@ -1283,18 +1399,16 @@ int main(void)
 		delete game->users[game->users.Size()-1];
 	delete game;
 
-	cloudClient->DeallocateWithDefaultAllocator(&cloudQueryResult);
 	RakPeerInterface::DestroyInstance(rakPeer);
 	TeamManager::DestroyInstance(teamManager);
 	FullyConnectedMesh2::DestroyInstance(fullyConnectedMesh2);
-	cloudClient->DeallocateWithDefaultAllocator(&cloudQueryResult);
-	CloudClient::DestroyInstance(cloudClient);
 	NatPunchthroughClient::DestroyInstance(natPunchthroughClient);
 	NatTypeDetectionClient::DestroyInstance(natTypeDetectionClient);
 	RPC4::DestroyInstance(rpc4);
 	ReadyEvent::DestroyInstance(readyEvent);
 	delete replicaManager3;
 	NetworkIDManager::DestroyInstance(networkIDManager);
+	HTTPConnection2::DestroyInstance(httpConnection2);
 
 	return 1;
 }

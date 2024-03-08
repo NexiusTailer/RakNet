@@ -32,7 +32,7 @@ RakNetSocket::~RakNetSocket()
 {
 	#ifdef __native_client__
 		if(s != 0)
-			((PPB_UDPSocket_Private_0_3*) pp::Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))->Close(s);
+			((PPB_UDPSocket_Private_0_4*) pp::Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))->Close(s);
 #elif defined(WINDOWS_STORE_RT)
 		WinRTClose(s);
 	#else
@@ -79,7 +79,7 @@ RakNetSocket* RakNetSocket::Create
 	#endif
 
 	#ifdef __native_client__
-		sock = ((PPB_UDPSocket_Private_0_3*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))->Create(_chromeInstance);
+		sock = ((PPB_UDPSocket_Private_0_4*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))->Create(_chromeInstance);
 
 
 	#elif defined(WINDOWS_STORE_RT)

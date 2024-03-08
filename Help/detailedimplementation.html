@@ -34,7 +34,7 @@ These are the most common headers you'll need:</td>
 #include "RakNetTypes.h"<BR>
 <BR>
 MessageIdentifiers.h contains a giant enumeration representing the native message identifiers that RakNet uses to send you messages, such as disconnection notifications.  Since you will probably want to define your own message identifiers, your enumerations should start at the 
-        highest enumeration in MessageIdentifiers.h + 1<font color="#666666" size="2" face="Geneva, Verdana, Arial, Helvetica, sans-serif">. RakNetworkFactory.h is an implementation of the factory design pattern, used to get a pointer to RakPeerInterface.  This is necessary to use the DLL.  RakPeerInterface.h is an interface for the RakPeer 
+        highest enumeration in MessageIdentifiers.h + 1<font color="#666666" size="2" face="Geneva, Verdana, Arial, Helvetica, sans-serif">RakPeerInterface.h is an interface for the RakPeer 
     class. RakNetTypes.h defines the structures used in RakNet, including <I>SystemAddress</I> - a unique identifier for systems, and <I>Packet</I> which the API returns to you when you get data or when it needs to send you a message.</td>
   </tr>
 </table>
@@ -63,8 +63,7 @@ For example:<BR></td>
 <table width="100%" border="0" cellspacing="0" cellpadding="10">
   <tr>
     <td class="RakNetManualTextBody">peer->Startup(1, &SocketDescriptor(), 1)<BR>
-peer
-    ->Connect(serverIP, serverPort, 0, 0);<BR>
+peer->Connect(serverIP, serverPort, 0, 0);<BR>
     <BR>
 The call to Startup starts the network threads.<br>
 The first parameter is the maximum mumber of connections. For a pure client, we use 1.<br>
@@ -111,8 +110,8 @@ Starting as a server is similar.</td>
 </table>
 <table width="100%" border="0" cellspacing="0" cellpadding="10">
   <tr>
-    <td class="RakNetManualTextBody">RakNet::SocketDescriptor sd(60000,0);<br>
-      peer->Startup(10,  &amp;sd, 1);<BR>
+    <td class="RakNetManualTextBody">RakNet::SocketDescriptor sd(serverPort,0);<br>
+peer-&gt;Startup(maxConnectionsAllowed, &amp;sd, 1);<BR>
 peer->SetMaximumIncomingConnections(4);<BR>
 <BR>
 Startup sets 10 allowable connections.  An allowable connection is either incoming or outgoing.  It uses port 60000 to receive data.<br>

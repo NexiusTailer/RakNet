@@ -18,7 +18,7 @@ namespace RakNet {
 
 /// Forward declarations
 class RakPeerInterface;
-class PacketizedTCP;
+class TCPInterface;
 struct Packet;
 struct InternalPacket;
 
@@ -176,13 +176,13 @@ public:
 	/// \internal
 	void SetRakPeerInterface( RakPeerInterface *ptr );
 
-#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _RAKNET_SUPPORT_TCPInterface==1
 	/// \internal
-	void SetPacketizedTCP( PacketizedTCP *ptr );
+	void SetTCPInterface( TCPInterface *ptr );
 #endif
 
 protected:
-	// Send through either rakPeerInterface or packetizedTCP, whichever is available
+	// Send through either rakPeerInterface or tcpInterface, whichever is available
 	void SendUnified( const RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast );
 	void SendUnified( const char * data, const int length, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast );
 	bool SendListUnified( const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast );
@@ -193,8 +193,8 @@ protected:
 
 	// Filled automatically in when attached
 	RakPeerInterface *rakPeerInterface;
-#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
-	PacketizedTCP *packetizedTCP;
+#if _RAKNET_SUPPORT_TCPInterface==1
+	TCPInterface *tcpInterface;
 #endif
 };
 

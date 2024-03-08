@@ -107,7 +107,7 @@ int main(void)
 		localPort=atoi(str);
 	RakNet::SocketDescriptor socketDescriptor(localPort,0);
 #ifdef USE_TCP
-	bool b=tcp1.Start(localPort,1);
+	bool b=tcp1.Start(localPort,8);
 	RakAssert(b);
 #else
 	if (rakPeer->Startup(8,&socketDescriptor, 1)!=RakNet::RAKNET_STARTED)

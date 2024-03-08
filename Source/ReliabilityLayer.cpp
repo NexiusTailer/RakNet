@@ -218,7 +218,7 @@ struct DatagramHeaderFormat
 	}
 };
 
-#if   !defined(__GNUC__) && !defined(__ARMCC)
+#if  !defined(__GNUC__) && !defined(__ARMCC)
 #pragma warning(disable:4702)   // unreachable code
 #endif
 
@@ -622,7 +622,7 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 //-------------------------------------------------------------------------------------------------------
 bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 	const char *buffer, unsigned int length, SystemAddress &systemAddress, DataStructures::List<PluginInterface2*> &messageHandlerList, int MTUSize,
-	RakNetSocket *s, RakNetRandom *rnr, CCTimeType timeRead,
+	RakNetSocket2 *s, RakNetRandom *rnr, CCTimeType timeRead,
 	BitStream &updateBitStream)
 {
 #ifdef _DEBUG
@@ -1672,7 +1672,7 @@ bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPri
 //-------------------------------------------------------------------------------------------------------
 // Run this once per game cycle.  Handles internal lists and actually does the send
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::Update( RakNetSocket *s, SystemAddress &systemAddress, int MTUSize, CCTimeType time,
+void ReliabilityLayer::Update( RakNetSocket2 *s, SystemAddress &systemAddress, int MTUSize, CCTimeType time,
 							  unsigned bitsPerSecondLimit,
 							  DataStructures::List<PluginInterface2*> &messageHandlerList,
 							  RakNetRandom *rnr,
@@ -1695,7 +1695,14 @@ void ReliabilityLayer::Update( RakNetSocket *s, SystemAddress &systemAddress, in
 		if (delayList.Peek()->sendTime <= timeMs)
 		{
 			DataAndTime *dat = delayList.Pop();
-			SocketLayer::SendTo( dat->s, dat->data, dat->length, systemAddress, __FILE__, __LINE__  );
+//			SocketLayer::SendTo( dat->s, dat->data, dat->length, systemAddress, __FILE__, __LINE__  );
+
+			RNS2_SendParameters bsp;
+			bsp.data = (char*) dat->data;
+			bsp.length = dat->length;
+			bsp.systemAddress = systemAddress;
+			if (dat->s->Send(&bsp, _FILE_AND_LINE_) == 10040)
+
 			RakNet::OP_DELETE(dat,__FILE__,__LINE__);
 		}
 		else
@@ -2221,7 +2228,7 @@ void ReliabilityLayer::Update( RakNetSocket *s, SystemAddress &systemAddress, in
 //-------------------------------------------------------------------------------------------------------
 // Writes a bitstream to the socket
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::SendBitStream( RakNetSocket *s, SystemAddress &systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, CCTimeType currentTime)
+void ReliabilityLayer::SendBitStream( RakNetSocket2 *s, SystemAddress &systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, CCTimeType currentTime)
 {
 	(void) systemAddress;
 	(void) rnr;
@@ -2306,7 +2313,13 @@ void ReliabilityLayer::SendBitStream( RakNetSocket *s, SystemAddress &systemAddr
 	block->systemAddress=systemAddress;
 	SendToThread::ProcessBlock(block);
 #else
-	SocketLayer::SendTo( s, ( char* ) bitStream->GetData(), length, systemAddress, __FILE__, __LINE__  );
+	// SocketLayer::SendTo( s, ( char* ) bitStream->GetData(), length, systemAddress, __FILE__, __LINE__  );
+
+	RNS2_SendParameters bsp;
+	bsp.data = (char*) bitStream->GetData();
+	bsp.length = length;
+	bsp.systemAddress = systemAddress;
+	s->Send(&bsp, _FILE_AND_LINE_);
 #endif
 }
 
@@ -3192,7 +3205,7 @@ InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketCh
 }
 //-------------------------------------------------------------------------------------------------------
 InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketIdType splitPacketId, CCTimeType time,
-																  RakNetSocket *s, SystemAddress &systemAddress, RakNetRandom *rnr, 
+																  RakNetSocket2 *s, SystemAddress &systemAddress, RakNetRandom *rnr, 
 																  BitStream &updateBitStream)
 {
 	unsigned int i;
@@ -3582,7 +3595,7 @@ bool ReliabilityLayer::IsResendQueueEmpty(void) const
 	return resendLinkedListHead==0;
 }
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::SendACKs(RakNetSocket *s, SystemAddress &systemAddress, CCTimeType time, RakNetRandom *rnr, BitStream &updateBitStream)
+void ReliabilityLayer::SendACKs(RakNetSocket2 *s, SystemAddress &systemAddress, CCTimeType time, RakNetRandom *rnr, BitStream &updateBitStream)
 {
 	BitSize_t maxDatagramPayload = GetMaxDatagramSizeExcludingMessageHeaderBits();
 

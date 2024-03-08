@@ -62,7 +62,7 @@ int main(void)
 	// Test IPV6
 	int socketFamily;
 	socketFamily=AF_INET;
-	socketFamily=AF_INET6;
+	//socketFamily=AF_INET6;
 
 	if (server)
 	{

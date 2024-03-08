@@ -33,7 +33,7 @@ void NatTypeDetectionServer::Startup(
 #endif
 									 )
 {
-	DataStructures::List<RakNetSocket* > sockets;
+	DataStructures::List<RakNetSocket2* > sockets;
 	rakPeerInterface->GetSockets(sockets);
 	char str[64];
 	sockets[0]->GetBoundAddress().ToString(false,str);

@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./../../Source;&quot;$(SolutionDir)DependentExtensions\miniupnpc-1.6.20120410&quot;"
+				AdditionalIncludeDirectories="./../../Source;&quot;$(SolutionDir)DependentExtensions\miniupnpc-1.6.20120410&quot;;&quot;$(SolutionDir)DependentExtensions\jansson-2.4\src&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE;STATICLIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -120,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./../../Source;&quot;$(SolutionDir)DependentExtensions\miniupnpc-1.6.20120410&quot;"
+				AdditionalIncludeDirectories="./../../Source;&quot;$(SolutionDir)DependentExtensions\miniupnpc-1.6.20120410&quot;;&quot;$(SolutionDir)DependentExtensions\jansson-2.4\src&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE;STATICLIB"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -301,6 +301,74 @@
 			</File>
 			<File
 				RelativePath="..\..\DependentExtensions\miniupnpc-1.6.20120410\upnpreplyparse.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="jansson"
+			>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\dump.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\error.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\hashtable.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\hashtable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\jansson.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\jansson_config.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\jansson_private.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\load.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\memory.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\pack_unpack.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\strbuffer.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\strbuffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\strconv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\utf.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\utf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\jansson-2.4\src\value.c"
 				>
 			</File>
 		</Filter>

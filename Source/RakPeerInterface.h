@@ -15,7 +15,7 @@
 #include "Export.h"
 #include "DS_List.h"
 #include "RakNetSmartPtr.h"
-#include "RakNetSocket.h"
+#include "RakNetSocket2.h"
 
 namespace RakNet
 {
@@ -27,7 +27,6 @@ struct RakNetStatistics;
 struct RakNetBandwidth;
 class RouterInterface;
 class NetworkIDManager;
-struct RakNetSocket;
 
 /// The primary interface for RakNet, RakPeer contains all major functions for the library.
 /// See the individual functions for what the class can do.
@@ -142,7 +141,7 @@ public:
 	/// \param[in] timeoutTime How long to keep the connection alive before dropping it on unable to send a reliable message. 0 to use the default from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
 	/// \return CONNECTION_ATTEMPT_STARTED on successful initiation. Otherwise, an appropriate enumeration indicating failure.
 	/// \note CONNECTION_ATTEMPT_STARTED does not mean you are already connected!
-	virtual ConnectionAttemptResult ConnectWithSocket(const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, RakNetSocket* socket, PublicKey *publicKey=0, unsigned sendConnectionAttemptCount=12, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNet::TimeMS timeoutTime=0)=0;
+	virtual ConnectionAttemptResult ConnectWithSocket(const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, RakNetSocket2* socket, PublicKey *publicKey=0, unsigned sendConnectionAttemptCount=12, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNet::TimeMS timeoutTime=0)=0;
 
 	/// \brief Connect to the specified network ID (Platform specific console function)
 	/// \details Does built-in NAt traversal
@@ -501,17 +500,17 @@ public:
 	virtual Packet* AllocatePacket(unsigned dataSize)=0;
 
 	/// Get the socket used with a particular active connection
-	/// The smart pointer reference counts the RakNetSocket object, so the socket will remain active as long as the smart pointer does, even if RakNet were to shutdown or close the connection.
+	/// The smart pointer reference counts the RakNetSocket2 object, so the socket will remain active as long as the smart pointer does, even if RakNet were to shutdown or close the connection.
 	/// \note This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so.
 	/// \param[in] target Which system
 	/// \return A smart pointer object containing the socket information about the socket. Be sure to check IsNull() which is returned if the update thread is unresponsive, shutting down, or if this system is not connected
-	virtual RakNetSocket* GetSocket( const SystemAddress target )=0;
+	virtual RakNetSocket2* GetSocket( const SystemAddress target )=0;
 
 	/// Get all sockets in use
 	/// \note This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so.
-	/// \param[out] sockets List of RakNetSocket structures in use. Sockets will not be closed until \a sockets goes out of scope
-	virtual void GetSockets( DataStructures::List<RakNetSocket* > &sockets )=0;
-	virtual void ReleaseSockets( DataStructures::List<RakNetSocket* > &sockets )=0;
+	/// \param[out] sockets List of RakNetSocket2 structures in use. Sockets will not be closed until \a sockets goes out of scope
+	virtual void GetSockets( DataStructures::List<RakNetSocket2* > &sockets )=0;
+	virtual void ReleaseSockets( DataStructures::List<RakNetSocket2* > &sockets )=0;
 
 	virtual void WriteOutOfBandHeader(RakNet::BitStream *bitStream)=0;
 
@@ -574,12 +573,6 @@ public:
 	// #endif
 	// );
 	virtual bool RunUpdateCycle( BitStream &updateBitStream )=0;
-
-	/// \internal
-	// Call manually if RAKPEER_USER_THREADED==1 at least every 30 milliseconds.
-	// Call in a loop until returns false if the socket is non-blocking
-	// remotePortRakNetWasStartedOn_PS3 and extraSocketOptions are from SocketDescriptor when the socket was created
-	virtual bool RunRecvFromOnce( RakNetSocket *s )=0;
 
 	/// \internal
 	virtual bool SendOutOfBand(const char *host, unsigned short remotePort, const char *data, BitSize_t dataLength, unsigned connectionSocketIndex=0 )=0;

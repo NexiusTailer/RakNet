@@ -272,7 +272,7 @@ struct RAK_DLL_EXPORT SystemAddress
 	void SetPortNetworkOrder(unsigned short s);
 
 	/// Old version, for crap platforms that don't support newer socket functions
-	void SetBinaryAddress(const char *str, char portDelineator=':');
+	bool SetBinaryAddress(const char *str, char portDelineator=':');
 	/// Old version, for crap platforms that don't support newer socket functions
 	void ToString_Old(bool writePort, char *dest, char portDelineator=':') const;
 

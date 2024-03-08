@@ -202,7 +202,7 @@ struct UPNPFramework : public SampleFramework
 				*/
 
 				// Use same external and internal ports
-				DataStructures::List<RakNetSocket* > sockets;
+				DataStructures::List<RakNetSocket2* > sockets;
 				rakPeer->GetSockets(sockets);
 				char iport[32];
 				Itoa(sockets[0]->GetBoundAddress().GetPort(),iport,10);
