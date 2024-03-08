@@ -3,9 +3,9 @@
 
 #include "RakString.h"
 
-#if   defined(GFWL)
-#include "XBox360Includes.h"
-#endif
+
+
+
 
 namespace RakNet
 {
@@ -55,10 +55,10 @@ namespace RakNet
 		/// Set by the user (you) or leave blank if desired.
 		RakString titleNameOrID;
 
-#if   defined(GFWL)
-		// Identifies a session. Used by the XBOX only
-		XNKID sessionId;		
-#endif
+
+
+
+
 
 		/// Anything you want
 		RakString statusString;

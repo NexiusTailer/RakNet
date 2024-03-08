@@ -189,7 +189,7 @@ bool PlayerReplica::DeserializeConstruction(RakNet::BitStream *constructionBitst
 	constructionBitstream->Read(isDead);
 	return true;
 }
-void PlayerReplica::PostDeserializeConstruction(RakNet::Connection_RM3 *sourceConnection)
+void PlayerReplica::PostDeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection)
 {
 	// Object was remotely created and all data loaded. Now we can make the object visible
 	scene::IAnimatedMesh* mesh = 0;
@@ -387,7 +387,7 @@ bool BallReplica::DeserializeConstruction(RakNet::BitStream *constructionBitstre
 	constructionBitstream->Read(shotDirection);
 	return true;
 }
-void BallReplica::PostDeserializeConstruction(RakNet::Connection_RM3 *sourceConnection)
+void BallReplica::PostDeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection)
 {
 	// Shot visible effect and BallReplica classes are not linked, but they update the same way, such that
 	// they are in the same spot all the time

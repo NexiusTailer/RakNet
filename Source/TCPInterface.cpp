@@ -28,6 +28,7 @@ typedef int socklen_t;
 #include "StringTable.h"
 #include "Itoa.h"
 #include "SocketLayer.h"
+#include "SocketDefines.h"
 
 #ifdef _DO_PRINTF
 #endif
@@ -114,7 +115,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 #if RAKNET_SUPPORT_IPV6!=1
 	if (maxIncomingConnections>0)
 	{
-		listenSocket = socket(AF_INET, SOCK_STREAM, 0);
+		listenSocket = socket__(AF_INET, SOCK_STREAM, 0);
 		if ((int)listenSocket ==-1)
 			return false;
 
@@ -126,10 +127,10 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 
 		serverAddress.sin_port = htons(port);
 
-		if (bind(listenSocket,(struct sockaddr *) &serverAddress,sizeof(serverAddress)) < 0)
+		if (bind__(listenSocket,(struct sockaddr *) &serverAddress,sizeof(serverAddress)) < 0)
 			return false;
 
-		listen(listenSocket, maxIncomingConnections);
+		listen__(listenSocket, maxIncomingConnections);
 	}
 #else
 	listenSocket=INVALID_SOCKET;
@@ -149,17 +150,17 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 		{
 			// Open socket. The address type depends on what
 			// getaddrinfo() gave us.
-			listenSocket = socket(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
+			listenSocket = socket__(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
 			if (listenSocket != INVALID_SOCKET)
 			{
-				int ret = bind( listenSocket, aip->ai_addr, (int) aip->ai_addrlen );
+				int ret = bind__( listenSocket, aip->ai_addr, (int) aip->ai_addrlen );
 				if (ret>=0)
 				{
 					break;
 				}
 				else
 				{
-					closesocket(listenSocket);
+					closesocket__(listenSocket);
 					listenSocket=INVALID_SOCKET;
 				}
 			}
@@ -168,7 +169,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 		if (listenSocket==INVALID_SOCKET)
 			return false;
 
-		listen(listenSocket, maxIncomingConnections);
+		listen__(listenSocket, maxIncomingConnections);
 	}
 #endif // #if RAKNET_SUPPORT_IPV6!=1
 	
@@ -206,12 +207,12 @@ void TCPInterface::Stop(void)
 	if (listenSocket!=(SOCKET) -1)
 	{
 #ifdef _WIN32
-		shutdown(listenSocket, SD_BOTH);
+		shutdown__(listenSocket, SD_BOTH);
 
 #else		
-		shutdown(listenSocket, SHUT_RDWR);
+		shutdown__(listenSocket, SHUT_RDWR);
 #endif
-		closesocket(listenSocket);
+		closesocket__(listenSocket);
 		listenSocket=(SOCKET) -1;
 	}
 
@@ -219,7 +220,7 @@ void TCPInterface::Stop(void)
 	blockingSocketListMutex.Lock();
 	for (i=0; i < blockingSocketList.Size(); i++)
 	{
-		closesocket(blockingSocketList[i]);
+		closesocket__(blockingSocketList[i]);
 	}
 	blockingSocketListMutex.Unlock();
 
@@ -232,7 +233,7 @@ void TCPInterface::Stop(void)
 	// Stuff from here on to the end of the function is not threadsafe
 	for (i=0; i < (unsigned int) remoteClientsLength; i++)
 	{
-		closesocket(remoteClients[i].socket);
+		closesocket__(remoteClients[i].socket);
 #if OPEN_SSL_CLIENT_SUPPORT==1
 		remoteClients[i].FreeSSL();
 #endif
@@ -700,7 +701,7 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, 
 		return (SOCKET) -1;
 
 
-	SOCKET sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	SOCKET sockfd = socket__(AF_INET, SOCK_STREAM, 0);
 	if (sockfd < 0) 
 		return (SOCKET) -1;
 
@@ -709,7 +710,7 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, 
 	serverAddress.sin_port = htons( remotePort );
 
 	int sock_opt=1024*256;
-	setsockopt(sockfd, SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
+	setsockopt__(sockfd, SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 
 
 	memcpy((char *)&serverAddress.sin_addr.s_addr, (char *)server->h_addr, server->h_length);
@@ -724,7 +725,7 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, 
 	blockingSocketListMutex.Unlock();
 
 	// This is blocking
-	connectResult = connect( sockfd, ( struct sockaddr * ) &serverAddress, sizeof( struct sockaddr ) );
+	connectResult = connect__( sockfd, ( struct sockaddr * ) &serverAddress, sizeof( struct sockaddr ) );
 
 #else
 
@@ -737,11 +738,11 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, 
 	char portStr[32];
 	Itoa(remotePort,portStr,10);
 	getaddrinfo(host, portStr, &hints, &res);
-	sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+	sockfd = socket__(res->ai_family, res->ai_socktype, res->ai_protocol);
 	blockingSocketListMutex.Lock();
 	blockingSocketList.Insert(sockfd, _FILE_AND_LINE_);
 	blockingSocketListMutex.Unlock();
-	connectResult=connect(sockfd, res->ai_addr, res->ai_addrlen);
+	connectResult=connect__(sockfd, res->ai_addr, res->ai_addrlen);
 	freeaddrinfo(res); // free the linked-list
 
 #endif // #if RAKNET_SUPPORT_IPV6!=1
@@ -755,7 +756,7 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, 
 			blockingSocketList.RemoveAtIndexFast(sockfdIndex);
 		blockingSocketListMutex.Unlock();
 
-		closesocket(sockfd);
+		closesocket__(sockfd);
 		return (SOCKET) -1;
 	}
 
@@ -858,10 +859,10 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 #endif
 
 
-		SOCKET largestDescriptor=0; // see select()'s first parameter's documentation under linux
+		SOCKET largestDescriptor=0; // see select__()'s first parameter's documentation under linux
 
 
-		// Linux' select() implementation changes the timeout
+		// Linux' select__() implementation changes the timeout
 		tv.tv_sec=0;
 		tv.tv_usec=500000;
 
@@ -901,18 +902,14 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 #ifdef _MSC_VER
 #pragma warning( disable : 4244 ) // warning C4127: conditional expression is constant
 #endif
-
-
-
-			selectResult=(int) select(largestDescriptor+1, &readFD, &writeFD, &exceptionFD, &tv);		
-
+			selectResult=(int) select__(largestDescriptor+1, &readFD, &writeFD, &exceptionFD, &tv);		
 
 			if (selectResult<=0)
 				break;
 
 			if (sts->listenSocket!=(SOCKET) -1 && FD_ISSET(sts->listenSocket, &readFD))
 			{
-				newSock = accept(sts->listenSocket, (sockaddr*)&sockAddr, (socklen_t*)&sockAddrSize);
+				newSock = accept__(sts->listenSocket, (sockaddr*)&sockAddr, (socklen_t*)&sockAddrSize);
 
 				if (newSock != (SOCKET) -1)
 				{
@@ -955,7 +952,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 					}
 					if (newRemoteClientIndex==-1)
 					{
-						closesocket(sts->listenSocket);
+						closesocket__(sts->listenSocket);
 					}
 				}
 				else
@@ -970,7 +967,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 #ifdef _DO_PRINTF
 				int err;
 				int errlen = sizeof(err);
-				getsockopt(sts->listenSocket, SOL_SOCKET, SO_ERROR,(char*)&err, &errlen);
+				getsockopt__(sts->listenSocket, SOL_SOCKET, SO_ERROR,(char*)&err, &errlen);
 				RAKNET_DEBUG_PRINTF("Socket error %s on listening socket\n", err);
 #endif
 			}
@@ -992,7 +989,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 // 						{
 // 							int err;
 // 							int errlen = sizeof(err);
-// 							getsockopt(sts->listenSocket, SOL_SOCKET, SO_ERROR,(char*)&err, &errlen);
+// 							getsockopt__(sts->listenSocket, SOL_SOCKET, SO_ERROR,(char*)&err, &errlen);
 // 							in_addr in;
 // 							in.s_addr = sts->remoteClients[i].systemAddress.binaryAddress;
 // 							RAKNET_DEBUG_PRINTF("Socket error %i on %s:%i\n", err,inet_ntoa( in ), sts->remoteClients[i].systemAddress.GetPort() );
@@ -1099,7 +1096,7 @@ void RemoteClient::SetActive(bool a)
 		Reset();
 		if (isActive==false && socket!=INVALID_SOCKET)
 		{
-			closesocket(socket);
+			closesocket__(socket);
 			socket=INVALID_SOCKET;
 		}
 	}
@@ -1164,23 +1161,23 @@ int RemoteClient::Send(const char *data, unsigned int length)
 		return SSL_write (ssl, data, length);
 	}
 	else
-		return send(socket, data, length, 0);
+		return send__(socket, data, length, 0);
 }
 int RemoteClient::Recv(char *data, const int dataSize)
 {
 	if (ssl)
 		return SSL_read (ssl, data, dataSize);
 	else
-		return recv(socket, data, dataSize, 0);
+		return recv__(socket, data, dataSize, 0);
 }
 #else
 int RemoteClient::Send(const char *data, unsigned int length)
 {
-	return send(socket, data, length, 0);
+	return send__(socket, data, length, 0);
 }
 int RemoteClient::Recv(char *data, const int dataSize)
 {
-	return recv(socket, data, dataSize, 0);
+	return recv__(socket, data, dataSize, 0);
 }
 #endif
 

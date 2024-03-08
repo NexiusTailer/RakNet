@@ -902,7 +902,7 @@ Enable or disable automatically assigning connections to new instances of <a cla
 <p>
 Every <em>intervalMS</em> milliseconds, Connection_RM3::OnAutoserializeInterval() will be called.<br>
  Defaults to 30.<br>
- Pass with 0 to disable.<br>
+ Pass with &lt;0 to disable. Pass 0 to Serialize() every time RakPeer::Recieve() is called<br>
  If you want to control the update interval with more granularity, use the return values from <a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b22441365145bf552f89e09" title="Serialize our class to a bitstream.">Replica3::Serialize()</a>.<br>
  <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -1042,7 +1042,7 @@ Defines the unique instance of <a class="el" href="classRakNet_1_1ReplicaManager
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri May 20 11:21:17 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jun 30 11:04:29 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

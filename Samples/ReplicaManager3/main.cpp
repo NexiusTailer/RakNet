@@ -160,7 +160,7 @@ struct SampleReplica : public Replica3
 		PrintStringInBitstream(serializationBitstream);
 	}
 
-	void OnPoppedConnection(RakNet::Connection_RM3 *droppedConnection)
+	virtual void OnPoppedConnection(RakNet::Connection_RM3 *droppedConnection)
 	{
 		// Same as in SerializeDestruction(), no longer track this system
 		variableDeltaSerializer.RemoveRemoteSystemVariableHistory(droppedConnection->GetRakNetGUID());

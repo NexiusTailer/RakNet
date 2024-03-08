@@ -317,8 +317,8 @@ volatile bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" h
 <tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#2b3b8738006dcd36960fedebc22664d8">maximumIncomingConnections</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Store the maximum number of peers able to connect, including reserved connection slots for pings, etc.  <a href="#2b3b8738006dcd36960fedebc22664d8"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b38f8c068a566c0623be9c1425f7bc39"></a><!-- doxytag: member="RakNet::RakPeer::mySystemAddress" ref="b38f8c068a566c0623be9c1425f7bc39" args="[MAXIMUM_NUMBER_OF_INTERNAL_IDS]" -->
-<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#b38f8c068a566c0623be9c1425f7bc39">mySystemAddress</a> [MAXIMUM_NUMBER_OF_INTERNAL_IDS]</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="79fac920e5b3388a3e1eb9ef5ebea60f"></a><!-- doxytag: member="RakNet::RakPeer::incomingPassword" ref="79fac920e5b3388a3e1eb9ef5ebea60f" args="[256]" -->
+char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#79fac920e5b3388a3e1eb9ef5ebea60f">incomingPassword</a> [256]</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Local Player ID. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">RemoteSystemStruct *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#433a287f35dd77985ae4ac579e6adf76">remoteSystemList</a></td></tr>
@@ -3182,7 +3182,8 @@ Stops the network threads and closes all connections.
 <p>
 Starts the network threads and opens the listen port. 
 <p>
-You must call this before calling <a class="el" href="classRakNet_1_1RakPeer.html#19979ff2acc15abe22785fc55c1c656c" title="Connect to the specified host (ip or domain name) and server port.">Connect()</a>. <dl class="note" compact><dt><b>Note:</b></dt><dd>Multiple calls while already active are ignored. To call this function again with different settings, you must first call <a class="el" href="classRakNet_1_1RakPeer.html#0a6d4c16c9b489574393a39ab2f99990" title="Stops the network threads and closes all connections.">Shutdown()</a>. <p>
+You must call this before calling <a class="el" href="classRakNet_1_1RakPeer.html#19979ff2acc15abe22785fc55c1c656c" title="Connect to the specified host (ip or domain name) and server port.">Connect()</a>. <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>On the PS3, call <a class="el" href="classRakNet_1_1RakPeer.html#de24b8bf50eb756f54a208c2841f5e0d" title="Starts the network threads and opens the listen port.">Startup()</a> after Client_Login() </dd></dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>Multiple calls while already active are ignored. To call this function again with different settings, you must first call <a class="el" href="classRakNet_1_1RakPeer.html#0a6d4c16c9b489574393a39ab2f99990" title="Stops the network threads and closes all connections.">Shutdown()</a>. <p>
 Call SetMaximumIncomingConnections if you want to accept incoming connections. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -3316,7 +3317,7 @@ This is used to return a number to the user when they call Send identifying the 
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="RakPeer_8h.html">RakPeer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri May 20 11:21:17 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jun 30 11:04:29 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -2,7 +2,7 @@
 
 #if   defined(_WIN32) 
 #include <conio.h> /* getche() */
-
+#elif   defined(__S3E__)
 
 #else
 

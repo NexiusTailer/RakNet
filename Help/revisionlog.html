@@ -376,6 +376,14 @@
 	ReplicaManager3::Connection_RM3 now supports QueryGroupDownloadMessages() feature, to give all construction and serialization messages in a single tick after initial download, rather than the download potentially spread over many ticks.
 	Fix lockup with isActiveMutex in TCPInterface::CloseConnection().
 	Fix bug where packets with higher priorities sent later than ones with lower priorities caused them to still send in order.<BR>
+	3.901 (6/16/2011)
+	RakNetStatistics.cpp: Multiply packetloss by 100
+	ReliabilityLayer.cpp: Fix bug with reported per-second statistics overreporting packetloss
+	CCRakNetSlidingWindow: Improve congestion control algorithm to decrease average packetloss in the steady state
+	TCPInterface: Fix RemoteClient::Send returning 0 instead of bytes written when using SSL.
+	ReliabilityLayer.cpp: Fix broken RELIABLE_WITH_ACK_RECEIPT
+	ReliabilityLayer.cpp: Bugfix: If a duplicate ack arrived and more than DATAGRAM_MESSAGE_ID_ARRAY_LENGTH (512 by default) reliable messages had been sent or resent between the first ack and the duplicate, the wrong reliable message would be flagged as delivered. This would result in no further reliable messages would be returned to the user, although the connection would not be lost due to lost connection detection pings being unreliable.
+	SocketLayer.cpp: Comment out printf
   4.0 (1/1/2011)
   See 3.x_to_4.x_upgrade.txt in base directory for conversion notes.
   SWIG and C# is now officially supported.
@@ -460,8 +468,23 @@
 	SteamLobby: Fix bug causing some plugins to not work, including FullyConnectedMesh2.
 	RPC4: Support blocking calls with return values. Support global registration of methods. User data is now aligned.
 	PS3: Added support for checking for reboots due to game invites.
-	Documentation: Expand multiplayergamecomponents.html to describe common tasks to add multiplayer to a single player game. Added technical documentation about bluetooth.	
-  <br>
+	Documentation: Expand multiplayergamecomponents.html to describe common tasks to add multiplayer to a single player game. Added technical documentation about bluetooth.<BR>
+	4.022 (6/29/2011)
+	ReplicaManager3: Added Replica3Composite to ReplicaManager3.h, to make it easier to use composition instead of deriving from Replica3. Replica3::PostDeserializeConstruction function signature changed. PostSerializeConstruction added. PostDeserializeConstruction() is now called after all objects have been created in a ReplicaManager3 construction tick. Replica3::PostSerializeConstruction has been added with an output bitstream that is sent to Replica3::PostDeserializeConstruction. This enables the user to resolve pointer linkages at a time when all other objects are known to have been created and initialized.
+	ReplicaManager3: SetAutoSerializeInterval now accepts 0 to serialize every time RakPeer::Update is called. Use a negative value to disable autoSerialize.
+	RakPeer: Fixed GetInternalID not working (Affects NATPunchthrough on LAN). Fix crash in GetConnectionList.
+	XBOX: Notification_Console_Got_Room_Invite now returns user index of which user was invited. Inviting users with an index higher than 0 now works. Use XUserSetContextEx when joining rooms to prevent XONLINE_E_SESSION_REQUIRES_ARBITRATION error. Fix for more than 2 members in a room. Error returned on room full.
+	PS3: Added L2MID_Console_EnableDisableRoomVoiceChat. Add password support to Join_Room. Add option to init network utilities to Client_Login.
+	LibCat security: Removed dependency on GetLogicalProcessorInformation to support Windows versions older than XP with SP3
+	RPC4: Signal and slot support added. Existing Call functions marked deprecated.
+	IrrlichtDemo: Updated to Irrlicht 1.7.2. PostDeserializeConstruction modified to match new function signature.
+	Games for Windows Live support: Added
+	FullyConnectedMesh2: Added GetHostOrder
+	Other: Remove Code blocks and Dev-CPP project files.
+	StringTable: Fixed
+	
+	<BR>
+	<br>
   <BR>
 </p></TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">

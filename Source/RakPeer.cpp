@@ -13,10 +13,7 @@
 
 #ifdef _WIN32
 
-
-
 #else
-#define closesocket close
 #include <unistd.h>
 #endif
 
@@ -123,9 +120,9 @@ static const unsigned int MAX_OFFLINE_DATA_LENGTH=400; // I set this because I l
 
 // Used to distinguish between offline messages with data, and messages from the reliability layer
 // Should be different than any message that could result from messages from the reliability layer
-
+#if   !defined(__GNUC__)
 #pragma warning(disable:4309) // 'initializing' : truncation of constant value
-
+#endif
 // Make sure highest bit is 0, so isValid in DatagramHeaderFormat is false
 static const char OFFLINE_MESSAGE_DATA_ID[16]={0x00,0xFF,0xFF,0x00,0xFE,0xFE,0xFE,0xFE,0xFD,0xFD,0xFD,0xFD,0x12,0x34,0x56,0x78};
 
@@ -209,7 +206,6 @@ RakPeer::RakPeer()
 	bytesSentPerSecond = bytesReceivedPerSecond = 0;
 	endThreads = true;
 	isMainLoopThreadActive = false;
-	isRecvFromLoopThreadActive = 0;
 
 
 
@@ -223,7 +219,7 @@ RakPeer::RakPeer()
 #endif
 	allowInternalRouting=false;
 	for (unsigned int i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
-		mySystemAddress[i]=UNASSIGNED_SYSTEM_ADDRESS;
+		ipList[i]=UNASSIGNED_SYSTEM_ADDRESS;
 	allowConnectionResponseIPMigration = false;
 	//incomingPasswordLength=outgoingPasswordLength=0;
 	incomingPasswordLength=0;
@@ -538,7 +534,7 @@ StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor 
 				return FAILED_TO_CREATE_NETWORK_THREAD;
 			}
 
-			isRecvFromLoopThreadActive=0;
+			RakAssert(isRecvFromLoopThreadActive.GetValue()==0);
 			for (i=0; i<socketDescriptorCount; i++)
 			{
 				rpai[i].remotePortRakNetWasStartedOn_PS3=socketDescriptors[i].remotePortRakNetWasStartedOn_PS3_PSP2;
@@ -1056,7 +1052,7 @@ bool RakPeer::GetConnectionList( SystemAddress *remoteSystems, unsigned short *n
 	if (remoteSystems)
 	{
 		unsigned short i;
-		for (i=0; i < *numberOfSystems; i++)
+		for (i=0; i < *numberOfSystems && i < addresses.Size(); i++)
 			remoteSystems[i]=addresses[i];
 		*numberOfSystems=i;
 	}
@@ -2032,7 +2028,7 @@ SystemAddress RakPeer::GetInternalID( const SystemAddress systemAddress, const i
 {
 	if (systemAddress==UNASSIGNED_SYSTEM_ADDRESS)
 	{
-		return mySystemAddress[index];
+		return ipList[index];
 	}
 	else
 	{
@@ -2046,7 +2042,7 @@ SystemAddress RakPeer::GetInternalID( const SystemAddress systemAddress, const i
 		/*
 		sockaddr_in sa;
 		socklen_t len = sizeof(sa);
-		if (getsockname(connectionSockets[remoteSystem->connectionSocketIndex], (sockaddr*)&sa, &len)!=0)
+		if (getsockname__(connectionSockets[remoteSystem->connectionSocketIndex], (sockaddr*)&sa, &len)!=0)
 			return UNASSIGNED_SYSTEM_ADDRESS;
 		returnValue.port=ntohs(sa.sin_port);
 		returnValue.binaryAddress=sa.sin_addr.s_addr;
@@ -3167,7 +3163,7 @@ void RakPeer::OnConnectionRequest( RakPeer::RemoteSystemStruct *remoteSystem, Ra
 	RakAssert(systemIndex!=65535);
 	bitStream.Write(systemIndex);
 	for (unsigned int i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
-		bitStream.Write(mySystemAddress[i]);
+		bitStream.Write(ipList[i]);
 	bitStream.Write(incomingTimestamp);
 	bitStream.Write(RakNet::GetTime());
 
@@ -3279,10 +3275,10 @@ RakPeer::RemoteSystemStruct * RakPeer::AssignSystemAddressToRemoteSystemList( co
 
 				for (ipListIndex=0; ipListIndex < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ipListIndex++)
 				{
-					if (mySystemAddress[ipListIndex]==UNASSIGNED_SYSTEM_ADDRESS)
+					if (ipList[ipListIndex]==UNASSIGNED_SYSTEM_ADDRESS)
 						break;
 
-					if (bindingAddress.EqualsExcludingPort(mySystemAddress[ipListIndex]))
+					if (bindingAddress.EqualsExcludingPort(ipList[ipListIndex]))
 					{
 						foundIndex=ipListIndex;
 						break;
@@ -3663,16 +3659,16 @@ bool RakPeer::IsLoopbackAddress(const AddressOrGUID &systemIdentifier, bool matc
 	if (systemIdentifier.rakNetGuid!=UNASSIGNED_RAKNET_GUID)
 		return systemIdentifier.rakNetGuid==myGuid;
 
-	for (int i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS && mySystemAddress[i]!=UNASSIGNED_SYSTEM_ADDRESS; i++)
+	for (int i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS && ipList[i]!=UNASSIGNED_SYSTEM_ADDRESS; i++)
 	{
 		if (matchPort)
 		{
-			if (mySystemAddress[i]==systemIdentifier.systemAddress)
+			if (ipList[i]==systemIdentifier.systemAddress)
 				return true;
 		}
 		else
 		{
-			if (mySystemAddress[i].EqualsExcludingPort(systemIdentifier.systemAddress))
+			if (ipList[i].EqualsExcludingPort(systemIdentifier.systemAddress))
 				return true;
 		}
 	}
@@ -3684,7 +3680,7 @@ bool RakPeer::IsLoopbackAddress(const AddressOrGUID &systemIdentifier, bool matc
 SystemAddress RakPeer::GetLoopbackAddress(void) const
 {
 
-	return mySystemAddress[0];
+	return ipList[0];
 
 
 
@@ -5321,7 +5317,7 @@ bool RakPeer::RunUpdateCycle( RakNet::TimeUS timeNS, RakNet::Time timeMS )
 			}
 
 
-			if (timeMS > remoteSystem->lastReliableSend && timeMS-remoteSystem->lastReliableSend > defaultTimeoutTime/2 && remoteSystem->connectMode==RemoteSystemStruct::CONNECTED)
+			if (timeMS > remoteSystem->lastReliableSend && timeMS-remoteSystem->lastReliableSend > remoteSystem->reliabilityLayer.GetTimeoutTime()/2 && remoteSystem->connectMode==RemoteSystemStruct::CONNECTED)
 			{
 				// If no reliable packets are waiting for an ack, do a one byte reliable send so that disconnections are noticed
 				RakNetStatistics rakNetStatistics;
@@ -5648,7 +5644,7 @@ bool RakPeer::RunUpdateCycle( RakNet::TimeUS timeNS, RakNet::Time timeMS )
 								outBitStream.Write((MessageID)ID_NEW_INCOMING_CONNECTION);
 								outBitStream.Write(systemAddress);
 								for (unsigned int i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
-									outBitStream.Write(mySystemAddress[i]);
+									outBitStream.Write(ipList[i]);
 								outBitStream.Write(sendPongTime);
 								outBitStream.Write(RakNet::GetTime());
 

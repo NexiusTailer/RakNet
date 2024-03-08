@@ -10,6 +10,7 @@
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
 #include "SocketLayer.h"
+#include "SocketDefines.h"
 
 using namespace RakNet;
 
@@ -23,7 +24,7 @@ NatTypeDetectionClient::~NatTypeDetectionClient()
 {
 	if (c2!=INVALID_SOCKET)
 	{
-		closesocket(c2);
+		closesocket__(c2);
 	}
 }
 void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress)
@@ -160,7 +161,7 @@ void NatTypeDetectionClient::Shutdown(void)
 	serverAddress=UNASSIGNED_SYSTEM_ADDRESS;
 	if (c2!=INVALID_SOCKET)
 	{
-		closesocket(c2);
+		closesocket__(c2);
 		c2=INVALID_SOCKET;
 	}
 

@@ -9,6 +9,7 @@
 #include "RakSleep.h"
 #include "DS_OrderedList.h"
 #include "LinuxStrings.h"
+#include "SocketDefines.h"
 
 using namespace RakNet;
 static const unsigned short DEFAULT_MAX_FORWARD_ENTRIES=64;
@@ -34,7 +35,7 @@ bool operator==( const DataStructures::MLKeyRef<UDPForwarder::SrcAndDest> &input
 UDPForwarder::ForwardEntry::ForwardEntry() {socket=INVALID_SOCKET; timeLastDatagramForwarded=RakNet::GetTimeMS(); updatedSourcePort=false; updatedDestPort=false;}
 UDPForwarder::ForwardEntry::~ForwardEntry() {
 	if (socket!=INVALID_SOCKET)
-		closesocket(socket);
+		closesocket__(socket);
 }
 
 UDPForwarder::UDPForwarder()
@@ -164,11 +165,7 @@ void UDPForwarder::UpdateThreaded_Old(void)
 			largestDescriptor = forwardList[i]->socket;
 	}
 
-
-
-
-	selectResult=(int) select((int) largestDescriptor+1, &readFD, 0, 0, &tv);
-
+	selectResult=(int) select__((int) largestDescriptor+1, &readFD, 0, 0, &tv);
 
 	char data[ MAXIMUM_MTU_SIZE ];
 	sockaddr_in sa;
@@ -196,7 +193,7 @@ void UDPForwarder::UpdateThreaded_Old(void)
 			unsigned short portnum=0;
 			len2 = sizeof( sa );
 			sa.sin_family = AF_INET;
-			receivedDataLen = recvfrom( forwardEntry->socket, data, MAXIMUM_MTU_SIZE, flag, ( sockaddr* ) & sa, ( socklen_t* ) & len2 );
+			receivedDataLen = recvfrom__( forwardEntry->socket, data, MAXIMUM_MTU_SIZE, flag, ( sockaddr* ) & sa, ( socklen_t* ) & len2 );
 
 			if (receivedDataLen<0)
 			{
@@ -245,7 +242,7 @@ void UDPForwarder::UpdateThreaded_Old(void)
 				saOut.sin_family = AF_INET;
 				do
 				{
-					len = sendto( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & saOut, sizeof( saOut ) );
+					len = sendto__( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & saOut, sizeof( saOut ) );
 				}
 				while ( len == 0 );
 
@@ -279,7 +276,7 @@ void UDPForwarder::UpdateThreaded_Old(void)
 				saOut.sin_family = AF_INET;
 				do
 				{
-					len = sendto( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & saOut, sizeof( saOut ) );
+					len = sendto__( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & saOut, sizeof( saOut ) );
 				}
 				while ( len == 0 );
 
@@ -336,7 +333,7 @@ void UDPForwarder::UpdateThreaded(void)
 			largestDescriptor = forwardList[i]->socket;
 	}
 
-	selectResult=(int) select((int) largestDescriptor+1, &readFD, 0, 0, &tv);
+	selectResult=(int) select__((int) largestDescriptor+1, &readFD, 0, 0, &tv);
 
 	char data[ MAXIMUM_MTU_SIZE ];
 	sockaddr_storage their_addr;
@@ -368,7 +365,7 @@ void UDPForwarder::UpdateThreaded(void)
 
 			const int flag=0;
 			int receivedDataLen, len=0;
-			receivedDataLen = recvfrom( forwardEntry->socket, data, MAXIMUM_MTU_SIZE, flag, sockAddrPtr, socketlenPtr );
+			receivedDataLen = recvfrom__( forwardEntry->socket, data, MAXIMUM_MTU_SIZE, flag, sockAddrPtr, socketlenPtr );
 
 			if (receivedDataLen<0)
 			{
@@ -430,7 +427,7 @@ void UDPForwarder::UpdateThreaded(void)
 				{
 					do
 					{
-						len = sendto( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & forwardEntry->srcAndDest.dest.address.addr4, sizeof( sockaddr_in ) );
+						len = sendto__( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & forwardEntry->srcAndDest.dest.address.addr4, sizeof( sockaddr_in ) );
 					}
 					while ( len == 0 );
 				}
@@ -438,7 +435,7 @@ void UDPForwarder::UpdateThreaded(void)
 				{
 					do
 					{
-						len = sendto( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & forwardEntry->srcAndDest.dest.address.addr6, sizeof( sockaddr_in ) );
+						len = sendto__( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & forwardEntry->srcAndDest.dest.address.addr6, sizeof( sockaddr_in ) );
 					}
 					while ( len == 0 );
 				}
@@ -472,7 +469,7 @@ void UDPForwarder::UpdateThreaded(void)
 				{
 					do
 					{
-						len = sendto( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & forwardEntry->srcAndDest.source.address.addr4, sizeof( sockaddr_in ) );
+						len = sendto__( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & forwardEntry->srcAndDest.source.address.addr4, sizeof( sockaddr_in ) );
 					}
 					while ( len == 0 );
 				}
@@ -480,7 +477,7 @@ void UDPForwarder::UpdateThreaded(void)
 				{
 					do
 					{
-						len = sendto( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & forwardEntry->srcAndDest.source.address.addr6, sizeof( sockaddr_in ) );
+						len = sendto__( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & forwardEntry->srcAndDest.source.address.addr6, sizeof( sockaddr_in ) );
 					}
 					while ( len == 0 );
 				}
@@ -521,30 +518,30 @@ UDPForwarderResult UDPForwarder::AddForwardingEntry(SrcAndDest srcAndDest, RakNe
 		ForwardEntry *fe = RakNet::OP_NEW<UDPForwarder::ForwardEntry>(_FILE_AND_LINE_);
 		fe->srcAndDest=srcAndDest;
 		fe->timeoutOnNoDataMS=timeoutOnNoDataMS;
-		fe->socket = socket( AF_INET, SOCK_DGRAM, 0 );
+		fe->socket = socket__( AF_INET, SOCK_DGRAM, 0 );
 
 		//printf("Made socket %i\n", fe->readSocket);
 
 		// This doubles the max throughput rate
 		sock_opt=1024*256;
-		setsockopt(fe->socket, SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
+		setsockopt__(fe->socket, SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 
 		// Immediate hard close. Don't linger the readSocket, or recreating the readSocket quickly on Vista fails.
 		sock_opt=0;
-		setsockopt(fe->socket, SOL_SOCKET, SO_LINGER, ( char * ) & sock_opt, sizeof ( sock_opt ) );
+		setsockopt__(fe->socket, SOL_SOCKET, SO_LINGER, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 
 		listenerSocketAddress.sin_family = AF_INET;
 
 		if (forceHostAddress && forceHostAddress[0])
 		{
-			listenerSocketAddress.sin_addr.s_addr = inet_addr( forceHostAddress );
+			listenerSocketAddress.sin_addr.s_addr = inet_addr__( forceHostAddress );
 		}
 		else
 		{
 			listenerSocketAddress.sin_addr.s_addr = INADDR_ANY;
 		}
 
-		int ret = bind( fe->socket, ( struct sockaddr * ) & listenerSocketAddress, sizeof( listenerSocketAddress ) );
+		int ret = bind__( fe->socket, ( struct sockaddr * ) & listenerSocketAddress, sizeof( listenerSocketAddress ) );
 		if (ret==-1)
 		{
 			RakNet::OP_DELETE(fe,_FILE_AND_LINE_);
@@ -578,17 +575,17 @@ UDPForwarderResult UDPForwarder::AddForwardingEntry(SrcAndDest srcAndDest, RakNe
 		{
 			// Open socket. The address type depends on what
 			// getaddrinfo() gave us.
-			fe->socket = socket(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
+			fe->socket = socket__(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
 			if (fe->socket != INVALID_SOCKET)
 			{
-				int ret = bind( fe->socket, aip->ai_addr, (int) aip->ai_addrlen );
+				int ret = bind__( fe->socket, aip->ai_addr, (int) aip->ai_addrlen );
 				if (ret>=0)
 				{
 					break;
 				}
 				else
 				{
-					closesocket(fe->socket);
+					closesocket__(fe->socket);
 					fe->socket=INVALID_SOCKET;
 				}
 			}
@@ -602,11 +599,11 @@ UDPForwarderResult UDPForwarder::AddForwardingEntry(SrcAndDest srcAndDest, RakNe
 		// This doubles the max throughput rate
 		int sock_opt;
 		sock_opt=1024*256;
-		setsockopt(fe->socket, SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
+		setsockopt__(fe->socket, SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 
 		// Immediate hard close. Don't linger the readSocket, or recreating the readSocket quickly on Vista fails.
 		sock_opt=0;
-		setsockopt(fe->socket, SOL_SOCKET, SO_LINGER, ( char * ) & sock_opt, sizeof ( sock_opt ) );
+		setsockopt__(fe->socket, SOL_SOCKET, SO_LINGER, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 #endif // #if RAKNET_SUPPORT_IPV6!=1
 
 //		DataStructures::DefaultIndexType oldSize = forwardList.GetSize();

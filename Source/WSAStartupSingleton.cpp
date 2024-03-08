@@ -7,10 +7,11 @@
 #if   defined(_WIN32)
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#if defined(GFWL)
-extern void X360Startup(void);
-extern void X360Shutdown(void);
-#endif
+
+
+
+
+
 #endif
 #include "RakNetDefines.h"
 #include <stdio.h>
@@ -28,9 +29,9 @@ void WSAStartupSingleton::AddRef(void)
 	if (refCount!=1)
 		return;
 
-#if   defined(GFWL)
-	X360Startup();
-#endif
+
+
+
 
 	WSADATA winsockInfo;
 	if ( WSAStartup( MAKEWORD( 2, 2 ), &winsockInfo ) != 0 )
@@ -64,9 +65,9 @@ void WSAStartupSingleton::Deref(void)
 	
 	WSACleanup();
 
-#if   defined(GFWL)
-	X360Shutdown();
-#endif
+
+
+
 
 	
 	refCount=0;

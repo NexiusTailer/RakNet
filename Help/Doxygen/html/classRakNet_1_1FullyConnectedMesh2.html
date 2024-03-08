@@ -57,6 +57,8 @@ Inheritance diagram for RakNet::FullyConnectedMesh2:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1FullyConnectedMesh2.html#69e4564d8ac72ffb080258a1684aa6f2">IsHostSystem</a> (void) const </td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1FullyConnectedMesh2.html#160f394c0ad844c5a90eaf645d9eb664">GetHostOrder</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &gt; &amp;hostList)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1FullyConnectedMesh2.html#52aea1f763012e112bb798e01ef53b7f">IsConnectedHost</a> (void) const </td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1FullyConnectedMesh2.html#dfd8010f739368f9afdcc6d67f7dd561">SetAutoparticipateConnections</a> (bool b)</td></tr>
@@ -182,6 +184,26 @@ The connected host is whichever system we are connected to that has been running
 Will return UNASSIGNED_RAKNET_GUID if we are not connected to anyone, or if we are connected and are calculating the host If includeCalculating is true, will return the estimated calculated host as long as the calculation is nearly complete includeCalculating should be true if you are taking action based on another system becoming host, because not all host calculations may complete at the exact same time <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="classRakNet_1_1ConnectionGraph2.html#08103e2820bb625f791a8d12c774698f">ConnectionGraph2::GetLowestAveragePingSystem()</a> . If you need one system in the peer to peer group to relay data, have the host call this function after host migration, and use that system </dd></dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>System address of whichever system is host. </dd></dl>
 
+</div>
+</div><p>
+<a class="anchor" name="160f394c0ad844c5a90eaf645d9eb664"></a><!-- doxytag: member="RakNet::FullyConnectedMesh2::GetHostOrder" ref="160f394c0ad844c5a90eaf645d9eb664" args="(DataStructures::List&lt; RakNetGUID &gt; &amp;hostList)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::FullyConnectedMesh2::GetHostOrder           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>hostList</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get the list of connected systems, from oldest connected to newest This is also the order that the hosts will be chosen in 
 </div>
 </div><p>
 <a class="anchor" name="b45a7bcb5f76db83b3289bda7bdd082a"></a><!-- doxytag: member="RakNet::FullyConnectedMesh2::GetHostSystem" ref="b45a7bcb5f76db83b3289bda7bdd082a" args="(void) const " -->
@@ -479,7 +501,7 @@ When the message ID_REMOTE_NEW_INCOMING_CONNECTION arrives, we try to connect to
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="FullyConnectedMesh2_8h.html">FullyConnectedMesh2.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri May 20 11:21:16 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jun 30 11:04:28 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

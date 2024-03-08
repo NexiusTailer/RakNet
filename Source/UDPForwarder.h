@@ -54,7 +54,7 @@ public:
 	void Shutdown(void);
 
 	/// Call on a regular basis, unless using UDP_FORWARDER_EXECUTE_THREADED.
-	/// Will call select() on all sockets and forward messages.
+	/// Will call select__() on all sockets and forward messages.
 	void Update(void);
 
 	/// Sets the maximum number of forwarding entries allowed

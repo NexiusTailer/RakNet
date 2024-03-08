@@ -181,12 +181,12 @@ struct RAK_DLL_EXPORT SystemAddress
 	SystemAddress();
 	SystemAddress(const char *str);
 	SystemAddress(const char *str, unsigned short port);
-#if   defined(GFWL)
-	/// On the XBOX, never transmit SystemAddress. Instead, transmit XSESSION_INFO and use SetFromXSessionInfo() to get the address of a remote console
-	explicit SystemAddress(XSESSION_INFO *addr, unsigned short _port);
-	void SetFromXSessionInfo(XSESSION_INFO *addr, unsigned short _port);
-	void SetFromXNADDRAndXNKID(XNADDR *xnaddr, XNKID *xnkid, unsigned short _port);
-#endif
+
+
+
+
+
+
 
 	/// SystemAddress, with RAKNET_SUPPORT_IPV6 defined, holds both an sockaddr_in6 and a sockaddr_in
 	union// In6OrIn4

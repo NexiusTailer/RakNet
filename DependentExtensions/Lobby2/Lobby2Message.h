@@ -9,9 +9,9 @@
 #include "SimpleMutex.h"
 #include "Lobby2Presence.h"
 
-#if   defined(GFWL)
-#include "XBOX360Includes.h"
-#endif
+
+
+
 
 #pragma once
 
@@ -153,6 +153,7 @@ enum Lobby2MessageID
 	L2MID_Console_ShowPartyUI,
 	L2MID_Console_ShowMessagesUI,
 	L2MID_Console_ShowGUIInvitationsToRooms,
+	L2MID_Console_EnableDisableRoomVoiceChat,
 	L2MID_Notification_Client_RemoteLogin,
 	L2MID_Notification_Client_IgnoreStatus,
 	L2MID_Notification_Friends_StatusChange,
@@ -336,9 +337,9 @@ struct Lobby2Message
 	uint64_t requestId;
 
 
-#if   defined(GFWL)
-	XOVERLAPPED        m_Overlapped;
-#endif
+
+
+
 
 private:
 
@@ -468,6 +469,7 @@ struct Console_StartGame;
 struct Console_ShowPartyUI;
 struct Console_ShowMessagesUI;
 struct Console_ShowGUIInvitationsToRooms;
+struct Console_EnableDisableRoomVoiceChat;
 struct Notification_Client_RemoteLogin;
 struct Notification_Client_IgnoreStatus;
 struct Notification_Friends_StatusChange;
@@ -641,6 +643,7 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Console_ShowPartyUI *message);
 	virtual void MessageResult(Console_ShowMessagesUI *message);
 	virtual void MessageResult(Console_ShowGUIInvitationsToRooms *message);
+	virtual void MessageResult(Console_EnableDisableRoomVoiceChat *message);
 	virtual void MessageResult(Notification_Client_RemoteLogin *message);
 	virtual void MessageResult(Notification_Client_IgnoreStatus *message);
 	virtual void MessageResult(Notification_Friends_StatusChange *message);
@@ -3137,6 +3140,14 @@ struct Console_ShowGUIInvitationsToRooms : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return true;}
 	virtual bool RequiresLogin(void) const {return true;}
 };
+struct Console_EnableDisableRoomVoiceChat : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Console_EnableDisableRoomVoiceChat)
+	virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return true;}
+	virtual bool RequiresLogin(void) const {return true;}
+};
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Client_RemoteLogin : public Lobby2Message
 {
@@ -3877,6 +3888,7 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Console_ShowPartyUI);
 			__L2_MSG_FACTORY_BASE(Console_ShowMessagesUI);
 			__L2_MSG_FACTORY_BASE(Console_ShowGUIInvitationsToRooms);
+			__L2_MSG_FACTORY_BASE(Console_EnableDisableRoomVoiceChat);
 			__L2_MSG_FACTORY_BASE(Notification_Client_RemoteLogin);
 			__L2_MSG_FACTORY_BASE(Notification_Client_IgnoreStatus);
 			__L2_MSG_FACTORY_BASE(Notification_Friends_StatusChange);

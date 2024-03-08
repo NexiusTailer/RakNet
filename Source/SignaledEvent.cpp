@@ -178,7 +178,16 @@ void SignaledEvent::WaitOnEvent(int timeoutMs)
 			        ts.tv_nsec -= 1000000000;
 			        ts.tv_sec++;
 			}
+			
+			// [SBC] added mutex lock/unlock around cond_timedwait.
+            // this prevents airplay from generating a whole much of errors.
+            // not sure how this works on other platforms since according to
+            // the docs you are suppost to hold the lock before you wait
+            // on the cond.
+            pthread_mutex_lock(&hMutex);
 			pthread_cond_timedwait(&eventList, &hMutex, &ts);
+            pthread_mutex_unlock(&hMutex);
+
 			timeoutMs-=30;
 
 			isSignaledMutex.Lock();
@@ -198,7 +207,10 @@ void SignaledEvent::WaitOnEvent(int timeoutMs)
 		        ts.tv_nsec -= 1000000000;
 		        ts.tv_sec++;
 		}
+
+		pthread_mutex_lock(&hMutex);
 		pthread_cond_timedwait(&eventList, &hMutex, &ts);
+        pthread_mutex_unlock(&hMutex);
 
 		isSignaledMutex.Lock();
 		isSignaled=false;

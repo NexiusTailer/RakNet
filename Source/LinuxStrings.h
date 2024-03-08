@@ -9,9 +9,9 @@
 
 
 
-	#if (defined(__GNUC__)  || defined(__GCCXML__)) && !defined(_WIN32)
-		#ifndef _stricmp   	 	 
-			int _stricmp(const char* s1, const char* s2);  	 	 
+	#if (defined(__GNUC__)  || defined(__GCCXML__) || defined(__S3E__)) && !defined(_WIN32)
+		#ifndef _stricmp
+			int _stricmp(const char* s1, const char* s2);
 		#endif 
 		int _strnicmp(const char* s1, const char* s2, size_t n);
 #ifndef __APPLE__

@@ -166,7 +166,7 @@ RakNet::TimeUS GetTimeUS_Windows( void )
 	return curTime;
 #endif // #if defined(GET_TIME_SPIKE_LIMIT) && GET_TIME_SPIKE_LIMIT>0
 }
-#elif defined(__GNUC__)  || defined(__GCCXML__) 
+#elif defined(__GNUC__)  || defined(__GCCXML__) ||  defined(__S3E__)
 RakNet::TimeUS GetTimeUS_Linux( void )
 {
 	timeval tp;

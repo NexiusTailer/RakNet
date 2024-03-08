@@ -28,8 +28,23 @@
 <dt>Member <a class="el" href="classRakNet_1_1RakPeerInterface.html#03910361629f5cbabe0df0612a1f2709">RakNet::RakPeerInterface::ApplyNetworkSimulator</a> (float packetloss, unsigned short minExtraPing, unsigned short extraPingVariance)=0 </dt>
 <dd>Use <a href="http://www.jenkinssoftware.com/forum/index.php?topic=1671.0">http://www.jenkinssoftware.com/forum/index.php?topic=1671.0</a> instead. </dd>
 </dl>
+<p>
+<a class="anchor" name="_deprecated000005"></a> <dl>
+<dt>Member <a class="el" href="classRakNet_1_1RPC4.html#94a6c4503e9639d65e052a685d458878">RakNet::RPC4::CallLoopback</a> (const char *uniqueID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream) </dt>
+<dd>Use RegisterSlot() and Signal() with your own RakNetGUID as the send target Send to the attached instance of RakPeer. See RakPeerInterface::SendLoopback() </dd>
+</dl>
+<p>
+<a class="anchor" name="_deprecated000003"></a> <dl>
+<dt>Member <a class="el" href="classRakNet_1_1RPC4.html#62122f90344dbfc064f9b14e0f565b23">RakNet::RPC4::RegisterFunction</a> (const char *uniqueID, void(*functionPointer)(<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *userData, Packet *packet)) </dt>
+<dd>Use RegisterSlot </dd>
+</dl>
+<p>
+<a class="anchor" name="_deprecated000004"></a> <dl>
+<dt>Member <a class="el" href="classRakNet_1_1RPC4.html#71f5f6d32e12adf3715d9c5faea25439">RakNet::RPC4::RegisterLocalCallback</a> (const char *uniqueID, MessageID messageId) </dt>
+<dd>Use RegisterSlot and invoke on self only when the packet you want arrives When a <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> Packet with the specified identifier is returned, execute CallLoopback() on a function previously registered with RegisterFunction() For example, you could call "OnClosedConnection" whenever you get ID_DISCONNECTION_NOTIFICATION or ID_CONNECTION_LOST </dd>
+</dl>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri May 20 11:21:15 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jun 30 11:04:27 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

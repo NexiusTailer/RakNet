@@ -210,9 +210,9 @@ struct DatagramHeaderFormat
 	}
 };
 
-
+#if   !defined(__GNUC__) && !defined(__ARMCC)
 #pragma warning(disable:4702)   // unreachable code
-
+#endif
 
 #ifdef _WIN32
 //#define _DEBUG_LOGGER

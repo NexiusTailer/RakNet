@@ -12,9 +12,9 @@ Lobby2Presence::Lobby2Presence(const Lobby2Presence& input) {
 	status=input.status;
 	isVisible=input.isVisible;
 	titleNameOrID=input.titleNameOrID;
-#if   defined(GFWL)
-	memcpy(sessionId.ab,input.sessionId.ab,sizeof(input.sessionId.ab));
-#endif
+
+
+
 	statusString=input.statusString;
 }
 Lobby2Presence& Lobby2Presence::operator = ( const Lobby2Presence& input )
@@ -22,9 +22,9 @@ Lobby2Presence& Lobby2Presence::operator = ( const Lobby2Presence& input )
 	status=input.status;
 	isVisible=input.isVisible;
 	titleNameOrID=input.titleNameOrID;
-#if   defined(GFWL)
-	memcpy(sessionId.ab,input.sessionId.ab,sizeof(input.sessionId.ab));
-#endif
+
+
+
 	statusString=input.statusString;
 	return *this;
 }
@@ -40,8 +40,8 @@ void Lobby2Presence::Serialize(RakNet::BitStream *bitStream, bool writeToBitstre
 	status=(Status) gs;
 	bitStream->Serialize(writeToBitstream,isVisible);
 	bitStream->Serialize(writeToBitstream,titleNameOrID);
-#if   defined(GFWL)
-	bitStream->SerializeBits(writeToBitstream,(unsigned char *)sessionId.ab, BYTES_TO_BITS(sizeof(sessionId.ab)));
-#endif
+
+
+
 	bitStream->Serialize(writeToBitstream,statusString);
 }

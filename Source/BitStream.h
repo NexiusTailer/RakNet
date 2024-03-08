@@ -1942,7 +1942,7 @@ namespace RakNet
 	template <class templateType> // templateType for this function must be a float or double
 		bool BitStream::ReadNormQuat( templateType &w, templateType &x, templateType &y, templateType &z)
 	{
-		bool cwNeg, cxNeg, cyNeg, czNeg;
+		bool cwNeg=false, cxNeg=false, cyNeg=false, czNeg=false;
 		unsigned short cx,cy,cz;
 		Read(cwNeg);
 		Read(cxNeg);

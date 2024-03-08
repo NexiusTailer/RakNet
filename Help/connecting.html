@@ -73,47 +73,34 @@ already know.</li>
   boolean indicating if the other system should reply, even if they have
   no connections available for you to connect to.<br>
   <br>
-  Open systems will reply with ID_PONG. From the sample:<br>
+  Open systems will reply with ID_UNCONNECTED_PONG. From the sample:<br>
   <br>
-  <span class="RakNetCode">if (p-&gt;data[0]==ID_PONG)<br>
+  <span class="RakNetCode">if (p-&gt;data[0]==ID_UNCONNECTED_PONG)<br>
       {<br>
-&nbsp;&nbsp;&nbsp; RakNetTime time;<br>
-&nbsp;&nbsp;&nbsp; memcpy((char*)&amp;time,
-      p-&gt;data+1, sizeof(RakNetTime));<br>
-&nbsp;&nbsp;&nbsp; printf("Got pong from %s with time
-      %i\n", p-&gt;systemAddress.ToString(), RakNet::GetTime() - time);<br>
-      }</span><br>
-    <span style="font-weight: bold;"></span><br>
+&nbsp;&nbsp;&nbsp; RakNet::TimeMS time;<br>
+&nbsp;&nbsp;&nbsp; RakNet::BitStream bsIn(packet-&gt;data,packet-&gt;length,false);<br>
+&nbsp;&nbsp;&nbsp; bsIn.IgnoreBytes(1);<br>
+&nbsp;&nbsp;&nbsp; bsIn.Read(time);<br>
+  &nbsp;&nbsp;&nbsp; printf("Got pong from %s with time
+  %i\n", p-&gt;systemAddress.ToString(), RakNet::GetTime() - time);</span><br>
+  }<br>
+  <span style="font-weight: bold;"></span><br>
   In order to send custom user data, call
   RakPeer::SetOfflinePingResponse(customUserData, lengthInBytes); RakNet
   will copy the data passed to it and return this data appended to
-  ID_PONG.<br>
-  <br>
-  Extending the example above to read custom user data:<br>
-  <font size="-2"><br>
-    <span class="RakNetCode">if
-      (p-&gt;data[0]==ID_PONG)<br>
-      {<br>
-&nbsp;&nbsp;&nbsp; RakNetTime time;<br>
-&nbsp;&nbsp;&nbsp; memcpy((char*)&amp;time,
-      p-&gt;data+1, sizeof(RakNetTime));<br>
-&nbsp;&nbsp;&nbsp; memcpy(customUserData,
-      p-&gt;data+1+sizeof(RakNetTime),
-      p-&gt;length-1-sizeof(RakNetTime));</span><br>
-      <br>
-      The +1 and -1 is the one byte ID_PONG.<br>
-      <span style="font-style: italic;"><br>
-        <font size="-1">Note: there is a hardcoded define
-          MAX_OFFLINE_DATA_LENGTH in RakPeer.cpp limiting the length of your
-          custom user data. Change this value and recompile if your data is
-          larger than this define.<br>
-        </span><br>
-        <span style="font-style: italic;">Advantages:</span><br>
+  ID_UNCONNECTED_PONG.<br>
+  <span style="font-style: italic;"><br>
+    <font size="-1">Note: there is a hardcoded define
+    MAX_OFFLINE_DATA_LENGTH in RakPeer.cpp limiting the length of your
+    custom user data. Change this value and recompile if your data is
+    larger than this define.<br>
+    </span><br>
+    <span style="font-style: italic;">Advantages:</span><br>
 </p>
 <ul>
-<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">You can join games automatically on program startup,
-no GUI or user interaction required</li>
-<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Best way to find games on the LAN</li>
+  <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">You can join games automatically on program startup,
+    no GUI or user interaction required</li>
+  <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Best way to find games on the LAN</li>
 </ul>
 <span style="font-style: italic;"><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Disadvantages:</span><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2"><br>
 <ul>

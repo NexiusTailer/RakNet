@@ -10,12 +10,11 @@
 
 using namespace RakNet;
 
-void CFunc( RakNet::BitStream *bitStream, Packet *packet )
+RakPeerInterface *rakPeer1, *rakPeer2;
+
+void CFunc1( RakNet::BitStream *bitStream, Packet *packet )
 {
-	if (packet->systemAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
-		printf("Localhost call: ");
-	else
-		printf("Remote call: ");
+	printf("CFunc1 ");
 	RakNet::RakString data;
 	int offset=bitStream->GetReadOffset();
 	bool read = bitStream->ReadCompressed(data);
@@ -23,16 +22,21 @@ void CFunc( RakNet::BitStream *bitStream, Packet *packet )
 	printf("%s\n", data.C_String());
 };
 
-
-// Every instance of RPC4 that is attached will have RegisterFunction called.
-RPC4GlobalRegistration g("CFunc",CFunc);
+void CFunc2( RakNet::BitStream *bitStream, Packet *packet )
+{
+	printf("CFunc2 ");
+	RakNet::RakString data;
+	int offset=bitStream->GetReadOffset();
+	bool read = bitStream->ReadCompressed(data);
+	RakAssert(read);
+	printf("%s\n", data.C_String());
+};
 
 int main(void)
 {
 	printf("Demonstration of the RPC4 plugin.\n");
 	printf("Difficulty: Beginner\n\n");
 
-	RakPeerInterface *rakPeer1, *rakPeer2;
 	rakPeer1=RakNet::RakPeerInterface::GetInstance();
 	rakPeer2=RakNet::RakPeerInterface::GetInstance();
 	RakNet::SocketDescriptor sd1(1234,0);
@@ -45,27 +49,23 @@ int main(void)
 	RPC4 rpc1, rpc2;
 	rakPeer1->AttachPlugin(&rpc1);
 	rakPeer2->AttachPlugin(&rpc2);
-	rpc1.CallLoopback("blah1", 0);
+	rpc1.RegisterSlot("Event1", CFunc1, 0);
+	rpc2.RegisterSlot("Event1", CFunc1, 0);
+	rpc1.RegisterSlot("Event1", CFunc2, 0);
+	rpc2.RegisterSlot("Event1", CFunc2, 0);
 	RakNet::BitStream testBs;
 	testBs.WriteCompressed("testData");
-	rpc2.CallLoopback("blah2", &testBs);
-	rpc2.Call("CFunc", &testBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,rakPeer2->GetSystemAddressFromIndex(0),false);
+	rpc1.Signal("Event1", &testBs, HIGH_PRIORITY,RELIABLE_ORDERED,0,rakPeer2->GetSystemAddressFromIndex(0),false, true);
+
 	RakNet::Packet *packet;
 	packet = rakPeer1->Receive();
 	RakAssert(packet->data[0]==ID_NEW_INCOMING_CONNECTION);
 	rakPeer1->DeallocatePacket(packet);
-	packet = rakPeer1->Receive();
-	RakAssert(packet->data[0]==ID_RPC_REMOTE_ERROR);
-	RakAssert(packet->data[1]==RPC_ERROR_FUNCTION_NOT_REGISTERED);
-	RakAssert(strcmp((const char*) packet->data+2,"blah1")==0);
-	rakPeer1->DeallocatePacket(packet);
+	
 	packet = rakPeer2->Receive();
 	RakAssert(packet->data[0]==ID_CONNECTION_REQUEST_ACCEPTED);
 	rakPeer2->DeallocatePacket(packet);
-	packet = rakPeer2->Receive();
-	RakAssert(packet->data[0]==ID_RPC_REMOTE_ERROR);
-	RakAssert(packet->data[1]==RPC_ERROR_FUNCTION_NOT_REGISTERED);
-	RakAssert(strcmp((const char*) packet->data+2,"blah2")==0);
+	
 	RakSleep(100);
 	for (packet=rakPeer1->Receive(); packet; rakPeer1->DeallocatePacket(packet), rakPeer1->Receive())
 		;

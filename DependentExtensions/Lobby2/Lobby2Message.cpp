@@ -124,6 +124,7 @@ void Lobby2Callbacks::MessageResult(Console_StartGame *message) {ExecuteDefaultR
 void Lobby2Callbacks::MessageResult(Console_ShowPartyUI *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_ShowMessagesUI *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_ShowGUIInvitationsToRooms *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Console_EnableDisableRoomVoiceChat *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Client_RemoteLogin *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Client_IgnoreStatus *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Friends_StatusChange *message) {ExecuteDefaultResult(message);}
@@ -171,9 +172,9 @@ void Lobby2Callbacks::MessageResult(Notification_Console_Got_Room_Invite *messag
 void Lobby2Callbacks::MessageResult(Notification_Console_Accepted_Room_Invite *message) {ExecuteDefaultResult(message);}
 
 Lobby2Message::Lobby2Message() {refCount=1; requestId=(unsigned int)-1; callbackId=(uint32_t)-1;
-#if   defined(GFWL)
-ZeroMemory( &m_Overlapped, sizeof( XOVERLAPPED ) );
-#endif
+
+
+
 }
 void Lobby2Message::SerializeBase(bool writeToBitstream, bool serializeOutput, BitStream *bitStream)
 {

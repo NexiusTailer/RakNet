@@ -35,6 +35,11 @@ using namespace cat;
 
 #if defined(CAT_OS_WINDOWS)
 #include <cat/port/WindowsInclude.hpp>
+
+typedef BOOL (WINAPI *PtGetLogicalProcessorInformation)(
+	PSYSTEM_LOGICAL_PROCESSOR_INFORMATION, 
+	PDWORD);
+
 #elif defined(CAT_OS_APPLE)
 #include <sys/sysctl.h>
 #else
@@ -70,24 +75,45 @@ static CAT_INLINE u32 DetermineCacheLineBytes()
 	DWORD buffer_size = 0;
 	SYSTEM_LOGICAL_PROCESSOR_INFORMATION *buffer = 0;
 
-	GetLogicalProcessorInformation(0, &buffer_size);
+	PtGetLogicalProcessorInformation glpi;
 
-	if (buffer_size > 0)
+	// Attempt to use GetLogicalProcessorInformation
+	glpi = (PtGetLogicalProcessorInformation)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "GetLogicalProcessorInformation");
+
+	// If it is available,
+	if (glpi)
 	{
-		buffer = (SYSTEM_LOGICAL_PROCESSOR_INFORMATION *)malloc(buffer_size);
-		GetLogicalProcessorInformation(&buffer[0], &buffer_size);
+		// Grab the buffer size required to use GLPI
+		glpi(0, &buffer_size);
 
-		for (int i = 0; i < (int)(buffer_size / sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION)); ++i)
+		// If no error occurred,
+		if (buffer_size > 0)
 		{
-			if (buffer[i].Relationship == RelationCache &&
-				buffer[i].Cache.Level == 1)
+			// Allocate space for buffer
+			buffer = (SYSTEM_LOGICAL_PROCESSOR_INFORMATION *)malloc(buffer_size);
+
+			// If buffer is allocated,
+			if (buffer)
 			{
-				discovered_cache_line_size = (u32)buffer[i].Cache.LineSize;
-				break;
+				// Finally invoke GLPI and grab processor information
+				glpi(buffer, &buffer_size);
+
+				// For each piece of information,
+				for (int i = 0; i < (int)(buffer_size / sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION)); ++i)
+				{
+					// If it is L1 cache,
+					if (buffer[i].Relationship == RelationCache &&
+						buffer[i].Cache.Level == 1)
+					{
+						// Woot found it!
+						discovered_cache_line_size = (u32)buffer[i].Cache.LineSize;
+						break;
+					}
+				}
+
+				free(buffer);
 			}
 		}
-
-		free(buffer);
 	}
 
 #elif defined(CAT_OS_LINUX)

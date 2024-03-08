@@ -79,7 +79,7 @@ public:
 	virtual bool DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection);
 	virtual RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters *serializeParameters);
 	virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters);
-	virtual void PostDeserializeConstruction(RakNet::Connection_RM3 *sourceConnection);
+	virtual void PostDeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection);
 	virtual void PreDestruction(RakNet::Connection_RM3 *sourceConnection);
 
 	virtual void Update(RakNet::TimeMS curTime);
@@ -125,7 +125,7 @@ public:
 	virtual bool DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection);
 	virtual RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters *serializeParameters);
 	virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters);
-	virtual void PostDeserializeConstruction(RakNet::Connection_RM3 *sourceConnection);
+	virtual void PostDeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection);
 	virtual void PreDestruction(RakNet::Connection_RM3 *sourceConnection);
 
 	virtual void Update(RakNet::TimeMS curTime);

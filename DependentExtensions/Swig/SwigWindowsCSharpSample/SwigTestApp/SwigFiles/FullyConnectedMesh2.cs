@@ -78,6 +78,11 @@ public class FullyConnectedMesh2 : PluginInterface2 {
     return ret;
   }
 
+  public void GetHostOrder(RakNetListRakNetGUID hostList) {
+    RakNetPINVOKE.FullyConnectedMesh2_GetHostOrder(swigCPtr, RakNetListRakNetGUID.getCPtr(hostList));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public bool IsConnectedHost() {
     bool ret = RakNetPINVOKE.FullyConnectedMesh2_IsConnectedHost(swigCPtr);
     return ret;

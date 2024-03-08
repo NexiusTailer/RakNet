@@ -10,6 +10,7 @@
 #include "MessageIdentifiers.h"
 #include "GetTime.h"
 #include "BitStream.h"
+#include "SocketDefines.h"
 
 using namespace RakNet;
 
@@ -46,22 +47,22 @@ void NatTypeDetectionServer::Shutdown()
 {
 	if (s1p2!=INVALID_SOCKET)
 	{
-		closesocket(s1p2);
+		closesocket__(s1p2);
 		s1p2=INVALID_SOCKET;
 	}
 	if (s2p3!=INVALID_SOCKET)
 	{
-		closesocket(s2p3);
+		closesocket__(s2p3);
 		s2p3=INVALID_SOCKET;
 	}
 	if (s3p4!=INVALID_SOCKET)
 	{
-		closesocket(s3p4);
+		closesocket__(s3p4);
 		s3p4=INVALID_SOCKET;
 	}
 	if (s4p5!=INVALID_SOCKET)
 	{
-		closesocket(s4p5);
+		closesocket__(s4p5);
 		s4p5=INVALID_SOCKET;
 	}
 }

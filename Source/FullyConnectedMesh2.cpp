@@ -14,8 +14,18 @@
 #include "RakAssert.h"
 #include "GetTime.h"
 #include "Rand.h"
+#include "DS_OrderedList.h"
 
 using namespace RakNet;
+
+int FCM2ParticipantComp( const FullyConnectedMesh2::FCM2Participant &key, const FullyConnectedMesh2::FCM2Participant &data )
+{
+	if (key.fcm2Guid < data.fcm2Guid)
+		return -1;
+	if (key.fcm2Guid > data.fcm2Guid)
+		return 1;
+	return 0;
+}
 
 STATIC_FACTORY_DEFINITIONS(FullyConnectedMesh2,FullyConnectedMesh2);
 
@@ -25,12 +35,12 @@ FullyConnectedMesh2::FullyConnectedMesh2()
 	totalConnectionCount=0;
 	ourFCMGuid=0;
 	autoParticipateConnections=true;
-#if   defined(GFWL)
-	// Do not use on the XBOX. See RoomMemberInfo::remoteIPAddress
-	connectOnNewRemoteConnections=false;
-#else
+
+
+
+
 	connectOnNewRemoteConnections=true;
-#endif
+
 }
 FullyConnectedMesh2::~FullyConnectedMesh2()
 {
@@ -58,6 +68,30 @@ RakNetGUID FullyConnectedMesh2::GetHostSystem(void) const
 bool FullyConnectedMesh2::IsHostSystem(void) const
 {
 	return GetHostSystem()==rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
+}
+void FullyConnectedMesh2::GetHostOrder(DataStructures::List<RakNetGUID> &hostList)
+{
+	hostList.Clear(true, _FILE_AND_LINE_);
+
+	if (ourFCMGuid==0 || fcm2ParticipantList.Size()==0)
+	{
+		hostList.Push(rakPeerInterface->GetMyGUID(), _FILE_AND_LINE_);
+		return;
+	}
+
+	FCM2Participant fcm2;
+	fcm2.fcm2Guid=ourFCMGuid;
+	fcm2.rakNetGuid=rakPeerInterface->GetMyGUID();
+
+	DataStructures::OrderedList<FCM2Participant, FCM2Participant, FCM2ParticipantComp> olist;
+	olist.Insert(fcm2, fcm2, true, _FILE_AND_LINE_);
+	for (unsigned int i=0; i < fcm2ParticipantList.Size(); i++)
+		olist.Insert(fcm2ParticipantList[i], fcm2ParticipantList[i], true, _FILE_AND_LINE_);
+
+	for (unsigned int i=0; i < olist.Size(); i++)
+	{
+		hostList.Push(olist[i].rakNetGuid, _FILE_AND_LINE_);
+	}
 }
 bool FullyConnectedMesh2::IsConnectedHost(void) const
 {

@@ -41,8 +41,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;./../../Source;C:\irrlicht-1.7.1\include;./../../DependentExtensions/miniupnpc-1.5"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				AdditionalIncludeDirectories="./;./../../Source;C:\irrlicht-1.7.2\include;./../../DependentExtensions/miniupnpc-1.5"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -92,7 +92,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy C:\irrlicht-1.7.1\bin\Win32-VisualStudio\Irrlicht.dll .\"
+				CommandLine="copy C:\irrlicht-1.7.2\bin\Win32-VisualStudio\Irrlicht.dll .\"
 			/>
 		</Configuration>
 		<Configuration
@@ -120,8 +120,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;./../../Source;C:\irrlicht-1.7.1\include;./../../DependentExtensions/miniupnpc-1.5"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
+				AdditionalIncludeDirectories="./;./../../Source;C:\irrlicht-1.7.2\include;./../../DependentExtensions/miniupnpc-1.5"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -171,7 +171,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy C:\irrlicht-1.7.1\bin\Win32-VisualStudio\Irrlicht.dll .\"
+				CommandLine="copy C:\irrlicht-1.7.2\bin\Win32-VisualStudio\Irrlicht.dll .\"
 			/>
 		</Configuration>
 	</Configurations>

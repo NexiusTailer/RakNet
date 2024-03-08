@@ -1,6 +1,7 @@
 #include "NatTypeDetectionCommon.h"
 #include "SocketLayer.h"
 #include "SocketIncludes.h"
+#include "SocketDefines.h"
 
 using namespace RakNet;
 
@@ -85,7 +86,7 @@ SOCKET RakNet::CreateNonblockingBoundSocket(const char *bindAddr )
 	SOCKET s = SocketLayer::CreateBoundSocket( 0, false, bindAddr, true, 0, AF_INET );
 	#ifdef _WIN32
 		unsigned long nonblocking = 1;
-		ioctlsocket( s, FIONBIO, &nonblocking );
+		ioctlsocket__( s, FIONBIO, &nonblocking );
 
 
 
@@ -103,7 +104,7 @@ int RakNet::NatTypeRecvFrom(char *data, SOCKET socket, SystemAddress &sender)
 	len2 = sizeof( sa );
 	sa.sin_family = AF_INET;
 	sa.sin_port=0;
-	int len = recvfrom( socket, data, MAXIMUM_MTU_SIZE, flag, ( sockaddr* ) & sa, ( socklen_t* ) & len2 );
+	int len = recvfrom__( socket, data, MAXIMUM_MTU_SIZE, flag, ( sockaddr* ) & sa, ( socklen_t* ) & len2 );
 	if (len>0)
 	{
 		sender.address.addr4.sin_family=AF_INET;

@@ -19,15 +19,29 @@
   <p><B>How do I simulate lag?</B><BR> 
     In a hurry, use RakPeer::ApplyNetworkSimulator. But I recommend 
       <a href="http://www.netlimiter.com/" target="_blank">http://www.netlimiter.com/</a> instead.<BR>
+    There is also Network Emulator Toolkit (NEWT) from <A HREF="http://blog.mrpol.nl/2010/01/14/network-emulator-toolkit/">http://blog.mrpol.nl/2010/01/14/network-emulator-toolkit/</A> or <A HREF="http://blogs.msdn.com/b/lkruger/archive/2009/06/08/introducing-true-network-emulation-in-visual-studio-2010.aspx">http://blogs.msdn.com/b/lkruger/archive/2009/06/08/introducing-true-network-emulation-in-visual-studio-2010.aspx</A>
+    <BR>
     <BR>
     <B>My data that I write using bitstreams is messed up on the other side.</B><BR>
-    Make sure if you write one of the ID_* enumerations you cast it to an (unsigned char).  Other than that, make sure your read and write calls match.<BR>
+    Make sure if you write one of the ID_* enumerations you cast it to an (unsigned char). Do not use types that may be different on 64 and 32 bit systems, such as int or long (See NativeTypes.h). Other than that, make sure your read and write calls match.<BR>
     <BR>
     <B>My data pointed to by a pointer isn't arriving.</B><BR>
     This is the same problem as when trying to use a default copy constructor with allocated memory.  You can just send pointers if you want, but it will send the pointer variable rather than the data pointed to.  You will need to serialize the contents of pointers yourself.<BR>
     <BR>
     <B>How should I deal with firewalls?</B><BR>
     Be sure to specify that your end-users need to open the appropriate ports, or use a port that is probably already open (such as the http port).  One way to reduce tech support calls in this regard is to have your application try connecting a local client to a local server.  If you can't connect after a couple of tries then the user probably has a firewall blocking this. You can message the user in-game that they probably have a firewall that needs to be turned off on whichever port your game uses.<BR>
+    <BR>
+    <B>I get errors from winsock.h such as follows</B><BR>
+    C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\ws2def.h(91) : warning C4005: 'AF_IPX' : macro redefinition<BR>
+       C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\winsock.h(460) : see previous definition of 'AF_IPX'<BR>
+C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\ws2def.h(127) : warning C4005: 'AF_MAX' : macro redefinition<BR>
+        C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\winsock.h(479) : see previous definition of 'AF_MAX'<BR>
+C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\ws2def.h(163) : warning C4005: 'SO_DONTLINGER' : macro redefinition<BR>
+        C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\winsock.h(402) : see previous definition of 'SO_DONTLINGER'<BR>
+C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\ws2def.h(206) : error C2011: 'sockaddr' : 'struct' type redefinition<BR>
+        C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\winsock.h(485) : see declaration of 'sockaddr'<BR>
+    	This is a bug in winsock.h. You have to include winsock2.h before including winsock.h. You can fix this by including "WindowsIncludes.h" before including winsock.h.    
+    <BR>
     <BR>
     <B>I get conflicting lib errors such as follows</B><BR>
     LIBCMT.lib(dosmap.obj) : error LNK2005: __dosmaperr already defined in LIBCD.lib(dosmap.obj)<BR>

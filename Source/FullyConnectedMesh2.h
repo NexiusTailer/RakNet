@@ -62,6 +62,10 @@ public:
 	/// \return If our system is host
 	bool IsHostSystem(void) const;
 
+	/// Get the list of connected systems, from oldest connected to newest
+	/// This is also the order that the hosts will be chosen in
+	void GetHostOrder(DataStructures::List<RakNetGUID> &hostList);
+
 	/// \param[in] includeCalculating If true, and we are currently calculating a new host, return the new host if the calculation is nearly complete
 	/// \return If our system is host
 	bool IsConnectedHost(void) const;

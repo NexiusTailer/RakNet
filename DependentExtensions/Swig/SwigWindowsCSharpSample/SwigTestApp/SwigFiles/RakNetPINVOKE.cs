@@ -3285,6 +3285,9 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_IsHostSystem")]
   public static extern bool FullyConnectedMesh2_IsHostSystem(HandleRef jarg1);
 
+  [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_GetHostOrder")]
+  public static extern void FullyConnectedMesh2_GetHostOrder(HandleRef jarg1, HandleRef jarg2);
+
   [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_IsConnectedHost")]
   public static extern bool FullyConnectedMesh2_IsConnectedHost(HandleRef jarg1);
 

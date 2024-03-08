@@ -57,6 +57,7 @@ public:
 	// --------------------------------------------------------------------------------------------Major Low Level Functions - Functions needed by most users--------------------------------------------------------------------------------------------
 	/// \brief Starts the network threads and opens the listen port.
 	/// \details You must call this before calling Connect().
+	/// \pre On the PS3, call Startup() after Client_Login()
 	/// \note Multiple calls while already active are ignored.  To call this function again with different settings, you must first call Shutdown().
 	/// \note Call SetMaximumIncomingConnections if you want to accept incoming connections.
 	/// \param[in] maxConnections Maximum number of connections between this instance of RakPeer and another instance of RakPeer. Required so that the network can preallocate and for thread safety. A pure client would set this to 1.  A pure server would set it to the number of allowed clients.A hybrid would set it to the sum of both types of connections.
@@ -708,7 +709,7 @@ protected:
 	unsigned short maximumIncomingConnections;
 	RakNet::BitStream offlinePingResponse;
 	///Local Player ID
-	SystemAddress mySystemAddress[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
+	// SystemAddress mySystemAddress[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
 	char incomingPassword[256];
 	unsigned char incomingPasswordLength;
 
@@ -841,11 +842,11 @@ protected:
 	// Constructor not called!
 	struct RecvFromStruct
 	{
-#if   defined(GFWL)
-		char data[MAXIMUM_MTU_SIZE*2];
-#else
+
+
+
 		char data[MAXIMUM_MTU_SIZE];
-#endif
+
 		int bytesRead;
 		SystemAddress systemAddress;
 		RakNet::TimeUS timeRead;
