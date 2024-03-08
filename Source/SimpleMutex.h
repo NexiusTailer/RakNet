@@ -10,9 +10,9 @@
 #define __SIMPLE_MUTEX_H
 
 #include "RakMemoryOverride.h"
-#if   defined(X360)
-#include "XBOX360Includes.h"
-#elif defined(_WIN32)
+
+
+#if   defined(_WIN32)
 #include "WindowsIncludes.h"
 
 

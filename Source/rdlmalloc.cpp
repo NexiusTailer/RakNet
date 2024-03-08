@@ -37,73 +37,73 @@ static MLOCK_T malloc_global_mutex = { initialization values };.
 #if USE_LOCKS == 1
 
 #if USE_SPIN_LOCKS && SPIN_LOCKS_AVAILABLE
-#if   defined(X360)
-/* Custom win32-style spin locks on x86 and x64 for MSC */
-struct win32_mlock_t {
-	volatile long l;
-	unsigned int c;
-	long threadid;
-};
 
-#define MLOCK_T               struct win32_mlock_t
-#define CURRENT_THREAD        GetCurrentThreadId()
-#define INITIAL_LOCK(sl)      ((sl)->threadid = 0, (sl)->l = (sl)->c = 0, 0)
-#define ACQUIRE_LOCK(sl)      win32_acquire_lock(sl)
-#define RELEASE_LOCK(sl)      win32_release_lock(sl)
-#define TRY_LOCK(sl)          win32_try_lock(sl)
-#define SPINS_PER_YIELD       63
 
-static MLOCK_T malloc_global_mutex = { 0, 0, 0};
 
-static int win32_acquire_lock (MLOCK_T *sl) {
-	int spins = 0;
-	for (;;) {
-		if (sl->l != 0) {
-			if (sl->threadid == CURRENT_THREAD) {
-				++sl->c;
-				return 0;
-			}
-		}
-		else {
-			if (!interlockedexchange(&sl->l, 1)) {
-				assert(!sl->threadid);
-				sl->threadid = CURRENT_THREAD;
-				sl->c = 1;
-				return 0;
-			}
-		}
-		if ((++spins & SPINS_PER_YIELD) == 0)
-			SleepEx(0, FALSE);
-	}
-}
 
-static void win32_release_lock (MLOCK_T *sl) {
-	assert(sl->threadid == CURRENT_THREAD);
-	assert(sl->l != 0);
-	if (--sl->c == 0) {
-		sl->threadid = 0;
-		interlockedexchange (&sl->l, 0);
-	}
-}
 
-static int win32_try_lock (MLOCK_T *sl) {
-	if (sl->l != 0) {
-		if (sl->threadid == CURRENT_THREAD) {
-			++sl->c;
-			return 1;
-		}
-	}
-	else {
-		if (!interlockedexchange(&sl->l, 1)){
-			assert(!sl->threadid);
-			sl->threadid = CURRENT_THREAD;
-			sl->c = 1;
-			return 1;
-		}
-	}
-	return 0;
-}
-#elif !defined(DL_PLATFORM_WIN32)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if   !defined(DL_PLATFORM_WIN32)
 
 /* Custom pthread-style spin locks on x86 and x64 for gcc */
 struct pthread_mlock_t {
@@ -1475,9 +1475,9 @@ DEFAULT_GRANULARITY : system_info.dwAllocationGranularity);
 			else
 #endif /* USE_DEV_RANDOM */
 
-#if   defined(X360)
-				magic = (size_t)(GetTickCount() ^ (size_t)0x55555555U);
-#elif defined(DL_PLATFORM_WIN32)
+
+
+#if   defined(DL_PLATFORM_WIN32)
 				magic = (size_t)(GetTickCount() ^ (size_t)0x55555555U);
 #else
 				magic = (size_t)(time(0) ^ (size_t)0x55555555U);

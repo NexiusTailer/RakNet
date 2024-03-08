@@ -1,10 +1,10 @@
 #include "WSAStartupSingleton.h"
 
-#if   defined(X360)
-#include "XBOX360Includes.h"
-extern void X360Startup(void);
-extern void X360Shutdown(void);
-#elif defined(_WIN32)
+
+
+
+
+#if   defined(_WIN32)
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #endif
@@ -24,14 +24,14 @@ void WSAStartupSingleton::AddRef(void)
 	if (refCount!=1)
 		return;
 
-#if   defined(X360)
-	X360Startup();
-#endif
+
+
+
 
 	WSADATA winsockInfo;
 	if ( WSAStartup( MAKEWORD( 2, 2 ), &winsockInfo ) != 0 )
 	{
-#if   !defined(X360) && defined(_DEBUG)
+#if   defined(_DEBUG)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -60,9 +60,9 @@ void WSAStartupSingleton::Deref(void)
 	
 	WSACleanup();
 
-#if   defined(X360)
-	X360Shutdown();
-#endif
+
+
+
 
 	
 	refCount=0;

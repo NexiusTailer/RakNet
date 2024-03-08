@@ -1,6 +1,6 @@
 
 
-#if   defined(_WIN32) &&  !defined(X360)
+#if   defined(_WIN32) 
 #include <conio.h> /* getche() */
 
 

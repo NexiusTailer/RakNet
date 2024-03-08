@@ -1132,7 +1132,7 @@ namespace RakNet
 		{
 			// Hide the address so routers don't modify it
 			SystemAddress var2=inTemplateVar;
-			unsigned long binaryAddress=~inTemplateVar.address.addr4.sin_addr.s_addr;
+			uint32_t binaryAddress=~inTemplateVar.address.addr4.sin_addr.s_addr;
 			// Don't endian swap the address or port
 			WriteBits((unsigned char*)&binaryAddress, sizeof(binaryAddress)*8, true);
 			unsigned short p = var2.GetPortNetworkOrder();
@@ -1486,7 +1486,7 @@ namespace RakNet
 			outTemplateVar.address.addr4.sin_family=AF_INET;
 			// Read(var.binaryAddress);
 			// Don't endian swap the address or port
-			unsigned long binaryAddress;
+			uint32_t binaryAddress;
 			ReadBits( ( unsigned char* ) & binaryAddress, sizeof(binaryAddress) * 8, true );
 			// Unhide the IP address, done to prevent routers from changing it
 			outTemplateVar.address.addr4.sin_addr.s_addr=~binaryAddress;

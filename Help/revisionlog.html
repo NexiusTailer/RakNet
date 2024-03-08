@@ -439,14 +439,21 @@
 	RELIABLE_WITH_ACK_RECEIPT: Fixed transmissing wrong value, causing datastream corruption when used.
 	Rackspace: Added Rackspace.h, a C++ interface to Rackspace cloud servers.
 	XBOX 360: Serialize room member names.
-	PS3: public and private slot counts now returned per room.
+	PS3: Public and private slot counts now returned per room. Added GUI invites.
 	Added LocklessTypes.h, LocklessTypes.cpp to /Source to fix reported bug http://www.jenkinssoftware.com/forum/index.php?topic=4466.0 where RakPeer::Startup() would block forever.<BR>
 	4.019 (4/12/2011)
 	Fixed Console_CreateRoom_Steam not using public slots setting.
 	Updated bzip to 1.0.6
 	Fixed binary data when returning more than one result for Lobby2Message_PGSQL
 	PS3: public and private slot fixed.<BR>
-  <br>
+	4.020 (4/21/2011)
+	NATPunchthroughClient: Fixed internal IP addresses incorrectly reported, sometimes causing failed LAN connections.
+	XBOX: Allow localization of SignIn dialog.
+	32 to 64 bit communications: Have stringCompressor not use unsigned int for 32/64 bit network support.	Fix error with BitStream writing SystemAddress using unsigned long, caused incorrect RakNetGUID values.
+	Linux (LIBCAT): Reduce entropy gathering rate to once a second.  For Linux, move vmstat -s polling to the invariant sources so it isn't run periodically.
+	PS3: Added Console_ShowGUIInvitationsToRooms.
+	PS3: Renamed Notification_Console_Got_Room_Invite_PS3 to Notification_Console_Accepted_Room_Invite_PS3
+	PS3: Added working implementation of  Notification_Console_Got_Room_Invite_PS3<BR>
   <br>
   <BR>
 </p></TD></TR></TABLE>

@@ -200,7 +200,7 @@ void UDPForwarder::UpdateThreaded_Old(void)
 
 			if (receivedDataLen<0)
 			{
-#if defined(_WIN32) && defined(_DEBUG) &&  !defined(X360)
+#if defined(_WIN32) && defined(_DEBUG) 
 				DWORD dwIOError = WSAGetLastError();
 
 				if (dwIOError!=WSAECONNRESET && dwIOError!=WSAEINTR && dwIOError!=WSAETIMEDOUT)
@@ -372,7 +372,7 @@ void UDPForwarder::UpdateThreaded(void)
 
 			if (receivedDataLen<0)
 			{
-#if defined(_WIN32) && defined(_DEBUG) &&  !defined(X360)
+#if defined(_WIN32) && defined(_DEBUG) 
 				DWORD dwIOError = WSAGetLastError();
 
 				if (dwIOError!=WSAECONNRESET && dwIOError!=WSAEINTR && dwIOError!=WSAETIMEDOUT)

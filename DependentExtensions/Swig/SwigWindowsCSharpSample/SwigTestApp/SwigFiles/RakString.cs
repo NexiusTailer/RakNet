@@ -448,11 +448,11 @@ public class RakString : IDisposable {
     RakNetPINVOKE.RakString_Serialize__SWIG_1(str, BitStream.getCPtr(bs));
   }
 
-  public void SerializeCompressed(BitStream bs, int languageId, bool writeLanguageId) {
+  public void SerializeCompressed(BitStream bs, byte languageId, bool writeLanguageId) {
     RakNetPINVOKE.RakString_SerializeCompressed__SWIG_0(swigCPtr, BitStream.getCPtr(bs), languageId, writeLanguageId);
   }
 
-  public void SerializeCompressed(BitStream bs, int languageId) {
+  public void SerializeCompressed(BitStream bs, byte languageId) {
     RakNetPINVOKE.RakString_SerializeCompressed__SWIG_1(swigCPtr, BitStream.getCPtr(bs), languageId);
   }
 
@@ -460,11 +460,11 @@ public class RakString : IDisposable {
     RakNetPINVOKE.RakString_SerializeCompressed__SWIG_2(swigCPtr, BitStream.getCPtr(bs));
   }
 
-  public static void SerializeCompressed(string str, BitStream bs, int languageId, bool writeLanguageId) {
+  public static void SerializeCompressed(string str, BitStream bs, byte languageId, bool writeLanguageId) {
     RakNetPINVOKE.RakString_SerializeCompressed__SWIG_3(str, BitStream.getCPtr(bs), languageId, writeLanguageId);
   }
 
-  public static void SerializeCompressed(string str, BitStream bs, int languageId) {
+  public static void SerializeCompressed(string str, BitStream bs, byte languageId) {
     RakNetPINVOKE.RakString_SerializeCompressed__SWIG_4(str, BitStream.getCPtr(bs), languageId);
   }
 

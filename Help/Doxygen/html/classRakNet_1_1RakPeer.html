@@ -841,7 +841,7 @@ Connect to the specified host (ip or domain name) and server port.
 <p>
 Calling Connect and not calling SetMaximumIncomingConnections acts as a dedicated client. Calling both acts as a true peer.<p>
 This is a non-blocking connection.<p>
-The connection is successful when <a class="el" href="classRakNet_1_1RakPeer.html#514c8d6f1dc75b5e9bb3cb5b9dcb632b">GetConnectionState()</a> returns IS_CONNECTED or <a class="el" href="classRakNet_1_1RakPeer.html#46d90fb903e747f76d63eb3a96543740" title="Gets a message from the incoming message queue.">Receive()</a> gets a message with the type identifier ID_CONNECTION_ACCEPTED. If the connection is not successful, such as a rejected connection or no response then neither of these things will happen. <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Requires that you first call Initialize. </dd></dl>
+The connection is successful when <a class="el" href="classRakNet_1_1RakPeer.html#514c8d6f1dc75b5e9bb3cb5b9dcb632b">GetConnectionState()</a> returns IS_CONNECTED or <a class="el" href="classRakNet_1_1RakPeer.html#46d90fb903e747f76d63eb3a96543740" title="Gets a message from the incoming message queue.">Receive()</a> gets a message with the type identifier ID_CONNECTION_REQUEST_ACCEPTED. If the connection is not successful, such as a rejected connection or no response then neither of these things will happen. <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Requires that you first call Initialize. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>host</em>&nbsp;</td><td>Either a dotted IP address or a domain name. </td></tr>
@@ -3316,7 +3316,7 @@ This is used to return a number to the user when they call Send identifying the 
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="RakPeer_8h.html">RakPeer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Apr 12 11:27:24 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Apr 21 18:27:12 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

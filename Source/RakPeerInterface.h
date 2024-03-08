@@ -111,7 +111,7 @@ public:
 	/// \brief Connect to the specified host (ip or domain name) and server port.
 	/// Calling Connect and not calling SetMaximumIncomingConnections acts as a dedicated client.
 	/// Calling both acts as a true peer. This is a non-blocking connection.
-	/// You know the connection is successful when GetConnectionState() returns IS_CONNECTED or Receive() gets a message with the type identifier ID_CONNECTION_ACCEPTED.
+	/// You know the connection is successful when GetConnectionState() returns IS_CONNECTED or Receive() gets a message with the type identifier ID_CONNECTION_REQUEST_ACCEPTED.
 	/// If the connection is not successful, such as a rejected connection or no response then neither of these things will happen.
 	/// \pre Requires that you first call Initialize
 	/// \param[in] host Either a dotted IP address or a domain name

@@ -39,11 +39,11 @@
 <a href="classRakNet_1_1StringCompressor-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1StringCompressor.html#097682d44840235ed6e9d37837f4f587">GenerateTreeFromStrings</a> (unsigned char *input, unsigned inputLength, int languageID)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1StringCompressor.html#85021d4797ca78ed05370edf8489a97a">GenerateTreeFromStrings</a> (unsigned char *input, unsigned inputLength, uint8_t languageId)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1StringCompressor.html#69411cc66e1e45238886c245de6bb054">EncodeString</a> (const char *input, int maxCharsToWrite, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *output, int languageID=0)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1StringCompressor.html#334eab1d6548d0212106d3d1108fb842">EncodeString</a> (const char *input, int maxCharsToWrite, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *output, uint8_t languageId=0)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1StringCompressor.html#51d85454cf582e98574f199d32d7ad1a">DecodeString</a> (char *output, int maxCharsToWrite, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *input, int languageID=0)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1StringCompressor.html#a5ee49280353bab84f6bf9154776bec2">DecodeString</a> (char *output, int maxCharsToWrite, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *input, uint8_t languageId=0)</td></tr>
 
 <tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static <a class="el" href="classRakNet_1_1StringCompressor.html">StringCompressor</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1StringCompressor.html#024d479beb74364c0414d20d8154713b">Instance</a> (void)</td></tr>
@@ -61,7 +61,7 @@ static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 Writes and reads strings to and from bitstreams. 
 <p>
 Only works with ASCII strings. The default compression is for English. You can call GenerateTreeFromStrings to compress and decompress other languages efficiently as well. <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="51d85454cf582e98574f199d32d7ad1a"></a><!-- doxytag: member="RakNet::StringCompressor::DecodeString" ref="51d85454cf582e98574f199d32d7ad1a" args="(char *output, int maxCharsToWrite, RakNet::BitStream *input, int languageID=0)" -->
+<a class="anchor" name="a5ee49280353bab84f6bf9154776bec2"></a><!-- doxytag: member="RakNet::StringCompressor::DecodeString" ref="a5ee49280353bab84f6bf9154776bec2" args="(char *output, int maxCharsToWrite, RakNet::BitStream *input, uint8_t languageId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -86,8 +86,8 @@ Only works with ASCII strings. The default compression is for English. You can c
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&nbsp;</td>
-          <td class="paramname"> <em>languageID</em> = <code>0</code></td><td>&nbsp;</td>
+          <td class="paramtype">uint8_t&nbsp;</td>
+          <td class="paramname"> <em>languageId</em> = <code>0</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -110,7 +110,7 @@ Writes input to output, uncompressed. Takes care of the null terminator for you.
 
 </div>
 </div><p>
-<a class="anchor" name="69411cc66e1e45238886c245de6bb054"></a><!-- doxytag: member="RakNet::StringCompressor::EncodeString" ref="69411cc66e1e45238886c245de6bb054" args="(const char *input, int maxCharsToWrite, RakNet::BitStream *output, int languageID=0)" -->
+<a class="anchor" name="334eab1d6548d0212106d3d1108fb842"></a><!-- doxytag: member="RakNet::StringCompressor::EncodeString" ref="334eab1d6548d0212106d3d1108fb842" args="(const char *input, int maxCharsToWrite, RakNet::BitStream *output, uint8_t languageId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -135,8 +135,8 @@ Writes input to output, uncompressed. Takes care of the null terminator for you.
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&nbsp;</td>
-          <td class="paramname"> <em>languageID</em> = <code>0</code></td><td>&nbsp;</td>
+          <td class="paramtype">uint8_t&nbsp;</td>
+          <td class="paramname"> <em>languageId</em> = <code>0</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -159,7 +159,7 @@ Writes input to output, compressed. Takes care of the null terminator for you. <
 
 </div>
 </div><p>
-<a class="anchor" name="097682d44840235ed6e9d37837f4f587"></a><!-- doxytag: member="RakNet::StringCompressor::GenerateTreeFromStrings" ref="097682d44840235ed6e9d37837f4f587" args="(unsigned char *input, unsigned inputLength, int languageID)" -->
+<a class="anchor" name="85021d4797ca78ed05370edf8489a97a"></a><!-- doxytag: member="RakNet::StringCompressor::GenerateTreeFromStrings" ref="85021d4797ca78ed05370edf8489a97a" args="(unsigned char *input, unsigned inputLength, uint8_t languageId)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -178,8 +178,8 @@ Writes input to output, compressed. Takes care of the null terminator for you. <
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&nbsp;</td>
-          <td class="paramname"> <em>languageID</em></td><td>&nbsp;</td>
+          <td class="paramtype">uint8_t&nbsp;</td>
+          <td class="paramname"> <em>languageId</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -225,7 +225,7 @@ static function because only static functions can access static members The <a c
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="StringCompressor_8h.html">StringCompressor.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Apr 12 11:27:24 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Apr 21 18:27:12 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

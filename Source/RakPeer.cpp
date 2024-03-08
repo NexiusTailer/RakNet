@@ -71,9 +71,9 @@ RAK_THREAD_DECLARATION(UDTConnect);
 #include <stdlib.h> // malloc
 #endif
 
-#if   defined(X360)
-//
-#elif defined(_WIN32)
+
+
+#if   defined(_WIN32)
 //
 #else
 /*
@@ -93,11 +93,11 @@ extern void Console2GetIPAndPort(unsigned int, char *, unsigned short *, unsigne
 
 
 static const int NUM_MTU_SIZES=3;
-#if   defined(X360)
-static const int mtuSizes[NUM_MTU_SIZES]={MAXIMUM_MTU_SIZE, MAXIMUM_MTU_SIZE, 576};
-#else
+
+
+
 static const int mtuSizes[NUM_MTU_SIZES]={MAXIMUM_MTU_SIZE, 1200, 576};
-#endif
+
 
 // Note to self - if I change this it might affect RECIPIENT_OFFLINE_MESSAGE_INTERVAL in Natpunchthrough.cpp
 //static const int MAX_OPEN_CONNECTION_REQUESTS=8;
@@ -342,9 +342,9 @@ StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor 
 
 	if (threadPriority==-99999)
 	{
-#if   defined(X360)
-		threadPriority=0;
-#elif defined(_WIN32)
+
+
+#if   defined(_WIN32)
 		threadPriority=0;
 
 
@@ -356,7 +356,7 @@ StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor 
 
 	// Fill out ipList structure
 	unsigned int i;
-#if   !defined(X360)
+
 	SocketLayer::GetMyIP( ipList );
 // 	for (i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
 // 	{
@@ -367,7 +367,7 @@ StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor 
 // 			printf("%s\n",str);
 // 		}
 // 	}
-#endif
+
 
 	if (myGuid==UNASSIGNED_RAKNET_GUID)
 	{
@@ -814,7 +814,7 @@ void RakPeer::GetIncomingPassword( char* passwordData, int *passwordDataLength  
 // Call this to connect to the specified host (ip or domain name) and server port.
 // Calling Connect and not calling SetMaximumIncomingConnections acts as a dedicated client.  Calling both acts as a true peer.
 // This is a non-blocking connection.  You know the connection is successful when IsConnected() returns true
-// or receive gets a packet with the type identifier ID_CONNECTION_ACCEPTED.  If the connection is not
+// or receive gets a packet with the type identifier ID_CONNECTION_REQUEST_ACCEPTED.  If the connection is not
 // successful, such as rejected connection or no response then neither of these things will happen.
 // Requires that you first call Initialize
 //
@@ -2036,7 +2036,7 @@ SystemAddress RakPeer::GetInternalID( const SystemAddress systemAddress, const i
 	}
 	else
 	{
-#if   !defined(X360)
+
 //		SystemAddress returnValue;
 		RemoteSystemStruct * remoteSystem = GetRemoteSystemFromSystemAddress( systemAddress, false, true );
 		if (remoteSystem==0)
@@ -2052,9 +2052,9 @@ SystemAddress RakPeer::GetInternalID( const SystemAddress systemAddress, const i
 		returnValue.binaryAddress=sa.sin_addr.s_addr;
 		return returnValue;
 */
-#else
-		return UNASSIGNED_SYSTEM_ADDRESS;
-#endif
+
+
+
 	}
 }
 
@@ -2295,17 +2295,17 @@ int RakPeer::GetMTUSize( const SystemAddress target ) const
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 unsigned int RakPeer::GetNumberOfAddresses( void )
 {
-#if   !defined(X360)
+
 	int i = 0;
 
 	while ( ipList[ i ]!=UNASSIGNED_SYSTEM_ADDRESS )
 		i++;
 
 	return i;
-#else
-	RakAssert(0);
-	return 0;
-#endif
+
+
+
+
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2318,19 +2318,19 @@ const char* RakPeer::GetLocalIP( unsigned int index )
 	if (IsActive()==false)
 	{
 	// Fill out ipList structure
-#if   !defined(X360)
+
 	SocketLayer::GetMyIP( ipList );
-#endif
+
 	}
 
-#if   !defined(X360)
+
 	static char str[128];
 	ipList[index].ToString(false,str);
 	return str;
-#else
-	RakAssert(0);
-	return 0;
-#endif
+
+
+
+
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2343,7 +2343,7 @@ bool RakPeer::IsLocalIP( const char *ip )
 	if (ip==0 || ip[0]==0)
 		return false;
 
-#if   !defined(X360)
+
 	if (strcmp(ip, "127.0.0.1")==0 || strcmp(ip, "localhost")==0)
 		return true;
 
@@ -2354,10 +2354,10 @@ bool RakPeer::IsLocalIP( const char *ip )
 		if (strcmp(ip, GetLocalIP(i))==0)
 			return true;
 	}
-#else
-	if (strcmp(ip, "2130706433")==0) // 127.0.0.1 big endian
-		return true;
-#endif
+
+
+
+
 	return false;
 }
 
@@ -3683,11 +3683,11 @@ bool RakPeer::IsLoopbackAddress(const AddressOrGUID &systemIdentifier, bool matc
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 SystemAddress RakPeer::GetLoopbackAddress(void) const
 {
-#if   !defined(X360)
+
 	return mySystemAddress[0];
-#else
-	return firstExternalID;
-#endif
+
+
+
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 bool RakPeer::AllowIncomingConnections(void) const
@@ -3896,11 +3896,11 @@ bool RakPeer::SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPri
 			return false;
 		}
 
-#if   !defined(X360)
+
 		sendList=(unsigned *)alloca(sizeof(unsigned));
-#else
-		sendList = (unsigned *) rakMalloc_Ex(sizeof(unsigned), _FILE_AND_LINE_);
-#endif
+
+
+
 
 		if (remoteSystemList[remoteSystemIndex].isActive &&
 			remoteSystemList[remoteSystemIndex].connectMode!=RemoteSystemStruct::DISCONNECT_ASAP &&
@@ -3913,13 +3913,13 @@ bool RakPeer::SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPri
 	}
 	else
 	{
-#if   !defined(X360)
+
 	//sendList=(unsigned *)alloca(sizeof(unsigned)*remoteSystemListSize);
 		sendList=(unsigned *)alloca(sizeof(unsigned)*maximumNumberOfPeers);
-#else
-	//sendList = RakNet::OP_NEW<unsigned[remoteSystemListSize]>( _FILE_AND_LINE_ );
-		sendList = (unsigned *) rakMalloc_Ex(sizeof(unsigned)*maximumNumberOfPeers, _FILE_AND_LINE_);
-#endif
+
+
+
+
 
 		// remoteSystemList in network thread
 		unsigned int idx;
@@ -4072,11 +4072,6 @@ union Buff6AndBuff8
 uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
 {
 	// Mac address is a poor solution because you can't have multiple connections from the same system
-#if   defined(X360)
-	Buff6AndBuff8 b6b8;
-	b6b8.buff8=0;
-	GetMACAddress(b6b8.buff6);
-	return b6b8.buff8;
 
 
 
@@ -4085,7 +4080,12 @@ uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
 
 
 
-#elif defined(_WIN32)
+
+
+
+
+
+#if   defined(_WIN32)
 	uint64_t g=RakNet::GetTimeUS();
 
 	RakNet::TimeUS lastTime, thisTime;
@@ -4134,7 +4134,7 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 	RakNet::Packet *packet;
 	unsigned i;
 
-#if   !defined(X360)
+
 	char str1[64];
 	systemAddress.ToString(false, str1);
 	if (rakPeer->IsBanned( str1 ))
@@ -4154,7 +4154,7 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 
 		return true;
 	}
-#endif
+
 
 
 	// The reason for all this is that the reliability layer has no way to tell between offline messages that arrived late for a player that is now connected,
@@ -5432,11 +5432,11 @@ bool RakPeer::RunUpdateCycle( RakNet::TimeUS timeNS, RakNet::Time timeMS )
 #ifdef _DO_PRINTF
 						RAKNET_DEBUG_PRINTF("Temporarily banning %i:%i for sending nonsense data\n", systemAddress);
 #endif
-#if   !defined(X360)
+
 						char str1[64];
 						systemAddress.ToString(false, str1);
 						AddToBanList(str1, remoteSystem->reliabilityLayer.GetTimeoutTime());
-#endif
+
 
 						rakFree_Ex(data, _FILE_AND_LINE_ );
 					}

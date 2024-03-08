@@ -1327,19 +1327,19 @@ class RakNetPINVOKE {
   public static extern void RakString_Serialize__SWIG_1(string jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_RakString_SerializeCompressed__SWIG_0")]
-  public static extern void RakString_SerializeCompressed__SWIG_0(HandleRef jarg1, HandleRef jarg2, int jarg3, bool jarg4);
+  public static extern void RakString_SerializeCompressed__SWIG_0(HandleRef jarg1, HandleRef jarg2, byte jarg3, bool jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_RakString_SerializeCompressed__SWIG_1")]
-  public static extern void RakString_SerializeCompressed__SWIG_1(HandleRef jarg1, HandleRef jarg2, int jarg3);
+  public static extern void RakString_SerializeCompressed__SWIG_1(HandleRef jarg1, HandleRef jarg2, byte jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_RakString_SerializeCompressed__SWIG_2")]
   public static extern void RakString_SerializeCompressed__SWIG_2(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_RakString_SerializeCompressed__SWIG_3")]
-  public static extern void RakString_SerializeCompressed__SWIG_3(string jarg1, HandleRef jarg2, int jarg3, bool jarg4);
+  public static extern void RakString_SerializeCompressed__SWIG_3(string jarg1, HandleRef jarg2, byte jarg3, bool jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_RakString_SerializeCompressed__SWIG_4")]
-  public static extern void RakString_SerializeCompressed__SWIG_4(string jarg1, HandleRef jarg2, int jarg3);
+  public static extern void RakString_SerializeCompressed__SWIG_4(string jarg1, HandleRef jarg2, byte jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_RakString_SerializeCompressed__SWIG_5")]
   public static extern void RakString_SerializeCompressed__SWIG_5(string jarg1, HandleRef jarg2);

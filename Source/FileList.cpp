@@ -39,8 +39,8 @@ static const unsigned HASH_LENGTH=4;
 using namespace RakNet;
 
 // alloca
-#if   defined(X360)
-#elif defined(_WIN32)
+
+#if   defined(_WIN32)
 #include <malloc.h>
 
 

@@ -20,11 +20,11 @@
 /// \li \em 1400. Maximum size for AOL DSL.
 /// \li \em 576. Typical value to connect to dial-up ISPs.
 /// The largest value for an UDP datagram
-#if   defined(X360)
-#define MAXIMUM_MTU_SIZE 1264
-#else
+
+
+
 #define MAXIMUM_MTU_SIZE 1492
-#endif
+
 
 #define MINIMUM_MTU_SIZE 400
 

@@ -91,9 +91,9 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 
 	if (threadPriority==-99999)
 	{
-#if   defined(X360)
-		threadPriority=0;
-#elif defined(_WIN32)
+
+
+#if   defined(_WIN32)
 		threadPriority=0;
 
 

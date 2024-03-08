@@ -67,16 +67,16 @@
 #endif
 
 #ifndef RakAssert
-#if   defined(X360)
-#include "XBox360Includes.h"
-#define RakAssert(x) XMASSERT(x)
-#else
+
+
+
+
 #if defined(_DEBUG)
 #define RakAssert(x) assert(x);
 #else
 #define RakAssert(x) 
 #endif
-#endif
+
 #endif
 
 /// This controls the amount of memory used per connection.
@@ -125,10 +125,10 @@
 
 
 
-#if   defined(X360)
-// Doesn't support IPV6
-#undef RAKNET_SUPPORT_IPV6
-#endif
+
+
+
+
 
 #ifndef RAKSTRING_TYPE
 #if defined(_UNICODE)

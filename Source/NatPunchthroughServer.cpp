@@ -300,6 +300,8 @@ void NatPunchthroughServer::OnClosedConnection(const SystemAddress &systemAddres
 		gprIndex = users[i]->groupPunchthroughRequests.GetIndexFromKey(rakNetGUID, &objectExists);
 		if (objectExists)
 		{
+//			printf("DEBUG %i\n", __LINE__);
+
 			RakNet::BitStream outgoingBs;
 			outgoingBs.Write((MessageID)ID_NAT_TARGET_NOT_CONNECTED);
 			outgoingBs.Write(rakNetGUID);
@@ -321,6 +323,9 @@ void NatPunchthroughServer::OnNewConnection(const SystemAddress &systemAddress, 
 	user->systemAddress=systemAddress;
 	user->isReady=true;
 	users.Insert(rakNetGUID, user, true, _FILE_AND_LINE_);
+
+//	printf("Adding to users %s\n", rakNetGUID.ToString());
+//	printf("DEBUG users[0] guid=%s\n", users[0]->guid.ToString());
 }
 void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
 {
@@ -341,6 +346,10 @@ void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
 	i = users.GetIndexFromKey(recipientGuid, &objectExists);
 	if (objectExists==false)
 	{
+// 		printf("DEBUG %i\n", __LINE__);
+// 		printf("DEBUG recipientGuid=%s\n", recipientGuid.ToString());
+// 		printf("DEBUG users[0] guid=%s\n", users[0]->guid.ToString());
+
 		outgoingBs.Write((MessageID)ID_NAT_TARGET_NOT_CONNECTED);
 		outgoingBs.Write(recipientGuid);
 		rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
@@ -378,6 +387,8 @@ void NatPunchthroughServer::OnNATGroupPunchthroughRequest(Packet *packet)
 	i = users.GetIndexFromKey(recipientGuid, &objectExists);
 	if (objectExists==false)
 	{
+//		printf("DEBUG %i\n", __LINE__);
+
 		outgoingBs.Write((MessageID)ID_NAT_TARGET_NOT_CONNECTED);
 		outgoingBs.Write(recipientGuid);
 		rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);

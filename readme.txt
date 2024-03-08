@@ -62,6 +62,44 @@ See http://www.unknownroad.com/rtfm/gdbtut/gdbstack.html for debugging
 Command to build autopatcher server from /Source directory
 g++ -lpthread -lpq -lssl -lbz2 -lssl -lcrypto -L/opt/PostgreSQL/9.0/lib -L../DependentExtensions/bzip2-1.0.6 -I/opt/PostgreSQL/9.0/include -I../DependentExtensions/bzip2-1.0.6 -I./ -I../DependentExtensions/Autopatcher -I../DependentExtensions/Autopatcher/AutopatcherPostgreRepository -I../DependentExtensions/PostgreSQLInterface -g *.cpp ../DependentExtensions/Autopatcher/AutopatcherServer.cpp ../DependentExtensions/Autopatcher/CreatePatch.cpp ../DependentExtensions/Autopatcher/MemoryCompressor.cpp ../DependentExtensions/Autopatcher/AutopatcherPostgreRepository/AutopatcherPostgreRepository.cpp ../DependentExtensions/PostgreSQLInterface/PostgreSQLInterface.cpp ../Samples/AutopatcherServer/AutopatcherServerTest.cpp
 
+Command to build NATCompleteServer from /Source directory
+g++ -lpthread -I./ -I../Samples/CloudServer ../Samples/CloudServer/CloudServerHelper.cpp ../Samples/NATCompleteServer/main.cpp *.cpp
+
+Command to build BigPacketTest from /Source directory
+g++ -lpthread -I./ ../Samples/BigPacketTest/BigPacketTest.cpp *.cpp
+Or with debugging info on
+g++ -g -lpthread -I./ ../Samples/BigPacketTest/BigPacketTest.cpp *.cpp
+
+To debug:
+http://cs.baylor.edu/~donahoo/tools/gdb/tutorial.html
+http://linux.bytesex.org/gdb.html
+http://www.delorie.com/gnu/docs/gdb/gdb_29.html
+gdb ./a.out
+Set breakpoint:
+gdb b file:line
+followed by run
+Useful:
+info stack
+info locals
+delete (Clears all breakpoints)
+step (step into)
+next (step over)
+p <variableName>
+For example: p users.orderedList.listArray[0].guid
+
+Command to install g++
+sudo apt-get install gcc-c++
+sudo apt-get install build-essential
+
+Command to install gdb
+sudo apt-get install gdb
+
+Text editor from console:
+pico
+
+Command to checkout RakNet
+svn checkout <URL>
+
 -----------------------------------------
 DevCPP Users
 -----------------------------------------
@@ -143,23 +181,23 @@ LOCAL_SRC_FILES += $(MY_SOURCES:$(MY_PREFIX)%=RakNetSources/%)
 include $(BUILD_SHARED_LIBRARY)
 
 This version of Android.mk assumes there is a directory called RakNetSources, for example 
-cygwin\home\Kevin\android-ndk-r4b\samples\RakNet\jni\RakNetSources
+cygwin/home/Kevin/android-ndk-r4b/samples/RakNet/jni/RakNetSources
 
 Under RakNetSources should be the /Source directory to RakNet. Rather than copy the files I used junction.exe 
 http://technet.microsoft.com/en-us/sysinternals/bb896768.aspx
 
 The command I used to create the junction was:
-D:\cygwin\home\Kevin\android-ndk-r4b\samples\RakNet\jni\junction.exe -s D:\cygwin\home\Kevin\android-ndk-r4b\samples\RakNet\jni\RakNetSources D:\RakNet4\Source
+D:/cygwin/home/Kevin/android-ndk-r4b/samples/RakNet/jni/junction.exe -s D:/cygwin/home/Kevin/android-ndk-r4b/samples/RakNet/jni/RakNetSources D:/RakNet4/Source
 
 To unjunction I used:
-D:\cygwin\home\Kevin\android-ndk-r4b\samples\RakNet\jni\junction.exe -d D:\cygwin\home\Kevin\android-ndk-r4b\samples\RakNet\jni\RakNetSources
+D:/cygwin/home/Kevin/android-ndk-r4b/samples/RakNet/jni/junction.exe -d D:/cygwin/home/Kevin/android-ndk-r4b/samples/RakNet/jni/RakNetSources
 
-From within the CYWGIN enviroment, navigate to home\Kevin\android-ndk-r4b\samples\RakNet. Then type
+From within the CYWGIN enviroment, navigate to home/Kevin/android-ndk-r4b/samples/RakNet. Then type
 ../../ndk-build
 
 Everything should build and you should end up with a .so file.
 
-You should then be able to create a project in eclipse, and import cygwin\home\Kevin\android-ndk-r4b\samples\RakNet
+You should then be able to create a project in eclipse, and import cygwin/home/Kevin/android-ndk-r4b/samples/RakNet
 
 -----------------------------------------
 Consoles

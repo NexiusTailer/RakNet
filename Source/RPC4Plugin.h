@@ -50,7 +50,7 @@ class NetworkIDManager;
 	/// You do not have the automatic serialization or other features of RPC3, and C++ member calls are not supported.
 	/// \note You cannot use RPC4 at the same time as RPC3Plugin
 	/// \ingroup RPC_PLUGIN_GROUP
-	class RPC4 : public PluginInterface2
+	class RAK_DLL_EXPORT RPC4 : public PluginInterface2
 	{
 	public:
 		// GetInstance() and DestroyInstance(instance*)

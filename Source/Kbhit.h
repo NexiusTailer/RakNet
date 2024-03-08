@@ -7,7 +7,7 @@ You can do whatever you want with it.
 *****************************************************************************/
 #if defined(_WIN32)
 #include <conio.h> /* kbhit(), getch() */
-#elif   defined(X360)
+
 #else
 #include <sys/time.h> /* struct timeval, select() */
 /* ICANON, ECHO, TCSANOW, struct termios */

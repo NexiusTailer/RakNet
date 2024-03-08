@@ -17,9 +17,9 @@
 #include "SocketIncludes.h"
 #include "RakNetDefines.h"
 
-#if   defined(X360)
-#include "XBOX360Includes.h"
-#elif defined(_WIN32)
+
+
+#if   defined(_WIN32)
 #include <winsock2.h> // htonl
 #include <memory.h>
 #include <cmath>
@@ -983,6 +983,8 @@ void BitStream::AssertCopyData( void )
 }
 bool BitStream::IsNetworkOrderInternal(void)
 {
+
+
 
 
 

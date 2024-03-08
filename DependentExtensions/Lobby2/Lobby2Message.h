@@ -9,9 +9,9 @@
 #include "SimpleMutex.h"
 #include "Lobby2Presence.h"
 
-#if   defined(X360)
-#include "XBOX360Includes.h"
-#endif
+
+
+
 
 #pragma once
 
@@ -150,6 +150,7 @@ enum Lobby2MessageID
 	L2MID_Console_StartGame,
 	L2MID_Console_ShowPartyUI,
 	L2MID_Console_ShowMessagesUI,
+	L2MID_Console_ShowGUIInvitationsToRooms,
 	L2MID_Notification_Client_RemoteLogin,
 	L2MID_Notification_Client_IgnoreStatus,
 	L2MID_Notification_Friends_StatusChange,
@@ -192,8 +193,7 @@ enum Lobby2MessageID
 	L2MID_Notification_Console_Game_Started, // XBOX only
 	L2MID_Notification_Console_Game_Ended, // XBOX only
 	L2MID_Notification_Console_Got_Room_Invite,
-
-
+	L2MID_Notification_Console_Accepted_Room_Invite,
 
 	L2MID_COUNT,
 };
@@ -333,9 +333,9 @@ struct Lobby2Message
 	uint64_t requestId;
 
 
-#if   defined(X360)
-	XOVERLAPPED        m_Overlapped;
-#endif
+
+
+
 
 private:
 
@@ -462,6 +462,7 @@ struct Console_EndGame;
 struct Console_StartGame;
 struct Console_ShowPartyUI;
 struct Console_ShowMessagesUI;
+struct Console_ShowGUIInvitationsToRooms;
 struct Notification_Client_RemoteLogin;
 struct Notification_Client_IgnoreStatus;
 struct Notification_Friends_StatusChange;
@@ -505,6 +506,7 @@ struct Notification_Console_MemberLeftParty;
 struct Notification_Console_Game_Started;
 struct Notification_Console_Game_Ended;
 struct Notification_Console_Got_Room_Invite;
+struct Notification_Console_Accepted_Room_Invite;
 
 // --------------------------------------------- Callback interface for all messages, notifies the user --------------------------------------------
 
@@ -630,6 +632,7 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Console_StartGame *message);
 	virtual void MessageResult(Console_ShowPartyUI *message);
 	virtual void MessageResult(Console_ShowMessagesUI *message);
+	virtual void MessageResult(Console_ShowGUIInvitationsToRooms *message);
 	virtual void MessageResult(Notification_Client_RemoteLogin *message);
 	virtual void MessageResult(Notification_Client_IgnoreStatus *message);
 	virtual void MessageResult(Notification_Friends_StatusChange *message);
@@ -673,6 +676,7 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Notification_Console_Game_Started *message);
 	virtual void MessageResult(Notification_Console_Game_Ended *message);
 	virtual void MessageResult(Notification_Console_Got_Room_Invite *message);
+	virtual void MessageResult(Notification_Console_Accepted_Room_Invite *message);
 
 	virtual void ExecuteDefaultResult(Lobby2Message *message) { (void)message; }
 
@@ -3098,6 +3102,14 @@ struct Console_ShowMessagesUI : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return true;}
 	virtual bool RequiresLogin(void) const {return true;}
 };
+struct Console_ShowGUIInvitationsToRooms : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Console_ShowGUIInvitationsToRooms)
+	virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return true;}
+	virtual bool RequiresLogin(void) const {return true;}
+};
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Client_RemoteLogin : public Lobby2Message
 {
@@ -3687,6 +3699,16 @@ struct Notification_Console_Got_Room_Invite : public Lobby2Message
 	virtual bool RequiresLogin(void) const {return false;}
 	virtual bool IsNotification(void) const {return true;}
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
+struct Notification_Console_Accepted_Room_Invite : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Notification_Console_Accepted_Room_Invite)
+		virtual bool RequiresAdmin(void) const {return true;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return false;}
+	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
+};
 // --------------------------------------------- Base interface of factory class for all messages --------------------------------------------
 #define __L2_ALLOCATE_AND_DEFINE(FACTORY, __TYPE__,VAR_NAME) RakNet::__TYPE__ *VAR_NAME = (RakNet::__TYPE__ *) FACTORY->Alloc(L2MID_##__TYPE__); RakAssert(VAR_NAME);
 #define __L2_MSG_FACTORY_BASE(__NAME__) {case L2MID_##__NAME__ : Lobby2Message *m = RakNet::OP_NEW< __NAME__ >( _FILE_AND_LINE_ ) ; RakAssert(m->GetID()==L2MID_##__NAME__ ); m->requestId=nextRequestId++; return m;}
@@ -3815,6 +3837,7 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Console_StartGame); // Currently xbox only
 			__L2_MSG_FACTORY_BASE(Console_ShowPartyUI);
 			__L2_MSG_FACTORY_BASE(Console_ShowMessagesUI);
+			__L2_MSG_FACTORY_BASE(Console_ShowGUIInvitationsToRooms);
 			__L2_MSG_FACTORY_BASE(Notification_Client_RemoteLogin);
 			__L2_MSG_FACTORY_BASE(Notification_Client_IgnoreStatus);
 			__L2_MSG_FACTORY_BASE(Notification_Friends_StatusChange);
@@ -3856,6 +3879,7 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Notification_Console_Game_Started); // Currently XBOX only
 			__L2_MSG_FACTORY_BASE(Notification_Console_Game_Ended); // Currently XBOX only
 			__L2_MSG_FACTORY_BASE(Notification_Console_Got_Room_Invite);
+			__L2_MSG_FACTORY_BASE(Notification_Console_Accepted_Room_Invite);
 
 		default:
 			return 0;
@@ -3880,3 +3904,4 @@ struct Lobby2MessageFactory
 } // namespace RakNet
 
 #endif
+

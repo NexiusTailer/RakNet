@@ -919,11 +919,11 @@ void RakString::Serialize(const char *str, BitStream *bs)
 	bs->Write(l);
 	bs->WriteAlignedBytes((const unsigned char*) str, (const unsigned int) l);
 }
-void RakString::SerializeCompressed(BitStream *bs, int languageId, bool writeLanguageId) const
+void RakString::SerializeCompressed(BitStream *bs, uint8_t languageId, bool writeLanguageId) const
 {
 	SerializeCompressed(C_String(), bs, languageId, writeLanguageId);
 }
-void RakString::SerializeCompressed(const char *str, BitStream *bs, int languageId, bool writeLanguageId)
+void RakString::SerializeCompressed(const char *str, BitStream *bs, uint8_t languageId, bool writeLanguageId)
 {
 	if (writeLanguageId)
 		bs->WriteCompressed(languageId);
@@ -965,7 +965,7 @@ bool RakString::Deserialize(char *str, BitStream *bs)
 }
 bool RakString::DeserializeCompressed(BitStream *bs, bool readLanguageId)
 {
-	unsigned int languageId;
+	uint8_t languageId;
 	if (readLanguageId)
 		bs->ReadCompressed(languageId);
 	else
@@ -974,7 +974,7 @@ bool RakString::DeserializeCompressed(BitStream *bs, bool readLanguageId)
 }
 bool RakString::DeserializeCompressed(char *str, BitStream *bs, bool readLanguageId)
 {
-	unsigned int languageId;
+	uint8_t languageId;
 	if (readLanguageId)
 		bs->ReadCompressed(languageId);
 	else

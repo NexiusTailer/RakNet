@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 
-#elif   defined(X360)
-// NIL
+
+
 #elif defined ( __APPLE__ ) || defined ( __APPLE_CC__ )
 #include <malloc/malloc.h>
 #include <alloca.h>

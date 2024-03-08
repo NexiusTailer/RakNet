@@ -177,7 +177,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Fix to be a file path, ending with /. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#b141de62e7f4618342a389b702029eba">Serialize</a> (<a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *bs) const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#de0ad16cd0ba2495147c981511c49f7c">SerializeCompressed</a> (<a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *bs, int languageId=0, bool writeLanguageId=false) const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#de41a2d6622841749ae0a6e51cb2cea9">SerializeCompressed</a> (<a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *bs, uint8_t languageId=0, bool writeLanguageId=false) const </td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#b5bf3364843b0b354a28582e1b2f35d4">Deserialize</a> (<a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *bs)</td></tr>
 
@@ -196,8 +196,8 @@ static unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class
 static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#e7c203a84b2d03b70d97a7bb79c6a84e">Serialize</a> (const char *str, <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *bs)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Static version of the Serialize function. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4946f6f2de0bab6f29405b11662c3c92"></a><!-- doxytag: member="RakNet::RakString::SerializeCompressed" ref="4946f6f2de0bab6f29405b11662c3c92" args="(const char *str, BitStream *bs, int languageId=0, bool writeLanguageId=false)" -->
-static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#4946f6f2de0bab6f29405b11662c3c92">SerializeCompressed</a> (const char *str, <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *bs, int languageId=0, bool writeLanguageId=false)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="31afa166a0303f0cd3ceb6af4998ab73"></a><!-- doxytag: member="RakNet::RakString::SerializeCompressed" ref="31afa166a0303f0cd3ceb6af4998ab73" args="(const char *str, BitStream *bs, uint8_t languageId=0, bool writeLanguageId=false)" -->
+static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#31afa166a0303f0cd3ceb6af4998ab73">SerializeCompressed</a> (const char *str, <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> *bs, uint8_t languageId=0, bool writeLanguageId=false)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Static version of the SerializeCompressed function. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e17669a3f7b3ea2f1f50986d1d40edd7"></a><!-- doxytag: member="RakNet::RakString::Deserialize" ref="e17669a3f7b3ea2f1f50986d1d40edd7" args="(char *str, BitStream *bs)" -->
@@ -420,7 +420,7 @@ Serialize to a bitstream, uncompressed (slightly faster) <dl compact><dt><b>Para
 
 </div>
 </div><p>
-<a class="anchor" name="de0ad16cd0ba2495147c981511c49f7c"></a><!-- doxytag: member="RakNet::RakString::SerializeCompressed" ref="de0ad16cd0ba2495147c981511c49f7c" args="(BitStream *bs, int languageId=0, bool writeLanguageId=false) const " -->
+<a class="anchor" name="de41a2d6622841749ae0a6e51cb2cea9"></a><!-- doxytag: member="RakNet::RakString::SerializeCompressed" ref="de41a2d6622841749ae0a6e51cb2cea9" args="(BitStream *bs, uint8_t languageId=0, bool writeLanguageId=false) const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -433,7 +433,7 @@ Serialize to a bitstream, uncompressed (slightly faster) <dl compact><dt><b>Para
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&nbsp;</td>
+          <td class="paramtype">uint8_t&nbsp;</td>
           <td class="paramname"> <em>languageId</em> = <code>0</code>, </td>
         </tr>
         <tr>
@@ -466,7 +466,7 @@ Serialize to a bitstream, compressed (better bandwidth usage) <dl compact><dt><b
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/RakString.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Apr 12 11:27:24 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Apr 21 18:27:12 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

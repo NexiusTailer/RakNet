@@ -1,9 +1,9 @@
 #ifndef __SIGNALED_EVENT_H
 #define __SIGNALED_EVENT_H
 
-#if   defined(X360)
-#include "XBOX360Includes.h"
-#elif defined(_WIN32)
+
+
+#if   defined(_WIN32)
 #include <windows.h>
 
 

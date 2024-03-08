@@ -630,8 +630,6 @@ void CloudServer::OnGetRequest(Packet *packet)
 			if (cloudDataList->subscriberCount==0)
 				SendSubscribedKeyToServers(cloudKey);
 
-			++cloudDataList->subscriberCount;
-
 			// If the subscription is specific, may have to also allocate CloudData
 			if (getRequest->cloudQueryWithAddresses.specificSystems.Size())
 			{
@@ -662,16 +660,36 @@ void CloudServer::OnGetRequest(Packet *packet)
 						cloudData = cloudDataList->keyData[keyDataListIndex];
 					}
 
+					++cloudDataList->subscriberCount;
 					cloudData->specificSubscribers.Insert(packet->guid, packet->guid, true, _FILE_AND_LINE_);
 				}
 			}
 			else
 			{
+				++cloudDataList->subscriberCount;
 				cloudDataList->nonSpecificSubscribers.Insert(packet->guid, packet->guid, true, _FILE_AND_LINE_);
 
-				// Remove specific if it's in a subkey
-				// TODO
-				cloudDataList->keyData;
+				// Remove packet->guid from CloudData::specificSubscribers among all instances of cloudDataList->keyData
+				unsigned int subscribedKeysIndex;
+				bool subscribedKeysIndexExists;
+				subscribedKeysIndex = remoteCloudClient->subscribedKeys.GetIndexFromKey(cloudDataList->key, &subscribedKeysIndexExists);
+				if (subscribedKeysIndexExists)
+				{
+					KeySubscriberID* keySubscriberId;
+					keySubscriberId = remoteCloudClient->subscribedKeys[subscribedKeysIndex];
+					unsigned int specificSystemIndex;
+					for (specificSystemIndex=0; specificSystemIndex < keySubscriberId->specificSystemsSubscribedTo.Size(); specificSystemIndex++)
+					{
+						bool keyDataExists;
+						unsigned int keyDataIndex = cloudDataList->keyData.GetIndexFromKey(keySubscriberId->specificSystemsSubscribedTo[specificSystemIndex], &keyDataExists);
+						if (keyDataExists)
+						{
+							CloudData *keyData = cloudDataList->keyData[keyDataIndex];
+							keyData->specificSubscribers.Remove(packet->guid);
+							--cloudDataList->subscriberCount;
+						}
+					}
+				}
 			}
 		}
 

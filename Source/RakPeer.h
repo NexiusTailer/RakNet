@@ -134,7 +134,7 @@ public:
 	///	
 	/// This is a non-blocking connection.
 	///
-	/// The connection is successful when GetConnectionState() returns IS_CONNECTED or Receive() gets a message with the type identifier ID_CONNECTION_ACCEPTED.
+	/// The connection is successful when GetConnectionState() returns IS_CONNECTED or Receive() gets a message with the type identifier ID_CONNECTION_REQUEST_ACCEPTED.
 	/// If the connection is not successful, such as a rejected connection or no response then neither of these things will happen.
 	/// \pre Requires that you first call Initialize.
 	/// \param[in] host Either a dotted IP address or a domain name.

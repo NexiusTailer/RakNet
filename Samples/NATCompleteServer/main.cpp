@@ -371,6 +371,9 @@ struct CloudServerFramework : public SampleFramework
 	}
 	virtual void ProcessPacket(RakNet::RakPeerInterface *rakPeer, Packet *packet)
 	{
+		if (isSupported!=SUPPORTED)
+			return;
+
 		switch (packet->data[0])
 		{
 		case ID_NEW_INCOMING_CONNECTION:
@@ -414,7 +417,7 @@ int main()
 	{
 		printf("%i. %s\n", i+1, ipList[i].ToString(false));
 	}
-	
+		
 	RakNet::SocketDescriptor sd(RAKPEER_PORT,0);
 	if (rakPeer->Startup(32,&sd,1)!=RakNet::RAKNET_STARTED)
 	{
@@ -426,6 +429,7 @@ int main()
 			return 1;
 		}
 	}
+	printf("Started on %s\n", rakPeer->GetMyBoundAddress().ToString(true));
 	printf("\n");
 
 	rakPeer->SetMaximumIncomingConnections(32);

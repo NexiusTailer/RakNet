@@ -52,9 +52,9 @@ SocketLayerOverride *SocketLayer::slo=0;
 
 
 
-#if   defined(X360)
-#include "WSAStartupSingleton.h"
-#elif defined(_WIN32)
+
+
+#if   defined(_WIN32)
 #include "WSAStartupSingleton.h"
 #include <ws2tcpip.h> // 'IP_DONTFRAGMENT' 'IP_TTL'
 #elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
@@ -238,7 +238,7 @@ void SocketLayer::SetDoNotFragment( SOCKET listenSocket, int opt, int IPPROTO )
 {
 #if defined(IP_DONTFRAGMENT )
 
-#if defined(_WIN32) &&  defined(_DEBUG) && !defined(X360)
+#if defined(_WIN32) &&  defined(_DEBUG) 
 	// If this assert hit you improperly linked against WSock32.h
 	RakAssert(IP_DONTFRAGMENT==14);
 #endif
@@ -332,7 +332,7 @@ void SocketLayer::SetSocketOptions( SOCKET listenSocket)
 	if ( setsockopt( listenSocket, SOL_SOCKET, SO_BROADCAST, ( char * ) & sock_opt, sizeof( sock_opt ) ) == -1 )
 	{
 #if defined(_WIN32) && defined(_DEBUG)
-#if   !defined(X360)
+
 	DWORD dwIOError = GetLastError();
 	// On Vista, can get WSAEACCESS (10013)
 	// See http://support.microsoft.com/kb/819124
@@ -346,7 +346,7 @@ void SocketLayer::SetSocketOptions( SOCKET listenSocket)
 	RAKNET_DEBUG_PRINTF( "setsockopt(SO_BROADCAST) failed:Error code - %d\n%s", dwIOError, messageBuffer );
 	//Free the buffer.
 	LocalFree( messageBuffer );
-#endif
+
 #endif
 
 	}
@@ -597,7 +597,7 @@ SOCKET SocketLayer::CreateBoundSocket_Old( unsigned short port, bool blockingSoc
 
 
 
-#if defined(_WIN32) &&  !defined(X360)
+#if defined(_WIN32) 
 		DWORD dwIOError = GetLastError();
 		if (dwIOError==10048)
 		{
@@ -740,7 +740,7 @@ SOCKET SocketLayer::CreateBoundSocket( unsigned short port, bool blockingSocket,
 		}
 	}
 
-#if defined(_WIN32) &&  !defined(X360)
+#if defined(_WIN32) 
 	DWORD dwIOError = GetLastError();
 	LPVOID messageBuffer;
 	FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -795,40 +795,40 @@ const char* SocketLayer::DomainNameToIP_Old( const char *domainName )
 	struct in_addr addr;
 	memset(&addr,0,sizeof(in_addr));
 
-#if   defined(X360)
-	WSAEVENT hEvent = WSACreateEvent();
-	XNDNS* pDns = NULL;
-
-	HRESULT err = XNetDnsLookup( domainName, hEvent, &pDns );
-	WaitForSingleObject( hEvent, 1000 );
-	WSACloseEvent( hEvent );
-
-	if( pDns )
-	{
-		const unsigned int ADDR_BUFF_SIZE = 16;		//Enough room for "xxx.xxx.xxx.xxx\0"
-		static char addrBuff[ADDR_BUFF_SIZE] = {0};
-
-		if( pDns->iStatus == 0 )
-		{
-			memcpy( &addr, &pDns->aina[0].s_addr, sizeof( struct in_addr ) );
-			XNetInAddrToString(addr, addrBuff, ADDR_BUFF_SIZE);
-		}
-		else
-		{
-			//error "DNS lookup failed: %u", pDns->iStatus
-		}
-		XNetDnsRelease( pDns );
-
-		return addrBuff;
-	}
-	else
-	{
-		//error "DNS lookup failed: %u", err;
-	}
 
 
 
-#else
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	// Use inet_addr instead? What is the difference?
 	struct hostent * phe = gethostbyname( domainName );
 
@@ -843,7 +843,7 @@ const char* SocketLayer::DomainNameToIP_Old( const char *domainName )
 
 	memcpy( &addr, phe->h_addr_list[ 0 ], sizeof( struct in_addr ) );
 	return inet_ntoa( addr );
-#endif
+
 
 	return "";
 }
@@ -853,38 +853,38 @@ const char* SocketLayer::DomainNameToIP( const char *domainName )
 	return DomainNameToIP_Old(domainName);
 #else
 
-#if   defined(X360)
-	struct in_addr addr;
-	WSAEVENT hEvent = WSACreateEvent();
-	XNDNS* pDns = NULL;
 
-	HRESULT err = XNetDnsLookup( domainName, hEvent, &pDns );
-	WaitForSingleObject( hEvent, 1000 );
-	WSACloseEvent( hEvent );
 
-	if( pDns )
-	{
-		const unsigned int ADDR_BUFF_SIZE = 16;		//Enough room for "xxx.xxx.xxx.xxx\0"
-		static char addrBuff[ADDR_BUFF_SIZE] = {0};
 
-		if( pDns->iStatus == 0 )
-		{
-			memcpy( &addr, &pDns->aina[0].s_addr, sizeof( struct in_addr ) );
-			XNetInAddrToString(addr, addrBuff, ADDR_BUFF_SIZE);
-		}
-		else
-		{
-			//error "DNS lookup failed: %u", pDns->iStatus
-		}
-		XNetDnsRelease( pDns );
 
-		return addrBuff;
-	}
-	else
-	{
-		//error "DNS lookup failed: %u", err;
-	}
-#else
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	struct addrinfo hints, *res, *p;
 	int status;
@@ -923,7 +923,7 @@ const char* SocketLayer::DomainNameToIP( const char *domainName )
 		return ipstr;
 //	}
 
-#endif
+
 
 	return "";
 
@@ -1306,7 +1306,7 @@ int SocketLayer::SendTo( SOCKET s, const char *data, int length, SystemAddress &
 	}
 	else if ( dwIOError != WSAEWOULDBLOCK && dwIOError != WSAEADDRNOTAVAIL)
 	{
-#if defined(_WIN32) &&  !defined(X360) && defined(_DEBUG)
+#if defined(_WIN32) &&  defined(_DEBUG)
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 			NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
@@ -1337,7 +1337,7 @@ int SocketLayer::SendToTTL( SOCKET s, const char *data, int length, SystemAddres
 	if (slo)
 		return slo->RakNetSendTo(s,data,length,systemAddress);
 
-#if   !defined(X360)
+
 	int oldTTL;
 	socklen_t opLen=sizeof(oldTTL);
 	// Get the current TTL
@@ -1381,9 +1381,9 @@ int SocketLayer::SendToTTL( SOCKET s, const char *data, int length, SystemAddres
 	setsockopt(s, systemAddress.GetIPPROTO(), IP_TTL, ( char * ) & oldTTL, opLen );
 
 	return res;
-#else
-	return 0;
-#endif
+
+
+
 }
 
 
@@ -1392,11 +1392,11 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(SOCKET inSock, RakNet::Ra
 	RakNet::RakString netMaskString;
 	RakNet::RakString ipString;
 
-#if   defined(X360)
-	return "";
 
 
-#elif defined(_WIN32)
+
+
+#if   defined(_WIN32)
 	INTERFACE_INFO InterfaceList[20];
 	unsigned long nBytesReturned;
 	if (WSAIoctl(inSock, SIO_GET_INTERFACE_LIST, 0, 0, &InterfaceList,
@@ -1474,7 +1474,6 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(SOCKET inSock, RakNet::Ra
 #endif
 
 }
-#if   defined(X360)
 
 
 
@@ -1549,13 +1548,15 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(SOCKET inSock, RakNet::Ra
 
 
 
-#elif   !defined(X360)
+
+
+
 void GetMyIP_Win32( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 {
 	char ac[ 80 ];
 	if ( gethostname( ac, sizeof( ac ) ) == -1 )
 	{
-#ifdef _WIN32
+		#if defined(_WIN32)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -1565,7 +1566,7 @@ void GetMyIP_Win32( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 		RAKNET_DEBUG_PRINTF( "gethostname failed:Error code - %d\n%s", dwIOError, messageBuffer );
 		//Free the buffer.
 		LocalFree( messageBuffer );
-#endif
+		#endif
 		return ;
 	}
 
@@ -1618,7 +1619,7 @@ void GetMyIP_Win32( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 		if (phe->h_addr_list[ idx ] == 0)
 			break;
 
-		memcpy(&addresses[idx].address.addr4,phe->h_addr_list[ idx ],sizeof(sockaddr_in));
+		memcpy(&addresses[idx].address.addr4.sin_addr,phe->h_addr_list[ idx ],sizeof(struct in_addr));
 
 	}
 #endif
@@ -1630,7 +1631,7 @@ void GetMyIP_Win32( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 		idx++;
 	}
 }
-
+// #else
 /*
 void GetMyIP_Linux( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 {
@@ -1651,35 +1652,41 @@ void GetMyIP_Linux( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 		if (family == AF_INET) {
 			s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in), host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 			if (s != 0) {
-				printf ("getnameinfo() failed: %s\n", gai_strerror(s));
+		//		printf ("getnameinfo() failed: %s\n", gai_strerror(s));
 			}
-			printf ("IP address: %s\n", host);
-			if (strcmp(host,"127.0.0.1")!=0)
+			else if (strcmp(host,"127.0.0.1")!=0)
 			{
-				strcpy( ipList[ idx ], host );
-				if (inet_aton(host, &linux_in_addr) == 0) {
-					perror("inet_aton");
-				}
-				else {
-					binaryAddresses[idx]=linux_in_addr.s_addr;
-				}
-
-				idx++;
+				if (inet_aton(host, &addresses[idx].address.addr4.sin_addr)!=0)
+					idx++;
 			}
 		}
+#if RAKNET_SUPPORT_IPV6==1
+		else
+		{
+			s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in6), host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+			if (s != 0) {
+		//		printf ("getnameinfo() failed: %s\n", gai_strerror(s));
+			}
+			else if (strcmp(host,"::1")!=0)
+			{
+				if (inet_pton(family, host, &addresses[idx].address.addr6.sin6_addr)!=0)
+					idx++;
+			}
+		}
+#endif
 	}
 
 	for ( ; idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ++idx )
 	{
-		ipList[idx][0]=0;
+		addresses[idx]=UNASSIGNED_SYSTEM_ADDRESS;
 	}
 
 	freeifaddrs(ifaddr);
 }
 */
-#endif
 
-#if   !defined(X360)
+
+
 void SocketLayer::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 {
 
@@ -1689,11 +1696,11 @@ void SocketLayer::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_ID
 #if   defined(_WIN32)
 	GetMyIP_Win32(addresses);
 #else
-	//GetMyIP_Linux(addresses);
+//	GetMyIP_Linux(addresses);
 	GetMyIP_Win32(addresses);
 #endif
 }
-#endif
+
 
 unsigned short SocketLayer::GetLocalPort(SOCKET s)
 {
@@ -1708,7 +1715,7 @@ void SocketLayer::GetSystemAddress_Old ( SOCKET s, SystemAddress *systemAddressO
 	socklen_t len = sizeof(sa);
 	if (getsockname(s, (sockaddr*)&sa, &len)!=0)
 	{
-#if defined(_WIN32) &&  !defined(X360) && defined(_DEBUG)
+#if defined(_WIN32) &&  defined(_DEBUG)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -1738,7 +1745,7 @@ void SocketLayer::GetSystemAddress ( SOCKET s, SystemAddress *systemAddressOut )
 
 	if (getsockname(s, (struct sockaddr *)&ss, &slen)!=0)
 	{
-#if defined(_WIN32) &&  !defined(X360) && defined(_DEBUG)
+#if defined(_WIN32) &&  defined(_DEBUG)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,

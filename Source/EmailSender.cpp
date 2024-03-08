@@ -13,9 +13,9 @@
 #include "BitStream.h"
 #include <stdio.h>
 
-#if   defined(X360)
-#include "XBOX360Includes.h"
-#endif
+
+
+
 
 #include "RakSleep.h"
 

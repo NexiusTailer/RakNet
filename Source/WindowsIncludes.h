@@ -1,4 +1,4 @@
-#if defined(__X360__) 
+#if defined(X360__) 
 #elif defined (_WIN32)
 #include <WinSock2.h>
 #include <windows.h>

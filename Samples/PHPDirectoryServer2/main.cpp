@@ -458,6 +458,7 @@ void TestPHPDirectoryServer(int argc, char **argv)
 
 void TestGet(void)
 {
+	printf("This is NOT a reliable way to download from a website. Use libcurl instead.\n");
 	httpConnection->Init(tcp, "www.google.com");
 	httpConnection->Get("index.html");
 	while (1)

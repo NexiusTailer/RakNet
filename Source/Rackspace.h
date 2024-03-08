@@ -83,6 +83,8 @@ namespace RakNet
 	class RAK_DLL_EXPORT RackspaceEventCallback
 	{
 	public:
+		RackspaceEventCallback() {}
+		virtual ~RackspaceEventCallback() {}
 		virtual void OnAuthenticationResult(RackspaceEventType eventType, const char *htmlAdditionalInfo)=0;
 		virtual void OnListServersResult(RackspaceEventType eventType, const char *htmlAdditionalInfo)=0;
 		virtual void OnListServersWithDetailsResult(RackspaceEventType eventType, const char *htmlAdditionalInfo)=0;
