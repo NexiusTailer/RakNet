@@ -95,7 +95,7 @@ int main(int argc, char **argv)
 	if (str[0]=='s' || str[0]=='S')
 	{
 		sender = RakNet::RakPeerInterface::GetInstance();
-		//sender->ApplyNetworkSimulator(.02, 100, 50);
+//		sender->ApplyNetworkSimulator(.1, 100, 50);
 
 		receiver = 0;
 
@@ -133,7 +133,7 @@ int main(int argc, char **argv)
 	else
 	{
 		receiver = RakNet::RakPeerInterface::GetInstance();
-		//receiver->ApplyNetworkSimulator(.02, 100, 50);
+	//	receiver->ApplyNetworkSimulator(.1, 100, 50);
 		sender=0;
 
 		printf("Enter local port: ");

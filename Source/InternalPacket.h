@@ -102,11 +102,15 @@ struct InternalPacket : public InternalPacketFixedSizeTransmissionHeader
 		NORMAL,
 
 		/// data points to a larger block of data, where the larger block is reference counted. internalPacketRefCountedData is used in this case
-		REF_COUNTED
+		REF_COUNTED,
+	
+		/// If allocation scheme is STACK, data points to stackData and should not be deallocated
+		/// This is only used when sending. Received packets are deallocated in RakPeer
+		STACK
 	} allocationScheme;
 	InternalPacketRefCountedData *refCountedData;
 	/// How many attempts we made at sending this message
-	unsigned char timesSent;
+//	unsigned char timesSent;
 	/// The priority level of this packet
 	PacketPriority priority;
 	/// If the reliability type requires a receipt, then return this number with it
@@ -115,6 +119,8 @@ struct InternalPacket : public InternalPacketFixedSizeTransmissionHeader
 	// Used for the resend queue
 	// Linked list implementation so I can remove from the list via a pointer, without finding it in the list
 	InternalPacket *resendPrev, *resendNext,*unreliablePrev,*unreliableNext;
+
+	unsigned char stackData[128];
 };
 
 } // namespace RakNet

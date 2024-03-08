@@ -427,6 +427,20 @@
 	Fix bug with FCM2 not being processed by other plugins.
 	Return Notification_Console_RoomOwnerChanged on all systems, not only host, on xbox lobby.
 	Disconnection notification right away on 360.<BR>
+	4.018 (4/2/2011)
+	Congestion control fix: Fixed bug with overagressive recovery using excessive bandwidth, which would cause packetloss in the usual case and dropped connections in the extreme case.
+	High data-rate fix: If a duplicate ack arrived and more than DATAGRAM_MESSAGE_ID_ARRAY_LENGTH (512 by default) reliable messages had been sent or resent between the first ack and the duplicate, the wrong reliable message would be flagged as delivered. This would result in no further reliable messages would be returned to the user, although the connection would not be lost due to lost connection detection pings being unreliable.
+	Speed optimization: Add a 128 byte stack block to InternalPacket which is used for outgoing packets to avoid a malloc. Make some DS_Heap operations inline.
+	USE_THREADED_SEND: Now supported if added to RakNetDefines.h. The define creates a separate thread for calling sendto() for very high outgoing data-rates.
+	Documentation: Added NAT Traversal architecture, detailing how to use NAT traversal components together.
+	Statistics: Fixed packetloss not being multiplied by 100 in StatisticsToString. Fix overreported packetloss.
+	TCPInterface: Added WasStarted(). Return correct SystemAddress for blocking connections. Fixed sends not working when using Open SSL (affects EmailSender class).
+	RakString: Add SplitURI function.
+	RELIABLE_WITH_ACK_RECEIPT: Fixed transmissing wrong value, causing datastream corruption when used.
+	Rackspace: Added Rackspace.h, a C++ interface to Rackspace cloud servers.
+	XBOX 360: Serialize room member names.
+	PS3: public and private slot counts now returned per room.
+	Added LocklessTypes.h, LocklessTypes.cpp to /Source to fix reported bug http://www.jenkinssoftware.com/forum/index.php?topic=4466.0 where RakPeer::Startup() would block forever.<BR>
   <br>
   <br>
   <BR>

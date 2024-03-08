@@ -88,10 +88,10 @@ struct BPSTracker
 	BPSTracker();
 	~BPSTracker();
 	void Reset(const char *file, unsigned int line);
-	void Push1(CCTimeType time, uint64_t value1);
+	inline void Push1(CCTimeType time, uint64_t value1) {dataQueue.Push(TimeAndValue2(time,value1),_FILE_AND_LINE_); total1+=value1; lastSec1+=value1;}
 //	void Push2(RakNet::TimeUS time, uint64_t value1, uint64_t value2);
-	uint64_t GetBPS1(CCTimeType time);
-	uint64_t GetBPS1Threadsafe(CCTimeType time);
+	inline uint64_t GetBPS1(CCTimeType time) {(void) time; return lastSec1;}
+	inline uint64_t GetBPS1Threadsafe(CCTimeType time) {(void) time; return lastSec1;}
 //	uint64_t GetBPS2(RakNetTimeUS time);
 //	void GetBPS1And2(RakNetTimeUS time, uint64_t &out1, uint64_t &out2);
 	uint64_t GetTotal1(void) const;
@@ -355,6 +355,7 @@ private:
 	};
 	// Queue length is programmatically restricted to DATAGRAM_MESSAGE_ID_ARRAY_LENGTH
 	// This is essentially an O(1) lookup to get a DatagramHistoryNode given an index
+	// datagramHistory holds a linked list of MessageNumberNode. Each MessageNumberNode refers to one element in resendList which can be cleared on an ack.
 	DataStructures::Queue<DatagramHistoryNode> datagramHistory;
 	DataStructures::MemoryPool<MessageNumberNode> datagramHistoryMessagePool;
 
@@ -539,11 +540,12 @@ private:
 	// Set the data pointer to externallyAllocatedPtr, do not allocate
 	void AllocInternalPacketData(InternalPacket *internalPacket, unsigned char *externallyAllocatedPtr);
 	// Allocate new
-	void AllocInternalPacketData(InternalPacket *internalPacket, unsigned int numBytes, const char *file, unsigned int line);
+	void AllocInternalPacketData(InternalPacket *internalPacket, unsigned int numBytes, bool allowStack, const char *file, unsigned int line);
 	void FreeInternalPacketData(InternalPacket *internalPacket, const char *file, unsigned int line);
 	DataStructures::MemoryPool<InternalPacketRefCountedData> refCountedDataPool;
 
 	BPSTracker bpsMetrics[RNS_PER_SECOND_METRICS_COUNT];
+	CCTimeType lastBpsClear;
 
 #if LIBCAT_SECURITY==1
 public:

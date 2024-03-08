@@ -272,11 +272,13 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 	if (block)
 	{
 		SystemAddress systemAddress;
-		systemAddress.address.addr4.sin_addr.s_addr=inet_addr(host);
+		systemAddress.FromString(host);
 		systemAddress.SetPort(remotePort);
 		systemAddress.systemIndex=(SystemIndex) newRemoteClientIndex;
+		char buffout[128];
+		systemAddress.ToString(false,buffout);
 
-		SOCKET sockfd = SocketConnect(host, remotePort, socketFamily);
+		SOCKET sockfd = SocketConnect(buffout, remotePort, socketFamily);
 		if (sockfd==(SOCKET)-1)
 		{
 			remoteClients[newRemoteClientIndex].isActiveMutex.Lock();
@@ -485,6 +487,10 @@ void TCPInterface::PushBackPacket( Packet *packet, bool pushAtHead )
 		headPush.Push(packet, _FILE_AND_LINE_ );
 	else
 		tailPush.Push(packet, _FILE_AND_LINE_ );
+}
+bool TCPInterface::WasStarted(void) const
+{
+	return threadRunning==true;
 }
 int TCPInterface::Base64Encoding(const char *inputData, int dataLength, char *outputData)
 {
@@ -982,6 +988,12 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 						{
 							// if recv returns 0 this was a graceful close
 							len = sts->remoteClients[i].Recv(data,BUFF_SIZE);
+
+						
+							// removeme
+// 								data[len]=0;
+// 								printf(data);
+							
 							if (len>0)
 							{
 								incomingMessage=sts->incomingMessages.Allocate( _FILE_AND_LINE_ );
@@ -1124,9 +1136,7 @@ int RemoteClient::Send(const char *data, unsigned int length)
 	int err;
 	if (ssl)
 	{
-		err = SSL_write (ssl, data, length);
-		RakAssert(err>0);
-		return 0;
+		return SSL_write (ssl, data, length);
 	}
 	else
 		return send(socket, data, length, 0);

@@ -120,8 +120,11 @@ public:
 
 	static const char *Base64Map(void) {return "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";}
 
-	// \brief Returns how many bytes were written.
+	/// \brief Returns how many bytes were written.
 	static int Base64Encoding(const char *inputData, int dataLength, char *outputData);
+
+	/// Returns if Start() was called successfully
+	bool WasStarted(void) const;
 
 protected:
 

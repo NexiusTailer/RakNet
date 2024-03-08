@@ -12,6 +12,9 @@
 #include "RakAssert.h"
 #include "Rand.h"
 #include "MessageIdentifiers.h"
+#ifdef USE_THREADED_SEND
+#include "SendToThread.h"
+#endif
 #include <math.h>
 
 using namespace RakNet;
@@ -55,13 +58,7 @@ BPSTracker::BPSTracker() {Reset(_FILE_AND_LINE_);}
 BPSTracker::~BPSTracker() {}
 //void BPSTracker::Reset(const char *file, unsigned int line) {total1=total2=lastSec1=lastSec2=0; dataQueue.Clear(file,line);}
 void BPSTracker::Reset(const char *file, unsigned int line) {total1=lastSec1=0; dataQueue.Clear(file,line);}
-void BPSTracker::Push1(RakNet::TimeUS time, uint64_t value1) {
-	ClearExpired1(time);
-	dataQueue.Push(TimeAndValue2(time,value1),_FILE_AND_LINE_); total1+=value1; lastSec1+=value1;
-}
 //void BPSTracker::Push2(RakNetTimeUS time, uint64_t value1, uint64_t value2) {dataQueue.Push(TimeAndValue2(time,value1,value2),_FILE_AND_LINE_); total1+=value1; lastSec1+=value1;  total2+=value2; lastSec2+=value2;}
-uint64_t BPSTracker::GetBPS1(RakNet::TimeUS time) {ClearExpired1(time); return lastSec1;}
-uint64_t BPSTracker::GetBPS1Threadsafe(RakNet::TimeUS time) {(void) time; return lastSec1;}
 //uint64_t BPSTracker::GetBPS2(RakNetTimeUS time) {ClearExpired2(time); return lastSec2;}
 //void BPSTracker::GetBPS1And2(RakNetTimeUS time, uint64_t &out1, uint64_t &out2) {ClearExpired2(time); out1=lastSec1; out2=lastSec2;}
 uint64_t BPSTracker::GetTotal1(void) const {return total1;}
@@ -309,7 +306,7 @@ updateBitStream( MAXIMUM_MTU_SIZE
 #endif
 
 	InitializeVariables();
-
+//int i = sizeof(InternalPacket);
 	datagramHistoryMessagePool.SetPageSize(sizeof(MessageNumberNode)*128);
 	internalPacketPool.SetPageSize(sizeof(InternalPacket)*128);
 	refCountedDataPool.SetPageSize(sizeof(InternalPacket)*32);
@@ -382,6 +379,7 @@ void ReliabilityLayer::InitializeVariables( void )
 	bandwidthExceededStatistic=false;
 	remoteSystemTime=0;
 	unreliableTimeout=0;
+	lastBpsClear=0;
 
 	// Disable packet pairs
 	countdownToNextPacketPair=15;
@@ -719,6 +717,9 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 
 					while (messageNumberNode)
 					{
+						// TESTING1
+// 						printf("Should remove %i on ack for datagramNumber=%i.\n", messageNumberNode->messageNumber.val, datagramNumber.val);
+
 						RemovePacketFromResendListAndDeleteOlderReliableSequenced( messageNumberNode->messageNumber, timeRead, messageHandlerList, systemAddress );
 						messageNumberNode=messageNumberNode->next;
 					}
@@ -855,6 +856,9 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 					// The subtraction unsigned overflow is intentional
 					holeCount = (DatagramSequenceNumberType)(internalPacket->reliableMessageNumber-receivedPacketsBaseIndex);
 					const DatagramSequenceNumberType typeRange = (DatagramSequenceNumberType)(const uint32_t)-1;
+
+					// TESTING1
+// 					printf("waiting on reliableMessageNumber=%i holeCount=%i datagramNumber=%i\n", receivedPacketsBaseIndex.val, holeCount.val, dhf.datagramNumber.val);
 
 					if (holeCount==(DatagramSequenceNumberType) 0)
 					{
@@ -1211,7 +1215,7 @@ bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPri
 
 	if ( makeDataCopy )
 	{
-		AllocInternalPacketData(internalPacket, numberOfBytesToSend, _FILE_AND_LINE_ );
+		AllocInternalPacketData(internalPacket, numberOfBytesToSend, true, _FILE_AND_LINE_ );
 		//internalPacket->data = (unsigned char*) rakMalloc_Ex( numberOfBytesToSend, _FILE_AND_LINE_ );
 		memcpy( internalPacket->data, data, numberOfBytesToSend );
 	}
@@ -1455,6 +1459,24 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress &systemAddress, int MTUSi
 	statistics.BPSLimitByOutgoingBandwidthLimit = BITS_TO_BYTES(bitsPerSecondLimit);
 	statistics.BPSLimitByCongestionControl = congestionManager.GetBytesPerSecondLimitByCongestionControl();
 
+	unsigned int i;
+	if (time > lastBpsClear+
+#if CC_TIME_TYPE_BYTES==4
+		100
+#else
+		100000
+#endif
+		)
+	{
+		for (i=0; i < RNS_PER_SECOND_METRICS_COUNT; i++)
+		{
+			bpsMetrics[i].ClearExpired1(time);
+		}
+
+		lastBpsClear=time;
+	}
+
+
 	if (hasDataToSendOrResend==true)
 	{
 		InternalPacket *internalPacket;
@@ -1495,10 +1517,9 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress &systemAddress, int MTUSi
 							PopListHead(false);
 
 							InternalPacket *ackReceipt = AllocateFromInternalPacketPool();
-							AllocInternalPacketData(ackReceipt, 5,  _FILE_AND_LINE_ );
+							AllocInternalPacketData(ackReceipt, 5,  false, _FILE_AND_LINE_ );
 							ackReceipt->dataBitLength=BYTES_TO_BITS(5);
 							ackReceipt->data[0]=(MessageID)ID_SND_RECEIPT_LOSS;
-							ackReceipt->allocationScheme=InternalPacket::NORMAL;
 							memcpy(ackReceipt->data+sizeof(MessageID), &internalPacket->sendReceiptSerial, sizeof(internalPacket->sendReceiptSerial));
 							outputQueue.Push(ackReceipt, _FILE_AND_LINE_ );
 
@@ -1526,8 +1547,13 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress &systemAddress, int MTUSi
 						CC_DEBUG_PRINTF_2("Rs %i ", internalPacket->reliableMessageNumber.val);
 
 						bpsMetrics[(int) USER_MESSAGE_BYTES_RESENT].Push1(time,BITS_TO_BYTES(internalPacket->dataBitLength));
+
+						// Testing1
+// 						if (internalPacket->reliability==RELIABLE_ORDERED)
+// 							printf("resend reliableMessageNumber %i with datagram %i\n", internalPacket->reliableMessageNumber.val, congestionManager.GetNextDatagramSequenceNumber().val);
+
 						PushPacket(time,internalPacket,true); // Affects GetNewTransmissionBandwidth()
-						internalPacket->timesSent++;
+//						internalPacket->timesSent++;
 						internalPacket->nextActionTime = congestionManager.GetRTOForRetransmission()+time;
 #if CC_TIME_TYPE_BYTES==4
 						if (internalPacket->nextActionTime-time > 10000)
@@ -1691,10 +1717,15 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress &systemAddress, int MTUSi
 						//		printf("post:%i ", unacknowledgedBytes);
 						sendReliableMessageNumberIndex++;
 					}
-					internalPacket->timesSent=1;
+//					internalPacket->timesSent=1;
 					// If isReliable is false, the packet and its contents will be added to a list to be freed in ClearPacketsAndDatagrams
 					// However, the internalPacket structure will remain allocated and be in the resendBuffer list if it requires a receipt
 					bpsMetrics[(int) USER_MESSAGE_BYTES_SENT].Push1(time,BITS_TO_BYTES(internalPacket->dataBitLength));
+
+					// Testing1
+// 					if (internalPacket->reliability==RELIABLE_ORDERED)
+// 						printf("send reliableMessageNumber %i in datagram %i\n", internalPacket->reliableMessageNumber.val, congestionManager.GetNextDatagramSequenceNumber().val);
+
 					PushPacket(time,internalPacket, isReliable);
 
 					for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
@@ -1896,7 +1927,19 @@ void ReliabilityLayer::SendBitStream( SOCKET s, SystemAddress &systemAddress, Ra
 	bpsMetrics[(int) ACTUAL_BYTES_SENT].Push1(currentTime,length);
 
 	RakAssert(length <= congestionManager.GetMTU());
+
+#ifdef USE_THREADED_SEND
+	SendToThread::SendToThreadBlock *block =  SendToThread::AllocateBlock();
+	memcpy(block->data, bitStream->GetData(), length);
+	block->dataWriteOffset=length;
+	block->extraSocketOptions=extraSocketOptions;
+	block->remotePortRakNetWasStartedOn_PS3=remotePortRakNetWasStartedOn_PS3;
+	block->s=s;
+	block->systemAddress=systemAddress;
+	SendToThread::ProcessBlock(block);
+#else
 	SocketLayer::SendTo( s, ( char* ) bitStream->GetData(), length, systemAddress, remotePortRakNetWasStartedOn_PS3, extraSocketOptions, __FILE__, __LINE__  );
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------------
@@ -2014,12 +2057,25 @@ unsigned ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSeque
 #endif
 	}
 
+	// Testing1
+// 	if (resendLinkedListHead)
+// 	{
+// 		InternalPacket *internalPacket = resendLinkedListHead;
+// 		do 
+// 		{
+// 			internalPacket=internalPacket->resendNext;
+// 			printf("%i ", internalPacket->reliableMessageNumber.val);
+// 		} while (internalPacket!=resendLinkedListHead);
+// 		printf("\n");
+// 	}
+
 	//	bool deleted;
 	//	deleted=resendTree.Delete(messageNumber, internalPacket);
 	internalPacket = resendBuffer[messageNumber & RESEND_BUFFER_ARRAY_MASK];
-	if (internalPacket)
+	// May ask to remove twice, for example resend twice, then second ack
+	if (internalPacket && internalPacket->reliableMessageNumber==messageNumber)
 	{
-		ValidateResendList();
+	//	ValidateResendList();
 		resendBuffer[messageNumber & RESEND_BUFFER_ARRAY_MASK]=0;
 		CC_DEBUG_PRINTF_2("AckRcv %i ", messageNumber);
 
@@ -2035,10 +2091,9 @@ unsigned ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSeque
 			)
 		{
 			InternalPacket *ackReceipt = AllocateFromInternalPacketPool();
-			AllocInternalPacketData(ackReceipt, 5,  _FILE_AND_LINE_ );
+			AllocInternalPacketData(ackReceipt, 5,  false, _FILE_AND_LINE_ );
 			ackReceipt->dataBitLength=BYTES_TO_BITS(5);
 			ackReceipt->data[0]=(MessageID)ID_SND_RECEIPT_ACKED;
-			ackReceipt->allocationScheme=InternalPacket::NORMAL;
 			memcpy(ackReceipt->data+sizeof(MessageID), &internalPacket->sendReceiptSerial, sizeof(internalPacket->sendReceiptSerial));
 			outputQueue.Push(ackReceipt, _FILE_AND_LINE_ );
 		}
@@ -2159,7 +2214,7 @@ BitSize_t ReliabilityLayer::WriteToBitStreamFromInternalPacket( RakNet::BitStrea
 	if (internalPacket->reliability==UNRELIABLE_WITH_ACK_RECEIPT)
 		tempChar=UNRELIABLE;
 	else if (internalPacket->reliability==RELIABLE_WITH_ACK_RECEIPT)
-		tempChar=RELIABLE_WITH_ACK_RECEIPT;
+		tempChar=RELIABLE;
 	else if (internalPacket->reliability==RELIABLE_ORDERED_WITH_ACK_RECEIPT)
 		tempChar=RELIABLE_ORDERED;
 	else
@@ -2299,7 +2354,7 @@ InternalPacket* ReliabilityLayer::CreateInternalPacketFromBitStream( RakNet::Bit
 	}
 
 	// Allocate memory to hold our data
-	AllocInternalPacketData(internalPacket, BITS_TO_BYTES( internalPacket->dataBitLength ),  _FILE_AND_LINE_ );
+	AllocInternalPacketData(internalPacket, BITS_TO_BYTES( internalPacket->dataBitLength ), false, _FILE_AND_LINE_ );
 	RakAssert(BITS_TO_BYTES( internalPacket->dataBitLength )<MAXIMUM_MTU_SIZE);
 
 	if (internalPacket->data == 0)
@@ -2644,7 +2699,6 @@ void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacke
 		AllocInternalPacketData(progressIndicator, len,  __FILE__, __LINE__ );
 		progressIndicator->dataBitLength=BYTES_TO_BITS(len);
 		progressIndicator->data[0]=(MessageID)ID_DOWNLOAD_PROGRESS;
-		progressIndicator->allocationScheme=InternalPacket::NORMAL;
 		unsigned int temp;
 		//	temp=splitPacketChannelList[index]->splitPacketList.Size();
 		temp=splitPacketChannelList[index]->splitPacketsArrived;
@@ -2682,10 +2736,9 @@ void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacke
 		// Write data, splitPacketChannelList[index]->splitPacketList[0]->data
 		InternalPacket *progressIndicator = AllocateFromInternalPacketPool();
 		unsigned int length = sizeof(MessageID) + sizeof(unsigned int)*2 + sizeof(unsigned int) + (unsigned int) BITS_TO_BYTES(splitPacketChannelList[index]->firstPacket->dataBitLength);
-		AllocInternalPacketData(progressIndicator, length,  __FILE__, __LINE__ );
+		AllocInternalPacketData(progressIndicator, length,  false, __FILE__, __LINE__ );
 		progressIndicator->dataBitLength=BYTES_TO_BITS(length);
 		progressIndicator->data[0]=(MessageID)ID_DOWNLOAD_PROGRESS;
-		progressIndicator->allocationScheme=InternalPacket::NORMAL;
 		unsigned int temp;
 		temp=splitPacketChannelList[index]->splitPacketList.Size();
 		memcpy(progressIndicator->data+sizeof(MessageID), &temp, sizeof(unsigned int));
@@ -2817,7 +2870,7 @@ InternalPacket * ReliabilityLayer::CreateInternalPacketCopy( InternalPacket *ori
 
 	if ( dataByteLength > 0 )
 	{
-		AllocInternalPacketData(copy, BITS_TO_BYTES(dataByteLength ),  _FILE_AND_LINE_ );
+		AllocInternalPacketData(copy, BITS_TO_BYTES(dataByteLength ),  false, _FILE_AND_LINE_ );
 		memcpy( copy->data, original->data + dataByteOffset, dataByteLength );
 	}
 	else
@@ -3026,6 +3079,7 @@ void ReliabilityLayer::PushPacket(CCTimeType time, InternalPacket *internalPacke
 	packetsToSendThisUpdate.Push(internalPacket, _FILE_AND_LINE_ );
 	packetsToDeallocThisUpdate.Push(isReliable==false, _FILE_AND_LINE_ );
 	RakAssert(internalPacket->headerLength==GetMessageHeaderLengthBits(internalPacket));
+
 // This code tells me how much time elapses between when you send, and when the message actually goes out
 // 	if (internalPacket->data[0]==0)
 // 	{
@@ -3110,7 +3164,7 @@ void ReliabilityLayer::MoveToListHead(InternalPacket *internalPacket)
 	resendLinkedListHead=internalPacket;
 	RakAssert(internalPacket->headerLength+internalPacket->dataBitLength>0);
 
-	ValidateResendList();
+	//ValidateResendList();
 }
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::RemoveFromList(InternalPacket *internalPacket, bool modifyUnacknowledgedBytes)
@@ -3131,7 +3185,7 @@ void ReliabilityLayer::RemoveFromList(InternalPacket *internalPacket, bool modif
 		// printf("-unacknowledgedBytes:%i ", unacknowledgedBytes);
 
 
-		ValidateResendList();
+//		ValidateResendList();
 	}
 }
 //-------------------------------------------------------------------------------------------------------
@@ -3155,7 +3209,7 @@ void ReliabilityLayer::AddToListTail(InternalPacket *internalPacket, bool modify
 	internalPacket->resendPrev->resendNext=internalPacket;
 	resendLinkedListHead->resendPrev=internalPacket;
 
-	ValidateResendList();
+//	ValidateResendList();
 
 }
 //-------------------------------------------------------------------------------------------------------
@@ -3293,24 +3347,22 @@ void ReliabilityLayer::AddToUnreliableLinkedList(InternalPacket *internalPacket)
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::ValidateResendList(void) const
 {
-	/*
-	unsigned int count1=0, count2=0;
-	for (unsigned int i=0; i < RESEND_BUFFER_ARRAY_LENGTH; i++)
-	if (resendBuffer[i])
-	count1++;
-
-	if (resendLinkedListHead)
-	{
-	InternalPacket *internalPacket = resendLinkedListHead;
-	do 
-	{
-	count2++;
-	internalPacket=internalPacket->resendNext;
-	} while (internalPacket!=resendLinkedListHead);
-	}
-	RakAssert(count1==count2);
-	RakAssert(count2<=RESEND_BUFFER_ARRAY_LENGTH);
-	*/
+// 	unsigned int count1=0, count2=0;
+// 	for (unsigned int i=0; i < RESEND_BUFFER_ARRAY_LENGTH; i++)
+// 	if (resendBuffer[i])
+// 	count1++;
+// 
+// 	if (resendLinkedListHead)
+// 	{
+// 	InternalPacket *internalPacket = resendLinkedListHead;
+// 	do 
+// 	{
+// 	count2++;
+// 	internalPacket=internalPacket->resendNext;
+// 	} while (internalPacket!=resendLinkedListHead);
+// 	}
+// 	RakAssert(count1==count2);
+// 	RakAssert(count2<=RESEND_BUFFER_ARRAY_LENGTH);
 }
 //-------------------------------------------------------------------------------------------------------
 bool ReliabilityLayer::ResendBufferOverflow(void) const
@@ -3416,10 +3468,18 @@ void ReliabilityLayer::AllocInternalPacketData(InternalPacket *internalPacket, u
 	internalPacket->data=externallyAllocatedPtr;
 }
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::AllocInternalPacketData(InternalPacket *internalPacket, unsigned int numBytes, const char *file, unsigned int line)
+void ReliabilityLayer::AllocInternalPacketData(InternalPacket *internalPacket, unsigned int numBytes, bool allowStack, const char *file, unsigned int line)
 {
-	internalPacket->allocationScheme=InternalPacket::NORMAL;
-	internalPacket->data=(unsigned char*) rakMalloc_Ex(numBytes,file,line);
+	if (allowStack && numBytes <= sizeof(internalPacket->stackData))
+	{
+		internalPacket->allocationScheme=InternalPacket::STACK;
+		internalPacket->data=internalPacket->stackData;
+	}
+	else
+	{
+		internalPacket->allocationScheme=InternalPacket::NORMAL;
+		internalPacket->data=(unsigned char*) rakMalloc_Ex(numBytes,file,line);
+	}
 }
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::FreeInternalPacketData(InternalPacket *internalPacket, const char *file, unsigned int line)
@@ -3442,12 +3502,17 @@ void ReliabilityLayer::FreeInternalPacketData(InternalPacket *internalPacket, co
 			internalPacket->refCountedData=0;
 		}
 	}
-	else
+	else if (internalPacket->allocationScheme==InternalPacket::NORMAL)
 	{
 		if (internalPacket->data==0)
 			return;
 
 		rakFree_Ex(internalPacket->data, file, line );
+		internalPacket->data=0;
+	}
+	else
+	{
+		// Data was on stack
 		internalPacket->data=0;
 	}
 }

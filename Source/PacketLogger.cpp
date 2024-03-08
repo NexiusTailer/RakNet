@@ -37,7 +37,7 @@ PacketLogger::~PacketLogger()
 {
 }
 void PacketLogger::FormatLine(
-char* into, const char* dir, const char* type, unsigned int packet, unsigned int frame, unsigned char id
+char* into, const char* dir, const char* type, unsigned int reliableMessageNumber, unsigned int frame, unsigned char id
 , const BitSize_t bitLen, unsigned long long time, const SystemAddress& local, const SystemAddress& remote,
 unsigned int splitPacketId, unsigned int splitPacketIndex, unsigned int splitPacketCount, unsigned int orderingIndex)
 {
@@ -59,11 +59,11 @@ unsigned int splitPacketId, unsigned int splitPacketIndex, unsigned int splitPac
 		idToPrint = numericID;
 	}
 
-	FormatLine(into, dir, type, packet, frame, idToPrint, bitLen, time, local, remote,splitPacketId,splitPacketIndex,splitPacketCount, orderingIndex);
+	FormatLine(into, dir, type, reliableMessageNumber, frame, idToPrint, bitLen, time, local, remote,splitPacketId,splitPacketIndex,splitPacketCount, orderingIndex);
 }
 
 void PacketLogger::FormatLine(
-char* into, const char* dir, const char* type, unsigned int packet, unsigned int frame, const char* idToPrint
+char* into, const char* dir, const char* type, unsigned int reliableMessageNumber, unsigned int frame, const char* idToPrint
 , const BitSize_t bitLen, unsigned long long time, const SystemAddress& local, const SystemAddress& remote,
 unsigned int splitPacketId, unsigned int splitPacketIndex, unsigned int splitPacketCount, unsigned int orderingIndex)
 {
@@ -72,13 +72,25 @@ unsigned int splitPacketId, unsigned int splitPacketIndex, unsigned int splitPac
 	remote.ToString(true, str2);
 	char localtime[128];
 	GetLocalTime(localtime);
+	char str3[64];
+	if (reliableMessageNumber==(unsigned int)-1)
+	{
+		str3[0]='N';
+		str3[1]='/';
+		str3[2]='A';
+		str3[3]=0;
+	}
+	else
+	{
+		sprintf(str3,"%5u",reliableMessageNumber);
+	}
 
-	sprintf(into, "%s,%s%s,%s,%5u,%5u,%s,%u,%"PRINTF_64_BIT_MODIFIER"u,%s,%s,%i,%i,%i,%i,%s,"
+	sprintf(into, "%s,%s%s,%s,%s,%5u,%s,%u,%"PRINTF_64_BIT_MODIFIER"u,%s,%s,%i,%i,%i,%i,%s,"
 					, localtime
 					, prefix
 					, dir
 					, type
-					, packet
+					, str3
 					, frame
 					, idToPrint
 					, bitLen
@@ -105,7 +117,7 @@ void PacketLogger::OnDirectSocketSend(const char *data, const BitSize_t bitsUsed
 void PacketLogger::LogHeader(void)
 {
 	// Last 5 are splitpacket id, split packet index, split packet count, ordering index, suffix
-	AddToLog("Clock,S|R,Typ,Pckt#,Frm #,PktID,BitLn,Time     ,Local IP:Port   ,RemoteIP:Port,SPID,SPIN,SPCO,OI,Suffix,Miscellaneous\n");
+	AddToLog("Clock,S|R,Typ,Reliable#,Frm #,PktID,BitLn,Time     ,Local IP:Port   ,RemoteIP:Port,SPID,SPIN,SPCO,OI,Suffix,Miscellaneous\n");
 }
 void PacketLogger::OnDirectSocketReceive(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress)
 {
@@ -179,13 +191,19 @@ void PacketLogger::OnInternalPacket(InternalPacket *internalPacket, unsigned fra
 	const char *sendType = sendTypes[isSend];
 	SystemAddress localSystemAddress = rakPeerInterface->GetExternalID(remoteSystemAddress);
 
+	unsigned int reliableMessageNumber;
+	if (internalPacket->reliability==UNRELIABLE || internalPacket->reliability==UNRELIABLE_SEQUENCED || internalPacket->reliability==UNRELIABLE_WITH_ACK_RECEIPT)
+		reliableMessageNumber=(unsigned int)-1;
+	else
+		reliableMessageNumber=internalPacket->reliableMessageNumber;
+
 	if (internalPacket->data[0]==ID_TIMESTAMP)
 	{
-		FormatLine(str, sendType, "Tms", internalPacket->reliableMessageNumber, frameNumber, internalPacket->data[1+sizeof(RakNet::Time)], internalPacket->dataBitLength, (unsigned long long)time, localSystemAddress, remoteSystemAddress, internalPacket->splitPacketId, internalPacket->splitPacketIndex, internalPacket->splitPacketCount, internalPacket->orderingIndex);
+		FormatLine(str, sendType, "Tms", reliableMessageNumber, frameNumber, internalPacket->data[1+sizeof(RakNet::Time)], internalPacket->dataBitLength, (unsigned long long)time, localSystemAddress, remoteSystemAddress, internalPacket->splitPacketId, internalPacket->splitPacketIndex, internalPacket->splitPacketCount, internalPacket->orderingIndex);
 	}
 	else
 	{
-		FormatLine(str, sendType, "Nrm", internalPacket->reliableMessageNumber, frameNumber, internalPacket->data[0], internalPacket->dataBitLength, (unsigned long long)time, localSystemAddress, remoteSystemAddress, internalPacket->splitPacketId, internalPacket->splitPacketIndex, internalPacket->splitPacketCount, internalPacket->orderingIndex);
+		FormatLine(str, sendType, "Nrm", reliableMessageNumber, frameNumber, internalPacket->data[0], internalPacket->dataBitLength, (unsigned long long)time, localSystemAddress, remoteSystemAddress, internalPacket->splitPacketId, internalPacket->splitPacketIndex, internalPacket->splitPacketCount, internalPacket->orderingIndex);
 	}
 
 	AddToLog(str);

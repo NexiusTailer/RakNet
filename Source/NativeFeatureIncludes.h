@@ -137,6 +137,9 @@
 #ifndef _RAKNET_SUPPORT_DynDNS
 #define _RAKNET_SUPPORT_DynDNS 1
 #endif
+#ifndef _RAKNET_SUPPORT_Rackspace
+#define _RAKNET_SUPPORT_Rackspace 1
+#endif
 
 // Take care of dependencies
 #if _RAKNET_SUPPORT_DirectoryDeltaTransfer==1

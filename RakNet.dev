@@ -1,7 +1,7 @@
 [Project]
 FileName=RakNet.dev
 Name=RakNet
-UnitCount=233
+UnitCount=240
 Type=2
 Ver=1
 ObjFiles=
@@ -2378,7 +2378,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit234]
-FileName=Source\gettimeofday.cpp
+FileName=Source\DS_ThreadsafePrimitives.h
 CompileCpp=1
 Folder=RakNet
 Compile=1
@@ -2388,7 +2388,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit235]
-FileName=Source\gettimeofday.h
+FileName=Source\LocklessTypes.cpp
 CompileCpp=1
 Folder=RakNet
 Compile=1
@@ -2398,7 +2398,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit236]
-FileName=Source\RakNetSmartPtr.h
+FileName=Source\LocklessTypes.h
 CompileCpp=1
 Folder=RakNet
 Compile=1
@@ -2408,7 +2408,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit237]
-FileName=Source\RakNetSocket.cpp
+FileName=Source\Rackspace.cpp
 CompileCpp=1
 Folder=RakNet
 Compile=1
@@ -2418,7 +2418,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit238]
-FileName=Source\RakNetSocket.h
+FileName=Source\Rackspace.h
 CompileCpp=1
 Folder=RakNet
 Compile=1
@@ -2428,7 +2428,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit239]
-FileName=Source\CCRakNetUDT.cpp
+FileName=Source\RakWString.cpp
 CompileCpp=1
 Folder=RakNet
 Compile=1
@@ -2438,7 +2438,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit240]
-FileName=Source\CCRakNetUDT.h
+FileName=Source\RakWString.h
 CompileCpp=1
 Folder=RakNet
 Compile=1

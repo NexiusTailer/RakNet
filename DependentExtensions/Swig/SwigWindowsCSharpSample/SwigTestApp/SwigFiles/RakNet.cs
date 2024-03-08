@@ -128,6 +128,7 @@ public class RakNet {
   public static readonly int _RAKNET_SUPPORT_CloudClient = RakNetPINVOKE._RAKNET_SUPPORT_CloudClient_get();
   public static readonly int _RAKNET_SUPPORT_CloudServer = RakNetPINVOKE._RAKNET_SUPPORT_CloudServer_get();
   public static readonly int _RAKNET_SUPPORT_DynDNS = RakNetPINVOKE._RAKNET_SUPPORT_DynDNS_get();
+  public static readonly int _RAKNET_SUPPORT_Rackspace = RakNetPINVOKE._RAKNET_SUPPORT_Rackspace_get();
   public static readonly int INVALID_SOCKET = RakNetPINVOKE.INVALID_SOCKET_get();
   public static readonly string PRINTF_64_BIT_MODIFIER = RakNetPINVOKE.PRINTF_64_BIT_MODIFIER_get();
   public static readonly int NETWORK_ID_MANAGER_HASH_LENGTH = RakNetPINVOKE.NETWORK_ID_MANAGER_HASH_LENGTH_get();

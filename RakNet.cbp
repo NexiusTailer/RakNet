@@ -444,6 +444,13 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\DS_ThreadsafePrimitives.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\DS_Tree.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -822,6 +829,18 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\LocklessTypes.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\LocklessTypes.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\LogCommandParser.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="debug"/>
@@ -1127,6 +1146,18 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\Rackspace.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\Rackspace.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\RakAlloca.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -1349,6 +1380,18 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\RakThread.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\RakWString.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\RakWString.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

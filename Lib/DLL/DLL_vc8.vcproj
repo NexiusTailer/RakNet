@@ -334,6 +334,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\LocklessTypes.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\LogCommandParser.cpp"
 				>
 			</File>
@@ -391,6 +395,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\PluginInterface2.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\Rackspace.cpp"
 				>
 			</File>
 			<File
@@ -816,6 +824,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\LocklessTypes.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\LogCommandParser.h"
 				>
 			</File>
@@ -901,6 +913,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\PluginInterface2.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\Rackspace.h"
 				>
 			</File>
 			<File

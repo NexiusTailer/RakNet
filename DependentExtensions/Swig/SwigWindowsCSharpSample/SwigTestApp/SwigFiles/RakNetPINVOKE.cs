@@ -678,6 +678,9 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp__RAKNET_SUPPORT_DynDNS_get")]
   public static extern int _RAKNET_SUPPORT_DynDNS_get();
 
+  [DllImport("RakNet", EntryPoint="CSharp__RAKNET_SUPPORT_Rackspace_get")]
+  public static extern int _RAKNET_SUPPORT_Rackspace_get();
+
   [DllImport("RakNet", EntryPoint="CSharp_new_ReferenceCounter")]
   public static extern IntPtr new_ReferenceCounter();
 
@@ -1295,6 +1298,9 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp_RakString_URLDecode")]
   public static extern IntPtr RakString_URLDecode(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_RakString_SplitURI")]
+  public static extern void RakString_SplitURI(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, HandleRef jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_RakString_SQLEscape")]
   public static extern IntPtr RakString_SQLEscape(HandleRef jarg1);

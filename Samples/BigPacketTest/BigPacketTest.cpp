@@ -14,7 +14,7 @@
 bool quit;
 bool sentPacket=false;
 
-#define BIG_PACKET_SIZE 100000000
+#define BIG_PACKET_SIZE 50000000
 
 using namespace RakNet;
 
@@ -168,6 +168,8 @@ int main(void)
 					t[0]=(unsigned char) 254;
 					server->Send(t, 1, MEDIUM_PRIORITY, RELIABLE_ORDERED, 1, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 				}
+				if (ch=='q')
+					quit=true;
 			}
 		}
 		if (client)

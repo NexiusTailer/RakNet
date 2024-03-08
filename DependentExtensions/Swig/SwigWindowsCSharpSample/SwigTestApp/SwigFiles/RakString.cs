@@ -417,6 +417,11 @@ public class RakString : IDisposable {
     return ret;
   }
 
+  public void SplitURI(RakString header, RakString domain, RakString path) {
+    RakNetPINVOKE.RakString_SplitURI(swigCPtr, RakString.getCPtr(header), RakString.getCPtr(domain), RakString.getCPtr(path));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public RakString SQLEscape() {
     RakString ret = new RakString(RakNetPINVOKE.RakString_SQLEscape(swigCPtr), false);
     return ret;

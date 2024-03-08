@@ -48,6 +48,10 @@
 #include "RakAlloca.h"
 #include "WSAStartupSingleton.h"
 
+#ifdef USE_THREADED_SEND
+#include "SendToThread.h"
+#endif
+
 #ifdef CAT_AUDIT
 #define CAT_AUDIT_PRINTF(...) printf(__VA_ARGS__)
 #else
@@ -490,7 +494,7 @@ StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor 
 			}
 
 
-			while (  isRecvFromLoopThreadActive < (int) socketDescriptorCount )
+			while (  isRecvFromLoopThreadActive.GetValue() < (int) socketDescriptorCount )
 				RakSleep(10);
 		}
 
@@ -507,7 +511,7 @@ StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor 
 	}
 
 #ifdef USE_THREADED_SEND
-	SendToThread::AddRef();
+	RakNet::SendToThread::AddRef();
 #endif
 
 	return RAKNET_STARTED;
@@ -878,7 +882,7 @@ void RakPeer::Shutdown( unsigned int blockDuration, unsigned char orderingChanne
 	}
 
 	RakNet::TimeMS timeout = RakNet::GetTimeMS()+1000;
-	while ( isRecvFromLoopThreadActive>0 && RakNet::GetTimeMS()<timeout )
+	while ( isRecvFromLoopThreadActive.GetValue()>0 && RakNet::GetTimeMS()<timeout )
 	{
 		// Get recvfrom to unblock
 		for (i=0; i < socketList.Size(); i++)
@@ -920,10 +924,10 @@ void RakPeer::Shutdown( unsigned int blockDuration, unsigned char orderingChanne
 	packetAllocationPool.Clear(_FILE_AND_LINE_);
 	packetAllocationPoolMutex.Unlock();
 
-	if (isRecvFromLoopThreadActive>0)
+	if (isRecvFromLoopThreadActive.GetValue()>0)
 	{
 		timeout = RakNet::GetTimeMS()+1000;
-		while ( isRecvFromLoopThreadActive>0 && RakNet::GetTimeMS()<timeout )
+		while ( isRecvFromLoopThreadActive.GetValue()>0 && RakNet::GetTimeMS()<timeout )
 		{
 			RakSleep(30);
 		}
@@ -949,7 +953,7 @@ void RakPeer::Shutdown( unsigned int blockDuration, unsigned char orderingChanne
 	ClearRemoteSystemLookup();
 
 #ifdef USE_THREADED_SEND
-	SendToThread::Deref();
+	RakNet::SendToThread::Deref();
 #endif
 
 	ResetSendReceipt();
@@ -4356,11 +4360,14 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			RakNetGUID guid;
 			bs.Read(guid);
 			SystemAddress bindingAddress;
-			bs.Read(bindingAddress);
+			bool b = bs.Read(bindingAddress);
+			RakAssert(b);
 			uint16_t mtu;
-			bs.Read(mtu);
+			b=bs.Read(mtu);
+			RakAssert(b);
 			bool doSecurity;
-			bs.Read(doSecurity);
+			b=bs.Read(doSecurity);
+			RakAssert(b);
 
 #if LIBCAT_SECURITY==1
 			char answer[cat::EasyHandshake::ANSWER_BYTES];
@@ -5630,7 +5637,7 @@ RAK_THREAD_DECLARATION(RakNet::RecvFromLoop)
 	unsigned short remotePortRakNetWasStartedOn_PS3 = rpai->remotePortRakNetWasStartedOn_PS3;
 	unsigned int extraSocketOptions = rpai->extraSocketOptions;
 
-	rakPeer->isRecvFromLoopThreadActive++;
+	rakPeer->isRecvFromLoopThreadActive.Increment();
 
 	RakPeer::RecvFromStruct *recvFromStruct;
 	while ( rakPeer->endThreads == false )
@@ -5657,7 +5664,7 @@ RAK_THREAD_DECLARATION(RakNet::RecvFromLoop)
 		else
 			RakSleep(30);
 	}
-	rakPeer->isRecvFromLoopThreadActive--;
+	rakPeer->isRecvFromLoopThreadActive.Decrement();
 	return 0;
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

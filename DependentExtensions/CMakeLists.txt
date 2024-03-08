@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
 add_subdirectory("bzip2-1.0.3")
-add_subdirectory("UPNP")
 add_subdirectory("XML")
 IF(USEMYSQL AND NOT DISABLEDEPENDENCIES) 
 	add_subdirectory(MySQLInterface)

@@ -189,6 +189,9 @@ public:
 	/// URL decode the string
 	RakNet::RakString& URLDecode(void);
 
+	/// https://servers.api.rackspacecloud.com/v1.0 to https://,  servers.api.rackspacecloud.com, /v1.0
+	void SplitURI(RakNet::RakString &header, RakNet::RakString &domain, RakNet::RakString &path);
+
 	/// Scan for quote, double quote, and backslash and prepend with backslash
 	RakNet::RakString& SQLEscape(void);
 

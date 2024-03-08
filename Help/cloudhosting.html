@@ -18,7 +18,8 @@
 <P><span class="RakNetBlueHeader">Cloud hosting through Rackspace</span><BR>
   <br>
 Services such as the <a href="autopatcher.html">autopatcher</a>, <a href="cloudcomputing.html">cloud server</a>, and <a href="natpunchthrough.html">NAT punchthrough server</a> require a server running RakNet. While it is possible to run this server using a traditional host, such as <a href="http://www.hypernia.com/">Hypernia</a> or <a href="http://www.dx.net/raknet_dx.php">dx.net</a> these services will cost you about $150 USD a month. Scaling up the services also requires time-consuming installation of the codebase and it is not possible to do so programmatically.
-<P>RakNet was tested with two cloud hosting providers: <a href="http://aws.amazon.com/">Amazon AWS</a> and <a href="http://www.rackspace.com/cloud/">Rackspace Cloud</a>. Based on our testing, Amazon AWS does not support incoming UDP connections. As this is required for the NAT punchthrough server, I don't recommend using it. Rackspace Cloud did support this however and the cost for their lowest-end Linux servers is very cheap.
+<P>RakNet was tested with two cloud hosting providers: <a href="http://aws.amazon.com/">Amazon AWS</a> and <a href="http://www.rackspace.com/cloud/">Rackspace Cloud</a>. Based on testing, Amazon AWS does not support incoming UDP connections. As this is required for the NAT punchthrough server, I don't recommend using it. Rackspace Cloud did support this however and the cost for their lowest-end Linux servers is very cheap. I also provide a <a href="rackspaceinterface.html">C++ interface to Rackspace</a> allowing you to programatically control your servers.
+<P><strong>Signing up</strong>
 <P><img src="cloudhosting1.jpg">
 <P><br>
   <strong>Creating the server</strong>
@@ -53,7 +54,8 @@ Services such as the <a href="autopatcher.html">autopatcher</a>, <a href="cloudc
 <A HREF="index.html">Index</A><BR>
 <a href="autopatcher.html">Autopatcher</a><BR>
 <a href="cloudcomputing.html">Cloud Computing</a><BR>
-<a href="natpunchthrough.html">NAT punchthrough</a>
+<a href="natpunchthrough.html">NAT punchthrough</a><BR>
+<a href="rackspaceinterface.html">Rackspace interface</A>
 </TD></TR></TABLE>
 </BODY>
 </HTML>

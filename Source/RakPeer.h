@@ -26,7 +26,7 @@
 #include "SignaledEvent.h"
 #include "NativeFeatureIncludes.h"
 #include "SecureHandshake.h"
-
+#include "LocklessTypes.h"
 
 namespace RakNet {
 /// Forward declarations
@@ -694,7 +694,10 @@ protected:
 	volatile bool endThreads;
 	///true if the peer thread is active. 
 	volatile bool isMainLoopThreadActive;
-	volatile int isRecvFromLoopThreadActive;
+	
+	RakNet::LocklessUint32_t isRecvFromLoopThreadActive;
+
+
 	bool occasionalPing;  /// Do we occasionally ping the other systems?*/
 	///Store the maximum number of peers allowed to connect
 	unsigned short maximumNumberOfPeers;
