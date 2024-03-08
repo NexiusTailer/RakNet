@@ -71,7 +71,7 @@ public:
 	/// \param[in] remoteSystemAddress The player we sent or got this packet from
 	/// \param[in] time The current time as returned by RakNet::GetTime()
 	/// \param[in] isSend Is this callback representing a send event or receive event?
-	void OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNetTime time, bool isSend);// {(void) internalPacket; (void) frameNumber; (void) remoteSystemAddress; (void) time; (void) isSend;}
+	void OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNetTime time, int isSend);// {(void) internalPacket; (void) frameNumber; (void) remoteSystemAddress; (void) time; (void) isSend;}
 
 	/// Called when we get an ack for a message we reliabily sent
 	/// \param[in] messageNumber The numerical identifier for which message this is

@@ -65,11 +65,17 @@ struct SampleReplica : public Replica3
 			serializeParameters->outputBitstream[0].Write(GetName() + RakNet::RakString(" Channel 0. Serialize. Time = %i", time));
 		else
 			serializeParameters->outputBitstream[1].Write(GetName() + RakNet::RakString(" Channel 1. Serialize. Time = %i", time));
+
+		// Each channel can have its own reliability
+		serializeParameters->outputBitstream[2].Write("Third output channel.");
+		serializeParameters->pro[2].reliability=UNRELIABLE;
+
 		return RM3SR_BROADCAST_IDENTICALLY;
 	}
 	virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters) {
 		PrintOutput(&deserializeParameters->serializationBitstream[0]);
 		PrintOutput(&deserializeParameters->serializationBitstream[1]);
+		PrintOutput(&deserializeParameters->serializationBitstream[2]);
 	}
 
 	virtual void SerializeConstructionRequestAccepted(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *requestingConnection)	{
@@ -176,16 +182,6 @@ struct ServerCreated_ServerSerialized : public SampleReplica {
 };
 struct P2PReplica : public SampleReplica {
 	virtual RakNet::RakString GetName(void) const {return RakNet::RakString("P2PReplica");}
-	virtual RM3SerializationResult Serialize(SerializeParameters *serializeParameters)
-	{
-		RakNetTime time = RakNet::GetTime()/1000;
-
-		if (time%2) // Swap channels randomly for testing
-			serializeParameters->outputBitstream[0].Write(GetName() + RakNet::RakString(" Serialize. Channel 0. Time = %i", time));
-		else
-			serializeParameters->outputBitstream[1].Write(GetName() + RakNet::RakString(" Serialize. Channel 1. Time = %i", time));
-		return RM3SR_BROADCAST_IDENTICALLY;
-	}
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {
 		return QueryConstruction_PeerToPeer(destinationConnection);
 	}

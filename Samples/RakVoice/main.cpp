@@ -65,7 +65,7 @@ static int PACallback( void *inputBuffer, void *outputBuffer,
 	return 0;
 }
 
-#define NAT_PUNCHTHROUGH_FACILITATOR_PORT 60481
+#define NAT_PUNCHTHROUGH_FACILITATOR_PORT 61111
 
 int main(void)
 {

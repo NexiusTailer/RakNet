@@ -1,7 +1,7 @@
 [Project]
 FileName=RakNet.dev
 Name=RakNet
-UnitCount=265
+UnitCount=264
 Type=2
 Ver=1
 ObjFiles=
@@ -2578,16 +2578,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit254]
-FileName=Source\BitStream_NoTemplate - Copy.h
-CompileCpp=1
-Folder=RakNet
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit255]
 FileName=Source\DS_StringKeyedHash.h
 CompileCpp=1
 Folder=RakNet
@@ -2597,7 +2587,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit256]
+[Unit255]
 FileName=Source\Getche.cpp
 CompileCpp=1
 Folder=RakNet
@@ -2607,7 +2597,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit257]
+[Unit256]
 FileName=Source\Getche.h
 CompileCpp=1
 Folder=RakNet
@@ -2617,7 +2607,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit258]
+[Unit257]
 FileName=Source\RakNetDefinesOverrides.h
 CompileCpp=1
 Folder=RakNet
@@ -2627,7 +2617,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit259]
+[Unit258]
 FileName=Source\rdlmalloc.cpp
 CompileCpp=1
 Folder=RakNet
@@ -2637,7 +2627,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit260]
+[Unit259]
 FileName=Source\rdlmalloc.h
 CompileCpp=1
 Folder=RakNet
@@ -2647,7 +2637,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit261]
+[Unit260]
 FileName=Source\rdlmalloc-options.h
 CompileCpp=1
 Folder=RakNet
@@ -2657,7 +2647,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit262]
+[Unit261]
 FileName=Source\Router2.cpp
 CompileCpp=1
 Folder=RakNet
@@ -2667,7 +2657,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit263]
+[Unit262]
 FileName=Source\Router2.h
 CompileCpp=1
 Folder=RakNet
@@ -2677,7 +2667,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit264]
+[Unit263]
 FileName=Source\TeamBalancer.cpp
 CompileCpp=1
 Folder=RakNet
@@ -2687,7 +2677,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit265]
+[Unit264]
 FileName=Source\TeamBalancer.h
 CompileCpp=1
 Folder=RakNet

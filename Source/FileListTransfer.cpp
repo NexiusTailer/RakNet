@@ -152,8 +152,8 @@ void FileListTransfer::Send(FileList *fileList, RakPeerInterface *rakPeer, Syste
 			{
 				outBitstream.Reset();
 				outBitstream.Write((MessageID)ID_FILE_LIST_TRANSFER_FILE);
-
-				outBitstream.Write(fileList->fileList[i].context);
+				outBitstream << fileList->fileList[i].context;
+				// outBitstream.Write(fileList->fileList[i].context);
 				outBitstream.Write(setID);
 				stringCompressor->EncodeString(fileList->fileList[i].filename, 512, &outBitstream);
 
@@ -283,7 +283,8 @@ bool FileListTransfer::DecodeFile(Packet *packet, bool isTheFileAndIsNotDownload
 		inBitStream.IgnoreBits(8);
 		// The header is appended to every chunk, which we continue to read after this statement flrMemoryBlock
 	}
-	inBitStream.Read(onFileStruct.context);
+	inBitStream >> onFileStruct.context;
+	// inBitStream.Read(onFileStruct.context);
 	inBitStream.Read(onFileStruct.setID);
 	FileListReceiver *fileListReceiver;
 	if (fileListReceivers.Has(onFileStruct.setID)==false)
@@ -434,7 +435,7 @@ PluginReceiveResult FileListTransfer::OnReceive(Packet *packet)
 
 	return RR_CONTINUE_PROCESSING;
 }
-void FileListTransfer::OnShutdown(void)
+void FileListTransfer::OnRakPeerShutdown(void)
 {
 	Clear();	
 }
@@ -598,7 +599,8 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFileAndIsNotDow
 		// The header is appended to every chunk, which we continue to read after this statement flrMemoryBlock
 	}
 
-	inBitStream.Read(onFileStruct.context);
+	inBitStream >> onFileStruct.context;
+	// inBitStream.Read(onFileStruct.context);
 	inBitStream.Read(onFileStruct.setID);
 	FileListReceiver *fileListReceiver;
 	if (fileListReceivers.Has(onFileStruct.setID)==false)
@@ -818,7 +820,8 @@ void FileListTransfer::SendIRIToAddress(SystemAddress systemAddress)
 				// Send all small files at once, rather than wait for ID_FILE_LIST_REFERENCE_PUSH. But at least one ID_FILE_LIST_REFERENCE_PUSH must be sent
 				outBitstream.Reset();
 				outBitstream.Write((MessageID)ID_FILE_LIST_TRANSFER_FILE);
-				outBitstream.Write(ftp->fileListNode.context);
+				// outBitstream.Write(ftp->fileListNode.context);
+				outBitstream << ftp->fileListNode.context;
 				outBitstream.Write(ftp->setID);
 				stringCompressor->EncodeString(ftp->fileListNode.filename, 512, &outBitstream);
 				outBitstream.WriteCompressed(ftp->setIndex);
@@ -846,7 +849,8 @@ void FileListTransfer::SendIRIToAddress(SystemAddress systemAddress)
 
 			outBitstream.Reset();
 			outBitstream.Write((MessageID)ID_FILE_LIST_REFERENCE_PUSH);
-			outBitstream.Write(ftp->fileListNode.context);
+			// outBitstream.Write(ftp->fileListNode.context);
+			outBitstream << ftp->fileListNode.context;
 			outBitstream.Write(ftp->setID);
 			stringCompressor->EncodeString(ftp->fileListNode.filename, 512, &outBitstream);
 			outBitstream.WriteCompressed(ftp->setIndex);

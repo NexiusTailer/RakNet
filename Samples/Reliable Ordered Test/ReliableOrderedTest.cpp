@@ -142,12 +142,6 @@ int main(int argc, char **argv)
 		receiver->Startup(1, 30, &socketDescriptor, 1);
 		receiver->SetMaximumIncomingConnections(32);
 	}
-
-//	if (sender)
-//		sender->ApplyNetworkSimulator(128000, 50, 100);
-//	if (receiver)
-//		receiver->ApplyNetworkSimulator(128000, 50, 100);
-
 	
 	printf("How long to run this test for, in seconds?\n");
 	gets(str);

@@ -3,7 +3,7 @@
 #include "BitStream.h"
 #include "FormatString.h"
 #include "LinuxStrings.h"
-
+#include <errmsg.h>
 
 
 #ifdef _WIN32
@@ -70,7 +70,8 @@ void MySQLInterface::Rollback(void)
 
 bool MySQLInterface::ExecuteBlockingCommand(const char *command)
 {
-	if (mysql_query(mySqlConnection, command) != 0)
+	int queryResult;
+	if ((queryResult=mysql_query(mySqlConnection, command)) != 0)
     {
         strcpy (lastError, mysql_error (mySqlConnection));
 	    return false;
@@ -111,7 +112,7 @@ char *MySQLInterface::GetLocalTimestamp(void)
 
 bool MySQLInterface::ExecuteQueryReadInt (const char * query, int *value)
 {
-	MYSQL_RES * result;
+	MYSQL_RES * result=0;
 	if (!ExecuteBlockingCommand(query, &result, false))
 	{
 		mysql_free_result(result);

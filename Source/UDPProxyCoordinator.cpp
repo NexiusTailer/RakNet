@@ -306,7 +306,9 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 	ForwardingRequest *fw = forwardingRequestList[index];
 
 	UDPForwarderResult success;
-	incomingBs.Read(success);
+	unsigned char c;
+	incomingBs.Read(c);
+	success=(UDPForwarderResult)c;
 
 	RakNet::BitStream outgoingBs;
 	if (success==UDPFORWARDER_SUCCESS)

@@ -686,7 +686,7 @@ void ReplicaManager2::OnClosedConnection(SystemAddress systemAddress, RakNetGUID
 
 	RemoveConnection(systemAddress);
 }
-void ReplicaManager2::OnShutdown(void)
+void ReplicaManager2::OnRakPeerShutdown(void)
 {
 	Clear();
 }

@@ -158,7 +158,7 @@ public:
 
 	virtual void OnAttach(void);
 	virtual void OnDetach(void);
-	virtual void OnShutdown(void);
+	virtual void OnRakPeerShutdown(void);
 	void Clear(void);
 
 protected:

@@ -32,7 +32,7 @@ extern PHPDirectoryServer2 *phpDirectoryServer2; // Connect to a webserver to li
 extern PlayerReplica *playerReplica; // Network object that represents the player
 
 // A NAT punchthrough and proxy server Jenkins Software is hosting for free, should usually be online
-#define DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_PORT 60481
+#define DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_PORT 61111
 #define DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP "94.198.81.195"
 
 void InstantiateRakNetClasses(void);

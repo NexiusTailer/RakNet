@@ -111,7 +111,7 @@ public:
 	// Packet handling functions
 	// --------------------------------------------------------------------------------------------
 	/// \internal
-	virtual void OnShutdown(void);
+	virtual void OnRakPeerShutdown(void);
 	/// \internal
 	virtual void Update(void);
 	/// \internal

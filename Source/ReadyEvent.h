@@ -185,7 +185,7 @@ protected:
 	// --------------------------------------------------------------------------------------------
 	virtual PluginReceiveResult OnReceive(Packet *packet);
 	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
-	virtual void OnShutdown(void);
+	virtual void OnRakPeerShutdown(void);
 	
 	void Clear(void);
 	/*

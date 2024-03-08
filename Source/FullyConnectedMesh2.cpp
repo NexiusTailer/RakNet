@@ -136,7 +136,7 @@ PluginReceiveResult FullyConnectedMesh2::OnReceive(Packet *packet)
 	}
 	return RR_CONTINUE_PROCESSING;
 }
-void FullyConnectedMesh2::OnStartup(void)
+void FullyConnectedMesh2::OnRakPeerStartup(void)
 {
 	Clear();
 	startupTime=RakNet::GetTimeUS();
@@ -148,7 +148,7 @@ void FullyConnectedMesh2::OnAttach(void)
 	if (rakPeerInterface->IsActive())
 		startupTime=RakNet::GetTimeUS();
 }
-void FullyConnectedMesh2::OnShutdown(void)
+void FullyConnectedMesh2::OnRakPeerShutdown(void)
 {
 	Clear();
 	startupTime=0;

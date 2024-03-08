@@ -504,7 +504,7 @@ struct WriteBitstream
 		BitSize_t oldReadOffset = t->GetReadOffset();
 		t->ResetReadPointer();
 		bitStream.WriteCompressed(t->GetNumberOfBitsUsed());
-		bitStream << t;
+		bitStream.Write(t);
 		t->SetReadOffset(oldReadOffset);
 	}
 };

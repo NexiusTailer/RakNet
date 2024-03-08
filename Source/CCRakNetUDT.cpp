@@ -150,6 +150,18 @@ void CCRakNetUDT::Update(CCTimeType curTime, bool hasDataToSendOrResend)
 	*/
 }
 // ----------------------------------------------------------------------------------------------------------------------------
+int CCRakNetUDT::GetRetransmissionBandwidth(CCTimeType curTime, CCTimeType timeSinceLastTick, uint32_t unacknowledgedBytes, bool isContinuousSend)
+{
+	(void) curTime;
+
+	if (isInSlowStart)
+	{
+		uint32_t CWNDLimit = (uint32_t) (CWND*MAXIMUM_MTU_INCLUDING_UDP_HEADER);
+		return CWNDLimit;
+	}
+	return GetTransmissionBandwidth(curTime,timeSinceLastTick,unacknowledgedBytes,isContinuousSend);
+}
+// ----------------------------------------------------------------------------------------------------------------------------
 int CCRakNetUDT::GetTransmissionBandwidth(CCTimeType curTime, CCTimeType timeSinceLastTick, uint32_t unacknowledgedBytes, bool isContinuousSend)
 {
 	(void) curTime;
@@ -767,6 +779,23 @@ void CCRakNetUDT::DecreaseTimeBetweenSends(void)
 	// SND=500 then increment=.01
 	// SND=0 then increment=near 0
 	SND*=(.99 - increment);
+}
+void CCRakNetUDT::SetTimeBetweenSendsLimit(unsigned int bitsPerSecond)
+{
+// 	bitsPerSecond / 1000000 = bitsPerMicrosecond
+// 	bitsPerMicrosecond / 8 = BytesPerMicrosecond
+// 	1 / BytesPerMicrosecond = MicrosecondsPerByte
+// 	1 / ( (bitsPerSecond / 1000000)  / 8 ) = 
+// 	1 / (bitsPerSecond / 8000000) =
+// 	8000000 / bitsPerSecond
+
+#if CC_TIME_TYPE_BYTES==4
+	MicrosecondsPerByte limit = (MicrosecondsPerByte) 8000 / (MicrosecondsPerByte)bitsPerSecond;
+#else
+	MicrosecondsPerByte limit = (MicrosecondsPerByte) 8000000 / (MicrosecondsPerByte)bitsPerSecond;
+#endif
+	if (limit > SND)
+		SND=limit;
 }
 void CCRakNetUDT::StartNewRttHistory(void)
 {

@@ -4,6 +4,7 @@
 #include "CDemo.h"
 #include "RakNetTime.h"
 #include "GetTime.h"
+#include "SocketLayer.h"
 
 using namespace RakNet;
 
@@ -78,8 +79,11 @@ void InstantiateRakNetClasses(void)
 
 	// Basis of all UDP communications
 	rakPeer=RakNetworkFactory::GetRakPeerInterface();
+	// Using fixed port so we can use AdvertiseSystem and connect on the LAN if the server is not available.
+	SocketDescriptor sd(1234,0);
+	while (SocketLayer::IsPortInUse(sd.port)==true)
+		sd.port++;
 	// +1 is for the connection to the NAT punchthrough server
-	SocketDescriptor sd(0,0);
 	rakPeer->Startup(MAX_PLAYERS+1,UDP_SLEEP_TIMER,&sd,1);
 	rakPeer->SetMaximumIncomingConnections(MAX_PLAYERS);
 	// ReplicaManager3 replies on NetworkIDManager. It assigns numbers to objects so they can be looked up over the network
@@ -110,9 +114,12 @@ void InstantiateRakNetClasses(void)
 	phpDirectoryServer2->Init(httpConnection, "/raknet/DirectoryServer.php");
 	phpDirectoryServer2->SetField("RakNetGUID",rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
 	// Upload our own game instance
-	phpDirectoryServer2->UploadAndDownloadTable("a", "a", "IrrlichtDemo", rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port, true);
+	//phpDirectoryServer2->UploadAndDownloadTable("a", "a", "IrrlichtDemo", rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port, true);
 	// Connect to the NAT punchthrough server
 	rakPeer->Connect(DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP, DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_PORT,0,0);
+	// Advertise ourselves on the lAN if the NAT punchthrough server is not available
+	for (int i=0; i < 8; i++)
+		rakPeer->AdvertiseSystem("255.255.255.255", 1234+i, 0,0,0);
 }
 void DeinitializeRakNetClasses(void)
 {

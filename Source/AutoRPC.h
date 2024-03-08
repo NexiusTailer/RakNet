@@ -23,6 +23,7 @@ class NetworkIDManager;
 #pragma warning( push )
 #endif
 
+/// \deprecated
 /// \defgroup AUTO_RPC_GROUP AutoRPC
 /// \brief Deprecated. Uses Assembly to do RPC
 /// \details
@@ -625,7 +626,7 @@ protected:
 	virtual void OnRPCRemoteIndex(SystemAddress systemAddress, unsigned char *data, unsigned int lengthInBytes);
 	virtual void OnRPCUnknownRemoteIndex(SystemAddress systemAddress, unsigned char *data, unsigned int lengthInBytes, RakNetTime timestamp);
 	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
-	virtual void OnShutdown(void);
+	virtual void OnRakPeerShutdown(void);
 
 	void Clear(void);
 

@@ -59,7 +59,9 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Events on low level sends and receives. These functions may be called from different threads at the same time. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPacketLogger.html#5d1f164f29a7ea5483ee9c628fb50fe8">OnDirectSocketReceive</a> (const char *data, const BitSize_t bitsUsed, <a class="el" href="structSystemAddress.html">SystemAddress</a> remoteSystemAddress)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPacketLogger.html#f834e745a2a7d21fd6ea1591fb5b23f6">OnInternalPacket</a> (<a class="el" href="structInternalPacket.html">InternalPacket</a> *internalPacket, unsigned frameNumber, <a class="el" href="structSystemAddress.html">SystemAddress</a> remoteSystemAddress, RakNetTime time, bool isSend)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPacketLogger.html#4d9a71c62e15adeecf34b120ddeb205d">OnReliabilityLayerPacketError</a> (const char *errorMessage, const BitSize_t bitsUsed, <a class="el" href="structSystemAddress.html">SystemAddress</a> remoteSystemAddress)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPacketLogger.html#2e50a2b2977234a8103b5809f7787546">OnInternalPacket</a> (<a class="el" href="structInternalPacket.html">InternalPacket</a> *internalPacket, unsigned frameNumber, <a class="el" href="structSystemAddress.html">SystemAddress</a> remoteSystemAddress, RakNetTime time, int isSend)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPacketLogger.html#270fccacf036f77b796c4d18410569f8">OnAck</a> (unsigned int messageNumber, <a class="el" href="structSystemAddress.html">SystemAddress</a> remoteSystemAddress, RakNetTime time)</td></tr>
 
@@ -176,7 +178,7 @@ Called on a receive from the socket, per datagram, that does not go through the 
 
 </div>
 </div><p>
-<a class="anchor" name="f834e745a2a7d21fd6ea1591fb5b23f6"></a><!-- doxytag: member="PacketLogger::OnInternalPacket" ref="f834e745a2a7d21fd6ea1591fb5b23f6" args="(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNetTime time, bool isSend)" -->
+<a class="anchor" name="2e50a2b2977234a8103b5809f7787546"></a><!-- doxytag: member="PacketLogger::OnInternalPacket" ref="2e50a2b2977234a8103b5809f7787546" args="(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNetTime time, int isSend)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -207,7 +209,7 @@ Called on a receive from the socket, per datagram, that does not go through the 
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramtype">int&nbsp;</td>
           <td class="paramname"> <em>isSend</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -230,7 +232,7 @@ Called on a send or receive of a message within the reliability layer <dl compac
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface2.html#c7c36f112c24d1fb6740b814c4cc4229">PluginInterface2</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#c3069521b6285ec6ab2215a18a661504">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -278,10 +280,53 @@ System called <a class="el" href="classRakPeerInterface.html#e4b68058e13bb3ef247
 
 </div>
 </div><p>
+<a class="anchor" name="4d9a71c62e15adeecf34b120ddeb205d"></a><!-- doxytag: member="PacketLogger::OnReliabilityLayerPacketError" ref="4d9a71c62e15adeecf34b120ddeb205d" args="(const char *errorMessage, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void PacketLogger::OnReliabilityLayerPacketError           </td>
+          <td>(</td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>errorMessage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const BitSize_t&nbsp;</td>
+          <td class="paramname"> <em>bitsUsed</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>remoteSystemAddress</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Called when the reliability layer rejects a send or receive <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>bitsUsed</em>&nbsp;</td><td>How many bits long <em>data</em> is </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>remoteSystemAddress</em>&nbsp;</td><td>Which system this message is being sent to </td></tr>
+  </table>
+</dl>
+
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#60fd518f4ebca9005e582b2f5fd60b14">PluginInterface2</a>.</p>
+
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="PacketLogger_8h.html">PacketLogger.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Feb 27 09:39:24 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Apr 12 08:48:29 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -691,7 +691,7 @@ void NatPunchthroughClient::OnDetach(void)
 {
 	Clear();
 }
-void NatPunchthroughClient::OnShutdown(void)
+void NatPunchthroughClient::OnRakPeerShutdown(void)
 {
 	Clear();
 }

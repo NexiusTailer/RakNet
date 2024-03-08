@@ -319,7 +319,15 @@ BitStream: Added WriteRef, and use with the shift left operator, so that RPC3 do
 ReplicaManager3: Replace AutoConstructByQuery with QueryConstructionMode, and added QueryReplicaList, for better performance for massively multiplayer games.
 TelnetTransport: You can now press the up arrow key to repeat the last command.
 RakPeer: Fix IMMEDIATE_PRIORITY to send right away when called by the user.
-Router2: Various bugs fixed.
+Router2: Various bugs fixed.<BR>
+3.73 (04/09/2010)
+Fix bug where packetloss during slow start could cause retransmissions to stop.<BR>
+Add Lobby2Client_Steam plugin and corresponding sample, to support Steam published games using the Steamworks SDK.
+Fix RPC3 with writing bitstream pointers.
+ReplicaManager3 now supports different send modes per bitstream channel. Also now stores store lastSerializationResult when using RM3SR_SERIALIZED_ALWAYS.
+Update ConnectionGraph2 to also store the remote system connection list in memory, and allow access by the user.
+PacketLogger will now log internal message receive errors.
+Consolodate NAT traversal plugins into NATCompleteServer and NATCompleteClient samples. Remove old NAT samples.
  </TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
 <img src="spacer.gif" width="8" height="1">See Also</td>

@@ -430,7 +430,7 @@ protected:
 	// Plugin interface functions
 	PluginReceiveResult OnReceive(Packet *packet);
 	void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
-	void OnShutdown(void);
+	void OnRakPeerShutdown(void);
 	void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 
 	/// List of objects replicated in the Replicate function.

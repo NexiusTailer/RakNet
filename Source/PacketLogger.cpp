@@ -117,6 +117,12 @@ void PacketLogger::OnDirectSocketReceive(const char *data, const BitSize_t bitsU
 	FormatLine(str, "Rcv", "Raw", 0, 0, data[0], bitsUsed, RakNet::GetTime(), rakPeerInterface->GetExternalID(remoteSystemAddress), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
 	AddToLog(str);
 }
+void PacketLogger::OnReliabilityLayerPacketError(const char *errorMessage, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress)
+{
+	char str[1024];
+	FormatLine(str, "RcvErr", errorMessage, 0, 0, "", bitsUsed, RakNet::GetTime(), rakPeerInterface->GetExternalID(remoteSystemAddress), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
+	AddToLog(str);
+}
 void PacketLogger::OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, RakNetTime time)
 {
 	char str[256];
@@ -157,10 +163,21 @@ void PacketLogger::OnPushBackPacket(const char *data, const BitSize_t bitsUsed, 
 					);
 	AddToLog(str);
 }
-void PacketLogger::OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNetTime time, bool isSend)
+void PacketLogger::OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNetTime time, int isSend)
 {
 	char str[256];
-	const char* sendType = (isSend) ? "Snd" : "Rcv";
+	const char *sendTypes[] =
+	{
+		"Rcv",
+		"Snd",
+		"Err1",
+		"Err2",
+		"Err3",
+		"Err4",
+		"Err5",
+		"Err6",
+	};
+	const char *sendType = sendTypes[isSend];
 	SystemAddress localSystemAddress = rakPeerInterface->GetExternalID(remoteSystemAddress);
 
 	if (internalPacket->data[0]==ID_TIMESTAMP && internalPacket->data[sizeof(unsigned char)+sizeof(RakNetTime)]!=ID_RPC)
@@ -169,7 +186,7 @@ void PacketLogger::OnInternalPacket(InternalPacket *internalPacket, unsigned fra
 	}
 	else if (internalPacket->data[0]==ID_RPC || (internalPacket->dataBitLength>(sizeof(unsigned char)+sizeof(RakNetTime))*8 && internalPacket->data[0]==ID_TIMESTAMP && internalPacket->data[sizeof(unsigned char)+sizeof(RakNetTime)]==ID_RPC))
 	{
-		const char *uniqueIdentifier = rakPeerInterface->GetRPCString((const char*) internalPacket->data, internalPacket->dataBitLength, isSend==true ? remoteSystemAddress : UNASSIGNED_SYSTEM_ADDRESS);
+		const char *uniqueIdentifier = rakPeerInterface->GetRPCString((const char*) internalPacket->data, internalPacket->dataBitLength, isSend==1 ? remoteSystemAddress : UNASSIGNED_SYSTEM_ADDRESS);
 
 		if (internalPacket->data[0]==ID_TIMESTAMP)
 			FormatLine(str, sendType, "RpT", internalPacket->reliableMessageNumber, frameNumber, uniqueIdentifier, internalPacket->dataBitLength, (unsigned long long)time, localSystemAddress, remoteSystemAddress, internalPacket->splitPacketId, internalPacket->splitPacketIndex, internalPacket->splitPacketCount, internalPacket->orderingIndex);

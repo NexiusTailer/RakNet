@@ -1,0 +1,177 @@
+<html><head>
+
+<title>NAT type detection</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="nattypedetection_files/RaknetManual.css" rel="stylesheet" 
+type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game 
+networking API">
+</head><body leftmargin="0" topmargin="0" alink="#003399" 
+bgcolor="#ffffff" link="#003399" marginheight="0" marginwidth="0" 
+vlink="#003399">
+<span style="background-color: rgb(255, 255, 255);"><img 
+src="nattypedetection_files/RakNet_Icon_Final-copy.jpg" alt="Jenkins 
+Software" height="150" width="150"></span><br>
+<br>
+<table border="0" width="100%">
+  <tbody><tr>
+    <td class="RakNetWhiteHeader" bgcolor="#2c5d92"><img 
+src="nattypedetection_files/spacer.gif" height="1" width="8">NAT type 
+detection</td>
+  </tr>
+</tbody></table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+  <tbody><tr>
+    <td>
+	
+	  <p><span class="RakNetBlueHeader">Determine in advance if you can 
+complete NAT punchthrough</span>	 <br>
+	    <br>
+      <a 
+href="http://www.jenkinssoftware.com/raknet/manual/natpunchthrough.html">NAT
+ punchthrough</a> success rates is based on what kind of algorithm the 
+NAT uses.</p>
+	  <p><strong>Full cone NAT</strong>: Accepts any datagrams to a port 
+that has been previously used. Will accept the first datagram from the 
+remote peer.</p>
+      <p><strong>Address-Restricted cone NAT</strong>: Accepts datagrams
+ to a port as long as the datagram source IP address is a system we have
+ already sent to. Will accept the first datagram if both systems send 
+simultaneously. Otherwise, will accept the first datagram after we have 
+sent one datagram.</p>
+      <p><strong>Port-Restricted cone NAT</strong>: Same as 
+address-restricted cone NAT, but we had to send to both the correct 
+remote IP address and correct remote port. The same source address and 
+port to a different destination uses the same mapping.</p>
+      <p><strong>Symmetric NAT</strong>: A different port is chosen for 
+every remote destination. The same source address and port to a 
+different destination uses a different mapping. Since the port will be 
+different, the first external punchthrough attempt will fail. For this 
+to work it requires  port-prediction (MAX_PREDICTIVE_PORT_RANGE&gt;1) 
+and that the router chooses ports sequentially.</p>
+      <center>
+        <b>Success Graph</b>
+        <table border="1">
+          <tbody><tr>
+            <td>Router Type</td>
+            <td><i>Full cone NAT</i></td>
+            <td><i>Address-Restricted cone NAT</i></td>
+            <td><i>Port-Restricted cone NAT</i></td>
+            <td><i>Symmetric NAT</i></td>
+          </tr>
+          <tr>
+            <td><i>Full cone NAT</i></td>
+            <td>YES</td>
+            <td>YES</td>
+            <td>YES</td>
+            <td>YES</td>
+          </tr>
+          <tr>
+            <td><i>Address-Restricted cone NAT</i></td>
+            <td>YES</td>
+            <td>YES</td>
+            <td>YES</td>
+            <td>YES</td>
+          </tr>
+          <tr>
+            <td><i>Port-Restricted cone NAT</i></td>
+            <td>YES</td>
+            <td>YES</td>
+            <td>YES</td>
+            <td>NO</td>
+          </tr>
+          <tr>
+            <td><i>Symmetric NAT</i></td>
+            <td>YES</td>
+            <td>YES</td>
+            <td>NO</td>
+            <td>NO</td>
+          </tr>
+        </tbody></table>
+        <p>&nbsp;</p>
+      </center>
+<p>The NatTypeDetection plugins allow you to determine which type of NAT
+ you have, and therefore if NAT punchthrough is likely to complete or 
+not. This can be determined in advance of joining a game.</p>
+<p><span class="RakNetBlueHeader">NAT Type Detection algorithm</span></p>
+<ol>
+  <li>Client opens two ports on the same IP address</li>
+  <li>Server opens two ports on one IP address, and one port on four 
+additional IP addresses</li>
+  <li>Client connects to the server on the first IP address normally</li>
+  <li>Client requests NAT type detection begins</li>
+  <li>Server attempts to send to client's second port. If received, then
+ the client is not behind a NAT.</li>
+  <li>Server sends from a different IP address to client's first port. 
+If received, then the client is using full-cone NAT.</li>
+  <li>Server sends from the second port on the already-connected IP 
+address. If received, then the client is using address-restricted cone 
+NAT.</li>
+  <li>Client sends to another IP address on the server, from its first 
+(already connected) port. If the IP address and port is the same, then 
+the client uses the same external IP address and port to all connections
+ from the same source address. This is port-restricted NAT.</li>
+  <li>Else symmetric NAT.</li>
+</ol>
+<p><span class="RakNetBlueHeader">Client Implementation</span></p>
+	  <ol>
+	    <li>Create an instance of the plugin: <span class="RakNetCode">NatTypeDetectionServer
+ nayTypeDetectionClient;</span></li>
+	    <li>Attach the plugin to an instance of RakPeerInterface: <span 
+class="RakNetCode">rakPeer-&gt;AttachPlugin(&amp;nayTypeDetectionClient);</span></li>
+	    <li>Connect to the server, and wait for 
+ID_CONNECTION_REQUEST_ACCEPTED. Use the following line to use the free 
+server provided by RakNet: <span class="RakNetCode">rakPeer-&gt;Connect("8.17.250.34",
+ 60481, 0, 0);</span></li>
+	    <li>Call DetectNATType with the SystemAddress of the server.</li>
+	    <li>Wait for ID_NAT_TYPE_DETECTION_RESULT<span class="RakNetCode"></span></li>
+	    <li>Byte 1 contains the type of NAT that you have. See the 
+enumeration NATTypeDetectionResult in NATTypeDetectionCommon.h</li>
+	    <li>Various utility functions are provided for this enumeration: <span
+ class="RakNetCode">CanConnect(), NATTypeDetectionResultToString(), 
+NATTypeDetectionResultToStringFriendly()</span></li>
+      </ol>
+	  <p><span class="RakNetBlueHeader">Server Implementation</span></p>
+	  <ol>
+	    <li>Host a server somewhere, not using NAT / e.g. behind a 
+firewall. (RakNet provides a free one at 8.17.250.34:60481, however  you
+ may wish to host your own for consistent uptime). The server must have 
+enough external IP addresses, as described in <strong>NAT Type Detection
+ Algorithm</strong>.</li>
+	    <li>Create an instance of the plugin: <span class="RakNetCode">NatTypeDetectionServernatTypeDetectionServer;</span></li>
+	    <li>Attach the plugin: <span class="RakNetCode">rakPeer-&gt;AttachPlugin(&amp;natTypeDetectionServer);</span></li>
+	    <li>Get a list of IP addresses on your system<br>
+          <span class="RakNetCode">char ipList[ 
+MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];<br>
+        unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];<br>
+        SocketLayer::Instance()-&gt;GetMyIP( ipList, binaryAddresses );</span></li>
+	    <li>Call <span class="RakNetCode">natTypeDetectionServer.Startup(ip2,ip3,ip4);
+ // ip2,ip3,ip4 must be ip addresses not already in use. If you bound 
+RakNet to ip1 in the call to RakPeer::Startup(), then use the 2nd to 4th
+ indices in ipList.</span></li>
+      </ol>
+<p><span class="RakNetBlueHeader">Sample </span><br>
+        <br>
+		
+      See the sample <em>\Samples\NATCompleteClient</em>
+</p>
+<p>This is also implemented for the server in <em><em>\Samples\NATCompleteServer</em></em>
+</p><p>
+<table border="0" width="100%">
+        <tbody><tr>
+          <td class="RakNetWhiteHeader" bgcolor="#2c5d92"><img 
+src="nattypedetection_files/spacer.gif" height="1" width="8">See Also</td>
+        </tr>
+      </tbody></table>
+      <table border="0" cellpadding="10" cellspacing="0" width="100%">
+        <tbody><tr>
+          <td> <a 
+href="http://www.jenkinssoftware.com/raknet/manual/index.html">Index</a><br>
+            <a 
+href="http://www.jenkinssoftware.com/raknet/manual/natpunchthrough.html">NAT
+ Punchthrough</a><br>             </td>
+        </tr>
+      </tbody></table>       </p></td>
+  </tr>
+</tbody></table>
+</body></html>

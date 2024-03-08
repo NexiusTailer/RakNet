@@ -8,6 +8,10 @@ Build Events / Post Build Events
 copy "C:\Program Files\MySQL\MySQL Server 5.0\lib\opt\*.dll" .\Release
 to whatever your path is.
 
+Other requirements:
+1. Run "CREATE DATABASE myDatabaseName" first in the adminstrator tools. Enter myDatabaseName when prompted "Enter DB schema:" from the C++ sample.
+2. In MySQL Administrator, in the advanced networking tab, check max packet size, and change it to 1000M. Then restart the service through service control.
+
 Related projects: AutopatcherClientRestarter, AutopatcherMySQLRepository, AutopatcherServer
 
 For help and support, please visit http://www.jenkinssoftware.com

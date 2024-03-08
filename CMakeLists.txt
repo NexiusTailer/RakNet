@@ -12,6 +12,7 @@ IF(WIN32 AND NOT UNIX)
 	set(USEDX3D9 "TRUE" CACHE BOOL "Enable projects that use Direct X 9?")
 	set(USEDSOUND "TRUE" CACHE BOOL "Enable projects that use Direct Sound?")
 	set(USEIRRLICHT "TRUE" CACHE BOOL "Enable projects that use Irrlicht?")
+	set(BUILDLOBBY2CLIENT "FALSE" CACHE BOOL "Build the Lobby2Client project?")
 	set(USEOGRE3D "FALSE" CACHE INTERNAL "HIDDEN" FORCE)#This is not working for windows
 	set(USESPEEX "TRUE" CACHE INTERNAL "HIDDEN" FORCE)#This is included for windows build, don't need to disable
 	set(USEPORTAUDIO "TRUE" CACHE INTERNAL "HIDDEN" FORCE)#This is included for windows build, don't need to disable
@@ -30,6 +31,7 @@ ELSE(WIN32 AND NOT UNIX)
 	set(USEIRRKLANG "TRUE" CACHE BOOL "Enable projects that use irrKlang?")
 	set(USEOGRE3D "TRUE" CACHE BOOL "Enable projects that use Ogre 3d?")
 	set(USEOIS "TRUE" CACHE BOOL "Enable projects that use OIS?")
+        set(BUILDLOBBY2CLIENT "FALSE" CACHE BOOL "Build the Lobby2Client project?")
 	set(WIN32NOTUNIX "FALSE" CACHE INTERNAL "HIDDEN" FORCE)
 ENDIF(WIN32 AND NOT UNIX)
 
@@ -78,7 +80,7 @@ add_subdirectory(Lib)
 IF (WIN32 AND NOT UNIX)
 	set(RAKNET_COMMON_LIBS LibStatic)
 ELSE(WIN32 AND NOT UNIX)
-	set(RAKNET_COMMON_LIBS LibStatic)
+	set(RAKNET_COMMON_LIBS RakNetStatic)
 ENDIF(WIN32 AND NOT UNIX)
 
 set(RAKNETHEADERFILES ${RakNet_SOURCE_DIR}/Source)

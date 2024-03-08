@@ -15,18 +15,7 @@
 #include <cstdio>
 #include <cstring>
 #include <stdlib.h>
-
-#ifdef _WIN32
-#include "WindowsIncludes.h" // Sleep
-#else
-#include <unistd.h> // usleep
-#endif
-
-#ifdef WIN32
-#define SLEEP(arg)  ( Sleep( (arg) ) )
-#else
-#define SLEEP(arg)  ( usleep( (arg) *1000 ) )
-#endif
+#include "RakSleep.h"
 
 int main(void)
 {
@@ -117,7 +106,7 @@ int main(void)
 
 		if (p==0)
 		{
-			SLEEP(30);
+			RakSleep(30);
 			continue;
 		}
 		if (server)
@@ -133,7 +122,7 @@ int main(void)
 			client->DeallocatePacket(p);
 		}
 
-		SLEEP(30);
+		RakSleep(30);
 	}
 
 	// We're done with the network

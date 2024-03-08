@@ -380,7 +380,7 @@ void ReadyEvent::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakN
 
 	RemoveFromAllLists(systemAddress);
 }
-void ReadyEvent::OnShutdown(void)
+void ReadyEvent::OnRakPeerShutdown(void)
 {
 	Clear();
 }

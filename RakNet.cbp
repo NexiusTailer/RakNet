@@ -363,6 +363,13 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\DS_StringKeyedHash.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\DS_Table.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="debug"/>
@@ -596,6 +603,18 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\GetTime.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\Getche.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\Getche.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -860,6 +879,13 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\PS3Includes.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\PacketConsoleLogger.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="debug"/>
@@ -1056,6 +1082,13 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\RakNetDefines.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\RakNetDefinesOverrides.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -1336,6 +1369,18 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\Router2.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\Router2.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\RouterInterface.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -1496,6 +1541,18 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\TeamBalancer.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\TeamBalancer.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\TelnetTransport.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="debug"/>
@@ -1620,6 +1677,13 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\XBox360Includes.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\_FindFirst.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="debug"/>
@@ -1638,6 +1702,25 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\gettimeofday.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\rdlmalloc-options.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\rdlmalloc.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\rdlmalloc.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

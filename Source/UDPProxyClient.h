@@ -130,7 +130,7 @@ public:
 	/// \internal
 	virtual void Update(void);
 	virtual PluginReceiveResult OnReceive(Packet *packet);
-	virtual void OnShutdown(void);
+	virtual void OnRakPeerShutdown(void);
 	
 	struct ServerWithPing
 	{

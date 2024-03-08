@@ -643,7 +643,7 @@ void AutoRPC::SendError(SystemAddress target, unsigned char errorCode, const cha
 	stringCompressor->EncodeString(functionName,256,&bs,0);
 	SendUnified(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, target, false);
 }
-void AutoRPC::OnShutdown(void)
+void AutoRPC::OnRakPeerShutdown(void)
 {
 	Clear();
 }

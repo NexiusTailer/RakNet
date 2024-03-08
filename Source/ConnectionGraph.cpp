@@ -95,7 +95,7 @@ void ConnectionGraph::SetAutoAddNewConnections(bool autoAdd)
 {
 	autoAddNewConnections=autoAdd;
 }
-void ConnectionGraph::OnShutdown(void)
+void ConnectionGraph::OnRakPeerShutdown(void)
 {
 	graph.Clear();
 	participantList.Clear(false, __FILE__, __LINE__);

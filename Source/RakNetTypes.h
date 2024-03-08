@@ -183,8 +183,10 @@ struct RAK_DLL_EXPORT RakNetGUID
 //{
 //	0xFFFFFFFF, 0xFFFF
 //};
+#ifndef SWIG
 const SystemAddress UNASSIGNED_SYSTEM_ADDRESS(0xFFFFFFFF, 0xFFFF);
 const RakNetGUID UNASSIGNED_RAKNET_GUID((uint64_t)-1);
+#endif
 //{
 //	{0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF}
 //	0xFFFFFFFFFFFFFFFF
@@ -259,12 +261,13 @@ struct RAK_DLL_EXPORT NetworkID
 //	static bool peerToPeerMode;
 
 #if NETWORK_ID_SUPPORTS_PEER_TO_PEER==1
+
+	RakNetGUID guid;
+
 	// deprecated: Use guid instead
 	// In peer to peer, we use both systemAddress and localSystemAddress
 	// In client / server, we only use localSystemAddress
 	SystemAddress systemAddress;
-
-	RakNetGUID guid;
 #endif
 	unsigned short localSystemAddress;
 

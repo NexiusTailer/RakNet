@@ -1097,9 +1097,9 @@ namespace DataStructures
 		source2.SetSortOrder(true);
 		source1.Sort(false);
 		source2.Sort(false);
-		intersection.Clear(__FILE__, __LINE__);
-		uniqueToSource1.Clear(__FILE__, __LINE__);
-		uniqueToSource2.Clear(__FILE__, __LINE__);
+		intersection.Clear(true,__FILE__, __LINE__);
+		uniqueToSource1.Clear(true,__FILE__, __LINE__);
+		uniqueToSource2.Clear(true,__FILE__, __LINE__);
 		
 		while (index1 < source1.GetSize() && index2 < source2.GetSize())
 		{

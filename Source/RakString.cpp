@@ -28,7 +28,11 @@ public:
 
 static RakStringCleanup cleanup;
 
-static SimpleMutex poolMutex;
+SimpleMutex& GetPoolMutex(void)
+{
+	static SimpleMutex poolMutex;
+	return poolMutex;
+}
 
 int RakString::RakStringComp( RakString const &key, RakString const &data )
 {
@@ -1060,11 +1064,11 @@ unsigned char RakString::ToUpper(unsigned char c)
 }
 void RakString::LockMutex(void)
 {
-	poolMutex.Lock();
+	GetPoolMutex().Lock();
 }
 void RakString::UnlockMutex(void)
 {
-	poolMutex.Unlock();
+	GetPoolMutex().Unlock();
 }
 
 /*

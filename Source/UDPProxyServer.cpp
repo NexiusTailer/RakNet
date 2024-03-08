@@ -105,11 +105,11 @@ void UDPProxyServer::OnClosedConnection(SystemAddress systemAddress, RakNetGUID 
 	loggingInCoordinators.RemoveAtKey(systemAddress,false, __FILE__, __LINE__ );
 	loggedInCoordinators.RemoveAtKey(systemAddress,false, __FILE__, __LINE__ );
 }
-void UDPProxyServer::OnStartup(void)
+void UDPProxyServer::OnRakPeerStartup(void)
 {
 	udpForwarder.Startup();
 }
-void UDPProxyServer::OnShutdown(void)
+void UDPProxyServer::OnRakPeerShutdown(void)
 {
 	udpForwarder.Shutdown();
 	loggingInCoordinators.Clear(true,__FILE__,__LINE__);
@@ -118,11 +118,11 @@ void UDPProxyServer::OnShutdown(void)
 void UDPProxyServer::OnAttach(void)
 {
 	if (rakPeerInterface->IsActive())
-		OnStartup();
+		OnRakPeerStartup();
 }
 void UDPProxyServer::OnDetach(void)
 {
-	OnShutdown();
+	OnRakPeerShutdown();
 }
 void UDPProxyServer::OnForwardingRequestFromCoordinatorToServer(Packet *packet)
 {
@@ -143,7 +143,7 @@ void UDPProxyServer::OnForwardingRequestFromCoordinatorToServer(Packet *packet)
 	outgoingBs.Write((MessageID)ID_UDP_PROXY_FORWARDING_REPLY_FROM_SERVER_TO_COORDINATOR);
 	outgoingBs.Write(sourceAddress);
 	outgoingBs.Write(targetAddress);
-	outgoingBs.Write(success);
+	outgoingBs.Write((unsigned char) success);
 	if (success==UDPFORWARDER_SUCCESS)
 	{
 		outgoingBs.Write(srcToDestPort);

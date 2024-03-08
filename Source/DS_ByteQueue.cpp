@@ -85,12 +85,12 @@ bool ByteQueue::ReadBytes(char *out, unsigned maxLengthToRead, bool peek)
 		
 	return true;
 }
-char* ByteQueue::PeekContiguousBytes(unsigned int *length) const
+char* ByteQueue::PeekContiguousBytes(unsigned int *outLength) const
 {
 	if (writeOffset>=readOffset)
-		*length=writeOffset-readOffset;
+		*outLength=writeOffset-readOffset;
 	else
-		*length=lengthAllocated-readOffset;
+		*outLength=lengthAllocated-readOffset;
 	return data+readOffset;
 }
 void ByteQueue::Clear(const char *file, unsigned int line)

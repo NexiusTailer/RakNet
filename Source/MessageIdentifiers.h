@@ -333,9 +333,10 @@ enum DefaultMessageIDTypes
 	ID_TEAM_BALANCER_TEAMS_LOCKED,
 	/// Team balancer plugin informing you of your team. Byte 1 contains the team you requested to join.
 	ID_TEAM_BALANCER_TEAM_ASSIGNED,
+	/// Gamebryo Lightspeed
+	ID_LIGHTSPEED_INTEGRATION,
 
 	// So I can add more without changing user enumerations
-	ID_RESERVED_1,
 	ID_RESERVED_2,
 	ID_RESERVED_3,
 	ID_RESERVED_4,

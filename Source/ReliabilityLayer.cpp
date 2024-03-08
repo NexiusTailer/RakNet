@@ -554,7 +554,11 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 	(void) MTUSize;
 
 	if ( length <= 2 || buffer == 0 )   // Length of 1 is a connection request resend that we just ignore
+	{
+		for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
+			messageHandlerList[messageHandlerIndex]->OnReliabilityLayerPacketError("length <= 2 || buffer == 0", BYTES_TO_BITS(length), systemAddress);
 		return true;
+	}
 
 	timeLastDatagramArrived=RakNet::GetTimeMS();
 
@@ -576,6 +580,10 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 		{
 			statistics.bitsWithBadCRCReceived += length * 8;
 			statistics.packetsWithBadCRCReceived++;
+
+			for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
+				messageHandlerList[messageHandlerIndex]->OnReliabilityLayerPacketError("Decryption failed", BYTES_TO_BITS(length), systemAddress);
+
 			return false;
 		}
 	}
@@ -593,7 +601,12 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 	DatagramHeaderFormat dhf;
 	dhf.Deserialize(&socketData);
 	if (dhf.isValid==false)
+	{
+		for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
+			messageHandlerList[messageHandlerIndex]->OnReliabilityLayerPacketError("dhf.isValid==false", BYTES_TO_BITS(length), systemAddress);
+
 		return true;
+	}
 	if (dhf.isACK)
 	{
 		DatagramSequenceNumberType datagramNumber;
@@ -624,12 +637,20 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 
 		incomingAcks.Clear();
 		if (incomingAcks.Deserialize(&socketData)==false)
+		{
+			for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
+				messageHandlerList[messageHandlerIndex]->OnReliabilityLayerPacketError("incomingAcks.Deserialize failed", BYTES_TO_BITS(length), systemAddress);
+
 			return false;
+		}
 		for (i=0; i<incomingAcks.ranges.Size();i++)
 		{
 			if (incomingAcks.ranges[i].minIndex>incomingAcks.ranges[i].maxIndex)
 			{
 				RakAssert(incomingAcks.ranges[i].minIndex<=incomingAcks.ranges[i].maxIndex);
+
+				for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
+					messageHandlerList[messageHandlerIndex]->OnReliabilityLayerPacketError("incomingAcks minIndex > maxIndex", BYTES_TO_BITS(length), systemAddress);
 				return false;
 			}
 			for (datagramNumber=incomingAcks.ranges[i].minIndex; datagramNumber >= incomingAcks.ranges[i].minIndex && datagramNumber <= incomingAcks.ranges[i].maxIndex; datagramNumber++)
@@ -655,12 +676,21 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 		DatagramSequenceNumberType messageNumber;
 		DataStructures::RangeList<DatagramSequenceNumberType> incomingNAKs;
 		if (incomingNAKs.Deserialize(&socketData)==false)
+		{
+			for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
+				messageHandlerList[messageHandlerIndex]->OnReliabilityLayerPacketError("incomingNAKs.Deserialize failed", BYTES_TO_BITS(length), systemAddress);			
+
 			return false;
+		}
 		for (i=0; i<incomingNAKs.ranges.Size();i++)
 		{
 			if (incomingNAKs.ranges[i].minIndex>incomingNAKs.ranges[i].maxIndex)
 			{
 				RakAssert(incomingNAKs.ranges[i].minIndex<=incomingNAKs.ranges[i].maxIndex);
+
+				for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
+					messageHandlerList[messageHandlerIndex]->OnReliabilityLayerPacketError("incomingNAKs minIndex>maxIndex", BYTES_TO_BITS(length), systemAddress);			
+
 				return false;
 			}
 			// Sanity check
@@ -694,7 +724,12 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 	{
 		uint32_t skippedMessageCount;
 		if (!congestionManager.OnGotPacket(dhf.datagramNumber, dhf.isContinuousSend, timeRead, length, &skippedMessageCount))
+		{
+			for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
+				messageHandlerList[messageHandlerIndex]->OnReliabilityLayerPacketError("congestionManager.OnGotPacket failed", BYTES_TO_BITS(length), systemAddress);			
+
 			return true;
+		}
 		if (dhf.isPacketPair)
 			congestionManager.OnGotPacketPair(dhf.datagramNumber, length, timeRead);
 
@@ -716,7 +751,12 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 
 		InternalPacket* internalPacket = CreateInternalPacketFromBitStream( &socketData, timeRead );
 		if (internalPacket==0)
+		{
+			for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
+				messageHandlerList[messageHandlerIndex]->OnReliabilityLayerPacketError("CreateInternalPacketFromBitStream failed", BYTES_TO_BITS(length), systemAddress);			
+
 			return true;
+		}
 
 		while ( internalPacket )
 		{
@@ -801,6 +841,9 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 						{
 							RakAssert("Hole count too high. See ReliabilityLayer.h" && 0);
 
+							for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
+								messageHandlerList[messageHandlerIndex]->OnReliabilityLayerPacketError("holeCount > 1000000", BYTES_TO_BITS(length), systemAddress);			
+
 							// Would crash due to out of memory!
 							FreeInternalPacketData(internalPacket, __FILE__, __LINE__ );
 							ReleaseToInternalPacketPool( internalPacket );
@@ -847,6 +890,10 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 
 						FreeInternalPacketData(internalPacket, __FILE__, __LINE__ );
 						ReleaseToInternalPacketPool( internalPacket );
+
+						for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
+							messageHandlerList[messageHandlerIndex]->OnReliabilityLayerPacketError("internalPacket->orderingChannel >= NUMBER_OF_ORDERED_STREAMS", BYTES_TO_BITS(length), systemAddress);			
+
 						goto CONTINUE_SOCKET_DATA_PARSE_LOOP;
 					}
 
@@ -1233,8 +1280,8 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 	}
 #endif
 
-	if (bitsPerSecondLimit>0 && (congestionManager.GetLocalSendRate() * (BytesPerMicrosecond) 1000000)*8 > bitsPerSecondLimit)
-		return;
+	if (bitsPerSecondLimit>0)
+		congestionManager.SetTimeBetweenSendsLimit(bitsPerSecondLimit);
 
 	// This line is necessary because the timer isn't accurate
 	if (time <= lastUpdateTime)
@@ -1372,12 +1419,13 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 		ResetPacketsAndDatagrams();
 
 		int transmissionBandwidth = congestionManager.GetTransmissionBandwidth(time, timeSinceLastTick, unacknowledgedBytes,dhf.isContinuousSend);
-		if (transmissionBandwidth>=0)
+		int retransmissionBandwidth = congestionManager.GetRetransmissionBandwidth(time, timeSinceLastTick, unacknowledgedBytes,dhf.isContinuousSend);
+		if (retransmissionBandwidth>0 || transmissionBandwidth>0)
 		{
 			allDatagramSizesSoFar=0;
 
 			// Keep filling datagrams until we exceed retransmission bandwidth
-			while ((int)BITS_TO_BYTES(allDatagramSizesSoFar)<transmissionBandwidth)
+			while ((int)BITS_TO_BYTES(allDatagramSizesSoFar)<retransmissionBandwidth)
 			{
 				pushedAnything=false;
 
@@ -1427,9 +1475,9 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 						for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
 						{
 #if CC_TIME_TYPE_BYTES==4
-							messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, sendReliableMessageNumberIndex, systemAddress, time, true);
+							messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, internalPacket->reliableMessageNumber, systemAddress, time, true);
 #else
-							messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, sendReliableMessageNumberIndex, systemAddress, (RakNetTime)(time/(CCTimeType)1000), true);
+							messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, internalPacket->reliableMessageNumber, systemAddress, (RakNetTime)(time/(CCTimeType)1000), true);
 #endif
 						}
 
@@ -1570,16 +1618,12 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 					for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
 					{
 #if CC_TIME_TYPE_BYTES==4
-						messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, sendReliableMessageNumberIndex, systemAddress, time, true);
+						messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, internalPacket->reliableMessageNumber, systemAddress, time, true);
 #else
-						messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, sendReliableMessageNumberIndex, systemAddress, (RakNetTime)(time/(CCTimeType)1000), true);
+						messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, internalPacket->reliableMessageNumber, systemAddress, (RakNetTime)(time/(CCTimeType)1000), true);
 #endif
 					}
 					pushedAnything=true;
-
-					// No packets pushed?
-					if (pushedAnything==false)
-						break;
 
 					if (ResendBufferOverflow())
 						break;
@@ -1774,6 +1818,10 @@ void ReliabilityLayer::SendBitStream( SOCKET s, SystemAddress systemAddress, Rak
 		}
 	}
 #endif
+
+	// Test packetloss
+// 	if (frandomMT()<.1)
+// 		return;
 
 	//	printf("%i/%i\n", length,congestionManager.GetMTU());
 

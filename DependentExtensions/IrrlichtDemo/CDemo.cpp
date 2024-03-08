@@ -1077,6 +1077,14 @@ void CDemo::UpdateRakNet(void)
 				}
 			}
 			break;
+		case ID_ADVERTISE_SYSTEM:
+			if (packet->guid!=rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
+			{
+				char hostIP[32];
+				packet->systemAddress.ToString(false,hostIP);
+				rakPeer->Connect(hostIP,packet->systemAddress.port,0,0);
+			}
+			break;
 		}
 	}
 	for (packet=tcpInterface->Receive(); packet; tcpInterface->DeallocatePacket(packet), packet=tcpInterface->Receive())

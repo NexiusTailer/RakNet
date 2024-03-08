@@ -383,7 +383,7 @@ void Router2::OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID
 		forwardedConnectionIndex++;
 	}
 }
-void Router2::OnShutdown(void)
+void Router2::OnRakPeerShutdown(void)
 {
 	ClearAll();
 }

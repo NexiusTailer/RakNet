@@ -336,7 +336,7 @@ protected:
 	void OnAttach(void);
 	PluginReceiveResult OnReceive(Packet *packet);
 	void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
-	void OnShutdown(void);
+	void OnRakPeerShutdown(void);
 	void Update(void);
 	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 

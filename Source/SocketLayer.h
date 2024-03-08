@@ -76,9 +76,7 @@ public:
 	/// \return If this port is already in use
 	static bool IsPortInUse(unsigned short port, const char *hostAddress=0);
 
-	#if !defined(_XBOX) && !defined(X360)
 	const char* DomainNameToIP( const char *domainName );
-	#endif
 	
 	/// Start an asynchronous read using the specified socket.  The callback will use the specified SystemAddress (associated with this socket) and call either the client or the server callback (one or
 	/// the other should be 0)

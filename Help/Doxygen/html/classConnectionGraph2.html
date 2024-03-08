@@ -48,17 +48,79 @@ Inheritance diagram for ConnectionGraph2:</div>
 <p>
 <a href="classConnectionGraph2-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph2.html#935d4882ee33a3a67993bf97d589f055">GetConnectionListForRemoteSystem</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> remoteSystemGuid, <a class="el" href="structSystemAddress.html">SystemAddress</a> *saOut, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> *guidOut, unsigned int *outLength)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Given a remote system identified by <a class="el" href="structRakNetGUID.html">RakNetGUID</a>, return the list of SystemAddresses and RakNetGUIDs they are connected to.  <a href="#935d4882ee33a3a67993bf97d589f055"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9f785d829042c012cbc68b2d6dd498c0"></a><!-- doxytag: member="ConnectionGraph2::ConnectionExists" ref="9f785d829042c012cbc68b2d6dd498c0" args="(RakNetGUID g1, RakNetGUID g2)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph2.html#9f785d829042c012cbc68b2d6dd498c0">ConnectionExists</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> g1, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> g2)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns if g1 is connected to g2. <br></td></tr>
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph2.html#dfe0e5756b523536f6c4191a2c39194a">OnClosedConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#gab440a9aec9ec5c84d009b2e1db9da24">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph2.html#61929b413e799919d36cf64b779c003a">OnNewConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, bool isIncoming)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph2.html#11ca8a31ebb77b192c7642e12c517f32">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 A one hop connection graph. 
 <p>
 Sends ID_CONNECTION_GRAPH_DISCONNECTION_NOTIFICATION, ID_CONNECTION_GRAPH_CONNECTION_LOST, ID_CONNECTION_GRAPH_NEW_CONNECTION<br>
- All identifiers are followed by <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a>, then <a class="el" href="structRakNetGUID.html">RakNetGUID</a> <hr><h2>Member Function Documentation</h2>
+ All identifiers are followed by <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a>, then <a class="el" href="structRakNetGUID.html">RakNetGUID</a> Also stores the list for you, which you can access with GetConnectionListForRemoteSystem <hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="935d4882ee33a3a67993bf97d589f055"></a><!-- doxytag: member="ConnectionGraph2::GetConnectionListForRemoteSystem" ref="935d4882ee33a3a67993bf97d589f055" args="(RakNetGUID remoteSystemGuid, SystemAddress *saOut, RakNetGUID *guidOut, unsigned int *outLength)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ConnectionGraph2::GetConnectionListForRemoteSystem           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>remoteSystemGuid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a> *&nbsp;</td>
+          <td class="paramname"> <em>saOut</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a> *&nbsp;</td>
+          <td class="paramname"> <em>guidOut</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int *&nbsp;</td>
+          <td class="paramname"> <em>outLength</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Given a remote system identified by <a class="el" href="structRakNetGUID.html">RakNetGUID</a>, return the list of SystemAddresses and RakNetGUIDs they are connected to. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>remoteSystemGuid</em>&nbsp;</td><td>Which system we are referring to. This only works for remote systems, not ourselves. </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>saOut</em>&nbsp;</td><td>A preallocated array to hold the output list of <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a>. Can be 0 if you don't care. </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>guidOut</em>&nbsp;</td><td>A preallocated array to hold the output list of <a class="el" href="structRakNetGUID.html">RakNetGUID</a>. Can be 0 if you don't care. </td></tr>
+    <tr><td valign="top"><tt>[in,out]</tt>&nbsp;</td><td valign="top"><em>outLength</em>&nbsp;</td><td>On input, the size of <em>saOut</em> and <em>guidOut</em>. On output, modified to reflect the number of elements actually written </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True if <em>remoteSystemGuid</em> was found. Otherwise false, and <em>saOut</em>, <em>guidOut</em> remain unchanged. <em>outLength</em> will be set to 0. </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="dfe0e5756b523536f6c4191a2c39194a"></a><!-- doxytag: member="ConnectionGraph2::OnClosedConnection" ref="dfe0e5756b523536f6c4191a2c39194a" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
@@ -147,10 +209,38 @@ Called when we got a new connection <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
+<a class="anchor" name="11ca8a31ebb77b192c7642e12c517f32"></a><!-- doxytag: member="ConnectionGraph2::OnReceive" ref="11ca8a31ebb77b192c7642e12c517f32" args="(Packet *packet)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a> ConnectionGraph2::OnReceive           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
+          <td class="paramname"> <em>packet</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [protected, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
+
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#bc50017a35682db5202a7562c58898ea">PluginInterface2</a>.</p>
+
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="ConnectionGraph2_8h.html">ConnectionGraph2.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Feb 27 09:39:24 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Apr 12 08:48:29 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

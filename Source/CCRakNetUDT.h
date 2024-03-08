@@ -82,6 +82,7 @@ class CCRakNetUDT
 	/// Update over time
 	void Update(CCTimeType curTime, bool hasDataToSendOrResend);
 
+	int GetRetransmissionBandwidth(CCTimeType curTime, CCTimeType timeSinceLastTick, uint32_t unacknowledgedBytes, bool isContinuousSend);
 	int GetTransmissionBandwidth(CCTimeType curTime, CCTimeType timeSinceLastTick, uint32_t unacknowledgedBytes, bool isContinuousSend);
 
 	/// Acks do not have to be sent immediately. Instead, they can be buffered up such that groups of acks are sent at a time
@@ -168,6 +169,7 @@ class CCRakNetUDT
 	static bool GreaterThan(DatagramSequenceNumberType a, DatagramSequenceNumberType b);
 	/// Is a < b, accounting for variable overflow?
 	static bool LessThan(DatagramSequenceNumberType a, DatagramSequenceNumberType b);
+	void SetTimeBetweenSendsLimit(unsigned int bitsPerSecond);
 
 
 	protected:

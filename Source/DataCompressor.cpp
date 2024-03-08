@@ -34,7 +34,8 @@ void DataCompressor::Compress( unsigned char *userData, unsigned sizeInBytes, Ra
 unsigned DataCompressor::DecompressAndAllocate( RakNet::BitStream * input, unsigned char **output )
 {
 	HuffmanEncodingTree tree;
-	unsigned int bitsUsed, destinationSizeInBytes, decompressedBytes;
+	unsigned int bitsUsed, destinationSizeInBytes;
+	unsigned int decompressedBytes;
 	unsigned int frequencyTable[ 256 ];
 	unsigned i;
 	

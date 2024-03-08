@@ -7,6 +7,8 @@
 #ifndef __FILE_LIST_NODE_CONTEXT_H
 #define __FILE_LIST_NODE_CONTEXT_H
 
+#include "BitStream.h"
+
 struct FileListNodeContext
 {
 	FileListNodeContext() {}
@@ -16,5 +18,19 @@ struct FileListNodeContext
 	unsigned char op;
 	unsigned int fileId;
 };
+
+inline RakNet::BitStream& operator<<(RakNet::BitStream& out, FileListNodeContext& in)
+{
+	out.Write(in.op);
+	out.Write(in.fileId);
+	return out;
+}
+inline RakNet::BitStream& operator>>(RakNet::BitStream& in, FileListNodeContext& out)
+{
+	in.Read(out.op);
+	bool success = in.Read(out.fileId);
+	assert(success);
+	return in;
+}
 
 #endif

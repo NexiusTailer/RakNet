@@ -16,6 +16,7 @@
 #include "Export.h"
 #include "RakNetTypes.h"
 #include "RakAssert.h"
+#include "RakString.h"
 #if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
                  
 #else
@@ -47,7 +48,7 @@ namespace RakNet
 		/// \details There is no benefit to calling this, unless you know exactly how many bytes you need and it is greater than BITSTREAM_STACK_ALLOCATION_SIZE.
 		/// In that case all it does is save you one or more realloc calls.
 		/// \param[in] initialBytesToAllocate the number of bytes to pre-allocate.
-		BitStream( int initialBytesToAllocate );
+		BitStream( const unsigned int initialBytesToAllocate );
 
 		/// \brief Initialize the BitStream, immediately setting the data it contains to a predefined pointer.
 		/// \details Set \a _copyData to true if you want to make an internal copy of the data you are passing. Set it to false to just save a pointer to the data.
@@ -59,7 +60,7 @@ namespace RakNet
 		/// \param[in] _data An array of bytes.
 		/// \param[in] lengthInBytes Size of the \a _data.
 		/// \param[in] _copyData true or false to make a copy of \a _data or not.
-		BitStream( unsigned char* _data, unsigned int lengthInBytes, bool _copyData );
+		BitStream( unsigned char* _data, const unsigned int lengthInBytes, bool _copyData );
 
 		// Destructor
 		~BitStream();
@@ -85,6 +86,17 @@ namespace RakNet
 		bool Serialize(bool writeToBitstream, float &var){if (writeToBitstream)Write(var);else return Read(var); return true;}
 		bool Serialize(bool writeToBitstream, double &var){if (writeToBitstream)Write(var);else return Read(var); return true;}
 		bool Serialize(bool writeToBitstream, long double &var){if (writeToBitstream)Write(var);else return Read(var); return true;}
+		bool Serialize(bool writeToBitstream, char* var){if (writeToBitstream)Write(var);else return Read(var); return true;}
+		bool Serialize(bool writeToBitstream, unsigned char* var){if (writeToBitstream)Write(var);else return Read(var); return true;}
+		bool Serialize(bool writeToBitstream, RakNet::RakString &var){if (writeToBitstream) Write(var);else return Read(var); return true;}
+		bool Serialize(bool writeToBitstream, uint24_t &var){if (writeToBitstream)Write(var);else return Read(var); return true;}
+		bool Serialize(bool writeToBitstream, RakNetGUID &var){if (writeToBitstream)Write(var);else return Read(var); return true;}
+
+		/// \brief Serialize a float into 2 bytes, spanning the range between \a floatMin and \a floatMax
+		/// \param[in] f The float to write
+		/// \param[in] floatMin Predetermined minimum value of f
+		/// \param[in] floatMax Predetermined maximum value of f
+		bool SerializeFloat16(bool writeToBitstream, float &f, float floatMin, float floatMax);
 
 		/// \brief Bidirectional serialize/deserialize any integral type to/from a bitstream.  If the current value is different from the last value
 		/// the current value will be written.  Otherwise, a single bit will be written
@@ -105,6 +117,11 @@ namespace RakNet
 		bool SerializeDelta(bool writeToBitstream, float &currentValue, float lastValue){if (writeToBitstream) WriteDelta(currentValue, lastValue); else return ReadDelta(currentValue);return true;}
 		bool SerializeDelta(bool writeToBitstream, double &currentValue, double lastValue){if (writeToBitstream) WriteDelta(currentValue, lastValue); else return ReadDelta(currentValue);return true;}
 		bool SerializeDelta(bool writeToBitstream, long double &currentValue, long double lastValue){if (writeToBitstream) WriteDelta(currentValue, lastValue); else return ReadDelta(currentValue);return true;}
+		bool SerializeDelta(bool writeToBitstream, char* currentValue, const char* lastValue){if (writeToBitstream) WriteDelta(currentValue, lastValue); else return ReadDelta(currentValue);return true;}
+		bool SerializeDelta(bool writeToBitstream, unsigned char* currentValue, const unsigned char* lastValue){if (writeToBitstream) WriteDelta(currentValue, lastValue); else return ReadDelta(currentValue);return true;}
+		bool SerializeDelta(bool writeToBitstream, RakNet::RakString &currentValue, const RakNet::RakString &lastValue){if (writeToBitstream) WriteDelta(currentValue, lastValue); else return ReadDelta(currentValue);return true;}
+		bool SerializeDelta(bool writeToBitstream, uint24_t &currentValue, const uint24_t lastValue){if (writeToBitstream) WriteDelta(currentValue, lastValue); else return ReadDelta(currentValue);return true;}
+		bool SerializeDelta(bool writeToBitstream, RakNetGUID &currentValue, const RakNetGUID lastValue){if (writeToBitstream) WriteDelta(currentValue, lastValue); else return ReadDelta(currentValue);return true;}
 
 		/// \brief Bidirectional version of SerializeDelta when you don't know what the last value is, or there is no last value.
 		/// \param[in] writeToBitstream true to write from your data to this bitstream.  False to read from this bitstream and write to your data
@@ -123,6 +140,11 @@ namespace RakNet
 		bool SerializeDelta(bool writeToBitstream, float &currentValue){if (writeToBitstream) WriteDelta(currentValue); else return ReadDelta(currentValue);return true;}
 		bool SerializeDelta(bool writeToBitstream, double &currentValue){if (writeToBitstream) WriteDelta(currentValue); else return ReadDelta(currentValue);return true;}
 		bool SerializeDelta(bool writeToBitstream, long double &currentValue){if (writeToBitstream) WriteDelta(currentValue); else return ReadDelta(currentValue);return true;}
+		bool SerializeDelta(bool writeToBitstream, char* currentValue){if (writeToBitstream) WriteDelta(currentValue); else return ReadDelta(currentValue);return true;}
+		bool SerializeDelta(bool writeToBitstream, unsigned char* currentValue){if (writeToBitstream) WriteDelta(currentValue); else return ReadDelta(currentValue);return true;}
+		bool SerializeDelta(bool writeToBitstream, RakNet::RakString &currentValue){if (writeToBitstream) WriteDelta(currentValue); else return ReadDelta(currentValue);return true;}
+		bool SerializeDelta(bool writeToBitstream, uint24_t &currentValue){if (writeToBitstream) WriteDelta(currentValue); else return ReadDelta(currentValue);return true;}
+		bool SerializeDelta(bool writeToBitstream, RakNetGUID &currentValue){if (writeToBitstream) WriteDelta(currentValue); else return ReadDelta(currentValue);return true;}
 
 		/// \brief Bidirectional serialize/deserialize any integral type to/from a bitstream.  Undefine __BITSTREAM_NATIVE_END if you need endian swapping.
 		/// \details If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte
@@ -145,6 +167,11 @@ namespace RakNet
 		bool SerializeCompressed(bool writeToBitstream, float &var){if (writeToBitstream)WriteCompressed(var);else return ReadCompressed(var); return true;}
 		bool SerializeCompressed(bool writeToBitstream, double &var){if (writeToBitstream)WriteCompressed(var);else return ReadCompressed(var); return true;}
 		bool SerializeCompressed(bool writeToBitstream, long double &var){if (writeToBitstream)WriteCompressed(var);else return ReadCompressed(var); return true;}
+		bool SerializeCompressed(bool writeToBitstream, char* var){if (writeToBitstream)WriteCompressed(var);else return ReadCompressed(var); return true;}
+		bool SerializeCompressed(bool writeToBitstream, unsigned char* var){if (writeToBitstream)WriteCompressed(var);else return ReadCompressed(var); return true;}
+		bool SerializeCompressed(bool writeToBitstream, RakNet::RakString &var){if (writeToBitstream)WriteCompressed(var);else return ReadCompressed(var); return true;}
+		bool SerializeCompressed(bool writeToBitstream, uint24_t &var){if (writeToBitstream)WriteCompressed(var);else return ReadCompressed(var); return true;}
+		bool SerializeCompressed(bool writeToBitstream, RakNetGUID &var){if (writeToBitstream)WriteCompressed(var);else return ReadCompressed(var); return true;}
 
 		/// \brief Bidirectional serialize/deserialize any integral type to/from a bitstream.  
 		/// \details If the current value is different from the last value the current value will be written.  
@@ -169,6 +196,11 @@ namespace RakNet
 		bool SerializeCompressedDelta(bool writeToBitstream, float &currentValue, float lastValue){if (writeToBitstream) WriteCompressedDelta(currentValue, lastValue); else return ReadCompressedDelta(currentValue);return true;}
 		bool SerializeCompressedDelta(bool writeToBitstream, double &currentValue, double lastValue){if (writeToBitstream) WriteCompressedDelta(currentValue, lastValue); else return ReadCompressedDelta(currentValue);return true;}
 		bool SerializeCompressedDelta(bool writeToBitstream, long double &currentValue, long double lastValue){if (writeToBitstream) WriteCompressedDelta(currentValue, lastValue); else return ReadCompressedDelta(currentValue);return true;}
+		bool SerializeCompressedDelta(bool writeToBitstream, char*currentValue, const char* lastValue){if (writeToBitstream) WriteCompressedDelta(currentValue, lastValue); else return ReadCompressedDelta(currentValue);return true;}
+		bool SerializeCompressedDelta(bool writeToBitstream, unsigned char* currentValue, const unsigned char* lastValue){if (writeToBitstream) WriteCompressedDelta(currentValue, lastValue); else return ReadCompressedDelta(currentValue);return true;}
+		bool SerializeCompressedDelta(bool writeToBitstream, RakNet::RakString &currentValue, const RakNet::RakString &lastValue){if (writeToBitstream) WriteCompressedDelta(currentValue, lastValue); else return ReadCompressedDelta(currentValue);return true;}
+		bool SerializeCompressedDelta(bool writeToBitstream, uint24_t &currentValue, uint24_t &lastValue){if (writeToBitstream) WriteCompressedDelta(currentValue, lastValue); else return ReadCompressedDelta(currentValue);return true;}
+		bool SerializeCompressedDelta(bool writeToBitstream, RakNetGUID &currentValue, RakNetGUID &lastValue){if (writeToBitstream) WriteCompressedDelta(currentValue, lastValue); else return ReadCompressedDelta(currentValue);return true;}
 
 		/// Save as SerializeCompressedDelta(templateType &currentValue, templateType lastValue) when we have an unknown second parameter
 		bool SerializeCompressedDelta(bool writeToBitstream, bool &var){if (writeToBitstream)WriteCompressedDelta(var);else return ReadCompressedDelta(var); return true;}
@@ -185,6 +217,11 @@ namespace RakNet
 		bool SerializeCompressedDelta(bool writeToBitstream, float &var){if (writeToBitstream)WriteCompressedDelta(var);else return ReadCompressedDelta(var); return true;}
 		bool SerializeCompressedDelta(bool writeToBitstream, double &var){if (writeToBitstream)WriteCompressedDelta(var);else return ReadCompressedDelta(var); return true;}
 		bool SerializeCompressedDelta(bool writeToBitstream, long double &var){if (writeToBitstream)WriteCompressedDelta(var);else return ReadCompressedDelta(var); return true;}
+		bool SerializeCompressedDelta(bool writeToBitstream, char* var){if (writeToBitstream)WriteCompressedDelta(var);else return ReadCompressedDelta(var); return true;}
+		bool SerializeCompressedDelta(bool writeToBitstream, unsigned char* var){if (writeToBitstream)WriteCompressedDelta(var);else return ReadCompressedDelta(var); return true;}
+		bool SerializeCompressedDelta(bool writeToBitstream, RakNet::RakString &var){if (writeToBitstream)WriteCompressedDelta(var);else return ReadCompressedDelta(var); return true;}
+		bool SerializeCompressedDelta(bool writeToBitstream, uint24_t &var){if (writeToBitstream)WriteCompressedDelta(var);else return ReadCompressedDelta(var); return true;}
+		bool SerializeCompressedDelta(bool writeToBitstream, RakNetGUID &var){if (writeToBitstream)WriteCompressedDelta(var);else return ReadCompressedDelta(var); return true;}
 
 		/// \brief Bidirectional serialize/deserialize an array or casted stream or raw data.  This does NOT do endian swapping.
 		/// \param[in] writeToBitstream true to write from your data to this bitstream.  False to read from this bitstream and write to your data
@@ -256,18 +293,23 @@ namespace RakNet
 		void Write(bool var){if ( var ) Write1(); else Write0();}
 		void Write(unsigned char var){WriteBits( ( unsigned char* ) & var, sizeof( unsigned char ) * 8, true );}
 		void Write(char var){WriteBits( ( unsigned char* ) & var, sizeof( char ) * 8, true );}
-		void Write(unsigned short var) {if (DoEndianSwap()){unsigned char output[sizeof(unsigned short)]; ReverseBytes((unsigned char*)&var, output, sizeof(unsigned short)); WriteBits( ( unsigned char* ) output, sizeof(unsigned short) * 8, true );} WriteBits( ( unsigned char* ) & var, sizeof(unsigned short) * 8, true );}
-		void Write(short var) {if (DoEndianSwap()){unsigned char output[sizeof(short)]; ReverseBytes((unsigned char*)&var, output, sizeof(short)); WriteBits( ( unsigned char* ) output, sizeof(short) * 8, true );} WriteBits( ( unsigned char* ) & var, sizeof(short) * 8, true );}
-		void Write(unsigned int var) {if (DoEndianSwap()){unsigned char output[sizeof(unsigned int)]; ReverseBytes((unsigned char*)&var, output, sizeof(unsigned int)); WriteBits( ( unsigned char* ) output, sizeof(unsigned int) * 8, true );} WriteBits( ( unsigned char* ) & var, sizeof(unsigned int) * 8, true );}
-		void Write(int var) {if (DoEndianSwap()){unsigned char output[sizeof(int)]; ReverseBytes((unsigned char*)&var, output, sizeof(int)); WriteBits( ( unsigned char* ) output, sizeof(int) * 8, true );} WriteBits( ( unsigned char* ) & var, sizeof(int) * 8, true );}
-		void Write(unsigned long var) {if (DoEndianSwap()){unsigned char output[sizeof(unsigned long)]; ReverseBytes((unsigned char*)&var, output, sizeof(unsigned long)); WriteBits( ( unsigned char* ) output, sizeof(unsigned long) * 8, true );} WriteBits( ( unsigned char* ) & var, sizeof(unsigned long) * 8, true );}
-		void Write(long var) {if (DoEndianSwap()){unsigned char output[sizeof(long)]; ReverseBytes((unsigned char*)&var, output, sizeof(long)); WriteBits( ( unsigned char* ) output, sizeof(long) * 8, true );} WriteBits( ( unsigned char* ) & var, sizeof(long) * 8, true );}
-		void Write(long long var) {if (DoEndianSwap()){unsigned char output[sizeof(long long)]; ReverseBytes((unsigned char*)&var, output, sizeof(long long)); WriteBits( ( unsigned char* ) output, sizeof(long long) * 8, true );} WriteBits( ( unsigned char* ) & var, sizeof(long long) * 8, true );}
-		void Write(unsigned long long var) {if (DoEndianSwap()){unsigned char output[sizeof(unsigned long long)]; ReverseBytes((unsigned char*)&var, output, sizeof(unsigned long long)); WriteBits( ( unsigned char* ) output, sizeof(unsigned long long) * 8, true );} WriteBits( ( unsigned char* ) & var, sizeof(unsigned long long) * 8, true );}
-		void Write(float var) {if (DoEndianSwap()){unsigned char output[sizeof(float)]; ReverseBytes((unsigned char*)&var, output, sizeof(float)); WriteBits( ( unsigned char* ) output, sizeof(float) * 8, true );} WriteBits( ( unsigned char* ) & var, sizeof(float) * 8, true );}
-		void Write(double var) {if (DoEndianSwap()){unsigned char output[sizeof(double)]; ReverseBytes((unsigned char*)&var, output, sizeof(double)); WriteBits( ( unsigned char* ) output, sizeof(double) * 8, true );} WriteBits( ( unsigned char* ) & var, sizeof(double) * 8, true );}
-		void Write(long double var) {if (DoEndianSwap()){unsigned char output[sizeof(long double)]; ReverseBytes((unsigned char*)&var, output, sizeof(long double)); WriteBits( ( unsigned char* ) output, sizeof(long double) * 8, true );} WriteBits( ( unsigned char* ) & var, sizeof(long double) * 8, true );}
-		void Write(void* var) {if (DoEndianSwap()){unsigned char output[sizeof(void*)]; ReverseBytes((unsigned char*)&var, output, sizeof(void*)); WriteBits( ( unsigned char* ) output, sizeof(void*) * 8, true );} WriteBits( ( unsigned char* ) & var, sizeof(void*) * 8, true );}
+		void Write(unsigned short var) {if (DoEndianSwap()){unsigned char output[sizeof(unsigned short)]; ReverseBytes((unsigned char*)&var, output, sizeof(unsigned short)); WriteBits( ( unsigned char* ) output, sizeof(unsigned short) * 8, true );return;} WriteBits( ( unsigned char* ) & var, sizeof(unsigned short) * 8, true );}
+		void Write(short var) {if (DoEndianSwap()){unsigned char output[sizeof(short)]; ReverseBytes((unsigned char*)&var, output, sizeof(short)); WriteBits( ( unsigned char* ) output, sizeof(short) * 8, true );return;} WriteBits( ( unsigned char* ) & var, sizeof(short) * 8, true );}
+		void Write(unsigned int var) {if (DoEndianSwap()){unsigned char output[sizeof(unsigned int)]; ReverseBytes((unsigned char*)&var, output, sizeof(unsigned int)); WriteBits( ( unsigned char* ) output, sizeof(unsigned int) * 8, true );return;} WriteBits( ( unsigned char* ) & var, sizeof(unsigned int) * 8, true );}
+		void Write(int var) {if (DoEndianSwap()){unsigned char output[sizeof(int)]; ReverseBytes((unsigned char*)&var, output, sizeof(int)); WriteBits( ( unsigned char* ) output, sizeof(int) * 8, true );return;} WriteBits( ( unsigned char* ) & var, sizeof(int) * 8, true );}
+		void Write(unsigned long var) {if (DoEndianSwap()){unsigned char output[sizeof(unsigned long)]; ReverseBytes((unsigned char*)&var, output, sizeof(unsigned long)); WriteBits( ( unsigned char* ) output, sizeof(unsigned long) * 8, true );return;} WriteBits( ( unsigned char* ) & var, sizeof(unsigned long) * 8, true );}
+		void Write(long var) {if (DoEndianSwap()){unsigned char output[sizeof(long)]; ReverseBytes((unsigned char*)&var, output, sizeof(long)); WriteBits( ( unsigned char* ) output, sizeof(long) * 8, true );return;} WriteBits( ( unsigned char* ) & var, sizeof(long) * 8, true );}
+		void Write(long long var) {if (DoEndianSwap()){unsigned char output[sizeof(long long)]; ReverseBytes((unsigned char*)&var, output, sizeof(long long)); WriteBits( ( unsigned char* ) output, sizeof(long long) * 8, true );return;} WriteBits( ( unsigned char* ) & var, sizeof(long long) * 8, true );}
+		void Write(unsigned long long var) {if (DoEndianSwap()){unsigned char output[sizeof(unsigned long long)]; ReverseBytes((unsigned char*)&var, output, sizeof(unsigned long long)); WriteBits( ( unsigned char* ) output, sizeof(unsigned long long) * 8, true );return;} WriteBits( ( unsigned char* ) & var, sizeof(unsigned long long) * 8, true );}
+		void Write(float var) {if (DoEndianSwap()){unsigned char output[sizeof(float)]; ReverseBytes((unsigned char*)&var, output, sizeof(float)); WriteBits( ( unsigned char* ) output, sizeof(float) * 8, true );return;} WriteBits( ( unsigned char* ) & var, sizeof(float) * 8, true );}
+		void Write(double var) {if (DoEndianSwap()){unsigned char output[sizeof(double)]; ReverseBytes((unsigned char*)&var, output, sizeof(double)); WriteBits( ( unsigned char* ) output, sizeof(double) * 8, true );return;} WriteBits( ( unsigned char* ) & var, sizeof(double) * 8, true );}
+		void Write(long double var) {if (DoEndianSwap()){unsigned char output[sizeof(long double)]; ReverseBytes((unsigned char*)&var, output, sizeof(long double)); WriteBits( ( unsigned char* ) output, sizeof(long double) * 8, true );return;} WriteBits( ( unsigned char* ) & var, sizeof(long double) * 8, true );}
+		void Write(const char* var) {RakString::Serialize(var, this);}
+		void Write(const unsigned char* var) {RakString::Serialize((const char*) var, this);}
+		void Write(const RakNet::RakString &var) {var.Serialize(this);}
+		void Write(const uint24_t &var);
+		void Write(const RakNetGUID &var) {if (DoEndianSwap()){unsigned char output[sizeof(uint64_t)]; ReverseBytes((unsigned char*)&var, output, sizeof(uint64_t)); WriteBits( ( unsigned char* ) output, sizeof(uint64_t) * 8, true );return;} WriteBits( ( unsigned char* ) & var, sizeof(uint64_t) * 8, true );}
+		void Write(void* var) {if (DoEndianSwap()){unsigned char output[sizeof(void*)]; ReverseBytes((unsigned char*)&var, output, sizeof(void*)); WriteBits( ( unsigned char* ) output, sizeof(void*) * 8, true );return;} WriteBits( ( unsigned char* ) & var, sizeof(void*) * 8, true );}
 		void Write(SystemAddress var){WriteBits( ( unsigned char* ) & var.binaryAddress, sizeof(var.binaryAddress) * 8, true ); Write(var.port);}
 		void Write(NetworkID var){if (NetworkID::IsPeerToPeerMode()) Write(var.systemAddress); Write(var.localSystemAddress);}
 
@@ -293,6 +335,13 @@ namespace RakNet
 		void WriteDelta(float currentValue, float lastValue){if (currentValue==lastValue) {Write(false);} else {Write(true); Write(currentValue);}}
 		void WriteDelta(double currentValue, double lastValue){if (currentValue==lastValue)	{Write(false);} else {Write(true); Write(currentValue);}}
 		void WriteDelta(long double currentValue, long double lastValue){if (currentValue==lastValue) {Write(false);} else {Write(true); Write(currentValue);}}
+		void WriteDelta(const char* currentValue, const char* lastValue){if (currentValue==lastValue) {Write(false);} else {Write(true); Write(currentValue);}}
+		void WriteDelta(const unsigned char* currentValue, const unsigned char* lastValue){if (currentValue==lastValue) {Write(false);} else {Write(true); Write(currentValue);}}
+		void WriteDelta(char* currentValue, char* lastValue){if (currentValue==lastValue) {Write(false);} else {Write(true); Write(currentValue);}}
+		void WriteDelta(unsigned char* currentValue, unsigned char* lastValue){if (currentValue==lastValue) {Write(false);} else {Write(true); Write(currentValue);}}
+		void WriteDelta(const RakNet::RakString &currentValue, const RakNet::RakString &lastValue){if (currentValue==lastValue) {Write(false);} else {Write(true); Write(currentValue);}}
+		void WriteDelta(const uint24_t &currentValue, const uint24_t &lastValue){if (currentValue==lastValue) {Write(false);} else {Write(true); Write(currentValue);}}
+		void WriteDelta(const RakNetGUID &currentValue, const RakNetGUID &lastValue){if (currentValue==lastValue) {Write(false);} else {Write(true); Write(currentValue);}}
 		void WriteDelta(SystemAddress currentValue, SystemAddress lastValue){if (currentValue==lastValue) {Write(false);} else {Write(true); Write(currentValue);}}
 		void WriteDelta(NetworkID currentValue, NetworkID lastValue){if (currentValue==lastValue) {Write(false);} else {Write(true); Write(currentValue);}}
 
@@ -312,6 +361,13 @@ namespace RakNet
 		void WriteDelta(float var){Write(true); Write(var);}
 		void WriteDelta(double var){Write(true); Write(var);}
 		void WriteDelta(long double var){Write(true); Write(var);}
+		void WriteDelta(const char* var){Write(true); Write(var);}
+		void WriteDelta(const unsigned char* var){Write(true); Write(var);}
+		void WriteDelta(char* var){Write(true); Write(var);}
+		void WriteDelta(unsigned char* var){Write(true); Write(var);}
+		void WriteDelta(const RakNet::RakString &var){Write(true); Write(var);}
+		void WriteDelta(const uint24_t &var){Write(true); Write(var);}
+		void WriteDelta(const RakNetGUID &var){Write(true); Write(var);}
 		void WriteDelta(SystemAddress var){Write(true); Write(var);}
 		void WriteDelta(NetworkID var){Write(true); Write(var);}
 
@@ -335,6 +391,11 @@ namespace RakNet
 		void WriteCompressed(float var) {RakAssert(var > -1.01f && var < 1.01f); if (var < -1.0f) var=-1.0f; if (var > 1.0f) var=1.0f; Write((unsigned short)((var+1.0f)*32767.5f));}
 		void WriteCompressed(double var) {RakAssert(var > -1.01 && var < 1.01); if (var < -1.0) var=-1.0; if (var > 1.0) var=1.0; Write((unsigned long)((var+1.0)*2147483648.0));}
 		void WriteCompressed(long double var) {RakAssert(var > -1.01 && var < 1.01); if (var < -1.0) var=-1.0; if (var > 1.0) var=1.0; Write((unsigned long)((var+1.0)*2147483648.0));}
+		void WriteCompressed(const char* var) {RakString::SerializeCompressed(var,this);}
+		void WriteCompressed(const unsigned char* var)  {RakString::SerializeCompressed((const char*) var,this);}
+		void WriteCompressed(const RakNet::RakString &var) {var.SerializeCompressed(this);}
+		void WriteCompressed(const uint24_t &var) {Write(var);}
+		void WriteCompressed(const RakNetGUID &var) {if (DoEndianSwap()) {unsigned char output[sizeof(uint64_t)]; ReverseBytes((unsigned char*)&var, output, sizeof(uint64_t)); WriteCompressed( ( unsigned char* ) output, sizeof(uint64_t) * 8, true );} else WriteCompressed( ( unsigned char* ) & var, sizeof(uint64_t) * 8, true );}
 
 		/// \brief Write any integral type to a bitstream.  
 		/// \details If the current value is different from the last value
@@ -362,6 +423,13 @@ namespace RakNet
 		void WriteCompressedDelta(float currentValue, float lastValue){if (currentValue==lastValue) {Write(false);} else { Write(true); WriteCompressed(currentValue);}}
 		void WriteCompressedDelta(double currentValue, double lastValue){if (currentValue==lastValue) {Write(false);} else { Write(true); WriteCompressed(currentValue);}}
 		void WriteCompressedDelta(long double currentValue, long double lastValue){if (currentValue==lastValue) {Write(false);} else { Write(true); WriteCompressed(currentValue);}}
+		void WriteCompressedDelta(const char* currentValue, const char* lastValue){if (currentValue==lastValue) {Write(false);} else { Write(true); WriteCompressed(currentValue);}}
+		void WriteCompressedDelta(const unsigned char* currentValue, const unsigned char* lastValue){if (currentValue==lastValue) {Write(false);} else { Write(true); WriteCompressed(currentValue);}}
+		void WriteCompressedDelta(char* currentValue, char* lastValue){if (currentValue==lastValue) {Write(false);} else { Write(true); WriteCompressed(currentValue);}}
+		void WriteCompressedDelta(unsigned char* currentValue, unsigned char* lastValue){if (currentValue==lastValue) {Write(false);} else { Write(true); WriteCompressed(currentValue);}}
+		void WriteCompressedDelta(const RakNet::RakString &currentValue, const RakNet::RakString &lastValue){if (currentValue==lastValue) {Write(false);} else { Write(true); WriteCompressed(currentValue);}}
+		void WriteCompressedDelta(const uint24_t &currentValue, const uint24_t &lastValue){if (currentValue==lastValue) {Write(false);} else { Write(true); WriteCompressed(currentValue);}}
+		void WriteCompressedDelta(const RakNetGUID &currentValue, const RakNetGUID &lastValue){if (currentValue==lastValue) {Write(false);} else { Write(true); WriteCompressed(currentValue);}}
 
 		/// Save as WriteCompressedDelta(templateType currentValue, templateType lastValue) when we have an unknown second parameter
 		void WriteCompressedDelta(bool var) {Write(var);}
@@ -378,6 +446,13 @@ namespace RakNet
 		void WriteCompressedDelta(float var) { Write(true);	WriteCompressed(var); }
 		void WriteCompressedDelta(double var) { Write(true);	WriteCompressed(var); }
 		void WriteCompressedDelta(long double var) { Write(true);	WriteCompressed(var); }
+		void WriteCompressedDelta(const char* var) { Write(true);	WriteCompressed(var); }
+		void WriteCompressedDelta(const unsigned char* var) { Write(true);	WriteCompressed(var); }
+		void WriteCompressedDelta(char* var) { Write(true);	WriteCompressed(var); }
+		void WriteCompressedDelta(unsigned char* var) { Write(true);	WriteCompressed(var); }
+		void WriteCompressedDelta(const RakNet::RakString &var) { Write(true);	WriteCompressed(var); }
+		void WriteCompressedDelta(const uint24_t &var) { Write(true);	WriteCompressed(var); }
+		void WriteCompressedDelta(const RakNetGUID &var) { Write(true);	WriteCompressed(var); }
 
 		/// \brief Read any integral type from a bitstream.  
 		/// \details Define __BITSTREAM_NATIVE_END if you need endian swapping.
@@ -404,6 +479,11 @@ namespace RakNet
 		bool Read(float &var) {if (DoEndianSwap()){unsigned char output[sizeof(float)]; if (ReadBits( ( unsigned char* ) output, sizeof(float) * 8, true )) { ReverseBytes(output, (unsigned char*)&var, sizeof(float)); return true;} return false;} else return ReadBits( ( unsigned char* ) & var, sizeof(float) * 8, true );}
 		bool Read(double &var) {if (DoEndianSwap()){unsigned char output[sizeof(double)]; if (ReadBits( ( unsigned char* ) output, sizeof(double) * 8, true )) { ReverseBytes(output, (unsigned char*)&var, sizeof(double)); return true;} return false;} else return ReadBits( ( unsigned char* ) & var, sizeof(double) * 8, true );}
 		bool Read(long double &var) {if (DoEndianSwap()){unsigned char output[sizeof(long double)]; if (ReadBits( ( unsigned char* ) output, sizeof(long double) * 8, true )) { ReverseBytes(output, (unsigned char*)&var, sizeof(long double)); return true;} return false;} else return ReadBits( ( unsigned char* ) & var, sizeof(long double) * 8, true );}
+		bool Read(char* var) {return RakNet::RakString::Deserialize(var,this);}
+		bool Read(unsigned char* var) {return RakNet::RakString::Deserialize((char*) var,this);}
+		bool Read(RakString &var) {return var.Deserialize(this);}
+		bool Read(uint24_t &var);
+		bool Read(const RakNetGUID &var) {if (DoEndianSwap()){unsigned char output[sizeof(uint64_t)]; if (ReadBits( ( unsigned char* ) output, sizeof(uint64_t) * 8, true )) { ReverseBytes(output, (unsigned char*)&var, sizeof(uint64_t)); return true;} return false;} else return ReadBits( ( unsigned char* ) & var, sizeof(uint64_t) * 8, true );}
 		bool Read(void* &var) {if (DoEndianSwap()){unsigned char output[sizeof(void*)]; if (ReadBits( ( unsigned char* ) output, sizeof(void*) * 8, true )) { ReverseBytes(output, (unsigned char*)&var, sizeof(void*)); return true;} return false;} else return ReadBits( ( unsigned char* ) & var, sizeof(void*) * 8, true );}
 		bool Read(SystemAddress &var){ReadBits( ( unsigned char* ) & var.binaryAddress, sizeof(var.binaryAddress) * 8, true ); return Read(var.port);}
 		bool Read(NetworkID &var){if (NetworkID::IsPeerToPeerMode()) Read(var.systemAddress); return Read(var.localSystemAddress);}
@@ -427,6 +507,11 @@ namespace RakNet
 		bool ReadDelta(float &var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=Read(var); return success;}
 		bool ReadDelta(double &var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=Read(var); return success;}
 		bool ReadDelta(long double &var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=Read(var); return success;}
+		bool ReadDelta(char* var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=Read(var); return success;}
+		bool ReadDelta(unsigned char* var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=Read(var); return success;}
+		bool ReadDelta(RakString &var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=Read(var); return success;}
+		bool ReadDelta(uint24_t &var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=Read(var); return success;}
+		bool ReadDelta(RakNetGUID &var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=Read(var); return success;}
 		bool ReadDelta(SystemAddress &var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=Read(var); return success;}
 		bool ReadDelta(NetworkID &var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=Read(var); return success;}
 
@@ -451,6 +536,11 @@ namespace RakNet
 		bool ReadCompressed(float &var){unsigned short compressedFloat; if (Read(compressedFloat)) { var = ((float)compressedFloat / 32767.5f - 1.0f); return true;} return false;}
 		bool ReadCompressed(double &var) {unsigned long compressedFloat; if (Read(compressedFloat)) { var = ((double)compressedFloat / 2147483648.0 - 1.0); return true; } return false;}
 		bool ReadCompressed(long double &var) {unsigned long compressedFloat; if (Read(compressedFloat)) { var = ((long double)compressedFloat / 2147483648.0 - 1.0); return true; } return false;}
+		bool ReadCompressed(char* var) {return RakNet::RakString::DeserializeCompressed(var,this);}
+		bool ReadCompressed(unsigned char* var) {return RakNet::RakString::DeserializeCompressed((char*) var,this);}
+		bool ReadCompressed(RakString &var) {return var.DeserializeCompressed(this);}
+		bool ReadCompressed(uint24_t &var) {return Read(var);}
+		bool ReadCompressed(const RakNetGUID &var){if (DoEndianSwap()){unsigned char output[sizeof(uint64_t)]; if (ReadCompressed( ( unsigned char* ) output, sizeof(uint64_t) * 8, true )){ReverseBytes(output, (unsigned char*)&var, sizeof(uint64_t)); return true;} return false;}else return ReadCompressed( ( unsigned char* ) & var, sizeof(uint64_t) * 8, true );}
 		bool ReadCompressed(SystemAddress &var) {return Read(var);}
 		bool ReadCompressed(NetworkID &var) {return Read(var);}
 
@@ -477,17 +567,33 @@ namespace RakNet
 		bool ReadCompressedDelta(float &var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=ReadCompressed(var); return success;}
 		bool ReadCompressedDelta(double &var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=ReadCompressed(var); return success;}
 		bool ReadCompressedDelta(long double &var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=ReadCompressed(var); return success;}
+		bool ReadCompressedDelta(char*var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=ReadCompressed(var); return success;}
+		bool ReadCompressedDelta(unsigned char*var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=ReadCompressed(var); return success;}
+		bool ReadCompressedDelta(RakString &var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=ReadCompressed(var); return success;}
+		bool ReadCompressedDelta(uint24_t &var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=ReadCompressed(var); return success;}
+		bool ReadCompressedDelta(const RakNetGUID &var){bool dataWritten; bool success; success=Read(dataWritten); if (dataWritten) success=ReadCompressed(var); return success;}
+
+		/// \brief Read one bitstream to another.
+		/// \param[in] numberOfBits bits to read
+		/// \param bitStream the bitstream to read into from
+		/// \return true on success, false on failure.
+		bool Read( BitStream *bitStream, BitSize_t numberOfBits );
+		bool Read( BitStream *bitStream );
+		bool Read( BitStream &bitStream, BitSize_t numberOfBits );
+		bool Read( BitStream &bitStream );
 
 		/// \brief Write an array or casted stream or raw data.  This does NOT do endian swapping.
 		/// \param[in] input a byte buffer
 		/// \param[in] numberOfBytes the size of \a input in bytes
-		void Write( const char* input, const int numberOfBytes );
+		void Write( const char* input, const unsigned int numberOfBytes );
 
-		/// \brief Write one bitstream to another
+		/// \brief Write one bitstream to another.
 		/// \param[in] numberOfBits bits to write
 		/// \param bitStream the bitstream to copy from
-		void Write( BitStream *bitStream, int numberOfBits );
+		void Write( BitStream *bitStream, BitSize_t numberOfBits );
 		void Write( BitStream *bitStream );
+		void Write( BitStream &bitStream, BitSize_t numberOfBits );
+		void Write( BitStream &bitStream );\
 
 		/// \brief Read a normalized 3D vector, using (at most) 4 bytes + 3 bits instead of 12-24 bytes.  
 		/// \details Will further compress y or z axis aligned vectors.
@@ -497,6 +603,12 @@ namespace RakNet
 		/// \param[in] z z
 		void WriteNormVector( float x, float y, float z );
 		void WriteNormVector( double x, double y, double z ) {WriteNormVector((float)x,(float)y,(float)z);}
+
+		/// \brief Write a float into 2 bytes, spanning the range between \a floatMin and \a floatMax
+		/// \param[in] f The float to write
+		/// \param[in] floatMin Predetermined minimum value of f
+		/// \param[in] floatMax Predetermined maximum value of f
+		void WriteFloat16( float f, float floatMin, float floatMax );
 
 		/// \brief Write a vector, using 10 bytes instead of 12.
 		/// \details Loses accuracy to about 3/10ths and only saves 2 bytes, so only use if accuracy is not important.
@@ -532,12 +644,12 @@ namespace RakNet
 			double m10, double m11, double m12,
 			double m20, double m21, double m22 );
 
-		/// \brief Read an array or casted stream of byte. 
+		/// \brief Read an array or casted stream of byte.
 		/// \details The array is raw data. There is no automatic endian conversion with this function
 		/// \param[in] output The result byte array. It should be larger than @em numberOfBytes.
 		/// \param[in] numberOfBytes The number of byte to read
 		/// \return true on success false if there is some missing bytes.
-		bool Read( char* output, const int numberOfBytes );
+		bool Read( char* output, const unsigned int numberOfBytes );
 
 		/// \brief Read a normalized 3D vector, using (at most) 4 bytes + 3 bits instead of 12-24 bytes.  
 		/// \details Will further compress y or z axis aligned vectors.
@@ -547,6 +659,12 @@ namespace RakNet
 		/// \param[in] z z
 		bool ReadNormVector( float &x, float &y, float &z );
 		bool ReadNormVector( double &x, double &y, double &z ) {float fx, fy, fz; bool b = ReadNormVector(fx, fy, fz); x=fx; y=fy; z=fz; return b;}
+
+		/// \brief Read a float into 2 bytes, spanning the range between \a floatMin and \a floatMax
+		/// \param[in] f The float to read
+		/// \param[in] floatMin Predetermined minimum value of f
+		/// \param[in] floatMax Predetermined maximum value of f
+		bool ReadFloat16( float &f, float floatMin, float floatMax );
 
 		/// \brief Read 3 floats or doubles, using 10 bytes, where those float or doubles comprise a vector.
 		/// \details Loses accuracy to about 3/10ths and only saves 2 bytes, so only use if accuracy is not important.
@@ -585,46 +703,49 @@ namespace RakNet
 		/// sure you didn't leave any data left over void
 		void AssertStreamEmpty( void );
 
-		/// RAKNET_DEBUG_PRINTF the bits in the stream.  Great for debugging.
+		/// \brief RAKNET_DEBUG_PRINTF the bits in the stream.  Great for debugging.
+		void PrintBits( char *out ) const;
 		void PrintBits( void ) const;
+		void PrintHex( char *out ) const;
+		void PrintHex( void ) const;
 
-		/// Ignore data we don't intend to read
+		/// \brief Ignore data we don't intend to read
 		/// \param[in] numberOfBits The number of bits to ignore
-		void IgnoreBits( const int numberOfBits );
+		void IgnoreBits( const BitSize_t numberOfBits );
 
-		/// Ignore data we don't intend to read
+		/// \brief Ignore data we don't intend to read
 		/// \param[in] numberOfBits The number of bytes to ignore
-		void IgnoreBytes( const int numberOfBytes );
+		void IgnoreBytes( const unsigned int numberOfBytes );
 
 		/// \brief Move the write pointer to a position on the array.
 		/// \param[in] offset the offset from the start of the array.
 		/// \attention
-		/// Dangerous if you don't know what you are doing!
+		/// \details Dangerous if you don't know what you are doing!
 		/// For efficiency reasons you can only write mid-stream if your data is byte aligned.
-		void SetWriteOffset( const int offset );
+		void SetWriteOffset( const BitSize_t offset );
 
-		/// Returns the length in bits of the stream
-		inline int GetNumberOfBitsUsed( void ) const {return GetWriteOffset();}
-		inline int GetWriteOffset( void ) const {return numberOfBitsUsed;}
+		/// \brief Returns the length in bits of the stream
+		inline BitSize_t GetNumberOfBitsUsed( void ) const {return GetWriteOffset();}
+		inline BitSize_t GetWriteOffset( void ) const {return numberOfBitsUsed;}
 
-		/// Returns the length in bytes of the stream
-		inline int GetNumberOfBytesUsed( void ) const {return BITS_TO_BYTES( numberOfBitsUsed );}
+		/// \brief Returns the length in bytes of the stream
+		inline BitSize_t GetNumberOfBytesUsed( void ) const {return BITS_TO_BYTES( numberOfBitsUsed );}
 
-		/// Returns the number of bits into the stream that we have read
-		inline int GetReadOffset( void ) const {return readOffset;}
+		/// \brief Returns the number of bits into the stream that we have read
+		inline BitSize_t GetReadOffset( void ) const {return readOffset;}
 
-		// Sets the read bit index
-		inline void SetReadOffset( int newReadOffset ) {readOffset=newReadOffset;}
+		/// \brief Sets the read bit index
+		void SetReadOffset( const BitSize_t newReadOffset ) {readOffset=newReadOffset;}
 
-		/// Returns the number of bits left in the stream that haven't been read
-		inline int GetNumberOfUnreadBits( void ) const {return numberOfBitsUsed - readOffset;}
+		/// \brief Returns the number of bits left in the stream that haven't been read
+		inline BitSize_t GetNumberOfUnreadBits( void ) const {return numberOfBitsUsed - readOffset;}
 
 		/// \brief Makes a copy of the internal data for you \a _data will point to
 		/// the stream. 
 		/// \details Returns the length in bits of the stream. Partial
 		/// bytes are left aligned.
 		/// \param[out] _data The allocated copy of GetData()
-		int CopyData( unsigned char** _data ) const;
+		BitSize_t CopyData( unsigned char** _data ) const;
 
 		/// Set the stream to some initial data.
 		/// \internal
@@ -636,15 +757,15 @@ namespace RakNet
 		inline unsigned char* GetData( void ) const {return data;}
 
 		/// \brief Write numberToWrite bits from the input source.
-		/// \details Right aligned data means in the case of a partial byte, 
-		/// the bits are aligned from the right (bit 0) rather than the left (as in the normal
-		/// internal representation). You would set this to true when
+		/// \details Right aligned data means in the case of a partial byte, the bits are aligned
+		/// from the right (bit 0) rather than the left (as in the normal
+		/// internal representation) You would set this to true when
 		/// writing user data, and false when copying bitstream data, such
 		/// as writing one bitstream to another.
 		/// \param[in] input The data
 		/// \param[in] numberOfBitsToWrite The number of bits to write
 		/// \param[in] rightAlignedBits if true data will be right aligned
-		void WriteBits( const unsigned char* input,	int numberOfBitsToWrite, const bool rightAlignedBits = true );
+		void WriteBits( const unsigned char* input, BitSize_t numberOfBitsToWrite, const bool rightAlignedBits = true );
 
 		/// \brief Align the bitstream to the byte boundary and then write the
 		/// specified number of bits.  
@@ -653,13 +774,16 @@ namespace RakNet
 		/// ReadAlignedBits at the corresponding read position.
 		/// \param[in] input The data
 		/// \param[in] numberOfBytesToWrite The size of input.
-		void WriteAlignedBytes( void *input, const int numberOfBytesToWrite );
+		void WriteAlignedBytes( const unsigned char *input, const unsigned int numberOfBytesToWrite );
+
+		// Endian swap bytes already in the bitstream
+		void EndianSwapBytes( int byteOffset, int length );
 
 		/// \brief Aligns the bitstream, writes inputLength, and writes input. Won't write beyond maxBytesToWrite
 		/// \param[in] input The data
 		/// \param[in] inputLength The size of input.
 		/// \param[in] maxBytesToWrite Max bytes to write
-		void WriteAlignedBytesSafe( void *input, const int inputLength, const int maxBytesToWrite );
+		void WriteAlignedBytesSafe( const char *input, const unsigned int inputLength, const unsigned int maxBytesToWrite );
 
 		/// \brief Read bits, starting at the next aligned bits. 
 		/// \details Note that the modulus 8 starting offset of the sequence must be the same as
@@ -668,30 +792,34 @@ namespace RakNet
 		/// \param[in] output The byte array larger than @em numberOfBytesToRead
 		/// \param[in] numberOfBytesToRead The number of byte to read from the internal state
 		/// \return true if there is enough byte.
-		bool ReadAlignedBytes( void *output,	const int numberOfBytesToRead );
+		bool ReadAlignedBytes( unsigned char *output, const unsigned int numberOfBytesToRead );
 
-		/// Reads what was written by WriteAlignedBytesSafe.
+		/// \brief Reads what was written by WriteAlignedBytesSafe.
 		/// \param[in] input The data
 		/// \param[in] maxBytesToRead Maximum number of bytes to read
-		bool ReadAlignedBytesSafe( void *input, int &inputLength, const int maxBytesToRead );
+		/// \return true on success, false on failure.
+		bool ReadAlignedBytesSafe( char *input, int &inputLength, const int maxBytesToRead );
+		bool ReadAlignedBytesSafe( char *input, unsigned int &inputLength, const unsigned int maxBytesToRead );
 
-		/// Same as ReadAlignedBytesSafe() but allocates the memory for you using new, rather than assuming it is safe to write to.
+		/// \brief Same as ReadAlignedBytesSafe() but allocates the memory for you using new, rather than assuming it is safe to write to
 		/// \param[in] input input will be deleted if it is not a pointer to 0
-		bool ReadAlignedBytesSafeAlloc( char **input, int &inputLength, const int maxBytesToRead );
+		/// \return true on success, false on failure.
+		bool ReadAlignedBytesSafeAlloc( char **input, int &inputLength, const unsigned int maxBytesToRead );
+		bool ReadAlignedBytesSafeAlloc( char **input, unsigned int &inputLength, const unsigned int maxBytesToRead );
 
 		/// \brief Align the next write and/or read to a byte boundary.  
-		/// \details This can be used to 'waste' bits to byte align for efficiency reasons.
-		/// It can also be used to force coalesced bitstreams to start on byte
-		/// boundaries so so WriteAlignedBits and ReadAlignedBits both
-		/// calculate the same offset when aligning.
-		void AlignWriteToByteBoundary( void );
-
-		/// \brief Align the next write and/or read to a byte boundary.
 		/// \details This can be used to 'waste' bits to byte align for efficiency reasons It
 		/// can also be used to force coalesced bitstreams to start on byte
 		/// boundaries so so WriteAlignedBits and ReadAlignedBits both
 		/// calculate the same offset when aligning.
-		void AlignReadToByteBoundary( void );
+		inline void AlignWriteToByteBoundary( void ) {numberOfBitsUsed += 8 - ( (( numberOfBitsUsed - 1 ) & 7) + 1 );}
+
+		/// \brief Align the next write and/or read to a byte boundary.  
+		/// \details This can be used to 'waste' bits to byte align for efficiency reasons It
+		/// can also be used to force coalesced bitstreams to start on byte
+		/// boundaries so so WriteAlignedBits and ReadAlignedBits both
+		/// calculate the same offset when aligning.
+		inline void AlignReadToByteBoundary( void ) {readOffset += 8 - ( (( readOffset - 1 ) & 7 ) + 1 );}
 
 		/// \brief Read \a numberOfBitsToRead bits to the output source.
 		/// \details alignBitsToRight should be set to true to convert internal
@@ -701,7 +829,7 @@ namespace RakNet
 		/// \param[in] numberOfBitsToRead The number of bits to read
 		/// \param[in] alignBitsToRight if true bits will be right aligned.
 		/// \return true if there is enough bits to read
-		bool ReadBits( unsigned char *output, int numberOfBitsToRead,	const bool alignBitsToRight = true );
+		bool ReadBits( unsigned char *output, BitSize_t numberOfBitsToRead, const bool alignBitsToRight = true );
 
 		/// Write a 0
 		void Write0( void );
@@ -716,23 +844,50 @@ namespace RakNet
 		/// *makes sure it is set to on and the data pointed to is copied.
 		void AssertCopyData( void );
 
-		/// Use this if you pass a pointer copy to the constructor
+		/// \brief Use this if you pass a pointer copy to the constructor
 		/// *(_copyData==false) and want to overallocate to prevent
-		/// *reallocation
-		void SetNumberOfBitsAllocated( const unsigned int lengthInBits );
+		/// reallocation.
+		void SetNumberOfBitsAllocated( const BitSize_t lengthInBits );
 
-		/// Reallocates (if necessary) in preparation of writing numberOfBitsToWrite
-		void AddBitsAndReallocate( const int numberOfBitsToWrite );
+		/// \brief Reallocates (if necessary) in preparation of writing numberOfBitsToWrite
+		void AddBitsAndReallocate( const BitSize_t numberOfBitsToWrite );
 
 		/// \internal
 		/// \return How many bits have been allocated internally
 		unsigned int GetNumberOfBitsAllocated(void) const;
 
-		static bool DoEndianSwap(void);
-		static bool IsBigEndian(void);
-		static bool IsNetworkOrder(void);
-		static void ReverseBytes(unsigned char *input, unsigned char *output, int length);
-		static void ReverseBytesInPlace(unsigned char *data, int length);
+		/// Write zeros until the bitstream is filled up to \a bytes
+		void PadWithZeroToByteLength( unsigned int bytes );
+
+		/// \internal Unrolled inner loop, for when performance is critical
+		void WriteAlignedVar8(const char *input);
+		/// \internal Unrolled inner loop, for when performance is critical
+		bool ReadAlignedVar8(char *output);
+		/// \internal Unrolled inner loop, for when performance is critical
+		void WriteAlignedVar16(const char *input);
+		/// \internal Unrolled inner loop, for when performance is critical
+		bool ReadAlignedVar16(char *output);
+		/// \internal Unrolled inner loop, for when performance is critical
+		void WriteAlignedVar32(const char *input);
+		/// \internal Unrolled inner loop, for when performance is critical
+		bool ReadAlignedVar32(char *output);
+
+		inline static bool DoEndianSwap(void) {
+#ifndef __BITSTREAM_NATIVE_END
+			return IsNetworkOrder()==false;
+#else
+			return false;
+#endif
+		}
+		inline static bool IsBigEndian(void)
+		{
+			return IsNetworkOrder();
+		}
+		inline static bool IsNetworkOrder(void) {static const bool r = IsNetworkOrderInternal(); return r;}
+		// Not inline, won't compile on PC due to winsock include errors
+		static bool IsNetworkOrderInternal(void);
+		static void ReverseBytes(unsigned char *input, unsigned char *output, const unsigned int length);
+		static void ReverseBytesInPlace(unsigned char *data,const unsigned int length);
 
 	private:
 
@@ -744,11 +899,11 @@ namespace RakNet
 
 		}
 
-		/// Assume the input source points to a native type, compress and write it.
-		void WriteCompressed( const unsigned char* input,	const int size, const bool unsignedData );
+		/// \brief Assume the input source points to a native type, compress and write it.
+		void WriteCompressed( const unsigned char* input, const unsigned int size, const bool unsignedData );
 
-		/// Assume the input source points to a compressed native type. Decompress and read it.
-		bool ReadCompressed( unsigned char* output,	const int size, const bool unsignedData );
+		/// \brief Assume the input source points to a compressed native type. Decompress and read it.
+		bool ReadCompressed( unsigned char* output,	const unsigned int size, const bool unsignedData );
 
 
 		int numberOfBitsUsed;

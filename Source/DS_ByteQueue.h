@@ -25,7 +25,7 @@ namespace DataStructures
 		void WriteBytes(const char *in, unsigned length, const char *file, unsigned int line);
 		bool ReadBytes(char *out, unsigned maxLengthToRead, bool peek);
 		unsigned GetBytesWritten(void) const;
-		char* PeekContiguousBytes(unsigned int *length) const;
+		char* PeekContiguousBytes(unsigned int *outLength) const;
 		void IncrementReadOffset(unsigned length);
 		void DecrementReadOffset(unsigned length);
 		void Clear(const char *file, unsigned int line);

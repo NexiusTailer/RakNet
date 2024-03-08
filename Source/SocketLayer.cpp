@@ -20,7 +20,7 @@
 #include <arpa/inet.h>
 #include <errno.h>  // error numbers
 #include <stdio.h> // RAKNET_DEBUG_PRINTF
-#include <ifaddrs.h>
+// #include <ifaddrs.h>
 #include <netinet/in.h>
 #include <net/if.h>
 #include <sys/types.h>
@@ -354,9 +354,13 @@ SOCKET SocketLayer::CreateBoundSocket( unsigned short port, bool blockingSocket,
 	return listenSocket;
 }
 
-#if !defined(_XBOX) && !defined(X360)
 const char* SocketLayer::DomainNameToIP( const char *domainName )
 {
+	struct in_addr addr;
+
+#if defined(_XBOX) || defined(X360)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+#else
 	struct hostent * phe = gethostbyname( domainName );
 
 	if ( phe == 0 || phe->h_addr_list[ 0 ] == 0 )
@@ -365,14 +369,15 @@ const char* SocketLayer::DomainNameToIP( const char *domainName )
 		return 0;
 	}
 
-	struct in_addr addr;
 	if (phe->h_addr_list[ 0 ]==0)
 		return 0;
 
 	memcpy( &addr, phe->h_addr_list[ 0 ], sizeof( struct in_addr ) );
 	return inet_ntoa( addr );
-}
 #endif
+
+	return "";
+}
 
 
 void SocketLayer::Write( const SOCKET writeSocket, const char* data, const int length )
@@ -731,7 +736,7 @@ int SocketLayer::SendTo_PC( SOCKET s, const char *data, int length, unsigned int
 
 #if defined(_WIN32) && !defined(_XBOX) && defined(_DEBUG) && !defined(X360)
 			DWORD dwIOError = GetLastError();
-			if (dwIOError!= 10040)
+			if (dwIOError!= 10040 && dwIOError != WSAEADDRNOTAVAIL)
 			{
 				LPVOID messageBuffer;
 				FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -804,7 +809,7 @@ int SocketLayer::SendTo( SOCKET s, const char *data, int length, unsigned int bi
 #endif
 
 	}
-	else if ( dwIOError != WSAEWOULDBLOCK )
+	else if ( dwIOError != WSAEWOULDBLOCK && dwIOError != WSAEADDRNOTAVAIL)
 	{
 #if defined(_WIN32) && !defined(_XBOX) && !defined(X360) && defined(_DEBUG)
 		LPVOID messageBuffer;
@@ -982,10 +987,13 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(SOCKET inSock, RakNet::Ra
 #if !defined(_XBOX) && !defined(X360)
 void SocketLayer::GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 {
-#if defined(_WIN32)
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                                                                                                                                                                                                 
+#else
 	char ac[ 80 ];
 	if ( gethostname( ac, sizeof( ac ) ) == -1 )
 	{
+#if defined(_WIN32)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -995,7 +1003,7 @@ void SocketLayer::GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], 
 		RAKNET_DEBUG_PRINTF( "gethostname failed:Error code - %d\n%s", dwIOError, messageBuffer );
 		//Free the buffer.
 		LocalFree( messageBuffer );
-
+#endif
 		return ;
 	}
 
@@ -1003,6 +1011,7 @@ void SocketLayer::GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], 
 
 	if ( phe == 0 )
 	{
+#if defined(_WIN32)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -1013,7 +1022,7 @@ void SocketLayer::GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], 
 
 		//Free the buffer.
 		LocalFree( messageBuffer );
-
+#endif
 		return ;
 	}
 
@@ -1025,7 +1034,11 @@ void SocketLayer::GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], 
 			break;
 
 		memcpy( &addr[idx], phe->h_addr_list[ idx ], sizeof( struct in_addr ) );
+#if defined(_WIN32)
 		binaryAddresses[idx]=addr[idx].S_un.S_addr;
+#else
+		binaryAddresses[idx]=addr[idx].s_addr;
+#endif
 		strcpy( ipList[ idx ], inet_ntoa( addr[idx] ) );
 
 	}
@@ -1034,48 +1047,7 @@ void SocketLayer::GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], 
 	{
 		ipList[idx][0]=0;
 	}
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                                                                                                                                 
-#else
-	struct ifaddrs *ifaddr, *ifa;
-	int family, s;
-	char host[NI_MAXHOST];
-	struct in_addr linux_in_addr;
-
-	if (getifaddrs(&ifaddr) == -1) {
-		printf( "Error getting interface list\n");
-	}
-
-	int idx = 0;
-	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-		if (!ifa->ifa_addr) continue;
-		family = ifa->ifa_addr->sa_family;
-
-		if (family == AF_INET) {
-			s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in), host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-			if (s != 0) {
-				printf ("getnameinfo() failed: %s\n", gai_strerror(s));
-			}
-			printf ("IP address: %s\n", host);
-			strcpy( ipList[ idx ], host );
-			if (inet_aton(host, &linux_in_addr) == 0) {
-				perror("inet_aton");
-			}
-			else {
-				binaryAddresses[idx]=linux_in_addr.s_addr;
-			}
-			idx++;
-		}
-	}
-
-	for ( ; idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ++idx )
-	{
-		ipList[idx][0]=0;
-	}
-
-	freeifaddrs(ifaddr);
 #endif
-
 }
 #endif
 

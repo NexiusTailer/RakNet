@@ -326,8 +326,10 @@ UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source, SystemAdd
 		{
 			threadOperation=threadOperationOutgoingQueue.Pop();
 			threadOperationOutgoingMutex.Unlock();
-			*srcToDestPort=threadOperation.srcToDestPort;
-			*destToSourcePort=threadOperation.destToSourcePort;
+			if (srcToDestPort)
+				*srcToDestPort=threadOperation.srcToDestPort;
+			if (destToSourcePort)
+				*destToSourcePort=threadOperation.destToSourcePort;
 			if (srcToDestSocket)
 				*srcToDestSocket=threadOperation.srcToDestSocket;
 			if (destToSourceSocket)

@@ -63,7 +63,7 @@ void PluginInterface::OnDirectSocketReceive(const char *data, const BitSize_t bi
 	(void) bitsUsed;
 	(void) remoteSystemAddress;
 }
-void PluginInterface::OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNetTime time, bool isSend)
+void PluginInterface::OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNetTime time, int isSend)
 {
 	(void) internalPacket;
 	(void) frameNumber;

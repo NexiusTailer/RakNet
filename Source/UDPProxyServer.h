@@ -88,8 +88,8 @@ public:
 	virtual void Update(void);
 	virtual PluginReceiveResult OnReceive(Packet *packet);
 	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
-	virtual void OnStartup(void);
-	virtual void OnShutdown(void);
+	virtual void OnRakPeerStartup(void);
+	virtual void OnRakPeerShutdown(void);
 
 protected:
 	void OnForwardingRequestFromCoordinatorToServer(Packet *packet);

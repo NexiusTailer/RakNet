@@ -223,7 +223,7 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet *packet)
 	}
 	return RR_CONTINUE_PROCESSING;
 }
-void UDPProxyClient::OnShutdown(void)
+void UDPProxyClient::OnRakPeerShutdown(void)
 {
 	Clear();
 }

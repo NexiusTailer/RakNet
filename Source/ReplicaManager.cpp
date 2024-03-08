@@ -1049,7 +1049,7 @@ void ReplicaManager::OnClosedConnection(SystemAddress systemAddress, RakNetGUID 
 
 	RemoveParticipant(systemAddress);
 }
-void ReplicaManager::OnShutdown(void)
+void ReplicaManager::OnRakPeerShutdown(void)
 {
 	Clear();
 }

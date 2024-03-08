@@ -121,9 +121,6 @@ void SystemAddress::SetBinaryAddress(const char *str)
 	if ( NonNumericHostString( str ) )
 	{
 
-#if defined(_XBOX) || defined(X360)
-         
-#else
 	#if defined(_WIN32)
 		if (_strnicmp(str,"localhost", 9)==0)
 	#else
@@ -141,7 +138,6 @@ void SystemAddress::SetBinaryAddress(const char *str)
 		{
 			binaryAddress=inet_addr(ip);
 		}
-#endif
 	}
 	else
 	{

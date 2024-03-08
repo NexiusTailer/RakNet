@@ -161,7 +161,7 @@ public:
 	/// \return True on success, false on function was not previously or is not currently registered.
 	bool UnregisterFunction(const char *uniqueIdentifier);
 
-	/// Returns if a function identifier was previously registered with RegisterFunction(), and not unregistered with UnregisterFunction()
+	/// Returns if a function identifier was previously registered on this system with RegisterFunction(), and not unregistered with UnregisterFunction()
 	/// \param[in] uniqueIdentifier String identifying the function.
 	/// \return True if the function was registered, false otherwise
 	bool IsFunctionRegistered(const char *uniqueIdentifier);

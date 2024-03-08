@@ -39,7 +39,11 @@ struct PRO
 
 	/// Passed to RakPeerInterface::Send(). Defaults to ReplicaManager3::SetDefaultOrderingChannel().
 	char orderingChannel;
+
+	bool operator==( const PRO& right ) const;
+	bool operator!=( const PRO& right ) const;
 };
+
 
 /// \brief System to help automate game object construction, destruction, and serialization
 /// \details ReplicaManager3 tracks your game objects and automates the networking for replicating them across the network<BR>
@@ -232,7 +236,7 @@ protected:
 	virtual void Update(void);
 	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
-	virtual void OnShutdown(void);
+	virtual void OnRakPeerShutdown(void);
 
 	void OnConstructionExisting(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 	void OnConstruction(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
@@ -242,6 +246,7 @@ protected:
 	void OnLocalConstructionRejected(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 	void OnLocalConstructionAccepted(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 
+	RakNet::Connection_RM3 * PopConnection(DataStructures::DefaultIndexType index);
 	Replica3* GetReplicaByNetworkID(NetworkID networkId);
 	DataStructures::DefaultIndexType ReferenceInternal(RakNet::Replica3 *replica3);
 
@@ -303,7 +308,7 @@ struct SerializeParameters
 	/// Passed to RakPeerInterface::Send(). Defaults to ReplicaManager3::SetDefaultPacketPriority().
 	/// Passed to RakPeerInterface::Send(). Defaults to ReplicaManager3::SetDefaultPacketReliability().
 	/// Passed to RakPeerInterface::Send(). Defaults to ReplicaManager3::SetDefaultOrderingChannel().
-	PRO pro;
+	PRO pro[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS];
 
 	/// Passed to RakPeerInterface::Send().
 	RakNet::Connection_RM3 *destinationConnection;
@@ -446,7 +451,7 @@ public:
 	/// \param[in] sendParameters Parameters on how to send
 	/// \param[in] rakPeer Instance of RakPeerInterface to send on
 	/// \param[in] worldId Which world, see ReplicaManager3::SetWorldID()
-	virtual SendSerializeIfChangedResult SendSerialize(RakNet::Replica3 *replica, bool indicesToSend[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNet::BitStream serializationData[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNetTime timestamp, PRO sendParameters, RakPeerInterface *rakPeer, unsigned char worldId);
+	virtual SendSerializeIfChangedResult SendSerialize(RakNet::Replica3 *replica, bool indicesToSend[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNet::BitStream serializationData[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNetTime timestamp, PRO sendParameters[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakPeerInterface *rakPeer, unsigned char worldId);
 
 	/// \internal
 	/// \details Calls Connection_RM3::SendSerialize() if Replica3::Serialize() returns a different result than what is contained in \a lastSerializationResult.<BR>
@@ -549,6 +554,7 @@ protected:
 	void OnSendDestructionFromQuery(DataStructures::DefaultIndexType queryToDestructIdx, ReplicaManager3 *replicaManager);
 	void OnDoNotQueryDestruction(DataStructures::DefaultIndexType queryToDestructIdx, ReplicaManager3 *replicaManager);
 	void ValidateLists(ReplicaManager3 *replicaManager) const;
+	void SendSerializeHeader(RakNet::Replica3 *replica, RakNetTime timestamp, RakNet::BitStream *bs, unsigned char worldId);
 	
 	// The list of objects that our local system and this remote system both have
 	// Either we sent this object to them, or they sent this object to us

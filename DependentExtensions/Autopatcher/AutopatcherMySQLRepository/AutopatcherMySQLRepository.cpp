@@ -161,8 +161,9 @@ bool AutopatcherMySQLRepository::GetChangelistSinceDate(const char *applicationN
 	//sqlCommandMutex.Lock();
 	if (!ExecuteQueryReadInt(query, &applicationID))
 	{
+		// This message covers the lost connection to the SQL server
 		//sqlCommandMutex.Unlock();
-		sprintf(lastError,"ERROR: %s not found in UpdateApplicationFiles\n",escapedApplicationName.C_String());
+		//sprintf(lastError,"ERROR: %s not found in UpdateApplicationFiles\n",escapedApplicationName.C_String());
 		return false;
 	}
 	//sqlCommandMutex.Unlock();

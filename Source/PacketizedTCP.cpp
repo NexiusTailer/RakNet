@@ -22,7 +22,7 @@ bool PacketizedTCP::Start(unsigned short port, unsigned short maxIncomingConnect
 	{
 		unsigned int i;
 		for (i=0; i < messageHandlerList.Size(); i++)
-			messageHandlerList[i]->OnStartup();
+			messageHandlerList[i]->OnRakPeerStartup();
 	}
 	return success;
 }
@@ -31,7 +31,7 @@ void PacketizedTCP::Stop(void)
 {
 	unsigned int i;
 	for (i=0; i < messageHandlerList.Size(); i++)
-		messageHandlerList[i]->OnShutdown();
+		messageHandlerList[i]->OnRakPeerShutdown();
 	for (i=0; i < waitingPackets.Size(); i++)
 		DeallocatePacket(waitingPackets[i]);
 	TCPInterface::Stop();

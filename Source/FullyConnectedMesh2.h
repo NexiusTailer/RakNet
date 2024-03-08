@@ -74,11 +74,11 @@ public:
 	/// \internal
 	virtual PluginReceiveResult OnReceive(Packet *packet);
 	/// \internal
-	virtual void OnStartup(void);
+	virtual void OnRakPeerStartup(void);
 	/// \internal
 	virtual void OnAttach(void);
 	/// \internal
-	virtual void OnShutdown(void);
+	virtual void OnRakPeerShutdown(void);
 	/// \internal
 	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	/// \internal

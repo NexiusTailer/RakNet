@@ -115,16 +115,6 @@ int main(void)
 	}
 	else if (systemType==1)
 	{
-		printf("Enter MTU size to use.  576 for dialup, 1400 for AOL, 1492 otherwise.\n");
-		gets((char*)byteBlock);
-		if (byteBlock[0]==0)
-		{
-			printf("Defaulting to 1492.\n");
-			localSystem->SetMTUSize(1492);
-		}
-		else
-			localSystem->SetMTUSize(atoi((char*)byteBlock));
-
 		printf("What send mode to use for relays?\n");
 		printf("(0). UNRELIABLE\n");
 		printf("(1). UNRELIABLE_SEQUENCED\n");
@@ -167,16 +157,6 @@ int main(void)
 	}
 	else
 	{
-		printf("Enter MTU size to use. 576 for dialup, 1400 for AOL, 1492 otherwise.\n");
-		gets((char*)byteBlock);
-		if (byteBlock[0]==0)
-		{
-			printf("Defaulting to 1492.\n");
-			localSystem->SetMTUSize(1492);
-		}
-		else
-			localSystem->SetMTUSize(atoi((char*)byteBlock));
-
 		printf("How many packets do you wish to send per second?\n");
 		gets((char*)byteBlock);
 		if (byteBlock[0]==0)

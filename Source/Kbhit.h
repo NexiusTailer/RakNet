@@ -5,9 +5,9 @@ Release date: ?
 This code is public domain (no copyright).
 You can do whatever you want with it.
 *****************************************************************************/
-#if !defined(linux) && !defined(__GNUC__) && !defined(__GCCXML__)
+#if defined(_WIN32)
 #include <conio.h> /* kbhit(), getch() */
-
+#elif defined(_XBOX) || defined(X360)
 #elif !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
 #include <sys/time.h> /* struct timeval, select() */
 /* ICANON, ECHO, TCSANOW, struct termios */
