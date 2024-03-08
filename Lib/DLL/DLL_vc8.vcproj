@@ -218,6 +218,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\CCRakNetSlidingWindow.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\CCRakNetUDT.cpp"
 				>
 			</File>
@@ -653,6 +657,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\BitStream_NoTemplate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\CCRakNetSlidingWindow.h"
 				>
 			</File>
 			<File

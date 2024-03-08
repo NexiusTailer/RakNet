@@ -81,7 +81,8 @@ int main(int argc, char **argv)
 	lobby2Client->AddCallbackInterface(&steamResults);
 	lobby2Client->SetMessageFactory(messageFactory);
 	rakPeer->AttachPlugin(lobby2Client);
-	rakPeer->Startup(32,0,&SocketDescriptor(1234,0),1);
+	SocketDescriptor sd(1234,0);
+	rakPeer->Startup(32,0,&sd,1);
 	rakPeer->SetMaximumIncomingConnections(32);
 	RakNet::Lobby2Message* msg = messageFactory->Alloc(RakNet::L2MID_Client_Login);
 	lobby2Client->SendMsg(msg);
@@ -166,7 +167,7 @@ int main(int argc, char **argv)
 		}
 		if (kbhit())
 		{
-			ch=getch();
+			ch=(char)getch();
 
 			switch (ch)
 			{
@@ -272,9 +273,9 @@ int main(int argc, char **argv)
 
 			case 'g':
 				{
-					DataStructures::Multilist<ML_ORDERED_LIST, uint64_t> roomMembers;
+					DataStructures::OrderedList<uint64_t, uint64_t> roomMembers;
 					lobby2Client->GetRoomMembers(roomMembers);
-					for (DataStructures::DefaultIndexType i=0; i < roomMembers.GetSize(); i++)
+					for (DataStructures::DefaultIndexType i=0; i < roomMembers.Size(); i++)
 					{
 						printf("%i. %s ID=%"PRINTF_64_BIT_MODIFIER"u\n", i+1, lobby2Client->GetRoomMemberName(roomMembers[i]), roomMembers[i]);
 					}

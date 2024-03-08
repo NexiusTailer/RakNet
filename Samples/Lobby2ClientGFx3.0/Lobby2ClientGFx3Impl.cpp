@@ -1330,7 +1330,7 @@ void Lobby2ClientGFx3Impl::OnNewConnection(SystemAddress systemAddress, RakNetGU
 }
 void Lobby2ClientGFx3Impl::OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason)
 {
-	if (systemAddress==lobby2Client->GetServerAddress())
+	if (packet->systemAddress==lobby2Client->GetServerAddress())
 	{
 		// isn't connected
 		FxResponseArgs<1> rargs;

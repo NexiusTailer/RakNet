@@ -177,7 +177,8 @@ public:
 	/// \param[in] fileLength Length of the file
 	/// \param[in] context User defined byte to store with each file. Use for whatever you want.
 	/// \param[in] isAReference Means that this is just a reference to a file elsewhere - does not actually have any data
-	void AddFile(const char *filename, const char *fullPathToFile, const char *data, const unsigned dataLength, const unsigned fileLength, FileListNodeContext context, bool isAReference=false);
+	/// \param[in] takeDataPointer If true, do not allocate dataLength. Just take the pointer passed to the \a data parameter
+	void AddFile(const char *filename, const char *fullPathToFile, const char *data, const unsigned dataLength, const unsigned fileLength, FileListNodeContext context, bool isAReference=false, bool takeDataPointer=false);
 
 	/// \brief Add a file, reading it from disk.
 	/// \param[in] filepath Complete path to the file, including the filename itself

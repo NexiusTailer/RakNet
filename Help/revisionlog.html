@@ -352,7 +352,7 @@
   Fix SimpleMutex failure caused by initializing the same instance from multiple threads at the same time.
   Fix packetlogger logging error when using timestamps.
   Fix assert in RoomsPlugin.
-  Update tutorial in manual.
+  Update tutorial in manual.<br>
   3.82 (9/17/2010)
   UDPForwarder now uses a single port
   Fixes to Router2
@@ -361,7 +361,22 @@
 	Update Ogre3DInterpDemo to Ogre 1.7.1
   Make SendOutOfBand work also when RakNet wasn't started
   Test sendto call for MTU detection, if it blocks, drop to the lowest MTU
-  Tweak CCRakNetUDT::IncreaseTimeBetweenSends to reduce backoff, to better handle random ping spikes
+  Tweak CCRakNetUDT::IncreaseTimeBetweenSends to reduce backoff, to better handle random ping spikes<br>
+  3.9 (10/15/2010)
+  New sliding window congestion control algorithm. Define USE_SLIDING_WINDOW_CONGESTION_CONTROL to something other than 1 to use old algorithm.
+  Additional Router2 fixes
+  Call QueryPerformanceFrequency() in GetTime.cpp every call to GetTimeUS(), to fix bug caused By Ludashi changing the reported CPU frequency.
+  Make SocketLayer static so it can be exported through a DLL.
+  Nat punchthrough fix - when testing internal IPs, the remote system may report loopback. This prevents testing internal IP connectivity on the loopback.
+  Fix logging errors with packet logger.
+  Assert against virtual call in destructor of ReplicaManager3.
+  Fix NatTypeDetection only returning port restricted. Expand boolean array in NatTypeDetectionCommon.
+  Fix Linux warnings.
+  Return last error with UPNP status update.
+	ReplicaManager3::Connection_RM3 now supports QueryGroupDownloadMessages() feature, to give all construction and serialization messages in a single tick after initial download, rather than the download potentially spread over many ticks.
+	Fix lockup with isActiveMutex in TCPInterface::CloseConnection().
+	Fix bug where packets with higher priorities sent later than ones with lower priorities caused them to still send in order.
+  <br>
   <br>
   <BR>
 </p></TD></TR></TABLE>

@@ -6,7 +6,9 @@ Dependencies: MySQL version 5.0 (http://dev.mysql.com/downloads/mysql/5.0.html).
 
 Other requirements:
 1. Run "CREATE DATABASE myDatabaseName" first in the adminstrator tools. Enter myDatabaseName when prompted "Enter DB schema:" from the C++ sample.
-2. In MySQL Administrator, in the advanced networking tab, check max packet size, and change it to 1000M. Then restart the service through service control.
+2. Download and install MySQL Administrator, which you have to download separately.
+3. Login using localhost for server host, root for username, and the password you entered during installation for the password.
+4. In MySQL Administrator, click Startup Variables on the Left. In the advanced networking tab, check max packet size, and change it to 1000M. Then restart the service through service control.
 
 Related projects: AutopatcherClientRestarter, AutopatcherMySQLRepository, AutopatcherServer
 

@@ -9,9 +9,7 @@ networking API">
 </head><body leftmargin="0" topmargin="0" alink="#003399" 
 bgcolor="#ffffff" link="#003399" marginheight="0" marginwidth="0" 
 vlink="#003399">
-<span style="background-color: rgb(255, 255, 255);"><img 
-src="nattypedetection_files/RakNet_Icon_Final-copy.jpg" alt="Jenkins 
-Software" height="150" width="150"></span><br>
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Jenkins Software" width="150" height="150"></span><br>
 <br>
 <table border="0" width="100%">
   <tbody><tr>
@@ -95,17 +93,17 @@ and that the router chooses ports sequentially.</p>
 not. This can be determined in advance of joining a game.</p>
 <p><span class="RakNetBlueHeader">NAT Type Detection algorithm</span></p>
 <ol>
-  <li>Client opens two ports on the same IP address</li>
-  <li>Server opens two ports on one IP address, and one port on four 
-additional IP addresses</li>
+  <li>Client opens two ports on the same IP address. In NatTypeDetectionClient, the RakNet socket is the first port, c2 is the socket on the second port, created in NatTypeDetectionClient::DetectNATType()</li>
+  <li>Server opens two ports on one IP address, and one port on three 
+additional IP addresses. This is done in NatTypeDetectionServer::Startup(). The first port on the first IP address is the normal RakNet socket. The second port on the first IP address is s1p2. The other three addresses are bound to the sockets s2p3, s3p4, and s4p5.</li>
   <li>Client connects to the server on the first IP address normally</li>
   <li>Client requests NAT type detection begins</li>
-  <li>Server attempts to send to client's second port. If received, then
- the client is not behind a NAT.</li>
-  <li>Server sends from a different IP address to client's first port. 
-If received, then the client is using full-cone NAT.</li>
+  <li>Server attempts to send to client's second port. This was a port that was never opened previously on the client, therefore if received, then
+ the client is not behind a NAT. This is done in NatTypeDetectionServer::Update(), defined by STATE_TESTING_NONE_1 and STATE_TESTING_NONE_2. The reason for 2 attempts is that every attempt occurs twice. The time for each attempt is the ping * 3 + 50 milliseconds. s4p5 is used for this.</li>
+  <li>Server sends from a different IP address to client's first port, the port that RakNet is connected on. 
+If received, then the client will accept datagrams from any source IP address to a port already in use. This is therefore  full-cone NAT. s2p3 is used for this.</li>
   <li>Server sends from the second port on the already-connected IP 
-address. If received, then the client is using address-restricted cone 
+address, s1p2. If received, then the client is using address-restricted cone 
 NAT.</li>
   <li>Client sends to another IP address on the server, from its first 
 (already connected) port. If the IP address and port is the same, then 

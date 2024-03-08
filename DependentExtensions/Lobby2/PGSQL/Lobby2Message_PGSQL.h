@@ -90,22 +90,22 @@ __L2_MSG_DB_HEADER(Client_PerTitleIntegerStorage, PGSQL){
 	virtual bool Delete( Lobby2ServerCommand *command, void *databaseInterface );
 	virtual bool Add( Lobby2ServerCommand *command, void *databaseInterface );
 };
-__L2_MSG_DB_HEADER(Client_SetPresence, PGSQL){virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress );};
-__L2_MSG_DB_HEADER(Client_GetPresence, PGSQL){virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress );};
+__L2_MSG_DB_HEADER(Client_SetPresence, PGSQL){virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, RakString userHandle );};
+__L2_MSG_DB_HEADER(Client_GetPresence, PGSQL){virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, RakString userHandle );};
 __L2_MSG_DB_HEADER(Client_PerTitleBinaryStorage, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Friends_SendInvite, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Friends_AcceptInvite, PGSQL){
 	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );
-	virtual void ServerPostDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress );
+	virtual void ServerPostDBMemoryImpl( Lobby2Server *server, RakString userHandle );
 };
 __L2_MSG_DB_HEADER(Friends_RejectInvite, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Friends_GetInvites, PGSQL){
 	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );
-	virtual void ServerPostDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress );
+	virtual void ServerPostDBMemoryImpl( Lobby2Server *server, RakString userHandle );
 };
 __L2_MSG_DB_HEADER(Friends_GetFriends, PGSQL){
 	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );
-	virtual void ServerPostDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress );
+	virtual void ServerPostDBMemoryImpl( Lobby2Server *server, RakString userHandle );
 };
 __L2_MSG_DB_HEADER(Friends_Remove, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(BookmarkedUsers_Add, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
@@ -325,7 +325,7 @@ __L2_MSG_DB_HEADER(Notification_Friends_StatusChange, PGSQL)
 	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 	{
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		if (command->callerSystemAddress==UNASSIGNED_SYSTEM_ADDRESS)
+		if (command->callerSystemAddresses.Size()==0)
 		{
 			OutputFriendsNotification(Notification_Friends_StatusChange::FRIEND_LOGGED_OFF, command, pgsql);
 		}
@@ -333,7 +333,7 @@ __L2_MSG_DB_HEADER(Notification_Friends_StatusChange, PGSQL)
 		// Don't let the thread return this notification with UNASSIGNED_SYSTEM_ADDRESS to the user. It's just a message to the thread.
 		return false;
 	}
-	virtual void ServerPostDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress )
+	virtual void ServerPostDBMemoryImpl( Lobby2Server *server, RakString userHandle )
 	{
 		switch (op)
 		{

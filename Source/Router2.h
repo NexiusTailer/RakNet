@@ -22,7 +22,7 @@ class RakPeerInterface;
 namespace RakNet
 {
 
-struct RAK_DLL_EXPORT Router2DebugInterface
+struct Router2DebugInterface
 {
 	virtual void ShowFailure(const char *message);
 	virtual void ShowDiagnostic(const char *message);
@@ -148,7 +148,7 @@ protected:
 	void OnMiniPunchReplyBounce(Packet *packet);
 	bool OnForwardingSuccess(Packet *packet);
 	int GetLargestPingAmongConnectedSystems(void) const;
-	void ReturnToUser(MessageID messageId, RakNetGUID endpointGuid, SystemAddress systemAddress);
+	void ReturnToUser(MessageID messageId, RakNetGUID endpointGuid, SystemAddress systemAddress, bool bypassPlugins);
 	bool ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLostOnFailure);
 
 	UDPForwarder *udpForwarder;

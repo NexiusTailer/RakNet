@@ -61,7 +61,7 @@ Inheritance diagram for RakNet::Platform_Startup:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Platform__Startup.html#098b4749f54fa8be17d257fe6254a63b">PrevalidateInput</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Platform__Startup.html#1d0cbd6cad379a13d02b7147ded8a47c">ServerPreDBMemoryImpl</a> (<a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a> *server, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Platform__Startup.html#70d828b8a3a8789d9ff15e48f520ee15">ServerPreDBMemoryImpl</a> (<a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a> *server, <a class="el" href="classRakNet_1_1RakString.html">RakString</a> userHandle)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -177,7 +177,7 @@ Is this message something that should only be run by a system with ranking uploa
 
 </div>
 </div><p>
-<a class="anchor" name="1d0cbd6cad379a13d02b7147ded8a47c"></a><!-- doxytag: member="RakNet::Platform_Startup::ServerPreDBMemoryImpl" ref="1d0cbd6cad379a13d02b7147ded8a47c" args="(Lobby2Server *server, SystemAddress systemAddress)" -->
+<a class="anchor" name="70d828b8a3a8789d9ff15e48f520ee15"></a><!-- doxytag: member="RakNet::Platform_Startup::ServerPreDBMemoryImpl" ref="70d828b8a3a8789d9ff15e48f520ee15" args="(Lobby2Server *server, RakString userHandle)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -190,8 +190,8 @@ Is this message something that should only be run by a system with ranking uploa
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1RakString.html">RakString</a>&nbsp;</td>
+          <td class="paramname"> <em>userHandle</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -204,14 +204,14 @@ Is this message something that should only be run by a system with ranking uploa
 
 <p>
 Do any <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base class for the lobby server, without database specific functionality.">Lobby2Server</a> functionality when the message first arrives on the server, and after it has returned true from <a class="el" href="structRakNet_1_1Platform__Startup.html#098b4749f54fa8be17d257fe6254a63b">PrevalidateInput()</a> If it returns true, the message has been handled, and the result is sent to the client If it returns false, the message continues to ServerDBImpl 
-<p>Reimplemented from <a class="el" href="structRakNet_1_1Lobby2Message.html#09a07dc920666fc0d195253bbaf98b2c">RakNet::Lobby2Message</a>.</p>
+<p>Reimplemented from <a class="el" href="structRakNet_1_1Lobby2Message.html#5213270ccd16a7bc6afc8df001b623e7">RakNet::Lobby2Message</a>.</p>
 
 </div>
 </div><p>
 <hr>The documentation for this struct was generated from the following file:<ul>
 <li>d:/RakNet/DependentExtensions/Lobby2/Lobby2Message.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 1 11:00:23 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 1 10:29:12 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

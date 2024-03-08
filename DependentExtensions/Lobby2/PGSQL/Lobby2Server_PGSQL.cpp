@@ -3,8 +3,6 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(Lobby2Server_PGSQL,Lobby2Server_PGSQL);
-
 Lobby2ServerCommand Lobby2ServerWorkerThread(Lobby2ServerCommand input, bool *returnOutput, void* perThreadData)
 {
 	PostgreSQLInterface *postgreSQLInterface = (PostgreSQLInterface *) perThreadData;
@@ -30,8 +28,6 @@ void Lobby2Server_PGSQL::AddInputFromThread(Lobby2Message *msg, unsigned int tar
 	command.returnToSender=true;
 	command.callerUserId=targetUserId;
 	command.callingUserName=targetUserHandle;
-	command.callerSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
-	command.callerGuid=UNASSIGNED_RAKNET_GUID;
 	command.server=this;
 	AddInputCommand(command);
 }
@@ -47,8 +43,6 @@ void Lobby2Server_PGSQL::AddOutputFromThread(Lobby2Message *msg, unsigned int ta
 	command.returnToSender=true;
 	command.callerUserId=targetUserId;
 	command.callingUserName=targetUserHandle;
-	command.callerSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
-	command.callerGuid=UNASSIGNED_RAKNET_GUID;
 	command.server=this;
 	msg->resultCode=L2RC_SUCCESS;
 	threadPool.AddOutput(command);

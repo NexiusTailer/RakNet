@@ -35,19 +35,19 @@ namespace RakNet
 	};
 
 	/// \return Can one system with NATTypeDetectionResult \a type1 connect to \a type2
-	bool CanConnect(NATTypeDetectionResult type1, NATTypeDetectionResult type2);
+	bool RAK_DLL_EXPORT CanConnect(NATTypeDetectionResult type1, NATTypeDetectionResult type2);
 
 	/// Return a technical string representin the enumeration
-	const char *NATTypeDetectionResultToString(NATTypeDetectionResult type);
+	RAK_DLL_EXPORT  const char * NATTypeDetectionResultToString(NATTypeDetectionResult type);
 
 	/// Return a friendly string representing the enumeration
 	/// None and relaxed can connect to anything
 	/// Moderate can connect to moderate or less
 	/// Strict can connect to relaxed or less
-	const char *NATTypeDetectionResultToStringFriendly(NATTypeDetectionResult type);
+	RAK_DLL_EXPORT const char * NATTypeDetectionResultToStringFriendly(NATTypeDetectionResult type);
 
 	/// \internal
-	SOCKET CreateNonblockingBoundSocket(const char *bindAddr);
+	SOCKET RAK_DLL_EXPORT CreateNonblockingBoundSocket(const char *bindAddr);
 
 	/// \internal
 	int NatTypeRecvFrom(char *data, SOCKET socket, SystemAddress &sender);

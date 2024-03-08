@@ -6,7 +6,7 @@
 /// Usage of RakNet is subject to the appropriate license agreement.
 
 
-#ifndef DEFAULT_MTU_SIZE
+#ifndef MAXIMUM_MTU_SIZE
 
 /// The MTU size to use if RakPeer::SetMTUSize() is not called.
 /// \remarks I think many people forget to call RakPeer::SetMTUSize() so I'm setting this to 1500 by default for efficiency.
@@ -21,12 +21,6 @@
 /// \li \em 1430. The size VPN and PPTP prefer.
 /// \li \em 1400. Maximum size for AOL DSL.
 /// \li \em 576. Typical value to connect to dial-up ISPs.
-#if defined(_XBOX) || defined(X360)
-                             
-#else
-#define DEFAULT_MTU_SIZE 1492
-#endif
-
 /// The largest value for an UDP datagram
 /// \sa RakPeer::SetMTUSize()
 #if defined(_XBOX) || defined(X360)

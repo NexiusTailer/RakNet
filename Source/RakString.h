@@ -45,12 +45,16 @@ public:
 	RakString& operator = ( const RakString& rhs );
 	RakString& operator = ( const char *str );
 	RakString& operator = ( char *str );
+	RakString& operator = ( const unsigned char *str );
+	RakString& operator = ( char unsigned *str );
 	RakString& operator = ( const char c );
 
 	/// Concatenation
 	RakString& operator +=( const RakString& rhs);
 	RakString& operator += ( const char *str );
 	RakString& operator += ( char *str );
+	RakString& operator += ( const unsigned char *str );
+	RakString& operator += ( char unsigned *str );
 	RakString& operator += ( const char c );
 
 	/// Character index. Do not use to change the string however.

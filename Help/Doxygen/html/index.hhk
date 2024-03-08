@@ -97,7 +97,6 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeerInterface.html#ed1fd1a31d740525d14ac855c0ff2997"><param name="Name" value="RakPeerInterface"></OBJECT>
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="AutoRPC_8h.html#b23a3b9ad84187760a50b7ba98eb669d"><param name="Name" value="ARPC_MAX_STACK_SIZE"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#9e80b5e34c39d41f063319c34be704d7"><param name="Name" value="AS"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1BitStream.html#0c4d4693f8fa98c3fa757da57fcb0c5d"><param name="Name" value="AssertCopyData"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classReplicaManager.html#3ce441961f9a95fb2ea51ac6207829d8"><param name="Name" value="AssertParticipantsClear"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classReplicaManager.html#2b5ab14d2211745867c82e905592cc43"><param name="Name" value="AssertReplicatedObjectsClear"></OBJECT>
@@ -154,7 +153,6 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="AutoRPC_8h.html"><param name="Name" value="AutoRPC.h"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#7e4acf3fe2eb879a8ae3f5b79a8fbe8fe183babf5e5d9787aafca2341d39582b"><param name="Name" value="AUTOSERIALIZE_DEFAULT"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#7e4acf3fe2eb879a8ae3f5b79a8fbe8f1bd9889211eccdeead005afc3369dc59"><param name="Name" value="AUTOSERIALIZE_RESYNCH_ONLY"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#b9257d79ab34bf808bb57908a9db75ce"><param name="Name" value="AvgNAKNum"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Presence.html#c02f863240768e80f5892ccbaef8d0ed415562abaa7cc11b88a8142594be0705"><param name="Name" value="AWAY"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1VariableDeltaSerializer.html#5cea057c2704378cc1268af235ff7b1e"><param name="Name" value="BeginDeserialize"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1VariableDeltaSerializer.html#3ba21dc59bc10fa337c02d79a785e344"><param name="Name" value="BeginIdenticalSerialize"></OBJECT>
@@ -189,10 +187,8 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Replica2.html#2b0797371e838d7fb54fc271cb114e3d"><param name="Name" value="BroadcastSerialize"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Replica2.html#faf134d3b581134dbd40ebcb1a582905"><param name="Name" value="BroadcastVisibility"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceGenRPC.html#a07cae9aaeb394bd3ace338be0da566c"><param name="Name" value="BuildStack"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#e2b2fd5b0e7a48044e37a0e3022ed575"><param name="Name" value="BytesPerMicrosecondToPacketsPerMillisecond"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#ba1ca9377af6817e35620c47bc89887f"><param name="Name" value="bytesSentPerSecond"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1RakString.html#e8fe1422249ea883413a535d01d8ffea"><param name="Name" value="C_String"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#46aba3a3f2244cb106e953be892ab39c"><param name="Name" value="CalculateListMedianRecursive"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1AutoRPC.html#b8798b20b4e34648c19735a1fcc87f56"><param name="Name" value="Call"></OBJECT>
   <UL>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1AutoRPC.html#b8798b20b4e34648c19735a1fcc87f56"><param name="Name" value="RakNet::AutoRPC"></OBJECT>
@@ -316,7 +312,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classFileListTransfer.html#b07db657b2dbd147bf20c2659242e037"><param name="Name" value="CancelReceive"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1TeamBalancer.html#f1b6ea4317c48bcb936be1c113bd2fa5"><param name="Name" value="CancelRequestSpecificTeam"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classDataStructures_1_1SingleProducerConsumer.html#dde3995822744b048b9e1df7a8bb02ff"><param name="Name" value="CancelWriteLock"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#9e8ea1fae25cf585c91a2821b6a5589a"><param name="Name" value="CanConnect"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#1b3644d668610a1cb839748907c83e65"><param name="Name" value="CanConnect"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1RoomsPlugin.html#01127b5eb8a069c7c0ee9a90d77e5882"><param name="Name" value="ChangeHandle"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classLogCommandParser.html#27075179ae1998e61353d86f6c2ff584"><param name="Name" value="channelNames"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structLogCommandParser_1_1SystemAddressAndChannel.html#f0fa9cd45860d2a5ad89b494d8ef2582"><param name="Name" value="channels"></OBJECT>
@@ -462,7 +458,6 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structInternalPacket.html#d37c7b188251c25d1ea247d3b2900cc5"><param name="Name" value="creationTime"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Ranking__GetRating.html#f588f46848b1e688c18057a16a958cc2"><param name="Name" value="currentRating"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1SerializeParameters.html#a9bc6a92cf76c0ff74d1cc9fbc338385"><param name="Name" value="curTime"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#5edf6a2e77d05d838d69f352672fbdf6"><param name="Name" value="CWND"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classDataStructures_1_1Multilist.html#cf634946f450bd5884fb3bcae33fd689"><param name="Name" value="data"></OBJECT>
   <UL>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classDataStructures_1_1Multilist.html#cf634946f450bd5884fb3bcae33fd689"><param name="Name" value="DataStructures::Multilist"></OBJECT>
@@ -605,15 +600,12 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Replica3.html#cf667862eb0f6ff14ce29c4a7146ccab"><param name="Name" value="DeallocReplica"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#d48d6053a9d086c29dc3108e7de557dc"><param name="Name" value="DebugMsg"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#ccf4946d351e9bb17ad197fc21b0b473"><param name="Name" value="DebugPrintf"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#120cc7e46e8944d545afeccd563e4d20"><param name="Name" value="DecCount"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#381abfbe6ce7e7f8dd4ab3af0ef6b754"><param name="Name" value="DecInterval"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1StringTable.html#50d83aa562f438cd26c1469e3a3aa3fc"><param name="Name" value="DecodeString"></OBJECT>
   <UL>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1StringTable.html#50d83aa562f438cd26c1469e3a3aa3fc"><param name="Name" value="RakNet::StringTable"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classStringCompressor.html#a6b0771ba70fb52294f294d31c2bd313"><param name="Name" value="StringCompressor"></OBJECT>
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classDataBlockEncryptor.html#cf7ae970aaf903fb00ffda34de410584"><param name="Name" value="Decrypt"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="MTUSize_8h.html#b463e7cce50e0fa472b4b08ac0fe258c"><param name="Name" value="DEFAULT_MTU_SIZE"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceDataStructures.html#6ba6c00f782b062bbc60c0abd97d232b"><param name="Name" value="defaultMapKeyComparison"></OBJECT>
   <UL>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceDataStructures.html#6ba6c00f782b062bbc60c0abd97d232b"><param name="Name" value="DataStructures"></OBJECT>
@@ -732,14 +724,11 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classDataBlockEncryptor.html#9cfb451b423e3c1cbaa51f167aa317b3"><param name="Name" value="Encrypt"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1VariableDeltaSerializer.html#a004336b73a3e8f2a0ea37526ca06249"><param name="Name" value="EndDeserialize"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1VariableDeltaSerializer.html#08a27cab67d35fd2fa80fefcc6a0ff13"><param name="Name" value="EndSerialize"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#fe61f2e7af1035c3b0b0583e1762b6cd"><param name="Name" value="EndSlowStart"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#7cfe43a66680f16050b43df0118a0f00"><param name="Name" value="endThreads"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1RakString.html#bdf336f3ab5269642b40261f8353289f"><param name="Name" value="Erase"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Router2.html#8d86939663f286f21a8aefeea615565b"><param name="Name" value="EstablishRouting"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#3db350e8d2e35e6a40f43ee4026bff20"><param name="Name" value="ExecuteCommand"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1RoomsPlugin.html#88194af5ce6cbc83a1af4b4bae7c56b1"><param name="Name" value="ExecuteFunc"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#f23a34584b9f20080db4a31bcfc5b202"><param name="Name" value="ExpCount"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#aff6f40991f4377d416f49dcd10181ea"><param name="Name" value="expectedNextSequenceNumber"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#5046c82fcca8bac36babe863c55ec9eb"><param name="Name" value="extendedResultCode"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structFileListNode.html#96be24bef8d0386e2b7972ffb34ac9cb"><param name="Name" value="fileLengthBytes"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structFileListNode.html"><param name="Name" value="FileListNode"></OBJECT>
@@ -1013,7 +1002,6 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#ac2a0b2392d0a1eb3ca08f11a180dbc2"><param name="Name" value="RakPeer"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeerInterface.html#c06c1f57cfaf5d9aad21f5d4e419337a"><param name="Name" value="RakPeerInterface"></OBJECT>
   </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#481e30533e9de45a30e964dc4a0f3246"><param name="Name" value="GetLocalSendRate"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#cd7b8388fccf81c93fa96a48aac9283a"><param name="Name" value="GetLowestPing"></OBJECT>
   <UL>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#cd7b8388fccf81c93fa96a48aac9283a"><param name="Name" value="RakPeer"></OBJECT>
@@ -1031,7 +1019,6 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeerInterface.html#0302427800e944489b845eec5f6609d5"><param name="Name" value="RakPeerInterface"></OBJECT>
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Plugin.html#8b6d1b34ae44e0991c6622c693e80dae"><param name="Name" value="GetMessageFactory"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#676f5d5759d312e6fd177cdf3660e9dd"><param name="Name" value="GetMTU"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#4272ca10738749fcc2a1e3b31e048a70"><param name="Name" value="GetMTUSize"></OBJECT>
   <UL>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#4272ca10738749fcc2a1e3b31e048a70"><param name="Name" value="RakPeer"></OBJECT>
@@ -1055,7 +1042,6 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#9c056f687a5be705c2d54ef2ca311243"><param name="Name" value="RakPeer"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeerInterface.html#9f0b16758bb5bf43c0bd53dc1882ab61"><param name="Name" value="RakPeerInterface"></OBJECT>
   </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#92a60d33f309abb79e7dfed88bb008da"><param name="Name" value="GetNextDatagramSequenceNumber"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#826f37d914c04365cb3276e7d8598f88"><param name="Name" value="GetNextSendReceipt"></OBJECT>
   <UL>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#826f37d914c04365cb3276e7d8598f88"><param name="Name" value="RakPeer"></OBJECT>
@@ -1133,10 +1119,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classDataStructures_1_1Table.html#a1e5c3881ba2622651ae978b38d462b5"><param name="Name" value="GetRowByIndex"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classDataStructures_1_1Table.html#17ca98f3efdcab9be32839dc4b31a908"><param name="Name" value="GetRowCount"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classDataStructures_1_1Table.html#f80dba550b9df6ec50e242bec0edcd04"><param name="Name" value="GetRows"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#d911b0c0adcc71a279a426878e9788bd"><param name="Name" value="GetRTOForRetransmission"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#af6d1c65a85157a2e28693d018f0ecc2"><param name="Name" value="GetRTT"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakVoice.html#e4a302b51f9400ce1e5f7e1508bc974c"><param name="Name" value="GetSampleRate"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#4ee92702503a6dd341236d7e7c1cc0d9"><param name="Name" value="GetSenderRTOForACK"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classHTTPConnection.html#9f83383c15cb832d7d2e132041ad9213"><param name="Name" value="GetServerAddress"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classNetworkIDManager.html#4c4bbceee8d5c0cdc006a6f870801092"><param name="Name" value="GetSharedNetworkID"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classDataStructures_1_1Multilist.html#374ed61cd2124ffd01e0bab732f89e61"><param name="Name" value="GetSize"></OBJECT>
@@ -1215,7 +1198,6 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classNatPunchthroughClient.html#a0734b3e0dee752c466be523814a5107"><param name="Name" value="GetUPNPInternalPort"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1UDPForwarder.html#905a55dfed3c5580971c1324cf014fbf"><param name="Name" value="GetUsedForwardEntries"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1ReplicaManager3.html#4f7e8d40cf70d0aadccb6c3246ad34c4"><param name="Name" value="GetWorldID"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#c5105e566aea7f02ee6f144701a5e00c"><param name="Name" value="GreaterThan"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structPacket.html#6b5a4002d538754bc3649e4e8e1eda85"><param name="Name" value="guid"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classInlineFunctor.html#f960d3606bee431a08954c365db3d775"><param name="Name" value="HandleResult"></OBJECT>
   <UL>
@@ -1225,6 +1207,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#b28534e0a89741d3b98b9e08a55c62b3"><param name="Name" value="HandleRPCPacket"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#f181aebf9663297b633a7f0f7afbd74e"><param name="Name" value="HandleRPCReplyPacket"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classReliabilityLayer.html#181f009d0c35bad7708d422d35aa1379"><param name="Name" value="HandleSocketReceiveFromConnectedPlayer"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#27ce393bde81f54fbf6c64763a5e5eea"><param name="Name" value="HasAdminAddress"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classHTTPConnection.html#af2b8cc84a5a1dc3e35314b9e49515ed"><param name="Name" value="HasBadResponse"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1ReplicaManager2.html#4af369cc9a75502a76c4c0185f4fd2d0"><param name="Name" value="HasConnection"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classDataStructures_1_1OrderedList.html#ecaf8370213fb9ebdd99bc6262a930e6"><param name="Name" value="HasData"></OBJECT>
@@ -1248,6 +1231,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structThreadPool.html#925d6c332e4c48bc99dc5750dfd5fcdd"><param name="Name" value="HasOutput"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structThreadPool.html#5d517170f4b61211325ac5c9717e32e1"><param name="Name" value="HasOutputFast"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classReplicaManager.html#67082399041a7042373a1ae4ed5bebbc"><param name="Name" value="HasParticipant"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#d72697445e87c271d0edbf1f9ecab1aa"><param name="Name" value="HasRankingAddress"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classHTTPConnection.html#ab4a9bdef33b76152a3aafed40c54d54"><param name="Name" value="HasRead"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Connection__RM3.html#1b05a20c8a6ceabb86c08bc175c7906d"><param name="Name" value="HasReplicaConstructed"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="PacketPriority_8h.html#659378374e516180f93640c79f59705ccb1785f11dd02aa7f5d164fb314c594e"><param name="Name" value="HIGH_PRIORITY"></OBJECT>
@@ -1403,7 +1387,6 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classHTTPConnection.html#d800ca9bacd714f25320a4070106a0a5"><param name="Name" value="Init"></OBJECT>
   <UL>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classHTTPConnection.html#d800ca9bacd714f25320a4070106a0a5"><param name="Name" value="HTTPConnection"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#4ce3b64953f8955ab9f5ddfc0fc2f3b8"><param name="Name" value="RakNet::CCRakNetUDT"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakVoice.html#9e4b55675844189e3dfc819fbe102a33"><param name="Name" value="RakVoice"></OBJECT>
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#adcb268bdcd4751c304c8156c28eb66d"><param name="Name" value="InitializeSecurity"></OBJECT>
@@ -1467,7 +1450,6 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#52ff3b23878d11d8b00473835d44b1f5"><param name="Name" value="RakPeer"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeerInterface.html#657f140de03d2db27b4cffd3229dc107"><param name="Name" value="RakPeerInterface"></OBJECT>
   </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#9bca468914291615e1a20436537e562c"><param name="Name" value="IsAdminAddress"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structFileListNode.html#f3e38445556a0668be3bcb1d6041f498"><param name="Name" value="isAReference"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#e1ad09ea9ca5ea8bd4a00f78e22a5abc"><param name="Name" value="IsBanned"></OBJECT>
   <UL>
@@ -1511,7 +1493,6 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#4541da876eef1161bd7460f2cbfcc3bd"><param name="Name" value="RakPeer"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeerInterface.html#3f4a251109ed1f18e2d7797fb751b41e"><param name="Name" value="RakPeerInterface"></OBJECT>
   </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#75b10ff828e2ac84b4c9a790d3bf8806"><param name="Name" value="isInSlowStart"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classReadyEvent.html#77f8a8a2be105ce742f1d9d19c261e46"><param name="Name" value="IsInWaitList"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classDataBlockEncryptor.html#17a3103d5448289015ec998824a75374"><param name="Name" value="IsKeySet"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#251f0972c417a8770548a354a10178f5"><param name="Name" value="IsLocalIP"></OBJECT>
@@ -1530,7 +1511,6 @@
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakVoice.html#4756c3de46aaf4fd188454e4b75b8d6a"><param name="Name" value="IsNoiseFilterActive"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classReliabilityLayer.html#365a2fdfb29b707746a826dfe1224615"><param name="Name" value="IsOutgoingDataWaiting"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#36b42e990f9116678d60ad403dcb0fc4"><param name="Name" value="IsRankingAddress"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakVoice.html#65423c103d71cc5f1354a599df19a801"><param name="Name" value="IsSendingVoiceDataTo"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1SerializationContext.html#16f084f64fcb282e8564af0b11df0b0a"><param name="Name" value="IsSerializationCommand"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classDataStructures_1_1Multilist.html#acbab3fd63f299185141b0c4a62e9ef5"><param name="Name" value="IsSorted"></OBJECT>
@@ -1541,17 +1521,11 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1SerializationContext.html#b19663630da092d1a4016622cb6b346a"><param name="Name" value="IsVisible"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structThreadPool.html#90b37c13ba8b9f67db4bd99ee4a5d811"><param name="Name" value="IsWorking"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classReliabilityLayer.html#dd31029f764d997d13bb87314a9eaced"><param name="Name" value="KillConnection"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#f5ab97f7c582d65eb196108f73477ea3"><param name="Name" value="lastPacketArrivalTime"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#d53be9c9b7fcea1400bee4fa18dfcfb9"><param name="Name" value="lastPacketPairPacketArrivalTime"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#c382a93a2204236c25587411665cc1fb"><param name="Name" value="lastPacketPairSequenceNumber"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1SerializeParameters.html#3f827fa6ae16ed1f35efddf5696ae4e9"><param name="Name" value="lastSentBitstream"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#f5ae47cc1ab23f6b6fdec9f3c84fffe8"><param name="Name" value="lastTransmitOfBAndAS"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#6442b7a2f098ca9becd8050a7ff86510"><param name="Name" value="lastUpdateWindowSizeAndAck"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="group__PLUGIN__INTERFACE__GROUP.html#ggab440a9aec9ec5c84d009b2e1db9da243885df8a90b00943c669f55dbf3ee7c8"><param name="Name" value="LCR_CLOSED_BY_USER"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="group__PLUGIN__INTERFACE__GROUP.html#ggab440a9aec9ec5c84d009b2e1db9da24a23e6b70cb379e58450d315bed7c0f02"><param name="Name" value="LCR_CONNECTION_LOST"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="group__PLUGIN__INTERFACE__GROUP.html#ggab440a9aec9ec5c84d009b2e1db9da24fa61361a0519787532255cd02708af50"><param name="Name" value="LCR_DISCONNECTION_NOTIFICATION"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structPacket.html#ac491c4cf66f656e6b1e12d3074719fb"><param name="Name" value="length"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#c9d2461d6412f31dd06aa1403cd3ea76"><param name="Name" value="LessThan"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classLightweightDatabaseClient.html"><param name="Name" value="LightweightDatabaseClient"></OBJECT>
   <UL>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classLightweightDatabaseClient.html#f1b72660433092063d3d632712432467"><param name="Name" value="QueryTable"></OBJECT>
@@ -1751,20 +1725,13 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="InternalPacket_8h.html#7bee53364aff03583e7d6bb2a6df7bc3"><param name="Name" value="MessageNumberType"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1SerializeParameters.html#aecbe1e740707f88e2bda424a6157123"><param name="Name" value="messageTimestamp"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Presence.html#c02f863240768e80f5892ccbaef8d0edb72d15cd94befe565c6963700abd489a"><param name="Name" value="MINIMIZED"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#c78f298234f763e5ebf18798165e13ab"><param name="Name" value="minRTT"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="DS__Multilist_8h.html#8387ff66ed3a8c8a6c0528ddb5650a5bf389ead3419ab483cfaa03ee3a36ed75"><param name="Name" value="ML_ORDERED_LIST"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="DS__Multilist_8h.html#8387ff66ed3a8c8a6c0528ddb5650a5bc3cfb863698e6e8dc19bf370d88d53d1"><param name="Name" value="ML_QUEUE"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="DS__Multilist_8h.html#8387ff66ed3a8c8a6c0528ddb5650a5b096faf4caf0afa60d52992f1f2660349"><param name="Name" value="ML_STACK"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="DS__Multilist_8h.html#8387ff66ed3a8c8a6c0528ddb5650a5babc606ce19c964682461785f5545a580"><param name="Name" value="ML_UNORDERED_LIST"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="DS__Multilist_8h.html#8387ff66ed3a8c8a6c0528ddb5650a5bf20618974fb332e0ea751416221c6085"><param name="Name" value="ML_VARIABLE_DURING_RUNTIME"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#cf9f3920b8f237316d15a338fe25970f"><param name="Name" value="mostRecentPacketPairValue"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="MTUSize_8h.html"><param name="Name" value="MTUSize.h"></OBJECT>
-  <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="MTUSize_8h.html#b463e7cce50e0fa472b4b08ac0fe258c"><param name="Name" value="DEFAULT_MTU_SIZE"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="MTUSize_8h.html#39d9da73f39bf9acabfc9e0ad2ae97c5"><param name="Name" value="MAXIMUM_MTU_SIZE"></OBJECT>
-  </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#c1756b0cf7cd10253e65a23b126b5ba2"><param name="Name" value="mySystemAddress"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#cc5c90cb7f27ab3f3ed68fbe5be2ec18"><param name="Name" value="NAKCount"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#81848fd95488939c0b3e217209f3113985b9244642c4226779a1702153310147"><param name="Name" value="NAT_TYPE_ADDRESS_RESTRICTED"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#81848fd95488939c0b3e217209f31139bd9c6bf5948fea28bf8d8513a4ef1b1d"><param name="Name" value="NAT_TYPE_DETECTION_IN_PROGRESS"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#81848fd95488939c0b3e217209f31139d5b124b608265130efdfddb038b2be82"><param name="Name" value="NAT_TYPE_FULL_CONE"></OBJECT>
@@ -1797,8 +1764,8 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classNatPunchthroughServer.html#3d1acf17dbf3682445cf54c1711d508d"><param name="Name" value="SetDebugInterface"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classNatPunchthroughServer.html#461d8f91f5820e6d85a847f7f6284c29"><param name="Name" value="Update"></OBJECT>
   </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#1233cd583b9586486afa8f39d23b4f13"><param name="Name" value="NATTypeDetectionResultToString"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#c8ba12f06cb89d6c5099190c87efeb4b"><param name="Name" value="NATTypeDetectionResultToStringFriendly"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#c89c0a6308f35b933825a354dbf4a219"><param name="Name" value="NATTypeDetectionResultToString"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#a400a447c631b730d879855b65fe2f67"><param name="Name" value="NATTypeDetectionResultToStringFriendly"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classNetworkIDObject.html#c7a9217c43aa063683c6fd259659ada3"><param name="Name" value="networkID"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classNetworkIDManager.html"><param name="Name" value="NetworkIDManager"></OBJECT>
   <UL>
@@ -1832,9 +1799,7 @@
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structInternalPacket.html#6862faec9f6c729ff21d786e1cf8faf9"><param name="Name" value="nextActionTime"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classNetworkIDObject.html#60ad61b62a1cef29bf6783acc17ff8e7"><param name="Name" value="nextAllocationNumber"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#c42b4998929da21d05314742fb92197a"><param name="Name" value="nextDatagramSequenceNumber"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1RPC3.html#d0300cf1ce772c72ad51893786d580bb"><param name="Name" value="nextSlotRegistrationCount"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#eb20ef9ac41fa2db0a5275384bfc93af"><param name="Name" value="nextSYNUpdate"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1RakString.html#6220f7e457fda28d722c83ee95d9baa9"><param name="Name" value="NonVariadic"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structInternalPacket.html#e132d7861ce3b91023b9f6ecdb5190c3972e5608580f3b8d836fcbe8a2cbbbba"><param name="Name" value="NORMAL"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Presence.html#c02f863240768e80f5892ccbaef8d0eda534a1b8f22cb3b699d9c3e395b48c2d"><param name="Name" value="NOT_ONLINE"></OBJECT>
@@ -1850,12 +1815,10 @@
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1BitStream.html#fc678e70ac2082d65c1b103436ca6b6f"><param name="Name" value="NumberOfLeadingZeroes"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structThreadPool.html#ad431a8d3f28af0ae5249c7e3b819307"><param name="Name" value="NumThreadsWorking"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#1c8e7053323596635c369c4fbf527971"><param name="Name" value="oldestUnsentAck"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classPacketLogger.html#270fccacf036f77b796c4d18410569f8"><param name="Name" value="OnAck"></OBJECT>
   <UL>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classPacketLogger.html#270fccacf036f77b796c4d18410569f8"><param name="Name" value="PacketLogger"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classPluginInterface2.html#3141887d338b4aff184882254a937aef"><param name="Name" value="PluginInterface2"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#68aa7981397893a0c872a983bbb7e2e7"><param name="Name" value="RakNet::CCRakNetUDT"></OBJECT>
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classFileListProgress.html#6cb8c0706f5216e6f94900d9d7dc628e"><param name="Name" value="OnAddFilesFromDirectoryStarted"></OBJECT>
   <UL>
@@ -1928,6 +1891,7 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classAutopatcherServer.html#e17e8c1b65270e8d96bab4156f3b8b4d"><param name="Name" value="AutopatcherServer"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classNatPunchthroughClient.html#657f92fcde3b52b485ed42285bab7a6e"><param name="Name" value="NatPunchthroughClient"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classPluginInterface2.html#017a96cb76e2462a320b570cc8877317"><param name="Name" value="PluginInterface2"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1ReplicaManager3.html#f2251f16c8f5146cdfe8b927543177ee"><param name="Name" value="RakNet::ReplicaManager3"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1RoomsPlugin.html#8c4a5eddb8c4fab89f9fa7b983c40d7e"><param name="Name" value="RakNet::RoomsPlugin"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1SQLite3ServerPlugin.html#817dacd9511047c13763eac6cc59052b"><param name="Name" value="RakNet::SQLite3ServerPlugin"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1UDPProxyServer.html#a0bf0313fe56e485dc5be8c5b72a9c75"><param name="Name" value="RakNet::UDPProxyServer"></OBJECT>
@@ -1964,8 +1928,6 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1UDPProxyClientResultHandler.html#043f736d85cf71abf7e8458aeff8cb95"><param name="Name" value="OnForwardingInProgress"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1UDPProxyClientResultHandler.html#e6a5e5ebcf51580f1d331406b03bd1d3"><param name="Name" value="OnForwardingNotification"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1UDPProxyClientResultHandler.html#2d29501e8e7f0fe29c3f96ecf4109444"><param name="Name" value="OnForwardingSuccess"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#9745aff0eecb30ac375f96d7ed900ec4"><param name="Name" value="OnGotPacket"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#bf5ff81bd53090d67a8f9551449cda3b"><param name="Name" value="OnGotPacketPair"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classPacketLogger.html#2e50a2b2977234a8103b5809f7787546"><param name="Name" value="OnInternalPacket"></OBJECT>
   <UL>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classPacketLogger.html#2e50a2b2977234a8103b5809f7787546"><param name="Name" value="PacketLogger"></OBJECT>
@@ -2066,11 +2028,6 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classPacketLogger.html#4d9a71c62e15adeecf34b120ddeb205d"><param name="Name" value="PacketLogger"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classPluginInterface2.html#60fd518f4ebca9005e582b2f5fd60b14"><param name="Name" value="PluginInterface2"></OBJECT>
   </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#b62bfd98e871b8d23688c568db191c4f"><param name="Name" value="OnResend"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#f7455ee4835dd7bca3a477302783e1be"><param name="Name" value="OnSendAck"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#4450a87680553db9783ea30755f6d5a8"><param name="Name" value="OnSendAckGetBAndAS"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#098c980d9b2e26a06242431d81104c33"><param name="Name" value="OnSendBytes"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#387a04edc27ce71cb04af8e91877a944"><param name="Name" value="OnSendNACK"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Replica3.html#61eb31f27074dae04ae7168eb2712c3b"><param name="Name" value="OnSerializeTransmission"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classCommandParserInterface.html#e592378001bdd4c164ddbac66aa80e33"><param name="Name" value="OnTransportChange"></OBJECT>
   <UL>
@@ -2111,8 +2068,6 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structPacket.html#ac491c4cf66f656e6b1e12d3074719fb"><param name="Name" value="length"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structPacket.html#65b2e676ad49156ba29d4d58c7d28d41"><param name="Name" value="systemAddress"></OBJECT>
   </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#8a7d31c35c4c61a37589be117d7898bb"><param name="Name" value="packetArrivalHistory"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#97f2fea4b8632cf1da01e0fdf3b41e66"><param name="Name" value="packetArrivalHistoryWriteIndex"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classPacketConsoleLogger.html"><param name="Name" value="PacketConsoleLogger"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classPacketFileLogger.html"><param name="Name" value="PacketFileLogger"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classPacketLogger.html"><param name="Name" value="PacketLogger"></OBJECT>
@@ -2130,7 +2085,6 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classPacketLogger.html#637d27bf214b195a748470ea2cdac111"><param name="Name" value="WriteLog"></OBJECT>
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classPacketOutputWindowLogger.html"><param name="Name" value="PacketOutputWindowLogger"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#f2235085e5a25b0e03bd4425180e191b"><param name="Name" value="packetPairRecieptHistoryWriteIndex"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="PacketPriority_8h.html"><param name="Name" value="PacketPriority.h"></OBJECT>
   <UL>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="PacketPriority_8h.html#659378374e516180f93640c79f59705ccb1785f11dd02aa7f5d164fb314c594e"><param name="Name" value="HIGH_PRIORITY"></OBJECT>
@@ -2324,6 +2278,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Replica3.html#e46e02c681346347be9ac56f392be304"><param name="Name" value="QueryConstruction_ServerConstruction"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Connection__RM3.html#918f5c8d69e2ede6c9469fd9ade96d32"><param name="Name" value="QueryConstructionMode"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Replica3.html#b476629672d62c7c33c8b1d8aa606918"><param name="Name" value="QueryDestruction"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Connection__RM3.html#adc711493e2022956fe51ea8592b57d2"><param name="Name" value="QueryGroupDownloadMessages"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Replica2.html#3548a6b29d2639fb5c6cc3ccf7afb1b1"><param name="Name" value="QueryIsConstructionAuthority"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Replica2.html#caee487da63d1b7b1b62dee8430a54ae"><param name="Name" value="QueryIsDestructionAuthority"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Replica2.html#d101c0208194a1132a12ed316a887fac"><param name="Name" value="QueryIsSerializationAuthority"></OBJECT>
@@ -2468,63 +2423,6 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1BookmarkedUsers__Remove.html#dcc92c1109730375715e5a03baf8e3d1"><param name="Name" value="RequiresLogin"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1BookmarkedUsers__Remove.html#df0ed1d114cdf9ebc1a8ca31bc6d736d"><param name="Name" value="RequiresRankingPermission"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1BookmarkedUsers__Remove.html#a4bdafd2bfbf721977513e1757d983a9"><param name="Name" value="Serialize"></OBJECT>
-  </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html"><param name="Name" value="RakNet::CCRakNetUDT"></OBJECT>
-  <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#9e80b5e34c39d41f063319c34be704d7"><param name="Name" value="AS"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#b9257d79ab34bf808bb57908a9db75ce"><param name="Name" value="AvgNAKNum"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#e2b2fd5b0e7a48044e37a0e3022ed575"><param name="Name" value="BytesPerMicrosecondToPacketsPerMillisecond"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#46aba3a3f2244cb106e953be892ab39c"><param name="Name" value="CalculateListMedianRecursive"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#5edf6a2e77d05d838d69f352672fbdf6"><param name="Name" value="CWND"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#120cc7e46e8944d545afeccd563e4d20"><param name="Name" value="DecCount"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#381abfbe6ce7e7f8dd4ab3af0ef6b754"><param name="Name" value="DecInterval"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#fe61f2e7af1035c3b0b0583e1762b6cd"><param name="Name" value="EndSlowStart"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#f23a34584b9f20080db4a31bcfc5b202"><param name="Name" value="ExpCount"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#aff6f40991f4377d416f49dcd10181ea"><param name="Name" value="expectedNextSequenceNumber"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#481e30533e9de45a30e964dc4a0f3246"><param name="Name" value="GetLocalSendRate"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#676f5d5759d312e6fd177cdf3660e9dd"><param name="Name" value="GetMTU"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#92a60d33f309abb79e7dfed88bb008da"><param name="Name" value="GetNextDatagramSequenceNumber"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#d911b0c0adcc71a279a426878e9788bd"><param name="Name" value="GetRTOForRetransmission"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#af6d1c65a85157a2e28693d018f0ecc2"><param name="Name" value="GetRTT"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#4ee92702503a6dd341236d7e7c1cc0d9"><param name="Name" value="GetSenderRTOForACK"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#c5105e566aea7f02ee6f144701a5e00c"><param name="Name" value="GreaterThan"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#4ce3b64953f8955ab9f5ddfc0fc2f3b8"><param name="Name" value="Init"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#75b10ff828e2ac84b4c9a790d3bf8806"><param name="Name" value="isInSlowStart"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#f5ab97f7c582d65eb196108f73477ea3"><param name="Name" value="lastPacketArrivalTime"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#d53be9c9b7fcea1400bee4fa18dfcfb9"><param name="Name" value="lastPacketPairPacketArrivalTime"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#c382a93a2204236c25587411665cc1fb"><param name="Name" value="lastPacketPairSequenceNumber"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#f5ae47cc1ab23f6b6fdec9f3c84fffe8"><param name="Name" value="lastTransmitOfBAndAS"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#6442b7a2f098ca9becd8050a7ff86510"><param name="Name" value="lastUpdateWindowSizeAndAck"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#c9d2461d6412f31dd06aa1403cd3ea76"><param name="Name" value="LessThan"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#c78f298234f763e5ebf18798165e13ab"><param name="Name" value="minRTT"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#cf9f3920b8f237316d15a338fe25970f"><param name="Name" value="mostRecentPacketPairValue"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#cc5c90cb7f27ab3f3ed68fbe5be2ec18"><param name="Name" value="NAKCount"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#c42b4998929da21d05314742fb92197a"><param name="Name" value="nextDatagramSequenceNumber"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#eb20ef9ac41fa2db0a5275384bfc93af"><param name="Name" value="nextSYNUpdate"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#1c8e7053323596635c369c4fbf527971"><param name="Name" value="oldestUnsentAck"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#68aa7981397893a0c872a983bbb7e2e7"><param name="Name" value="OnAck"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#9745aff0eecb30ac375f96d7ed900ec4"><param name="Name" value="OnGotPacket"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#bf5ff81bd53090d67a8f9551449cda3b"><param name="Name" value="OnGotPacketPair"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#b62bfd98e871b8d23688c568db191c4f"><param name="Name" value="OnResend"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#f7455ee4835dd7bca3a477302783e1be"><param name="Name" value="OnSendAck"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#4450a87680553db9783ea30755f6d5a8"><param name="Name" value="OnSendAckGetBAndAS"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#098c980d9b2e26a06242431d81104c33"><param name="Name" value="OnSendBytes"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#387a04edc27ce71cb04af8e91877a944"><param name="Name" value="OnSendNACK"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#8a7d31c35c4c61a37589be117d7898bb"><param name="Name" value="packetArrivalHistory"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#97f2fea4b8632cf1da01e0fdf3b41e66"><param name="Name" value="packetArrivalHistoryWriteIndex"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#f2235085e5a25b0e03bd4425180e191b"><param name="Name" value="packetPairRecieptHistoryWriteIndex"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#055271fe5ad776eec681349e31d13868"><param name="Name" value="ReceiverCalculateDataArrivalRate"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#c8a4b72191a1685746204848812e54a8"><param name="Name" value="ReceiverCalculateDataArrivalRateMedian"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#2e4579352bde32c43e7237aa1ad54cf8"><param name="Name" value="ResetOnDataArrivalHalveSNDOnNoDataTime"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#860d3d061c314f419d0e5cd1aba7136e"><param name="Name" value="RTT"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#0b1c120767dc4a2be1ee07a0f3bb65bb"><param name="Name" value="SetMTU"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#ce0d603d0ea12c812e5a16f2911a2848"><param name="Name" value="SetNextSYNUpdate"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#8bccdc59401e7c858a5ad6622c22b089"><param name="Name" value="ShouldSendACKs"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#af5b074b6ec43f211853d5c168150ab6"><param name="Name" value="SND"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#8eccf390d74986f75ecb6752a513d485"><param name="Name" value="totalUserDataBytesSent"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#55338d840de0ab779fce0adbad13035f"><param name="Name" value="Update"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#61ab6246afa94f10534d00eb72b72e48"><param name="Name" value="UpdateWindowSizeAndAckOnAckPerSyn"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#99cc63d23201e61352fb33485a039d34"><param name="Name" value="UpdateWindowSizeAndAckOnAckPreSlowStart"></OBJECT>
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1CDKey__Add.html"><param name="Name" value="RakNet::CDKey_Add"></OBJECT>
   <UL>
@@ -3042,6 +2940,7 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Connection__RM3.html#1d176e2d5c47c15ca341d8efaecb637e5a5b467fa02165891a53b941b0e20516"><param name="Name" value="QUERY_REPLICA_FOR_CONSTRUCTION"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Connection__RM3.html#1d176e2d5c47c15ca341d8efaecb637e6798d0f74d05dc9577b6fa5917b7aea5"><param name="Name" value="QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Connection__RM3.html#918f5c8d69e2ede6c9469fd9ade96d32"><param name="Name" value="QueryConstructionMode"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Connection__RM3.html#adc711493e2022956fe51ea8592b57d2"><param name="Name" value="QueryGroupDownloadMessages"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Connection__RM3.html#b9692dc44dbe6dbfb5ee25fe0fad8b2f"><param name="Name" value="QueryReplicaList"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Connection__RM3.html#536d4413a4243b6732bc2a503d14d03e"><param name="Name" value="SerializeOnDownloadComplete"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Connection__RM3.html#d3661c8e40c359fc54bdc2066acb8dba"><param name="Name" value="SerializeOnDownloadStarted"></OBJECT>
@@ -3176,8 +3075,8 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#750b6a5d792d6f6c2532bfc7e3f74c99"><param name="Name" value="resultCode"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#48a3b558797a8b8ac79fa94cdb70f087"><param name="Name" value="Serialize"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#39a885f1a8d8b636e5c7bbeb13d4f822"><param name="Name" value="ServerDBImpl"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#510133c6c9db3b05b0494bcd028b99e3"><param name="Name" value="ServerPostDBMemoryImpl"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#09a07dc920666fc0d195253bbaf98b2c"><param name="Name" value="ServerPreDBMemoryImpl"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#62cc92ba3fb0e6562cf77d929d231a35"><param name="Name" value="ServerPostDBMemoryImpl"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#5213270ccd16a7bc6afc8df001b623e7"><param name="Name" value="ServerPreDBMemoryImpl"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#f510ed0df868969f12118ea32027334b"><param name="Name" value="ValidateBinary"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#ec0eeb9161acabd01464f4b875abed31"><param name="Name" value="ValidateEmailAddress"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#6a85caa9e47c7d9fec7f156c5e7c723a"><param name="Name" value="ValidateHandle"></OBJECT>
@@ -3229,15 +3128,15 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#3db350e8d2e35e6a40f43ee4026bff20"><param name="Name" value="ExecuteCommand"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#b160cae2c448814f99100a6f66584f6e"><param name="Name" value="GetConfigurationProperties"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#a498fdb38fcac5e2391ab38cca3c5a5d"><param name="Name" value="GetPresence"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#9bca468914291615e1a20436537e562c"><param name="Name" value="IsAdminAddress"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#36b42e990f9116678d60ad403dcb0fc4"><param name="Name" value="IsRankingAddress"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#27ce393bde81f54fbf6c64763a5e5eea"><param name="Name" value="HasAdminAddress"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#d72697445e87c271d0edbf1f9ecab1aa"><param name="Name" value="HasRankingAddress"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#c44139cfb3eddb807ccc52876d9dcf43"><param name="Name" value="OnClosedConnection"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#daaaf6224637d7200f0d7f7edfc81199"><param name="Name" value="OnReceive"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#4d2add6952f20f6ff7444c1376458ece"><param name="Name" value="RemoveAdminAddress"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#29356d89b8170173ee25de6a355b276e"><param name="Name" value="RemoveRankingAddress"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#8731d899b0f74fd6bc44a1f8ca190618"><param name="Name" value="SendMessage"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#8b3640fa28be5dafecfe591db7f83830"><param name="Name" value="SendMessage"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#35bbe780affcd6e90b39c871947cd324"><param name="Name" value="SetConfigurationProperties"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#3a3aa313404c80643fad1f2d26869a0c"><param name="Name" value="SetPresence"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#9d8ec1bac73bac3c2eefe6f6b0f700d7"><param name="Name" value="SetPresence"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#e8e80230834a7900980d3f432987b7a4"><param name="Name" value="SetRoomsPlugin"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#5fedfb42550ed287ca9eb2704c2ff3e2"><param name="Name" value="SetRoomsPluginAddress"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#0be4a5360e7a8480a11f18e80854e264"><param name="Name" value="Update"></OBJECT>
@@ -3269,7 +3168,7 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Platform__Shutdown.html#e21a37db0fcb6f4b203e6c7479bc761f"><param name="Name" value="RequiresAdmin"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Platform__Shutdown.html#bd238a3ff70cad231ebd5d99cb266e49"><param name="Name" value="RequiresLogin"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Platform__Shutdown.html#fbea2e994bac77e77f61eab7e8ab1bbe"><param name="Name" value="RequiresRankingPermission"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Platform__Shutdown.html#d468df2e5f6029ebe5a407caba1c0d14"><param name="Name" value="ServerPreDBMemoryImpl"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Platform__Shutdown.html#4f3440dc86865202cf317070b0d645c9"><param name="Name" value="ServerPreDBMemoryImpl"></OBJECT>
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Platform__Startup.html"><param name="Name" value="RakNet::Platform_Startup"></OBJECT>
   <UL>
@@ -3278,7 +3177,7 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Platform__Startup.html#da5fbe07c87e8c3c49b38a6f311832f3"><param name="Name" value="RequiresAdmin"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Platform__Startup.html#da97cec637e7093116b808c680cb7ce7"><param name="Name" value="RequiresLogin"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Platform__Startup.html#0ee1167e8d805c71dd783c5856cadbdc"><param name="Name" value="RequiresRankingPermission"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Platform__Startup.html#1d0cbd6cad379a13d02b7147ded8a47c"><param name="Name" value="ServerPreDBMemoryImpl"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Platform__Startup.html#70d828b8a3a8789d9ff15e48f520ee15"><param name="Name" value="ServerPreDBMemoryImpl"></OBJECT>
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1RakString.html"><param name="Name" value="RakNet::RakString"></OBJECT>
   <UL>
@@ -3549,6 +3448,7 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1ReplicaManager3.html#75ea8255f9ddf997c39a2ebc478e4773"><param name="Name" value="GetReplicasCreatedByMe"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1ReplicaManager3.html#4f7e8d40cf70d0aadccb6c3246ad34c4"><param name="Name" value="GetWorldID"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1ReplicaManager3.html#d2a6adcbf6c801ee785749968b067303"><param name="Name" value="OnClosedConnection"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1ReplicaManager3.html#f2251f16c8f5146cdfe8b927543177ee"><param name="Name" value="OnDetach"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1ReplicaManager3.html#d48a5e48d1fcc95c65c6089325d48c93"><param name="Name" value="OnNewConnection"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1ReplicaManager3.html#d812ceecfe3150b78236382d7a6a2784"><param name="Name" value="OnRakPeerShutdown"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1ReplicaManager3.html#0cdd79247e16ca120ed9d13c1fca60ed"><param name="Name" value="OnReceive"></OBJECT>
@@ -3911,7 +3811,7 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#7e4acf3fe2eb879a8ae3f5b79a8fbe8fd9273d09ff018b9c1eaa2556e3d2c921"><param name="Name" value="BROADCAST_SERIALIZATION_GENERIC_TO_SYSTEM"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#7e4acf3fe2eb879a8ae3f5b79a8fbe8f69bc86bb60794642bf309c3ef9602111"><param name="Name" value="BROADCAST_VISIBILITY_FALSE_TO_SYSTEM"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#7e4acf3fe2eb879a8ae3f5b79a8fbe8ff50707c52c4385446b4a3044a4098961"><param name="Name" value="BROADCAST_VISIBILITY_TRUE_TO_SYSTEM"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#9e8ea1fae25cf585c91a2821b6a5589a"><param name="Name" value="CanConnect"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#1b3644d668610a1cb839748907c83e65"><param name="Name" value="CanConnect"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#aa2d77435e0bf2c56c77f6f41739d4b4"><param name="Name" value="GetTime"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#e83fee0c0efb646482d2901b2f6cc017"><param name="Name" value="GetTimeNS"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#81848fd95488939c0b3e217209f3113985b9244642c4226779a1702153310147"><param name="Name" value="NAT_TYPE_ADDRESS_RESTRICTED"></OBJECT>
@@ -3922,8 +3822,8 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#81848fd95488939c0b3e217209f3113916b9a0a7400130f9f1b046426a8ae7d0"><param name="Name" value="NAT_TYPE_SUPPORTS_UPNP"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#81848fd95488939c0b3e217209f311390fe9820fcb6c01ea039c04165f8a38f8"><param name="Name" value="NAT_TYPE_SYMMETRIC"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#81848fd95488939c0b3e217209f311390f4cdc67acdc19e4287f0b44a0c91945"><param name="Name" value="NAT_TYPE_UNKNOWN"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#1233cd583b9586486afa8f39d23b4f13"><param name="Name" value="NATTypeDetectionResultToString"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#c8ba12f06cb89d6c5099190c87efeb4b"><param name="Name" value="NATTypeDetectionResultToStringFriendly"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#c89c0a6308f35b933825a354dbf4a219"><param name="Name" value="NATTypeDetectionResultToString"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#a400a447c631b730d879855b65fe2f67"><param name="Name" value="NATTypeDetectionResultToStringFriendly"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#7e4acf3fe2eb879a8ae3f5b79a8fbe8f3ba1336f85ee9bbd6bde208205bf3503"><param name="Name" value="RELAY_DESTRUCTION_TO_SYSTEMS"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#7e4acf3fe2eb879a8ae3f5b79a8fbe8fb1f683febac9a714f106b37508b939d4"><param name="Name" value="RELAY_SERIALIZATION_TO_SYSTEMS"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#7e4acf3fe2eb879a8ae3f5b79a8fbe8fe522dc25396e79c8bc483c67606579ee"><param name="Name" value="RELAY_VISIBILITY_FALSE_TO_SYSTEMS"></OBJECT>
@@ -4337,8 +4237,6 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classReceiveDownloadCompleteInterface.html#df34f389657d65d5fa756f9fbd6ca3bb"><param name="Name" value="ReceiveDownloadComplete"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classReceiveDownloadCompleteInterface.html"><param name="Name" value="ReceiveDownloadCompleteInterface"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakVoice.html#5393d4704f712f0e1fd2dea1b8b66a41"><param name="Name" value="ReceiveFrame"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#055271fe5ad776eec681349e31d13868"><param name="Name" value="ReceiverCalculateDataArrivalRate"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#c8a4b72191a1685746204848812e54a8"><param name="Name" value="ReceiverCalculateDataArrivalRateMedian"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classReplica.html#9077bbe9b0a2e4804be48e2f5119ccb0"><param name="Name" value="ReceiveScopeChange"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1RoomsPluginNotification.html#f3878db35234840b3c841d6bb8ecc642"><param name="Name" value="recipient"></OBJECT>
   <UL>
@@ -4881,7 +4779,6 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classReliabilityLayer.html#cffaa7f6bedf9bc7c6c2cd2e20589b7d"><param name="Name" value="ReliabilityLayer"></OBJECT>
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classFullyConnectedMesh2.html#e38791d1069d82e4d2ef967eb68f6bbf"><param name="Name" value="ResetHostCalculation"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#2e4579352bde32c43e7237aa1ad54cf8"><param name="Name" value="ResetOnDataArrivalHalveSNDOnNoDataTime"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1BitStream.html#aa64a4efffbfc9f5e527061bb82126b8"><param name="Name" value="ResetReadPointer"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1BitStream.html#9254b23b2873496aab84d2637d7488ee"><param name="Name" value="ResetWritePointer"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#750b6a5d792d6f6c2532bfc7e3f74c99"><param name="Name" value="resultCode"></OBJECT>
@@ -5023,7 +4920,6 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="group__PLUGIN__INTERFACE__GROUP.html#gg5ac73e41e819ce2fab41a083a2066ed633713ec7db4a51ea845fd0c8358b4568"><param name="Name" value="RR_STOP_PROCESSING"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="group__PLUGIN__INTERFACE__GROUP.html#gg5ac73e41e819ce2fab41a083a2066ed693f5747162bb665fcee074fbcda03aeb"><param name="Name" value="RR_STOP_PROCESSING_AND_DEALLOCATE"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#d09e4ac8d31b115425d20bd01993567a"><param name="Name" value="rsacrypt"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#860d3d061c314f419d0e5cd1aba7136e"><param name="Name" value="RTT"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="Rand_8h.html#b906455689fe29d53488741dcb85144c"><param name="Name" value="seedMT"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classEmailSender.html#1cfdbcbbb272ddcf0ac54e830cc29d1b"><param name="Name" value="Send"></OBJECT>
   <UL>
@@ -5085,7 +4981,7 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#888819dc988a3282c41db84ee0a00b6e"><param name="Name" value="RakPeer"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeerInterface.html#aa2ae363bd5a7f8f631bf8b949681df1"><param name="Name" value="RakPeerInterface"></OBJECT>
   </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#8731d899b0f74fd6bc44a1f8ca190618"><param name="Name" value="SendMessage"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#8b3640fa28be5dafecfe591db7f83830"><param name="Name" value="SendMessage"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f"><param name="Name" value="SendMsg"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Client.html#95ce0205949b6129eaa2401a86d71eeb"><param name="Name" value="SendMsgAndDealloc"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structInternalPacket.html#f521f6294271de4e6b45e1bbe3dac61a"><param name="Name" value="sendReceiptSerial"></OBJECT>
@@ -5246,12 +5142,12 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1BitStream.html#62e28b643291d050ca0984b432753e8f"><param name="Name" value="SerializeVector"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Replica2.html#fd126c1f7373570325f0e38586274bf0"><param name="Name" value="SerializeVisibility"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#39a885f1a8d8b636e5c7bbeb13d4f822"><param name="Name" value="ServerDBImpl"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#510133c6c9db3b05b0494bcd028b99e3"><param name="Name" value="ServerPostDBMemoryImpl"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#09a07dc920666fc0d195253bbaf98b2c"><param name="Name" value="ServerPreDBMemoryImpl"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#62cc92ba3fb0e6562cf77d929d231a35"><param name="Name" value="ServerPostDBMemoryImpl"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#5213270ccd16a7bc6afc8df001b623e7"><param name="Name" value="ServerPreDBMemoryImpl"></OBJECT>
   <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#09a07dc920666fc0d195253bbaf98b2c"><param name="Name" value="RakNet::Lobby2Message"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Platform__Shutdown.html#d468df2e5f6029ebe5a407caba1c0d14"><param name="Name" value="RakNet::Platform_Shutdown"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Platform__Startup.html#1d0cbd6cad379a13d02b7147ded8a47c"><param name="Name" value="RakNet::Platform_Startup"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Lobby2Message.html#5213270ccd16a7bc6afc8df001b623e7"><param name="Name" value="RakNet::Lobby2Message"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Platform__Shutdown.html#4f3440dc86865202cf317070b0d645c9"><param name="Name" value="RakNet::Platform_Shutdown"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Platform__Startup.html#70d828b8a3a8789d9ff15e48f520ee15"><param name="Name" value="RakNet::Platform_Startup"></OBJECT>
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structDataStructures_1_1Table_1_1Cell.html#f9025af5d98187d83c14c542755a87ac"><param name="Name" value="Set"></OBJECT>
   <UL>
@@ -5360,7 +5256,6 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeerInterface.html#43ab3da8e2a95f71f232f95a2593ba9f"><param name="Name" value="RakPeerInterface"></OBJECT>
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Plugin.html#ea2398d48dc769d0d88b7819601636c4"><param name="Name" value="SetMessageFactory"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#0b1c120767dc4a2be1ee07a0f3bb65bb"><param name="Name" value="SetMTU"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classDataStructures_1_1Multilist.html#054b07faf5e383569219911f18615a39"><param name="Name" value="SetMultilistType"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classNetworkIDObject.html#87058cf5f2ae5d3e7722b3c21cc4ee84"><param name="Name" value="SetNetworkID"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classNetworkIDObject.html#9d961af54fed1645da8e9b3b216ccab9"><param name="Name" value="SetNetworkIDManager"></OBJECT>
@@ -5373,7 +5268,6 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="group__RAKNET__RPC.html#g3dd3a014e7e3ab37489fdc3d9c77d072"><param name="Name" value="RakPeer"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="group__RAKNET__RPC.html#g2213ab20dee5f864383e559e3d8cac7e"><param name="Name" value="RakPeerInterface"></OBJECT>
   </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#ce0d603d0ea12c812e5a16f2911a2848"><param name="Name" value="SetNextSYNUpdate"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakVoice.html#47c64a6bf3ee923e2eb70bb107b3a3dc"><param name="Name" value="SetNoiseFilter"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1BitStream.html#ba6bd33c456e1593e002207bc3ec5c28"><param name="Name" value="SetNumberOfBitsAllocated"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#8324e15260b26b92abb204ed9f04ff57"><param name="Name" value="SetOccasionalPing"></OBJECT>
@@ -5401,7 +5295,7 @@
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1FunctionThread.html#6dbf87aa1bb2dfa670f21822c2ba5026"><param name="Name" value="SetPostResultFunction"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classPacketLogger.html#2b86ff6142d4ed69858af8e01db54141"><param name="Name" value="SetPrefix"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#3a3aa313404c80643fad1f2d26869a0c"><param name="Name" value="SetPresence"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#9d8ec1bac73bac3c2eefe6f6b0f700d7"><param name="Name" value="SetPresence"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1RoomsPlugin.html#db6f41986a08d0c82cb284e83f68e272"><param name="Name" value="SetProfanityFilter"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classConsoleServer.html#80e041496501dfeb5bbc14316889e1fb"><param name="Name" value="SetPrompt"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structDataStructures_1_1Table_1_1Cell.html#e85207fbf2e07fad48c12fc002e01c43"><param name="Name" value="SetPtr"></OBJECT>
@@ -5502,7 +5396,6 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1ReplicaManager3.html#bd277d2c0b25c5e5864a23fa32c96606"><param name="Name" value="SetWorldID"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1BitStream.html#a56ebc6a1381369ddc2a6d7821512d7e"><param name="Name" value="SetWriteOffset"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#303003eed8c97558f6c9b2657f76a7ae"><param name="Name" value="ShiftIncomingTimestamp"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#8bccdc59401e7c858a5ad6622c22b089"><param name="Name" value="ShouldSendACKs"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1UDPForwarder.html#601f4783a6c32353a99c26d0996f0500"><param name="Name" value="Shutdown"></OBJECT>
   <UL>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1UDPForwarder.html#601f4783a6c32353a99c26d0996f0500"><param name="Name" value="RakNet::UDPForwarder"></OBJECT>
@@ -5520,7 +5413,6 @@
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Client__PerTitleBinaryStorage.html#1941cb380e473db17c109d71dcaacc61"><param name="Name" value="slotIndex"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1TeamBalancer.html#615ce461958441f9a0a559ba14610172b1c6831e34276d7f8c8327f292f0afb3"><param name="Name" value="SMALLEST_TEAM"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#af5b074b6ec43f211853d5c168150ab6"><param name="Name" value="SND"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structSocketDescriptor.html"><param name="Name" value="SocketDescriptor"></OBJECT>
   <UL>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="structSocketDescriptor.html#8a54bfe40bf0c9644adaee66270ca57d"><param name="Name" value="hostAddress"></OBJECT>
@@ -5671,7 +5563,6 @@
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1RakString.html#79f546baedf74c64a820297b40590250"><param name="Name" value="ToInteger"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1RakString.html#3fb93d1bd2bb2ce06c4797956f89f476"><param name="Name" value="ToLower"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#8eccf390d74986f75ecb6752a513d485"><param name="Name" value="totalUserDataBytesSent"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1RakString.html#a4c723f521bede5c1bd468f499509bdd"><param name="Name" value="ToUpper"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classLogCommandParser.html#8a15d53a3c14a1708c047fb9890a6adf"><param name="Name" value="trans"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classTransportInterface.html"><param name="Name" value="TransportInterface"></OBJECT>
@@ -5733,7 +5624,6 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classNatPunchthroughClient.html#e20967bc02cbf3e71c50e378eef3daba"><param name="Name" value="NatPunchthroughClient"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classNatPunchthroughServer.html#461d8f91f5820e6d85a847f7f6284c29"><param name="Name" value="NatPunchthroughServer"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classPluginInterface2.html#3ae050232a13186f812e8ecb493fb53b"><param name="Name" value="PluginInterface2"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#55338d840de0ab779fce0adbad13035f"><param name="Name" value="RakNet::CCRakNetUDT"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1Lobby2Server.html#0be4a5360e7a8480a11f18e80854e264"><param name="Name" value="RakNet::Lobby2Server"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1NatTypeDetectionClient.html#706c3f546daf15fa38abed920bb3fb4f"><param name="Name" value="RakNet::NatTypeDetectionClient"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1NatTypeDetectionServer.html#7df6c37944e93fac0f440666ee619cef"><param name="Name" value="RakNet::NatTypeDetectionServer"></OBJECT>
@@ -5763,8 +5653,6 @@
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#886adb8f6d621863a031f7eee9ce3041"><param name="Name" value="updateCycleIsRunning"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classLightweightDatabaseClient.html#b2c1a21f6c79c6a16a38f581eec18a98"><param name="Name" value="UpdateRow"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#61ab6246afa94f10534d00eb72b72e48"><param name="Name" value="UpdateWindowSizeAndAckOnAckPerSyn"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html#99cc63d23201e61352fb33485a039d34"><param name="Name" value="UpdateWindowSizeAndAckOnAckPreSlowStart"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1RakString.html#665ee6e312ae9770d96732ea7eac8222"><param name="Name" value="URLDecode"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakNet_1_1RakString.html#ac87f8015d01c5c973c259066d96b4f0"><param name="Name" value="URLEncode"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="structRakNet_1_1Client__GetPresence.html#78f8cf13a7f249e68ea357616d9ff4d5"><param name="Name" value="userHandle"></OBJECT>

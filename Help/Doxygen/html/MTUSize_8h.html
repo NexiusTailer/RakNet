@@ -33,8 +33,6 @@
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Defines</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="MTUSize_8h.html#b463e7cce50e0fa472b4b08ac0fe258c">DEFAULT_MTU_SIZE</a>&nbsp;&nbsp;&nbsp;1492</td></tr>
-
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="MTUSize_8h.html#39d9da73f39bf9acabfc9e0ad2ae97c5">MAXIMUM_MTU_SIZE</a>&nbsp;&nbsp;&nbsp;1492</td></tr>
 
 </table>
@@ -43,12 +41,12 @@
 <p>
 This file is part of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> Copyright 2003 Jenkins Software LLC<p>
 Usage of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> is subject to the appropriate license agreement. <hr><h2>Define Documentation</h2>
-<a class="anchor" name="b463e7cce50e0fa472b4b08ac0fe258c"></a><!-- doxytag: member="MTUSize.h::DEFAULT_MTU_SIZE" ref="b463e7cce50e0fa472b4b08ac0fe258c" args="" -->
+<a class="anchor" name="39d9da73f39bf9acabfc9e0ad2ae97c5"></a><!-- doxytag: member="MTUSize.h::MAXIMUM_MTU_SIZE" ref="39d9da73f39bf9acabfc9e0ad2ae97c5" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define DEFAULT_MTU_SIZE&nbsp;&nbsp;&nbsp;1492          </td>
+          <td class="memname">#define MAXIMUM_MTU_SIZE&nbsp;&nbsp;&nbsp;1492          </td>
         </tr>
       </table>
 </div>
@@ -66,30 +64,15 @@ The MTU size to use if RakPeer::SetMTUSize() is not called. <dl class="remark" c
 <li><em>1460</em>. Usable by AOL if you don't have large email attachments, etc. </li>
 <li><em>1430</em>. The size VPN and PPTP prefer. </li>
 <li><em>1400</em>. Maximum size for AOL DSL. </li>
-<li><em>576</em>. Typical value to connect to dial-up ISPs. </li>
+<li><em>576</em>. Typical value to connect to dial-up ISPs. The largest value for an UDP datagram </li>
 </ul>
 </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="39d9da73f39bf9acabfc9e0ad2ae97c5"></a><!-- doxytag: member="MTUSize.h::MAXIMUM_MTU_SIZE" ref="39d9da73f39bf9acabfc9e0ad2ae97c5" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MAXIMUM_MTU_SIZE&nbsp;&nbsp;&nbsp;1492          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-The largest value for an UDP datagram <dl class="see" compact><dt><b>See also:</b></dt><dd>RakPeer::SetMTUSize() </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd>RakPeer::SetMTUSize() </dd></dl>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 1 11:00:20 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 1 10:29:08 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

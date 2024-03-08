@@ -76,9 +76,14 @@ int main(int argc, char **argv)
 	AutopatcherClient autopatcherClient;
 	FileListTransfer fileListTransfer;
 	autopatcherClient.SetFileListTransferPlugin(&fileListTransfer);
+	unsigned short localPort=0;
+	if (argc>=6)
+	{
+		localPort=atoi(argv[5]);
+	}
 #ifdef USE_TCP
 	PacketizedTCP packetizedTCP;
-	if (packetizedTCP.Start(0,1)==false)
+	if (packetizedTCP.Start(localPort,1)==false)
 	{
 		printf("Failed to start TCP. Is the port already in use?");
 		return 1;
@@ -88,7 +93,7 @@ int main(int argc, char **argv)
 #else
 	RakPeerInterface *rakPeer;
 	rakPeer = RakNetworkFactory::GetRakPeerInterface();
-	SocketDescriptor socketDescriptor(0,0);
+	SocketDescriptor socketDescriptor(localPort,0);
 	rakPeer->Startup(1,0,&socketDescriptor, 1);
 	// Plugin will send us downloading progress notifications if a file is split to fit under the MTU 10 or more times
 	rakPeer->SetSplitMessageProgressInterval(10);
@@ -138,7 +143,7 @@ int main(int argc, char **argv)
 	else
 		strcpy(appName, argv[3]);
 
-	bool patchImmediately=argc==5 && argv[4][0]=='1';
+	bool patchImmediately=argc>=5 && argv[4][0]=='1';
 
 	if (patchImmediately==false)
 		printf("Hit 'q' to quit, 'p' to patch, 'c' to cancel the patch. 'r' to reconnect. 'd' to disconnect.\n");

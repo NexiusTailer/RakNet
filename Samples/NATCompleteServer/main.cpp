@@ -63,7 +63,7 @@ struct NatTypeDetectionServerFramework : public SampleFramework
 			char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
 			unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
 			SocketLayer::GetMyIP( ipList, binaryAddresses );
-			for (int i=0; i<5; i++)
+			for (int i=0; i<4; i++)
 			{
 				if (ipList[i][0]==0 && i < MAXIMUM_NUMBER_OF_INTERNAL_IDS)
 				{

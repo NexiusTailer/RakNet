@@ -150,10 +150,6 @@ void main(void)
 		// This sleep keeps RakNet responsive
 		RakSleep(30);
 
-		if (kbhit())
-		{
-		}
-
 		//printf("%i ", lobby2Server.GetUsers().Size());
 	}
 

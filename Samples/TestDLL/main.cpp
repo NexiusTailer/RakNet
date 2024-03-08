@@ -6,7 +6,6 @@
 #include "FileOperations.h"
 #include "RakMemoryOverride.h"
 #include "DS_List.h"
-#include "UPNPPortForwarder.h"
 
 void* MyMalloc (size_t size)
 {

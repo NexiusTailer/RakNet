@@ -58,6 +58,7 @@ void NatTypeDetectionClient::OnCompletion(NATTypeDetectionResult result)
 	p->systemAddress.systemIndex=(SystemIndex)-1;
 	p->guid=rakPeerInterface->GetGuidFromSystemAddress(serverAddress);
 	p->data[1]=(unsigned char) result;
+	p->bypassPlugins=true;
 	rakPeerInterface->PushBackPacket(p, true);
 
 	// Symmetric and port restricted are determined by server, so no need to notify server we are done
@@ -84,7 +85,7 @@ void NatTypeDetectionClient::Update(void)
 		int len;
 		SystemAddress sender;
 		len=NatTypeRecvFrom(data, c2, sender);
-		if (len==1 && data[0]==NAT_TYPE_NONE && sender==serverAddress)
+		if (len==1 && data[0]==NAT_TYPE_NONE)
 		{
 			OnCompletion(NAT_TYPE_NONE);
 			RakAssert(IsInProgress()==false);
@@ -93,7 +94,7 @@ void NatTypeDetectionClient::Update(void)
 }
 PluginReceiveResult NatTypeDetectionClient::OnReceive(Packet *packet)
 {
-	if (IsInProgress() && packet->systemAddress==serverAddress)
+	if (IsInProgress())
 	{
 		switch (packet->data[0])
 		{

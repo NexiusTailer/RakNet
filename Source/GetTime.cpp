@@ -20,7 +20,6 @@
 DWORD mProcMask;
 DWORD mSysMask;
 HANDLE mThread;
-static LARGE_INTEGER yo;
 #elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
                                                                                                                                                                                                   
 #else
@@ -94,14 +93,17 @@ RakNetTimeUS GetTimeUS_Windows( void )
 	}	
 
 	// 9/26/2010 In China running LuDaShi, QueryPerformanceFrequency has to be called every time because CPU clock speeds can be different
-	QueryPerformanceFrequency( &yo );
 	RakNetTimeUS curTime;
 	LARGE_INTEGER PerfVal;
+	LARGE_INTEGER yo1;
+
+	QueryPerformanceFrequency( &yo1 );
 	QueryPerformanceCounter( &PerfVal );
+
 	__int64 quotient, remainder;
-	quotient=((PerfVal.QuadPart) / yo.QuadPart);
-	remainder=((PerfVal.QuadPart) % yo.QuadPart);
-	curTime = (RakNetTimeUS) quotient*(RakNetTimeUS)1000000 + (remainder*(RakNetTimeUS)1000000 / yo.QuadPart);
+	quotient=((PerfVal.QuadPart) / yo1.QuadPart);
+	remainder=((PerfVal.QuadPart) % yo1.QuadPart);
+	curTime = (RakNetTimeUS) quotient*(RakNetTimeUS)1000000 + (remainder*(RakNetTimeUS)1000000 / yo1.QuadPart);
 
 #if defined(GET_TIME_SPIKE_LIMIT) && GET_TIME_SPIKE_LIMIT>0
 	return NormalizeTime(curTime);

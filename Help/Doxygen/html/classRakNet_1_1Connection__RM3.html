@@ -69,6 +69,9 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#d3f7cec74bfac88a3ae095664e6a29c0">GetRakNetGUID</a> (void) const </td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#adc711493e2022956fe51ea8592b57d2">QueryGroupDownloadMessages</a> (void) const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return whether or not downloads to our system should all be processed the same tick (call to <a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7" title="Gets a message from the incoming message queue.">RakPeer::Receive()</a> ).  <a href="#adc711493e2022956fe51ea8592b57d2"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="classRakNet_1_1Connection__RM3.html#1d176e2d5c47c15ca341d8efaecb637e">ConstructionMode</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#918f5c8d69e2ede6c9469fd9ade96d32">QueryConstructionMode</a> (void) const </td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Queries how to get the list of objects that exist on remote systems.  <a href="#918f5c8d69e2ede6c9469fd9ade96d32"></a><br></td></tr>
@@ -322,6 +325,30 @@ The default of calling QueryConstruction for every known object is easy to use, 
 
 </div>
 </div><p>
+<a class="anchor" name="adc711493e2022956fe51ea8592b57d2"></a><!-- doxytag: member="RakNet::Connection_RM3::QueryGroupDownloadMessages" ref="adc711493e2022956fe51ea8592b57d2" args="(void) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool RakNet::Connection_RM3::QueryGroupDownloadMessages           </td>
+          <td>(</td>
+          <td class="paramtype">void&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const<code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Return whether or not downloads to our system should all be processed the same tick (call to <a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7" title="Gets a message from the incoming message queue.">RakPeer::Receive()</a> ). 
+<p>
+Normally the system will send ID_REPLICA_MANAGER_DOWNLOAD_STARTED, ID_REPLICA_MANAGER_CONSTRUCTION for all downloaded objects, ID_REPLICA_MANAGER_SERIALIZE for each downloaded object, and lastly ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE. This enables the application to show a downloading splash screen on ID_REPLICA_MANAGER_DOWNLOAD_STARTED, a progress bar, and to close the splash screen and activate all objects on ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE However, if the application was not set up for this then it would result in incomplete objects spread out over time, and cause problems If you return true from <a class="el" href="classRakNet_1_1Connection__RM3.html#adc711493e2022956fe51ea8592b57d2" title="Return whether or not downloads to our system should all be processed the same tick...">QueryGroupDownloadMessages()</a>, then these messages will be returned all in one tick, returned only when the download is complete <dl class="note" compact><dt><b>Note:</b></dt><dd>ID_REPLICA_MANAGER_DOWNLOAD_STARTED calls the callback <a class="el" href="classRakNet_1_1Connection__RM3.html#cf23e94dddb214cf0d631fe074cd4467">DeserializeOnDownloadStarted()</a> <p>
+ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE calls the callback <a class="el" href="classRakNet_1_1Connection__RM3.html#293a2c18871dc91410953e931d90ca52">DeserializeOnDownloadComplete()</a> </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="b9692dc44dbe6dbfb5ee25fe0fad8b2f"></a><!-- doxytag: member="RakNet::Connection_RM3::QueryReplicaList" ref="b9692dc44dbe6dbfb5ee25fe0fad8b2f" args="(DataStructures::Multilist&lt; ML_STACK, Replica3 *, Replica3 * &gt; newReplicasToCreate, DataStructures::Multilist&lt; ML_STACK, Replica3 *, Replica3 * &gt; existingReplicasToDestroy)" -->
 <div class="memitem">
 <div class="memproto">
@@ -419,7 +446,7 @@ When a new connection connects, before sending any objects, <a class="el" href="
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/RakNet/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 1 11:00:23 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 1 10:29:11 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

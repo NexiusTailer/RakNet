@@ -112,4 +112,15 @@
 #define GET_TIME_SPIKE_LIMIT 0
 #endif
 
+// Use sliding window congestion control instead of ping based congestion control
+#ifndef USE_SLIDING_WINDOW_CONGESTION_CONTROL
+#define USE_SLIDING_WINDOW_CONGESTION_CONTROL 1
+#endif
+
+// When a large message is arriving, preallocate the memory for the entire block
+// This results in large messages not taking up time to reassembly with memcpy, but is vulnerable to attackers causing the host to run out of memory
+#ifndef PREALLOCATE_LARGE_MESSAGES
+#define PREALLOCATE_LARGE_MESSAGES 0
+#endif
+
 #endif // __RAKNET_DEFINES_H

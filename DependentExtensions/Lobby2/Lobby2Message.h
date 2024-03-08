@@ -252,10 +252,10 @@ struct Lobby2Message
 	/// Do any Lobby2Server	functionality when the message first arrives on the server, and after it has returned true from PrevalidateInput()
 	/// If it returns true, the message has been handled, and the result is sent to the client
 	/// If it returns false, the message continues to ServerDBImpl
-	virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress );
+	virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, RakString userHandle );
 
 	/// Do any Lobby2Server	functionality after the message has been processed by the database, in the server thread.
-	virtual void ServerPostDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress );
+	virtual void ServerPostDBMemoryImpl( Lobby2Server *server, RakString userHandle );
 	
 	/// Do any Lobby2Server	functionality when the message is processed in a database thread on the server.
 	/// It is safe to do slow database calls in this function.
@@ -841,7 +841,7 @@ struct Platform_Startup : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 	virtual bool PrevalidateInput(void) {return true;}
-	virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; return true; }
+	virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, RakString userHandle ) { (void)server; (void)userHandle; return true; }
 };
 
 /// \brief Platform specific startup. Unused on the PC
@@ -854,7 +854,7 @@ struct Platform_Shutdown : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 	virtual bool PrevalidateInput(void) {return true;}
-	virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; return true; }
+	virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, RakString userHandle ) { (void)server; (void)userHandle; return true; }
 };
 
 /// \brief Create all tables and stored procedures on a system that does not already have them
@@ -1126,6 +1126,8 @@ struct CDKey_FlagStolen : public Lobby2Message
 struct Client_Login : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_Login)
+	Client_Login() {allowMultipleLogins=false;}
+	virtual ~Client_Login() {}
 	virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return true;}
@@ -1136,6 +1138,7 @@ struct Client_Login : public Lobby2Message
 
 	// Input parameters
 	RakNet::RakString userPassword;
+	bool allowMultipleLogins; // PC only, allow login with the same username from multiple computers at once
 	// Used if check 
 	RakNet::RakString titleName;
 	RakNet::RakString titleSecretKey;
@@ -1515,7 +1518,7 @@ struct Client_SetPresence : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return true;}
 	virtual bool RequiresLogin(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
-//	virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress );
+//	virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, RakString userHandle );
 
 	/// \param[in] Presence info to set.
 	RakNet::Lobby2Presence presence;
@@ -1531,7 +1534,7 @@ struct Client_GetPresence : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return true;}
 	virtual bool RequiresLogin(void) const {return false;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
-//	virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress );
+//	virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, RakString userHandle );
 
 	/// \param[in] Which user we are looking up ( can be ourselves )
 	RakNet::RakString userHandle;
@@ -1737,7 +1740,7 @@ struct Emails_Send : public Lobby2Message
 {
 
 	Emails_Send() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
-	~Emails_Send() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
+	virtual ~Emails_Send() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
 
 	__L2_MSG_BASE_IMPL(Emails_Send)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -1761,14 +1764,20 @@ struct Emails_Send : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Emails_Get : public Lobby2Message
 {
+	Emails_Get() {unreadEmailsOnly=false; emailIdsOnly=false;}
+	virtual ~Emails_Get() {}
+
 	__L2_MSG_BASE_IMPL(Emails_Get)
-		virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return true;}
 	virtual bool RequiresLogin(void) const {return true;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
 	// Input parameters
+	bool unreadEmailsOnly;  //If this is true then it will only return emails that have not been read by the user.
+	bool emailIdsOnly; //When this is set only the emailIds are filled out and no data is returned.
+	DataStructures::List<unsigned int> emailsToRetrieve; //If this has entries then it will only get the emails in the list, otherwise it will get all emails.
 
 	// Output parameters
 	/// \param[out] emailResults Up to caller to deallocate binary data

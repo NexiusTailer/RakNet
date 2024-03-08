@@ -9,8 +9,13 @@
 #include "SocketLayer.h"
 #include "RakAssert.h"
 #include "RakNetTypes.h"
-#include "CCRakNetUDT.h"
 #include "GetTime.h"
+
+#if USE_SLIDING_WINDOW_CONGESTION_CONTROL!=1
+#include "CCRakNetUDT.h"
+#else
+#include "CCRakNetSlidingWindow.h"
+#endif
 
 
 SocketLayerOverride *SocketLayer::slo=0;
@@ -23,7 +28,9 @@ SocketLayerOverride *SocketLayer::slo=0;
 #include <arpa/inet.h>
 #include <errno.h>  // error numbers
 #include <stdio.h> // RAKNET_DEBUG_PRINTF
+#if !defined(ANDROID)
 #include <ifaddrs.h>
+#endif
 #include <netinet/in.h>
 #include <net/if.h>
 #include <sys/types.h>
@@ -119,6 +126,10 @@ bool SocketLayer::IsPortInUse(unsigned short port, const char *hostAddress)
 #if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
                                   
 #else
+	#if defined(_DEBUG)
+	if (ret == -1)
+		perror("Failed to bind to address:");
+	#endif
 	return ret <= -1;
 #endif
 }
@@ -1059,6 +1070,57 @@ void GetMyIP_Win32( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], unsigne
 		ipList[idx][0]=0;
 	}
 }
+#elif defined(ANDROID)
+void GetMyIP_Linux( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
+{
+	struct ifreq ifreqs[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
+	struct ifconf ifconf;
+	struct in_addr bin_addr;
+
+	memset(&ifconf,0,sizeof(ifconf));
+	ifconf.ifc_buf = (char*) (ifreqs);
+	ifconf.ifc_len = sizeof(ifreqs);
+
+	{ // get list of interfaces
+		int sock = socket(AF_INET,SOCK_STREAM,0);
+		if (sock < 0)
+		{
+			perror("Error creating socket");
+			return;
+		}
+		if ((ioctl(sock, SIOCGIFCONF, (char*) &ifconf  )) < 0 )
+		{
+			perror("Error returned from ioctl(SIOGIFCONF)");
+			ifconf.ifc_len = 0;
+		}
+		close(sock);
+	}
+
+	int idx = 0;
+	int iface_count =  ifconf.ifc_len/sizeof(struct ifreq);
+	printf("Interfaces (%d):\n", iface_count);
+	for( ; idx < iface_count; idx++)
+	{
+		char ip_addr[ 16/*INET_ADDRSTRLEN */];
+		struct sockaddr_in *b = (struct sockaddr_in *) &(ifreqs[idx].ifr_addr);
+		const char* host = inet_ntop(AF_INET, & b->sin_addr, ip_addr, sizeof ip_addr);
+		strcpy( ipList[idx], host );
+		if (inet_aton(host, &bin_addr) == 0)
+		{
+			perror("inet_aton error");
+			continue;
+		}
+		else
+		{
+			binaryAddresses[idx] = bin_addr.s_addr;
+		}
+		printf("\t%-10s\t%s (%08x)\n", ifreqs[idx].ifr_name, ipList[idx], binaryAddresses[idx]);
+	}
+	for ( ; idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ++idx )
+	{
+		ipList[idx][0]=0;
+	}
+}
 #elif !defined(_XBOX) && !defined(X360)
 void GetMyIP_Linux( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 {
@@ -1082,14 +1144,18 @@ void GetMyIP_Linux( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], unsigne
 				printf ("getnameinfo() failed: %s\n", gai_strerror(s));
 			}
 			printf ("IP address: %s\n", host);
-			strcpy( ipList[ idx ], host );
-			if (inet_aton(host, &linux_in_addr) == 0) {
-				perror("inet_aton");
+			if (strcmp(host,"127.0.0.1")!=0)
+			{
+				strcpy( ipList[ idx ], host );
+				if (inet_aton(host, &linux_in_addr) == 0) {
+					perror("inet_aton");
+				}
+				else {
+					binaryAddresses[idx]=linux_in_addr.s_addr;
+				}
+
+				idx++;
 			}
-			else {
-				binaryAddresses[idx]=linux_in_addr.s_addr;
-			}
-			idx++;
 		}
 	}
 

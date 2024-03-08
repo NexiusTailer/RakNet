@@ -211,6 +211,7 @@ void NatPunchthroughClient::PushFailure(void)
 		p->data[1]=1;
 	else
 		p->data[1]=0;
+	p->bypassPlugins=true;
 	rakPeerInterface->PushBackPacket(p, true);
 }
 void NatPunchthroughClient::OnPunchthroughFailure(void)
@@ -302,6 +303,9 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 			OnGetMostRecentPort(packet);
 			return RR_STOP_PROCESSING_AND_DEALLOCATE;
 		}
+	case ID_NAT_PUNCHTHROUGH_FAILED:
+	case ID_NAT_PUNCHTHROUGH_SUCCEEDED:
+		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 	case ID_OUT_OF_BAND_INTERNAL:
 		if (packet->length>=2 &&
 			(packet->data[1]==ID_NAT_ESTABLISH_UNIDIRECTIONAL || packet->data[1]==ID_NAT_ESTABLISH_BIDIRECTIONAL) &&
@@ -317,7 +321,8 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 
 			char ipAddressString[32];
 			packet->systemAddress.ToString(true,ipAddressString);
-			if (packet->data[1]==ID_NAT_ESTABLISH_UNIDIRECTIONAL)
+			// sp.targetGuid==packet->guid is because the internal IP addresses reported may include loopbacks not reported by RakPeer::IsLocalIP()
+			if (packet->data[1]==ID_NAT_ESTABLISH_UNIDIRECTIONAL && sp.targetGuid==packet->guid)
 			{
 				if (natPunchthroughDebugInterface)
 				{
@@ -385,7 +390,7 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 	case ID_NAT_CONNECTION_TO_TARGET_LOST:
 	case ID_NAT_TARGET_UNRESPONSIVE:
 		{
-			char *reason;
+			const char *reason;
 			if (packet->data[0]==ID_NAT_TARGET_NOT_CONNECTED)
 				reason="ID_NAT_TARGET_NOT_CONNECTED";
 			else if (packet->data[0]==ID_NAT_CONNECTION_TO_TARGET_LOST)
@@ -509,9 +514,17 @@ void NatPunchthroughClient::OnConnectAtTime(Packet *packet)
 	bs.Read(sp.sessionId);
 	bs.Read(sp.targetAddress);
 	//RakAssert(rakPeerInterface->IsConnected(sp.targetAddress,true,true)==false);
-	int j;
+	int j,k;
+	k=0;
 	for (j=0; j < MAXIMUM_NUMBER_OF_INTERNAL_IDS; j++)
-		bs.Read(sp.internalIds[j]);
+	{
+		SystemAddress id;
+		bs.Read(id);
+		char str[32];
+		id.ToString(false,str);
+		if (rakPeerInterface->IsLocalIP(str)==false)
+			sp.internalIds[k++]=id;
+	}
 	sp.attemptCount=0;
 	sp.retryCount=0;
 	if (pc.MAXIMUM_NUMBER_OF_INTERNAL_IDS_TO_CHECK>0)
@@ -737,6 +750,7 @@ void NatPunchthroughClient::PushSuccess(void)
 		p->data[1]=1;
 	else
 		p->data[1]=0;
+	p->bypassPlugins=true;
 	rakPeerInterface->PushBackPacket(p, true);
 }
 

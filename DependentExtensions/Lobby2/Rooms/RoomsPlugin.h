@@ -732,6 +732,8 @@ struct Bitstream_Notification : public RoomsPluginNotification {
 struct RoomsCallback
 {
 	// Results of calls
+	RoomsCallback() {}
+	virtual ~RoomsCallback() {}
 	virtual void CreateRoom_Callback( SystemAddress senderAddress, CreateRoom_Func *callResult) {(void) senderAddress; (void) callResult;}
 	virtual void EnterRoom_Callback( SystemAddress senderAddress, EnterRoom_Func *callResult) {(void) senderAddress; (void) callResult;}
 	virtual void JoinByFilter_Callback( SystemAddress senderAddress, JoinByFilter_Func *callResult) {(void) senderAddress; (void) callResult;}

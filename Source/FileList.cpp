@@ -1,10 +1,12 @@
 #include "FileList.h"
 #include <stdio.h> // RAKNET_DEBUG_PRINTF
 #include "RakAssert.h"
-#if defined(_WIN32) || defined(__CYGWIN__)
-	#include <io.h>
+#if defined(ANDROID)
+#include <asm/io.h>
+#elif defined(_WIN32) || defined(__CYGWIN__)
+#include <io.h>
 #elif !defined ( __APPLE__ ) && !defined ( __APPLE_CC__ ) && !defined ( __PPC__ ) && !defined ( __FreeBSD__ )
-	#include <sys/io.h>
+#include <sys/io.h>
 #endif
 #include "DS_Queue.h"
 #ifdef _WIN32 
@@ -117,7 +119,7 @@ void FileList::AddFile(const char *filepath, const char *filename, FileListNodeC
 		rakFree_Ex(data, __FILE__, __LINE__ );
 
 }
-void FileList::AddFile(const char *filename, const char *fullPathToFile, const char *data, const unsigned dataLength, const unsigned fileLength, FileListNodeContext context, bool isAReference)
+void FileList::AddFile(const char *filename, const char *fullPathToFile, const char *data, const unsigned dataLength, const unsigned fileLength, FileListNodeContext context, bool isAReference, bool takeDataPointer)
 {
 	if (filename==0)
 		return;
@@ -153,8 +155,15 @@ void FileList::AddFile(const char *filename, const char *fullPathToFile, const c
 //	size_t fileNameLen = strlen(filename);
 	if (dataLength && data)
 	{
-		n.data=(char*) rakMalloc_Ex( dataLength, __FILE__, __LINE__ );
-		memcpy(n.data, data, dataLength);
+		if (takeDataPointer)
+		{
+			n.data=(char*) data;
+		}
+		else
+		{
+			n.data=(char*) rakMalloc_Ex( dataLength, __FILE__, __LINE__ );
+			memcpy(n.data, data, dataLength);
+		}
 	}
 	else
 		n.data=0;
@@ -248,19 +257,24 @@ void FileList::AddFilesFromDirectory(const char *applicationDirectory, const cha
 					fileData= (char*) rakMalloc_Ex( fileInfo.size+HASH_LENGTH, __FILE__, __LINE__ );
 					fp = fopen(fullPath, "rb");
 					fread(fileData+HASH_LENGTH, fileInfo.size, 1, fp);
-					fclose(fp);
+					if (fp)
+					{
+						fileData= (char*) rakMalloc_Ex( fileInfo.size+HASH_LENGTH, __FILE__, __LINE__ );
+						fread(fileData+HASH_LENGTH, fileInfo.size, 1, fp);
+						fclose(fp);
 
-					unsigned int hash = SuperFastHash(fileData+HASH_LENGTH, fileInfo.size);
-					if (RakNet::BitStream::DoEndianSwap())
-						RakNet::BitStream::ReverseBytesInPlace((unsigned char*) &hash, sizeof(hash));
-					memcpy(fileData, &hash, HASH_LENGTH);
+						unsigned int hash = SuperFastHash(fileData+HASH_LENGTH, fileInfo.size);
+						if (RakNet::BitStream::DoEndianSwap())
+							RakNet::BitStream::ReverseBytesInPlace((unsigned char*) &hash, sizeof(hash));
+						memcpy(fileData, &hash, HASH_LENGTH);
 
-//					sha1.Reset();
-//					sha1.Update( ( unsigned char* ) fileData+HASH_LENGTH, fileInfo.size );
-//					sha1.Final();
-//					memcpy(fileData, sha1.GetHash(), HASH_LENGTH);
-					// File data and hash
-					AddFile((const char*)fullPath+rootLen, fullPath, fileData, fileInfo.size+HASH_LENGTH, fileInfo.size, context);
+						//					sha1.Reset();
+						//					sha1.Update( ( unsigned char* ) fileData+HASH_LENGTH, fileInfo.size );
+						//					sha1.Final();
+						//					memcpy(fileData, sha1.GetHash(), HASH_LENGTH);
+						// File data and hash
+						AddFile((const char*)fullPath+rootLen, fullPath, fileData, fileInfo.size+HASH_LENGTH, fileInfo.size, context);
+					}					
 				}
 				else if (writeHash)
 				{

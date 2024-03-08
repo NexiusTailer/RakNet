@@ -292,7 +292,7 @@ RAK_THREAD_DECLARATION(QueryUPNPSupportThread)
 		}
 		else
 		{
-			fupnpi->callBack->UPNPStatusUpdate("Not found.\n");
+			fupnpi->callBack->UPNPStatusUpdate(upnp.GetLastError());
 		}
 	}
 

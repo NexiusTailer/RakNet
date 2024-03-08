@@ -9,10 +9,10 @@
 #endif
 
 // Boost dependencies
-// Boost is assumed to be at C:\boost_1_35_0 based on the project settings
+// Boost is assumed to be at C:\boost_1_43_0 based on the project settings
 // If this is not where you downloaded boost, change the project settings Configuration Properties / C/C++ / General / Additional Include Directories
 // If you don't have boost, get it from http://www.boost.org/users/download/
-// If you don't want to use boost, use AutoRPC instead which relies on assembly but has fewer features
+// If you don't want to use boost, use RPC4 instead which relies on assembly but has fewer features
 #include "boost/type_traits.hpp"
 #include "boost/function.hpp"
 #include "boost/bind.hpp"

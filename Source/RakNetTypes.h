@@ -308,6 +308,10 @@ struct Packet
 	/// @internal
 	/// Indicates whether to delete the data, or to simply delete the packet.
 	bool deleteData;
+
+	/// @internal
+	/// If true, this message is meant for the user, not for the plugins, so do not process it through plugins
+	bool bypassPlugins;
 };
 
 ///  Index of an unassigned player

@@ -166,6 +166,7 @@ protected:
 	SSL_METHOD *meth;
 	DataStructures::ThreadsafeAllocatingQueue<SystemAddress> startSSL;
 	DataStructures::List<SystemAddress> activeSSLConnections;
+	SimpleMutex sharedSslMutex;
 #endif
 };
 

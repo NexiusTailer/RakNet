@@ -143,6 +143,18 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\CCRakNetSlidingWindow.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\CCRakNetSlidingWindow.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\CCRakNetUDT.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="debug"/>

@@ -110,7 +110,7 @@ void NatTypeDetectionServer::Update(void)
 			}
 			else
 			{
-				RakAssert("i==0 in Update when looking up GUID in NatTypeDetectionServer.cpp. Either a bug or a late resend" && 0);
+		//		RakAssert("i==0 in Update when looking up GUID in NatTypeDetectionServer.cpp. Either a bug or a late resend" && 0);
 			}
 		}
 		else

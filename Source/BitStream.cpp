@@ -28,7 +28,11 @@
 #else
 #include <arpa/inet.h>
 #include <memory.h>
+#if defined(ANDROID)
+#include <math.h>
+#else
 #include <cmath>
+#endif
 #include <float.h>
 #endif
 
@@ -173,7 +177,7 @@ void BitStream::Write( const char* inputByteArray, const unsigned int numberOfBy
 }
 void BitStream::Write( BitStream *bitStream)
 {
-	Write(bitStream, bitStream->GetNumberOfBitsUsed());
+	Write(bitStream, bitStream->GetNumberOfBitsUsed()-bitStream->GetReadOffset());
 }
 void BitStream::Write( BitStream *bitStream, BitSize_t numberOfBits )
 {
@@ -862,7 +866,7 @@ void BitStream::PrintBits( void ) const
 {
 	char out[2048];
 	PrintBits(out);
-	RAKNET_DEBUG_PRINTF(out);
+	RAKNET_DEBUG_PRINTF("%s", out);
 }
 void BitStream::PrintHex( char *out ) const
 {
@@ -876,7 +880,7 @@ void BitStream::PrintHex( void ) const
 {
 	char out[2048];
 	PrintHex(out);
-	RAKNET_DEBUG_PRINTF(out);
+	RAKNET_DEBUG_PRINTF("%s", out);
 }
 
 // Exposes the data for you to look at, like PrintBits does.

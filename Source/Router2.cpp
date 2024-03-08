@@ -38,13 +38,18 @@ Algorithm:
 11. When the user connects the endpoint and sender, then the sender will get ID_CONNECTION_REQUEST_ACCEPTED. The sender will look up the endpoint in the forwardedConnectionList, and send ID_ROUTER_2_INCREASE_TIMEOUT to the endpoint. This message will call SetTimeoutTime() on the endpoint, so that if the router disconnects, enough time is available for the reroute to complete.
 */
 
+#define MIN_MINIPUNCH_TIMEOUT	5000
+
+
+
+
 void Router2DebugInterface::ShowFailure(const char *message)
 {
-	printf(message);
+	printf("%s", message);
 }
 void Router2DebugInterface::ShowDiagnostic(const char *message)
 {
-	printf(message);
+	printf("%s", message);
 }
 
 enum Router2MessageIdentifiers
@@ -101,7 +106,7 @@ bool Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLost
 	if (largestPing<0)
 	{
 		char buff[512];
-		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed at %s:%i\n", __FILE__, __LINE__));
+		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2: ConnectInternal(%I64d) failed at %s:%i\n", endpointGuid.g, __FILE__, __LINE__));
 
 		// Not connected to anyone
 		return false;
@@ -113,7 +118,7 @@ bool Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLost
 	{
 		connectionRequestsMutex.Unlock();
 		char buff[512];
-		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed at %s:%i\n", __FILE__, __LINE__));
+		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2: ConnectInternal(%I64d) failed at %s:%i\n", endpointGuid.g, __FILE__, __LINE__));
 
 		return false;
 	}
@@ -151,7 +156,23 @@ bool Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLost
 			bsOut.Write((MessageID)ID_ROUTER_2_INTERNAL);
 			bsOut.Write((unsigned char) ID_ROUTER_2_QUERY_FORWARDING);
 			bsOut.Write(endpointGuid);
-			rakPeerInterface->Send(&bsOut,MEDIUM_PRIORITY,RELIABLE_ORDERED,0,crs.guid,false);
+			uint32_t pack_id = rakPeerInterface->Send(&bsOut,MEDIUM_PRIORITY,RELIABLE_ORDERED,0,crs.guid,false);
+
+        	if (debugInterface)
+        	{
+        		char buff[512];
+        		debugInterface->ShowDiagnostic(FormatStringTS(buff,"Router2::ConnectInternal: at %s:%i, pack_id = %d", __FILE__, __LINE__,pack_id));
+        	}
+
+		}
+		else
+		{
+        	if (debugInterface)
+        	{
+        		char buff[512];
+        		debugInterface->ShowDiagnostic(FormatStringTS(buff,"Router2::ConnectInternal: at %s:%i [else ..].: %I64d==%I64d", __FILE__, __LINE__,
+        			guids[i].g,endpointGuid.g));
+        	}                                                                                              
 		}
 	}
 	connectionRequestsMutex.Lock();
@@ -161,7 +182,7 @@ bool Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLost
 	if (debugInterface)
 	{
 		char buff[512];
-		debugInterface->ShowDiagnostic(FormatStringTS(buff,"Broadcasting ID_ROUTER_2_QUERY_FORWARDING at %s:%i\n", __FILE__, __LINE__));
+		debugInterface->ShowDiagnostic(FormatStringTS(buff,"Broadcasting ID_ROUTER_2_QUERY_FORWARDING to %I64d at %s:%i\n", endpointGuid.g , __FILE__, __LINE__));
 	}
 
 	return true;
@@ -172,7 +193,8 @@ void Router2::EstablishRouting(RakNetGUID endpointGuid)
 	if (rakPeerInterface->IsConnected(endpointGuid,false,false)==true)
 	{
 		char buff[512];
-		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed at %s:%i (already connected)\n", __FILE__, __LINE__));
+		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed at %s:%i "
+                "(already connected to the %I64d)\n", __FILE__, __LINE__, endpointGuid.g ));
 		return;
 	}
 
@@ -214,6 +236,16 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
 			}
 		case ID_ROUTER_2_REQUEST_FORWARDING:
 			{
+
+                if (debugInterface)
+                {
+                    char buff[512];
+                    char buff2[32];
+                    packet->systemAddress.ToString(true,buff2);
+                    debugInterface->ShowDiagnostic(FormatStringTS(buff,"Got ID_ROUTER_2_REQUEST_FORWARDING on ip %s from %I64d, ",
+                        buff2,packet->guid.g));
+                }
+
 				OnRequestForwarding(packet);
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 			}
@@ -241,6 +273,10 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
 						char buff2[32];
 						sa.ToString(false,buff2);
 						debugInterface->ShowDiagnostic(FormatStringTS(buff,"Got ID_ROUTER_2_REPLY_TO_SENDER_PORT %i on address %s, replying with ID_ROUTER_2_MINI_PUNCH_REPLY at %s:%i\n", sa.port, buff2, __FILE__, __LINE__));
+
+//						packet->systemAddress.ToString(true,buff2);
+//						debugInterface->ShowDiagnostic(FormatStringTS(buff,"Got ID_ROUTER_2_REPLY_TO_SENDER_PORT on address %s (%I64d), "
+//                                       "replying with ID_ROUTER_2_MINI_PUNCH_REPLY at %s:%i\n", buff2,packet->guid.g, __FILE__, __LINE__));
 					}
 
 					return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -260,12 +296,15 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
 						char buff[512];
 						char buff2[32];
 						sa.ToString(false,buff2);
-						debugInterface->ShowDiagnostic(FormatStringTS(buff,"Got ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT %i on address %s, replying with ID_ROUTER_2_MINI_PUNCH_REPLY at %s:%i\n", sa.port, buff2, __FILE__, __LINE__));
+						debugInterface->ShowDiagnostic(FormatStringTS(buff,"Got ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT %i on address %s, "
+                                        "replying with ID_ROUTER_2_MINI_PUNCH_REPLY at %s:%i\n", sa.port, buff2, __FILE__, __LINE__));
 					}
 
 					return RR_STOP_PROCESSING_AND_DEALLOCATE;
 				}
 			case ID_ROUTER_2_MINI_PUNCH_REPLY:
+                
+				
 				OnMiniPunchReply(packet);
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 			case ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE:
@@ -295,7 +334,7 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
 
 		if (forwardingIndex<forwardedConnectionList.Size())
 		{
-			forwardedConnectionListMutex.Unlock();
+            forwardedConnectionListMutex.Unlock();
 
 			// We connected to this system through a forwarding system
 			// Have the endpoint take longer to drop us, in case the intermediary system drops
@@ -307,14 +346,18 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
 			if (debugInterface)
 			{
 				char buff[512];
-				debugInterface->ShowDiagnostic(FormatStringTS(buff,"Got ID_CONNECTION_REQUEST_ACCEPTED, sending ID_ROUTER_2_INCREASE_TIMEOUT at %s:%i\n", __FILE__, __LINE__));
+				debugInterface->ShowDiagnostic(FormatStringTS(buff,"Got ID_CONNECTION_REQUEST_ACCEPTED, "
+                    "sending ID_ROUTER_2_INCREASE_TIMEOUT to the %I64d at %s:%i\n", packet->guid.g, __FILE__, __LINE__));
 			}
 
 			// Also take longer ourselves
 			rakPeerInterface->SetTimeoutTime(rakPeerInterface->GetTimeoutTime(packet->systemAddress)+10000, packet->systemAddress);
 		}
-		else
-			forwardedConnectionListMutex.Unlock();
+        else  {
+        	// ~Gwynn: Fix for Receive hanging up problem on Windows XP
+		    // See http://blog.delphi-jedi.net/2008/04/23/the-case-of-the-unexplained-dead-lock-in-a-single-thread/ for details
+            forwardedConnectionListMutex.Unlock();
+        }
 	}
 
 	return RR_CONTINUE_PROCESSING;
@@ -416,7 +459,7 @@ void Router2::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetG
 			if (debugInterface)
 			{
 				char buff[512];
-				debugInterface->ShowDiagnostic(FormatStringTS(buff,"Closed connection, removing forwarding from list at %s:%i\n", __FILE__, __LINE__));
+				debugInterface->ShowDiagnostic(FormatStringTS(buff,"Closed connection to the %I64d, removing forwarding from list at %s:%i\n", rakNetGUID.g, __FILE__, __LINE__));
 			}
 
 			// No longer need forwarding
@@ -424,7 +467,12 @@ void Router2::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetG
 		}
 		else if (forwardedConnectionList[forwardedConnectionIndex].intermediaryGuid==rakNetGUID && forwardedConnectionList[forwardedConnectionIndex].weInitiatedForwarding)
 		{
-			// Lost connection to intermediary. Restart process to connect to endpoint. If failed, push ID_CONNECTION_LOST
+			// Lost connection to intermediary. Restart process to connect to endpoint. If failed, push ID_CONNECTION_LOST. Also remove connection request if it already is in the list, to restart it
+            connectionRequestsMutex.Lock();
+			unsigned int pos = GetConnectionRequestIndex(forwardedConnectionList[forwardedConnectionIndex].endpointGuid);
+			if((unsigned int)-1 != pos) {RakNet::OP_DELETE(connectionRequests[pos], __FILE__, __LINE__); connectionRequests.RemoveAtIndexFast(pos);}
+			connectionRequestsMutex.Unlock();
+            
 			ConnectInternal(forwardedConnectionList[forwardedConnectionIndex].endpointGuid, true);
 
 			forwardedConnectionIndex++;
@@ -432,7 +480,7 @@ void Router2::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetG
 			if (debugInterface)
 			{
 				char buff[512];
-				debugInterface->ShowDiagnostic(FormatStringTS(buff,"Closed connection, restarting forwarding at %s:%i\n", __FILE__, __LINE__));
+				debugInterface->ShowDiagnostic(FormatStringTS(buff,"Closed connection %I64d, restarting forwarding at %s:%i\n",rakNetGUID.g, __FILE__, __LINE__));
 			}
 
 			// This should not be removed - the connection is still forwarded, but perhaps through another system
@@ -454,24 +502,36 @@ void Router2::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetG
 		{
 			cr->connectionRequestSystems.RemoveAtIndexFast(connectionRequestGuidIndex);
 			cr->connectionRequestSystemsMutex.Unlock();
-			if (UpdateForwarding(cr)==false)
+			if (UpdateForwarding(cr)==false) // If returns false, no connection request systems left
 			{
 				if (debugInterface)
 				{
 					char buff[512];
-					debugInterface->ShowDiagnostic(FormatStringTS(buff,"Aborted connection, aborted forwarding at %s:%i\n", __FILE__, __LINE__));
+					debugInterface->ShowDiagnostic(FormatStringTS(buff,"Aborted connection to the %I64d, aborted forwarding at %s:%i\n", rakNetGUID.g, __FILE__, __LINE__));
 				}
 
 				RemoveConnectionRequest(connectionRequestIndex);
 			}
-			else
+			else // Else a system in the connection request list dropped. If cr->requestState==R2RS_REQUEST_STATE_QUERY_FORWARDING then we are still waiting for other systems to respond.
 			{
 				if (debugInterface)
 				{
 					char buff[512];
-					debugInterface->ShowDiagnostic(FormatStringTS(buff,"Aborted connection, restarting forwarding at %s:%i\n", __FILE__, __LINE__));
+					debugInterface->ShowDiagnostic(FormatStringTS(buff,"Aborted connection attempt to %I64d, restarting forwarding to %I64d at %s:%i\n", rakNetGUID.g,cr->endpointGuid.g,__FILE__, __LINE__));
 				}
-
+//                 if(volatile bool is_my_fix_a_truth = true) { // A system in the list of potential systems to try routing to dropped. There is no need to restart the whole process.
+//                     connectionRequestsMutex.Lock();
+//                     connectionRequests.RemoveAtIndexFast(connectionRequestIndex);
+//                     connectionRequestsMutex.Unlock();
+// 
+//                     if(false == ConnectInternal(cr->endpointGuid,cr->returnConnectionLostOnFailure))
+//                         if (debugInterface)
+//                         {
+//                             char buff[512];
+//                             debugInterface->ShowDiagnostic(FormatStringTS(buff,"ConnectInternal(cr->endpointGuid,cr->returnConnectionLostOnFailure) is false. at %s:%i\n", __FILE__, __LINE__));
+//                         }
+//                 }
+                        
 				connectionRequestIndex++;
 			}
 		}
@@ -515,7 +575,8 @@ void Router2::OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAtte
 			if (debugInterface)
 			{
 				char buff[512];
-				debugInterface->ShowDiagnostic(FormatStringTS(buff,"Failed connection attempt to forwarded system at %s:%i\n", __FILE__, __LINE__));
+				debugInterface->ShowDiagnostic(FormatStringTS(buff,"Failed connection attempt to forwarded system (%I64d : %s) at %s:%i\n",
+                        forwardedConnectionList[forwardedConnectionIndex].endpointGuid.g, packet->systemAddress.ToString(true), __FILE__, __LINE__));
 			}
 
 			packet->guid=forwardedConnectionList[forwardedConnectionIndex].endpointGuid;
@@ -534,14 +595,23 @@ void Router2::OnRakPeerShutdown(void)
 bool Router2::UpdateForwarding(ConnnectRequest* connectionRequest)
 {
 	connectionRequest->connectionRequestSystemsMutex.Lock();
+
+//     RAKNET_DEBUG_PRINTF(__FUNCTION__": connectionRequest->connectionRequestSystems.Size = %d", 
+//         connectionRequest->connectionRequestSystems.Size());
+
 	if (connectionRequest->connectionRequestSystems.Size()==0)
 	{
 		connectionRequest->connectionRequestSystemsMutex.Unlock();
+
 	//	printf("Router2 failed at %s:%i\n", __FILE__, __LINE__);
-		if (connectionRequest->returnConnectionLostOnFailure)
-			ReturnToUser(ID_CONNECTION_LOST, connectionRequest->endpointGuid, UNASSIGNED_SYSTEM_ADDRESS);
+		if (connectionRequest->returnConnectionLostOnFailure) {
+			ReturnToUser(ID_CONNECTION_LOST, connectionRequest->endpointGuid, UNASSIGNED_SYSTEM_ADDRESS, true); // This is a connection which was previously established. Rerouting is not possible.
+//             bool sendDisconnectionNotification = false;
+//             rakPeerInterface->CloseConnection(rakPeerInterface->GetSystemAddressFromGuid(connectionRequest->endpointGuid), sendDisconnectionNotification);
+//             RAKNET_DEBUG_PRINTF(__FUNCTION__": call rakPeerInterface->CloseConnection(%I64d)" , connectionRequest->endpointGuid.g);
+        }
 		else
-			ReturnToUser(ID_ROUTER_2_FORWARDING_NO_PATH, connectionRequest->endpointGuid, UNASSIGNED_SYSTEM_ADDRESS);
+			ReturnToUser(ID_ROUTER_2_FORWARDING_NO_PATH, connectionRequest->endpointGuid, UNASSIGNED_SYSTEM_ADDRESS, false);
 
 		if (debugInterface)
 		{
@@ -550,6 +620,7 @@ bool Router2::UpdateForwarding(ConnnectRequest* connectionRequest)
 		}
 
 		forwardedConnectionListMutex.Lock();
+
 		for (unsigned int forwardedConnectionIndex=0; forwardedConnectionIndex < forwardedConnectionList.Size(); forwardedConnectionIndex++)
 		{
 			if (forwardedConnectionList[forwardedConnectionIndex].endpointGuid==connectionRequest->endpointGuid && forwardedConnectionList[forwardedConnectionIndex].weInitiatedForwarding)
@@ -567,12 +638,13 @@ bool Router2::UpdateForwarding(ConnnectRequest* connectionRequest)
 	if (connectionRequest->requestState==R2RS_REQUEST_STATE_QUERY_FORWARDING)
 	{
 		connectionRequest->connectionRequestSystemsMutex.Lock();
+
 		for (unsigned int i=0; i < connectionRequest->connectionRequestSystems.Size(); i++)
 		{
 			if (connectionRequest->connectionRequestSystems[i].pingToEndpoint<0)
 			{
 				connectionRequest->connectionRequestSystemsMutex.Unlock();
-				return true;
+				return true; // Forward query still in progress, just return
 			}
 		}
 		connectionRequest->connectionRequestSystemsMutex.Unlock();
@@ -643,7 +715,9 @@ void Router2::RequestForwarding(ConnnectRequest* connectionRequest)
 	if (debugInterface)
 	{
 		char buff[512];
-		debugInterface->ShowDiagnostic(FormatStringTS(buff,"Sending ID_ROUTER_2_REQUEST_FORWARDING at %s:%i\n", __FILE__, __LINE__));
+		debugInterface->ShowDiagnostic(FormatStringTS(buff,"Sending ID_ROUTER_2_REQUEST_FORWARDING "
+            "(connectionRequest->lastRequestedForwardingSystem = %I64d, connectionRequest->endpointGuid = %I64d) at %s:%i\n", 
+            connectionRequest->lastRequestedForwardingSystem.g,connectionRequest->endpointGuid.g, __FILE__, __LINE__));
 	}
 }
 void Router2::SendFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endpointGuid)
@@ -661,7 +735,8 @@ int Router2::ReturnFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endp
 	if (udpForwarder==0 || udpForwarder->GetUsedForwardEntries()/2>maximumForwardingRequests)
 	{
 		char buff[512];
-		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed at %s:%i\n", __FILE__, __LINE__));
+		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed (%I64d -> %I64d) at %s:%i\n", 
+                   sourceGuid.g, endpointGuid.g,__FILE__, __LINE__));
 		SendFailureOnCannotForward(sourceGuid,endpointGuid);
 		return -1;
 	}
@@ -670,7 +745,8 @@ int Router2::ReturnFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endp
 	forwardedConnectionListMutex.Lock();
 	for (unsigned int i=0; i < forwardedConnectionList.Size(); i++)
 	{
-		if (forwardedConnectionList[i].endpointGuid==endpointGuid)
+		if ((forwardedConnectionList[i].endpointGuid==endpointGuid) 
+			|| (forwardedConnectionList[i].endpointGuid==sourceGuid)) // sourceGuid is here so you do not respond to routing requests from systems you are already routing through.
 		{
 			forwardedConnectionListMutex.Unlock();
 
@@ -687,7 +763,9 @@ int Router2::ReturnFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endp
 	if (pingToEndpoint==-1)
 	{
 		char buff[512];
-		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed at %s:%i\n", __FILE__, __LINE__));
+		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed (%I64d -> %I64d)  at %s:%i\n", 
+            sourceGuid.g, endpointGuid.g,__FILE__, __LINE__));
+
 		SendFailureOnCannotForward(sourceGuid,endpointGuid);
 		return -1;
 	}
@@ -705,7 +783,7 @@ void Router2::OnQueryForwarding(Packet *packet)
 	if (pingToEndpoint==-1)
 	{
 		char buff[512];
-		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed at %s:%i\n", __FILE__, __LINE__));
+		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed (%I64d) at %s:%i\n", packet->guid.g, __FILE__, __LINE__));
 		return;
 	}
 
@@ -722,7 +800,7 @@ void Router2::OnQueryForwarding(Packet *packet)
 	if (debugInterface)
 	{
 		char buff[512];
-		debugInterface->ShowDiagnostic(FormatStringTS(buff,"Sending ID_ROUTER_2_REPLY_FORWARDING at %s:%i\n", __FILE__, __LINE__));
+		debugInterface->ShowDiagnostic(FormatStringTS(buff,"Sending ID_ROUTER_2_REPLY_FORWARDING to the %I64d at %s:%i\n", packet->guid.g, __FILE__, __LINE__));
 	}
 }
 void Router2::OnQueryForwardingReply(Packet *packet)
@@ -742,7 +820,7 @@ void Router2::OnQueryForwardingReply(Packet *packet)
 	{
 		connectionRequestsMutex.Unlock();
 		char buff[512];
-		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed at %s:%i\n", __FILE__, __LINE__));
+		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed (%I64d) at %s:%i\n", endpointGuid.g, __FILE__, __LINE__));
 		return;
 	}
 
@@ -753,14 +831,17 @@ void Router2::OnQueryForwardingReply(Packet *packet)
 		connectionRequests[connectionRequestIndex]->connectionRequestSystemsMutex.Unlock();
 		connectionRequestsMutex.Unlock();
 		char buff[512];
-		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed at %s:%i\n", __FILE__, __LINE__));
+		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed (%I64d) at %s:%i\n", endpointGuid.g, __FILE__, __LINE__));
 		return;
 	}
 
 	if (debugInterface)
 	{
 		char buff[512];
-		debugInterface->ShowDiagnostic(FormatStringTS(buff,"Got ID_ROUTER_2_REPLY_FORWARDING, canForward=%i at %s:%i\n", canForward, __FILE__, __LINE__));
+        char buff2[512];
+        packet->systemAddress.ToString(true,buff2);
+		debugInterface->ShowDiagnostic(FormatStringTS(buff,"Got ID_ROUTER_2_REPLY_FORWARDING on address %s(%I64d -> %I64d) canForward=%i at %s:%i\n",
+            buff2, packet->guid.g, endpointGuid.g, canForward, __FILE__, __LINE__));
 	}
 
 	if (canForward)
@@ -830,6 +911,21 @@ void Router2::SendOOBMessages(Router2::MiniPunchRequest *mpr)
 	// Send from destToSourcePort to endpointSystemAddress (destination). If the message arrives, the remote system should reply.
 	SendOOBFromSpecifiedSocket(ID_ROUTER_2_REPLY_TO_SENDER_PORT, mpr->endpointAddress, mpr->forwardingSocket);
 
+
+    if (debugInterface) {
+        char buff [512];
+
+        char buff2[128];
+
+        mpr->sourceAddress   .ToString(true,buff2);
+
+        debugInterface->ShowDiagnostic(FormatStringTS(buff,"call SendOOBFromSpecifiedSocket(...,%s,...)", buff2));
+
+        mpr->endpointAddress .ToString(true,buff2);
+
+        debugInterface->ShowDiagnostic(FormatStringTS(buff,"call SendOOBFromSpecifiedSocket(...,%s,...)", buff2));
+    }                                              
+
 	// Tell source to send to forwardingPort
 	RakNet::BitStream extraData;
 	extraData.Write(mpr->forwardingPort);
@@ -853,7 +949,8 @@ void Router2::OnRequestForwarding(Packet *packet)
 	if (pingToEndpoint==-1)
 	{
 		char buff[512];
-		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed at %s:%i\n", __FILE__, __LINE__));
+		if (debugInterface)	debugInterface->ShowFailure(FormatStringTS(buff,"Router2 failed (packet->guid =%I64d, endpointGuid = %I64d) at %s:%i\n", 
+                packet->guid.g, endpointGuid.g, __FILE__, __LINE__));
 		return;
 	}
 
@@ -869,7 +966,9 @@ void Router2::OnRequestForwarding(Packet *packet)
 		if (debugInterface)
 		{
 			char buff[512];
-			debugInterface->ShowDiagnostic(FormatStringTS(buff,"Got ID_ROUTER_2_REQUEST_FORWARDING, result=UDPFORWARDER_FORWARDING_ALREADY_EXISTS at %s:%i\n", __FILE__, __LINE__));
+			debugInterface->ShowDiagnostic(FormatStringTS(buff,"Got ID_ROUTER_2_REQUEST_FORWARDING, result=UDPFORWARDER_FORWARDING_ALREADY_EXISTS "
+                    "(packet->guid =%I64d, endpointGuid = %I64d) at %s:%i\n", 
+                packet->guid.g, endpointGuid.g,__FILE__, __LINE__));
 		}
 
 		SendForwardingSuccess(ID_ROUTER_2_FORWARDING_ESTABLISHED, packet->guid, endpointGuid, forwardingPort);
@@ -937,9 +1036,9 @@ void Router2::OnRequestForwarding(Packet *packet)
 		int ping1 = rakPeerInterface->GetAveragePing(packet->guid);
 		int ping2 = rakPeerInterface->GetAveragePing(endpointGuid);
 		if (ping1>ping2)
-			miniPunchRequest.timeout=RakNet::GetTimeMS()+ping1*8+300;
+			miniPunchRequest.timeout=RakNet::GetTimeMS() + ping1*8+300;
 		else
-			miniPunchRequest.timeout=RakNet::GetTimeMS()+ping2*8+300;
+			miniPunchRequest.timeout=RakNet::GetTimeMS() + ping2*8+300;
 		miniPunchRequest.nextAction=RakNet::GetTimeMS()+100;
 		SendOOBMessages(&miniPunchRequest);
 		miniPunchesInProgressMutex.Lock();
@@ -951,6 +1050,14 @@ void Router2::OnMiniPunchReplyBounce(Packet *packet)
 {
 	// Find stored punch request
 	unsigned int i=0;
+
+	if (debugInterface)
+	{
+		char buff[512];
+		debugInterface->ShowDiagnostic(FormatStringTS(buff,"Got ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE from guid=%I64d (miniPunchesInProgress.Size() = %d)", 
+			packet->guid.g, miniPunchesInProgress.Size()));
+	}
+
 	miniPunchesInProgressMutex.Lock();
 	while (i < miniPunchesInProgress.Size())
 	{
@@ -964,7 +1071,7 @@ void Router2::OnMiniPunchReplyBounce(Packet *packet)
 			if (debugInterface)
 			{
 				char buff[512];
-				debugInterface->ShowDiagnostic(FormatStringTS(buff,"Got ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE, gotReplyFromSource=%i gotReplyFromEndpoint=%i at %s:%i\n", miniPunchesInProgress[i].gotReplyFromSource, miniPunchesInProgress[i].gotReplyFromEndpoint, __FILE__, __LINE__));
+				debugInterface->ShowDiagnostic(FormatStringTS(buff,"Processing ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE, gotReplyFromSource=%i gotReplyFromEndpoint=%i at %s:%i\n", miniPunchesInProgress[i].gotReplyFromSource, miniPunchesInProgress[i].gotReplyFromEndpoint, __FILE__, __LINE__));
 			}
 
 			if (miniPunchesInProgress[i].gotReplyFromEndpoint==true &&
@@ -995,7 +1102,12 @@ void Router2::OnMiniPunchReply(Packet *packet)
 	if (debugInterface)
 	{
 		char buff[512];
-		debugInterface->ShowDiagnostic(FormatStringTS(buff,"Sending ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE at %s:%i\n", __FILE__, __LINE__));
+
+        char buff2[512];
+
+        rakPeerInterface->GetSystemAddressFromGuid(routerGuid).ToString(true,buff2);
+
+		debugInterface->ShowDiagnostic(FormatStringTS(buff,"Sending ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE (%s) at %s:%i\n", buff2, __FILE__, __LINE__));
 	}
 }
 void Router2::OnRerouted(Packet *packet)
@@ -1012,22 +1124,53 @@ void Router2::OnRerouted(Packet *packet)
 	intermediaryAddress.port=sourceToDestPort;
 	rakPeerInterface->ChangeSystemAddress(endpointGuid, intermediaryAddress);
 
-	ForwardedConnection fc;
-	fc.endpointGuid=endpointGuid;
-	fc.intermediaryAddress=packet->systemAddress;
-	fc.intermediaryAddress.port=sourceToDestPort;
-	fc.intermediaryGuid=packet->guid;
-	fc.weInitiatedForwarding=false;
-	// add to forwarding list. This is only here to avoid reporting direct connections in Router2::ReturnFailureOnCannotForward
+    unsigned int forwardingIndex;
 	forwardedConnectionListMutex.Lock();
-	forwardedConnectionList.Push (fc,__FILE__, __LINE__);
-	forwardedConnectionListMutex.Unlock();
-
-	if (debugInterface)
+	for (forwardingIndex=0; forwardingIndex < forwardedConnectionList.Size(); forwardingIndex++)
 	{
-		char buff[512];
-		debugInterface->ShowDiagnostic(FormatStringTS(buff,"Got ID_ROUTER_2_REROUTED, returning ID_ROUTER_2_REROUTED, Calling RakPeer::ChangeSystemAddress at %s:%i\n", __FILE__, __LINE__));
+		if (forwardedConnectionList[forwardingIndex].endpointGuid==endpointGuid)
+			break;
 	}
+
+	if (forwardingIndex<forwardedConnectionList.Size())
+	{
+		ForwardedConnection& ref_fc     = forwardedConnectionList[forwardingIndex];
+		forwardedConnectionListMutex.Unlock();
+
+    	ref_fc.intermediaryAddress      = packet->systemAddress;
+		ref_fc.intermediaryAddress.port = sourceToDestPort;
+		ref_fc.intermediaryGuid         = packet->guid;
+
+        rakPeerInterface->ChangeSystemAddress(endpointGuid, intermediaryAddress);
+
+        if (debugInterface)
+        {
+            char buff[512];
+            debugInterface->ShowDiagnostic(FormatStringTS(buff,"FIX: Got ID_ROUTER_2_REROUTE, returning ID_ROUTER_2_REROUTED,"
+                " Calling RakPeer::ChangeSystemAddress(%I64d, %s) at %s:%i\n",endpointGuid.g, intermediaryAddress.ToString(true), __FILE__, __LINE__));
+        }
+    }
+    else
+    {
+        ForwardedConnection fc;
+        fc.endpointGuid=endpointGuid;
+        fc.intermediaryAddress=packet->systemAddress;
+        fc.intermediaryAddress.port=sourceToDestPort;
+        fc.intermediaryGuid=packet->guid;
+        fc.weInitiatedForwarding=false;
+        // add to forwarding list. This is only here to avoid reporting direct connections in Router2::ReturnFailureOnCannotForward
+        forwardedConnectionList.Push (fc,__FILE__, __LINE__);
+        forwardedConnectionListMutex.Unlock();
+
+        rakPeerInterface->ChangeSystemAddress(endpointGuid, intermediaryAddress);
+
+        if (debugInterface)
+        {
+            char buff[512];
+            debugInterface->ShowDiagnostic(FormatStringTS(buff,"Got ID_ROUTER_2_REROUTE, returning ID_ROUTER_2_REROUTED, Calling RakPeer::ChangeSystemAddress at %s:%i\n", __FILE__, __LINE__));
+        }
+    }
+
 }
 bool Router2::OnForwardingSuccess(Packet *packet)
 {
@@ -1042,18 +1185,23 @@ bool Router2::OnForwardingSuccess(Packet *packet)
 	forwardedConnectionListMutex.Lock();
 	for (forwardingIndex=0; forwardingIndex < forwardedConnectionList.Size(); forwardingIndex++)
 	{
-		if (forwardedConnectionList[forwardingIndex].endpointGuid==endpointGuid && forwardedConnectionList[forwardingIndex].weInitiatedForwarding)
+		if (forwardedConnectionList[forwardingIndex].endpointGuid==endpointGuid)
 			break;
 	}
 
 	if (forwardingIndex<forwardedConnectionList.Size())
 	{
-		forwardedConnectionListMutex.Unlock();
-
 		// Return rerouted notice
 		SystemAddress intermediaryAddress=packet->systemAddress;
 		intermediaryAddress.port=sourceToDestPort;
 		rakPeerInterface->ChangeSystemAddress(endpointGuid, intermediaryAddress);
+
+        ////////////////////////////////////////////////////////////////////////////
+        ForwardedConnection& ref_fc     = forwardedConnectionList[forwardingIndex];
+    	ref_fc.intermediaryAddress      = packet->systemAddress;
+		ref_fc.intermediaryAddress.port = sourceToDestPort;
+		ref_fc.intermediaryGuid         = packet->guid;
+        ////////////////////////////////////////////////////////////////////////////
 
 		if (debugInterface)
 		{
@@ -1063,6 +1211,7 @@ bool Router2::OnForwardingSuccess(Packet *packet)
 
 		packet->data[0]=ID_ROUTER_2_REROUTED;
 
+    	forwardedConnectionListMutex.Unlock();
 		return true; // Return packet to user
 	}
 	else
@@ -1076,7 +1225,6 @@ bool Router2::OnForwardingSuccess(Packet *packet)
 		fc.returnConnectionLostOnFailure=connectionRequests[connectionRequestIndex]->returnConnectionLostOnFailure;
 		connectionRequests.RemoveAtIndexFast(connectionRequestIndex);
 		connectionRequestsMutex.Unlock();
-
 		fc.endpointGuid=endpointGuid;
 		fc.intermediaryAddress=packet->systemAddress;
 		fc.intermediaryAddress.port=sourceToDestPort;
@@ -1138,13 +1286,14 @@ unsigned int Router2::ConnnectRequest::GetGuidIndex(RakNetGUID guid)
 	}
 	return (unsigned int) -1;
 }
-void Router2::ReturnToUser(MessageID messageId, RakNetGUID endpointGuid, SystemAddress systemAddress)
+void Router2::ReturnToUser(MessageID messageId, RakNetGUID endpointGuid, SystemAddress systemAddress, bool bypassPlugins)
 {
 	Packet *p = rakPeerInterface->AllocatePacket(sizeof(MessageID)+sizeof(unsigned char));
 	p->data[0]=messageId;
 	p->systemAddress=systemAddress;
 	p->systemAddress.systemIndex=(SystemIndex)-1;
 	p->guid=endpointGuid;
+	p->bypassPlugins=bypassPlugins;
 	rakPeerInterface->PushBackPacket(p, true);
 }
 void Router2::ClearForwardedConnections(void)

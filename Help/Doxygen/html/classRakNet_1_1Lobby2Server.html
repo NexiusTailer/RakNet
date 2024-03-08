@@ -60,17 +60,17 @@ Inheritance diagram for RakNet::Lobby2Server:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#6a8918f9399834397ca99882846587b8">ConnectToDB</a> (const char *conninfo, int numWorkerThreads)=0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Connect to the database <em>numWorkerThreads</em> times using the connection string.  <a href="#6a8918f9399834397ca99882846587b8"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#8731d899b0f74fd6bc44a1f8ca190618">SendMessage</a> (<a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> *msg, <a class="el" href="structSystemAddress.html">SystemAddress</a> recipient)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#8b3640fa28be5dafecfe591db7f83830">SendMessage</a> (<a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> *msg, const <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structSystemAddress.html">SystemAddress</a> &gt; &amp;recipients)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><a class="el" href="structRakNet_1_1Lobby2Message.html" title="A Lobby2Message encapsulates a networked function call from the client.">Lobby2Message</a> encapsulates a user command, containing both input and output data.  <a href="#8731d899b0f74fd6bc44a1f8ca190618"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><a class="el" href="structRakNet_1_1Lobby2Message.html" title="A Lobby2Message encapsulates a networked function call from the client.">Lobby2Message</a> encapsulates a user command, containing both input and output data.  <a href="#8b3640fa28be5dafecfe591db7f83830"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#3db350e8d2e35e6a40f43ee4026bff20">ExecuteCommand</a> (<a class="el" href="structRakNet_1_1Lobby2ServerCommand.html">Lobby2ServerCommand</a> *command)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a command, which contains a message and other data such as who send the message.  <a href="#3db350e8d2e35e6a40f43ee4026bff20"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#499cbfd420d6a6caecd62a8143a641da">AddAdminAddress</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> addr)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">If <a class="el" href="structRakNet_1_1Lobby2Message.html#79cbb400e4521af2c353fbd640fed0f7">Lobby2Message::RequiresAdmin()</a> returns true, the message can only be processed from a remote system if the sender's system address is first added().  <a href="#499cbfd420d6a6caecd62a8143a641da"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9bca468914291615e1a20436537e562c"></a><!-- doxytag: member="RakNet::Lobby2Server::IsAdminAddress" ref="9bca468914291615e1a20436537e562c" args="(SystemAddress addr)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#9bca468914291615e1a20436537e562c">IsAdminAddress</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> addr)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="27ce393bde81f54fbf6c64763a5e5eea"></a><!-- doxytag: member="RakNet::Lobby2Server::HasAdminAddress" ref="27ce393bde81f54fbf6c64763a5e5eea" args="(const DataStructures::List&lt; SystemAddress &gt; &amp;addresses)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#27ce393bde81f54fbf6c64763a5e5eea">HasAdminAddress</a> (const <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structSystemAddress.html">SystemAddress</a> &gt; &amp;addresses)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">If <a class="el" href="classRakNet_1_1Lobby2Server.html#499cbfd420d6a6caecd62a8143a641da" title="If Lobby2Message::RequiresAdmin() returns true, the message can only be processed...">AddAdminAddress()</a> was previously called with <em>addr</em> then this returns true. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4d2add6952f20f6ff7444c1376458ece"></a><!-- doxytag: member="RakNet::Lobby2Server::RemoveAdminAddress" ref="4d2add6952f20f6ff7444c1376458ece" args="(SystemAddress addr)" -->
@@ -84,7 +84,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#16a9ef14b0c08f5c01745908666064d5">AddRankingAddress</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> addr)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">If <a class="el" href="structRakNet_1_1Lobby2Message.html#3eab67e30f491cd3410b9d850ffcecea">Lobby2Message::RequiresRankingPermission()</a> returns true, then the system that sent the command must be registered with <a class="el" href="classRakNet_1_1Lobby2Server.html#16a9ef14b0c08f5c01745908666064d5" title="If Lobby2Message::RequiresRankingPermission() returns true, then the system that...">AddRankingAddress()</a>.  <a href="#16a9ef14b0c08f5c01745908666064d5"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#36b42e990f9116678d60ad403dcb0fc4">IsRankingAddress</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> addr)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#d72697445e87c271d0edbf1f9ecab1aa">HasRankingAddress</a> (const <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structSystemAddress.html">SystemAddress</a> &gt; &amp;addresses)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#29356d89b8170173ee25de6a355b276e">RemoveRankingAddress</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> addr)</td></tr>
 
@@ -106,7 +106,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 const <a class="el" href="structRakNet_1_1Lobby2Server_1_1ConfigurationProperties.html">ConfigurationProperties</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#b160cae2c448814f99100a6f66584f6e">GetConfigurationProperties</a> (void) const </td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the previously set configuration properties. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#3a3aa313404c80643fad1f2d26869a0c">SetPresence</a> (const <a class="el" href="structRakNet_1_1Lobby2Presence.html">RakNet::Lobby2Presence</a> &amp;presence, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#9d8ec1bac73bac3c2eefe6f6b0f700d7">SetPresence</a> (const <a class="el" href="structRakNet_1_1Lobby2Presence.html">RakNet::Lobby2Presence</a> &amp;presence, <a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> userHandle)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#a498fdb38fcac5e2391ab38cca3c5a5d">GetPresence</a> (<a class="el" href="structRakNet_1_1Lobby2Presence.html">RakNet::Lobby2Presence</a> &amp;presence, <a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> userHandle)</td></tr>
 
@@ -269,15 +269,15 @@ Get the presence of a logged in user, by handle <dl compact><dt><b>Parameters:</
 
 </div>
 </div><p>
-<a class="anchor" name="36b42e990f9116678d60ad403dcb0fc4"></a><!-- doxytag: member="RakNet::Lobby2Server::IsRankingAddress" ref="36b42e990f9116678d60ad403dcb0fc4" args="(SystemAddress addr)" -->
+<a class="anchor" name="d72697445e87c271d0edbf1f9ecab1aa"></a><!-- doxytag: member="RakNet::Lobby2Server::HasRankingAddress" ref="d72697445e87c271d0edbf1f9ecab1aa" args="(const DataStructures::List&lt; SystemAddress &gt; &amp;addresses)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool RakNet::Lobby2Server::IsRankingAddress           </td>
+          <td class="memname">bool RakNet::Lobby2Server::HasRankingAddress           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>addr</em>          </td>
+          <td class="paramtype">const <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structSystemAddress.html">SystemAddress</a> &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>addresses</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td></td>
         </tr>
@@ -391,7 +391,7 @@ Removes an addressed added with <a class="el" href="classRakNet_1_1Lobby2Server.
 
 </div>
 </div><p>
-<a class="anchor" name="8731d899b0f74fd6bc44a1f8ca190618"></a><!-- doxytag: member="RakNet::Lobby2Server::SendMessage" ref="8731d899b0f74fd6bc44a1f8ca190618" args="(Lobby2Message *msg, SystemAddress recipient)" -->
+<a class="anchor" name="8b3640fa28be5dafecfe591db7f83830"></a><!-- doxytag: member="RakNet::Lobby2Server::SendMessage" ref="8b3640fa28be5dafecfe591db7f83830" args="(Lobby2Message *msg, const DataStructures::List&lt; SystemAddress &gt; &amp;recipients)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -404,8 +404,8 @@ Removes an addressed added with <a class="el" href="classRakNet_1_1Lobby2Server.
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>recipient</em></td><td>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structSystemAddress.html">SystemAddress</a> &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>recipients</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -422,7 +422,7 @@ Removes an addressed added with <a class="el" href="classRakNet_1_1Lobby2Server.
 This will serialize and transmit that command 
 </div>
 </div><p>
-<a class="anchor" name="3a3aa313404c80643fad1f2d26869a0c"></a><!-- doxytag: member="RakNet::Lobby2Server::SetPresence" ref="3a3aa313404c80643fad1f2d26869a0c" args="(const RakNet::Lobby2Presence &amp;presence, SystemAddress systemAddress)" -->
+<a class="anchor" name="9d8ec1bac73bac3c2eefe6f6b0f700d7"></a><!-- doxytag: member="RakNet::Lobby2Server::SetPresence" ref="9d8ec1bac73bac3c2eefe6f6b0f700d7" args="(const RakNet::Lobby2Presence &amp;presence, RakNet::RakString userHandle)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -435,8 +435,8 @@ This will serialize and transmit that command
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a>&nbsp;</td>
+          <td class="paramname"> <em>userHandle</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -451,7 +451,6 @@ This will serialize and transmit that command
 Set the presence of a logged in user <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>presence</em>&nbsp;</td><td>Presence info of this user </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Address of this user (must be logged in) </td></tr>
   </table>
 </dl>
 
@@ -506,7 +505,7 @@ This will set the system address of that system to send the login and logoff com
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/RakNet/DependentExtensions/Lobby2/Lobby2Server.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 1 11:00:24 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 1 10:29:13 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

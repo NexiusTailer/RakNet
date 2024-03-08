@@ -32,7 +32,8 @@
 	  defined(__alpha__) || defined(__alpha) || defined(__ia64) || defined(__ia64__) || \
 	  defined(_M_ALPHA) || defined(ns32000) || defined(__ns32000__) || defined(sequent) || \
 	  defined(MIPSEL) || defined(_MIPSEL) || defined(sun386) || defined(__sun386__) || \
-	  defined(x86_64) || defined(__x86_64) || (defined(TARGET_OS_IPHONE) && defined(TARGET_CPU_ARM))
+	  defined(x86_64) || defined(__x86_64) || (defined(TARGET_OS_IPHONE) && defined(TARGET_CPU_ARM)) || \
+	  defined(__arm__)
 #  define LITTLE_ENDIAN
 # else
 #  error "Add your platform to the list"

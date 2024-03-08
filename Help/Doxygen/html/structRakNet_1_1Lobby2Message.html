@@ -163,10 +163,10 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Message.html#7d2c66bbb0ffbcda05e83e936976c41a">CallCallback</a> (<a class="el" href="structRakNet_1_1Lobby2Callbacks.html">Lobby2Callbacks</a> *cb)=0</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Message.html#09a07dc920666fc0d195253bbaf98b2c">ServerPreDBMemoryImpl</a> (<a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a> *server, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Message.html#5213270ccd16a7bc6afc8df001b623e7">ServerPreDBMemoryImpl</a> (<a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a> *server, <a class="el" href="classRakNet_1_1RakString.html">RakString</a> userHandle)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="510133c6c9db3b05b0494bcd028b99e3"></a><!-- doxytag: member="RakNet::Lobby2Message::ServerPostDBMemoryImpl" ref="510133c6c9db3b05b0494bcd028b99e3" args="(Lobby2Server *server, SystemAddress systemAddress)" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Message.html#510133c6c9db3b05b0494bcd028b99e3">ServerPostDBMemoryImpl</a> (<a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a> *server, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="62cc92ba3fb0e6562cf77d929d231a35"></a><!-- doxytag: member="RakNet::Lobby2Message::ServerPostDBMemoryImpl" ref="62cc92ba3fb0e6562cf77d929d231a35" args="(Lobby2Server *server, RakString userHandle)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Message.html#62cc92ba3fb0e6562cf77d929d231a35">ServerPostDBMemoryImpl</a> (<a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a> *server, <a class="el" href="classRakNet_1_1RakString.html">RakString</a> userHandle)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Do any <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base class for the lobby server, without database specific functionality.">Lobby2Server</a> functionality after the message has been processed by the database, in the server thread. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Message.html#39a885f1a8d8b636e5c7bbeb13d4f822">ServerDBImpl</a> (<a class="el" href="structRakNet_1_1Lobby2ServerCommand.html">Lobby2ServerCommand</a> *command, void *databaseInterface)</td></tr>
@@ -402,7 +402,7 @@ Is this message something that should only be run by a system with ranking uploa
 Do any <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base class for the lobby server, without database specific functionality.">Lobby2Server</a> functionality when the message is processed in a database thread on the server. It is safe to do slow database calls in this function. If it returns true, the message has been handled, and the result is sent to the client If it returns false, that means ignore the message 
 </div>
 </div><p>
-<a class="anchor" name="09a07dc920666fc0d195253bbaf98b2c"></a><!-- doxytag: member="RakNet::Lobby2Message::ServerPreDBMemoryImpl" ref="09a07dc920666fc0d195253bbaf98b2c" args="(Lobby2Server *server, SystemAddress systemAddress)" -->
+<a class="anchor" name="5213270ccd16a7bc6afc8df001b623e7"></a><!-- doxytag: member="RakNet::Lobby2Message::ServerPreDBMemoryImpl" ref="5213270ccd16a7bc6afc8df001b623e7" args="(Lobby2Server *server, RakString userHandle)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -415,8 +415,8 @@ Do any <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base cla
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1RakString.html">RakString</a>&nbsp;</td>
+          <td class="paramname"> <em>userHandle</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -429,7 +429,7 @@ Do any <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base cla
 
 <p>
 Do any <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base class for the lobby server, without database specific functionality.">Lobby2Server</a> functionality when the message first arrives on the server, and after it has returned true from <a class="el" href="structRakNet_1_1Lobby2Message.html#419b02230facc25fe97e364ee914e996">PrevalidateInput()</a> If it returns true, the message has been handled, and the result is sent to the client If it returns false, the message continues to ServerDBImpl 
-<p>Reimplemented in <a class="el" href="structRakNet_1_1Platform__Startup.html#1d0cbd6cad379a13d02b7147ded8a47c">RakNet::Platform_Startup</a>, and <a class="el" href="structRakNet_1_1Platform__Shutdown.html#d468df2e5f6029ebe5a407caba1c0d14">RakNet::Platform_Shutdown</a>.</p>
+<p>Reimplemented in <a class="el" href="structRakNet_1_1Platform__Startup.html#70d828b8a3a8789d9ff15e48f520ee15">RakNet::Platform_Startup</a>, and <a class="el" href="structRakNet_1_1Platform__Shutdown.html#4f3440dc86865202cf317070b0d645c9">RakNet::Platform_Shutdown</a>.</p>
 
 </div>
 </div><p>
@@ -487,7 +487,7 @@ Just a number, uniquely identifying each allocation of <a class="el" href="struc
 <hr>The documentation for this struct was generated from the following file:<ul>
 <li>d:/RakNet/DependentExtensions/Lobby2/Lobby2Message.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 1 11:00:23 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 1 10:29:12 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

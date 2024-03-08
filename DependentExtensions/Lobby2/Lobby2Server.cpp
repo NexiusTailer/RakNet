@@ -10,11 +10,11 @@
 
 using namespace RakNet;
 
-int Lobby2Server::UserCompBySysAddr( const SystemAddress &key, Lobby2Server::User * const &data )
+int Lobby2Server::UserCompByUsername( const RakString &key, Lobby2Server::User * const &data )
 {
-	if (key < data->systemAddress)
+	if (key < data->userName)
 		return -1;
-	if (key==data->systemAddress)
+	if (key==data->userName)
 		return 0;
 	return 1;
 }
@@ -22,6 +22,7 @@ int Lobby2Server::UserCompBySysAddr( const SystemAddress &key, Lobby2Server::Use
 Lobby2Server::Lobby2Server()
 {
 	DataStructures::OrderedList<SystemAddress, SystemAddress>::IMPLEMENT_DEFAULT_COMPARISON();
+	DataStructures::OrderedList<RakString, RakString>::IMPLEMENT_DEFAULT_COMPARISON();
 	roomsPlugin=0;
 	roomsPluginAddress=UNASSIGNED_SYSTEM_ADDRESS;
 }
@@ -29,13 +30,13 @@ Lobby2Server::~Lobby2Server()
 {
 	Clear();
 }
-void Lobby2Server::SendMessage(Lobby2Message *msg, SystemAddress recipient)
+void Lobby2Server::SendMessage(Lobby2Message *msg, const DataStructures::List<SystemAddress> &recipients)
 {
 	RakNet::BitStream bs;
 	bs.Write((MessageID)ID_LOBBY2_SEND_MESSAGE);
 	bs.Write((MessageID)msg->GetID());
 	msg->Serialize(true,true,&bs);
-	SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, recipient, false);
+	SendUnifiedToMultiple(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, recipients);
 }
 void Lobby2Server::Update(void)
 {
@@ -69,7 +70,7 @@ void Lobby2Server::Update(void)
 	if (threadPool.HasOutputFast() && threadPool.HasOutput())
 	{
 		Lobby2ServerCommand c = threadPool.GetOutput();
-		c.lobby2Message->ServerPostDBMemoryImpl(this, c.callerSystemAddress);
+		c.lobby2Message->ServerPostDBMemoryImpl(this, c.callingUserName);
 		if (c.returnToSender)
 		{
 			RakNet::BitStream bs;
@@ -77,7 +78,7 @@ void Lobby2Server::Update(void)
 			bs.Write((MessageID)c.lobby2Message->GetID());
 			c.lobby2Message->Serialize(true,true,&bs);
 			// Have the ID to send to, but not the address. The ID came from the thread, such as notifying another user
-			if (c.callerSystemAddress==UNASSIGNED_SYSTEM_ADDRESS)
+			if (c.callerSystemAddresses.Size()==0)
 			{
 				unsigned int i;
 				if (c.callerUserId!=0)
@@ -86,12 +87,13 @@ void Lobby2Server::Update(void)
 					{
 						if (users[i]->callerUserId==c.callerUserId)
 						{
-							c.callerSystemAddress=users[i]->systemAddress;
-							c.callerGuid=users[i]->guid;
+							c.callerSystemAddresses=users[i]->systemAddresses;
+							c.callerGuids=users[i]->guids;		
 
+							/*
 							if (c.requiredConnectionAddress!=UNASSIGNED_SYSTEM_ADDRESS)
 							{
-								// This message refers to another use that has to be logged on for it to be sent
+								// This message refers to another user that has to be logged on for it to be sent
 								bool objectExists;
 								unsigned int idx;
 								idx = users.GetIndexFromKey(c.callerSystemAddress,&objectExists);
@@ -102,18 +104,19 @@ void Lobby2Server::Update(void)
 									return;
 								}
 							}
+							*/
 							break;
 						}
 					}
 				}
-				if (c.callerSystemAddress==UNASSIGNED_SYSTEM_ADDRESS && c.callingUserName.IsEmpty()==false)
+				if (c.callerSystemAddresses.Size()==0 && c.callingUserName.IsEmpty()==false)
 				{
 					for (i=0; i < users.Size(); i++)
 					{
-						if (users[i]->userName==c.callingUserName)
+						if (users[i]->callerUserId==c.callerUserId)
 						{
-							c.callerSystemAddress=users[i]->systemAddress;
-							c.callerGuid=users[i]->guid;
+							c.callerSystemAddresses=users[i]->systemAddresses;
+							c.callerGuids=users[i]->guids;
 							break;
 						}
 					}
@@ -123,7 +126,7 @@ void Lobby2Server::Update(void)
 			{
 				bool objectExists;
 				unsigned int idx;
-				idx = users.GetIndexFromKey(c.callerSystemAddress,&objectExists);
+				idx = users.GetIndexFromKey(c.callingUserName,&objectExists);
 				if (objectExists && 
 					c.callingUserName.IsEmpty()==false &&
 					users[idx]->userName!=c.callingUserName)
@@ -134,7 +137,7 @@ void Lobby2Server::Update(void)
 					return;
 				}
 			}
-			SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, c.callerSystemAddress, false);
+			SendUnifiedToMultiple(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, c.callerSystemAddresses);
 		}
 		if (c.deallocMsgWhenDone)
 			RakNet::OP_DELETE(c.lobby2Message, __FILE__, __LINE__);
@@ -167,19 +170,32 @@ void Lobby2Server::OnClosedConnection(SystemAddress systemAddress, RakNetGUID ra
 	// If systemAddress is a user, then notify his friends about him logging off
 	if (index!=-1)
 	{
-		// Log this logoff due to closed connection
-		Lobby2Message *lobby2Message = msgFactory->Alloc(L2MID_Client_Logoff);
-		Lobby2ServerCommand command;
-		command.lobby2Message=lobby2Message;
-		command.deallocMsgWhenDone=true;
-		command.returnToSender=true;
-		command.callerSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
-		command.callerGuid=UNASSIGNED_RAKNET_GUID;
-		command.callerUserId=users[index]->callerUserId;
-		command.server=this;
-		ExecuteCommand(&command);
+		bool found=false;
+		User *user = users[index];
+		for (unsigned int i=0; i < user->systemAddresses.Size(); i++)
+		{
+			if (user->systemAddresses[i]==systemAddress)
+			{
+				found=true;
+				user->systemAddresses.RemoveAtIndexFast(i);
+				break;
+			}
+		}
 
-		RemoveUser(index);
+		if (found && user->systemAddresses.Size()==0)
+		{
+			// Log this logoff due to closed connection
+			Lobby2Message *lobby2Message = msgFactory->Alloc(L2MID_Client_Logoff);
+			Lobby2ServerCommand command;
+			command.lobby2Message=lobby2Message;
+			command.deallocMsgWhenDone=true;
+			command.returnToSender=true;
+			command.callerUserId=users[index]->callerUserId;
+			command.server=this;
+			ExecuteCommand(&command);
+
+			RemoveUser(index);
+		}		
 	}
 }
 void Lobby2Server::OnMessage(Packet *packet)
@@ -218,8 +234,8 @@ void Lobby2Server::OnMessage(Packet *packet)
 			}
 			command.callerUserId=0;
 		}
-		command.callerSystemAddress=packet->systemAddress;
-		command.callerGuid=packet->guid;
+		command.callerSystemAddresses.Push(packet->systemAddress,__FILE__,__LINE__);
+		command.callerGuids.Push(packet->guid,__FILE__,__LINE__);
 		command.server=this;
 		ExecuteCommand(&command);
 	}
@@ -267,9 +283,18 @@ void Lobby2Server::AddAdminAddress(SystemAddress addr)
 {
 	adminAddresses.Insert(addr,addr,false, __FILE__, __LINE__ );
 }
-bool Lobby2Server::IsAdminAddress(SystemAddress addr)
+bool Lobby2Server::HasAdminAddress(const DataStructures::List<SystemAddress> &addresses)
 {
-	return addr==UNASSIGNED_SYSTEM_ADDRESS || adminAddresses.HasData(addr);
+	if (addresses.Size()==0)
+		return true;
+
+	unsigned int j;
+	for (j=0; j < addresses.Size(); j++)
+	{
+		if (adminAddresses.HasData(addresses[j]))
+			return true;
+	}
+	return false;
 }
 void Lobby2Server::RemoveAdminAddress(SystemAddress addr)
 {
@@ -283,9 +308,18 @@ void Lobby2Server::AddRankingAddress(SystemAddress addr)
 {
 	rankingAddresses.Insert(addr,addr,false, __FILE__, __LINE__ );
 }
-bool Lobby2Server::IsRankingAddress(SystemAddress addr)
+bool Lobby2Server::HasRankingAddress(const DataStructures::List<SystemAddress> &addresses)
 {
-	return addr==UNASSIGNED_SYSTEM_ADDRESS || rankingAddresses.HasData(addr);
+	if (addresses.Size()==0)
+		return true;
+
+	unsigned int j;
+	for (j=0; j < addresses.Size(); j++)
+	{
+		if (rankingAddresses.HasData(addresses[j]))
+			return true;
+	}
+	return false;
 }
 void Lobby2Server::RemoveRankingAddress(SystemAddress addr)
 {
@@ -300,35 +334,35 @@ void Lobby2Server::ExecuteCommand(Lobby2ServerCommand *command)
 	RakNet::BitStream out;
 	if (command->lobby2Message->PrevalidateInput()==false)
 	{
-		SendMessage(command->lobby2Message, command->callerSystemAddress);
+		SendMessage(command->lobby2Message, command->callerSystemAddresses);
 		if (command->deallocMsgWhenDone)
 			msgFactory->Dealloc(command->lobby2Message);
 		return;
 	}
 
-	if (command->lobby2Message->RequiresAdmin() && IsAdminAddress(command->callerSystemAddress)==false)
+	if (command->lobby2Message->RequiresAdmin() && HasAdminAddress(command->callerSystemAddresses)==false)
 	{
 		command->lobby2Message->resultCode=L2RC_REQUIRES_ADMIN;
-		SendMessage(command->lobby2Message, command->callerSystemAddress);
-		SendUnified(&out,packetPriority, RELIABLE_ORDERED, orderingChannel, command->callerSystemAddress, false);
+		SendMessage(command->lobby2Message, command->callerSystemAddresses);
+		SendUnifiedToMultiple(&out,packetPriority, RELIABLE_ORDERED, orderingChannel, command->callerSystemAddresses);
 		if (command->deallocMsgWhenDone)
 			msgFactory->Dealloc(command->lobby2Message);
 		return;
 	}
 
-	if (command->lobby2Message->RequiresRankingPermission() && IsRankingAddress(command->callerSystemAddress)==false)
+	if (command->lobby2Message->RequiresRankingPermission() && HasRankingAddress(command->callerSystemAddresses)==false)
 	{
 		command->lobby2Message->resultCode=L2RC_REQUIRES_ADMIN;
-		SendMessage(command->lobby2Message, command->callerSystemAddress);
-		SendUnified(&out,packetPriority, RELIABLE_ORDERED, orderingChannel, command->callerSystemAddress, false);
+		SendMessage(command->lobby2Message, command->callerSystemAddresses);
+		SendUnifiedToMultiple(&out,packetPriority, RELIABLE_ORDERED, orderingChannel, command->callerSystemAddresses);
 		if (command->deallocMsgWhenDone)
 			msgFactory->Dealloc(command->lobby2Message);
 		return;
 	}
 
-	if (command->lobby2Message->ServerPreDBMemoryImpl(this, command->callerSystemAddress)==true)
+	if (command->lobby2Message->ServerPreDBMemoryImpl(this, command->callingUserName)==true)
 	{
-		SendMessage(command->lobby2Message, command->callerSystemAddress);
+		SendMessage(command->lobby2Message, command->callerSystemAddresses);
 		if (command->deallocMsgWhenDone)
 			msgFactory->Dealloc(command->lobby2Message);
 		return;
@@ -372,12 +406,12 @@ void Lobby2Server::LogoffFromRooms(User *user)
 #endif
 
 }
-void Lobby2Server::SendRemoteLoginNotification(RakNet::RakString handle, SystemAddress recipient)
+void Lobby2Server::SendRemoteLoginNotification(RakNet::RakString handle, const DataStructures::List<SystemAddress>& recipients)
 {
 	Notification_Client_RemoteLogin notification;
 	notification.handle=handle;
 	notification.resultCode=L2RC_SUCCESS;
-	SendMessage(&notification, recipient);
+	SendMessage(&notification, recipients);
 }
 void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 {
@@ -393,63 +427,83 @@ void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 	}
 
 	bool objectExists;
-	unsigned int insertionIndex = users.GetIndexFromKey(command->callerSystemAddress, &objectExists);
+	unsigned int insertionIndex = users.GetIndexFromKey(command->callingUserName, &objectExists);
 	if (objectExists)
 	{
 		User * user = users[insertionIndex];
-		SendRemoteLoginNotification(user->userName, user->systemAddress);
-		LogoffFromRooms(user);
+		if (user->allowMultipleLogins==false)
+		{
+			SendRemoteLoginNotification(user->userName, user->systemAddresses);
+			LogoffFromRooms(user);
 
-		// Already logged in from this system address.
-		// Delete the existing entry, which will be reinserted.
-		RakNet::OP_DELETE(user,__FILE__,__LINE__);
-		users.RemoveAtIndex(insertionIndex);
+			// Already logged in from this system address.
+			// Delete the existing entry, which will be reinserted.
+			RakNet::OP_DELETE(user,__FILE__,__LINE__);
+			users.RemoveAtIndex(insertionIndex);
+		}
+		else
+		{
+			if (user->systemAddresses.GetIndexOf(command->callerSystemAddresses[0])==(unsigned int) -1)
+			{
+				// Just add system address and guid already in use to the list for this user
+				user->systemAddresses.Push(command->callerSystemAddresses[0], __FILE__, __LINE__);
+				user->guids.Push(command->callerGuids[0], __FILE__, __LINE__);
+			}
+			return;
+		}
 	}
 	else
 	{
-		unsigned int idx2 = GetUserIndexByGUID(command->callerGuid);
-		unsigned int idx3 = GetUserIndexByUsername(command->callingUserName);
+		// Different username, from the same IP address or RakNet instance
+		unsigned int idx2 = GetUserIndexByGUID(command->callerGuids[0]);
+		unsigned int idx3 = GetUserIndexBySystemAddress(command->callerSystemAddresses[0]);
 		if (idx2!=(unsigned int) -1)
 		{
 			User * user = users[idx2];
-			SendRemoteLoginNotification(user->userName, user->systemAddress);
+			if (user->allowMultipleLogins==true)
+				return;
+			SendRemoteLoginNotification(user->userName, user->systemAddresses);
 			LogoffFromRooms(user);
 
 			RakNet::OP_DELETE(user,__FILE__,__LINE__);
 			users.RemoveAtIndex(idx2);
 
-			insertionIndex = users.GetIndexFromKey(command->callerSystemAddress, &objectExists);
+			insertionIndex = users.GetIndexFromKey(command->callingUserName, &objectExists);
 		}
 		else if (idx3!=(unsigned int) -1)
 		{
 			User * user = users[idx3];
-			SendRemoteLoginNotification(user->userName, user->systemAddress);
+			if (user->allowMultipleLogins==true)
+				return;
+			SendRemoteLoginNotification(user->userName, user->systemAddresses);
 			LogoffFromRooms(user);
 
 			RakNet::OP_DELETE(user,__FILE__,__LINE__);
 			users.RemoveAtIndex(idx3);
 
-			insertionIndex = users.GetIndexFromKey(command->callerSystemAddress, &objectExists);
+			insertionIndex = users.GetIndexFromKey(command->callingUserName, &objectExists);
 		}
 	}
 
+
 	User *user = RakNet::OP_NEW<User>( __FILE__, __LINE__ );
 	user->userName=command->callingUserName;
-	user->systemAddress=command->callerSystemAddress;
-	user->guid=command->callerGuid;
+	user->systemAddresses=command->callerSystemAddresses;
+	user->guids=command->callerGuids;
 	user->callerUserId=command->callerUserId;
+	user->allowMultipleLogins=((Client_Login*)command->lobby2Message)->allowMultipleLogins;
 	users.InsertAtIndex(user, insertionIndex, __FILE__, __LINE__ );
 
 #if defined(__INTEGRATE_LOBBY2_WITH_ROOMS_PLUGIN)
 	// Tell the rooms plugin about the login event
 	if (roomsPlugin)
 	{
-		roomsPlugin->LoginRoomsParticipant(user->userName, user->systemAddress, user->guid, UNASSIGNED_SYSTEM_ADDRESS);
+		roomsPlugin->LoginRoomsParticipant(user->userName, user->systemAddresses[0], user->guids[0], UNASSIGNED_SYSTEM_ADDRESS);
 	}
 	else if (roomsPluginAddress!=UNASSIGNED_SYSTEM_ADDRESS)
 	{
 		RakNet::BitStream bs;
-		RoomsPlugin::SerializeLogin(user->userName,user->systemAddress, user->guid, &bs);
+		RoomsPlugin::SerializeLogin(user->userName,user->systemAddresses[0], user->guids[0], &bs);
 		SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, roomsPluginAddress, false);
 	}
 #endif
@@ -466,7 +520,7 @@ void Lobby2Server::OnLogoff(Lobby2ServerCommand *command, bool calledFromThread)
 		threadActionQueueMutex.Unlock();
 		return;
 	}
-	RemoveUser(command->callerSystemAddress);
+	RemoveUser(command->callingUserName);
 }
 void Lobby2Server::OnChangeHandle(Lobby2ServerCommand *command, bool calledFromThread)
 {
@@ -510,14 +564,10 @@ void Lobby2Server::OnChangeHandle(Lobby2ServerCommand *command, bool calledFromT
 	}
 #endif
 }
-void Lobby2Server::RemoveUser(SystemAddress address)
+void Lobby2Server::RemoveUser(RakString userName)
 {
-	// Could be UNASSIGNED_SYSTEM_ADDRESS if locally generated due to disconnect
-	if (address==UNASSIGNED_SYSTEM_ADDRESS)
-		return;
-
 	bool objectExists;
-	unsigned int index = users.GetIndexFromKey(address, &objectExists);
+	unsigned int index = users.GetIndexFromKey(userName, &objectExists);
 	if (objectExists)
 		RemoveUser(index);
 }
@@ -530,8 +580,6 @@ void Lobby2Server::RemoveUser(unsigned int index)
 	notification->otherHandle=user->userName;
 	notification->op=Notification_Friends_StatusChange::FRIEND_LOGGED_OFF;
 	notification->resultCode=L2RC_SUCCESS;
-	command.callerSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
-	command.callerGuid=UNASSIGNED_RAKNET_GUID;
 	command.server=this;
 	command.deallocMsgWhenDone=true;
 	command.lobby2Message=notification;
@@ -546,7 +594,7 @@ void Lobby2Server::RemoveUser(unsigned int index)
 	{
 		Lobby2ServerCommand command;
 		command = threadPool.GetInputAtIndex(i);
-		if (command.lobby2Message->CancelOnDisconnect() && command.callerSystemAddress==user->systemAddress)
+		if (command.lobby2Message->CancelOnDisconnect()&& command.callerSystemAddresses.Size()>0 && user->systemAddresses.GetIndexOf(command.callerSystemAddresses[0])!=(unsigned int)-1)
 		{
 			if (command.deallocMsgWhenDone)
 				RakNet::OP_DELETE(command.lobby2Message, __FILE__, __LINE__);
@@ -564,27 +612,37 @@ void Lobby2Server::RemoveUser(unsigned int index)
 }
 unsigned int Lobby2Server::GetUserIndexBySystemAddress(SystemAddress systemAddress) const
 {
-	bool objectExists;
-	unsigned int idx;
-	idx = users.GetIndexFromKey(systemAddress, &objectExists);
-	if (objectExists)
-		return idx;
-	return (unsigned int)-1;
+	unsigned int idx1,idx2;
+	for (idx1=0; idx1 < users.Size(); idx1++)
+	{
+		for (idx2=0; idx2 < users[idx1]->systemAddresses.Size(); idx2++)
+		{
+			if (users[idx1]->systemAddresses[idx2]==systemAddress)
+				return idx1;
+		}
+	}
+	return (unsigned int) -1;
 }
 unsigned int Lobby2Server::GetUserIndexByGUID(RakNetGUID guid) const
 {
-	unsigned int idx;
-	for (idx=0; idx < users.Size(); idx++)
-		if (users[idx]->guid==guid)
-			return idx;
+	unsigned int idx1,idx2;
+	for (idx1=0; idx1 < users.Size(); idx1++)
+	{
+		for (idx2=0; idx2 < users[idx1]->guids.Size(); idx2++)
+		{
+			if (users[idx1]->guids[idx2]==guid)
+				return idx1;
+		}
+	}
 	return (unsigned int) -1;
 }
 unsigned int Lobby2Server::GetUserIndexByUsername(RakNet::RakString userName) const
 {
 	unsigned int idx;
-	for (idx=0; idx < users.Size(); idx++)
-		if (users[idx]->userName==userName)
-			return idx;
+	bool objectExists;
+	idx = users.GetIndexFromKey(userName,&objectExists);
+	if (objectExists)
+		return idx;
 	return (unsigned int) -1;
 }
 void Lobby2Server::StopThreads(void)
@@ -614,9 +672,9 @@ void Lobby2Server::GetUserOnlineStatus(UsernameAndOnlineStatus &userInfo) const
 		userInfo.presence.isVisible=false;
 	}
 }
-void Lobby2Server::SetPresence(const RakNet::Lobby2Presence &presence, SystemAddress systemAddress)
+void Lobby2Server::SetPresence(const RakNet::Lobby2Presence &presence, RakNet::RakString userHandle)
 {
-	unsigned int index = GetUserIndexBySystemAddress(systemAddress);
+	unsigned int index = GetUserIndexByUsername(userHandle);
 
 	if (index!=-1)
 	{
@@ -629,8 +687,6 @@ void Lobby2Server::SetPresence(const RakNet::Lobby2Presence &presence, SystemAdd
 		notification->newPresence=presence;
 		notification->otherHandle=user->userName;
 		notification->resultCode=L2RC_SUCCESS;
-		command.callerSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
-		command.callerGuid=UNASSIGNED_RAKNET_GUID;
 		command.server=this;
 		command.deallocMsgWhenDone=true;
 		command.lobby2Message=notification;
@@ -650,4 +706,9 @@ void Lobby2Server::GetPresence(RakNet::Lobby2Presence &presence, RakNet::RakStri
 	{
 		presence.status=Lobby2Presence::NOT_ONLINE;
 	}
+}
+void Lobby2Server::SendUnifiedToMultiple( const RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const DataStructures::List<SystemAddress> systemAddresses )
+{
+	for (unsigned int i=0; i < systemAddresses.Size(); i++)
+		SendUnified(bitStream,priority,reliability,orderingChannel,systemAddresses[i],false);
 }

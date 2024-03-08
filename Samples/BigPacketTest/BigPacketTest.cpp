@@ -48,8 +48,8 @@ int main(void)
 		printf("Enter remote IP: ");
 		gets(text);
 		if (text[0]==0)
-			//strcpy(text, "127.0.0.1");
-			strcpy(text, "94.198.81.195"); // dx in Europe
+			strcpy(text, "127.0.0.1");
+		//	strcpy(text, "94.198.81.195"); // dx in Europe
 	}
 	else if (ch=='s')
 	{

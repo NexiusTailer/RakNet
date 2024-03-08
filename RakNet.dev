@@ -1,7 +1,7 @@
 [Project]
 FileName=RakNet.dev
 Name=RakNet
-UnitCount=264
+UnitCount=266
 Type=2
 Ver=1
 ObjFiles=
@@ -2679,6 +2679,26 @@ BuildCmd=
 
 [Unit264]
 FileName=Source\TeamBalancer.h
+CompileCpp=1
+Folder=RakNet
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit265]
+FileName=..\RakNet4\Source\CCRakNetSlidingWindow.cpp
+CompileCpp=1
+Folder=RakNet
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit266]
+FileName=..\RakNet4\Source\CCRakNetSlidingWindow.h
 CompileCpp=1
 Folder=RakNet
 Compile=1

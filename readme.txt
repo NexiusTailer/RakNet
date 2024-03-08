@@ -1,4 +1,4 @@
-RakNet 3.82
+RakNet 3.9
 Copyright 2002-2005 Kevin Jenkins (rakkar@jenkinssoftware.com).
 This API and the code herein created by and wholly and privately owned by Kevin Jenkins except where specifically indicated otherwise.
 Licensed under the "RakNet" brand by Jenkins Software and subject to the terms of the relevant licensing agreement available at http://www.jenkinssoftware.com
@@ -40,7 +40,7 @@ You might have to copy *.dll from cygwin\bin as well.
 -----------------------------------------
 Linux users
 -----------------------------------------
-Use cmake.
+Use cmake, or "g++ -lpthread *.cpp" in the /Source directory.
 
 -----------------------------------------
 DevCPP Users
@@ -61,7 +61,8 @@ Open a Terminal window and type: cd ~/Desktop/RakNet/Source
 Give the following command:
 
 Code:
-gcc -c -I ../Include -isysroot /Developer/SDKs/MacOSX10.3.9.sdk/ -arch ppc *.cpp
+g++ -c -DNDEBUG -I -isysroot /Developer/SDKs/MacOSX10.5u.sdk/ -arch i386 *.cpp 
+Use whichver SDK you have. However, the 10.4 SDK is bugged and will not compile unless you use GCC 4.0 from inside XCODE
 
 The sources should build cleanly. This gives you a bunch of PowerPC binaries, compiled against the 10.3.9 SDK which is a good thing.
 
@@ -99,12 +100,6 @@ IPod
 -----------------------------------------
 Depending on what version you target, you may have to change two defines to not use 64 bit integers and floats or doubles. See 
 See http://www.jenkinssoftware.com/forum/index.php?topic=2717.0
-
-
------------------------------------------
-Other Platforms
------------------------------------------
-The define _COMPATIBILITY_1 while adding Compatibility1Includes.h may work for you.
 
 -----------------------------------------
 Package notes

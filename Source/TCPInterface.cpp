@@ -270,11 +270,13 @@ void TCPInterface::StartSSLClient(SystemAddress systemAddress)
 {
 	if (ctx==0)
 	{
+		sharedSslMutex.Lock();
 		SSLeay_add_ssl_algorithms();
 		meth = SSLv2_client_method();
 		SSL_load_error_strings();
 		ctx = SSL_CTX_new (meth);
 		RakAssert(ctx!=0);
+		sharedSslMutex.Unlock();
 	}
 
 	SystemAddress *id = startSSL.Allocate( __FILE__, __LINE__ );
@@ -373,7 +375,7 @@ void TCPInterface::CloseConnection( SystemAddress systemAddress )
 	{
 		remoteClients[systemAddress.systemIndex].isActiveMutex.Lock();
 		remoteClients[systemAddress.systemIndex].SetActive(false);
-		remoteClients[systemAddress.systemIndex].isActiveMutex.Lock();
+		remoteClients[systemAddress.systemIndex].isActiveMutex.Unlock();
 	}
 	else
 	{

@@ -83,8 +83,6 @@ extern void Console2GetIPAndPort(unsigned int, char *, unsigned short *, unsigne
 static const int NUM_MTU_SIZES=3;
 #if defined(_XBOX) || defined(X360)
                                                                                    
-#elif __PC__
-static const int mtuSizes[NUM_MTU_SIZES]={1200, 1200, 576};
 #else
 static const int mtuSizes[NUM_MTU_SIZES]={MAXIMUM_MTU_SIZE, 1200, 576};
 #endif
@@ -196,6 +194,7 @@ Packet *RakPeer::AllocPacket(unsigned dataSize, const char *file, unsigned int l
 	p->bitSize=BYTES_TO_BITS(dataSize);
 	p->deleteData=true;
 	p->guid=UNASSIGNED_RAKNET_GUID;
+	p->bypassPlugins=false;
 	return p;
 }
 
@@ -212,6 +211,7 @@ Packet *RakPeer::AllocPacket(unsigned dataSize, unsigned char *data, const char 
 	p->bitSize=BYTES_TO_BITS(dataSize);
 	p->deleteData=true;
 	p->guid=UNASSIGNED_RAKNET_GUID;
+	p->bypassPlugins=false;
 	return p;
 }
 
@@ -2861,7 +2861,7 @@ bool RakPeer::IsLocalIP( const char *ip )
 		return false;
 
 #if !defined(_XBOX) && !defined(X360)
-	if (strcmp(ip, "127.0.0.1")==0)
+	if (strcmp(ip, "127.0.0.1")==0 || strcmp(ip, "localhost")==0)
 		return true;
 
 	int num = GetNumberOfAddresses();
@@ -4432,8 +4432,11 @@ bool RakPeer::HandleRPCPacket( const char *data, int length, SystemAddress syste
 	incomingBitStream.IgnoreBits(8);
 	if (data[0]==ID_TIMESTAMP)
 	{
-		incomingBitStream.IgnoreBits(8*(sizeof(RakNetTime)+sizeof(MessageID)));
-		memcpy(&rpcParms.remoteTimestamp, data+sizeof(MessageID), sizeof(RakNetTime));
+		// 11/1/2010 timestamp fix for RPC
+// 		incomingBitStream.IgnoreBits(8*(sizeof(RakNetTime)+sizeof(MessageID)));
+// 		memcpy(&rpcParms.remoteTimestamp, data+sizeof(MessageID), sizeof(RakNetTime));
+		incomingBitStream.Read(rpcParms.remoteTimestamp);
+		incomingBitStream.IgnoreBits(8);
 	}
 	else
 		rpcParms.remoteTimestamp=0;
@@ -5173,7 +5176,7 @@ void RakPeer::SendBufferedList( const char **data, const int *lengths, const int
 		}
 	}
 
-	if (broadcast==false && IsLoopbackAddress(systemIdentifier.systemAddress,true))
+	if (broadcast==false && IsLoopbackAddress(systemIdentifier,true))
 	{
 		SendLoopback(dataAggregate,totalLength);
 		rakFree_Ex(dataAggregate,__FILE__,__LINE__);
@@ -5364,6 +5367,8 @@ void RakPeer::OnConnectedPong(RakNetTime sendPingTime, RakNetTime sendPongTime, 
 
 		if ( ++( remoteSystem->pingAndClockDifferentialWriteIndex ) == PING_TIMES_ARRAY_SIZE )
 			remoteSystem->pingAndClockDifferentialWriteIndex = 0;
+
+		remoteSystem->reliabilityLayer.OnExternalPing((double) ping);
 	}
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

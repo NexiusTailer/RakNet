@@ -34,10 +34,17 @@
 #include "DS_RangeList.h"
 #include "DS_BPlusTree.h"
 #include "DS_MemoryPool.h"
-#include "CCRakNetUDT.h"
 #include "DS_Multilist.h"
 #include "RakNetDefines.h"
 #include "DS_Heap.h"
+
+#if USE_SLIDING_WINDOW_CONGESTION_CONTROL!=1
+#include "CCRakNetUDT.h"
+#define INCLUDE_TIMESTAMP_WITH_DATAGRAMS 1
+#else
+#include "CCRakNetSlidingWindow.h"
+#define INCLUDE_TIMESTAMP_WITH_DATAGRAMS 0
+#endif
 
 class PluginInterface2;
 class RakNetRandom;
@@ -55,11 +62,18 @@ struct SplitPacketChannel//<SplitPacketChannel>
 {
 	CCTimeType lastUpdateTime;
 
+	DataStructures::List<InternalPacket*> splitPacketList;
+
+#if PREALLOCATE_LARGE_MESSAGES==1
+	InternalPacket *returnedPacket;
+	bool gotFirstPacket;
+	unsigned int stride;
+	unsigned int splitPacketsArrived;
+#else
 	// This is here for progress notifications, since progress notifications return the first packet data, if available
 	InternalPacket *firstPacket;
+#endif
 
-	// DataStructures::OrderedList<SplitPacketIndexType, InternalPacket*, SplitPacketIndexComp> splitPacketList;
-	DataStructures::List<InternalPacket*> splitPacketList;
 };
 int RAK_DLL_EXPORT SplitPacketChannelComp( SplitPacketIdType const &key, SplitPacketChannel* const &data );
 
@@ -199,7 +213,9 @@ public:
 	bool AckTimeout(RakNetTimeMS curTime);
 	CCTimeType GetNextSendTime(void) const;
 	CCTimeType GetTimeBetweenPackets(void) const;
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
 	CCTimeType GetAckPing(void) const;
+#endif
 	RakNetTimeMS GetTimeLastDatagramArrived(void) const {return timeLastDatagramArrived;}
 
 	// If true, will update time between packets quickly based on ping calculations
@@ -207,6 +223,9 @@ public:
 
 	// Encoded as numMessages[unsigned int], message1BitLength[unsigned int], message1Data (aligned), ...
 	//void GetUndeliveredMessages(RakNet::BitStream *messages, int MTUSize);
+
+	// Told of the system ping externally
+	void OnExternalPing(double pingMS);
 
 private:
 	/// Send the contents of a bitstream to the socket
@@ -332,9 +351,14 @@ private:
 	struct DatagramHistoryNode
 	{
 		DatagramHistoryNode() {}
-		DatagramHistoryNode(MessageNumberNode *_head) :
-		head(_head) {}
+		DatagramHistoryNode(MessageNumberNode *_head
+			//, bool r
+			) :
+		head(_head)
+		//	, isReliable(r)
+		{}
 		MessageNumberNode *head;
+	//	bool isReliable;
 	};
 	// Queue length is programmatically restricted to DATAGRAM_MESSAGE_ID_ARRAY_LENGTH
 	// This is essentially an O(1) lookup to get a DatagramHistoryNode given an index
@@ -343,7 +367,7 @@ private:
 
 
 	void RemoveFromDatagramHistory(DatagramSequenceNumberType index);
-	MessageNumberNode* GetMessageNumberNodeByDatagramIndex(DatagramSequenceNumberType index);
+	MessageNumberNode* GetMessageNumberNodeByDatagramIndex(DatagramSequenceNumberType index/*, bool *isReliable*/);
 	void AddFirstToDatagramHistory(DatagramSequenceNumberType datagramNumber);
 	MessageNumberNode* AddFirstToDatagramHistory(DatagramSequenceNumberType datagramNumber, DatagramSequenceNumberType messageNumber);
 	MessageNumberNode* AddSubsequentToDatagramHistory(MessageNumberNode *messageNumberNode, DatagramSequenceNumberType messageNumber);
@@ -421,7 +445,10 @@ private:
 	bool resetReceivedPackets;
 
 	CCTimeType lastUpdateTime;
-	CCTimeType timeBetweenPackets, nextSendTime, ackPing;
+	CCTimeType timeBetweenPackets, nextSendTime;
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
+	CCTimeType ackPing;
+#endif
 //	CCTimeType ackPingSamples[ACK_PING_SAMPLES_SIZE]; // Must be range of unsigned char to wrap ackPingIndex properly
 	CCTimeType ackPingSum;
 	unsigned char ackPingIndex;
@@ -467,7 +494,14 @@ private:
 
 	CCTimeType nextAckTimeToSend;
 
+	
+#if USE_SLIDING_WINDOW_CONGESTION_CONTROL==1
+	RakNet::CCRakNetSlidingWindow congestionManager;
+#else
 	RakNet::CCRakNetUDT congestionManager;
+#endif
+
+
 	uint32_t unacknowledgedBytes;
 	
 	bool ResendBufferOverflow(void) const;

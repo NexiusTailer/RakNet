@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="c:/boost_1_38_0;../../Source;../../DependentExtensions/RPC3"
+				AdditionalIncludeDirectories="C:\boost_1_43_0;../../Source;../../DependentExtensions/RPC3"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -117,7 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="c:/boost_1_38_0;../../Source;../../DependentExtensions/RPC3"
+				AdditionalIncludeDirectories="C:\boost_1_43_0;../../Source;../../DependentExtensions/RPC3"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"

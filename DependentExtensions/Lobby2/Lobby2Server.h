@@ -25,9 +25,9 @@ struct Lobby2ServerCommand
 	bool returnToSender;
 	unsigned int callerUserId;
 	RakNet::RakString callingUserName;
-	SystemAddress callerSystemAddress;
-	SystemAddress requiredConnectionAddress;
-	RakNetGUID callerGuid;
+	DataStructures::List<SystemAddress> callerSystemAddresses;
+	DataStructures::List<RakNetGUID> callerGuids;
+	//SystemAddress requiredConnectionAddress;
 	Lobby2Server *server;
 };
 
@@ -52,7 +52,7 @@ public:
 
 	/// \brief Lobby2Message encapsulates a user command, containing both input and output data
 	/// \details This will serialize and transmit that command
-	void SendMessage(Lobby2Message *msg, SystemAddress recipient);
+	void SendMessage(Lobby2Message *msg, const DataStructures::List<SystemAddress> &recipients);
 
 	/// \brief Add a command, which contains a message and other data such as who send the message.
 	/// \details The command will be processed according to its implemented virtual functions. Most likely it will be processed in a thread to run database commands
@@ -62,7 +62,7 @@ public:
 	/// \details This is useful if you want to administrate the server remotely
 	void AddAdminAddress(SystemAddress addr);
 	/// \brief If AddAdminAddress() was previously called with \a addr then this returns true.
-	bool IsAdminAddress(SystemAddress addr);
+	bool HasAdminAddress(const DataStructures::List<SystemAddress> &addresses);
 	/// \brief Removes a system address previously added with AddAdminAddress()
 	void RemoveAdminAddress(SystemAddress addr);
 	/// \brief Removes all system addresses previously added with AddAdminAddress()
@@ -74,7 +74,7 @@ public:
 
 	/// Returns if an address was previously added with AddRankingAddress()
 	/// \param[in] addr Address to check
-	bool IsRankingAddress(SystemAddress addr);
+	bool HasRankingAddress(const DataStructures::List<SystemAddress> &addresses);
 
 	/// Removes an addressed added with AddRankingAddress()
 	/// \param[in] addr Address to check
@@ -123,8 +123,7 @@ public:
 
 	/// Set the presence of a logged in user
 	/// \param[in] presence Presence info of this user
-	/// \param[in] systemAddress Address of this user (must be logged in)
-	void SetPresence(const RakNet::Lobby2Presence &presence, SystemAddress systemAddress);
+	void SetPresence(const RakNet::Lobby2Presence &presence, RakNet::RakString userHandle);
 
 	/// Get the presence of a logged in user, by handle
 	/// \param[out] presence Presence info of requested user
@@ -141,15 +140,16 @@ public:
 	/// \internal
 	struct User
 	{
-		SystemAddress systemAddress;
-		RakNetGUID guid;
+		DataStructures::List<SystemAddress> systemAddresses;
+		DataStructures::List<RakNetGUID> guids;
 		unsigned int callerUserId;
 		RakNet::RakString userName;
 		Lobby2Presence presence;
+		bool allowMultipleLogins;
 	};
 
 	/// \internal
-	static int UserCompBySysAddr( const SystemAddress &key, Lobby2Server::User * const &data );
+	static int UserCompByUsername( const RakString &key, Lobby2Server::User * const &data );
 
 	/// \internal
 	struct ThreadAction
@@ -158,7 +158,7 @@ public:
 		Lobby2ServerCommand command;
 	};
 
-	const DataStructures::OrderedList<SystemAddress, User*, Lobby2Server::UserCompBySysAddr>& GetUsers(void) const {return users;}
+	const DataStructures::OrderedList<RakString, User*, Lobby2Server::UserCompByUsername>& GetUsers(void) const {return users;}
 	void GetUserOnlineStatus(UsernameAndOnlineStatus &userInfo) const;
 	
 
@@ -175,10 +175,10 @@ protected:
 	unsigned int GetUserIndexByGUID(RakNetGUID guid) const;
 	unsigned int GetUserIndexByUsername(RakNet::RakString userName) const;
 	void StopThreads(void);
-	void SendRemoteLoginNotification(RakNet::RakString handle, SystemAddress recipient);
+	void SendRemoteLoginNotification(RakNet::RakString handle, const DataStructures::List<SystemAddress>& recipients);
 
 	/// \internal
-	void RemoveUser(SystemAddress address);
+	void RemoveUser(RakString userName);
 	/// \internal
 	void RemoveUser(unsigned int index);
 	void LogoffFromRooms(User *user);
@@ -190,7 +190,7 @@ protected:
 
 	DataStructures::OrderedList<SystemAddress, SystemAddress> adminAddresses;
 	DataStructures::OrderedList<SystemAddress, SystemAddress> rankingAddresses;
-	DataStructures::OrderedList<SystemAddress, User*, Lobby2Server::UserCompBySysAddr> users;
+	DataStructures::OrderedList<RakString, User*, Lobby2Server::UserCompByUsername> users;
 	RoomsPlugin *roomsPlugin;
 	SystemAddress roomsPluginAddress;
 	ThreadPool<Lobby2ServerCommand,Lobby2ServerCommand> threadPool;
@@ -200,6 +200,7 @@ protected:
 	SimpleMutex threadActionQueueMutex;
 
 	//DataStructures::List<PostgreSQLInterface *> connectionPool;
+	void SendUnifiedToMultiple( const RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const DataStructures::List<SystemAddress> systemAddresses );
 };
 	
 }

@@ -1,9 +1,14 @@
 #include "SendToThread.h"
 #ifdef USE_THREADED_SEND
 #include "RakThread.h"
-#include "CCRakNetUDT.h"
 #include "InternalPacket.h"
 #include "GetTime.h"
+
+#if USE_SLIDING_WINDOW_CONGESTION_CONTROL!=1
+#include "CCRakNetUDT.h"
+#else
+#include "CCRakNetSlidingWindow.h"
+#endif
 
 int SendToThread::refCount=0;
 DataStructures::ThreadsafeAllocatingQueue<SendToThread::SendToThreadBlock> SendToThread::objectQueue;

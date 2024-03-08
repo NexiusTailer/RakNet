@@ -1,4 +1,7 @@
 #include "CCRakNetUDT.h"
+
+#if USE_SLIDING_WINDOW_CONGESTION_CONTROL!=1
+
 #include "Rand.h"
 #include "MTUSize.h"
 #include <stdio.h>
@@ -224,6 +227,11 @@ bool CCRakNetUDT::ShouldSendACKs(CCTimeType curTime, CCTimeType estimatedTimeToN
 // ----------------------------------------------------------------------------------------------------------------------------
 DatagramSequenceNumberType CCRakNetUDT::GetNextDatagramSequenceNumber(void)
 {
+	return nextDatagramSequenceNumber;
+}
+// ----------------------------------------------------------------------------------------------------------------------------
+DatagramSequenceNumberType CCRakNetUDT::GetAndIncrementNextDatagramSequenceNumber(void)
+{
 	DatagramSequenceNumberType dsnt=nextDatagramSequenceNumber;
 	nextDatagramSequenceNumber++;
 	return dsnt;
@@ -353,7 +361,7 @@ CCTimeType CCRakNetUDT::GetSenderRTOForACK(void) const
 CCTimeType CCRakNetUDT::GetRTOForRetransmission(void) const
 {
 #if CC_TIME_TYPE_BYTES==4
-	const CCTimeType maxThreshold=1000;
+	const CCTimeType maxThreshold=10000;
 	const CCTimeType minThreshold=100;
 #else
 	const CCTimeType maxThreshold=1000000;
@@ -786,3 +794,5 @@ void CCRakNetUDT::SetTimeBetweenSendsLimit(unsigned int bitsPerSecond)
 		SND=limit;
 }
 */
+
+#endif

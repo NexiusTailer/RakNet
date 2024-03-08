@@ -304,7 +304,7 @@ void RakNetGUID::ToString(char *dest) const
 		strcpy(dest, "UNASSIGNED_RAKNET_GUID");
 
 	//sprintf(dest, "%u.%u.%u.%u.%u.%u", g[0], g[1], g[2], g[3], g[4], g[5]);
-	sprintf(dest, "%" PRINTF_64_BIT_MODIFIER "u", g);
+	sprintf(dest, "%" PRINTF_64_BIT_MODIFIER "u", (long long unsigned int) g);
 	// sprintf(dest, "%u.%u.%u.%u.%u.%u", g[0], g[1], g[2], g[3], g[4], g[5]);
 }
 bool RakNetGUID::FromString(const char *source)
@@ -319,7 +319,8 @@ bool RakNetGUID::FromString(const char *source)
 #elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
                          
 #else
-	g=strtoull(source,0,10);
+	// Changed from g=strtoull(source,0,10); for android
+	g=strtoull(source, (char **)NULL, 10);
 #endif
 	return true;
 

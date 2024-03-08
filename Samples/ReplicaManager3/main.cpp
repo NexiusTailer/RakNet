@@ -307,6 +307,9 @@ public:
 	SampleConnection(SystemAddress _systemAddress, RakNetGUID _guid) : Connection_RM3(_systemAddress, _guid) {}
 	virtual ~SampleConnection() {}
 
+	// See documentation - Makes all messages between ID_REPLICA_MANAGER_DOWNLOAD_STARTED and ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE arrive in one tick
+	bool QueryGroupDownloadMessages(void) const {return true;}
+
 	virtual Replica3 *AllocReplica(RakNet::BitStream *allocationId, ReplicaManager3 *replicaManager3)
 	{
 		RakNet::RakString typeName;

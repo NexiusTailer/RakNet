@@ -42,7 +42,7 @@ unsigned int splitPacketId, unsigned int splitPacketIndex, unsigned int splitPac
 	const char* idToPrint = NULL;
 	if(printId)
 	{
-		if (splitPacketCount>0)
+		if (splitPacketCount>0 && splitPacketCount!=(unsigned int)-1)
 			idToPrint="(SPLIT PACKET)";
 		else
 			idToPrint =	IDTOString(id);
@@ -110,13 +110,13 @@ void PacketLogger::OnDirectSocketReceive(const char *data, const BitSize_t bitsU
 		return;
 
 	char str[256];
-	FormatLine(str, "Rcv", "Raw", 0, 0, data[0], bitsUsed, RakNet::GetTime(), rakPeerInterface->GetExternalID(remoteSystemAddress), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
+	FormatLine(str, "Rcv", "Raw", 0, 0, data[0], bitsUsed, RakNet::GetTime(), rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
 	AddToLog(str);
 }
 void PacketLogger::OnReliabilityLayerPacketError(const char *errorMessage, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress)
 {
 	char str[1024];
-	FormatLine(str, "RcvErr", errorMessage, 0, 0, "", bitsUsed, RakNet::GetTime(), rakPeerInterface->GetExternalID(remoteSystemAddress), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
+	FormatLine(str, "RcvErr", errorMessage, 0, 0, "", bitsUsed, RakNet::GetTime(), rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
 	AddToLog(str);
 }
 void PacketLogger::OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, RakNetTime time)

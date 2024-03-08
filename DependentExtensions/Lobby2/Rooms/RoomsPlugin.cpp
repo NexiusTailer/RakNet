@@ -1639,14 +1639,19 @@ bool RoomsPlugin::IsServer(void) const
 }
 RoomsPlugin::RoomsPluginParticipant* RoomsPlugin::GetParticipantByHandle(RakNet::RakString handle, SystemAddress senderAddress)
 {
+	(void) senderAddress;
 	if (roomsParticipants.HasData(handle))
 	{
 		RoomsPluginParticipant *rp = roomsParticipants.GetElementFromKey(handle);
 		RakAssert(IsServer());
+		// 10/27/2010 - what was this for? Caused the bug http://www.jenkinssoftware.com/forum/index.php?topic=3720.0;topicseen
+		// This apparently validates the systemAddress to match the one in the function call
+		/*
 		if (senderAddress==UNASSIGNED_SYSTEM_ADDRESS || senderAddress==serverAddress)
 			return rp;
 		if (rp->GetSystemAddress()!=senderAddress)
 			return 0;
+		*/
 		return rp;
 	}
 	return 0;

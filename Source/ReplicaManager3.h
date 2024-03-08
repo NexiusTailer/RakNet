@@ -243,12 +243,13 @@ protected:
 	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 	virtual void OnRakPeerShutdown(void);
+	virtual void OnDetach(void);
 
 	void OnConstructionExisting(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
-	void OnConstruction(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
-	void OnSerialize(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, RakNetTime timestamp, unsigned char packetDataOffset);
-	void OnDownloadStarted(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
-	void OnDownloadComplete(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
+	PluginReceiveResult OnConstruction(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
+	PluginReceiveResult OnSerialize(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, RakNetTime timestamp, unsigned char packetDataOffset);
+	PluginReceiveResult OnDownloadStarted(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
+	PluginReceiveResult OnDownloadComplete(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 	void OnLocalConstructionRejected(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 	void OnLocalConstructionAccepted(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 
@@ -423,6 +424,16 @@ public:
 		QUERY_CONNECTION_FOR_REPLICA_LIST
 	};
 
+	/// \brief Return whether or not downloads to our system should all be processed the same tick (call to RakPeer::Receive() )
+	/// \details Normally the system will send ID_REPLICA_MANAGER_DOWNLOAD_STARTED, ID_REPLICA_MANAGER_CONSTRUCTION for all downloaded objects,
+	/// ID_REPLICA_MANAGER_SERIALIZE for each downloaded object, and lastly ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE.
+	/// This enables the application to show a downloading splash screen on ID_REPLICA_MANAGER_DOWNLOAD_STARTED, a progress bar, and to close the splash screen and activate all objects on ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE
+	/// However, if the application was not set up for this then it would result in incomplete objects spread out over time, and cause problems
+	/// If you return true from QueryGroupDownloadMessages(), then these messages will be returned all in one tick, returned only when the download is complete
+	/// \note ID_REPLICA_MANAGER_DOWNLOAD_STARTED calls the callback DeserializeOnDownloadStarted()
+	/// \note ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE calls the callback DeserializeOnDownloadComplete()
+	virtual bool QueryGroupDownloadMessages(void) const {return false;}
+
 	/// \brief Queries how to get the list of objects that exist on remote systems
 	/// \details The default of calling QueryConstruction for every known object is easy to use, but not efficient, especially for large worlds where many objects are outside of the player's circle of influence.<BR>
 	/// QueryDestruction is also not necessarily useful or efficient, as object destruction tends to happen in known cases, and can be accomplished by calling Replica3::BroadcastDestruction()
@@ -582,6 +593,12 @@ protected:
 
 	// Working lists
 	DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> constructedReplicasCulled, destroyedReplicasCulled;
+
+	// This is used if QueryGroupDownloadMessages() returns true when ID_REPLICA_MANAGER_DOWNLOAD_STARTED arrives
+	// Packets will be gathered and not returned until ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE arrives
+	bool groupConstructionAndSerialize;
+	DataStructures::Multilist<ML_QUEUE, Packet*, Packet*> downloadGroup;
+	void ClearDownloadGroup(RakPeerInterface *rakPeerInterface);
 
 	friend class ReplicaManager3;
 private:

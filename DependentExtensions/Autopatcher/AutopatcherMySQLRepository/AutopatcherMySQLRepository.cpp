@@ -509,7 +509,8 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 		// Unless set to false, file does not exist in query result or is different.
 		if (addFile)
 		{
-			newFiles.AddFile(hardDriveFilename,hardDriveFilename, filesOnHarddrive.fileList[fileListIndex].data, filesOnHarddrive.fileList[fileListIndex].dataLengthBytes, filesOnHarddrive.fileList[fileListIndex].fileLengthBytes, FileListNodeContext(0,0), false);
+			newFiles.AddFile(hardDriveFilename,hardDriveFilename, filesOnHarddrive.fileList[fileListIndex].data, filesOnHarddrive.fileList[fileListIndex].dataLengthBytes, filesOnHarddrive.fileList[fileListIndex].fileLengthBytes, FileListNodeContext(0,0), false, true);
+			filesOnHarddrive.fileList[fileListIndex].data=0;
 		}
 	}
 	

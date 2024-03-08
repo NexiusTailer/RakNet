@@ -222,6 +222,7 @@ void FullyConnectedMesh2::PushNewHost(const RakNetGUID &guid)
 	p->systemAddress=rakPeerInterface->GetSystemAddressFromGuid(guid);
 	p->systemAddress.systemIndex=(SystemIndex)-1;
 	p->guid=guid;
+	p->bypassPlugins=true;
 	rakPeerInterface->PushBackPacket(p, true);
 
 	lastPushedHost=guid;

@@ -1843,13 +1843,13 @@ bool RakNet::Client_PerTitleBinaryStorage_PGSQL::ServerDBImpl( Lobby2ServerComma
 	resultCode=L2RC_SUCCESS;
 	return true;
 }
-bool RakNet::Client_SetPresence_PGSQL::ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress )
+bool RakNet::Client_SetPresence_PGSQL::ServerPreDBMemoryImpl( Lobby2Server *server, RakString userHandle )
 {
-	server->SetPresence( presence, systemAddress );
+	server->SetPresence( presence, userHandle );
 	resultCode=L2RC_SUCCESS;
 	return true;
 }
-bool RakNet::Client_GetPresence_PGSQL::ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress )
+bool RakNet::Client_GetPresence_PGSQL::ServerPreDBMemoryImpl( Lobby2Server *server, RakString userHandle )
 {
 	server->GetPresence( presence, userHandle );
 	resultCode=L2RC_SUCCESS;
@@ -2043,9 +2043,9 @@ bool RakNet::Friends_AcceptInvite_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 	return true;
 }
 
-void RakNet::Friends_AcceptInvite_PGSQL::ServerPostDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress )
+void RakNet::Friends_AcceptInvite_PGSQL::ServerPostDBMemoryImpl( Lobby2Server *server, RakString userHandle )
 {
-	(void)systemAddress;
+	(void)userHandle;
 	server->GetPresence(presence,targetHandle);
 }
 bool RakNet::Friends_RejectInvite_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
@@ -2131,9 +2131,9 @@ bool RakNet::Friends_GetInvites_PGSQL::ServerDBImpl( Lobby2ServerCommand *comman
 	resultCode=L2RC_SUCCESS;
 	return true;
 }
-void RakNet::Friends_GetInvites_PGSQL::ServerPostDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress )
+void RakNet::Friends_GetInvites_PGSQL::ServerPostDBMemoryImpl( Lobby2Server *server, RakString userHandle )
 {
-	(void)systemAddress;
+	(void)userHandle;
 
 	for (unsigned int i=0; i < invitesSent.Size(); i++)
 		server->GetUserOnlineStatus(invitesSent[i].usernameAndStatus);
@@ -2148,9 +2148,9 @@ bool RakNet::Friends_GetFriends_PGSQL::ServerDBImpl( Lobby2ServerCommand *comman
 	resultCode=L2RC_SUCCESS;
 	return true;
 }
-void RakNet::Friends_GetFriends_PGSQL::ServerPostDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress )
+void RakNet::Friends_GetFriends_PGSQL::ServerPostDBMemoryImpl( Lobby2Server *server, RakString userHandle )
 {
-	(void)systemAddress;
+	(void)userHandle;
 
 	for (unsigned int i=0; i < myFriends.Size(); i++)
 		server->GetUserOnlineStatus(myFriends[i].usernameAndStatus);
@@ -2312,14 +2312,60 @@ bool RakNet::Emails_Send_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void
 bool RakNet::Emails_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 {
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-	PGresult *result = pgsql->QueryVariadic(
-		"SELECT handle, tbl2.* from lobby2.users, ("
-		"SELECT tbl1.*, lobby2.emails.subject, lobby2.emails.body, lobby2.emails.binaryData, lobby2.emails.creationDate FROM"
-		"(SELECT emailId_fk, emailTarget_pk, userMe_fk, userOther_fk, status, wasRead, ISentThisEmail, isDeleted FROM lobby2.emailTargets) as tbl1, lobby2.emails "
-		"WHERE tbl1.emailId_fk=lobby2.emails.emailId_pk AND tbl1.userMe_fk=%i AND tbl1.isDeleted=FALSE"
-		") as tbl2 "
-		"WHERE userId_pk=tbl2.userother_fk ORDER BY creationDate ASC;"
-		, command->callerUserId);
+	PGresult *result;
+	
+	if (unreadEmailsOnly==true)
+	{
+		if (emailIdsOnly)
+		{
+			result = pgsql->QueryVariadic(
+			"SELECT tbl2.emailid_fk from lobby2.users, ("
+			"SELECT tbl1.*, lobby2.emails.creationDate FROM"
+			"(SELECT emailId_fk, userMe_fk, userOther_fk, isDeleted FROM lobby2.emailTargets) as tbl1, lobby2.emails"
+			"WHERE tbl1.emailId_fk=lobby2.emails.emailId_pk AND tbl1.userMe_fk=%i AND tbl1.isDeleted=FALSE AND tbl1.wasRead=FALSE"
+			") as tbl2"
+			"WHERE userId_pk=tbl2.userother_fk ORDER BY creationDate ASC;"
+			, command->callerUserId);
+		}
+		else
+		{
+			result = pgsql->QueryVariadic(
+			"SELECT handle, tbl2.* from lobby2.users, ("
+			"SELECT tbl1.*, lobby2.emails.subject, lobby2.emails.body, lobby2.emails.binaryData, lobby2.emails.creationDate FROM"
+			"(SELECT emailId_fk, emailTarget_pk, userMe_fk, userOther_fk, status, wasRead, ISentThisEmail, isDeleted FROM lobby2.emailTargets) as tbl1, lobby2.emails "
+			"WHERE tbl1.emailId_fk=lobby2.emails.emailId_pk AND tbl1.userMe_fk=%i AND tbl1.isDeleted=FALSE AND tbl1.wasRead=FALSE"
+			") as tbl2 "
+			"WHERE userId_pk=tbl2.userother_fk ORDER BY creationDate ASC;"
+			, command->callerUserId);
+		}
+	}
+	else
+	{
+		if (emailIdsOnly)
+		{
+			result = pgsql->QueryVariadic(
+				"SELECT tbl2.emailid_fk from lobby2.users, ("
+				"SELECT tbl1.*, lobby2.emails.creationDate FROM"
+				"(SELECT emailId_fk, userMe_fk, userOther_fk, isDeleted FROM lobby2.emailTargets) as tbl1, lobby2.emails"
+				"WHERE tbl1.emailId_fk=lobby2.emails.emailId_pk AND tbl1.userMe_fk=%i AND tbl1.isDeleted=FALSE"
+				") as tbl2"
+				"WHERE userId_pk=tbl2.userother_fk ORDER BY creationDate ASC;"
+				, command->callerUserId);
+		}
+		else
+		{
+			result = pgsql->QueryVariadic(
+				"SELECT handle, tbl2.* from lobby2.users, ("
+				"SELECT tbl1.*, lobby2.emails.subject, lobby2.emails.body, lobby2.emails.binaryData, lobby2.emails.creationDate FROM"
+				"(SELECT emailId_fk, emailTarget_pk, userMe_fk, userOther_fk, status, wasRead, ISentThisEmail, isDeleted FROM lobby2.emailTargets) as tbl1, lobby2.emails "
+				"WHERE tbl1.emailId_fk=lobby2.emails.emailId_pk AND tbl1.userMe_fk=%i AND tbl1.isDeleted=FALSE"
+				") as tbl2 "
+				"WHERE userId_pk=tbl2.userother_fk ORDER BY creationDate ASC;"
+				, command->callerUserId);
+		}
+	}
+	
+
 	if (result==0)
 	{
 		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
@@ -2332,26 +2378,50 @@ bool RakNet::Emails_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void 
 	{
 		RakNet::RakString otherHandle;
 		RakNet::RakString myHandle = command->callingUserName;
-		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.emailID, result, i, "emailTarget_pk");
-		PostgreSQLInterface::PQGetValueFromBinary(&otherHandle, result, i, "handle");
-		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.status, result, i, "status");
-		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.wasReadByMe, result, i, "wasRead");
-		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.wasSendByMe, result, i, "ISentThisEmail");
-		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.subject, result, i, "subject");
-		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.body, result, i, "body");
-		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.binaryData->binaryData, &emailResult.binaryData->binaryDataLength, result, i, "binaryData");
-		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.creationDate, result, i, "creationDate");
-		if (emailResult.wasSendByMe)
+		// 11/4/2010 - I think this was a copy/paste error
+		// PostgreSQLInterface::PQGetValueFromBinary(&emailResult.emailID, result, i, "emailTarget_pk");
+		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.emailID, result, i, "emailId_fk");
+		bool getThisEmail;
+		if (emailsToRetrieve.Size()>0)
 		{
-			emailResult.sender=myHandle;
-			emailResult.recipient=otherHandle;
+			getThisEmail=false;
+			for (unsigned int i=0; i < emailsToRetrieve.Size(); i++)
+			{
+				if (emailsToRetrieve[i]==emailResult.emailID)
+				{
+					getThisEmail=true;
+					break;
+				}
+			}
 		}
 		else
+			getThisEmail=true;
+		if (getThisEmail)
 		{
-			emailResult.sender=otherHandle;
-			emailResult.recipient=myHandle;
+			if (emailIdsOnly==false)
+			{
+				PostgreSQLInterface::PQGetValueFromBinary(&otherHandle, result, i, "handle");
+				PostgreSQLInterface::PQGetValueFromBinary(&emailResult.status, result, i, "status");
+				PostgreSQLInterface::PQGetValueFromBinary(&emailResult.wasReadByMe, result, i, "wasRead");
+				PostgreSQLInterface::PQGetValueFromBinary(&emailResult.wasSendByMe, result, i, "ISentThisEmail");
+				PostgreSQLInterface::PQGetValueFromBinary(&emailResult.subject, result, i, "subject");
+				PostgreSQLInterface::PQGetValueFromBinary(&emailResult.body, result, i, "body");
+				PostgreSQLInterface::PQGetValueFromBinary(&emailResult.binaryData->binaryData, &emailResult.binaryData->binaryDataLength, result, i, "binaryData");
+				PostgreSQLInterface::PQGetValueFromBinary(&emailResult.creationDate, result, i, "creationDate");
+				if (emailResult.wasSendByMe)
+				{
+					emailResult.sender=myHandle;
+					emailResult.recipient=otherHandle;
+				}
+				else
+				{
+					emailResult.sender=otherHandle;
+					emailResult.recipient=myHandle;
+				}
+			}		
+			emailResults.Insert(emailResult, __FILE__, __LINE__ );
 		}
-		emailResults.Insert(emailResult, __FILE__, __LINE__ );
+		
 	}
 
 	resultCode=L2RC_SUCCESS;

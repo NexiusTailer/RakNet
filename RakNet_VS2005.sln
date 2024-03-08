@@ -143,8 +143,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AutopatcherClient", "Sample
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AutopatcherServer_PostgreSQL", "Samples\AutopatcherServer\AutopatcherServer_vc8.vcproj", "{4BDF263B-655B-4F1D-B42F-65260DC688A6}"
 	ProjectSection(ProjectDependencies) = postProject
-		{6533BDAE-0F0C-45E4-8FE7-ADD0F37FE063} = {6533BDAE-0F0C-45E4-8FE7-ADD0F37FE063}
 		{0FD54BD0-C49C-4681-80CE-AA22B8995CA8} = {0FD54BD0-C49C-4681-80CE-AA22B8995CA8}
+		{6533BDAE-0F0C-45E4-8FE7-ADD0F37FE063} = {6533BDAE-0F0C-45E4-8FE7-ADD0F37FE063}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CrashReporter", "Samples\CrashReporter\CrashReporter_vc8.vcproj", "{F1DC7171-0188-492F-9FC3-733B285836D2}"
@@ -233,8 +233,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RakVoiceDSound", "Samples\R
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AutopatcherServer_MySQL", "Samples\AutoPatcherServer_MySQL\AutopatcherServer_MySQL.vcproj", "{01A7ED79-2098-4BB5-B5A0-8293210BCB93}"
 	ProjectSection(ProjectDependencies) = postProject
-		{9092C339-3CCA-41B4-8B80-FAED313D4168} = {9092C339-3CCA-41B4-8B80-FAED313D4168}
 		{6533BDAE-0F0C-45E4-8FE7-ADD0F37FE063} = {6533BDAE-0F0C-45E4-8FE7-ADD0F37FE063}
+		{9092C339-3CCA-41B4-8B80-FAED313D4168} = {9092C339-3CCA-41B4-8B80-FAED313D4168}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AutopatcherMySQLRepository", "DependentExtensions\Autopatcher\AutopatcherMySQLRepository\AutopatcherMySQLRepository.vcproj", "{9092C339-3CCA-41B4-8B80-FAED313D4168}"
@@ -406,9 +406,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scaleform", "Scaleform", "{E23741D2-96FD-4A05-B01F-FE98AEC776F3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SteamLobby", "Samples\SteamLobby\SteamLobby.vcproj", "{369194AC-BF69-4621-A489-B1FB4F509506}"
-	ProjectSection(ProjectDependencies) = postProject
-		{6533BDAE-0F0C-45E4-8FE7-ADD0F37FE063} = {6533BDAE-0F0C-45E4-8FE7-ADD0F37FE063}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RPC4", "Samples\RPC4\RPC4.vcproj", "{6EA9995C-77BE-4E61-BCF0-7956190B75C5}"
 	ProjectSection(ProjectDependencies) = postProject

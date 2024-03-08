@@ -25,8 +25,13 @@ void SignaledEvent::InitEvent(void)
 #ifdef _WIN32
 		eventList=CreateEvent(0, false, false, 0);
 #else
+
+#if !defined(ANDROID)
 		pthread_condattr_init( &condAttr );
 		pthread_cond_init(&eventList, &condAttr);
+#else
+		pthread_cond_init(&eventList, 0);
+#endif
 		pthread_mutexattr_init( &mutexAttr	);
 		pthread_mutex_init(&hMutex, &mutexAttr);
 #endif
@@ -43,7 +48,9 @@ void SignaledEvent::CloseEvent(void)
 #else
 	pthread_cond_destroy(&eventList);
 	pthread_mutex_destroy(&hMutex);
+#if !defined(ANDROID)
 	pthread_condattr_destroy( &condAttr );
+#endif
 	pthread_mutexattr_destroy( &mutexAttr );
 #endif
 }

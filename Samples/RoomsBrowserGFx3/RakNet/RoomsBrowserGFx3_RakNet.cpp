@@ -190,10 +190,10 @@ void RoomsBrowserGFx3_RakNet::OnFailedConnectionAttempt(Packet *packet, PI2_Fail
 	}
 
 	char saString[64];
-	systemAddress.ToString(true,saString);
+	packet->systemAddress.ToString(true,saString);
 	rargs.Add(saString);
 
-	if (systemAddress==lobby2Client->GetServerAddress())
+	if (packet->systemAddress==lobby2Client->GetServerAddress())
 		FxDelegate::Invoke(movie, "c2f_NotifyConnectionAttemptToServerFailure", rargs);
 	else
 		FxDelegate::Invoke(movie, "c2f_NotifyFailedConnectionAttempt", rargs);

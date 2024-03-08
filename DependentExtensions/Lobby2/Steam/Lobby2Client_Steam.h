@@ -5,10 +5,13 @@
 #include "DS_Multilist.h"
 #include "SocketLayer.h"
 #include "steam_api.h"
+#include "DS_OrderedList.h"
 
 namespace RakNet
 {
 struct Lobby2Message;
+
+#define STEAM_UNUSED_PORT 0
 
 class RAK_DLL_EXPORT Lobby2Client_Steam : public RakNet::Lobby2Plugin, public SocketLayerOverride
 {
@@ -27,7 +30,7 @@ public:
 	void OnLobbyCreated( LobbyCreated_t *pCallback, bool bIOFailure );
 	void OnLobbyJoined( LobbyEnter_t *pCallback, bool bIOFailure );
 	bool IsCommandRunning( Lobby2MessageID msgId );
-	void GetRoomMembers(DataStructures::Multilist<ML_ORDERED_LIST, uint64_t> &_roomMembers);
+	void GetRoomMembers(DataStructures::OrderedList<uint64_t, uint64_t> &_roomMembers);
 	const char * GetRoomMemberName(uint64_t memberId);
 	bool IsRoomOwner(const CSteamID roomid);
 	bool IsInRoom(void) const;
@@ -35,7 +38,6 @@ public:
 	uint64 GetMyUserID(void){return SteamUser()->GetSteamID().ConvertToUint64();}
 	const char* GetMyUserPersonalName(void) {return SteamFriends()->GetPersonaName();}
 	
-	void PunchTarget(uint64_t roomMemberId);
 	void NotifyLeaveRoom(void);
 
 	// Returns 0 if none
@@ -47,25 +49,18 @@ public:
 	/// Called when RecvFrom would otherwise occur. Return number of bytes read. Write data into dataOut
 	virtual int RakNetRecvFrom( const SOCKET sIn, RakPeer *rakPeerIn, char dataOut[ MAXIMUM_MTU_SIZE ], SystemAddress *senderOut, bool calledFromMainThread);
 
+	virtual void OnRakPeerShutdown(void);
+	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	virtual void OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason);
 
-	// This is junk, but necessary because you have to use their system to send
-	struct OutputSocket
+	struct RoomMember
 	{
-		SNetSocket_t socket;
 		SystemAddress systemAddress;
-		CSteamID steamIDRemote;
+		uint64_t steamIDRemote;
 	};
-	static bool RecvFrom(char *dataOut, int *dataLengthOut, SystemAddress *sender);
-	static int SendTo(const char *dataIn, unsigned int dataLengthIn, SystemAddress recipient);
-	static void AddWriteSocket(SNetSocket_t socket, SystemAddress systemAddress, CSteamID steamIDRemote);
-	static void CloseWriteSocket(CSteamID steamIDRemote);
-	static void CloseAllWriteSockets(void);
-	static DataStructures::Multilist<ML_ORDERED_LIST, OutputSocket*, SystemAddress> outputSockets;
-	static DataStructures::DefaultIndexType GetOutputSocketIndex(SystemAddress sa);
-	static DataStructures::DefaultIndexType GetOutputSocketIndex(CSteamID id);
-	
+	static int SystemAddressAndRoomMemberComp( const SystemAddress &key, const RoomMember &data );
 protected:
-		Lobby2Client_Steam();
+	Lobby2Client_Steam();
 	void CallCBWithResultCode(Lobby2Message *msg, Lobby2ResultCode rc);
 	void PushDeferredCallback(Lobby2Message *msg);
 	void CallRoomCallbacks(void);
@@ -78,23 +73,24 @@ protected:
 	STEAM_CALLBACK( Lobby2Client_Steam, OnLobbyDataUpdate, LobbyDataUpdate_t, m_CallbackLobbyDataUpdate );
 	STEAM_CALLBACK( Lobby2Client_Steam, OnLobbyChatUpdate, LobbyChatUpdate_t, m_CallbackChatDataUpdate );
 	STEAM_CALLBACK( Lobby2Client_Steam, OnLobbyChatMessage, LobbyChatMsg_t, m_CallbackChatMessageUpdate );
-	STEAM_CALLBACK( Lobby2Client_Steam, OnSocketStatusCallback, SocketStatusCallback_t, m_SocketStatusCallback );
+
+	STEAM_CALLBACK( Lobby2Client_Steam, OnP2PSessionRequest, P2PSessionRequest_t, m_CallbackP2PSessionRequest );
+	STEAM_CALLBACK( Lobby2Client_Steam, OnP2PSessionConnectFail, P2PSessionConnectFail_t, m_CallbackP2PSessionConnectFail );
 
 	DataStructures::Multilist<ML_UNORDERED_LIST, Lobby2Message *, uint64_t > deferredCallbacks;
 
 	uint64_t roomId;
-	DataStructures::Multilist<ML_ORDERED_LIST, uint64_t> roomMembers;
+	DataStructures::OrderedList<SystemAddress, RoomMember, SystemAddressAndRoomMemberComp> roomMembers;
 	DataStructures::Multilist<ML_ORDERED_LIST, uint64_t> rooms;
 
-	// DataStructures::Multilist<ML_UNORDERED_LIST, SNetSocket_t> punchInProgress;
-
-
-	void CreatePunchListenSocket(void);
 	void ClearRoom(void);
-	static SNetSocket_t m_hSocketServer;
 
 	RakNet::RakString versionString;
+
+	uint32_t nextFreeSystemAddress;
+
 };
+
 };
 
 #endif

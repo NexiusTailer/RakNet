@@ -270,8 +270,8 @@ bool Lobby2Message::ValidateEmailAddress( RakString *text )
 }
 bool Lobby2Message::PrevalidateInput(void) {return true;}
 bool Lobby2Message::ClientImpl( Lobby2Client *client) { (void)client; return true; }
-bool Lobby2Message::ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; return false; }
-void Lobby2Message::ServerPostDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; }
+bool Lobby2Message::ServerPreDBMemoryImpl( Lobby2Server *server, RakString userHandle ) { (void)server; (void)userHandle; return false; }
+void Lobby2Message::ServerPostDBMemoryImpl( Lobby2Server *server, RakString userHandle ) { (void)server; (void)userHandle; }
 bool Lobby2Message::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface ) { (void)command; (void)databaseInterface; resultCode=L2RC_COUNT; return true; }
 
 void CreateAccountParameters::Serialize(bool writeToBitstream, BitStream *bitStream)
@@ -602,6 +602,7 @@ void Client_Login::Serialize( bool writeToBitstream, bool serializeOutput, BitSt
 {
 	SerializeBase(writeToBitstream, serializeOutput, bitStream);
 	bitStream->Serialize(writeToBitstream,userPassword);
+	bitStream->Serialize(writeToBitstream,allowMultipleLogins);
 	bitStream->Serialize(writeToBitstream,titleName);
 	bitStream->Serialize(writeToBitstream,titleSecretKey);
 	bitStream->Serialize(writeToBitstream,userName);
@@ -846,8 +847,7 @@ void Client_PerTitleIntegerStorage::Serialize( bool writeToBitstream, bool seria
 	c = (unsigned char)operationToPerform;
 	bitStream->Serialize(writeToBitstream,c);
 	operationToPerform = (PTIS_Operation) c;
-	if (operationToPerform!=PTISC_NOT_EQUAL)
-		bitStream->Serialize(writeToBitstream,conditionValue);
+	bitStream->Serialize(writeToBitstream,conditionValue);
 	if (operationToPerform!=PTISO_DELETE)
 	{
 		if (operationToPerform==PTISO_ADD || operationToPerform==PTISO_WRITE)
@@ -881,7 +881,7 @@ void Client_SetPresence::Serialize( bool writeToBitstream, bool serializeOutput,
 	SerializeBase(writeToBitstream, serializeOutput, bitStream);
 	presence.Serialize(bitStream,writeToBitstream);
 }
-// bool Client_SetPresence::ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress )
+// bool Client_SetPresence::ServerPreDBMemoryImpl( Lobby2Server *server, RakString userHandle )
 // {
 // 	// This has to go in Lobby2Message_PGSQL.h because the server and client both share this file, and the client doesn't know about the server
 // 	server->SetPresence( presence, systemAddress );
@@ -896,7 +896,7 @@ void Client_GetPresence::Serialize( bool writeToBitstream, bool serializeOutput,
 		presence.Serialize(bitStream,writeToBitstream);
 	}
 }
-// bool Client_GetPresence::ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress )
+// bool Client_GetPresence::ServerPreDBMemoryImpl( Lobby2Server *server, RakString userHandle )
 // {
 // 	// This has to go in Lobby2Message_PGSQL.h because the server and client both share this file, and the client doesn't know about the server
 // 	server->GetPresence( presence, userHandle );
@@ -1126,9 +1126,31 @@ bool Emails_Send::PrevalidateInput( void )
 void Emails_Get::Serialize( bool writeToBitstream, bool serializeOutput, BitStream *bitStream )
 {
 	SerializeBase(writeToBitstream, serializeOutput, bitStream);
+
+	unsigned short listSize;
+
+	bitStream->Serialize(writeToBitstream,unreadEmailsOnly);
+	bitStream->Serialize(writeToBitstream,emailIdsOnly);
+
+	listSize = (unsigned short) emailsToRetrieve.Size();
+	bitStream->SerializeCompressed(writeToBitstream, listSize);
+	for (unsigned int i=0; i < listSize; i++)
+	{
+		unsigned int id;
+		if (writeToBitstream)
+		{
+			bitStream->Write(emailsToRetrieve[i]);
+		}
+		else
+		{
+			bitStream->Read(id);
+			emailsToRetrieve.Push(id,__FILE__, __LINE__);
+		}
+	}
+
 	if (serializeOutput)
 	{
-		unsigned short listSize = (unsigned short) emailResults.Size();
+		listSize = (unsigned short) emailResults.Size();
 		bitStream->SerializeCompressed(writeToBitstream, listSize);
 		for (unsigned int i=0; i < listSize; i++)
 		{
