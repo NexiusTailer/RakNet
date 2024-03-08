@@ -29,11 +29,11 @@ namespace RakNet
 	// Should be renamed GetTimeMS
 	RakNetTime RAK_DLL_EXPORT GetTime( void );
 	// Should be renamed GetTimeUS
-	RakNetTimeNS RAK_DLL_EXPORT GetTimeNS( void );
+	RakNetTimeUS RAK_DLL_EXPORT GetTimeNS( void );
 
 	// Renames, for RakNet 4
 	inline RakNetTime RAK_DLL_EXPORT GetTimeMS( void ) {return GetTime();}
-	inline RakNetTimeNS RAK_DLL_EXPORT GetTimeUS( void ) {return GetTimeNS();}
+	inline RakNetTimeUS RAK_DLL_EXPORT GetTimeUS( void ) {return GetTimeNS();}
 }
 
 #endif

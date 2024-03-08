@@ -2,6 +2,26 @@
 #include "RakPeerInterface.h"
 #include "Router.h"
 #include "ConnectionGraph.h"
+#include "FileOperations.h"
+#include "RakMemoryOverride.h"
+#include "DS_List.h"
+
+void* MyMalloc (size_t size)
+{
+	return malloc(size);
+}
+
+void* MyRealloc (void *p, size_t size)
+{
+	return realloc(p,size);
+}
+
+void MyFree (void *p)
+{
+	free(p);
+}
+
+
 
 // This project is used to test the DLL system to make sure necessary classes are exported
 void main(void)
@@ -16,11 +36,22 @@ void main(void)
 	Router *g=RakNetworkFactory::GetRouter( );
 	ConnectionGraph *h=RakNetworkFactory::GetConnectionGraph( );
 
+	// See RakMemoryOverride.h
+	SetMalloc(MyMalloc);
+	SetRealloc(MyRealloc);
+	SetFree(MyFree);
+
+	char *cArray = RakNet::OP_NEW_ARRAY<char>(10,__FILE__,__LINE__);
+	RakNet::OP_DELETE_ARRAY(cArray,__FILE__,__LINE__);
+
+	DataStructures::List<int> intList;
+	intList.Push(5);
+	
 	f->GetMTUSize(UNASSIGNED_SYSTEM_ADDRESS);
 	SystemAddress p1;
 	SystemAddress p2;
 	p1=p2;
-	g->Update(f);
+	g->Update();
 
 	RakNetworkFactory::DestroyConsoleServer(a);
 	RakNetworkFactory::DestroyReplicaManager(b);
@@ -31,3 +62,4 @@ void main(void)
 	RakNetworkFactory::DestroyRouter(g);
 	RakNetworkFactory::DestroyConnectionGraph(h);
 }
+

@@ -29,7 +29,7 @@ public:
 	ThreadsafePacketLogger();
 	virtual ~ThreadsafePacketLogger();
 
-	virtual void Update(RakPeerInterface *peer);
+	virtual void Update(void);
 
 protected:
 	virtual void AddToLog(const char *str);

@@ -1,4 +1,4 @@
-
+cmake_minimum_required(VERSION 2.6)
 
 PROJECT(RakNetStaticLib)
 
@@ -24,6 +24,7 @@ Source/EmailSender.cpp
 Source/EncodeClassName.cpp
 Source/EpochTimeToString.cpp
 Source/ExtendedOverlappedPool.cpp
+Source/FCMHost.cpp
 Source/FileList.cpp
 Source/FileListTransfer.cpp
 Source/FileOperations.cpp
@@ -43,13 +44,16 @@ Source/LightweightDatabaseServer.cpp
 Source/LinuxStrings.cpp
 Source/LogCommandParser.cpp
 Source/MessageFilter.cpp
-Source/NatPunchthrough.cpp
+Source/NatPunchthroughClient.cpp
+Source/NatPunchthroughServer.cpp
 Source/NetworkIDManager.cpp
 Source/NetworkIDObject.cpp
 Source/PacketConsoleLogger.cpp
 Source/PacketFileLogger.cpp
+Source/PacketizedTCP.cpp
 Source/PacketLogger.cpp
 Source/PluginInterface.cpp
+Source/PluginInterface2.cpp
 Source/RakMemoryOverride.cpp
 Source/RakNetCommandParser.cpp
 Source/RakNetStatistics.cpp
@@ -113,6 +117,7 @@ Source/DS_LinkedList.h
 Source/DS_List.h
 Source/DS_Map.h
 Source/DS_MemoryPool.h
+Source/DS_Multilist.h
 Source/DS_OrderedChannelHeap.h
 Source/DS_OrderedList.h
 Source/DS_Queue.h
@@ -125,6 +130,7 @@ Source/EmailSender.h
 Source/EpochTimeToString.h
 Source/Export.h
 Source/ExtendedOverlappedPool.h
+Source/FCMHost.h
 Source/FileList.h
 Source/FileListNodeContext.h
 Source/FileListTransfer.h
@@ -146,27 +152,31 @@ Source/LightweightDatabaseClient.h
 Source/LightweightDatabaseCommon.h
 Source/LightweightDatabaseServer.h
 Source/LinuxStrings.h
-Source/LobbyClientInterface.h
 Source/LogCommandParser.h
 Source/MessageFilter.h
 Source/MessageIdentifiers.h
 Source/MTUSize.h
 Source/NativeTypes.h
-Source/NatPunchthrough.h
+Source/NatPunchthroughClient.h
+Source/NatPunchthroughServer.h
 Source/NetworkIDManager.h
 Source/NetworkIDObject.h
 Source/PacketConsoleLogger.h
 Source/PacketFileLogger.h
+Source/PacketizedTCP.h
 Source/PacketLogger.h
 Source/PacketPool.h
 Source/PacketPriority.h
 Source/Platform.h
 Source/PluginInterface.h
+Source/PluginInterface2.h
+Source/RakAlloca.h
 Source/RakAssert.h
 Source/RakMemoryOverride.h
 Source/RakNetCommandParser.h
 Source/RakNetDefines.h
 Source/RakNetStatistics.h
+Source/RakNetTime.h
 Source/RakNetTransport.h
 Source/RakNetTypes.h
 Source/RakNetVersion.h
@@ -195,6 +205,7 @@ Source/SHA1.h
 Source/SimpleMutex.h
 Source/SimpleTCPServer.h
 Source/SingleProducerConsumer.h
+Source/SocketIncludes.h
 Source/SocketLayer.h
 Source/StringCompressor.h
 Source/StringTable.h
@@ -206,6 +217,7 @@ Source/TelnetTransport.h
 Source/ThreadPool.h
 Source/ThreadsafePacketLogger.h
 Source/TransportInterface.h
+Source/WindowsIncludes.h
 Source/WSAStartupSingleton.h
 Source/_FindFirst.h
 )
@@ -220,4 +232,5 @@ INSTALL(TARGETS RakNet
 INSTALL(FILES ${RAKNET_HEADERS}
         DESTINATION include/raknet)
 
-
+find_package(Threads REQUIRED)
+target_link_libraries(RakNet ${CMAKE_THREAD_LIBS_INIT})

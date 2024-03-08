@@ -20,7 +20,7 @@
 
 class RakPeerInterface;
 #include "RakNetTypes.h"
-#include "PluginInterface.h"
+#include "PluginInterface2.h"
 #include "DS_OrderedList.h"
 #include "Export.h"
 #include "ConnectionGraph.h"
@@ -52,6 +52,7 @@ struct CreateRoom_Func : public RoomsPluginFunc {
 	NetworkedRoomCreationParameters networkedRoomCreationParameters;
 	GameIdentifier gameIdentifier;
 	// Output parameters
+	RoomID roomId;
 
 	virtual void SerializeIn(bool writeToBitstream, RakNet::BitStream *bitStream);
 	virtual void SerializeOut(bool writeToBitstream, RakNet::BitStream *bitStream);
@@ -68,6 +69,7 @@ struct EnterRoom_Func : public RoomsPluginFunc {
 	// Output parameters
 	JoinedRoomResult joinedRoomResult;
 	bool createdRoom;
+	RoomID roomId;
 
 	void PrintResult(void)
 	{
@@ -93,6 +95,21 @@ struct JoinByFilter_Func : public RoomsPluginFunc {
 
 	// Output parameters
 	JoinedRoomResult joinedRoomResult;
+
+	void PrintResult(void)
+	{
+		if (resultCode!=REC_SUCCESS)
+			printf("Result for user %s: %s\n", userName.C_String(), RoomsErrorCodeDescription::ToEnglish(resultCode));
+		else
+		{
+			printf("Joined room %s with id %i\n", joinedRoomResult.roomDescriptor.GetProperty(DefaultRoomColumns::TC_ROOM_NAME)->c, joinedRoomResult.roomDescriptor.lobbyRoomId);
+			for (unsigned int i=0; i < joinedRoomResult.roomDescriptor.roomMemberList.Size(); i++)
+			{
+				printf("%i. %s (%s)\n", i+1, joinedRoomResult.roomDescriptor.roomMemberList[i].name.C_String(), joinedRoomResult.roomDescriptor.roomMemberList[i].systemAddress.ToString());
+			}
+		}
+	}
+
 
 	virtual void SerializeIn(bool writeToBitstream, RakNet::BitStream *bitStream);
 	virtual void SerializeOut(bool writeToBitstream, RakNet::BitStream *bitStream);
@@ -205,7 +222,7 @@ struct GetRoomProperties_Func : public RoomsPluginFunc {
 		}
 		else
 		{
-			char out[8096];
+//			char out[8096];
 			printf("room %s has %i columns and %i members\n", roomName.C_String(), roomDescriptor.roomProperties.GetColumnCount(), roomDescriptor.roomMemberList.Size());
 	//		roomDescriptor.roomProperties.PrintColumnHeaders(out,8096,',');
 	//		printf(out);
@@ -253,6 +270,42 @@ struct SetReadyStatus_Func : public RoomsPluginFunc {
 	// Input parameters
 	bool isReady;
 	// Output parameters
+	DataStructures::List<RakNet::RakString> readyUsers;
+	DataStructures::List<RakNet::RakString> unreadyUsers;
+
+	void PrintResult(void)
+	{
+		if (resultCode!=REC_SUCCESS)
+		{
+			printf("Result for user %s: %s\n", userName.C_String(), RoomsErrorCodeDescription::ToEnglish(resultCode));
+		}
+		else
+		{
+			printf("SetReadyStatus_Func member ready states:\n");
+			if (readyUsers.Size()>0)
+			{
+				printf("Ready: ");
+				for (unsigned int i=0; i < readyUsers.Size(); i++)
+				{
+					printf("%s ", readyUsers[i].C_String());
+				}
+
+				printf("\n");
+			}
+
+			if (unreadyUsers.Size()>0)
+			{
+				printf("Unready: ");
+				for (unsigned int i=0; i < unreadyUsers.Size(); i++)
+				{
+					printf("%s ", unreadyUsers[i].C_String());
+				}
+
+				printf("\n");
+			}
+			
+		}
+	}
 
 	virtual void SerializeIn(bool writeToBitstream, RakNet::BitStream *bitStream);
 	virtual void SerializeOut(bool writeToBitstream, RakNet::BitStream *bitStream);
@@ -426,7 +479,7 @@ struct QuickJoinExpired_Notification : public RoomsPluginNotification {
 struct QuickJoinEnteredRoom_Notification : public RoomsPluginNotification {
 	JoinedRoomResult joinedRoomResult;
 	virtual void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
-	virtual void PrintResult(void) {printf("QuickJoinEnteredRoom_Notification to %s\n", recipient.C_String());}
+	virtual void PrintResult(void) {printf("QuickJoinEnteredRoom_Notification to %s. roomId=%i\n", recipient.C_String(), joinedRoomResult.roomDescriptor.lobbyRoomId);}
 };
 /// Another room member has started spectating
 struct RoomMemberStartedSpectating_Notification : public RoomsPluginNotification {
@@ -487,6 +540,11 @@ struct RoomMemberReadyStatusSet_Notification : public RoomsPluginNotification {
 	RoomID roomId;
 	bool isReady;
 	RakNet::RakString roomMember;
+
+	// Current status of all room members
+	DataStructures::List<RakNet::RakString> readyUsers;
+	DataStructures::List<RakNet::RakString> unreadyUsers;
+
 	virtual void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
 	virtual void PrintResult(void) {printf("RoomMemberReadyStatusSet_Notification to %s\n", recipient.C_String());}
 };
@@ -524,11 +582,14 @@ struct RoomMemberLeftRoom_Notification : public RoomsPluginNotification {
 /// A room member has joined the room
 struct RoomMemberJoinedRoom_Notification : public RoomsPluginNotification {
 	RoomMemberJoinedRoom_Notification() {joinedRoomResult=0;}
-	~RoomMemberJoinedRoom_Notification() {if (joinedRoomResult!=0) RakNet::OP_DELETE(joinedRoomResult);}
+	~RoomMemberJoinedRoom_Notification() {if (joinedRoomResult!=0) RakNet::OP_DELETE(joinedRoomResult, __FILE__, __LINE__);}
 	RoomID roomId;
 	JoinedRoomResult *joinedRoomResult;
 	virtual void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
-	virtual void PrintResult(void) {printf("RoomMemberJoinedRoom_Notification to %s\n", recipient.C_String());}
+	virtual void PrintResult(void)
+	{
+		printf("RoomMemberJoinedRoom_Notification to %s: %s (%s) has joined the room.\n", recipient.C_String(), joinedRoomResult->joiningMemberName.C_String(), joinedRoomResult->joiningMemberAddress.ToString());
+	}
 };
 /// You have received an invitation to a room
 struct RoomInvitationSent_Notification : public RoomsPluginNotification {
@@ -648,7 +709,7 @@ struct RoomsCallback
 /// 5. As users go online, call RoomsPlugin::LoginRoomsParticipant(). Login and Logoff is up to you to implement (or rely on other systems, such as Lobby2)
 /// 6. As users go offline, call RoomsPlugin::LogoffRoomsParticipant();
 /// \sa AllGamesRoomsContainer
-class RAK_DLL_EXPORT RoomsPlugin : public PluginInterface, public RoomsCallback
+class RAK_DLL_EXPORT RoomsPlugin : public PluginInterface2, public RoomsCallback
 {
 public:
 	RoomsPlugin();
@@ -725,12 +786,11 @@ public:
 	// --------------------------------------------------------------------------------------------
 	// Packet handling functions
 	// --------------------------------------------------------------------------------------------
-	virtual void OnAttach(RakPeerInterface *peer);
-	virtual void OnDetach(RakPeerInterface *peer);
-	virtual void OnShutdown(RakPeerInterface *peer);
-	virtual void Update(RakPeerInterface *peer);
-	virtual PluginReceiveResult OnReceive(RakPeerInterface *peer, Packet *packet);
-	virtual void OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddress);
+	virtual void OnDetach(void);
+	virtual void OnShutdown(void);
+	virtual void Update(void);
+	virtual PluginReceiveResult OnReceive(Packet *packet);
+	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 
 protected:
 	void Clear(void);
@@ -740,7 +800,6 @@ protected:
 	void OnHandleChange(Packet *packet);
 
 	// Client and server data
-	RakPeerInterface *rakPeer;
 	char orderingChannel;
 	RoomsCallback * roomsCallback;
 	PacketPriority packetPriority;
@@ -757,8 +816,7 @@ protected:
 	// Logged in room members
 	struct RoomsPluginParticipant : public RoomsParticipant
 	{
-		RoomsPluginParticipant() {systemAddress=UNASSIGNED_SYSTEM_ADDRESS; lastRoomJoined=(RoomID)-1;}
-		SystemAddress systemAddress;
+		RoomsPluginParticipant() {lastRoomJoined=(RoomID)-1;}
 		RoomID lastRoomJoined;
 	};
 	static int RoomsPluginParticipantCompByRakString( const RakNet::RakString &key, RoomsPluginParticipant* const &data );

@@ -53,11 +53,20 @@ public:
 	/// Call update to read packet sent from your TransportInterface.
 	/// You should do this fairly frequently.
 	void Update(void);
+
+	/// Sets a prompt to show when waiting for user input
+	/// Pass an empty string to clear the prompt
+	/// Defaults to no prompt
+	/// \param[in] _prompt Null-terminated string of the prompt to use. If you want a newline, be sure to use /r/n
+	void SetPrompt(const char *_prompt);
+
 protected:
 	void ListParsers(SystemAddress systemAddress);
+	void ShowPrompt(SystemAddress systemAddress);
 	TransportInterface *transport;
 	DataStructures::List<CommandParserInterface *> commandParserList;
 	char* password[256];
+	char *prompt;
 };
 
 #endif

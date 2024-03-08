@@ -21,7 +21,8 @@
 #include "Rand.h"
 #include "Kbhit.h"
 #include <stdio.h> // Printf
-#include <windows.h> // Sleep
+#include "WindowsIncludes.h" // Sleep
+#include "MessageIdentifiers.h"
 
 void main(void)
 {
@@ -47,7 +48,22 @@ void main(void)
 	pl1.LogHeader();
 	peer1->Connect("127.0.0.1", 1235, 0, 0);
 	peer2->Connect("127.0.0.1", 1234, 0, 0);
-	Sleep(5000);
+	Sleep(2000);
+	Packet *p;
+	for (p=peer1->Receive(); p; peer1->DeallocatePacket(p), p=peer1->Receive())
+	{
+		if (p->data[0]==ID_NEW_INCOMING_CONNECTION)
+			printf("Peer1: ID_NEW_INCOMING_CONNECTION\n");
+		else if (p->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
+			printf("Peer1: ID_CONNECTION_REQUEST_ACCEPTED\n");
+	}
+	for (p=peer2->Receive(); p; peer2->DeallocatePacket(p), p=peer2->Receive())
+	{
+		if (p->data[0]==ID_NEW_INCOMING_CONNECTION)
+			printf("Peer2: ID_NEW_INCOMING_CONNECTION\n");
+		else if (p->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
+			printf("Peer2: ID_CONNECTION_REQUEST_ACCEPTED\n");
+	}
 	peer1->Shutdown(1000);
 	peer2->Shutdown(1000);
 	Sleep(1000);

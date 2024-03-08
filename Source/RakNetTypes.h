@@ -58,7 +58,7 @@ typedef unsigned int BitSize_t;
 struct RAK_DLL_EXPORT SocketDescriptor
 {
 	SocketDescriptor();
-	SocketDescriptor(unsigned short _port, const char *_hostAddress, bool _isPS3LobbySocket=false);
+	SocketDescriptor(unsigned short _port, const char *_hostAddress);
 
 	/// The local port to bind to.  Pass 0 to have the OS autoassign a port.
 	unsigned short port;
@@ -66,8 +66,15 @@ struct RAK_DLL_EXPORT SocketDescriptor
 	/// The local network card address to bind to, such as "127.0.0.1".  Pass an empty string to use INADDR_ANY.
 	char hostAddress[32];
 
-	/// \internal
-	bool isPS3LobbySocket;
+	enum SocketType
+	{
+		UDP,
+		PS3_LOBBY_UDP,
+		NONE // Socket is not created, must be set with UseUserSocket to do anything
+	};
+
+	// Type of the socket. Defaults to UDP.
+	SocketType socketType;
 };
 
 /// \brief Network address for a system
@@ -156,6 +163,8 @@ struct RAK_DLL_EXPORT RakNetGUID
 	// dest must be large enough to hold the output
 	// THREADSAFE
 	void ToString(char *dest) const;
+
+	bool FromString(const char *source);
 
 	RakNetGUID& operator = ( const RakNetGUID& input )
 	{

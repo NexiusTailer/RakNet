@@ -35,6 +35,7 @@ void main(void)
 		printf("Server started\n");
 		printf("(C)reate table\n");
 		printf("(R)emove table\n");
+		printf("(P)rint table\n");
 	}
 	else
 	{
@@ -53,8 +54,11 @@ void main(void)
 		printf("(Q)uery table\n");
 		printf("(U)pdate row\n");
 		printf("(R)emove row\n");
+		printf("(D)isconnect from server\n");
 	}
 	printf("(E)xit\n");
+
+	printf("My GUID=%s\n", rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
 
 	Packet *p;
 	while (1)
@@ -108,7 +112,13 @@ void main(void)
 						for (i=0; i < (unsigned)cur->size; i++)
 						{
 							table.PrintRow(str, 256, ',', true, cur->data[i]);
+							SystemAddress sysAddr;
+							RakNetGUID guid;			
+							memcpy(&sysAddr, cur->data[i]->cells[table.ColumnIndex(SYSTEM_ID_COLUMN_NAME)]->c, sizeof(SystemAddress));
+							memcpy(&guid, cur->data[i]->cells[table.ColumnIndex(SYSTEM_GUID_COLUMN_NAME)]->c, sizeof(RakNetGUID));
+							printf("SystemAddress=%s GUID=%s\n", sysAddr.ToString(true), guid.ToString());
 							printf("RowID %i: %s\n", cur->keys[i], str );
+							
 						}
 						cur=cur->next;
 					}
@@ -126,6 +136,19 @@ void main(void)
 			char ch=getch();
 			if (isServer)
 			{
+				if (ch=='p')
+				{
+					char buff[10000];
+					databaseServer.GetTable(0)->PrintColumnHeaders(buff,10000,',');
+					printf(buff);
+					printf("\n");
+					for (unsigned int i=0; i < databaseServer.GetTable(0)->GetRowCount(); i++)
+					{
+						databaseServer.GetTable(0)->PrintRow(buff,10000,',',true,databaseServer.GetTable(0)->GetRowByIndex(0,0));
+						printf(buff);
+						printf("\n");
+					}
+				}
 				if (ch=='c')
 				{
 					bool allowRemoteUpdate;
@@ -379,6 +402,12 @@ void main(void)
 					gets(str);
 					rowId=atoi(str);
 					databaseClient.RemoveRow(tableName, tablePassword, rowId, UNASSIGNED_SYSTEM_ADDRESS, true);
+				}
+				
+				else if (ch=='d')
+				{
+					printf("Disconnected\n");
+					rakPeer->CloseConnection(rakPeer->GetSystemAddressFromIndex(0), true, 0);
 				}
 			}
 

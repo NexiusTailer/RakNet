@@ -101,7 +101,7 @@ void HTTPConnection::Update(void)
 			contentType.C_String(),
 			(unsigned) outgoing.GetLength(),
 			outgoing.C_String());
-		tcp.Send(request, (unsigned int) strlen(request), server);
+		tcp.Send(request, (unsigned int) strlen(request), server,false);
 
 		state = RAK_HTTP_REQUEST_SENT;
 	}

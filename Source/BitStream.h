@@ -369,6 +369,8 @@ namespace RakNet
 		/// RAKNET_DEBUG_PRINTF the bits in the stream.  Great for debugging.
 		void PrintBits( char *out ) const;
 		void PrintBits( void ) const;
+		void PrintHex( char *out ) const;
+		void PrintHex( void ) const;
 
 		/// Ignore data we don't intend to read
 		/// \param[in] numberOfBits The number of bits to ignore

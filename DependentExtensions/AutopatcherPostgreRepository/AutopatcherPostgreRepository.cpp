@@ -196,7 +196,7 @@ bool AutopatcherPostgreRepository::GetChangelistSinceDate(const char *applicatio
 	char *fileLengthPtr;
 	int rowIndex;
 	int fileLength;
-	assert(PQfsize(result, fileLengthColumnIndex)==sizeof(fileLength));
+	RakAssert(PQfsize(result, fileLengthColumnIndex)==sizeof(fileLength));
 	
 	numRows = PQntuples(result);
 
@@ -210,11 +210,11 @@ bool AutopatcherPostgreRepository::GetChangelistSinceDate(const char *applicatio
 			fileLengthPtr = PQgetvalue(result, rowIndex, fileLengthColumnIndex);
 			memcpy(&fileLength, fileLengthPtr, sizeof(fileLength));
 			fileLength=ntohl(fileLength); // This is asinine...
-			addedFiles->AddFile(hardDriveFilename, hardDriveHash, HASH_LENGTH, fileLength, FileListNodeContext(0,0), false);
+			addedFiles->AddFile(hardDriveFilename, hardDriveFilename, hardDriveHash, HASH_LENGTH, fileLength, FileListNodeContext(0,0), false);
 		}
 		else
 		{
-			deletedFiles->AddFile(hardDriveFilename,0,0,0,FileListNodeContext(0,0), false);
+			deletedFiles->AddFile(hardDriveFilename,hardDriveFilename,0,0,0,FileListNodeContext(0,0), false);
 		}
 	}
 
@@ -310,7 +310,7 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 				int fileLength = ntohl(*((int*)PQgetvalue(result, 0, fileLengthIndex)));
 
 
-				patchList->AddFile(userFilename, 0, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId),true);
+				patchList->AddFile(userFilename,userFilename, 0, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId),true);
 			}
 			PQclear(result);
 		}
@@ -408,7 +408,7 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 						unsigned int hash2 = SuperFastHash(content, contentLength);
 						*/
 
-						patchList->AddFile(userFilename, 0, fileLengthInt, fileLengthInt, FileListNodeContext(PC_WRITE_FILE,fileIdInt), true);
+						patchList->AddFile(userFilename,userFilename, 0, fileLengthInt, fileLengthInt, FileListNodeContext(PC_WRITE_FILE,fileIdInt), true);
 //						patchList->AddFile(userFilename, file, fileLengthInt, contentLength, FileListNodeContext(PC_WRITE_FILE,0), true);
 //						RakNet::OP_DELETE_ARRAY file;
 					}
@@ -420,7 +420,7 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 						patchLength=PQgetlength(patchResult, 0, 0);
 						// Bleh, get a stack overflow here
 						// char *temp = (char*) _alloca(patchLength+HASH_LENGTH);
-						char *temp = RakNet::OP_NEW_ARRAY<char>(patchLength + HASH_LENGTH);
+						char *temp = RakNet::OP_NEW_ARRAY<char>(patchLength + HASH_LENGTH, __FILE__, __LINE__ );
 						memcpy(temp, contentHash, HASH_LENGTH);
 						memcpy(temp+HASH_LENGTH, patch, patchLength);
 //						int len;
@@ -431,9 +431,9 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 					//	for (int i=0; i < patchLength; i++)
 					//		printf("%i ", patch[i]);
 					//	printf("\n");
-						patchList->AddFile(userFilename, temp, HASH_LENGTH+patchLength, fileLengthInt, FileListNodeContext(PC_HASH_WITH_PATCH,0),false );
+						patchList->AddFile(userFilename,userFilename, temp, HASH_LENGTH+patchLength, fileLengthInt, FileListNodeContext(PC_HASH_WITH_PATCH,0),false );
 						PQclear(patchResult);
-						RakNet::OP_DELETE_ARRAY(temp);
+						RakNet::OP_DELETE_ARRAY(temp, __FILE__, __LINE__);
 					}
 				}
 				else
@@ -595,7 +595,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 		// Unless set to false, file does not exist in query result or is different.
 		if (addFile==true)
 		{
-			newFiles.AddFile(hardDriveFilename, filesOnHarddrive.fileList[fileListIndex].data, filesOnHarddrive.fileList[fileListIndex].dataLengthBytes, filesOnHarddrive.fileList[fileListIndex].fileLengthBytes, FileListNodeContext(0,0), false);
+			newFiles.AddFile(hardDriveFilename,hardDriveFilename, filesOnHarddrive.fileList[fileListIndex].data, filesOnHarddrive.fileList[fileListIndex].dataLengthBytes, filesOnHarddrive.fileList[fileListIndex].fileLengthBytes, FileListNodeContext(0,0), false);
 		}
 	}
 	
@@ -624,7 +624,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 		}
 
 		if (fileOnHarddrive==false)
-			deletedFiles.AddFile(queryFilename,0,0,0,FileListNodeContext(0,0), false);
+			deletedFiles.AddFile(queryFilename,queryFilename,0,0,0,FileListNodeContext(0,0), false);
 	}
 
 	// Query memory and files on harddrive no longer needed.  Free this memory since generating all the patches is memory intensive.
@@ -697,7 +697,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 		{
 			newFiles.Clear();
 			PQclear(fileRows);
-			assert(0);
+			RakAssert(0);
 			return false;
 		}
 		
@@ -733,7 +733,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 				newFiles.Clear();
 				PQclear(result);
 				PQclear(fileRows);
-				assert(0);
+				RakAssert(0);
 				return false;
 			}
 			formats[0] = PQEXECPARAM_FORMAT_TEXT;
@@ -769,7 +769,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 			}
 
 			// Done with this patch data
-			RakNet::OP_DELETE_ARRAY(patch);
+			RakNet::OP_DELETE_ARRAY(patch, __FILE__, __LINE__);
 
 			PQclear(result);
 			PQclear(uploadResult);
@@ -795,8 +795,8 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 		outLengths[1]=hardDriveDataLength;
 		outLengths[2]=HASH_LENGTH;
 		formats[0]=PQEXECPARAM_FORMAT_TEXT;
-		assert(formats[1]==PQEXECPARAM_FORMAT_BINARY);
-		assert(formats[2]==PQEXECPARAM_FORMAT_BINARY);
+		RakAssert(formats[1]==PQEXECPARAM_FORMAT_BINARY);
+		RakAssert(formats[2]==PQEXECPARAM_FORMAT_BINARY);
 		
 		// Upload the new file
 		uploadResult = PQexecParams(pgConn, query,3,0,outTemp,outLengths,formats,PQEXECPARAM_FORMAT_BINARY);
@@ -804,7 +804,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 		{
 			// Libpq had a problem inserting the file to the table. Most likely due to it running out of
 			// memory or a buffer being too small.
-			assert( 0 );
+			RakAssert( 0 );
 			newFiles.Clear();
 			PQclear(result);
 			return false;

@@ -12,9 +12,10 @@
 #include "DataCompressor.h"
 #include "FileListTransferCBInterface.h"
 #include "RakSleep.h"
+#include "IncrementalReadInterface.h"
 
 #ifdef _WIN32
-#include <windows.h> // Sleep
+#include "WindowsIncludes.h" // Sleep
 #else
 #include <unistd.h> // usleep
 #endif
@@ -34,7 +35,7 @@ public:
 
 	virtual void OnFileProgress(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int partLength, char *firstDataChunk)
 	{
-		printf("%i (%i%%) %i/%i %s %ib->%ib / %ib->%ib\n", onFileStruct->setID, 100*partCount/partTotal, onFileStruct->fileIndex+1, onFileStruct->setCount, onFileStruct->fileName, onFileStruct->compressedTransmissionLength, onFileStruct->finalDataLength, onFileStruct->setTotalCompressedTransmissionLength, onFileStruct->setTotalFinalLength, firstDataChunk);
+		printf("%i (%i%%) %i/%i %s %ib->%ib / %ib->%ib\n", onFileStruct->setID, (int) (100.0*(double)partCount/(double)partTotal), onFileStruct->fileIndex+1, onFileStruct->setCount, onFileStruct->fileName, onFileStruct->compressedTransmissionLength, onFileStruct->finalDataLength, onFileStruct->setTotalCompressedTransmissionLength, onFileStruct->setTotalFinalLength, firstDataChunk);
 	}
 
 	virtual bool OnDownloadComplete(void)
@@ -57,12 +58,15 @@ int main(void)
 	DirectoryDeltaTransfer directoryDeltaTransfer;
 	// The fileListTransfer plugin is used by the DirectoryDeltaTransfer plugin and must also be registered (you could use this yourself too if you wanted, of course).
 	FileListTransfer fileListTransfer;
+	// Read files in parts, rather than the whole file from disk at once
+	IncrementalReadInterface iri;
+	directoryDeltaTransfer.SetDownloadRequestIncrementalReadInterface(&iri, 1000000);
 
 	rakPeer = RakNetworkFactory::GetRakPeerInterface();
 	rakPeer->AttachPlugin(&directoryDeltaTransfer);
 	rakPeer->AttachPlugin(&fileListTransfer);
 	// Get download progress notifications.  Handled by the plugin.
-	rakPeer->SetSplitMessageProgressInterval(1);
+	rakPeer->SetSplitMessageProgressInterval(100);
 	directoryDeltaTransfer.SetFileListTransferPlugin(&fileListTransfer);
 
 	printf("This sample demonstrates the plugin to incrementally transfer compressed\n");

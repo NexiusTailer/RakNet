@@ -30,7 +30,7 @@
 <h1>FileListTransfer Class Reference<br>
 <small>
 [<a class="el" href="group__FILE__LIST__TRANSFER__GROUP.html">FileListTransfer</a>]</small>
-</h1><!-- doxytag: class="FileListTransfer" --><!-- doxytag: inherits="PluginInterface" -->A plugin to provide a simple way to compress and incrementally send the files in the FileList structure. Similar to the <a class="el" href="classDirectoryDeltaTransfer.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">DirectoryDeltaTransfer</a> plugin, except that it doesn't send deltas based on pre-existing files or actually write the files to disk.  
+</h1><!-- doxytag: class="FileListTransfer" --><!-- doxytag: inherits="PluginInterface2" -->A plugin to provide a simple way to compress and incrementally send the files in the FileList structure. Similar to the <a class="el" href="classDirectoryDeltaTransfer.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">DirectoryDeltaTransfer</a> plugin, except that it doesn't send deltas based on pre-existing files or actually write the files to disk.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;FileListTransfer.h&gt;</code>
@@ -41,7 +41,7 @@ Inheritance diagram for FileListTransfer:</div>
 
 <p><center><img src="classFileListTransfer.png" usemap="#FileListTransfer_map" border="0" alt=""></center>
 <map name="FileListTransfer_map">
-<area href="classPluginInterface.html" alt="PluginInterface" shape="rect" coords="0,0,100,24">
+<area href="classPluginInterface2.html" alt="PluginInterface2" shape="rect" coords="0,0,104,24">
 </map>
 </div>
 
@@ -52,8 +52,6 @@ Inheritance diagram for FileListTransfer:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransfer.html#c130a7a61507e899ba48d5f010e0218a">SetupReceive</a> (<a class="el" href="classFileListTransferCBInterface.html">FileListTransferCBInterface</a> *handler, bool deleteHandler, <a class="el" href="structSystemAddress.html">SystemAddress</a> allowedSender)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransfer.html#dd4663058f646c5947ac9cef98396982">Send</a> (FileList *fileList, <a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *rakPeer, <a class="el" href="structSystemAddress.html">SystemAddress</a> recipient, unsigned short setID, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, char orderingChannel, bool compressData, IncrementalReadInterface *_incrementalReadInterface=0, unsigned int _chunkSize=8388608)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransfer.html#2a523806217ab1bb1fe13b5e44495187">SetIncrementalReadInterface</a> (IncrementalReadInterface *_incrementalReadInterface, unsigned int _chunkSize)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b07db657b2dbd147bf20c2659242e037"></a><!-- doxytag: member="FileListTransfer::CancelReceive" ref="b07db657b2dbd147bf20c2659242e037" args="(unsigned short setId)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransfer.html#b07db657b2dbd147bf20c2659242e037">CancelReceive</a> (unsigned short setId)</td></tr>
@@ -71,16 +69,18 @@ bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classFileListProgress.html">FileListProgress</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransfer.html#de3559ee6746c05ed75d78c09717acc1">GetCallback</a> (void) const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransfer.html#7ef7ec634602b9a1fc889c7bfd17a76e">OnReceive</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransfer.html#af695c75800242ac537465a7debb749c">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransfer.html#311fa94b5e481c5bb82e9420d5a0aa6d">OnShutdown</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="67ab4b2738ad0c73e3b913af35654b3f"></a><!-- doxytag: member="FileListTransfer::OnShutdown" ref="67ab4b2738ad0c73e3b913af35654b3f" args="(void)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransfer.html#67ab4b2738ad0c73e3b913af35654b3f">OnShutdown</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransfer.html#4b595b69dc766120d2f40ae51badc913">OnCloseConnection</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransfer.html#58707ddccafca57ea97549dee43f5c24">OnClosedConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, PI2_LostConnectionReason lostConnectionReason)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransfer.html#c952fc90f5c01060468ea1cc80121010">OnAttach</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="434ef297b8e3f11f4b5ad5cc38effcce"></a><!-- doxytag: member="FileListTransfer::Update" ref="434ef297b8e3f11f4b5ad5cc38effcce" args="(void)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransfer.html#434ef297b8e3f11f4b5ad5cc38effcce">Update</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransfer.html#9eabe5c97081e0b6c5cf3e78695ecf98">Update</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update is called every time a packet is checked for . <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 A plugin to provide a simple way to compress and incrementally send the files in the FileList structure. Similar to the <a class="el" href="classDirectoryDeltaTransfer.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">DirectoryDeltaTransfer</a> plugin, except that it doesn't send deltas based on pre-existing files or actually write the files to disk. 
@@ -108,48 +108,27 @@ What was sent to SetCallback </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="c952fc90f5c01060468ea1cc80121010"></a><!-- doxytag: member="FileListTransfer::OnAttach" ref="c952fc90f5c01060468ea1cc80121010" args="(RakPeerInterface *peer)" -->
+<a class="anchor" name="58707ddccafca57ea97549dee43f5c24"></a><!-- doxytag: member="FileListTransfer::OnClosedConnection" ref="58707ddccafca57ea97549dee43f5c24" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void FileListTransfer::OnAttach           </td>
+          <td class="memname">void FileListTransfer::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#9124155ea27bf6c50801350d21173d68">PluginInterface</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="4b595b69dc766120d2f40ae51badc913"></a><!-- doxytag: member="FileListTransfer::OnCloseConnection" ref="4b595b69dc766120d2f40ae51badc913" args="(RakPeerInterface *peer, SystemAddress systemAddress)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void FileListTransfer::OnCloseConnection           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>rakNetGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PI2_LostConnectionReason&nbsp;</td>
+          <td class="paramname"> <em>lostConnectionReason</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -163,62 +142,25 @@ Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd
 <p>
 Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#05e43a9ba3b85f1000adb2f1e9551000">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system whose connection was closed </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lostConnectionReason</em>&nbsp;</td><td>How the connection was closed: manually, connection lost, or notification of disconnection </td></tr>
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#da6d76a81fb6ea6dd8422c3ed5c9baff">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#f14d27351aca9bfd5b4fc2ac1461ff14">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="7ef7ec634602b9a1fc889c7bfd17a76e"></a><!-- doxytag: member="FileListTransfer::OnReceive" ref="7ef7ec634602b9a1fc889c7bfd17a76e" args="(RakPeerInterface *peer, Packet *packet)" -->
+<a class="anchor" name="af695c75800242ac537465a7debb749c"></a><!-- doxytag: member="FileListTransfer::OnReceive" ref="af695c75800242ac537465a7debb749c" args="(Packet *packet)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">PluginReceiveResult FileListTransfer::OnReceive           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
-          <td class="paramname"> <em>packet</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#633dcfc264e4309c41f0cfeb84b4840a">PluginInterface</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="311fa94b5e481c5bb82e9420d5a0aa6d"></a><!-- doxytag: member="FileListTransfer::OnShutdown" ref="311fa94b5e481c5bb82e9420d5a0aa6d" args="(RakPeerInterface *peer)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void FileListTransfer::OnShutdown           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
+          <td class="paramname"> <em>packet</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [virtual]</code></td>
         </tr>
@@ -227,13 +169,14 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown <dl compact><dt><b>Parameters:</b></dt><dd>
+OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
   </table>
 </dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#0983119975a8bb9c726b8a006c089dc2">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#bc50017a35682db5202a7562c58898ea">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -308,7 +251,7 @@ Called when <a class="el" href="classRakPeer.html" title="The main interface for
 Send the FileList structure to another system, which must have previously called <a class="el" href="classFileListTransfer.html#c130a7a61507e899ba48d5f010e0218a">SetupReceive()</a> <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>fileList</em>&nbsp;</td><td>A list of files. The data contained in FileList::data will be sent incrementally and compressed among all files in the set </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakPeer</em>&nbsp;</td><td>The instance of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> to use to send the message </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakPeer</em>&nbsp;</td><td>The instance of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> to use to send the message. Pass 0 to use the instance the plugin is attached to </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>recipient</em>&nbsp;</td><td>The address of the system to send to </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>setID</em>&nbsp;</td><td>The return value of <a class="el" href="classFileListTransfer.html#c130a7a61507e899ba48d5f010e0218a">SetupReceive()</a> which was previously called on <em>recipient</em> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>Passed to <a class="el" href="classRakPeerInterface.html#cc8848069091fa7610e9da5d8aa4925e">RakPeerInterface::Send()</a> </td></tr>
@@ -341,41 +284,6 @@ Send the FileList structure to another system, which must have previously called
 Set a callback to get progress reports about what the file list instances do <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>cb</em>&nbsp;</td><td>A pointer to an externally defined instance of <a class="el" href="classFileListProgress.html" title="Callback interface set with FileList::SetCallback() in case you want progress notifications...">FileListProgress</a>. This pointer is held internally, so should remain valid as long as this class is valid. </td></tr>
-  </table>
-</dl>
-
-</div>
-</div><p>
-<a class="anchor" name="2a523806217ab1bb1fe13b5e44495187"></a><!-- doxytag: member="FileListTransfer::SetIncrementalReadInterface" ref="2a523806217ab1bb1fe13b5e44495187" args="(IncrementalReadInterface *_incrementalReadInterface, unsigned int _chunkSize)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void FileListTransfer::SetIncrementalReadInterface           </td>
-          <td>(</td>
-          <td class="paramtype">IncrementalReadInterface *&nbsp;</td>
-          <td class="paramname"> <em>_incrementalReadInterface</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&nbsp;</td>
-          <td class="paramname"> <em>_chunkSize</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-In order to support sending files that are references (See FileList::AddFile), incrementalReadInterface must be set. Referenced files are sent in chunks, rather than the complete file at a time. <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_incrementalReadInterface</em>&nbsp;</td><td>If a file in <em>fileList</em> has no data, filePullInterface will be used to read the file in chunks of size <em>chunkSize</em> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_chunkSize</em>&nbsp;</td><td>How large of a block of a file to send at once </td></tr>
   </table>
 </dl>
 
@@ -424,37 +332,10 @@ Allows one corresponding <a class="el" href="classFileListTransfer.html#dd466305
 
 </div>
 </div><p>
-<a class="anchor" name="9eabe5c97081e0b6c5cf3e78695ecf98"></a><!-- doxytag: member="FileListTransfer::Update" ref="9eabe5c97081e0b6c5cf3e78695ecf98" args="(RakPeerInterface *peer)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void FileListTransfer::Update           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Update is called every time a packet is checked for . <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>- the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#5966e72f872ebd754b44770ecc981bd9">PluginInterface</a>.</p>
-
-</div>
-</div><p>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/Source/<a class="el" href="FileListTransfer_8h.html">FileListTransfer.h</a><li>C:/RakNet/Source/FileListTransfer.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:07 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:29 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

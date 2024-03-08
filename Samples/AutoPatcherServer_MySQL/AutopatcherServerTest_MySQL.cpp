@@ -12,36 +12,52 @@
 #include "FileList.h" // FLP_Printf
 #include "AutopatcherServer.h"
 #include "AutopatcherMySQLRepository.h"
+#include "PacketizedTCP.h"
 
 #ifdef _WIN32
-#include <windows.h> // Sleep
+#include "WindowsIncludes.h" // Sleep
 #else
 #include <unistd.h> // usleep
 #endif
+
+#define USE_TCP
+#define LISTEN_PORT 60000
+#define MAX_INCOMING_CONNECTIONS 8
 
 int main(int argc, char **argv)
 {
 	// Avoids the Error: Got a packet bigger than 'max_allowed_packet' bytes
 	printf("Important: Requires that you first set the DB schema and the max packet size on the server.\n");
 	printf("See DependentExtensions/AutopatcherMySQLRepository/readme.txt\n");
-	
-	RakPeerInterface *rakPeer;
-	rakPeer = RakNetworkFactory::GetRakPeerInterface();
-	printf("Server starting... ");
-	SocketDescriptor socketDescriptor(60000,0);
-	rakPeer->Startup(8,0,&socketDescriptor, 1);
-	rakPeer->SetMaximumIncomingConnections(8);
-	printf("started.\n");
 
+	printf("Server starting... ");
 	AutopatcherServer autopatcherServer;
-	rakPeer->AttachPlugin(&autopatcherServer);
-	AutopatcherMySQLRepository repository;
-	autopatcherServer.SetAutopatcherRepositoryInterface(&repository);
 	FLP_Printf progressIndicator;
 	FileListTransfer fileListTransfer;
+	AutopatcherMySQLRepository repository;
+	autopatcherServer.SetAutopatcherRepositoryInterface(&repository);
 	fileListTransfer.SetCallback(&progressIndicator);
 	autopatcherServer.SetFileListTransferPlugin(&fileListTransfer);
+#ifdef USE_TCP
+	PacketizedTCP packetizedTCP;
+	if (packetizedTCP.Start(LISTEN_PORT,MAX_INCOMING_CONNECTIONS)==false)
+	{
+		printf("Failed to start TCP. Is the port already in use?");
+		return 1;
+	}
+	packetizedTCP.AttachPlugin(&autopatcherServer);
+	packetizedTCP.AttachPlugin(&fileListTransfer);
+#else
+	RakPeerInterface *rakPeer;
+	rakPeer = RakNetworkFactory::GetRakPeerInterface();
+	SocketDescriptor socketDescriptor(LISTEN_PORT,0);
+	rakPeer->Startup(8,0,&socketDescriptor, 1);
+	rakPeer->SetMaximumIncomingConnections(MAX_INCOMING_CONNECTIONS);
+	rakPeer->AttachPlugin(&autopatcherServer);
 	rakPeer->AttachPlugin(&fileListTransfer);
+#endif
+	printf("started.\n");
+
 	printf("Enter database password:\n");
 	char password[128];
 	char username[256];
@@ -66,6 +82,25 @@ int main(int argc, char **argv)
 	Packet *p;
 	while (1)
 	{
+#ifdef USE_TCP
+		SystemAddress notificationAddress;
+		notificationAddress=packetizedTCP.HasCompletedConnectionAttempt();
+		if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+			printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
+		notificationAddress=packetizedTCP.HasNewIncomingConnection();
+		if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+			printf("ID_NEW_INCOMING_CONNECTION\n");
+		notificationAddress=packetizedTCP.HasLostConnection();
+		if (notificationAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+			printf("ID_CONNECTION_LOST\n");
+
+		p=packetizedTCP.Receive();
+		while (p)
+		{
+			packetizedTCP.DeallocatePacket(p);
+			p=packetizedTCP.Receive();
+		}
+#else
 		p=rakPeer->Receive();
 		while (p)
 		{
@@ -79,7 +114,7 @@ int main(int argc, char **argv)
 			rakPeer->DeallocatePacket(p);
 			p=rakPeer->Receive();
 		}
-
+#endif
 		if (kbhit())
 		{
 			ch=getch();
@@ -155,5 +190,9 @@ int main(int argc, char **argv)
 
 	}
 
+#ifdef USE_TCP
+	packetizedTCP.Stop();
+#else
 	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+#endif
 }

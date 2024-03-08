@@ -31,7 +31,7 @@ extern ReplicaManager2 replicaManager;
 // Track this pointer, which user owns me, and the initial value for my name
 Soldier::Soldier()
 {
-	soldiers.Insert(this);
+	soldiers.Insert(this, __FILE__, __LINE__);
 	owner=0;
 	strcpy(name, "DefaultName");
 	isCloaked=false;
@@ -173,7 +173,7 @@ bool Soldier::QueryIsSerializationAuthority(void) const
 User::User()
 {
 	soldier=0;
-	users.Insert(this);
+	users.Insert(this, __FILE__, __LINE__);
 	systemAddress=UNASSIGNED_SYSTEM_ADDRESS;
 }
 
@@ -250,16 +250,33 @@ Soldier* User::GetMySoldier(void) const
 {
 	return soldier;
 }
+// Helper function to free memory when someone disconnections.
+BooleanQueryResult User::QueryConstruction(Connection_RM2 *connection)
+{
+	if (connection==0)
+		return BQR_NO;
 
+	ReplicaManager2DemoConnection *rm2dc = (ReplicaManager2DemoConnection*)connection;
+	if (rm2dc->constructionDelayedOneTick==false)
+	{
+		// Just doing this to delay construction of this object to remote systems by one tick as a test
+		rm2dc->constructionDelayedOneTick=true;
+		return BQR_NO;
+	}
+
+	return BQR_YES;
+}
 // Implemented member of Replica2: This function encodes the identifier for this class, so the class factory can create it
 bool User::SerializeConstruction(RakNet::BitStream *bitStream, SerializationContext *serializationContext)
 {
+	printf("In User::SerializeConstruction\n");
 	StringTable::Instance()->EncodeString("User",128,bitStream);
 	return true;
 }
 // Implemented member of Replica2: Write the data members of this class. ReplicaManager2 works with pointers as well as any other kind of data
 bool User::Serialize(RakNet::BitStream *bitStream, SerializationContext *serializationContext)
 {
+	//printf("In User::Serialize\n");
 	if (soldier)
 		bitStream->Write(soldier->GetNetworkID());
 	else

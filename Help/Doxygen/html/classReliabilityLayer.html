@@ -55,13 +55,13 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">RakNetTime&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#ef602e205058eab7e6a961790553856f">GetTimeoutTime</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#3fde2774d10881ccc670e3ecb7f4f202">HandleSocketReceiveFromConnectedPlayer</a> (const char *buffer, unsigned int length, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classPluginInterface.html">PluginInterface</a> * &gt; &amp;messageHandlerList, int MTUSize)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#c1cce813d9f4439a822343e8c175cea4">HandleSocketReceiveFromConnectedPlayer</a> (const char *buffer, unsigned int length, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classPluginInterface2.html">PluginInterface2</a> * &gt; &amp;messageHandlerList, int MTUSize)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">BitSize_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#bcc7d50f16310d422dcdb3eaee55c7db">Receive</a> (unsigned char **data)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#ef2aa29bea8080989f7589f582a89636">Send</a> (char *data, BitSize_t numberOfBitsToSend, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, RakNetTimeNS currentTime)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#55d2378b105d46c5c76b9fef0f45b471">Send</a> (char *data, BitSize_t numberOfBitsToSend, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, RakNetTimeUS currentTime)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#2602909210bf41b84bf9ab2c55306d61">Update</a> (<a class="el" href="TCPInterface_8h.html#b8a4083c1e5d7c4172936f59e67ce798">SOCKET</a> s, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, int MTUSize, RakNetTimeNS time, unsigned maxBitsPerSecond, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classPluginInterface.html">PluginInterface</a> * &gt; &amp;messageHandlerList, RakNetRandom *rnr, bool isPS3LobbySocket)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#fb8efd1d3d1a946ec4ecb9b47da31229">Update</a> (<a class="el" href="TCPInterface_8h.html#b8a4083c1e5d7c4172936f59e67ce798">SOCKET</a> s, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, int MTUSize, RakNetTimeUS time, unsigned maxBitsPerSecond, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classPluginInterface2.html">PluginInterface2</a> * &gt; &amp;messageHandlerList, RakNetRandom *rnr, bool isPS3LobbySocket)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#d7f2277b9df3b6dcbff170657cd7532a">IsCheater</a> (void) const </td></tr>
 
@@ -79,8 +79,8 @@ bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Are we waiting for any data to be sent out or be processed by the player? <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#9d54b491be8d725ee14bff0f2dfe4ec4">IsNetworkSimulatorActive</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="cc7a46b771fd002d6131191b68051d5c"></a><!-- doxytag: member="ReliabilityLayer::AckTimeout" ref="cc7a46b771fd002d6131191b68051d5c" args="(RakNetTimeNS curTime)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#cc7a46b771fd002d6131191b68051d5c">AckTimeout</a> (RakNetTimeNS curTime)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="823c2d3fdcb3dbafb401a6c651abe80f"></a><!-- doxytag: member="ReliabilityLayer::AckTimeout" ref="823c2d3fdcb3dbafb401a6c651abe80f" args="(RakNetTimeUS curTime)" -->
+bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReliabilityLayer.html#823c2d3fdcb3dbafb401a6c651abe80f">AckTimeout</a> (RakNetTimeUS curTime)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Has a lot of time passed since the last ack. <br></td></tr>
 </table>
@@ -132,7 +132,7 @@ Returns the value passed to SetTimeoutTime. or the default if it was never calle
 
 </div>
 </div><p>
-<a class="anchor" name="3fde2774d10881ccc670e3ecb7f4f202"></a><!-- doxytag: member="ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer" ref="3fde2774d10881ccc670e3ecb7f4f202" args="(const char *buffer, unsigned int length, SystemAddress systemAddress, DataStructures::List&lt; PluginInterface * &gt; &amp;messageHandlerList, int MTUSize)" -->
+<a class="anchor" name="c1cce813d9f4439a822343e8c175cea4"></a><!-- doxytag: member="ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer" ref="c1cce813d9f4439a822343e8c175cea4" args="(const char *buffer, unsigned int length, SystemAddress systemAddress, DataStructures::List&lt; PluginInterface2 * &gt; &amp;messageHandlerList, int MTUSize)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -157,7 +157,7 @@ Returns the value passed to SetTimeoutTime. or the default if it was never calle
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classPluginInterface.html">PluginInterface</a> * &gt; &amp;&nbsp;</td>
+          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classPluginInterface2.html">PluginInterface2</a> * &gt; &amp;&nbsp;</td>
           <td class="paramname"> <em>messageHandlerList</em>, </td>
         </tr>
         <tr>
@@ -283,7 +283,7 @@ This allocates bytes and writes a user-level message to those bytes. <dl compact
 
 </div>
 </div><p>
-<a class="anchor" name="ef2aa29bea8080989f7589f582a89636"></a><!-- doxytag: member="ReliabilityLayer::Send" ref="ef2aa29bea8080989f7589f582a89636" args="(char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, RakNetTimeNS currentTime)" -->
+<a class="anchor" name="55d2378b105d46c5c76b9fef0f45b471"></a><!-- doxytag: member="ReliabilityLayer::Send" ref="55d2378b105d46c5c76b9fef0f45b471" args="(char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, RakNetTimeUS currentTime)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -332,7 +332,7 @@ This allocates bytes and writes a user-level message to those bytes. <dl compact
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">RakNetTimeNS&nbsp;</td>
+          <td class="paramtype">RakNetTimeUS&nbsp;</td>
           <td class="paramname"> <em>currentTime</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -411,7 +411,7 @@ Set the time, in MS, to use before considering ourselves disconnected after not 
 
 </div>
 </div><p>
-<a class="anchor" name="2602909210bf41b84bf9ab2c55306d61"></a><!-- doxytag: member="ReliabilityLayer::Update" ref="2602909210bf41b84bf9ab2c55306d61" args="(SOCKET s, SystemAddress systemAddress, int MTUSize, RakNetTimeNS time, unsigned maxBitsPerSecond, DataStructures::List&lt; PluginInterface * &gt; &amp;messageHandlerList, RakNetRandom *rnr, bool isPS3LobbySocket)" -->
+<a class="anchor" name="fb8efd1d3d1a946ec4ecb9b47da31229"></a><!-- doxytag: member="ReliabilityLayer::Update" ref="fb8efd1d3d1a946ec4ecb9b47da31229" args="(SOCKET s, SystemAddress systemAddress, int MTUSize, RakNetTimeUS time, unsigned maxBitsPerSecond, DataStructures::List&lt; PluginInterface2 * &gt; &amp;messageHandlerList, RakNetRandom *rnr, bool isPS3LobbySocket)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -436,7 +436,7 @@ Set the time, in MS, to use before considering ourselves disconnected after not 
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">RakNetTimeNS&nbsp;</td>
+          <td class="paramtype">RakNetTimeUS&nbsp;</td>
           <td class="paramname"> <em>time</em>, </td>
         </tr>
         <tr>
@@ -448,7 +448,7 @@ Set the time, in MS, to use before considering ourselves disconnected after not 
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classPluginInterface.html">PluginInterface</a> * &gt; &amp;&nbsp;</td>
+          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classPluginInterface2.html">PluginInterface2</a> * &gt; &amp;&nbsp;</td>
           <td class="paramname"> <em>messageHandlerList</em>, </td>
         </tr>
         <tr>
@@ -489,7 +489,7 @@ Call once per game cycle. Handles internal lists and actually does the send. <dl
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/Source/<a class="el" href="ReliabilityLayer_8h.html">ReliabilityLayer.h</a><li>C:/RakNet/Source/<a class="el" href="ReliabilityLayer_8cpp.html">ReliabilityLayer.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:08 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:30 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

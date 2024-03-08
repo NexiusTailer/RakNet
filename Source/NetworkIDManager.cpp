@@ -134,7 +134,7 @@ NetworkIDManager::NetworkIDManager(void)
 
 #if defined(NETWORK_ID_USE_PTR_TABLE) || defined (NETWORK_ID_USE_HASH)
 	// Last element is reserved for UNASSIGNED_NETWORK_ID
-	IDArray = (NetworkIDObject**) rakMalloc(sizeof(NetworkIDObject*) * 65534);
+	IDArray = (NetworkIDObject**) rakMalloc_Ex(sizeof(NetworkIDObject*) * 65534, __FILE__, __LINE__);
 	memset(IDArray,0,sizeof(NetworkIDObject*)*65534);
 	// You can't use this technique in peer to peer mode.  Undefine NETWORK_ID_USE_PTR_TABLE in NetworkIDManager.h
 	RakAssert(NetworkID::IsPeerToPeerMode()==false);
@@ -144,7 +144,7 @@ NetworkIDManager::NetworkIDManager(void)
 NetworkIDManager::~NetworkIDManager(void)
 {
 #if defined(NETWORK_ID_USE_PTR_TABLE) || defined (NETWORK_ID_USE_HASH)
-	rakFree(IDArray);
+	rakFree_Ex(IDArray, __FILE__, __LINE__ );
 #endif
 }
 //-------------------------------------------------------------------------------------

@@ -18,9 +18,7 @@
 #include "NetworkIDManager.h"
 #include "RakAssert.h"
 
-#if !defined (_WIN32) && !defined (_XBOX) && !defined(X360)
-#include <alloca.h>
-#endif
+#include "RakAlloca.h"
 
 unsigned int NetworkIDObject::nextAllocationNumber=0;
 
@@ -169,7 +167,7 @@ void NetworkIDObject::SetParent( void *_parent )
 		}
 		else
 	#endif
-			nodeArray = RakNet::OP_NEW_ARRAY<NetworkIDNode>(size);
+			nodeArray = RakNet::OP_NEW_ARRAY<NetworkIDNode>(size, __FILE__, __LINE__ );
 
 		networkIDManager->IDTree.DisplayBreadthFirstSearch( nodeArray );
 		for (i=0; i < size; i++)
@@ -179,7 +177,7 @@ void NetworkIDObject::SetParent( void *_parent )
 		}
 
 		if (usedAlloca==false)
-			RakNet::OP_DELETE_ARRAY(nodeArray);
+			RakNet::OP_DELETE_ARRAY(nodeArray, __FILE__, __LINE__);
 #endif
 	}
 #endif

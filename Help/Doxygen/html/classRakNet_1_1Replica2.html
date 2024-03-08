@@ -162,7 +162,8 @@ Base class for game objects that use the <a class="el" href="classRakNet_1_1Repl
 <div class="memdoc">
 
 <p>
-Adds a timer that will elapse every <em>countdown</em> milliseconds, calling Serialize with AUTOSERIALIZE_DEFAULT or whatever value was passed to <em>serializationType</em> Every time this timer elapses, the value returned from <a class="el" href="classRakNet_1_1Replica2.html#874f4223b8fc62c34540456e98f20cd4">Serialize()</a> will be compared to the last value returned by <a class="el" href="classRakNet_1_1Replica2.html#874f4223b8fc62c34540456e98f20cd4">Serialize()</a>. If different, <a class="el" href="classRakNet_1_1Replica2.html#727922deb6e9869ca8664d23e085a318">SendSerialize()</a> will be called automatically. It is possible to create your own AUTOSERIALIZE enumerations and thus control which parts of the object is serialized Use <a class="el" href="classRakNet_1_1Replica2.html#9110805fd2547ff1f7a6d954384b732a">CancelAutoSerializeTimer()</a> or <a class="el" href="classRakNet_1_1Replica2.html#d6681d3255e66b7f84b48255b9c9cca6" title="Remove and deallocate all previously added autoSerialize timers.">ClearAutoSerializeTimers()</a> to stop the timer. If this timer already exists, it will simply override the existing countdown This timer will automatically repeat every <em>countdown</em> milliseconds <dl compact><dt><b>Parameters:</b></dt><dd>
+Adds a timer that will elapse every <em>countdown</em> milliseconds, calling Serialize with AUTOSERIALIZE_DEFAULT or whatever value was passed to <em>serializationType</em> Every time this timer elapses, the value returned from <a class="el" href="classRakNet_1_1Replica2.html#874f4223b8fc62c34540456e98f20cd4">Serialize()</a> will be compared to the last value returned by <a class="el" href="classRakNet_1_1Replica2.html#874f4223b8fc62c34540456e98f20cd4">Serialize()</a>. If different, <a class="el" href="classRakNet_1_1Replica2.html#727922deb6e9869ca8664d23e085a318">SendSerialize()</a> will be called automatically. It is possible to create your own AUTOSERIALIZE enumerations and thus control which parts of the object is serialized Use <a class="el" href="classRakNet_1_1Replica2.html#9110805fd2547ff1f7a6d954384b732a">CancelAutoSerializeTimer()</a> or <a class="el" href="classRakNet_1_1Replica2.html#d6681d3255e66b7f84b48255b9c9cca6" title="Remove and deallocate all previously added autoSerialize timers.">ClearAutoSerializeTimers()</a> to stop the timer. If this timer already exists, it will simply override the existing countdown This timer will automatically repeat every <em>countdown</em> milliseconds <dl class="note" compact><dt><b>Note:</b></dt><dd>The same data is sent to all participants when the autoserialize timer completes. If the data sent depends on the system to be sent to, do not use autoserialize. This is an optimization to save memory. </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>interval</em>&nbsp;</td><td>Time in milliseconds between autoserialize ticks. Use 0 to process immediately, and every tick </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>serializationType</em>&nbsp;</td><td>User-defined identifier for what type of serialization operation to perform. Returned in <a class="el" href="classRakNet_1_1Replica2.html#14fbe7dd9b6757bf8a1f58ec584425c7">Deserialize()</a> as the <em>serializationType</em> parameter. </td></tr>
@@ -774,7 +775,8 @@ A call to <a class="el" href="classRakNet_1_1Connection__RM2.html" title="This c
 <div class="memdoc">
 
 <p>
-CALLBACK: For a given connection, should this object exist? Checked every Update cycle if <a class="el" href="classRakNet_1_1ReplicaManager2.html#9b8295c386a51584e298ec922da8b961">ReplicaManager2::SetAutoUpdateScope()</a> parameter <em>construction</em> is true Defaults to BQR_ALWAYS <dl compact><dt><b>Parameters:</b></dt><dd>
+CALLBACK: For a given connection, should this object exist? Checked every Update cycle if <a class="el" href="classRakNet_1_1ReplicaManager2.html#9b8295c386a51584e298ec922da8b961">ReplicaManager2::SetAutoUpdateScope()</a> parameter <em>construction</em> is true Defaults to BQR_ALWAYS <dl class="note" compact><dt><b>Note:</b></dt><dd>This query is NOT used for ReplicaManager2::BroadcastConstruction() or <a class="el" href="classRakNet_1_1Replica2.html#0cad89094e502fa3dd2b99b3188a7673">SendConstruction()</a>, which forces the operation to occur. If you DO want to use the query, use <a class="el" href="classRakNet_1_1ReplicaManager2.html#36637a754b68dffd93d20d780c9eb716">ReplicaManager2::Reference()</a> and the next time <a class="el" href="classRakPeer.html#30f9b6c0108bae2b860776136f6aece7">RakPeer::Receive()</a> is called it will occur. </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>connection</em>&nbsp;</td><td>Which connection we are referring to. 0 means unknown, in which case the system is checking for BQR_ALWAYS or BQR_NEVER as an optimization. </td></tr>
   </table>
@@ -884,7 +886,8 @@ CALLBACK: Does this system have control over visibility of this object? While no
 <div class="memdoc">
 
 <p>
-CALLBACK: For a given connection, should this object be visible (updatable?) Checked every Update cycle if <a class="el" href="classRakNet_1_1ReplicaManager2.html#9b8295c386a51584e298ec922da8b961">ReplicaManager2::SetAutoUpdateScope()</a> parameter <em>serializationVisiblity</em> is true Defaults to BQR_ALWAYS <dl compact><dt><b>Parameters:</b></dt><dd>
+CALLBACK: For a given connection, should this object be visible (updatable?) Checked every Update cycle if <a class="el" href="classRakNet_1_1ReplicaManager2.html#9b8295c386a51584e298ec922da8b961">ReplicaManager2::SetAutoUpdateScope()</a> parameter <em>serializationVisiblity</em> is true Defaults to BQR_ALWAYS <dl class="note" compact><dt><b>Note:</b></dt><dd>This query is NOT used for ReplicaManager2::BroadcastVisibility() or <a class="el" href="classRakNet_1_1Replica2.html#6a8a8d1a19093c1da85ea0845a8004d8">SendVisibility()</a>, which forces the operation to occur. If you DO want to use the query, use <a class="el" href="classRakNet_1_1ReplicaManager2.html#36637a754b68dffd93d20d780c9eb716">ReplicaManager2::Reference()</a> and the next time <a class="el" href="classRakPeer.html#30f9b6c0108bae2b860776136f6aece7">RakPeer::Receive()</a> is called it will occur. </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>connection</em>&nbsp;</td><td>Which connection we are referring to. 0 means unknown, in which case the system is checking for BQR_ALWAYS or BQR_NEVER as an optimization. </td></tr>
   </table>
@@ -1206,7 +1209,7 @@ Sets the replica manager to use with this <a class="el" href="classReplica.html"
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/Source/<a class="el" href="ReplicaManager2_8h.html">ReplicaManager2.h</a><li>C:/RakNet/Source/ReplicaManager2.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:09 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:32 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

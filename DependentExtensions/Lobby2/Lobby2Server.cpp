@@ -35,9 +35,9 @@ void Lobby2Server::SendMessage(Lobby2Message *msg, SystemAddress recipient)
 	bs.Write((MessageID)ID_LOBBY2_SEND_MESSAGE);
 	bs.Write((MessageID)msg->GetID());
 	msg->Serialize(true,true,&bs);
-	rakPeer->Send(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, recipient, false);
+	SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, recipient, false);
 }
-void Lobby2Server::Update(RakPeerInterface *peer)
+void Lobby2Server::Update(void)
 {
 	while (threadActionQueue.Size())
 	{
@@ -54,7 +54,7 @@ void Lobby2Server::Update(RakPeerInterface *peer)
 			{
 				OnLogin(&ta.command, false);
 			}
-			else if (ta.action=L2MID_Client_ChangeHandle)
+			else if (ta.action==L2MID_Client_ChangeHandle)
 			{
 				OnChangeHandle(&ta.command, false);
 			}
@@ -101,23 +101,18 @@ void Lobby2Server::Update(RakPeerInterface *peer)
 					}
 				}
 			}
-			rakPeer->Send(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, c.callerSystemAddress, false);
+			SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, c.callerSystemAddress, false);
 		}
 		if (c.deallocMsgWhenDone)
-			delete c.lobby2Message;
+			RakNet::OP_DELETE(c.lobby2Message, __FILE__, __LINE__);
 	}
 }
-PluginReceiveResult Lobby2Server::OnReceive(RakPeerInterface *peer, Packet *packet)
+PluginReceiveResult Lobby2Server::OnReceive(Packet *packet)
 {
 	RakAssert(packet);
-	RakAssert(peer);
 
 	switch (packet->data[0]) 
 	{
-	case ID_CONNECTION_LOST:
-	case ID_DISCONNECTION_NOTIFICATION:
-		OnCloseConnection(peer, packet->systemAddress);
-		break;
 	case ID_LOBBY2_SEND_MESSAGE:
 		OnMessage(packet);
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -125,11 +120,11 @@ PluginReceiveResult Lobby2Server::OnReceive(RakPeerInterface *peer, Packet *pack
 
 	return RR_CONTINUE_PROCESSING;
 }
-void Lobby2Server::OnShutdown(RakPeerInterface *peer)
+void Lobby2Server::OnShutdown(void)
 {
 	Clear();
 }
-void Lobby2Server::OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddress)
+void Lobby2Server::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	unsigned int index = GetUserIndexBySystemAddress(systemAddress);
 
@@ -170,7 +165,7 @@ void Lobby2Server::OnMessage(Packet *packet)
 				bs.Write((MessageID)lobby2Message->GetID());
 				lobby2Message->resultCode=L2RC_NOT_LOGGED_IN;
 				lobby2Message->Serialize(true,true,&bs);
-				rakPeer->Send(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, packet->systemAddress, false);
+				SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, packet->systemAddress, false);
 				return;
 			}
 			command.callerUserId=0;
@@ -185,7 +180,7 @@ void Lobby2Server::OnMessage(Packet *packet)
 		out.Write((MessageID)ID_LOBBY2_SERVER_ERROR);
 		out.Write((unsigned char) L2SE_UNKNOWN_MESSAGE_ID);
 		out.Write((unsigned int) msgId);
-		rakPeer->Send(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, packet->systemAddress, false);
+		SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, packet->systemAddress, false);
 	}
 }
 void Lobby2Server::Clear(void)
@@ -204,14 +199,14 @@ void Lobby2Server::Clear(void)
 	{
 		c = threadPool.GetInputAtIndex(i);
 		if (c.deallocMsgWhenDone && c.lobby2Message)
-			delete c.lobby2Message;
+			RakNet::OP_DELETE(c.lobby2Message, __FILE__, __LINE__);
 	}
 	threadPool.ClearInput();
 	for (i=0; i < threadPool.OutputSize(); i++)
 	{
 		c = threadPool.GetOutputAtIndex(i);
 		if (c.deallocMsgWhenDone && c.lobby2Message)
-			delete c.lobby2Message;
+			RakNet::OP_DELETE(c.lobby2Message, __FILE__, __LINE__);
 	}
 	threadPool.ClearOutput();
 
@@ -266,7 +261,7 @@ void Lobby2Server::ExecuteCommand(Lobby2ServerCommand *command)
 	{
 		command->lobby2Message->resultCode=L2RC_REQUIRES_ADMIN;
 		SendMessage(command->lobby2Message, command->callerSystemAddress);
-		rakPeer->Send(&out,packetPriority, RELIABLE_ORDERED, orderingChannel, command->callerSystemAddress, false);
+		SendUnified(&out,packetPriority, RELIABLE_ORDERED, orderingChannel, command->callerSystemAddress, false);
 		if (command->deallocMsgWhenDone)
 			msgFactory->Dealloc(command->lobby2Message);
 		return;
@@ -276,7 +271,7 @@ void Lobby2Server::ExecuteCommand(Lobby2ServerCommand *command)
 	{
 		command->lobby2Message->resultCode=L2RC_REQUIRES_ADMIN;
 		SendMessage(command->lobby2Message, command->callerSystemAddress);
-		rakPeer->Send(&out,packetPriority, RELIABLE_ORDERED, orderingChannel, command->callerSystemAddress, false);
+		SendUnified(&out,packetPriority, RELIABLE_ORDERED, orderingChannel, command->callerSystemAddress, false);
 		if (command->deallocMsgWhenDone)
 			msgFactory->Dealloc(command->lobby2Message);
 		return;
@@ -307,7 +302,7 @@ void Lobby2Server::ClearUsers(void)
 {
 	unsigned int i;
 	for (i=0; i < users.Size(); i++)
-		delete users[i];
+		RakNet::OP_DELETE(users[i], __FILE__, __LINE__);
 	users.Clear();
 }
 void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
@@ -325,7 +320,7 @@ void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 
 	bool objectExists;
 	unsigned int insertionIndex = users.GetIndexFromKey(command->callerSystemAddress, &objectExists);
-	User *user = new User;
+	User *user = RakNet::OP_NEW<User>( __FILE__, __LINE__ );
 	user->userName=command->callingUserName;
 	user->systemAddress=command->callerSystemAddress;
 	user->callerUserId=command->callerUserId;
@@ -341,7 +336,7 @@ void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 	{
 		RakNet::BitStream bs;
 		RoomsPlugin::SerializeLogin(user->userName,user->systemAddress, &bs);
-		rakPeer->Send(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, roomsPluginAddress, false);
+		SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, roomsPluginAddress, false);
 	}
 #endif
 }
@@ -397,7 +392,7 @@ void Lobby2Server::OnChangeHandle(Lobby2ServerCommand *command, bool calledFromT
 	{
 		RakNet::BitStream bs;
 		RoomsPlugin::SerializeChangeHandle(oldHandle,command->callingUserName,&bs);
-		rakPeer->Send(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, roomsPluginAddress, false);
+		SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, roomsPluginAddress, false);
 	}
 #endif
 }
@@ -435,7 +430,7 @@ void Lobby2Server::RemoveUser(unsigned int index)
 		if (command.lobby2Message->CancelOnDisconnect() && command.callerSystemAddress==user->systemAddress)
 		{
 			if (command.deallocMsgWhenDone)
-				delete command.lobby2Message;;
+				RakNet::OP_DELETE(command.lobby2Message, __FILE__, __LINE__);
 			threadPool.RemoveInputAtIndex(i);
 		}
 		else
@@ -447,13 +442,13 @@ void Lobby2Server::RemoveUser(unsigned int index)
 	// Tell the rooms plugin about the logoff event
 	if (roomsPlugin)
 	{
-		roomsPlugin->LogoffRoomsParticipant(user->userName, user->systemAddress);
+		roomsPlugin->LogoffRoomsParticipant(user->userName, UNASSIGNED_SYSTEM_ADDRESS);
 	}
 	else if (roomsPluginAddress!=UNASSIGNED_SYSTEM_ADDRESS)
 	{
 		RakNet::BitStream bs;
 		RoomsPlugin::SerializeLogoff(user->userName,&bs);
-		rakPeer->Send(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, roomsPluginAddress, false);
+		SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, roomsPluginAddress, false);
 	}
 #endif
 }

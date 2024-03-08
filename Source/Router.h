@@ -20,7 +20,7 @@
 
 class RakPeerInterface;
 #include "RakNetTypes.h"
-#include "PluginInterface.h"
+#include "PluginInterface2.h"
 #include "DS_OrderedList.h"
 #include "DS_WeightedGraph.h"
 #include "PacketPriority.h"
@@ -34,7 +34,7 @@ class RakPeerInterface;
 
 /// \ingroup ROUTER_GROUP
 /// \brief Used to route messages between peers
-class RAK_DLL_EXPORT Router : public PluginInterface , public RouterInterface
+class RAK_DLL_EXPORT Router : public PluginInterface2 , public RouterInterface
 {
 public:
 	Router();
@@ -79,19 +79,15 @@ public:
 	// --------------------------------------------------------------------------------------------
 	// Packet handling functions
 	// --------------------------------------------------------------------------------------------
-	virtual void OnAttach(RakPeerInterface *peer);
-	virtual void OnDetach(RakPeerInterface *peer);
-	virtual void OnShutdown(RakPeerInterface *peer);
-	virtual void Update(RakPeerInterface *peer);
-	virtual PluginReceiveResult OnReceive(RakPeerInterface *peer, Packet *packet);
-	virtual void OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddress);
+	virtual void OnAttach(void);
+	virtual void OnDetach(void);
+	virtual PluginReceiveResult OnReceive(Packet *packet);
 protected:
 	void SendTree(PacketPriority priority, PacketReliability reliability, char orderingChannel, DataStructures::Tree<ConnectionGraph::SystemAddressAndGroupId> *tree, const char *data, BitSize_t bitLength, RakNet::BitStream *out, SystemAddressList *recipients);
 	void SerializePreorder(DataStructures::Tree<ConnectionGraph::SystemAddressAndGroupId> *tree, RakNet::BitStream *out, SystemAddressList *recipients) const;
 	DataStructures::WeightedGraph<ConnectionGraph::SystemAddressAndGroupId, unsigned short, false> *graph;
 	bool restrictByType;
 	DataStructures::OrderedList<unsigned char,unsigned char> allowedTypes;
-	RakPeerInterface *rakPeer;
 };
 
 #endif

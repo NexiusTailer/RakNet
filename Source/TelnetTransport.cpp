@@ -23,9 +23,9 @@ TelnetTransport::~TelnetTransport()
 {
 	Stop();
 	if (sendSuffix)
-		rakFree(sendSuffix);
+		rakFree_Ex(sendSuffix, __FILE__, __LINE__ );
 	if (sendPrefix)
-		rakFree(sendPrefix);
+		rakFree_Ex(sendPrefix, __FILE__, __LINE__ );
 }
 bool TelnetTransport::Start(unsigned short port, bool serverMode)
 {
@@ -40,14 +40,17 @@ void TelnetTransport::Stop(void)
 	tcpInterface->Stop();
 	unsigned i;
 	for (i=0; i < remoteClients.Size(); i++)
-		RakNet::OP_DELETE(remoteClients[i]);
+		RakNet::OP_DELETE(remoteClients[i], __FILE__, __LINE__);
 	remoteClients.Clear();
-	RakNet::OP_DELETE(tcpInterface);
+	RakNet::OP_DELETE(tcpInterface, __FILE__, __LINE__);
 	tcpInterface=0;
 }
 void TelnetTransport::Send(  SystemAddress systemAddress, const char *data,... )
 {
 	if (tcpInterface==0) return;
+
+	if (data==0 || data[0]==0)
+		return;
 
 	char text[REMOTE_MAX_TEXT_INPUT];
 	size_t prefixLength;
@@ -74,7 +77,7 @@ void TelnetTransport::Send(  SystemAddress systemAddress, const char *data,... )
 		strncat(text, sendSuffix, availableChars);
 	}
 
-	tcpInterface->Send(text, (unsigned int) strlen(text), systemAddress);
+	tcpInterface->Send(text, (unsigned int) strlen(text), systemAddress, false);
 }
 void TelnetTransport::CloseConnection( SystemAddress systemAddress )
 {
@@ -129,7 +132,7 @@ Packet* TelnetTransport::Receive( void )
 		if (remoteClients[i]->systemAddress==p->systemAddress)
 			remoteClient=remoteClients[i];
 	}
-	RakAssert(remoteClient);
+	//RakAssert(remoteClient);
 	if (remoteClient==0)
 	{
 		tcpInterface->DeallocatePacket(p);
@@ -139,7 +142,7 @@ Packet* TelnetTransport::Receive( void )
 
 	// Echo
 #ifdef ECHO_INPUT
-	tcpInterface->Send((const char *)p->data, p->length, p->systemAddress);
+	tcpInterface->Send((const char *)p->data, p->length, p->systemAddress, false);
 #endif
 
 	bool gotLine;
@@ -153,17 +156,17 @@ Packet* TelnetTransport::Receive( void )
 			char spaceThenBack[2];
 			spaceThenBack[0]=' ';
 			spaceThenBack[1]=8;
-			tcpInterface->Send((const char *)spaceThenBack, 2, p->systemAddress);
+			tcpInterface->Send((const char *)spaceThenBack, 2, p->systemAddress, false);
 		}
 #endif
 
 		gotLine=ReassembleLine(remoteClient, p->data[i]);
 		if (gotLine && remoteClient->textInput[0])
 		{
-			Packet *reassembledLine = (Packet*) rakMalloc(sizeof(Packet));
+			Packet *reassembledLine = (Packet*) rakMalloc_Ex(sizeof(Packet), __FILE__, __LINE__);
 			reassembledLine->length=(unsigned int) strlen(remoteClient->textInput);
 			RakAssert(reassembledLine->length < REMOTE_MAX_TEXT_INPUT);
-			reassembledLine->data= (unsigned char*) rakMalloc( reassembledLine->length+1 );
+			reassembledLine->data= (unsigned char*) rakMalloc_Ex( reassembledLine->length+1, __FILE__, __LINE__ );
 			memcpy(reassembledLine->data, remoteClient->textInput, reassembledLine->length);
 #ifdef _PRINTF_DEBUG
 			memset(remoteClient->textInput, 0, REMOTE_MAX_TEXT_INPUT);
@@ -181,14 +184,14 @@ Packet* TelnetTransport::Receive( void )
 void TelnetTransport::DeallocatePacket( Packet *packet )
 {
 	if (tcpInterface==0) return;
-	rakFree(packet->data);
-	rakFree(packet);
+	rakFree_Ex(packet->data, __FILE__, __LINE__ );
+	rakFree_Ex(packet, __FILE__, __LINE__ );
 }
-SystemAddress TelnetTransport::HasNewConnection(void)
+SystemAddress TelnetTransport::HasNewIncomingConnection(void)
 {
 	unsigned i;
 	SystemAddress newConnection;
-	newConnection = tcpInterface->HasNewConnection();
+	newConnection = tcpInterface->HasNewIncomingConnection();
 	// 03/16/06 Can't force the stupid windows telnet to use line mode or local echo so now I have to track all the remote players and their
 	// input buffer
 	if (newConnection != UNASSIGNED_SYSTEM_ADDRESS)
@@ -200,7 +203,7 @@ SystemAddress TelnetTransport::HasNewConnection(void)
 		//command[1]=253; // WON'T
 		command[1]=251; // WILL
 		command[2]=1; // ECHO
-		tcpInterface->Send((const char*)command, 3, newConnection);
+		tcpInterface->Send((const char*)command, 3, newConnection, false);
 
 		/*
 		// Tell the other side to use line mode
@@ -233,7 +236,7 @@ SystemAddress TelnetTransport::HasNewConnection(void)
 #endif
 		}
 
-		remoteClients.Insert(remoteClient);
+		remoteClients.Insert(remoteClient, __FILE__, __LINE__);
 	}
 	return newConnection;
 }
@@ -248,7 +251,7 @@ SystemAddress TelnetTransport::HasLostConnection(void)
 		{
 			if (remoteClients[i]->systemAddress==systemAddress)
 			{
-				RakNet::OP_DELETE(remoteClients[i]);
+				RakNet::OP_DELETE(remoteClients[i], __FILE__, __LINE__);
 				remoteClients[i]=remoteClients[remoteClients.Size()-1];
 				remoteClients.RemoveFromEnd();
 			}
@@ -264,12 +267,12 @@ void TelnetTransport::SetSendSuffix(const char *suffix)
 {
 	if (sendSuffix)
 	{
-		rakFree(sendSuffix);
+		rakFree_Ex(sendSuffix, __FILE__, __LINE__ );
 		sendSuffix=0;
 	}
 	if (suffix)
 	{
-		sendSuffix = (char*) rakMalloc(strlen(suffix)+1);
+		sendSuffix = (char*) rakMalloc_Ex(strlen(suffix)+1, __FILE__, __LINE__);
 		strcpy(sendSuffix, suffix);
 	}
 }
@@ -277,12 +280,12 @@ void TelnetTransport::SetSendPrefix(const char *prefix)
 {
 	if (sendPrefix)
 	{
-		rakFree(sendPrefix);
+		rakFree_Ex(sendPrefix, __FILE__, __LINE__ );
 		sendPrefix=0;
 	}
 	if (prefix)
 	{
-		sendPrefix = (char*) rakMalloc(strlen(prefix)+1);
+		sendPrefix = (char*) rakMalloc_Ex(strlen(prefix)+1, __FILE__, __LINE__);
 		strcpy(sendPrefix, prefix);
 	}
 }

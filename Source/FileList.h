@@ -22,6 +22,9 @@ struct FileListNode
 	/// Name of the file
 	char *filename;
 
+	/// Full path to the file, which may be different than filename
+	char *fullPathToFile;
+
 	/// File data (may be null if not ready)
 	char *data;
 
@@ -161,12 +164,13 @@ public:
 
 	/// Add a file, given data already in memory
 	/// \param[in] filename Name of a file, optionally prefixed with a partial or complete path. Use \ as the path delineator.
+	/// \param[in] fullPathToFile Full path to the file on disk
 	/// \param[in] data Contents to write
 	/// \param[in] dataLength length of the data, which may be greater than fileLength should you prefix extra data, such as the hash
 	/// \param[in] fileLength Length of the file
 	/// \param[in] context User defined byte to store with each file. Use for whatever you want.
 	/// \param[in] isAReference Means that this is just a reference to a file elsewhere - does not actually have any data
-	void AddFile(const char *filename, const char *data, const unsigned dataLength, const unsigned fileLength, FileListNodeContext context, bool isAReference=false);
+	void AddFile(const char *filename, const char *fullPathToFile, const char *data, const unsigned dataLength, const unsigned fileLength, FileListNodeContext context, bool isAReference=false);
 
 	/// Add a file, reading it from disk
 	/// \param[in] filepath Complete path to the file, including the filename itself

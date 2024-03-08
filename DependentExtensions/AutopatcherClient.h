@@ -20,7 +20,7 @@
 
 #include "RakNetTypes.h"
 #include "Export.h"
-#include "PluginInterface.h"
+#include "PluginInterface2.h"
 #include "PacketPriority.h"
 #include "FileList.h"
 
@@ -30,7 +30,7 @@ class FileListTransfer;
 class FileListTransferCBInterface;
 
 /// \ingroup Autopatcher
-class RAK_DLL_EXPORT AutopatcherClient : public PluginInterface
+class RAK_DLL_EXPORT AutopatcherClient : public PluginInterface2
 {
 public:
 	/// Constructor
@@ -75,19 +75,18 @@ public:
 	void Clear(void);
 
 	/// \internal For plugin handling
-	virtual void OnAttach(RakPeerInterface *peer);
+	virtual void Update(void);
 	/// \internal For plugin handling
-	virtual void Update(RakPeerInterface *peer);
+	virtual PluginReceiveResult OnReceive(Packet *packet);
+	void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	/// \internal For plugin handling
-	virtual PluginReceiveResult OnReceive(RakPeerInterface *peer, Packet *packet);
-	/// \internal For plugin handling
-	virtual void OnShutdown(RakPeerInterface *peer);
+	virtual void OnShutdown(void);
 	void OnThreadCompletion(void);
 protected:
-	PluginReceiveResult OnCreationList(RakPeerInterface *peer, Packet *packet);
-	void OnDeletionList(RakPeerInterface *peer, Packet *packet);
-	PluginReceiveResult OnDownloadFinishedInternal(RakPeerInterface *peer, Packet *packet);
-	PluginReceiveResult OnDownloadFinished(RakPeerInterface *peer, Packet *packet);
+	PluginReceiveResult OnCreationList(Packet *packet);
+	void OnDeletionList(Packet *packet);
+	PluginReceiveResult OnDownloadFinishedInternal(Packet *packet);
+	PluginReceiveResult OnDownloadFinished(Packet *packet);
 	
 	friend class AutopatcherClientCallback;
 	void CopyAndRestart(const char *filePath);
@@ -99,7 +98,6 @@ protected:
 	char restartExe[512];
 	char serverDate[128];
 	FileListTransfer *fileListTransfer;
-	RakPeerInterface *rakPeer;
 	PacketPriority priority;
 	SystemAddress serverId;
 	SystemIndex serverIdIndex;

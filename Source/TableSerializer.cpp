@@ -313,6 +313,6 @@ void TableSerializer::DeallocateQueryList(DataStructures::Table::FilterQuery *qu
 
 	unsigned i;
 	for (i=0; i < numQueries; i++)
-		RakNet::OP_DELETE(query[i].cellValue);
-	RakNet::OP_DELETE_ARRAY(query);
+		RakNet::OP_DELETE(query[i].cellValue, __FILE__, __LINE__);
+	RakNet::OP_DELETE_ARRAY(query, __FILE__, __LINE__);
 }

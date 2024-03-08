@@ -57,6 +57,7 @@ namespace DataStructures
 	template <class TreeType>
 	Tree<TreeType>::~Tree()
 	{
+		DeleteDecendants();
 	}
 
 	template <class TreeType>
@@ -72,7 +73,7 @@ namespace DataStructures
 		while (queue.Size())
 		{
 			node=queue.Pop();
-			output.Insert(node);
+			output.Insert(node, __FILE__, __LINE__);
 			for (i=0; i < node->children.Size(); i++)
 				queue.Push(node->children[i]);
 		}
@@ -81,17 +82,24 @@ namespace DataStructures
 	template <class TreeType>
 	void Tree<TreeType>::AddChild(TreeType &newData)
 	{
-		children.Insert(new Tree(newData));
+		children.Insert(RakNet::OP_NEW<Tree>(newData, __FILE__, __LINE__));
 	}
 
 	template <class TreeType>
 	void Tree<TreeType>::DeleteDecendants(void)
 	{
+		/*
         DataStructures::List<Tree*> output;
 		LevelOrderTraversal(output);
 		unsigned i;
 		for (i=0; i < output.Size(); i++)
-			RakNet::OP_DELETE(output[i]);
+			RakNet::OP_DELETE(output[i], __FILE__, __LINE__);
+*/
+
+		// Already recursive to do this
+		unsigned int i;
+		for (i=0; i < children.Size(); i++)
+			RakNet::OP_DELETE(children[i], __FILE__, __LINE__);
 	}
 }
 

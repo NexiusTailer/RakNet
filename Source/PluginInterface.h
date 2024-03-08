@@ -15,6 +15,7 @@
 /// Software Foundation; either version 2 of the License, or (at your
 /// option) any later version.
 
+/*
 #ifndef __PLUGIN_INTERFACE_H
 #define __PLUGIN_INTERFACE_H
 
@@ -109,3 +110,4 @@ public:
 
 #endif
 
+*/

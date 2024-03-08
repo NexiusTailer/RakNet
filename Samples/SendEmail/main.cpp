@@ -35,7 +35,7 @@ void main(void)
 	if (password[0]==0)
 		strcpy(password, "mygmailpassword");
 
-	fileList.AddFile("quote.txt", quote, (const unsigned int) strlen(quote), (const unsigned int) strlen(quote), FileListNodeContext(0,0));
+	fileList.AddFile("quote.txt", "quote.txt", quote, (const unsigned int) strlen(quote), (const unsigned int) strlen(quote), FileListNodeContext(0,0), false);
 	const char *sendResult=emailSender.Send(mailServer,
 		25,
 		senderUsername,

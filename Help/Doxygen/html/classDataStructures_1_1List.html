@@ -57,13 +57,13 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">list_type &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataStructures_1_1List.html#46ce8d0ed396b4de4cc3d4af3e6965db">Get</a> (const unsigned int position) const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataStructures_1_1List.html#5fc0f2385bfbf74dd82aeb5f70d304ba">Push</a> (const list_type input)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataStructures_1_1List.html#54f8310f2acd5d76b2a32d2e0877127b">Push</a> (const list_type input, const char *file=__FILE__, unsigned int line=__LINE__)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">list_type &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataStructures_1_1List.html#9be46e78d21543bf28bd473807160024">Pop</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataStructures_1_1List.html#b72a69b5e5a63efdcc03ff5ba10cd71b">Insert</a> (const list_type input, const unsigned int position)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataStructures_1_1List.html#c9d10757040e964ba21e7a3c0630e4fe">Insert</a> (const list_type input, const unsigned int position, const char *file=__FILE__, unsigned int line=__LINE__)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataStructures_1_1List.html#8064bdd3eee5d8f04ab8419226ebe0e0">Insert</a> (const list_type input)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataStructures_1_1List.html#5c86bca75ff3cbfc79d88392ac69a93f">Insert</a> (const list_type input, const char *file=__FILE__, unsigned int line=__LINE__)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDataStructures_1_1List.html#8a1cfe7b5a989068c485aa0b0df8e583">Replace</a> (const list_type input, const list_type filler, const unsigned int position)</td></tr>
 
@@ -209,7 +209,7 @@ Returns the index of the specified item or MAX_UNSIGNED_LONG if not found <dl co
 
 </div>
 </div><p>
-<a class="anchor" name="8064bdd3eee5d8f04ab8419226ebe0e0"></a><!-- doxytag: member="DataStructures::List::Insert" ref="8064bdd3eee5d8f04ab8419226ebe0e0" args="(const list_type input)" -->
+<a class="anchor" name="5c86bca75ff3cbfc79d88392ac69a93f"></a><!-- doxytag: member="DataStructures::List::Insert" ref="5c86bca75ff3cbfc79d88392ac69a93f" args="(const list_type input, const char *file=__FILE__, unsigned int line=__LINE__)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -219,9 +219,24 @@ template&lt;class list_type &gt; </div>
           <td class="memname">void <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; list_type &gt;::Insert           </td>
           <td>(</td>
           <td class="paramtype">const list_type&nbsp;</td>
-          <td class="paramname"> <em>input</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [inline]</code></td>
+          <td class="paramname"> <em>input</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>file</em> = <code>__FILE__</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&nbsp;</td>
+          <td class="paramname"> <em>line</em> = <code>__LINE__</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
         </tr>
       </table>
 </div>
@@ -236,7 +251,7 @@ Insert at the end of the list. <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
-<a class="anchor" name="b72a69b5e5a63efdcc03ff5ba10cd71b"></a><!-- doxytag: member="DataStructures::List::Insert" ref="b72a69b5e5a63efdcc03ff5ba10cd71b" args="(const list_type input, const unsigned int position)" -->
+<a class="anchor" name="c9d10757040e964ba21e7a3c0630e4fe"></a><!-- doxytag: member="DataStructures::List::Insert" ref="c9d10757040e964ba21e7a3c0630e4fe" args="(const list_type input, const unsigned int position, const char *file=__FILE__, unsigned int line=__LINE__)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -252,7 +267,19 @@ template&lt;class list_type &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const unsigned int&nbsp;</td>
-          <td class="paramname"> <em>position</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>position</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>file</em> = <code>__FILE__</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&nbsp;</td>
+          <td class="paramname"> <em>line</em> = <code>__LINE__</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -325,7 +352,7 @@ Pop an element from the end of the stack <dl class="pre" compact><dt><b>Precondi
 
 </div>
 </div><p>
-<a class="anchor" name="5fc0f2385bfbf74dd82aeb5f70d304ba"></a><!-- doxytag: member="DataStructures::List::Push" ref="5fc0f2385bfbf74dd82aeb5f70d304ba" args="(const list_type input)" -->
+<a class="anchor" name="54f8310f2acd5d76b2a32d2e0877127b"></a><!-- doxytag: member="DataStructures::List::Push" ref="54f8310f2acd5d76b2a32d2e0877127b" args="(const list_type input, const char *file=__FILE__, unsigned int line=__LINE__)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -335,9 +362,24 @@ template&lt;class list_type &gt; </div>
           <td class="memname">void <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; list_type &gt;::Push           </td>
           <td>(</td>
           <td class="paramtype">const list_type&nbsp;</td>
-          <td class="paramname"> <em>input</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [inline]</code></td>
+          <td class="paramname"> <em>input</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>file</em> = <code>__FILE__</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&nbsp;</td>
+          <td class="paramname"> <em>line</em> = <code>__LINE__</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
         </tr>
       </table>
 </div>
@@ -504,7 +546,7 @@ template&lt;class list_type &gt; </div>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>C:/RakNet/Source/<a class="el" href="DS__List_8h.html">DS_List.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:08 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:31 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

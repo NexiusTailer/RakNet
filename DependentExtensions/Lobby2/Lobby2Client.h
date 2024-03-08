@@ -49,9 +49,9 @@ public:
 
 protected:
 
-	PluginReceiveResult OnReceive(RakPeerInterface *peer, Packet *packet);
-	void OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddress);
-	void OnShutdown(RakPeerInterface *peer);
+	PluginReceiveResult OnReceive(Packet *packet);
+	void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	void OnShutdown(void);
 	void OnMessage(Packet *packet);
 
 	SystemAddress serverAddress;

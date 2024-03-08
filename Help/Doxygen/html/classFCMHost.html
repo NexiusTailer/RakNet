@@ -30,10 +30,7 @@
 <h1>FCMHost Class Reference<br>
 <small>
 [<a class="el" href="group__FCM__HOST__GROUP.html">FullyConnectedMeshHost</a>]</small>
-</h1><!-- doxytag: class="FCMHost" --><!-- doxytag: inherits="PluginInterface" -->In a fully connected mesh of peers, allows all peers to agree that another peer is hot.  
-<a href="#_details">More...</a>
-<p>
-<code>#include &lt;FCMHost.h&gt;</code>
+</h1><!-- doxytag: class="FCMHost" --><!-- doxytag: inherits="PluginInterface2" --><code>#include &lt;FCMHost.h&gt;</code>
 <p>
 <div class="dynheader">
 Inheritance diagram for FCMHost:</div>
@@ -41,7 +38,7 @@ Inheritance diagram for FCMHost:</div>
 
 <p><center><img src="classFCMHost.png" usemap="#FCMHost_map" border="0" alt=""></center>
 <map name="FCMHost_map">
-<area href="classPluginInterface.html" alt="PluginInterface" shape="rect" coords="0,0,97,24">
+<area href="classPluginInterface2.html" alt="PluginInterface2" shape="rect" coords="0,0,104,24">
 </map>
 </div>
 
@@ -61,40 +58,38 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#cbecff5a4dd8b36aa9e0d681c9645eee">RemoveParticipantFromAllGroups</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> guid)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#e7586c94f48d526947ca25bdb96d310e">RemoveParticipant</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> guid, FCMHostGroupID groupId=0)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#54e220359f625d2b2c5324747683e006">RemoveParticipant</a> (<a class="el" href="structRakNetGUID.html">RakNetGUID</a> guid, FCMHostGroupID groupId=0)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#90e8c3ba081159497d845a538f47eca3">SetAutoAddNewConnections</a> (bool autoAdd, FCMHostGroupID groupId=0)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#020e33b749352c86e565ec2aaa110590">GetHost</a> (FCMHostGroupID groupId=0) const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="FCMHost_8h.html#01bed11c45422c835e900b0af6f8da01">FCMHostState</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#7ba7ab95ace936f45f5321b4b5e2b9d9">GetHostState</a> (FCMHostGroupID groupId=0)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#51e461bac1956bb15a4a5c2372de6f7d">AmIHost</a> (FCMHostGroupID groupId=0) const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#5260e4a432609f87e498b4674f96b2b5">HasHost</a> (FCMHostGroupID groupId=0)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#8ec4f45f328defbbf8248c21009d53b6">HasConnectedHost</a> (FCMHostGroupID groupId=0) const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#958bb56c24bbff7f580851e63b861db1">GetHost</a> (FCMHostGroupID groupId=0)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#c29463d6bb8556471d24a13a81da1ca4">AmIConnectedHost</a> (FCMHostGroupID groupId=0) const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#41ef3c4ca217f9529f8ffe888b3889c8">SetHostPriority</a> (int priority, FCMHostGroupID groupId=0)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#d72c55d711d8512787bcec72e8fecc46">OnAttach</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="04d6ee420035d0d7eb391b84c8979e22"></a><!-- doxytag: member="FCMHost::GetParticipants" ref="04d6ee420035d0d7eb391b84c8979e22" args="(DataStructures::List&lt; RakNetGUID &gt; &amp;participants, FCMHostGroupID groupId=0)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#04d6ee420035d0d7eb391b84c8979e22">GetParticipants</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNetGUID.html">RakNetGUID</a> &gt; &amp;participants, FCMHostGroupID groupId=0)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#0de79edaa93b2b60620ee7dba371039b">OnReceive</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get all participants in a group. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2aa6dc56d7f6b268eae7fa67f50159b9"></a><!-- doxytag: member="FCMHost::Clear" ref="2aa6dc56d7f6b268eae7fa67f50159b9" args="(void)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#2aa6dc56d7f6b268eae7fa67f50159b9">Clear</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#c584bae82aad4472f7dbac98d0139588">OnShutdown</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Reset the system, clearing all data. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#ed5caedfe41cc99c8dc416f8fff6b6a9">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#cfd7e60b8c07166acabca16d45e3c603">OnCloseConnection</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="201efb3954e4459efef779b9b2d7d73b"></a><!-- doxytag: member="FCMHost::OnShutdown" ref="201efb3954e4459efef779b9b2d7d73b" args="(void)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#201efb3954e4459efef779b9b2d7d73b">OnShutdown</a> (void)</td></tr>
 
-<tr><td colspan="2"><br><h2>Protected Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d62136671a023ff937a16b1e1e9035ac"></a><!-- doxytag: member="FCMHost::hostListsGroup" ref="d62136671a023ff937a16b1e1e9035ac" args="" -->
-<a class="el" href="classDataStructures_1_1Map.html">DataStructures::Map</a><br class="typebreak">
-&lt; FCMHostGroupID, <br class="typebreak">
-<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a><br class="typebreak">
-&lt; <a class="el" href="structRakNetGUID.html">RakNetGUID</a> &gt; * &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#d62136671a023ff937a16b1e1e9035ac">hostListsGroup</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#a88c575f2d59698787537c3ba3ed8885">OnClosedConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, PI2_LostConnectionReason lostConnectionReason)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">List of hosts, in a map of groupIDs. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html#4bb6d123ec4e00e02d300e1255bc597f">OnNewConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, bool isIncoming)</td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-In a fully connected mesh of peers, allows all peers to agree that another peer is hot. 
-<p>
-In peer to peer games it is often still useful to have one system act as a host / server For example, if the game has AI, only the host / server should control the AI This plugin automatically determines the host, changing the host as the prior host disconnects, and allowing all peers to agree on who is the host<p>
-Algorithm: 1. Every system has a synchronized list of RakNetGuid, representing remote systems in the mesh 2. The system at the head of the list is the host. 3. New systems to join the mesh are added to the end of the list. 4. To avoid contention, only the current host modifies or broadcasts the list. Modifications are broadcast to other systems. 5. If the connection to the host is lost, the next connected system in the list becomes the host. 6. If two meshes join each other, the host with the lower RakNetGuid takes precedence, and the lower priority mesh is appended.<p>
 <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>A fully connected mesh is required among the participants - e.g. all participants must eventually connect to all other participants. Otherwise the algorithm will not return the same host among all systems. </dd></dl>
 <dl class="note" compact><dt><b>Note:</b></dt><dd>ID_FCM_HOST_CHANGED is returned to <a class="el" href="classRakPeerInterface.html#b92ff92041d251011bc166f6abdf119d">RakPeerInterface::Receive()</a> every time the host changes. </dd></dl>
 <hr><h2>Member Function Documentation</h2>
@@ -133,59 +128,7 @@ Add a connected system to the list of systems to manage host tracking <dl compac
 
 </div>
 </div><p>
-<a class="anchor" name="c29463d6bb8556471d24a13a81da1ca4"></a><!-- doxytag: member="FCMHost::AmIConnectedHost" ref="c29463d6bb8556471d24a13a81da1ca4" args="(FCMHostGroupID groupId=0) const " -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool FCMHost::AmIConnectedHost           </td>
-          <td>(</td>
-          <td class="paramtype">FCMHostGroupID&nbsp;</td>
-          <td class="paramname"> <em>groupId</em> = <code>0</code>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Convenience function to return if the attached instance of <a class="el" href="classRakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a> is the host Differs from AmIHost in that if this system is the only system in the mesh, returns false <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>groupId</em>&nbsp;</td><td>Which group we are referring to. </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>true if this system is the host, false otherwise. </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="51e461bac1956bb15a4a5c2372de6f7d"></a><!-- doxytag: member="FCMHost::AmIHost" ref="51e461bac1956bb15a4a5c2372de6f7d" args="(FCMHostGroupID groupId=0) const " -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool FCMHost::AmIHost           </td>
-          <td>(</td>
-          <td class="paramtype">FCMHostGroupID&nbsp;</td>
-          <td class="paramname"> <em>groupId</em> = <code>0</code>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Convenience function to return if the attached instance of <a class="el" href="classRakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a> is the host <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>groupId</em>&nbsp;</td><td>Which group we are referring to. </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>true if this system is the host, false otherwise. </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="020e33b749352c86e565ec2aaa110590"></a><!-- doxytag: member="FCMHost::GetHost" ref="020e33b749352c86e565ec2aaa110590" args="(FCMHostGroupID groupId=0) const " -->
+<a class="anchor" name="958bb56c24bbff7f580851e63b861db1"></a><!-- doxytag: member="FCMHost::GetHost" ref="958bb56c24bbff7f580851e63b861db1" args="(FCMHostGroupID groupId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -195,33 +138,58 @@ Convenience function to return if the attached instance of <a class="el" href="c
           <td class="paramtype">FCMHostGroupID&nbsp;</td>
           <td class="paramname"> <em>groupId</em> = <code>0</code>          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-Get the current host. This will usually be the oldest system added with <a class="el" href="classFCMHost.html#3c257607563f8673bb7dc5071e40e8f2">AddParticipant()</a> or automatically added with <a class="el" href="classFCMHost.html#90e8c3ba081159497d845a538f47eca3">SetAutoAddNewConnections()</a> <dl compact><dt><b>Parameters:</b></dt><dd>
+Get the current host. Only meaningful when GetHostState is FCMHS_WE_ARE_HOST or FCMHS_REMOTE_SYSTEM_IS_HOST <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>groupId</em>&nbsp;</td><td>Which group we are referring to. </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>A RakNetGuid representing which system should be the host. We are NOT necessarily connected to this system, if the mesh is not fully connected (yet?) </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>The Guid of the host </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="8ec4f45f328defbbf8248c21009d53b6"></a><!-- doxytag: member="FCMHost::HasConnectedHost" ref="8ec4f45f328defbbf8248c21009d53b6" args="(FCMHostGroupID groupId=0) const " -->
+<a class="anchor" name="7ba7ab95ace936f45f5321b4b5e2b9d9"></a><!-- doxytag: member="FCMHost::GetHostState" ref="7ba7ab95ace936f45f5321b4b5e2b9d9" args="(FCMHostGroupID groupId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool FCMHost::HasConnectedHost           </td>
+          <td class="memname"><a class="el" href="FCMHost_8h.html#01bed11c45422c835e900b0af6f8da01">FCMHostState</a> FCMHost::GetHostState           </td>
           <td>(</td>
           <td class="paramtype">FCMHostGroupID&nbsp;</td>
           <td class="paramname"> <em>groupId</em> = <code>0</code>          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td> const</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get the current state of the system for determing the host <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>groupId</em>&nbsp;</td><td>Which group we are referring to. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="5260e4a432609f87e498b4674f96b2b5"></a><!-- doxytag: member="FCMHost::HasHost" ref="5260e4a432609f87e498b4674f96b2b5" args="(FCMHostGroupID groupId=0)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool FCMHost::HasHost           </td>
+          <td>(</td>
+          <td class="paramtype">FCMHostGroupID&nbsp;</td>
+          <td class="paramname"> <em>groupId</em> = <code>0</code>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
         </tr>
       </table>
 </div>
@@ -237,48 +205,27 @@ Returns if we are connected to other systems, and one of those systems (possibly
 
 </div>
 </div><p>
-<a class="anchor" name="d72c55d711d8512787bcec72e8fecc46"></a><!-- doxytag: member="FCMHost::OnAttach" ref="d72c55d711d8512787bcec72e8fecc46" args="(RakPeerInterface *peer)" -->
+<a class="anchor" name="a88c575f2d59698787537c3ba3ed8885"></a><!-- doxytag: member="FCMHost::OnClosedConnection" ref="a88c575f2d59698787537c3ba3ed8885" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void FCMHost::OnAttach           </td>
+          <td class="memname">void FCMHost::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#9124155ea27bf6c50801350d21173d68">PluginInterface</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="cfd7e60b8c07166acabca16d45e3c603"></a><!-- doxytag: member="FCMHost::OnCloseConnection" ref="cfd7e60b8c07166acabca16d45e3c603" args="(RakPeerInterface *peer, SystemAddress systemAddress)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void FCMHost::OnCloseConnection           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>rakNetGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PI2_LostConnectionReason&nbsp;</td>
+          <td class="paramname"> <em>lostConnectionReason</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -292,30 +239,37 @@ Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd
 <p>
 Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#05e43a9ba3b85f1000adb2f1e9551000">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system whose connection was closed </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lostConnectionReason</em>&nbsp;</td><td>How the connection was closed: manually, connection lost, or notification of disconnection </td></tr>
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#da6d76a81fb6ea6dd8422c3ed5c9baff">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#f14d27351aca9bfd5b4fc2ac1461ff14">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="0de79edaa93b2b60620ee7dba371039b"></a><!-- doxytag: member="FCMHost::OnReceive" ref="0de79edaa93b2b60620ee7dba371039b" args="(RakPeerInterface *peer, Packet *packet)" -->
+<a class="anchor" name="4bb6d123ec4e00e02d300e1255bc597f"></a><!-- doxytag: member="FCMHost::OnNewConnection" ref="4bb6d123ec4e00e02d300e1255bc597f" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">PluginReceiveResult FCMHost::OnReceive           </td>
+          <td class="memname">void FCMHost::OnNewConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
-          <td class="paramname"> <em>packet</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>rakNetGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>isIncoming</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -327,27 +281,27 @@ Called when a connection is dropped because the user called <a class="el" href="
 <div class="memdoc">
 
 <p>
-OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
+Called when we got a new connection <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Address of the new connection </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>isIncoming</em>&nbsp;</td><td>If true, this is ID_NEW_INCOMING_CONNECTION, or the equivalent </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#633dcfc264e4309c41f0cfeb84b4840a">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#7a4f68d0bae0dd4539f6b9e14a59f7fa">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="c584bae82aad4472f7dbac98d0139588"></a><!-- doxytag: member="FCMHost::OnShutdown" ref="c584bae82aad4472f7dbac98d0139588" args="(RakPeerInterface *peer)" -->
+<a class="anchor" name="ed5caedfe41cc99c8dc416f8fff6b6a9"></a><!-- doxytag: member="FCMHost::OnReceive" ref="ed5caedfe41cc99c8dc416f8fff6b6a9" args="(Packet *packet)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void FCMHost::OnShutdown           </td>
+          <td class="memname">PluginReceiveResult FCMHost::OnReceive           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
+          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
+          <td class="paramname"> <em>packet</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [virtual]</code></td>
         </tr>
@@ -356,22 +310,23 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown <dl compact><dt><b>Parameters:</b></dt><dd>
+OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
   </table>
 </dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#0983119975a8bb9c726b8a006c089dc2">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#bc50017a35682db5202a7562c58898ea">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="e7586c94f48d526947ca25bdb96d310e"></a><!-- doxytag: member="FCMHost::RemoveParticipant" ref="e7586c94f48d526947ca25bdb96d310e" args="(RakNetGUID guid, FCMHostGroupID groupId=0)" -->
+<a class="anchor" name="54e220359f625d2b2c5324747683e006"></a><!-- doxytag: member="FCMHost::RemoveParticipant" ref="54e220359f625d2b2c5324747683e006" args="(RakNetGUID guid, FCMHostGroupID groupId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void FCMHost::RemoveParticipant           </td>
+          <td class="memname">bool FCMHost::RemoveParticipant           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
           <td class="paramname"> <em>guid</em>, </td>
@@ -398,6 +353,7 @@ Remove a participant added with <a class="el" href="classFCMHost.html#3c25760756
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>groupId</em>&nbsp;</td><td>Which group to remove this system from. Groups are used if you want to manage more than one list at a time. Use 0 if you don't care. </td></tr>
   </table>
 </dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True if done, false if not </dd></dl>
 
 </div>
 </div><p>
@@ -452,9 +408,44 @@ Remove a participant added with <a class="el" href="classFCMHost.html#3c25760756
 <div class="memdoc">
 
 <p>
-If set to true, all subsequent new connections will be added to <em>groupId</em>. <dl compact><dt><b>Parameters:</b></dt><dd>
+If set to true, all subsequent new connections will be added to <em>groupId</em>. Defaults to false <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>autoAdd</em>&nbsp;</td><td>If true, removes the need to call <a class="el" href="classFCMHost.html#3c257607563f8673bb7dc5071e40e8f2">AddParticipant()</a> on ID_NEW_INCOMING_CONNECTION or ID_CONNECTION_REQUEST_ACCEPTED Which group to automatically add systems to. Unused parameter if <em>autoAdd</em> is false </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="41ef3c4ca217f9529f8ffe888b3889c8"></a><!-- doxytag: member="FCMHost::SetHostPriority" ref="41ef3c4ca217f9529f8ffe888b3889c8" args="(int priority, FCMHostGroupID groupId=0)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void FCMHost::SetHostPriority           </td>
+          <td>(</td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>priority</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FCMHostGroupID&nbsp;</td>
+          <td class="paramname"> <em>groupId</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+While calculating the host, priority gives a boost to which system will be host If two systems have the same priority, the system with the lower GUID will be host. priority defaults to 0 This won't change the host after the fact, only before adding that system with AddParticipant <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>The priority level to set. Just a number for comparison, set to whatever you want. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>groupId</em>&nbsp;</td><td>Which group we are referring to. </td></tr>
   </table>
 </dl>
 
@@ -463,7 +454,7 @@ If set to true, all subsequent new connections will be added to <em>groupId</em>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/Source/<a class="el" href="FCMHost_8h.html">FCMHost.h</a><li>C:/RakNet/Source/FCMHost.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:07 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:29 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

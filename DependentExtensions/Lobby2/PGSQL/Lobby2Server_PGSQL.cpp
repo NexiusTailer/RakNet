@@ -9,7 +9,7 @@ Lobby2ServerCommand Lobby2ServerWorkerThread(Lobby2ServerCommand input, bool *re
 	input.returnToSender = input.lobby2Message->ServerDBImpl(&input, postgreSQLInterface);
 	*returnOutput=input.returnToSender;
 	if (input.deallocMsgWhenDone && input.returnToSender==false)
-		delete input.lobby2Message;
+		RakNet::OP_DELETE(input.lobby2Message, __FILE__, __LINE__);
 	return input;
 }
 
@@ -59,10 +59,10 @@ bool Lobby2Server_PGSQL::ConnectToDB(const char *conninfo, int numWorkerThreads)
 	PostgreSQLInterface *connection;
 	for (i=0; i < numWorkerThreads; i++)
 	{
-		connection = new PostgreSQLInterface;
+		connection = RakNet::OP_NEW<PostgreSQLInterface>( __FILE__, __LINE__ );
 		if (connection->Connect(conninfo)==false)
 		{
-			delete connection;
+			RakNet::OP_DELETE(connection, __FILE__, __LINE__);
 			ClearConnections();
 			return false;
 		}
@@ -86,14 +86,14 @@ void* Lobby2Server_PGSQL::PerThreadFactory(void *context)
 void Lobby2Server_PGSQL::PerThreadDestructor(void* factoryResult, void *context)
 {
 	PostgreSQLInterface* p = (PostgreSQLInterface*)factoryResult;
-	delete p;
+	RakNet::OP_DELETE(p, __FILE__, __LINE__);
 }
 void Lobby2Server_PGSQL::ClearConnections(void)
 {
 	unsigned int i;
 	connectionPoolMutex.Lock();
 	for (i=0; i < connectionPool.Size(); i++)
-		delete connectionPool[i];
+		RakNet::OP_DELETE(connectionPool[i], __FILE__, __LINE__);
 	connectionPool.Clear();
 	connectionPoolMutex.Unlock();
 }

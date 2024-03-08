@@ -60,7 +60,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTelnetTransport.html#4575ed9bcafe3d1ef19463df1b3514d8">DeallocatePacket</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTelnetTransport.html#dcb74296d20304eafe982cf2472e42c5">HasNewConnection</a> (void)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTelnetTransport.html#9a3d51e25cf3bc8c4a6268fabf72d74e">HasNewIncomingConnection</a> (void)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTelnetTransport.html#b9fff80bd0c3633d2061a6630a9d9e39">HasLostConnection</a> (void)</td></tr>
 
@@ -169,12 +169,12 @@ If a system loses the connection, you should queue that event and return the sys
 
 </div>
 </div><p>
-<a class="anchor" name="dcb74296d20304eafe982cf2472e42c5"></a><!-- doxytag: member="TelnetTransport::HasNewConnection" ref="dcb74296d20304eafe982cf2472e42c5" args="(void)" -->
+<a class="anchor" name="9a3d51e25cf3bc8c4a6268fabf72d74e"></a><!-- doxytag: member="TelnetTransport::HasNewIncomingConnection" ref="9a3d51e25cf3bc8c4a6268fabf72d74e" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structSystemAddress.html">SystemAddress</a> TelnetTransport::HasNewConnection           </td>
+          <td class="memname"><a class="el" href="structSystemAddress.html">SystemAddress</a> TelnetTransport::HasNewIncomingConnection           </td>
           <td>(</td>
           <td class="paramtype">void&nbsp;</td>
           <td class="paramname">          </td>
@@ -188,7 +188,7 @@ If a system loses the connection, you should queue that event and return the sys
 <p>
 If a new system connects to you, you should queue that event and return the systemAddress/address of that player in this function. <dl class="return" compact><dt><b>Returns:</b></dt><dd>The SystemAddress/address of the system </dd></dl>
 
-<p>Implements <a class="el" href="classTransportInterface.html#5978e692faf472fe7ffd2c98ee253dfa">TransportInterface</a>.</p>
+<p>Implements <a class="el" href="classTransportInterface.html#e4e54bc1d8e386e712bfc701e1a1115d">TransportInterface</a>.</p>
 
 </div>
 </div><p>
@@ -300,7 +300,7 @@ Start the transport provider on the indicated port. <dl compact><dt><b>Parameter
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/Source/<a class="el" href="TelnetTransport_8h.html">TelnetTransport.h</a><li>C:/RakNet/Source/TelnetTransport.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:08 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:31 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

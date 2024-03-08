@@ -1,13 +1,10 @@
+#if !defined(_XBOX) && !defined(X360) && !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
+
 #include "BigInt.h"
 #include <ctype.h>
 #include <string.h>
 
-#if defined(_WIN32)
-#include <malloc.h> // alloca
-#elif (defined(__GNUC__)  || defined(__GCCXML__))
-#include <alloca.h>
-#else
-#endif
+#include "RakAlloca.h"
 #include "RakMemoryOverride.h"
 
 namespace big
@@ -1468,7 +1465,7 @@ loop_done:
 		// precomputed window starts with 000001, 000011, 000101, 000111, ...
 		uint32_t k = (1 << (window_bits - 1));
 
-		uint32_t *window = RakNet::OP_NEW_ARRAY<uint32_t>(limbs * k);
+		uint32_t *window = RakNet::OP_NEW_ARRAY<uint32_t>(limbs * k, __FILE__, __LINE__ );
 
 		uint32_t *cw = window;
 		Set(window, limbs, base);
@@ -1639,7 +1636,7 @@ loop_done:
 			//e_bits = 0;
 		}
 
-		RakNet::OP_DELETE_ARRAY(window);
+		RakNet::OP_DELETE_ARRAY(window, __FILE__, __LINE__);
 	}
 
 	// Computes: result = base ^ exponent (Mod modulus)
@@ -1724,3 +1721,5 @@ loop_done:
 		Add(result, mod_limbs*2, p, mod_limbs);
 	}
 }
+
+#endif

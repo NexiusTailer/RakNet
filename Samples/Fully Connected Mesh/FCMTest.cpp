@@ -12,7 +12,7 @@
 #include "Kbhit.h"
 #include "RakSleep.h"
 
-static const int NUM_PEERS=3;
+static const int NUM_PEERS=7;
 RakPeerInterface *rakPeer[NUM_PEERS];
 FullyConnectedMesh fullyConnectedMeshPlugin[NUM_PEERS];
 ConnectionGraph connectionGraphPlugin[NUM_PEERS];

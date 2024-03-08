@@ -8,6 +8,8 @@
 #include "RakNetworkFactory.h"
 #include "RakVoice.h"
 #include "RakNetStatistics.h"
+#include "NatPunchthroughClient.h"
+#include "BitStream.h"
 
 /// To test sending to myself. Also uncomment in RakVoice.cpp
 //#define _TEST_LOOPBACK
@@ -62,6 +64,8 @@ static int PACallback( void *inputBuffer, void *outputBuffer,
 	return 0;
 }
 
+#define NAT_PUNCHTHROUGH_FACILITATOR_PORT 60481
+
 int main(void)
 {
 	PortAudioStream *stream;
@@ -80,10 +84,11 @@ int main(void)
 	printf("can substitute whatever you want if you do not want to use portaudio.\n");
 	printf("Difficulty: Advanced\n\n");
 
-
+	// Since voice is peer to peer, we give the option to use the nat punchthrough client if desired.
+	NatPunchthroughClient natPunchthroughClient;
 	char port[256];
 	rakPeer = RakNetworkFactory::GetRakPeerInterface();
-	printf("Enter local port: ");
+	printf("Enter local port (enter for default): ");
 	gets(port);
 	if (port[0]==0)
 		strcpy(port, "60000");
@@ -91,6 +96,7 @@ int main(void)
 	rakPeer->Startup(4, 30, &socketDescriptor, 1);
 	rakPeer->SetMaximumIncomingConnections(4);
 	rakPeer->AttachPlugin(&rakVoice);
+	rakPeer->AttachPlugin(&natPunchthroughClient);
 	rakVoice.Init(SAMPLE_RATE, FRAMES_PER_BUFFER*sizeof(SAMPLE));
 
 	err = Pa_Initialize();
@@ -118,10 +124,37 @@ int main(void)
 	err = Pa_StartStream( stream );
 	if( err != paNoError ) goto error;
 
+	printf("Support NAT punchthrough? (y/n)? ");
+	bool useNatPunchthrough;
+	useNatPunchthrough=(getche()=='y');
+	printf("\n");
+	char facilitatorIP[256];
+	SystemAddress facilitator;
+	if (useNatPunchthrough)
+	{
+		printf("My GUID is %s\n", rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
+
+		printf("Enter IP of facilitator (enter for default): ");
+		gets(facilitatorIP);
+		if (facilitatorIP[0]==0)
+			strcpy(facilitatorIP, "216.224.123.180");
+		facilitator.SetBinaryAddress(facilitatorIP);
+		facilitator.port=NAT_PUNCHTHROUGH_FACILITATOR_PORT;
+		rakPeer->Connect(facilitatorIP, NAT_PUNCHTHROUGH_FACILITATOR_PORT, 0, 0);
+		printf("Connecting to facilitator...\n");
+	}
+	else
+	{
+		printf("Not supporting NAT punchthrough.\n");
+	}
+
+
     
 	Packet *p;
 	quit=false;
-	printf("(Q)uit. (C)onnect. (D)isconnect. (M)ute. ' ' for stats.\n");
+	if (useNatPunchthrough==false)
+		printf("(Q)uit. (C)onnect. (D)isconnect. (M)ute. ' ' for stats.\n");
+
 	while (!quit)
 	{
 		if (kbhit())
@@ -133,16 +166,36 @@ int main(void)
 			}
 			else if (ch=='c')
 			{
-				char ip[256];
-				printf("Enter IP of remote system: ");
-				gets(ip);
-				if (ip[0]==0)
-					strcpy(ip, "127.0.0.1");
-				printf("Enter port of remote system: ");
-				gets(port);
-				if (port[0]==0)
-					strcpy(port, "60000");
-				rakPeer->Connect(ip, atoi(port), 0,0);
+				if (useNatPunchthrough)
+				{
+					RakNetGUID destination;
+					printf("Enter GUID of destination: ");
+					char guidStr[256];
+					while (1)
+					{
+						gets(guidStr);
+						if (!destination.FromString(guidStr))
+							printf("Invalid GUID format. Try again.\nEnter GUID of destination: ");
+						else
+							break;
+					}
+					printf("Starting NAT punch. Please wait...\n");
+					natPunchthroughClient.OpenNAT(destination,facilitator);
+				}
+				else
+				{
+					char ip[256];
+					printf("Enter IP of remote system: ");
+					gets(ip);
+					if (ip[0]==0)
+						strcpy(ip, "127.0.0.1");
+					printf("Enter port of remote system: ");
+					gets(port);
+					if (port[0]==0)
+						strcpy(port, "60000");
+					rakPeer->Connect(ip, atoi(port), 0,0);
+
+				}
 			}
 			else if (ch=='m')
 			{
@@ -173,13 +226,84 @@ int main(void)
 		{
 			if (p->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
 			{
-				printf("ID_CONNECTION_REQUEST_ACCEPTED from %s\n", p->systemAddress.ToString());
-				rakVoice.RequestVoiceChannel(p->systemAddress);
+				if (p->systemAddress==facilitator)
+				{
+					printf("Connection to facilitator completed\n");
+					printf("(Q)uit. (C)onnect. (D)isconnect. (M)ute. ' ' for stats.\n");
+				}
+				else
+				{
+					printf("ID_CONNECTION_REQUEST_ACCEPTED from %s\n", p->systemAddress.ToString());
+					rakVoice.RequestVoiceChannel(p->systemAddress);
+				}
+			}
+			else if (p->data[0]==ID_CONNECTION_ATTEMPT_FAILED)
+			{
+				if (p->systemAddress==facilitator)
+				{
+					printf("Connection to facilitator failed. Using direct connections\n");
+					useNatPunchthrough=false;
+					printf("(Q)uit. (C)onnect. (D)isconnect. (M)ute. ' ' for stats.\n");
+				}
+				else
+				{
+					printf("ID_CONNECTION_ATTEMPT_FAILED\n");
+				}
 			}
 			else if (p->data[0]==ID_RAKVOICE_OPEN_CHANNEL_REQUEST || p->data[0]==ID_RAKVOICE_OPEN_CHANNEL_REPLY)
 			{
 				printf("Got new channel from %s\n", p->systemAddress.ToString());
 			}
+			else if (p->data[0]==ID_NAT_TARGET_NOT_CONNECTED)
+			{
+				RakNetGUID g;
+				RakNet::BitStream b(p->data, p->length, false);
+				b.IgnoreBits(8); // Ignore the ID_...
+				b.Read(g);
+				printf("ID_NAT_TARGET_NOT_CONNECTED for %s\n", g.ToString());
+			}
+			else if (p->data[0]==ID_NAT_TARGET_UNRESPONSIVE)
+			{
+				RakNetGUID g;
+				RakNet::BitStream b(p->data, p->length, false);
+				b.IgnoreBits(8); // Ignore the ID_...
+				b.Read(g);
+				printf("ID_NAT_TARGET_UNRESPONSIVE for %s\n", g.ToString());
+			}
+			else if (p->data[0]==ID_NAT_CONNECTION_TO_TARGET_LOST)
+			{
+				RakNetGUID g;
+				RakNet::BitStream b(p->data, p->length, false);
+				b.IgnoreBits(8); // Ignore the ID_...
+				b.Read(g);
+				printf("ID_NAT_CONNECTION_TO_TARGET_LOST for %s\n", g.ToString());
+			}
+			else if (p->data[0]==ID_NAT_ALREADY_IN_PROGRESS)
+			{
+				RakNetGUID g;
+				RakNet::BitStream b(p->data, p->length, false);
+				b.IgnoreBits(8); // Ignore the ID_...
+				b.Read(g);
+				printf("ID_NAT_ALREADY_IN_PROGRESS for %s\n", g.ToString());
+			}
+			else if (p->data[0]==ID_NAT_PUNCHTHROUGH_FAILED)
+			{
+				printf("ID_NAT_PUNCHTHROUGH_FAILED for %s\n", p->guid.ToString());
+			}
+			else if (p->data[0]==ID_NAT_PUNCHTHROUGH_SUCCEEDED)
+			{
+				printf("ID_NAT_PUNCHTHROUGH_SUCCEEDED for %s. Connecting...\n", p->guid.ToString());
+				rakPeer->Connect(p->systemAddress.ToString(false),p->systemAddress.port,0,0);
+			}
+			else if (p->data[0]==ID_ALREADY_CONNECTED)
+			{
+				printf("ID_ALREADY_CONNECTED\n");
+			}
+			else
+			{
+				printf("Unknown packet ID %i\n", p->data[0]);
+			}
+
 
 			rakPeer->DeallocatePacket(p);
 			p=rakPeer->Receive();

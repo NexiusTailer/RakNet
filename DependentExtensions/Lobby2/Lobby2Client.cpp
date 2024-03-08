@@ -26,19 +26,14 @@ void Lobby2Client::SendMsg(Lobby2Message *msg)
 	bs.Write((MessageID)ID_LOBBY2_SEND_MESSAGE);
 	bs.Write((MessageID)msg->GetID());
 	msg->Serialize(true,false,&bs);
-	rakPeer->Send(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, serverAddress, false);
+	SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, serverAddress, false);
 }
-PluginReceiveResult Lobby2Client::OnReceive(RakPeerInterface *peer, Packet *packet)
+PluginReceiveResult Lobby2Client::OnReceive(Packet *packet)
 {
 	RakAssert(packet);
-	RakAssert(peer);
 
 	switch (packet->data[0]) 
 	{
-	case ID_CONNECTION_LOST:
-	case ID_DISCONNECTION_NOTIFICATION:
-		OnCloseConnection(peer, packet->systemAddress);
-		break;
 	case ID_LOBBY2_SEND_MESSAGE:
 		OnMessage(packet);
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -46,12 +41,12 @@ PluginReceiveResult Lobby2Client::OnReceive(RakPeerInterface *peer, Packet *pack
 
 	return RR_CONTINUE_PROCESSING;
 }
-void Lobby2Client::OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddress)
+void Lobby2Client::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 //	if (systemAddress==serverAddress)
 //		ClearIgnoreList();
 }
-void Lobby2Client::OnShutdown(RakPeerInterface *peer)
+void Lobby2Client::OnShutdown(void)
 {
 //	ClearIgnoreList();
 }

@@ -297,6 +297,13 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\DS_Multilist.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\DS_OrderedChannelHeap.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -712,13 +719,6 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
-		<Unit filename="Source\Makefile.am">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="debug"/>
-			<Option target="release"/>
-		</Unit>
 		<Unit filename="Source\MessageFilter.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="debug"/>
@@ -744,6 +744,30 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\NatPunchthrough.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\NatPunchthroughClient.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\NatPunchthroughClient.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\NatPunchthroughServer.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\NatPunchthroughServer.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -831,6 +855,18 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\PacketizedTCP.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\PacketizedTCP.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\Platform.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -844,6 +880,18 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\PluginInterface.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\PluginInterface2.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\PluginInterface2.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -881,6 +929,13 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\RakAlloca.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\RakAssert.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -894,34 +949,6 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\RakMemoryOverride.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="debug"/>
-			<Option target="release"/>
-		</Unit>
-		<Unit filename="Source\RakNet.vcproj">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="debug"/>
-			<Option target="release"/>
-		</Unit>
-		<Unit filename="Source\RakNet.vcproj.vspscc">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="debug"/>
-			<Option target="release"/>
-		</Unit>
-		<Unit filename="Source\RakNet3.0.vcproj">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="debug"/>
-			<Option target="release"/>
-		</Unit>
-		<Unit filename="Source\RakNet3.0.vcproj.user">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -991,13 +1018,6 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\RakNetVersion.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="debug"/>
-			<Option target="release"/>
-		</Unit>
-		<Unit filename="Source\RakNet_vc8.vcproj">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -1223,6 +1243,13 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
+		<Unit filename="Source\SocketIncludes.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
 		<Unit filename="Source\SocketLayer.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="debug"/>
@@ -1351,6 +1378,13 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\WSAStartupSingleton.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\WindowsIncludes.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

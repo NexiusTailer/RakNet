@@ -20,7 +20,7 @@
 
 class RakPeerInterface;
 class NetworkIDManager;
-#include "PluginInterface.h"
+#include "PluginInterface2.h"
 #include "DS_Map.h"
 #include "PacketPriority.h"
 #include "RakNetTypes.h"
@@ -168,7 +168,7 @@ enum RPCErrorCodes
 /// Pointers are automatically dereferenced and the contents copied with memcpy
 /// Use the old system, or regular message passing, if you need greater flexibility
 /// \ingroup AUTO_RPC_GROUP
-class AutoRPC : public PluginInterface
+class AutoRPC : public PluginInterface2
 {
 public:
 	/// Constructor
@@ -606,13 +606,13 @@ protected:
 	// --------------------------------------------------------------------------------------------
 	// Packet handling functions
 	// --------------------------------------------------------------------------------------------
-	void OnAttach(RakPeerInterface *peer);
-	virtual PluginReceiveResult OnReceive(RakPeerInterface *peer, Packet *packet);
+	void OnAttach(void);
+	virtual PluginReceiveResult OnReceive(Packet *packet);
 	virtual void OnAutoRPCCall(SystemAddress systemAddress, unsigned char *data, unsigned int lengthInBytes);
 	virtual void OnRPCRemoteIndex(SystemAddress systemAddress, unsigned char *data, unsigned int lengthInBytes);
 	virtual void OnRPCUnknownRemoteIndex(SystemAddress systemAddress, unsigned char *data, unsigned int lengthInBytes, RakNetTime timestamp);
-	virtual void OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddress);
-	virtual void OnShutdown(RakPeerInterface *peer);
+	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	virtual void OnShutdown(void);
 
 	void Clear(void);
 
@@ -637,7 +637,6 @@ protected:
 	SystemAddress incomingSystemAddress;
 	RakNet::BitStream incomingExtraData;
 
-	RakPeerInterface *rakPeer;
 	NetworkIDManager *networkIdManager;
 	char currentExecution[512];
 };

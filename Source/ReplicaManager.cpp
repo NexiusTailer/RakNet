@@ -70,7 +70,6 @@ ReplicaManager::ReplicaManager()
 	_constructionCB=0;
 	_sendDownloadCompleteCB=0;
 	_receiveDownloadCompleteCB=0;
-	rakPeer=0;
 	sendChannel=0;
 	autoParticipateNewConnections=false;
 	defaultScope=false;
@@ -100,7 +99,7 @@ bool ReplicaManager::AddParticipant(SystemAddress systemAddress)
 		return false;
 
 	// Create a new participant with this systemAddress
-	participantStruct = RakNet::OP_NEW<ParticipantStruct>();
+	participantStruct = RakNet::OP_NEW<ParticipantStruct>( __FILE__, __LINE__ );
 	participantStruct->systemAddress=systemAddress;
 
 	// Signal that when done sending SendConstruction for each existing object, we call sendDownloadCompleteCB
@@ -147,7 +146,7 @@ bool ReplicaManager::AddParticipant(SystemAddress systemAddress)
 		for (i=0; i < replicatedObjects.Size(); i++)
 		{
 			replicaAndCommand.replica=replicatedObjects[i].replica;
-			participantStruct->commandList.Insert(replicaAndCommand);
+			participantStruct->commandList.Insert(replicaAndCommand, __FILE__, __LINE__);
 		}
 	}
 
@@ -165,7 +164,7 @@ bool ReplicaManager::RemoveParticipant(SystemAddress systemAddress)
 	if (participantStruct)
 	{
 		participantList.Remove(systemAddress);
-		RakNet::OP_DELETE(participantStruct);
+		RakNet::OP_DELETE(participantStruct, __FILE__, __LINE__);
 		return true;
 	}
 
@@ -218,14 +217,14 @@ void ReplicaManager::Construct(Replica *replica, bool isCopy, SystemAddress syst
 					if (defaultScope==true)
 						replicaAndCommand.command |= REPLICA_SCOPE_TRUE;
 
-					participantStruct->commandList.Insert(replicaAndCommand);
+					participantStruct->commandList.Insert(replicaAndCommand, __FILE__, __LINE__);
 				}
 			}
 		}
 	}
 
 	// Update immediately, otherwise if we take action on this object the first frame, the action packets will arrive before the object is created
-	Update(rakPeer);
+	Update();
 }
 void ReplicaManager::Destruct(Replica *replica, SystemAddress systemAddress, bool broadcast)
 {
@@ -272,10 +271,10 @@ void ReplicaManager::Destruct(Replica *replica, SystemAddress systemAddress, boo
 							outBitstream.Write((MessageID)ID_TIMESTAMP);
 							outBitstream.Write(RakNet::GetTime());
 							outBitstream.Write(&userDataBitStream);
-							rakPeer->Send(&outBitstream, HIGH_PRIORITY, RELIABLE_ORDERED, sendChannel, participantStruct->systemAddress, false);
+							SendUnified(&outBitstream, HIGH_PRIORITY, RELIABLE_ORDERED, sendChannel, participantStruct->systemAddress, false);
 						}
 						else
-							rakPeer->Send(&userDataBitStream, HIGH_PRIORITY, RELIABLE_ORDERED, sendChannel, participantStruct->systemAddress, false);
+							SendUnified(&userDataBitStream, HIGH_PRIORITY, RELIABLE_ORDERED, sendChannel, participantStruct->systemAddress, false);
 					}
 				}
 
@@ -318,7 +317,7 @@ void ReplicaManager::ReferencePointer(Replica *replica)
 		replicatedObjects.Insert(replica,replicaAndTime, true);
 		/// Try setting the network ID manager if the user forgot
 		if (replica->GetNetworkIDManager()==0)
-			replica->SetNetworkIDManager(rakPeer->GetNetworkIDManager());
+			replica->SetNetworkIDManager(rakPeerInterface->GetNetworkIDManager());
 	}
 }
 void ReplicaManager::DereferencePointer(Replica *replica)
@@ -396,7 +395,7 @@ void ReplicaManager::SetScope(Replica *replica, bool inScope, SystemAddress syst
 			else
 			{
 				// Add a new command, since there are no pending commands for this object
-				participantStruct->commandList.Insert(replicaAndCommand);
+				participantStruct->commandList.Insert(replicaAndCommand, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -437,7 +436,7 @@ void ReplicaManager::SignalSerializeNeeded(Replica *replica, SystemAddress syste
 			else
 			{
 				// Add a new command, since there are no pending commands for this object
-				participantStruct->commandList.Insert(replicaAndCommand);
+				participantStruct->commandList.Insert(replicaAndCommand, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -588,7 +587,7 @@ void ReplicaManager::SignalSerializationFlags(Replica *replica, SystemAddress sy
 				else if (set)
 				{
 					// Add a new command, since there are no pending commands for this object
-					participantStruct->commandList.Insert(replicaAndCommand);
+					participantStruct->commandList.Insert(replicaAndCommand, __FILE__, __LINE__);
 				}
 			}
 		}
@@ -631,7 +630,7 @@ unsigned int* ReplicaManager::AccessSerializationFlags(Replica *replica, SystemA
 			{
 				// Add a new command, since there are no pending commands for this object
 				//index =
-					participantStruct->commandList.Insert(replicaAndCommand);
+					participantStruct->commandList.Insert(replicaAndCommand, __FILE__, __LINE__);
 				// return &(participantStruct->commandList[index].userFlags);
 					return & (participantStruct->commandList[participantStruct->commandList.Size()-1].userFlags);
 			}
@@ -647,7 +646,7 @@ void ReplicaManager::Clear(void)
 	// Free all memory
 	unsigned i;
 	for (i=0; i < participantList.Size(); i++)
-		RakNet::OP_DELETE(participantList[i]);
+		RakNet::OP_DELETE(participantList[i], __FILE__, __LINE__);
 	participantList.Clear();
 	replicatedObjects.Clear();
 	nextReferenceIndex=0;
@@ -660,11 +659,7 @@ void ReplicaManager::AssertParticipantsClear(void)
 {
 	RakAssert(participantList.Size()==0);
 }
-void ReplicaManager::OnAttach(RakPeerInterface *peer)
-{
-	rakPeer=peer;
-}
-void ReplicaManager::Update(RakPeerInterface *peer)
+void ReplicaManager::Update(void)
 {
 	if (participantList.Size()==0)
 		return;
@@ -726,7 +721,7 @@ void ReplicaManager::Update(RakPeerInterface *peer)
 					outBitstream.Reset();
 					outBitstream.Write((MessageID)ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE);
 					outBitstream.Write(&userDataBitstream, userDataBitstream.GetNumberOfBitsUsed());
-					peer->Send(&outBitstream, HIGH_PRIORITY, RELIABLE_ORDERED, sendChannel, participantStruct->systemAddress, false);
+					SendUnified(&outBitstream, HIGH_PRIORITY, RELIABLE_ORDERED, sendChannel, participantStruct->systemAddress, false);
 					participantStruct->callDownloadCompleteCB=false;
 				}
 				else if (sendDLComplete==REPLICA_CANCEL_PROCESS)
@@ -798,7 +793,7 @@ void ReplicaManager::Update(RakPeerInterface *peer)
 
 						outBitstream.Write(&userDataBitstream, userDataBitstream.GetNumberOfBitsUsed());
 
-						peer->Send(&outBitstream, HIGH_PRIORITY, RELIABLE_ORDERED, sendChannel, participantStruct->systemAddress, false);
+						SendUnified(&outBitstream, HIGH_PRIORITY, RELIABLE_ORDERED, sendChannel, participantStruct->systemAddress, false);
 
 						// Turn off this bit
 						participantStruct->commandList[commandListIndex].command &= 0xFF ^ REPLICA_EXPLICIT_CONSTRUCTION;
@@ -898,7 +893,7 @@ void ReplicaManager::Update(RakPeerInterface *peer)
 								outBitstream.Write((MessageID)ID_REPLICA_MANAGER_SCOPE_CHANGE);
 								outBitstream.Write(replica->GetNetworkID());
 								outBitstream.Write(&userDataBitstream, userDataBitstream.GetNumberOfBitsUsed());
-								peer->Send(&outBitstream, HIGH_PRIORITY, RELIABLE_ORDERED, sendChannel, participantStruct->systemAddress, false);
+								SendUnified(&outBitstream, HIGH_PRIORITY, RELIABLE_ORDERED, sendChannel, participantStruct->systemAddress, false);
 
 								// Set the scope for this object and system
 								participantStruct->remoteObjectList[remoteObjectListIndex].inScope=scopeTrue;
@@ -966,7 +961,7 @@ void ReplicaManager::Update(RakPeerInterface *peer)
 								outBitstream.Write((MessageID)ID_REPLICA_MANAGER_SERIALIZE);
 								outBitstream.Write(replica->GetNetworkID());
 								outBitstream.Write(&userDataBitstream, userDataBitstream.GetNumberOfBitsUsed());
-								peer->Send(&outBitstream, priority, reliability, sendChannel, participantStruct->systemAddress, false);		
+								SendUnified(&outBitstream, priority, reliability, sendChannel, participantStruct->systemAddress, false);		
 
 								// Clear the serialize bit when done
 								if (res==REPLICA_PROCESSING_DONE)
@@ -1038,25 +1033,36 @@ void ReplicaManager::Update(RakPeerInterface *peer)
 			}
 			
 			// Done with this command, so delete it
-			RakNet::OP_DELETE(receivedCommand->userData);
-			RakNet::OP_DELETE(receivedCommand);
+			RakNet::OP_DELETE(receivedCommand->userData, __FILE__, __LINE__);
+			RakNet::OP_DELETE(receivedCommand, __FILE__, __LINE__);
 		}
 	}
 #ifdef _DEBUG
 	inUpdate=false;
 #endif
 }
-void ReplicaManager::OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddress)
+void ReplicaManager::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
-	(void) peer;
+	(void) systemAddress;
+	(void) rakNetGUID;
+	(void) lostConnectionReason;
+
 	RemoveParticipant(systemAddress);
 }
-void ReplicaManager::OnShutdown(RakPeerInterface *peer)
+void ReplicaManager::OnShutdown(void)
 {
-	(void) peer;
 	Clear();
 }
-PluginReceiveResult ReplicaManager::OnReceive(RakPeerInterface *peer, Packet *packet)
+void ReplicaManager::OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
+{
+	(void) systemAddress;
+	(void) rakNetGUID;
+	(void) isIncoming;
+	
+	if (autoParticipateNewConnections)
+		AddParticipant(systemAddress);
+}
+PluginReceiveResult ReplicaManager::OnReceive(Packet *packet)
 {
 	unsigned char packetIdentifier;
 	if ( ( unsigned char ) packet->data[ 0 ] == ID_TIMESTAMP )
@@ -1071,15 +1077,6 @@ PluginReceiveResult ReplicaManager::OnReceive(RakPeerInterface *peer, Packet *pa
 
 	switch (packetIdentifier)
 	{
-	case ID_NEW_INCOMING_CONNECTION:
-	case ID_CONNECTION_REQUEST_ACCEPTED:
-		if (autoParticipateNewConnections)
-			AddParticipant(packet->systemAddress);
-		return RR_CONTINUE_PROCESSING;
-	case ID_DISCONNECTION_NOTIFICATION:
-	case ID_CONNECTION_LOST:
-		OnCloseConnection(peer, packet->systemAddress);
-		return RR_CONTINUE_PROCESSING;
 	case ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE:
 		if (_receiveDownloadCompleteCB==0)
 		{
@@ -1140,11 +1137,11 @@ PluginReceiveResult ReplicaManager::OnReceive(RakPeerInterface *peer, Packet *pa
 					// Copy the data and add this to a queue that will call ProcessReceivedCommand again in Update.
 
 					// Allocate and copy structure
-					ReceivedCommand *rc = RakNet::OP_NEW<ReceivedCommand>();
+					ReceivedCommand *rc = RakNet::OP_NEW<ReceivedCommand>( __FILE__, __LINE__ );
 					memcpy(rc, &receivedCommand, sizeof(ReceivedCommand));
 
 					// Allocate and copy inBitstream remaining data
-					rc->userData = RakNet::OP_NEW<RakNet::BitStream>();
+					rc->userData = RakNet::OP_NEW<RakNet::BitStream>( __FILE__, __LINE__ );
 					rc->userData->Write(&inBitstream, inBitstream.GetNumberOfBitsUsed());
 
 					participantStruct->pendingCommands.Push(rc);
@@ -1175,11 +1172,11 @@ ReplicaReturnResult ReplicaManager::ProcessReceivedCommand(ParticipantStruct *pa
 	(void) participantStruct;
 
 	// If this assert hits you didn't first call RakPeer::SetNetworkIDManager as required.
-	RakAssert(rakPeer->GetNetworkIDManager());
-	if (rakPeer->GetNetworkIDManager()==0)
+	RakAssert(rakPeerInterface->GetNetworkIDManager());
+	if (rakPeerInterface->GetNetworkIDManager()==0)
 		return REPLICA_CANCEL_PROCESS;
 
-	Replica *replica = (Replica*) rakPeer->GetNetworkIDManager()->GET_BASE_OBJECT_FROM_ID(receivedCommand->networkID);
+	Replica *replica = (Replica*) rakPeerInterface->GetNetworkIDManager()->GET_BASE_OBJECT_FROM_ID(receivedCommand->networkID);
 	
 	bool objectExists;
 	unsigned index=0;
@@ -1258,8 +1255,8 @@ ReplicaManager::ParticipantStruct::~ParticipantStruct()
 	while ( pendingCommands.Size() )
 	{
 		receivedCommand=pendingCommands.Pop();
-		RakNet::OP_DELETE(receivedCommand->userData);
-		RakNet::OP_DELETE(receivedCommand);
+		RakNet::OP_DELETE(receivedCommand->userData, __FILE__, __LINE__);
+		RakNet::OP_DELETE(receivedCommand, __FILE__, __LINE__);
 	}
 }
 

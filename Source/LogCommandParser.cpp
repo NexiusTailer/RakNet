@@ -242,7 +242,7 @@ unsigned LogCommandParser::Subscribe(SystemAddress systemAddress, const char *ch
 		newUser.channels=1<<channelIndex;
 	else
 		newUser.channels=0xFFFF;
-	remoteUsers.Insert(newUser);
+	remoteUsers.Insert(newUser, __FILE__, __LINE__);
 	return channelIndex;
 }
 unsigned LogCommandParser::GetChannelIndexFromName(const char *channelName)

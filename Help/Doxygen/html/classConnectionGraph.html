@@ -30,7 +30,7 @@
 <h1>ConnectionGraph Class Reference<br>
 <small>
 [<a class="el" href="group__CONNECTION__GRAPH__GROUP.html">ConnectionGraph</a>]</small>
-</h1><!-- doxytag: class="ConnectionGraph" --><!-- doxytag: inherits="PluginInterface" -->A connection graph. Each peer will know about all other peers.  
+</h1><!-- doxytag: class="ConnectionGraph" --><!-- doxytag: inherits="PluginInterface2" -->A connection graph. Each peer will know about all other peers.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;ConnectionGraph.h&gt;</code>
@@ -41,7 +41,7 @@ Inheritance diagram for ConnectionGraph:</div>
 
 <p><center><img src="classConnectionGraph.png" usemap="#ConnectionGraph_map" border="0" alt=""></center>
 <map name="ConnectionGraph_map">
-<area href="classPluginInterface.html" alt="PluginInterface" shape="rect" coords="0,0,111,24">
+<area href="classPluginInterface2.html" alt="PluginInterface2" shape="rect" coords="0,0,111,24">
 </map>
 </div>
 
@@ -63,7 +63,7 @@ unsigned short, false &gt; *&nbsp;</td><td class="memItemRight" valign="bottom">
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#5470a17677faa8c390c3bba016d34a1d">SetAutoAddNewConnections</a> (bool autoAdd)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#e0d46282a9193ec91838c428d1df3e48">RequestConnectionGraph</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#7a7c9e856a0b429843e99fa284cb999c">RequestConnectionGraph</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#fac574c4d1c76f40d12d9947f0851d3d">AddNewConnection</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> guid, ConnectionGraphGroupID groupId)</td></tr>
 
@@ -73,13 +73,19 @@ unsigned short, false &gt; *&nbsp;</td><td class="memItemRight" valign="bottom">
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#083a2f2c578a52814143005a79f41320">UnsubscribeFromGroup</a> (ConnectionGraphGroupID groupId)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#343c409b90b6579e6773ab851816d44a">OnShutdown</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3fcde6f97d484688600aa2d8c8b8fc24"></a><!-- doxytag: member="ConnectionGraph::OnShutdown" ref="3fcde6f97d484688600aa2d8c8b8fc24" args="(void)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#3fcde6f97d484688600aa2d8c8b8fc24">OnShutdown</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#64e141770dd25176750a6fdcc8a6f435">Update</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="74095c24962b96ab3b1eb287ae1aa652"></a><!-- doxytag: member="ConnectionGraph::Update" ref="74095c24962b96ab3b1eb287ae1aa652" args="(void)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#74095c24962b96ab3b1eb287ae1aa652">Update</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#f3bdc2d4b7589dce765a733a497d517a">OnReceive</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update is called every time a packet is checked for . <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#36e58ee5a4cdb7742dc9ab9cc353e836">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#a39a45b0ea55a84816b4010129db3181">OnCloseConnection</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#24dba6f9289a655999ecb90e92bec575">OnClosedConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, PI2_LostConnectionReason lostConnectionReason)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConnectionGraph.html#6cad593bedc9eaff819a04566f4c106d">OnNewConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, bool isIncoming)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -154,21 +160,27 @@ Returns the connection graph <dl class="return" compact><dt><b>Returns:</b></dt>
 
 </div>
 </div><p>
-<a class="anchor" name="a39a45b0ea55a84816b4010129db3181"></a><!-- doxytag: member="ConnectionGraph::OnCloseConnection" ref="a39a45b0ea55a84816b4010129db3181" args="(RakPeerInterface *peer, SystemAddress systemAddress)" -->
+<a class="anchor" name="24dba6f9289a655999ecb90e92bec575"></a><!-- doxytag: member="ConnectionGraph::OnClosedConnection" ref="24dba6f9289a655999ecb90e92bec575" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void ConnectionGraph::OnCloseConnection           </td>
+          <td class="memname">void ConnectionGraph::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>rakNetGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PI2_LostConnectionReason&nbsp;</td>
+          <td class="paramname"> <em>lostConnectionReason</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -182,30 +194,37 @@ Returns the connection graph <dl class="return" compact><dt><b>Returns:</b></dt>
 <p>
 Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#05e43a9ba3b85f1000adb2f1e9551000">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system whose connection was closed </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lostConnectionReason</em>&nbsp;</td><td>How the connection was closed: manually, connection lost, or notification of disconnection </td></tr>
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#da6d76a81fb6ea6dd8422c3ed5c9baff">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#f14d27351aca9bfd5b4fc2ac1461ff14">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="f3bdc2d4b7589dce765a733a497d517a"></a><!-- doxytag: member="ConnectionGraph::OnReceive" ref="f3bdc2d4b7589dce765a733a497d517a" args="(RakPeerInterface *peer, Packet *packet)" -->
+<a class="anchor" name="6cad593bedc9eaff819a04566f4c106d"></a><!-- doxytag: member="ConnectionGraph::OnNewConnection" ref="6cad593bedc9eaff819a04566f4c106d" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">PluginReceiveResult ConnectionGraph::OnReceive           </td>
+          <td class="memname">void ConnectionGraph::OnNewConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
-          <td class="paramname"> <em>packet</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>rakNetGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>isIncoming</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -217,27 +236,27 @@ Called when a connection is dropped because the user called <a class="el" href="
 <div class="memdoc">
 
 <p>
-OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
+Called when we got a new connection <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Address of the new connection </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>isIncoming</em>&nbsp;</td><td>If true, this is ID_NEW_INCOMING_CONNECTION, or the equivalent </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#633dcfc264e4309c41f0cfeb84b4840a">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#7a4f68d0bae0dd4539f6b9e14a59f7fa">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="343c409b90b6579e6773ab851816d44a"></a><!-- doxytag: member="ConnectionGraph::OnShutdown" ref="343c409b90b6579e6773ab851816d44a" args="(RakPeerInterface *peer)" -->
+<a class="anchor" name="36e58ee5a4cdb7742dc9ab9cc353e836"></a><!-- doxytag: member="ConnectionGraph::OnReceive" ref="36e58ee5a4cdb7742dc9ab9cc353e836" args="(Packet *packet)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void ConnectionGraph::OnShutdown           </td>
+          <td class="memname">PluginReceiveResult ConnectionGraph::OnReceive           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
+          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
+          <td class="paramname"> <em>packet</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [virtual]</code></td>
         </tr>
@@ -246,36 +265,28 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown <dl compact><dt><b>Parameters:</b></dt><dd>
+OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
   </table>
 </dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#0983119975a8bb9c726b8a006c089dc2">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#bc50017a35682db5202a7562c58898ea">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="e0d46282a9193ec91838c428d1df3e48"></a><!-- doxytag: member="ConnectionGraph::RequestConnectionGraph" ref="e0d46282a9193ec91838c428d1df3e48" args="(RakPeerInterface *peer, SystemAddress systemAddress)" -->
+<a class="anchor" name="7a7c9e856a0b429843e99fa284cb999c"></a><!-- doxytag: member="ConnectionGraph::RequestConnectionGraph" ref="7a7c9e856a0b429843e99fa284cb999c" args="(SystemAddress systemAddress)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void ConnectionGraph::RequestConnectionGraph           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
+          <td class="paramname"> <em>systemAddress</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
           <td></td>
-          <td>)</td>
-          <td></td><td></td><td></td>
         </tr>
       </table>
 </div>
@@ -284,7 +295,6 @@ Called when <a class="el" href="classRakPeer.html" title="The main interface for
 <p>
 Requests the connection graph from another system Only necessary to call if SetAutoAddNewConnections(false) is called. You should call this sometime after getting ID_CONNECTION_REQUEST_ACCEPTED and <em>systemAddress</em> is or should be a node on the connection graph <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>The instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> to send through </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system to send to </td></tr>
   </table>
 </dl>
@@ -391,37 +401,10 @@ Disables addition of graph nodes with this groupId Calling this does not add rem
 
 </div>
 </div><p>
-<a class="anchor" name="64e141770dd25176750a6fdcc8a6f435"></a><!-- doxytag: member="ConnectionGraph::Update" ref="64e141770dd25176750a6fdcc8a6f435" args="(RakPeerInterface *peer)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ConnectionGraph::Update           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Update is called every time a packet is checked for . <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>- the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#5966e72f872ebd754b44770ecc981bd9">PluginInterface</a>.</p>
-
-</div>
-</div><p>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/Source/<a class="el" href="ConnectionGraph_8h.html">ConnectionGraph.h</a><li>C:/RakNet/Source/<a class="el" href="ConnectionGraph_8cpp.html">ConnectionGraph.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:07 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:29 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

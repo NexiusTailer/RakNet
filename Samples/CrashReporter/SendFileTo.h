@@ -4,7 +4,7 @@
 #ifndef __SENDFILETO_H__
 #define __SENDFILETO_H__
 
-#include <windows.h>
+#include "WindowsIncludes.h"
 #include <mapi.h>
 
 

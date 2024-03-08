@@ -57,7 +57,7 @@ void RunGame(void)
 
 // If you don't plan to debug the crash reporter itself, you can remove _DEBUG_CRASH_REPORTER
 #ifdef _DEBUG_CRASH_REPORTER
-#include <windows.h>
+#include "WindowsIncludes.h"
 extern void DumpMiniDump(PEXCEPTION_POINTERS excpInfo);
 #endif
 

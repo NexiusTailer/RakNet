@@ -75,6 +75,9 @@ public:
 	// Remove myself from the static users list
 	virtual ~User();
 
+	// Overload QueryConstruction to test delaying construction by one tick
+	virtual BooleanQueryResult QueryConstruction(Connection_RM2 *connection);
+
 	// Helper function to free memory when someone disconnections.
 	static void DeleteUserByAddress(SystemAddress systemAddress);
 
@@ -98,6 +101,9 @@ public:
 // It is designed this way so you can override per-connection behavior in your own game classes
 class ReplicaManager2DemoConnection : public Connection_RM2
 {
+public:
+	ReplicaManager2DemoConnection() {constructionDelayedOneTick=false;}
+	~ReplicaManager2DemoConnection() {}
 	// Callback used to create objects
 	// See Connection_RM2::Construct in ReplicaManager2.h for a full explanation of each parameter
 	Replica2* Construct(RakNet::BitStream *replicaData, SystemAddress sender, SerializationType type, ReplicaManager2 *replicaManager, RakNetTime timestamp, NetworkID networkId, bool networkIDCollision);
@@ -106,6 +112,7 @@ class ReplicaManager2DemoConnection : public Connection_RM2
 	// See Connection_RM2::DeserializeDownloadComplete in ReplicaManager2.h for a full explanation of each parameter
 	virtual void DeserializeDownloadComplete(RakNet::BitStream *objectData, SystemAddress sender, ReplicaManager2 *replicaManager, RakNetTime timestamp, SerializationType serializationType);
 
+	bool constructionDelayedOneTick;
 };
 
 // This is a required class factory, that creates and destroys instances of ReplicaManager2DemoConnection

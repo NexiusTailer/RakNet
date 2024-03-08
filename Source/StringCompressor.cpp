@@ -36,7 +36,7 @@ void StringCompressor::AddReference(void)
 {
 	if (++referenceCount==1)
 	{
-		instance = RakNet::OP_NEW<StringCompressor>();
+		instance = RakNet::OP_NEW<StringCompressor>( __FILE__, __LINE__ );
 	}
 }
 void StringCompressor::RemoveReference(void)
@@ -47,7 +47,7 @@ void StringCompressor::RemoveReference(void)
 	{
 		if (--referenceCount==0)
 		{
-			RakNet::OP_DELETE(instance);
+			RakNet::OP_DELETE(instance, __FILE__, __LINE__);
 			instance=0;
 		}
 	}
@@ -323,7 +323,7 @@ StringCompressor::StringCompressor()
 	DataStructures::Map<int, HuffmanEncodingTree *>::IMPLEMENT_DEFAULT_COMPARISON();
 
 	// Make a default tree immediately, since this is used for RPC possibly from multiple threads at the same time
-	HuffmanEncodingTree *huffmanEncodingTree = RakNet::OP_NEW<HuffmanEncodingTree>();
+	HuffmanEncodingTree *huffmanEncodingTree = RakNet::OP_NEW<HuffmanEncodingTree>( __FILE__, __LINE__ );
 	huffmanEncodingTree->GenerateFromFrequencyTable( englishCharacterFrequencies );
 
 	huffmanEncodingTrees.Set(0, huffmanEncodingTree);
@@ -334,7 +334,7 @@ void StringCompressor::GenerateTreeFromStrings( unsigned char *input, unsigned i
 	if (huffmanEncodingTrees.Has(languageID))
 	{
 		huffmanEncodingTree = huffmanEncodingTrees.Get(languageID);
-		RakNet::OP_DELETE(huffmanEncodingTree);
+		RakNet::OP_DELETE(huffmanEncodingTree, __FILE__, __LINE__);
 	}
 
 	unsigned index;
@@ -351,7 +351,7 @@ void StringCompressor::GenerateTreeFromStrings( unsigned char *input, unsigned i
 		frequencyTable[ input[ index ] ] ++;
 
 	// Build the tree
-	huffmanEncodingTree = RakNet::OP_NEW<HuffmanEncodingTree>();
+	huffmanEncodingTree = RakNet::OP_NEW<HuffmanEncodingTree>( __FILE__, __LINE__ );
 	huffmanEncodingTree->GenerateFromFrequencyTable( frequencyTable );
 	huffmanEncodingTrees.Set(languageID, huffmanEncodingTree);
 }
@@ -359,7 +359,7 @@ void StringCompressor::GenerateTreeFromStrings( unsigned char *input, unsigned i
 StringCompressor::~StringCompressor()
 {
 	for (unsigned i=0; i < huffmanEncodingTrees.Size(); i++)
-		RakNet::OP_DELETE(huffmanEncodingTrees[i]);
+		RakNet::OP_DELETE(huffmanEncodingTrees[i], __FILE__, __LINE__);
 }
 
 void StringCompressor::EncodeString( const char *input, int maxCharsToWrite, RakNet::BitStream *output, int languageID )
@@ -464,10 +464,10 @@ bool StringCompressor::DecodeString( std::string *output, int maxCharsToWrite, R
 	else
 #endif
 	{
-		destinationBlock = (char*) rakMalloc( maxCharsToWrite );
+		destinationBlock = (char*) rakMalloc_Ex( maxCharsToWrite, __FILE__, __LINE__ );
 		out=DecodeString(destinationBlock, maxCharsToWrite, input, languageID);
 		*output=destinationBlock;
-		rakFree(destinationBlock);
+		rakFree_Ex(destinationBlock, __FILE__, __LINE__ );
 	}
 
 	return out;
@@ -498,10 +498,10 @@ bool StringCompressor::DecodeString( RakString *output, int maxCharsToWrite, Rak
 	else
 #endif
 	{
-		destinationBlock = (char*) rakMalloc( maxCharsToWrite );
+		destinationBlock = (char*) rakMalloc_Ex( maxCharsToWrite, __FILE__, __LINE__ );
 		out=DecodeString(destinationBlock, maxCharsToWrite, input, languageID);
 		*output=destinationBlock;
-		rakFree(destinationBlock);
+		rakFree_Ex(destinationBlock, __FILE__, __LINE__ );
 	}
 
 	return out;

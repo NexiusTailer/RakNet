@@ -32,7 +32,7 @@
 <p>
 <code>#include &quot;<a class="el" href="RakNetTypes_8h.html">RakNetTypes.h</a>&quot;</code><br>
 <code>#include &quot;Export.h&quot;</code><br>
-<code>#include &quot;<a class="el" href="PluginInterface_8h.html">PluginInterface.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="PluginInterface2_8h.html">PluginInterface2.h</a>&quot;</code><br>
 <code>#include &quot;<a class="el" href="PacketPriority_8h.html">PacketPriority.h</a>&quot;</code><br>
 <code>#include &quot;<a class="el" href="DS__List_8h.html">DS_List.h</a>&quot;</code><br>
 <code>#include &quot;<a class="el" href="DS__Map_8h.html">DS_Map.h</a>&quot;</code><br>
@@ -41,14 +41,57 @@
 <tr><td colspan="2"><br><h2>Classes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFCMHost.html">FCMHost</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">In a fully connected mesh of peers, allows all peers to agree that another peer is hot.  <a href="classFCMHost.html#_details">More...</a><br></td></tr>
+<tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="FCMHost_8h.html#01bed11c45422c835e900b0af6f8da01">FCMHostState</a> { <br>
+&nbsp;&nbsp;<a class="el" href="FCMHost_8h.html#01bed11c45422c835e900b0af6f8da011b3f7dc16926a3c0e4da1df7180292cf">FCMHS_SOLO</a>, 
+<a class="el" href="FCMHost_8h.html#01bed11c45422c835e900b0af6f8da01ca93faa8c04430d37c6fe091d5bf54c4">FCMHS_QUERYING_FOR_HOST</a>, 
+<a class="el" href="FCMHost_8h.html#01bed11c45422c835e900b0af6f8da01173c99d6ef57bed517b542ce1897cd63">FCMHS_CALCULATING_NEW_HOST</a>, 
+<a class="el" href="FCMHost_8h.html#01bed11c45422c835e900b0af6f8da013e74701fd43a8088dbd169d5863317d2">FCMHS_WE_ARE_HOST</a>, 
+<br>
+&nbsp;&nbsp;<a class="el" href="FCMHost_8h.html#01bed11c45422c835e900b0af6f8da0162eb1f31dd18dbcd1a9804b0e05109f1">FCMHS_REMOTE_SYSTEM_IS_HOST</a>
+<br>
+ }</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">In a fully connected mesh of peers, allows all peers to agree that another peer is hot.  <a href="FCMHost_8h.html#01bed11c45422c835e900b0af6f8da01">More...</a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 In a fully connected mesh, determines which system can act as a host. This generally is the system that has been connected to the mesh the longest. 
 <p>
 This file is part of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> Copyright 2003 Kevin Jenkins.<p>
-Usage of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> is subject to the appropriate license agreement. Creative Commons Licensees are subject to the license found at <a href="http://creativecommons.org/licenses/by-nc/2.5/">http://creativecommons.org/licenses/by-nc/2.5/</a> Single application licensees are subject to the license found at <a href="http://www.jenkinssoftware.com/SingleApplicationLicense.html">http://www.jenkinssoftware.com/SingleApplicationLicense.html</a> Custom license users are subject to the terms therein. GPL license users are subject to the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version. </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:06 2009 for RakNet by&nbsp;
+Usage of <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> is subject to the appropriate license agreement. Creative Commons Licensees are subject to the license found at <a href="http://creativecommons.org/licenses/by-nc/2.5/">http://creativecommons.org/licenses/by-nc/2.5/</a> Single application licensees are subject to the license found at <a href="http://www.jenkinssoftware.com/SingleApplicationLicense.html">http://www.jenkinssoftware.com/SingleApplicationLicense.html</a> Custom license users are subject to the terms therein. GPL license users are subject to the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version. <hr><h2>Enumeration Type Documentation</h2>
+<a class="anchor" name="01bed11c45422c835e900b0af6f8da01"></a><!-- doxytag: member="FCMHost.h::FCMHostState" ref="01bed11c45422c835e900b0af6f8da01" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="FCMHost_8h.html#01bed11c45422c835e900b0af6f8da01">FCMHostState</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+In a fully connected mesh of peers, allows all peers to agree that another peer is hot. 
+<p>
+In peer to peer games it is often still useful to have one system act as a host / server For example, if the game has AI, only the host / server should control the AI <dl compact><dt><b>Enumerator: </b></dt><dd>
+<table border="0" cellspacing="2" cellpadding="0">
+<tr><td valign="top"><em><a class="anchor" name="01bed11c45422c835e900b0af6f8da011b3f7dc16926a3c0e4da1df7180292cf"></a><!-- doxytag: member="FCMHS_SOLO" ref="01bed11c45422c835e900b0af6f8da011b3f7dc16926a3c0e4da1df7180292cf" args="" -->FCMHS_SOLO</em>&nbsp;</td><td>
+No participants, so we are the default host. </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="01bed11c45422c835e900b0af6f8da01ca93faa8c04430d37c6fe091d5bf54c4"></a><!-- doxytag: member="FCMHS_QUERYING_FOR_HOST" ref="01bed11c45422c835e900b0af6f8da01ca93faa8c04430d37c6fe091d5bf54c4" args="" -->FCMHS_QUERYING_FOR_HOST</em>&nbsp;</td><td>
+Querying to see if another system is the host. </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="01bed11c45422c835e900b0af6f8da01173c99d6ef57bed517b542ce1897cd63"></a><!-- doxytag: member="FCMHS_CALCULATING_NEW_HOST" ref="01bed11c45422c835e900b0af6f8da01173c99d6ef57bed517b542ce1897cd63" args="" -->FCMHS_CALCULATING_NEW_HOST</em>&nbsp;</td><td>
+Calculating a new host. </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="01bed11c45422c835e900b0af6f8da013e74701fd43a8088dbd169d5863317d2"></a><!-- doxytag: member="FCMHS_WE_ARE_HOST" ref="01bed11c45422c835e900b0af6f8da013e74701fd43a8088dbd169d5863317d2" args="" -->FCMHS_WE_ARE_HOST</em>&nbsp;</td><td>
+This system is the host. </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="01bed11c45422c835e900b0af6f8da0162eb1f31dd18dbcd1a9804b0e05109f1"></a><!-- doxytag: member="FCMHS_REMOTE_SYSTEM_IS_HOST" ref="01bed11c45422c835e900b0af6f8da0162eb1f31dd18dbcd1a9804b0e05109f1" args="" -->FCMHS_REMOTE_SYSTEM_IS_HOST</em>&nbsp;</td><td>
+Another system is the host. </td></tr>
+</table>
+</dl>
+
+</div>
+</div><p>
+</div>
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:29 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

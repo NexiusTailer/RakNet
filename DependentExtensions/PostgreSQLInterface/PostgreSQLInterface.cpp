@@ -643,7 +643,7 @@ PGresult * PostgreSQLInterface::QueryVaridic( const char * input, ... )
 		{
 			int val = va_arg( argptr, int );
 			paramLength[i]=sizeof(val);
-			paramData[i]=(char*) rakMalloc(paramLength[i]);
+			paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
 			memcpy(paramData[i], &val, paramLength[i]);
 			if (RakNet::BitStream::IsNetworkOrder()==false) RakNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
 		}
@@ -651,14 +651,14 @@ PGresult * PostgreSQLInterface::QueryVaridic( const char * input, ... )
 		{
 			char* val = va_arg( argptr, char* );
 			paramLength[i]=(int) strlen(val);
-			paramData[i]=(char*) rakMalloc(paramLength[i]+1);
+			paramData[i]=(char*) rakMalloc_Ex(paramLength[i]+1, __FILE__, __LINE__);
 			memcpy(paramData[i], val, paramLength[i]+1);
 		}
 		else if (typeMappings[indices[i].typeMappingIndex].inputType=='b')
 		{
 			bool val = (bool) va_arg( argptr, int );
 			paramLength[i]=sizeof(val);
-			paramData[i]=(char*) rakMalloc(paramLength[i]);
+			paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
 			memcpy(paramData[i], &val, paramLength[i]);
 			if (RakNet::BitStream::IsNetworkOrder()==false) RakNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
 		}
@@ -668,7 +668,7 @@ PGresult * PostgreSQLInterface::QueryVaridic( const char * input, ... )
 			float val = (float) va_arg( argptr, double );
 			//float val = va_arg( argptr, float );
 			paramLength[i]=sizeof(val);
-			paramData[i]=(char*) rakMalloc(paramLength[i]);
+			paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
 			memcpy(paramData[i], &val, paramLength[i]);
 			if (RakNet::BitStream::IsNetworkOrder()==false) RakNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
 		}
@@ -676,7 +676,7 @@ PGresult * PostgreSQLInterface::QueryVaridic( const char * input, ... )
 		{
 			double val = va_arg( argptr, double );
 			paramLength[i]=sizeof(val);
-			paramData[i]=(char*) rakMalloc(paramLength[i]);
+			paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
 			memcpy(paramData[i], &val, paramLength[i]);
 			if (RakNet::BitStream::IsNetworkOrder()==false) RakNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
 		}
@@ -684,7 +684,7 @@ PGresult * PostgreSQLInterface::QueryVaridic( const char * input, ... )
 		{
 			char* val = va_arg( argptr, char* );
 			paramLength[i]=va_arg( argptr, unsigned int );
-			paramData[i]=(char*) rakMalloc(paramLength[i]);
+			paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
 			memcpy(paramData[i], val, paramLength[i]);
 		}
 		paramFormat[i]=PQEXECPARAM_FORMAT_BINARY;
@@ -693,7 +693,7 @@ PGresult * PostgreSQLInterface::QueryVaridic( const char * input, ... )
 	result = PQexecPrepared(pgConn, RakNet::RakString("PGSQL_ExecuteVaridic_%i", preparedQueryIndex), indices.Size(), paramData, paramLength, paramFormat, PQEXECPARAM_FORMAT_BINARY );
 
 	for (i=0; i < indices.Size(); i++)
-		rakFree(paramData[i]);
+		rakFree_Ex(paramData[i], __FILE__, __LINE__ );
 
 	/*
 	query.Set("EXECUTE PGSQL_ExecuteVaridic_%i", preparedQueryIndex);

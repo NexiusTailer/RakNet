@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="AutopatcherClientRestarter"
 	ProjectGUID="{D1BEED3B-4E09-4D77-9C15-55F596617F43}"
+	RootNamespace="AutopatcherClientRestarter"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -40,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="./;./../../Source"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -117,6 +119,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="./;./../../Source"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"

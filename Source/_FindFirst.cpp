@@ -44,7 +44,7 @@ long _findfirst(const char *name, _finddata_t *f)
         
 	if(!dir) return -1;
 
-	_findinfo_t* fi = RakNet::OP_NEW<_findinfo_t>();
+	_findinfo_t* fi = RakNet::OP_NEW<_findinfo_t>( __FILE__, __LINE__ );
 	fi->filter    = filter;
 	fi->dirName   = nameCopy;  // we need to remember this for stat()
 	fi->openedDir = dir;
@@ -155,7 +155,7 @@ int _findclose(long h)
     _findinfo_t* fi = fileInfo[h];
     closedir(fi->openedDir);
     fileInfo.RemoveAtIndex(h);
-    RakNet::OP_DELETE(fi);
+    RakNet::OP_DELETE(fi, __FILE__, __LINE__);
     return 0;   
 }
 #endif

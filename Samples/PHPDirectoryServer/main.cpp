@@ -37,7 +37,7 @@ int main(void)
 	printf("Set columns and one row for your game, and upload it to a\nviewable and downloadable webpage.\n");
 	printf("Difficulty: Intermediate\n\n");
 
-	RakNetTime lastTouched = 0;
+//	RakNetTime lastTouched = 0;
 
     // Start the TCP thread. This is used for general TCP communication, whether it is for webpages, sending emails, or telnet
     TCPInterface tcp;
@@ -57,7 +57,7 @@ int main(void)
 	phpDirectoryServer.UploadTable(50, "Game name", 1234, "");
 
 
-	for (int j=0; j < 5; j++)
+	for (int j=0; j < 10; j++)
 	{
 
 		// Download uploaded servers

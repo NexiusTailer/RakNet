@@ -32,7 +32,7 @@
 <h1>RakNet::ReplicaManager2 Class Reference<br>
 <small>
 [<a class="el" href="group__REPLICA__MANAGER__2__GROUP.html">ReplicaManager2</a>]</small>
-</h1><!-- doxytag: class="RakNet::ReplicaManager2" --><!-- doxytag: inherits="PluginInterface" -->A management system for your game objects and players to make serialization, scoping, and object creation and destruction easier.  
+</h1><!-- doxytag: class="RakNet::ReplicaManager2" --><!-- doxytag: inherits="PluginInterface2" -->A management system for your game objects and players to make serialization, scoping, and object creation and destruction easier.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;ReplicaManager2.h&gt;</code>
@@ -43,7 +43,7 @@ Inheritance diagram for RakNet::ReplicaManager2:</div>
 
 <p><center><img src="classRakNet_1_1ReplicaManager2.png" usemap="#RakNet::ReplicaManager2_map" border="0" alt=""></center>
 <map name="RakNet::ReplicaManager2_map">
-<area href="classPluginInterface.html" alt="PluginInterface" shape="rect" coords="0,0,158,24">
+<area href="classPluginInterface2.html" alt="PluginInterface2" shape="rect" coords="0,0,158,24">
 </map>
 </div>
 
@@ -112,15 +112,21 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager2.html#ac4f4893eb29d3263bfb4bbd518a41ac">Dereference</a> (<a class="el" href="classRakNet_1_1Replica2.html">Replica2</a> *replica)</td></tr>
 
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager2.html#84877cb18db2c110119570f85dd891a4">OnAttach</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager2.html#143138721c8190f108649e8d9606ad5f">OnAttach</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager2.html#ccc3e73fd163d8d187b2b60cc2653d74">OnReceive</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager2.html#7cba96b3807f606e78290e8ad15be716">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager2.html#4baab23ff15f7b87924e3df20a699a2b">OnCloseConnection</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager2.html#b7fef0932c1a42624642b1bed22fd441">OnClosedConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, PI2_LostConnectionReason lostConnectionReason)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager2.html#59379efbc7aba6141f0223fbfaaaa762">OnShutdown</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="38b05f1374dd94ba9be2980fd0ccaa94"></a><!-- doxytag: member="RakNet::ReplicaManager2::OnShutdown" ref="38b05f1374dd94ba9be2980fd0ccaa94" args="(void)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager2.html#38b05f1374dd94ba9be2980fd0ccaa94">OnShutdown</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager2.html#6f68fd7d9c3144b8e9cbae9f90d37fc9">Update</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8f90363163b0323bb89eca38b7492b85"></a><!-- doxytag: member="RakNet::ReplicaManager2::Update" ref="8f90363163b0323bb89eca38b7492b85" args="(void)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager2.html#8f90363163b0323bb89eca38b7492b85">Update</a> (void)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update is called every time a packet is checked for . <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager2.html#12f6cb5975981ac00c0c0c0f5a7f4a1f">OnNewConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, bool isIncoming)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -441,15 +447,15 @@ Is this connection registered with the system? <dl compact><dt><b>Parameters:</b
 
 </div>
 </div><p>
-<a class="anchor" name="84877cb18db2c110119570f85dd891a4"></a><!-- doxytag: member="RakNet::ReplicaManager2::OnAttach" ref="84877cb18db2c110119570f85dd891a4" args="(RakPeerInterface *peer)" -->
+<a class="anchor" name="143138721c8190f108649e8d9606ad5f"></a><!-- doxytag: member="RakNet::ReplicaManager2::OnAttach" ref="143138721c8190f108649e8d9606ad5f" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void ReplicaManager2::OnAttach           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
+          <td class="paramtype">void&nbsp;</td>
+          <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [protected, virtual]</code></td>
         </tr>
@@ -464,25 +470,31 @@ Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#9124155ea27bf6c50801350d21173d68">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#523fa43791dfc9c363d0d20e9609b177">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="4baab23ff15f7b87924e3df20a699a2b"></a><!-- doxytag: member="RakNet::ReplicaManager2::OnCloseConnection" ref="4baab23ff15f7b87924e3df20a699a2b" args="(RakPeerInterface *peer, SystemAddress systemAddress)" -->
+<a class="anchor" name="b7fef0932c1a42624642b1bed22fd441"></a><!-- doxytag: member="RakNet::ReplicaManager2::OnClosedConnection" ref="b7fef0932c1a42624642b1bed22fd441" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void ReplicaManager2::OnCloseConnection           </td>
+          <td class="memname">void ReplicaManager2::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>rakNetGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PI2_LostConnectionReason&nbsp;</td>
+          <td class="paramname"> <em>lostConnectionReason</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -496,30 +508,37 @@ Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd
 <p>
 Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#05e43a9ba3b85f1000adb2f1e9551000">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system whose connection was closed </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lostConnectionReason</em>&nbsp;</td><td>How the connection was closed: manually, connection lost, or notification of disconnection </td></tr>
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#da6d76a81fb6ea6dd8422c3ed5c9baff">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#f14d27351aca9bfd5b4fc2ac1461ff14">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="ccc3e73fd163d8d187b2b60cc2653d74"></a><!-- doxytag: member="RakNet::ReplicaManager2::OnReceive" ref="ccc3e73fd163d8d187b2b60cc2653d74" args="(RakPeerInterface *peer, Packet *packet)" -->
+<a class="anchor" name="12f6cb5975981ac00c0c0c0f5a7f4a1f"></a><!-- doxytag: member="RakNet::ReplicaManager2::OnNewConnection" ref="12f6cb5975981ac00c0c0c0f5a7f4a1f" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">PluginReceiveResult ReplicaManager2::OnReceive           </td>
+          <td class="memname">void ReplicaManager2::OnNewConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
-          <td class="paramname"> <em>packet</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>rakNetGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>isIncoming</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -531,27 +550,27 @@ Called when a connection is dropped because the user called <a class="el" href="
 <div class="memdoc">
 
 <p>
-OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
+Called when we got a new connection <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Address of the new connection </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>isIncoming</em>&nbsp;</td><td>If true, this is ID_NEW_INCOMING_CONNECTION, or the equivalent </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#633dcfc264e4309c41f0cfeb84b4840a">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#7a4f68d0bae0dd4539f6b9e14a59f7fa">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="59379efbc7aba6141f0223fbfaaaa762"></a><!-- doxytag: member="RakNet::ReplicaManager2::OnShutdown" ref="59379efbc7aba6141f0223fbfaaaa762" args="(RakPeerInterface *peer)" -->
+<a class="anchor" name="7cba96b3807f606e78290e8ad15be716"></a><!-- doxytag: member="RakNet::ReplicaManager2::OnReceive" ref="7cba96b3807f606e78290e8ad15be716" args="(Packet *packet)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void ReplicaManager2::OnShutdown           </td>
+          <td class="memname">PluginReceiveResult ReplicaManager2::OnReceive           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
+          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
+          <td class="paramname"> <em>packet</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [protected, virtual]</code></td>
         </tr>
@@ -560,13 +579,14 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown <dl compact><dt><b>Parameters:</b></dt><dd>
+OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
   </table>
 </dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#0983119975a8bb9c726b8a006c089dc2">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#bc50017a35682db5202a7562c58898ea">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -1069,8 +1089,8 @@ Autoadd will cause a <a class="el" href="classRakNet_1_1Connection__RM2.html" ti
 <p>
 Auto scope will track the prior construction and serialization visibility of each registered <a class="el" href="classRakNet_1_1Replica2.html" title="Base class for game objects that use the ReplicaManager2 system All game objects...">Replica2</a> class, for each connection. Per-tick, as the visibility or construction status of a replica changes, it will be constructed, destroyed, or the visibility will change as appropriate. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>construction</em>&nbsp;</td><td>If true, <a class="el" href="classRakNet_1_1Connection__RM2.html#f979227f8702b6beb8a86021b46805f6">Connection_RM2::SetConstructionByReplicaQuery</a> will be called once per <a class="el" href="classPluginInterface.html#5966e72f872ebd754b44770ecc981bd9">PluginInterface::Update</a> tick. This will call <a class="el" href="classRakNet_1_1Replica2.html#e196b741da9530ad57f4589cf68645dc">Replica2::QueryConstruction</a> to return if an object should be exist on a particular connection </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>visibility</em>&nbsp;</td><td>If true, Connection_RM2::SetConstructionSerializationByReplicaQuery will be called once per <a class="el" href="classPluginInterface.html#5966e72f872ebd754b44770ecc981bd9">PluginInterface::Update</a> tick. This will call Replica2::QuerySerialization to return if an object should be visible to a particular connection or not. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>construction</em>&nbsp;</td><td>If true, <a class="el" href="classRakNet_1_1Connection__RM2.html#f979227f8702b6beb8a86021b46805f6">Connection_RM2::SetConstructionByReplicaQuery</a> will be called once per PluginInterface::Update tick. This will call <a class="el" href="classRakNet_1_1Replica2.html#e196b741da9530ad57f4589cf68645dc">Replica2::QueryConstruction</a> to return if an object should be exist on a particular connection </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>visibility</em>&nbsp;</td><td>If true, Connection_RM2::SetConstructionSerializationByReplicaQuery will be called once per PluginInterface::Update tick. This will call Replica2::QuerySerialization to return if an object should be visible to a particular connection or not. </td></tr>
   </table>
 </dl>
 
@@ -1201,37 +1221,10 @@ If true, autoserialize timers added with <a class="el" href="classRakNet_1_1Repl
 
 </div>
 </div><p>
-<a class="anchor" name="6f68fd7d9c3144b8e9cbae9f90d37fc9"></a><!-- doxytag: member="RakNet::ReplicaManager2::Update" ref="6f68fd7d9c3144b8e9cbae9f90d37fc9" args="(RakPeerInterface *peer)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ReplicaManager2::Update           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [protected, virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Update is called every time a packet is checked for . <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>- the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#5966e72f872ebd754b44770ecc981bd9">PluginInterface</a>.</p>
-
-</div>
-</div><p>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/Source/<a class="el" href="ReplicaManager2_8h.html">ReplicaManager2.h</a><li>C:/RakNet/Source/ReplicaManager2.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:09 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:32 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

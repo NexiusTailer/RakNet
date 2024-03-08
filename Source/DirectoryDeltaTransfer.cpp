@@ -63,8 +63,7 @@ DirectoryDeltaTransfer::DirectoryDeltaTransfer()
 {
 	applicationDirectory[0]=0;
 	fileListTransfer=0;
-	availableUploads = RakNet::OP_NEW<FileList>();
-	rakPeer=0;
+	availableUploads = RakNet::OP_NEW<FileList>( __FILE__, __LINE__ );
 	priority=HIGH_PRIORITY;
 	orderingChannel=0;
 	incrementalReadInterface=0;
@@ -72,7 +71,7 @@ DirectoryDeltaTransfer::DirectoryDeltaTransfer()
 }
 DirectoryDeltaTransfer::~DirectoryDeltaTransfer()
 {
-	RakNet::OP_DELETE(availableUploads);
+	RakNet::OP_DELETE(availableUploads, __FILE__, __LINE__);
 }
 void DirectoryDeltaTransfer::SetFileListTransferPlugin(FileListTransfer *flt)
 {
@@ -105,7 +104,7 @@ void DirectoryDeltaTransfer::AddUploadsFromSubdirectory(const char *subdir)
 }
 unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(const char *subdir, const char *outputSubdir, bool prependAppDirToOutputSubdir, SystemAddress host, FileListTransferCBInterface *onFileCallback, PacketPriority _priority, char _orderingChannel, FileListProgress *cb)
 {
-	if (rakPeer->IsConnected(host)==false)
+	if (rakPeerInterface->IsConnected(host)==false)
 		return (unsigned short) -1;
 
 	DDTCallback *transferCallback;
@@ -115,7 +114,7 @@ unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(const char *subd
 	localFiles.AddFilesFromDirectory(prependAppDirToOutputSubdir ? applicationDirectory : 0, outputSubdir, true, false, true, FileListNodeContext(0,0));
 
 	// Prepare the callback data
-	transferCallback = RakNet::OP_NEW<DDTCallback>();
+	transferCallback = RakNet::OP_NEW<DDTCallback>( __FILE__, __LINE__ );
 	if (subdir && subdir[0])
 	{
 		transferCallback->subdirLen=(unsigned int)strlen(subdir);
@@ -144,7 +143,7 @@ unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(const char *subd
 	stringCompressor->EncodeString(subdir, 256, &outBitstream);
 	stringCompressor->EncodeString(outputSubdir, 256, &outBitstream);
     localFiles.Serialize(&outBitstream);
-	rakPeer->Send(&outBitstream, _priority, RELIABLE_ORDERED, _orderingChannel, host, false);
+	SendUnified(&outBitstream, _priority, RELIABLE_ORDERED, _orderingChannel, host, false);
 
 	return setId;
 }
@@ -152,10 +151,8 @@ void DirectoryDeltaTransfer::ClearUploads(void)
 {
 	availableUploads->Clear();
 }
-void DirectoryDeltaTransfer::OnDownloadRequest(RakPeerInterface *peer, Packet *packet)
+void DirectoryDeltaTransfer::OnDownloadRequest(Packet *packet)
 {
-	(void) peer;
-
 	char subdir[256];
 	char remoteSubdir[256];
 	RakNet::BitStream inBitstream(packet->data, packet->length, false);
@@ -181,30 +178,18 @@ void DirectoryDeltaTransfer::OnDownloadRequest(RakPeerInterface *peer, Packet *p
 		delta.FlagFilesAsReferences();
 
 	// This will call the ddtCallback interface that was passed to FileListTransfer::SetupReceive on the remote system
-	fileListTransfer->Send(&delta, rakPeer, packet->systemAddress, setId, priority, orderingChannel, compressOutgoingSends, incrementalReadInterface, chunkSize);
+	fileListTransfer->Send(&delta, rakPeerInterface, packet->systemAddress, setId, priority, orderingChannel, compressOutgoingSends, incrementalReadInterface, chunkSize);
 }
-void DirectoryDeltaTransfer::OnAttach(RakPeerInterface *peer)
-{
-	rakPeer=peer;
-}
-void DirectoryDeltaTransfer::Update(RakPeerInterface *peer)
-{
-	(void) peer;
-}
-PluginReceiveResult DirectoryDeltaTransfer::OnReceive(RakPeerInterface *peer, Packet *packet)
+PluginReceiveResult DirectoryDeltaTransfer::OnReceive(Packet *packet)
 {
 	switch (packet->data[0]) 
 	{
 	case ID_DDT_DOWNLOAD_REQUEST:
-		OnDownloadRequest(peer, packet);
+		OnDownloadRequest(packet);
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 	}
 
 	return RR_CONTINUE_PROCESSING;
-}
-void DirectoryDeltaTransfer::OnShutdown(RakPeerInterface *peer)
-{
-	(void) peer;
 }
 
 unsigned DirectoryDeltaTransfer::GetNumberOfFilesForUpload(void) const

@@ -19,7 +19,7 @@
 #define __LIGHTWEIGHT_DATABASE_CLIENT_H
 
 #include "Export.h"
-#include "PluginInterface.h"
+#include "PluginInterface2.h"
 #include "LightweightDatabaseCommon.h"
 
 class RakPeerInterface;
@@ -30,7 +30,7 @@ struct Packet;
 
 /// \brief The client interface to the simple database included with RakNet, useful for a server browser or a lobby server.
 /// \ingroup SIMPLE_DATABSE_GROUP
-class RAK_DLL_EXPORT LightweightDatabaseClient : public PluginInterface
+class RAK_DLL_EXPORT LightweightDatabaseClient : public PluginInterface2
 {
 public:
 
@@ -77,12 +77,7 @@ public:
 	/// \param[in] broadcast Broadcast or not.  Same as the parameter in RakPeer::Send
 	void RemoveRow(const char *tableName, const char *removePassword, unsigned rowId, SystemAddress systemAddress, bool broadcast);
 
-	/// \internal For plugin handling
-	void OnAttach(RakPeerInterface *peer);
-	/// \internal For plugin handling
-	virtual PluginReceiveResult OnReceive(RakPeerInterface *peer, Packet *packet);
 protected:
-	RakPeerInterface *rakPeer;
 };
 
 #endif

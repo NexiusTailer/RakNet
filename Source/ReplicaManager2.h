@@ -21,7 +21,7 @@
 #include "Export.h"
 #include "RakNetTypes.h"
 #include "DS_Map.h"
-#include "PluginInterface.h"
+#include "PluginInterface2.h"
 #include "NetworkIDObject.h"
 #include "PacketPriority.h"
 #include "GetTime.h"
@@ -129,7 +129,7 @@ enum
 /// \pre This system is a client:  Call NetworkIDManager::SetIsNetworkIDAuthority(false).
 /// \pre If peer to peer, NETWORK_ID_SUPPORTS_PEER_TO_PEER should be defined in RakNetDefines.h
 /// \ingroup REPLICA_MANAGER_2_GROUP
-class RAK_DLL_EXPORT ReplicaManager2 : public PluginInterface
+class RAK_DLL_EXPORT ReplicaManager2 : public PluginInterface2
 {
 public:
 	/// Constructor
@@ -337,11 +337,12 @@ public:
 
 protected:
 	// Plugin interface functions
-	void OnAttach(RakPeerInterface *peer);
-	PluginReceiveResult OnReceive(RakPeerInterface *peer, Packet *packet);
-	void OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddress);
-	void OnShutdown(RakPeerInterface *peer);
-	void Update(RakPeerInterface *peer);
+	void OnAttach(void);
+	PluginReceiveResult OnReceive(Packet *packet);
+	void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	void OnShutdown(void);
+	void Update(void);
+	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 
 	PluginReceiveResult OnDownloadComplete(unsigned char *packetData, int packetDataLength, SystemAddress sender, RakNetTime timestamp);
 	PluginReceiveResult OnDownloadStarted(unsigned char *packetData, int packetDataLength, SystemAddress sender, RakNetTime timestamp);
@@ -372,7 +373,6 @@ protected:
 	friend class Connection_RM2;
 	friend class Replica2;
 
-	RakPeerInterface *rakPeer;
 	Connection_RM2Factory *connectionFactoryInterface;
 	bool autoUpdateConstruction, autoUpdateVisibility;
 
@@ -570,6 +570,7 @@ public:
 	/// For a given connection, should this object exist?
 	/// Checked every Update cycle if ReplicaManager2::SetAutoUpdateScope() parameter \a construction is true
 	/// Defaults to BQR_ALWAYS
+	/// \note This query is NOT used for ReplicaManager2::BroadcastConstruction() or SendConstruction(), which forces the operation to occur. If you DO want to use the query, use ReplicaManager2::Reference() and the next time RakPeer::Receive() is called it will occur.
 	/// \param[in] connection Which connection we are referring to. 0 means unknown, in which case the system is checking for BQR_ALWAYS or BQR_NEVER as an optimization.
 	/// \return BQR_NO and the object will be destroyed. BQR_YES and the object will be created. BQR_ALWAYS is YES for all connections, and is optimized to only be checked once.
 	virtual BooleanQueryResult QueryConstruction(Connection_RM2 *connection);
@@ -578,6 +579,7 @@ public:
 	/// For a given connection, should this object be visible (updatable?)
 	/// Checked every Update cycle if ReplicaManager2::SetAutoUpdateScope() parameter \a serializationVisiblity is true
 	/// Defaults to BQR_ALWAYS
+	/// \note This query is NOT used for ReplicaManager2::BroadcastVisibility() or SendVisibility(), which forces the operation to occur. If you DO want to use the query, use ReplicaManager2::Reference() and the next time RakPeer::Receive() is called it will occur.
 	/// \param[in] connection Which connection we are referring to. 0 means unknown, in which case the system is checking for BQR_ALWAYS or BQR_NEVER as an optimization.
 	/// \return BQR_NO or BQR_YES and as this value changes per connection, you will get a call to DeserializeVisibility().
 	virtual BooleanQueryResult QueryVisibility(Connection_RM2 *connection);
@@ -626,6 +628,7 @@ public:
 	/// Use CancelAutoSerializeTimer() or ClearAutoSerializeTimers() to stop the timer.
 	/// If this timer already exists, it will simply override the existing countdown
 	/// This timer will automatically repeat every \a countdown milliseconds
+	/// \note The same data is sent to all participants when the autoserialize timer completes. If the data sent depends on the system to be sent to, do not use autoserialize. This is an optimization to save memory.
 	/// \param[in] interval Time in milliseconds between autoserialize ticks. Use 0 to process immediately, and every tick
 	/// \param[in] serializationType User-defined identifier for what type of serialization operation to perform. Returned in Deserialize() as the \a serializationType parameter.
 	/// \param[in] countdown Amount of time before doing the next autoserialize. Defaults to interval
@@ -682,6 +685,7 @@ protected:
 	virtual void DeleteOnReceiveDestruction(SystemAddress sender, RakNet::BitStream *serializedObject, SerializationType serializationType, RakNetTime timestamp, DataStructures::OrderedList<SystemAddress,SystemAddress> &exclusionList );
 	virtual void ReceiveVisibility(SystemAddress sender, RakNet::BitStream *serializedObject, SerializationType serializationType, RakNetTime timestamp, DataStructures::OrderedList<SystemAddress,SystemAddress> &exclusionList);
 	virtual Replica2 * ReceiveConstructionReply(SystemAddress sender, BitStream *replicaData, bool constructionAllowed);
+	void DereferenceFromDestruction(void);
 
 	friend class ReplicaManager2;
 	friend class Connection_RM2;

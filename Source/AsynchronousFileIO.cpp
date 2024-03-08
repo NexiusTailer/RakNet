@@ -267,10 +267,10 @@ HANDLE_ERROR:
 			// This socket is no longer used
 
 			if ( lpOverlapped )
-				RakNet::OP_DELETE(lpOverlapped);
+				RakNet::OP_DELETE(lpOverlapped, __FILE__, __LINE__);
 
 			if ( lpClientContext )
-				RakNet::OP_DELETE(lpClientContext);
+				RakNet::OP_DELETE(lpClientContext, __FILE__, __LINE__);
 
 			// If we are killing the threads, then we keep posting fake completion statuses until we get a fake one through the queue (i.e. lpOverlapped==0 as above)
 			// This way we delete all the data from the real calls before exiting the thread

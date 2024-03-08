@@ -147,7 +147,7 @@ int main(void)
 					// This way if we change the system address or the Soldier* we don't have to call user->BroadcastSerialize();
 					newUser->AddAutoSerializeTimer(100);
 					// Send out this new user to all systems. Unlike the old system (ReplicaManager) all sends are done immediately.
-					newUser->BroadcastConstruction();
+					replicaManager.Reference(newUser,0);
 				}				
 				break;
 			case ID_DISCONNECTION_NOTIFICATION:

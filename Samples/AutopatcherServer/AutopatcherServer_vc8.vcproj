@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="AutopatcherServer_PostgreSQL"
 	ProjectGUID="{4BDF263B-655B-4F1D-B42F-65260DC688A6}"
+	RootNamespace="AutopatcherServer_PostgreSQL"
 	Keyword="Win32Proj"
 	>
 	<Platforms>

@@ -353,7 +353,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\NatPunchthrough.cpp"
+				RelativePath="..\..\Source\NatPunchthroughClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\NatPunchthroughServer.cpp"
 				>
 			</File>
 			<File
@@ -373,11 +377,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\PacketizedTCP.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\PacketLogger.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\Source\PluginInterface.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\PluginInterface2.cpp"
 				>
 			</File>
 			<File
@@ -759,10 +771,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\LobbyClientInterface.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\LogCommandParser.h"
 				>
 			</File>
@@ -783,7 +791,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\NatPunchthrough.h"
+				RelativePath="..\..\Source\NatPunchthroughClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\NatPunchthroughServer.h"
 				>
 			</File>
 			<File
@@ -800,6 +812,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\PacketFileLogger.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\PacketizedTCP.h"
 				>
 			</File>
 			<File
@@ -820,6 +836,14 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\PluginInterface.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\PluginInterface2.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\RakAlloca.h"
 				>
 			</File>
 			<File
@@ -959,6 +983,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\SocketIncludes.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\SocketLayer.h"
 				>
 			</File>
@@ -1000,6 +1028,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\TransportInterface.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\WindowsIncludes.h"
 				>
 			</File>
 			<File

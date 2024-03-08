@@ -182,12 +182,12 @@ namespace DataStructures
 
 		if (index>=orderedList.Size())
 		{
-			orderedList.Insert(data);
+			orderedList.Insert(data, __FILE__, __LINE__);
 			return orderedList.Size()-1;
 		}
 		else
 		{
-			orderedList.Insert(data,index);
+			orderedList.Insert(data,index, __FILE__, __LINE__);
 			return index;
 		}		
 	}
@@ -235,13 +235,13 @@ namespace DataStructures
 	template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>
 		void OrderedList<key_type, data_type, default_comparison_function>::InsertAtIndex(const data_type &data, const unsigned index)
 	{
-		orderedList.Insert(data, index);
+		orderedList.Insert(data, index, __FILE__, __LINE__);
 	}
 
 	template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>
 		void OrderedList<key_type, data_type, default_comparison_function>::InsertAtEnd(const data_type &data)
 	{
-		orderedList.Insert(data);
+		orderedList.Insert(data, __FILE__, __LINE__);
 	}
 
 	template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>

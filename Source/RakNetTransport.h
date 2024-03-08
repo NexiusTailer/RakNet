@@ -101,7 +101,7 @@ public:
 
 	/// If a new system connects to you, you should queue that event and return the systemAddress/address of that player in this function.
 	/// \return The SystemAddress/address of the system
-	SystemAddress HasNewConnection(void);
+	SystemAddress HasNewIncomingConnection(void);
 
 	/// If a system loses the connection, you should queue that event and return the systemAddress/address of that player in this function.
 	/// \return The SystemAddress/address of the system

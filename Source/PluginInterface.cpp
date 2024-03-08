@@ -14,6 +14,7 @@
 /// Software Foundation; either version 2 of the License, or (at your
 /// option) any later version.
 
+/*
 #include "PluginInterface.h"
 
 #ifdef _MSC_VER
@@ -83,3 +84,4 @@ void PluginInterface::OnInternalPacket(InternalPacket *internalPacket, unsigned 
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+*/

@@ -2,7 +2,7 @@
 #define __LOBBY_2_PLUGIN_H
 
 #include "Lobby2Message.h"
-#include "PluginInterface.h"
+#include "PluginInterface2.h"
 #include "PacketPriority.h"
 #include "RakPeerInterface.h"
 
@@ -21,7 +21,7 @@ enum ServerErrors
 struct Lobby2MessageFactory;
 
 /// Both the server and pc client plugins derive from this class.
-class RAK_DLL_EXPORT Lobby2Plugin : public PluginInterface
+class RAK_DLL_EXPORT Lobby2Plugin : public PluginInterface2
 {
 public:
 	Lobby2Plugin();
@@ -47,10 +47,6 @@ public:
 	
 protected:
 		
-	// Plugin interface functions
-	void OnAttach(RakPeerInterface *peer);
-	
-	RakPeerInterface *rakPeer;
 	char orderingChannel;
 	PacketPriority packetPriority;	
 	Lobby2MessageFactory *msgFactory;

@@ -23,7 +23,7 @@
 #include "Rand.h"
 #include "Kbhit.h"
 #include <stdio.h> // Printf
-#include <windows.h> // Sleep
+#include "WindowsIncludes.h" // Sleep
 
 void DoSpeedTest(PacketReliability packetReliability, unsigned sendSize);
 
@@ -120,7 +120,7 @@ void DoSpeedTest(PacketReliability packetReliability, unsigned sendSize)
 			lastMessagesPerSecond1=rss1->messageSendBuffer[HIGH_PRIORITY];
 		}
 		else
-			riseCount1=0;
+			riseCount2=0;
 		currentTime=RakNet::GetTime();
 		lastPrint=messagesPerSecond/2000;
 		messagesPerSecond+=2*(currentTime-lastTime);

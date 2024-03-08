@@ -30,7 +30,7 @@
 <h1>ReadyEvent Class Reference<br>
 <small>
 [<a class="el" href="group__READY__EVENT__GROUP.html">ReadyEvent</a>]</small>
-</h1><!-- doxytag: class="ReadyEvent" --><!-- doxytag: inherits="PluginInterface" --><code>#include &lt;ReadyEvent.h&gt;</code>
+</h1><!-- doxytag: class="ReadyEvent" --><!-- doxytag: inherits="PluginInterface2" --><code>#include &lt;ReadyEvent.h&gt;</code>
 <p>
 <div class="dynheader">
 Inheritance diagram for ReadyEvent:</div>
@@ -38,7 +38,7 @@ Inheritance diagram for ReadyEvent:</div>
 
 <p><center><img src="classReadyEvent.png" usemap="#ReadyEvent_map" border="0" alt=""></center>
 <map name="ReadyEvent_map">
-<area href="classPluginInterface.html" alt="PluginInterface" shape="rect" coords="0,0,97,24">
+<area href="classPluginInterface2.html" alt="PluginInterface2" shape="rect" coords="0,0,104,24">
 </map>
 </div>
 
@@ -87,14 +87,14 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReadyEvent.html#248b2c6c3ee70b61f4c04fc0b930689b">SetSendChannel</a> (unsigned char newChannel)</td></tr>
 
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReadyEvent.html#1aca6c00d62a8002145ce2312a1c0ddd">OnAttach</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReadyEvent.html#5ef8e4fe9969f4980bbbb2c863ecc42e">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReadyEvent.html#1164c97a26ff94c3ead3df28f726584b">OnReceive</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReadyEvent.html#edb2d85a4bada0d1085cdd5a8cf51764">OnClosedConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, PI2_LostConnectionReason lostConnectionReason)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReadyEvent.html#b5d968b5c84889e3a588d5135d928c7d">OnCloseConnection</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3f4f8c98ebd43a693de74526edf01750"></a><!-- doxytag: member="ReadyEvent::OnShutdown" ref="3f4f8c98ebd43a693de74526edf01750" args="(void)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReadyEvent.html#3f4f8c98ebd43a693de74526edf01750">OnShutdown</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classReadyEvent.html#546c126a204d214716bdb6d274bc53a7">OnShutdown</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Ready event plugin Used to signal event completion when a set of systems all set a signal flag to true. This is usually used for lobby systems, or peer to peer turn based environments. The user will get ID_READY_EVENT_SET and ID_READY_EVENT_UNSET as the signal flag is set or unset The user will get ID_READY_EVENT_ALL_SET when all systems are done waiting for all other systems, in which case the event is considered complete, and no longer tracked. <hr><h2>Member Function Documentation</h2>
@@ -467,48 +467,27 @@ Returns if a particular system is waiting on a particular event. <dl compact><dt
 
 </div>
 </div><p>
-<a class="anchor" name="1aca6c00d62a8002145ce2312a1c0ddd"></a><!-- doxytag: member="ReadyEvent::OnAttach" ref="1aca6c00d62a8002145ce2312a1c0ddd" args="(RakPeerInterface *peer)" -->
+<a class="anchor" name="edb2d85a4bada0d1085cdd5a8cf51764"></a><!-- doxytag: member="ReadyEvent::OnClosedConnection" ref="edb2d85a4bada0d1085cdd5a8cf51764" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void ReadyEvent::OnAttach           </td>
+          <td class="memname">void ReadyEvent::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [protected, virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#9124155ea27bf6c50801350d21173d68">PluginInterface</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="b5d968b5c84889e3a588d5135d928c7d"></a><!-- doxytag: member="ReadyEvent::OnCloseConnection" ref="b5d968b5c84889e3a588d5135d928c7d" args="(RakPeerInterface *peer, SystemAddress systemAddress)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ReadyEvent::OnCloseConnection           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>rakNetGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PI2_LostConnectionReason&nbsp;</td>
+          <td class="paramname"> <em>lostConnectionReason</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -522,62 +501,25 @@ Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd
 <p>
 Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#05e43a9ba3b85f1000adb2f1e9551000">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system whose connection was closed </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lostConnectionReason</em>&nbsp;</td><td>How the connection was closed: manually, connection lost, or notification of disconnection </td></tr>
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#da6d76a81fb6ea6dd8422c3ed5c9baff">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#f14d27351aca9bfd5b4fc2ac1461ff14">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="1164c97a26ff94c3ead3df28f726584b"></a><!-- doxytag: member="ReadyEvent::OnReceive" ref="1164c97a26ff94c3ead3df28f726584b" args="(RakPeerInterface *peer, Packet *packet)" -->
+<a class="anchor" name="5ef8e4fe9969f4980bbbb2c863ecc42e"></a><!-- doxytag: member="ReadyEvent::OnReceive" ref="5ef8e4fe9969f4980bbbb2c863ecc42e" args="(Packet *packet)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">PluginReceiveResult ReadyEvent::OnReceive           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
-          <td class="paramname"> <em>packet</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [protected, virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#633dcfc264e4309c41f0cfeb84b4840a">PluginInterface</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="546c126a204d214716bdb6d274bc53a7"></a><!-- doxytag: member="ReadyEvent::OnShutdown" ref="546c126a204d214716bdb6d274bc53a7" args="(RakPeerInterface *peer)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ReadyEvent::OnShutdown           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
+          <td class="paramname"> <em>packet</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [protected, virtual]</code></td>
         </tr>
@@ -586,13 +528,14 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown <dl compact><dt><b>Parameters:</b></dt><dd>
+OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
   </table>
 </dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#0983119975a8bb9c726b8a006c089dc2">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#bc50017a35682db5202a7562c58898ea">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -696,7 +639,7 @@ This channel will be used for all <a class="el" href="classRakPeer.html#3acee662
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/Source/<a class="el" href="ReadyEvent_8h.html">ReadyEvent.h</a><li>C:/RakNet/Source/ReadyEvent.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:08 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:30 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

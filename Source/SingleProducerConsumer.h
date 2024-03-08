@@ -101,9 +101,9 @@ namespace DataStructures
 		SingleProducerConsumer<SingleProducerConsumerType>::SingleProducerConsumer()
 	{
 		// Preallocate
-		readPointer = RakNet::OP_NEW<DataPlusPtr>();
+		readPointer = RakNet::OP_NEW<DataPlusPtr>( __FILE__, __LINE__ );
 		writePointer=readPointer;
-		readPointer->next = RakNet::OP_NEW<DataPlusPtr>();
+		readPointer->next = RakNet::OP_NEW<DataPlusPtr>( __FILE__, __LINE__ );
 		int listSize;
 #ifdef _DEBUG
 		RakAssert(MINIMUM_LIST_SIZE>=3);
@@ -111,7 +111,7 @@ namespace DataStructures
 		for (listSize=2; listSize < MINIMUM_LIST_SIZE; listSize++)
 		{
 			readPointer=readPointer->next;
-			readPointer->next = RakNet::OP_NEW<DataPlusPtr>();
+			readPointer->next = RakNet::OP_NEW<DataPlusPtr>( __FILE__, __LINE__ );
 		}
 		readPointer->next->next=writePointer; // last to next = start
 		readPointer=writePointer;
@@ -128,10 +128,10 @@ namespace DataStructures
 		while (readPointer!=writeAheadPointer)
 		{
 			next=readPointer->next;
-			RakNet::OP_DELETE((char*) readPointer);
+			RakNet::OP_DELETE((char*) readPointer, __FILE__, __LINE__);
 			readPointer=next;
 		}
-		RakNet::OP_DELETE((char*) readPointer);
+		RakNet::OP_DELETE((char*) readPointer, __FILE__, __LINE__);
 	}
 
 	template <class SingleProducerConsumerType>
@@ -234,7 +234,7 @@ namespace DataStructures
 #ifdef _DEBUG
 			RakAssert(writePointer!=readPointer);
 #endif
-			RakNet::OP_DELETE((char*) writePointer);
+			RakNet::OP_DELETE((char*) writePointer, __FILE__, __LINE__);
 			writePointer=next;
 		}
 
@@ -272,7 +272,7 @@ namespace DataStructures
 #include <process.h>
 #include "RakAssert.h"
 #include <stdio.h>
-#include <windows.h>
+#include "WindowsIncludes.h"
 #if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
 #include <math.h>
 #else

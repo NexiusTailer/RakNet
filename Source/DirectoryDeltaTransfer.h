@@ -21,7 +21,7 @@
 #include "RakMemoryOverride.h"
 #include "RakNetTypes.h"
 #include "Export.h"
-#include "PluginInterface.h"
+#include "PluginInterface2.h"
 #include "DS_Map.h"
 #include "PacketPriority.h"
 
@@ -52,7 +52,7 @@ class IncrementalReadInterface;
 /// It would NOT allow downloads from C:/Games/MyRPG/Levels, nor would it allow downloads from C:/Windows
 /// While pathToApplication can be anything you want, applicationSubdirectory must match either partially or fully between systems.
 /// \ingroup DIRECTORY_DELTA_TRANSFER_GROUP
-class RAK_DLL_EXPORT DirectoryDeltaTransfer : public PluginInterface
+class RAK_DLL_EXPORT DirectoryDeltaTransfer : public PluginInterface2
 {
 public:
 	/// Constructor
@@ -119,20 +119,13 @@ public:
 	void SetDownloadRequestIncrementalReadInterface(IncrementalReadInterface *_incrementalReadInterface, unsigned int _chunkSize);
 	
 	/// \internal For plugin handling
-	virtual void OnAttach(RakPeerInterface *peer);
-	/// \internal For plugin handling
-	virtual void Update(RakPeerInterface *peer);
-	/// \internal For plugin handling
-	virtual PluginReceiveResult OnReceive(RakPeerInterface *peer, Packet *packet);
-	/// \internal For plugin handling
-	virtual void OnShutdown(RakPeerInterface *peer);
+	virtual PluginReceiveResult OnReceive(Packet *packet);
 protected:
-	void OnDownloadRequest(RakPeerInterface *peer, Packet *packet);
+	void OnDownloadRequest(Packet *packet);
 
 	char applicationDirectory[512];
 	FileListTransfer *fileListTransfer;
 	FileList *availableUploads;
-	RakPeerInterface *rakPeer;
 	PacketPriority priority;
 	char orderingChannel;
 	bool compressOutgoingSends;

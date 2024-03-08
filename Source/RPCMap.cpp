@@ -33,8 +33,8 @@ void RPCMap::Clear(void)
 		node=rpcSet[i];
 		if (node)
 		{
-			rakFree(node->uniqueIdentifier);
-			RakNet::OP_DELETE(node);
+			rakFree_Ex(node->uniqueIdentifier, __FILE__, __LINE__ );
+			RakNet::OP_DELETE(node, __FILE__, __LINE__);
 		}
 	}
 	rpcSet.Clear();
@@ -85,8 +85,8 @@ void RPCMap::AddIdentifierWithFunction(const char *uniqueIdentifier, void *funct
 		return;
 	}
 
-	node = RakNet::OP_NEW<RPCNode>();
-	node->uniqueIdentifier = (char*) rakMalloc( strlen(uniqueIdentifier)+1 );
+	node = RakNet::OP_NEW<RPCNode>( __FILE__, __LINE__ );
+	node->uniqueIdentifier = (char*) rakMalloc_Ex( strlen(uniqueIdentifier)+1, __FILE__, __LINE__ );
 	strcpy(node->uniqueIdentifier, uniqueIdentifier);
 	node->functionPointer=functionPointer;
 	node->isPointerToMember=isPointerToMember;
@@ -101,7 +101,7 @@ void RPCMap::AddIdentifierWithFunction(const char *uniqueIdentifier, void *funct
 		}
 	}
 
-	rpcSet.Insert(node); // No empty spots available so just add to the end of the list
+	rpcSet.Insert(node, __FILE__, __LINE__); // No empty spots available so just add to the end of the list
 
 }
 void RPCMap::AddIdentifierAtIndex(const char *uniqueIdentifier, RPCIndex insertionIndex)
@@ -123,12 +123,12 @@ void RPCMap::AddIdentifierAtIndex(const char *uniqueIdentifier, RPCIndex inserti
 		// Delete the existing one
 		oldNode=rpcSet[existingNodeIndex];
 		rpcSet[existingNodeIndex]=0;
-		rakFree(oldNode->uniqueIdentifier);
-		RakNet::OP_DELETE(oldNode);
+		rakFree_Ex(oldNode->uniqueIdentifier, __FILE__, __LINE__ );
+		RakNet::OP_DELETE(oldNode, __FILE__, __LINE__);
 	}
 
-	node = RakNet::OP_NEW<RPCNode>();
-	node->uniqueIdentifier = (char*) rakMalloc( strlen(uniqueIdentifier)+1 );
+	node = RakNet::OP_NEW<RPCNode>( __FILE__, __LINE__ );
+	node->uniqueIdentifier = (char*) rakMalloc_Ex( strlen(uniqueIdentifier)+1, __FILE__, __LINE__ );
 	strcpy(node->uniqueIdentifier, uniqueIdentifier);
 	node->functionPointer=0;
 
@@ -139,8 +139,8 @@ void RPCMap::AddIdentifierAtIndex(const char *uniqueIdentifier, RPCIndex inserti
 		oldNode=rpcSet[insertionIndex];
 		if (oldNode)
 		{
-			RakNet::OP_DELETE_ARRAY(oldNode->uniqueIdentifier);
-			RakNet::OP_DELETE(oldNode);
+			RakNet::OP_DELETE_ARRAY(oldNode->uniqueIdentifier, __FILE__, __LINE__);
+			RakNet::OP_DELETE(oldNode, __FILE__, __LINE__);
 		}
 		rpcSet[insertionIndex]=node;
 	}
@@ -160,8 +160,8 @@ void RPCMap::RemoveNode(const char *uniqueIdentifier)
 	#endif
 	RPCNode *node;
 	node = rpcSet[index];
-	rakFree(node->uniqueIdentifier);
-	RakNet::OP_DELETE(node);
+	rakFree_Ex(node->uniqueIdentifier, __FILE__, __LINE__ );
+	RakNet::OP_DELETE(node, __FILE__, __LINE__);
 	rpcSet[index]=0;
 }
 

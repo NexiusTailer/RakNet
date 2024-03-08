@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 #ifdef _WIN32
-#include <windows.h> // Sleep
+#include "WindowsIncludes.h" // Sleep
 #define SLEEP(arg) ( Sleep( (arg) ) )
 #else
 #include <unistd.h> // usleep

@@ -62,7 +62,7 @@ int main(void)
 	if (peer1)
 	{
 		peer1->SetMaximumIncomingConnections(1);
-		SocketDescriptor socketDescriptor(10000,0);
+		SocketDescriptor socketDescriptor(60000,0);
 		peer1->SetMTUSize(1492);
 		peer1->Startup(1, 0, &socketDescriptor, 1);
 		peer1->SetSplitMessageProgressInterval(100); // Get ID_DOWNLOAD_PROGRESS notifications
@@ -72,7 +72,7 @@ int main(void)
 		SocketDescriptor socketDescriptor(0,0);
 		peer2->SetMTUSize(1492);
 		peer2->Startup(1, 0, &socketDescriptor, 1);
-		peer2->Connect(text, 10000, 0, 0);
+		peer2->Connect(text, 60000, 0, 0);
 	}
 	RakSleep(500);
 
@@ -116,14 +116,14 @@ int main(void)
 					unsigned int total;
 					unsigned int partLength;
 					RakNetStatistics *rss=peer1->GetStatistics(peer1->GetSystemAddressFromIndex(0));
-					char data[MAXIMUM_MTU_SIZE];
-					progressBS.Read(progress);
-					progressBS.Read(total);
-					progressBS.Read(partLength);
-					progressBS.Read(data, partLength);
+
+					// Disable endian swapping on reading this, as it's generated locally in ReliabilityLayer.cpp
+					progressBS.ReadBits( (unsigned char* ) &progress, BYTES_TO_BITS(sizeof(progress)), true );
+					progressBS.ReadBits( (unsigned char* ) &total, BYTES_TO_BITS(sizeof(total)), true );
+					progressBS.ReadBits( (unsigned char* ) &partLength, BYTES_TO_BITS(sizeof(partLength)), true );
 
 					printf("Progress: msgID=%i Progress %i/%i Partsize=%i Full=%i\n",
-						(unsigned char) data[0],
+						(unsigned char) packet->data[0],
 						progress,
 						total,
 						partLength,

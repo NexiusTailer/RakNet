@@ -32,7 +32,7 @@
 <h1>RakNet::RoomsPlugin Class Reference<br>
 <small>
 [<a class="el" href="group__ROOMS__GROUP.html">RoomsPlugin</a>]</small>
-</h1><!-- doxytag: class="RakNet::RoomsPlugin" --><!-- doxytag: inherits="PluginInterface,RakNet::RoomsCallback" -->Used to create rooms for players where they can matchmake A room is similar to the rooms you see in other lobby systems, where groups of players can join together in order to start a game match Each player can be in at most one room Each player name must be unique Each room has one moderator, which can perform operations on the room such as kicking out members This plugin networks the AllGamesRoomsContainer class, which performs the actual functionality.  
+</h1><!-- doxytag: class="RakNet::RoomsPlugin" --><!-- doxytag: inherits="PluginInterface2,RakNet::RoomsCallback" -->Used to create rooms for players where they can matchmake A room is similar to the rooms you see in other lobby systems, where groups of players can join together in order to start a game match Each player can be in at most one room Each player name must be unique Each room has one moderator, which can perform operations on the room such as kicking out members This plugin networks the AllGamesRoomsContainer class, which performs the actual functionality.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;RoomsPlugin.h&gt;</code>
@@ -43,7 +43,7 @@ Inheritance diagram for RakNet::RoomsPlugin:</div>
 
 <p><center><img src="classRakNet_1_1RoomsPlugin.png" usemap="#RakNet::RoomsPlugin_map" border="0" alt=""></center>
 <map name="RakNet::RoomsPlugin_map">
-<area href="classPluginInterface.html" alt="PluginInterface" shape="rect" coords="0,0,130,24">
+<area href="classPluginInterface2.html" alt="PluginInterface2" shape="rect" coords="0,0,130,24">
 </map>
 </div>
 
@@ -91,17 +91,19 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove all addresses added with <a class="el" href="classRakNet_1_1RoomsPlugin.html#5f977b74866ae26f3d57375bb02f3053">AddLoginServerAddress()</a>. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#f7b32dbde51c723833d263cc6570507a">SetProfanityFilter</a> (ProfanityFilter *pf)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#8807c08deb9b3255f9f7239600f09ea4">OnAttach</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#1d76339161745986ace994a6536dd2a6">OnDetach</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#cf202c64b7e2b480277db44ae6396c4c">OnDetach</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="36d919337900284fd1819e76a08bc375"></a><!-- doxytag: member="RakNet::RoomsPlugin::OnShutdown" ref="36d919337900284fd1819e76a08bc375" args="(void)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#36d919337900284fd1819e76a08bc375">OnShutdown</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#af82411948dd24c10b361ab06bbc5c91">OnShutdown</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a9918a18ac438e7cfe5cf8a44a6c1126"></a><!-- doxytag: member="RakNet::RoomsPlugin::Update" ref="a9918a18ac438e7cfe5cf8a44a6c1126" args="(void)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#a9918a18ac438e7cfe5cf8a44a6c1126">Update</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#af9b6f9060a5ea2e421d7eb154f6a1aa">Update</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update is called every time a packet is checked for . <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#669568a6d041f2a52d85152db0d4c665">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#9519fbcde73bb0087d34ce6f5cc45b21">OnReceive</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#3a484e2bde14cf75bd3b55528a699254">OnCloseConnection</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#c0a9f9589478f5a4ecc7254a40ec57c7">OnClosedConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, PI2_LostConnectionReason lostConnectionReason)</td></tr>
 
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AllGamesRoomsContainer&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#42fd97f32605eb0d1ebfbd9c19edb2c0">roomsContainer</a></td></tr>
@@ -215,48 +217,27 @@ Removes a participant from the system <dl compact><dt><b>Parameters:</b></dt><dd
 
 </div>
 </div><p>
-<a class="anchor" name="8807c08deb9b3255f9f7239600f09ea4"></a><!-- doxytag: member="RakNet::RoomsPlugin::OnAttach" ref="8807c08deb9b3255f9f7239600f09ea4" args="(RakPeerInterface *peer)" -->
+<a class="anchor" name="c0a9f9589478f5a4ecc7254a40ec57c7"></a><!-- doxytag: member="RakNet::RoomsPlugin::OnClosedConnection" ref="c0a9f9589478f5a4ecc7254a40ec57c7" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void RoomsPlugin::OnAttach           </td>
+          <td class="memname">void RoomsPlugin::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#9124155ea27bf6c50801350d21173d68">PluginInterface</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="3a484e2bde14cf75bd3b55528a699254"></a><!-- doxytag: member="RakNet::RoomsPlugin::OnCloseConnection" ref="3a484e2bde14cf75bd3b55528a699254" args="(RakPeerInterface *peer, SystemAddress systemAddress)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void RoomsPlugin::OnCloseConnection           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>rakNetGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PI2_LostConnectionReason&nbsp;</td>
+          <td class="paramname"> <em>lostConnectionReason</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -270,24 +251,25 @@ Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd
 <p>
 Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#05e43a9ba3b85f1000adb2f1e9551000">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system whose connection was closed </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lostConnectionReason</em>&nbsp;</td><td>How the connection was closed: manually, connection lost, or notification of disconnection </td></tr>
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#da6d76a81fb6ea6dd8422c3ed5c9baff">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#f14d27351aca9bfd5b4fc2ac1461ff14">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="cf202c64b7e2b480277db44ae6396c4c"></a><!-- doxytag: member="RakNet::RoomsPlugin::OnDetach" ref="cf202c64b7e2b480277db44ae6396c4c" args="(RakPeerInterface *peer)" -->
+<a class="anchor" name="1d76339161745986ace994a6536dd2a6"></a><!-- doxytag: member="RakNet::RoomsPlugin::OnDetach" ref="1d76339161745986ace994a6536dd2a6" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void RoomsPlugin::OnDetach           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
+          <td class="paramtype">void&nbsp;</td>
+          <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [virtual]</code></td>
         </tr>
@@ -302,57 +284,19 @@ Called when the interface is detached <dl compact><dt><b>Parameters:</b></dt><dd
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#700cfa399500e04eeb54aa5fe1f14c95">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#017a96cb76e2462a320b570cc8877317">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="9519fbcde73bb0087d34ce6f5cc45b21"></a><!-- doxytag: member="RakNet::RoomsPlugin::OnReceive" ref="9519fbcde73bb0087d34ce6f5cc45b21" args="(RakPeerInterface *peer, Packet *packet)" -->
+<a class="anchor" name="669568a6d041f2a52d85152db0d4c665"></a><!-- doxytag: member="RakNet::RoomsPlugin::OnReceive" ref="669568a6d041f2a52d85152db0d4c665" args="(Packet *packet)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">PluginReceiveResult RoomsPlugin::OnReceive           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
-          <td class="paramname"> <em>packet</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#633dcfc264e4309c41f0cfeb84b4840a">PluginInterface</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="af82411948dd24c10b361ab06bbc5c91"></a><!-- doxytag: member="RakNet::RoomsPlugin::OnShutdown" ref="af82411948dd24c10b361ab06bbc5c91" args="(RakPeerInterface *peer)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void RoomsPlugin::OnShutdown           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
+          <td class="paramname"> <em>packet</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [virtual]</code></td>
         </tr>
@@ -361,13 +305,14 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown <dl compact><dt><b>Parameters:</b></dt><dd>
+OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
   </table>
 </dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#0983119975a8bb9c726b8a006c089dc2">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#bc50017a35682db5202a7562c58898ea">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -446,33 +391,6 @@ Sets the remote server address that is running <a class="el" href="classRakNet_1
 
 </div>
 </div><p>
-<a class="anchor" name="af9b6f9060a5ea2e421d7eb154f6a1aa"></a><!-- doxytag: member="RakNet::RoomsPlugin::Update" ref="af9b6f9060a5ea2e421d7eb154f6a1aa" args="(RakPeerInterface *peer)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void RoomsPlugin::Update           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Update is called every time a packet is checked for . <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>- the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#5966e72f872ebd754b44770ecc981bd9">PluginInterface</a>.</p>
-
-</div>
-</div><p>
 <hr><h2>Member Data Documentation</h2>
 <a class="anchor" name="42fd97f32605eb0d1ebfbd9c19edb2c0"></a><!-- doxytag: member="RakNet::RoomsPlugin::roomsContainer" ref="42fd97f32605eb0d1ebfbd9c19edb2c0" args="" -->
 <div class="memitem">
@@ -492,7 +410,7 @@ Only used on the server. Locally perform any desired functions, such as logging 
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/DependentExtensions/Lobby2/Rooms/<a class="el" href="RoomsPlugin_8h.html">RoomsPlugin.h</a><li>C:/RakNet/DependentExtensions/Lobby2/Rooms/RoomsPlugin.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:11 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:34 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

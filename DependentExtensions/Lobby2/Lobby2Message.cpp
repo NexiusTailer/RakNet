@@ -286,6 +286,7 @@ void CreateAccountParameters::Serialize(bool writeToBitstream, BitStream *bitStr
 	bitStream->Serialize(writeToBitstream, caption1);
 	bitStream->Serialize(writeToBitstream, caption2);
 	bitStream->Serialize(writeToBitstream, ageInDays);
+	binaryData.Serialize(writeToBitstream,bitStream);
 }
 void BinaryDataBlock::Serialize(bool writeToBitstream, BitStream *bitStream)
 {
@@ -297,10 +298,10 @@ void BinaryDataBlock::Serialize(bool writeToBitstream, BitStream *bitStream)
 	if (writeToBitstream==false)
 	{
 		if (binaryData)
-			rakFree(binaryData);
+			rakFree_Ex(binaryData, __FILE__, __LINE__ );
 
 		if (binaryDataLength<=L2_MAX_BINARY_DATA_LENGTH)
-			binaryData = (char*) rakMalloc(binaryDataLength);
+			binaryData = (char*) rakMalloc_Ex(binaryDataLength, __FILE__, __LINE__);
 		else
 			binaryData=0;
 	}
@@ -1016,11 +1017,11 @@ void Emails_Get::Serialize( bool writeToBitstream, bool serializeOutput, BitStre
 			EmailResult obj;
 			if (writeToBitstream)
 			{
-				bitStream->Serialize(writeToBitstream, emailResults[i]);
+				emailResults[i].Serialize( writeToBitstream, bitStream );
 			}
 			else
 			{
-				bitStream->Serialize(writeToBitstream, obj);
+				obj.Serialize( writeToBitstream, bitStream );
 				emailResults.Insert(obj);
 			}
 		}
@@ -1612,19 +1613,35 @@ void Clans_DownloadRequestList::Serialize( bool writeToBitstream, bool serialize
 	SerializeBase(writeToBitstream, serializeOutput, bitStream);
 	if (serializeOutput)
 	{
-		unsigned short listSize = (unsigned short) clanJoinRequests.Size();
+		unsigned short listSize = (unsigned short) joinRequestsToMyClan.Size();
 		bitStream->SerializeCompressed(writeToBitstream, listSize);
 		for (unsigned int i=0; i < listSize; i++)
 		{
 			ClanJoinRequest obj;
 			if (writeToBitstream)
 			{
-				bitStream->Serialize(writeToBitstream, clanJoinRequests[i]);
+				bitStream->Serialize(writeToBitstream, joinRequestsToMyClan[i]);
 			}
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				clanJoinRequests.Insert(obj);
+				joinRequestsToMyClan.Insert(obj);
+			}
+		}
+
+		listSize = (unsigned short) joinRequestsFromMe.Size();
+		bitStream->SerializeCompressed(writeToBitstream, listSize);
+		for (unsigned int i=0; i < listSize; i++)
+		{
+			ClanJoinRequest obj;
+			if (writeToBitstream)
+			{
+				bitStream->Serialize(writeToBitstream, joinRequestsFromMe[i]);
+			}
+			else
+			{
+				bitStream->Serialize(writeToBitstream, obj);
+				joinRequestsFromMe.Insert(obj);
 			}
 		}
 	}

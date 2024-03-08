@@ -61,7 +61,7 @@ namespace DataStructures
 
 		/// Push an element at the end of the stack
 		/// \param[in] input The new element. 
-		void Push(const list_type input);
+		void Push(const list_type input, const char *file=__FILE__, unsigned int line=__LINE__ );
 
 		/// Pop an element from the end of the stack
 		/// \pre Size()>0
@@ -71,11 +71,11 @@ namespace DataStructures
 		/// Insert an element at position \a position in the list 
 		/// \param[in] input The new element. 
 		/// \param[in] position The position of the new element. 		
-		void Insert( const list_type input, const unsigned int position );
+		void Insert( const list_type input, const unsigned int position, const char *file=__FILE__, unsigned int line=__LINE__ );
 		
 		/// Insert at the end of the list.
 		/// \param[in] input The new element. 
-		void Insert( const list_type input );
+		void Insert( const list_type input, const char *file=__FILE__, unsigned int line=__LINE__ );
 		
 		/// Replace the value at \a position by \a input.  If the size of
 		/// the list is less than @em position, it increase the capacity of
@@ -144,7 +144,7 @@ namespace DataStructures
 		List<list_type>::~List()
 	{
 		if (allocation_size>0)
-			RakNet::OP_DELETE_ARRAY(listArray);
+			RakNet::OP_DELETE_ARRAY(listArray, __FILE__, __LINE__);
 	}
 
 
@@ -160,7 +160,7 @@ namespace DataStructures
 		}
 		else
 		{
-			listArray = RakNet::OP_NEW_ARRAY<list_type >( original_copy.list_size );
+			listArray = RakNet::OP_NEW_ARRAY<list_type >( original_copy.list_size , __FILE__, __LINE__ );
 
 			for ( unsigned int counter = 0; counter < original_copy.list_size; ++counter )
 				listArray[ counter ] = original_copy.listArray[ counter ];
@@ -189,7 +189,7 @@ namespace DataStructures
 
 			else
 			{
-				listArray = RakNet::OP_NEW_ARRAY<list_type >( original_copy.list_size );
+				listArray = RakNet::OP_NEW_ARRAY<list_type >( original_copy.list_size , __FILE__, __LINE__ );
 
 				for ( unsigned int counter = 0; counter < original_copy.list_size; ++counter )
 					listArray[ counter ] = original_copy.listArray[ counter ];
@@ -224,9 +224,9 @@ namespace DataStructures
 		}
 
 		template <class list_type>
-		void List<list_type>::Push(const list_type input)
+		void List<list_type>::Push(const list_type input, const char *file, unsigned int line)
 		{
-			Insert(input);
+			Insert(input, file, line);
 		}
 
 		template <class list_type>
@@ -240,7 +240,7 @@ namespace DataStructures
 		}
 
 	template <class list_type>
-		void List<list_type>::Insert( const list_type input, const unsigned int position )
+	void List<list_type>::Insert( const list_type input, const unsigned int position, const char *file, unsigned int line )
 	{
 #ifdef _DEBUG
 		if (position>list_size)
@@ -260,7 +260,7 @@ namespace DataStructures
 			else
 				allocation_size *= 2;
 
-			new_array = RakNet::OP_NEW_ARRAY<list_type >( allocation_size );
+			new_array = RakNet::OP_NEW_ARRAY<list_type >( allocation_size , file, line );
 
 			// copy old array over
 			for ( unsigned int counter = 0; counter < list_size; ++counter )
@@ -270,7 +270,7 @@ namespace DataStructures
 			//memcpy(new_array, listArray, list_size*sizeof(list_type));
 
 			// set old array to point to the newly allocated and twice as large array
-			RakNet::OP_DELETE_ARRAY(listArray);
+			RakNet::OP_DELETE_ARRAY(listArray, file, line);
 
 			listArray = new_array;
 		}
@@ -291,7 +291,7 @@ namespace DataStructures
 
 
 	template <class list_type>
-		void List<list_type>::Insert( const list_type input )
+	void List<list_type>::Insert( const list_type input, const char *file, unsigned int line )
 	{
 		// Reallocate list if necessary
 
@@ -305,7 +305,7 @@ namespace DataStructures
 			else
 				allocation_size *= 2;
 
-			new_array = RakNet::OP_NEW_ARRAY<list_type >( allocation_size );
+			new_array = RakNet::OP_NEW_ARRAY<list_type >( allocation_size , file, line );
 
 			if (listArray)
 			{
@@ -317,7 +317,7 @@ namespace DataStructures
 				//memcpy(new_array, listArray, list_size*sizeof(list_type));
 
 				// set old array to point to the newly allocated and twice as large array
-				RakNet::OP_DELETE_ARRAY(listArray);
+				RakNet::OP_DELETE_ARRAY(listArray, file, line);
 			}
 			
 			listArray = new_array;
@@ -345,7 +345,7 @@ namespace DataStructures
 				list_type * new_array;
 				allocation_size = position + 1;
 
-				new_array = RakNet::OP_NEW_ARRAY<list_type >( allocation_size );
+				new_array = RakNet::OP_NEW_ARRAY<list_type >( allocation_size , __FILE__, __LINE__ );
 
 				// copy old array over
 
@@ -356,7 +356,7 @@ namespace DataStructures
 				//memcpy(new_array, listArray, list_size*sizeof(list_type));
 
 				// set old array to point to the newly allocated array
-				RakNet::OP_DELETE_ARRAY(listArray);
+				RakNet::OP_DELETE_ARRAY(listArray, __FILE__, __LINE__);
 
 				listArray = new_array;
 			}
@@ -455,7 +455,7 @@ namespace DataStructures
 
 		if (allocation_size>512 || doNotDeallocateSmallBlocks==false)
 		{
-			RakNet::OP_DELETE_ARRAY(listArray);
+			RakNet::OP_DELETE_ARRAY(listArray, __FILE__, __LINE__);
 			allocation_size = 0;
 			listArray = 0;
 		}
@@ -470,7 +470,7 @@ namespace DataStructures
 		if ( allocation_size == 0 )
 			return ;
 
-		new_array = RakNet::OP_NEW_ARRAY<list_type >( allocation_size );
+		new_array = RakNet::OP_NEW_ARRAY<list_type >( allocation_size , __FILE__, __LINE__ );
 
 		// copy old array over
 		for ( unsigned int counter = 0; counter < list_size; ++counter )
@@ -480,7 +480,7 @@ namespace DataStructures
 		//memcpy(new_array, listArray, list_size*sizeof(list_type));
 
 		// set old array to point to the newly allocated array
-		RakNet::OP_DELETE_ARRAY(listArray);
+		RakNet::OP_DELETE_ARRAY(listArray, __FILE__, __LINE__);
 
 		listArray = new_array;
 	}
@@ -501,7 +501,7 @@ namespace DataStructures
 
 			allocation_size=amountToAllocate;
 
-			new_array = RakNet::OP_NEW_ARRAY< list_type >( allocation_size );
+			new_array = RakNet::OP_NEW_ARRAY< list_type >( allocation_size , __FILE__, __LINE__ );
 
 			if (listArray)
 			{
@@ -513,7 +513,7 @@ namespace DataStructures
 				//memcpy(new_array, listArray, list_size*sizeof(list_type));
 
 				// set old array to point to the newly allocated and twice as large array
-				RakNet::OP_DELETE_ARRAY(listArray);
+				RakNet::OP_DELETE_ARRAY(listArray, __FILE__, __LINE__);
 			}
 
 			listArray = new_array;

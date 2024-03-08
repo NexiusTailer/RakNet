@@ -105,7 +105,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./../;./../bzip2-1.0.3;./../../Source;./../PostgreSQLInterface;C:\Program Files\PostgreSQL\8.3\include"
+				AdditionalIncludeDirectories="./../;&quot;./../bzip2-1.0.3&quot;;./../../Source;./../PostgreSQLInterface;&quot;C:\Program Files\PostgreSQL\8.3\include&quot;"
 				PreprocessorDefinitions="_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"

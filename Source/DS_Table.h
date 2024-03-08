@@ -50,6 +50,7 @@ namespace DataStructures
 			Cell();
 			~Cell();
 			Cell(double numericValue, char *charValue, void *ptr, ColumnType type);
+			void SetByType(double numericValue, char *charValue, void *ptr, ColumnType type);
 			void Clear(void);
 			
 			/// Numeric

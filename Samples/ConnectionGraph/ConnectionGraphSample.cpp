@@ -20,7 +20,7 @@
 #include "RakNetworkFactory.h"
 #include "Kbhit.h"
 #include <stdio.h> // Printf
-#include <windows.h> // Sleep
+#include "WindowsIncludes.h" // Sleep
 #include "Rand.h"
 
 #include "PacketLogger.h"

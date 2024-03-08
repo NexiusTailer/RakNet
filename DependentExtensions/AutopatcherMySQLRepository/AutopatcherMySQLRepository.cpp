@@ -177,11 +177,11 @@ bool AutopatcherMySQLRepository::GetChangelistSinceDate(const char *applicationN
 		{
 			const char * hardDriveHash = row [2]; 
 			int fileLength = atoi (row [1]);
-			addedFiles->AddFile(hardDriveFilename, hardDriveHash, HASH_LENGTH, fileLength, FileListNodeContext(0,0), false);
+			addedFiles->AddFile(hardDriveFilename, hardDriveFilename, hardDriveHash, HASH_LENGTH, fileLength, FileListNodeContext(0,0), false);
 		}
 		else
 		{
-			deletedFiles->AddFile(hardDriveFilename,0,0,0,FileListNodeContext(0,0), false);
+			deletedFiles->AddFile(hardDriveFilename,hardDriveFilename,0,0,0,FileListNodeContext(0,0), false);
 		}
 	}
 	mysql_free_result (result);
@@ -242,7 +242,7 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 				//patchList->AddFile(userFilename, content, contentLength, contentLength, FileListNodeContext(PC_WRITE_FILE,0));
 				const int fileId = atoi (row [0]); 
 				const int fileLength = atoi (row [1]); 
-				patchList->AddFile(userFilename, 0, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId), true);
+				patchList->AddFile(userFilename,userFilename, 0, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId), true);
 			}
 			mysql_free_result(result);
 		}
@@ -312,7 +312,7 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 						patchList->AddFile(userFilename, file, fileLength, contentLength, FileListNodeContext(PC_WRITE_FILE,0));
 						mysql_free_result(substrresult);
 						*/
-						patchList->AddFile(userFilename, 0, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId), true);
+						patchList->AddFile(userFilename,userFilename, 0, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId), true);
 					}
 					else
 					{
@@ -325,7 +325,7 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 						memcpy(temp, contentHash, HASH_LENGTH);
 						memcpy(temp+HASH_LENGTH, patch, patchLength);
 
-						patchList->AddFile(userFilename, temp, HASH_LENGTH+patchLength, fileLength, FileListNodeContext(PC_HASH_WITH_PATCH,0) );
+						patchList->AddFile(userFilename,userFilename, temp, HASH_LENGTH+patchLength, fileLength, FileListNodeContext(PC_HASH_WITH_PATCH,0) );
 						delete [] temp;
 					}
 
@@ -461,7 +461,7 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 		// Unless set to false, file does not exist in query result or is different.
 		if (addFile)
 		{
-			newFiles.AddFile(hardDriveFilename, filesOnHarddrive.fileList[fileListIndex].data, filesOnHarddrive.fileList[fileListIndex].dataLengthBytes, filesOnHarddrive.fileList[fileListIndex].fileLengthBytes, FileListNodeContext(0,0), false);
+			newFiles.AddFile(hardDriveFilename,hardDriveFilename, filesOnHarddrive.fileList[fileListIndex].data, filesOnHarddrive.fileList[fileListIndex].dataLengthBytes, filesOnHarddrive.fileList[fileListIndex].fileLengthBytes, FileListNodeContext(0,0), false);
 		}
 	}
 	
@@ -488,7 +488,7 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 		}
 
 		if (!fileOnHarddrive)
-			deletedFiles.AddFile(fi.filename,0,0,0,FileListNodeContext(0,0), false);
+			deletedFiles.AddFile(fi.filename,fi.filename,0,0,0,FileListNodeContext(0,0), false);
 	}
 
 	// files on harddrive no longer needed.  Free this memory since generating all the patches is memory intensive.

@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="BitStream"
 	ProjectGUID="{1DAD4461-92F1-44D5-A3B4-54B8D3900EB9}"
+	RootNamespace="BitStream"
 	Keyword="Win32Proj"
 	>
 	<Platforms>

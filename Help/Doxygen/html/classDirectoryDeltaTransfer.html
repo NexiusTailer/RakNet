@@ -30,7 +30,7 @@
 <h1>DirectoryDeltaTransfer Class Reference<br>
 <small>
 [<a class="el" href="group__DIRECTORY__DELTA__TRANSFER__GROUP.html">DirectoryDeltaTransfer</a>]</small>
-</h1><!-- doxytag: class="DirectoryDeltaTransfer" --><!-- doxytag: inherits="PluginInterface" -->Simple class to send changes between directories. In essence, a simple autopatcher that can be used for transmitting levels, skins, etc.  
+</h1><!-- doxytag: class="DirectoryDeltaTransfer" --><!-- doxytag: inherits="PluginInterface2" -->Simple class to send changes between directories. In essence, a simple autopatcher that can be used for transmitting levels, skins, etc.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;DirectoryDeltaTransfer.h&gt;</code>
@@ -41,7 +41,7 @@ Inheritance diagram for DirectoryDeltaTransfer:</div>
 
 <p><center><img src="classDirectoryDeltaTransfer.png" usemap="#DirectoryDeltaTransfer_map" border="0" alt=""></center>
 <map name="DirectoryDeltaTransfer_map">
-<area href="classPluginInterface.html" alt="PluginInterface" shape="rect" coords="0,0,142,24">
+<area href="classPluginInterface2.html" alt="PluginInterface2" shape="rect" coords="0,0,142,24">
 </map>
 </div>
 
@@ -75,13 +75,9 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDirectoryDeltaTransfer.html#87f719aaa888aa220cc8f853c3e340a9">SetCompressOutgoingSends</a> (bool compress)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDirectoryDeltaTransfer.html#a0f3005f2a12ba8ba31f8cff956a2f9b">OnAttach</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDirectoryDeltaTransfer.html#6c19487c0d65a0814dfe7590a9949208">SetDownloadRequestIncrementalReadInterface</a> (IncrementalReadInterface *_incrementalReadInterface, unsigned int _chunkSize)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDirectoryDeltaTransfer.html#6228616c0c3bf084806629892e159b6e">Update</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDirectoryDeltaTransfer.html#a3db1e47f20de0c25af62bcb084b8766">OnReceive</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDirectoryDeltaTransfer.html#95d170070d1e8761f3748161f4889f57">OnShutdown</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDirectoryDeltaTransfer.html#ac5e075273c5a8740314ca221215067e">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -215,53 +211,17 @@ Returns how many files are available for upload <dl class="return" compact><dt><
 
 </div>
 </div><p>
-<a class="anchor" name="a0f3005f2a12ba8ba31f8cff956a2f9b"></a><!-- doxytag: member="DirectoryDeltaTransfer::OnAttach" ref="a0f3005f2a12ba8ba31f8cff956a2f9b" args="(RakPeerInterface *peer)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void DirectoryDeltaTransfer::OnAttach           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#9124155ea27bf6c50801350d21173d68">PluginInterface</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="a3db1e47f20de0c25af62bcb084b8766"></a><!-- doxytag: member="DirectoryDeltaTransfer::OnReceive" ref="a3db1e47f20de0c25af62bcb084b8766" args="(RakPeerInterface *peer, Packet *packet)" -->
+<a class="anchor" name="ac5e075273c5a8740314ca221215067e"></a><!-- doxytag: member="DirectoryDeltaTransfer::OnReceive" ref="ac5e075273c5a8740314ca221215067e" args="(Packet *packet)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">PluginReceiveResult DirectoryDeltaTransfer::OnReceive           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
-          <td class="paramname"> <em>packet</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [virtual]</code></td>
+          <td class="paramname"> <em>packet</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -270,40 +230,12 @@ Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd
 <p>
 OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#633dcfc264e4309c41f0cfeb84b4840a">PluginInterface</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="95d170070d1e8761f3748161f4889f57"></a><!-- doxytag: member="DirectoryDeltaTransfer::OnShutdown" ref="95d170070d1e8761f3748161f4889f57" args="(RakPeerInterface *peer)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void DirectoryDeltaTransfer::OnShutdown           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#0983119975a8bb9c726b8a006c089dc2">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#bc50017a35682db5202a7562c58898ea">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -352,6 +284,41 @@ Set the local root directory to base all file uploads and downloads off of. <dl 
 Set if we should compress outgoing sends or not Defaults to false, because this results in a noticeable freeze on large requests You can set this to true if you only send small files though <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>compress</em>&nbsp;</td><td>True to compress, false to not. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="6c19487c0d65a0814dfe7590a9949208"></a><!-- doxytag: member="DirectoryDeltaTransfer::SetDownloadRequestIncrementalReadInterface" ref="6c19487c0d65a0814dfe7590a9949208" args="(IncrementalReadInterface *_incrementalReadInterface, unsigned int _chunkSize)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DirectoryDeltaTransfer::SetDownloadRequestIncrementalReadInterface           </td>
+          <td>(</td>
+          <td class="paramtype">IncrementalReadInterface *&nbsp;</td>
+          <td class="paramname"> <em>_incrementalReadInterface</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&nbsp;</td>
+          <td class="paramname"> <em>_chunkSize</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Normally, if a remote system requests files, those files are all loaded into memory and sent immediately. This function allows the files to be read in incremental chunks, saving memory <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_incrementalReadInterface</em>&nbsp;</td><td>If a file in <em>fileList</em> has no data, filePullInterface will be used to read the file in chunks of size <em>chunkSize</em> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_chunkSize</em>&nbsp;</td><td>How large of a block of a file to send at once </td></tr>
   </table>
 </dl>
 
@@ -417,37 +384,10 @@ What parameters to use for the <a class="el" href="classRakPeerInterface.html#cc
 
 </div>
 </div><p>
-<a class="anchor" name="6228616c0c3bf084806629892e159b6e"></a><!-- doxytag: member="DirectoryDeltaTransfer::Update" ref="6228616c0c3bf084806629892e159b6e" args="(RakPeerInterface *peer)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void DirectoryDeltaTransfer::Update           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Update is called every time a packet is checked for . <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>- the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#5966e72f872ebd754b44770ecc981bd9">PluginInterface</a>.</p>
-
-</div>
-</div><p>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/Source/<a class="el" href="DirectoryDeltaTransfer_8h.html">DirectoryDeltaTransfer.h</a><li>C:/RakNet/Source/DirectoryDeltaTransfer.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:07 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:29 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -30,7 +30,7 @@
 <h1>LightweightDatabaseClient Class Reference<br>
 <small>
 [<a class="el" href="group__SIMPLE__DATABSE__GROUP.html">LightweightDatabase</a>]</small>
-</h1><!-- doxytag: class="LightweightDatabaseClient" --><!-- doxytag: inherits="PluginInterface" -->The client interface to the simple database included with <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a>, useful for a server browser or a lobby server.  
+</h1><!-- doxytag: class="LightweightDatabaseClient" --><!-- doxytag: inherits="PluginInterface2" -->The client interface to the simple database included with <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a>, useful for a server browser or a lobby server.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;LightweightDatabaseClient.h&gt;</code>
@@ -41,7 +41,7 @@ Inheritance diagram for LightweightDatabaseClient:</div>
 
 <p><center><img src="classLightweightDatabaseClient.png" usemap="#LightweightDatabaseClient_map" border="0" alt=""></center>
 <map name="LightweightDatabaseClient_map">
-<area href="classPluginInterface.html" alt="PluginInterface" shape="rect" coords="0,0,160,24">
+<area href="classPluginInterface2.html" alt="PluginInterface2" shape="rect" coords="0,0,160,24">
 </map>
 </div>
 
@@ -63,78 +63,9 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLightweightDatabaseClient.html#f8ac29e3b622b571b8207f0b788d93ba">RemoveRow</a> (const char *tableName, const char *removePassword, unsigned rowId, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLightweightDatabaseClient.html#517d53d8f0a5e642e19cd0ee69f584b4">OnAttach</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLightweightDatabaseClient.html#022dffbdfab05978607e9a21f1918d3b">OnReceive</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
-
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 The client interface to the simple database included with <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a>, useful for a server browser or a lobby server. <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="517d53d8f0a5e642e19cd0ee69f584b4"></a><!-- doxytag: member="LightweightDatabaseClient::OnAttach" ref="517d53d8f0a5e642e19cd0ee69f584b4" args="(RakPeerInterface *peer)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void LightweightDatabaseClient::OnAttach           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#9124155ea27bf6c50801350d21173d68">PluginInterface</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="022dffbdfab05978607e9a21f1918d3b"></a><!-- doxytag: member="LightweightDatabaseClient::OnReceive" ref="022dffbdfab05978607e9a21f1918d3b" args="(RakPeerInterface *peer, Packet *packet)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">PluginReceiveResult LightweightDatabaseClient::OnReceive           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
-          <td class="paramname"> <em>packet</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#633dcfc264e4309c41f0cfeb84b4840a">PluginInterface</a>.</p>
-
-</div>
-</div><p>
 <a class="anchor" name="f1b72660433092063d3d632712432467"></a><!-- doxytag: member="LightweightDatabaseClient::QueryTable" ref="f1b72660433092063d3d632712432467" args="(const char *tableName, const char *queryPassword, const char **columnNamesSubset, unsigned char numColumnSubset, DatabaseFilter *filter, unsigned char numFilters, unsigned *rowIds, unsigned char numRowIDs, SystemAddress systemAddress, bool broadcast)" -->
 <div class="memitem">
 <div class="memproto">
@@ -370,7 +301,7 @@ Sets one or more values in a new or existing row, assuming the server allows row
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/Source/<a class="el" href="LightweightDatabaseClient_8h.html">LightweightDatabaseClient.h</a><li>C:/RakNet/Source/LightweightDatabaseClient.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:07 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:29 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

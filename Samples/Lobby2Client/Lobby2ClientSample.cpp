@@ -101,23 +101,38 @@ void main(void)
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_SetMemberRank));
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_GrantLeader));
 	*/
+
 	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Clans_SendJoinRequest));
+	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Clans_WithdrawJoinRequest));
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_AcceptJoinRequest));
+
+//	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Clans_SendJoinRequest));
+//	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Clans_DownloadRequestList));
+	// TODO - test from here
+	/*
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_RejectJoinRequest));
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_AcceptJoinRequest));
+	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Clans_SendJoinRequest));
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_AcceptJoinRequest));
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_KickAndBlacklistUser));
+	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Clans_SendJoinRequest));
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_GetBlacklist));
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_UnblacklistUser));
+	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Clans_SendJoinRequest));
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_AcceptJoinRequest));
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_GetMembers));
+	*/
 
 	/*
-
-	
-
-	// TODO from here on
-	// L2MID_Clans_SendJoinRequest,
-		L2MID_Clans_WithdrawJoinRequest,
-		L2MID_Clans_AcceptJoinRequest,
-		L2MID_Clans_RejectJoinRequest,
-		L2MID_Clans_DownloadRequestList,
-		L2MID_Clans_KickAndBlacklistUser,
-		L2MID_Clans_UnblacklistUser,
-		L2MID_Clans_GetBlacklist,
-		L2MID_Clans_GetMembers,
-		// ...
+	// TODO
+	L2MID_Clans_CreateBoard,
+		L2MID_Clans_DestroyBoard,
+		L2MID_Clans_CreateNewTopic,
+		L2MID_Clans_ReplyToTopic,
+		L2MID_Clans_RemovePost,
+		L2MID_Clans_GetBoards,
+		L2MID_Clans_GetTopics,
+		L2MID_Clans_GetPosts,
 		*/
 	
 
@@ -822,18 +837,25 @@ void ExecuteCommand(RakNet::Lobby2MessageID command, RakNet::RakString userName,
 	case RakNet::L2MID_Clans_WithdrawJoinRequest:
 		{
 			RakNet::Clans_WithdrawJoinRequest *arg = (RakNet::Clans_WithdrawJoinRequest *) m;
+			arg->clanHandle="Clan handle";
+			arg->subject="L2MID_Clans_WithdrawJoinRequest";
 		}
 		break;
 
 	case RakNet::L2MID_Clans_AcceptJoinRequest:
 		{
 			RakNet::Clans_AcceptJoinRequest *arg = (RakNet::Clans_AcceptJoinRequest *) m;
+			arg->clanHandle="Clan handle";
+			arg->requestingUserHandle=RakNet::RakString("Test User %i", instanceNumber+1);
+			arg->subject="L2MID_Clans_AcceptJoinRequest";
 		}
 		break;
 
 	case RakNet::L2MID_Clans_RejectJoinRequest:
 		{
 			RakNet::Clans_RejectJoinRequest *arg = (RakNet::Clans_RejectJoinRequest *) m;
+			arg->clanHandle="Clan handle";
+			arg->requestingUserHandle=RakNet::RakString("Test User %i", instanceNumber+1);
 		}
 		break;
 
@@ -846,24 +868,32 @@ void ExecuteCommand(RakNet::Lobby2MessageID command, RakNet::RakString userName,
 	case RakNet::L2MID_Clans_KickAndBlacklistUser:
 		{
 			RakNet::Clans_KickAndBlacklistUser *arg = (RakNet::Clans_KickAndBlacklistUser *) m;
+			arg->clanHandle="Clan handle";
+			arg->targetHandle=RakNet::RakString("Test User %i", instanceNumber+1);
+			arg->kick=true;
+			arg->blacklist=true;
 		}
 		break;
 
 	case RakNet::L2MID_Clans_UnblacklistUser:
 		{
 			RakNet::Clans_UnblacklistUser *arg = (RakNet::Clans_UnblacklistUser *) m;
+			arg->clanHandle="Clan handle";
+			arg->targetHandle=RakNet::RakString("Test User %i", instanceNumber+1);
 		}
 		break;
 
 	case RakNet::L2MID_Clans_GetBlacklist:
 		{
 			RakNet::Clans_GetBlacklist *arg = (RakNet::Clans_GetBlacklist *) m;
+			arg->clanHandle="Clan handle";
 		}
 		break;
 
 	case RakNet::L2MID_Clans_GetMembers:
 		{
 			RakNet::Clans_GetMembers *arg = (RakNet::Clans_GetMembers *) m;
+			arg->clanHandle="Clan handle";
 		}
 		break;
 

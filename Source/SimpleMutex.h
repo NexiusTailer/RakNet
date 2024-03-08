@@ -22,7 +22,7 @@
 #if defined(_XBOX) || defined(X360)
 #include "XBOX360Includes.h"
 #elif defined(_WIN32)
-#include <windows.h>
+#include "WindowsIncludes.h"
 #else
 #include <pthread.h>
 #include <sys/types.h>

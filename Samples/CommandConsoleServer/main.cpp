@@ -30,7 +30,7 @@
 #include "Compatibility1Includes.h"
 #define printf(x,y) 
 #elif defined(_WIN32)
-#include <windows.h> // Sleep
+#include "WindowsIncludes.h" // Sleep
 #else
 #include <unistd.h> // usleep
 #include <stdio.h>
@@ -68,6 +68,7 @@ void TestCommandServer(TransportInterface *ti, unsigned short port)
 	consoleServer.AddCommandParser(&rcp);
 	consoleServer.AddCommandParser(&lcp);
 	consoleServer.SetTransportProvider(ti, port);
+	consoleServer.SetPrompt("> "); // Show this character when waiting for user input
 	rcp.SetRakPeerInterface(rakPeer);
 	lcp.AddChannel("TestChannel");
 	while (1)

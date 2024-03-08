@@ -109,6 +109,7 @@ void InvitedUser::Serialize(bool writeToBitstream, RakNet::BitStream *bitStream)
 		roomId=room->GetID();
 	bitStream->Serialize(writeToBitstream,roomId);
 	bitStream->Serialize(writeToBitstream,invitorName);
+	bitStream->Serialize(writeToBitstream,invitorSystemAddress);
 	bitStream->Serialize(writeToBitstream,target);
 	bitStream->Serialize(writeToBitstream,subject);
 	bitStream->Serialize(writeToBitstream,body);
@@ -126,12 +127,14 @@ void RoomMemberDescriptor::FromRoomMember(RoomMember *roomMember)
 	name=roomMember->roomsParticipant->GetName();
 	roomMemberMode=roomMember->roomMemberMode;
 	isReady=roomMember->isReady;
+	systemAddress=roomMember->roomsParticipant->GetSystemAddress();
 }
 void RoomMemberDescriptor::Serialize(bool writeToBitstream, RakNet::BitStream *bitStream)
 {
 	bitStream->Serialize(writeToBitstream, name);
 	bitStream->Serialize(writeToBitstream, roomMemberMode);
 	bitStream->Serialize(writeToBitstream, isReady);
+	bitStream->Serialize(writeToBitstream, systemAddress);
 }
 // ----------------------------  RemoveUserResult  ----------------------------
 
@@ -178,7 +181,19 @@ void RemoveUserResult::Serialize(bool writeToBitstream, RakNet::BitStream *bitSt
 void JoinedRoomResult::Serialize(bool writeToBitstream, RakNet::BitStream *bitStream)
 {
 	if (acceptedInvitor)
+	{
 		acceptedInvitorName=acceptedInvitor->GetName();
+		acceptedInvitorAddress=acceptedInvitor->GetSystemAddress();
+	}
+	if (joiningMember)
+	{
+		joiningMemberName=joiningMember->GetName();
+		joiningMemberAddress=joiningMember->GetSystemAddress();
+	}
+	bitStream->Serialize(writeToBitstream, acceptedInvitorName);
+	bitStream->Serialize(writeToBitstream, joiningMemberName);
+	bitStream->Serialize(writeToBitstream, acceptedInvitorAddress);
+	bitStream->Serialize(writeToBitstream, joiningMemberAddress);
 	roomDescriptor.FromRoom(roomOutput, agrc);
 	roomDescriptor.Serialize(writeToBitstream, bitStream);
 }
@@ -190,12 +205,12 @@ void RoomDescriptor::FromRoom(Room *room, AllGamesRoomsContainer *agrc)
 
 	Clear();
 
-	roomLockState=roomLockState;
-	lobbyRoomId=lobbyRoomId;
-	autoLockReadyStatus=autoLockReadyStatus;
-	hiddenFromSearches=hiddenFromSearches;
-	inviteToRoomPermission=inviteToRoomPermission;
-	inviteToSpectatorSlotPermission=inviteToSpectatorSlotPermission;
+	roomLockState=room->roomLockState;
+	lobbyRoomId=room->lobbyRoomId;
+	autoLockReadyStatus=room->autoLockReadyStatus;
+	hiddenFromSearches=room->hiddenFromSearches;
+	inviteToRoomPermission=room->inviteToRoomPermission;
+	inviteToSpectatorSlotPermission=room->inviteToSpectatorSlotPermission;
 	RoomMemberDescriptor rmd;
 	unsigned int i;
 	for (i=0; i < room->roomMemberList.Size(); i++)

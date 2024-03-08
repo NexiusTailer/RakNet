@@ -1,4 +1,4 @@
-#include <windows.h>
+#include "WindowsIncludes.h"
 #include "SendFileTo.h"
 #include <shlwapi.h>
 #include <tchar.h>

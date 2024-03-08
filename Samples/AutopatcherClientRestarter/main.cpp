@@ -2,7 +2,7 @@
 #ifdef _COMPATIBILITY_1
 #include "Compatibility1Includes.h" // Developers of a certain platform will know what to do here.
 #elif defined(_WIN32)
-#include <windows.h> // Sleep and CreateProcess
+#include "WindowsIncludes.h" // Sleep and CreateProcess
 #include <process.h> // system
 #else
 #include <unistd.h> // usleep

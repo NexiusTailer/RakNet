@@ -64,7 +64,7 @@ EXAMPLE <div class="fragment"><pre class="fragment"> BinarySearchTree&lt;int&gt;
  A.Add(10);
  A.Add(15);
  A.Add(5);
- <span class="keywordtype">int</span>* array = RakNet::OP_NEW&lt;int &gt;(A.Size());
+ <span class="keywordtype">int</span>* array = RakNet::OP_NEW&lt;int &gt;(A.Size(), __FILE__, __LINE__ );
  A.DisplayInorder(array);
  array[0]; <span class="comment">// returns 5</span>
  array[1]; <span class="comment">// returns 10</span>
@@ -75,7 +75,7 @@ clear - empties the <a class="el" href="classDataStructures_1_1BinarySearchTree.
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>C:/RakNet/Source/<a class="el" href="DS__BinarySearchTree_8h.html">DS_BinarySearchTree.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:08 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:31 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

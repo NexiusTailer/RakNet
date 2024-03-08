@@ -26,7 +26,7 @@ StringTable::~StringTable()
 	for (i=0; i < orderedStringList.Size(); i++)
 	{
 		if (orderedStringList[i].b)
-			rakFree(orderedStringList[i].str);
+			rakFree_Ex(orderedStringList[i].str, __FILE__, __LINE__ );
 	}
 }
 
@@ -34,7 +34,7 @@ void StringTable::AddReference(void)
 {
 	if (++referenceCount==1)
 	{
-		instance = RakNet::OP_NEW<StringTable>();
+		instance = RakNet::OP_NEW<StringTable>( __FILE__, __LINE__ );
 	}
 }
 void StringTable::RemoveReference(void)
@@ -45,7 +45,7 @@ void StringTable::RemoveReference(void)
 	{
 		if (--referenceCount==0)
 		{
-			RakNet::OP_DELETE(instance);
+			RakNet::OP_DELETE(instance, __FILE__, __LINE__);
 			instance=0;
 		}
 	}
@@ -62,7 +62,7 @@ void StringTable::AddString(const char *str, bool copyString)
 	sab.b=copyString;
 	if (copyString)
 	{
-		sab.str = (char*) rakMalloc( strlen(str)+1 );
+		sab.str = (char*) rakMalloc_Ex( strlen(str)+1, __FILE__, __LINE__ );
 		strcpy(sab.str, str);
 	}
 	else
@@ -74,7 +74,7 @@ void StringTable::AddString(const char *str, bool copyString)
 	if (orderedStringList.Insert(sab.str,sab, true)!=(unsigned)-1)
 	{
 		if (copyString)
-			RakNet::OP_DELETE(sab.str);
+			RakNet::OP_DELETE(sab.str, __FILE__, __LINE__);
 	}
 
 	// If this assert hits you need to increase the range of StringTableType

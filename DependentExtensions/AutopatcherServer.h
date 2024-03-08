@@ -20,7 +20,7 @@
 
 #include "RakNetTypes.h"
 #include "Export.h"
-#include "PluginInterface.h"
+#include "PluginInterface2.h"
 #include "PacketPriority.h"
 #include "ThreadPool.h"
 #include "BitStream.h"
@@ -34,7 +34,7 @@ class FileListTransfer;
 
 /// \addtogroup PLUGINS_GROUP
 /// \brief The server plugin for the autopatcher.  Must be running for the client to get patches.
-class RAK_DLL_EXPORT AutopatcherServer : public PluginInterface
+class RAK_DLL_EXPORT AutopatcherServer : public PluginInterface2
 {
 public:
 	/// Constructor
@@ -62,19 +62,19 @@ public:
 	void Clear(void);
 
 	/// \internal For plugin handling
-	virtual void OnAttach(RakPeerInterface *peer);
+	virtual void OnAttach(void);
 	/// \internal For plugin handling
-	virtual void OnDetach(RakPeerInterface *peer);;
+	virtual void OnDetach(void);;
 	/// \internal For plugin handling
-	virtual void Update(RakPeerInterface *peer);
+	virtual void Update(void);
 	/// \internal For plugin handling
-	virtual PluginReceiveResult OnReceive(RakPeerInterface *peer, Packet *packet);
+	virtual PluginReceiveResult OnReceive(Packet *packet);
 	/// \internal For plugin handling
-	virtual void OnShutdown(RakPeerInterface *peer);
+	virtual void OnShutdown(void);
 	/// \internal For plugin handling
 	virtual void OnStartup(RakPeerInterface *peer);
 	/// \internal For plugin handling
-	virtual void OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddress);
+	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 
 	struct ThreadData
 	{
@@ -108,13 +108,12 @@ public:
 protected:
 	friend AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherServer::ThreadData pap, bool *returnOutput, void* perThreadData);
 	friend AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadData pap, bool *returnOutput, void* perThreadData);
-	void OnGetChangelistSinceDate(RakPeerInterface *peer, Packet *packet);
-	void OnGetPatch(RakPeerInterface *peer, Packet *packet);
+	void OnGetChangelistSinceDate(Packet *packet);
+	void OnGetPatch(Packet *packet);
 
 	void RemoveFromThreadPool(SystemAddress systemAddress);
 	AutopatcherRepositoryInterface *repository;
 	FileListTransfer *fileListTransfer;
-	RakPeerInterface *rakPeer;
 	PacketPriority priority;
 	char orderingChannel;
 

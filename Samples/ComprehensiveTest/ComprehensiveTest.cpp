@@ -10,7 +10,7 @@
 #include "GetTime.h"
 
 #ifdef _WIN32
-#include <windows.h> // Sleep
+#include "WindowsIncludes.h" // Sleep
 #else
 #include <unistd.h> // usleep
 #include <cstdio>

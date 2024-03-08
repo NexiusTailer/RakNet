@@ -32,7 +32,7 @@
 #include "RakThread.h"
 
 class HuffmanEncodingTree;
-class PluginInterface;
+class PluginInterface2;
 
 // Sucks but this struct has to be outside the class.  Inside and DevCPP won't let you refer to the struct as RakPeer::SystemAddressAndIndex while GCC
 // forces you to do RakPeer::SystemAddressAndIndex
@@ -132,8 +132,10 @@ public:
 	/// \param[in] passwordData A data block that must match the data block on the server passed to SetIncomingPassword.  This can be a string or can be a stream of data.  Use 0 for no password.
 	/// \param[in] passwordDataLength The length in bytes of passwordData
 	/// \param[in] connectionSocketIndex Index into the array of socket descriptors passed to socketDescriptors in RakPeer::Startup() to send on.
+	/// \param[in] sendConnectionAttemptCount How many datagrams to send to the other system to try to connect.
+	/// \param[in] timeBetweenSendConnectionAttemptsMS How often to send datagrams to the other system to try to connect. After this many times, ID_CONNECTION_ATTEMPT_FAILED is returned
 	/// \return True on successful initiation. False on incorrect parameters, internal error, or too many existing peers.  Returning true does not mean you connected!
-	bool Connect( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex=0 );
+	bool Connect( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex=0, unsigned sendConnectionAttemptCount=7, unsigned timeBetweenSendConnectionAttemptsMS=500 );
 
 	/// \brief Connect to the specified network ID (Platform specific console function)
 	/// Does built-in NAT traversal
@@ -531,11 +533,11 @@ public:
 	/// Attatches a Plugin interface to run code automatically on message receipt in the Receive call
 	/// \note If plugins have dependencies on each other then the order does matter - for example the router plugin should go first because it might route messages for other plugins
 	/// \param[in] messageHandler Pointer to a plugin to attach
-	void AttachPlugin( PluginInterface *plugin );
+	void AttachPlugin( PluginInterface2 *plugin );
 
 	/// Detaches a Plugin interface to run code automatically on message receipt
 	/// \param[in] messageHandler Pointer to a plugin to detach
-	void DetachPlugin( PluginInterface *messageHandler );
+	void DetachPlugin( PluginInterface2 *messageHandler );
 
 	// --------------------------------------------------------------------------------------------Miscellaneous Functions--------------------------------------------------------------------------------------------
 	/// Put a message back at the end of the receive queue in case you don't want to deal with it immediately
@@ -639,10 +641,7 @@ public:
 		RPCMap rpcMap; /// Mapping of RPC calls to single byte integers to save transmission bandwidth.
 		RakNetGUID guid;
 		int MTUSize;
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-//		void *onlineServiceId;
-//		unsigned int connectionId;
-#endif
+
 		enum ConnectMode {NO_ACTION, DISCONNECT_ASAP, DISCONNECT_ASAP_SILENTLY, DISCONNECT_ON_NO_ACK, REQUESTED_CONNECTION, HANDLING_CONNECTION_REQUEST, UNVERIFIED_SENDER, SET_ENCRYPTION_ON_MULTIPLE_16_BYTE_PACKET, CONNECTED} connectMode;
 	};
 
@@ -673,7 +672,7 @@ protected:
 	int GetIndexFromSystemAddress( const SystemAddress systemAddress, bool calledFromNetworkThread );
 
 	//void RemoveFromRequestedConnectionsList( const SystemAddress systemAddress );
-	bool SendConnectionRequest( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex, unsigned int extraData );
+	bool SendConnectionRequest( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex, unsigned int extraData, unsigned sendConnectionAttemptCount, unsigned timeBetweenSendConnectionAttemptsMS );
 	///Get the reliability layer associated with a systemAddress.  
 	/// \param[in] systemAddress The player identifier 
 	/// \return 0 if none
@@ -793,12 +792,14 @@ protected:
 		unsigned char outgoingPasswordLength;
 		unsigned socketIndex;
 		unsigned int extraData;
+		unsigned sendConnectionAttemptCount;
+		unsigned timeBetweenSendConnectionAttemptsMS;
 		enum {CONNECT=1, /*PING=2, PING_OPEN_CONNECTIONS=4,*/ /*ADVERTISE_SYSTEM=2*/} actionToTake;
 	};
 
 	//DataStructures::List<DataStructures::List<MemoryBlock>* > automaticVariableSynchronizationList;
 	DataStructures::List<BanStruct*> banList;
-	DataStructures::List<PluginInterface*> messageHandlerList;
+	DataStructures::List<PluginInterface2*> messageHandlerList;
 	// DataStructures::SingleProducerConsumer<RequestedConnectionStruct> requestedConnectionList;
 
 	DataStructures::Queue<RequestedConnectionStruct*> requestedConnectionQueue;
@@ -830,7 +831,7 @@ protected:
 		char *data;
 		bool haveRakNetCloseSocket;
 		unsigned connectionSocketIndex;
-		bool isPS3LobbySocket;
+		SocketDescriptor::SocketType socketType;
 		SOCKET socket;
 		unsigned short port;
 		enum {BCS_SEND, BCS_CLOSE_CONNECTION, BCS_USE_USER_SOCKET, BCS_REBIND_SOCKET_ADDRESS, /*BCS_RPC, BCS_RPC_SHIFT,*/ BCS_DO_NOTHING} command;
@@ -848,7 +849,7 @@ protected:
 	void CloseConnectionInternal( const SystemAddress target, bool sendDisconnectionNotification, bool performImmediate, unsigned char orderingChannel );
 	void SendBuffered( const char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RemoteSystemStruct::ConnectMode connectionMode );
 	void SendBufferedList( char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RemoteSystemStruct::ConnectMode connectionMode );
-	bool SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, bool useCallerDataAllocation, RakNetTimeNS currentTime );
+	bool SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, bool useCallerDataAllocation, RakNetTimeUS currentTime );
 	//bool HandleBufferedRPC(BufferedCommandStruct *bcs, RakNetTime time);
 	void ClearBufferedCommands(void);
 	void ClearRequestedConnectionList(void);
@@ -865,8 +866,8 @@ protected:
 	struct RakNetSocket
 	{
 		SOCKET s;
-		bool isPS3LobbySocket;
 		bool haveRakNetCloseSocket;
+		SocketDescriptor::SocketType socketType;
 	} *connectionSockets;
 
 //	SOCKET *connectionSockets;

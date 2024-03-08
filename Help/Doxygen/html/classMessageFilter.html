@@ -30,7 +30,7 @@
 <h1>MessageFilter Class Reference<br>
 <small>
 [<a class="el" href="group__MESSAGEFILTER__GROUP.html">MessageFilter</a>]</small>
-</h1><!-- doxytag: class="MessageFilter" --><!-- doxytag: inherits="PluginInterface" -->Assigns systems to FilterSets. Each FilterSet limits what kinds of messages are allowed. The <a class="el" href="classMessageFilter.html" title="Assigns systems to FilterSets. Each FilterSet limits what kinds of messages are allowed...">MessageFilter</a> plugin is used for security where you limit what systems can send what kind of messages. You implicitly define FilterSets, and add allowed message IDs and RPC calls to these FilterSets. You then add systems to these filters, such that those systems are limited to sending what the filters allows. You can automatically assign systems to a filter. You can automatically kick and possibly ban users that stay in a filter too long, or send the wrong message. Each system is a member of either zero or one filters. Add this plugin before any plugin you wish to filter (most likely just add this plugin before any other).  
+</h1><!-- doxytag: class="MessageFilter" --><!-- doxytag: inherits="PluginInterface2" -->Assigns systems to FilterSets. Each FilterSet limits what kinds of messages are allowed. The <a class="el" href="classMessageFilter.html" title="Assigns systems to FilterSets. Each FilterSet limits what kinds of messages are allowed...">MessageFilter</a> plugin is used for security where you limit what systems can send what kind of messages. You implicitly define FilterSets, and add allowed message IDs and RPC calls to these FilterSets. You then add systems to these filters, such that those systems are limited to sending what the filters allows. You can automatically assign systems to a filter. You can automatically kick and possibly ban users that stay in a filter too long, or send the wrong message. Each system is a member of either zero or one filters. Add this plugin before any plugin you wish to filter (most likely just add this plugin before any other).  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;MessageFilter.h&gt;</code>
@@ -41,7 +41,7 @@ Inheritance diagram for MessageFilter:</div>
 
 <p><center><img src="classMessageFilter.png" usemap="#MessageFilter_map" border="0" alt=""></center>
 <map name="MessageFilter_map">
-<area href="classPluginInterface.html" alt="PluginInterface" shape="rect" coords="0,0,97,24">
+<area href="classPluginInterface2.html" alt="PluginInterface2" shape="rect" coords="0,0,104,24">
 </map>
 </div>
 
@@ -77,17 +77,15 @@ Inheritance diagram for MessageFilter:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMessageFilter.html#ec59de57d8995e3e66eea414b1347926">DeleteFilterSet</a> (int filterSetID)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMessageFilter.html#2c9cc0282c4780eb1001df23dc09f537">OnAttach</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e42c3621885987f4c671172f3c163899"></a><!-- doxytag: member="MessageFilter::Update" ref="e42c3621885987f4c671172f3c163899" args="(void)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMessageFilter.html#e42c3621885987f4c671172f3c163899">Update</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMessageFilter.html#909852454acd985c1aaba1d1d011305b">OnDetach</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update is called every time a packet is checked for . <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMessageFilter.html#741921f3eabdd478f323b8f10b5f58ff">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMessageFilter.html#dcb7b0afe39075b2ceeb77b3340684ec">OnShutdown</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMessageFilter.html#3b0811a9f3b45e3a52c1ba7de59f5a6a">OnNewConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, bool isIncoming)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMessageFilter.html#40dc7e67925ce8274410843699eceb16">Update</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMessageFilter.html#b0e73dc8a214e9470f02d764808de1ad">OnReceive</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMessageFilter.html#321f85f34737527774c7ad7784dd5dd4">OnCloseConnection</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMessageFilter.html#47156b065fa4bf44f610c43491dc5e21">OnClosedConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, PI2_LostConnectionReason lostConnectionReason)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -248,48 +246,27 @@ Get the filterSetID a system is using. Returns -1 for none. <dl compact><dt><b>P
 
 </div>
 </div><p>
-<a class="anchor" name="2c9cc0282c4780eb1001df23dc09f537"></a><!-- doxytag: member="MessageFilter::OnAttach" ref="2c9cc0282c4780eb1001df23dc09f537" args="(RakPeerInterface *peer)" -->
+<a class="anchor" name="47156b065fa4bf44f610c43491dc5e21"></a><!-- doxytag: member="MessageFilter::OnClosedConnection" ref="47156b065fa4bf44f610c43491dc5e21" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void MessageFilter::OnAttach           </td>
+          <td class="memname">void MessageFilter::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#9124155ea27bf6c50801350d21173d68">PluginInterface</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="321f85f34737527774c7ad7784dd5dd4"></a><!-- doxytag: member="MessageFilter::OnCloseConnection" ref="321f85f34737527774c7ad7784dd5dd4" args="(RakPeerInterface *peer, SystemAddress systemAddress)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void MessageFilter::OnCloseConnection           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>rakNetGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PI2_LostConnectionReason&nbsp;</td>
+          <td class="paramname"> <em>lostConnectionReason</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -303,57 +280,37 @@ Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd
 <p>
 Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#05e43a9ba3b85f1000adb2f1e9551000">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system whose connection was closed </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lostConnectionReason</em>&nbsp;</td><td>How the connection was closed: manually, connection lost, or notification of disconnection </td></tr>
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#da6d76a81fb6ea6dd8422c3ed5c9baff">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#f14d27351aca9bfd5b4fc2ac1461ff14">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="909852454acd985c1aaba1d1d011305b"></a><!-- doxytag: member="MessageFilter::OnDetach" ref="909852454acd985c1aaba1d1d011305b" args="(RakPeerInterface *peer)" -->
+<a class="anchor" name="3b0811a9f3b45e3a52c1ba7de59f5a6a"></a><!-- doxytag: member="MessageFilter::OnNewConnection" ref="3b0811a9f3b45e3a52c1ba7de59f5a6a" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void MessageFilter::OnDetach           </td>
+          <td class="memname">void MessageFilter::OnNewConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Called when the interface is detached <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#700cfa399500e04eeb54aa5fe1f14c95">PluginInterface</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="b0e73dc8a214e9470f02d764808de1ad"></a><!-- doxytag: member="MessageFilter::OnReceive" ref="b0e73dc8a214e9470f02d764808de1ad" args="(RakPeerInterface *peer, Packet *packet)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">PluginReceiveResult MessageFilter::OnReceive           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
-          <td class="paramname"> <em>packet</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>rakNetGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>isIncoming</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -365,27 +322,27 @@ Called when the interface is detached <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
+Called when we got a new connection <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Address of the new connection </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>isIncoming</em>&nbsp;</td><td>If true, this is ID_NEW_INCOMING_CONNECTION, or the equivalent </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#633dcfc264e4309c41f0cfeb84b4840a">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#7a4f68d0bae0dd4539f6b9e14a59f7fa">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="dcb7b0afe39075b2ceeb77b3340684ec"></a><!-- doxytag: member="MessageFilter::OnShutdown" ref="dcb7b0afe39075b2ceeb77b3340684ec" args="(RakPeerInterface *peer)" -->
+<a class="anchor" name="741921f3eabdd478f323b8f10b5f58ff"></a><!-- doxytag: member="MessageFilter::OnReceive" ref="741921f3eabdd478f323b8f10b5f58ff" args="(Packet *packet)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void MessageFilter::OnShutdown           </td>
+          <td class="memname">PluginReceiveResult MessageFilter::OnReceive           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
+          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
+          <td class="paramname"> <em>packet</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [virtual]</code></td>
         </tr>
@@ -394,13 +351,14 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown <dl compact><dt><b>Parameters:</b></dt><dd>
+OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
   </table>
 </dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#0983119975a8bb9c726b8a006c089dc2">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#bc50017a35682db5202a7562c58898ea">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -737,37 +695,10 @@ Set a user callback to be called when a user is disconnected due to SetFilterMax
 
 </div>
 </div><p>
-<a class="anchor" name="40dc7e67925ce8274410843699eceb16"></a><!-- doxytag: member="MessageFilter::Update" ref="40dc7e67925ce8274410843699eceb16" args="(RakPeerInterface *peer)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void MessageFilter::Update           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Update is called every time a packet is checked for . <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>- the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#5966e72f872ebd754b44770ecc981bd9">PluginInterface</a>.</p>
-
-</div>
-</div><p>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/Source/<a class="el" href="MessageFilter_8h.html">MessageFilter.h</a><li>C:/RakNet/Source/MessageFilter.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:07 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:30 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

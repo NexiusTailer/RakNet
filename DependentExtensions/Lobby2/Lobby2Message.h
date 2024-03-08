@@ -588,6 +588,14 @@ struct Lobby2Printf : public Lobby2Callbacks
 
 // --------------------------------------------- Types --------------------------------------------
 
+struct BinaryDataBlock
+{
+	char *binaryData;
+	unsigned int binaryDataLength;
+	BinaryDataBlock() {binaryData=0; binaryDataLength=0;}
+	~BinaryDataBlock() {if (binaryData) rakFree_Ex(binaryData, __FILE__, __LINE__ );}
+	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
+};
 struct CreateAccountParameters
 {
 	/// [in] Self-apparent
@@ -638,15 +646,9 @@ struct CreateAccountParameters
 	RakNet::RakString caption2;
 	/// [in] Self-apparent
 	unsigned int ageInDays;
+	/// [in] binary data
+	BinaryDataBlock binaryData;
 
-	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
-};
-struct BinaryDataBlock
-{
-	char *binaryData;
-	unsigned int binaryDataLength;
-	BinaryDataBlock() {binaryData=0; binaryDataLength=0;}
-	~BinaryDataBlock() {if (binaryData) rakFree(binaryData);}
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
 };
 struct PendingInvite
@@ -712,6 +714,7 @@ struct ClanJoinRequest
 {
 	RakNet::RakString targetClan;
 	RakNet::RakString dateSent;
+	RakNet::RakString joinRequestSender;
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
 };
 
@@ -728,7 +731,7 @@ struct BookmarkedUser
 
 #define __L2_MSG_BASE_IMPL(__NAME__) \
 	virtual void CallCallback(Lobby2Callbacks *cb) {cb->MessageResult(this);}; \
-	virtual Lobby2MessageID GetID(void) const {return L2MID_##__NAME__;} \
+	virtual Lobby2MessageID GetID(void) const {return (Lobby2MessageID) L2MID_##__NAME__;} \
 	virtual const char* GetName(void) const {return #__NAME__;} \
 	virtual void DebugMsg(RakNet::RakString &out) const {out.Set(#__NAME__ " result=%s\n", Lobby2ResultCodeDescription::ToEnglish(resultCode));};
 
@@ -1186,7 +1189,7 @@ struct Client_ChangeHandle : public Lobby2Message
 	// Output parameters
 };
 
-/// Will update any or all of the inputs that were previously passwed to Client_RegisterAccount, except handle.
+/// Will update any or all of the inputs that were previously passed to Client_RegisterAccount, except handle.
 /// For input parameters, see Client_RegisterAccount() createAccountParameters, EXCEPT handle
 /// For output parameters, see Client_RegisterAccount()
 struct Client_UpdateAccount : public Lobby2Message
@@ -2107,7 +2110,8 @@ struct Clans_DownloadRequestList : public Lobby2Message
 	// Input parameters
 
 	// Output parameters
-	DataStructures::List<ClanJoinRequest> clanJoinRequests;
+	// joinRequestsToMyClan is only filled out for clans you are a leader or subleader in
+	DataStructures::List<ClanJoinRequest> joinRequestsToMyClan, joinRequestsFromMe;
 };
 /// Kicks a user from the clan and/or blacklists a user so they cannot join. Only a clan leader or subleader can perform this operation. The operation can only be performed on members of lower status (leader can perform on subleader or regular member or nonmember, subleader on regular members or nonmember). If a member is banned, they are added to the banned table which contains the member's primary key, which user banned them, and the reason. Email is sent from myPrimaryKey to all leaders if a clan member is banned. Emails is furthermore sent to all clan members if successfully kicked. 
 struct Clans_KickAndBlacklistUser : public Lobby2Message
@@ -2915,7 +2919,7 @@ struct Notification_Console_Local_Users_Changed : public Lobby2Message
 
 
 // --------------------------------------------- Base interface of factory class for all messages --------------------------------------------
-#define __L2_MSG_FACTORY_BASE(__NAME__) {case L2MID_##__NAME__ : Lobby2Message *m = RakNet::OP_NEW< __NAME__ >() ; RakAssert(m->GetID()==L2MID_##__NAME__); m->requestId=nextRequestId++; return m;}
+#define __L2_MSG_FACTORY_BASE(__NAME__) {case L2MID_##__NAME__ : Lobby2Message *m = RakNet::OP_NEW< __NAME__ >( __FILE__, __LINE__ ) ; RakAssert(m->GetID()==L2MID_##__NAME__ ); m->requestId=nextRequestId++; return m;}
 struct Lobby2MessageFactory
 {
 	Lobby2MessageFactory() {nextRequestId=0;}
@@ -3064,7 +3068,7 @@ struct Lobby2MessageFactory
 	}
 	void Dealloc(Lobby2Message *msg) {
 		if (--msg->refCount==0)
-			RakNet::OP_DELETE<Lobby2Message>(msg);
+			RakNet::OP_DELETE<Lobby2Message>(msg, __FILE__, __LINE__ );
 	}
 
 	unsigned int nextRequestId;

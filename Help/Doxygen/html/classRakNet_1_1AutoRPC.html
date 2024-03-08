@@ -32,7 +32,7 @@
 <h1>RakNet::AutoRPC Class Reference<br>
 <small>
 [<a class="el" href="group__AUTO__RPC__GROUP.html">AutoRPC</a>]</small>
-</h1><!-- doxytag: class="RakNet::AutoRPC" --><!-- doxytag: inherits="PluginInterface" --><code>#include &lt;AutoRPC.h&gt;</code>
+</h1><!-- doxytag: class="RakNet::AutoRPC" --><!-- doxytag: inherits="PluginInterface2" --><code>#include &lt;AutoRPC.h&gt;</code>
 <p>
 <div class="dynheader">
 Inheritance diagram for RakNet::AutoRPC:</div>
@@ -40,7 +40,7 @@ Inheritance diagram for RakNet::AutoRPC:</div>
 
 <p><center><img src="classRakNet_1_1AutoRPC.png" usemap="#RakNet::AutoRPC_map" border="0" alt=""></center>
 <map name="RakNet::AutoRPC_map">
-<area href="classPluginInterface.html" alt="PluginInterface" shape="rect" coords="0,0,109,24">
+<area href="classPluginInterface2.html" alt="PluginInterface2" shape="rect" coords="0,0,109,24">
 </map>
 </div>
 
@@ -137,14 +137,16 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#80f6006931f6216aeea18d76032a3b39">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8)</td></tr>
 
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#f9fa2bcc57dcbd5dd257914bfc5894c1">OnAttach</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#e546b1ba849ae77257c0ebf5461ed147">OnAttach</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#2f9acc244d1ff0bc6290684b4eb1b23f">OnReceive</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#61866920c4abaad1588c3349a837d118">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#fc6da580e907279d1b5a25866dd65258">OnCloseConnection</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#4bb4358d673fa9d49f6d2403ab4a3660">OnClosedConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, PI2_LostConnectionReason lostConnectionReason)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#8a55cc4da36c5a9d941eff869c92b993">OnShutdown</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bcdfa1cc7f56a86ffa96b3011dd7ad8b"></a><!-- doxytag: member="RakNet::AutoRPC::OnShutdown" ref="bcdfa1cc7f56a86ffa96b3011dd7ad8b" args="(void)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#bcdfa1cc7f56a86ffa96b3011dd7ad8b">OnShutdown</a> (void)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 The <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a> plugin allows you to call remote functions as if they were local functions, using the standard function call syntax No serialization or deserialization is needed. Advantages are that this is easier to use than regular RPC system. Disadvantages is that all parameters must be passable on the stack using memcpy (shallow copy). For other types of parameters, use <a class="el" href="classRakNet_1_1AutoRPC.html#d3e411af4ff34c04877a8ff11c806420">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#ed9db7b981b8cf5a48ace1664d329d45">GetIncomingExtraData()</a> Pointers are automatically dereferenced and the contents copied with memcpy Use the old system, or regular message passing, if you need greater flexibility <hr><h2>Member Function Documentation</h2>
@@ -1674,15 +1676,15 @@ If the last received function call has a timestamp included, it is stored and ca
 
 </div>
 </div><p>
-<a class="anchor" name="f9fa2bcc57dcbd5dd257914bfc5894c1"></a><!-- doxytag: member="RakNet::AutoRPC::OnAttach" ref="f9fa2bcc57dcbd5dd257914bfc5894c1" args="(RakPeerInterface *peer)" -->
+<a class="anchor" name="e546b1ba849ae77257c0ebf5461ed147"></a><!-- doxytag: member="RakNet::AutoRPC::OnAttach" ref="e546b1ba849ae77257c0ebf5461ed147" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void AutoRPC::OnAttach           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
+          <td class="paramtype">void&nbsp;</td>
+          <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [protected, virtual]</code></td>
         </tr>
@@ -1697,25 +1699,31 @@ Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#9124155ea27bf6c50801350d21173d68">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#523fa43791dfc9c363d0d20e9609b177">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="fc6da580e907279d1b5a25866dd65258"></a><!-- doxytag: member="RakNet::AutoRPC::OnCloseConnection" ref="fc6da580e907279d1b5a25866dd65258" args="(RakPeerInterface *peer, SystemAddress systemAddress)" -->
+<a class="anchor" name="4bb4358d673fa9d49f6d2403ab4a3660"></a><!-- doxytag: member="RakNet::AutoRPC::OnClosedConnection" ref="4bb4358d673fa9d49f6d2403ab4a3660" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void AutoRPC::OnCloseConnection           </td>
+          <td class="memname">void AutoRPC::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>rakNetGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PI2_LostConnectionReason&nbsp;</td>
+          <td class="paramname"> <em>lostConnectionReason</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -1729,62 +1737,25 @@ Called when the interface is attached <dl compact><dt><b>Parameters:</b></dt><dd
 <p>
 Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#05e43a9ba3b85f1000adb2f1e9551000">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system whose connection was closed </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lostConnectionReason</em>&nbsp;</td><td>How the connection was closed: manually, connection lost, or notification of disconnection </td></tr>
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#da6d76a81fb6ea6dd8422c3ed5c9baff">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#f14d27351aca9bfd5b4fc2ac1461ff14">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="2f9acc244d1ff0bc6290684b4eb1b23f"></a><!-- doxytag: member="RakNet::AutoRPC::OnReceive" ref="2f9acc244d1ff0bc6290684b4eb1b23f" args="(RakPeerInterface *peer, Packet *packet)" -->
+<a class="anchor" name="61866920c4abaad1588c3349a837d118"></a><!-- doxytag: member="RakNet::AutoRPC::OnReceive" ref="61866920c4abaad1588c3349a837d118" args="(Packet *packet)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">PluginReceiveResult AutoRPC::OnReceive           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
-          <td class="paramname"> <em>packet</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [protected, virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#633dcfc264e4309c41f0cfeb84b4840a">PluginInterface</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="8a55cc4da36c5a9d941eff869c92b993"></a><!-- doxytag: member="RakNet::AutoRPC::OnShutdown" ref="8a55cc4da36c5a9d941eff869c92b993" args="(RakPeerInterface *peer)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void AutoRPC::OnShutdown           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
+          <td class="paramname"> <em>packet</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [protected, virtual]</code></td>
         </tr>
@@ -1793,13 +1764,14 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown <dl compact><dt><b>Parameters:</b></dt><dd>
+OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
   </table>
 </dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#0983119975a8bb9c726b8a006c089dc2">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#bc50017a35682db5202a7562c58898ea">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -2067,7 +2039,7 @@ Unregisters a function pointer to be callable given an identifier for the pointe
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/Source/<a class="el" href="AutoRPC_8h.html">AutoRPC.h</a><li>C:/RakNet/Source/AutoRPC.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:09 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:31 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

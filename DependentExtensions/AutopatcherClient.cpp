@@ -79,7 +79,7 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 		input->prePatchLength = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
 		input->postPatchFile=0;
-		input->prePatchFile= (char*) rakMalloc(input->prePatchLength);
+		input->prePatchFile= (char*) rakMalloc_Ex(input->prePatchLength, __FILE__, __LINE__);
 		fread(input->prePatchFile, input->prePatchLength, 1, fp);
 		fclose(fp);
 
@@ -163,24 +163,24 @@ public:
 		{
 			info = threadPool.GetInputAtIndex(i);
 			if (info->prePatchFile)
-				rakFree(info->prePatchFile);
+				rakFree_Ex(info->prePatchFile, __FILE__, __LINE__ );
 			if (info->postPatchFile)
-				rakFree(info->postPatchFile);
+				rakFree_Ex(info->postPatchFile, __FILE__, __LINE__ );
 			if (info->onFileStruct.fileData)
-				rakFree(info->onFileStruct.fileData);
-			RakNet::OP_DELETE(info);
+				rakFree_Ex(info->onFileStruct.fileData, __FILE__, __LINE__ );
+			RakNet::OP_DELETE(info, __FILE__, __LINE__);
 		}
 		threadPool.ClearInput();
 		for (i=0; i < threadPool.OutputSize(); i++)
 		{
 			info = threadPool.GetOutputAtIndex(i);
 			if (info->prePatchFile)
-				rakFree(info->prePatchFile);
+				rakFree_Ex(info->prePatchFile, __FILE__, __LINE__ );
 			if (info->postPatchFile)
-				rakFree(info->postPatchFile);
+				rakFree_Ex(info->postPatchFile, __FILE__, __LINE__ );
 			if (info->onFileStruct.fileData)
-				rakFree(info->onFileStruct.fileData);
-			RakNet::OP_DELETE(info);
+				rakFree_Ex(info->onFileStruct.fileData, __FILE__, __LINE__ );
+			RakNet::OP_DELETE(info, __FILE__, __LINE__);
 		}
 		threadPool.ClearOutput();
 	}
@@ -203,7 +203,7 @@ public:
 					else
 					{
 						// Regular file in use but we can write the temporary file.  Restart and copy it over the existing
-						rakFree(threadInfo->onFileStruct.fileData);
+						rakFree_Ex(threadInfo->onFileStruct.fileData, __FILE__, __LINE__ );
 						threadInfo->onFileStruct.fileData=threadInfo->postPatchFile;
 						onFileCallback->OnFile(&threadInfo->onFileStruct);
 						threadInfo->onFileStruct.fileData=0;
@@ -218,7 +218,7 @@ public:
 					}
 					else
 					{
-						rakFree(threadInfo->onFileStruct.fileData);
+						rakFree_Ex(threadInfo->onFileStruct.fileData, __FILE__, __LINE__ );
 						threadInfo->onFileStruct.fileData=threadInfo->postPatchFile;
 						threadInfo->onFileStruct.finalDataLength=threadInfo->postPatchLength;
 						onFileCallback->OnFile(&threadInfo->onFileStruct);
@@ -254,7 +254,7 @@ public:
 					}
 					else
 					{
-						rakFree(threadInfo->onFileStruct.fileData);
+						rakFree_Ex(threadInfo->onFileStruct.fileData, __FILE__, __LINE__ );
 						threadInfo->onFileStruct.fileData=threadInfo->postPatchFile;
 						onFileCallback->OnFile(&threadInfo->onFileStruct);
 						threadInfo->onFileStruct.fileData=0;
@@ -264,12 +264,12 @@ public:
 			}
 
 			if (threadInfo->prePatchFile)
-				rakFree(threadInfo->prePatchFile);
+				rakFree_Ex(threadInfo->prePatchFile, __FILE__, __LINE__ );
 			if (threadInfo->postPatchFile)
-				rakFree(threadInfo->postPatchFile);
+				rakFree_Ex(threadInfo->postPatchFile, __FILE__, __LINE__ );
 			if (threadInfo->onFileStruct.fileData)
-				rakFree(threadInfo->onFileStruct.fileData);
-			RakNet::OP_DELETE(threadInfo);
+				rakFree_Ex(threadInfo->onFileStruct.fileData, __FILE__, __LINE__ );
+			RakNet::OP_DELETE(threadInfo, __FILE__, __LINE__);
 		}
 
 		// If both input and output are empty, we are done.
@@ -304,7 +304,7 @@ public:
 	}
 	virtual bool OnFile(OnFileStruct *onFileStruct)
 	{
-		AutopatcherClientThreadInfo *inStruct = RakNet::OP_NEW<AutopatcherClientThreadInfo>();
+		AutopatcherClientThreadInfo *inStruct = RakNet::OP_NEW<AutopatcherClientThreadInfo>( __FILE__, __LINE__ );
 		inStruct->prePatchFile=0;
 		inStruct->postPatchFile=0;
 		memcpy(&(inStruct->onFileStruct), onFileStruct, sizeof(OnFileStruct));
@@ -333,7 +333,6 @@ public:
 };
 AutopatcherClient::AutopatcherClient()
 {
-	rakPeer=0;
 	serverId=UNASSIGNED_SYSTEM_ADDRESS;
 	serverIdIndex=-1;
 	applicationDirectory[0]=0;
@@ -387,12 +386,11 @@ bool AutopatcherClient::PatchApplication(const char *_applicationName, const cha
 {
     RakAssert(applicationName);
 	RakAssert(applicationDirectory);
-	RakAssert(rakPeer);
 	RakAssert(pathToRestartExe);
 	RakAssert(restartOutputFilename);
 
-	if (rakPeer->GetIndexFromSystemAddress(host)==-1)
-		return false;
+//	if (rakPeerInterface->GetIndexFromSystemAddress(host)==-1)
+//		return false;
 	if (IsPatching())
 		return false; // Already in the middle of patching.
 
@@ -410,17 +408,13 @@ bool AutopatcherClient::PatchApplication(const char *_applicationName, const cha
 	outBitStream.Write((unsigned char)ID_AUTOPATCHER_GET_CHANGELIST_SINCE_DATE);
 	stringCompressor->EncodeString(applicationName, 512, &outBitStream);
 	stringCompressor->EncodeString(lastUpdateDate, 64, &outBitStream);
-    rakPeer->Send(&outBitStream, priority, RELIABLE_ORDERED, orderingChannel, host, false);
+    SendUnified(&outBitStream, priority, RELIABLE_ORDERED, orderingChannel, host, false);
 	return true;
-}
-void AutopatcherClient::OnAttach(RakPeerInterface *peer)
-{
-	rakPeer=peer;
 }
 #ifdef _MSC_VER
 #pragma warning( disable : 4100 ) // warning C4100: <variable name> : unreferenced formal parameter
 #endif
-void AutopatcherClient::Update(RakPeerInterface *peer)
+void AutopatcherClient::Update(void)
 {
 	if (processThreadCompletion)
 	{
@@ -432,7 +426,7 @@ void AutopatcherClient::Update(RakPeerInterface *peer)
 		{
 			RakNet::BitStream outBitStream;
 			AutopatcherClientCallback *transferCallback;
-			transferCallback = RakNet::OP_NEW<AutopatcherClientCallback>();
+			transferCallback = RakNet::OP_NEW<AutopatcherClientCallback>( __FILE__, __LINE__ );
 			strcpy(transferCallback->applicationDirectory, applicationDirectory);
 			transferCallback->onFileCallback=userCB;
 			transferCallback->client=this;
@@ -443,17 +437,17 @@ void AutopatcherClient::Update(RakPeerInterface *peer)
 			outBitStream.Write(setId);
 			stringCompressor->EncodeString(applicationName, 512, &outBitStream);
 			redownloadList.Serialize(&outBitStream);
-			rakPeer->Send(&outBitStream, priority, RELIABLE_ORDERED, orderingChannel, serverId, false);
+			SendUnified(&outBitStream, priority, RELIABLE_ORDERED, orderingChannel, serverId, false);
 			redownloadList.Clear();
 		}
 		else if (copyAndRestartList.fileList.Size())
 		{
-			Packet *p = peer->AllocatePacket(1);
+			Packet *p = AllocatePacketUnified(1);
 			p->bitSize=p->length*8;
 			p->data[0]=ID_AUTOPATCHER_RESTART_APPLICATION;
 			p->systemAddress=serverId;
 			p->systemIndex=serverIdIndex;
-			peer->PushBackPacket(p, false);
+			PushBackPacketUnified(p,false);
 
 			FILE *fp;
 			fp = fopen(copyOnRestartOut, "wt");
@@ -474,49 +468,49 @@ void AutopatcherClient::Update(RakPeerInterface *peer)
 		}
 		else
 		{
-			Packet *p = peer->AllocatePacket(1);
+			Packet *p = AllocatePacketUnified(1);
 			p->bitSize=p->length*8;
 			p->data[0]=ID_AUTOPATCHER_FINISHED;
 			p->systemAddress=serverId;
 			p->systemIndex=serverIdIndex;
-			peer->PushBackPacket(p, false);
+			PushBackPacketUnified(p,false);
 		}
 	}
 }
-PluginReceiveResult AutopatcherClient::OnReceive(RakPeerInterface *peer, Packet *packet)
+void AutopatcherClient::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+{
+	if (systemAddress==serverId)
+		Clear();
+}
+PluginReceiveResult AutopatcherClient::OnReceive(Packet *packet)
 {
 	switch (packet->data[0]) 
 	{
-	case ID_CONNECTION_LOST:
-	case ID_DISCONNECTION_NOTIFICATION:
-		if (packet->systemAddress==serverId)
-			Clear();
-		return RR_CONTINUE_PROCESSING;
 	case ID_AUTOPATCHER_CREATION_LIST:
-		return OnCreationList(peer, packet);
+		return OnCreationList(packet);
 	case ID_AUTOPATCHER_DELETION_LIST:
-		OnDeletionList(peer, packet);
+		OnDeletionList(packet);
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 	case ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR:
 		fileListTransfer->RemoveReceiver(serverId);
 		Clear();
 		return RR_CONTINUE_PROCESSING;
 	case ID_AUTOPATCHER_FINISHED_INTERNAL:
-		return OnDownloadFinishedInternal(peer, packet);
+		return OnDownloadFinishedInternal(packet);
 	case ID_AUTOPATCHER_FINISHED:
-		return OnDownloadFinished(peer, packet);
+		return OnDownloadFinished(packet);
 	}
 	return RR_CONTINUE_PROCESSING;
 }
 #ifdef _MSC_VER
 #pragma warning( disable : 4100 ) // warning C4100: <variable name> : unreferenced formal parameter
 #endif
-void AutopatcherClient::OnShutdown(RakPeerInterface *peer)
+void AutopatcherClient::OnShutdown(void)
 {
 	// TODO
 }
 
-PluginReceiveResult AutopatcherClient::OnCreationList(RakPeerInterface *peer, Packet *packet)
+PluginReceiveResult AutopatcherClient::OnCreationList(Packet *packet)
 {
 	RakAssert(fileListTransfer);
 	if (packet->systemAddress!=serverId)
@@ -543,7 +537,7 @@ PluginReceiveResult AutopatcherClient::OnCreationList(RakPeerInterface *peer, Pa
 
 	// Prepare the transfer plugin to get a file list.
 	AutopatcherClientCallback *transferCallback;
-	transferCallback = RakNet::OP_NEW<AutopatcherClientCallback>();
+	transferCallback = RakNet::OP_NEW<AutopatcherClientCallback>( __FILE__, __LINE__ );
 	strcpy(transferCallback->applicationDirectory, applicationDirectory);
 	transferCallback->onFileCallback=userCB;
 	transferCallback->client=this;
@@ -554,11 +548,11 @@ PluginReceiveResult AutopatcherClient::OnCreationList(RakPeerInterface *peer, Pa
 	outBitStream.Write(setId);
 	stringCompressor->EncodeString(applicationName, 512, &outBitStream);
 	missingOrChanged.Serialize(&outBitStream);
-	rakPeer->Send(&outBitStream, priority, RELIABLE_ORDERED, orderingChannel, packet->systemAddress, false);
+	SendUnified(&outBitStream, priority, RELIABLE_ORDERED, orderingChannel, packet->systemAddress, false);
 
 	return RR_STOP_PROCESSING_AND_DEALLOCATE; // Absorb this message
 }
-void AutopatcherClient::OnDeletionList(RakPeerInterface *peer, Packet *packet)
+void AutopatcherClient::OnDeletionList(Packet *packet)
 {
 	if (packet->systemAddress!=serverId)
 		return;
@@ -571,7 +565,7 @@ void AutopatcherClient::OnDeletionList(RakPeerInterface *peer, Packet *packet)
 		return;
 	fileList.DeleteFiles(applicationDirectory);
 }
-PluginReceiveResult AutopatcherClient::OnDownloadFinished(RakPeerInterface *peer, Packet *packet)
+PluginReceiveResult AutopatcherClient::OnDownloadFinished(Packet *packet)
 {
 	RakNet::BitStream inBitStream(packet->data, packet->length, false);
 	inBitStream.IgnoreBits(8);
@@ -584,7 +578,7 @@ PluginReceiveResult AutopatcherClient::OnDownloadFinished(RakPeerInterface *peer
 
 	return RR_CONTINUE_PROCESSING;
 }
-PluginReceiveResult AutopatcherClient::OnDownloadFinishedInternal(RakPeerInterface *peer, Packet *packet)
+PluginReceiveResult AutopatcherClient::OnDownloadFinishedInternal(Packet *packet)
 {
 	RakNet::BitStream inBitStream(packet->data, packet->length, false);
 	inBitStream.IgnoreBits(8);
@@ -598,11 +592,11 @@ PluginReceiveResult AutopatcherClient::OnDownloadFinishedInternal(RakPeerInterfa
 void AutopatcherClient::CopyAndRestart(const char *filePath)
 {
 	// We weren't able to write applicationDirectory + filePath so we wrote applicationDirectory + filePath + COPY_ON_RESTART_EXTENSION instead
-	copyAndRestartList.AddFile(filePath, 0, 0, 0, FileListNodeContext(0,0));
+	copyAndRestartList.AddFile(filePath,filePath, 0, 0, 0, FileListNodeContext(0,0));
 }
 void AutopatcherClient::Redownload(const char *filePath)
 {
-	redownloadList.AddFile(filePath, 0, 0, 0, FileListNodeContext(0,0));
+	redownloadList.AddFile(filePath,filePath, 0, 0, 0, FileListNodeContext(0,0));
 }
 
 #ifdef _MSC_VER

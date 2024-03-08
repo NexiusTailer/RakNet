@@ -39,7 +39,7 @@ public:
 	void CloseConnection( SystemAddress systemAddress );
 	Packet* Receive( void );
 	void DeallocatePacket( Packet *packet );
-	SystemAddress HasNewConnection(void);
+	SystemAddress HasNewIncomingConnection(void);
 	SystemAddress HasLostConnection(void);
 	CommandParserInterface* GetCommandParser(void);
 	void SetSendSuffix(const char *suffix);

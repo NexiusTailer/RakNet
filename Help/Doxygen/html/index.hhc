@@ -12,7 +12,7 @@
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Modules"><param name="Local" value="modules.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="PluginInterface"><param name="Local" value="group__PLUGINS__GROUP.html"><param name="ImageNumber" value="1"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="PluginInterface2"><param name="Local" value="group__PLUGINS__GROUP.html"><param name="ImageNumber" value="1"></OBJECT>
     <UL>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="AutoRPC"><param name="Local" value="group__AUTO__RPC__GROUP.html"><param name="ImageNumber" value="11"></OBJECT>
       <UL>
@@ -246,11 +246,13 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="MemoryCompressor"><param name="Local" value="classMemoryCompressor.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::MemoryPool< MemoryBlockType >"><param name="Local" value="classDataStructures_1_1MemoryPool.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="MessageFilter"><param name="Local" value="classMessageFilter.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::MLKeyRef< templateType >"><param name="Local" value="classDataStructures_1_1MLKeyRef.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::ModeratorChanged_Notification"><param name="Local" value="structRakNet_1_1ModeratorChanged__Notification.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RankingServerDBSpec::ModifyTrustedIPList_Data"><param name="Local" value="classRankingServerDBSpec_1_1ModifyTrustedIPList__Data.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="ModifyTrustedIPList_PostgreSQLImpl"><param name="Local" value="classModifyTrustedIPList__PostgreSQLImpl.html"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="NatPunchthrough"><param name="Local" value="classNatPunchthrough.html"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="NatPunchthroughLogger"><param name="Local" value="classNatPunchthroughLogger.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::Multilist< _MultilistType, _DataType, _KeyType, _IndexType >"><param name="Local" value="classDataStructures_1_1Multilist.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="NatPunchthroughClient"><param name="Local" value="classNatPunchthroughClient.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="NatPunchthroughServer"><param name="Local" value="classNatPunchthroughServer.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="NetworkIDManager"><param name="Local" value="classNetworkIDManager.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="NetworkIDObject"><param name="Local" value="classNetworkIDObject.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::OrderedList< key_type, data_type, default_comparison_function >"><param name="Local" value="classDataStructures_1_1OrderedList.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -260,7 +262,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="PacketLogger"><param name="Local" value="classPacketLogger.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::Page< KeyType, DataType, order >"><param name="Local" value="structDataStructures_1_1Page.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RankingServerDBSpec::PairedKeyDbId"><param name="Local" value="structRankingServerDBSpec_1_1PairedKeyDbId.html"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="PluginInterface"><param name="Local" value="classPluginInterface.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="PluginInterface2"><param name="Local" value="classPluginInterface2.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::Queue< queue_type >"><param name="Local" value="classDataStructures_1_1Queue.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::QueueLinkedList< QueueType >"><param name="Local" value="classDataStructures_1_1QueueLinkedList.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::QuickJoinEnteredRoom_Notification"><param name="Local" value="structRakNet_1_1QuickJoinEnteredRoom__Notification.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -533,12 +535,17 @@
     <UL>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::LobbyServerPostgreSQL"><param name="Local" value="classRakNet_1_1LobbyServerPostgreSQL.html"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::LobbyServer"><param name="Local" value="classRakNet_1_1LobbyServer.html"><param name="ImageNumber" value="1"></OBJECT>
+    <UL>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::LobbyServerPostgreSQL"><param name="Local" value="classRakNet_1_1LobbyServerPostgreSQL.html"><param name="ImageNumber" value="11"></OBJECT>
+    </UL>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="LogCommandParser::SystemAddressAndChannel"><param name="Local" value="structLogCommandParser_1_1SystemAddressAndChannel.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="ltp_params"><param name="Local" value="structltp__params.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::Map< key_type, data_type, key_comparison_func >"><param name="Local" value="classDataStructures_1_1Map.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="MemoryCompressor"><param name="Local" value="classMemoryCompressor.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::MemoryPool< MemoryBlockType >"><param name="Local" value="classDataStructures_1_1MemoryPool.html"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="NatPunchthroughLogger"><param name="Local" value="classNatPunchthroughLogger.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::MLKeyRef< templateType >"><param name="Local" value="classDataStructures_1_1MLKeyRef.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::Multilist< _MultilistType, _DataType, _KeyType, _IndexType >"><param name="Local" value="classDataStructures_1_1Multilist.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="NetworkIDManager"><param name="Local" value="classNetworkIDManager.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="NetworkIDObject"><param name="Local" value="classNetworkIDObject.html"><param name="ImageNumber" value="1"></OBJECT>
     <UL>
@@ -549,7 +556,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="Packet"><param name="Local" value="structPacket.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::Page< KeyType, DataType, order >"><param name="Local" value="structDataStructures_1_1Page.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RankingServerDBSpec::PairedKeyDbId"><param name="Local" value="structRankingServerDBSpec_1_1PairedKeyDbId.html"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="PluginInterface"><param name="Local" value="classPluginInterface.html"><param name="ImageNumber" value="1"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="PluginInterface2"><param name="Local" value="classPluginInterface2.html"><param name="ImageNumber" value="1"></OBJECT>
     <UL>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="ConnectionGraph"><param name="Local" value="classConnectionGraph.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="DirectoryDeltaTransfer"><param name="Local" value="classDirectoryDeltaTransfer.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -559,7 +566,8 @@
     <LI><OBJECT type="text/sitemap"><param name="Name" value="LightweightDatabaseClient"><param name="Local" value="classLightweightDatabaseClient.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="LightweightDatabaseServer"><param name="Local" value="classLightweightDatabaseServer.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="MessageFilter"><param name="Local" value="classMessageFilter.html"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="NatPunchthrough"><param name="Local" value="classNatPunchthrough.html"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="NatPunchthroughClient"><param name="Local" value="classNatPunchthroughClient.html"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="NatPunchthroughServer"><param name="Local" value="classNatPunchthroughServer.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="PacketLogger"><param name="Local" value="classPacketLogger.html"><param name="ImageNumber" value="1"></OBJECT>
       <UL>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="PacketConsoleLogger"><param name="Local" value="classPacketConsoleLogger.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -574,11 +582,6 @@
         <UL>
         <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::Lobby2Server_PGSQL"><param name="Local" value="classRakNet_1_1Lobby2Server__PGSQL.html"><param name="ImageNumber" value="11"></OBJECT>
         </UL>
-      </UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::LobbyClientPC"><param name="Local" value="classRakNet_1_1LobbyClientPC.html"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::LobbyServer"><param name="Local" value="classRakNet_1_1LobbyServer.html"><param name="ImageNumber" value="1"></OBJECT>
-      <UL>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::LobbyServerPostgreSQL"><param name="Local" value="classRakNet_1_1LobbyServerPostgreSQL.html"><param name="ImageNumber" value="11"></OBJECT>
       </UL>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::ReplicaManager2"><param name="Local" value="classRakNet_1_1ReplicaManager2.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::RoomsPlugin"><param name="Local" value="classRakNet_1_1RoomsPlugin.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -762,7 +765,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/DependentExtensions/AutopatcherMySQLRepository/AutopatcherMySQLRepository.h"><param name="Local" value="AutopatcherMySQLRepository_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/DependentExtensions/AutopatcherPostgreRepository/AutopatcherPostgreRepository.cpp"><param name="Local" value="AutopatcherPostgreRepository_8cpp.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/DependentExtensions/AutopatcherPostgreRepository/AutopatcherPostgreRepository.h"><param name="Local" value="AutopatcherPostgreRepository_8h.html"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/DependentExtensions/Lobby/LobbyClientInterface.h"><param name="Local" value="DependentExtensions_2Lobby_2LobbyClientInterface_8h.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/DependentExtensions/Lobby/LobbyClientInterface.h"><param name="Local" value="LobbyClientInterface_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/DependentExtensions/Lobby/LobbyClientPC.h"><param name="Local" value="LobbyClientPC_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/DependentExtensions/Lobby/LobbyDBSpec.h"><param name="Local" value="LobbyDBSpec_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/DependentExtensions/Lobby/LobbyPCCommon.h"><param name="Local" value="LobbyPCCommon_8h.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -854,6 +857,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/DS_LinkedList.h"><param name="Local" value="DS__LinkedList_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/DS_List.h"><param name="Local" value="DS__List_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/DS_Map.h"><param name="Local" value="DS__Map_8h.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/DS_Multilist.h"><param name="Local" value="DS__Multilist_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/DS_OrderedChannelHeap.h"><param name="Local" value="DS__OrderedChannelHeap_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/DS_OrderedList.h"><param name="Local" value="DS__OrderedList_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/DS_Queue.h"><param name="Local" value="DS__Queue_8h.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -879,18 +883,22 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/MessageFilter.h"><param name="Local" value="MessageFilter_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/MessageIdentifiers.h"><param name="Local" value="MessageIdentifiers_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/MTUSize.h"><param name="Local" value="MTUSize_8h.html"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/NatPunchthrough.h"><param name="Local" value="NatPunchthrough_8h.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/NatPunchthroughClient.h"><param name="Local" value="NatPunchthroughClient_8h.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/NatPunchthroughServer.h"><param name="Local" value="NatPunchthroughServer_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/NetworkIDManager.cpp"><param name="Local" value="NetworkIDManager_8cpp.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/NetworkIDManager.h"><param name="Local" value="NetworkIDManager_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/NetworkIDObject.cpp"><param name="Local" value="NetworkIDObject_8cpp.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/NetworkIDObject.h"><param name="Local" value="NetworkIDObject_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/PacketConsoleLogger.h"><param name="Local" value="PacketConsoleLogger_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/PacketFileLogger.h"><param name="Local" value="PacketFileLogger_8h.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/PacketizedTCP.h"><param name="Local" value="PacketizedTCP_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/PacketLogger.cpp"><param name="Local" value="PacketLogger_8cpp.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/PacketLogger.h"><param name="Local" value="PacketLogger_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/PacketPriority.h"><param name="Local" value="PacketPriority_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/PluginInterface.cpp"><param name="Local" value="PluginInterface_8cpp.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/PluginInterface.h"><param name="Local" value="PluginInterface_8h.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/PluginInterface2.cpp"><param name="Local" value="PluginInterface2_8cpp.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/PluginInterface2.h"><param name="Local" value="PluginInterface2_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/RakMemoryOverride.h"><param name="Local" value="RakMemoryOverride_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/RakNetCommandParser.h"><param name="Local" value="RakNetCommandParser_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/RakNetStatistics.cpp"><param name="Local" value="RakNetStatistics_8cpp.html"><param name="ImageNumber" value="11"></OBJECT>

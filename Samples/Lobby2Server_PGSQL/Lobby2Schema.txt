@@ -553,7 +553,8 @@ CREATE TABLE lobby2.users
   passwordrecoveryanswer character varying(128) NOT NULL,
   caption1 character varying(128),
   caption2 character varying(128),
-  dateofbirth date
+  dateofbirth date,
+  binaryData bytea
 )
 WITH (OIDS=FALSE);
 

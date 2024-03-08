@@ -47,6 +47,9 @@ void GetFriendHandlesByStatus(unsigned int callerUserId, RakNet::RakString statu
 void SendEmail(DataStructures::List<RakNet::RakString> &recipientNames, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, BinaryDataBlock *binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql);
 void SendEmail(DataStructures::List<unsigned int> &targetUserIds, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, BinaryDataBlock *binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql);
 void SendEmail(unsigned int targetUserId, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, BinaryDataBlock *binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql);
+int GetActiveClanCount(unsigned int userId, PostgreSQLInterface *pgsql);
+bool CreateAccountParametersFailed( CreateAccountParameters &createAccountParameters, RakNet::Lobby2ResultCode &resultCode, Lobby2ServerCommand *command, PostgreSQLInterface *pgsql);
+void UpdateAccountFromMissingCreationParameters(CreateAccountParameters &createAccountParameters, unsigned int userPrimaryKey, Lobby2ServerCommand *command, PostgreSQLInterface *pgsql);
 
 __L2_MSG_DB_HEADER(Platform_Startup, PGSQL) {virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface ) {return false;}};
 __L2_MSG_DB_HEADER(Platform_Shutdown, PGSQL) {virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface ) {return false;}};
@@ -112,8 +115,16 @@ __L2_MSG_DB_HEADER(Clans_GetMemberProperties, PGSQL){	virtual bool ServerDBImpl(
 __L2_MSG_DB_HEADER(Clans_ChangeHandle, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Clans_Leave, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Clans_Get, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_SendJoinInvitation, PGSQL){ virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_WithdrawJoinInvitation, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_AcceptJoinInvitation, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_RejectJoinInvitation, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_DownloadInvitationList, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_SendJoinRequest, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_WithdrawJoinRequest, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 
-__L2_MSG_DB_HEADER(Clans_SendJoinInvitation, PGSQL)
+
+__L2_MSG_DB_HEADER(Clans_AcceptJoinRequest, PGSQL)
 {
 	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 	{
@@ -123,7 +134,7 @@ __L2_MSG_DB_HEADER(Clans_SendJoinInvitation, PGSQL)
 		unsigned int clanId = GetClanIdFromHandle(clanHandle, pgsql);
 		if (clanId==0)
 		{
-			resultCode=L2RC_Clans_SendJoinInvitation_UNKNOWN_CLAN;
+			resultCode=L2RC_Clans_AcceptJoinRequest_UNKNOWN_CLAN;
 			return true;
 		}
 
@@ -131,29 +142,28 @@ __L2_MSG_DB_HEADER(Clans_SendJoinInvitation, PGSQL)
 		RakNet::ClanMemberState clanMemberState = GetClanMemberState(clanId, command->callerUserId, &isSubleader, pgsql);
 		if (clanMemberState!=CMD_ACTIVE)
 		{
-			resultCode=L2RC_Clans_SendJoinInvitation_NOT_IN_CLAN;
+			resultCode=L2RC_Clans_AcceptJoinRequest_NOT_IN_CLAN;
 			return true;
 		}
 
 		unsigned int clanLeaderId = GetClanLeaderId(clanId, pgsql);
-
 		if (isSubleader==false && clanLeaderId!=command->callerUserId)
 		{
-			resultCode=L2RC_Clans_SendJoinInvitation_MUST_BE_LEADER_OR_SUBLEADER;
+			resultCode=L2RC_Clans_AcceptJoinRequest_MUST_BE_LEADER_OR_SUBLEADER;
 			return true;
 		}
 
 		// Does target already have an entry?
-		unsigned int targetId = RakNet::GetUserRowFromHandle(targetHandle, pgsql);
+		unsigned int targetId = RakNet::GetUserRowFromHandle(requestingUserHandle, pgsql);
 		if (targetId==0)
 		{
-			resultCode=L2RC_Clans_SendJoinInvitation_UNKNOWN_TARGET_HANDLE;
+			resultCode=L2RC_Clans_AcceptJoinRequest_UNKNOWN_TARGET_HANDLE;
 			return true;
 		}
 
 		if (targetId==command->callerUserId)
 		{
-			resultCode=L2RC_Clans_SendJoinInvitation_CANNOT_PERFORM_ON_SELF;
+			resultCode=L2RC_Clans_AcceptJoinRequest_CANNOT_PERFORM_ON_SELF;
 			return true;
 		}
 
@@ -162,198 +172,38 @@ __L2_MSG_DB_HEADER(Clans_SendJoinInvitation, PGSQL)
 		if (targetClanMemberState==CMD_ACTIVE)
 		{
 			// active member
-			resultCode=L2RC_Clans_SendJoinInvitation_TARGET_ALREADY_IN_CLAN;
+			resultCode=L2RC_Clans_AcceptJoinRequest_TARGET_ALREADY_IN_CLAN;
 			return true;
 		}
 
 		if (targetClanMemberState==CMD_BANNED)
 		{
-			// banned
-			resultCode=L2RC_Clans_SendJoinInvitation_TARGET_IS_BANNED;
+			resultCode=L2RC_Clans_AcceptJoinRequest_TARGET_IS_BANNED;
 			return true;
 		}
 
-		if (targetClanMemberState==CMD_JOIN_INVITED)
+		if (targetClanMemberState!=CMD_JOIN_REQUESTED)
 		{
-			// already invited
-			resultCode=L2RC_Clans_SendJoinInvitation_REQUEST_ALREADY_PENDING;
+			resultCode=L2RC_Clans_AcceptJoinRequest_REQUEST_NOT_PENDING;
 			return true;
 		}
 
-		if (targetClanMemberState==CMD_JOIN_REQUESTED)
-		{
-			resultCode=L2RC_Clans_SendJoinInvitation_TARGET_ALREADY_REQUESTED;
-			// already requested
-			return true;
-		}
-
-		// Add row to lobby2.clanMembers
-		result = pgsql->QueryVaridic(
-			"INSERT INTO lobby2.clanMembers (userId_fk, clanId_fk, isSubleader, memberState_fk) VALUES "
-			"(%i, %i, false, (SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_JoinInvited') );"
-			,targetId, clanId);
+		// Change status to clan member
+		result = pgsql->QueryVaridic("UPDATE lobby2.clanMembers SET memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active') WHERE userId_fk=%i AND clanId_fk=%i", targetId, clanId);
 		PQclear(result);
 
-		// Send email to target
-		SendEmail(targetId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_SendJoinInvitation", pgsql);
-
-		// Send notification to target, leader, subleaders about this invite
-		Notification_Clans_PendingJoinStatus *notification;
-		notification = (Notification_Clans_PendingJoinStatus *) command->server->GetMessageFactory()->Alloc(L2MID_Notification_Clans_PendingJoinStatus);
-		notification->clanHandle=clanHandle;
-		notification->targetHandle=targetHandle;
-		notification->sourceHandle=command->callingUserName;		
-		notification->majorOp=Notification_Clans_PendingJoinStatus::JOIN_CLAN_INVITATION;
-		notification->minorOp=Notification_Clans_PendingJoinStatus::JOIN_SENT;
-		command->server->AddOutputFromThread(notification, targetId, ""); // target
-
-		DataStructures::List<ClanMemberDescriptor> clanMembers;
-		GetClanMembers(clanId, clanMembers, pgsql);
-		for (unsigned int i=0; i < clanMembers.Size(); i++)
-		{
-			if (clanMembers[i].memberState!=CMD_ACTIVE)
-				continue;
-			if (clanMembers[i].isSubleader==false && clanMembers[i].userId!=clanLeaderId)
-				continue;
-
-			notification = (Notification_Clans_PendingJoinStatus *) command->server->GetMessageFactory()->Alloc(L2MID_Notification_Clans_PendingJoinStatus);
-			notification->clanHandle=clanHandle;
-			notification->targetHandle=targetHandle;
-			notification->sourceHandle=command->callingUserName;		
-			notification->majorOp=Notification_Clans_PendingJoinStatus::JOIN_CLAN_INVITATION;
-			notification->minorOp=Notification_Clans_PendingJoinStatus::JOIN_SENT;
-			command->server->AddOutputFromThread(notification, clanMembers[i].userId, ""); // subleader
-
-		}
-
-		resultCode=L2RC_SUCCESS;
-		return true;
-	}
-};
-
-__L2_MSG_DB_HEADER(Clans_WithdrawJoinInvitation, PGSQL)
-{
-	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
-	{
-		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result;
-
-		unsigned int clanId = GetClanIdFromHandle(clanHandle, pgsql);
-		if (clanId==0)
-		{
-			resultCode=L2RC_Clans_WithdrawJoinInvitation_UNKNOWN_CLAN;
-			return true;
-		}
-
-		// Does target already have an entry?
-		unsigned int targetId = RakNet::GetUserRowFromHandle(targetHandle, pgsql);
-		if (targetId==0)
-		{
-			resultCode=L2RC_Clans_WithdrawJoinInvitation_UNKNOWN_TARGET_HANDLE;
-			return true;
-		}
-
-		if (targetId==command->callerUserId)
-		{
-			resultCode=L2RC_Clans_WithdrawJoinInvitation_CANNOT_PERFORM_ON_SELF;
-			return true;
-		}
-
-		bool isSubleader;
-		RakNet::ClanMemberState clanMemberState = GetClanMemberState(clanId, targetId, &isSubleader, pgsql);
-		if (clanMemberState!=CMD_JOIN_INVITED)
-		{
-			resultCode=L2RC_Clans_WithdrawJoinInvitation_NO_SUCH_INVITATION_EXISTS;
-			return true;
-		}
-
-		unsigned int clanLeaderId = GetClanLeaderId(clanId, pgsql);
-		if (isSubleader==false && clanLeaderId!=command->callerUserId)
-		{
-			resultCode=L2RC_Clans_WithdrawJoinInvitation_MUST_BE_LEADER_OR_SUBLEADER;
-			return true;
-		}
-
-		result = pgsql->QueryVaridic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", targetId, clanId);
-		PQclear(result);
-
-		// Send email to target
-		SendEmail(targetId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_WithdrawJoinInvitation", pgsql);
-
-		// Send notification to target, leader, subleaders
-		Notification_Clans_PendingJoinStatus *notification;
-		notification = (Notification_Clans_PendingJoinStatus *) command->server->GetMessageFactory()->Alloc(L2MID_Notification_Clans_PendingJoinStatus);
-		notification->clanHandle=clanHandle;
-		notification->targetHandle=targetHandle;
-		notification->sourceHandle=command->callingUserName;		
-		notification->majorOp=Notification_Clans_PendingJoinStatus::JOIN_CLAN_INVITATION;
-		notification->minorOp=Notification_Clans_PendingJoinStatus::JOIN_WITHDRAWN;
-		command->server->AddOutputFromThread(notification, targetId, ""); // target
-
-		
-		DataStructures::List<ClanMemberDescriptor> clanMembers;
-		GetClanMembers(clanId, clanMembers, pgsql);
-		for (unsigned int i=0; i < clanMembers.Size(); i++)
-		{
-			if (clanMembers[i].memberState!=CMD_ACTIVE)
-				continue;
-			if (clanMembers[i].isSubleader==false && clanMembers[i].userId!=clanLeaderId)
-				continue;
-			if (command->callerUserId==clanMembers[i].userId)
-				continue;
-
-			notification = (Notification_Clans_PendingJoinStatus *) command->server->GetMessageFactory()->Alloc(L2MID_Notification_Clans_PendingJoinStatus);
-			notification->clanHandle=clanHandle;
-			notification->targetHandle=targetHandle;
-			notification->sourceHandle=command->callingUserName;		
-			notification->majorOp=Notification_Clans_PendingJoinStatus::JOIN_CLAN_INVITATION;
-			notification->minorOp=Notification_Clans_PendingJoinStatus::JOIN_WITHDRAWN;
-			command->server->AddOutputFromThread(notification, clanMembers[i].userId, ""); // subleader
-
-		}
-
-		resultCode=L2RC_SUCCESS;
-		return true;
-	}
-};
-
-__L2_MSG_DB_HEADER(Clans_AcceptJoinInvitation, PGSQL)
-{
-	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
-	{
-		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result;
-
+		// Do AFTER the update in case another thread also added to a clan
 		if (failIfAlreadyInClan)
 		{
-			result = pgsql->QueryVaridic("SELECT clanMemberId_pk FROM lobby2.clanMembers WHERE userId_fk=%i AND memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active')", command->callerUserId);
-			int numRowsReturned = PQntuples(result);
-			PQclear(result);
-			if (numRowsReturned>0)
+			int count = GetActiveClanCount(targetId, pgsql);
+			if (count>1)
 			{
-				resultCode=L2RC_Clans_AcceptJoinInvitation_ALREADY_IN_CLAN;
+				result = pgsql->QueryVaridic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i;", targetId, clanId);
+				PQclear(result);
+				resultCode=L2RC_Clans_AcceptJoinRequest_TARGET_ALREADY_IN_DIFFERENT_CLAN;
 				return true;
 			}
 		}
-
-		unsigned int clanId = GetClanIdFromHandle(clanHandle, pgsql);
-		if (clanId==0)
-		{
-			resultCode=L2RC_Clans_AcceptJoinInvitation_UNKNOWN_CLAN;
-			return true;
-		}
-
-		bool isSubleader;
-		RakNet::ClanMemberState clanMemberState = GetClanMemberState(clanId, command->callerUserId, &isSubleader, pgsql);
-		if (clanMemberState!=CMD_JOIN_INVITED)
-		{
-			resultCode=L2RC_Clans_AcceptJoinInvitation_NO_SUCH_INVITATION_EXISTS;
-			return true;
-		}
-
-		// Change status from invited to clan member
-		result = pgsql->QueryVaridic("UPDATE lobby2.clanMembers SET memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active') WHERE userId_fk=%i AND clanId_fk=%i", command->callerUserId, clanId);
-		PQclear(result);
 
 		// Notify all members about this new member
 		DataStructures::List<ClanMemberDescriptor> clanMembers;
@@ -367,250 +217,13 @@ __L2_MSG_DB_HEADER(Clans_AcceptJoinInvitation, PGSQL)
 
 			Notification_Clans_NewClanMember *notification = (Notification_Clans_NewClanMember *) command->server->GetMessageFactory()->Alloc(L2MID_Notification_Clans_NewClanMember);
 			notification->clanHandle=clanHandle;
-			notification->targetHandle=command->callingUserName;	
+			notification->targetHandle=requestingUserHandle;	
 			command->server->AddOutputFromThread(notification, clanMembers[i].userId, ""); // subleader
 
 		}
 
-		unsigned int clanLeaderId = GetClanLeaderId(clanId, pgsql);
-
-		// Send email to leader
-		SendEmail(clanLeaderId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_AcceptJoinInvitation", pgsql);
-
-		resultCode=L2RC_SUCCESS;
-		return true;
-	}
-};
-
-__L2_MSG_DB_HEADER(Clans_RejectJoinInvitation, PGSQL)
-{
-	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
-	{
-		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result;
-
-		unsigned int clanId = GetClanIdFromHandle(clanHandle, pgsql);
-		if (clanId==0)
-		{
-			resultCode=L2RC_Clans_RejectJoinInvitation_UNKNOWN_CLAN;
-			return true;
-		}
-
-		bool isSubleader;
-		RakNet::ClanMemberState clanMemberState = GetClanMemberState(clanId, command->callerUserId, &isSubleader, pgsql);
-		if (clanMemberState!=CMD_JOIN_INVITED)
-		{
-			resultCode=L2RC_Clans_RejectJoinInvitation_NO_SUCH_INVITATION_EXISTS;
-			return true;
-		}
-
-		result = pgsql->QueryVaridic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i", command->callerUserId, clanId);
-		PQclear(result);
-
-		unsigned int clanLeaderId = GetClanLeaderId(clanId, pgsql);
-
-		// Send email to leader
-		SendEmail(clanLeaderId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_RejectJoinInvitation", pgsql);
-
-		// Subleader and leader notification
-		DataStructures::List<ClanMemberDescriptor> clanMembers;
-		GetClanMembers(clanId, clanMembers, pgsql);
-		for (unsigned int i=0; i < clanMembers.Size(); i++)
-		{
-			if (clanMembers[i].memberState!=CMD_ACTIVE)
-				continue;
-			if (clanMembers[i].isSubleader==false && clanMembers[i].userId!=clanLeaderId)
-				continue;
-
-			Notification_Clans_PendingJoinStatus *notification = (Notification_Clans_PendingJoinStatus *) command->server->GetMessageFactory()->Alloc(L2MID_Notification_Clans_PendingJoinStatus);
-			notification->clanHandle=clanHandle;
-			notification->sourceHandle=command->callingUserName;		
-			notification->majorOp=Notification_Clans_PendingJoinStatus::JOIN_CLAN_INVITATION;
-			notification->minorOp=Notification_Clans_PendingJoinStatus::JOIN_WITHDRAWN;
-			command->server->AddOutputFromThread(notification, clanMembers[i].userId, ""); // subleader
-
-		}
-
-		resultCode=L2RC_SUCCESS;
-		return true;
-	}
-};
-
-__L2_MSG_DB_HEADER(Clans_DownloadInvitationList, PGSQL)
-{
-	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
-	{
-		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result = pgsql->QueryVaridic(
-			" SELECT clanHandle FROM lobby2.clans INNER JOIN "
-			" (SELECT clanId_fk FROM lobby2.clanMembers WHERE userId_fk=%i AND memberState_fk = "
-			" (SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_JoinInvited') ) as tbl1 "
-			" ON tbl1.clanId_fk = lobby2.clans.clanId_pk;", command->callerUserId);
-
-		if (result==0)
-		{
-			PQclear(result);
-			resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
-			return true;
-		}
-		int numRowsReturned = PQntuples(result);
-		int i;
-		for (i=0; i < numRowsReturned; i++)
-		{
-			OpenInvite oi;
-			PostgreSQLInterface::PQGetValueFromBinary(&oi.clanHandle, result, i, "clanHandle");
-			invitations.Insert(oi);
-		}
-
-		PQclear(result);
-		resultCode=L2RC_SUCCESS;
-		return true;
-	}
-};
-
-__L2_MSG_DB_HEADER(Clans_SendJoinRequest, PGSQL)
-{
-	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
-	{
-		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result;
-
-		clanJoined=false;
-		unsigned int clanId = GetClanIdFromHandle(clanHandle, pgsql);
-		if (clanId==0)
-		{
-			resultCode=L2RC_Clans_SendJoinRequest_UNKNOWN_CLAN;
-			return true;
-		}
-
-		bool isSubleader;
-		RakNet::ClanMemberState clanMemberState = GetClanMemberState(clanId, command->callerUserId, &isSubleader, pgsql);
-		if (clanMemberState==CMD_ACTIVE)
-		{
-			resultCode=L2RC_Clans_SendJoinRequest_ALREADY_IN_CLAN;
-			return true;
-		}
-		if (clanMemberState==CMD_BANNED)
-		{
-			resultCode=L2RC_Clans_SendJoinRequest_BANNED;
-			return true;
-		}
-		if (clanMemberState==CMD_JOIN_REQUESTED)
-		{
-			resultCode=L2RC_Clans_SendJoinRequest_REQUEST_ALREADY_PENDING;
-			return true;
-		}
-		if (clanMemberState==CMD_JOIN_INVITED)
-		{
-			resultCode=L2RC_Clans_SendJoinRequest_ALREADY_INVITED;
-			return true;
-		}
-
-		result = pgsql->QueryVaridic("SELECT requiresInvitationsToJoin FROM lobby2.clans WHERE clanId_pk=%i",clanId);
-		bool requiresInvitationsToJoin;
-		PostgreSQLInterface::PQGetValueFromBinary(&requiresInvitationsToJoin, result, 0, "requiresInvitationsToJoin");
-		PQclear(result);
-
-		if (requiresInvitationsToJoin==false)
-		{
-			result = pgsql->QueryVaridic(
-				"INSERT INTO lobby2.clanMembers (userId_fk, clanId_fk, isSubleader, memberState_fk) VALUES "
-				"(%i, %i, false, (SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active') );"
-				,command->callerUserId, clanId);
-			PQclear(result);
-
-			// Send notification all members about the new member
-			// Notify all members about this new member
-			DataStructures::List<ClanMemberDescriptor> clanMembers;
-			GetClanMembers(clanId, clanMembers, pgsql);
-			for (unsigned int i=0; i < clanMembers.Size(); i++)
-			{
-				if (clanMembers[i].memberState!=CMD_ACTIVE)
-					continue;
-				if (clanMembers[i].userId==command->callerUserId)
-					continue;
-
-				Notification_Clans_NewClanMember *notification = (Notification_Clans_NewClanMember *) command->server->GetMessageFactory()->Alloc(L2MID_Notification_Clans_NewClanMember);
-				notification->clanHandle=clanHandle;
-				notification->targetHandle=command->callingUserName;	
-				command->server->AddOutputFromThread(notification, clanMembers[i].userId, "");
-
-			}
-
-			unsigned int clanLeaderId = GetClanLeaderId(clanId, pgsql);
-
-			// Send email to leader
-			SendEmail(clanLeaderId, command->callerUserId, command->callingUserName, command->server, subject, body, &binaryData, emailStatus, "Clans_SendJoinRequest", pgsql);
-
-			clanJoined=true;
-		}
-		else
-		{
-			// Add row to lobby2.clanMembers
-			result = pgsql->QueryVaridic(
-				"INSERT INTO lobby2.clanMembers (userId_fk, clanId_fk, isSubleader, memberState_fk) VALUES "
-				"(%i, %i, false, (SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_JoinRequested') );"
-				,command->callerUserId, clanId);
-			PQclear(result);
-
-			// Send notification to leader, subleaders about this invite
-			unsigned int clanLeaderId = GetClanLeaderId(clanId, pgsql);
-			DataStructures::List<ClanMemberDescriptor> clanMembers;
-			GetClanMembers(clanId, clanMembers, pgsql);
-			for (unsigned int i=0; i < clanMembers.Size(); i++)
-			{
-				if (clanMembers[i].memberState!=CMD_ACTIVE)
-					continue;
-				if (clanMembers[i].isSubleader==false && clanMembers[i].userId!=clanLeaderId)
-					continue;
-
-				Notification_Clans_PendingJoinStatus *notification = (Notification_Clans_PendingJoinStatus *) command->server->GetMessageFactory()->Alloc(L2MID_Notification_Clans_PendingJoinStatus);
-				notification->clanHandle=clanHandle;
-				notification->targetHandle=clanMembers[i].name;
-				notification->sourceHandle=command->callingUserName;		
-				notification->majorOp=Notification_Clans_PendingJoinStatus::JOIN_CLAN_REQUEST;
-				notification->minorOp=Notification_Clans_PendingJoinStatus::JOIN_SENT;
-				command->server->AddOutputFromThread(notification, clanMembers[i].userId, ""); // subleader
-			}
-		}
-
-		resultCode=L2RC_SUCCESS;
-		return true;
-	}
-};
-
-__L2_MSG_DB_HEADER(Clans_WithdrawJoinRequest, PGSQL)
-{
-	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
-	{
-		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result;
-		Notification_Clans_PendingJoinStatus notification;
-		//notification.userName="Leader and subleaders of the clan.";
-		notification.clanHandle="The clan handle";
-		notification.targetHandle="The guy that withdrew the join request";
-		notification.majorOp=Notification_Clans_PendingJoinStatus::JOIN_CLAN_REQUEST;
-		notification.minorOp=Notification_Clans_PendingJoinStatus::JOIN_WITHDRAWN;
-		notification.resultCode=L2RC_SUCCESS;
-		command->server->AddOutputFromThread(&notification, 0, "");
-
-		resultCode=L2RC_SUCCESS;
-		return true;
-	}
-};
-
-__L2_MSG_DB_HEADER(Clans_AcceptJoinRequest, PGSQL)
-{
-	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
-	{
-		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result;
-		Notification_Clans_NewClanMember notification;
-		//notification.userName="All members of the clan.";
-		notification.clanHandle="The clan handle";
-		notification.targetHandle="The guy joining the clan";
-		notification.resultCode=L2RC_SUCCESS;
-		command->server->AddOutputFromThread(&notification, 0, "");
+		// Send email to member
+		SendEmail(targetId, command->callerUserId, requestingUserHandle, command->server, subject, body, &binaryData, emailStatus, "Clans_AcceptJoinRequest", pgsql);
 
 		resultCode=L2RC_SUCCESS;
 		return true;
@@ -643,16 +256,23 @@ __L2_MSG_DB_HEADER(Clans_DownloadRequestList, PGSQL)
 	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 	{
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result = pgsql->QueryVaridic("");
-		if (result!=0)
-		{
-			PQclear(result);
-			resultCode=L2RC_SUCCESS;
-		}
-		else
-		{
-			resultCode=L2RC_SUCCESS;
-		}
+		PGresult *result;
+
+		/*
+
+		-- Get all clanMembers that are in state requested of all clans where I am the leader or subleader
+		SELECT userId_fk, clanId, creationDate, U.handle, C.clanHandle FROM lobby2.clanMembers INNER JOIN
+		(SELECT clanId_pk as clanId FROM lobby2.clans WHERE leaderUserId_fk=1
+		UNION ALL
+		SELECT clanId_fk as clanId FROM lobby2.clanMembers WHERE isSubleader=TRUE AND userId_fk=1) as clansWhereIAmLeaderOrSubleader
+		ON clansWhereIAmLeaderOrSubleader.clanId=lobby2.clanMembers.clanId_fk
+		INNER JOIN lobby2.users U ON U.userId_pk = userId_fk
+		INNER JOIN lobby2.clans C ON C.clanId_pk = clanId
+		WHERE lobby2.clanMembers.memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active');
+
+			*/
+
+		resultCode=L2RC_SUCCESS;
 		return true;
 	}
 };
@@ -916,7 +536,7 @@ __L2_MSG_DB_HEADER(Notification_Friends_StatusChange, PGSQL)
 
 // --------------------------------------------- Database specific factory class for all messages --------------------------------------------
 
-#define __L2_MSG_FACTORY_IMPL(__NAME__,__DB__) {case L2MID_##__NAME__ : return RakNet::OP_NEW< __NAME__##_##__DB__ >() ;}
+#define __L2_MSG_FACTORY_IMPL(__NAME__,__DB__) {case L2MID_##__NAME__ : return RakNet::OP_NEW< __NAME__##_##__DB__ >( __FILE__, __LINE__ ) ;}
 
 struct Lobby2MessageFactory_PGSQL : public Lobby2MessageFactory
 {

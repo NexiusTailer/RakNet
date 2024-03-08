@@ -8,7 +8,7 @@
 #if defined(_XBOX) || defined(X360)
 #include <XBOX360Includes.h>
 #elif defined (_WIN32)
-#include <windows.h>
+#include "WindowsIncludes.h"
 #endif
 #include <stddef.h>
 //#define ASSEMBLY_BLOCK asm

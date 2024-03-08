@@ -22,7 +22,7 @@
 #include "MessageIdentifiers.h"
 #include "Kbhit.h"
 #include <stdio.h> // Printf
-#include <windows.h> // Sleep
+#include "WindowsIncludes.h" // Sleep
 #include <process.h>
 
 RakPeerInterface *peer1, *peer2;

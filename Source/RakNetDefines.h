@@ -63,6 +63,14 @@
 // #define NETWORK_ID_USE_PTR_TABLE
 
 // Maximum number of local IP addresses supported
-#define MAXIMUM_NUMBER_OF_INTERNAL_IDS 5
+#define MAXIMUM_NUMBER_OF_INTERNAL_IDS 10
 
+// #define _DISABLE_RAKNET_ASSERTS
+#if defined(_DEBUG) && !defined(_XBOX) && !defined(_DISABLE_RAKNET_ASSERTS)
+	#include <assert.h>
+	#define RakAssert(x) assert(x);
+#else
+	#define RakAssert(x) 
 #endif
+
+#endif // __RAKNET_DEFINES_H

@@ -5,7 +5,7 @@
 // Change SERVER_IP_ADDRESS to connect over the internet
 
 #ifdef WIN32
-#include <Windows.h>
+#include "WindowsIncludes.h"
 #else
 #define HWND void*
 #endif

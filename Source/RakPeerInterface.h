@@ -28,7 +28,7 @@ namespace RakNet
 {
 	class BitStream;
 }
-class PluginInterface;
+class PluginInterface2;
 struct RPCMap;
 struct RakNetStatistics;
 class RouterInterface;
@@ -123,8 +123,10 @@ public:
 	/// \param[in] passwordData A data block that must match the data block on the server passed to SetIncomingPassword.  This can be a string or can be a stream of data.  Use 0 for no password.
 	/// \param[in] passwordDataLength The length in bytes of passwordData
 	/// \param[in] connectionSocketIndex Index into the array of socket descriptors passed to socketDescriptors in RakPeer::Startup() to send on.
+	/// \param[in] sendConnectionAttemptCount How many datagrams to send to the other system to try to connect.
+	/// \param[in] timeBetweenSendConnectionAttemptsMS How often to send datagrams to the other system to try to connect. After this many times, ID_CONNECTION_ATTEMPT_FAILED is returned
 	/// \return True on successful initiation. False on incorrect parameters, internal error, or too many existing peers.  Returning true does not mean you connected!
-	virtual bool Connect( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex=0 )=0;
+	virtual bool Connect( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex=0, unsigned sendConnectionAttemptCount=7, unsigned timeBetweenSendConnectionAttemptsMS=500 )=0;
 
 	/// \brief Connect to the specified network ID (Platform specific console function)
 	/// Does built-in NAt traversal
@@ -520,11 +522,11 @@ public:
 	/// Attatches a Plugin interface to run code automatically on message receipt in the Receive call
 	/// \note If plugins have dependencies on each other then the order does matter - for example the router plugin should go first because it might route messages for other plugins
 	/// \param[in] messageHandler Pointer to a plugin to attach
-	virtual void AttachPlugin( PluginInterface *plugin )=0;
+	virtual void AttachPlugin( PluginInterface2 *plugin )=0;
 
 	/// Detaches a Plugin interface to run code automatically on message receipt
 	/// \param[in] messageHandler Pointer to a plugin to detach
-	virtual void DetachPlugin( PluginInterface *messageHandler )=0;
+	virtual void DetachPlugin( PluginInterface2 *messageHandler )=0;
 
 	// --------------------------------------------------------------------------------------------Miscellaneous Functions--------------------------------------------------------------------------------------------
 	/// Put a message back at the end of the receive queue in case you don't want to deal with it immediately

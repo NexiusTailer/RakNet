@@ -448,7 +448,8 @@ void SocketLayer::Write( const SOCKET writeSocket, const char* data, const int l
 
 	send( writeSocket, data, length, 0 );
 }
-
+// REMOVEME
+//#include "BitStream.h"
 int SocketLayer::RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode, unsigned connectionSocketIndex, bool isPs3LobbySocket )
 {
 	if ( s == (SOCKET) -1 )
@@ -500,10 +501,21 @@ int SocketLayer::RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode, uns
 	}
 
 	if ( len > 0 )
-	// if ( len != SOCKET_ERROR )
 	{
-		//strcpy(ip, inet_ntoa(sa.sin_addr));
-		//if (strcmp(ip, "0.0.0.0")==0)
+
+		// REMOVEME
+//		char ip[256];
+	//	strcpy(ip, inet_ntoa(sa.sin_addr));
+	//	if (strcmp(ip, "69.129.39.163")==0)
+//		if (len>=30 && len <= 36)
+//		{
+//			strcpy(ip, inet_ntoa(sa.sin_addr));
+//			RakNet::BitStream bs((unsigned char*) data,len,false);
+//			printf("%s: ", ip);
+//			bs.PrintHex();
+//			printf("\n");
+//		}
+
 		// strcpy(ip, "127.0.0.1");
 		ProcessNetworkPacket( sa.sin_addr.s_addr, portnum, data, len, rakPeer, connectionSocketIndex );
 

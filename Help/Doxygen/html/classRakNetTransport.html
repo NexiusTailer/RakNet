@@ -60,7 +60,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNetTransport.html#d448ef81553ccd9aa60f2d662f3e0850">CloseConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNetTransport.html#0b740b8255d4c0c3fd4ef33d092868cc">HasNewConnection</a> (void)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNetTransport.html#a7c940c4b951b079c0c409c4a6b45294">HasNewIncomingConnection</a> (void)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNetTransport.html#a48d0e294a5374e7b80e495f9a598b74">HasLostConnection</a> (void)</td></tr>
 
@@ -173,12 +173,12 @@ If a system loses the connection, you should queue that event and return the sys
 
 </div>
 </div><p>
-<a class="anchor" name="0b740b8255d4c0c3fd4ef33d092868cc"></a><!-- doxytag: member="RakNetTransport::HasNewConnection" ref="0b740b8255d4c0c3fd4ef33d092868cc" args="(void)" -->
+<a class="anchor" name="a7c940c4b951b079c0c409c4a6b45294"></a><!-- doxytag: member="RakNetTransport::HasNewIncomingConnection" ref="a7c940c4b951b079c0c409c4a6b45294" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structSystemAddress.html">SystemAddress</a> RakNetTransport::HasNewConnection           </td>
+          <td class="memname"><a class="el" href="structSystemAddress.html">SystemAddress</a> RakNetTransport::HasNewIncomingConnection           </td>
           <td>(</td>
           <td class="paramtype">void&nbsp;</td>
           <td class="paramname">          </td>
@@ -192,7 +192,7 @@ If a system loses the connection, you should queue that event and return the sys
 <p>
 If a new system connects to you, you should queue that event and return the systemAddress/address of that player in this function. <dl class="return" compact><dt><b>Returns:</b></dt><dd>The SystemAddress/address of the system </dd></dl>
 
-<p>Implements <a class="el" href="classTransportInterface.html#5978e692faf472fe7ffd2c98ee253dfa">TransportInterface</a>.</p>
+<p>Implements <a class="el" href="classTransportInterface.html#e4e54bc1d8e386e712bfc701e1a1115d">TransportInterface</a>.</p>
 
 </div>
 </div><p>
@@ -329,7 +329,7 @@ Start the transport provider on the indicated port. <dl compact><dt><b>Parameter
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/Source/<a class="el" href="RakNetTransport_8h.html">RakNetTransport.h</a><li>C:/RakNet/Source/RakNetTransport.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:07 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:30 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

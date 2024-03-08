@@ -108,8 +108,8 @@ namespace DataStructures
 		{
 			rootNode=original_copy.rootNode;
 			costMatrixIndices=original_copy.costMatrixIndices;
-			costMatrix = RakNet::OP_NEW_ARRAY<weight_type>(costMatrixIndices.Size() * costMatrixIndices.Size());
-			leastNodeArray = RakNet::OP_NEW_ARRAY<node_type>(costMatrixIndices.Size());
+			costMatrix = RakNet::OP_NEW_ARRAY<weight_type>(costMatrixIndices.Size() * costMatrixIndices.Size(), __FILE__, __LINE__ );
+			leastNodeArray = RakNet::OP_NEW_ARRAY<node_type>(costMatrixIndices.Size(), __FILE__, __LINE__ );
 			memcpy(costMatrix, original_copy.costMatrix, costMatrixIndices.Size() * costMatrixIndices.Size() * sizeof(weight_type));
 			memcpy(leastNodeArray, original_copy.leastNodeArray, costMatrixIndices.Size() * sizeof(weight_type));
 		}
@@ -125,8 +125,8 @@ namespace DataStructures
 		{
 			rootNode=original_copy.rootNode;
 			costMatrixIndices=original_copy.costMatrixIndices;
-			costMatrix = RakNet::OP_NEW_ARRAY<weight_type>(costMatrixIndices.Size() * costMatrixIndices.Size());
-			leastNodeArray = RakNet::OP_NEW_ARRAY<node_type>(costMatrixIndices.Size());
+			costMatrix = RakNet::OP_NEW_ARRAY<weight_type>(costMatrixIndices.Size() * costMatrixIndices.Size(), __FILE__, __LINE__ );
+			leastNodeArray = RakNet::OP_NEW_ARRAY<node_type>(costMatrixIndices.Size(), __FILE__, __LINE__ );
 			memcpy(costMatrix, original_copy.costMatrix, costMatrixIndices.Size() * costMatrixIndices.Size() * sizeof(weight_type));
 			memcpy(leastNodeArray, original_copy.leastNodeArray, costMatrixIndices.Size() * sizeof(weight_type));
 		}
@@ -137,7 +137,7 @@ namespace DataStructures
 	template <class node_type, class weight_type, bool allow_unlinkedNodes>
 		void WeightedGraph<node_type, weight_type, allow_unlinkedNodes>::AddNode(const node_type &node)
 	{
-		adjacencyLists.SetNew(node, RakNet::OP_NEW<DataStructures::Map<node_type, weight_type> >());
+		adjacencyLists.SetNew(node, RakNet::OP_NEW<DataStructures::Map<node_type, weight_type> >( __FILE__, __LINE__) );
 	}
 
 	template <class node_type, class weight_type, bool allow_unlinkedNodes>
@@ -149,7 +149,7 @@ namespace DataStructures
 		removeNodeQueue.Push(node);
 		while (removeNodeQueue.Size())
 		{
-			RakNet::OP_DELETE(adjacencyLists.Pop(removeNodeQueue.Pop()));
+			RakNet::OP_DELETE(adjacencyLists.Pop(removeNodeQueue.Pop()), __FILE__, __LINE__);
 
 			// Remove this node from all of the other lists as well
 			for (i=0; i < adjacencyLists.Size(); i++)
@@ -216,7 +216,7 @@ namespace DataStructures
 	{
 		unsigned i;
 		for (i=0; i < adjacencyLists.Size(); i++)
-			RakNet::OP_DELETE(adjacencyLists[i]);
+			RakNet::OP_DELETE(adjacencyLists[i], __FILE__, __LINE__);
 		adjacencyLists.Clear();
 
 		ClearDijkstra();
@@ -228,8 +228,8 @@ namespace DataStructures
 		path.Clear();
 		if (startNode==endNode)
 		{
-			path.Insert(startNode);
-			path.Insert(endNode);
+			path.Insert(startNode, __FILE__, __LINE__);
+			path.Insert(endNode, __FILE__, __LINE__);
 			return true;
 		}
 
@@ -257,8 +257,8 @@ namespace DataStructures
 		row=costMatrixIndices.Size()-2;
 		if (row==0)
 		{
-			path.Insert(startNode);
-			path.Insert(endNode);
+			path.Insert(startNode, __FILE__, __LINE__);
+			path.Insert(endNode, __FILE__, __LINE__);
 			return true;
 		}
 		currentWeight=costMatrix[row*adjacencyLists.Size() + col];
@@ -279,9 +279,9 @@ namespace DataStructures
 			{
 				if (row==0)
 				{
-					path.Insert(startNode);
+					path.Insert(startNode, __FILE__, __LINE__);
 					for (col=0; outputQueue.Size(); col++)
-						path.Insert(outputQueue.Pop());
+						path.Insert(outputQueue.Pop(), __FILE__, __LINE__);
 					return true;
 				}
 				--row;
@@ -295,9 +295,9 @@ namespace DataStructures
 			currentWeight=costMatrix[row*adjacencyLists.Size() + col];
 		}
 
-		path.Insert(startNode);
+		path.Insert(startNode, __FILE__, __LINE__);
 		for (col=0; outputQueue.Size(); col++)
-			path.Insert(outputQueue.Pop());
+			path.Insert(outputQueue.Pop(), __FILE__, __LINE__);
 		return true;
 	}
 
@@ -337,7 +337,7 @@ namespace DataStructures
 		for (i=0; i < inputNodes->Size(); i++)
 		{
 			res=GetShortestPath(path, startNode, (*inputNodes)[i], INFINITE_WEIGHT);
-			if (res)
+			if (res && path.Size()>0)
 			{
 				for (j=0; j < path.Size()-1; j++)
 				{
@@ -362,11 +362,11 @@ namespace DataStructures
 
 		for (i=0; i < adjacencyList->Size(); i++)
 		{
-			nap2.node=RakNet::OP_NEW<DataStructures::Tree<node_type> >();
+			nap2.node=RakNet::OP_NEW<DataStructures::Tree<node_type> >( __FILE__, __LINE__ );
 			nap2.node->data=adjacencyList->GetKeyAtIndex(i);
 			nap2.parent=current;
 			nodesToProcess.Push(nap2);
-			current->children.Insert(nap2.node);
+			current->children.Insert(nap2.node, __FILE__, __LINE__);
 		}
 
 		while (nodesToProcess.Size())
@@ -380,11 +380,11 @@ namespace DataStructures
 				key=adjacencyList->GetKeyAtIndex(i);
 				if (key!=nap.parent->data)
 				{
-					nap2.node=RakNet::OP_NEW<DataStructures::Tree<node_type> >();
+					nap2.node=RakNet::OP_NEW<DataStructures::Tree<node_type> >( __FILE__, __LINE__ );
 					nap2.node->data=key;
 					nap2.parent=current;
 					nodesToProcess.Push(nap2);
-					current->children.Insert(nap2.node);
+					current->children.Insert(nap2.node, __FILE__, __LINE__);
 				}				
 			}
 		}
@@ -398,8 +398,8 @@ namespace DataStructures
 		if (adjacencyLists.Size()==0)
 			return;
 
-		costMatrix = RakNet::OP_NEW_ARRAY<weight_type>(adjacencyLists.Size() * adjacencyLists.Size());
-		leastNodeArray = RakNet::OP_NEW_ARRAY<node_type>(adjacencyLists.Size());
+		costMatrix = RakNet::OP_NEW_ARRAY<weight_type>(adjacencyLists.Size() * adjacencyLists.Size(), __FILE__, __LINE__ );
+		leastNodeArray = RakNet::OP_NEW_ARRAY<node_type>(adjacencyLists.Size(), __FILE__, __LINE__ );
 
 		node_type currentNode;
 		unsigned col, row, row2, openSetIndex;
@@ -506,8 +506,8 @@ namespace DataStructures
 		if (isValidPath)
 		{
 			isValidPath=false;
-			RakNet::OP_DELETE_ARRAY(costMatrix);
-			RakNet::OP_DELETE_ARRAY(leastNodeArray);
+			RakNet::OP_DELETE_ARRAY(costMatrix, __FILE__, __LINE__);
+			RakNet::OP_DELETE_ARRAY(leastNodeArray, __FILE__, __LINE__);
 			costMatrixIndices.Clear();
 		}
 	}

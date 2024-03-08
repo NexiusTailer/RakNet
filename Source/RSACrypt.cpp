@@ -1,13 +1,10 @@
+#if !defined(_XBOX) && !defined(X360) && !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
+
 #include "RSACrypt.h"
 //#include "Random.hpp"
 #include "Rand.h"
 #include "BigInt.h"
-#if defined(_WIN32)
-#include <malloc.h> // alloca
-#elif (defined(__GNUC__)  || defined(__GCCXML__))
-#include <alloca.h>
-#else
-#endif
+#include "RakAlloca.h"
 #include "RakMemoryOverride.h"
 using namespace big;
 
@@ -26,15 +23,15 @@ RSACrypt::~RSACrypt()
 void RSACrypt::cleanup()
 {
 	e = 0;
-	if (p) RakNet::OP_DELETE_ARRAY(p);
+	if (p) RakNet::OP_DELETE_ARRAY(p, __FILE__, __LINE__);
 	p = 0;
-	if (q)RakNet::OP_DELETE_ARRAY(q);
+	if (q)RakNet::OP_DELETE_ARRAY(q, __FILE__, __LINE__);
 	q = 0;
-	if (pinvq) RakNet::OP_DELETE_ARRAY(pinvq);
+	if (pinvq) RakNet::OP_DELETE_ARRAY(pinvq, __FILE__, __LINE__);
 	pinvq = 0;
-	if (d) RakNet::OP_DELETE_ARRAY(d);
+	if (d) RakNet::OP_DELETE_ARRAY(d, __FILE__, __LINE__);
 	d = 0;
-	if (modulus) RakNet::OP_DELETE_ARRAY(modulus);
+	if (modulus) RakNet::OP_DELETE_ARRAY(modulus, __FILE__, __LINE__);
 	modulus = 0;
 }
 
@@ -76,11 +73,11 @@ bool RSACrypt::setPrivateKey(const uint32_t *pi, const uint32_t *qi, int halfFac
 	factor_limbs = halfFactorLimbs;
 	mod_limbs = factor_limbs * 2;
 
-	p = RakNet::OP_NEW_ARRAY<uint32_t>(factor_limbs);
-	q = RakNet::OP_NEW_ARRAY<uint32_t>(factor_limbs);
-	pinvq = RakNet::OP_NEW_ARRAY<uint32_t>(factor_limbs);
-	modulus = RakNet::OP_NEW_ARRAY<uint32_t>(mod_limbs);
-	d = RakNet::OP_NEW_ARRAY<uint32_t>(mod_limbs);
+	p = RakNet::OP_NEW_ARRAY<uint32_t>(factor_limbs, __FILE__, __LINE__ );
+	q = RakNet::OP_NEW_ARRAY<uint32_t>(factor_limbs, __FILE__, __LINE__ );
+	pinvq = RakNet::OP_NEW_ARRAY<uint32_t>(factor_limbs, __FILE__, __LINE__ );
+	modulus = RakNet::OP_NEW_ARRAY<uint32_t>(mod_limbs, __FILE__, __LINE__ );
+	d = RakNet::OP_NEW_ARRAY<uint32_t>(mod_limbs, __FILE__, __LINE__ );
 	if (!p || !q || !pinvq || !modulus || !d) return false;
 
 	Set(p, factor_limbs, pi);
@@ -110,7 +107,7 @@ bool RSACrypt::setPublicKey(const uint32_t *modulusi, int mod_limbsi, uint32_t e
 
 	mod_limbs = mod_limbsi;
 
-	modulus = RakNet::OP_NEW_ARRAY<uint32_t>(mod_limbs);
+	modulus = RakNet::OP_NEW_ARRAY<uint32_t>(mod_limbs, __FILE__, __LINE__ );
 	if (!modulus) return false;
 
 	Set(modulus, mod_limbs, modulusi);
@@ -237,3 +234,5 @@ bool RSACrypt::decrypt(uint32_t *pt, const uint32_t *ct)
 	ExpCRT(ct, mod_limbs, d, mod_limbs, p, p_inv, q, q_inv, pinvq, factor_limbs, pt);
 	return true;
 }
+
+#endif

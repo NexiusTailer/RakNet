@@ -27,10 +27,6 @@ Lobby2MessageFactory* Lobby2Plugin::GetMessageFactory(void) const
 {
 	return msgFactory;
 }
-void Lobby2Plugin::OnAttach(RakPeerInterface *peer)
-{
-	rakPeer=peer;
-}
 void Lobby2Plugin::SetCallbackInterface(Lobby2Callbacks *cb)
 {
 	ClearCallbackInterfaces();

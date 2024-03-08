@@ -45,6 +45,8 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConsoleServer.html#94323365dfba6964f1b2659137d972e1">Update</a> (void)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConsoleServer.html#80e041496501dfeb5bbc14316889e1fb">SetPrompt</a> (const char *_prompt)</td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 The main entry point for the server portion of your remote console application support. <a class="el" href="classConsoleServer.html" title="The main entry point for the server portion of your remote console application support...">ConsoleServer</a> takes one <a class="el" href="classTransportInterface.html" title="Defines an interface that is used to send and receive null-terminated strings. In...">TransportInterface</a> and one or more <a class="el" href="classCommandParserInterface.html" title="The interface used by command parsers.">CommandParserInterface</a> (s) The <a class="el" href="classTransportInterface.html" title="Defines an interface that is used to send and receive null-terminated strings. In...">TransportInterface</a> will be used to send data between the server and the client. The connecting client must support the protocol used by your derivation of <a class="el" href="classTransportInterface.html" title="Defines an interface that is used to send and receive null-terminated strings. In...">TransportInterface</a> . <a class="el" href="classTelnetTransport.html" title="Use TelnetTransport to easily allow windows telnet to connect to your ConsoleServer...">TelnetTransport</a> and <a class="el" href="classRakNetTransport.html" title="Use RakNetTransport if you need a secure connection between the client and the console...">RakNetTransport</a> are two such derivations . When a command is sent by a remote console, it will be processed by your implementations of <a class="el" href="classCommandParserInterface.html" title="The interface used by command parsers.">CommandParserInterface</a>. <hr><h2>Member Function Documentation</h2>
@@ -93,6 +95,31 @@ Add an implementation of <a class="el" href="classCommandParserInterface.html" t
 Remove an implementation of <a class="el" href="classCommandParserInterface.html" title="The interface used by command parsers.">CommandParserInterface</a> previously added with <a class="el" href="classConsoleServer.html#8b31a34ddd9e31c12d5319695a126a0f">AddCommandParser()</a> <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>commandParserInterface</em>&nbsp;</td><td>The command parser referred to </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="80e041496501dfeb5bbc14316889e1fb"></a><!-- doxytag: member="ConsoleServer::SetPrompt" ref="80e041496501dfeb5bbc14316889e1fb" args="(const char *_prompt)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ConsoleServer::SetPrompt           </td>
+          <td>(</td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>_prompt</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Sets a prompt to show when waiting for user input Pass an empty string to clear the prompt Defaults to no prompt <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_prompt</em>&nbsp;</td><td>Null-terminated string of the prompt to use. If you want a newline, be sure to use /r/n </td></tr>
   </table>
 </dl>
 
@@ -156,7 +183,7 @@ Call update to read packet sent from your <a class="el" href="classTransportInte
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/Source/<a class="el" href="ConsoleServer_8h.html">ConsoleServer.h</a><li>C:/RakNet/Source/ConsoleServer.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:07 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:29 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

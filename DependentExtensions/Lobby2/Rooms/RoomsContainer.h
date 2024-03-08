@@ -37,11 +37,14 @@ public:
 	// Name is used for persistent invites and bans. Name should be unique among all participants or else the invites and bans will be applied to the wrong players
 	RakNet::RakString GetName(void) const {return name;}
 	void SetName(const char *str) {name = str;}
+	void SetSystemAddress(SystemAddress sa) {systemAddress=sa;}
+	SystemAddress GetSystemAddress(void) const {return systemAddress;}
 
 	PerGameRoomsContainer *GetPerGameRoomsContainer(void) const {return perGameRoomsContainer;}
 	bool GetInQuickJoin(void) const {return inQuickJoin;}
 protected:
 	RakNet::RakString name;
+	SystemAddress systemAddress;
 	Room *room;
 	bool inQuickJoin;
 	PerGameRoomsContainer *perGameRoomsContainer;
@@ -87,6 +90,7 @@ struct InvitedUser
 	Room *room;
 	RoomID roomId;
 	RakNet::RakString invitorName;
+	SystemAddress invitorSystemAddress;
 	RakNet::RakString target;
 	RakNet::RakString subject;
 	RakNet::RakString body;
@@ -128,6 +132,8 @@ struct RoomMemberDescriptor
 	RakNet::RakString name;
 	RoomMemberMode roomMemberMode;
 	bool isReady;
+	// Filled externally
+	SystemAddress systemAddress;
 
 	void FromRoomMember(RoomMember *roomMember);
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
@@ -189,14 +195,16 @@ struct RoomDescriptor
 
 struct JoinedRoomResult
 {
-	JoinedRoomResult() {roomOutput=0; acceptedInvitor=0; agrc=0;}
+	JoinedRoomResult() {roomOutput=0; acceptedInvitor=0; agrc=0; joiningMember=0;}
 	~JoinedRoomResult() {}
 	Room* roomOutput;
 	RoomDescriptor roomDescriptor;
 	RoomsParticipant* acceptedInvitor;
 	RakNet::RakString acceptedInvitorName;
+	SystemAddress acceptedInvitorAddress;
 	RoomsParticipant* joiningMember;
 	RakNet::RakString joiningMemberName;
+	SystemAddress joiningMemberAddress;
 
 	// Needed to serialize
 	AllGamesRoomsContainer *agrc;
@@ -576,8 +584,10 @@ protected:
 		void SetTotalSlots(Slots *totalSlots);
 		Slots GetUsedSlots(void) const;
 		
+
 		RoomLockState roomLockState;
-			
+		
+		friend struct RoomDescriptor;
 		friend class PerGameRoomsContainer;
 		friend class AllGamesRoomsContainer;
 

@@ -31,7 +31,7 @@ namespace DataStructures
 		ByteQueue();
 		~ByteQueue();
 		void WriteBytes(const char *in, unsigned length);
-		bool ReadBytes(char *out, unsigned length, bool peek);
+		bool ReadBytes(char *out, unsigned maxLengthToRead, bool peek);
 		unsigned GetBytesWritten(void) const;
 		void IncrementReadOffset(unsigned length);
 		void Clear(void);

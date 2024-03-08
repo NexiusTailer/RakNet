@@ -20,7 +20,7 @@
 
 #include "RakNetTypes.h"
 #include "Export.h"
-#include "PluginInterface.h"
+#include "PluginInterface2.h"
 #include "DS_Map.h"
 #include "RakNetTypes.h"
 #include "PacketPriority.h"
@@ -45,7 +45,7 @@ struct FileListReceiver;
 /// The other system should then prepare a FileList and call FileListTransfer::Send(), passing the return value of FileListTransfer::SetupReceive()
 /// as the \a setID parameter to FileListTransfer::Send()
 /// \ingroup FILE_LIST_TRANSFER_GROUP
-class RAK_DLL_EXPORT FileListTransfer : public PluginInterface
+class RAK_DLL_EXPORT FileListTransfer : public PluginInterface2
 {
 public:
 	FileListTransfer();
@@ -60,7 +60,7 @@ public:
 
 	/// Send the FileList structure to another system, which must have previously called SetupReceive()
 	/// \param[in] fileList A list of files.  The data contained in FileList::data will be sent incrementally and compressed among all files in the set
-	/// \param[in] rakPeer The instance of RakNet to use to send the message
+	/// \param[in] rakPeer The instance of RakNet to use to send the message. Pass 0 to use the instance the plugin is attached to
 	/// \param[in] recipient The address of the system to send to
 	/// \param[in] setID The return value of SetupReceive() which was previously called on \a recipient
 	/// \param[in] priority Passed to RakPeerInterface::Send()
@@ -88,15 +88,13 @@ public:
 	FileListProgress *GetCallback(void) const;
 
 	/// \internal For plugin handling
-	virtual PluginReceiveResult OnReceive(RakPeerInterface *peer, Packet *packet);
+	virtual PluginReceiveResult OnReceive(Packet *packet);
 	/// \internal For plugin handling
-	virtual void OnShutdown(RakPeerInterface *peer);
+	virtual void OnShutdown(void);
 	/// \internal For plugin handling
-	virtual void OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddress);
+	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	/// \internal For plugin handling
-	virtual void OnAttach(RakPeerInterface *peer);
-	/// \internal For plugin handling
-	virtual void Update(RakPeerInterface *peer);
+	virtual void Update(void);
 
 protected:
 	bool DecodeSetHeader(Packet *packet);
@@ -105,11 +103,12 @@ protected:
 	void Clear(void);
 
 	void OnReferencePush(Packet *packet, bool fullFile);
-	void StoreForPush(FileListNodeContext context, unsigned short _setID, const char *fileName, unsigned int _setIndex, unsigned fileLengthBytes, unsigned dataLengthBytes, SystemAddress recipient, PacketPriority packetPriority, char orderingChannel, IncrementalReadInterface *_incrementalReadInterface, unsigned int _chunkSize);
+	void OnReferencePushAck(Packet *packet);
+	void PushReference(SystemAddress systemAddress);
+	void StoreForPush(FileListNodeContext context, unsigned short _setID, const char *fileName, const char *fullPathToFile, unsigned int _setIndex, unsigned fileLengthBytes, unsigned dataLengthBytes, SystemAddress recipient, PacketPriority packetPriority, char orderingChannel, IncrementalReadInterface *_incrementalReadInterface, unsigned int _chunkSize);
 
 	DataStructures::Map<unsigned short, FileListReceiver*> fileListReceivers;
 	unsigned short setId;
-	RakPeerInterface *rakPeer;
 	FileListProgress *callback;
 
 	struct FileToPush

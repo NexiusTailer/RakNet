@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #ifdef _WIN32
 #include "Kbhit.h"
-#include <windows.h> // Sleep
+#include "WindowsIncludes.h" // Sleep
 #else
 #include "Kbhit.h"
 #include <unistd.h> // usleep

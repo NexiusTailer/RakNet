@@ -52,7 +52,7 @@ BitStream::BitStream()
 	//numberOfBitsAllocated = 32 * 8;
 	numberOfBitsAllocated = BITSTREAM_STACK_ALLOCATION_SIZE * 8;
 	readOffset = 0;
-	//data = ( unsigned char* ) rakMalloc( 32 );
+	//data = ( unsigned char* ) rakMalloc_Ex( 32, __FILE__, __LINE__ );
 	data = ( unsigned char* ) stackData;
 
 #ifdef _DEBUG
@@ -73,7 +73,7 @@ BitStream::BitStream( int initialBytesToAllocate )
 	}
 	else
 	{
-		data = ( unsigned char* ) rakMalloc( initialBytesToAllocate );
+		data = ( unsigned char* ) rakMalloc_Ex( initialBytesToAllocate, __FILE__, __LINE__ );
 		numberOfBitsAllocated = initialBytesToAllocate << 3;
 	}
 #ifdef _DEBUG
@@ -101,7 +101,7 @@ BitStream::BitStream( unsigned char* _data, unsigned int lengthInBytes, bool _co
 			}
 			else
 			{
-				data = ( unsigned char* ) rakMalloc( lengthInBytes );
+				data = ( unsigned char* ) rakMalloc_Ex( lengthInBytes, __FILE__, __LINE__ );
 			}
 #ifdef _DEBUG
 			RakAssert( data );
@@ -127,7 +127,7 @@ void BitStream::SetNumberOfBitsAllocated( const unsigned int lengthInBits )
 BitStream::~BitStream()
 {
 	if ( copyData && numberOfBitsAllocated > (BITSTREAM_STACK_ALLOCATION_SIZE << 3))
-		rakFree( data );  // Use realloc and free so we are more efficient than delete and new for resizing
+		rakFree_Ex( data , __FILE__, __LINE__ );  // Use realloc and free so we are more efficient than delete and new for resizing
 }
 
 void BitStream::Reset( void )
@@ -148,7 +148,7 @@ void BitStream::Reset( void )
 	//numberOfBitsAllocated=8;
 	readOffset = 0;
 
-	//data=(unsigned char*)rakMalloc(1);
+	//data=(unsigned char*)rakMalloc_Ex(1, __FILE__, __LINE__);
 	// if (numberOfBitsAllocated>0)
 	//  memset(data, 0, BITS_TO_BYTES(numberOfBitsAllocated));
 }
@@ -348,7 +348,7 @@ bool BitStream::ReadAlignedBytesSafe( void *input, int &inputLength, const int m
 }
 bool BitStream::ReadAlignedBytesSafeAlloc( char **input, int &inputLength, const int maxBytesToRead )
 {
-	rakFree(*input);
+	rakFree_Ex(*input, __FILE__, __LINE__ );
 	*input=0;
 	if (ReadCompressed(inputLength)==false)
 		return false;
@@ -356,7 +356,7 @@ bool BitStream::ReadAlignedBytesSafeAlloc( char **input, int &inputLength, const
 		inputLength=maxBytesToRead;
 	if (inputLength==0)
 		return true;
-	*input = (char*) rakMalloc( BITS_TO_BYTES( inputLength ) );
+	*input = (char*) rakMalloc_Ex( BITS_TO_BYTES( inputLength ), __FILE__, __LINE__ );
 	return ReadAlignedBytes((unsigned char*) *input, inputLength);
 }
 // Align the next write and/or read to a byte boundary.  This can be used to 'waste' bits to byte align for efficiency reasons
@@ -642,7 +642,7 @@ void BitStream::AddBitsAndReallocate( const int numberOfBitsToWrite )
 		{
 			 if (amountToAllocate > BITSTREAM_STACK_ALLOCATION_SIZE)
 			 {
-				 data = ( unsigned char* ) rakMalloc( amountToAllocate );
+				 data = ( unsigned char* ) rakMalloc_Ex( amountToAllocate, __FILE__, __LINE__ );
 
 				 // need to copy the stack data over to our new memory area too
 				 memcpy ((void *)data, (void *)stackData, BITS_TO_BYTES( numberOfBitsAllocated ));
@@ -650,7 +650,7 @@ void BitStream::AddBitsAndReallocate( const int numberOfBitsToWrite )
 		}
 		else
 		{
-			data = ( unsigned char* ) rakRealloc( data, amountToAllocate );
+			data = ( unsigned char* ) rakRealloc_Ex( data, amountToAllocate, __FILE__, __LINE__ );
 		}
 
 #ifdef _DEBUG
@@ -713,7 +713,7 @@ int BitStream::CopyData( unsigned char** _data ) const
 	RakAssert( numberOfBitsUsed > 0 );
 #endif
 
-	*_data = (unsigned char*) rakMalloc( BITS_TO_BYTES( numberOfBitsUsed ) );
+	*_data = (unsigned char*) rakMalloc_Ex( BITS_TO_BYTES( numberOfBitsUsed ), __FILE__, __LINE__ );
 	memcpy( *_data, data, sizeof(unsigned char) * ( BITS_TO_BYTES( numberOfBitsUsed ) ) );
 	return numberOfBitsUsed;
 }
@@ -787,7 +787,7 @@ void BitStream::AssertCopyData( void )
 
 		if ( numberOfBitsAllocated > 0 )
 		{
-			unsigned char * newdata = ( unsigned char* ) rakMalloc( BITS_TO_BYTES( numberOfBitsAllocated ) );
+			unsigned char * newdata = ( unsigned char* ) rakMalloc_Ex( BITS_TO_BYTES( numberOfBitsAllocated ), __FILE__, __LINE__ );
 #ifdef _DEBUG
 
 			RakAssert( data );

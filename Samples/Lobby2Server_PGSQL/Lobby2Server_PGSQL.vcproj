@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions/Lobby2/Rooms;./../../DependentExtensions/Lobby2;./../../DependentExtensions/Lobby2/PGSQL;&quot;C:\Program Files\PostgreSQL\8.3\include&quot;;./../../DependentExtensions/PostgreSQLInterface"
+				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions/Lobby2/Rooms;./../../DependentExtensions/Lobby2;./../../DependentExtensions/Lobby2/PGSQL;&quot;C:\Program Files (x86)\PostgreSQL\8.3\include&quot;;./../../DependentExtensions/PostgreSQLInterface"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib &quot;C:\Program Files\PostgreSQL\8.3\lib\libpq.lib&quot;"
+				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib &quot;C:\Program Files (x86)\PostgreSQL\8.3\lib\libpq.lib&quot;"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -90,7 +90,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;C:\Program Files\PostgreSQL\8.3\bin\*.dll&quot; .\Debug"
+				CommandLine="copy &quot;C:\Program Files (x86)\PostgreSQL\8.3\bin\*.dll&quot; .\Debug"
 			/>
 		</Configuration>
 		<Configuration
@@ -118,7 +118,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions/Lobby2/Rooms;./../../DependentExtensions/Lobby2;./../../DependentExtensions/Lobby2/PGSQL;&quot;C:\Program Files\PostgreSQL\8.3\include&quot;;./../../DependentExtensions/PostgreSQLInterface"
+				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions/Lobby2/Rooms;./../../DependentExtensions/Lobby2;./../../DependentExtensions/Lobby2/PGSQL;&quot;C:\Program Files (x86)\PostgreSQL\8.3\include&quot;;./../../DependentExtensions/PostgreSQLInterface"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -137,7 +137,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStatic.lib ws2_32.lib &quot;C:\Program Files\PostgreSQL\8.3\lib\libpq.lib&quot;"
+				AdditionalDependencies="./../../lib/RakNetLibStatic.lib ws2_32.lib &quot;C:\Program Files (x86)\PostgreSQL\8.3\lib\libpq.lib&quot;"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -168,7 +168,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;C:\Program Files\PostgreSQL\8.3\bin\*.dll&quot; .\Release"
+				CommandLine="copy &quot;C:\Program Files (x86)\PostgreSQL\8.3\bin\*.dll&quot; .\Release"
 			/>
 		</Configuration>
 	</Configurations>

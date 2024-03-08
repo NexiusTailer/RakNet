@@ -19,7 +19,6 @@
 #include "MessageIdentifiers.h"
 #include "BitStream.h"
 #include "ConnectionGraph.h"
-#include "NatPunchthrough.h"
 #include <string.h>
 #include "RakAssert.h"
 
@@ -30,22 +29,21 @@
 FullyConnectedMesh::FullyConnectedMesh()
 {
 	pw=0;
-	natPunchthrough=0;
 }
 
 FullyConnectedMesh::~FullyConnectedMesh()
 {
 	if (pw)
-		rakFree(pw);
+		rakFree_Ex(pw, __FILE__, __LINE__ );
 }
 
 void FullyConnectedMesh::Startup(const char *password, int _passwordLength)
 {
 	if (pw)
-		rakFree(pw);
+		rakFree_Ex(pw, __FILE__, __LINE__ );
 	if (password)
 	{
-		pw = (char*) rakMalloc( _passwordLength );
+		pw = (char*) rakMalloc_Ex( _passwordLength, __FILE__, __LINE__ );
 		memcpy(pw, password, _passwordLength);
 		passwordLength=_passwordLength;
 	}
@@ -54,26 +52,9 @@ void FullyConnectedMesh::Startup(const char *password, int _passwordLength)
 	
 }
 
-void FullyConnectedMesh::ConnectWithNatPunchthrough(NatPunchthrough *np, SystemAddress _facilitator)
-	{
-	natPunchthrough=np;
-	facilitator=_facilitator;
-	}
-
-
-void FullyConnectedMesh::OnShutdown(RakPeerInterface *peer)
-{
-	(void) peer;
-}
-void FullyConnectedMesh::Update(RakPeerInterface *peer)
-{
-	(void) peer;
-}
-
-PluginReceiveResult FullyConnectedMesh::OnReceive(RakPeerInterface *peer, Packet *packet)
+PluginReceiveResult FullyConnectedMesh::OnReceive(Packet *packet)
 {
 	RakAssert(packet);
-	RakAssert(peer);
 
 	switch (packet->data[0])
 	{
@@ -87,34 +68,20 @@ PluginReceiveResult FullyConnectedMesh::OnReceive(RakPeerInterface *peer, Packet
 			b.Read(node1);
 			b.Read(group1);
 			b.Read(guid1);
-			if (peer->IsConnected(node1,true)==false)
+			if (rakPeerInterface->IsConnected(node1,true)==false)
 			{
-				if (natPunchthrough)
-				{
-					natPunchthrough->Connect(node1, pw, pw ? passwordLength : 0, facilitator);
-				}
-				else
-				{
-					char str1[64];
-					node1.ToString(false, str1);
-					peer->Connect(str1, node1.port, pw, pw ? passwordLength : 0);
-				}
+				char str1[64];
+				node1.ToString(false, str1);
+				rakPeerInterface->Connect(str1, node1.port, pw, pw ? passwordLength : 0);
 			}				
 			b.Read(node2);
 			b.Read(group2);
 			b.Read(guid2);
-			if (peer->IsConnected(node2,true)==false)
+			if (rakPeerInterface->IsConnected(node2,true)==false)
 			{
-				if (natPunchthrough)
-				{
-					natPunchthrough->Connect(node2, pw, pw ? passwordLength : 0, facilitator);
-				}
-				else
-				{
-					char str1[64];
-					node2.ToString(false, str1);
-					peer->Connect(str1, node2.port, pw, pw ? passwordLength : 0);
-				}
+				char str1[64];
+				node2.ToString(false, str1);
+				rakPeerInterface->Connect(str1, node2.port, pw, pw ? passwordLength : 0);
 			}
 				
 			break;

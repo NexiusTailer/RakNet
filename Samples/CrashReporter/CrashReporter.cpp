@@ -3,7 +3,7 @@
 #ifdef WIN32
 
 #include <stdio.h>
-#include <windows.h>
+#include "WindowsIncludes.h"
 #include <DbgHelp.h>
 #include <stdlib.h>
 #include <time.h>
@@ -12,6 +12,7 @@
 #include "EmailSender.h"
 #include "FileList.h"
 #include "FileOperations.h"
+#include "SimpleMutex.h"
 
 CrashReportControls CrashReporter::controls;
 
@@ -159,7 +160,12 @@ LONG ProcessException(struct _EXCEPTION_POINTERS *ExceptionInfo)
 
 LONG WINAPI CrashExceptionFilter( struct _EXCEPTION_POINTERS *ExceptionInfo )
 {
-	return ProcessException(ExceptionInfo); 
+	// Mutex here due to http://www.jenkinssoftware.com/raknet/forum/index.php?topic=2305.0;topicseen
+	static SimpleMutex crashExceptionFilterMutex;
+	crashExceptionFilterMutex.Lock();
+	LONG retVal = ProcessException(ExceptionInfo); 
+	crashExceptionFilterMutex.Unlock();
+	return retVal;
 }
 
 void DumpMiniDump(PEXCEPTION_POINTERS excpInfo)

@@ -77,7 +77,7 @@ namespace DataStructures
 	{
 		unsigned currentIndex = heap.Size();
 		unsigned parentIndex;
-		heap.Insert(HeapNode(weight, data));
+		heap.Insert(HeapNode(weight, data), __FILE__, __LINE__);
 		while (currentIndex!=0)
 		{
 			parentIndex = Parent(currentIndex);

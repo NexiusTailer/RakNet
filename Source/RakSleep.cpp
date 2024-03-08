@@ -1,7 +1,7 @@
 #if defined(_XBOX) || defined(X360)
 #include "XBOX360Includes.h"
 #elif defined(_WIN32)
-#include <windows.h> // Sleep
+#include "WindowsIncludes.h" // Sleep
 #elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
 #include "PS3Includes.h"
 #include <sys/timer.h>

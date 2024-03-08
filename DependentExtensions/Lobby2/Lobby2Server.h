@@ -134,10 +134,10 @@ public:
 
 protected:
 
-	void Update(RakPeerInterface *peer);
-	PluginReceiveResult OnReceive(RakPeerInterface *peer, Packet *packet);
-	void OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddress);
-	void OnShutdown(RakPeerInterface *peer);
+	void Update(void);
+	PluginReceiveResult OnReceive(Packet *packet);
+	void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	void OnShutdown(void);
 	void OnMessage(Packet *packet);
 	void Clear(void);
 	void ClearUsers(void);

@@ -38,7 +38,7 @@ Inheritance diagram for RakNet::Lobby2Client:</div>
 <p><center><img src="classRakNet_1_1Lobby2Client.png" usemap="#RakNet::Lobby2Client_map" border="0" alt=""></center>
 <map name="RakNet::Lobby2Client_map">
 <area href="classRakNet_1_1Lobby2Plugin.html" alt="RakNet::Lobby2Plugin" shape="rect" coords="0,56,135,80">
-<area href="classPluginInterface.html" alt="PluginInterface" shape="rect" coords="0,0,135,24">
+<area href="classPluginInterface2.html" alt="PluginInterface2" shape="rect" coords="0,0,135,24">
 </map>
 </div>
 
@@ -53,30 +53,38 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#4b199a3ac3c295d8f7e9a8f4d423bb04">SendMsg</a> (<a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> *msg)</td></tr>
 
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#54a8ec3b5e05bdfef09e831d755032c2">OnReceive</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">PluginReceiveResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#b58e09f91ff2d159c303747063fdd356">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#016fd5ba62605b9c5d22197d253de03a">OnCloseConnection</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#b770ea5a8215465bdeda36a13c1da263">OnClosedConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, PI2_LostConnectionReason lostConnectionReason)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#e7ce36b781a5530cb692914673c6501d">OnShutdown</a> (<a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *peer)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ac9fb43a88058f48bbaa080a7995f43e"></a><!-- doxytag: member="RakNet::Lobby2Client::OnShutdown" ref="ac9fb43a88058f48bbaa080a7995f43e" args="(void)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#ac9fb43a88058f48bbaa080a7995f43e">OnShutdown</a> (void)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 The lobby system works by sending implementations of <a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> from <a class="el" href="classRakNet_1_1Lobby2Client.html">Lobby2Client</a> to <a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a>, and getting the results via <a class="el" href="classRakNet_1_1Lobby2Plugin.html#10200e44e4bd586f4d9c6988fe5bdb04" title="Set the callback to receive the results of operations via SendMessage().">Lobby2Client::SetCallbackInterface()</a> The client itself is a thin shell that does little more than call Serialize on the messages. To use: 1. Call <a class="el" href="classRakNet_1_1Lobby2Client.html#d031bb3f6ed554f6710d7ae4b7f4bb99" title="Set the address of the server. When you call SendMsg() the packet will be sent to...">Lobby2Client::SetServerAddress()</a> after connecting to the system running <a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a>. 2. Instantiate an instance of RakNet::Lobby2MessageFactory and register it with RakNet::Lobby2Plugin::SetMessageFactory() (the base class of <a class="el" href="classRakNet_1_1Lobby2Client.html">Lobby2Client</a>) 3. Call messageFactory.Alloc(command); where command is one of the Lobby2MessageID enumerations. 4. Instantiate a (probably derived) instance of <a class="el" href="structRakNet_1_1Lobby2Callbacks.html" title="Every Lobby2Message processed with Lobby2Client::SendMessage() while connected will...">Lobby2Callbacks</a> and register it with <a class="el" href="classRakNet_1_1Lobby2Plugin.html#10200e44e4bd586f4d9c6988fe5bdb04" title="Set the callback to receive the results of operations via SendMessage().">Lobby2Client::SetCallbackInterface()</a> 5. Cast the returned structure, fill in the input parameters, and call <a class="el" href="classRakNet_1_1Lobby2Client.html#4b199a3ac3c295d8f7e9a8f4d423bb04">Lobby2Client::SendMsg()</a> to send this command to the server. 6. Wait for the result of the operation to be sent to your callback. The message will contain the original input parameters, possibly output parameters, and <a class="el" href="structRakNet_1_1Lobby2Message.html#750b6a5d792d6f6c2532bfc7e3f74c99" title="Result of the operation. L2RC_SUCCESS means the result completed. Anything else means...">Lobby2Message::resultCode</a> will be filled in. <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="016fd5ba62605b9c5d22197d253de03a"></a><!-- doxytag: member="RakNet::Lobby2Client::OnCloseConnection" ref="016fd5ba62605b9c5d22197d253de03a" args="(RakPeerInterface *peer, SystemAddress systemAddress)" -->
+<a class="anchor" name="b770ea5a8215465bdeda36a13c1da263"></a><!-- doxytag: member="RakNet::Lobby2Client::OnClosedConnection" ref="b770ea5a8215465bdeda36a13c1da263" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void Lobby2Client::OnCloseConnection           </td>
+          <td class="memname">void Lobby2Client::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
+          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>rakNetGUID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PI2_LostConnectionReason&nbsp;</td>
+          <td class="paramname"> <em>lostConnectionReason</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -90,62 +98,25 @@ The lobby system works by sending implementations of <a class="el" href="structR
 <p>
 Called when a connection is dropped because the user called <a class="el" href="classRakPeer.html#05e43a9ba3b85f1000adb2f1e9551000">RakPeer::CloseConnection()</a> for a particular system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The system whose connection was closed </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lostConnectionReason</em>&nbsp;</td><td>How the connection was closed: manually, connection lost, or notification of disconnection </td></tr>
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#da6d76a81fb6ea6dd8422c3ed5c9baff">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#f14d27351aca9bfd5b4fc2ac1461ff14">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="54a8ec3b5e05bdfef09e831d755032c2"></a><!-- doxytag: member="RakNet::Lobby2Client::OnReceive" ref="54a8ec3b5e05bdfef09e831d755032c2" args="(RakPeerInterface *peer, Packet *packet)" -->
+<a class="anchor" name="b58e09f91ff2d159c303747063fdd356"></a><!-- doxytag: member="RakNet::Lobby2Client::OnReceive" ref="b58e09f91ff2d159c303747063fdd356" args="(Packet *packet)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">PluginReceiveResult Lobby2Client::OnReceive           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
-          <td class="paramname"> <em>packet</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [protected, virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#633dcfc264e4309c41f0cfeb84b4840a">PluginInterface</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="e7ce36b781a5530cb692914673c6501d"></a><!-- doxytag: member="RakNet::Lobby2Client::OnShutdown" ref="e7ce36b781a5530cb692914673c6501d" args="(RakPeerInterface *peer)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Lobby2Client::OnShutdown           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *&nbsp;</td>
-          <td class="paramname"> <em>peer</em>          </td>
+          <td class="paramname"> <em>packet</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [protected, virtual]</code></td>
         </tr>
@@ -154,13 +125,14 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Called when <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> is shutdown <dl compact><dt><b>Parameters:</b></dt><dd>
+OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>peer</em>&nbsp;</td><td>the instance of <a class="el" href="classRakPeer.html" title="The main interface for network communications.">RakPeer</a> that is calling Receive </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>the packet that is being returned to the user </td></tr>
   </table>
 </dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface.html#0983119975a8bb9c726b8a006c089dc2">PluginInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#bc50017a35682db5202a7562c58898ea">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -193,7 +165,7 @@ Send a command to the server <dl compact><dt><b>Parameters:</b></dt><dd>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>C:/RakNet/DependentExtensions/Lobby2/Lobby2Client.h<li>C:/RakNet/DependentExtensions/Lobby2/Lobby2Client.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 10 08:44:09 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 31 19:05:32 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -35,10 +35,10 @@
 #include "SocketLayer.h"
 #include <stdlib.h>
 
-SocketDescriptor::SocketDescriptor() {port=0; hostAddress[0]=0; isPS3LobbySocket=false;}
-SocketDescriptor::SocketDescriptor(unsigned short _port, const char *_hostAddress, bool _isPS3LobbySocket)
+SocketDescriptor::SocketDescriptor() {port=0; hostAddress[0]=0; socketType=UDP;}
+SocketDescriptor::SocketDescriptor(unsigned short _port, const char *_hostAddress)
 {
-	isPS3LobbySocket=_isPS3LobbySocket;
+	socketType=UDP;
 	port=_port;
 	if (_hostAddress)
 		strcpy(hostAddress, _hostAddress);
@@ -320,4 +320,35 @@ void RakNetGUID::ToString(char *dest) const
 		strcpy(dest, "UNASSIGNED_RAKNET_GUID");
 
 	sprintf(dest, "%u.%u.%u.%u", g[0], g[1], g[2], g[3]);
+}
+bool RakNetGUID::FromString(const char *source)
+{
+	if (source==0)
+		return false;
+
+	char intPart[64];
+	unsigned int destIndex, sourceIndex=0, partIndex;
+	for (partIndex=0; partIndex<4; partIndex++)
+	{
+		for (destIndex=0; source[sourceIndex] && source[sourceIndex]!='.' && destIndex<sizeof(intPart)-1; destIndex++, sourceIndex++)
+		{
+			if (source[sourceIndex]<'0' || source[sourceIndex]>'9')
+				return false;
+			intPart[destIndex]=source[sourceIndex];
+		}
+		if (source[sourceIndex]!='.' && partIndex<3)
+		{
+			// Failed
+			return false;
+		}
+		if (destIndex==0)
+		{
+			// Failed
+			return false;
+		}
+		intPart[destIndex]=0;
+		g[partIndex]=strtoul(intPart,0,0);
+		sourceIndex++;
+	}
+	return true;
 }

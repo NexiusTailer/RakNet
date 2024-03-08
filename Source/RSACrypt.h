@@ -1,3 +1,5 @@
+#if !defined(_XBOX) && !defined(X360) && !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
+
 #ifndef RSA_CRYPT_HPP
 #define RSA_CRYPT_HPP
 
@@ -45,3 +47,5 @@ public:
 };
 
 #endif // RSA_CRYPT_HPP
+
+#endif

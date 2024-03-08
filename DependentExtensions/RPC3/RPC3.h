@@ -23,7 +23,7 @@
 
 class RakPeerInterface;
 class NetworkIDManager;
-#include "PluginInterface.h"
+#include "PluginInterface2.h"
 #include "DS_Map.h"
 #include "PacketPriority.h"
 #include "RakNetTypes.h"
@@ -79,7 +79,7 @@ enum RPCErrorCodes
 /// 2. Types are written to BitStream, meaning built-in serialization operations are performed, including endian swapping
 /// 3. Types can customize autoserialization by providing an implementation of operator << and operator >> to and from BitStream
 /// \ingroup RPC_3_GROUP
-class RPC3 : public PluginInterface
+class RPC3 : public PluginInterface2
 {
 public:
 	/// Constructor
@@ -526,12 +526,12 @@ public:
 	// --------------------------------------------------------------------------------------------
 	// Packet handling functions
 	// --------------------------------------------------------------------------------------------
-	void OnAttach(RakPeerInterface *peer);
-	virtual PluginReceiveResult OnReceive(RakPeerInterface *peer, Packet *packet);
+	void OnAttach(void);
+	virtual PluginReceiveResult OnReceive(Packet *packet);
 	virtual void OnRPC3Call(SystemAddress systemAddress, unsigned char *data, unsigned int lengthInBytes);
 	virtual void OnRPCRemoteIndex(SystemAddress systemAddress, unsigned char *data, unsigned int lengthInBytes);
-	virtual void OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddress);
-	virtual void OnShutdown(RakPeerInterface *peer);
+	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	virtual void OnShutdown(void);
 
 	void Clear(void);
 
@@ -554,7 +554,6 @@ public:
 	SystemAddress incomingSystemAddress;
 	RakNet::BitStream incomingExtraData;
 
-	RakPeerInterface *rakPeer;
 	NetworkIDManager *networkIdManager;
 	char currentExecution[512];
 

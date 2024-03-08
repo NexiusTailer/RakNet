@@ -19,7 +19,6 @@ int RPC3::RemoteRPCFunctionComp( const RPC3::RPCIdentifier &key, const RemoteRPC
 RPC3::RPC3()
 {
 	currentExecution[0]=0;
-	rakPeer=0;
 	networkIdManager=0;
 	outgoingTimestamp=0;
 	outgoingPriority=HIGH_PRIORITY;
@@ -86,7 +85,7 @@ SystemAddress RPC3::GetLastSenderAddress(void) const
 
 RakPeerInterface *RPC3::GetRakPeer(void) const
 {
-	return rakPeer;
+	return rakPeerInterface;
 }
 
 const char *RPC3::GetCurrentExecution(void) const
@@ -126,9 +125,9 @@ bool RPC3::SendCall(RakString uniqueIdentifier, char parameterCount, RakNet::Bit
 	if (outgoingBroadcast)
 	{
 		unsigned systemIndex;
-		for (systemIndex=0; systemIndex < rakPeer->GetMaximumNumberOfPeers(); systemIndex++)
+		for (systemIndex=0; systemIndex < rakPeerInterface->GetMaximumNumberOfPeers(); systemIndex++)
 		{
-			systemAddr=rakPeer->GetSystemAddressFromIndex(systemIndex);
+			systemAddr=rakPeerInterface->GetSystemAddressFromIndex(systemIndex);
 			if (systemAddr!=UNASSIGNED_SYSTEM_ADDRESS && systemAddr!=outgoingSystemAddress)
 			{
 				if (GetRemoteFunctionIndex(systemAddr, uniqueIdentifier, &outerIndex, &innerIndex))
@@ -145,7 +144,7 @@ bool RPC3::SendCall(RakString uniqueIdentifier, char parameterCount, RakNet::Bit
 
 				bs.WriteCompressed(serializedParameters->GetNumberOfBitsUsed());
 				bs.WriteAlignedBytes((const unsigned char*) serializedParameters->GetData(), serializedParameters->GetNumberOfBytesUsed());
-				rakPeer->Send(&bs, outgoingPriority, outgoingReliability, outgoingOrderingChannel, systemAddr, false);
+				SendUnified(&bs, outgoingPriority, outgoingReliability, outgoingOrderingChannel, systemAddr, false);
 
 				// Start writing again after ID_AUTO_RPC_CALL
 				bs.SetWriteOffset(writeOffset);
@@ -171,7 +170,7 @@ bool RPC3::SendCall(RakString uniqueIdentifier, char parameterCount, RakNet::Bit
 
 			bs.WriteCompressed(serializedParameters->GetNumberOfBitsUsed());
 			bs.WriteAlignedBytes((const unsigned char*) serializedParameters->GetData(), serializedParameters->GetNumberOfBytesUsed());
-			rakPeer->Send(&bs, outgoingPriority, outgoingReliability, outgoingOrderingChannel, systemAddr, false);
+			SendUnified(&bs, outgoingPriority, outgoingReliability, outgoingOrderingChannel, systemAddr, false);
 		}
 		else
 			return false;
@@ -179,15 +178,14 @@ bool RPC3::SendCall(RakString uniqueIdentifier, char parameterCount, RakNet::Bit
 	return true;
 }
 
-void RPC3::OnAttach(RakPeerInterface *peer)
+void RPC3::OnAttach(void)
 {
-	rakPeer=peer;
 	outgoingSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
 	outgoingNetworkID=UNASSIGNED_NETWORK_ID;
 	incomingSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
 }
 
-PluginReceiveResult RPC3::OnReceive(RakPeerInterface *peer, Packet *packet)
+PluginReceiveResult RPC3::OnReceive(Packet *packet)
 {
 	RakNetTime timestamp=0;
 	unsigned char packetIdentifier, packetDataOffset;
@@ -212,10 +210,6 @@ PluginReceiveResult RPC3::OnReceive(RakPeerInterface *peer, Packet *packet)
 
 	switch (packetIdentifier)
 	{
-	case ID_DISCONNECTION_NOTIFICATION:
-	case ID_CONNECTION_LOST:
-		OnCloseConnection(peer, packet->systemAddress);
-		return RR_CONTINUE_PROCESSING;
 	case ID_AUTO_RPC_CALL:
 		incomingTimeStamp=timestamp;
 		incomingSystemAddress=packet->systemAddress;
@@ -248,7 +242,7 @@ void RPC3::OnRPC3Call(SystemAddress systemAddress, unsigned char *data, unsigned
 	if (hasNetworkId)
 	{
 		bs.Read(networkId);
-		if (networkIdManager==0 && (networkIdManager=rakPeer->GetNetworkIDManager())==0)
+		if (networkIdManager==0 && (networkIdManager=rakPeerInterface->GetNetworkIDManager())==0)
 		{
 			// Failed - Tried to call object member, however, networkIDManager system was never registered
 			SendError(systemAddress, RPC_ERROR_NETWORK_ID_MANAGER_UNAVAILABLE, "");
@@ -305,7 +299,7 @@ void RPC3::OnRPC3Call(SystemAddress systemAddress, unsigned char *data, unsigned
 				outgoingBitstream.Write(hasNetworkId);
 				outgoingBitstream.WriteCompressed(functionIndex);
 				stringCompressor->EncodeString(strIdentifier,512,&outgoingBitstream,0);
-				rakPeer->Send(&outgoingBitstream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemAddress, false);
+				SendUnified(&outgoingBitstream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemAddress, false);
 				break;
 			}
 		}
@@ -410,7 +404,7 @@ void RPC3::OnRPCRemoteIndex(SystemAddress systemAddress, unsigned char *data, un
 	}
 }
 
-void RPC3::OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddress)
+void RPC3::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	(void) peer;
 	if (remoteFunctions.Has(systemAddress))
@@ -421,7 +415,7 @@ void RPC3::OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddress
 	}
 }
 
-void RPC3::OnShutdown(RakPeerInterface *peer)
+void RPC3::OnShutdown(void)
 {
 	(void) peer;
 	Clear();
@@ -447,7 +441,7 @@ void RPC3::SendError(SystemAddress target, unsigned char errorCode, const char *
 	bs.Write((MessageID)ID_RPC_REMOTE_ERROR);
 	bs.Write(errorCode);
 	bs.WriteAlignedBytes((const unsigned char*) functionName,(const unsigned int) strlen(functionName)+1);
-	rakPeer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, target, false);
+	SendUnified(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, target, false);
 }
 
 unsigned RPC3::GetLocalFunctionIndex(RPC3::RPCIdentifier identifier)

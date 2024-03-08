@@ -17,7 +17,7 @@
 #include "ReliabilityLayer.h"
 #include "GetTime.h"
 #include "SocketLayer.h"
-#include "PluginInterface.h"
+#include "PluginInterface2.h"
 #include "RakAssert.h"
 #include "Rand.h"
 #include "MessageIdentifiers.h"
@@ -25,11 +25,11 @@
 
 
 static const int DEFAULT_HAS_RECEIVED_PACKET_QUEUE_SIZE=512;
-static const RakNetTimeNS MAX_TIME_BETWEEN_PACKETS= 350000; // 350 milliseconds
-static const RakNetTimeNS STARTING_TIME_BETWEEN_PACKETS=MAX_TIME_BETWEEN_PACKETS;
-static const RakNetTimeNS HISTOGRAM_RESTART_CYCLE=10000000; // Every 10 seconds reset the histogram
+static const RakNetTimeUS MAX_TIME_BETWEEN_PACKETS= 350000; // 350 milliseconds
+static const RakNetTimeUS STARTING_TIME_BETWEEN_PACKETS=MAX_TIME_BETWEEN_PACKETS;
+static const RakNetTimeUS HISTOGRAM_RESTART_CYCLE=10000000; // Every 10 seconds reset the histogram
 static const long double TIME_BETWEEN_PACKETS_INCREASE_MULTIPLIER_DEFAULT=.02;
-static const long double TIME_BETWEEN_PACKETS_DECREASE_MULTIPLIER_DEFAULT=.04;
+static const long double TIME_BETWEEN_PACKETS_DECREASE_MULTIPLIER_DEFAULT=1;
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -38,7 +38,7 @@ static const long double TIME_BETWEEN_PACKETS_DECREASE_MULTIPLIER_DEFAULT=.04;
 #ifdef _WIN32
 //#define _DEBUG_LOGGER
 #ifdef _DEBUG_LOGGER
-#include <windows.h>
+#include "WindowsIncludes.h"
 #endif
 #endif
 
@@ -167,13 +167,13 @@ void ReliabilityLayer::InitializeVariables( void )
 	timeBetweenPackets=STARTING_TIME_BETWEEN_PACKETS;
 
 	ackPingIndex=0;
-	ackPingSum=(RakNetTimeNS)0;
+	ackPingSum=(RakNetTimeUS)0;
 
 	nextSendTime=lastUpdateTime;
-	//nextLowestPingReset=(RakNetTimeNS)0;
+	//nextLowestPingReset=(RakNetTimeUS)0;
 	continuousSend=false;
 
-	histogramStart=(RakNetTimeNS)0;
+	histogramStart=(RakNetTimeUS)0;
 	histogramBitsSent=0;
 	packetlossThisSample=backoffThisSample=false;
 	packetlossThisSampleResendCount=0;
@@ -214,17 +214,17 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 	{
 		for (j=0; j < splitPacketChannelList[i]->splitPacketList.Size(); j++)
 		{
-			rakFree(splitPacketChannelList[i]->splitPacketList[j]->data);
+			rakFree_Ex(splitPacketChannelList[i]->splitPacketList[j]->data, __FILE__, __LINE__ );
 			//		internalPacketPool.Release( splitPacketChannelList[i]->splitPacketList[j] );
 		}
-		RakNet::OP_DELETE(splitPacketChannelList[i]);
+		RakNet::OP_DELETE(splitPacketChannelList[i], __FILE__, __LINE__);
 	}
 	splitPacketChannelList.Clear();
 
 	while ( outputQueue.Size() > 0 )
 	{
 		internalPacket = outputQueue.Pop();
-		rakFree(internalPacket->data);
+		rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 		//		internalPacketPool.Release( internalPacket );
 	}
 
@@ -241,11 +241,11 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 				while ( theList->Size() )
 				{
 					internalPacket = orderingList[ i ]->Pop();
-					rakFree(internalPacket->data);
+					rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 					//		internalPacketPool.Release( internalPacket );
 				}
 
-				RakNet::OP_DELETE(theList);
+				RakNet::OP_DELETE(theList, __FILE__, __LINE__);
 			}
 		}
 	}
@@ -261,7 +261,7 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 
 		if ( internalPacket )
 		{
-			rakFree(internalPacket->data);
+			rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 			//	internalPacketPool.Release( internalPacket );
 		}
 	}
@@ -273,7 +273,7 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 		j = 0;
 		for ( ; j < sendPacketSet[ i ].Size(); j++ )
 		{
-			rakFree(( sendPacketSet[ i ] ) [ j ]->data);
+			rakFree_Ex(( sendPacketSet[ i ] ) [ j ]->data, __FILE__, __LINE__ );
 			//internalPacketPool.Release( ( sendPacketSet[ i ] ) [ j ] );
 		}
 
@@ -282,7 +282,7 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 
 #ifndef _RELEASE
 	for (unsigned i = 0; i < delayList.Size(); i++ )
-		RakNet::OP_DELETE(delayList[ i ]);
+		RakNet::OP_DELETE(delayList[ i ], __FILE__, __LINE__);
 	delayList.Clear();
 #endif
 
@@ -299,7 +299,7 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 // because some data is used internally, such as packet acknowledgment and
 //split packets
 //-------------------------------------------------------------------------------------------------------
-bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffer, unsigned int length, SystemAddress systemAddress, DataStructures::List<PluginInterface*> &messageHandlerList, int MTUSize )
+bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffer, unsigned int length, SystemAddress systemAddress, DataStructures::List<PluginInterface2*> &messageHandlerList, int MTUSize )
 {
 #ifdef _DEBUG
 	RakAssert( !( buffer == 0 ) );
@@ -311,7 +311,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 		return true;
 
 	//int numberOfAcksInFrame = 0;
-	RakNetTimeNS time;
+	RakNetTimeUS time;
 	bool indexFound;
 	int count, size;
 	MessageNumberType holeCount;
@@ -362,6 +362,10 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 			{
 				hasAcks=true;
 
+				unsigned int mhl;
+				for (mhl=0; mhl < messageHandlerList.Size(); mhl++)
+					messageHandlerList[i]->OnAck(messageNumber,systemAddress,(RakNetTimeMS)(time/(RakNetTimeUS)1000));
+
 				// GOT ACK
 
 				// SHOW - ack received
@@ -387,32 +391,32 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 			}
 		}
 
-		RakNetTimeNS rst = (RakNetTimeNS) ourSystemTime * (RakNetTimeNS) 1000;
+		RakNetTimeUS rst = (RakNetTimeUS) ourSystemTime * (RakNetTimeUS) 1000;
 		if (time >= rst)
 			ackPing = time - rst;
 		else
 			ackPing=0;
-		RakNetTimeNS avePing;
+		RakNetTimeUS avePing;
 		if (ackPingSum==0)
 		{
 			// First time between packets is just the ping.
 			timeBetweenPackets = ackPing;
 			if (timeBetweenPackets > MAX_TIME_BETWEEN_PACKETS)
 				timeBetweenPackets=MAX_TIME_BETWEEN_PACKETS;
-			else if (timeBetweenPackets < (RakNetTimeNS)10000 )
-				timeBetweenPackets=(RakNetTimeNS)10000;
-			ackPingSum=ackPing<<8; // Multiply by 256
-			for (int i=0; i < 256; i++)
+			else if (timeBetweenPackets < (RakNetTimeUS)10000 )
+				timeBetweenPackets=(RakNetTimeUS)10000;
+			ackPingSum=ackPing<<ACK_PING_SAMPLES_BITS; // Multiply by ACK_PING_SAMPLES_SIZE
+			for (int i=0; i < ACK_PING_SAMPLES_SIZE; i++)
 				ackPingSamples[i]=ackPing;
 		}			
 
-		avePing=ackPingSum>>8; // divide by 256
+		avePing=ackPingSum>>ACK_PING_SAMPLES_BITS; // divide by ACK_PING_SAMPLES_SIZE
                               
 		if (continuousSend && time >= nextAllowedThroughputSample)
 		{
 			// 10 milliseconds tolerance, because at small pings percentage fluctuations vary widely naturally
-			bool pingLowering = ackPing <= avePing * (RakNetTimeNS)6 / (RakNetTimeNS)5
-				+ (RakNetTimeNS)10000;
+			bool pingLowering = ackPing <= avePing * (RakNetTimeUS)6 / (RakNetTimeUS)5
+				+ (RakNetTimeUS)10000;
 
 			// Only increase if the ping is lowering and there was no packetloss
 			if (pingLowering==true && packetlossThisSample==false) 
@@ -422,14 +426,17 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 				ackPingSum-=ackPingSamples[ackPingIndex];
 				ackPingSamples[ackPingIndex]=ackPing;
 				ackPingSum+=ackPing;
-				ackPingIndex++; // Might wrap to 0
+				if (ACK_PING_SAMPLES_BITS==8)
+					ackPingIndex++; // Might wrap to 0
+				else
+					ackPingIndex=(ackPingIndex+1)%ACK_PING_SAMPLES_SIZE;
 
-				RakNetTimeNS diff;
+				RakNetTimeUS diff;
 				// Decrease time between packets by 2%
 				if (lastPacketlossTime==0 || time>lastPacketlossTime && time-lastPacketlossTime>5000000)
-					diff = (RakNetTimeNS)ceil(((long double) timeBetweenPackets * TIME_BETWEEN_PACKETS_INCREASE_MULTIPLIER_DEFAULT * 2.0));
+					diff = (RakNetTimeUS)ceil(((long double) timeBetweenPackets * TIME_BETWEEN_PACKETS_INCREASE_MULTIPLIER_DEFAULT * 2.0));
 				else
-					diff = (RakNetTimeNS)ceil(((long double) timeBetweenPackets * TIME_BETWEEN_PACKETS_INCREASE_MULTIPLIER_DEFAULT));
+					diff = (RakNetTimeUS)ceil(((long double) timeBetweenPackets * TIME_BETWEEN_PACKETS_INCREASE_MULTIPLIER_DEFAULT));
 
 				if (diff < timeBetweenPackets)
 				{
@@ -437,18 +444,25 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 					timeBetweenPackets-=diff;
 				}
 				
-//				RAKNET_DEBUG_PRINTF("- CurPing: %i. AvePing: %i. Ploss=%.1f.  Time between= %i\n", (RakNetTime)(ackPing/(RakNetTimeNS)1000), (RakNetTime)(avePing/(RakNetTimeNS)1000), 100.0f * ( float ) statistics.messagesTotalBitsResent / ( float ) statistics.totalBitsSent, timeBetweenPackets);
+				//RAKNET_DEBUG_PRINTF("- CurPing: %i. AvePing: %i. Ploss=%.1f.  Time between= %i\n", (RakNetTime)(ackPing/(RakNetTimeUS)1000), (RakNetTime)(avePing/(RakNetTimeUS)1000), 100.0f * ( float ) statistics.messagesTotalBitsResent / ( float ) statistics.totalBitsSent, timeBetweenPackets);
 				lastTimeBetweenPacketsDecrease=time;
+
+				if (ackPing < 1000000) 
+					// 1 milliseconds tolerance, Otherwise we overreact at very small pings
+					nextAllowedThroughputSample=time+ackPing + (RakNetTimeUS)1000;
+				else
+					// Don't resample over long periods
+					nextAllowedThroughputSample=time+1000000;
+
 			}
 			// Decrease if the ping is rising or we got packetloss for a new group of resends
-			else if (pingLowering==false || backoffThisSample==true) // if (ackPing >= ((avePing*(RakNetTimeNS)4)/(RakNetTimeNS)3) + (RakNetTimeNS) 1000) // 1 milliseconds tolerance, because at small pings percentage fluctuations vary widely naturally
+			else if (pingLowering==false || backoffThisSample==true) // if (ackPing >= ((avePing*(RakNetTimeUS)4)/(RakNetTimeUS)3) + (RakNetTimeUS) 1000) // 1 milliseconds tolerance, because at small pings percentage fluctuations vary widely naturally
 			{
-				// Increase time between packets by 4%
-				RakNetTimeNS diff = (RakNetTimeNS)ceil(((long double) timeBetweenPackets * TIME_BETWEEN_PACKETS_DECREASE_MULTIPLIER_DEFAULT));
+				RakNetTimeUS diff = (RakNetTimeUS)ceil(((long double) timeBetweenPackets * TIME_BETWEEN_PACKETS_DECREASE_MULTIPLIER_DEFAULT));
 				nextSendTime+=diff;
 				timeBetweenPackets+=diff;
 
-//				RAKNET_DEBUG_PRINTF("+ CurPing: %i. AvePing: %i. Ploss=%.1f. Time between = %i\n",  (RakNetTime)(ackPing/(RakNetTimeNS)1000), (RakNetTime)(avePing/(RakNetTimeNS)1000), 100.0f * ( float ) statistics.messagesTotalBitsResent / ( float ) statistics.totalBitsSent,timeBetweenPackets);
+				//RAKNET_DEBUG_PRINTF("+ CurPing: %i. AvePing: %i. Ploss=%.1f. Time between = %i\n",  (RakNetTime)(ackPing/(RakNetTimeUS)1000), (RakNetTime)(avePing/(RakNetTimeUS)1000), 100.0f * ( float ) statistics.messagesTotalBitsResent / ( float ) statistics.totalBitsSent,timeBetweenPackets);
 				lastTimeBetweenPacketsIncrease=time;
 
 				if (timeBetweenPackets > MAX_TIME_BETWEEN_PACKETS)
@@ -456,20 +470,15 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 					// Something wrong, perhaps the entire network clogged up, or a different path was taken.
 					timeBetweenPackets=MAX_TIME_BETWEEN_PACKETS;
 				}
+
+				if (ackPing*10 < 500000) 
+					nextAllowedThroughputSample=time+ackPing*10 + (RakNetTimeUS)2000;
+				else
+					nextAllowedThroughputSample=time+500000;
 			}
 			
 			packetlossThisSample=false;
 			backoffThisSample=false;
-
-			if (ackPing < 2000000) 
-				// 1 milliseconds tolerance, Otherwise we overreact at very small pings
-				nextAllowedThroughputSample=time+ackPing + (RakNetTimeNS)1000;
-			else
-				// Don't resample over super long periods
-				nextAllowedThroughputSample=time+200000;
-
-                //        RAKNET_DEBUG_PRINTF("time=%i ",time);
-                  //      RAKNET_DEBUG_PRINTF("nextAllowedThroughputSample=%i\n",nextAllowedThroughputSample);
 		}
 	//	else
 	//		RAKNET_DEBUG_PRINTF("Continuous Send = false\n");
@@ -480,7 +489,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 		//		if (time > nextLowestPingReset)
 		//		{
 		//			lowestPing=ackPing;
-		//			nextLowestPingReset=time+(RakNetTimeNS)60000000; // Once per minute, reset the lowest ping to account for high level ping changes.
+		//			nextLowestPingReset=time+(RakNetTimeUS)60000000; // Once per minute, reset the lowest ping to account for high level ping changes.
 		//		}
 
 	}
@@ -500,7 +509,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 	while ( internalPacket )
 	{
 		for (i=0; i < messageHandlerList.Size(); i++)
-			messageHandlerList[i]->OnInternalPacket(internalPacket, receivePacketCount, systemAddress, (RakNetTime)(time/(RakNetTimeNS)1000), false);
+			messageHandlerList[i]->OnInternalPacket(internalPacket, receivePacketCount, systemAddress, (RakNetTime)(time/(RakNetTimeUS)1000), false);
 
 		{
 #ifdef _DEBUG_LOGGER
@@ -571,7 +580,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 #endif
 
 				// Duplicate packet
-				rakFree(internalPacket->data);
+				rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 				internalPacketPool.Release( internalPacket );
 				goto CONTINUE_SOCKET_DATA_PARSE_LOOP;
 			}
@@ -603,7 +612,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 #endif
 
 					// Duplicate packet
-					rakFree(internalPacket->data);
+					rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 					internalPacketPool.Release( internalPacket );
 					goto CONTINUE_SOCKET_DATA_PARSE_LOOP;
 				}
@@ -618,7 +627,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 #endif
 
 					// Would crash due to out of memory!
-					rakFree(internalPacket->data);
+					rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 					internalPacketPool.Release( internalPacket );
 					goto CONTINUE_SOCKET_DATA_PARSE_LOOP;
 				}
@@ -636,7 +645,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 				// Add 0 times to the queue until (messageNumber - baseIndex) < queue size.
 			//	RakAssert(holeCount<10000);
 				while ((MessageNumberType)(holeCount) > hasReceivedPacketQueue.Size())
-					hasReceivedPacketQueue.Push(time+(RakNetTimeNS)60 * (RakNetTimeNS)1000 * (RakNetTimeNS)1000); // Didn't get this packet - set the time to give up waiting
+					hasReceivedPacketQueue.Push(time+(RakNetTimeUS)60 * (RakNetTimeUS)1000 * (RakNetTimeUS)1000); // Didn't get this packet - set the time to give up waiting
 				hasReceivedPacketQueue.Push(0); // Got the packet
 #ifdef _DEBUG
 				// If this assert hits then MessageNumberType has overflowed
@@ -670,7 +679,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 //					RAKNET_DEBUG_PRINTF( "Got invalid packet\n" );
 #endif
 
-					rakFree(internalPacket->data);
+					rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 					internalPacketPool.Release( internalPacket );
 					goto CONTINUE_SOCKET_DATA_PARSE_LOOP;
 				}
@@ -721,7 +730,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 					statistics.sequencedMessagesOutOfOrder++;
 
 					// Older sequenced packet. Discard it
-					rakFree(internalPacket->data);
+					rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 					internalPacketPool.Release( internalPacket );
 				}
 
@@ -768,7 +777,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer( const char *buffe
 					//RAKNET_DEBUG_PRINTF("Got invalid ordering channel %i from packet %i\n", internalPacket->orderingChannel, internalPacket->messageNumber);
 #endif
 					// Invalid packet
-					rakFree(internalPacket->data);
+					rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 					internalPacketPool.Release( internalPacket );
 					goto CONTINUE_SOCKET_DATA_PARSE_LOOP;
 				}
@@ -958,7 +967,7 @@ BitSize_t ReliabilityLayer::Receive( unsigned char **data )
 // reliability is what reliability to use
 // ordering channel is from 0 to 255 and specifies what stream to use
 //-------------------------------------------------------------------------------------------------------
-bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, RakNetTimeNS currentTime )
+bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, RakNetTimeUS currentTime )
 {
 #ifdef _DEBUG
 	RakAssert( !( reliability > RELIABLE_SEQUENCED || reliability < 0 ) );
@@ -981,7 +990,7 @@ bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPri
 		orderingChannel = 0;
 
 	// For the first 60 seconds of a new connection, send everything reliable, so that acks arrive and available bandwidth can be determined.
-	if (currentTime-(RakNetTimeNS)statistics.connectionStartTime*(RakNetTimeNS)1000 < (RakNetTimeNS)60000000)
+	if (currentTime-(RakNetTimeUS)statistics.connectionStartTime*(RakNetTimeUS)1000 < (RakNetTimeUS)60000000)
 	{
 		if (reliability==UNRELIABLE)
 			reliability=RELIABLE;
@@ -1015,7 +1024,7 @@ bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPri
 
 	if ( makeDataCopy )
 	{
-		internalPacket->data = (unsigned char*) rakMalloc( numberOfBytesToSend );
+		internalPacket->data = (unsigned char*) rakMalloc_Ex( numberOfBytesToSend, __FILE__, __LINE__ );
 		memcpy( internalPacket->data, data, numberOfBytesToSend );
 		//		RAKNET_DEBUG_PRINTF("Allocated %i\n", internalPacket->data);
 	}
@@ -1095,7 +1104,7 @@ bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPri
 			//sendPacketSet[priority].CancelWriteLock(internalPacket);
 			//SplitPacket( &packetCopy, MTUSize );
 			SplitPacket( internalPacket, MTUSize );
-			//RakNet::OP_DELETE_ARRAY(packetCopy.data);
+			//RakNet::OP_DELETE_ARRAY(packetCopy.data, __FILE__, __LINE__);
 			return true;
 		}
 
@@ -1107,9 +1116,9 @@ bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPri
 //-------------------------------------------------------------------------------------------------------
 // Run this once per game cycle.  Handles internal lists and actually does the send
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSize, RakNetTimeNS time,
+void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSize, RakNetTimeUS time,
 							  unsigned bitsPerSecondLimit,
-							  DataStructures::List<PluginInterface*> &messageHandlerList,
+							  DataStructures::List<PluginInterface2*> &messageHandlerList,
 							  RakNetRandom *rnr, bool isPS3LobbySocket)
 {
 	// Debug memory leaks
@@ -1160,7 +1169,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 		return;
 	}
 
-	RakNetTimeNS elapsed = time - lastUpdateTime;
+	RakNetTimeUS elapsed = time - lastUpdateTime;
 	lastUpdateTime=time;
 	UpdateThreadedMemory();
 
@@ -1202,15 +1211,15 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 	const int maxDataBitSize = BYTES_TO_BITS((MTUSize - UDP_HEADER_SIZE));
 	bool hitMTUCap;
 	bool reliableDataSent;
-	RakNetTimeNS usedTime;
+	RakNetTimeUS usedTime;
 #ifdef _ENABLE_FLOW_CONTROL
-	RakNetTimeNS availableTime;
+	RakNetTimeUS availableTime;
 	if (limitThroughput==false)
 	{
 		if (time >= nextSendTime)
 		{
 			hitMTUCap=false;
-			usedTime=(RakNetTimeNS)0;
+			usedTime=(RakNetTimeUS)0;
 			availableTime = time - nextSendTime;
 			if (availableTime > MAX_TIME_BETWEEN_PACKETS)
 				availableTime=MAX_TIME_BETWEEN_PACKETS;
@@ -1230,14 +1239,14 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 					{
 						// Delay the send to simulate lag
 						DataAndTime *dt;
-						dt = RakNet::OP_NEW<DataAndTime>();
-						//dt = RakNet::OP_NEW<ReliabilityLayer::DataAndTime>(1);
+						dt = RakNet::OP_NEW<DataAndTime>( __FILE__, __LINE__ );
+						//dt = RakNet::OP_NEW<ReliabilityLayer::DataAndTime>(1, __FILE__, __LINE__ );
 						memcpy( dt->data, updateBitStream.GetData(), (size_t) updateBitStream.GetNumberOfBytesUsed() );
 						dt->length = (unsigned int) updateBitStream.GetNumberOfBytesUsed();
-						dt->sendTime = time + (RakNetTimeNS)minExtraPing*1000;
+						dt->sendTime = time + (RakNetTimeUS)minExtraPing*1000;
 						if (extraPingVariance > 0)
-							dt->sendTime += (RakNetTimeNS) ( rnr->RandomMT() % (int)extraPingVariance ) * 1000;
-						delayList.Insert( dt );
+							dt->sendTime += (RakNetTimeUS) ( rnr->RandomMT() % (int)extraPingVariance ) * 1000;
+						delayList.Insert( dt, __FILE__, __LINE__ );
 					}
 					else
 #endif
@@ -1248,7 +1257,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 #ifdef _ENABLE_FLOW_CONTROL
 					if (bitsPerSecondLimit > 0)
 					{
-						throughputCapCountdown+=(RakNetTimeNS)(1000000.0 * (double) updateBitStream.GetNumberOfBitsUsed() / (double) bitsPerSecondLimit);
+						throughputCapCountdown+=(RakNetTimeUS)(1000000.0 * (double) updateBitStream.GetNumberOfBitsUsed() / (double) bitsPerSecondLimit);
 						// Prevent sending a large burst and then doing nothing for a long time
 						if (throughputCapCountdown>30000)
 							break;
@@ -1257,7 +1266,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 					if (hitMTUCap)
 						usedTime+=timeBetweenPackets;
 					else
-						usedTime+=(RakNetTimeNS)((long double) timeBetweenPackets * ((long double) updateBitStream.GetNumberOfBitsUsed() / (long double) maxDataBitSize));
+						usedTime+=(RakNetTimeUS)((long double) timeBetweenPackets * ((long double) updateBitStream.GetNumberOfBitsUsed() / (long double) maxDataBitSize));
 #endif
 				}
 				else
@@ -1301,7 +1310,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 
 				if (bitsPerSecondLimit > 0)
 				{
-					throughputCapCountdown+=(RakNetTimeNS)(1000000.0 * (double) updateBitStream.GetNumberOfBitsUsed() / (double) bitsPerSecondLimit);
+					throughputCapCountdown+=(RakNetTimeUS)(1000000.0 * (double) updateBitStream.GetNumberOfBitsUsed() / (double) bitsPerSecondLimit);
 				}
 			}
 		}
@@ -1321,7 +1330,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 			// Send it now
 			SendBitStream( s, systemAddress, &updateBitStream, rnr, isPS3LobbySocket );
 
-			RakNet::OP_DELETE(delayList[ i ]);
+			RakNet::OP_DELETE(delayList[ i ], __FILE__, __LINE__);
 			if (i != delayList.Size() - 1)
 				delayList[ i ] = delayList[ delayList.Size() - 1 ];
 			delayList.RemoveFromEnd();
@@ -1394,7 +1403,7 @@ void ReliabilityLayer::SendBitStream( SOCKET s, SystemAddress systemAddress, Rak
 //-------------------------------------------------------------------------------------------------------
 // Generates a datagram (coalesced packets)
 //-------------------------------------------------------------------------------------------------------
-bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize, bool *reliableDataSent, RakNetTimeNS time, SystemAddress systemAddress, bool *hitMTUCap, DataStructures::List<PluginInterface*> &messageHandlerList  )
+bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize, bool *reliableDataSent, RakNetTimeUS time, SystemAddress systemAddress, bool *hitMTUCap, DataStructures::List<PluginInterface2*> &messageHandlerList  )
 {
 	InternalPacket * internalPacket;
 	//	InternalPacket *temp;
@@ -1450,7 +1459,7 @@ bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize,
 				packetlossThisSampleResendCount--;
 
 			resendQueue.Pop();
-			rakFree(internalPacket->data);
+			rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 			internalPacketPool.Release( internalPacket );
 			continue; // This was a hole
 		}
@@ -1480,7 +1489,7 @@ bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize,
 #endif
 
 			for (messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
-				messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, sendPacketCount, systemAddress, (RakNetTime)(time/(RakNetTimeNS)1000), true);
+				messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, sendPacketCount, systemAddress, (RakNetTime)(time/(RakNetTimeUS)1000), true);
 
 			// Write to the output bitstream
 			statistics.messageResends++;
@@ -1497,7 +1506,7 @@ bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize,
 				wroteData=true;
 				output->Write(true);
 				// Write our own system time for ping calculations for flow control
-				output->Write((RemoteSystemTimeType)(time / (RakNetTimeNS)1000));
+				output->Write((RemoteSystemTimeType)(time / (RakNetTimeUS)1000));
 			}
 			statistics.messagesTotalBitsResent += WriteToBitStreamFromInternalPacket( output, internalPacket, time );
 			internalPacket->packetNumber=sendPacketCount;
@@ -1507,32 +1516,32 @@ bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize,
 
 			statistics.packetsContainingOnlyAcknowlegementsAndResends++;
 
-	//		RAKNET_DEBUG_PRINTF("internalPacket->messageNumber=%i time=%i timeBetween=%i\n", internalPacket->messageNumber, (RakNetTime)(time/(RakNetTimeNS)1000), (RakNetTime)(timeBetweenPackets/(RakNetTimeNS)1000));
+	//		RAKNET_DEBUG_PRINTF("internalPacket->messageNumber=%i time=%i timeBetween=%i\n", internalPacket->messageNumber, (RakNetTime)(time/(RakNetTimeUS)1000), (RakNetTime)(timeBetweenPackets/(RakNetTimeUS)1000));
 			
 			internalPacket->timesSent++;
 			/*
 			if (ackPingSum==0 || internalPacket->timesSent>=3)
 			{
 				// Fourth and subsequent tries will be one second apart, to avoid flooding the other system on periods of long unresponsiveness
-				internalPacket->nextActionTime = time + (RakNetTimeNS)1000000;
+				internalPacket->nextActionTime = time + (RakNetTimeUS)1000000;
 			}
 			else
 			{
 				// Third try will be
 				// 100 milliseconds for system variance
 				// 2 * your ping
-				internalPacket->nextActionTime = time + (RakNetTimeNS)100000 + (ackPingSum>>7); 
-				if (internalPacket->nextActionTime > time + (RakNetTimeNS)1000000)
-					internalPacket->nextActionTime = time + (RakNetTimeNS)1000000;
+				internalPacket->nextActionTime = time + (RakNetTimeUS)100000 + (ackPingSum>>7); 
+				if (internalPacket->nextActionTime > time + (RakNetTimeUS)1000000)
+					internalPacket->nextActionTime = time + (RakNetTimeUS)1000000;
 			}
 			*/
 
 			//RAKNET_DEBUG_PRINTF("PACKETLOSS\n ");
 
-			internalPacket->nextActionTime = time + (RakNetTimeNS)15000 + (ackPingSum>>8) + (ackPingSum>>9); 
+			internalPacket->nextActionTime = time + (RakNetTimeUS)15000 + (ackPingSum>>ACK_PING_SAMPLES_BITS) + (ackPingSum>>(ACK_PING_SAMPLES_BITS+1)); 
 
-			if (internalPacket->nextActionTime > time + (RakNetTimeNS)1000000)
-				internalPacket->nextActionTime = time + (RakNetTimeNS)1000000;
+			if (internalPacket->nextActionTime > time + (RakNetTimeUS)1000000)
+				internalPacket->nextActionTime = time + (RakNetTimeUS)1000000;
 
 			packetlossThisSample=true;
 			lastPacketlossTime=time;
@@ -1546,7 +1555,7 @@ bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize,
 				if (internalPacket->timesSent>=3 && lastAckTime!=0 && time - lastAckTime>1000000)
 				{
 					// Totally unable to deliver messages for more than a second
-					RakNetTimeNS diff = (RakNetTimeNS)ceil(((long double) timeBetweenPackets * .5));
+					RakNetTimeUS diff = (RakNetTimeUS)ceil(((long double) timeBetweenPackets * .5));
 					nextSendTime+=diff;
 					timeBetweenPackets+=diff;
 					lastTimeBetweenPacketsIncrease=time;
@@ -1595,10 +1604,10 @@ bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize,
 
 			if (unreliableTimeout!=0 &&
 				(internalPacket->reliability==UNRELIABLE || internalPacket->reliability==UNRELIABLE_SEQUENCED) &&
-				time > internalPacket->creationTime+(RakNetTimeNS)unreliableTimeout)
+				time > internalPacket->creationTime+(RakNetTimeUS)unreliableTimeout)
 			{
 				// Unreliable packets are deleted
-				rakFree(internalPacket->data);
+				rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 				internalPacketPool.Release( internalPacket );
 				continue;
 			}
@@ -1629,9 +1638,6 @@ bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize,
 			}
 #endif
 
-			for (messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
-				messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, sendPacketCount, systemAddress, (RakNetTime)(time/(RakNetTimeNS)1000), true);
-
 			//			if (writeFalseToHeader)
 			//			{
 			//				output->Write(false);
@@ -1642,7 +1648,7 @@ bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize,
 				wroteData=true;
 				output->Write(true);
 				// Write our own system time for ping calculations for flow control
-				output->Write((RemoteSystemTimeType)(time / (RakNetTimeNS)1000));
+				output->Write((RemoteSystemTimeType)(time / (RakNetTimeUS)1000));
 			}
 			// I assign the message number in the order the messages are sent, rather than the order they are created.
 			// This fixes a bug where I was formerly creating a huge number of split packets, then sending on a different ordering channel on a higher priority.
@@ -1661,14 +1667,17 @@ bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize,
 			internalPacket->packetNumber=sendPacketCount;
 			messagesSent++;
 
+			for (messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
+				messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, sendPacketCount, systemAddress, (RakNetTime)(time/(RakNetTimeUS)1000), true);
+
 			if ( isReliable )
 			{
 				// Reliable packets are saved to resend later
 				reliableBits += internalPacket->dataBitLength;
-	//			RAKNET_DEBUG_PRINTF("internalPacket->messageNumber=%i time=%i timeBetween=%i\n", internalPacket->messageNumber, (RakNetTime)(time/(RakNetTimeNS)1000), (RakNetTime)(timeBetweenPackets/(RakNetTimeNS)1000));
+	//			RAKNET_DEBUG_PRINTF("internalPacket->messageNumber=%i time=%i timeBetween=%i\n", internalPacket->messageNumber, (RakNetTime)(time/(RakNetTimeUS)1000), (RakNetTime)(timeBetweenPackets/(RakNetTimeUS)1000));
 				if (ackPingSum==0)
 				{
-					internalPacket->nextActionTime = time + (RakNetTimeNS)1000000;
+					internalPacket->nextActionTime = time + (RakNetTimeUS)1000000;
 				}
 				else
 				{
@@ -1676,10 +1685,10 @@ bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize,
 					// Second try will be
 					// 15 milliseconds for system variance
 					// 1.5 * your ping
-					internalPacket->nextActionTime = time + (RakNetTimeNS)15000 + (ackPingSum>>8) + (ackPingSum>>9); 
+					internalPacket->nextActionTime = time + (RakNetTimeUS)15000 + (ackPingSum>>ACK_PING_SAMPLES_BITS) + (ackPingSum>>(ACK_PING_SAMPLES_BITS+1)); 
 
-					if (internalPacket->nextActionTime > time + (RakNetTimeNS)1000000)
-						internalPacket->nextActionTime = time + (RakNetTimeNS)1000000;
+					if (internalPacket->nextActionTime > time + (RakNetTimeUS)1000000)
+						internalPacket->nextActionTime = time + (RakNetTimeUS)1000000;
 				}
 
 #if defined (DEBUG_SPLIT_PACKET_PROBLEMS)
@@ -1695,7 +1704,7 @@ bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize,
 			else
 			{
 				// Unreliable packets are deleted
-				rakFree(internalPacket->data);
+				rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 				internalPacketPool.Release( internalPacket );
 			}
 		}
@@ -1777,7 +1786,7 @@ void ReliabilityLayer::SetSplitMessageProgressInterval(int interval)
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::SetUnreliableTimeout(RakNetTime timeoutMS)
 {
-	unreliableTimeout=(RakNetTimeNS)timeoutMS*(RakNetTimeNS)1000;
+	unreliableTimeout=(RakNetTimeUS)timeoutMS*(RakNetTimeUS)1000;
 }
 
 //-------------------------------------------------------------------------------------------------------
@@ -1809,7 +1818,7 @@ bool ReliabilityLayer::IsSendThrottled( int MTUSize )
 //-------------------------------------------------------------------------------------------------------
 // We lost a packet
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::UpdateWindowFromPacketloss( RakNetTimeNS time )
+void ReliabilityLayer::UpdateWindowFromPacketloss( RakNetTimeUS time )
 {
 	(void) time;
 }
@@ -1817,7 +1826,7 @@ void ReliabilityLayer::UpdateWindowFromPacketloss( RakNetTimeNS time )
 //-------------------------------------------------------------------------------------------------------
 // Increase the window size
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::UpdateWindowFromAck( RakNetTimeNS time )
+void ReliabilityLayer::UpdateWindowFromAck( RakNetTimeUS time )
 {
 	(void) time;
 }
@@ -1825,7 +1834,7 @@ void ReliabilityLayer::UpdateWindowFromAck( RakNetTimeNS time )
 //-------------------------------------------------------------------------------------------------------
 // Does what the function name says
 //-------------------------------------------------------------------------------------------------------
-unsigned ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSequenced( const MessageNumberType messageNumber, RakNetTimeNS time )
+unsigned ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSequenced( const MessageNumberType messageNumber, RakNetTimeUS time )
 {
 	(void) time;
 
@@ -1843,7 +1852,7 @@ unsigned ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSeque
 		reliability = internalPacket->reliability;
 		orderingChannel = internalPacket->orderingChannel;
 		orderingIndex = internalPacket->orderingIndex;
-		//		RakNet::OP_DELETE_ARRAY(internalPacket->data);
+		//		RakNet::OP_DELETE_ARRAY(internalPacket->data, __FILE__, __LINE__);
 		//		internalPacketPool.ReleasePointer( internalPacket );
 		internalPacket->nextActionTime=0; // Will be freed in the update function
 		return 0;
@@ -1862,7 +1871,7 @@ unsigned ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSeque
 		if ( internalPacket && internalPacket->reliability == RELIABLE_SEQUENCED && internalPacket->orderingChannel == orderingChannel && IsOlderOrderedPacket( internalPacket->orderingIndex, orderingIndex ) )
 		{
 		// Delete the packet
-		RakNet::OP_DELETE_ARRAY(internalPacket->data);
+		RakNet::OP_DELETE_ARRAY(internalPacket->data, __FILE__, __LINE__);
 		internalPacketPool.ReleasePointer( internalPacket );
 		resendList[ j ] = 0; // Generate a hole
 		}
@@ -1885,7 +1894,7 @@ unsigned ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSeque
 //-------------------------------------------------------------------------------------------------------
 // Acknowledge receipt of the packet with the specified messageNumber
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::SendAcknowledgementPacket( const MessageNumberType messageNumber, RakNetTimeNS time )
+void ReliabilityLayer::SendAcknowledgementPacket( const MessageNumberType messageNumber, RakNetTimeUS time )
 {
 	(void) time;
 	statistics.acknowlegementsSent++;
@@ -1957,7 +1966,7 @@ int ReliabilityLayer::GetBitStreamHeaderLength( const InternalPacket *const inte
 //-------------------------------------------------------------------------------------------------------
 // Parse an internalPacket and create a bitstream to represent this data
 //-------------------------------------------------------------------------------------------------------
-BitSize_t ReliabilityLayer::WriteToBitStreamFromInternalPacket( RakNet::BitStream *bitStream, const InternalPacket *const internalPacket, RakNetTimeNS curTime )
+BitSize_t ReliabilityLayer::WriteToBitStreamFromInternalPacket( RakNet::BitStream *bitStream, const InternalPacket *const internalPacket, RakNetTimeUS curTime )
 {
 	(void) curTime;
 
@@ -2009,7 +2018,7 @@ BitSize_t ReliabilityLayer::WriteToBitStreamFromInternalPacket( RakNet::BitStrea
 //	if (internalPacket->reliability == RELIABLE || internalPacket->reliability == RELIABLE_ORDERED || internalPacket->reliability==RELIABLE_SEQUENCED)
 	//{
 	//	// Write the time in reliable packets for flow control
-//		bitStream->Write((RemoteSystemTimeType) (curTime/(RakNetTimeNS)1000));
+//		bitStream->Write((RemoteSystemTimeType) (curTime/(RakNetTimeUS)1000));
 //	}
 
 	// Write if this is a split packet (1 bit)
@@ -2049,7 +2058,7 @@ BitSize_t ReliabilityLayer::WriteToBitStreamFromInternalPacket( RakNet::BitStrea
 //-------------------------------------------------------------------------------------------------------
 // Parse a bitstream and create an internal packet to represent this data
 //-------------------------------------------------------------------------------------------------------
-InternalPacket* ReliabilityLayer::CreateInternalPacketFromBitStream( RakNet::BitStream *bitStream, RakNetTimeNS time )
+InternalPacket* ReliabilityLayer::CreateInternalPacketFromBitStream( RakNet::BitStream *bitStream, RakNetTimeUS time )
 {
 	bool bitStreamSucceeded;
 	InternalPacket* internalPacket;
@@ -2246,13 +2255,13 @@ InternalPacket* ReliabilityLayer::CreateInternalPacketFromBitStream( RakNet::Bit
 	if ( ! ( internalPacket->dataBitLength > 0 && BITS_TO_BYTES( internalPacket->dataBitLength ) < MAXIMUM_MTU_SIZE ) )
 	{
 		// 10/08/05 - internalPacket->data wasn't allocated yet
-		//	RakNet::OP_DELETE_ARRAY(internalPacket->data);
+		//	RakNet::OP_DELETE_ARRAY(internalPacket->data, __FILE__, __LINE__);
 		internalPacketPool.Release( internalPacket );
 		return 0;
 	}
 
 	// Allocate memory to hold our data
-	internalPacket->data = (unsigned char*) rakMalloc( (size_t) BITS_TO_BYTES( internalPacket->dataBitLength ) );
+	internalPacket->data = (unsigned char*) rakMalloc_Ex( (size_t) BITS_TO_BYTES( internalPacket->dataBitLength ), __FILE__, __LINE__ );
 	//RAKNET_DEBUG_PRINTF("Allocating %i\n",  internalPacket->data);
 
 	// Set the last byte to 0 so if ReadBits does not read a multiple of 8 the last bits are 0'ed out
@@ -2270,7 +2279,7 @@ InternalPacket* ReliabilityLayer::CreateInternalPacketFromBitStream( RakNet::Bit
 
 	if ( bitStreamSucceeded == false )
 	{
-		rakFree(internalPacket->data);
+		rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 		internalPacketPool.Release( internalPacket );
 		return 0;
 	}
@@ -2328,7 +2337,7 @@ void ReliabilityLayer::DeleteSequencedPacketsInList( unsigned char orderingChann
 		{
 			InternalPacket * internalPacket = theList[ i ];
 			theList.RemoveAtIndex( i );
-			rakFree(internalPacket->data);
+			rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 			internalPacketPool.Release( internalPacket );
 		}
 
@@ -2353,7 +2362,7 @@ void ReliabilityLayer::DeleteSequencedPacketsInList( unsigned char orderingChann
 		{
 			internalPacket = theList[ i ];
 			theList.RemoveAtIndex( i );
-			rakFree(internalPacket->data);
+			rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 			internalPacketPool.Release( internalPacket );
 			listSize--;
 		}
@@ -2424,7 +2433,7 @@ void ReliabilityLayer::SplitPacket( InternalPacket *internalPacket, int MTUSize 
 	statistics.totalSplits += internalPacket->splitPacketCount;
 
 	// Optimization
-	// internalPacketArray = RakNet::OP_NEW<InternalPacket*>(internalPacket->splitPacketCount);
+	// internalPacketArray = RakNet::OP_NEW<InternalPacket*>(internalPacket->splitPacketCount, __FILE__, __LINE__ );
 	bool usedAlloca=false;
 #if !defined(_XBOX) && !defined(_X360)
 	if (sizeof( InternalPacket* ) * internalPacket->splitPacketCount < MAX_ALLOCA_STACK_ALLOCATION)
@@ -2434,7 +2443,7 @@ void ReliabilityLayer::SplitPacket( InternalPacket *internalPacket, int MTUSize 
 	}
 	else
 #endif
-		internalPacketArray = (InternalPacket**) rakMalloc( sizeof(InternalPacket*) * internalPacket->splitPacketCount );
+		internalPacketArray = (InternalPacket**) rakMalloc_Ex( sizeof(InternalPacket*) * internalPacket->splitPacketCount, __FILE__, __LINE__ );
 
 	for ( i = 0; i < ( int ) internalPacket->splitPacketCount; i++ )
 	{
@@ -2457,7 +2466,7 @@ void ReliabilityLayer::SplitPacket( InternalPacket *internalPacket, int MTUSize 
 			bytesToSend = maximumSendBlock;
 
 		// Copy over our chunk of data
-		internalPacketArray[ splitPacketIndex ]->data = (unsigned char*) rakMalloc( bytesToSend );
+		internalPacketArray[ splitPacketIndex ]->data = (unsigned char*) rakMalloc_Ex( bytesToSend, __FILE__, __LINE__ );
 
 		memcpy( internalPacketArray[ splitPacketIndex ]->data, internalPacket->data + byteOffset, bytesToSend );
 
@@ -2508,25 +2517,25 @@ void ReliabilityLayer::SplitPacket( InternalPacket *internalPacket, int MTUSize 
 	}
 
 	// Delete the original
-	rakFree(internalPacket->data);
+	rakFree_Ex(internalPacket->data, __FILE__, __LINE__ );
 	internalPacketPool.Release( internalPacket );
 
 	if (usedAlloca==false)
-		rakFree(internalPacketArray);
+		rakFree_Ex(internalPacketArray, __FILE__, __LINE__ );
 }
 
 //-------------------------------------------------------------------------------------------------------
 // Insert a packet into the split packet list
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacket, RakNetTimeNS time )
+void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacket, RakNetTimeUS time )
 {
 	bool objectExists;
 	unsigned index;
 	index=splitPacketChannelList.GetIndexFromKey(internalPacket->splitPacketId, &objectExists);
 	if (objectExists==false)
 	{
-		SplitPacketChannel *newChannel = RakNet::OP_NEW<SplitPacketChannel>();
-		//SplitPacketChannel *newChannel = RakNet::OP_NEW<SplitPacketChannel>(1);
+		SplitPacketChannel *newChannel = RakNet::OP_NEW<SplitPacketChannel>( __FILE__, __LINE__ );
+		//SplitPacketChannel *newChannel = RakNet::OP_NEW<SplitPacketChannel>(1, __FILE__, __LINE__ );
 		index=splitPacketChannelList.Insert(internalPacket->splitPacketId, newChannel, true);
 	}
 	splitPacketChannelList[index]->splitPacketList.Insert(internalPacket->splitPacketIndex, internalPacket, true);
@@ -2550,7 +2559,7 @@ void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacke
 		// Write data, splitPacketChannelList[index]->splitPacketList[0]->data
 		InternalPacket *progressIndicator = internalPacketPool.Allocate();
 		unsigned int length = sizeof(MessageID) + sizeof(unsigned int)*2 + sizeof(unsigned int) + (unsigned int) BITS_TO_BYTES(splitPacketChannelList[index]->splitPacketList[0]->dataBitLength);
-		progressIndicator->data = (unsigned char*) rakMalloc( length );
+		progressIndicator->data = (unsigned char*) rakMalloc_Ex( length, __FILE__, __LINE__ );
 		progressIndicator->dataBitLength=BYTES_TO_BITS(length);
 		progressIndicator->data[0]=(MessageID)ID_DOWNLOAD_PROGRESS;
 		unsigned int temp;
@@ -2571,7 +2580,7 @@ void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacke
 //reconstruct a packet.  If we can, allocate and return it.  Otherwise return 0
 // Optimized version
 //-------------------------------------------------------------------------------------------------------
-InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketIdType splitPacketId, RakNetTimeNS time )
+InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketIdType splitPacketId, RakNetTimeUS time )
 {
 	unsigned i, j;
 	unsigned byteProgress;
@@ -2591,7 +2600,7 @@ InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketId
 		for (j=0; j < splitPacketChannelList[i]->splitPacketList.Size(); j++)
 			internalPacket->dataBitLength+=splitPacketChannelList[i]->splitPacketList[j]->dataBitLength;
 
-		internalPacket->data = (unsigned char*) rakMalloc( (size_t) BITS_TO_BYTES( internalPacket->dataBitLength ) );
+		internalPacket->data = (unsigned char*) rakMalloc_Ex( (size_t) BITS_TO_BYTES( internalPacket->dataBitLength ), __FILE__, __LINE__ );
 
 		byteProgress=0;
 		for (j=0; j < splitPacketChannelList[i]->splitPacketList.Size(); j++)
@@ -2602,10 +2611,10 @@ InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketId
 
 		for (j=0; j < splitPacketChannelList[i]->splitPacketList.Size(); j++)
 		{
-			rakFree(splitPacketChannelList[i]->splitPacketList[j]->data);
+			rakFree_Ex(splitPacketChannelList[i]->splitPacketList[j]->data, __FILE__, __LINE__ );
 			internalPacketPool.Release(splitPacketChannelList[i]->splitPacketList[j]);
 		}
-		RakNet::OP_DELETE(splitPacketChannelList[i]);
+		RakNet::OP_DELETE(splitPacketChannelList[i], __FILE__, __LINE__);
 		splitPacketChannelList.RemoveAtIndex(i);
 
 		return internalPacket;
@@ -2615,21 +2624,21 @@ InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketId
 }
 
 // Delete any unreliable split packets that have long since expired
-void ReliabilityLayer::DeleteOldUnreliableSplitPackets( RakNetTimeNS time )
+void ReliabilityLayer::DeleteOldUnreliableSplitPackets( RakNetTimeUS time )
 {
 	unsigned i,j;
 	i=0;
 	while (i < splitPacketChannelList.Size())
 	{
-		if (time > splitPacketChannelList[i]->lastUpdateTime + (RakNetTimeNS)timeoutTime*(RakNetTimeNS)1000 &&
+		if (time > splitPacketChannelList[i]->lastUpdateTime + (RakNetTimeUS)timeoutTime*(RakNetTimeUS)1000 &&
 			(splitPacketChannelList[i]->splitPacketList[0]->reliability==UNRELIABLE || splitPacketChannelList[i]->splitPacketList[0]->reliability==UNRELIABLE_SEQUENCED))
 		{
 			for (j=0; j < splitPacketChannelList[i]->splitPacketList.Size(); j++)
 			{
-				RakNet::OP_DELETE_ARRAY(splitPacketChannelList[i]->splitPacketList[j]->data);
+				RakNet::OP_DELETE_ARRAY(splitPacketChannelList[i]->splitPacketList[j]->data, __FILE__, __LINE__);
 				internalPacketPool.Release(splitPacketChannelList[i]->splitPacketList[j]);
 			}
-			RakNet::OP_DELETE(splitPacketChannelList[i]);
+			RakNet::OP_DELETE(splitPacketChannelList[i], __FILE__, __LINE__);
 			splitPacketChannelList.RemoveAtIndex(i);
 
 #if defined(DEBUG_SPLIT_PACKET_PROBLEMS)
@@ -2645,7 +2654,7 @@ void ReliabilityLayer::DeleteOldUnreliableSplitPackets( RakNetTimeNS time )
 // Creates a copy of the specified internal packet with data copied from the original starting at dataByteOffset for dataByteLength bytes.
 // Does not copy any split data parameters as that information is always generated does not have any reason to be copied
 //-------------------------------------------------------------------------------------------------------
-InternalPacket * ReliabilityLayer::CreateInternalPacketCopy( InternalPacket *original, int dataByteOffset, int dataByteLength, RakNetTimeNS time )
+InternalPacket * ReliabilityLayer::CreateInternalPacketCopy( InternalPacket *original, int dataByteOffset, int dataByteLength, RakNetTimeUS time )
 {
 	InternalPacket * copy = internalPacketPool.Allocate();
 #ifdef _DEBUG
@@ -2656,7 +2665,7 @@ InternalPacket * ReliabilityLayer::CreateInternalPacketCopy( InternalPacket *ori
 
 	if ( dataByteLength > 0 )
 	{
-		copy->data = (unsigned char*) rakMalloc( BITS_TO_BYTES(dataByteLength ) );
+		copy->data = (unsigned char*) rakMalloc_Ex( BITS_TO_BYTES(dataByteLength ), __FILE__, __LINE__ );
 		memcpy( copy->data, original->data + dataByteOffset, dataByteLength );
 	}
 	else
@@ -2733,7 +2742,7 @@ void ReliabilityLayer::AddToOrderingList( InternalPacket * internalPacket )
 //-------------------------------------------------------------------------------------------------------
 // Inserts a packet into the resend list in order
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::InsertPacketIntoResendList( InternalPacket *internalPacket, RakNetTimeNS time, bool makeCopyOfInternalPacket, bool firstResend )
+void ReliabilityLayer::InsertPacketIntoResendList( InternalPacket *internalPacket, RakNetTimeUS time, bool makeCopyOfInternalPacket, bool firstResend )
 {
 	// lastAckTime is the time we last got an acknowledgment - however we also initialize the value if this is the first resend and
 	// either we never got an ack before or we are inserting into an empty resend queue
@@ -2808,7 +2817,7 @@ RakNetStatistics * const ReliabilityLayer::GetStatistics( RakNetStatistics *rns 
 	//rns->lossySize = lossyWindowSize == MAXIMUM_WINDOW_SIZE + 1 ? 0 : lossyWindowSize;
 	//	rns->lossySize=0;
 	// The connection is full if we are continuously sending data and we had to throttle back recently.
-	rns->bandwidthExceeded = continuousSend && (lastUpdateTime-lastTimeBetweenPacketsIncrease) > (RakNetTimeNS) 1000000;
+	rns->bandwidthExceeded = continuousSend && (lastUpdateTime-lastTimeBetweenPacketsIncrease) > (RakNetTimeUS) 1000000;
 	rns->messagesOnResendQueue = GetResendListDataSize();
 
 	return rns;
@@ -2843,32 +2852,32 @@ void ReliabilityLayer::UpdateThreadedMemory(void)
 	}
 }
 //-------------------------------------------------------------------------------------------------------
-bool ReliabilityLayer::AckTimeout(RakNetTimeNS curTime)
+bool ReliabilityLayer::AckTimeout(RakNetTimeUS curTime)
 {
-	return curTime > lastAckTime && lastAckTime && curTime - lastAckTime > (RakNetTimeNS)timeoutTime*1000;
+	return curTime > lastAckTime && lastAckTime && curTime - lastAckTime > (RakNetTimeUS)timeoutTime*1000;
 }
 //-------------------------------------------------------------------------------------------------------
-RakNetTimeNS ReliabilityLayer::GetNextSendTime(void) const
+RakNetTimeUS ReliabilityLayer::GetNextSendTime(void) const
 {
 	return nextSendTime;
 }
 //-------------------------------------------------------------------------------------------------------
-RakNetTimeNS ReliabilityLayer::GetTimeBetweenPackets(void) const
+RakNetTimeUS ReliabilityLayer::GetTimeBetweenPackets(void) const
 {
 	return timeBetweenPackets;
 }
 //-------------------------------------------------------------------------------------------------------
-RakNetTimeNS ReliabilityLayer::GetLastTimeBetweenPacketsDecrease(void) const
+RakNetTimeUS ReliabilityLayer::GetLastTimeBetweenPacketsDecrease(void) const
 {
 	return lastTimeBetweenPacketsDecrease;
 }
 //-------------------------------------------------------------------------------------------------------
-RakNetTimeNS ReliabilityLayer::GetLastTimeBetweenPacketsIncrease(void) const
+RakNetTimeUS ReliabilityLayer::GetLastTimeBetweenPacketsIncrease(void) const
 {
 	return lastTimeBetweenPacketsIncrease;
 }
 //-------------------------------------------------------------------------------------------------------
-RakNetTimeNS ReliabilityLayer::GetAckPing(void) const
+RakNetTimeUS ReliabilityLayer::GetAckPing(void) const
 {
 	return ackPing;
 }
