@@ -63,7 +63,7 @@ bool RPC3::IsFunctionRegistered(const char *uniqueIdentifier)
 	return i.IsInvalid()==false;
 }
 
-void RPC3::SetTimestamp(RakNet::TimeMS timeStamp)
+void RPC3::SetTimestamp(RakNet::Time timeStamp)
 {
 	outgoingTimestamp=timeStamp;
 }
@@ -86,7 +86,7 @@ void RPC3::SetRecipientObject(NetworkID networkID)
 	outgoingNetworkID=networkID;
 }
 
-RakNet::TimeMS RPC3::GetLastSenderTimestamp(void) const
+RakNet::Time RPC3::GetLastSenderTimestamp(void) const
 {
 	return incomingTimeStamp;
 }
@@ -160,6 +160,9 @@ bool RPC3::SendCallOrSignal(RakString uniqueIdentifier, char parameterCount, Rak
 //				}
 
 				bs.WriteCompressed(serializedParameters->GetNumberOfBitsUsed());
+
+				// serializedParameters->PrintBits();
+
 				bs.WriteAlignedBytes((const unsigned char*) serializedParameters->GetData(), serializedParameters->GetNumberOfBytesUsed());
 				SendUnified(&bs, outgoingPriority, outgoingReliability, outgoingOrderingChannel, systemAddr, false);
 
@@ -207,17 +210,17 @@ void RPC3::OnAttach(void)
 
 PluginReceiveResult RPC3::OnReceive(Packet *packet)
 {
-	RakNet::TimeMS timestamp=0;
+	RakNet::Time timestamp=0;
 	unsigned char packetIdentifier, packetDataOffset;
 	if ( ( unsigned char ) packet->data[ 0 ] == ID_TIMESTAMP )
 	{
-		if ( packet->length > sizeof( unsigned char ) + sizeof( RakNet::TimeMS ) )
+		if ( packet->length > sizeof( unsigned char ) + sizeof( RakNet::Time ) )
 		{
-			packetIdentifier = ( unsigned char ) packet->data[ sizeof( unsigned char ) + sizeof( RakNet::TimeMS ) ];
+			packetIdentifier = ( unsigned char ) packet->data[ sizeof( unsigned char ) + sizeof( RakNet::Time ) ];
 			// Required for proper endian swapping
 			RakNet::BitStream tsBs(packet->data+sizeof(MessageID),packet->length-1,false);
 			tsBs.Read(timestamp);
-			packetDataOffset=sizeof( unsigned char )*2 + sizeof( RakNet::TimeMS );
+			packetDataOffset=sizeof( unsigned char )*2 + sizeof( RakNet::Time );
 		}
 		else
 			return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -297,7 +300,8 @@ void RPC3::OnRPC3Call(const SystemAddress &systemAddress, unsigned char *data, u
 	if (bitsOnStack>0)
 	{
 		serializedParameters.AddBitsAndReallocate(bitsOnStack);
-		bs.ReadAlignedBytes(serializedParameters.GetData(), bitsOnStack);
+		// BITS_TO_BYTES is correct, why did I change this?
+		bs.ReadAlignedBytes(serializedParameters.GetData(), BITS_TO_BYTES(bitsOnStack));
 		serializedParameters.SetWriteOffset(bitsOnStack);
 	}
 // 	if (hasFunctionIndex)
@@ -400,7 +404,9 @@ void RPC3::OnRPC3Call(const SystemAddress &systemAddress, unsigned char *data, u
 		functionArgs.networkIDManager=networkIdManager;
 		functionArgs.caller=this;
 		functionArgs.thisPtr=networkIdObject;
-		//	serializedParameters.PrintBits();
+		
+		// serializedParameters.PrintBits();
+
 		_RPC3::InvokeResultCodes res2 = functionPtr(functionArgs);
 	}
 	else

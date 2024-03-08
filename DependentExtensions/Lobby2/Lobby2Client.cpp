@@ -77,7 +77,7 @@ void Lobby2Client::OnMessage(Packet *packet)
 		{
 			for (unsigned long i=0; i < callbacks.Size(); i++)
 			{
-				if (lobby2Message->callbackId==(unsigned char)-1 || lobby2Message->callbackId==callbacks[i]->callbackId)
+				if (lobby2Message->callbackId==(uint32_t)-1 || lobby2Message->callbackId==callbacks[i]->callbackId)
 					lobby2Message->CallCallback(callbacks[i]);
 			}
 		}

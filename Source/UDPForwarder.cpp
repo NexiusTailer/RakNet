@@ -485,6 +485,8 @@ int UDPForwarder::GetUsedForwardEntries(void) const
 }
 UDPForwarderResult UDPForwarder::AddForwardingEntry(SrcAndDest srcAndDest, RakNet::TimeMS timeoutOnNoDataMS, unsigned short *port, const char *forceHostAddress, short socketFamily)
 {
+	(void) socketFamily;
+
 	DataStructures::DefaultIndexType insertionIndex;
 	insertionIndex = forwardList.GetInsertionIndex(srcAndDest);
 	if (insertionIndex!=(DataStructures::DefaultIndexType)-1)

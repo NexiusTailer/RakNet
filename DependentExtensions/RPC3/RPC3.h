@@ -168,7 +168,7 @@ public:
 	/// Send or stop sending a timestamp with all following calls to Call()
 	/// Use GetLastSenderTimestamp() to read the timestamp.
 	/// \param[in] timeStamp Non-zero to pass this timestamp using the ID_TIMESTAMP system. 0 to clear passing a timestamp.
-	void SetTimestamp(RakNet::TimeMS timeStamp);
+	void SetTimestamp(RakNet::Time timeStamp);
 
 	/// Set parameters to pass to RakPeer::Send() for all following calls to Call()
 	/// Deafults to HIGH_PRIORITY, RELIABLE_ORDERED, ordering channel 0
@@ -194,7 +194,7 @@ public:
 
 	/// If the last received function call has a timestamp included, it is stored and can be retrieved with this function.
 	/// \return 0 if the last call did not have a timestamp, else non-zero
-	RakNet::TimeMS GetLastSenderTimestamp(void) const;
+	RakNet::Time GetLastSenderTimestamp(void) const;
 
 	/// Returns the system address of the last system to send us a received function call
 	/// Equivalent to the old system RPCParameters::sender
@@ -344,14 +344,14 @@ public:
 	{
 		CallExplicitParameters(
 			NetworkID _networkID=UNASSIGNED_NETWORK_ID, SystemAddress _systemAddress=RakNet::UNASSIGNED_SYSTEM_ADDRESS,
-			bool _broadcast=true, RakNet::TimeMS _timeStamp=0, PacketPriority _priority=HIGH_PRIORITY,
+			bool _broadcast=true, RakNet::Time _timeStamp=0, PacketPriority _priority=HIGH_PRIORITY,
 			PacketReliability _reliability=RELIABLE_ORDERED, char _orderingChannel=0
 			) : networkID(_networkID), systemAddress(_systemAddress), broadcast(_broadcast), timeStamp(_timeStamp), priority(_priority), reliability(_reliability), orderingChannel(_orderingChannel)
 		{}
 		NetworkID networkID;
 		SystemAddress systemAddress;
 		bool broadcast;
-		RakNet::TimeMS timeStamp;
+		RakNet::Time timeStamp;
 		PacketPriority priority;
 		PacketReliability reliability;
 		char orderingChannel;
@@ -676,13 +676,13 @@ public:
 	{
 		SignalExplicitParameters(
 			SystemAddress _systemAddress=RakNet::UNASSIGNED_SYSTEM_ADDRESS,
-			bool _broadcast=true, RakNet::TimeMS _timeStamp=0, PacketPriority _priority=HIGH_PRIORITY,
+			bool _broadcast=true, RakNet::Time _timeStamp=0, PacketPriority _priority=HIGH_PRIORITY,
 			PacketReliability _reliability=RELIABLE_ORDERED, char _orderingChannel=0
 			) : systemAddress(_systemAddress), broadcast(_broadcast), timeStamp(_timeStamp), priority(_priority), reliability(_reliability), orderingChannel(_orderingChannel)
 		{}
 		SystemAddress systemAddress;
 		bool broadcast;
-		RakNet::TimeMS timeStamp;
+		RakNet::Time timeStamp;
 		PacketPriority priority;
 		PacketReliability reliability;
 		char orderingChannel;
@@ -845,7 +845,7 @@ public:
 // 	DataStructures::List<LocalRPCFunction> localFunctions;
 
 //	DataStructures::Map<SystemAddress, DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, RPC3::RemoteRPCFunctionComp> *> remoteFunctions, remoteSlots;
-	RakNet::TimeMS outgoingTimestamp;
+	RakNet::Time outgoingTimestamp;
 	PacketPriority outgoingPriority;
 	PacketReliability outgoingReliability;
 	char outgoingOrderingChannel;
@@ -854,7 +854,7 @@ public:
 	NetworkID outgoingNetworkID;
 	RakNet::BitStream outgoingExtraData;
 
-	RakNet::TimeMS incomingTimeStamp;
+	RakNet::Time incomingTimeStamp;
 	SystemAddress incomingSystemAddress;
 	RakNet::BitStream incomingExtraData;
 

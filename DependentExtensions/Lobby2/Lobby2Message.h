@@ -315,7 +315,7 @@ struct Lobby2Message
 
 	/// Just a number, representing which instance of Lobby2Callbacks should process the result of this operation
 	/// -1 means all
-	unsigned char callbackId;
+	uint32_t callbackId;
 
 	/// Used for consoles
 	int extendedResultCode;
@@ -673,8 +673,8 @@ struct Lobby2Callbacks
 
 	virtual void ExecuteDefaultResult(Lobby2Message *message) { (void)message; }
 
-	unsigned char callbackId;
-	static unsigned char nextCallbackId;
+	uint32_t callbackId;
+	static uint32_t nextCallbackId;
 };
 
 /// Just print out the name of the message by default. This class is used in the sample.

@@ -43,29 +43,22 @@ namespace RakNet
 
 	__L2_MSG_DB_HEADER(Console_SearchRooms, Steam)
 	{
+		Console_SearchRooms_Steam();
+		virtual ~Console_SearchRooms_Steam();
 		virtual bool ClientImpl( RakNet::Lobby2Plugin *client);
 
-		virtual void DebugMsg(RakNet::RakString &out) const
-		{
-			if (resultCode!=L2RC_SUCCESS)
-			{
-				Console_SearchRooms::DebugMsg(out);
-				return;
-			}
-			out.Set("%i rooms found", roomNames.GetSize());
-			for (DataStructures::DefaultIndexType i=0; i < roomNames.GetSize(); i++)
-			{
-				out += RakNet::RakString("\n%i. %s. ID=%"PRINTF_64_BIT_MODIFIER"u", i+1, roomNames[i].C_String(), roomIds[i].ConvertToUint64());
-			}
-		}
+		virtual void DebugMsg(RakNet::RakString &out) const;
 
 		// Output
 		// Use CConsoleCommand_GetRoomDetails to get room names for unknown rooms, which will have blank names
 		DataStructures::Multilist<ML_UNORDERED_LIST, RakNet::RakString> roomNames;
-		DataStructures::Multilist<ML_UNORDERED_LIST, CSteamID> roomIds;
+		// Type of uint64_ts is uint64_t
+		DataStructures::Multilist<ML_UNORDERED_LIST, uint64_t> roomIds;
 
 		/// \internal
-		CCallResult<Lobby2Client_Steam, LobbyMatchList_t> m_SteamCallResultLobbyMatchList;
+		// uint32_t is LobbyMatchList_t
+		// CCallResult<Lobby2Client_Steam, uint32_t> m_SteamCallResultLobbyMatchList;
+		void *m_SteamCallResultLobbyMatchList;
 	};
 
 	__L2_MSG_DB_HEADER(Console_GetRoomDetails, Steam)
@@ -79,11 +72,11 @@ namespace RakNet
 				Console_GetRoomDetails::DebugMsg(out);
 				return;
 			}
-			out.Set("GetRoomDetails: roomName=%s for id %"PRINTF_64_BIT_MODIFIER"u", roomName.C_String(), roomId.ConvertToUint64());
+			out.Set("GetRoomDetails: roomName=%s for id %"PRINTF_64_BIT_MODIFIER"u", roomName.C_String(), roomId);
 		}
 
 		/// Input
-		CSteamID roomId;
+		uint64_t roomId;
 
 		/// Output
 		RakNet::RakString roomName;
@@ -91,6 +84,9 @@ namespace RakNet
 
 	__L2_MSG_DB_HEADER(Console_CreateRoom, Steam)
 	{
+		Console_CreateRoom_Steam();
+		virtual ~Console_CreateRoom_Steam();
+
 		virtual bool ClientImpl( RakNet::Lobby2Plugin *client);
 
 		virtual void DebugMsg(RakNet::RakString &out) const
@@ -109,14 +105,18 @@ namespace RakNet
 		RakNet::RakString roomName;
 
 		/// Output
-		uint64 roomId;
+		uint64_t roomId;
 
 		/// \internal
-		CCallResult<Lobby2Client_Steam, LobbyCreated_t> m_SteamCallResultLobbyCreated;
+		// CCallResult<Lobby2Client_Steam, LobbyCreated_t> m_SteamCallResultLobbyCreated;
+		void *m_SteamCallResultLobbyCreated;
 	};
 
 	__L2_MSG_DB_HEADER(Console_JoinRoom, Steam)
 	{
+		Console_JoinRoom_Steam();
+		virtual ~Console_JoinRoom_Steam();
+
 		virtual bool ClientImpl( RakNet::Lobby2Plugin *client);
 
 		virtual void DebugMsg(RakNet::RakString &out) const
@@ -130,10 +130,11 @@ namespace RakNet
 		}
 
 		/// Input
-		uint64 roomId;
+		uint64_t roomId;
 
 		/// \internal
-		CCallResult<Lobby2Client_Steam, LobbyEnter_t> m_SteamCallResultLobbyEntered;
+		//CCallResult<Lobby2Client_Steam, LobbyEnter_t> m_SteamCallResultLobbyEntered;
+		void *m_SteamCallResultLobbyEntered;
 	};
 
 	__L2_MSG_DB_HEADER(Console_LeaveRoom, Steam)
@@ -151,7 +152,7 @@ namespace RakNet
 		}
 
 		/// Input
-		uint64 roomId;
+		uint64_t roomId;
 	};
 
 	__L2_MSG_DB_HEADER(Console_SendRoomChatMessage, Steam)
@@ -169,7 +170,7 @@ namespace RakNet
 		}
 
 		/// Input
-		uint64 roomId;
+		uint64_t roomId;
 		RakNet::RakString message;
 	};
 

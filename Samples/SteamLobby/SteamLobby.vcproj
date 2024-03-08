@@ -187,6 +187,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Steam\Lobby2Client_Steam_Impl.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\DependentExtensions\Lobby2\Lobby2Message.cpp"
 				>
 			</File>
@@ -214,6 +218,10 @@
 			>
 			<File
 				RelativePath="..\..\DependentExtensions\Lobby2\Steam\Lobby2Client_Steam.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Steam\Lobby2Client_Steam_Impl.h"
 				>
 			</File>
 			<File

@@ -3,7 +3,7 @@
 
 using namespace RakNet;
 
-unsigned char Lobby2Callbacks::nextCallbackId=0;
+uint32_t Lobby2Callbacks::nextCallbackId=0;
 
 void Lobby2Callbacks::MessageResult(Platform_Startup *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Platform_Shutdown *message) {ExecuteDefaultResult(message);}
@@ -164,7 +164,7 @@ void Lobby2Callbacks::MessageResult(Notification_Console_MemberLeftParty *messag
 void Lobby2Callbacks::MessageResult(Notification_Console_Game_Started *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_Game_Ended *message) {ExecuteDefaultResult(message);}
 
-Lobby2Message::Lobby2Message() {refCount=1; requestId=(unsigned int)-1; callbackId=(unsigned char)-1;
+Lobby2Message::Lobby2Message() {refCount=1; requestId=(unsigned int)-1; callbackId=(uint32_t)-1;
 #if defined(_XBOX) || defined(X360)
                                                    
 #endif

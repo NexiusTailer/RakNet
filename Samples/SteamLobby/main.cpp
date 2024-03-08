@@ -11,13 +11,14 @@
 #include <windows.h>
 #include <Kbhit.h>
 #include "Gets.h"
+#include "steam_api.h"
 
 using namespace RakNet;
 
 Lobby2MessageFactory_Steam *messageFactory;
 Lobby2Client_Steam *lobby2Client;
 RakNet::RakPeerInterface *rakPeer;
-CSteamID lastRoom;
+uint64_t lastRoom;
 
 void PrintCommands(void)
 {
@@ -86,7 +87,7 @@ int main(int argc, char **argv)
 	SteamResults steamResults;
 	rakPeer = RakNet::RakPeerInterface::GetInstance();
 	messageFactory = new Lobby2MessageFactory_Steam;
-	lobby2Client = new Lobby2Client_Steam("1.0");
+	lobby2Client = Lobby2Client_Steam::GetInstance();
 	lobby2Client->AddCallbackInterface(&steamResults);
 	lobby2Client->SetMessageFactory(messageFactory);
 	rakPeer->AttachPlugin(lobby2Client);
@@ -227,12 +228,12 @@ int main(int argc, char **argv)
 					}
 
 					RakNet::Console_JoinRoom_Steam* msg = (RakNet::Console_JoinRoom_Steam*) messageFactory->Alloc(RakNet::L2MID_Console_JoinRoom);
-					printf("Enter room id, or enter for %"PRINTF_64_BIT_MODIFIER"u: ", lastRoom.ConvertToUint64());
+					printf("Enter room id, or enter for %"PRINTF_64_BIT_MODIFIER"u: ", lastRoom);
 					char str[256];
 					Gets(str, sizeof(str));
 					if (str[0]==0)
 					{
-						msg->roomId=lastRoom.ConvertToUint64();
+						msg->roomId=lastRoom;
 					}
 					else
 					{
@@ -308,7 +309,9 @@ int main(int argc, char **argv)
 	RakNet::Lobby2Message* logoffMsg = messageFactory->Alloc(RakNet::L2MID_Client_Logoff);
 	lobby2Client->SendMsg(logoffMsg);
 	messageFactory->Dealloc(logoffMsg);
+	rakPeer->DetachPlugin(lobby2Client);
 	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
+	Lobby2Client_Steam::DestroyInstance(lobby2Client);
 
 	return 1;
 }

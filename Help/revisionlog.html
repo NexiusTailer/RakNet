@@ -395,7 +395,7 @@
   PS3: Fix Console_SearchRooms and Console_GetRoomDetails not returning integer and binary properties
   XBOX 360: Fixed RakVoice_360, was previously not working.
   4.013 (2/21/2011)
-  IPV6: Fix domain name lookup. Now defaults to IPV4 to save bandwidth.
+  IPV6: Fix domain name lookup. RakNetDefines.h now disables IPV6 by default to save bandwidth.
   RPC3: Fix not reading enough bytes on receive()
   Lobby (All): Rename SendMessage() to SendMsg() for consistency among platforms.
   Lobby (PS3): Console_JoinRoom_PS3 now returns only the room, for consistency
@@ -407,7 +407,12 @@
   Documentation: Update how to use static objects with ReplicaManager3
   RakPeerInterface: Fix not returning ID_SND_RECEIPT_ACKED and ID_SND_RECEIPT_LOSS
   RakWString: Added for Unicode support. Currently assumes UTF-16.
-  OpenSSL: Update inclued version to 1.0.0d<BR>  
+  OpenSSL: Update included version to 1.0.0d<BR>  
+  4.014 (2/28/2011)
+  Fix bug introduced in 4.013 with RPC3, causing failure on receipt.
+ 	Lobby (360): Numerous fixes.
+ 	Lobby (PS3): Expose thread priority for cellSysutilAvc2Load.
+  Update Lobby2 for Steam so that steam_api.h is not included from any RakNet files, in order to take steam_types.h out of the global namespace due to type conflicts.<BR>
   <br>
   <br>
   <BR>
