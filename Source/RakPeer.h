@@ -63,7 +63,7 @@ public:
 	/// \param[in] _threadSleepTimer Time in milliseconds for the thread to Sleep in each internal update cycle. With new congestion control, the best results will be obtained by passing 10.
 	/// \param[in] socketDescriptors An array of SocketDescriptor structures to force RakNet to listen on a particular IP address or port (or both).  Each SocketDescriptor will represent one unique socket.  Do not pass redundant structures.  To listen on a specific port, you can pass SocketDescriptor(myPort,0); for a server.  For a client, it is usually OK to pass SocketDescriptor();
 	/// \param[in] socketDescriptorCount The size of the \a socketDescriptors array.  Pass 1 if you are not sure what to pass.
-	/// \param[in] threadPriority Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. WARNING!!! On the PS3, 0 means highest priority!
+	/// \param[in] threadPriority Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. For Linux based systems, you MUST pass something reasonable based on the thread priorities for your application.
 	/// \return False on failure (can't create socket or thread), true on success.
 	bool Startup( unsigned short maxConnections, int _threadSleepTimer, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority=-99999 );
 
@@ -369,6 +369,7 @@ public:
 	/// \param[in] systemAddress The SystemAddress we are referring to
 	/// \param[in] includeInProgress If true, also return true for connections that are in progress but haven't completed
 	/// \param[in] includeDisconnecting If true, also return true for connections that are in the process of disconnecting
+	/// \note This locks a mutex, do not call too frequently during connection attempts with includeInProgress==true or you may cause the attempt to take longer and fail
 	/// \return True if this system is connected and active, false otherwise.
 	bool IsConnected(const AddressOrGUID systemIdentifier, bool includeInProgress=false, bool includeDisconnecting=false);
 
@@ -963,7 +964,7 @@ protected:
 	void GenerateSYNCookieRandomNumber( void );
 	void SecuredConnectionResponse( const SystemAddress systemAddress );
 	void SecuredConnectionConfirmation( RakPeer::RemoteSystemStruct * remoteSystem, char* data );
-	bool RunUpdateCycle( void );
+	bool RunUpdateCycle( RakNetTimeUS timeNS, RakNetTime timeMS );
 	// void RunMutexedUpdateCycle(void);
 
 	struct BufferedCommandStruct
@@ -984,7 +985,7 @@ protected:
 		SOCKET socket;
 		unsigned short port;
 		uint32_t receipt;
-		enum {BCS_SEND, BCS_CLOSE_CONNECTION, BCS_GET_SOCKET, BCS_CHANGE_SYSTEM_ADDRESS,/* BCS_USE_USER_SOCKET, BCS_REBIND_SOCKET_ADDRESS, BCS_RPC, BCS_RPC_SHIFT,*/ BCS_DO_NOTHING} command;
+		enum {BCS_SEND, BCS_CLOSE_CONNECTION, BCS_GET_SOCKET, BCS_CHANGE_SYSTEM_ADDRESS,/* BCS_USE_USER_SOCKET, BCS_REBIND_SOCKET_ADDRESS, BCS_RPC, BCS_RPC_SHIFT,*/BCS_SEND_OUT_OF_BAND, BCS_DO_NOTHING} command;
 	};
 
 	// Single producer single consumer queue using a linked list

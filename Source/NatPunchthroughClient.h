@@ -84,7 +84,7 @@ struct RAK_DLL_EXPORT PunchthroughConfiguration
 };
 
 /// \ingroup NAT_PUNCHTHROUGH_GROUP
-struct NatPunchthroughDebugInterface
+struct RAK_DLL_EXPORT NatPunchthroughDebugInterface
 {
 	NatPunchthroughDebugInterface() {}
 	virtual ~NatPunchthroughDebugInterface() {}
@@ -92,14 +92,14 @@ struct NatPunchthroughDebugInterface
 };
 
 /// \ingroup NAT_PUNCHTHROUGH_GROUP
-struct NatPunchthroughDebugInterface_Printf : public NatPunchthroughDebugInterface
+struct RAK_DLL_EXPORT NatPunchthroughDebugInterface_Printf : public NatPunchthroughDebugInterface
 {
 	virtual void OnClientMessage(const char *msg);
 };
 
 #if _RAKNET_SUPPORT_PacketLogger==1
 /// \ingroup NAT_PUNCHTHROUGH_GROUP
-struct NatPunchthroughDebugInterface_PacketLogger : public NatPunchthroughDebugInterface
+struct RAK_DLL_EXPORT NatPunchthroughDebugInterface_PacketLogger : public NatPunchthroughDebugInterface
 {
 	// Set to non-zero to write to the packetlogger!
 	PacketLogger *pl;

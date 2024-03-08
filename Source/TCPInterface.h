@@ -25,7 +25,7 @@
 
 struct RemoteClient;
 
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 #include <openssl/crypto.h>
 #include <openssl/x509.h>
 #include <openssl/pem.h>
@@ -42,7 +42,7 @@ public:
 	virtual ~TCPInterface();
 
 	/// Starts the TCP server on the indicated port
-	/// \param[in] threadPriority Passed to thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. WARNING!!! On Linux, 0 means highest priority! You MUST set this to something valid based on the values used by your other threads
+	/// \param[in] threadPriority Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. For Linux based systems, you MUST pass something reasonable based on the thread priorities for your application.
 	bool Start(unsigned short port, unsigned short maxIncomingConnections, unsigned short maxConnections=0, int _threadPriority=-99999);
 
 	/// Stops the TCP server
@@ -51,7 +51,7 @@ public:
 	/// Connect to the specified host on the specified port
 	SystemAddress Connect(const char* host, unsigned short remotePort, bool block=true);
 
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 	/// Start SSL on an existing connection, notified with HasCompletedConnectionAttempt
 	void StartSSLClient(SystemAddress systemAddress);
 
@@ -161,7 +161,7 @@ protected:
 		bool useSSL;
 	};
 
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 	SSL_CTX* ctx;
 	SSL_METHOD *meth;
 	DataStructures::ThreadsafeAllocatingQueue<SystemAddress> startSSL;
@@ -173,7 +173,7 @@ protected:
 struct RemoteClient
 {
 	RemoteClient() {
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 		ssl=0;
 #endif
 		isActive=false;
@@ -186,7 +186,7 @@ struct RemoteClient
 	SimpleMutex outgoingDataMutex;
 	SimpleMutex isActiveMutex;
 
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 	SSL*     ssl;
 	void InitSSL(SSL_CTX* ctx, SSL_METHOD *meth);
 	void DisconnectSSL(void);

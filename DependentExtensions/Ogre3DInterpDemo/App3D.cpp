@@ -108,16 +108,24 @@ void App3D::PreConfigure(void)
 }
 bool App3D::Configure(void)
 {
-	if(root->restoreConfig() || root->showConfigDialog())
+	try
 	{
-		// If returned true, user clicked OK so initialise
-		// Here we choose to let the system create a default rendering window by passing 'true'
-		window = root->initialise(true,  GetWindowTitle());
-		return true;
+		if(root->restoreConfig() || root->showConfigDialog())
+		{
+			// If returned true, user clicked OK so initialise
+			// Here we choose to let the system create a default rendering window by passing 'true'
+			window = root->initialise(true,  GetWindowTitle());
+			return true;
+		}
+		else 
+		{
+			return false;
+		}
 	}
-	else
+	catch (Ogre::InvalidParametersException &e)
 	{
 		return false;
+		
 	}
 }
 void App3D::PostConfigure(const char *defaultResourceConfigurationPath, bool recursive)

@@ -12,6 +12,9 @@
 #include "CCRakNetUDT.h"
 #include "GetTime.h"
 
+
+SocketLayerOverride *SocketLayer::slo=0;
+
 #ifdef _WIN32
 #elif !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
 #include <string.h> // memcpy
@@ -54,8 +57,6 @@
 #pragma warning( push )
 #endif
 
-SocketLayer SocketLayer::I;
-
 extern void ProcessNetworkPacket( const SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNetSmartPtr<RakNetSocket> rakNetSocket, RakNetTimeUS timeRead );
 extern void ProcessNetworkPacket( const SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNetTimeUS timeRead );
 extern void ProcessPortUnreachable( const unsigned int binaryAddress, const unsigned short port, RakPeer *rakPeer );
@@ -64,20 +65,9 @@ extern void ProcessPortUnreachable( const unsigned int binaryAddress, const unsi
 #include <stdio.h>
 #endif
 
-SocketLayer::SocketLayer()
-{
-#ifdef _WIN32
-	WSAStartupSingleton::AddRef();
-#endif
-	slo=0;
-}
+// Frogwares: Define this
+// #define DEBUG_SENDTO_SPIKES
 
-SocketLayer::~SocketLayer()
-{
-#ifdef _WIN32
-	WSAStartupSingleton::Deref();
-#endif
-}
 
 SOCKET SocketLayer::Connect( SOCKET writeSocket, unsigned int binaryAddress, unsigned short port )
 {
@@ -541,10 +531,10 @@ void SocketLayer::RecvFromBlocking( const SOCKET s, RakPeer *rakPeer, unsigned s
 	(void) rakPeer;
 	// Randomly crashes, slo is 0, yet gets inside loop.
 	/*
-	if (SocketLayer::Instance()->slo)
+	if (SocketLayer::slo)
 	{
 		SystemAddress sender;
-		*bytesReadOut = SocketLayer::Instance()->slo->RakNetRecvFrom(s,rakPeer,dataOut,systemAddressOut,false);
+		*bytesReadOut = SocketLayer::slo->RakNetRecvFrom(s,rakPeer,dataOut,systemAddressOut,false);
 		if (*bytesReadOut>0)
 		{
 			*timeRead=RakNet::GetTimeUS();
@@ -615,6 +605,10 @@ void SocketLayer::RecvFromBlocking( const SOCKET s, RakPeer *rakPeer, unsigned s
 		systemAddressOut->port=ntohs( sa.sin_port );
 		systemAddressOut->binaryAddress=sa.sin_addr.s_addr;
 	}
+
+// 	if (systemAddressOut->port!=61111)
+// 		printf("Got %i bytes from %s\n", *bytesReadOut, systemAddressOut->ToString());
+
 }
 
 void SocketLayer::RawRecvFromNonBlocking( const SOCKET s, unsigned short remotePortRakNetWasStartedOn_PS3, char *dataOut, int *bytesReadOut, SystemAddress *systemAddressOut, RakNetTimeUS *timeRead )
@@ -728,8 +722,15 @@ int SocketLayer::SendTo_360( SOCKET s, const char *data, int length, const char 
 #endif
 	return len;
 }
-int SocketLayer::SendTo_PC( SOCKET s, const char *data, int length, unsigned int binaryAddress, unsigned short port )
+int SocketLayer::SendTo_PC( SOCKET s, const char *data, int length, unsigned int binaryAddress, unsigned short port, const char *file, const long line )
 {
+// 	if (port!=61111)
+// 	{
+// 		SystemAddress testa(binaryAddress,port);
+// 		printf("Sending %i bytes to %s\n", length, testa.ToString());
+// 	}
+
+
 	sockaddr_in sa;
 	memset(&sa,0,sizeof(sockaddr_in));
 	sa.sin_port = htons( port ); // User port
@@ -738,7 +739,18 @@ int SocketLayer::SendTo_PC( SOCKET s, const char *data, int length, unsigned int
 	int len=0;
 	do
 	{
+#ifdef DEBUG_SENDTO_SPIKES
+		RakNetTime start = RakNet::GetTime();
+#else
+		(void) file;
+		(void) line;
+#endif
 		len = sendto( s, data, length, 0, ( const sockaddr* ) & sa, sizeof( sa ) );
+#ifdef DEBUG_SENDTO_SPIKES
+		RakNetTime end = RakNet::GetTime();
+		static unsigned int callCount=1;
+		printf("%i. SendTo_PC, time=%"PRINTF_64_BIT_MODIFIER"u, elapsed=%"PRINTF_64_BIT_MODIFIER"u, length=%i, returned=%i, binaryAddress=%i, port=%i, file=%s, line=%i\n", callCount++, end, end-start, length, len, binaryAddress, port, file, line);
+#endif
 		if (len<0)
 		{
 
@@ -774,7 +786,7 @@ int SocketLayer::SendTo_PC( SOCKET s, const char *data, int length, unsigned int
 #ifdef _MSC_VER
 #pragma warning( disable : 4702 ) // warning C4702: unreachable code
 #endif
-int SocketLayer::SendTo( SOCKET s, const char *data, int length, unsigned int binaryAddress, unsigned short port, unsigned short remotePortRakNetWasStartedOn_PS3 )
+int SocketLayer::SendTo( SOCKET s, const char *data, int length, unsigned int binaryAddress, unsigned short port, unsigned short remotePortRakNetWasStartedOn_PS3, const char *file, const long line )
 {
 	RakAssert(length<=MAXIMUM_MTU_SIZE-UDP_HEADER_SIZE);
 	RakAssert(port!=0);
@@ -801,7 +813,7 @@ int SocketLayer::SendTo( SOCKET s, const char *data, int length, unsigned int bi
 #if (defined(_XBOX) || defined(_X360)) && defined(RAKNET_USE_VDP)
 		len = SendTo_360(s,data,length,0,0,binaryAddress,port);
 #else
-		len = SendTo_PC(s,data,length,binaryAddress,port);
+		len = SendTo_PC(s,data,length,binaryAddress,port,file,line);
 #endif
 	}
 
@@ -840,11 +852,11 @@ int SocketLayer::SendTo( SOCKET s, const char *data, int length, unsigned int bi
 
 	return 1; // error
 }
-int SocketLayer::SendTo( SOCKET s, const char *data, int length, const char ip[ 16 ], unsigned short port, unsigned short remotePortRakNetWasStartedOn_PS3 )
+int SocketLayer::SendTo( SOCKET s, const char *data, int length, const char ip[ 16 ], unsigned short port, unsigned short remotePortRakNetWasStartedOn_PS3, const char *file, const long line )
 {
 	unsigned int binaryAddress;
 	binaryAddress = inet_addr( ip );
-	return SendTo( s, data, length, binaryAddress, port,remotePortRakNetWasStartedOn_PS3 );
+	return SendTo( s, data, length, binaryAddress, port,remotePortRakNetWasStartedOn_PS3, file, line );
 }
 int SocketLayer::SendToTTL( SOCKET s, const char *data, int length, const char ip[ 16 ], unsigned short port, int ttl )
 {
@@ -893,7 +905,7 @@ int SocketLayer::SendToTTL( SOCKET s, const char *data, int length, const char i
 	}
 
 	// Send
-	int res = SendTo(s,data,length,ip,port,false);
+	int res = SendTo(s,data,length,ip,port,false, __FILE__, __LINE__ );
 
 	// Restore the old TTL
 	setsockopt(s, IPPROTO_IP, IP_TTL, ( char * ) & oldTTL, opLen );

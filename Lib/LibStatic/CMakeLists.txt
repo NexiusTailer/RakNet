@@ -17,7 +17,7 @@ ENDIF(WIN32 AND NOT UNIX)
 
 IF(WIN32 AND NOT UNIX)
 	target_link_libraries (LibStatic ${RAKNET_LIBRARY_LIBS})
-	set_target_properties(LibStatic PROPERTIES STATIC_LIBRARY_FLAGS "/NODEFAULTLIB:&quot;LIBCD.lib LIBCMTD.lib MSVCRT.lib&quot;" )
+	set_target_properties(LibStatic PROPERTIES STATIC_LIBRARY_FLAGS "/NODEFAULTLIB:\"LIBCD.lib LIBCMTD.lib MSVCRT.lib\"" )
 ELSE(WIN32 AND NOT UNIX)
 	target_link_libraries (RakNetStatic ${RAKNET_LIBRARY_LIBS})
 	INSTALL(TARGETS RakNetStatic DESTINATION ${RakNet_SOURCE_DIR}/Lib/LibStatic)

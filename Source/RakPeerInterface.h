@@ -49,7 +49,7 @@ public:
 	/// \param[in] _threadSleepTimer How many ms to Sleep each internal update cycle. With new congestion control, the best results will be obtained by passing 10.
 	/// \param[in] socketDescriptors An array of SocketDescriptor structures to force RakNet to listen on a particular IP address or port (or both).  Each SocketDescriptor will represent one unique socket.  Do not pass redundant structures.  To listen on a specific port, you can pass SocketDescriptor(myPort,0); such as for a server.  For a client, it is usually OK to just pass SocketDescriptor();
 	/// \param[in] socketDescriptorCount The size of the \a socketDescriptors array.  Pass 1 if you are not sure what to pass.
-	/// \param[in] threadPriority Passed to thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. WARNING!!! On Linux, 0 means highest priority! You MUST set this to something valid based on the values used by your other threads
+	/// \param[in] threadPriority Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. For Linux based systems, you MUST pass something reasonable based on the thread priorities for your application.
 	/// \return False on failure (can't create socket or thread), true on success.
 	virtual bool Startup( unsigned short maxConnections, int _threadSleepTimer, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority=-99999 )=0;
 
@@ -328,6 +328,7 @@ public:
 	/// \param[in] systemAddress The SystemAddress we are referring to
 	/// \param[in] includeInProgress If true, also return true for connections that are in progress but haven't completed
 	/// \param[in] includeDisconnecting If true, also return true for connections that are in the process of disconnecting
+	/// \note This locks a mutex, do not call too frequently during connection attempts with includeInProgress==true or you may cause the attempt to take longer and fail
 	/// \return True if this system is connected and active, false otherwise.
 	virtual bool IsConnected(const AddressOrGUID systemIdentifier, bool includeInProgress=false, bool includeDisconnecting=false)=0;
 

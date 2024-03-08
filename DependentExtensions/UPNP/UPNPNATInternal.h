@@ -20,7 +20,7 @@
 /// \brief Collection of classes for UPNP
 
 /// \class UPNPNATInternal
-/// \brief UPNP class for private RAKNET use, do not use
+/// \brief UPNP class for private RAKNET use, use UPNPPortForwarder instead
 /// \details
 /// \ingroup UPNP_GROUP
 class RAK_DLL_EXPORT UPNPNATInternal

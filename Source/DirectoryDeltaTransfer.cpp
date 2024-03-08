@@ -56,9 +56,9 @@ public:
 
 		onFileCallback->OnFileProgress(fps);
 	}
-	virtual bool OnDownloadComplete(void)
+	virtual bool OnDownloadComplete(DownloadCompleteStruct *dcs)
 	{
-		return onFileCallback->OnDownloadComplete();
+		return onFileCallback->OnDownloadComplete(dcs);
 	}
 };
 

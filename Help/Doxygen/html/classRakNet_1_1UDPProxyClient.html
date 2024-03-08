@@ -195,7 +195,7 @@ Same as above, but specify the target with a GUID, in case you don't know what i
 <div class="memdoc">
 
 <p>
-Sends a request to proxyCoordinator to find a server and have that server setup <a class="el" href="classRakNet_1_1UDPForwarder.html#64dcdc9ed748c9b2ad67439be985cf74">UDPForwarder::StartForwarding()</a> on our address to <em>targetAddressAsSeenFromCoordinator</em> The forwarded datagrams can be from any UDP source, not just <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Must be connected to <em>proxyCoordinator</em> <p>
+Sends a request to proxyCoordinator to find a server and have that server setup <a class="el" href="classRakNet_1_1UDPForwarder.html#e22b3da12aa093783cf3ccd9b6a689f9">UDPForwarder::StartForwarding()</a> on our address to <em>targetAddressAsSeenFromCoordinator</em> The forwarded datagrams can be from any UDP source, not just <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Must be connected to <em>proxyCoordinator</em> <p>
 Systems running <a class="el" href="classRakNet_1_1UDPProxyServer.html" title="UDPProxyServer to control our instance of UDPForwarder.">UDPProxyServer</a> must be connected to <em>proxyCoordinator</em> and logged in via UDPProxyCoordinator::LoginServer() or <a class="el" href="classRakNet_1_1UDPProxyServer.html#32edaff2aec11cce6a138897b0e2a158">UDPProxyServer::LoginToCoordinator()</a> </dd></dl>
 <dl class="note" compact><dt><b>Note:</b></dt><dd>May still fail, if all proxy servers have no open connections. <p>
 RakNet's protocol will ensure a message is sent at least every 5 seconds, so if routing <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> messages, it is a reasonable value for timeoutOnNoDataMS, plus an extra few seconds for latency. </dd></dl>
@@ -240,7 +240,7 @@ Receives the results of calling <a class="el" href="classRakNet_1_1UDPProxyClien
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/RakNet/Source/<a class="el" href="UDPProxyClient_8h.html">UDPProxyClient.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jul 1 07:46:42 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 1 11:00:23 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

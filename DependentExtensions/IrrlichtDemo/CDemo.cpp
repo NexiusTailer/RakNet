@@ -1168,18 +1168,18 @@ void CDemo::UpdateRakNet(void)
 			((BaseIrrlichtReplica*)(replicaManager3->GetReplicaAtIndex(idx)))->Update(curTime);;
 	}	
 }
-void CDemo::OnForwardingSuccess(const char *proxyIPAddress, unsigned short proxyPort, unsigned short reverseProxyPort,
+void CDemo::OnForwardingSuccess(const char *proxyIPAddress, unsigned short proxyPort,
 										SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 {
 	RakNet::RakString targetName = targetAddress.ToString();
 	PushMessage(RakNet::RakString("Proxy forwarding to ") + targetName + RakNet::RakString(" through %s:%i succeeded. Connecting.", proxyIPAddress, proxyPort));
 	rakPeer->Connect(proxyIPAddress, proxyPort,0,0);
 }
-void CDemo::OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort, unsigned short reverseProxyPort,
+void CDemo::OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort,
 											 SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 {
 	RakNet::RakString targetName = proxyIPAddress;
-	PushMessage(RakNet::RakString("%s has setup forwarding to us through proxy %s:%i.\n", sourceAddress.ToString(false), proxyIPAddress, reverseProxyPort));
+	PushMessage(RakNet::RakString("%s has setup forwarding to us through proxy %s:%i.\n", sourceAddress.ToString(false), proxyIPAddress,proxyPort));
 }
 void CDemo::OnNoServersOnline(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 {

@@ -656,6 +656,8 @@ void NatPunchthroughClient::OnGetMostRecentPort(Packet *packet)
 	RakNet::BitStream outgoingBs;
 	outgoingBs.Write((MessageID)ID_NAT_GET_MOST_RECENT_PORT);
 	outgoingBs.Write(sessionId);
+	if (mostRecentNewExternalPort==0)
+		mostRecentNewExternalPort=rakPeerInterface->GetExternalID(packet->systemAddress).port;
 	outgoingBs.Write(mostRecentNewExternalPort);
 	rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
 	sp.facilitator=packet->systemAddress;

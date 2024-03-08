@@ -1,5 +1,5 @@
 #include "UPNPNATInternal.h"
-#include "xmlParser.h"
+#include "xmlParser.h" // Found at DependentExtensions/XML
 static bool parseUrl(const char* url,RakNet::RakString& host,unsigned short* port,RakNet::RakString& path)
 {
 	RakNet::RakString strUrl=url;
@@ -124,16 +124,15 @@ bool UPNPNATInternal::Discovery(void)
 	int iOptLen = sizeof(int);
 	RakNetSmartPtr<RakNetSocket> socketptr;
 	socketptr= new RakNetSocket();
-	SocketLayer * currentInstance=SocketLayer::Instance();
 	
-	socketptr->s= (unsigned int)currentInstance->CreateBoundSocket(0,false,thisSocketAddress.C_String(),true);
-	currentInstance->SetNonBlocking(socketptr->s);
+	socketptr->s= (unsigned int)SocketLayer::CreateBoundSocket(0,false,thisSocketAddress.C_String(),true);
+	SocketLayer::SetNonBlocking(socketptr->s);
 	
 	SystemAddress connvertSys,convertSys2;
 
 	connvertSys.SetBinaryAddress(thisSocketAddress.C_String());
 
-	RakNet::RakString subNetAddress=currentInstance->GetSubNetForSocketAndIp(socketptr->s,thisSocketAddress);
+	RakNet::RakString subNetAddress=SocketLayer::GetSubNetForSocketAndIp(socketptr->s,thisSocketAddress);
 
 	if (subNetAddress=="")
 	{
@@ -150,7 +149,7 @@ bool UPNPNATInternal::Discovery(void)
 
 	broadCastAddress=tmpBroadcast;
 	char buff2[maxBuffSize];
-	currentInstance->SendTo(socketptr->s, sendBuff.C_String(), (int) sendBuff.GetLength()+1, broadCastAddress.C_String(), targetPort, false);
+	SocketLayer::SendTo(socketptr->s, sendBuff.C_String(), (int) sendBuff.GetLength()+1, broadCastAddress.C_String(), targetPort, 0, __FILE__, __LINE__);
 
 	SystemAddress outAddress;
 	RakNetTimeUS timeOut;
@@ -161,7 +160,7 @@ bool UPNPNATInternal::Discovery(void)
 
 		memset(buff2, 0, sizeof(buff2));
 
-		currentInstance->RawRecvFromNonBlocking( socketptr->s, false, buff2, &ret, &outAddress, &timeOut);
+		SocketLayer::RawRecvFromNonBlocking( socketptr->s, false, buff2, &ret, &outAddress, &timeOut);
 		if(ret==-1){
 			RakSleep(100);
 			continue;

@@ -3,6 +3,8 @@
 
 using namespace RakNet;
 
+STATIC_FACTORY_DEFINITIONS(Lobby2Server_PGSQL,Lobby2Server_PGSQL);
+
 Lobby2ServerCommand Lobby2ServerWorkerThread(Lobby2ServerCommand input, bool *returnOutput, void* perThreadData)
 {
 	PostgreSQLInterface *postgreSQLInterface = (PostgreSQLInterface *) perThreadData;

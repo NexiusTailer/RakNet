@@ -32,8 +32,7 @@ int main()
 		strcpy(receiver, "rakkar@rakkar.org");
 	printf("Enter password needed to send: ");
 	gets(password);
-	if (password[0]==0)
-		strcpy(password, "jenny120");
+
 
 	// http://mail.google.com/support/bin/answer.py?hl=en&answer=13287
 	unsigned short hostPort;

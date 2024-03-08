@@ -318,18 +318,15 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 	{
 		char serverIP[64];
 		packet->systemAddress.ToString(false,serverIP);
-		unsigned short srcToDestPort;
-		unsigned short destToSourcePort;
-		incomingBs.Read(srcToDestPort);
-		incomingBs.Read(destToSourcePort);
+		unsigned short forwardingPort;
+		incomingBs.Read(forwardingPort);
 
 		outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
 		outgoingBs.Write((MessageID)ID_UDP_PROXY_FORWARDING_SUCCEEDED);
 		outgoingBs.Write(sata.senderClientAddress);
 		outgoingBs.Write(sata.targetClientAddress);
 		outgoingBs.Write(RakNet::RakString(serverIP));
-		outgoingBs.Write(srcToDestPort);
-		outgoingBs.Write(destToSourcePort);
+		outgoingBs.Write(forwardingPort);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, fw->requestingAddress, false);
 
 		outgoingBs.Reset();
@@ -338,8 +335,7 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 		outgoingBs.Write(sata.senderClientAddress);
 		outgoingBs.Write(sata.targetClientAddress);
 		outgoingBs.Write(RakNet::RakString(serverIP));
-		outgoingBs.Write(srcToDestPort);
-		outgoingBs.Write(destToSourcePort);
+		outgoingBs.Write(forwardingPort);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, sata.targetClientAddress, false);
 
 		// 05/18/09 Keep the entry around for some time after success, so duplicates are reported if attempting forwarding from the target system before notification of success

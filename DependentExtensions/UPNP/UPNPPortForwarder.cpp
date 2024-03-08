@@ -161,7 +161,7 @@ void GetGateways(char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ])
 
 #else
 	unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
-	SocketLayer::Instance()->GetMyIP( ipList, unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
+	SocketLayer::GetMyIP( ipList, unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 #endif
 }
 */
@@ -259,7 +259,7 @@ RAK_THREAD_DECLARATION(QueryUPNPSupportThread)
 	if (fupnpi->interfaceQueried=="ALL")
 	{
 		unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
-		SocketLayer::Instance()->GetMyIP(ipList, binaryAddresses);
+		SocketLayer::GetMyIP(ipList, binaryAddresses);
 	}
 	else
 	{
@@ -312,7 +312,7 @@ RAK_THREAD_DECLARATION(OpenPortOnInterfaceThread)
 	if (opr->interfaceIp=="ALL")
 	{
 		unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
-		SocketLayer::Instance()->GetMyIP(ipList, binaryAddresses);
+		SocketLayer::GetMyIP(ipList, binaryAddresses);
 	}
 	else
 	{

@@ -62,7 +62,7 @@ struct NatTypeDetectionServerFramework : public SampleFramework
 
 			char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
 			unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
-			SocketLayer::Instance()->GetMyIP( ipList, binaryAddresses );
+			SocketLayer::GetMyIP( ipList, binaryAddresses );
 			for (int i=0; i<5; i++)
 			{
 				if (ipList[i][0]==0 && i < MAXIMUM_NUMBER_OF_INTERNAL_IDS)
@@ -138,11 +138,13 @@ struct UDPProxyCoordinatorFramework : public SampleFramework
 			rakPeer->AttachPlugin(udppc);
 
 			char password[512];
-			do
+			printf("Create password for UDPProxyCoordinator: ");
+			gets(password);
+			if (password[0]==0)
 			{
-				printf("Create password for UDPProxyCoordinator: ");
-				gets(password);
-			} while (password[0]==0);
+				password[0]='a';
+				password[1]=0;
+			}
 			udppc->SetRemoteLoginPassword(password);
 		}
 	}
@@ -254,7 +256,7 @@ struct UDPProxyServerFramework : public SampleFramework, public UDPProxyServerRe
 				printf("\n");
 				if (ch=='1')
 				{
-					coordinatorAddress==rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS);
+					coordinatorAddress=rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS);
 				}
 				else if (ch=='2')
 				{
@@ -275,11 +277,13 @@ struct UDPProxyServerFramework : public SampleFramework, public UDPProxyServerRe
 			}
 			
 			char password[512];
-			do
+			printf("Enter password used with UDPProxyCoordinator: ");
+			gets(password);
+			if (password[0]==0)
 			{
-				printf("Enter password used with UDPProxyCoordinator: ");
-				gets(password);
-			} while (password[0]==0);
+				password[0]='a';
+				password[1]=0;
+			}
 
 			udpps = new UDPProxyServer;
 			udpps->SetResultHandler(this);
@@ -338,7 +342,7 @@ int main()
 	RakPeerInterface *rakPeer=RakNetworkFactory::GetRakPeerInterface();
 	char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
 	unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
-	SocketLayer::Instance()->GetMyIP( ipList, binaryAddresses );
+	SocketLayer::GetMyIP( ipList, binaryAddresses );
 	SocketDescriptor sd(RAKPEER_PORT,ipList[0]);
 	if (rakPeer->Startup(32,10,&sd,1)==false)
 	{

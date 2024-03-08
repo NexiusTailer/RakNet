@@ -288,10 +288,10 @@ public:
 
 		return true;
 	}
-	virtual bool OnDownloadComplete(void)
+	virtual bool OnDownloadComplete(DownloadCompleteStruct *dcs)
 	{
 		downloadComplete=true;
-		if (onFileCallback->OnDownloadComplete()==false)
+		if (onFileCallback->OnDownloadComplete(dcs)==false)
 		{
 			canDeleteUser=true;
 		}

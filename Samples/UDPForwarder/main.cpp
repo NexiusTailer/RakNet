@@ -39,16 +39,15 @@ int main()
 	peer0Addr.SetBinaryAddress("127.0.0.1");
 	peer1Addr.SetBinaryAddress("127.0.0.1");
 
-	unsigned short peer0To1FowardPort;
-	unsigned short peer1To0FowardPort;
-	if (!udpForwarder.StartForwarding(peer0Addr,peer1Addr, timeoutOnNoDataMS, 0, &peer0To1FowardPort, &peer1To0FowardPort,0,0))
+	unsigned short fowardPort;
+	if (!udpForwarder.StartForwarding(peer0Addr,peer1Addr, timeoutOnNoDataMS, 0, &fowardPort,0))
 	{
 		printf("Socket error\n");
 		return 1;
 	}
 
 	// Send a connect message to the forwarder, on the port to forward to rakPeer[1]
-	rakPeer[0]->Connect("127.0.0.1", peer0To1FowardPort, 0, 0);
+	rakPeer[0]->Connect("127.0.0.1", fowardPort, 0, 0);
 	
 	printf("'q'uit.\n");
 	Packet *p;

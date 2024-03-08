@@ -1310,7 +1310,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 		if (delayList.Peek()->sendTime <= timeMs)
 		{
 			DataAndTime *dat = delayList.Pop();
-			SocketLayer::Instance()->SendTo( dat->s, dat->data, dat->length, systemAddress.binaryAddress, systemAddress.port, dat->remotePortRakNetWasStartedOn_PS3 );
+			SocketLayer::SendTo( dat->s, dat->data, dat->length, systemAddress.binaryAddress, systemAddress.port, dat->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__  );
 			RakNet::OP_DELETE(dat,__FILE__,__LINE__);
 		}
 		break;
@@ -1889,7 +1889,7 @@ void ReliabilityLayer::SendBitStream( SOCKET s, SystemAddress systemAddress, Rak
 	bpsMetrics[(int) ACTUAL_BYTES_SENT].Push1(currentTime,length);
 
 	RakAssert(length <= congestionManager.GetMTU());
-	SocketLayer::Instance()->SendTo( s, ( char* ) bitStream->GetData(), length, systemAddress.binaryAddress, systemAddress.port, remotePortRakNetWasStartedOn_PS3 );
+	SocketLayer::SendTo( s, ( char* ) bitStream->GetData(), length, systemAddress.binaryAddress, systemAddress.port, remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__  );
 }
 
 //-------------------------------------------------------------------------------------------------------

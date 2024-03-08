@@ -386,24 +386,8 @@ bool RunTest()
 
 void OutputBody(HTTPConnection& http, const char *path, const char *data, TCPInterface& tcp);
 
-int main(int argc, char **argv)
+void TestPHPDirectoryServer(int argc, char **argv)
 {
-	printf("PHP Directory server 2.\n");
-	printf("Similar to lightweight database, but uses common shared webservers.\n");
-	printf("Set columns and one row for your game, and upload it to a\nviewable and downloadable webpage.\n");
-	printf("Difficulty: Intermediate\n\n");
-
-	tcp = RakNet::OP_NEW<TCPInterface>(__FILE__,__LINE__);
-	httpConnection = RakNet::OP_NEW<HTTPConnection>(__FILE__,__LINE__);
-	phpDirectoryServer2 = RakNet::OP_NEW<PHPDirectoryServer2>(__FILE__,__LINE__);
-
-
-
-//	RakNetTime lastTouched = 0;
-
-	// Start the TCP thread. This is used for general TCP communication, whether it is for webpages, sending emails, or telnet
-    tcp->Start(0, 64);
-
 	char website[256];
 	char pathToPHP[256];
 	if (argc==3)
@@ -433,8 +417,8 @@ int main(int argc, char **argv)
 	// This creates an HTTP connection using TCPInterface. It allows you to Post messages to and parse messages from webservers.
 	// The connection attempt is asynchronous, and is handled automatically as HTTPConnection::Update() is called
 	httpConnection->Init(tcp, website);
-   
-    // This adds specific parsing functionality to HTTPConnection, in order to communicate with DirectoryServer.php
+
+	// This adds specific parsing functionality to HTTPConnection, in order to communicate with DirectoryServer.php
 	phpDirectoryServer2->Init(httpConnection, pathToPHP);
 
 	if (RunTest())
@@ -453,6 +437,54 @@ int main(int argc, char **argv)
 	RakNet::OP_DELETE(phpDirectoryServer2,__FILE__,__LINE__);
 	RakNet::OP_DELETE(httpConnection,__FILE__,__LINE__);
 	RakNet::OP_DELETE(tcp,__FILE__,__LINE__);
+}
+
+void TestGet(void)
+{
+	httpConnection->Init(tcp, "www.google.com");
+	httpConnection->Get("index.html");
+	while (1)
+	{
+		Packet *packet = tcp->Receive();
+		if(packet)
+		{
+			httpConnection->ProcessTCPPacket(packet);
+			tcp->DeallocatePacket(packet);
+		}
+		httpConnection->Update();
+
+		if (httpConnection->IsBusy()==false)
+		{
+			RakString fileContents = httpConnection->Read();
+			printf(fileContents.C_String());
+			return;
+		}
+		// Prevent 100% cpu usage
+		RakSleep(30);
+	}
+}
+
+int main(int argc, char **argv)
+{
+	printf("PHP Directory server 2.\n");
+	printf("Similar to lightweight database, but uses common shared webservers.\n");
+	printf("Set columns and one row for your game, and upload it to a\nviewable and downloadable webpage.\n");
+	printf("Difficulty: Intermediate\n\n");
+
+	tcp = RakNet::OP_NEW<TCPInterface>(__FILE__,__LINE__);
+	httpConnection = RakNet::OP_NEW<HTTPConnection>(__FILE__,__LINE__);
+	phpDirectoryServer2 = RakNet::OP_NEW<PHPDirectoryServer2>(__FILE__,__LINE__);
+
+
+
+//	RakNetTime lastTouched = 0;
+
+	// Start the TCP thread. This is used for general TCP communication, whether it is for webpages, sending emails, or telnet
+    tcp->Start(0, 64);
+
+	TestPHPDirectoryServer(argc,argv);
+
+	// TestGet();
 
     return 0;
 }

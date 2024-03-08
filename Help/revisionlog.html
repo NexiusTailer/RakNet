@@ -350,9 +350,18 @@
   Improve congestion control for LAN settings.
   Add GET_TIME_SPIKE_LIMIT to RakNetDefines, as an option, disabled by default, to prevent http://support.microsoft.com/kb/274323.
   Fix SimpleMutex failure caused by initializing the same instance from multiple threads at the same time.
-  Fix packetlogger logging error when using tiemstamps.
+  Fix packetlogger logging error when using timestamps.
   Fix assert in RoomsPlugin.
   Update tutorial in manual.
+  3.82 (9/17/2010)
+  UDPForwarder now uses a single port
+  Fixes to Router2
+  Add Get to HTTPConnection class
+	Fix ReplicaManager3 when using send type other than RELIABLE_ORDERED
+	Update Ogre3DInterpDemo to Ogre 1.7.1
+  Make SendOutOfBand work also when RakNet wasn't started
+  Test sendto call for MTU detection, if it blocks, drop to the lowest MTU
+  Tweak CCRakNetUDT::IncreaseTimeBetweenSends to reduce backoff, to better handle random ping spikes
   <br>
   <BR>
 </p></TD></TR></TABLE>

@@ -31,13 +31,13 @@ void NatTypeDetectionServer::Startup(
 	char str[64];
 	sockets[0]->boundAddress.ToString(false,str);
 	s1p2=CreateNonblockingBoundSocket(str);
-	s1p2Port=SocketLayer::Instance()->GetLocalPort(s1p2);
+	s1p2Port=SocketLayer::GetLocalPort(s1p2);
 	s2p3=CreateNonblockingBoundSocket(nonRakNetIP2);
-	s2p3Port=SocketLayer::Instance()->GetLocalPort(s2p3);
+	s2p3Port=SocketLayer::GetLocalPort(s2p3);
 	s3p4=CreateNonblockingBoundSocket(nonRakNetIP3);
-	s3p4Port=SocketLayer::Instance()->GetLocalPort(s3p4);
+	s3p4Port=SocketLayer::GetLocalPort(s3p4);
 	s4p5=CreateNonblockingBoundSocket(nonRakNetIP4);
-	s4p5Port=SocketLayer::Instance()->GetLocalPort(s4p5);
+	s4p5Port=SocketLayer::GetLocalPort(s4p5);
 	strcpy(s3p4Address, nonRakNetIP3);
 }
 void NatTypeDetectionServer::Shutdown()
@@ -137,7 +137,7 @@ void NatTypeDetectionServer::Update(void)
 				c = NAT_TYPE_NONE;
 				printf("Testing NAT_TYPE_NONE\n");
 				// S4P5 sends to C2. If arrived, no NAT. Done. (Else S4P5 potentially banned, do not use again).
-				SocketLayer::Instance()->SendTo_PC( s4p5, (const char*) &c, 1, natDetectionAttempts[i].systemAddress.binaryAddress, natDetectionAttempts[i].c2Port );
+				SocketLayer::SendTo_PC( s4p5, (const char*) &c, 1, natDetectionAttempts[i].systemAddress.binaryAddress, natDetectionAttempts[i].c2Port, __FILE__, __LINE__  );
 				break;
 			case STATE_TESTING_FULL_CONE_1:
 			case STATE_TESTING_FULL_CONE_2:
@@ -146,7 +146,7 @@ void NatTypeDetectionServer::Update(void)
 				bs.Write((unsigned char) ID_NAT_TYPE_DETECT);
 				bs.Write((unsigned char) NAT_TYPE_FULL_CONE);
 				// S2P3 sends to C1 (Different address, different port, to previously used port on client). If received, Full-cone nat. Done.  (Else S2P3 potentially banned, do not use again).
-				SocketLayer::Instance()->SendTo_PC( s2p3, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), natDetectionAttempts[i].systemAddress.binaryAddress, natDetectionAttempts[i].systemAddress.port );
+				SocketLayer::SendTo_PC( s2p3, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), natDetectionAttempts[i].systemAddress.binaryAddress, natDetectionAttempts[i].systemAddress.port, __FILE__, __LINE__  );
 				break;
 			case STATE_TESTING_ADDRESS_RESTRICTED_1:
 			case STATE_TESTING_ADDRESS_RESTRICTED_2:
@@ -155,7 +155,7 @@ void NatTypeDetectionServer::Update(void)
 				bs.Write((unsigned char) ID_NAT_TYPE_DETECT);
 				bs.Write((unsigned char) NAT_TYPE_ADDRESS_RESTRICTED);
 				// S1P2 sends to C1 (Same address, different port, to previously used port on client). If received, address-restricted cone nat. Done.
-				SocketLayer::Instance()->SendTo_PC( s1p2, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), natDetectionAttempts[i].systemAddress.binaryAddress, natDetectionAttempts[i].systemAddress.port );
+				SocketLayer::SendTo_PC( s1p2, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), natDetectionAttempts[i].systemAddress.binaryAddress, natDetectionAttempts[i].systemAddress.port, __FILE__, __LINE__  );
 				break;
 			case STATE_TESTING_PORT_RESTRICTED_1:
 			case STATE_TESTING_PORT_RESTRICTED_2:

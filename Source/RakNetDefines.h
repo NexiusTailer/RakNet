@@ -36,7 +36,7 @@
 /// Uncomment to use RakMemoryOverride for custom memory tracking
 /// See RakMemoryOverride.h. 
 #ifndef _USE_RAK_MEMORY_OVERRIDE
-#define _USE_RAK_MEMORY_OVERRIDE 1
+#define _USE_RAK_MEMORY_OVERRIDE 0
 #endif
 
 /// If defined, OpenSSL is enabled for the class TCPInterface
@@ -44,6 +44,9 @@
 /// Note that OpenSSL carries its own license restrictions that you should be aware of. If you don't agree, don't enable this define
 /// This also requires that you enable header search paths to DependentExtensions\openssl-0.9.8g
 // #define OPEN_SSL_CLIENT_SUPPORT
+#ifndef OPEN_SSL_CLIENT_SUPPORT
+#define OPEN_SSL_CLIENT_SUPPORT 0
+#endif
 
 /// Threshold at which to do a malloc / free rather than pushing data onto a fixed stack for the bitstream class
 /// Arbitrary size, just picking something likely to be larger than most packets
@@ -102,9 +105,9 @@
 // #define _LINK_DL_MALLOC
 
 #ifndef GET_TIME_SPIKE_LIMIT
-/// Workaround for http://support.microsoft.com/kb/274323 , only does anything on Windows and Linux
+/// Workaround for http://support.microsoft.com/kb/274323
 /// If two calls between RakNet::GetTime() happen farther apart than this time in microseconds, this delta will be returned instead
-/// \note RakNet itself calls RakNet::GetTime() constantly while active, so you won't see this limit unless you infrequently call RakNet::GetTime() while RakNet is not active
+/// Note: This will cause ID_TIMESTAMP to be temporarily inaccurate if you set a breakpoint that pauses the UpdateNetworkLoop() thread in RakPeer
 /// Define in RakNetDefinesOverrides.h to enable (non-zero) or disable (0)
 #define GET_TIME_SPIKE_LIMIT 0
 #endif

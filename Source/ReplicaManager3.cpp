@@ -227,7 +227,7 @@ void ReplicaManager3::Dereference(RakNet::Replica3 *replica3)
 void ReplicaManager3::DereferenceList(DataStructures::Multilist<ML_STACK, Replica3*> &replicaListIn)
 {
 	DataStructures::DefaultIndexType index;
-	for (index=0; index < userReplicaList.GetSize(); index++)
+	for (index=0; index < replicaListIn.GetSize(); index++)
 		Dereference(replicaListIn[index]);
 }
 
@@ -1253,6 +1253,19 @@ SendSerializeIfChangedResult Connection_RM3::SendSerialize(RakNet::Replica3 *rep
 			// Send remainder
 			replica->OnSerializeTransmission(&out, systemAddress);
 			rakPeer->Send(&out,lastPro.priority,lastPro.reliability,lastPro.orderingChannel,systemAddress,false,lastPro.sendReceipt);
+
+			// If no data left to send, quit out
+			bool anyData=false;
+			for (int channelIndex2=channelIndex; channelIndex2 < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; channelIndex2++)
+			{
+				if (serializationData[channelIndex2].GetNumberOfBitsUsed()>0)
+				{
+					anyData=true;
+					break;
+				}
+			}
+			if (anyData==false)
+				return SSICR_SENT_DATA;
 
 			// Restart stream
 			SendSerializeHeader(replica, timestamp, &out, worldId);

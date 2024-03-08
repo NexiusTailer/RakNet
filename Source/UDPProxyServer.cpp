@@ -136,11 +136,10 @@ void UDPProxyServer::OnForwardingRequestFromCoordinatorToServer(Packet *packet)
 	incomingBs.Read(targetAddress);
 	RakNetTimeMS timeoutOnNoDataMS;
 	incomingBs.Read(timeoutOnNoDataMS);
-	RakAssert(timeoutOnNoDataMS > 0 && timeoutOnNoDataMS < UDP_FORWARDER_MAXIMUM_TIMEOUT);
+	RakAssert(timeoutOnNoDataMS > 0 && timeoutOnNoDataMS <= UDP_FORWARDER_MAXIMUM_TIMEOUT);
 
-	unsigned short srcToDestPort;
-	unsigned short destToSourcePort;
-	UDPForwarderResult success = udpForwarder.StartForwarding(sourceAddress, targetAddress, timeoutOnNoDataMS, 0, &srcToDestPort, &destToSourcePort, 0, 0);
+	unsigned short forwardingPort;
+	UDPForwarderResult success = udpForwarder.StartForwarding(sourceAddress, targetAddress, timeoutOnNoDataMS, 0, &forwardingPort, 0);
 	RakNet::BitStream outgoingBs;
 	outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
 	outgoingBs.Write((MessageID)ID_UDP_PROXY_FORWARDING_REPLY_FROM_SERVER_TO_COORDINATOR);
@@ -149,8 +148,7 @@ void UDPProxyServer::OnForwardingRequestFromCoordinatorToServer(Packet *packet)
 	outgoingBs.Write((unsigned char) success);
 	if (success==UDPFORWARDER_SUCCESS)
 	{
-		outgoingBs.Write(srcToDestPort);
-		outgoingBs.Write(destToSourcePort);
+		outgoingBs.Write(forwardingPort);
 	}
 	rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 }

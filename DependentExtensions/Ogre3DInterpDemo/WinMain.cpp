@@ -13,7 +13,7 @@
 // Ogre includes
 #include "OgreTextAreaOverlayElement.h"
 #include "Ogre.h"
-#include <OIS/OIS.h>
+#include <OIS.h>
 
 // Stuff to help run ogre
 #include "OverlayHelper.h"
@@ -441,6 +441,7 @@ public:
 					rakPeer->SetMaximumIncomingConnections(32);
 				else
 					rakPeer->Connect(SERVER_IP_ADDRESS,SERVER_PORT,0,0);
+				replicaManager3.SetAutoSerializeInterval(DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES);
 
 				// StringTable has to be called after RakPeer started, or else first call StringTable::AddRef() yourself
 				StringTable::Instance()->AddString("Popcorn",false);
@@ -527,8 +528,6 @@ public:
 
 		sceneManager->setAmbientLight( ColourValue( .5, .5, .5 ) );
 
-		ShowMessage("'S'erver. 'C'lient. Hold ' ' to disable interp.");
-
 		mainLight = sceneManager->createLight("MainLight");
 		mainLightNode = sceneManager->getRootSceneNode()->createChildSceneNode( "MainLightNode" );
 		mainLightNode->attachObject(mainLight);
@@ -546,6 +545,10 @@ public:
 		sceneManager->setSkyBox(true, "Examples/SteveCubeSkyBox");
 		isStarted=false;
 		enableInterpolation=true;
+
+
+		// Bug: Since updating to ogre OgreSDK_vc8_v1-7-1 from Ogre 3D 1.6.2, this message doesn't show up anymore
+		ShowMessage("'S'erver. 'C'lient. Hold ' ' to disable interp.");
 	}
 
 	virtual void CreateKernels(ReplicaManager3 *replicaManager3)

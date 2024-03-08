@@ -23,7 +23,7 @@ public:
 	virtual ~PacketizedTCP();
 
 	/// Starts the TCP server on the indicated port
-	/// \param[in] threadPriority Passed to thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. WARNING!!! On Linux, 0 means highest priority! You MUST set this to something valid based on the values used by your other threads
+	/// \param[in] threadPriority Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. For Linux based systems, you MUST pass something reasonable based on the thread priorities for your application.
 	bool Start(unsigned short port, unsigned short maxIncomingConnections, int threadPriority=-99999);
 
 	/// Stops the TCP server

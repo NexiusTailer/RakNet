@@ -6,6 +6,7 @@
 #include "FileOperations.h"
 #include "RakMemoryOverride.h"
 #include "DS_List.h"
+#include "UPNPPortForwarder.h"
 
 void* MyMalloc (size_t size)
 {
@@ -44,6 +45,8 @@ int main()
 		RakNetCommandParser* e=RakNetworkFactory::GetRakNetCommandParser( );
 	#endif
 	RakPeerInterface * f=RakNetworkFactory::GetRakPeerInterface( );
+	SystemAddress sa = UNASSIGNED_SYSTEM_ADDRESS;
+	f->GetIndexFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 	#if _RAKNET_SUPPORT_Router==1
 		Router *g=RakNetworkFactory::GetRouter( );
 	#endif

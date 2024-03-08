@@ -46,9 +46,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransferCBInterface.html#35fc481a05fbdfbbe2e07132f4a07dcc">Update</a> (void)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called while the handler is active by <a class="el" href="classFileListTransfer.html" title="A plugin to provide a simple way to compress and incrementally send the files in...">FileListTransfer</a>.  <a href="#35fc481a05fbdfbbe2e07132f4a07dcc"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransferCBInterface.html#0706279d02834b3a179eb438e312a359">OnDownloadComplete</a> (void)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransferCBInterface.html#8665e54c6cb95136aac7a4a3bef2794e">OnDownloadComplete</a> (DownloadCompleteStruct *dcs)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the download is completed.  <a href="#0706279d02834b3a179eb438e312a359"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the download is completed.  <a href="#8665e54c6cb95136aac7a4a3bef2794e"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileListTransferCBInterface.html#9c0320f6f765ddcebb94efc8095f38c2">OnDereference</a> (void)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function is called when this instance is about to be dereferenced by the <a class="el" href="classFileListTransfer.html" title="A plugin to provide a simple way to compress and incrementally send the files in...">FileListTransfer</a> plugin.  <a href="#9c0320f6f765ddcebb94efc8095f38c2"></a><br></td></tr>
@@ -80,15 +80,15 @@ This function is called when this instance is about to be dereferenced by the <a
 Update will no longer be called. It will will be deleted automatically if true was passed to FileListTransfer::SetupReceive::deleteHandler Otherwise it is up to you to delete it yourself. 
 </div>
 </div><p>
-<a class="anchor" name="0706279d02834b3a179eb438e312a359"></a><!-- doxytag: member="FileListTransferCBInterface::OnDownloadComplete" ref="0706279d02834b3a179eb438e312a359" args="(void)" -->
+<a class="anchor" name="8665e54c6cb95136aac7a4a3bef2794e"></a><!-- doxytag: member="FileListTransferCBInterface::OnDownloadComplete" ref="8665e54c6cb95136aac7a4a3bef2794e" args="(DownloadCompleteStruct *dcs)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">virtual bool FileListTransferCBInterface::OnDownloadComplete           </td>
           <td>(</td>
-          <td class="paramtype">void&nbsp;</td>
-          <td class="paramname">          </td>
+          <td class="paramtype">DownloadCompleteStruct *&nbsp;</td>
+          <td class="paramname"> <em>dcs</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [inline, virtual]</code></td>
         </tr>
@@ -172,7 +172,7 @@ Return false when you are done with the class. At that point OnDereference will 
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/RakNet/Source/<a class="el" href="FileListTransferCBInterface_8h.html">FileListTransferCBInterface.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jul 1 07:46:40 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 1 11:00:21 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

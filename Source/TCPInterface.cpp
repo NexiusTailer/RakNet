@@ -50,7 +50,7 @@ TCPInterface::TCPInterface()
 	StringCompressor::AddReference();
 	RakNet::StringTable::AddReference();
 
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 	ctx=0;
 	meth=0;
 #endif
@@ -132,7 +132,7 @@ void TCPInterface::Stop(void)
 		return;
 
 	unsigned i;
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 	for (i=0; i < remoteClientsLength; i++)
 		remoteClients[i].DisconnectSSL();
 #endif
@@ -168,7 +168,7 @@ void TCPInterface::Stop(void)
 	for (i=0; i < (unsigned int) remoteClientsLength; i++)
 	{
 		closesocket(remoteClients[i].socket);
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 		remoteClients[i].FreeSSL();
 #endif
 	}
@@ -191,7 +191,7 @@ void TCPInterface::Stop(void)
 		DeallocatePacket(tailPush[i]);
 	tailPush.Clear(__FILE__, __LINE__);
 
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 	SSL_CTX_free (ctx);
 	startSSL.Clear(__FILE__, __LINE__);
 	activeSSLConnections.Clear(false, __FILE__, __LINE__);
@@ -265,7 +265,7 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 		return UNASSIGNED_SYSTEM_ADDRESS;
 	}	
 }
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 void TCPInterface::StartSSLClient(SystemAddress systemAddress)
 {
 	if (ctx==0)
@@ -371,7 +371,9 @@ void TCPInterface::CloseConnection( SystemAddress systemAddress )
 	
 	if (systemAddress.systemIndex<remoteClientsLength && remoteClients[systemAddress.systemIndex].systemAddress==systemAddress)
 	{
+		remoteClients[systemAddress.systemIndex].isActiveMutex.Lock();
 		remoteClients[systemAddress.systemIndex].SetActive(false);
+		remoteClients[systemAddress.systemIndex].isActiveMutex.Lock();
 	}
 	else
 	{
@@ -389,7 +391,7 @@ void TCPInterface::CloseConnection( SystemAddress systemAddress )
 	}
 
 
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 	unsigned index = activeSSLConnections.GetIndexOf(systemAddress);
 	if (index!=(unsigned)-1)
 		activeSSLConnections.RemoveAtIndex(index);
@@ -650,7 +652,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 
 	while (sts->isStarted)
 	{
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 		SystemAddress *sslSystemAddress;
 		sslSystemAddress = sts->startSSL.PopInaccurate();
 		if (sslSystemAddress)
@@ -810,7 +812,9 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 						SystemAddress *lostConnectionSystemAddress=sts->lostConnections.Allocate( __FILE__, __LINE__ );
 						*lostConnectionSystemAddress=sts->remoteClients[i].systemAddress;
 						sts->lostConnections.Push(lostConnectionSystemAddress);
+						sts->remoteClients[i].isActiveMutex.Lock();
 						sts->remoteClients[i].SetActive(false);
+						sts->remoteClients[i].isActiveMutex.Unlock();
 					}
 					else
 					{
@@ -836,7 +840,9 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 								SystemAddress *lostConnectionSystemAddress=sts->lostConnections.Allocate( __FILE__, __LINE__ );
 								*lostConnectionSystemAddress=sts->remoteClients[i].systemAddress;
 								sts->lostConnections.Push(lostConnectionSystemAddress);
+								sts->remoteClients[i].isActiveMutex.Lock();
 								sts->remoteClients[i].SetActive(false);
+								sts->remoteClients[i].isActiveMutex.Unlock();
 								continue;
 							}
 						}
@@ -889,12 +895,15 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 }
 void RemoteClient::SetActive(bool a)
 {
-	isActive=a;
-	Reset();
-	if (isActive==false && socket!=INVALID_SOCKET)
+	if (isActive != a)
 	{
-		closesocket(socket);
-		socket=INVALID_SOCKET;
+		isActive=a;
+		Reset();
+		if (isActive==false && socket!=INVALID_SOCKET)
+		{
+			closesocket(socket);
+			socket=INVALID_SOCKET;
+		}
 	}
 }
 void RemoteClient::SendOrBuffer(const char **data, const unsigned int *lengths, const int numParameters)
@@ -929,7 +938,7 @@ void RemoteClient::SendOrBuffer(const char **data, const unsigned int *lengths, 
 		}
 	}
 }
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 void RemoteClient::InitSSL(SSL_CTX* ctx, SSL_METHOD *meth)
 {
 	(void) meth;

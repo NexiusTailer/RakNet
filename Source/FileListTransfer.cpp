@@ -252,7 +252,14 @@ bool FileListTransfer::DecodeSetHeader(Packet *packet)
 	}
 	else
 	{
-		if (fileListReceiver->downloadHandler->OnDownloadComplete()==false)
+		FileListTransferCBInterface::DownloadCompleteStruct dcs;
+		dcs.setID=fileListReceiver->setID;
+		dcs.numberOfFilesInThisSet=fileListReceiver->setCount;
+		dcs.byteLengthOfThisSet=fileListReceiver->setTotalFinalLength;
+		dcs.senderSystemAddress=packet->systemAddress;
+		dcs.senderGuid=packet->guid;
+
+		if (fileListReceiver->downloadHandler->OnDownloadComplete(&dcs)==false)
 		{
 			fileListReceiver->downloadHandler->OnDereference();
 			fileListReceivers.Delete(setID);
@@ -272,6 +279,9 @@ bool FileListTransfer::DecodeFile(Packet *packet, bool isTheFileAndIsNotDownload
 	FileListTransferCBInterface::OnFileStruct onFileStruct;
 	RakNet::BitStream inBitStream(packet->data, packet->length, false);
 	inBitStream.IgnoreBits(8);
+
+	onFileStruct.senderSystemAddress=packet->systemAddress;
+	onFileStruct.senderGuid=packet->guid;
 
 	unsigned int partCount=0;
 	unsigned int partTotal=0;
@@ -350,6 +360,8 @@ bool FileListTransfer::DecodeFile(Packet *packet, bool isTheFileAndIsNotDownload
 		fps.iriDataChunk=onFileStruct.fileData;
 		fps.allocateIrIDataChunkAutomatically=true;
 		fps.iriWriteOffset=0;
+		fps.senderSystemAddress=packet->systemAddress;
+		fps.senderGuid=packet->guid;
 		fileListReceiver->downloadHandler->OnFileProgress(&fps);
 
 		// Got a complete file
@@ -363,7 +375,14 @@ bool FileListTransfer::DecodeFile(Packet *packet, bool isTheFileAndIsNotDownload
 		// If this set is done, free the memory for it.
 		if ((int) fileListReceiver->setCount==fileListReceiver->filesReceived)
 		{
-			if (fileListReceiver->downloadHandler->OnDownloadComplete()==false)
+			FileListTransferCBInterface::DownloadCompleteStruct dcs;
+			dcs.setID=fileListReceiver->setID;
+			dcs.numberOfFilesInThisSet=fileListReceiver->setCount;
+			dcs.byteLengthOfThisSet=fileListReceiver->setTotalFinalLength;
+			dcs.senderSystemAddress=packet->systemAddress;
+			dcs.senderGuid=packet->guid;
+
+			if (fileListReceiver->downloadHandler->OnDownloadComplete(&dcs)==false)
 			{
 				fileListReceiver->downloadHandler->OnDereference();
 				if (fileListReceiver->deleteDownloadHandler)
@@ -395,6 +414,8 @@ bool FileListTransfer::DecodeFile(Packet *packet, bool isTheFileAndIsNotDownload
 		fps.iriDataChunk=0;
 		fps.allocateIrIDataChunkAutomatically=true;
 		fps.iriWriteOffset=0;
+		fps.senderSystemAddress=packet->systemAddress;
+		fps.senderGuid=packet->guid;
 
 		// Remote system is sending a complete file, but the file is large enough that we get ID_PROGRESS_NOTIFICATION from the transport layer
 		fileListReceiver->downloadHandler->OnFileProgress(&fps);
@@ -698,6 +719,8 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFileAndIsNotDow
 	onFileStruct.byteLengthOfThisSet=fileListReceiver->setTotalFinalLength;
 	// Note: mb.flrMemoryBlock may be null here
 	onFileStruct.fileData=mb.flrMemoryBlock;
+	onFileStruct.senderSystemAddress=packet->systemAddress;
+	onFileStruct.senderGuid=packet->guid;
 
 	unsigned int totalNotifications;
 	unsigned int currentNotificationIndex;
@@ -719,6 +742,8 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFileAndIsNotDow
 	fps.allocateIrIDataChunkAutomatically=true;
 	fps.onFileStruct->fileData=mb.flrMemoryBlock;
 	fps.iriWriteOffset=offset;
+	fps.senderSystemAddress=packet->systemAddress;
+	fps.senderGuid=packet->guid;
 
 	if (finished)
 	{
@@ -740,7 +765,14 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFileAndIsNotDow
 		// If this set is done, free the memory for it.
 		if ((int) fileListReceiver->setCount==fileListReceiver->filesReceived)
 		{
-			if (fileListReceiver->downloadHandler->OnDownloadComplete()==false)
+			FileListTransferCBInterface::DownloadCompleteStruct dcs;
+			dcs.setID=fileListReceiver->setID;
+			dcs.numberOfFilesInThisSet=fileListReceiver->setCount;
+			dcs.byteLengthOfThisSet=fileListReceiver->setTotalFinalLength;
+			dcs.senderSystemAddress=packet->systemAddress;
+			dcs.senderGuid=packet->guid;
+
+			if (fileListReceiver->downloadHandler->OnDownloadComplete(&dcs)==false)
 			{
 				fileListReceiver->downloadHandler->OnDereference();
 				fileListReceivers.Delete(onFileStruct.setID);

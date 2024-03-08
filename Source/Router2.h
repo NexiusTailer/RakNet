@@ -22,7 +22,7 @@ class RakPeerInterface;
 namespace RakNet
 {
 
-struct Router2DebugInterface
+struct RAK_DLL_EXPORT Router2DebugInterface
 {
 	virtual void ShowFailure(const char *message);
 	virtual void ShowDiagnostic(const char *message);
@@ -79,7 +79,6 @@ public:
 	virtual void Update(void);
 	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	virtual void OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason);
-	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 	virtual void OnRakPeerShutdown(void);
 
 
@@ -102,6 +101,7 @@ public:
 		~ConnnectRequest();
 
 		DataStructures::List<ConnectionRequestSystem> connectionRequestSystems;
+		SimpleMutex connectionRequestSystemsMutex;
 		Router2RequestStates requestState;
 		RakNetTimeMS pingTimeout;
 		RakNetGUID endpointGuid;
@@ -122,10 +122,8 @@ public:
 		bool gotReplyFromSource;
 		RakNetTimeMS timeout;
 		RakNetTimeMS nextAction;
-		unsigned short srcToDestPort;
-		unsigned short destToSourcePort;
-		SOCKET srcToDestSocket;
-		SOCKET destToSourceSocket;
+		unsigned short forwardingPort;
+		SOCKET forwardingSocket;
 	};
 
 	struct ForwardedConnection
@@ -134,17 +132,18 @@ public:
 		RakNetGUID intermediaryGuid;
 		SystemAddress intermediaryAddress;
 		bool returnConnectionLostOnFailure;
+		bool weInitiatedForwarding;
 	};
 
 protected:
 
-	bool UpdateForwarding(unsigned int connectionRequestIndex);
+	bool UpdateForwarding(ConnnectRequest* connectionRequest);
 	void RemoveConnectionRequest(unsigned int connectionRequestIndex);
-	void RequestForwarding(unsigned int connectionRequestIndex);
+	void RequestForwarding(ConnnectRequest* connectionRequest);
 	void OnQueryForwarding(Packet *packet);
 	void OnQueryForwardingReply(Packet *packet);
 	void OnRequestForwarding(Packet *packet);
-	void OnReroute(Packet *packet);
+	void OnRerouted(Packet *packet);
 	void OnMiniPunchReply(Packet *packet);
 	void OnMiniPunchReplyBounce(Packet *packet);
 	bool OnForwardingSuccess(Packet *packet);
@@ -154,8 +153,10 @@ protected:
 
 	UDPForwarder *udpForwarder;
 	int maximumForwardingRequests;
+	SimpleMutex connectionRequestsMutex, miniPunchesInProgressMutex, forwardedConnectionListMutex;
 	DataStructures::List<ConnnectRequest*> connectionRequests;
 	DataStructures::List<MiniPunchRequest> miniPunchesInProgress;
+	// Forwarding we have initiated
 	DataStructures::List<ForwardedConnection> forwardedConnectionList;
 
 	void ClearConnectionRequests(void);
@@ -164,7 +165,7 @@ protected:
 	void ClearAll(void);
 	int ReturnFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endpointGuid);
 	void SendFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endpointGuid);
-	void SendForwardingSuccess(RakNetGUID sourceGuid, RakNetGUID endpointGuid, unsigned short sourceToDstPort);
+	void SendForwardingSuccess(MessageID messageId, RakNetGUID sourceGuid, RakNetGUID endpointGuid, unsigned short sourceToDstPort);
 	void SendOOBFromRakNetPort(OutOfBandIdentifiers oob, BitStream *extraData, SystemAddress sa);
 	void SendOOBFromSpecifiedSocket(OutOfBandIdentifiers oob, SystemAddress sa, SOCKET socket);
 	void SendOOBMessages(MiniPunchRequest *mpr);

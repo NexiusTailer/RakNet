@@ -35,6 +35,12 @@ const char *RakNet::NATTypeDetectionResultToString(NATTypeDetectionResult type)
 		return "Port restricted";
 	case NAT_TYPE_SYMMETRIC:
 		return "Symmetric";
+	case NAT_TYPE_UNKNOWN:
+		return "Unknown";
+	case NAT_TYPE_DETECTION_IN_PROGRESS:
+		return "In Progress";
+	case NAT_TYPE_SUPPORTS_UPNP:
+		return "Supports UPNP";
 	}
 	return "Error, unknown enum in NATTypeDetectionResult";
 }
@@ -56,6 +62,12 @@ const char *RakNet::NATTypeDetectionResultToStringFriendly(NATTypeDetectionResul
 		return "Moderate";
 	case NAT_TYPE_SYMMETRIC:
 		return "Strict";
+	case NAT_TYPE_UNKNOWN:
+		return "Unknown";
+	case NAT_TYPE_DETECTION_IN_PROGRESS:
+		return "In Progress";
+	case NAT_TYPE_SUPPORTS_UPNP:
+		return "Supports UPNP";
 	}
 	return "Error, unknown enum in NATTypeDetectionResult";
 }
@@ -63,7 +75,7 @@ const char *RakNet::NATTypeDetectionResultToStringFriendly(NATTypeDetectionResul
 
 SOCKET RakNet::CreateNonblockingBoundSocket(const char *bindAddr)
 {
-	SOCKET s = SocketLayer::Instance()->CreateBoundSocket( 0, false, bindAddr, true );
+	SOCKET s = SocketLayer::CreateBoundSocket( 0, false, bindAddr, true );
 	#ifdef _WIN32
 		unsigned long nonblocking = 1;
 		ioctlsocket( s, FIONBIO, &nonblocking );

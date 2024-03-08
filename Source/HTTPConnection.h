@@ -51,10 +51,14 @@ public:
     /// HTTP only allows one request at a time per connection
     ///
 	/// \pre IsBusy()==false
-    /// \param path the path on the remote server you want to POST to. For example "mywebpage/index.html"
+    /// \param path the path on the remote server you want to POST to. For example "index.html"
     /// \param data A NULL terminated string to submit to the server
 	/// \param contentType "Content-Type:" passed to post.
     void Post(const char *path, const char *data, const char *_contentType="application/x-www-form-urlencoded");
+
+	/// Get a file from a webserver
+	/// \param path the path on the remote server you want to GET from. For example "index.html"
+	void Get(const char *path);
     
 	/// Is there a Read result ready?
 	bool HasRead(void) const;
@@ -109,15 +113,16 @@ public:
 	/// \internal
 	int GetState(void) const;
 
-	struct OutgoingPost
+	struct OutgoingCommand
 	{
 		RakNet::RakString remotePath;
 		RakNet::RakString data;
 		RakNet::RakString contentType;
+		bool isPost;
 	};
 
-	 DataStructures::Queue<OutgoingPost> outgoingPosts;
-	 OutgoingPost currentProcessingRequest;
+	 DataStructures::Queue<OutgoingCommand> outgoingCommand;
+	 OutgoingCommand currentProcessingCommand;
 
 private:
     SystemAddress server;

@@ -45,7 +45,7 @@ RakNetTimeUS NormalizeTime(RakNetTimeUS timeIn)
 	static SimpleMutex mutex;
 	
 	mutex.Lock();
-	if (timeIn>lastNormalizedInputValue)
+	if (timeIn>=lastNormalizedInputValue)
 	{
 		diff = timeIn-lastNormalizedInputValue;
 		if (diff > GET_TIME_SPIKE_LIMIT)
@@ -53,6 +53,8 @@ RakNetTimeUS NormalizeTime(RakNetTimeUS timeIn)
 		else
 			lastNormalizedReturnedValue+=diff;
 	}
+	else
+		lastNormalizedReturnedValue+=GET_TIME_SPIKE_LIMIT;
 
 	lastNormalizedInputValue=timeIn;
 	lastNormalizedReturnedValueCopy=lastNormalizedReturnedValue;
@@ -89,9 +91,10 @@ RakNetTimeUS GetTimeUS_Windows( void )
 		mThread = GetCurrentThread();
 
 #endif // _WIN32_WCE
-		QueryPerformanceFrequency( &yo );
 	}	
 
+	// 9/26/2010 In China running LuDaShi, QueryPerformanceFrequency has to be called every time because CPU clock speeds can be different
+	QueryPerformanceFrequency( &yo );
 	RakNetTimeUS curTime;
 	LARGE_INTEGER PerfVal;
 	QueryPerformanceCounter( &PerfVal );

@@ -633,7 +633,7 @@ void AutoRPC::OnRPCUnknownRemoteIndex(SystemAddress systemAddress, unsigned char
 	bs2.SetWriteOffset(0);
 	bs2.Write((MessageID)ID_RPC_REMOTE_ERROR);
 	bs2.Write((unsigned char)RPC_ERROR_FUNCTION_NO_LONGER_REGISTERED);
-	stringCompressor->EncodeString("",256,&bs,0);
+	stringCompressor->EncodeString("",256,&bs2,0);
 	p->systemAddress=systemAddress;
 	rakPeerInterface->PushBackPacket(p, false);
 

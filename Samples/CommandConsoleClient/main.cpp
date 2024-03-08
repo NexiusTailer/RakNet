@@ -170,7 +170,5 @@ int main()
 #else
 		usleep(30 * 1000);
 #endif
-
-	return 0;
 	}
 }

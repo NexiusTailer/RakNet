@@ -15,7 +15,7 @@ SendToThread::SendToThreadBlock* SendToWorkerThread(SendToThread::SendToThreadBl
 	*returnOutput=false;
 	RakNetTimeUS *mostRecentTime=(RakNetTimeUS *)input->data;
 	*mostRecentTime=RakNet::GetTimeUS();
-	SocketLayer::Instance()->SendTo(input->s, input->data, input->dataWriteOffset, input->binaryAddress, input->port, input->remotePortRakNetWasStartedOn_PS3);
+	SocketLayer::SendTo(input->s, input->data, input->dataWriteOffset, input->binaryAddress, input->port, input->remotePortRakNetWasStartedOn_PS3);
 	SendToThread::objectQueue.Push(input);
 	return 0;
 }

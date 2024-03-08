@@ -34,7 +34,7 @@
 void function1(int a)
 {
 	// Cause a global to be compiled in so I can test the watch value.  SocketLayer::I
-	SocketLayer::Instance()->GetLocalPort(-1);
+	SocketLayer::GetLocalPort(-1);
 
 
 	int *crashPtr=0;

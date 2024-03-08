@@ -13,8 +13,9 @@
 #include "DS_Map.h"
 #include "RakMemoryOverride.h"
 
-
-//#include <string>
+#ifdef _STD_STRING_COMPRESSOR
+#include <string>
+#endif
 
 /// Forward declaration
 namespace RakNet

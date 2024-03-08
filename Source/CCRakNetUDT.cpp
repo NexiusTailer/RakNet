@@ -748,13 +748,12 @@ void CCRakNetUDT::IncreaseTimeBetweenSends(void)
 	// (SND+1.0) brings it to the range of 1 to 501
 	// Square the number, which is the range of 1 to 251001
 	// Divide by 251001, which is the range of 1/251001 to 1
-	// Multiple by .02
 
 	double increment;
 	increment = .02 * ((SND+1.0) * (SND+1.0)) / (501.0*501.0) ;
 	// SND=500 then increment=.02
 	// SND=0 then increment=near 0
-	SND*=(1.04 - increment);
+	SND*=(1.02 - increment);
 
 	// SND=0 then fast increase, slow decrease
 	// SND=500 then slow increase, fast decrease

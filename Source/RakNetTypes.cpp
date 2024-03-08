@@ -133,7 +133,7 @@ void SystemAddress::SetBinaryAddress(const char *str)
 			return;
 		}
 
-		const char *ip = ( char* ) SocketLayer::Instance()->DomainNameToIP( str );
+		const char *ip = ( char* ) SocketLayer::DomainNameToIP( str );
 		if (ip)
 		{
 			binaryAddress=inet_addr(ip);

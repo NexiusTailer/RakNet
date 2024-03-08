@@ -37,7 +37,7 @@ void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress)
 		char str[64];
 		sockAddr.ToString(false,str);
 		c2=CreateNonblockingBoundSocket(str);
-		c2Port=SocketLayer::Instance()->GetLocalPort(c2);
+		c2Port=SocketLayer::GetLocalPort(c2);
 	}
 
 
@@ -143,7 +143,7 @@ void NatTypeDetectionClient::OnTestPortRestricted(Packet *packet)
 	RakNet::BitStream bsOut;
 	bsOut.Write((MessageID) NAT_TYPE_PORT_RESTRICTED);
 	bsOut.Write(rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
-	SocketLayer::Instance()->SendTo_PC( sockets[0]->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), s3p4Addr.binaryAddress, s3p4Addr.port);
+	SocketLayer::SendTo_PC( sockets[0]->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), s3p4Addr.binaryAddress, s3p4Addr.port, __FILE__, __LINE__ );
 }
 void NatTypeDetectionClient::Shutdown(void)
 {

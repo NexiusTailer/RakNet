@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;./../../Source;$(OGRE_HOME)\include"
+				AdditionalIncludeDirectories="./;./../../Source;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\boost_1_42\;$(OGRE_HOME)\include\OIS"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,10 +61,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetDLLDebug.lib ws2_32.lib OgreGUIRenderer_d.lib OgreMain_d.lib OIS_d.lib"
+				AdditionalDependencies="./../../lib/RakNetDLLDebug.lib ws2_32.lib OgreMain_d.lib OIS_d.lib"
 				OutputFile="$(ProjectDir)\$(ProjectName).exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(OGRE_HOME)\lib"
+				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\$(ConfigurationName)&quot;;&quot;$(OGRE_HOME)\boost_1_42\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -92,7 +92,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(OGRE_HOME)\bin\debug\*_d.dll .\&#x0D;&#x0A;copy $(OGRE_HOME)\lib\*.dll .\&#x0D;&#x0A;copy $(OGRE_HOME)\samples\Common\bin\debug\*.dll .\&#x0D;&#x0A;copy .\..\..\Lib\RakNetDebug.dll .\&#x0D;&#x0A;"
+				CommandLine="copy $(OGRE_HOME)\bin\debug\*.dll $(ProjectDir)&#x0D;&#x0A;copy .\..\..\Lib\RakNetDebug.dll  $(ProjectDir)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -120,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;./../../Source;$(OGRE_HOME)\include"
+				AdditionalIncludeDirectories="./;./../../Source;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\boost_1_42\;$(OGRE_HOME)\include\OIS"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -139,10 +139,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetDLL.lib ws2_32.lib OgreGUIRenderer.lib OgreMain.lib OIS.lib"
+				AdditionalDependencies="./../../lib/RakNetDLL.lib ws2_32.lib OgreMain.lib OIS.lib"
 				OutputFile="$(ProjectDir)\$(ProjectName).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(OGRE_HOME)\lib"
+				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\$(ConfigurationName)&quot;;&quot;$(OGRE_HOME)\boost_1_42\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -172,7 +172,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(OGRE_HOME)\bin\release\*.dll .\&#x0D;&#x0A;copy $(OGRE_HOME)\lib\*.dll .\&#x0D;&#x0A;copy $(OGRE_HOME)\samples\Common\bin\release\*.dll .\&#x0D;&#x0A;copy .\..\..\Lib\RakNet.dll .\&#x0D;&#x0A;"
+				CommandLine="copy $(OGRE_HOME)\bin\release\*.dll  $(ProjectDir)&#x0D;&#x0A;copy .\..\..\Lib\RakNet.dll  $(ProjectDir)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>

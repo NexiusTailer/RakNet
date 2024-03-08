@@ -33,7 +33,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 	emailServer=tcpInterface.Connect(hostAddress, hostPort,true);
 	if (emailServer==UNASSIGNED_SYSTEM_ADDRESS)
 		return "Failed to connect to host";
-#ifdef OPEN_SSL_CLIENT_SUPPORT
+#if  OPEN_SSL_CLIENT_SUPPORT==1
 	tcpInterface.StartSSLClient(emailServer);
 #endif
 	RakNetTime timeoutTime = RakNet::GetTime()+3000;
@@ -320,7 +320,7 @@ const char *EmailSender::GetResponse(TCPInterface *tcpInterface, const SystemAdd
 			{
 				RAKNET_DEBUG_PRINTF("%s", packet->data);
 			}
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 			if (strstr((const char*)packet->data, "220"))
 			{
 				tcpInterface->StartSSLClient(packet->systemAddress);
@@ -336,7 +336,7 @@ const char *EmailSender::GetResponse(TCPInterface *tcpInterface, const SystemAdd
 				return 0; // Authentication accepted
 			if (strstr((const char*)packet->data, "354"))
 				return 0; // Go ahead
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 			if (strstr((const char*)packet->data, "250-STARTTLS"))
 			{
 				tcpInterface->Send("STARTTLS\r\n", (unsigned int) strlen("STARTTLS\r\n"), packet->systemAddress, false);

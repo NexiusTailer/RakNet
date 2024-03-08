@@ -143,9 +143,9 @@ private:
 	// Per-tick game update for RakNet
 	void UpdateRakNet(void);
 	// Callbacks from RakNet::UDPProxyClientResultHandler
-	virtual void OnForwardingSuccess(const char *proxyIPAddress, unsigned short proxyPort, unsigned short reverseProxyPort,
+	virtual void OnForwardingSuccess(const char *proxyIPAddress, unsigned short proxyPort,
 		SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
-	virtual void OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort, unsigned short reverseProxyPort,
+	virtual void OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort,
 		SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
 	virtual void OnNoServersOnline(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
 	virtual void OnRecipientNotConnected(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin);

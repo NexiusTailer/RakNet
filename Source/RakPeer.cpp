@@ -8,6 +8,7 @@
 #include "RakNetDefines.h"
 #include "RakPeer.h"
 #include "RakNetTypes.h"
+#include "WSAStartupSingleton.h"
 
 #ifdef _WIN32
 #elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
@@ -221,6 +222,7 @@ RakPeer::RakPeer()
 {
 	StringCompressor::AddReference();
 	RakNet::StringTable::AddReference();
+	WSAStartupSingleton::AddRef();
 
 #if !defined(_XBOX) && !defined(_WIN32_WCE) && !defined(X360)
 	usingSecurity = false;
@@ -311,6 +313,7 @@ RakPeer::~RakPeer()
 
 	StringCompressor::RemoveReference();
 	RakNet::StringTable::RemoveReference();
+	WSAStartupSingleton::Deref();
 
 	quitAndDataEvents.CloseEvent();
 }
@@ -349,7 +352,7 @@ bool RakPeer::Startup( unsigned short maxConnections, int _threadSleepTimer, Soc
 	// Fill out ipList structure
 #if !defined(_XBOX) && !defined(X360)
 	memset( ipList, 0, sizeof( char ) * 16 * MAXIMUM_NUMBER_OF_INTERNAL_IDS );
-	SocketLayer::Instance()->GetMyIP( ipList,binaryAddresses );
+	SocketLayer::GetMyIP( ipList,binaryAddresses );
 #endif
 
 	unsigned int i;
@@ -382,7 +385,7 @@ bool RakPeer::Startup( unsigned short maxConnections, int _threadSleepTimer, Soc
 	// Go through all socket descriptors and precreate sockets on the specified addresses
 	for (i=0; i<socketDescriptorCount; i++)
 	{
-		if (socketDescriptors[i].port!=0 && SocketLayer::Instance()->IsPortInUse(socketDescriptors[i].port, socketDescriptors[i].hostAddress)==true)
+		if (socketDescriptors[i].port!=0 && SocketLayer::IsPortInUse(socketDescriptors[i].port, socketDescriptors[i].hostAddress)==true)
 		{
 			DerefAllSockets();
 			return false;
@@ -390,9 +393,9 @@ bool RakPeer::Startup( unsigned short maxConnections, int _threadSleepTimer, Soc
 
 		RakNetSmartPtr<RakNetSocket> rns(RakNet::OP_NEW<RakNetSocket>(__FILE__,__LINE__));
 		if (socketDescriptors[i].remotePortRakNetWasStartedOn_PS3==0)
-			rns->s = (unsigned int) SocketLayer::Instance()->CreateBoundSocket( socketDescriptors[i].port, true, socketDescriptors[i].hostAddress, 100 );
+			rns->s = (unsigned int) SocketLayer::CreateBoundSocket( socketDescriptors[i].port, true, socketDescriptors[i].hostAddress, 100 );
 		else // if (socketDescriptors[i].socketType==SocketDescriptor::PS3_LOBBY_UDP)
-			rns->s = (unsigned int) SocketLayer::Instance()->CreateBoundSocket_PS3Lobby( socketDescriptors[i].port, true, socketDescriptors[i].hostAddress );
+			rns->s = (unsigned int) SocketLayer::CreateBoundSocket_PS3Lobby( socketDescriptors[i].port, true, socketDescriptors[i].hostAddress );
 
 		if ((SOCKET)rns->s==(SOCKET)-1)
 		{
@@ -407,7 +410,7 @@ bool RakPeer::Startup( unsigned short maxConnections, int _threadSleepTimer, Soc
 
 		// Test the socket
 		int zero=0;
-		if (SocketLayer::Instance()->SendTo((SOCKET)rns->s, (const char*) &zero,4,"127.0.0.1", rns->boundAddress.port, rns->remotePortRakNetWasStartedOn_PS3)!=0)
+		if (SocketLayer::SendTo((SOCKET)rns->s, (const char*) &zero,4,"127.0.0.1", rns->boundAddress.port, rns->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__ )!=0)
 		{
 			DerefAllSockets();
 			return false;
@@ -446,9 +449,9 @@ bool RakPeer::Startup( unsigned short maxConnections, int _threadSleepTimer, Soc
 		if (socketDescriptors[i].socketType==SocketDescriptor::NONE)
 			connectionSockets[i].s = (SOCKET) -1;
 		else if (socketDescriptors[i].remotePortRakNetWasStartedOn_PS3==0)
-			connectionSockets[i].s = SocketLayer::Instance()->CreateBoundSocket( socketDescriptors[i].port, true, socketDescriptors[i].hostAddress );
+			connectionSockets[i].s = SocketLayer::CreateBoundSocket( socketDescriptors[i].port, true, socketDescriptors[i].hostAddress );
 		else if (socketDescriptors[i].socketType==SocketDescriptor::PS3_LOBBY_UDP)
-			connectionSockets[i].s = SocketLayer::Instance()->CreateBoundSocket_PS3Lobby( socketDescriptors[i].port, true, socketDescriptors[i].hostAddress );
+			connectionSockets[i].s = SocketLayer::CreateBoundSocket_PS3Lobby( socketDescriptors[i].port, true, socketDescriptors[i].hostAddress );
 		connectionSockets[i].haveRakNetCloseSocket=true;
 		connectionSockets[i].socketType=socketDescriptors[i].socketType;
 
@@ -553,7 +556,7 @@ bool RakPeer::Startup( unsigned short maxConnections, int _threadSleepTimer, Soc
 #if !defined(_XBOX) && !defined(X360)
 			if (ipList[ipIndex][0])
 			{
-				mySystemAddress[ipIndex].port = SocketLayer::Instance()->GetLocalPort(socketList[0]->s);
+				mySystemAddress[ipIndex].port = SocketLayer::GetLocalPort(socketList[0]->s);
 //				if (socketDescriptors[0].hostAddress==0 || socketDescriptors[0].hostAddress[0]==0)
 				mySystemAddress[ipIndex].binaryAddress = inet_addr( ipList[ ipIndex ] );
 				//			else
@@ -884,7 +887,7 @@ bool RakPeer::Connect( const char* host, unsigned short remotePort, const char *
 
 	if ( NonNumericHostString( host ) )
 	{
-		host = ( char* ) SocketLayer::Instance()->DomainNameToIP( host );
+		host = ( char* ) SocketLayer::DomainNameToIP( host );
 
 		if (host==0)
 			return false;
@@ -913,7 +916,7 @@ bool RakPeer::ConnectWithSocket(const char* host, unsigned short remotePort, con
 
 		if ( NonNumericHostString( host ) )
 	{
-		host = ( char* ) SocketLayer::Instance()->DomainNameToIP( host );
+		host = ( char* ) SocketLayer::DomainNameToIP( host );
 
 		if (host==0)
 			return false;
@@ -984,7 +987,7 @@ void RakPeer::Shutdown( unsigned int blockDuration, unsigned char orderingChanne
 	// Get recvfrom to unblock
 	for (i=0; i < socketList.Size(); i++)
 	{
-		if (SocketLayer::Instance()->SendTo(socketList[i]->s, (const char*) &i,1,"127.0.0.1", socketList[i]->boundAddress.port, socketList[i]->remotePortRakNetWasStartedOn_PS3)!=0)
+		if (SocketLayer::SendTo(socketList[i]->s, (const char*) &i,1,"127.0.0.1", socketList[i]->boundAddress.port, socketList[i]->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__ )!=0)
 			break;
 	}
 	while ( isMainLoopThreadActive )
@@ -1031,7 +1034,7 @@ void RakPeer::Shutdown( unsigned int blockDuration, unsigned char orderingChanne
 		// Get recvfrom to unblock
 		for (i=0; i < socketList.Size(); i++)
 		{
-			SocketLayer::Instance()->SendTo(socketList[i]->s, (const char*) &i,1,"127.0.0.1", socketList[i]->boundAddress.port, socketList[i]->remotePortRakNetWasStartedOn_PS3);
+			SocketLayer::SendTo(socketList[i]->s, (const char*) &i,1,"127.0.0.1", socketList[i]->boundAddress.port, socketList[i]->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__ );
 		}
 
 		RakSleep(30);
@@ -2400,7 +2403,7 @@ bool RakPeer::Ping( const char* host, unsigned short remotePort, bool onlyReplyO
 
 	if ( NonNumericHostString( host ) )
 	{
-		host = ( char* ) SocketLayer::Instance()->DomainNameToIP( host );
+		host = ( char* ) SocketLayer::DomainNameToIP( host );
 		if (host==0)
 			return false;
 	}
@@ -2424,7 +2427,7 @@ bool RakPeer::Ping( const char* host, unsigned short remotePort, bool onlyReplyO
 		messageHandlerList[i]->OnDirectSocketSend((const char*)bitStream.GetData(), bitStream.GetNumberOfBitsUsed(), systemAddress);
 	// No timestamp for 255.255.255.255
 	unsigned int realIndex = GetRakNetSocketFromUserConnectionSocketIndex(connectionSocketIndex);
-	SocketLayer::Instance()->SendTo( socketList[realIndex]->s, (const char*)bitStream.GetData(), (int) bitStream.GetNumberOfBytesUsed(), ( char* ) host, remotePort, socketList[realIndex]->remotePortRakNetWasStartedOn_PS3 );
+	SocketLayer::SendTo( socketList[realIndex]->s, (const char*)bitStream.GetData(), (int) bitStream.GetNumberOfBytesUsed(), ( char* ) host, remotePort, socketList[realIndex]->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__  );
 
 	return true;
 }
@@ -2835,7 +2838,7 @@ const char* RakPeer::GetLocalIP( unsigned int index )
 	// Fill out ipList structure
 #if !defined(_XBOX) && !defined(X360)
 	memset( ipList, 0, sizeof( char ) * 16 * MAXIMUM_NUMBER_OF_INTERNAL_IDS );
-	SocketLayer::Instance()->GetMyIP( ipList,binaryAddresses );
+	SocketLayer::GetMyIP( ipList,binaryAddresses );
 #endif
 	}
 
@@ -2953,7 +2956,7 @@ void RakPeer::SendTTL( const char* host, unsigned short remotePort, int ttl, uns
 	fakeData[0]=0;
 	fakeData[1]=1;
 	unsigned int realIndex = GetRakNetSocketFromUserConnectionSocketIndex(connectionSocketIndex);
-	SocketLayer::Instance()->SendToTTL( socketList[realIndex]->s, (char*)fakeData, 2, (char*) host, remotePort, ttl );
+	SocketLayer::SendToTTL( socketList[realIndex]->s, (char*)fakeData, 2, (char*) host, remotePort, ttl );
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -3478,7 +3481,7 @@ bool RakPeer::SendOutOfBand(const char *host, unsigned short remotePort, const c
 
 	if ( NonNumericHostString( host ) )
 	{
-		host = ( char* ) SocketLayer::Instance()->DomainNameToIP( host );
+		host = ( char* ) SocketLayer::DomainNameToIP( host );
 
 		if (host==0)
 			return false;
@@ -3499,11 +3502,40 @@ bool RakPeer::SendOutOfBand(const char *host, unsigned short remotePort, const c
 	{
 		bitStream.Write(data, dataLength);
 	}
-	unsigned i;
-	for (i=0; i < messageHandlerList.Size(); i++)
-		messageHandlerList[i]->OnDirectSocketSend((const char*)bitStream.GetData(), bitStream.GetNumberOfBitsUsed(), systemAddress);
-	unsigned int realIndex = GetRakNetSocketFromUserConnectionSocketIndex(connectionSocketIndex);
-	SocketLayer::Instance()->SendTo( socketList[realIndex]->s, (const char*)bitStream.GetData(), (int) bitStream.GetNumberOfBytesUsed(), ( char* ) host, remotePort, socketList[realIndex]->remotePortRakNetWasStartedOn_PS3 );
+
+	if (IsActive())
+	{
+		BufferedCommandStruct *bcs;
+#ifdef _RAKNET_THREADSAFE
+		bcs=bufferedCommands.Allocate( __FILE__, __LINE__ );
+		bcs->command=BufferedCommandStruct::BCS_SEND_OUT_OF_BAND;
+		bcs->connectionSocketIndex=connectionSocketIndex;
+		bcs->data=(char*) rakMalloc_Ex(bitStream.GetNumberOfBytesUsed(), __FILE__, __LINE__);
+		bcs->numberOfBitsToSend=bitStream.GetNumberOfBitsUsed();
+		memcpy(bcs->data, bitStream.GetData(), bitStream.GetNumberOfBytesUsed());
+		bcs->systemIdentifier.systemAddress.SetBinaryAddress(host);
+		bcs->systemIdentifier.systemAddress.port=remotePort;
+		bufferedCommands.Push(bcs);
+#else
+		bcs=bufferedCommands.WriteLock();
+		bcs->command=BufferedCommandStruct::BCS_SEND_OUT_OF_BAND;
+		bcs->connectionSocketIndex=connectionSocketIndex;
+		bcs->data=(char*) rakMalloc_Ex(bitStream.GetNumberOfBytesUsed(), __FILE__, __LINE__);
+		bcs->numberOfBitsToSend=bitStream.GetNumberOfBitsUsed();
+		memcpy(bcs->data, bitStream.GetData(), bitStream.GetNumberOfBytesUsed());
+		bcs->systemIdentifier.systemAddress.SetBinaryAddress(host);
+		bcs->systemIdentifier.systemAddress.port=remotePort;
+		bufferedCommands.WriteUnlock();
+#endif
+	}
+	else
+	{
+		unsigned i;
+		for (i=0; i < messageHandlerList.Size(); i++)
+			messageHandlerList[i]->OnDirectSocketSend((const char*)bitStream.GetData(), bitStream.GetNumberOfBitsUsed(), systemAddress);
+		unsigned int realIndex = GetRakNetSocketFromUserConnectionSocketIndex(connectionSocketIndex);
+		SocketLayer::SendTo( socketList[realIndex]->s, (const char*)bitStream.GetData(), (int) bitStream.GetNumberOfBytesUsed(), ( char* ) host, remotePort, socketList[realIndex]->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__  );
+	}
 
 	return true;
 }
@@ -3876,7 +3908,7 @@ void RakPeer::OnConnectionRequest( RakPeer::RemoteSystemStruct *remoteSystem, un
 	else
 	{
 		unsigned char c = ID_NO_FREE_INCOMING_CONNECTIONS;
-		//SocketLayer::Instance()->SendTo( connectionSocket, ( char* ) & c, sizeof( char ), systemAddress.binaryAddress, systemAddress.port );
+		//SocketLayer::SendTo( connectionSocket, ( char* ) & c, sizeof( char ), systemAddress.binaryAddress, systemAddress.port );
 
 		SendImmediate((char*)&c, sizeof(c)*8, IMMEDIATE_PRIORITY, RELIABLE, 0, remoteSystem->systemAddress, false, false, RakNet::GetTimeNS());
 		remoteSystem->connectMode=RemoteSystemStruct::DISCONNECT_ASAP_SILENTLY;
@@ -4042,9 +4074,9 @@ RakPeer::RemoteSystemStruct * RakPeer::AssignSystemAddressToRemoteSystemList( co
 						// Force binding with new socket
 						RakNetSmartPtr<RakNetSocket> rns(RakNet::OP_NEW<RakNetSocket>(__FILE__,__LINE__));
 						if (incomingRakNetSocket->remotePortRakNetWasStartedOn_PS3==0)
-							rns->s = (unsigned int) SocketLayer::Instance()->CreateBoundSocket( bindingAddress.port, true, ipList[foundIndex], 0 );
+							rns->s = (unsigned int) SocketLayer::CreateBoundSocket( bindingAddress.port, true, ipList[foundIndex], 0 );
 						else
-							rns->s = (unsigned int) SocketLayer::Instance()->CreateBoundSocket_PS3Lobby( bindingAddress.port, true, ipList[foundIndex] );
+							rns->s = (unsigned int) SocketLayer::CreateBoundSocket_PS3Lobby( bindingAddress.port, true, ipList[foundIndex] );
 						if ((SOCKET)rns->s==(SOCKET)-1)
 						{
 							// Can't bind. Just use whatever socket it came in on
@@ -4776,7 +4808,7 @@ void RakPeer::SecuredConnectionResponse( const SystemAddress systemAddress )
 	*/
 
 	// s2c public key, syn-cookie
-	//SocketLayer::Instance()->SendTo( connectionSocket, ( char* ) connectionRequestResponse, 1 + sizeof( big::uint32_t ) + sizeof( RSA_BIT_SIZE ) + 20, systemAddress.binaryAddress, systemAddress.port );
+	//SocketLayer::SendTo( connectionSocket, ( char* ) connectionRequestResponse, 1 + sizeof( big::uint32_t ) + sizeof( RSA_BIT_SIZE ) + 20, systemAddress.binaryAddress, systemAddress.port );
 	// All secure connection requests are unreliable because the entire process needs to be restarted if any part fails.
 	// Connection requests are resent periodically
 	SendImmediate(( char* ) connectionRequestResponse, (1 + sizeof( e ) + sizeof( modulus ) + 20) * 8, IMMEDIATE_PRIORITY, UNRELIABLE, 0, systemAddress, false, false, RakNet::GetTimeNS(), 0);
@@ -4930,7 +4962,7 @@ void RakPeer::SecuredConnectionConfirmation( RakPeer::RemoteSystemStruct * remot
 		memcpy( reply + 1, data + 1, 20 );  // Copy the syn-cookie
 		memcpy( reply + 1 + 20, encryptedMessage, sizeof( RSA_BIT_SIZE ) ); // Copy the encoded random number
 
-		//SocketLayer::Instance()->SendTo( connectionSocket, reply, 1 + 20 + sizeof( RSA_BIT_SIZE ), systemAddress.binaryAddress, systemAddress.port );
+		//SocketLayer::SendTo( connectionSocket, reply, 1 + 20 + sizeof( RSA_BIT_SIZE ), systemAddress.binaryAddress, systemAddress.port );
 		// All secure connection requests are unreliable because the entire process needs to be restarted if any part fails.
 		// Connection requests are resent periodically
 		SendImmediate((char*)reply, (1 + 20 + sizeof( RSA_BIT_SIZE )) * 8, IMMEDIATE_PRIORITY, UNRELIABLE, 0, remoteSystem->systemAddress, false, false, RakNet::GetTimeNS());
@@ -5466,7 +5498,7 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 		unsigned i;
 		for (i=0; i < rakPeer->messageHandlerList.Size(); i++)
 			rakPeer->messageHandlerList[i]->OnDirectSocketSend((char*) bs.GetData(), bs.GetNumberOfBitsUsed(), systemAddress);
-		SocketLayer::Instance()->SendTo( rakNetSocket->s, (char*) bs.GetData(), bs.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3 );
+		SocketLayer::SendTo( rakNetSocket->s, (char*) bs.GetData(), bs.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__  );
 
 		return true;
 	}
@@ -5560,7 +5592,7 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 
 				char str1[64];
 				systemAddress.ToString(false, str1);
-				SocketLayer::Instance()->SendTo( rakNetSocket->s, (const char*)outBitStream.GetData(), (unsigned int) outBitStream.GetNumberOfBytesUsed(), str1 , systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3 );
+				SocketLayer::SendTo( rakNetSocket->s, (const char*)outBitStream.GetData(), (unsigned int) outBitStream.GetNumberOfBytesUsed(), str1 , systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__  );
 
 				packet=rakPeer->AllocPacket(sizeof(MessageID), __FILE__, __LINE__);
 				packet->data[0]=data[0];
@@ -5805,7 +5837,7 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 				for (i=0; i < rakPeer->messageHandlerList.Size(); i++)
 					rakPeer->messageHandlerList[i]->OnDirectSocketSend((char*)bs.GetData(), bs.GetNumberOfBitsUsed(), systemAddress);
 
-				SocketLayer::Instance()->SendTo( rakNetSocket->s, (char*)bs.GetData(), bs.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3 );
+				SocketLayer::SendTo( rakNetSocket->s, (char*)bs.GetData(), bs.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__  );
 				return true;
 			}
 
@@ -5874,7 +5906,7 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 				for (i=0; i < rakPeer->messageHandlerList.Size(); i++)
 					rakPeer->messageHandlerList[i]->OnDirectSocketSend((const char*) bsOut.GetData(), bsOut.GetNumberOfBitsUsed(), systemAddress);
 				SocketLayer::SetDoNotFragment(rakNetSocket->s, 1);
-				SocketLayer::Instance()->SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3 );
+				SocketLayer::SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__  );
 				SocketLayer::SetDoNotFragment(rakNetSocket->s, 0);
 				return true;
 			}
@@ -5885,7 +5917,7 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 				bsOut.Write(guid);
 				for (i=0; i < rakPeer->messageHandlerList.Size(); i++)
 					rakPeer->messageHandlerList[i]->OnDirectSocketSend((const char*) bsOut.GetData(), bsOut.GetNumberOfBitsUsed(), systemAddress);
-				SocketLayer::Instance()->SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3 );
+				SocketLayer::SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__  );
 
 				return true;
 			}
@@ -5897,7 +5929,7 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 				bsOut.Write(guid);
 				for (i=0; i < rakPeer->messageHandlerList.Size(); i++)
 					rakPeer->messageHandlerList[i]->OnDirectSocketSend((const char*) bsOut.GetData(), bsOut.GetNumberOfBitsUsed(), systemAddress);
-				SocketLayer::Instance()->SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3 );
+				SocketLayer::SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__  );
 
 				return true;
 			}
@@ -5912,7 +5944,7 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 				bsOut.Write(guid);
 				for (i=0; i < rakPeer->messageHandlerList.Size(); i++)
 					rakPeer->messageHandlerList[i]->OnDirectSocketSend((const char*) bsOut.GetData(), bsOut.GetNumberOfBitsUsed(), systemAddress);
-				SocketLayer::Instance()->SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3 );
+				SocketLayer::SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__  );
 
 				return true;
 			}
@@ -5925,7 +5957,7 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 			for (i=0; i < rakPeer->messageHandlerList.Size(); i++)
 				rakPeer->messageHandlerList[i]->OnDirectSocketSend((const char*) bsOut.GetData(), bsOut.GetNumberOfBitsUsed(), systemAddress);
 			SocketLayer::SetDoNotFragment(rakNetSocket->s, 1);
-			SocketLayer::Instance()->SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3 );
+			SocketLayer::SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__  );
 			SocketLayer::SetDoNotFragment(rakNetSocket->s, 0);
 
 
@@ -6045,7 +6077,7 @@ unsigned int RakPeer::GetRakNetSocketFromUserConnectionSocketIndex(unsigned int 
 	return (unsigned int) -1;
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-bool RakPeer::RunUpdateCycle( void )
+bool RakPeer::RunUpdateCycle( RakNetTimeUS timeNS, RakNetTime timeMS )
 {
 	RakPeer::RemoteSystemStruct * remoteSystem;
 	unsigned remoteSystemIndex;
@@ -6057,8 +6089,6 @@ bool RakPeer::RunUpdateCycle( void )
 	BitSize_t bitSize;
 	unsigned int byteSize;
 	unsigned char *data;
-	RakNetTimeUS timeNS;
-	RakNetTime timeMS;
 	SystemAddress systemAddress;
 	BufferedCommandStruct *bcs;
 	bool callerDataAllocationUsed;
@@ -6072,7 +6102,7 @@ bool RakPeer::RunUpdateCycle( void )
 	{
 		do
 		{
-			gotData = SocketLayer::Instance()->RecvFrom( socketList[connectionSocketIndex]->s, this, &errorCode, socketList[connectionSocketIndex], socketList[connectionSocketIndex]->remotePortRakNetWasStartedOn_PS3 );
+			gotData = SocketLayer::RecvFrom( socketList[connectionSocketIndex]->s, this, &errorCode, socketList[connectionSocketIndex], socketList[connectionSocketIndex]->remotePortRakNetWasStartedOn_PS3 );
 
 			if ( gotData == -1 )
 			{
@@ -6113,11 +6143,11 @@ bool RakPeer::RunUpdateCycle( void )
 	*/
 
 	// This is here so RecvFromBlocking actually gets data from the same thread
-	if (SocketLayer::Instance()->GetSocketLayerOverride())
+	if (SocketLayer::GetSocketLayerOverride())
 	{
 		SystemAddress sender;
 		char dataOut[ MAXIMUM_MTU_SIZE ];
-		int len = SocketLayer::Instance()->GetSocketLayerOverride()->RakNetRecvFrom(socketList[0]->s,this,dataOut,&sender,true);
+		int len = SocketLayer::GetSocketLayerOverride()->RakNetRecvFrom(socketList[0]->s,this,dataOut,&sender,true);
 		if (len>0)
 		{
 			ProcessNetworkPacket( sender, dataOut, len, this, socketList[0], RakNet::GetTimeUS() );
@@ -6139,10 +6169,6 @@ bool RakPeer::RunUpdateCycle( void )
 		bufferedPackets.Deallocate(recvFromStruct, __FILE__,__LINE__);
 	}
 
-
-	timeNS=0;
-	timeMS=0;
-
 #ifdef _RAKNET_THREADSAFE
 	while ((bcs=bufferedCommands.PopInaccurate())!=0)
 #else
@@ -6161,7 +6187,10 @@ bool RakPeer::RunUpdateCycle( void )
 
 			callerDataAllocationUsed=SendImmediate((char*)bcs->data, bcs->numberOfBitsToSend, bcs->priority, bcs->reliability, bcs->orderingChannel, bcs->systemIdentifier, bcs->broadcast, true, timeNS, bcs->receipt);
 			if ( callerDataAllocationUsed==false )
+			{
 				rakFree_Ex(bcs->data, __FILE__, __LINE__ );
+				bcs->data=0;
+			}
 
 			// Set the new connection state AFTER we call sendImmediate in case we are setting it to a disconnection state, which does not allow further sends
 			if (bcs->connectionMode!=RemoteSystemStruct::NO_ACTION )
@@ -6170,6 +6199,20 @@ bool RakPeer::RunUpdateCycle( void )
 				if (remoteSystem)
 					remoteSystem->connectMode=bcs->connectionMode;
 			}
+		}
+		else if (bcs->command==BufferedCommandStruct::BCS_SEND_OUT_OF_BAND)
+		{
+			char host[128];
+			bcs->systemIdentifier.systemAddress.ToString(false,host);
+
+			unsigned i;
+			for (i=0; i < messageHandlerList.Size(); i++)
+				messageHandlerList[i]->OnDirectSocketSend(bcs->data, bcs->numberOfBitsToSend, systemAddress);
+			unsigned int realIndex = GetRakNetSocketFromUserConnectionSocketIndex(bcs->connectionSocketIndex);
+			SocketLayer::SendTo( socketList[realIndex]->s, bcs->data, (int) BITS_TO_BYTES(bcs->numberOfBitsToSend), ( char* ) host, bcs->systemIdentifier.systemAddress.port, socketList[realIndex]->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__  );
+
+			rakFree_Ex(bcs->data, __FILE__, __LINE__ );
+			bcs->data=0;
 		}
 		else if (bcs->command==BufferedCommandStruct::BCS_CLOSE_CONNECTION)
 		{
@@ -6226,9 +6269,6 @@ bool RakPeer::RunUpdateCycle( void )
 
 		}
 
-#ifdef _DEBUG
-		bcs->data=0;
-#endif
 
 #ifdef _RAKNET_THREADSAFE
 		bufferedCommands.Deallocate(bcs, __FILE__,__LINE__);
@@ -6325,22 +6365,72 @@ bool RakPeer::RunUpdateCycle( void )
 					if (rcs->socket.IsNull())
 					{
 						SocketLayer::SetDoNotFragment(socketList[rcs->socketIndex]->s, 1);
-						if (SocketLayer::Instance()->SendTo( socketList[rcs->socketIndex]->s, (const char*) bitStream.GetData(), bitStream.GetNumberOfBytesUsed(), rcs->systemAddress.binaryAddress, rcs->systemAddress.port, socketList[rcs->socketIndex]->remotePortRakNetWasStartedOn_PS3 )==-10040)
+						RakNetTime sendToStart=RakNet::GetTime();
+						if (SocketLayer::SendTo( socketList[rcs->socketIndex]->s, (const char*) bitStream.GetData(), bitStream.GetNumberOfBytesUsed(), rcs->systemAddress.binaryAddress, rcs->systemAddress.port, socketList[rcs->socketIndex]->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__  )==-10040)
 						{
-							// Don't use this MTU size again
-							rcs->requestsMade = (unsigned char) ((MTUSizeIndex + 1) * (rcs->sendConnectionAttemptCount/NUM_MTU_SIZES));
-							rcs->nextRequestTime=timeMS;
+							if (rcs->requestsMade==rcs->sendConnectionAttemptCount+1)
+							{
+								// every size is returning -10040
+								rcs->requestsMade=rcs->sendConnectionAttemptCount+1;
+							}
+							else
+							{
+								// Don't use this MTU size again
+								rcs->requestsMade = (unsigned char) ((MTUSizeIndex + 1) * (rcs->sendConnectionAttemptCount/NUM_MTU_SIZES));
+								rcs->nextRequestTime=timeMS;
+							}
+						}
+						else
+						{
+							RakNetTime sendToEnd=RakNet::GetTime();
+							if (sendToEnd-sendToStart>100)
+							{
+								// Drop to lowest MTU
+								int lowestMtuIndex = rcs->sendConnectionAttemptCount/NUM_MTU_SIZES * (NUM_MTU_SIZES - 1);
+								if (lowestMtuIndex > rcs->requestsMade)
+								{
+									rcs->requestsMade = lowestMtuIndex;
+									rcs->nextRequestTime=timeMS;
+								}
+								else
+									rcs->requestsMade=rcs->sendConnectionAttemptCount+1;
+							}
 						}
 						SocketLayer::SetDoNotFragment(socketList[rcs->socketIndex]->s, 0);
 					}
 					else
 					{
 						SocketLayer::SetDoNotFragment(rcs->socket->s, 1);
-						if (SocketLayer::Instance()->SendTo( rcs->socket->s, (const char*) bitStream.GetData(), bitStream.GetNumberOfBytesUsed(), rcs->systemAddress.binaryAddress, rcs->systemAddress.port, socketList[rcs->socketIndex]->remotePortRakNetWasStartedOn_PS3 )==-10040)
+						RakNetTime sendToStart=RakNet::GetTime();
+						if (SocketLayer::SendTo( rcs->socket->s, (const char*) bitStream.GetData(), bitStream.GetNumberOfBytesUsed(), rcs->systemAddress.binaryAddress, rcs->systemAddress.port, socketList[rcs->socketIndex]->remotePortRakNetWasStartedOn_PS3, __FILE__, __LINE__  )==-10040)
 						{
-							// Don't use this MTU size again
-							rcs->requestsMade = (unsigned char) ((MTUSizeIndex + 1) * (rcs->sendConnectionAttemptCount/NUM_MTU_SIZES));
-							rcs->nextRequestTime=timeMS;
+							if (rcs->requestsMade==rcs->sendConnectionAttemptCount+1)
+							{
+								// every size is returning -10040
+								rcs->requestsMade=rcs->sendConnectionAttemptCount+1;
+							}
+							else
+							{
+								// Don't use this MTU size again
+								rcs->requestsMade = (unsigned char) ((MTUSizeIndex + 1) * (rcs->sendConnectionAttemptCount/NUM_MTU_SIZES));
+								rcs->nextRequestTime=timeMS;
+							}
+						}
+						else
+						{
+							RakNetTime sendToEnd=RakNet::GetTime();
+							if (sendToEnd-sendToStart>100)
+							{
+								// Drop to lowest MTU
+								int lowestMtuIndex = rcs->sendConnectionAttemptCount/NUM_MTU_SIZES * (NUM_MTU_SIZES - 1);
+								if (lowestMtuIndex > rcs->requestsMade)
+								{
+									rcs->requestsMade = lowestMtuIndex;
+									rcs->nextRequestTime=timeMS;
+								}
+								else
+									rcs->requestsMade=rcs->sendConnectionAttemptCount+1;
+							}
 						}
 						SocketLayer::SetDoNotFragment(socketList[rcs->socketIndex]->s, 0);
 					}
@@ -6492,6 +6582,7 @@ bool RakPeer::RunUpdateCycle( void )
 				if (data[0]==ID_CONNECTION_ATTEMPT_FAILED || data[0]==ID_MODIFIED_PACKET)
 				{
 					RakAssert(0);
+					bitSize=0;
 					continue;
 				}
 
@@ -7018,15 +7109,30 @@ RAK_THREAD_DECLARATION(UpdateNetworkLoop)
 #endif
 */
 
+	RakNetTimeUS timeNS;
+	RakNetTimeMS timeMS;
+
 	rakPeer->isMainLoopThreadActive = true;
 
+// #ifdef _DEBUG
+// 	RakNetTime lastCall=RakNet::GetTime();
+// #endif
 	while ( rakPeer->endThreads == false )
 	{
+		// Set inside RunUpdateCycle() itself, this is here for testing
+		timeNS=0;
+		timeMS=0;
+
+// #ifdef _DEBUG
+// 		// Sanity check, make sure RunUpdateCycle does not block or not otherwise get called for a long time
+// 		RakNetTime thisCall=RakNet::GetTime();
+// 		RakAssert(thisCall-lastCall<250);
+// 		lastCall=thisCall;
+// #endif
 		if (rakPeer->userUpdateThreadPtr)
 			rakPeer->userUpdateThreadPtr(rakPeer, rakPeer->userUpdateThreadData);
 
-		rakPeer->RunUpdateCycle();
-
+		rakPeer->RunUpdateCycle(timeNS, timeMS);
 
 		// Pending sends go out this often, unless quitAndDataEvents is set
 		rakPeer->quitAndDataEvents.WaitOnEvent(10);

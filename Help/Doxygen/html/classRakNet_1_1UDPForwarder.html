@@ -56,7 +56,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPForwarder.html#905a55dfed3c5580971c1324cf014fbf">GetUsedForwardEntries</a> (void) const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">UDPForwarderResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPForwarder.html#64dcdc9ed748c9b2ad67439be985cf74">StartForwarding</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> source, <a class="el" href="structSystemAddress.html">SystemAddress</a> destination, RakNetTimeMS timeoutOnNoDataMS, const char *forceHostAddress, unsigned short *srcToDestPort, unsigned short *destToSourcePort, SOCKET *srcToDestSocket, SOCKET *destToSourceSocket)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">UDPForwarderResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPForwarder.html#e22b3da12aa093783cf3ccd9b6a689f9">StartForwarding</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> source, <a class="el" href="structSystemAddress.html">SystemAddress</a> destination, RakNetTimeMS timeoutOnNoDataMS, const char *forceHostAddress, unsigned short *forwardingPort, SOCKET *forwardingSocket)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPForwarder.html#4611e9e3408e73980c5978e972a2dbd8">StopForwarding</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> source, <a class="el" href="structSystemAddress.html">SystemAddress</a> destination)</td></tr>
 
@@ -131,7 +131,7 @@ Sets the maximum number of forwarding entries allowed Set according to your avai
 
 </div>
 </div><p>
-<a class="anchor" name="64dcdc9ed748c9b2ad67439be985cf74"></a><!-- doxytag: member="RakNet::UDPForwarder::StartForwarding" ref="64dcdc9ed748c9b2ad67439be985cf74" args="(SystemAddress source, SystemAddress destination, RakNetTimeMS timeoutOnNoDataMS, const char *forceHostAddress, unsigned short *srcToDestPort, unsigned short *destToSourcePort, SOCKET *srcToDestSocket, SOCKET *destToSourceSocket)" -->
+<a class="anchor" name="e22b3da12aa093783cf3ccd9b6a689f9"></a><!-- doxytag: member="RakNet::UDPForwarder::StartForwarding" ref="e22b3da12aa093783cf3ccd9b6a689f9" args="(SystemAddress source, SystemAddress destination, RakNetTimeMS timeoutOnNoDataMS, const char *forceHostAddress, unsigned short *forwardingPort, SOCKET *forwardingSocket)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -163,25 +163,13 @@ Sets the maximum number of forwarding entries allowed Set according to your avai
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">unsigned short *&nbsp;</td>
-          <td class="paramname"> <em>srcToDestPort</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned short *&nbsp;</td>
-          <td class="paramname"> <em>destToSourcePort</em>, </td>
+          <td class="paramname"> <em>forwardingPort</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">SOCKET *&nbsp;</td>
-          <td class="paramname"> <em>srcToDestSocket</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">SOCKET *&nbsp;</td>
-          <td class="paramname"> <em>destToSourceSocket</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>forwardingSocket</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -194,17 +182,15 @@ Sets the maximum number of forwarding entries allowed Set according to your avai
 
 <p>
 Forwards datagrams from source to destination, and vice-versa Does nothing if this forward entry already exists via a previous call <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Call <a class="el" href="classRakNet_1_1UDPForwarder.html#33db580779b6bc0c52e82c18c9f82e0e">Startup()</a> </dd></dl>
-<dl class="note" compact><dt><b>Note:</b></dt><dd>RakNet's protocol will ensure a message is sent at least every 5 seconds, so if routing <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> messages, it is a reasonable value for timeoutOnNoDataMS, plus an extra few seconds for latency </dd></dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>RakNet's protocol will ensure a message is sent at least every 15 seconds, so if routing <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> messages, it is a reasonable value for timeoutOnNoDataMS, plus an some extra seconds for latency </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>source</em>&nbsp;</td><td>The source IP and port </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>destination</em>&nbsp;</td><td>Where to forward to (and vice-versa) </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>timeoutOnNoDataMS</em>&nbsp;</td><td>If no messages are forwarded for this many MS, then automatically remove this entry. Currently hardcoded to UDP_FORWARDER_MAXIMUM_TIMEOUT (else the call fails) </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>forceHostAddress</em>&nbsp;</td><td>Force binding on a particular address. 0 to use any. </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>srcToDestPort</em>&nbsp;</td><td>Port to go from source to destination </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>destToSourcePort</em>&nbsp;</td><td>Port to go from destination to source </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>srcToDestSocket</em>&nbsp;</td><td>Socket to go from source to destination </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>destToSourceSocket</em>&nbsp;</td><td>Socket to go from destination to source </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>forwardingPort</em>&nbsp;</td><td>New opened port for forwarding </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>forwardingSocket</em>&nbsp;</td><td>New opened socket for forwarding </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>UDPForwarderResult </dd></dl>
@@ -289,7 +275,7 @@ Call on a regular basis, unless using UDP_FORWARDER_EXECUTE_THREADED. Will call 
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/RakNet/Source/<a class="el" href="UDPForwarder_8h.html">UDPForwarder.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jul 1 07:46:42 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 1 11:00:23 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

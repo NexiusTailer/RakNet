@@ -52,6 +52,8 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHTTPConnection.html#20783e99693017d9d7ace4b6d0f76607">Post</a> (const char *path, const char *data, const char *_contentType=&quot;application/x-www-form-urlencoded&quot;)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHTTPConnection.html#b03943256cd48f9357332a742bdb94f6">Get</a> (const char *path)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ab4a9bdef33b76152a3aafed40c54d54"></a><!-- doxytag: member="HTTPConnection::HasRead" ref="ab4a9bdef33b76152a3aafed40c54d54" args="(void) const " -->
 bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHTTPConnection.html#ab4a9bdef33b76152a3aafed40c54d54">HasRead</a> (void) const </td></tr>
 
@@ -98,6 +100,31 @@ Results of HTTP requests. Standard response codes are &lt; 999 ( define HTTP cod
 </div>
 </div><p>
 <hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="b03943256cd48f9357332a742bdb94f6"></a><!-- doxytag: member="HTTPConnection::Get" ref="b03943256cd48f9357332a742bdb94f6" args="(const char *path)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void HTTPConnection::Get           </td>
+          <td>(</td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>path</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get a file from a webserver <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>path</em>&nbsp;</td><td>the path on the remote server you want to GET from. For example "index.html" </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <a class="anchor" name="d800ca9bacd714f25320a4070106a0a5"></a><!-- doxytag: member="HTTPConnection::Init" ref="d800ca9bacd714f25320a4070106a0a5" args="(TCPInterface *_tcp, const char *host, unsigned short port=80)" -->
 <div class="memitem">
 <div class="memproto">
@@ -169,7 +196,7 @@ Results of HTTP requests. Standard response codes are &lt; 999 ( define HTTP cod
 Submit data to the HTTP server HTTP only allows one request at a time per connection <dl class="pre" compact><dt><b>Precondition:</b></dt><dd><a class="el" href="classHTTPConnection.html#4bbcc0f39656697713afccab0c8ac938" title="Returns false if the connection is not doing anything else.">IsBusy()</a>==false </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>path</em>&nbsp;</td><td>the path on the remote server you want to POST to. For example "mywebpage/index.html" </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>path</em>&nbsp;</td><td>the path on the remote server you want to POST to. For example "index.html" </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>data</em>&nbsp;</td><td>A NULL terminated string to submit to the server</td></tr>
     <tr><td valign="top"></td><td valign="top"><em>contentType</em>&nbsp;</td><td>"Content-Type:" passed to post. </td></tr>
   </table>
@@ -226,7 +253,7 @@ Get one result from the server<dl class="pre" compact><dt><b>Precondition:</b></
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/RakNet/Source/<a class="el" href="HTTPConnection_8h.html">HTTPConnection.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jul 1 07:46:40 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 1 11:00:21 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

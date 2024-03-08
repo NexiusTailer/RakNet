@@ -1853,6 +1853,7 @@ Returns if a particular systemAddress is connected to us (this also returns true
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>includeDisconnecting</em>&nbsp;</td><td>If true, also return true for connections that are in the process of disconnecting </td></tr>
   </table>
 </dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>This locks a mutex, do not call too frequently during connection attempts with includeInProgress==true or you may cause the attempt to take longer and fail </dd></dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True if this system is connected and active, false otherwise. </dd></dl>
 
 <p>Implemented in <a class="el" href="classRakPeer.html#ca0cb46f8b48b2f2d5da83377c918064">RakPeer</a>.</p>
@@ -2942,7 +2943,7 @@ Set _RAKNET_THREADSAFE in RakNetDefines.h if you want to call <a class="el" href
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_threadSleepTimer</em>&nbsp;</td><td>How many ms to Sleep each internal update cycle. With new congestion control, the best results will be obtained by passing 10. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>socketDescriptors</em>&nbsp;</td><td>An array of <a class="el" href="structSocketDescriptor.html" title="Describes the local socket to use for RakPeer::Startup.">SocketDescriptor</a> structures to force <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> to listen on a particular IP address or port (or both). Each <a class="el" href="structSocketDescriptor.html" title="Describes the local socket to use for RakPeer::Startup.">SocketDescriptor</a> will represent one unique socket. Do not pass redundant structures. To listen on a specific port, you can pass SocketDescriptor(myPort,0); such as for a server. For a client, it is usually OK to just pass SocketDescriptor(); </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>socketDescriptorCount</em>&nbsp;</td><td>The size of the <em>socketDescriptors</em> array. Pass 1 if you are not sure what to pass. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>threadPriority</em>&nbsp;</td><td>Passed to thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. WARNING!!! On Linux, 0 means highest priority! You MUST set this to something valid based on the values used by your other threads </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>threadPriority</em>&nbsp;</td><td>Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. For Linux based systems, you MUST pass something reasonable based on the thread priorities for your application. </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>False on failure (can't create socket or thread), true on success. </dd></dl>
@@ -2954,7 +2955,7 @@ Set _RAKNET_THREADSAFE in RakNetDefines.h if you want to call <a class="el" href
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/RakNet/Source/<a class="el" href="RakPeerInterface_8h.html">RakPeerInterface.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jul 1 07:46:40 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 1 11:00:21 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -107,7 +107,7 @@ void main(void)
 	rakPeer->AttachPlugin(&natTypeDetectionServer);
 	char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
 	unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
-	SocketLayer::Instance()->GetMyIP( ipList, binaryAddresses );
+	SocketLayer::GetMyIP( ipList, binaryAddresses );
 	natTypeDetectionServer.Startup(ipList[1], ipList[2], ipList[3]);
 	// Login proxy server to proxy coordinator
 	// Normally the proxy server is on a different computer. Here, we login to our own IP address since the plugin is on the same system

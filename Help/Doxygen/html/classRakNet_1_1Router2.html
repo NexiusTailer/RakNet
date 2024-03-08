@@ -74,8 +74,6 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Router2.html#c3be692d08e4ccce030c201038346f1d">OnFailedConnectionAttempt</a> (<a class="el" href="structPacket.html">Packet</a> *packet, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g4e43ad7508cbef7619975aaef0aec794">PI2_FailedConnectionAttemptReason</a> failedConnectionAttemptReason)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Router2.html#4c57e01dcb9651a7d6c1a14fbca704bf">OnNewConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, bool isIncoming)</td></tr>
-
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="59bb4fa9ae67bdc0c3761c2bd5bce6b7"></a><!-- doxytag: member="RakNet::Router2::OnRakPeerShutdown" ref="59bb4fa9ae67bdc0c3761c2bd5bce6b7" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Router2.html#59bb4fa9ae67bdc0c3761c2bd5bce6b7">OnRakPeerShutdown</a> (void)</td></tr>
 
@@ -189,50 +187,6 @@ Called when a connection attempt fails <dl compact><dt><b>Parameters:</b></dt><d
 
 </div>
 </div><p>
-<a class="anchor" name="4c57e01dcb9651a7d6c1a14fbca704bf"></a><!-- doxytag: member="RakNet::Router2::OnNewConnection" ref="4c57e01dcb9651a7d6c1a14fbca704bf" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void RakNet::Router2::OnNewConnection           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td>
-          <td class="paramname"> <em>rakNetGUID</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&nbsp;</td>
-          <td class="paramname"> <em>isIncoming</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Called when we got a new connection <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Address of the new connection </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rakNetGuid</em>&nbsp;</td><td>The guid of the specified system </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>isIncoming</em>&nbsp;</td><td>If true, this is ID_NEW_INCOMING_CONNECTION, or the equivalent </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classPluginInterface2.html#7a4f68d0bae0dd4539f6b9e14a59f7fa">PluginInterface2</a>.</p>
-
-</div>
-</div><p>
 <a class="anchor" name="825d62c2f01def72c58815b609cf4bbf"></a><!-- doxytag: member="RakNet::Router2::OnReceive" ref="825d62c2f01def72c58815b609cf4bbf" args="(Packet *packet)" -->
 <div class="memitem">
 <div class="memproto">
@@ -284,7 +238,7 @@ Set the maximum number of bidirectional connections this system will support Def
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/RakNet/Source/<a class="el" href="Router2_8h.html">Router2.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jul 1 07:46:41 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 1 11:00:23 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

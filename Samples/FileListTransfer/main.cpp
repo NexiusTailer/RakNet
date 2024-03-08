@@ -66,7 +66,7 @@ public:
 			fps->firstDataChunk);
 	}
 
-	virtual bool OnDownloadComplete(void)
+	virtual bool OnDownloadComplete(DownloadCompleteStruct *dcs)
 	{
 		printf("Download complete.\n");
 

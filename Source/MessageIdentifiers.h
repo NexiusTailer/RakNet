@@ -21,8 +21,7 @@ enum OutOfBandIdentifiers
 	ID_ROUTER_2_REPLY_TO_SENDER_PORT,
 	ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT,
 	ID_ROUTER_2_MINI_PUNCH_REPLY,
-	ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE,
-	ID_ROUTER_2_REROUTE,
+	ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE
 };
 
 /// You should not edit the file MessageIdentifiers.h as it is a part of RakNet static library

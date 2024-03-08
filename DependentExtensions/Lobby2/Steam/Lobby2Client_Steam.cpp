@@ -441,7 +441,7 @@ void Lobby2Client_Steam::OnSocketStatusCallback( SocketStatusCallback_t *pCallba
 				case k_ESNetSocketStateConnected:
 				{
 //					punchInProgress.RemoveAtIndex(i);
-					SocketLayer::Instance()->SetSocketLayerOverride(this);
+					SocketLayer::SetSocketLayerOverride(this);
 
 					CSteamID pSteamIDRemote;
 					int peSocketStatus;

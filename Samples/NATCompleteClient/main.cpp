@@ -2,7 +2,7 @@
 #include "RakSleep.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "RakNetworkFactory.h"
+
 #include <string.h>
 #include "Kbhit.h"
 #include "MessageIdentifiers.h"
@@ -15,11 +15,12 @@
 #include "GetTime.h"
 #include "Router2.h"
 #include "UDPProxyClient.h"
+#include "RakNetworkFactory.h"
 
 using namespace RakNet;
 
-#define RAKPEER_PORT 61112
-#define RAKPEER_PORT_STR "61112"
+#define RAKPEER_PORT 0
+#define RAKPEER_PORT_STR "0"
 #define DEFAULT_SERVER_PORT "61111"
 #define DEFAULT_SERVER_ADDRESS "94.198.81.195"
 
@@ -29,6 +30,21 @@ enum SampleResult
 	FAILED,
 	SUCCEEDED
 };
+
+#define SUPPORT_UPNP PENDING
+#define SUPPORT_NAT_TYPE_DETECTION PENDING
+#define SUPPORT_NAT_PUNCHTHROUGH PENDING
+#define SUPPORT_ROUTER2 PENDING
+#define SUPPORT_UDP_PROXY PENDING
+
+// #define SUPPORT_UPNP FAILED
+// #define SUPPORT_NAT_TYPE_DETECTION FAILED
+// #define SUPPORT_NAT_PUNCHTHROUGH FAILED
+// #define SUPPORT_ROUTER2 FAILED
+// #define SUPPORT_UDP_PROXY PENDING
+// #undef DEFAULT_SERVER_ADDRESS
+// #define DEFAULT_SERVER_ADDRESS "192.168.1.2"
+
 
 struct SampleFramework
 {
@@ -47,7 +63,7 @@ struct SampleFramework
 
 struct UPNPFramework : public SampleFramework, public UPNPCallbackInterface
 {
-	UPNPFramework() { sampleResult=PENDING; upnp=0;} 
+	UPNPFramework() { sampleResult=SUPPORT_UPNP; upnp=0;} 
 	virtual const char * QueryName(void) {return "UPNPFramework";}
 	virtual bool QueryRequiresServer(void) {return false;}
 	virtual const char * QueryFunction(void) {return "Use UPNP to open the router";}
@@ -217,7 +233,8 @@ SystemAddress ConnectBlocking(RakPeerInterface *rakPeer, const char *hostName, c
 }
 struct NatTypeDetectionFramework : public SampleFramework
 {
-	NatTypeDetectionFramework() { sampleResult=PENDING; ntdc=0;}
+	// Set to FAILED to skip this test
+	NatTypeDetectionFramework() { sampleResult=SUPPORT_NAT_TYPE_DETECTION; ntdc=0;}
 	virtual const char * QueryName(void) {return "NatTypeDetectionFramework";}
 	virtual bool QueryRequiresServer(void) {return true;}
 	virtual const char * QueryFunction(void) {return "Determines router type to avoid NAT punch attempts that cannot\nsucceed.";}
@@ -293,7 +310,8 @@ struct NatTypeDetectionFramework : public SampleFramework
 
 struct NatPunchthoughClientFramework : public SampleFramework, public NatPunchthroughDebugInterface_Printf
 {
-	NatPunchthoughClientFramework() { sampleResult=PENDING; npClient=0;}
+	// Set to FAILED to skip this test
+	NatPunchthoughClientFramework() { sampleResult=SUPPORT_NAT_PUNCHTHROUGH; npClient=0;}
 	virtual const char * QueryName(void) {return "NatPunchthoughClientFramework";}
 	virtual bool QueryRequiresServer(void) {return true;}
 	virtual const char * QueryFunction(void) {return "Causes two systems to try to connect to each other at the same\ntime, to get through routers.";}
@@ -314,20 +332,29 @@ struct NatPunchthoughClientFramework : public SampleFramework, public NatPunchth
 				return;
 			}
 		}
-		npClient->SetDebugInterface(this);
-		
+
 		char guid[128];
-		do 
-		{
-			printf("Enter RakNetGuid of the remote system, which should have already connected to the server.\n");
-			gets(guid);
-		} while (guid[0]==0);
-		RakNetGUID remoteSystemGuid;
-		remoteSystemGuid.FromString(guid);
+		printf("Enter RakNetGuid of the remote system, which should have already connected\nto the server.\nOr press enter to just listen.\n");
+		gets(guid);
 		npClient = new NatPunchthroughClient;
+		npClient->SetDebugInterface(this);
 		rakPeer->AttachPlugin(npClient);
-		npClient->OpenNAT(remoteSystemGuid, serverAddress);
-		timeout=RakNet::GetTimeMS() + 5000;
+
+		if (guid[0])
+		{
+			RakNetGUID remoteSystemGuid;
+			remoteSystemGuid.FromString(guid);
+			npClient->OpenNAT(remoteSystemGuid, serverAddress);
+			isListening=false;
+
+			timeout=RakNet::GetTimeMS() + 10000;
+		}
+		else
+		{
+			printf("Listening\n");
+			printf("My GUID is %s\n", rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
+			isListening=true;
+		}
 	}
 
 	virtual void ProcessPacket(Packet *packet)
@@ -338,39 +365,39 @@ struct NatPunchthoughClientFramework : public SampleFramework, public NatPunchth
 			packet->data[0]==ID_NAT_CONNECTION_TO_TARGET_LOST ||
 			packet->data[0]==ID_NAT_PUNCHTHROUGH_FAILED
 			)
+		{
+			RakNetGUID guid;
+			if (packet->data[0]==ID_NAT_PUNCHTHROUGH_FAILED)
 			{
-				RakNetGUID guid;
-				if (packet->data[0]==ID_NAT_PUNCHTHROUGH_FAILED)
-				{
-					guid=packet->guid;
-				}
-				else
-				{
-					RakNet::BitStream bs(packet->data,packet->length,false);
-					bs.IgnoreBytes(1);
-					bool b = bs.Read(guid);
-					RakAssert(b);
-				}
-
-				switch (packet->data[0])
-				{
-				case ID_NAT_TARGET_NOT_CONNECTED:
-					printf("Failed: ID_NAT_TARGET_NOT_CONNECTED\n");
-					break;
-				case ID_NAT_TARGET_UNRESPONSIVE:
-					printf("Failed: ID_NAT_TARGET_UNRESPONSIVE\n");
-					break;
-				case ID_NAT_CONNECTION_TO_TARGET_LOST:
-					printf("Failed: ID_NAT_CONNECTION_TO_TARGET_LOST\n");
-					break;
-				case ID_NAT_PUNCHTHROUGH_FAILED:
-					printf("Failed: ID_NAT_PUNCHTHROUGH_FAILED\n");
-					break;
-				}
-
-				sampleResult=FAILED;
-				return;
+				guid=packet->guid;
 			}
+			else
+			{
+				RakNet::BitStream bs(packet->data,packet->length,false);
+				bs.IgnoreBytes(1);
+				bool b = bs.Read(guid);
+				RakAssert(b);
+			}
+
+			switch (packet->data[0])
+			{
+			case ID_NAT_TARGET_NOT_CONNECTED:
+				printf("Failed: ID_NAT_TARGET_NOT_CONNECTED\n");
+				break;
+			case ID_NAT_TARGET_UNRESPONSIVE:
+				printf("Failed: ID_NAT_TARGET_UNRESPONSIVE\n");
+				break;
+			case ID_NAT_CONNECTION_TO_TARGET_LOST:
+				printf("Failed: ID_NAT_CONNECTION_TO_TARGET_LOST\n");
+				break;
+			case ID_NAT_PUNCHTHROUGH_FAILED:
+				printf("Failed: ID_NAT_PUNCHTHROUGH_FAILED\n");
+				break;
+			}
+
+			sampleResult=FAILED;
+			return;
+		}
 		else if (packet->data[0]==ID_NAT_PUNCHTHROUGH_SUCCEEDED)
 		{
 			unsigned char weAreTheSender = packet->data[1];
@@ -378,13 +405,14 @@ struct NatPunchthoughClientFramework : public SampleFramework, public NatPunchth
 				printf("NAT punch success to remote system %s.\n", packet->systemAddress.ToString(true));
 			else
 				printf("NAT punch success from remote system %s.\n", packet->systemAddress.ToString(true));
+			sampleResult=SUCCEEDED;
 		}
 	}
 	virtual void Update(RakPeerInterface *rakPeer)
 	{
 		if (sampleResult==FAILED) return;
 
-		if (sampleResult==PENDING && RakNet::GetTimeMS()>timeout)
+		if (sampleResult==PENDING && RakNet::GetTimeMS()>timeout && isListening==false)
 		{
 			printf("No response from the server, probably not running NatPunchthroughServer plugin.\n");
 			sampleResult=FAILED;
@@ -398,11 +426,13 @@ struct NatPunchthoughClientFramework : public SampleFramework, public NatPunchth
 
 	NatPunchthroughClient *npClient;
 	RakNetTimeMS timeout;
+	bool isListening;
 };
 
 struct Router2Framework : public SampleFramework
 {
-	Router2Framework() { sampleResult=PENDING; router2=0;}
+	// Set to FAILED to skip this test
+	Router2Framework() { sampleResult=SUPPORT_ROUTER2; router2=0;}
 	virtual const char * QueryName(void) {return "Router2Framework";}
 	virtual bool QueryRequiresServer(void) {return false;}
 	virtual const char * QueryFunction(void) {return "Connect to a peer we cannot directly connect to using the\nbandwidth of a shared peer.";}
@@ -477,7 +507,8 @@ struct Router2Framework : public SampleFramework
 };
 struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientResultHandler
 {
-	UDPProxyClientFramework() { sampleResult=PENDING; udpProxy=0;}
+	// Set to FAILED to skip this test
+	UDPProxyClientFramework() { sampleResult=SUPPORT_UDP_PROXY; udpProxy=0;}
 	virtual const char * QueryName(void) {return "UDPProxyClientFramework";}
 	virtual bool QueryRequiresServer(void) {return true;}
 	virtual const char * QueryFunction(void) {return "Connect to a peer using a shared server connection.";}
@@ -501,6 +532,27 @@ struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientRe
 		udpProxy = new UDPProxyClient;
 		rakPeer->AttachPlugin(udpProxy);
 		udpProxy->SetResultHandler(this);
+
+		char guid[128];
+		printf("Enter RakNetGuid of the remote system, which should have already connected\nto the server.\nOr press enter to just listen.\n");
+		gets(guid);
+		RakNetGUID targetGuid;
+		targetGuid.FromString(guid);
+
+		if (guid[0])
+		{
+			RakNetGUID remoteSystemGuid;
+			remoteSystemGuid.FromString(guid);
+			udpProxy->RequestForwarding(serverAddress, UNASSIGNED_SYSTEM_ADDRESS, targetGuid, UDP_FORWARDER_MAXIMUM_TIMEOUT, 0);
+			isListening=false;
+		}
+		else
+		{
+			printf("Listening\n");
+			printf("My GUID is %s\n", rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
+			isListening=true;
+		}
+
 		timeout=RakNet::GetTimeMS() + 5000;
 	}
 	virtual void ProcessPacket(Packet *packet)
@@ -510,7 +562,7 @@ struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientRe
 	{
 		if (sampleResult==FAILED) return;
 
-		if (sampleResult==PENDING && RakNet::GetTimeMS()>timeout)
+		if (sampleResult==PENDING && RakNet::GetTimeMS()>timeout && isListening==false)
 		{
 			printf("No response from the server, probably not running UDPProxyCoordinator plugin.\n");
 			sampleResult=FAILED;
@@ -521,19 +573,20 @@ struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientRe
 		delete udpProxy;
 		udpProxy=0;
 	}
-	
-	virtual void OnForwardingSuccess(const char *proxyIPAddress, unsigned short proxyPort, unsigned short reverseProxyPort,
+
+	virtual void OnForwardingSuccess(const char *proxyIPAddress, unsigned short proxyPort,
 		SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 	{
-		printf("Datagrams forwarded successfully by proxy %s:%i to target %s.\n", proxyIPAddress, proxyPort, targetAddress.ToString(false));
+		printf("Datagrams forwarded by proxy %s:%i to target %s.\n", proxyIPAddress, proxyPort, targetAddress.ToString(false));
 		printf("Connecting to proxy, which will be received by target.\n");
-		// rakPeer->Connect(proxyIPAddress, proxyPort, 0, 0);
+		bool b = proxyClientPlugin->GetRakPeerInterface()->Connect(proxyIPAddress, proxyPort, 0, 0);
+		RakAssert(b);
 		sampleResult=SUCCEEDED;
 	}
-	virtual void OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort, unsigned short reverseProxyPort,
+	virtual void OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort,
 		SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 	{
-		printf("Source %s has setup forwarding to us through proxy %s:%i.\n", sourceAddress.ToString(false), proxyIPAddress, reverseProxyPort);
+		printf("Source %s has setup forwarding to us through proxy %s:%i.\n", sourceAddress.ToString(false), proxyIPAddress, proxyPort);
 	}
 	virtual void OnNoServersOnline(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
 	{
@@ -557,7 +610,63 @@ struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientRe
 
 	UDPProxyClient *udpProxy;
 	RakNetTimeMS timeout;
+	bool isListening;
 };
+void PrintPacketMessages(Packet *packet, RakPeerInterface *rakPeer)
+{
+
+	switch (packet->data[0])
+	{
+	case ID_DISCONNECTION_NOTIFICATION:
+		// Connection lost normally
+		printf("ID_DISCONNECTION_NOTIFICATION\n");
+		break;
+	case ID_ALREADY_CONNECTED:
+		// Connection lost normally
+		printf("ID_ALREADY_CONNECTED\n");
+		break;
+	case ID_INCOMPATIBLE_PROTOCOL_VERSION:
+		printf("ID_INCOMPATIBLE_PROTOCOL_VERSION\n");
+		break;
+	case ID_REMOTE_DISCONNECTION_NOTIFICATION: // Server telling the clients of another client disconnecting gracefully.  You can manually broadcast this in a peer to peer enviroment if you want.
+		printf("ID_REMOTE_DISCONNECTION_NOTIFICATION\n"); 
+		break;
+	case ID_REMOTE_CONNECTION_LOST: // Server telling the clients of another client disconnecting forcefully.  You can manually broadcast this in a peer to peer enviroment if you want.
+		printf("ID_REMOTE_CONNECTION_LOST\n");
+		break;
+	case ID_REMOTE_NEW_INCOMING_CONNECTION: // Server telling the clients of another client connecting.  You can manually broadcast this in a peer to peer enviroment if you want.
+		printf("ID_REMOTE_NEW_INCOMING_CONNECTION\n");
+		break;
+	case ID_CONNECTION_BANNED: // Banned from this server
+		printf("We are banned from this server.\n");
+		break;			
+	case ID_CONNECTION_ATTEMPT_FAILED:
+		printf("Connection attempt failed\n");
+		break;
+	case ID_NO_FREE_INCOMING_CONNECTIONS:
+		printf("ID_NO_FREE_INCOMING_CONNECTIONS\n");
+		break;
+	case ID_MODIFIED_PACKET:
+		// Cheater!
+		printf("ID_MODIFIED_PACKET\n");
+		break;
+
+	case ID_INVALID_PASSWORD:
+		printf("ID_INVALID_PASSWORD\n");
+		break;
+
+	case ID_CONNECTION_LOST:
+		printf("ID_CONNECTION_LOST\n");
+		break;
+
+	case ID_CONNECTION_REQUEST_ACCEPTED:
+		// This tells the client they have connected
+		printf("ID_CONNECTION_REQUEST_ACCEPTED to %s with GUID %s\n", packet->systemAddress.ToString(true), packet->guid.ToString());
+		printf("My external address is %s\n", rakPeer->GetExternalID(packet->systemAddress).ToString(true));
+		break;
+	}
+}
+
 enum FeatureList
 {
 	_UPNPFramework,
@@ -577,6 +686,7 @@ int main(void)
 		RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
 		return 1;
 	}
+	rakPeer->SetMaximumIncomingConnections(32);
 
 	SampleFramework *samples[FEATURE_LIST_COUNT];
 	unsigned int i=0;
@@ -640,6 +750,8 @@ int main(void)
 				{
 					samples[i]->ProcessPacket(packet);
 				}
+
+				PrintPacketMessages(packet, rakPeer);
 			}
 
 			if (samples[(int) currentStage]->sampleResult==FAILED ||
@@ -672,12 +784,33 @@ int main(void)
 					printf("Passed %s\n", samples[(int) currentStage]->QueryName());
 					if (samples[(int) currentStage]->QueryQuitOnSuccess())
 					{
-						printf("You should now be able to connect. Sample complete.\n");
+
+						printf("Press any key to quit.\n");
+						while (!kbhit())
+						{
+							for (packet=rakPeer->Receive(); packet; rakPeer->DeallocatePacket(packet), packet=rakPeer->Receive())
+							{
+								for (i=0; i < FEATURE_LIST_COUNT; i++)
+								{
+									samples[i]->ProcessPacket(packet);
+								}
+
+								PrintPacketMessages(packet, rakPeer);
+							}
+							RakSleep(30);
+						}
+
 						rakPeer->Shutdown(100);
 						RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+						printf("Press enter to quit.\n");
+						char temp[32];
+						gets(temp);
 						return 1;
 					}
 					printf("Proceeding to next stage.\n");
+					int stageInt = (int) currentStage;
+					stageInt++;
+					currentStage=(FeatureList)stageInt;
 					break;
 				}
 			}
