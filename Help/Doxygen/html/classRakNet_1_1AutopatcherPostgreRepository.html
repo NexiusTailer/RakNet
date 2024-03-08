@@ -81,12 +81,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a152d2cafd30025dd1967b60c5228a821"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5eae206210afc6d0ea16b38fc015de6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherPostgreRepository.html#ac5eae206210afc6d0ea16b38fc015de6">UpdateApplicationFiles</a> (const char *applicationName, const char *applicationDirectory, const char *userName, <a class="el" href="classRakNet_1_1FileListProgress.html">FileListProgress</a> *cb)</td></tr>
 <tr class="separator:ac5eae206210afc6d0ea16b38fc015de6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7114cd4cbc15b11c7642985e455f18e0"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherPostgreRepository.html#a7114cd4cbc15b11c7642985e455f18e0">GetChangelistSinceDate</a> (const char *applicationName, FileList *addedFiles, FileList *deletedFiles, double sinceDate)</td></tr>
-<tr class="separator:a7114cd4cbc15b11c7642985e455f18e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa38da622783e0b10addd93dd046621e0"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherPostgreRepository.html#aa38da622783e0b10addd93dd046621e0">GetPatches</a> (const char *applicationName, FileList *input, FileList *patchList)</td></tr>
-<tr class="separator:aa38da622783e0b10addd93dd046621e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a744f03eafdc9f56de8ec4f7f0bd6699a"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherPostgreRepository.html#a744f03eafdc9f56de8ec4f7f0bd6699a">GetMostRecentChangelistWithPatches</a> (<a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> &amp;applicationName, FileList *patchedFiles, FileList *updatedFiles, FileList *updatedFileHashes, FileList *deletedFiles, double *priorRowPatchTime, double *mostRecentRowPatchTime)</td></tr>
-<tr class="separator:a744f03eafdc9f56de8ec4f7f0bd6699a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f4c39d5d8697283f9535e5ee9074f4a"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherPostgreRepository.html#a7f4c39d5d8697283f9535e5ee9074f4a">GetChangelistSinceDate</a> (const char *applicationName, FileList *addedOrModifiedFilesWithHashData, FileList *deletedFiles, double sinceDate)</td></tr>
+<tr class="separator:a7f4c39d5d8697283f9535e5ee9074f4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa56efe5018eb82ffad538aa5662301b3"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherPostgreRepository.html#aa56efe5018eb82ffad538aa5662301b3">GetPatches</a> (const char *applicationName, FileList *input, bool allowDownloadOfOriginalUnmodifiedFiles, FileList *patchList)</td></tr>
+<tr class="separator:aa56efe5018eb82ffad538aa5662301b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c0f669267284290a74844000d4c0241"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherPostgreRepository.html#a9c0f669267284290a74844000d4c0241">GetMostRecentChangelistWithPatches</a> (<a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> &amp;applicationName, FileList *patchedFiles, FileList *addedFiles, FileList *addedOrModifiedFileHashes, FileList *deletedFiles, double *priorRowPatchTime, double *mostRecentRowPatchTime)</td></tr>
+<tr class="separator:a9c0f669267284290a74844000d4c0241"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a342c992202426d8f507246202acd63f6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a342c992202426d8f507246202acd63f6"></a>
 virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherPostgreRepository.html#a342c992202426d8f507246202acd63f6">GetLastError</a> (void) const </td></tr>
 <tr class="memdesc:a342c992202426d8f507246202acd63f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">If any of the above functions fail, the error string is stored internally. Call this to get it. <br/></td></tr>
@@ -189,7 +189,7 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>GetLa
 
 </div>
 </div>
-<a class="anchor" id="a7114cd4cbc15b11c7642985e455f18e0"></a>
+<a class="anchor" id="a7f4c39d5d8697283f9535e5ee9074f4a"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -206,7 +206,7 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>GetLa
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">FileList *&#160;</td>
-          <td class="paramname"><em>addedFiles</em>, </td>
+          <td class="paramname"><em>addedOrModifiedFilesWithHashData</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -244,7 +244,7 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>GetLa
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True on success, false on failure. </dd></dl>
 
-<p>Implements <a class="el" href="classRakNet_1_1AutopatcherRepositoryInterface.html#ac9d1e99fa5cbf266f0e96fcea1d233fd">RakNet::AutopatcherRepositoryInterface</a>.</p>
+<p>Implements <a class="el" href="classRakNet_1_1AutopatcherRepositoryInterface.html#a54058b725b12eb1186a94ba4e77ae87a">RakNet::AutopatcherRepositoryInterface</a>.</p>
 
 </div>
 </div>
@@ -338,7 +338,7 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>GetLa
 
 </div>
 </div>
-<a class="anchor" id="a744f03eafdc9f56de8ec4f7f0bd6699a"></a>
+<a class="anchor" id="a9c0f669267284290a74844000d4c0241"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -361,13 +361,13 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>GetLa
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">FileList *&#160;</td>
-          <td class="paramname"><em>updatedFiles</em>, </td>
+          <td class="paramname"><em>addedFiles</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">FileList *&#160;</td>
-          <td class="paramname"><em>updatedFileHashes</em>, </td>
+          <td class="paramname"><em>addedOrModifiedFileHashes</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -403,8 +403,9 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>GetLa
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">applicationName</td><td>Name of the application to get patches for. If empty, uses the most recently updated application, and the string will be updated to reflect this name. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">patchedFiles</td><td>You should return list of files with either the filedata or the patch. This is a subset of <em>input</em>. The context data for each file will be either PC_WRITE_FILE (to just write the file) or PC_HASH_WITH_PATCH (to patch). If PC_HASH_WITH_PATCH, then the file contains a SHA1_LENGTH byte patch followed by the hash. The datalength is patchlength + SHA1_LENGTH </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">newFiles</td><td>On-disk version of all files that were changed or added in the most recent patch </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">patchedFiles</td><td>A list of patched files with op PC_HASH_2_WITH_PATCH. It has 2 hashes, the priorHash and the currentHash. The currentHash is checked on the client after patching for patch success. The priorHash is checked in AutopatcherServer::OnGetPatch() to see if the client is able to hash with the version they currently have </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">patchedFiles</td><td>A list of new files. It contains the actual data in addition to the filename </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">addedOrModifiedFileHashes</td><td>A list of file hashes that were either modified or new. This is returned to the client when replying to ID_AUTOPATCHER_CREATION_LIST, which tells the client what files have changed on the server since a certain date </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">deletedFiles</td><td>A list of the current versions of filenames that were deleted in the most recent patch </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">whenPatched</td><td>time in seconds since epoch when patched. Use time() function to get this in C </td></tr>
   </table>
@@ -412,11 +413,11 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>GetLa
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true on success, false on failure </dd></dl>
 
-<p>Implements <a class="el" href="classRakNet_1_1AutopatcherRepositoryInterface.html#aa3095ea320136e7b41dc664bf535fa1a">RakNet::AutopatcherRepositoryInterface</a>.</p>
+<p>Implements <a class="el" href="classRakNet_1_1AutopatcherRepositoryInterface.html#a1244493706ecbd21fbbc8ce5e198ee59">RakNet::AutopatcherRepositoryInterface</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="aa38da622783e0b10addd93dd046621e0"></a>
+<a class="anchor" id="aa56efe5018eb82ffad538aa5662301b3"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -424,7 +425,7 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>GetLa
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual bool RakNet::AutopatcherPostgreRepository::GetPatches </td>
+          <td class="memname">virtual int RakNet::AutopatcherPostgreRepository::GetPatches </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
           <td class="paramname"><em>applicationName</em>, </td>
@@ -434,6 +435,12 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>GetLa
           <td></td>
           <td class="paramtype">FileList *&#160;</td>
           <td class="paramname"><em>input</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>allowDownloadOfOriginalUnmodifiedFiles</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -458,13 +465,14 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>GetLa
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">applicationName</td><td>A null terminated string previously passed to AddApplication </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">input</td><td>A list of files with hashes to get from the database. If this hash exists, a patch to the current version is returned if this file is not the current version. Otherwise the current version is returned. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">allowDownloadOfOriginalUnmodifiedFiles</td><td>If false, then if a file has never been modified and there is no hash for it in the input list, return false. This is to prevent clients from just downloading the game from the autopatcher. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">patchList</td><td>A list of files with either the filedata or the patch. This is a subset of <em>input</em>. The context data for each file will be either PC_WRITE_FILE (to just write the file) or PC_HASH_WITH_PATCH (to patch). If PC_HASH_WITH_PATCH, then the file contains a SHA1_LENGTH byte patch followed by the hash. The datalength is patchlength + SHA1_LENGTH </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>True on success, false on failure. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>1 on success, 0 on database failure, -1 on tried to download original unmodified file </dd></dl>
 
-<p>Implements <a class="el" href="classRakNet_1_1AutopatcherRepositoryInterface.html#a2874948bc8e43476ffb65e56572df869">RakNet::AutopatcherRepositoryInterface</a>.</p>
+<p>Implements <a class="el" href="classRakNet_1_1AutopatcherRepositoryInterface.html#aa1e6f1fff8fa2ade2a82c437a5da6947">RakNet::AutopatcherRepositoryInterface</a>.</p>
 
 </div>
 </div>
@@ -547,7 +555,7 @@ virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><b>GetLa
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Dec 5 2012 00:32:35 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Dec 17 2012 23:26:03 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

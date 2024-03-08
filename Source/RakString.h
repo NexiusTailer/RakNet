@@ -214,17 +214,18 @@ public:
 	/// \param[in] contentType For example, text/plain; charset=UTF-8
 	/// \param[in] body Body of the post
 	/// \return Formatted string
-	static RakNet::RakString FormatForPOST(RakString uri, RakString contentType, RakString body);
+	static RakNet::RakString FormatForPOST(RakString uri, RakString contentType, RakString body, RakString extraHeaders);
+	static RakNet::RakString FormatForPUT(RakString uri, RakString contentType, RakString body, RakString extraHeaders);
 
 	/// Format as a GET command that can be sent to a webserver
 	/// \param[in] uri For example, masterserver2.raknet.com/testServer?__gameId=comprehensivePCGame
 	/// \return Formatted string
-	static RakNet::RakString FormatForGET(RakString uri);
+	static RakNet::RakString FormatForGET(RakString uri, RakString extraHeaders);
 
 	/// Format as a DELETE command that can be sent to a webserver
 	/// \param[in] uri For example, masterserver2.raknet.com/testServer?__gameId=comprehensivePCGame&__rowId=1
 	/// \return Formatted string
-	static RakNet::RakString FormatForDELETE(RakString uri);
+	static RakNet::RakString FormatForDELETE(RakString uri, RakString extraHeaders);
 
 	/// Fix to be a file path, ending with /
 	RakNet::RakString& MakeFilePath(void);
@@ -317,6 +318,7 @@ public:
 	static void UnlockMutex(void);
 
 protected:
+	static RakNet::RakString FormatForPUTOrPost(const char* type, RakString uri, RakString contentType, RakString body, RakString extraHeaders);
 	void Allocate(size_t len);
 	void Assign(const char *str);
 	void Assign(const char *str, va_list ap);

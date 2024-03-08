@@ -15,12 +15,21 @@ HTTPConnection2::~HTTPConnection2()
 {
 
 }
-bool HTTPConnection2::TransmitRequest(RakString stringToTransmit, RakString host, unsigned short port, int ipVersion)
+bool HTTPConnection2::TransmitRequest(RakString stringToTransmit, RakString host, unsigned short port, int ipVersion, SystemAddress useAddress)
 {
 	Request request;
 	request.host=host;
-	if (request.hostEstimatedAddress.FromString(host.C_String(), '|', ipVersion)==false)
-		return false;
+	if (useAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+	{
+		request.hostEstimatedAddress=useAddress;
+		if (IsConnected(request.hostEstimatedAddress)==false)
+			return false;
+	}
+	else
+	{
+		if (request.hostEstimatedAddress.FromString(host.C_String(), '|', ipVersion)==false)
+			return false;
+	}
 	request.hostEstimatedAddress.SetPort(port);
 	request.port=port;
 	request.stringToTransmit=stringToTransmit;
@@ -81,7 +90,7 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
 	{
 		if (sentRequests[i].hostCompletedAddress==packet->systemAddress)
 		{
-			sentRequests[i].stringReceived += packet->data;
+			sentRequests[i].stringReceived+=packet->data;
 
 			if (sentRequests[i].contentLength==-1)
 			{
@@ -133,9 +142,14 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
 			}
 			else
 			{
-				if (strstr(sentRequests[i].stringReceived.C_String(), "\r\n\r\n")!=0)
+				const char *firstNewlineSet = strstr(sentRequests[i].stringReceived.C_String(), "\r\n\r\n");
+				if (firstNewlineSet!=0)
 				{
-					sentRequests[i].contentOffset=-1;
+					int offset = firstNewlineSet - sentRequests[i].stringReceived.C_String();
+					if (sentRequests[i].stringReceived.C_String()[offset+4]==0)
+						sentRequests[i].contentOffset=-1;
+					else
+						sentRequests[i].contentOffset=offset+4;
 					completedRequests.Push(sentRequests[i], _FILE_AND_LINE_);
 					sentRequests.RemoveAtIndexFast(i);
 
@@ -173,6 +187,10 @@ void HTTPConnection2::SendPendingRequestToConnectedSystem(SystemAddress sa)
 		{
 			// Send this request
 			pendingRequests[i].hostCompletedAddress=sa;
+
+#if OPEN_SSL_CLIENT_SUPPORT==1
+			tcpInterface->StartSSLClient(sa);
+#endif
 			SendRequest(pendingRequests[i]);
 			pendingRequests.RemoveAtIndex(i);
 			requestsSent++;
@@ -193,6 +211,11 @@ void HTTPConnection2::SendPendingRequestToConnectedSystem(SystemAddress sa)
 			pendingRequests[i].hostCompletedAddress=sa;
 
 			// Send
+
+#if OPEN_SSL_CLIENT_SUPPORT==1
+			tcpInterface->StartSSLClient(sa);
+#endif
+
 			SendRequest(pendingRequests[i]);
 			pendingRequests.RemoveAtIndex(i);
 			break;

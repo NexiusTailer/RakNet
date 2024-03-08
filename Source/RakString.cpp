@@ -143,6 +143,7 @@ void RakString::Realloc(SharedString *sharedString, size_t bytes)
 {
 	if (bytes<=sharedString->bytesUsed)
 		return;
+
 	RakAssert(bytes>0);
 	size_t oldBytes = sharedString->bytesUsed;
 	size_t newBytes;
@@ -942,7 +943,7 @@ RakNet::RakString& RakString::SQLEscape(void)
 	}
 	return *this;
 }
-RakString RakString::FormatForPOST(RakString uri, RakString contentType, RakString body)
+RakNet::RakString RakString::FormatForPUTOrPost(const char* type, RakString uri, RakString contentType, RakString body, RakString extraHeaders)
 {
 	RakString out;
 	RakString host;
@@ -952,24 +953,51 @@ RakString RakString::FormatForPOST(RakString uri, RakString contentType, RakStri
 	uri.SplitURI(header, host, remotePath);
 	if (host.IsEmpty() || remotePath.IsEmpty())
 		return out;
-	
-	out.Set("POST %s HTTP/1.1\r\n"
-		"Host: %s\r\n"
-//		"Connection: Keep-Alive\r\n"
-//		"Connection: close\r\n"
-		"Content-Type: %s\r\n"
-		"Content-Length: %u\r\n"
-		"\r\n"
-		"%s",
-		remotePath.C_String(),
-		host.C_String(),
-		contentType.C_String(),
-		body.GetLength(),
-		body.C_String());
+
+	if (extraHeaders.IsEmpty()==false)
+	{
+		out.Set("%s %s HTTP/1.1\r\n"
+			"%s\r\n"
+			"Host: %s\r\n"
+			"Content-Type: %s\r\n"
+			"Content-Length: %u\r\n"
+			"\r\n"
+			"%s",
+			type,
+			remotePath.C_String(),
+			extraHeaders.C_String(),
+			host.C_String(),
+			contentType.C_String(),
+			body.GetLength(),
+			body.C_String());
+	}
+	else
+	{
+		out.Set("%s %s HTTP/1.1\r\n"
+			"Host: %s\r\n"
+			"Content-Type: %s\r\n"
+			"Content-Length: %u\r\n"
+			"\r\n"
+			"%s",
+			type,
+			remotePath.C_String(),
+			host.C_String(),
+			contentType.C_String(),
+			body.GetLength(),
+			body.C_String());
+	}
 
 	return out;
 }
-RakString RakString::FormatForGET(RakString uri)
+RakString RakString::FormatForPOST(RakString uri, RakString contentType, RakString body, RakString extraHeaders)
+{
+	return FormatForPUTOrPost("POST", uri, contentType, body, extraHeaders);
+}
+RakString RakString::FormatForPUT(RakString uri, RakString contentType, RakString body, RakString extraHeaders)
+{
+	return FormatForPUTOrPost("PUT", uri, contentType, body, extraHeaders);
+}
+RakString RakString::FormatForGET(RakString uri, RakString extraHeaders)
 {
 	RakString out;
 	RakString host;
@@ -980,17 +1008,30 @@ RakString RakString::FormatForGET(RakString uri)
 	if (host.IsEmpty() || remotePath.IsEmpty())
 		return out;
 
-	out.Set("GET %s HTTP/1.1\r\n"
-		"Host: %s\r\n"
-//		"Connection: Keep-Alive\r\n"
-//		"Connection: close\r\n"
-		"\r\n",
-		remotePath.C_String(),
-		host.C_String());
+	if (extraHeaders.IsEmpty()==false)
+	{
+		out.Set("GET %s HTTP/1.1\r\n"
+			"%s\r\n"
+			"Host: %s\r\n"
+			"\r\n",
+			remotePath.C_String(),
+			extraHeaders.C_String(),
+			host.C_String());
+	}
+	else
+	{
+		out.Set("GET %s HTTP/1.1\r\n"
+			"Host: %s\r\n"
+			"\r\n",
+			remotePath.C_String(),
+			host.C_String());
+
+	}
+
 
 	return out;
 }
-RakString RakString::FormatForDELETE(RakString uri)
+RakString RakString::FormatForDELETE(RakString uri, RakString extraHeaders)
 {
 	RakString out;
 	RakString host;
@@ -1001,13 +1042,27 @@ RakString RakString::FormatForDELETE(RakString uri)
 	if (host.IsEmpty() || remotePath.IsEmpty())
 		return out;
 
-	out.Set("DELETE %s HTTP/1.1\r\n"
-		"Content-Length: 0\r\n"
-		"Host: %s\r\n"
-		"Connection: close\r\n"
-		"\r\n",
-		remotePath.C_String(),
-		host.C_String());
+	if (extraHeaders.IsEmpty()==false)
+	{
+		out.Set("DELETE %s HTTP/1.1\r\n"
+			"%s\r\n"
+			"Content-Length: 0\r\n"
+			"Host: %s\r\n"
+			"Connection: close\r\n"
+			"\r\n",
+			remotePath.C_String(),
+			host.C_String());
+	}
+	else
+	{
+		out.Set("DELETE %s HTTP/1.1\r\n"
+			"Content-Length: 0\r\n"
+			"Host: %s\r\n"
+			"Connection: close\r\n"
+			"\r\n",
+			remotePath.C_String(),
+			host.C_String());
+	}
 
 	return out;
 }
@@ -1320,14 +1375,25 @@ int RakString::ReadIntFromSubstring(const char *str, size_t pos, size_t n)
 }
 void RakString::AppendBytes(const char *bytes, unsigned int count)
 {
-	Clone();
-	Realloc(sharedString, count);
-	unsigned int length=(unsigned int) GetLength();
-	memcpy(sharedString->c_str+length, bytes, count);
-	sharedString->c_str[length+count]=0;
+	if (IsEmpty())
+	{
+		Allocate(count);
+		memcpy(sharedString->c_str, bytes, count);
+	}
+	else
+	{
+		Clone();
+		Realloc(sharedString, count);
+		unsigned int length=(unsigned int) GetLength();
+		memcpy(sharedString->c_str+length, bytes, count);
+		sharedString->c_str[length+count]=0;
+	}
+
+	
 }
 void RakString::Clone(void)
 {
+	RakAssert(sharedString!=&emptyString);
 	if (sharedString==&emptyString)
 	{
 		return;

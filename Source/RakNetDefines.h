@@ -44,7 +44,7 @@
 /// If defined, OpenSSL is enabled for the class TCPInterface
 /// This is necessary to use the SendEmail class with Google POP servers
 /// Note that OpenSSL carries its own license restrictions that you should be aware of. If you don't agree, don't enable this define
-/// This also requires that you enable header search paths to DependentExtensions\openssl-0.9.8g
+/// This also requires that you enable header search paths to DependentExtensions\openssl-1.0.0d
 // #define OPEN_SSL_CLIENT_SUPPORT
 #ifndef OPEN_SSL_CLIENT_SUPPORT
 #define OPEN_SSL_CLIENT_SUPPORT 0
@@ -70,13 +70,15 @@
 
 
 
-
+#if   defined(__native_client__)
+#define RakAssert(x)
+#else
 #if defined(_DEBUG)
 #define RakAssert(x) assert(x);
 #else
 #define RakAssert(x) 
 #endif
-
+#endif
 #endif
 
 /// This controls the amount of memory used per connection.

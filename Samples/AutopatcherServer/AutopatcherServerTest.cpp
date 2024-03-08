@@ -93,6 +93,7 @@ int main(int argc, char **argv)
 	// A greater number of SQL connections, which read files incrementally for large downloads
 	autopatcherServer.StartThreads(workerThreadCount,sqlConnectionObjectCount, connectionObjectAddresses);
 	autopatcherServer.CacheMostRecentPatch(0);
+	// autopatcherServer.SetAllowDownloadOfOriginalUnmodifiedFiles(false);
 	printf("System ready for connections\n");
 
 	printf("(D)rop database\n(C)reate database.\n(A)dd application\n(U)pdate revision.\n(R)emove application\n(Q)uit\n");

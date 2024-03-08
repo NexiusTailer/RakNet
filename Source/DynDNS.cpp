@@ -53,7 +53,7 @@ void DynDNS::Stop(void)
 
 
 // newIPAddress is optional - if left out, DynDNS will use whatever it receives
-void DynDNS::UpdateHostIP(const char *dnsHost, const char *newIPAddress, const char *usernameAndPassword )
+void DynDNS::UpdateHostIPAsynch(const char *dnsHost, const char *newIPAddress, const char *usernameAndPassword )
 {
 	myIPStr[0]=0;
 

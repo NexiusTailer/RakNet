@@ -186,6 +186,10 @@ int main(int argc, char **argv)
 				printf("ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR\n");
 				printf("%s\n", buff);
 			}
+			else if (p->data[0]==ID_AUTOPATCHER_CANNOT_DOWNLOAD_ORIGINAL_UNMODIFIED_FILES)
+			{
+				printf("ID_AUTOPATCHER_CANNOT_DOWNLOAD_ORIGINAL_UNMODIFIED_FILES\n");
+			}			
 			else if (p->data[0]==ID_AUTOPATCHER_FINISHED)
 			{
 				printf("ID_AUTOPATCHER_FINISHED with server time %f\n", autopatcherClient.GetServerDate());
@@ -225,6 +229,10 @@ int main(int argc, char **argv)
 				RakNet::StringCompressor::Instance()->DecodeString(buff, 256, &temp);
 				printf("ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR\n");
 				printf("%s\n", buff);
+			}
+			else if (p->data[0]==ID_AUTOPATCHER_CANNOT_DOWNLOAD_ORIGINAL_UNMODIFIED_FILES)
+			{
+				printf("ID_AUTOPATCHER_CANNOT_DOWNLOAD_ORIGINAL_UNMODIFIED_FILES\n");
 			}
 			else if (p->data[0]==ID_AUTOPATCHER_FINISHED)
 			{

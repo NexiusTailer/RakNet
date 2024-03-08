@@ -67,7 +67,7 @@ public:
 	/// \param[in] socketDescriptorCount The size of the \a socketDescriptors array.  Pass 1 if you are not sure what to pass.
 	/// \param[in] threadPriority Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. For Linux based systems, you MUST pass something reasonable based on the thread priorities for your application.
 	/// \return RAKNET_STARTED on success, otherwise appropriate failure enumeration.
-	StartupResult Startup( unsigned short maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority=-99999 );
+	StartupResult Startup( unsigned int maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority=-99999 );
 
 	/// If you accept connections, you must call this or else security will not be enabled for incoming connections.
 	/// This feature requires more round trips, bandwidth, and CPU time for the connection handshake
@@ -111,7 +111,7 @@ public:
 
 	/// \brief Returns the value passed to SetMaximumIncomingConnections().
 	/// \return Maximum number of incoming connections, which is always <= maxConnections
-	unsigned short GetMaximumIncomingConnections( void ) const;
+	unsigned int GetMaximumIncomingConnections( void ) const;
 
 	/// \brief Returns how many open connections exist at this time.
 	/// \return Number of open connections.
@@ -200,7 +200,7 @@ public:
 	virtual uint32_t IncrementNextSendReceipt(void);
 
 	/// \brief Sends a block of data to the specified system that you are connected to.
-	/// \note This function only works while the connected.
+	/// \note This function only works while connected.
 	/// \note The first byte should be a message identifier starting at ID_USER_PACKET_ENUM.
 	/// \param[in] data Block of data to send.
 	/// \param[in] length Size in bytes of the data to send.
@@ -271,7 +271,7 @@ public:
 
 	/// \brief Return the total number of connections we are allowed.
 	/// \return Total number of connections allowed.
-	unsigned short GetMaximumNumberOfPeers( void ) const;
+	unsigned int GetMaximumNumberOfPeers( void ) const;
 
 	// -------------------------------------------------------------------------------------------- Connection Management Functions--------------------------------------------------------------------------------------------
 	/// \brief Close the connection to another host (if we initiated the connection it will disconnect, if they did it will kick them out).
@@ -304,12 +304,12 @@ public:
 	/// 
 	/// \param[in] index Index should range between 0 and the maximum number of players allowed - 1.
 	/// \return The SystemAddress structure corresponding to \a index in remoteSystemList.
-	SystemAddress GetSystemAddressFromIndex( int index );
+	SystemAddress GetSystemAddressFromIndex( unsigned int index );
 
 	/// \brief Same as GetSystemAddressFromIndex but returns RakNetGUID
 	/// \param[in] index Index should range between 0 and the maximum number of players allowed - 1.
 	/// \return The RakNetGUID
-	RakNetGUID GetGUIDFromIndex( int index );
+	RakNetGUID GetGUIDFromIndex( unsigned int index );
 
 	/// \brief Same as calling GetSystemAddressFromIndex and GetGUIDFromIndex for all systems, but more efficient
 	/// Indices match each other, so \a addresses[0] and \a guids[0] refer to the same system
@@ -590,7 +590,7 @@ public:
 	RakNetStatistics * GetStatistics( const SystemAddress systemAddress, RakNetStatistics *rns=0 );
 	/// \brief Returns the network statistics of the system at the given index in the remoteSystemList.
 	///	\return True if the index is less than the maximum number of peers allowed and the system is active. False otherwise.
-	bool GetStatistics( const int index, RakNetStatistics *rns );
+	bool GetStatistics( const unsigned int index, RakNetStatistics *rns );
 	/// \brief Returns the list of systems, and statistics for each of those systems
 	/// Each system has one entry in each of the lists, in the same order
 	/// \param[out] addresses SystemAddress for each connected system
@@ -701,7 +701,7 @@ protected:
 	///Send a reliable disconnect packet to this player and disconnect them when it is delivered
 	void NotifyAndFlagForShutdown( const SystemAddress systemAddress, bool performImmediate, unsigned char orderingChannel, PacketPriority disconnectionNotificationPriority );
 	///Returns how many remote systems initiated a connection to us
-	unsigned short GetNumberOfRemoteInitiatedConnections( void ) const;
+	unsigned int GetNumberOfRemoteInitiatedConnections( void ) const;
 	///	\brief Get a free remote system from the list and assign our systemAddress to it.
 	/// \note Should only be called from the update thread - not the user thread.
 	/// \param[in] systemAddress	systemAddress to be assigned
@@ -733,12 +733,12 @@ protected:
 
 	bool occasionalPing;  /// Do we occasionally ping the other systems?*/
 	///Store the maximum number of peers allowed to connect
-	unsigned short maximumNumberOfPeers;
+	unsigned int maximumNumberOfPeers;
 	//05/02/06 Just using maximumNumberOfPeers instead
 	///Store the maximum number of peers able to connect, including reserved connection slots for pings, etc.
 	//unsigned short remoteSystemListSize;
 	///Store the maximum incoming connection allowed 
-	unsigned short maximumIncomingConnections;
+	unsigned int maximumIncomingConnections;
 	RakNet::BitStream offlinePingResponse;
 	///Local Player ID
 	// SystemAddress mySystemAddress[MAXIMUM_NUMBER_OF_INTERNAL_IDS];

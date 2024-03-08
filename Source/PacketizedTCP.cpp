@@ -50,7 +50,7 @@ void PacketizedTCP::Send( const char *data, unsigned length, const SystemAddress
 	lengthsArray[1]=length;
 	TCPInterface::SendList(dataArray,lengthsArray,2,systemAddress,broadcast);
 }
-bool PacketizedTCP::SendList( const char **data, const int *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast )
+bool PacketizedTCP::SendList( const char **data, const unsigned int *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast )
 {
 	if (isStarted.GetValue()==0)
 		return false;

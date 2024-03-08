@@ -160,6 +160,9 @@
 #ifndef _RAKNET_SUPPORT_LibVoice
 #define _RAKNET_SUPPORT_LibVoice 0
 #endif
+#ifndef _RAKNET_SUPPORT_RelayPlugin
+#define _RAKNET_SUPPORT_RelayPlugin 1
+#endif
 
 // Take care of dependencies
 #if _RAKNET_SUPPORT_DirectoryDeltaTransfer==1

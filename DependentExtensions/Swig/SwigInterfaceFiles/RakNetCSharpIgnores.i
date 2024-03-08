@@ -128,6 +128,7 @@ IGNORERAKPEERANDINTERFACE(GetConnectionList( SystemAddress *remoteSystems, unsig
 
 //RakNetSocket
 %ignore RakNetSocket::recvEvent;
+%ignore RakNetSocket::Fcntl;
 
 //To allow easier future support if needed, rather than not parsing the PluginInterface2 ignore the functions
 //Later if decided that is needed remove the ignores and the commented typemaps and includes

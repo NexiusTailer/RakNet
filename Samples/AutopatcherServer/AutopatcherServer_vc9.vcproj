@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.6&quot;;./../../DependentExtensions/Autopatcher/AutopatcherPostgreRepository;./../../DependentExtensions/PostgreSQLInterface"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.6&quot;;./../../DependentExtensions/Autopatcher/AutopatcherPostgreRepository;./../../DependentExtensions/PostgreSQLInterface;&quot;./../../DependentExtensions/openssl-1.0.0d/include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib ./../../DependentExtensions\Autopatcher\AutopatcherPostgreRepository\Debug\AutopatcherPostgreRepository.lib &quot;C:\Program Files (x86)\PostgreSQL\9.1\lib\libpq.lib&quot;"
+				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib ./../../DependentExtensions\Autopatcher\AutopatcherPostgreRepository\Debug\AutopatcherPostgreRepository.lib &quot;C:\Program Files (x86)\PostgreSQL\9.2\lib\libpq.lib&quot;"
 				OutputFile="$(OutDir)/AutopatcherServer.exe"
 				LinkIncremental="2"
 				IgnoreAllDefaultLibraries="false"
@@ -95,7 +95,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;C:\Program Files (x86)\PostgreSQL\9.1\bin\*.dll&quot; .\Debug"
+				CommandLine="copy &quot;C:\Program Files (x86)\PostgreSQL\9.2\bin\*.dll&quot; .\Debug"
 			/>
 		</Configuration>
 		<Configuration
@@ -123,7 +123,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.6&quot;;./../../DependentExtensions/Autopatcher/AutopatcherPostgreRepository;./../../DependentExtensions/PostgreSQLInterface"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.6&quot;;./../../DependentExtensions/Autopatcher/AutopatcherPostgreRepository;./../../DependentExtensions/PostgreSQLInterface;&quot;./../../DependentExtensions/openssl-1.0.0d/include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -142,7 +142,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStatic.lib ws2_32.lib ./../../Depend+entExtensions\Autopatcher\AutopatcherPostgreRepository\Release\AutopatcherPostgreRepository.lib &quot;C:\Program Files (x86)\PostgreSQL\9.1\lib\libpq.lib&quot;"
+				AdditionalDependencies="./../../lib/RakNetLibStatic.lib ws2_32.lib ./../../Depend+entExtensions\Autopatcher\AutopatcherPostgreRepository\Release\AutopatcherPostgreRepository.lib &quot;C:\Program Files (x86)\PostgreSQL\9.2\lib\libpq.lib&quot;"
 				OutputFile="$(OutDir)/AutopatcherServer.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
@@ -174,7 +174,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;C:\Program Files (x86)\PostgreSQL\9.1\bin\*.dll&quot; .\Release"
+				CommandLine="copy &quot;C:\Program Files (x86)\PostgreSQL\9.2\bin\*.dll&quot; .\Release"
 			/>
 		</Configuration>
 	</Configurations>

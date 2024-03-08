@@ -11,7 +11,10 @@
 
 int main(int argc, char **argv)
 {
-	if (!RakNet::CloudServerHelper::ParseCommandLineParameters(argc, argv))
+	// Used to update DNS
+	RakNet::DynDNS dynDNS;
+	RakNet::CloudServerHelper_DynDns cloudServerHelper(&dynDNS);
+	if (!cloudServerHelper.ParseCommandLineParameters(argc, argv))
 		return 1;
 
 	// ---- RAKPEER -----
@@ -28,8 +31,6 @@ int main(int argc, char **argv)
 	// Used for servers to verify each other - otherwise any system could pose as a server
 	// Could also be used to verify and restrict clients if paired with the MessageFilter plugin
 	RakNet::TwoWayAuthentication twoWayAuthentication;
-	// Used to update DNS
-	RakNet::DynDNS dynDNS;
 	// Used to tell servers about each other
 	RakNet::ConnectionGraph2 connectionGraph2;
 
@@ -39,17 +40,17 @@ int main(int argc, char **argv)
 	rakPeer->AttachPlugin(&twoWayAuthentication);
 	rakPeer->AttachPlugin(&connectionGraph2);
 
-	if (!RakNet::CloudServerHelper::StartRakPeer(rakPeer))
+	if (!cloudServerHelper.StartRakPeer(rakPeer))
 		return 1;
 
 	RakNet::CloudServerHelperFilter sampleFilter; // Keeps clients from updating stuff to the server they are not supposed to
 	sampleFilter.serverGuid=rakPeer->GetMyGUID();
-	RakNet::CloudServerHelper::SetupPlugins(&cloudServer, &sampleFilter, &cloudClient, &fullyConnectedMesh2, &twoWayAuthentication,&connectionGraph2, RakNet::CloudServerHelper::serverToServerPassword);
+	cloudServerHelper.SetupPlugins(&cloudServer, &sampleFilter, &cloudClient, &fullyConnectedMesh2, &twoWayAuthentication,&connectionGraph2, cloudServerHelper.serverToServerPassword);
 
 	int ret;
 	do 
 	{
-		ret = RakNet::CloudServerHelper::JoinCloud(rakPeer, &cloudServer, &cloudClient, &fullyConnectedMesh2, &twoWayAuthentication, &connectionGraph2, &dynDNS);
+		ret = cloudServerHelper.JoinCloud(rakPeer, &cloudServer, &cloudClient, &fullyConnectedMesh2, &twoWayAuthentication, &connectionGraph2, dynDNS.GetMyPublicIP());
 	} while (ret==2);
 	if (ret==1)
 		return 1;
@@ -61,11 +62,11 @@ int main(int argc, char **argv)
 	{
 		for (packet=rakPeer->Receive(); packet; rakPeer->DeallocatePacket(packet), packet=rakPeer->Receive())
 		{
-			RakNet::CloudServerHelper::OnPacket(packet, rakPeer, &cloudClient, &cloudServer, &fullyConnectedMesh2, &twoWayAuthentication, &connectionGraph2, &dynDNS);
+			cloudServerHelper.OnPacket(packet, rakPeer, &cloudClient, &cloudServer, &fullyConnectedMesh2, &twoWayAuthentication, &connectionGraph2);
 		}
 
 		// Update() returns false on DNS update failure
-		if (!RakNet::CloudServerHelper::Update(&dynDNS))
+		if (!cloudServerHelper.Update())
 			break;
 
 		// Any additional server processing beyond hosting the CloudServer can go here

@@ -1119,11 +1119,12 @@ int main(void)
 
 		// The following code is TCP operations for talking to the master server, and parsing the reply
 		SystemAddress sa;
+		// This is kind of crappy, but for TCP plugins, always do HasCompletedConnectionAttempt, then Receive(), then HasFailedConnectionAttempt(),HasLostConnection()
 		sa = tcp->HasCompletedConnectionAttempt();
-		sa = tcp->HasFailedConnectionAttempt();
-		sa = tcp->HasLostConnection();
 		for (packet = tcp->Receive(); packet; tcp->DeallocatePacket(packet), packet = tcp->Receive())
 			;
+		sa = tcp->HasFailedConnectionAttempt();
+		sa = tcp->HasLostConnection();
 
 		RakString stringTransmitted;
 		RakString hostTransmitted;

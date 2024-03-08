@@ -195,6 +195,8 @@ enum DefaultMessageIDTypes
 	ID_AUTOPATCHER_PATCH_LIST,
 	/// Autopatcher plugin - Returned to the user: An error from the database repository for the autopatcher.
 	ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR,
+	/// Autopatcher plugin - Returned to the user: The server does not allow downloading unmodified game files.
+	ID_AUTOPATCHER_CANNOT_DOWNLOAD_ORIGINAL_UNMODIFIED_FILES,
 	/// Autopatcher plugin - Finished getting all files from the autopatcher
 	ID_AUTOPATCHER_FINISHED_INTERNAL,
 	ID_AUTOPATCHER_FINISHED,
@@ -402,6 +404,9 @@ enum DefaultMessageIDTypes
 
 	// LibVoice
 	ID_LIB_VOICE,
+
+	ID_RELAY_PLUGIN_TO_RELAY,
+	ID_RELAY_PLUGIN_FROM_RELAY,
 
 	// So I can add more without changing user enumerations
 	ID_RESERVED_1,

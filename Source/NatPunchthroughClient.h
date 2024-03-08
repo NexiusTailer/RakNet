@@ -158,7 +158,7 @@ public:
 	/// \param[in] i Pointer to an interface. The pointer is stored, so don't delete it while in progress. Pass 0 to clear.
 	void SetDebugInterface(NatPunchthroughDebugInterface *i);
 
-	/// Get the port mappings you should pass to UPNP (for miniupnpc-1.5, for the function UPNP_AddPortMapping)
+	/// Get the port mappings you should pass to UPNP (for miniupnpc-1.6.20120410, for the function UPNP_AddPortMapping)
 	void GetUPNPPortMappings(char *externalPort, char *internalPort, const SystemAddress &natPunchthroughServerAddress);
 
 	/// \internal For plugin handling

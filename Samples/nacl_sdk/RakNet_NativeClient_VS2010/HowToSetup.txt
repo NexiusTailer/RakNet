@@ -26,4 +26,11 @@ D:\nacl_sdk>naclsdk install vs_addin
 D:\nacl_sdk>cd vs_addin
 D:\nacl_sdk\vs_addin>install.bat
 
+Set the enviroment variable NACL_SDK_ROOT to D:\nacl_sdk\pepper_canary
+Then see https://developers.google.com/native-client/dev/devguide/devcycle/vs-addin#add-platforms
+
 6. Build as in make.bat
+
+7. Run httpd.py
+
+8. Press F5 to debug. There are these instructions, but I don't believe they are relevant:http://www.chromium.org/nativeclient/how-tos/debugging-documentation/debugging-with-debug-stub-recommended/debugging-nacl-apps-in-visual-studio-with-wingdb-using-debug-stub-experimental

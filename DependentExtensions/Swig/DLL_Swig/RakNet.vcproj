@@ -205,6 +205,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Source\Base64Encoder.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\Base64Encoder.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Source\BitStream.cpp"
 			>
 		</File>
@@ -537,6 +545,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Source\HTTPConnection2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\HTTPConnection2.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Source\IncrementalReadInterface.cpp"
 			>
 		</File>
@@ -753,10 +769,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\SwigOutput\CplusDLLIncludes\RakNet_wrap.cxx"
-			>
-		</File>
-		<File
 			RelativePath="..\..\..\Source\RakNetCommandParser.cpp"
 			>
 		</File>
@@ -782,6 +794,42 @@
 		</File>
 		<File
 			RelativePath="..\..\..\Source\RakNetSocket.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\RakNetSocket2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\RakNetSocket2.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\RakNetSocket2_360_720.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\RakNetSocket2_Berkley.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\RakNetSocket2_NativeClient.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\RakNetSocket2_PS3_PS4.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\RakNetSocket2_Vita.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\RakNetSocket2_Windows_Linux.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\RakNetSocket2_Windows_Linux_360.cpp"
 			>
 		</File>
 		<File
@@ -869,18 +917,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\Source\rdlmalloc-options.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\Source\rdlmalloc.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\Source\rdlmalloc.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\..\Source\ReadyEvent.cpp"
 			>
 		</File>
@@ -890,6 +926,14 @@
 		</File>
 		<File
 			RelativePath="..\..\..\Source\RefCountedObj.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\RelayPlugin.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\RelayPlugin.h"
 			>
 		</File>
 		<File

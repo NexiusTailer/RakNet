@@ -366,7 +366,7 @@ struct CloudServerFramework : public SampleFramework
 			rakPeer->AttachPlugin(cloudClient);
 			cloudServerHelperFilter = new CloudServerHelperFilter;
 			cloudServer->AddQueryFilter(cloudServerHelperFilter);
-			RakNet::CloudServerHelper::OnConnectionCountChange(rakPeer, cloudClient);
+			cloudServerHelper.OnConnectionCountChange(rakPeer, cloudClient);
 		}
 	}
 	virtual void ProcessPacket(RakNet::RakPeerInterface *rakPeer, Packet *packet)
@@ -378,12 +378,12 @@ struct CloudServerFramework : public SampleFramework
 		{
 		case ID_NEW_INCOMING_CONNECTION:
 			printf("Got connection to %s\n", packet->systemAddress.ToString(true));
-			RakNet::CloudServerHelper::OnConnectionCountChange(rakPeer, cloudClient);
+			cloudServerHelper.OnConnectionCountChange(rakPeer, cloudClient);
 			break;
 		case ID_CONNECTION_LOST:
 		case ID_DISCONNECTION_NOTIFICATION:
 			printf("Lost connection to %s\n", packet->systemAddress.ToString(true));
-			RakNet::CloudServerHelper::OnConnectionCountChange(rakPeer, cloudClient);
+			cloudServerHelper.OnConnectionCountChange(rakPeer, cloudClient);
 			break;
 		}
 	}
@@ -405,6 +405,7 @@ struct CloudServerFramework : public SampleFramework
 	RakNet::CloudServer *cloudServer;
 	RakNet::CloudClient *cloudClient;
 	RakNet::CloudServerHelperFilter *cloudServerHelperFilter;
+	RakNet::CloudServerHelper cloudServerHelper;
 };
 int main()
 {

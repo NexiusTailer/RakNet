@@ -493,6 +493,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\RelayPlugin.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\ReliabilityLayer.cpp"
 				>
 			</File>
@@ -1056,6 +1060,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\RefCountedObj.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\RelayPlugin.h"
 				>
 			</File>
 			<File

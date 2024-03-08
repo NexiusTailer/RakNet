@@ -34,7 +34,7 @@ public:
 	void Send( const char *data, unsigned length, const SystemAddress &systemAddress, bool broadcast );
 
 	// Sends a concatenated list of byte streams
-	bool SendList( const char **data, const int *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast );
+	bool SendList( const char **data, const unsigned int *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast );
 
 	/// Returns data received
 	Packet* Receive( void );

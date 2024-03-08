@@ -93,7 +93,7 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 		if (input->onFileStruct.context.op==PC_HASH_1_WITH_PATCH)
 			hashMultiplier=1;
 		else
-			hashMultiplier=2;
+			hashMultiplier=2; // else op==PC_HASH_2_WITH_PATCH
 		if (ApplyPatch((char*)input->prePatchFile, input->prePatchLength, &input->postPatchFile, &input->postPatchLength, (char*)input->onFileStruct.fileData+HASH_LENGTH*hashMultiplier, input->onFileStruct.byteLengthOfThisFile-HASH_LENGTH*hashMultiplier)==false)
 		{
 
@@ -525,6 +525,7 @@ PluginReceiveResult AutopatcherClient::OnReceive(Packet *packet)
 		OnDeletionList(packet);
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 	case ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR:
+	case ID_AUTOPATCHER_CANNOT_DOWNLOAD_ORIGINAL_UNMODIFIED_FILES:
 		fileListTransfer->RemoveReceiver(serverId);
 		Clear();
 		return RR_CONTINUE_PROCESSING;

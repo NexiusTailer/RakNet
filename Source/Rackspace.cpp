@@ -17,13 +17,13 @@ Rackspace::~Rackspace()
 
 }
 
-void Rackspace::AddEventCallback(RackspaceEventCallback *callback)
+void Rackspace::AddEventCallback(Rackspace2EventCallback *callback)
 {
 	unsigned int idx = eventCallbacks.GetIndexOf(callback);
 	if (idx == (unsigned int)-1)
 		eventCallbacks.Push(callback,_FILE_AND_LINE_);
 }
-void Rackspace::RemoveEventCallback(RackspaceEventCallback *callback)
+void Rackspace::RemoveEventCallback(Rackspace2EventCallback *callback)
 {
 	unsigned int idx = eventCallbacks.GetIndexOf(callback);
 	if (idx != (unsigned int)-1)

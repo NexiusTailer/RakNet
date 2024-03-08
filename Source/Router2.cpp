@@ -1258,10 +1258,10 @@ int Router2::GetLargestPingAmongConnectedSystems(void) const
 {
 	int avePing;
 	int largestPing=-1;
-	unsigned short maxPeers = rakPeerInterface->GetMaximumNumberOfPeers();
+	unsigned int maxPeers = rakPeerInterface->GetMaximumNumberOfPeers();
 	if (maxPeers==0)
 		return 9999;
-	unsigned short index;
+	unsigned int index;
 	for (index=0; index < rakPeerInterface->GetMaximumNumberOfPeers(); index++)
 	{
 		RakNetGUID g = rakPeerInterface->GetGUIDFromIndex(index);

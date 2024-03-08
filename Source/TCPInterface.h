@@ -73,10 +73,10 @@ public:
 #endif
 
 	/// Sends a byte stream
-	void Send( const char *data, unsigned int length, const SystemAddress &systemAddress, bool broadcast );
+	virtual void Send( const char *data, unsigned int length, const SystemAddress &systemAddress, bool broadcast );
 
 	// Sends a concatenated list of byte streams
-	bool SendList( const char **data, const unsigned int  *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast );
+	virtual bool SendList( const char **data, const unsigned int  *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast );
 
 	// Get how many bytes are waiting to be sent. If too many, you may want to skip sending
 	unsigned int GetOutgoingDataBufferSize(SystemAddress systemAddress) const;

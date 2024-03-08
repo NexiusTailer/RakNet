@@ -153,7 +153,7 @@ bool AutopatcherMySQLRepository::RemoveApplication(const char *applicationName)
 	return b;
 }
 
-bool AutopatcherMySQLRepository::GetChangelistSinceDate(const char *applicationName, FileList *addedFiles, FileList *deletedFiles, double sinceDate)
+bool AutopatcherMySQLRepository::GetChangelistSinceDate(const char *applicationName, FileList *addedOrModifiedFilesWithHashData, FileList *deletedFiles, double sinceDate)
 {
 	char query[512];
 	RakNet::RakString escapedApplicationName = GetEscapedString(applicationName);
@@ -213,7 +213,7 @@ bool AutopatcherMySQLRepository::GetChangelistSinceDate(const char *applicationN
 	return true;
 }
 
-bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileList *input, FileList *patchList)
+int AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileList *input, bool allowDownloadOfOriginalUnmodifiedFiles, FileList *patchList)
 {
 	char query[512];
 	RakNet::RakString escapedApplicationName = GetEscapedString(applicationName);
@@ -245,7 +245,7 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 		//	               "ON FileVersionHistory.fileId = MaxId.maxId", 
 		//		applicationID, fn);
 
-			sprintf(query, "SELECT fileId, fileLength FROM FileVersionHistory "
+			sprintf(query, "SELECT fileId, fileLength, changeSetID FROM FileVersionHistory "
 				"JOIN (SELECT max(fileId) maxId FROM FileVersionHistory WHERE applicationId=%i AND filename='%s') MaxId "
 				"ON FileVersionHistory.fileId = MaxId.maxId", 
 				applicationID, fn);
@@ -268,6 +268,13 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 				//patchList->AddFile(userFilename, content, contentLength, contentLength, FileListNodeContext(PC_WRITE_FILE,0));
 				const int fileId = atoi (row [0]); 
 				const int fileLength = atoi (row [1]); 
+				const int changeSetID = atoi (row [2]); 
+				if (allowDownloadOfOriginalUnmodifiedFiles==false && changeSetID==0)
+				{
+					mysql_free_result(result);
+					return false;
+				}
+
 				patchList->AddFile(userFilename,userFilename, 0, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId), true);
 			}
 			mysql_free_result(result);
@@ -382,7 +389,7 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 	return true;
 }
 
-bool AutopatcherMySQLRepository::GetMostRecentChangelistWithPatches(RakNet::RakString &applicationName, FileList *patchedFiles, FileList *updatedFiles, FileList *updatedFileHashes, FileList *deletedFiles, double *priorRowPatchTime, double *mostRecentRowPatchTime)
+bool AutopatcherMySQLRepository::GetMostRecentChangelistWithPatches(RakNet::RakString &applicationName, FileList *patchedFiles, FileList *addedFiles, FileList *addedOrModifiedFileHashes, FileList *deletedFiles, double *priorRowPatchTime, double *mostRecentRowPatchTime)
 {
 	// Not yet implemented
 	return false;

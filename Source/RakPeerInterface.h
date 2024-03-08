@@ -53,7 +53,7 @@ public:
 	/// \param[in] socketDescriptorCount The size of the \a socketDescriptors array.  Pass 1 if you are not sure what to pass.
 	/// \param[in] threadPriority Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. For Linux based systems, you MUST pass something reasonable based on the thread priorities for your application.
 	/// \return RAKNET_STARTED on success, otherwise appropriate failure enumeration.
-	virtual StartupResult Startup( unsigned short maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority=-99999 )=0;
+	virtual StartupResult Startup( unsigned int maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority=-99999 )=0;
 
 	/// If you accept connections, you must call this or else security will not be enabled for incoming connections.
 	/// This feature requires more round trips, bandwidth, and CPU time for the connection handshake
@@ -93,7 +93,7 @@ public:
 
 	/// Returns the value passed to SetMaximumIncomingConnections()
 	/// \return the maximum number of incoming connections, which is always <= maxConnections
-	virtual unsigned short GetMaximumIncomingConnections( void ) const=0;
+	virtual unsigned int GetMaximumIncomingConnections( void ) const=0;
 
 	/// Returns how many open connections there are at this time
 	/// \return the number of open connections
@@ -176,7 +176,7 @@ public:
 	virtual uint32_t IncrementNextSendReceipt(void)=0;
 
 	/// Sends a block of data to the specified system that you are connected to.
-	/// This function only works while the connected
+	/// This function only works while connected
 	/// The first byte should be a message identifier starting at ID_USER_PACKET_ENUM
 	/// \param[in] data The block of data to send
 	/// \param[in] length The size in bytes of the data to send
@@ -217,7 +217,7 @@ public:
 	/// bs.WriteAlignedBytes(block3, blockLength3);
 	/// Send(&bs, ...)
 	///
-	/// This function only works while the connected
+	/// This function only works while connected
 	/// \param[in] data An array of pointers to blocks of data
 	/// \param[in] lengths An array of integers indicating the length of each block of data
 	/// \param[in] numParameters Length of the arrays data and lengths
@@ -243,7 +243,7 @@ public:
 	virtual void DeallocatePacket( Packet *packet )=0;
 
 	/// Return the total number of connections we are allowed
-	virtual unsigned short GetMaximumNumberOfPeers( void ) const=0;
+	virtual unsigned int GetMaximumNumberOfPeers( void ) const=0;
 
 	// -------------------------------------------------------------------------------------------- Connection Management Functions--------------------------------------------------------------------------------------------
 	/// Close the connection to another host (if we initiated the connection it will disconnect, if they did it will kick them out).
@@ -273,12 +273,12 @@ public:
 	/// Given an index, will return a SystemAddress.
 	/// \param[in] index Index should range between 0 and the maximum number of players allowed - 1.
 	/// \return The SystemAddress
-	virtual SystemAddress GetSystemAddressFromIndex( int index )=0;
+	virtual SystemAddress GetSystemAddressFromIndex( unsigned int index )=0;
 
 	/// Same as GetSystemAddressFromIndex but returns RakNetGUID
 	/// \param[in] index Index should range between 0 and the maximum number of players allowed - 1.
 	/// \return The RakNetGUID
-	virtual RakNetGUID GetGUIDFromIndex( int index )=0;
+	virtual RakNetGUID GetGUIDFromIndex( unsigned int index )=0;
 
 	/// Same as calling GetSystemAddressFromIndex and GetGUIDFromIndex for all systems, but more efficient
 	/// Indices match each other, so \a addresses[0] and \a guids[0] refer to the same system
@@ -551,7 +551,7 @@ public:
 	virtual RakNetStatistics * GetStatistics( const SystemAddress systemAddress, RakNetStatistics *rns=0 )=0;
 	/// \brief Returns the network statistics of the system at the given index in the remoteSystemList.
 	///	\return True if the index is less than the maximum number of peers allowed and the system is active. False otherwise.
-	virtual bool GetStatistics( const int index, RakNetStatistics *rns )=0;
+	virtual bool GetStatistics( const unsigned int index, RakNetStatistics *rns )=0;
 	/// \brief Returns the list of systems, and statistics for each of those systems
 	/// Each system has one entry in each of the lists, in the same order
 	/// \param[out] addresses SystemAddress for each connected system

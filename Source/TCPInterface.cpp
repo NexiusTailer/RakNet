@@ -1273,7 +1273,8 @@ void RemoteClient::InitSSL(SSL_CTX* ctx, SSL_METHOD *meth)
 	res = SSL_connect (ssl);
 	if (res<0)
 	{
-		printf("SSL_connect error: %s\n", ERR_reason_error_string(ERR_get_error()));
+		unsigned long err = ERR_get_error();
+		printf("SSL_connect error: %s\n", ERR_reason_error_string(err));
 	}
 	else if (res==0)
 	{

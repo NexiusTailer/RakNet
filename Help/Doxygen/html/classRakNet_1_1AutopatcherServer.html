@@ -92,8 +92,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ac39d86dcda2c9566310335cf36eb1ed1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab23dced0b7e1c29e8cf02561a6b6ef2e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherServer.html#ab23dced0b7e1c29e8cf02561a6b6ef2e">SetMaxConurrentUsers</a> (unsigned int _maxConcurrentUsers)</td></tr>
 <tr class="separator:ab23dced0b7e1c29e8cf02561a6b6ef2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab85215dbb1168e709234d1427d726c78"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherServer.html#ab85215dbb1168e709234d1427d726c78">GetMaxConurrentUsers</a> (void) const </td></tr>
+<tr class="separator:ab85215dbb1168e709234d1427d726c78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add10b676cc7641eac267cf69e9ab43c2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherServer.html#add10b676cc7641eac267cf69e9ab43c2">SetLoadManagementCallback</a> (AutopatcherServerLoadNotifier *asumc)</td></tr>
 <tr class="separator:add10b676cc7641eac267cf69e9ab43c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a656a5b2929391d0e2f7b9bd6caddb0bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherServer.html#a656a5b2929391d0e2f7b9bd6caddb0bb">SetAllowDownloadOfOriginalUnmodifiedFiles</a> (bool allow)</td></tr>
+<tr class="separator:a656a5b2929391d0e2f7b9bd6caddb0bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52e9ec17aab14603f6e763b5e9cd90d0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a52e9ec17aab14603f6e763b5e9cd90d0"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherServer.html#a52e9ec17aab14603f6e763b5e9cd90d0">Clear</a> (void)</td></tr>
 <tr class="memdesc:a52e9ec17aab14603f6e763b5e9cd90d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear buffered input and output. <br/></td></tr>
@@ -201,6 +205,23 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </div>
 </div>
+<a class="anchor" id="ab85215dbb1168e709234d1427d726c78"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int RakNet::AutopatcherServer::GetMaxConurrentUsers </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Returns what was passed to <a class="el" href="classRakNet_1_1AutopatcherServer.html#ab23dced0b7e1c29e8cf02561a6b6ef2e">SetMaxConurrentUsers()</a>; </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a76414a1d46ea3bd2d3401c4f64b70146"></a>
 <div class="memitem">
 <div class="memproto">
@@ -283,6 +304,29 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <dl class="section return"><dt>Returns</dt><dd>True to allow the game and other plugins to get this message, false to absorb it </dd></dl>
 
 <p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#aa86f33263c1648f11b8a006469272639">RakNet::PluginInterface2</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a656a5b2929391d0e2f7b9bd6caddb0bb"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::AutopatcherServer::SetAllowDownloadOfOriginalUnmodifiedFiles </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>allow</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Set whether or not the client can download files that were never modified, that they do not have Defaults to true Set to false to disallow downloading the entire game through the autopatcher. In this case, the user must have a copy of the game through other means (such as a CD install) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">allow</td><td>True to allow downloading original game files, false to disallow </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -441,7 +485,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Dec 5 2012 00:32:35 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Dec 17 2012 23:26:03 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

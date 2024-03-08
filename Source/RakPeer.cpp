@@ -340,7 +340,7 @@ RakPeer::~RakPeer()
 // \param[in] socketDescriptorCount The size of the \a socketDescriptors array.  Pass 1 if you are not sure what to pass.
 // \return False on failure (can't create socket or thread), true on success.
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority )
+StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority )
 {
 	if (IsActive())
 		return RAKNET_ALREADY_STARTED;
@@ -439,7 +439,6 @@ StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor 
 
 		RakNetSocket2 *r2 = RakNetSocket2Allocator::AllocRNS2();
 		r2->SetUserConnectionSocketIndex(i);
-
 		#if defined(__native_client__)
 		NativeClientBindParameters ncbp;
 		RNS2_NativeClient * nativeClientSocket = (RNS2_NativeClient*) r2;
@@ -865,7 +864,7 @@ void RakPeer::SetMaximumIncomingConnections( unsigned short numberAllowed )
 // Description:
 // Returns the maximum number of incoming connections, which is always <= maxConnections
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-unsigned short RakPeer::GetMaximumIncomingConnections( void ) const
+unsigned int RakPeer::GetMaximumIncomingConnections( void ) const
 {
 	return maximumIncomingConnections;
 }
@@ -1003,7 +1002,7 @@ void RakPeer::Shutdown( unsigned int blockDuration, unsigned char orderingChanne
 //	SystemAddress systemAddress;
 	RakNet::TimeMS time;
 	//unsigned short systemListSize = remoteSystemListSize; // This is done for threading reasons
-	unsigned short systemListSize = maximumNumberOfPeers;
+	unsigned int systemListSize = maximumNumberOfPeers;
 
 	if ( blockDuration > 0 )
 	{
@@ -1376,7 +1375,7 @@ uint32_t RakPeer::Send( const RakNet::BitStream * bitStream, PacketPriority prio
 // bs.WriteAlignedBytes(block3, blockLength3);
 // Send(&bs, ...)
 //
-// This function only works while the connected
+// This function only works while connected
 // \param[in] data An array of pointers to blocks of data
 // \param[in] lengths An array of integers indicating the length of each block of data
 // \param[in] numParameters Length of the arrays data and lengths
@@ -1589,7 +1588,7 @@ void RakPeer::DeallocatePacket( Packet *packet )
 // Description:
 // Return the total number of connections we are allowed
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-unsigned short RakPeer::GetMaximumNumberOfPeers( void ) const
+unsigned int RakPeer::GetMaximumNumberOfPeers( void ) const
 {
 	return maximumNumberOfPeers;
 }
@@ -1749,7 +1748,7 @@ int RakPeer::GetIndexFromSystemAddress( const SystemAddress systemAddress ) cons
 // Returns
 // A valid systemAddress or UNASSIGNED_SYSTEM_ADDRESS if no such player at that index
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-SystemAddress RakPeer::GetSystemAddressFromIndex( int index )
+SystemAddress RakPeer::GetSystemAddressFromIndex( unsigned int index )
 {
 	// remoteSystemList in user thread
 	//if ( index >= 0 && index < remoteSystemListSize )
@@ -1765,7 +1764,7 @@ SystemAddress RakPeer::GetSystemAddressFromIndex( int index )
 // \param[in] index Index should range between 0 and the maximum number of players allowed - 1.
 // \return The RakNetGUID
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-RakNetGUID RakPeer::GetGUIDFromIndex( int index )
+RakNetGUID RakPeer::GetGUIDFromIndex( unsigned int index )
 {
 	// remoteSystemList in user thread
 	//if ( index >= 0 && index < remoteSystemListSize )
@@ -2485,6 +2484,9 @@ int RakPeer::GetMTUSize( const SystemAddress target ) const
 unsigned int RakPeer::GetNumberOfAddresses( void )
 {
 
+	if (IsActive()==false)
+		RakNetSocket2::GetMyIP( ipList );
+
 	int i = 0;
 
 	while ( ipList[ i ]!=UNASSIGNED_SYSTEM_ADDRESS )
@@ -3006,7 +3008,7 @@ void RakPeer::GetStatisticsList(DataStructures::List<SystemAddress> &addresses, 
 	}
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-bool RakPeer::GetStatistics( const int index, RakNetStatistics *rns )
+bool RakPeer::GetStatistics( const unsigned int index, RakNetStatistics *rns )
 {
 	if (index < maximumNumberOfPeers && remoteSystemList[ index ].isActive)
 	{
@@ -3459,12 +3461,12 @@ void RakPeer::NotifyAndFlagForShutdown( const SystemAddress systemAddress, bool 
 	}
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-unsigned short RakPeer::GetNumberOfRemoteInitiatedConnections( void ) const
+unsigned int RakPeer::GetNumberOfRemoteInitiatedConnections( void ) const
 {
 	if ( remoteSystemList == 0 || endThreads == true )
 		return 0;
 
-	unsigned short numberOfIncomingConnections;
+	unsigned int numberOfIncomingConnections;
 	numberOfIncomingConnections = 0;
 	unsigned int i;
 	for (i=0; i < activeSystemListSize; i++)

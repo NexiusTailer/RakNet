@@ -80,6 +80,8 @@ void AutopatcherServerLoadNotifier_Printf::OnGetPatchCompleted(SystemAddress rem
 		patchResultString="No files needed patching"; 
 	else if (patchResult==PR_REPOSITORY_ERROR)
 		patchResultString="Repository error"; 
+	else if (patchResult==PR_DISALLOWED_DOWNLOADING_ORIGINAL_FILES)
+		patchResultString="Disallowed downloading original files"; 
 	else if (patchResult==PR_PATCHES_WERE_SENT)
 		patchResultString="Files pushed for patching";
 	else if (patchResult==PR_ABORTED_FROM_INPUT_THREAD)
@@ -101,6 +103,7 @@ AutopatcherServer::AutopatcherServer()
 	cache_minTime=0;
 	cache_maxTime=0;
 	cacheLoaded=false;
+	allowDownloadOfOriginalUnmodifiedFiles=true;
 }
 AutopatcherServer::~AutopatcherServer()
 {
@@ -141,13 +144,13 @@ void AutopatcherServer::CacheMostRecentPatch(const char *applicationName)
 		else
 			cache_appName.Clear();
 		cache_patchedFiles.Clear();
-		cache_updatedFiles.Clear();
+		cache_addedFiles.Clear();
 		cache_deletedFiles.Clear();
-		cache_updatedFileHashes.Clear();
+		cache_addedOrModifiedFileHashes.Clear();
 		cache_minTime=0;
 		cache_maxTime=0;
 
-		cacheLoaded = connectionPool[0]->GetMostRecentChangelistWithPatches(cache_appName, &cache_patchedFiles, &cache_updatedFiles, &cache_updatedFileHashes, &cache_deletedFiles, &cache_minTime, &cache_maxTime);
+		cacheLoaded = connectionPool[0]->GetMostRecentChangelistWithPatches(cache_appName, &cache_patchedFiles, &cache_addedFiles, &cache_addedOrModifiedFileHashes, &cache_deletedFiles, &cache_minTime, &cache_maxTime);
 	}
 }
 void AutopatcherServer::OnAttach(void)
@@ -170,6 +173,7 @@ void AutopatcherServer::Update(void)
 		case ID_AUTOPATCHER_GET_CHANGELIST_SINCE_DATE:
 			OnGetChangelistSinceDateInt(packet);
 			break;
+		// Client sends ID_AUTOPATCHER_GET_PATCH with files that they have different or missing
 		case ID_AUTOPATCHER_GET_PATCH:
 			OnGetPatchInt(packet);
 			break;
@@ -212,7 +216,7 @@ void AutopatcherServer::Clear(void)
 	{
 		RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->patchList, _FILE_AND_LINE_);
 		RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->deletedFiles, _FILE_AND_LINE_);
-		RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->addedFiles, _FILE_AND_LINE_);
+		RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->addedOrModifiedFilesWithHashData, _FILE_AND_LINE_);
 	}
 	threadPool.ClearOutput();
 
@@ -275,7 +279,7 @@ void AutopatcherServer::RemoveFromThreadPool(SystemAddress systemAddress)
 		{
 			RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->patchList, _FILE_AND_LINE_);
 			RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->deletedFiles, _FILE_AND_LINE_);
-			RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->addedFiles, _FILE_AND_LINE_);
+			RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->addedOrModifiedFilesWithHashData, _FILE_AND_LINE_);
 			threadPool.RemoveOutputAtIndex(i);
 		}
 		else
@@ -289,7 +293,7 @@ AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherS
 {
 	AutopatcherRepositoryInterface *repository = (AutopatcherRepositoryInterface*)perThreadData;
 	
-	FileList addedFiles, deletedFiles;
+	FileList addedOrModifiedFilesWithHashData, deletedFiles;
 	AutopatcherServer *server = threadData.server;
 
 	//AutopatcherServer::ResultTypeAndBitstream *rtab = RakNet::OP_NEW<AutopatcherServer::ResultTypeAndBitstream>( _FILE_AND_LINE_ );
@@ -298,18 +302,18 @@ AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherS
 // 	rtab.deletedFiles=RakNet::OP_NEW<FileList>( _FILE_AND_LINE_ );
 // 	rtab.addedFiles=RakNet::OP_NEW<FileList>( _FILE_AND_LINE_ );
 	rtab.deletedFiles=&deletedFiles;
-	rtab.addedFiles=&addedFiles;
+	rtab.addedOrModifiedFilesWithHashData=&addedOrModifiedFilesWithHashData;
 
 	// Query the database for a changelist since this date
 	RakAssert(server);
 	//if (server->repository->GetChangelistSinceDate(threadData.applicationName.C_String(), rtab.addedFiles, rtab.deletedFiles, threadData.lastUpdateDate.C_String(), currentDate))
-	if (repository->GetChangelistSinceDate(threadData.applicationName.C_String(), rtab.addedFiles, rtab.deletedFiles, threadData.lastUpdateDate))
+	if (repository->GetChangelistSinceDate(threadData.applicationName.C_String(), rtab.addedOrModifiedFilesWithHashData, rtab.deletedFiles, threadData.lastUpdateDate))
 	{
-		rtab.fatalError=false;
+		rtab.resultCode=1;
 	}
 	else
 	{
-		rtab.fatalError=true;
+		rtab.resultCode=0;
 	}
 
 	rtab.operation=AutopatcherServer::ResultTypeAndBitstream::GET_CHANGELIST_SINCE_DATE;
@@ -317,7 +321,7 @@ AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherS
 	// *returnOutput=true;
 	// return rtab;
 
-	if (rtab.fatalError==false)
+	if (rtab.resultCode==1)
 	{
 		if (rtab.deletedFiles->fileList.Size())
 		{
@@ -325,14 +329,14 @@ AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherS
 			rtab.deletedFiles->Serialize(&rtab.bitStream1);
 		}
 
-		if (rtab.addedFiles->fileList.Size())
+		if (rtab.addedOrModifiedFilesWithHashData->fileList.Size())
 		{
 			rtab.bitStream2.Write((unsigned char) ID_AUTOPATCHER_CREATION_LIST);
-			rtab.addedFiles->Serialize(&rtab.bitStream2);
+			rtab.addedOrModifiedFilesWithHashData->Serialize(&rtab.bitStream2);
 			rtab.bitStream2.Write(rtab.currentDate);
 			rtab.bitStream2.WriteCasted<double>(0);
 
-			rtab.addedFiles->Clear();
+			rtab.addedOrModifiedFilesWithHashData->Clear();
 		}
 		else
 		{
@@ -364,13 +368,13 @@ AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherS
 			autopatcherState.requestsWorking=server->patchingUsers.Size();
 
 			AutopatcherServerLoadNotifier::GetChangelistResult getChangelistResult;
-			if (rtab.fatalError==true)
+			if (rtab.resultCode!=1)
 				getChangelistResult=AutopatcherServerLoadNotifier::GCR_REPOSITORY_ERROR;
-			else if (rtab.deletedFiles->fileList.Size()==0 && rtab.addedFiles->fileList.Size()==0)
+			else if (rtab.deletedFiles->fileList.Size()==0 && rtab.addedOrModifiedFilesWithHashData->fileList.Size()==0)
 				getChangelistResult=AutopatcherServerLoadNotifier::GCR_NOTHING_TO_DO;
 			else if (rtab.deletedFiles->fileList.Size()==0)
 				getChangelistResult=AutopatcherServerLoadNotifier::GCR_ADD_FILES;
-			else if (rtab.addedFiles->fileList.Size()==0)
+			else if (rtab.addedOrModifiedFilesWithHashData->fileList.Size()==0)
 				getChangelistResult=AutopatcherServerLoadNotifier::GCR_DELETE_FILES;
 			else
 				getChangelistResult=AutopatcherServerLoadNotifier::GCR_ADD_AND_DELETE_FILES;
@@ -414,10 +418,10 @@ PluginReceiveResult AutopatcherServer::OnGetChangelistSinceDate(Packet *packet)
 				cache_deletedFiles.Serialize(&bitStream1);
 				SendUnified(&bitStream1, priority, RELIABLE_ORDERED,orderingChannel, packet->systemAddress, false);
 			}
-			if (cache_updatedFileHashes.fileList.Size())
+			if (cache_addedOrModifiedFileHashes.fileList.Size())
 			{
 				bitStream2.Write((unsigned char) ID_AUTOPATCHER_CREATION_LIST);
-				cache_updatedFileHashes.Serialize(&bitStream2);
+				cache_addedOrModifiedFileHashes.Serialize(&bitStream2);
 				bitStream2.Write(currentDate);
 				bitStream2.Write(threadData.lastUpdateDate);
 			}
@@ -474,17 +478,14 @@ AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadD
 	RakAssert(server);
 //	RakAssert(server->repository);
 //	if (server->repository->GetPatches(threadData.applicationName.C_String(), threadData.clientList, rtab.patchList, currentDate))
-	if (repository->GetPatches(threadData.applicationName.C_String(), threadData.clientList, rtab.patchList))
-		rtab.fatalError=false;
-	else
-		rtab.fatalError=true;
+	rtab.resultCode = repository->GetPatches(threadData.applicationName.C_String(), threadData.clientList, server->allowDownloadOfOriginalUnmodifiedFiles, rtab.patchList);
 	rtab.operation=AutopatcherServer::ResultTypeAndBitstream::GET_PATCH;
 	rtab.setId=threadData.setId;
 	rtab.currentDate=(double) time(NULL);
 
 	RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
 
-	if (rtab.fatalError==false)
+	if (rtab.resultCode==1)
 	{
 		if (rtab.patchList->fileList.Size())
 		{
@@ -503,13 +504,22 @@ AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadD
 	}
 	else
 	{
-		rtab.bitStream1.Write((unsigned char) ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR);
-	//	StringCompressor::Instance()->EncodeString(server->repository->GetLastError(), 256, &rtab.bitStream1);
-		StringCompressor::Instance()->EncodeString(repository->GetLastError(), 256, &rtab.bitStream1);
+		AutopatcherServerLoadNotifier::PatchResult pr;
+		if (rtab.resultCode==0)
+		{
+			rtab.bitStream1.Write((unsigned char) ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR);
+			StringCompressor::Instance()->EncodeString(repository->GetLastError(), 256, &rtab.bitStream1);
+			pr = AutopatcherServerLoadNotifier::PR_REPOSITORY_ERROR;
+		}
+		else
+		{
+			rtab.bitStream1.Write((unsigned char) ID_AUTOPATCHER_CANNOT_DOWNLOAD_ORIGINAL_UNMODIFIED_FILES);
+			pr = AutopatcherServerLoadNotifier::PR_DISALLOWED_DOWNLOADING_ORIGINAL_FILES;
+		}
 
 		if (server->DecrementPatchingUserCount(rtab.systemAddress))
 		{
-			server->CallPatchCompleteCallback(rtab.systemAddress, AutopatcherServerLoadNotifier::PR_REPOSITORY_ERROR);
+			server->CallPatchCompleteCallback(rtab.systemAddress, pr);
 		}
 		else
 		{
@@ -578,17 +588,18 @@ PluginReceiveResult AutopatcherServer::OnGetPatch(Packet *packet)
 		char *userHash;
 		RakNet::RakString userFilename;
 		FileList patchList;
+		bool cacheUpdateFailed=false;
 
 		unsigned int i,j;
+		// FileList is the list of all files missing or changed as determined by the client
 		for (i=0; i < threadData.clientList->fileList.Size(); i++)
 		{
 			userHash=threadData.clientList->fileList[i].data;
 			userFilename=threadData.clientList->fileList[i].filename;
-			bool sentAnything=false;
 
-			// If the user file has a hash, check this hash against the hash stored with the patch, for the file of the same name
 			if (userHash)
 			{
+				// If the user has a hash, check for this file in cache_patchedFiles. If not found, or hash is wrong, use DB
 				if (threadData.clientList->fileList[i].dataLengthBytes!=HASH_LENGTH)
 				{
 					RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
@@ -599,33 +610,49 @@ PluginReceiveResult AutopatcherServer::OnGetPatch(Packet *packet)
 				{
 					if (userFilename == cache_patchedFiles.fileList[j].filename)
 					{			
-						if (memcmp(cache_patchedFiles.fileList[j].data, userHash, HASH_LENGTH)!=0)
-						{
-							// Full file will be sent below							
-						}
-						else
+						if (memcmp(cache_patchedFiles.fileList[j].data, userHash, HASH_LENGTH)==0)
 						{
 							// Send patch
 							RakAssert(cache_patchedFiles.fileList[j].context.op==PC_HASH_2_WITH_PATCH);
 							patchList.AddFile(userFilename,userFilename, 0, cache_patchedFiles.fileList[j].dataLengthBytes, cache_patchedFiles.fileList[j].fileLengthBytes, cache_patchedFiles.fileList[j].context, true, false);
-							sentAnything=true;
+						}
+						else
+						{
+							// Bad hash
+							cacheUpdateFailed=true;
 						}
 
 						break;
 					}
 				}
-			}
 
-			if (sentAnything==false)
+				if (j==cache_patchedFiles.fileList.Size())
+				{
+					// Didn't find the patch even though the client has an older version of the file
+					cacheUpdateFailed=true;
+				}
+			}
+			else
 			{
-				RakAssert(userFilename == cache_updatedFiles.fileList[j].filename);
+				// If the user does not have a hash, check for this file in cache_addedFiles. If not found, use DB
+				for (j=0; j < cache_addedFiles.fileList.Size(); j++)
+				{
+					if (userFilename == cache_addedFiles.fileList[j].filename)
+					{
+						// Send added file
+						patchList.AddFile(userFilename,userFilename, 0, cache_addedFiles.fileList[j].dataLengthBytes, cache_addedFiles.fileList[j].fileLengthBytes, cache_addedFiles.fileList[j].context, true, false);
+						break;
+					}
+				}
 
-				patchList.AddFile(userFilename,userFilename, 0, cache_updatedFiles.fileList[j].dataLengthBytes, cache_updatedFiles.fileList[j].fileLengthBytes, cache_updatedFiles.fileList[j].context, true, false);
-				sentAnything=true;
-				break;
+				if (j==cache_addedFiles.fileList.Size())
+				{
+					// Didn't find the file in the cache even though the client asked for it
+					cacheUpdateFailed=true;
+				}
 			}
 
-			if (sentAnything==false)
+			if (cacheUpdateFailed==true)
 			{
 				// Failure to find file in cache
 				// Will fall to use database
@@ -753,6 +780,10 @@ void AutopatcherServer::SetMaxConurrentUsers(unsigned int _maxConcurrentUsers)
 {
 	maxConcurrentUsers=_maxConcurrentUsers;
 }
+unsigned int AutopatcherServer::GetMaxConurrentUsers(void) const
+{
+	return maxConcurrentUsers;
+}
 void AutopatcherServer::CallPacketCallback(Packet *packet, AutopatcherServerLoadNotifier::QueueOperation queueOperation)
 {
 	if (loadNotifier)
@@ -799,6 +830,10 @@ Packet *AutopatcherServer::PopOffWaitingQueue(void)
 void AutopatcherServer::SetLoadManagementCallback(AutopatcherServerLoadNotifier *asumc)
 {
 	loadNotifier=asumc;
+}
+void AutopatcherServer::SetAllowDownloadOfOriginalUnmodifiedFiles(bool allow)
+{
+	allowDownloadOfOriginalUnmodifiedFiles = allow;
 }
 unsigned int AutopatcherServer::GetFilePart( const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)
 {

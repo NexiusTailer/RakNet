@@ -68,6 +68,7 @@ public:
 	{
 		PR_NO_FILES_NEEDED_PATCHING,
 		PR_REPOSITORY_ERROR,
+		PR_DISALLOWED_DOWNLOADING_ORIGINAL_FILES,
 		PR_PATCHES_WERE_SENT,
 		PR_ABORTED_FROM_INPUT_THREAD,
 		PR_ABORTED_FROM_DOWNLOAD_THREAD,
@@ -163,10 +164,19 @@ public:
 	/// \param[in] maxConcurrentUsers Pass 0 for unlimited, otherwise the max users to serve at once
 	void SetMaxConurrentUsers(unsigned int _maxConcurrentUsers);
 
+	/// \return Returns what was passed to SetMaxConurrentUsers();
+	unsigned int GetMaxConurrentUsers(void) const;
+
 	/// Set a callback to get notifications of when user requests are queued and processed
 	/// This is primarily of use to load balance the server
 	/// \param[in] asumc An externally allocated instance of AutopatcherServerLoadNotifier. Pass 0 to disable.
 	void SetLoadManagementCallback(AutopatcherServerLoadNotifier *asumc);
+
+	/// Set whether or not the client can download files that were never modified, that they do not have
+	/// Defaults to true
+	/// Set to false to disallow downloading the entire game through the autopatcher. In this case, the user must have a copy of the game through other means (such as a CD install)
+	/// \param[in] allow True to allow downloading original game files, false to disallow
+	void SetAllowDownloadOfOriginalUnmodifiedFiles(bool allow);
 
 	/// Clear buffered input and output
 	void Clear(void);
@@ -199,14 +209,15 @@ public:
 	/// \deprecated
 	struct ResultTypeAndBitstream
 	{
-		ResultTypeAndBitstream() {patchList=0; deletedFiles=0; addedFiles=0;}
+		ResultTypeAndBitstream() {patchList=0; deletedFiles=0; addedOrModifiedFilesWithHashData=0;}
 		int resultType;
 		SystemAddress systemAddress;
 		RakNet::BitStream bitStream1;
 		RakNet::BitStream bitStream2;
 		FileList *patchList;
-		FileList *deletedFiles, *addedFiles;
-		bool fatalError;
+		FileList *deletedFiles, *addedOrModifiedFilesWithHashData;
+		// bool fatalError;
+		int resultCode; // 1 = success, 0 = unknown error, -1 = failed allowDownloadOfOriginalUnmodifiedFiles check
 		unsigned short setId;
 		double currentDate;
 		enum
@@ -264,11 +275,12 @@ protected:
 
 	RakNet::RakString cache_appName;
 	FileList cache_patchedFiles;
-	FileList cache_updatedFiles;
-	FileList cache_updatedFileHashes;
+	FileList cache_addedFiles;
+	FileList cache_addedOrModifiedFileHashes;
 	FileList cache_deletedFiles;
 	double cache_minTime, cache_maxTime;
 	bool cacheLoaded;
+	bool allowDownloadOfOriginalUnmodifiedFiles;
 };
 
 } // namespace RakNet

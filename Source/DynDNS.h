@@ -57,7 +57,7 @@ public:
 
 	// Pass 0 for newIPAddress to autodetect whatever you are uploading from
 	// usernameAndPassword should be in the format username:password
-	void UpdateHostIP(const char *dnsHost, const char *newIPAddress, const char *usernameAndPassword );
+	void UpdateHostIPAsynch(const char *dnsHost, const char *newIPAddress, const char *usernameAndPassword );
 	void Update(void);
 
 	// Output
