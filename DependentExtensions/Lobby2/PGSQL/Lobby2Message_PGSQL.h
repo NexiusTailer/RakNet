@@ -78,6 +78,7 @@ __L2_MSG_DB_HEADER(Client_GetPasswordRecoveryQuestionByHandle, PGSQL){virtual bo
 __L2_MSG_DB_HEADER(Client_GetPasswordByPasswordRecoveryAnswer, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Client_ChangeHandle, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Client_UpdateAccount, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Client_GetAccountDetails, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Client_StartIgnore, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Client_StopIgnore, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Client_GetIgnoreList, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
@@ -361,6 +362,7 @@ struct Lobby2MessageFactory_PGSQL : public Lobby2MessageFactory
 			__L2_MSG_FACTORY_IMPL(Client_GetPasswordByPasswordRecoveryAnswer, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Client_ChangeHandle, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Client_UpdateAccount, PGSQL);
+			__L2_MSG_FACTORY_IMPL(Client_GetAccountDetails, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Client_StartIgnore, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Client_StopIgnore, PGSQL);
 			__L2_MSG_FACTORY_IMPL(Client_GetIgnoreList, PGSQL);

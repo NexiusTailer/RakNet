@@ -114,7 +114,7 @@ void main(void)
 	char str[256];
 	gets(str);
 	if (str[0]==0)
-		strcpy(str, "c:\\temp\\wow.jpg");
+		strcpy(str, "c:\\temp\\Lobby2ClientGFx3.zip");
 	file=str;
 	fileCopy=file+"_copy";
 	// Reference this file, rather than add it in memory. Will send 1000 byte chunks. The reason to do this is so the whole file does not have to be in memory at once
@@ -132,6 +132,7 @@ void main(void)
 	}
 	fileList.AddFile(file.C_String(), file.C_String(), 0, fileLength, fileLength, FileListNodeContext(0,0), true);
 	// Wait for the connection
+	printf("File added.\n");
 	RakSleep(100);
 	Packet *packet1, *packet2;
 	while (1)

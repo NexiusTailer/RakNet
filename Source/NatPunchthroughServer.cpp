@@ -170,13 +170,13 @@ void NatPunchthroughServer::Update(void)
 						connectionAttempt->sender->isReady=true;
 						connectionAttempt->recipient->isReady=true;
 						recipient=connectionAttempt->recipient;
-						connectionAttempt->sender->DerefConnectionAttempt(connectionAttempt);
-						connectionAttempt->recipient->DeleteConnectionAttempt(connectionAttempt);
+
 
 						if (natPunchthroughServerDebugInterface)
 						{
 							char str[1024];
 							char addr1[128], addr2[128];
+							// 8/01/09 Fixed bug where this was after DeleteConnectionAttempt()
 							connectionAttempt->sender->systemAddress.ToString(true,addr1);
 							connectionAttempt->recipient->systemAddress.ToString(true,addr2);
 							sprintf(str, "Sending ID_NAT_TARGET_UNRESPONSIVE to sender %s and recipient %s.", addr1, addr2);
@@ -185,6 +185,10 @@ void NatPunchthroughServer::Update(void)
 							connectionAttempt->sender->LogConnectionAttempts(log);
 							connectionAttempt->recipient->LogConnectionAttempts(log);
 						}
+
+
+						connectionAttempt->sender->DerefConnectionAttempt(connectionAttempt);
+						connectionAttempt->recipient->DeleteConnectionAttempt(connectionAttempt);
 
 						StartPunchthroughForUser(user);
 						StartPunchthroughForUser(recipient);

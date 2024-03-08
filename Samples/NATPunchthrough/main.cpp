@@ -28,6 +28,7 @@
 #include "UDPProxyServer.h"
 #include "UDPProxyCoordinator.h"
 #include "UDPProxyClient.h"
+#include "NatTypeDetectionServer.h"
 
 #ifdef USE_UPNP
 // This file is in Samples/upnp
@@ -158,7 +159,7 @@ void GUIClientTest()
 	ConnectionGraph2 connectionGraph;
 	rakPeer->AttachPlugin(&connectionGraph);
 	rakPeer->AttachPlugin(&natPunchthroughClient);
-	rakPeer->Startup(NAT_PUNCHTHROUGH_CLIENT_PORT,0,&SocketDescriptor(0,0), 1);
+	rakPeer->Startup(8,0,&SocketDescriptor(0,0), 1);
 	rakPeer->SetMaximumIncomingConnections(32);
 	rakPeer->Connect(DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP, NAT_PUNCHTHROUGH_FACILITATOR_PORT, NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD, (int) strlen(NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD));
 
@@ -353,6 +354,8 @@ void VerboseTest()
 	RakNet::UDPProxyServer udpProxyServer;
 	// Connects to UDPProxyCoordinator
 	RakNet::UDPProxyClient udpProxyClient;
+	/// Used to let the client determine what kind of NAT they have
+	RakNet::NatTypeDetectionServer natTypeDetectionServer;
 	// Handles progress notifications for udpProxyClient
 	UDPProxyClientResultHandler_Test udpProxyClientResultHandler;
 	udpProxyClientResultHandler.rakPeer=rakPeer;
@@ -474,6 +477,11 @@ void VerboseTest()
 		rakPeer->AttachPlugin(&natPunchthroughServer);
 		rakPeer->AttachPlugin(&udpProxyServer);
 		rakPeer->AttachPlugin(&udpProxyCoordinator);
+		rakPeer->AttachPlugin(&natTypeDetectionServer);
+		char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
+		unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
+		SocketLayer::Instance()->GetMyIP( ipList, binaryAddresses );
+		natTypeDetectionServer.Startup(ipList[1], ipList[2], ipList[3]);
 
 		// Login proxy server to proxy coordinator
 		// Normally the proxy server is on a different computer. Here, we login to our own IP address since the plugin is on the same system

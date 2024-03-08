@@ -13,6 +13,13 @@
 #include "CustomPacketIdentifiers.h"
 #else
 
+enum OutOfBandIdentifiers
+{
+	ID_NAT_ESTABLISH_UNIDIRECTIONAL,
+	ID_NAT_ESTABLISH_BIDIRECTIONAL,
+	ID_NAT_TYPE_DETECT,
+};
+
 /// You should not edit the file MessageIdentifiers.h as it is a part of RakNet static library
 /// To define your own message id, define an enum following the code example that follows. 
 ///
@@ -277,6 +284,14 @@ enum DefaultMessageIDTypes
 
 	/// Serialize construction for an object that already exists on the remote system
 	ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING,
+	ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_REJECTED,
+	ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_ACCEPTED,
+
+	/// Sent to NatTypeDetectionServer
+	ID_NAT_TYPE_DETECTION_REQUEST,
+
+	/// Sent to NatTypeDetectionClient. Byte 1 contains the type of NAT detected.
+	ID_NAT_TYPE_DETECTION_RESULT,
 
 	// For the user to use.  Start your first enumeration at this value.
 	ID_USER_PACKET_ENUM,

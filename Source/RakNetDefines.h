@@ -7,9 +7,7 @@
 
 /// Makes RakNet threadsafe
 /// Define this if you use the same instance of RakPeer from multiple threads
-/// Otherwise leave it undefined, since it makes things an order of magnitude slower.
-/// Disabled by default
-// #define _RAKNET_THREADSAFE
+#define _RAKNET_THREADSAFE
 
 /// Define __BITSTREAM_NATIVE_END to NOT support endian swapping in the BitStream class.  This is faster and is what you should use
 /// unless you actually plan to have different endianness systems connect to each other

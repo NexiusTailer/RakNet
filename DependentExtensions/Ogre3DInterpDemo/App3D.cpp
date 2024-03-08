@@ -159,10 +159,10 @@ void App3D::PostConfigure(const char *defaultResourceConfigurationPath, bool rec
 
 	const Ogre::RenderSystemCapabilities* cap = root->getRenderSystem()->getCapabilities();
 	// + (*cap).mMaxFragmentProgramVersion "ps_2_b" std::basic_string<char,std::char_traits<char>,std::allocator<char> >
-	if (cap->getMaxFragmentProgramVersion().c_str()[3]>='2')
+//	if (cap->getMaxFragmentProgramVersion().c_str()[3]>='2')
 		hasPixelShader2=true;
-	else
-		hasPixelShader2=false;
+//	else
+//		hasPixelShader2=false;
 }
 void App3D::InitSceneManager(Ogre::SceneManager *sm)
 {

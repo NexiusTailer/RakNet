@@ -32,6 +32,7 @@ void Lobby2Callbacks::MessageResult(Client_GetPasswordRecoveryQuestionByHandle *
 void Lobby2Callbacks::MessageResult(Client_GetPasswordByPasswordRecoveryAnswer *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Client_ChangeHandle *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Client_UpdateAccount *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Client_GetAccountDetails *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Client_StartIgnore *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Client_StopIgnore *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Client_GetIgnoreList *message) {ExecuteDefaultResult(message);}
@@ -138,7 +139,6 @@ void Lobby2Callbacks::MessageResult(Notification_Console_MemberLeftRoom *message
 void Lobby2Callbacks::MessageResult(Notification_Console_KickedOutOfRoom *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_RoomWasDestroyed *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_RoomOwnerChanged *message) {ExecuteDefaultResult(message);}
-void Lobby2Callbacks::MessageResult(Notification_Console_RoomStateChanged *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_RoomChatMessage *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_RoomMessage *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_RoomMemberConnectivityUpdate *message) {ExecuteDefaultResult(message);}
@@ -146,9 +146,6 @@ void Lobby2Callbacks::MessageResult(Notification_Console_ChatEvent *message) {Ex
 void Lobby2Callbacks::MessageResult(Notification_Console_MuteListChanged *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_Local_Users_Changed *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_ReceivedDataMessageFromUser *message) {ExecuteDefaultResult(message);}
-
-
-
 
 Lobby2Message::Lobby2Message() {refCount=1; requestId=(unsigned int)-1; callbackId=(unsigned char)-1;
 #if defined(_XBOX) || defined(X360)
@@ -748,6 +745,15 @@ bool Client_UpdateAccount::PrevalidateInput( void )
 	if (!ValidateRequiredText(&createAccountParameters.passwordRecoveryQuestion)) return false;
 	if (!ValidateRequiredText(&createAccountParameters.passwordRecoveryAnswer)) return false;
 	return true;
+}
+
+void Client_GetAccountDetails::Serialize( bool writeToBitstream, bool serializeOutput, BitStream *bitStream )
+{
+	SerializeBase(writeToBitstream, serializeOutput, bitStream);
+	if (serializeOutput)
+	{
+		createAccountParameters.Serialize(writeToBitstream, bitStream);
+	}
 }
 
 void Client_StartIgnore::Serialize( bool writeToBitstream, bool serializeOutput, BitStream *bitStream )

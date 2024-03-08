@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;&quot;$(GFXSDK)\Src\GRenderer&quot;;&quot;$(GFXSDK)\Src\GKernel&quot;;&quot;$(GFXSDK)\Src\GFxXML&quot;;&quot;$(GFXSDK)\Include&quot;"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/GFx3;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;&quot;$(GFXSDK)\Src\GRenderer&quot;;&quot;$(GFXSDK)\Src\GKernel&quot;;&quot;$(GFXSDK)\Src\GFxXML&quot;;&quot;$(GFXSDK)\Include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -124,7 +124,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;&quot;$(GFXSDK)\Src\GRenderer&quot;;&quot;$(GFXSDK)\Src\GKernel&quot;;&quot;$(GFXSDK)\Src\GFxXML&quot;;&quot;$(GFXSDK)\Include&quot;"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/GFx3;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;&quot;$(GFXSDK)\Src\GRenderer&quot;;&quot;$(GFXSDK)\Src\GKernel&quot;;&quot;$(GFXSDK)\Src\GFxXML&quot;;&quot;$(GFXSDK)\Include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -279,11 +279,11 @@
 			Name="GFx3"
 			>
 			<File
-				RelativePath=".\FxGameDelegate.cpp"
+				RelativePath="..\..\DependentExtensions\GFx3\FxGameDelegate.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\FxGameDelegate.h"
+				RelativePath="..\..\DependentExtensions\GFx3\FxGameDelegate.h"
 				>
 			</File>
 			<File

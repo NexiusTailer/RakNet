@@ -2026,7 +2026,8 @@ Put a message back at the end of the receive queue in case you don't want to dea
 
 <p>
 Gets a message from the incoming message queue. Use <a class="el" href="classRakPeerInterface.html#8e792f3d13652387fcf12542bc1cd2be">DeallocatePacket()</a> to deallocate the message after you are done with it. User-thread functions, such as RPC calls and the plugin function PluginInterface::Update occur here. <dl class="return" compact><dt><b>Returns:</b></dt><dd>0 if no packets are waiting to be handled, otherwise a pointer to a packet. </dd></dl>
-<dl class="note" compact><dt><b>Note:</b></dt><dd>COMMON MISTAKE: Be sure to call this in a loop, once per game tick, until it returns 0. If you only process one packet per game tick they will buffer up. sa <a class="el" href="RakNetTypes_8h.html" title="Types used by RakNet, most of which involve user code.">RakNetTypes.h</a> contains struct <a class="el" href="structPacket.html" title="This represents a user message from another system.">Packet</a> </dd></dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>COMMON MISTAKE: Be sure to call this in a loop, once per game tick, until it returns 0. If you only process one packet per game tick they will buffer up. <p>
+Not threadsafe. Do not call from different threads, unless you define _RAKNET_THREADSAFE sa <a class="el" href="RakNetTypes_8h.html" title="Types used by RakNet, most of which involve user code.">RakNetTypes.h</a> contains struct <a class="el" href="structPacket.html" title="This represents a user message from another system.">Packet</a> </dd></dl>
 
 <p>Implemented in <a class="el" href="classRakPeer.html#79fddb1f74db30833fc08687c1310ce7">RakPeer</a>.</p>
 
@@ -2142,7 +2143,8 @@ Sends a block of data to the specified system that you are connected to. Same as
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>False if we are not connected to the specified recipient. True otherwise </dd></dl>
-<dl class="note" compact><dt><b>Note:</b></dt><dd>COMMON MISTAKE: When writing the first byte, bitStream-&gt;Write((unsigned char) ID_MY_TYPE) be sure it is casted to a byte, and you are not writing a 4 byte enumeration. </dd></dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>COMMON MISTAKE: When writing the first byte, bitStream-&gt;Write((unsigned char) ID_MY_TYPE) be sure it is casted to a byte, and you are not writing a 4 byte enumeration./// <p>
+Not threadsafe. Do not call from different threads, unless you define _RAKNET_THREADSAFE </dd></dl>
 
 <p>Implemented in <a class="el" href="classRakPeer.html#c3798ef62d4fcaf901281dc7bfc18368">RakPeer</a>.</p>
 
@@ -2297,7 +2299,8 @@ This function only works while the connected <dl compact><dt><b>Parameters:</b><
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to. </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>False if we are not connected to the specified recipient. True otherwise </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>False if we are not connected to the specified recipient. True otherwise</dd></dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>Not threadsafe. Do not call from different threads, unless you define _RAKNET_THREADSAFE </dd></dl>
 
 <p>Implemented in <a class="el" href="classRakPeer.html#fc11202f6a642b60b947123652ba6d8d">RakPeer</a>.</p>
 
@@ -2805,7 +2808,7 @@ Set _RAKNET_THREADSAFE in RakNetDefines.h if you want to call <a class="el" href
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>C:/RakNet/Source/<a class="el" href="RakPeerInterface_8h.html">RakPeerInterface.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Jul 20 23:57:17 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:46 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

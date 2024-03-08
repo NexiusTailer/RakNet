@@ -339,7 +339,9 @@ void ReplicaManager3::GetConnectionsThatHaveReplicaConstructed(Replica3 *replica
 
 void ReplicaManager3::Clear(void)
 {
-	connectionList.ClearPointers(true,__FILE__,__LINE__);
+	for (DataStructures::DefaultIndexType i=0; i < connectionList.GetSize(); i++)
+		DeallocConnection(connectionList[i]);
+	connectionList.Clear(true,__FILE__,__LINE__);
 	userReplicaList.Clear(true,__FILE__,__LINE__);
 }
 
@@ -420,11 +422,17 @@ PluginReceiveResult ReplicaManager3::OnReceive(Packet *packet)
 	case ID_REPLICA_MANAGER_SERIALIZE:
 		OnSerialize(packet->data, packet->length, packet->guid, timestamp, packetDataOffset);
 		break;
-	case ID_REPLICA_MANAGER_DOWNLOAD_STARTED:
+	case ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_REJECTED:
 		OnLocalConstructionRejected(packet->data, packet->length, packet->guid, packetDataOffset);
 		break;
-	case ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE:
+	case ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_ACCEPTED:
 		OnLocalConstructionAccepted(packet->data, packet->length, packet->guid, packetDataOffset);
+		break;
+	case ID_REPLICA_MANAGER_DOWNLOAD_STARTED:
+		OnDownloadStarted(packet->data, packet->length, packet->guid, packetDataOffset);
+		break;
+	case ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE:
+		OnDownloadComplete(packet->data, packet->length, packet->guid, packetDataOffset);
 		break;
 	case ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING:
 		OnConstructionExisting(packet->data, packet->length, packet->guid, packetDataOffset);
@@ -447,7 +455,7 @@ PluginReceiveResult ReplicaManager3::OnReceive(Packet *packet)
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3, bool isFirstConnection)
+void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3)
 {
 	ValidateLists(replicaManager3);
 
@@ -534,7 +542,7 @@ void ReplicaManager3::Update(void)
 		{
 			if (connectionList[index]->isValidated==false)
 				continue;
-			connectionList[index]->AutoConstructByQuery(this,connectionList.GetSize()==1);
+			connectionList[index]->AutoConstructByQuery(this);
 		}
 
 		/*
@@ -723,6 +731,13 @@ void ReplicaManager3::OnNewConnection(SystemAddress systemAddress, RakNetGUID ra
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+void ReplicaManager3::OnShutdown(void)
+{
+	Clear();
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 void ReplicaManager3::OnConstructionExisting(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset)
 {
 	Connection_RM3 *connection = GetConnectionByGUID(senderGuid);
@@ -791,7 +806,7 @@ void ReplicaManager3::OnConstruction(unsigned char *packetData, int packetDataLe
 			continue;
 		}
 
-		replica = connection->AllocReplica(&bsIn);
+		replica = connection->AllocReplica(&bsIn, this);
 		if (replica==0)
 		{
 			bsIn.SetReadOffset(bitOffset);
@@ -830,7 +845,7 @@ void ReplicaManager3::OnConstruction(unsigned char *packetData, int packetDataLe
 			if (networkId==UNASSIGNED_NETWORK_ID)
 			{
 				RakNet::BitStream bsOut;
-				bsOut.Write((MessageID)ID_REPLICA_MANAGER_DOWNLOAD_STARTED);
+				bsOut.Write((MessageID)ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_REJECTED);
 				bsOut.Write(worldId);
 				bsOut.Write(allocationNumber);
 				replica->SerializeConstructionRequestRejected(&bsOut,connection);
@@ -850,7 +865,7 @@ void ReplicaManager3::OnConstruction(unsigned char *packetData, int packetDataLe
 		{
 			// Overtake this message to mean construction accepted
 			RakNet::BitStream bsOut;
-			bsOut.Write((MessageID)ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE);
+			bsOut.Write((MessageID)ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_ACCEPTED);
 			bsOut.Write(worldId);
 			bsOut.Write(allocationNumber);
 			bsOut.Write(replica->GetNetworkID());
@@ -947,6 +962,29 @@ void ReplicaManager3::OnSerialize(unsigned char *packetData, int packetDataLengt
 		}
 		replica->Deserialize(&ds);
 	}
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void ReplicaManager3::OnDownloadStarted(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset)
+{
+	Connection_RM3 *connection = GetConnectionByGUID(senderGuid);
+	if (connection==0)
+		return;
+	RakNet::BitStream bsIn(packetData,packetDataLength,false);
+	bsIn.IgnoreBytes(packetDataOffset);
+	connection->DeserializeOnDownloadStarted(&bsIn);
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void ReplicaManager3::OnDownloadComplete(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset)
+{
+	Connection_RM3 *connection = GetConnectionByGUID(senderGuid);
+	if (connection==0)
+		return;
+	RakNet::BitStream bsIn(packetData,packetDataLength,false);
+	bsIn.IgnoreBytes(packetDataOffset);
+	connection->DeserializeOnDownloadComplete(&bsIn);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1684,7 +1722,14 @@ void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, LastSe
 	DataStructures::DefaultIndexType newListIndex, oldListIndex;
 	RakNet::BitStream bsOut;
 	NetworkID networkId;
+	bsOut.Write((MessageID)ID_REPLICA_MANAGER_DOWNLOAD_STARTED);
+	bsOut.Write(worldId);
+	SerializeOnDownloadStarted(&bsOut);
+	rakPeer->Send(&bsOut,sendParameters.priority,sendParameters.reliability,sendParameters.orderingChannel,systemAddress,false);
+	
+
 	//	LastSerializationResult* lsr;
+	bsOut.Reset();
 	bsOut.Write((MessageID)ID_REPLICA_MANAGER_CONSTRUCTION);
 	bsOut.Write(worldId);
 	bsOut.Write(newObjects.GetSize());
@@ -1759,6 +1804,12 @@ void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, LastSe
 
 		}
 	}
+
+	bsOut.Reset();
+	bsOut.Write((MessageID)ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE);
+	bsOut.Write(worldId);
+	SerializeOnDownloadComplete(&bsOut);
+	rakPeer->Send(&bsOut,sendParameters.priority,sendParameters.reliability,sendParameters.orderingChannel,systemAddress,false);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

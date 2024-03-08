@@ -26,7 +26,7 @@
 <p><span class="RakNetBlueHeader">NAT Punchthrough Algorithm</span></p>
 <ol>
   <li> Peer P1 wants to connect to peer P2, both of whom are connected to a third Non-NAT system, F</li>
-  <li>Peer P1 calls SendPunchthrough() with the GUID (unique identifier) of P2 to F.</li>
+  <li>Peer P1 calls SendPunchthrough() with the RakNetGUID (unique identifier) of P2 to F.</li>
   <li>F returns failure if P2 is not connected, or already attempting punchthrough to P1.</li>
   <li>F remembers busy state of P1 and P2. If either P1 or P2 is busy, the request is pushed to a queue. Otherwise F requests most recently used external port from P1 and P2. P1 and P2 are flagged as busy.</li>
   <li>If either P1 or P2 do not respond punchthrough fails with ID_NAT_TARGET_UNRESPONSIVE and the busy flag is unset. Otherwise, F sends timestamped connection message to P1 and P2  simultaneously.</li>
@@ -37,15 +37,16 @@
 <p>Algorithm effectivness depends on the NAT types involved. It will work with whichever NAT is the most permissive.</p>
 <p><strong>Full cone NAT</strong>: Accepts any datagrams to a port that has been previously used. Will accept the first datagram from the remote peer.</p>
 <p><strong>Address-Restricted cone NAT</strong>: Accepts datagrams to a port as long as the datagram source IP address is a system we have already sent to. Will accept the first datagram if both systems send simultaneously. Otherwise, will accept the first datagram after we have sent one datagram.</p>
-<p><strong>Port-Restricted cone NAT</strong>: Same as restricted cone NAT, but we had to send to both the correct remote IP address and correct remote port. If the router maps the same external port to two different destination addresses, then the port will be correct and this works as well as address-restricted cone NAT.</p>
-<p><strong>Symmetric NAT</strong>: A different port is chosen for every remote destination. Since the port will be different, the first external punchthrough attempt will fai. For this to work it requires  port-prediction (MAX_PREDICTIVE_PORT_RANGE&gt;1) and that the router chooses ports sequentially.</p>
+<p><strong>Port-Restricted cone NAT</strong>: Same as address-restricted cone NAT, but we had to send to both the correct remote IP address and correct remote port. The same source address and port to a different destination uses the same mapping.</p>
+<p><strong>Symmetric NAT</strong>: A different port is chosen for every remote destination. The same source address and port to a different destination uses a different mapping. Since the port will be different, the first external punchthrough attempt will fail. For this to work it requires  port-prediction (MAX_PREDICTIVE_PORT_RANGE&gt;1) and that the router chooses ports sequentially.</p>
 
 <CENTER><B>Success Graph</B>
 <TABLE BORDER=1>
 <TR><TD>Router Type</TD><TD><I>Full cone NAT</I></TD><TD><I>Address-Restricted cone NAT</I></TD><TD><I>Port-Restricted cone NAT</I></TD><TD><I>Symmetric NAT</I></TD></TR>
 <TR><TD><I>Full cone NAT</I></TD><TD>YES</TD><TD>YES</TD><TD>YES</TD><TD>YES</TD></TR>
 <TR><TD><I>Address-Restricted cone NAT</I></TD><TD>YES</TD><TD>YES</TD><TD>YES</TD><TD>YES</TD></TR>
-<TR><TD><I>Port-Restricted cone NAT</I></TD><TD>YES</TD><TD>YES</TD><TD>YES</TD><TD>NO</TD></TR>
+<TR><TD><I>Port-Restricted cone NAT</I></TD><TD>YES</TD><TD>YES</TD>
+<TD>YES</TD><TD>NO</TD></TR>
 <TR><TD><I>Symmetric NAT</I></TD><TD>YES</TD><TD>YES</TD><TD>NO</TD><TD>NO</TD></TR>
 </TABLE></CENTER>
 <BR>
@@ -55,14 +56,14 @@
 	  <ol>
 	    <li>Create an instance of the plugin: <span class="RakNetCode">NatPunchthroughClient natPunchthroughClient;</span></li>
 	    <li>Attach the plugin to an instance of RakPeerInterface: <span class="RakNetCode">rakPeer-&gt;AttachPlugin(&amp;natPunchthroughClient);</span></li>
-	    <li>Connect to the server, and wait for ID_CONNECTION_REQUEST_ACCEPTED. Use the following line to use the free server provided by RakNet: <span class="RakNetCode">rakPeer-&gt;Connect(&quot;216.224.123.180&quot;, 60481, 0, 0);</span></li>
-	    <li>Call OpenNAT with the GUID (globally unique identifier) of the remote system that you want to connect to. In order to get the GUID, you would either have to transmit it with your own code on the server, upload it to the <A HREF="phpdirectoryserver.html">PHPDirectoryServer</A>, or use a plugin that stores it, such as <A HREF="lightweightdatabase.html">LightweightDatabase</A>: <span class="RakNetCode">natPunchthroughClient.OpenNAT(remoteGuid, serverSystemAddress);</span>. In order to read your own guid, use <span class="RakNetCode">RakPeerInterface::GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);</span></li>
+	    <li>Connect to the server, and wait for ID_CONNECTION_REQUEST_ACCEPTED. Use the following line to use the free server provided by RakNet: <span class="RakNetCode">rakPeer-&gt;Connect(&quot;8.17.250.34&quot;, 60481, 0, 0);</span></li>
+	    <li>Call OpenNAT with the RakNetGUID (globally unique identifier) of the remote system that you want to connect to. In order to get the RakNetGUID, you would either have to transmit it with your own code on the server, upload it to the <A HREF="phpdirectoryserver.html">PHPDirectoryServer</A>, or use a plugin that stores it, such as <A HREF="lightweightdatabase.html">LightweightDatabase</A>: <span class="RakNetCode">natPunchthroughClient.OpenNAT(remoteGuid, serverSystemAddress);</span>. In order to read your own RakNetGUID, use <span class="RakNetCode">RakPeerInterface::GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);</span></li>
 	    <li>Wait a while. It may take over 10 seconds to try every possible port twice, although it often works within a couple of seconds. If you want to get text messages on what is happening, you can use <span class="RakNetCode">NatPunchthroughClient::SetDebugInterface()</span></li>
 	    <li>ID_NAT_PUNCHTHROUGH_SUCCEEDED means the punchthrough succeeded, and you should be able to connect or send other messages to the remote system. Packet::SystemAddress is the address of the system you can now connect to. Any other ID_NAT_* means the punchthrough failed. See MessageIdentifiers.h for the list of codes and comments on each. </li>
       </ol>
 	  <p><span class="RakNetBlueHeader">Server Implementation</span></p>
 	  <ol>
-	    <li>Host a server somewhere, not using NAT / e.g. behind a firewall. (RakNet provides a free one at 216.224.123.180:60481, however  you may wish to host your own for consistent uptime).</li>
+	    <li>Host a server somewhere, not using NAT / e.g. behind a firewall. (RakNet provides a free one at 8.17.250.34:60481, however  you may wish to host your own for consistent uptime).</li>
 	    <li>Create an instance of the plugin: <span class="RakNetCode">NatPunchthroughServer natPunchthroughServer;</span></li>
 	    <li>Attach the plugin: <span class="RakNetCode">rakPeer-&gt;AttachPlugin(&amp;natPunchthroughServer);</span></li>
 	    <li>Don't forget to call <span class="RakNetCode">RakPeerInterface::Startup()</span> and <span class="RakNetCode">RakPeerInterface::SetMaximumIncomingConnections(MAX_CONNECTIONS);</span></li>
@@ -94,7 +95,7 @@
   <li>Try NATPunchthrough first. If you get ID_NAT_PUNCHTHROUGH_FAILED for the system that initiated NATPunchthrough, go to step 6. Both systems will return ID_NAT_PUNCHTHROUGH_FAILED, however, only one system needs to start the proxy system.</li>
   <li>Call UDPProxyClient::RequestForwarding with the address of the coordinator, the address you want to forward from (UNASSIGNED_SYSTEM_ADDRESS for your own), the address you want to forward to, and how long to keep the forwarding active on no data. For example:<BR>
     <span class="RakNetCode">SystemAddress coordinatorAddress;<BR>
-  coordinatorAddress.SetBinaryAddress("216.224.123.180");<BR>
+  coordinatorAddress.SetBinaryAddress("8.17.250.34");<BR>
   coordinatorAddress.port=60481;<BR>
    udpProxyClient.RequestForwarding(coordinatorAddress, UNASSIGNED_SYSTEM_ADDRESS, p-&gt;systemAddress, 7000);</span></li>
   <li>Assuming you are connected to the coordinator, and the coordinator is running the plugin, your event handler class created in step 2 should get a callback within a second or two. <span class="RakNetCode">UDPProxyClientResultHandler::OnForwardingSuccess</span> will be returned if a UDPProxyServer has been assigned to forward datagrams from the source system specified in step 6, to the target system specified in step 6. For example, to connect to the remote system use: <span class="RakNetCode">rakPeer-&gt;Connect(proxyIPAddress, proxyPort, 0, 0);</span></li>
@@ -169,8 +170,10 @@ If you find more hosting solutions, <A HREF="mailto:rakkar@jenkinssoftware.com">
       </table>
       <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
         <TR>
-          <TD> <A HREF="index.html">Index</A><BR>
-            <A HREF="lightweightdatabase.html">Lightweight Database</A><BR>             </TD>
+          <TD> <p><A HREF="index.html">Index</A><BR>
+            <A HREF="lightweightdatabase.html">Lightweight Database</A><BR>
+            <A HREF="nattypedetection.html">NAT type detection</A><BR>
+          </p></TD>
         </TR>
       </TABLE>       </TD>
   </TR>

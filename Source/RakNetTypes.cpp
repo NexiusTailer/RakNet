@@ -26,6 +26,17 @@
 #include "SocketLayer.h"
 #include <stdlib.h>
 
+bool NonNumericHostString( const char *host )
+{
+	if ( host[ 0 ] >= '0' && host[ 0 ] <= '9' )
+		return false;
+
+	if ( (host[ 0 ] == '-') && ( host[ 1 ] >= '0' && host[ 1 ] <= '9' ) )
+		return false;
+
+	return true;
+}
+
 SocketDescriptor::SocketDescriptor() {port=0; hostAddress[0]=0; remotePortRakNetWasStartedOn_PS3=0;}
 SocketDescriptor::SocketDescriptor(unsigned short _port, const char *_hostAddress)
 {
@@ -119,7 +130,7 @@ SystemAddress::SystemAddress(unsigned int a, unsigned short b) {binaryAddress=a;
 #endif
 void SystemAddress::SetBinaryAddress(const char *str)
 {
-	if (str[0]<'0' || str[0]>'9')
+	if ( NonNumericHostString( str ) )
 	{
 
 #if defined(_XBOX) || defined(X360)
@@ -288,7 +299,8 @@ void NetworkID::SetPeerToPeerMode(bool isPeerToPeer)
 }
 bool RakNetGUID::operator==( const RakNetGUID& right ) const
 {
-	return memcmp(g, right.g, sizeof(g))==0;
+	//return memcmp(g, right.g, sizeof(g))==0;
+	return g==right.g;
 //	for (unsigned int i=0; i < sizeof(RakNetGUID) / sizeof(RakNetGUID::g[0]); i++)
 //		if (g[i]!=right.g[i])
 //			return false;
@@ -296,7 +308,8 @@ bool RakNetGUID::operator==( const RakNetGUID& right ) const
 }
 bool RakNetGUID::operator!=( const RakNetGUID& right ) const
 {
-	return memcmp(g, right.g, sizeof(g))!=0;
+	return g!=right.g;
+	// return memcmp(g, right.g, sizeof(g))!=0;
 //	for (unsigned int i=0; i < sizeof(RakNetGUID) / sizeof(RakNetGUID::g[0]); i++)
 //		if (g[i]!=right.g[i])
 //			return true;
@@ -306,6 +319,8 @@ bool RakNetGUID::operator > ( const RakNetGUID& right ) const
 {
 	// memcmp returns the wrong result!
 //	return memcmp(g, right.g, sizeof(g))>0;
+	return g > right.g;
+	/*
 	for (unsigned int i=0; i < sizeof(RakNetGUID) / sizeof(RakNetGUID::g[0]); i++)
 	{
 		if (g[i]<right.g[i])
@@ -314,11 +329,14 @@ bool RakNetGUID::operator > ( const RakNetGUID& right ) const
 			return true;
 	}
 	return false;
+	*/
 }
 bool RakNetGUID::operator < ( const RakNetGUID& right ) const
 {
+	return g < right.g;
 	// memcmp returns the wrong result!
 //	return memcmp(g, right.g, sizeof(g))<0;
+	/*
 	for (unsigned int i=0; i < sizeof(RakNetGUID) / sizeof(RakNetGUID::g[0]); i++)
 	{
 		if (g[i]>right.g[i])
@@ -327,6 +345,7 @@ bool RakNetGUID::operator < ( const RakNetGUID& right ) const
 			return true;
 	}
 	return false;
+	*/
 }
 const char *RakNetGUID::ToString(void) const
 {
@@ -343,13 +362,23 @@ void RakNetGUID::ToString(char *dest) const
 	if (*this==UNASSIGNED_RAKNET_GUID)
 		strcpy(dest, "UNASSIGNED_RAKNET_GUID");
 
-	sprintf(dest, "%u.%u.%u.%u.%u.%u", g[0], g[1], g[2], g[3], g[4], g[5]);
+	//sprintf(dest, "%u.%u.%u.%u.%u.%u", g[0], g[1], g[2], g[3], g[4], g[5]);
+	sprintf(dest, "%" PRINTF_TIME_MODIFIER "u", g);
+	// sprintf(dest, "%u.%u.%u.%u.%u.%u", g[0], g[1], g[2], g[3], g[4], g[5]);
 }
 bool RakNetGUID::FromString(const char *source)
 {
 	if (source==0)
 		return false;
 
+#if defined(WIN32) || defined(_XBOX) || defined(_X360)
+	g=_atoi64(source);
+#else
+	g=atoll(source);
+#endif
+	return true;
+
+	/*
 	char intPart[128];
 	unsigned int destIndex, sourceIndex=0, partIndex;
 	for (partIndex=0; partIndex<sizeof(RakNetGUID) / sizeof(RakNetGUID::g[0]); partIndex++)
@@ -374,5 +403,7 @@ bool RakNetGUID::FromString(const char *source)
 		g[partIndex]=strtoul(intPart,0,0);
 		sourceIndex++;
 	}
+
 	return true;
+	*/
 }

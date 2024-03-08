@@ -323,6 +323,10 @@ const char* PacketLogger::BaseIDTOString(unsigned char Id)
 		"ID_SQLite3_EXEC",
 		"ID_SQLite3_UNKNOWN_DB",
 		"ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING",
+		"ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_REJECTED",
+		"ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_ACCEPTED",
+		"ID_NAT_TYPE_DETECTION_REQUEST",
+		"ID_NAT_TYPE_DETECTION_RESULT",
 		"ID_USER_PACKET_ENUM"
 	};
 
@@ -355,10 +359,8 @@ void PacketLogger::SetSuffix(const char *_suffix)
 }
 void PacketLogger::GetLocalTime(char buffer[128])
 {
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-	buffer[0]=0;
-#else
-	time_t rawtime;
+#if defined(_WIN32) && !defined(__GNUC__)  && !defined(__GCCXML__)
+    time_t rawtime;
 	struct timeval tv;
 	// If you get an arror about an incomplete type, just delete this file
 	struct timezone tz;
@@ -385,6 +387,8 @@ void PacketLogger::GetLocalTime(char buffer[128])
 	strftime (buff2,32,"%x",timeinfo);
 	strcat(buffer,buff2);
 	*/
+#else
+    buffer[0]=0;
 #endif
 }
 

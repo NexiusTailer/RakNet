@@ -52,6 +52,8 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the address of the server. When you call <a class="el" href="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f">SendMsg()</a> the packet will be sent to this address. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f">SendMsg</a> (<a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> *msg)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#95ce0205949b6129eaa2401a86d71eeb">SendMsgAndDealloc</a> (<a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> *msg)</td></tr>
+
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Client.html#b6bd157a6a8d6e71961e94c8ec10e817">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
@@ -162,10 +164,30 @@ Send a command to the server <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
+<a class="anchor" name="95ce0205949b6129eaa2401a86d71eeb"></a><!-- doxytag: member="RakNet::Lobby2Client::SendMsgAndDealloc" ref="95ce0205949b6129eaa2401a86d71eeb" args="(Lobby2Message *msg)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void RakNet::Lobby2Client::SendMsgAndDealloc           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> *&nbsp;</td>
+          <td class="paramname"> <em>msg</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Same as <a class="el" href="classRakNet_1_1Lobby2Client.html#756efa8e824f52acecf7138617dc4c3f">SendMsg()</a> Also calls Dealloc on the message factory 
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>C:/RakNet/DependentExtensions/Lobby2/Lobby2Client.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Jul 20 23:57:19 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:48 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

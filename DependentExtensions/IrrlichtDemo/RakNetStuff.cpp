@@ -454,7 +454,7 @@ void BallReplica::Update(RakNetTime curTime)
 		}
 	}
 }
-RakNet::Replica3 *Connection_RM3Irrlicht::AllocReplica(RakNet::BitStream *allocationId)
+RakNet::Replica3 *Connection_RM3Irrlicht::AllocReplica(RakNet::BitStream *allocationId, ReplicaManager3 *replicaManager3)
 {
 	RakNet::RakString typeName; allocationId->Read(typeName);
 	if (typeName=="PlayerReplica") {BaseIrrlichtReplica *r = new PlayerReplica; r->demo=demo; return r;}

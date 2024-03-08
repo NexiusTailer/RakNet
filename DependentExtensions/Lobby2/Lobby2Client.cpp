@@ -16,6 +16,10 @@ void Lobby2Client::SetServerAddress(SystemAddress addr)
 {
 	serverAddress=addr;
 }
+SystemAddress Lobby2Client::GetServerAddress(void) const
+{
+	return serverAddress;
+}
 void Lobby2Client::SendMsg(Lobby2Message *msg)
 {
 	// Callback must be ready to receive reply
@@ -27,6 +31,11 @@ void Lobby2Client::SendMsg(Lobby2Message *msg)
 	bs.Write((MessageID)msg->GetID());
 	msg->Serialize(true,false,&bs);
 	SendUnified(&bs,packetPriority, RELIABLE_ORDERED, orderingChannel, serverAddress, false);
+}
+void Lobby2Client::SendMsgAndDealloc(Lobby2Message *msg)
+{
+	SendMsg(msg);
+	msgFactory->Dealloc(msg);
 }
 PluginReceiveResult Lobby2Client::OnReceive(Packet *packet)
 {

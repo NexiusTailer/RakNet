@@ -37,6 +37,9 @@
       <LI><OBJECT type="text/sitemap"><param name="Name" value="NatPunchthrough"><param name="Local" value="group__NAT__PUNCHTHROUGH__GROUP.html"><param name="ImageNumber" value="11"></OBJECT>
         <UL>
         </UL>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="NatTypeDetection"><param name="Local" value="group__NAT__TYPE__DETECTION__GROUP.html"><param name="ImageNumber" value="11"></OBJECT>
+        <UL>
+        </UL>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="PacketLogger"><param name="Local" value="group__PACKETLOGGER__GROUP.html"><param name="ImageNumber" value="11"></OBJECT>
         <UL>
         </UL>
@@ -103,6 +106,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::BookmarkedUsers_Add"><param name="Local" value="structRakNet_1_1BookmarkedUsers__Add.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::BookmarkedUsers_Get"><param name="Local" value="structRakNet_1_1BookmarkedUsers__Get.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::BPlusTree< KeyType, DataType, order >"><param name="Local" value="classDataStructures_1_1BPlusTree.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::CCRakNetUDT"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::CDKey_Add"><param name="Local" value="structRakNet_1_1CDKey__Add.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::CDKey_FlagStolen"><param name="Local" value="structRakNet_1_1CDKey__FlagStolen.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::CDKey_GetStatus"><param name="Local" value="structRakNet_1_1CDKey__GetStatus.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -237,6 +241,8 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::Multilist< _MultilistType, _DataType, _KeyType, _IndexType >"><param name="Local" value="classDataStructures_1_1Multilist.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="NatPunchthroughClient"><param name="Local" value="classNatPunchthroughClient.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="NatPunchthroughServer"><param name="Local" value="classNatPunchthroughServer.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::NatTypeDetectionClient"><param name="Local" value="classRakNet_1_1NatTypeDetectionClient.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::NatTypeDetectionServer"><param name="Local" value="classRakNet_1_1NatTypeDetectionServer.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="NetworkIDManager"><param name="Local" value="classNetworkIDManager.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="NetworkIDObject"><param name="Local" value="classNetworkIDObject.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::OrderedList< key_type, data_type, default_comparison_function >"><param name="Local" value="classDataStructures_1_1OrderedList.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -365,6 +371,7 @@
     </UL>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::BitStream"><param name="Local" value="classRakNet_1_1BitStream.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::BPlusTree< KeyType, DataType, order >"><param name="Local" value="classDataStructures_1_1BPlusTree.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::CCRakNetUDT"><param name="Local" value="classRakNet_1_1CCRakNetUDT.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="CheckSum"><param name="Local" value="classCheckSum.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::CircularLinkedList< CircularLinkedListType >"><param name="Local" value="classDataStructures_1_1CircularLinkedList.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::CircularLinkedList< LinkedListType >"><param name="Local" value="classDataStructures_1_1CircularLinkedList.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -536,6 +543,8 @@
         <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::Lobby2Server_PGSQL"><param name="Local" value="classRakNet_1_1Lobby2Server__PGSQL.html"><param name="ImageNumber" value="11"></OBJECT>
         </UL>
       </UL>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::NatTypeDetectionClient"><param name="Local" value="classRakNet_1_1NatTypeDetectionClient.html"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::NatTypeDetectionServer"><param name="Local" value="classRakNet_1_1NatTypeDetectionServer.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::ReplicaManager2"><param name="Local" value="classRakNet_1_1ReplicaManager2.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::ReplicaManager3"><param name="Local" value="classRakNet_1_1ReplicaManager3.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::RoomsPlugin"><param name="Local" value="classRakNet_1_1RoomsPlugin.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -709,6 +718,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/DS_QueueLinkedList.h"><param name="Local" value="DS__QueueLinkedList_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/DS_RangeList.h"><param name="Local" value="DS__RangeList_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/DS_Table.h"><param name="Local" value="DS__Table_8h.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/DS_ThreadsafeAllocatingQueue.h"><param name="Local" value="DS__ThreadsafeAllocatingQueue_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/DS_Tree.h"><param name="Local" value="DS__Tree_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/DS_WeightedGraph.h"><param name="Local" value="DS__WeightedGraph_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/EmailSender.h"><param name="Local" value="EmailSender_8h.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -735,6 +745,8 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/MTUSize.h"><param name="Local" value="MTUSize_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/NatPunchthroughClient.h"><param name="Local" value="NatPunchthroughClient_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/NatPunchthroughServer.h"><param name="Local" value="NatPunchthroughServer_8h.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/NatTypeDetectionClient.h"><param name="Local" value="NatTypeDetectionClient_8h.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/NatTypeDetectionServer.h"><param name="Local" value="NatTypeDetectionServer_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/NetworkIDManager.h"><param name="Local" value="NetworkIDManager_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/NetworkIDObject.h"><param name="Local" value="NetworkIDObject_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="C:/RakNet/Source/PacketConsoleLogger.h"><param name="Local" value="PacketConsoleLogger_8h.html"><param name="ImageNumber" value="11"></OBJECT>

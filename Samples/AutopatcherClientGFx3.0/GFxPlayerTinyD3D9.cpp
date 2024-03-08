@@ -55,7 +55,7 @@ The sample illustrates the following concepts:
 // KevinJ: Does all the work of the autopatcher
 #include "AutopatcherClientGFx3Impl.h"
 // Need for delegates to work with the CLIK widgets
-#include "..\Apps\Samples\GameDelegate\FxGameDelegate.h"
+#include "FxGameDelegate.h"
 
 // ***** FxPlayerTiny Application Class
 

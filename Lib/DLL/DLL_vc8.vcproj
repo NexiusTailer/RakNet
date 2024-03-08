@@ -213,6 +213,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\CCRakNetUDT.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\CheckSum.cpp"
 				>
 			</File>
@@ -366,6 +370,18 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\NatPunchthroughServer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\NATTypeDetectionClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\NatTypeDetectionCommon.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\NatTypeDetectionServer.cpp"
 				>
 			</File>
 			<File
@@ -592,6 +608,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\BitStream_NoTemplate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\CCRakNetUDT.h"
 				>
 			</File>
 			<File
@@ -844,6 +864,14 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\NatPunchthroughServer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\NATTypeDetectionClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\NatTypeDetectionServer.h"
 				>
 			</File>
 			<File

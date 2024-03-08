@@ -1720,8 +1720,8 @@ bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize,
 
 			internalPacket->nextActionTime = time + (RakNetTimeUS)60000 + ((ackPingSum>>(ACK_PING_SAMPLES_BITS-1)));// + (ackPingSum>>(ACK_PING_SAMPLES_BITS+1))); 
 
-			if (internalPacket->nextActionTime > time + (RakNetTimeUS)1000000)
-				internalPacket->nextActionTime = time + (RakNetTimeUS)1000000;
+			if (internalPacket->nextActionTime > time + (RakNetTimeUS)300000)
+				internalPacket->nextActionTime = time + (RakNetTimeUS)300000;
 
 			packetlossThisSample=true;
 			lastPacketlossTime=time;
@@ -1874,8 +1874,8 @@ bool ReliabilityLayer::GenerateDatagram( RakNet::BitStream *output, int MTUSize,
 					// Twice average ping
 					internalPacket->nextActionTime = time + (RakNetTimeUS)60000 + ((ackPingSum>>(ACK_PING_SAMPLES_BITS-1)));// + (ackPingSum>>(ACK_PING_SAMPLES_BITS+1)));
 
-					if (internalPacket->nextActionTime > time + (RakNetTimeUS)1000000)
-						internalPacket->nextActionTime = time + (RakNetTimeUS)1000000;
+					if (internalPacket->nextActionTime > time + (RakNetTimeUS)300000)
+						internalPacket->nextActionTime = time + (RakNetTimeUS)300000;
 				}
 
 #if defined (DEBUG_SPLIT_PACKET_PROBLEMS)

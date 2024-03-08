@@ -185,7 +185,7 @@ public:
 	/// \param[in] systemAddress Who to send this packet to, or in the case of broadcasting who not to send it to.  Use UNASSIGNED_SYSTEM_ADDRESS to specify none
 	/// \param[in] broadcast True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to.
 	/// \return False if we are not connected to the specified recipient.  True otherwise
-	/// \note COMMON MISTAKE: When writing the first byte, bitStream->Write((unsigned char) ID_MY_TYPE) be sure it is casted to a byte, and you are not writing a 4 byte enumeration.
+	/// \note COMMON MISTAKE: When writing the first byte, bitStream->Write((unsigned char) ID_MY_TYPE) be sure it is casted to a byte, and you are not writing a 4 byte enumeration./// \note Not threadsafe. Do not call from different threads, unless you define _RAKNET_THREADSAFE
 	virtual bool Send( const RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast )=0;
 
 	/// Sends multiple blocks of data, concatenating them automatically.
@@ -207,6 +207,7 @@ public:
 	/// \param[in] systemAddress Who to send this packet to, or in the case of broadcasting who not to send it to.  Use UNASSIGNED_SYSTEM_ADDRESS to specify none
 	/// \param[in] broadcast True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to.
 	/// \return False if we are not connected to the specified recipient.  True otherwise
+		/// \note Not threadsafe. Do not call from different threads, unless you define _RAKNET_THREADSAFE
 	virtual bool SendList( char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast )=0;
 
 	/// Gets a message from the incoming message queue.
@@ -214,6 +215,7 @@ public:
 	/// User-thread functions, such as RPC calls and the plugin function PluginInterface::Update occur here.
 	/// \return 0 if no packets are waiting to be handled, otherwise a pointer to a packet.
 	/// \note COMMON MISTAKE: Be sure to call this in a loop, once per game tick, until it returns 0. If you only process one packet per game tick they will buffer up.
+	/// \note Not threadsafe. Do not call from different threads, unless you define _RAKNET_THREADSAFE
 	/// sa RakNetTypes.h contains struct Packet
 	virtual Packet* Receive( void )=0;
 
@@ -586,6 +588,8 @@ public:
 	/// \param[out] sockets List of RakNetSocket structures in use. Sockets will not be closed until \a sockets goes out of scope
 	virtual void GetSockets( DataStructures::List<RakNetSmartPtr<RakNetSocket> > &sockets )=0;
 
+	virtual void WriteOutOfBandHeader(RakNet::BitStream *bitStream, MessageID header)=0;
+
 	// --------------------------------------------------------------------------------------------Network Simulator Functions--------------------------------------------------------------------------------------------
 	/// Adds simulated ping and packet loss to the outgoing data flow.
 	/// To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and maxSendBPS value on each.
@@ -624,7 +628,6 @@ public:
 
 	/// \internal
 	virtual bool SendOutOfBand(const char *host, unsigned short remotePort, MessageID header, const char *data, BitSize_t dataLength, unsigned connectionSocketIndex=0 )=0;
-	virtual void WriteOutOfBandHeader(RakNet::BitStream *bitStream, MessageID header)=0;
 
 };
 

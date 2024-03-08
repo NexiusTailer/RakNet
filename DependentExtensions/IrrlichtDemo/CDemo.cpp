@@ -940,6 +940,13 @@ void CDemo::UpdateRakNet(void)
 
 		switch (packet->data[0])
 		{
+		case ID_INCOMPATIBLE_PROTOCOL_VERSION:
+			{
+				PushMessage(RakNet::RakString("Incompatible protocol version from ") + targetName + RakNet::RakString("."));
+				if (packet->systemAddress==facilitatorSystemAddress)
+					PushMessage("Multiplayer will not work without the NAT punchthrough server!");
+			}
+			break;
 		case ID_DISCONNECTION_NOTIFICATION:
 			{
 				PushMessage(RakNet::RakString("Disconnected from ") + targetName + RakNet::RakString("."));

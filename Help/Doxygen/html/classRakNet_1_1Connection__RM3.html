@@ -42,13 +42,21 @@
 <a href="classRakNet_1_1Connection__RM3-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#082ca6fd38e39c321b552d7c4c015801">AllocReplica</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *allocationIdBitstream)=0</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#b05d85100f726378f2ed73c6792a5b46">AllocReplica</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *allocationIdBitstream, <a class="el" href="classRakNet_1_1ReplicaManager3.html">ReplicaManager3</a> *replicaManager3)=0</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Class factory to create a <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instance, given a user-defined identifier.  <a href="#082ca6fd38e39c321b552d7c4c015801"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Class factory to create a <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instance, given a user-defined identifier.  <a href="#b05d85100f726378f2ed73c6792a5b46"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#eae4816f4fc9c0e2ba5ab9f24e7a66e2">GetConstructedReplicas</a> (<a class="el" href="classDataStructures_1_1Multilist.html">DataStructures::Multilist</a>&lt; ML_STACK, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;objectsTheyDoHave)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get list of all replicas that are constructed for this connection.  <a href="#eae4816f4fc9c0e2ba5ab9f24e7a66e2"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#1b05a20c8a6ceabb86c08bc175c7906d">HasReplicaConstructed</a> (<a class="el" href="classRakNet_1_1Replica3.html">RakNet::Replica3</a> *replica)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#d3661c8e40c359fc54bdc2066acb8dba">SerializeOnDownloadStarted</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#cf23e94dddb214cf0d631fe074cd4467">DeserializeOnDownloadStarted</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#536d4413a4243b6732bc2a503d14d03e">SerializeOnDownloadComplete</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#293a2c18871dc91410953e931d90ca52">DeserializeOnDownloadComplete</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <br class="typebreak">
 SendSerializeIfChangedResult&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#c072ea774a6347d312eb8b809d9053bb">SendSerialize</a> (<a class="el" href="classRakNet_1_1Replica3.html">RakNet::Replica3</a> *replica, bool indicesToSend[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> serializationData[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNetTime timestamp, PRO sendParameters, <a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *rakPeer, unsigned char worldId)</td></tr>
@@ -61,15 +69,15 @@ SendSerializeIfChangedResult&nbsp;</td><td class="memItemRight" valign="bottom">
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structRakNetGUID.html">RakNetGUID</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#d3f7cec74bfac88a3ae095664e6a29c0">GetRakNetGUID</a> (void) const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#7050f8eed9552308ac3d82ac17baacd1">SendConstruction</a> (<a class="el" href="classDataStructures_1_1Multilist.html">DataStructures::Multilist</a>&lt; ML_STACK, <a class="el" href="structRakNet_1_1LastSerializationResult.html">LastSerializationResult</a> *, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;newObjects, <a class="el" href="classDataStructures_1_1Multilist.html">DataStructures::Multilist</a>&lt; ML_STACK, <a class="el" href="structRakNet_1_1LastSerializationResult.html">LastSerializationResult</a> *, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;deletedObjects, PRO sendParameters, <a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *rakPeer, unsigned char worldId, bool isFirstConnection)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#22d72ad637434cd22250865a6aaee6bb">SendConstruction</a> (<a class="el" href="classDataStructures_1_1Multilist.html">DataStructures::Multilist</a>&lt; ML_STACK, <a class="el" href="structRakNet_1_1LastSerializationResult.html">LastSerializationResult</a> *, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;newObjects, <a class="el" href="classDataStructures_1_1Multilist.html">DataStructures::Multilist</a>&lt; ML_STACK, <a class="el" href="structRakNet_1_1LastSerializationResult.html">LastSerializationResult</a> *, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;deletedObjects, PRO sendParameters, <a class="el" href="classRakPeerInterface.html">RakPeerInterface</a> *rakPeer, unsigned char worldId)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroy objects that no longer exist. Create objects that now exist. objectsThatExist is the entire list of objects that should exist. Given a list of objects, compare it against constructedReplicas. Objects in objectsThatExist, that are not in constructedReplicas, and that pass <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="This object does not exist on this system. Queried every tick to see if it should...">Replica3::QueryConstruction()</a> be constructed. Objects not in objectsThatExist, that are in constructedReplicas, and that pass <a class="el" href="classRakNet_1_1Replica3.html#c78ab07796290ede00559de9d4ceb72d" title="Write extra data to send with the object deletion event, if desired.">Replica3::SerializeDestruction()</a> be destroyed. This can be more efficient than <a class="el" href="classRakNet_1_1ReplicaManager3.html#f1d82ce64069659c5586537b6688c091" title="Enables or disables the automatic object creation and destruction feature.">ReplicaManager3::SetAutoConstructByQuery</a>.  <a href="#7050f8eed9552308ac3d82ac17baacd1"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destroy objects that no longer exist. Create objects that now exist. objectsThatExist is the entire list of objects that should exist. Given a list of objects, compare it against constructedReplicas. Objects in objectsThatExist, that are not in constructedReplicas, and that pass <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="This object does not exist on this system. Queried every tick to see if it should...">Replica3::QueryConstruction()</a> be constructed. Objects not in objectsThatExist, that are in constructedReplicas, and that pass <a class="el" href="classRakNet_1_1Replica3.html#c78ab07796290ede00559de9d4ceb72d" title="Write extra data to send with the object deletion event, if desired.">Replica3::SerializeDestruction()</a> be destroyed. This can be more efficient than <a class="el" href="classRakNet_1_1ReplicaManager3.html#f1d82ce64069659c5586537b6688c091" title="Enables or disables the automatic object creation and destruction feature.">ReplicaManager3::SetAutoConstructByQuery</a>.  <a href="#22d72ad637434cd22250865a6aaee6bb"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Each remote system is represented by <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a>. Used to allocate <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> and track which instances have been allocated. 
 <p>
-Important function: <a class="el" href="classRakNet_1_1Connection__RM3.html#082ca6fd38e39c321b552d7c4c015801" title="Class factory to create a Replica3 instance, given a user-defined identifier.">AllocReplica()</a> - must be overridden to create an object given an identifier for that object, which you define for all objects in your game <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="082ca6fd38e39c321b552d7c4c015801"></a><!-- doxytag: member="RakNet::Connection_RM3::AllocReplica" ref="082ca6fd38e39c321b552d7c4c015801" args="(RakNet::BitStream *allocationIdBitstream)=0" -->
+Important function: <a class="el" href="classRakNet_1_1Connection__RM3.html#b05d85100f726378f2ed73c6792a5b46" title="Class factory to create a Replica3 instance, given a user-defined identifier.">AllocReplica()</a> - must be overridden to create an object given an identifier for that object, which you define for all objects in your game <hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="b05d85100f726378f2ed73c6792a5b46"></a><!-- doxytag: member="RakNet::Connection_RM3::AllocReplica" ref="b05d85100f726378f2ed73c6792a5b46" args="(RakNet::BitStream *allocationIdBitstream, ReplicaManager3 *replicaManager3)=0" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -77,9 +85,18 @@ Important function: <a class="el" href="classRakNet_1_1Connection__RM3.html#082c
           <td class="memname">virtual <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a>* RakNet::Connection_RM3::AllocReplica           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *&nbsp;</td>
-          <td class="paramname"> <em>allocationIdBitstream</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [pure virtual]</code></td>
+          <td class="paramname"> <em>allocationIdBitstream</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1ReplicaManager3.html">ReplicaManager3</a> *&nbsp;</td>
+          <td class="paramname"> <em>replicaManager3</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [pure virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -97,9 +114,60 @@ Identifier is returned by <a class="el" href="classRakNet_1_1Replica3.html#5a5fa
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>allocationIdBitstream</em>&nbsp;</td><td>user-defined bitstream uniquely identifying a game object type </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>replicaManager3</em>&nbsp;</td><td>Instance of <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> that controls this connection </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>The new replica instance </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="293a2c18871dc91410953e931d90ca52"></a><!-- doxytag: member="RakNet::Connection_RM3::DeserializeOnDownloadComplete" ref="293a2c18871dc91410953e931d90ca52" args="(RakNet::BitStream *bitStream)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void RakNet::Connection_RM3::DeserializeOnDownloadComplete           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *&nbsp;</td>
+          <td class="paramname"> <em>bitStream</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Receives whatever was written in <a class="el" href="classRakNet_1_1Connection__RM3.html#293a2c18871dc91410953e931d90ca52">DeserializeOnDownloadComplete()</a> <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>bitStream</em>&nbsp;</td><td>Written in <a class="el" href="classRakNet_1_1Connection__RM3.html#536d4413a4243b6732bc2a503d14d03e">SerializeOnDownloadComplete()</a> </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="cf23e94dddb214cf0d631fe074cd4467"></a><!-- doxytag: member="RakNet::Connection_RM3::DeserializeOnDownloadStarted" ref="cf23e94dddb214cf0d631fe074cd4467" args="(RakNet::BitStream *bitStream)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void RakNet::Connection_RM3::DeserializeOnDownloadStarted           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *&nbsp;</td>
+          <td class="paramname"> <em>bitStream</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Receives whatever was written in <a class="el" href="classRakNet_1_1Connection__RM3.html#d3661c8e40c359fc54bdc2066acb8dba">SerializeOnDownloadStarted()</a> <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>bitStream</em>&nbsp;</td><td>Written in <a class="el" href="classRakNet_1_1Connection__RM3.html#d3661c8e40c359fc54bdc2066acb8dba">SerializeOnDownloadStarted()</a> </td></tr>
+  </table>
+</dl>
 
 </div>
 </div><p>
@@ -198,7 +266,7 @@ Returns true if we think this remote connection has this replica constructed <dl
 
 </div>
 </div><p>
-<a class="anchor" name="7050f8eed9552308ac3d82ac17baacd1"></a><!-- doxytag: member="RakNet::Connection_RM3::SendConstruction" ref="7050f8eed9552308ac3d82ac17baacd1" args="(DataStructures::Multilist&lt; ML_STACK, LastSerializationResult *, Replica3 * &gt; &amp;newObjects, DataStructures::Multilist&lt; ML_STACK, LastSerializationResult *, Replica3 * &gt; &amp;deletedObjects, PRO sendParameters, RakPeerInterface *rakPeer, unsigned char worldId, bool isFirstConnection)" -->
+<a class="anchor" name="22d72ad637434cd22250865a6aaee6bb"></a><!-- doxytag: member="RakNet::Connection_RM3::SendConstruction" ref="22d72ad637434cd22250865a6aaee6bb" args="(DataStructures::Multilist&lt; ML_STACK, LastSerializationResult *, Replica3 * &gt; &amp;newObjects, DataStructures::Multilist&lt; ML_STACK, LastSerializationResult *, Replica3 * &gt; &amp;deletedObjects, PRO sendParameters, RakPeerInterface *rakPeer, unsigned char worldId)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -230,13 +298,7 @@ Returns true if we think this remote connection has this replica constructed <dl
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">unsigned char&nbsp;</td>
-          <td class="paramname"> <em>worldId</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&nbsp;</td>
-          <td class="paramname"> <em>isFirstConnection</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -335,10 +397,60 @@ Sends over a serialization update for <em>replica</em>.<br>
 
 </div>
 </div><p>
+<a class="anchor" name="536d4413a4243b6732bc2a503d14d03e"></a><!-- doxytag: member="RakNet::Connection_RM3::SerializeOnDownloadComplete" ref="536d4413a4243b6732bc2a503d14d03e" args="(RakNet::BitStream *bitStream)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void RakNet::Connection_RM3::SerializeOnDownloadComplete           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *&nbsp;</td>
+          <td class="paramname"> <em>bitStream</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+When a new connection connects, after constructing and serialization all objects, <a class="el" href="classRakNet_1_1Connection__RM3.html#536d4413a4243b6732bc2a503d14d03e">SerializeOnDownloadComplete()</a> is called <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>bitStream</em>&nbsp;</td><td>Passed to <a class="el" href="classRakNet_1_1Connection__RM3.html#293a2c18871dc91410953e931d90ca52">DeserializeOnDownloadComplete()</a> </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="d3661c8e40c359fc54bdc2066acb8dba"></a><!-- doxytag: member="RakNet::Connection_RM3::SerializeOnDownloadStarted" ref="d3661c8e40c359fc54bdc2066acb8dba" args="(RakNet::BitStream *bitStream)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void RakNet::Connection_RM3::SerializeOnDownloadStarted           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *&nbsp;</td>
+          <td class="paramname"> <em>bitStream</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+When a new connection connects, before sending any objects, <a class="el" href="classRakNet_1_1Connection__RM3.html#d3661c8e40c359fc54bdc2066acb8dba">SerializeOnDownloadStarted()</a> is called <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>bitStream</em>&nbsp;</td><td>Passed to <a class="el" href="classRakNet_1_1Connection__RM3.html#cf23e94dddb214cf0d631fe074cd4467">DeserializeOnDownloadStarted()</a> </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>C:/RakNet/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Jul 20 23:57:19 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 5 09:35:47 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

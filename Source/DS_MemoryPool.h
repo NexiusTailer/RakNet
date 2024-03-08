@@ -46,7 +46,7 @@ namespace DataStructures
 
 		MemoryPool();
 		~MemoryPool();
-		void SetPageSize(int size); // Defaults to 16384
+		void SetPageSize(int size); // Defaults to 16384 bytes
 		MemoryBlockType *Allocate(void);
 		void Release(MemoryBlockType *m);
 		void Clear(void);
@@ -138,6 +138,7 @@ namespace DataStructures
 		if (InitPage(availablePages, availablePages)==false)
 			return 0;
 		RakAssert(availablePages->availableStackSize>1);
+
 		return (MemoryBlockType *) availablePages->availableStack[--availablePages->availableStackSize];
 	}
 	template<class MemoryBlockType>
@@ -147,7 +148,6 @@ namespace DataStructures
 		RakNet::OP_DELETE(m, __FILE__, __LINE__);
 		return;
 #endif
-
 		// Find the page this block is in and return it.
 		Page *curPage;
 		MemoryWithPage *memoryWithPage = (MemoryWithPage*)m;

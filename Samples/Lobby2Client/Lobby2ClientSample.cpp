@@ -490,6 +490,12 @@ void ExecuteCommand(RakNet::Lobby2MessageID command, RakNet::RakString userName,
 		}
 		break;
 
+	case RakNet::L2MID_Client_GetAccountDetails:
+		{
+			RakNet::Client_GetAccountDetails *arg = (RakNet::Client_GetAccountDetails *) m;
+		}
+		break;
+
 	case RakNet::L2MID_Client_StartIgnore:
 		{
 			RakNet::Client_StartIgnore *arg = (RakNet::Client_StartIgnore *) m;

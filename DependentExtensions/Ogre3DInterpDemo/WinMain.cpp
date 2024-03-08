@@ -28,7 +28,7 @@
 #include "RakNetworkFactory.h"
 #include "BitStream.h"
 #include "MessageIdentifiers.h"
-#include "ReplicaManager2.h"
+#include "ReplicaManager3.h"
 #include "NetworkIDManager.h"
 #include "RakSleep.h"
 #include "FormatString.h"
@@ -65,9 +65,6 @@ bool isServer;
 Ogre::Entity *popcornKernel, *popcornPopped;
 RakPeerInterface *rakPeer;
 DataStructures::List<Popcorn*> popcornList;
-// See the project ReplicaManager2 for a proper introduction of this class.
-// There is also a video online at http://www.rakkarsoft.com/raknet/manual/ReplicaManager2.html
-ReplicaManager2 replicaManager2;
 bool enableInterpolation;
 
 App3D *app;
@@ -76,7 +73,7 @@ App3D *app;
 // When to pop, and the physics the popcorn takes is entirely controlled by the server
 // Every DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES the server will send an update
 // The client intentionally lags this far behind, so it always has a recent position to interpolate to
-class Popcorn : public Replica2
+class Popcorn : public Replica3
 {
 public:
 	Popcorn() {
@@ -111,22 +108,75 @@ public:
 	Ogre::Quaternion visibleOrientation;
 	TransformationHistory transformationHistory;
 
-	virtual bool SerializeConstruction(RakNet::BitStream *bitStream, SerializationContext *serializationContext)
+	virtual void WriteAllocationID(RakNet::BitStream *allocationIdBitstream) const
 	{
-		RakAssert(isServer==true);
-		StringTable::Instance()->EncodeString("Popcorn", 128, bitStream);
-		return true;
+		StringTable::Instance()->EncodeString("Popcorn", 128, allocationIdBitstream);
 	}
-	virtual bool Serialize(RakNet::BitStream *bitStream, SerializationContext *serializationContext)
+	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3)
+	{
+		if (isServer)
+			return QueryConstruction_ServerConstruction(destinationConnection);
+		else
+			return QueryConstruction_ClientConstruction(destinationConnection);
+	}
+	virtual bool QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection){
+		if (isServer)
+			return QueryRemoteConstruction_ServerConstruction(sourceConnection);
+		else
+			return QueryRemoteConstruction_ClientConstruction(sourceConnection);
+	}
+	virtual void SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection){}
+	virtual bool DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection){return true;}
+	virtual void SerializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *destinationConnection){}
+	virtual bool DeserializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *sourceConnection){return true;}
+	virtual RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3 *droppedConnection) const
+	{
+		if (isServer)
+			return QueryActionOnPopConnection_Server(droppedConnection);
+		else
+			return QueryActionOnPopConnection_Client(droppedConnection);
+	}
+	virtual void DeallocReplica(RakNet::Connection_RM3 *sourceConnection) {delete this;}
+	virtual RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3 *destinationConnection)
+	{
+		if (isServer)
+			return QuerySerialization_ServerSerializable(destinationConnection);
+		else
+			return QuerySerialization_ClientSerializable(destinationConnection);
+	}
+	virtual RM3SerializationResult Serialize(RakNet::SerializeParameters *serializeParameters)
 	{
 		// Autoserialize causes a network packet to go out when any of these member variables change.
 		RakAssert(isServer==true);
-		bitStream->Write(isKernel);
-		bitStream->WriteAlignedBytes((const unsigned char*)&position,sizeof(position));
-		bitStream->WriteAlignedBytes((const unsigned char*)&velocity,sizeof(velocity));
-		bitStream->WriteAlignedBytes((const unsigned char*)&orientation,sizeof(orientation));
-		return true;
+		serializeParameters->outputBitstream[0].Write(isKernel);
+		serializeParameters->outputBitstream[0].WriteAlignedBytes((const unsigned char*)&position,sizeof(position));
+		serializeParameters->outputBitstream[0].WriteAlignedBytes((const unsigned char*)&velocity,sizeof(velocity));
+		serializeParameters->outputBitstream[0].WriteAlignedBytes((const unsigned char*)&orientation,sizeof(orientation));
+		return RM3SR_BROADCAST_IDENTICALLY;
+	}	
+	virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters)
+	{
+		bool lastIsKernel = isKernel;
+
+		// Doing this because we are also lagging position and orientation behind by DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES
+		// Without it, the kernel would pop immediately but would not start moving
+		deserializeParameters->serializationBitstream[0].Read(isKernel);
+		if (isKernel==false && lastIsKernel==true)
+		popCountdown=DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES;
+
+		deserializeParameters->serializationBitstream[0].ReadAlignedBytes((unsigned char*)&position,sizeof(position));
+		deserializeParameters->serializationBitstream[0].ReadAlignedBytes((unsigned char*)&velocity,sizeof(velocity));
+		deserializeParameters->serializationBitstream[0].ReadAlignedBytes((unsigned char*)&orientation,sizeof(orientation));
+
+		// Scene node starts invisible until we deserialize the intial startup data
+		// This data could also have been passed in SerializeConstruction()
+		sceneNode->setVisible(true,true);
+
+		// Every time we get a network packet, we write it to the transformation history class.
+		// This class, given a time in the past, can then return to us an interpolated position of where we should be in at that time
+		transformationHistory.Write(position,velocity,orientation,RakNet::GetTime());
 	}
+
 	virtual void SetToPopped(void)
 	{
 		// Change the mesh, and add some velocity.
@@ -140,33 +190,9 @@ public:
 			velocity.x=-PLANE_VELOCITY_VARIANCE/2.0f+frandomMT()*PLANE_VELOCITY_VARIANCE;
 			velocity.y=UPWARD_VELOCITY_MINIMUM+frandomMT()*UPWARD_VELOCITY_VARIANCE;
 			velocity.z=-PLANE_VELOCITY_VARIANCE/2.0f+frandomMT()*PLANE_VELOCITY_VARIANCE;
-
-			// Update remote system right away for responsiveness (optional)
-			BroadcastSerialize();
 		}		
 	}
-	virtual void Deserialize(RakNet::BitStream *bitStream, SerializationType serializationType, SystemAddress sender, RakNetTime timestamp)
-	{
-		bool lastIsKernel = isKernel;
-
-		// Doing this because we are also lagging position and orientation behind by DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES
-		// Without it, the kernel would pop immediately but would not start moving
-		bitStream->Read(isKernel);
-		if (isKernel==false && lastIsKernel==true)
-			popCountdown=DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES;
-
-		bitStream->ReadAlignedBytes((unsigned char*)&position,sizeof(position));
-		bitStream->ReadAlignedBytes((unsigned char*)&velocity,sizeof(velocity));
-		bitStream->ReadAlignedBytes((unsigned char*)&orientation,sizeof(orientation));
-
-		// Scene node starts invisible until we deserialize the intial startup data
-		// This data could also have been passed in SerializeConstruction()
-		sceneNode->setVisible(true,true);
-
-		// Every time we get a network packet, we write it to the transformation history class.
-		// This class, given a time in the past, can then return to us an interpolated position of where we should be in at that time
-		transformationHistory.Write(position,velocity,orientation,RakNet::GetTime());
-	}
+	
 	virtual void Update(RakNetTime timeElapsedMs)
 	{
 		visiblePosition=position;
@@ -230,13 +256,14 @@ public:
 		while (popcornList.Size())
 			delete popcornList[popcornList.Size()-1];
 	}
-	static Popcorn * CreateKernel()
+	static Popcorn * CreateKernel(ReplicaManager3 *replicaManager3)
 	{
 		Popcorn *p = new Popcorn;
+		// Tell the replication system about this new Replica instance.
+		replicaManager3->Reference(p);
 		static int count=0;
 		count++;
 		popcornList.Insert(p);
-		p->SetReplicaManager(&replicaManager2);
 		p->sceneNode = app->GetSceneManager()->getRootSceneNode()->createChildSceneNode();
 		p->sceneNode->attachObject(popcornKernel->clone(FormatString("%p",p)));
 
@@ -252,14 +279,6 @@ public:
 			p->rotationalVelocity.FromAngleAxis(Ogre::Radian(frandomMT()*6.28f), Ogre::Vector3(-1.0f+frandomMT()*2.0f,-1.0f+frandomMT()*2.0f,-1.0f+frandomMT()*2.0f).normalisedCopy());
 			p->visiblePosition=p->position;
 			p->visibleOrientation=p->orientation;
-
-			// Automatically call Serialize every DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES milliseconds and send out changes if they occur
-			p->AddAutoSerializeTimer(DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES);
-			// All connected systems should create this object
-			p->BroadcastConstruction();
-			// Force the first serialize to go out. We could have also just wrote the data in SerializeConstruction()
-			// Without this call, no serialize would occur until something changed from the intial value
-			p->BroadcastSerialize();
 		}
 		else
 			p->sceneNode->setVisible(false,true);
@@ -271,32 +290,31 @@ public:
 
 // One instance of Connection_RM2 is implicitly created per connection that uses ReplicaManager2. The most important function to implement is Construct() as this creates your game objects.
 // It is designed this way so you can override per-connection behavior in your own game classes
-class PopcornSampleConnection : public Connection_RM2
+class PopcornSampleConnection : public Connection_RM3
 {
 public:
-	PopcornSampleConnection() {}
+	PopcornSampleConnection(SystemAddress _systemAddress, RakNetGUID _guid) : Connection_RM3(_systemAddress,_guid) {}
 	virtual ~PopcornSampleConnection() {}
 
 	// Callback used to create objects
 	// See Connection_RM2::Construct in ReplicaManager2.h for a full explanation of each parameter
-	Replica2* Construct(RakNet::BitStream *replicaData, SystemAddress sender, SerializationType type, ReplicaManager2 *replicaManager, RakNetTime timestamp, NetworkID networkId, bool networkIDCollision)
+	virtual Replica3 *AllocReplica(RakNet::BitStream *allocationIdBitstream, ReplicaManager3 *replicaManager3)
 	{
 		char objectName[128];
-		StringTable::Instance()->DecodeString(objectName,128,replicaData);
+		StringTable::Instance()->DecodeString(objectName,128,allocationIdBitstream);
 		if (strcmp(objectName,"Popcorn")==0)
 		{
-			return Popcorn::CreateKernel();
+			return Popcorn::CreateKernel(replicaManager3);
 		}
 		return 0;
 	}
 };
-
-// This is a required class factory, that creates and destroys instances of ReplicaManager2DemoConnection
-class PopcornFactory : public Connection_RM2Factory {
-	virtual Connection_RM2* AllocConnection(void) const {return new PopcornSampleConnection;}
-	virtual void DeallocConnection(Connection_RM2* s) const {delete s;}
+class PopcornDemoRM3 : public ReplicaManager3
+{
+	virtual Connection_RM3* AllocConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID) const {return new PopcornSampleConnection(systemAddress,rakNetGUID);}
+	virtual void DeallocConnection(Connection_RM3 *connection) const {delete connection;}
 };
-
+PopcornDemoRM3 replicaManager3;
 class ExampleApp : public App3D
 {
 public:
@@ -416,10 +434,8 @@ public:
 				// Start RakNet, up to 32 connections if the server
 				rakPeer = RakNetworkFactory::GetRakPeerInterface();
 				rakPeer->Startup(isServer ? 32 : 1,100,&sd,1);
-				rakPeer->AttachPlugin(&replicaManager2);
+				rakPeer->AttachPlugin(&replicaManager3);
 				rakPeer->SetNetworkIDManager(&networkIdManager);
-				// Register our custom connection factory
-				replicaManager2.SetConnectionFactory(&popcornFactory);
 				// The server should allow systems to connect. Clients do not need to unless you want to use RakVoice or for some other reason want to transmit directly between systems.
 				if (isServer)
 					rakPeer->SetMaximumIncomingConnections(32);
@@ -465,7 +481,7 @@ public:
 				if (popcornLifetimeCountdown<=elapsedTimeMS)
 				{
 					Popcorn::ClearPopcorn();
-					CreateKernels();
+					CreateKernels(&replicaManager3);
 					popcornLifetimeCountdown=RESTART_TIMER_MS;
 				}
 				popcornLifetimeCountdown-=elapsedTimeMS;
@@ -532,7 +548,7 @@ public:
 		enableInterpolation=true;
 	}
 
-	virtual void CreateKernels()
+	virtual void CreateKernels(ReplicaManager3 *replicaManager3)
 	{
 		RakAssert(isServer);
 		unsigned int kernelCount;
@@ -541,7 +557,7 @@ public:
 		else
 			kernelCount = MIN_KERNELS;
 		for (unsigned int i=0; i < kernelCount; i++)
-			Popcorn::CreateKernel();
+			Popcorn::CreateKernel(replicaManager3);
 
 	}
 
@@ -581,7 +597,6 @@ protected:
 
 	OIS::InputManager* mInputManager;
 	OIS::Keyboard* mKeyboard;
-	PopcornFactory popcornFactory;
 
 	NetworkIDManager networkIdManager;
 	bool isStarted;

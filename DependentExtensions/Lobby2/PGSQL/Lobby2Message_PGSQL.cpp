@@ -754,9 +754,12 @@ bool RakNet::CDKey_GetStatus_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, 
 		return true;
 	}
 
-	result = pgsql->QueryVariadic("SELECT (lobby2.cdkeys.usable, lobby2.cdkeys.stolen, lobby2.cdkeys.activationDate, lobby2.users.handle) "
-		"FROM lobby2.cdkeys, lobby2.users WHERE lobby2.cdkeys.cdKey=%s AND lobby2.cdkeys.titleName_fk=%s AND lobby2.users.userId_pk=lobby2.cdkeys.userId_fk",
-		cdKey.C_String(), titleName.C_String());
+	result = pgsql->QueryVariadic(
+		"SELECT lobby2.cdkeys.usable, lobby2.cdkeys.stolen, lobby2.cdkeys.activationDate, lobby2.users.handle "
+		"FROM lobby2.cdkeys LEFT OUTER JOIN lobby2.users ON lobby2.users.userId_pk=lobby2.cdkeys.userId_fk "
+		"WHERE lobby2.cdkeys.cdKey=%s AND lobby2.cdkeys.titleName_fk=%s;"
+		, cdKey.C_String(), titleName.C_String());
+
 	int numRowsReturned = PQntuples(result);
 	if (numRowsReturned==0)
 	{
@@ -1167,6 +1170,30 @@ bool RakNet::System_DeleteAccount_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 		return true;
 	}
 
+	PGresult *result = pgsql->QueryVariadic(
+		"SELECT password from lobby2.users WHERE userId_pk = %i", userRow);
+	if (result==0)
+	{
+		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
+		return true;
+	}
+	int numRowsReturned = PQntuples(result);
+	if (numRowsReturned==0)
+	{
+		PQclear(result);
+		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
+		return true;
+	}
+	RakNet::RakString passwordFromDB;
+	PostgreSQLInterface::PQGetValueFromBinary(&passwordFromDB, result, 0, "password");
+	PQclear(result);
+	if (passwordFromDB!=password)
+	{
+		PQclear(result);
+		resultCode=L2RC_System_DeleteAccount_INVALID_PASSWORD;
+		return true;
+	}
+
 	// Notify friends of account deletion
 	command->callingUserName=userName;
 	command->callerUserId=userRow;
@@ -1178,7 +1205,7 @@ bool RakNet::System_DeleteAccount_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 	command->server->AddOutputFromThread(logoffRequest, userRow, userName);
 
 	// Delete the account
-	PGresult *result = pgsql->QueryVariadic("DELETE FROM lobby2.users WHERE userId_pk=%i", userRow);
+	result = pgsql->QueryVariadic("DELETE FROM lobby2.users WHERE userId_pk=%i", userRow);
 	PQclear(result);
 	if (result!=0)
 		resultCode=L2RC_SUCCESS;
@@ -1268,7 +1295,7 @@ bool RakNet::Client_GetPasswordRecoveryQuestionByHandle_PGSQL::ServerDBImpl( Lob
 	}
 
 	PGresult *result = pgsql->QueryVariadic(
-		"SELECT passwordRecoveryQuestion from lobby2.users WHERE userId_pk = %i", userRow);
+		"SELECT passwordRecoveryQuestion,emailAddress from lobby2.users WHERE userId_pk = %i", userRow);
 
 	if (result==0)
 	{
@@ -1285,6 +1312,7 @@ bool RakNet::Client_GetPasswordRecoveryQuestionByHandle_PGSQL::ServerDBImpl( Lob
 		return true;
 	}
 
+	PostgreSQLInterface::PQGetValueFromBinary(&emailAddress, result, 0, "emailAddress");
 	PostgreSQLInterface::PQGetValueFromBinary(&passwordRecoveryQuestion, result, 0, "passwordRecoveryQuestion");
 	PQclear(result);
 
@@ -1351,6 +1379,33 @@ bool RakNet::Client_ChangeHandle_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 		return true;
 	}
 
+	if (requiresPasswordToChangeHandle)
+	{
+		PGresult *result = pgsql->QueryVariadic(
+			"SELECT password from lobby2.users WHERE userId_pk = %i", userRow);
+		if (result==0)
+		{
+			resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
+			return true;
+		}
+		int numRowsReturned = PQntuples(result);
+		if (numRowsReturned==0)
+		{
+			PQclear(result);
+			resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
+			return true;
+		}
+		RakNet::RakString passwordFromDB;
+		PostgreSQLInterface::PQGetValueFromBinary(&passwordFromDB, result, 0, "password");
+		PQclear(result);
+		if (passwordFromDB!=password)
+		{
+			PQclear(result);
+			resultCode=L2RC_Client_ChangeHandle_INVALID_PASSWORD;
+			return true;
+		}
+	}
+
 	PGresult *result = pgsql->QueryVariadic(
 		"UPDATE lobby2.users SET handle=%s WHERE userId_pk=%i", newHandle.C_String(), userRow);
 	PQclear(result);
@@ -1412,7 +1467,60 @@ bool RakNet::Client_UpdateAccount_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 	resultCode=L2RC_SUCCESS;
 	return true;
 }
+bool RakNet::Client_GetAccountDetails_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
+{
+	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
+	PGresult *result;
 
+	result = pgsql->QueryVariadic(
+		"SELECT (firstname, middlename, lastname, sex_male, homeaddress1, homeaddress2, homecity, "
+		"homezipcode, billingaddress1, billingaddress2, billingcity, billingzipcode, emailaddress, password, passwordrecoveryquestion,"
+		"passwordrecoveryanswer, caption1, caption2, dateOfBirth, binaryData) FROM lobby2.users"
+		"WHERE userId_pk = %i", command->callerUserId);
+	if (result==0)
+	{
+		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
+		return true;
+	}
+
+	int numRowsReturned = PQntuples(result);
+	if (numRowsReturned==0)
+	{
+		PQclear(result);
+		resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
+		return true;
+	}
+
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.firstName, result, 0, "firstname");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.middleName, result, 0, "middleName");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.lastName, result, 0, "lastName");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.race, result, 0, "race");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.sex_male, result, 0, "sex_male");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.homeAddress1, result, 0, "homeAddress1");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.homeAddress2, result, 0, "homeAddress2");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.homeCity, result, 0, "homeCity");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.homeState, result, 0, "homeState");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.homeCountry, result, 0, "homeCountry");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.homeZipCode, result, 0, "homeZipCode");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.billingAddress1, result, 0, "billingAddress1");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.billingAddress2, result, 0, "billingAddress2");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.billingCity, result, 0, "billingCity");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.billingState, result, 0, "billingState");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.billingCountry, result, 0, "billingCountry");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.billingZipCode, result, 0, "billingZipCode");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.emailAddress, result, 0, "emailAddress");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.password, result, 0, "password");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.passwordRecoveryQuestion, result, 0, "passwordRecoveryQuestion");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.passwordRecoveryAnswer, result, 0, "passwordRecoveryAnswer");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.caption1, result, 0, "caption1");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.caption2, result, 0, "caption2");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.ageInDays, result, 0, "ageInDays");
+	PostgreSQLInterface::PQGetValueFromBinary(&createAccountParameters.binaryData->binaryData, &createAccountParameters.binaryData->binaryDataLength, result, 0, "binaryData");
+	PQclear(result);
+
+	resultCode=L2RC_SUCCESS;
+	return true;
+}
 bool RakNet::Client_StartIgnore_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 {
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
@@ -3079,19 +3187,19 @@ bool RakNet::Clans_GetMemberProperties_PGSQL::ServerDBImpl( Lobby2ServerCommand 
 	unsigned int clanId = GetClanIdFromHandle(clanHandle, pgsql);
 	if (clanId==0)
 	{
-		resultCode=L2RC_Clans_SetMemberRank_UNKNOWN_CLAN;
+		resultCode=L2RC_Clans_GetMemberProperties_UNKNOWN_CLAN;
 		return true;
 	}
 	unsigned int targetUserId = GetUserRowFromHandle(targetHandle, pgsql);
 	if (targetUserId==0)
 	{
-		resultCode=L2RC_Clans_SetMemberRank_UNKNOWN_TARGET_HANDLE;
+		resultCode=L2RC_Clans_GetMemberProperties_UNKNOWN_TARGET_HANDLE;
 		return true;
 	}
 	RakNet::ClanMemberState clanMemberState = GetClanMemberState(clanId, targetUserId, &isSubleader, pgsql);
 	if (clanMemberState==CMD_UNDEFINED)
 	{
-		resultCode=L2RC_Clans_SetMemberRank_TARGET_NOT_IN_CLAN;
+		resultCode=L2RC_Clans_GetMemberProperties_TARGET_NOT_IN_CLAN;
 		return true;
 	}
 	result = pgsql->QueryVariadic("SELECT description, binaryData, isSubleader, rank, memberState_fk, banReason FROM lobby2.clanMembers where userId_fk=%i AND clanId_fk=%i",
@@ -4385,3 +4493,7 @@ bool RakNet::Clans_GetList_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, vo
 	resultCode=L2RC_SUCCESS;
 	return true;
 }
+
+
+
+

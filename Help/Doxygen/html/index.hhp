@@ -56,6 +56,7 @@ DS__Queue_8h.html
 DS__QueueLinkedList_8h.html
 DS__RangeList_8h.html
 DS__Table_8h.html
+DS__ThreadsafeAllocatingQueue_8h.html
 DS__Tree_8h.html
 DS__WeightedGraph_8h.html
 EmailSender_8h.html
@@ -82,6 +83,8 @@ MessageIdentifiers_8h.html
 MTUSize_8h.html
 NatPunchthroughClient_8h.html
 NatPunchthroughServer_8h.html
+NatTypeDetectionClient_8h.html
+NatTypeDetectionServer_8h.html
 NetworkIDManager_8h.html
 NetworkIDObject_8h.html
 PacketConsoleLogger_8h.html
@@ -137,6 +140,7 @@ group__FULLY__CONNECTED__MESH__GROUP.html
 group__SIMPLE__DATABSE__GROUP.html
 group__MESSAGEFILTER__GROUP.html
 group__NAT__PUNCHTHROUGH__GROUP.html
+group__NAT__TYPE__DETECTION__GROUP.html
 group__PACKETLOGGER__GROUP.html
 group__PLUGIN__INTERFACE__GROUP.html
 group__PLUGINS__GROUP.html
@@ -407,10 +411,16 @@ classRakNet_1_1AutoRPC.html
 classRakNet_1_1AutoRPC-members.html
 classRakNet_1_1BitStream.html
 classRakNet_1_1BitStream-members.html
+classRakNet_1_1CCRakNetUDT.html
+classRakNet_1_1CCRakNetUDT-members.html
 classRakNet_1_1FunctionThread.html
 classRakNet_1_1FunctionThread-members.html
 classRakNet_1_1Functor.html
 classRakNet_1_1Functor-members.html
+classRakNet_1_1NatTypeDetectionClient.html
+classRakNet_1_1NatTypeDetectionClient-members.html
+classRakNet_1_1NatTypeDetectionServer.html
+classRakNet_1_1NatTypeDetectionServer-members.html
 classRakNet_1_1RakString.html
 classRakNet_1_1RakString-members.html
 classRakNet_1_1ReplicaManager2.html

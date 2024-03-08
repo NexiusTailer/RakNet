@@ -5,10 +5,6 @@
 #include "GetTime.h"
 #include "PacketLogger.h"
 
-// As I add more out of band messages this will be moved elsewhere
-static const char ID_NAT_ESTABLISH_UNIDIRECTIONAL=0;
-static const char ID_NAT_ESTABLISH_BIDIRECTIONAL=1;
-
 void NatPunchthroughDebugInterface_Printf::OnClientMessage(const char *msg)
 {
 	printf("%s\n", msg);

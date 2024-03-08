@@ -27,10 +27,17 @@ public:
 	/// Set the address of the server. When you call SendMsg() the packet will be sent to this address.
 	void SetServerAddress(SystemAddress addr);
 
+	// Return whatever was passed to SetServerAddress()
+	SystemAddress GetServerAddress(void) const;
+
 	/// Send a command to the server
 	/// \param[in] msg The message that represents the command
 	/// \param[in] callbackId Which callback, registered with SetCallbackInterface() or AddCallbackInterface(), should process the result. -1 for all
 	virtual void SendMsg(Lobby2Message *msg);
+
+	/// Same as SendMsg()
+	/// Also calls Dealloc on the message factory
+	virtual void SendMsgAndDealloc(Lobby2Message *msg);
 
 	// Let the user do this if they want. Not all users may want ignore lists
 	/*

@@ -186,7 +186,7 @@ int main(void)
 		{
 			case ID_DISCONNECTION_NOTIFICATION:
 				  // Connection lost normally
-				printf("ID_DISCONNECTION_NOTIFICATION\n");
+				printf("ID_DISCONNECTION_NOTIFICATION from %s\n", p->systemAddress.ToString(true));;
 				break;
 
 		
@@ -204,7 +204,7 @@ int main(void)
 			case ID_CONNECTION_LOST:
 				// Couldn't deliver a reliable packet - i.e. the other system was abnormally
 				// terminated
-				printf("ID_CONNECTION_LOST\n");
+				printf("ID_CONNECTION_LOST from %s\n", p->systemAddress.ToString(true));;
 				break;
 
 			default:

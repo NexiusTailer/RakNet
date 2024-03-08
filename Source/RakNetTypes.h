@@ -61,6 +61,9 @@ struct RAK_DLL_EXPORT SocketDescriptor
 	// Connect with the port returned by signaling. Set this to whatever port RakNet was actually started on
 	unsigned short remotePortRakNetWasStartedOn_PS3;
 };
+
+extern bool NonNumericHostString( const char *host );
+
 /// \brief Network address for a system
 /// \details Corresponds to a network address<BR>
 /// This is not necessarily a unique identifier. For example, if a system has both LAN and internet connections, the system may be identified by either one, depending on who is communicating<BR>
@@ -137,10 +140,11 @@ struct RPCParameters
 };
 
 /// Uniquely identifies an instance of RakPeer. Use RakPeer::GetGuidFromSystemAddress() and RakPeer::GetSystemAddressFromGuid() to go between SystemAddress and RakNetGUID
-/// Use RakPeer::GetGuidFromSystemAddress(UNASSIGNED_SYSTSEM_ADDRESS) to get your own GUID
+/// Use RakPeer::GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS) to get your own GUID
 struct RAK_DLL_EXPORT RakNetGUID
 {
-	uint32_t g[6];
+//	uint32_t g[6];
+	uint64_t g;
 
 	// Return the GUID as a string
 	// Returns a static string
@@ -156,12 +160,13 @@ struct RAK_DLL_EXPORT RakNetGUID
 
 	RakNetGUID& operator = ( const RakNetGUID& input )
 	{
-		g[0]=input.g[0];
-		g[1]=input.g[1];
-		g[2]=input.g[2];
-		g[3]=input.g[3];
-		g[4]=input.g[4];
-		g[5]=input.g[5];
+		g=input.g;
+		//g[0]=input.g[0];
+		//g[1]=input.g[1];
+		//g[2]=input.g[2];
+		//g[3]=input.g[3];
+		//g[4]=input.g[4];
+		//g[5]=input.g[5];
 		return *this;
 	}
 
@@ -177,10 +182,11 @@ struct RAK_DLL_EXPORT RakNetGUID
 //	0xFFFFFFFF, 0xFFFF
 //};
 const SystemAddress UNASSIGNED_SYSTEM_ADDRESS(0xFFFFFFFF, 0xFFFF);
-const RakNetGUID UNASSIGNED_RAKNET_GUID = 
-{
-	{0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF}
-};
+const RakNetGUID UNASSIGNED_RAKNET_GUID = {(uint64_t)-1};
+//{
+//	{0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF}
+//	0xFFFFFFFFFFFFFFFF
+//};
 
 struct RAK_DLL_EXPORT NetworkID
 {

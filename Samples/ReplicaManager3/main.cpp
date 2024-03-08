@@ -204,7 +204,7 @@ public:
 	SampleConnection(SystemAddress _systemAddress, RakNetGUID _guid) : Connection_RM3(_systemAddress, _guid) {}
 	virtual ~SampleConnection() {}
 
-	virtual Replica3 *AllocReplica(RakNet::BitStream *allocationId)
+	virtual Replica3 *AllocReplica(RakNet::BitStream *allocationId, ReplicaManager3 *replicaManager3)
 	{
 		RakNet::RakString typeName;
 		allocationId->Read(typeName);

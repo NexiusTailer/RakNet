@@ -57,6 +57,7 @@ enum Lobby2MessageID
 	L2MID_Client_GetPasswordByPasswordRecoveryAnswer,
 	L2MID_Client_ChangeHandle,
 	L2MID_Client_UpdateAccount,
+	L2MID_Client_GetAccountDetails,
 	L2MID_Client_StartIgnore,
 	L2MID_Client_StopIgnore,
 	L2MID_Client_GetIgnoreList,
@@ -163,7 +164,6 @@ enum Lobby2MessageID
 	L2MID_Notification_Console_KickedOutOfRoom,
 	L2MID_Notification_Console_RoomWasDestroyed,
 	L2MID_Notification_Console_RoomOwnerChanged,
-	L2MID_Notification_Console_RoomStateChanged,
 	L2MID_Notification_Console_RoomChatMessage,
 	L2MID_Notification_Console_RoomMessage,
 	L2MID_Notification_Console_RoomMemberConnectivityUpdate,
@@ -335,6 +335,7 @@ struct Client_GetPasswordRecoveryQuestionByHandle;
 struct Client_GetPasswordByPasswordRecoveryAnswer;
 struct Client_ChangeHandle;
 struct Client_UpdateAccount;
+struct Client_GetAccountDetails;
 struct Client_StartIgnore;
 struct Client_StopIgnore;
 struct Client_GetIgnoreList;
@@ -441,7 +442,6 @@ struct Notification_Console_MemberLeftRoom;
 struct Notification_Console_KickedOutOfRoom;
 struct Notification_Console_RoomWasDestroyed;
 struct Notification_Console_RoomOwnerChanged;
-struct Notification_Console_RoomStateChanged;
 struct Notification_Console_RoomChatMessage;
 struct Notification_Console_RoomMessage;
 struct Notification_Console_RoomMemberConnectivityUpdate;
@@ -484,6 +484,7 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Client_GetPasswordByPasswordRecoveryAnswer *message);
 	virtual void MessageResult(Client_ChangeHandle *message);
 	virtual void MessageResult(Client_UpdateAccount *message);
+	virtual void MessageResult(Client_GetAccountDetails *message);
 	virtual void MessageResult(Client_StartIgnore *message);
 	virtual void MessageResult(Client_StopIgnore *message);
 	virtual void MessageResult(Client_GetIgnoreList *message);
@@ -590,7 +591,6 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Notification_Console_KickedOutOfRoom *message);
 	virtual void MessageResult(Notification_Console_RoomWasDestroyed *message);
 	virtual void MessageResult(Notification_Console_RoomOwnerChanged *message);
-	virtual void MessageResult(Notification_Console_RoomStateChanged *message);
 	virtual void MessageResult(Notification_Console_RoomChatMessage *message);
 	virtual void MessageResult(Notification_Console_RoomMessage *message);
 	virtual void MessageResult(Notification_Console_RoomMemberConnectivityUpdate *message);
@@ -911,7 +911,6 @@ struct System_RegisterProfanity : public Lobby2Message
 	DataStructures::List<RakNet::RakString> profanityWords;
 
 	// Output parameters
-
 };
 /// Bans a specific user (will be most likely called by a moderator). Adds the user's primary key to a ban table, along with the name of the moderator, the reason for the ban. Banning is used to prevent the banned user from logging on for some specified duration. A date column should be present and automatically filled in. When bans are expired, the ban can be deleted from the database. However, a separate table should log bans, so that even expired bans can be looked up in case.
 struct System_BanUser : public Lobby2Message
@@ -1189,10 +1188,11 @@ struct Client_GetPasswordRecoveryQuestionByHandle : public Lobby2Message
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 	virtual bool PrevalidateInput(void);
 
-	// Input parameters
+	// Input/output parameters
 	RakNet::RakString userName;
 
 	// Output parameters
+	RakNet::RakString emailAddress;
 	RakNet::RakString passwordRecoveryQuestion;
 };
 /// Returns the password associated with a handle, if the passwordRecoveryAnswer is correct
@@ -1217,7 +1217,8 @@ struct Client_GetPasswordByPasswordRecoveryAnswer : public Lobby2Message
 struct Client_ChangeHandle : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_ChangeHandle)
-		virtual bool RequiresAdmin(void) const {return false;}
+	Client_ChangeHandle() {requiresPasswordToChangeHandle=false;}
+	virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
@@ -1227,14 +1228,15 @@ struct Client_ChangeHandle : public Lobby2Message
 
 	// Input parameters
 	RakNet::RakString userName;
+	bool requiresPasswordToChangeHandle;
+	RakNet::RakString password;
 	RakNet::RakString newHandle;
 
 	// Output parameters
 };
 
 /// Will update any or all of the inputs that were previously passed to Client_RegisterAccount, except handle.
-/// For input parameters, see Client_RegisterAccount() createAccountParameters, EXCEPT handle
-/// For output parameters, see Client_RegisterAccount()
+/// For input parameters, see Client_RegisterAccount() createAccountParameters
 struct Client_UpdateAccount : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_UpdateAccount)
@@ -1250,6 +1252,21 @@ struct Client_UpdateAccount : public Lobby2Message
 	CreateAccountParameters createAccountParameters;
 
 	// Output parameters
+};
+
+struct Client_GetAccountDetails : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Client_GetAccountDetails)
+		virtual bool RequiresAdmin(void) const {return false;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return false;}
+	virtual bool RequiresLogin(void) const {return true;}
+	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
+
+	// Input parameters
+
+	// Output parameters
+	CreateAccountParameters createAccountParameters;
 };
 
 /// Adds the specified user to an ignore list for my user. Recommended to store the primary key of the remote user, both for speed and so if the other use changes their handle it still works. The ignore list is checked for friend invites, emails, and elsewhere where indicated. Ignoring is uni-directional, so if A ignores B, A will block messages from B where appropriate, but B will not immediately block messages from A.
@@ -2836,7 +2853,6 @@ struct Notification_Clans_SetMemberRank : public Lobby2Message
 	virtual bool RequiresLogin(void) const {return false;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
-	// Input parameters
 	RakNet::RakString clanHandle;
 	RakNet::RakString targetHandle;
 	RakNet::RakString leaderHandle;
@@ -2851,7 +2867,6 @@ struct Notification_Clans_ChangeHandle : public Lobby2Message
 	virtual bool RequiresLogin(void) const {return false;}
 	virtual void Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream );
 
-	// Input parameters
 	RakNet::RakString oldClanHandle;
 	RakNet::RakString newClanHandle;
 	RakNet::RakString leaderHandle;
@@ -3081,15 +3096,6 @@ struct Notification_Console_RoomOwnerChanged : public Lobby2Message
 	virtual bool RequiresLogin(void) const {return false;}
 };
 
-struct Notification_Console_RoomStateChanged : public Lobby2Message
-{
-	__L2_MSG_BASE_IMPL(Notification_Console_RoomStateChanged)
-		virtual bool RequiresAdmin(void) const {return true;}
-	virtual bool RequiresRankingPermission(void) const {return false;}
-	virtual bool CancelOnDisconnect(void) const {return false;}
-	virtual bool RequiresLogin(void) const {return false;}
-};
-
 struct Notification_Console_RoomChatMessage : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_RoomChatMessage)
@@ -3164,6 +3170,7 @@ struct Notification_ReceivedDataMessageFromUser : public Lobby2Message
 };
 
 // --------------------------------------------- Base interface of factory class for all messages --------------------------------------------
+#define __L2_ALLOCATE_AND_DEFINE(FACTORY, __TYPE__,VAR_NAME) RakNet::__TYPE__ *VAR_NAME = (RakNet::__TYPE__ *) FACTORY->Alloc(L2MID_##__TYPE__); RakAssert(VAR_NAME);
 #define __L2_MSG_FACTORY_BASE(__NAME__) {case L2MID_##__NAME__ : Lobby2Message *m = RakNet::OP_NEW< __NAME__ >( __FILE__, __LINE__ ) ; RakAssert(m->GetID()==L2MID_##__NAME__ ); m->requestId=nextRequestId++; return m;}
 struct Lobby2MessageFactory
 {
@@ -3200,6 +3207,7 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Client_GetPasswordByPasswordRecoveryAnswer);
 			__L2_MSG_FACTORY_BASE(Client_ChangeHandle);
 			__L2_MSG_FACTORY_BASE(Client_UpdateAccount);
+			__L2_MSG_FACTORY_BASE(Client_GetAccountDetails);
 			__L2_MSG_FACTORY_BASE(Client_StartIgnore);
 			__L2_MSG_FACTORY_BASE(Client_StopIgnore);
 			__L2_MSG_FACTORY_BASE(Client_GetIgnoreList);
@@ -3304,7 +3312,6 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Notification_Console_KickedOutOfRoom);
 			__L2_MSG_FACTORY_BASE(Notification_Console_RoomWasDestroyed);
 			__L2_MSG_FACTORY_BASE(Notification_Console_RoomOwnerChanged);
-			__L2_MSG_FACTORY_BASE(Notification_Console_RoomStateChanged);
 			__L2_MSG_FACTORY_BASE(Notification_Console_RoomChatMessage);
 			__L2_MSG_FACTORY_BASE(Notification_Console_RoomMessage);
 			__L2_MSG_FACTORY_BASE(Notification_Console_RoomMemberConnectivityUpdate);

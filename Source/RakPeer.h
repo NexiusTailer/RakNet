@@ -23,6 +23,7 @@
 #include "RakThread.h"
 #include "RakNetSocket.h"
 #include "RakNetSmartPtr.h"
+#include "DS_ThreadsafeAllocatingQueue.h"
 
 #ifndef _USE_RAKNET_FLOW_CONTROL // Use UDT
 #include "udt.h"
@@ -607,6 +608,9 @@ public:
 	/// \param[out] sockets List of RakNetSocket structures in use. Sockets will not be closed until \a sockets goes out of scope
 	virtual void GetSockets( DataStructures::List<RakNetSmartPtr<RakNetSocket> > &sockets );
 
+	/// \internal
+	virtual void WriteOutOfBandHeader(RakNet::BitStream *bitStream, MessageID header);
+
 	// --------------------------------------------------------------------------------------------Network Simulator Functions--------------------------------------------------------------------------------------------
 	/// Adds simulated ping and packet loss to the outgoing data flow.
 	/// To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and maxSendBPS value on each.
@@ -646,7 +650,6 @@ public:
 
 	/// \internal
 	bool SendOutOfBand(const char *host, unsigned short remotePort, MessageID header, const char *data, BitSize_t dataLength, unsigned connectionSocketIndex=0 );
-	virtual void WriteOutOfBandHeader(RakNet::BitStream *bitStream, MessageID header);
 
 	/// \internal
 	/// \brief Holds the clock differences between systems, along with the ping
@@ -801,10 +804,7 @@ protected:
 	{
 		// Only put these mutexes in user thread functions!
 #ifdef _RAKNET_THREADSAFE
-		transferToPacketQueue_Mutex,
 		packetPool_Mutex,
-		bufferedCommands_Mutex,
-		socketQueryOutput_Mutex,
 		requestedConnectionList_Mutex,
 #endif
 		offlinePingResponse_Mutex,
@@ -854,7 +854,6 @@ protected:
 	//DataStructures::List<DataStructures::List<MemoryBlock>* > automaticVariableSynchronizationList;
 	DataStructures::List<BanStruct*> banList;
 	DataStructures::List<PluginInterface2*> messageHandlerList;
-	// DataStructures::SingleProducerConsumer<RequestedConnectionStruct> requestedConnectionList;
 
 	DataStructures::Queue<RequestedConnectionStruct*> requestedConnectionQueue;
 	SimpleMutex requestedConnectionQueueMutex;
@@ -893,7 +892,12 @@ protected:
 
 	// Single producer single consumer queue using a linked list
 	//BufferedCommandStruct* bufferedCommandReadIndex, bufferedCommandWriteIndex;
+
+#ifndef _RAKNET_THREADSAFE
 	DataStructures::SingleProducerConsumer<BufferedCommandStruct> bufferedCommands;
+#else
+	DataStructures::ThreadsafeAllocatingQueue<BufferedCommandStruct> bufferedCommands;
+#endif
 
 	struct SocketQueryOutput
 	{
@@ -901,7 +905,11 @@ protected:
 		~SocketQueryOutput() {}
 		DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
 	};
+#ifndef _RAKNET_THREADSAFE
 	DataStructures::SingleProducerConsumer< SocketQueryOutput > socketQueryOutput;
+#else
+	DataStructures::ThreadsafeAllocatingQueue<SocketQueryOutput> socketQueryOutput;
+#endif
 
 	bool AllowIncomingConnections(void) const;
 
@@ -948,7 +956,7 @@ protected:
 
 	// Generate and store a unique GUID
 	void GenerateGUID(void);
-	RakNetGUID guid;
+	RakNetGUID myGuid;
 
 	unsigned maxOutgoingBPS;
 
@@ -992,7 +1000,12 @@ protected:
 
 	// The packetSingleProducerConsumer transfers the packets from the network thread to the user thread. The pushedBackPacket holds packets that couldn't be processed
 	// immediately while waiting on blocked RPCs
+#ifndef _RAKNET_THREADSAFE
 	DataStructures::SingleProducerConsumer<Packet*> packetSingleProducerConsumer;
+#else
+	DataStructures::ThreadsafeAllocatingQueue<Packet*> packetSingleProducerConsumer;
+#endif
+
 	//DataStructures::Queue<Packet*> pushedBackPacket, outOfOrderDeallocatedPacket;
 	// A free-list of packets, to reduce memory fragmentation
 	DataStructures::Queue<Packet*> packetPool;

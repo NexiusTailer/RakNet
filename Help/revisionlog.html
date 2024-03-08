@@ -285,7 +285,8 @@ Added SQLLite3Plugin to DependentExtensions\SQLite3Plugin. This allows you to do
  Added critical section locks to the referenced counted pointers in RakString, to support multithreaded use.
  BitStream will now use memcpy if possible when writing other bitstreams.
  Fix crash in AutopatcherServer due to mismatch of calls to malloc and OP_DELETE.<BR>
-3.611 (07/23/2009) Fix bug with serialization not sent to reconnecting system with ReplicaManager3. Release Scaleform GFx autopatcher integration.
+3.611 (07/23/2009) Fix bug with serialization not sent to reconnecting system with ReplicaManager3. Release Scaleform GFx autopatcher integration.<BR>
+3.622 (08/05/2009) RakNet is now threadsafe by default in RakNetDefines.h, and more optimized for the threadsafe case. Reduce size of RakNetGuid to int64_t to save bandwidth. Update OgreInterpSample to use ReplicaManager3. Add parameter to ReplicaManager3::AllocReplica. Add OnDownloadStarted and OnDownloadComplete callbacks to Connection_RM3. Add NatTypeDetection sample and code.<BR>
  </TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
 <img src="spacer.gif" width="8" height="1">See Also</td>

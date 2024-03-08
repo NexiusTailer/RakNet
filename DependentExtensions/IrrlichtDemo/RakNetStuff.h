@@ -141,7 +141,7 @@ public:
 	Connection_RM3Irrlicht(SystemAddress _systemAddress, RakNetGUID _guid, CDemo *_demo) : RakNet::Connection_RM3(_systemAddress, _guid) {demo=_demo;}
 	virtual ~Connection_RM3Irrlicht() {}
 
-	virtual RakNet::Replica3 *AllocReplica(RakNet::BitStream *allocationId);
+	virtual RakNet::Replica3 *AllocReplica(RakNet::BitStream *allocationId, RakNet::ReplicaManager3 *replicaManager3);
 protected:
 	CDemo *demo;
 };

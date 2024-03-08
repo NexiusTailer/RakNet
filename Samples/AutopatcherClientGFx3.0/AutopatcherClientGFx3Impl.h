@@ -1,6 +1,5 @@
 #include "RakNetTypes.h"
-
-#include "..\Apps\Samples\GameDelegate\FxGameDelegate.h"
+#include "FxGameDelegate.h"
 
 class AutopatcherClient;
 class FileListTransfer;
