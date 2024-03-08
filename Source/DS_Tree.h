@@ -28,7 +28,7 @@
 namespace DataStructures
 {
 	template <class TreeType>
-	class RAK_DLL_EXPORT Tree : public RakNet::RakMemoryOverride
+	class RAK_DLL_EXPORT Tree
 	{
 	public:
 		Tree();
@@ -91,7 +91,7 @@ namespace DataStructures
 		LevelOrderTraversal(output);
 		unsigned i;
 		for (i=0; i < output.Size(); i++)
-			delete output[i];
+			RakNet::OP_DELETE(output[i]);
 	}
 }
 

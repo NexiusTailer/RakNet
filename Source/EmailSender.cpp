@@ -11,8 +11,8 @@
 #include "BitStream.h"
 #include <stdio.h>
 
-#if defined(_XBOX360)
-#include "Console1Includes.h"
+#if defined(_XBOX) || defined(X360)
+#include "XBOX360Includes.h"
 #endif
 
 #include "RakSleep.h"
@@ -38,7 +38,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 		if (packet)
 		{
 			if (doPrintf)
-				printf("%s", packet->data);
+				RAKNET_DEBUG_PRINTF("%s", packet->data);
 			break;
 		}
 		RakSleep(250);
@@ -82,7 +82,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 
 		if (password==0)
 			return "Password needed";
-		char *outputData = new char [(strlen(sender)+strlen(password)+2)*3];
+		char *outputData = RakNet::OP_NEW_ARRAY<char >((const int) (strlen(sender)+strlen(password)+2)*3);
 		RakNet::BitStream bs;
 		char zero=0;
 		bs.Write(&zero,1);
@@ -106,6 +106,9 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 	else
 		sprintf(query, "MAIL From: <>\r\n");
 	tcpInterface.Send(query, (unsigned int)strlen(query), emailServer);
+	response=GetResponse(&tcpInterface, emailServer, doPrintf);
+	if (response!=0)
+		return response;
 
 	if (recipient)
 		sprintf(query, "RCPT TO: <%s>\r\n", recipient);
@@ -117,6 +120,8 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 		return response;
 
 	tcpInterface.Send("DATA\r\n", (unsigned int)strlen("DATA\r\n"), emailServer);
+
+	// Wait for 354...
 
 	response=GetResponse(&tcpInterface, emailServer, doPrintf);
 	if (response!=0)
@@ -283,7 +288,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 		packet = tcpInterface.Receive();
 		while (packet)
 		{
-			printf("%s", packet->data);
+			RAKNET_DEBUG_PRINTF("%s", packet->data);
 			packet = tcpInterface.Receive();
 		}
 	}
@@ -308,7 +313,7 @@ const char *EmailSender::GetResponse(TCPInterface *tcpInterface, const SystemAdd
 		{
 			if (doPrintf)
 			{
-				printf("%s", packet->data);
+				RAKNET_DEBUG_PRINTF("%s", packet->data);
 			}
 #if defined(OPEN_SSL_CLIENT_SUPPORT)
 			if (strstr((const char*)packet->data, "220"))
@@ -320,7 +325,7 @@ const char *EmailSender::GetResponse(TCPInterface *tcpInterface, const SystemAdd
 			if (strstr((const char*)packet->data, "235"))
 				return 0; // Authentication accepted
 			if (strstr((const char*)packet->data, "354"))
-				return 0; // OK
+				return 0; // Go ahead
 #if defined(OPEN_SSL_CLIENT_SUPPORT)
 			if (strstr((const char*)packet->data, "250-STARTTLS"))
 			{
@@ -374,7 +379,11 @@ int EmailSender::Base64Encoding(const char *inputData, int dataLength, char *out
 		// One input byte remaining
 		outputData[outputOffset++]=base64Map[inputData[j*3+0] >> 2];
 		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
-	
+
+		// Remaining 2 bits from first byte, placed in position, and 4 high bits from the second byte, masked to ignore bits 7,8
+		outputData[outputOffset++]=base64Map[((inputData[j*3+0] << 4) | (inputData[j*3+1] >> 4)) & 63];
+		if ((++charCount % 76)==0) {outputData[outputOffset++]='\r'; outputData[outputOffset++]='\n'; charCount=0;}
+
 		// Pad with two equals
 		outputData[outputOffset++]='=';
 		outputData[outputOffset++]='=';

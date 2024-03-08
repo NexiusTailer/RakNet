@@ -62,6 +62,7 @@ int main(void)
 	printf("'D' to disconnect a system\n");
 	printf("'S' to signal a system\n");
 	printf("'U' to unsignal a system\n");
+	printf("'F' to force all systems to be completed (cannot be unset)\n");
 	printf("'Q' to quit\n");
 	printf("' ' to print wait statuses\n");
 
@@ -136,6 +137,24 @@ int main(void)
 				SocketDescriptor socketDescriptor(60000+sysIndex,0);
 				rakPeer[sysIndex]->Startup(NUM_PEERS, 0, &socketDescriptor, 1);
 				printf("Restarting system %i.\n", sysIndex);
+			}
+			else
+			{
+				printf("Invalid range\n");
+			}
+		}
+		if (ch=='f' || ch=='F')
+		{
+			ch=0;
+			printf("Which system? 0 to %i\n", NUM_PEERS-1);
+			gets(str);
+			int sysIndex = atoi(str);
+			if (sysIndex>=0 && sysIndex<NUM_PEERS)
+			{
+				if (readyEventPlugin[sysIndex].ForceCompletion(0))
+					printf("Set system %i to force complete\n", sysIndex);
+				else
+					printf("Set system %i to force complete FAILED\n", sysIndex);
 			}
 			else
 			{

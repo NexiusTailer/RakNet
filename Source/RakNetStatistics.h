@@ -37,16 +37,16 @@ struct RAK_DLL_EXPORT RakNetStatistics
 	///  Number of total bits used for user messages, including headers
 	uint64_t messageTotalBitsSent[ NUMBER_OF_PRIORITIES ];
 	
-	///  Number of packets sent containing only acknowledgements
+	///  Number of packets sent containing only acknowledgments
 	unsigned packetsContainingOnlyAcknowlegements;
-	///  Number of acknowledgements sent
+	///  Number of acknowledgments sent
 	unsigned acknowlegementsSent;
-	///  Number of acknowledgements waiting to be sent
+	///  Number of acknowledgments waiting to be sent
 	unsigned acknowlegementsPending;
-	///  Number of acknowledgements bits sent
+	///  Number of acknowledgments bits sent
 	uint64_t acknowlegementBitsSent;
 	
-	///  Number of packets containing only acknowledgements and resends
+	///  Number of packets containing only acknowledgments and resends
 	unsigned packetsContainingOnlyAcknowlegementsAndResends;
 	
 	///  Number of messages resent

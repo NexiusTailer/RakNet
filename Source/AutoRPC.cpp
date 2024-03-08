@@ -3,7 +3,7 @@
 #include "RakAssert.h"
 #include "StringCompressor.h"
 #include "BitStream.h"
-#include "Types.h"
+//#include "Types.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
 #include "NetworkIDObject.h"
@@ -47,11 +47,7 @@ void AutoRPC::SetNetworkIDManager(NetworkIDManager *idMan)
 {
 	networkIdManager=idMan;
 }
-bool AutoRPC::RegisterFunction(const char *uniqueIdentifier, void* functionPtr, bool isObjectMember, char parameterCount)
-{
-	return RegisterFunction( uniqueIdentifier, GenRPC::PMF( functionPtr ), isObjectMember, parameterCount );
-}
-bool AutoRPC::RegisterFunction(const char *uniqueIdentifier, GenRPC::PMF functionPtr, bool isObjectMember, char parameterCount)
+bool AutoRPC::RegisterFunction(const char *uniqueIdentifier, void *functionPtr, bool isObjectMember, char parameterCount)
 {
 	if (uniqueIdentifier==0 || functionPtr==0)
 	{
@@ -292,7 +288,7 @@ PluginReceiveResult AutoRPC::OnReceive(RakPeerInterface *peer, Packet *packet)
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 	case ID_AUTO_RPC_UNKNOWN_REMOTE_INDEX:
 		OnRPCUnknownRemoteIndex(packet->systemAddress, packet->data+packetDataOffset, packet->length-packetDataOffset, timestamp);
-		return RR_STOP_PROCESSING_AND_DEALLOCATE;
+		return RR_STOP_PROCESSING_AND_DEALLOCATE;		
 	}
 
 	return RR_CONTINUE_PROCESSING;
@@ -309,7 +305,7 @@ void AutoRPC::OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddr
 			if (theList->operator [](i).identifier.uniqueIdentifier)
 				rakFree(theList->operator [](i).identifier.uniqueIdentifier);
 		}
-		delete theList;
+		RakNet::OP_DELETE(theList);
 		remoteFunctions.Delete(systemAddress);
 	}
 }
@@ -354,7 +350,7 @@ void AutoRPC::OnAutoRPCCall(SystemAddress systemAddress, unsigned char *data, un
 			SendError(systemAddress, RPC_ERROR_NETWORK_ID_MANAGER_UNAVAILABLE, "");
 			return;
 		}
-		networkIdObject = (NetworkIDObject*) networkIdManager->GET_OBJECT_FROM_ID(networkId);
+		networkIdObject = networkIdManager->GET_OBJECT_FROM_ID<NetworkIDObject*>(networkId);
 		if (networkIdObject==0)
 		{
 			// Failed - Tried to call object member, object does not exist (deleted?)
@@ -413,7 +409,7 @@ void AutoRPC::OnAutoRPCCall(SystemAddress systemAddress, unsigned char *data, un
 			out.WriteCompressed(bytesOnStack);
 			out.WriteAlignedBytes((const unsigned char*) inputStack, bytesOnStack);
 			rakPeer->Send(&out, HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemAddress, false);
-
+			
 			return;
 		}
 		*/
@@ -452,7 +448,7 @@ void AutoRPC::OnAutoRPCCall(SystemAddress systemAddress, unsigned char *data, un
 
 					if (localFunctions[functionIndex].identifier.isObjectMember==false && networkIdObject!=0)
 					{
-						// Failed - Calling C function as C++ function
+						// Failed - Calling C++ function as C function
 						SendError(systemAddress, RPC_ERROR_CALLING_C_AS_CPP, strIdentifier);
 						return;
 					}
@@ -485,7 +481,7 @@ void AutoRPC::OnAutoRPCCall(SystemAddress systemAddress, unsigned char *data, un
 		return;
 	}
 
-
+	
 //	unsigned int bytesWritten;
 //	unsigned char numParameters;
 //	unsigned int parameterLengths[64]; // 64 is arbitrary, just needs to be more than whatever might be serialized
@@ -493,33 +489,21 @@ void AutoRPC::OnAutoRPCCall(SystemAddress systemAddress, unsigned char *data, un
 
 	GenRPC::CallParams call;
 
-	// this is the dynamic cast error handling
-
-	void* deserialized_this = localFunctions[functionIndex].functionPtr.computeThis( networkIdObject );
-#ifdef AUTO_RPC_USE_DYNAMIC_CAST
-	if ( networkIdObject && !deserialized_this ) 
-	{
-		// This needs its only error message - this happens when dynamic_cast<YourClass*>( networdIdObject )
-		// fails - i.e. you don't inherit from NetworkIDObject.
-		SendError(systemAddress, RPC_ERROR_STACK_DESERIALIZATION_FAILED, strIdentifier);
-		return;
-	}
-#endif
-
-	if ( !DeserializeParametersAndBuildCall(call, inputStack, bytesOnStack, this, deserialized_this ) )
+	if (DeserializeParametersAndBuildCall(call, inputStack, bytesOnStack, this, networkIdObject)==false)
 	{
 		// Failed - Couldn't deserialize
-		SendError(systemAddress, RPC_ERROR_STACK_DESERIALIZATION_FAILED, strIdentifier);
+		SendError(systemAddress, RPC_ERROR_STACK_DESERIALIZATION_FAILED, localFunctions[functionIndex].identifier.uniqueIdentifier);
 		return;
 	}
 
 	strncpy(currentExecution, localFunctions[functionIndex].identifier.uniqueIdentifier, sizeof(currentExecution)-1);
 
-	if (!CallWithStack( call, localFunctions[functionIndex].functionPtr.computeFuncAddr( networkIdObject ))) {
+	if (!CallWithStack( call, localFunctions[functionIndex].functionPtr)){
 		// Failed - Couldn't deserialize
-		SendError(systemAddress, RPC_ERROR_STACK_DESERIALIZATION_FAILED, strIdentifier);
+		SendError(systemAddress, RPC_ERROR_STACK_DESERIALIZATION_FAILED, currentExecution);
 		return;
 	}
+
 
 	currentExecution[0]=0;
 }
@@ -558,7 +542,7 @@ void AutoRPC::OnRPCRemoteIndex(SystemAddress systemAddress, unsigned char *data,
 	}
 	else
 	{
-		theList = new DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, AutoRPC::RemoteRPCFunctionComp>;
+		theList = RakNet::OP_NEW<DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, AutoRPC::RemoteRPCFunctionComp> >();
 
 		newRemoteFunction.functionIndex=remoteIndex;
 		newRemoteFunction.identifier.isObjectMember=identifier.isObjectMember;
@@ -622,7 +606,7 @@ void AutoRPC::OnRPCUnknownRemoteIndex(SystemAddress systemAddress, unsigned char
 				else
 				{
 					out.Write(false);
-				}
+				}				
 				out.WriteCompressed(numberOfBitsUsed);
 				out.Write(&extraData);
 				out.Write(hasNetworkId);
@@ -674,7 +658,7 @@ void AutoRPC::Clear(void)
 			if (theList->operator [](i).identifier.uniqueIdentifier)
 				rakFree(theList->operator [](i).identifier.uniqueIdentifier);
 		}
-		delete theList;
+		RakNet::OP_DELETE(theList);
 	}
 	for (i=0; i < localFunctions.Size(); i++)
 	{
@@ -713,5 +697,4 @@ bool AutoRPC::GetRemoteFunctionIndex(SystemAddress systemAddress, AutoRPC::RPCId
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
-
 

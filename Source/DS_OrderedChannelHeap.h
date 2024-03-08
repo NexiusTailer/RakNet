@@ -22,7 +22,7 @@
 #include "DS_Map.h"
 #include "DS_Queue.h"
 #include "Export.h"
-#include <assert.h>
+#include "RakAssert.h"
 #include "Rand.h"
 
 /// The namespace DataStructures was only added to avoid compiler errors for commonly named data structures
@@ -30,7 +30,7 @@
 namespace DataStructures
 {
 	template <class channel_key_type, class heap_data_type, int (*channel_key_comparison_func)(const channel_key_type&, const channel_key_type&)=defaultMapKeyComparison<channel_key_type> >
-	class RAK_DLL_EXPORT OrderedChannelHeap : public RakNet::RakMemoryOverride
+	class RAK_DLL_EXPORT OrderedChannelHeap
 	{
 	public:
 		static void IMPLEMENT_DEFAULT_COMPARISON(void) {DataStructures::defaultMapKeyComparison<channel_key_type>(channel_key_type(),channel_key_type());}
@@ -139,7 +139,7 @@ namespace DataStructures
 		}
 		
 #ifdef _DEBUG
-		assert(maxRange!=0.0);
+		RakAssert(maxRange!=0.0);
 #endif
 		rnd=frandomMT() * (maxRange - minRange);
 		if (rnd==0.0)
@@ -156,7 +156,7 @@ namespace DataStructures
 	template <class channel_key_type, class heap_data_type, int (*channel_key_comparison_func)(const channel_key_type&, const channel_key_type&)>
 	heap_data_type OrderedChannelHeap<channel_key_type, heap_data_type, channel_key_comparison_func>::Pop(const unsigned startingIndex)
 	{
-		assert(startingIndex < heap.Size());
+		RakAssert(startingIndex < heap.Size());
 
 		QueueAndWeight *queueAndWeight=map.Get(heap[startingIndex].channel);
 		if (startingIndex!=0)
@@ -192,7 +192,7 @@ namespace DataStructures
 	template <class channel_key_type, class heap_data_type, int (*channel_key_comparison_func)(const channel_key_type&, const channel_key_type&)>
 	void OrderedChannelHeap<channel_key_type, heap_data_type, channel_key_comparison_func>::AddChannel(const channel_key_type &channelID, const double weight)
 	{
-		QueueAndWeight *qaw = new QueueAndWeight;
+		QueueAndWeight *qaw = RakNet::OP_NEW<QueueAndWeight>();
 		qaw->weight=weight;
 		qaw->signalDeletion=false;
 		map.SetNew(channelID, qaw);
@@ -207,7 +207,7 @@ namespace DataStructures
 			i=map.GetIndexAtKey(channelID);
 			if (map[i]->randResultQueue.Size()==0)
 			{
-				delete map[i];
+				RakNet::OP_DELETE(map[i]);
 				map.RemoveAtIndex(i);
 			}
 			else
@@ -243,7 +243,7 @@ namespace DataStructures
 	{
 		unsigned i;
 		for (i=0; i < map.Size(); i++)
-			delete map[i];
+			RakNet::OP_DELETE(map[i]);
 		map.Clear();
 		heap.Clear();
 	}

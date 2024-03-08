@@ -25,10 +25,12 @@
 #include "RakNetTypes.h"
 #include "PacketPriority.h"
 #include "RakMemoryOverride.h"
+#include "FileList.h"
 
+class IncrementalReadInterface;
 class FileListTransferCBInterface;
-class FileList;
 class FileListProgress;
+struct FileListReceiver;
 
 /// \defgroup FILE_LIST_TRANSFER_GROUP FileListTransfer
 /// \ingroup PLUGINS_GROUP
@@ -52,7 +54,7 @@ public:
 	/// Allows one corresponding Send() call from another system to arrive.
 	/// \param[in] handler The class to call on each file
 	/// \param[in] deleteHandler True to delete the handler when it is no longer needed.  False to not do so.
-	/// \param[in] allowedSender Which system to allow files from
+	/// \param[in] allowedSender Which system to allow files from.
 	/// \return A set ID value, which should be passed as the \a setID value to the Send() call on the other system.  This value will be returned in the callback and is unique per file set.  Returns 65535 on failure (not connected to sender)
     unsigned short SetupReceive(FileListTransferCBInterface *handler, bool deleteHandler, SystemAddress allowedSender);
 
@@ -63,8 +65,10 @@ public:
 	/// \param[in] setID The return value of SetupReceive() which was previously called on \a recipient
 	/// \param[in] priority Passed to RakPeerInterface::Send()
 	/// \param[in] orderingChannel Passed to RakPeerInterface::Send()
-	/// \param[in] compressData Use a poor but fast compression algorithm.  This makes your data larger if it is already compressed or if the amount of data to send is small so don't use it blindly.
-	void Send(FileList *fileList, RakPeerInterface *rakPeer, SystemAddress recipient, unsigned short setID, PacketPriority priority, char orderingChannel, bool compressData);
+	/// \param[in] compressData Depreciated, unsupported
+	/// \param[in] _incrementalReadInterface If a file in \a fileList has no data, filePullInterface will be used to read the file in chunks of size \a chunkSize
+	/// \param[in] _chunkSize How large of a block of a file to send at once
+	void Send(FileList *fileList, RakPeerInterface *rakPeer, SystemAddress recipient, unsigned short setID, PacketPriority priority, char orderingChannel, bool compressData, IncrementalReadInterface *_incrementalReadInterface=0, unsigned int _chunkSize=8388608);
 
 	/// Stop a download.
 	void CancelReceive(unsigned short setId);
@@ -79,7 +83,7 @@ public:
 	/// \param[in] cb A pointer to an externally defined instance of FileListProgress. This pointer is held internally, so should remain valid as long as this class is valid.
 	void SetCallback(FileListProgress *cb);
 
-	/// \Returns what was sent to SetCallback
+	/// \returns what was sent to SetCallback
 	/// \return What was sent to SetCallback
 	FileListProgress *GetCallback(void) const;
 
@@ -100,11 +104,27 @@ protected:
 
 	void Clear(void);
 
-	struct FileListReceiver;
+	void OnReferencePush(Packet *packet, bool fullFile);
+	void StoreForPush(FileListNodeContext context, unsigned short _setID, const char *fileName, unsigned int _setIndex, unsigned fileLengthBytes, unsigned dataLengthBytes, SystemAddress recipient, PacketPriority packetPriority, char orderingChannel, IncrementalReadInterface *_incrementalReadInterface, unsigned int _chunkSize);
+
 	DataStructures::Map<unsigned short, FileListReceiver*> fileListReceivers;
 	unsigned short setId;
 	RakPeerInterface *rakPeer;
 	FileListProgress *callback;
+
+	struct FileToPush
+	{
+		FileListNode fileListNode;
+		SystemAddress systemAddress;
+		PacketPriority packetPriority;
+		char orderingChannel;
+		unsigned int currentOffset;
+		unsigned short setID;
+		unsigned int setIndex;
+		IncrementalReadInterface *incrementalReadInterface;
+		unsigned int chunkSize;
+	};
+	DataStructures::List<FileToPush> filesToPush;
 };
 
 #endif

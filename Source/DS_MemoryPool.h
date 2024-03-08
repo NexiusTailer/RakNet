@@ -5,7 +5,7 @@
 // Use stdlib and not malloc for compatibility
 #include <stdlib.h>
 #endif
-#include <assert.h>
+#include "RakAssert.h"
 #include "Export.h"
 
 #include "RakMemoryOverride.h"
@@ -20,7 +20,7 @@ namespace DataStructures
 	/// Very fast memory pool for allocating and deallocating structures that don't have constructors or destructors.
 	/// Contains a list of pages, each of which has an array of the user structures
 	template <class MemoryBlockType>
-	class RAK_DLL_EXPORT MemoryPool : public RakNet::RakMemoryOverride
+	class RAK_DLL_EXPORT MemoryPool
 	{
 	public:
 		struct Page;
@@ -102,7 +102,7 @@ namespace DataStructures
 			{
 				--availablePagesSize;
 				availablePages=curPage->next;
-				assert(availablePagesSize==0 || availablePages->availableStackSize>0);
+				RakAssert(availablePagesSize==0 || availablePages->availableStackSize>0);
 				curPage->next->prev=curPage->prev;
 				curPage->prev->next=curPage->next;
 
@@ -121,7 +121,7 @@ namespace DataStructures
 				}			
 			}
 
-			assert(availablePagesSize==0 || availablePages->availableStackSize>0);
+			RakAssert(availablePagesSize==0 || availablePages->availableStackSize>0);
 			return retVal;
 		}
 
@@ -131,14 +131,14 @@ namespace DataStructures
 		availablePagesSize=1;
 		if (InitPage(availablePages, availablePages)==false)
 			return 0;
-		assert(availablePages->availableStackSize>1);
+		RakAssert(availablePages->availableStackSize>1);
 		return (MemoryBlockType *) availablePages->availableStack[--availablePages->availableStackSize];
 	}
 	template<class MemoryBlockType>
 	void MemoryPool<MemoryBlockType>::Release(MemoryBlockType *m)
 	{
 #ifdef _DISABLE_MEMORY_POOL
-		delete m;
+		RakNet::OP_DELETE(m);
 		return;
 #endif
 
@@ -185,7 +185,7 @@ namespace DataStructures
 				if (curPage==availablePages)
 				{
 					availablePages=curPage->next;
-					assert(availablePages->availableStackSize>0);
+					RakAssert(availablePages->availableStackSize>0);
 				}
 				curPage->prev->next=curPage->next;
 				curPage->next->prev=curPage->prev;

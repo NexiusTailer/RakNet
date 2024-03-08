@@ -36,6 +36,7 @@
 #include "DS_MemoryPool.h"
 
 class PluginInterface;
+class RakNetRandom;
 
 /// Sizeof an UDP header in byte
 #define UDP_HEADER_SIZE 28
@@ -48,7 +49,7 @@ class PluginInterface;
 #include "BitStream.h"
 
 int SplitPacketIndexComp( SplitPacketIndexType const &key, InternalPacket* const &data );
-struct SplitPacketChannel : public RakNet::RakMemoryOverride//<SplitPacketChannel>
+struct SplitPacketChannel//<SplitPacketChannel>
 {
 	RakNetTimeNS lastUpdateTime;
 	DataStructures::OrderedList<SplitPacketIndexType, InternalPacket*, SplitPacketIndexComp> splitPacketList;
@@ -56,7 +57,7 @@ struct SplitPacketChannel : public RakNet::RakMemoryOverride//<SplitPacketChanne
 int RAK_DLL_EXPORT SplitPacketChannelComp( SplitPacketIdType const &key, SplitPacketChannel* const &data );
 
 /// Datagram reliable, ordered, unordered and sequenced sends.  Flow control.  Message splitting, reassembly, and coalescence.
-class ReliabilityLayer : public RakNet::RakMemoryOverride//<ReliabilityLayer>
+class ReliabilityLayer//<ReliabilityLayer>
 {
 public:
 
@@ -117,7 +118,7 @@ public:
 	/// \param[in] time current system time
 	/// \param[in] maxBitsPerSecond if non-zero, enforces that outgoing bandwidth does not exceed this amount
 	/// \param[in] messageHandlerList A list of registered plugins
-	void Update(  SOCKET s, SystemAddress systemAddress, int MTUSize, RakNetTimeNS time, unsigned maxBitsPerSecond, DataStructures::List<PluginInterface*> &messageHandlerList );
+	void Update(  SOCKET s, SystemAddress systemAddress, int MTUSize, RakNetTimeNS time, unsigned maxBitsPerSecond, DataStructures::List<PluginInterface*> &messageHandlerList, RakNetRandom *rnr, bool isPS3LobbySocket );
 
 	/// If Read returns -1 and this returns true then a modified packetwas detected
 	/// \return true when a modified packet is detected
@@ -132,7 +133,7 @@ public:
 
 	/// Get Statistics
 	/// \return A pointer to a static struct, filled out with current statistical information.
-	RakNetStatistics * const GetStatistics( void );
+	RakNetStatistics * const GetStatistics( RakNetStatistics *rns );
 
 	///Are we waiting for any data to be sent out or be processed by the player?
 	bool IsOutgoingDataWaiting(void);
@@ -178,7 +179,7 @@ private:
 	/// \param[in] s The socket used for sending data
 	/// \param[in] systemAddress The address and port to send to
 	/// \param[in] bitStream The data to send.
-	void SendBitStream( SOCKET s, SystemAddress systemAddress, RakNet::BitStream *bitStream );
+	void SendBitStream( SOCKET s, SystemAddress systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, bool isPS3LobbySocket);
 
 	///Parse an internalPacket and create a bitstream to represent this data
 	/// \return Returns number of bits used
@@ -352,11 +353,12 @@ private:
 	// If we backoff due to packetloss, don't remeasure until all waiting resends have gone out or else we overcount
 	bool packetlossThisSample, backoffThisSample;
 	unsigned packetlossThisSampleResendCount;
+	RakNetTimeNS lastPacketlossTime;
 
 	//long double timeBetweenPacketsIncreaseMultiplier, timeBetweenPacketsDecreaseMultiplier;
 
 #ifndef _RELEASE
-	struct DataAndTime : public RakNet::RakMemoryOverride//<InternalPacket>
+	struct DataAndTime//<InternalPacket>
 	{
 		char data[ MAXIMUM_MTU_SIZE ];
 		unsigned int length;

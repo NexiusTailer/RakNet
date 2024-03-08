@@ -3,17 +3,14 @@
 #include "BitStream.h"
 #include "MessageIdentifiers.h"
 #include "GetTime.h"
+#include "RakSleep.h"
 using namespace RakNet;
 
 #include <cstdio>
 #include <memory.h>
 #include <cstring>
 
-#ifdef WIN32
 #include "Kbhit.h"
-#else
-#include "Kbhit.h"
-#endif
 
 
 int main(void)
@@ -22,6 +19,8 @@ int main(void)
 
 	RakPeerInterface *rakClient=RakNetworkFactory::GetRakPeerInterface();
 	RakPeerInterface *rakServer=RakNetworkFactory::GetRakPeerInterface();
+	rakClient->SetOccasionalPing(true);
+	rakServer->SetOccasionalPing(true);
 
 	char ch;
 	bool isServer;
@@ -47,7 +46,7 @@ int main(void)
 				strcpy(serverIP, "127.0.0.1");
 
 			SocketDescriptor socketDescriptor(0,0);
-			rakClient->Startup(1, 30, &socketDescriptor, 1);
+			rakClient->Startup(1, 0, &socketDescriptor, 1);
 			rakClient->Connect(serverIP, 2100, 0, 0);
 			printf("Connecting client\n");
 			isServer=false;
@@ -57,7 +56,7 @@ int main(void)
 		{
 			// Run as a server.
 			SocketDescriptor socketDescriptor(2100,0);
-			rakServer->Startup(32,30,&socketDescriptor, 1);
+			rakServer->Startup(32,0,&socketDescriptor, 1);
 			rakServer->SetMaximumIncomingConnections(32);
 			printf("Server started\n");
 			isServer=true;
@@ -144,6 +143,8 @@ int main(void)
 		}
 
 		ch=0;
+
+		RakSleep(0);
 	}
 
 	// Shutdown stuff.  It's ok to call disconnect on the server if we are a client and vice-versa

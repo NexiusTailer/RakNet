@@ -20,21 +20,22 @@
 
 #include "RakMemoryOverride.h"
 #include <stdio.h> // Needed for file access
+#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
 #include <memory.h> // Needed for memset and memcpy
+#endif
 #include <string.h> // Needed for strcat and strcpy
-#include "Types.h" 
 #include "Export.h"
 
 #define MAX_FILE_READ_BUFFER 8000 
 
 #define SHA1_LENGTH 20
 
-class RAK_DLL_EXPORT CSHA1 : public RakNet::RakMemoryOverride
+class RAK_DLL_EXPORT CSHA1
 {
 
 public:
 	// Rotate x bits to the left
-	// #define ROL32(value, bits) (((value)<<(bits))|((value)>>(32-(bits))))
+	#define ROL32(value, bits) (((value)<<(bits))|((value)>>(32-(bits))))
 
 #ifdef LITTLE_ENDIAN
 #define SHABLK0(i) (block->l[i] = (ROL32(block->l[i],24) & 0xFF00FF00) \

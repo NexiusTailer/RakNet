@@ -24,7 +24,7 @@ class HuffmanEncodingTree;
 /// \brief Creates instances of the class HuffmanEncodingTree
 ///
 /// This class takes a frequency table and given that frequence table, will generate an instance of HuffmanEncodingTree
-class HuffmanEncodingTreeFactory : public RakNet::RakMemoryOverride
+class HuffmanEncodingTreeFactory
 {
 public:
 	/// Default constructor

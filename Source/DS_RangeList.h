@@ -4,12 +4,12 @@
 #include "DS_OrderedList.h"
 #include "BitStream.h"
 #include "RakMemoryOverride.h"
-#include <assert.h>
+#include "RakAssert.h"
 
 namespace DataStructures
 {
     template <class range_type>
-	struct RangeNode : public RakNet::RakMemoryOverride
+	struct RangeNode
     {
         RangeNode() {}
         ~RangeNode() {}
@@ -30,7 +30,7 @@ namespace DataStructures
     }
 
 	template <class range_type>
-	class RAK_DLL_EXPORT RangeList : public RakNet::RakMemoryOverride
+	class RAK_DLL_EXPORT RangeList
 	{
 	public:
 		RangeList();
@@ -48,7 +48,7 @@ namespace DataStructures
 	template <class range_type>
 	BitSize_t RangeList<range_type>::Serialize(RakNet::BitStream *in, BitSize_t maxBits, bool clearSerialized)
 	{
-		assert(ranges.Size() < (unsigned short)-1);
+		RakAssert(ranges.Size() < (unsigned short)-1);
 		RakNet::BitStream tempBS;
 		BitSize_t bitsWritten;
 		unsigned short countWritten;
@@ -73,9 +73,9 @@ namespace DataStructures
 		BitSize_t before=in->GetWriteOffset();
 		in->WriteCompressed(countWritten);
 		bitsWritten+=in->GetWriteOffset()-before;
-	//	printf("%i ", in->GetNumberOfBitsUsed());
+	//	RAKNET_DEBUG_PRINTF("%i ", in->GetNumberOfBitsUsed());
 		in->Write(&tempBS, tempBS.GetNumberOfBitsUsed());
-	//	printf("%i %i \n", tempBS.GetNumberOfBitsUsed(),in->GetNumberOfBitsUsed());
+	//	RAKNET_DEBUG_PRINTF("%i %i \n", tempBS.GetNumberOfBitsUsed(),in->GetNumberOfBitsUsed());
 
 		if (clearSerialized && countWritten)
 		{

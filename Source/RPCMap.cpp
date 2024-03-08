@@ -34,7 +34,7 @@ void RPCMap::Clear(void)
 		if (node)
 		{
 			rakFree(node->uniqueIdentifier);
-			delete node;
+			RakNet::OP_DELETE(node);
 		}
 	}
 	rpcSet.Clear();
@@ -66,9 +66,9 @@ RPCIndex RPCMap::GetIndexFromFunctionName(const char *uniqueIdentifier)
 void RPCMap::AddIdentifierWithFunction(const char *uniqueIdentifier, void *functionPointer, bool isPointerToMember)
 {
 #ifdef _DEBUG
-	assert((int) rpcSet.Size()+1 < MAX_RPC_MAP_SIZE); // If this hits change the typedef of RPCIndex to use an unsigned short
-	assert(uniqueIdentifier && uniqueIdentifier[0]);
-	assert(functionPointer);
+	RakAssert((int) rpcSet.Size()+1 < MAX_RPC_MAP_SIZE); // If this hits change the typedef of RPCIndex to use an unsigned short
+	RakAssert(uniqueIdentifier && uniqueIdentifier[0]);
+	RakAssert(functionPointer);
 #endif
 
 	unsigned index, existingNodeIndex;
@@ -85,7 +85,7 @@ void RPCMap::AddIdentifierWithFunction(const char *uniqueIdentifier, void *funct
 		return;
 	}
 
-	node = new RPCNode;
+	node = RakNet::OP_NEW<RPCNode>();
 	node->uniqueIdentifier = (char*) rakMalloc( strlen(uniqueIdentifier)+1 );
 	strcpy(node->uniqueIdentifier, uniqueIdentifier);
 	node->functionPointer=functionPointer;
@@ -107,7 +107,7 @@ void RPCMap::AddIdentifierWithFunction(const char *uniqueIdentifier, void *funct
 void RPCMap::AddIdentifierAtIndex(const char *uniqueIdentifier, RPCIndex insertionIndex)
 {
 #ifdef _DEBUG
-	assert(uniqueIdentifier && uniqueIdentifier[0]);
+	RakAssert(uniqueIdentifier && uniqueIdentifier[0]);
 #endif
 
 	unsigned existingNodeIndex;
@@ -124,10 +124,10 @@ void RPCMap::AddIdentifierAtIndex(const char *uniqueIdentifier, RPCIndex inserti
 		oldNode=rpcSet[existingNodeIndex];
 		rpcSet[existingNodeIndex]=0;
 		rakFree(oldNode->uniqueIdentifier);
-		delete oldNode;
+		RakNet::OP_DELETE(oldNode);
 	}
 
-	node = new RPCNode;
+	node = RakNet::OP_NEW<RPCNode>();
 	node->uniqueIdentifier = (char*) rakMalloc( strlen(uniqueIdentifier)+1 );
 	strcpy(node->uniqueIdentifier, uniqueIdentifier);
 	node->functionPointer=0;
@@ -139,8 +139,8 @@ void RPCMap::AddIdentifierAtIndex(const char *uniqueIdentifier, RPCIndex inserti
 		oldNode=rpcSet[insertionIndex];
 		if (oldNode)
 		{
-			delete [] oldNode->uniqueIdentifier;
-			delete oldNode;
+			RakNet::OP_DELETE_ARRAY(oldNode->uniqueIdentifier);
+			RakNet::OP_DELETE(oldNode);
 		}
 		rpcSet[insertionIndex]=node;
 	}
@@ -156,12 +156,12 @@ void RPCMap::RemoveNode(const char *uniqueIdentifier)
 	unsigned index;
 	index=GetIndexFromFunctionName(uniqueIdentifier);
     #ifdef _DEBUG
-	assert((int) index!=UNDEFINED_RPC_INDEX); // If this hits then the user was removing an RPC call that wasn't currently registered
+	RakAssert((int) index!=UNDEFINED_RPC_INDEX); // If this hits then the user was removing an RPC call that wasn't currently registered
 	#endif
 	RPCNode *node;
 	node = rpcSet[index];
 	rakFree(node->uniqueIdentifier);
-	delete node;
+	RakNet::OP_DELETE(node);
 	rpcSet[index]=0;
 }
 

@@ -18,7 +18,7 @@
 #ifndef __CLIENT_CONTEXT_STRUCT_H
 #define __CLIENT_CONTEXT_STRUCT_H
 
-#ifdef _XBOX360
+#if defined(_XBOX) || defined(X360)
 #elif defined(_WIN32)
 //#include <windows.h>
 #endif

@@ -21,13 +21,13 @@
 #include "RakMemoryOverride.h"
 
 /// World's simplest class :)
-class RefCountedObj : public RakNet::RakMemoryOverride
+class RefCountedObj
 {
 	public:
 		RefCountedObj() {refCount=1;}
 		virtual ~RefCountedObj() {}
 		void AddRef(void) {refCount++;}
-		void Deref(void) {if (--refCount==0) delete this;}
+		void Deref(void) {if (--refCount==0) RakNet::OP_DELETE(this);}
 		int refCount;
 };
 

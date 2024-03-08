@@ -8,6 +8,7 @@ struct pg_result;
 typedef struct pg_result PGresult;
 
 #include "RakString.h"
+#include "DS_OrderedList.h"
 
 class PostgreSQLInterface
 {
@@ -32,6 +33,9 @@ public:
 	/// If any of the above functions fail, the error string is stored internally.  Call this to get it.
 	virtual const char *GetLastError(void) const;
 
+	// Returns  DEFAULT EXTRACT(EPOCH FROM current_timestamp))
+	long long GetEpoch(void);
+
 	// Returns a string containing LOCALTIMESTAMP on the server
 	char *GetLocalTimestamp(void);
 
@@ -40,6 +44,7 @@ public:
 	static bool PQGetValueFromBinary(unsigned int *output, PGresult *result, int rowIndex, const char *columnName);
 	static bool PQGetValueFromBinary(long long *output, PGresult *result, int rowIndex, const char *columnName);
 	static bool PQGetValueFromBinary(float *output, PGresult *result, int rowIndex, const char *columnName);
+	static bool PQGetValueFromBinary(double *output, PGresult *result, int rowIndex, const char *columnName);
 	static bool PQGetValueFromBinary(bool *output, PGresult *result, int rowIndex, const char *columnName);
 	static bool PQGetValueFromBinary(RakNet::RakString *output, PGresult *result, int rowIndex, const char *columnName);
 	static bool PQGetValueFromBinary(char **output, unsigned int *outputLength, PGresult *result, int rowIndex, const char *columnName);
@@ -60,19 +65,31 @@ public:
 	static void EncodeQueryUpdate(const char *colName, const char *str, RakNet::RakString &valueStr, int &numParams, char **paramData, int *paramLength, int *paramFormat, const char *type = "text");
 	static void EncodeQueryUpdate(const char *colName, const RakNet::RakString &str, RakNet::RakString &valueStr, int &numParams, char **paramData, int *paramLength, int *paramFormat, const char *type = "text");
 
-protected:
+	// Standard query
+	PGresult * QueryVaridic( const char *input, ... );
+	static void ClearResult(PGresult *result);
+
 	// Pass queries to the server
 	bool ExecuteBlockingCommand(const char *command, PGresult **result, bool rollbackOnFailure);
 	bool IsResultSuccessful(PGresult *result, bool rollbackOnFailure);
 	void Rollback(void);
 	static void EndianSwapInPlace(char* data, int dataLength);
 	RakNet::RakString GetEscapedString(const char *input) const;
-	
+protected:	
+
 	PGconn *pgConn;
 	bool pgConnAllocatedHere;
 	bool isConnected;
 	char lastError[1024];
 
+	//	DataStructures::List<RakNet::RakString> preparedStatements;
+	struct IndexAndType
+	{
+		unsigned int strIndex;
+		unsigned int typeMappingIndex;
+	};
+	static void GetTypeMappingIndices( const char *format, DataStructures::List<IndexAndType> &indices );
+	DataStructures::List<RakNet::RakString> preparedQueries;
 };
 
 #endif

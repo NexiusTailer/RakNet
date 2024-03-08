@@ -33,7 +33,7 @@ ExtendedOverlappedPool::~ExtendedOverlappedPool()
 	while ( pool.Size() )
 	{
 		p = pool.Pop();
-		delete p;
+		RakNet::OP_DELETE(p);
 	}
 
 	poolMutex.Unlock();

@@ -12,7 +12,7 @@
 #include "RakString.h"
 
 #define _TABLE_BPLUS_TREE_ORDER 16
-#define _TABLE_MAX_COLUMN_NAME_LENGTH 32
+#define _TABLE_MAX_COLUMN_NAME_LENGTH 64
 
 /// The namespace DataStructures was only added to avoid compiler errors for commonly named data structures
 /// As these data structures are stand-alone, you can use them outside of RakNet for your own projects if you wish.
@@ -24,7 +24,7 @@ namespace DataStructures
 	/// This is a relatively simple and fast implementation of the types of tables commonly used in databases
 	/// See TableSerializer to serialize data members of the table
 	/// See LightweightDatabaseClient and LightweightDatabaseServer to transmit the table over the network.
-	class RAK_DLL_EXPORT Table : public RakNet::RakMemoryOverride
+	class RAK_DLL_EXPORT Table
 	{
 	public:
 			
@@ -49,11 +49,13 @@ namespace DataStructures
 		{
 			Cell();
 			~Cell();
-			Cell(int intValue, char *charValue, void *ptr, ColumnType type);
+			Cell(double numericValue, char *charValue, void *ptr, ColumnType type);
 			void Clear(void);
 			
 			/// Numeric
 			void Set(int input);
+			void Set(unsigned int input);
+			void Set(double input);
 
 			/// String
 			void Set(const char *input);
@@ -66,6 +68,7 @@ namespace DataStructures
 
 			/// Numeric
 			void Get(int *output);
+			void Get(double *output);
 
 			/// String
 			void Get(char *output);
@@ -79,8 +82,10 @@ namespace DataStructures
 			Cell& operator = ( const Cell& input );
 			Cell( const Cell & input);
 
+			ColumnType EstimateColumnType(void) const;
+
 			bool isEmpty;
-			int i;
+			double i;
 			char *c;
 			void *ptr;
 		};
@@ -104,7 +109,7 @@ namespace DataStructures
 			DataStructures::List<Cell*> cells;
 
 			/// Numeric
-			void UpdateCell(unsigned columnIndex, int value);
+			void UpdateCell(unsigned columnIndex, double value);
 
 			/// String
 			void UpdateCell(unsigned columnIndex, const char *str);
@@ -183,12 +188,12 @@ namespace DataStructures
 		/// \brief Gives the string name of the column at a certain index
 		/// \param[in] index The index of the column
 		/// \return The name of the column, or 0 if an invalid index
-		char* ColumnName(unsigned index);
+		char* ColumnName(unsigned index) const;
 
 		/// \brief Returns the type of a column, referenced by index
 		/// \param[in] index The index of the column
 		/// \return The type of the column
-		ColumnType GetColumnType(unsigned index);
+		ColumnType GetColumnType(unsigned index) const;
 
 		/// Returns the number of columns
 		/// \return The number of columns in the table
@@ -209,10 +214,12 @@ namespace DataStructures
 		/// \return The newly added row
 		Table::Row* AddRow(unsigned rowId);
 		Table::Row* AddRow(unsigned rowId, DataStructures::List<Cell> &initialCellValues);
+		Table::Row* AddRow(unsigned rowId, DataStructures::List<Cell*> &initialCellValues, bool copyCells=false);
 
 		/// Removes a row specified by rowId
 		/// \param[in] rowId The ID of the row
-		void RemoveRow(unsigned rowId);
+		/// \return true if the row was deleted. False if not.
+		bool RemoveRow(unsigned rowId);
 
 		/// Removes all the rows with IDs that the specified table also has
 		/// \param[in] tableContainingRowIDs The IDs of the rows
@@ -290,7 +297,7 @@ namespace DataStructures
 		DataStructures::List<ColumnDescriptor>& GetColumns(void);
 
 		/// Direct access to make things easier
-		DataStructures::BPlusTree<unsigned, Row*, _TABLE_BPLUS_TREE_ORDER>& GetRows(void);
+		const DataStructures::BPlusTree<unsigned, Row*, _TABLE_BPLUS_TREE_ORDER>& GetRows(void) const;
 
 		/// Get the head of a linked list containing all the row data
 		DataStructures::Page<unsigned, DataStructures::Table::Row*, _TABLE_BPLUS_TREE_ORDER> * GetListHead(void);
@@ -298,6 +305,8 @@ namespace DataStructures
 		/// Get the first free row id.
 		/// This could be made more efficient.
 		unsigned GetAvailableRowId(void) const;
+
+		Table& operator = ( const Table& input );
 
 	protected:
 		Table::Row* AddRowColumns(unsigned rowId, Row *row, DataStructures::List<unsigned> columnIndices);

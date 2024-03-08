@@ -57,7 +57,7 @@ void PHPDirectoryServer::Escape(RakString &str)
 
     while(i--)
         {
-        unsigned char old = str[i];
+//        unsigned char old = str[i];
         if(str[i] == '\001' || str[i] == '\002')
             str.Replace(i, 1, ' ');
         else if(str[i] == '\n')

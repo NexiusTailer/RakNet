@@ -24,7 +24,7 @@ class TCPInterface;
 #include "RakMemoryOverride.h"
 
 /// \brief Rudimentary class to send email from code.
-class EmailSender : public RakNet::RakMemoryOverride
+class EmailSender
 {
 public:
 	/// Sends an email

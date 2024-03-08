@@ -29,9 +29,10 @@
 #include "ConnectionGraph.h"
 #include "PacketLogger.h"
 #include "StringCompressor.h"
+#include "PacketFileLogger.h"
 #include "GetTime.h"
 
-#define NAT_PUNCHTHROUGH_FACILITATOR_PORT 60500
+#define NAT_PUNCHTHROUGH_FACILITATOR_PORT 60481
 #define NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD ""
 #define DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP "127.0.0.1"
 
@@ -51,44 +52,36 @@ void main(void)
 	NatPunchthrough natPunchthrough;
 	ConnectionGraph connectionGraph;
 	NatPunchthroughLogger l;
+//	PacketFileLogger pfl;
+//	pfl.StartLog("NATLOG");
+//	rakPeer->AttachPlugin(&pfl);
 	natPunchthrough.SetLogger(&l);
 	char mode[64], facilitatorIP[64];
 	rakPeer->AttachPlugin(&natPunchthrough);
 	rakPeer->AttachPlugin(&connectionGraph);
+	rakPeer->SetIncomingPassword(NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD, (int) strlen(NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD));
 
 	printf("Tests the NAT Punchthrough plugin\n");
 	printf("Difficulty: Intermediate\n\n");
 	printf("Act as (S)ender, (R)ecipient, or (F)acilitator?\n");
 	gets(mode);
-	if (mode[0]=='s' || mode[0]=='S')
+	if (mode[0]=='s' || mode[0]=='S' || mode[0]=='r' || mode[0]=='R')
 	{
-		SocketDescriptor socketDescriptor(50064,0);
-		rakPeer->Startup(2,0,&socketDescriptor, 1);
+		SocketDescriptor socketDescriptor(0,0);
+		rakPeer->Startup(32,0,&socketDescriptor, 1);
+		rakPeer->SetMaximumIncomingConnections(32);
 		printf("Enter facilitator IP: ");
 		gets(facilitatorIP);
 		if (facilitatorIP[0]==0)
 			strcpy(facilitatorIP, DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP);
 		printf("Connecting to facilitator.\n");
-		rakPeer->Connect(facilitatorIP, NAT_PUNCHTHROUGH_FACILITATOR_PORT, NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD, strlen(NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD));
-	}
-	else if (mode[0]=='r' || mode[0]=='R')
-	{
-		SocketDescriptor socketDescriptor(50065,0);
-		rakPeer->Startup(2,0,&socketDescriptor, 1);
-		rakPeer->SetMaximumIncomingConnections(1);
-		printf("Enter facilitator IP: ");
-		gets(facilitatorIP);
-		if (facilitatorIP[0]==0)
-			strcpy(facilitatorIP, DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP);
-		printf("Connecting to facilitator.\n");
-		rakPeer->Connect(facilitatorIP, NAT_PUNCHTHROUGH_FACILITATOR_PORT, NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD, strlen(NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD));
+		rakPeer->Connect(facilitatorIP, NAT_PUNCHTHROUGH_FACILITATOR_PORT, NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD, (int) strlen(NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD));
 	}
 	else
 	{
 		SocketDescriptor socketDescriptor(NAT_PUNCHTHROUGH_FACILITATOR_PORT,0);
 		rakPeer->Startup(32,0,&socketDescriptor, 1);
 		rakPeer->SetMaximumIncomingConnections(32);
-		rakPeer->SetIncomingPassword(NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD, strlen(NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD));
 		printf("Ready.\n");
 	}
 
@@ -102,12 +95,14 @@ void main(void)
 			if (p->data[0]==ID_REMOTE_NEW_INCOMING_CONNECTION && (mode[0]=='s' || mode[0]=='S'))
 			{
 				printf("Connecting to ID_REMOTE_NEW_INCOMING_CONNECTION of %s.\n", p->systemAddress.ToString(true));
-				natPunchthrough.Connect(p->systemAddress, 0, 0, rakPeer->GetSystemAddressFromIndex(0));
+				natPunchthrough.Connect(p->systemAddress, NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD, (int) strlen(NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD), rakPeer->GetSystemAddressFromIndex(0));
 			}
 			if (p->data[0]==ID_DISCONNECTION_NOTIFICATION)
 				printf("ID_DISCONNECTION_NOTIFICATION\n");
 			else if (p->data[0]==ID_CONNECTION_LOST)
-				printf("ID_CONNECTION_LOST\n");
+			{
+				printf("ID_CONNECTION_LOST from %s\n", p->systemAddress.ToString());
+			}
 			else if (p->data[0]==ID_NO_FREE_INCOMING_CONNECTIONS)
 				printf("ID_NO_FREE_INCOMING_CONNECTIONS\n");
 			else if (p->data[0]==ID_NEW_INCOMING_CONNECTION)
@@ -116,6 +111,18 @@ void main(void)
 					printf("Test successful. Sender connected.\nPress space to send a test string.\n");
 				else
 					printf("ID_NEW_INCOMING_CONNECTION from %s\n", p->systemAddress.ToString());
+			}
+			else if (p->data[0]==ID_REMOTE_NEW_INCOMING_CONNECTION)
+			{
+				printf("Got ID_REMOTE_NEW_INCOMING_CONNECTION from %s\n", p->systemAddress.ToString(true));
+			}
+			else if (p->data[0]==ID_CONNECTION_GRAPH_REPLY)
+			{
+				printf("Got ID_CONNECTION_GRAPH_REPLY from %s\n", p->systemAddress.ToString(true));
+			}
+			else if (p->data[0]==ID_REMOTE_DISCONNECTION_NOTIFICATION)
+			{
+				printf("Got ID_REMOTE_DISCONNECTION_NOTIFICATION from %s\n", p->systemAddress.ToString(true));
 			}
 			else if (p->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
 			{
@@ -158,6 +165,10 @@ void main(void)
 				memcpy((char*)&time, p->data+1, sizeof(RakNetTime));
 				printf("Got pong from %s with time %i\n", p->systemAddress.ToString(), RakNet::GetTime() - time);
 			}
+			else if (p->data[0]==ID_INVALID_PASSWORD)
+			{
+				printf("ID_INVALID_PASSWORD\n");
+			}
 			else if (p->data[0]==ID_NAT_IN_PROGRESS)
 			{
 				SystemAddress systemAddress;
@@ -173,6 +184,10 @@ void main(void)
 				b.IgnoreBits(8); // Ignore the ID_...
 				stringCompressor->DecodeString(message,1024,&b,0);
 				printf("%s\n", message);
+			}
+			else
+			{
+				printf("Unknown packet ID %i\n", p->data[0]);
 			}
 
 			rakPeer->DeallocatePacket(p);

@@ -18,8 +18,7 @@
 #ifndef __SIMPLE_TCP_SERVER
 #define __SIMPLE_TCP_SERVER
 
-#ifdef _XBOX360
-#include "Console1Includes.h"
+#if defined(_XBOX) || defined(X360)
 #elif defined(_WIN32)
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -58,7 +57,7 @@ struct RemoteClient;
 
 /// \internal
 /// \brief As the name says, a simple multithreaded TCP server.  Used by TelnetTransport
-class RAK_DLL_EXPORT TCPInterface : public RakNet::RakMemoryOverride
+class RAK_DLL_EXPORT TCPInterface
 {
 public:
 	TCPInterface();

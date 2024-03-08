@@ -12,6 +12,7 @@ namespace RakNet
 #define _SIMPLE_DATABASE_TABLE_NAME_LENGTH 32
 
 #define SYSTEM_ID_COLUMN_NAME "__SystemAddress"
+#define SYSTEM_GUID_COLUMN_NAME "__SystemGuid"
 #define LAST_PING_RESPONSE_COLUMN_NAME "__lastPingResponseTime"
 #define NEXT_PING_SEND_COLUMN_NAME "__nextPingSendTime"
 

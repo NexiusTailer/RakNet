@@ -1,22 +1,34 @@
 #include "RakString.h"
 #include "RakAssert.h"
 #include "RakMemoryOverride.h"
-#include "SimpleMutex.h"
 #include "BitStream.h"
 #include <stdarg.h>
 #include <string.h>
 #include "LinuxStrings.h"
 #include "StringCompressor.h"
+#include "SimpleMutex.h"
 
 using namespace RakNet;
 
 //DataStructures::MemoryPool<RakString::SharedString> RakString::pool;
 unsigned int RakString::nPos=(unsigned int) -1;
-static SimpleMutex poolMutex;
 RakString::SharedString RakString::emptyString={0,0,0,"",""};
 //RakString::SharedString *RakString::sharedStringFreeList=0;
 //unsigned int RakString::sharedStringFreeListAllocationCount=0;
 DataStructures::List<RakString::SharedString*> RakString::freeList;
+
+class RakStringCleanup
+{
+public:
+	~RakStringCleanup()
+	{
+		RakNet::RakString::FreeMemoryNoMutex();
+	}
+};
+
+static RakStringCleanup cleanup;
+
+static SimpleMutex poolMutex;
 
 int RakString::RakStringComp( RakString const &key, RakString const &data )
 {
@@ -182,6 +194,22 @@ bool RakString::operator==(char *str) const
 {
 	return strcmp(sharedString->c_str,str)==0;
 }
+bool RakString::operator < ( const RakString& right ) const
+{
+	return strcmp(sharedString->c_str,right.C_String()) < 0;
+}
+bool RakString::operator <= ( const RakString& right ) const
+{
+	return strcmp(sharedString->c_str,right.C_String()) <= 0;
+}
+bool RakString::operator > ( const RakString& right ) const
+{
+	return strcmp(sharedString->c_str,right.C_String()) > 0;
+}
+bool RakString::operator >= ( const RakString& right ) const
+{
+	return strcmp(sharedString->c_str,right.C_String()) >= 0;
+}
 bool RakString::operator!=(const RakString &rhs) const
 {
 	return strcmp(sharedString->c_str,rhs.sharedString->c_str)!=0;
@@ -207,7 +235,7 @@ const RakNet::RakString operator+(const RakNet::RakString &lhs, const RakNet::Ra
 	allocatedBytes = RakString::GetSizeToAllocate(allocatedBytes);
 	RakString::SharedString *sharedString;
 
-	poolMutex.Lock();
+	RakString::LockMutex();
 	// sharedString = RakString::pool.Allocate();
 	if (RakString::freeList.Size()==0)
 	{
@@ -223,7 +251,7 @@ const RakNet::RakString operator+(const RakNet::RakString &lhs, const RakNet::Ra
 	}
 	sharedString = RakString::freeList[RakString::freeList.Size()-1];
 	RakString::freeList.RemoveAtIndex(RakString::freeList.Size()-1);
-	poolMutex.Unlock();
+	RakString::UnlockMutex();
 
 	const int smallStringSize = 128-sizeof(unsigned int)-sizeof(size_t)-sizeof(char*)*2;
 	sharedString->bytesUsed=allocatedBytes;
@@ -243,7 +271,7 @@ const RakNet::RakString operator+(const RakNet::RakString &lhs, const RakNet::Ra
 
 	return RakString(sharedString);
 }
-void RakString::ToLower(void)
+const char * RakString::ToLower(void)
 {
 	Clone();
 
@@ -251,8 +279,9 @@ void RakString::ToLower(void)
 	unsigned i;
 	for (i=0; i < strLen; i++)
 		sharedString->c_str[i]=ToLower(sharedString->c_str[i]);
+	return sharedString->c_str;
 }
-void RakString::ToUpper(void)
+const char * RakString::ToUpper(void)
 {
 	Clone();
 
@@ -260,6 +289,7 @@ void RakString::ToUpper(void)
 	unsigned i;
 	for (i=0; i < strLen; i++)
 		sharedString->c_str[i]=ToUpper(sharedString->c_str[i]);
+	return sharedString->c_str;
 }
 void RakString::Set(const char *format, ...)
 {
@@ -292,7 +322,39 @@ void RakString::Replace(unsigned index, unsigned count, unsigned char c)
 		countIndex++;
 	}
 }
-void RakString::Erase(unsigned index, unsigned count)
+void RakString::SetChar( unsigned index, unsigned char c )
+{
+	RakAssert(index < GetLength());
+	Clone();
+	sharedString->c_str[index]=c;
+}
+void RakString::SetChar( unsigned index, RakNet::RakString s )
+{
+	RakAssert(index < GetLength());
+	Clone();
+	RakNet::RakString firstHalf = SubStr(0, index);
+	RakNet::RakString secondHalf = SubStr(index+1, (unsigned int)-1);
+	*this = firstHalf;
+	*this += s;
+	*this += secondHalf;
+}
+RakString RakString::SubStr(unsigned int index, unsigned int count) const
+{
+	size_t length = GetLength();
+	if (index >= length || count==0)
+		return RakString();
+	RakString copy;
+	size_t numBytes = length-index;
+	if (count < numBytes)
+		numBytes=count;
+	copy.Allocate(numBytes+1);
+	size_t i;
+	for (i=0; i < numBytes; i++)
+		copy.sharedString->c_str[i]=sharedString->c_str[index+i];
+	copy.sharedString->c_str[i]=0;
+	return copy;
+}
+void RakString::Erase(unsigned int index, unsigned int count)
 {
 	size_t len = GetLength();
 	RakAssert(index+count <= len);
@@ -315,7 +377,7 @@ int RakString::StrICmp(const RakString &rhs) const
 }
 void RakString::Printf(void)
 {
-	printf(sharedString->c_str);
+	RAKNET_DEBUG_PRINTF(sharedString->c_str);
 }
 void RakString::FPrintf(FILE *fp)
 {
@@ -372,6 +434,57 @@ bool RakString::IPAddressMatch(const char *IP)
 	// No match found.
 	return false;
 }
+bool RakString::ContainsNonprintableExceptSpaces(void) const
+{
+	size_t strLen = strlen(sharedString->c_str);
+	unsigned i;
+	for (i=0; i < strLen; i++)
+	{
+		if (sharedString->c_str[i] < ' ' || sharedString->c_str[i] >126)
+			return true;
+	}
+	return false;
+}
+bool RakString::IsEmailAddress(void) const
+{
+	if (IsEmpty())
+		return false;
+	size_t strLen = strlen(sharedString->c_str);
+	if (strLen < 7) // a@b.com
+		return false;
+	if (sharedString->c_str[strLen-4]!='.') // .com, .net., .org
+		return false;
+	unsigned i;
+	// Has non-printable?
+	for (i=0; i < strLen; i++)
+	{
+		if (sharedString->c_str[i] <= ' ' || sharedString->c_str[i] >126)
+			return false;
+	}
+	int atCount=0;
+	for (i=0; i < strLen; i++)
+	{
+		if (sharedString->c_str[i]=='@')
+		{
+			atCount++;
+		}
+	}
+	if (atCount!=1)
+		return false;
+	int dotCount=0;
+	for (i=0; i < strLen; i++)
+	{
+		if (sharedString->c_str[i]=='.')
+		{
+			dotCount++;
+		}
+	}
+	if (dotCount==0)
+		return false;
+
+	// There's more I could check, but this is good enough
+	return true;
+}
 void RakString::URLEncode(void)
 {
 	RakString result;
@@ -401,8 +514,14 @@ void RakString::URLEncode(void)
 }
 void RakString::FreeMemory(void)
 {
+	LockMutex();
+	FreeMemoryNoMutex();
+	UnlockMutex();
+}
+void RakString::FreeMemoryNoMutex(void)
+{
 	for (unsigned int i=0; i < freeList.Size(); i++)
-		delete freeList[i];
+		RakNet::OP_DELETE(freeList[i]);
 	freeList.Clear();
 }
 void RakString::Serialize(BitStream *bs)
@@ -441,6 +560,8 @@ bool RakString::Deserialize(BitStream *bs)
 		else
 			Clear();
 	}
+	else
+		bs->AlignReadToByteBoundary();
 	return b;
 }
 bool RakString::Deserialize(char *str, BitStream *bs)
@@ -453,6 +574,8 @@ bool RakString::Deserialize(char *str, BitStream *bs)
 
 	if (b==false)
 		str[0]=0;
+	
+	str[l]=0;
 	return b;
 }
 bool RakString::DeserializeCompressed(BitStream *bs, bool readLanguageId)
@@ -507,7 +630,7 @@ void RakString::Clear(void)
 }
 void RakString::Allocate(size_t len)
 {
-	poolMutex.Lock();
+	RakString::LockMutex();
 	// sharedString = RakString::pool.Allocate();
 	if (RakString::freeList.Size()==0)
 	{
@@ -523,7 +646,7 @@ void RakString::Allocate(size_t len)
 	}
 	sharedString = RakString::freeList[RakString::freeList.Size()-1];
 	RakString::freeList.RemoveAtIndex(RakString::freeList.Size()-1);
-	poolMutex.Unlock();
+	RakString::UnlockMutex();
 
 	const size_t smallStringSize = 128-sizeof(unsigned int)-sizeof(size_t)-sizeof(char*)*2;
 	sharedString->refCount=1;
@@ -572,14 +695,14 @@ void RakString::Free(void)
 		if (sharedString->bytesUsed>smallStringSize)
 			rakFree(sharedString->bigString);
 		/*
-		poolMutex.Lock();
+		poolMutex->Lock();
 		pool.Release(sharedString);
-		poolMutex.Unlock();
+		poolMutex->Unlock();
 		*/
 
-		poolMutex.Lock();
+		RakString::LockMutex();
 		RakString::freeList.Insert(sharedString);
-		poolMutex.Unlock();
+		RakString::UnlockMutex();
 
 		sharedString=&emptyString;
 	}
@@ -595,6 +718,14 @@ unsigned char RakString::ToUpper(unsigned char c)
 	if (c >= 'a' && c <= 'z')
 		return c-'a'+'A';
 	return c;
+}
+void RakString::LockMutex(void)
+{
+	poolMutex.Lock();
+}
+void RakString::UnlockMutex(void)
+{
+	poolMutex.Unlock();
 }
 /*
 int main(void)
@@ -635,7 +766,7 @@ int main(void)
 	MyFunc(s6);
 	s6.Printf();
 	s7.Printf();
-	printf("\n");
+	RAKNET_DEBUG_PRINTF("\n");
 
 	static const int repeatCount=7500;
 	DataStructures::List<RakString> rakStringList;
@@ -651,7 +782,7 @@ int main(void)
 		beforeReferenceList=RakNet::GetTime();
 		for (i=0; i < repeatCount; i++)
 		{
-			c = new char [56];
+			c = RakNet::OP_NEW<char >(56);
 			strcpy(c, "Aalsdkj alsdjf laksdjf ;lasdfj ;lasjfd");
 			referenceStringList.Insert(c);
 		}
@@ -663,12 +794,12 @@ int main(void)
 		for (i=0; i < repeatCount; i++)
 			stdStringList.Insert("Aalsdkj alsdjf laksdjf ;lasdfj ;lasjfd");
 		afterStdString=RakNet::GetTime();
-		printf("Insertion 1 Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
+		RAKNET_DEBUG_PRINTF("Insertion 1 Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
 
 		beforeReferenceList=RakNet::GetTime();
 		for (i=0; i < repeatCount; i++)
 		{
-			delete referenceStringList[0];
+			RakNet::OP_DELETE(referenceStringList[0]);
 			referenceStringList.RemoveAtIndex(0);
 		}
 		beforeRakString=RakNet::GetTime();
@@ -678,12 +809,12 @@ int main(void)
 		for (i=0; i < repeatCount; i++)
 			stdStringList.RemoveAtIndex(0);
 		afterStdString=RakNet::GetTime();
-		printf("RemoveHead Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
+		RAKNET_DEBUG_PRINTF("RemoveHead Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
 
 		beforeReferenceList=RakNet::GetTime();
 		for (i=0; i < repeatCount; i++)
 		{
-			c = new char [56];
+			c = RakNet::OP_NEW<char >(56);
 			strcpy(c, "Aalsdkj alsdjf laksdjf ;lasdfj ;lasjfd");
 			referenceStringList.Insert(0);
 		}
@@ -694,12 +825,12 @@ int main(void)
 		for (i=0; i < repeatCount; i++)
 			stdStringList.Insert("Aalsdkj alsdjf laksdjf ;lasdfj ;lasjfd");
 		afterStdString=RakNet::GetTime();
-		printf("Insertion 2 Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
+		RAKNET_DEBUG_PRINTF("Insertion 2 Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
 
 		beforeReferenceList=RakNet::GetTime();
 		for (i=0; i < repeatCount; i++)
 		{
-			delete [] referenceStringList[referenceStringList.Size()-1];
+			RakNet::OP_DELETE_ARRAY(referenceStringList[referenceStringList.Size()-1]);
 			referenceStringList.RemoveAtIndex(referenceStringList.Size()-1);
 		}
 		beforeRakString=RakNet::GetTime();
@@ -709,7 +840,7 @@ int main(void)
 		for (i=0; i < repeatCount; i++)
 			stdStringList.RemoveAtIndex(stdStringList.Size()-1);
 		afterStdString=RakNet::GetTime();
-		printf("RemoveTail Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
+		RAKNET_DEBUG_PRINTF("RemoveTail Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
 
 	}
 

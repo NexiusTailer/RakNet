@@ -31,97 +31,97 @@
 
 RakPeerInterface* RakNetworkFactory::GetRakPeerInterface( void )
 {
-	return new RakPeer;
+	return RakNet::OP_NEW<RakPeer>();
 }
 ConsoleServer* RakNetworkFactory::GetConsoleServer( void )
 {
-	return new ConsoleServer;
+	return RakNet::OP_NEW<ConsoleServer>();
 }
 ReplicaManager* RakNetworkFactory::GetReplicaManager( void )
 {
-	return new ReplicaManager;
+	return RakNet::OP_NEW<ReplicaManager>();
 }
 LogCommandParser* RakNetworkFactory::GetLogCommandParser( void )
 {
-	return new LogCommandParser;
+	return RakNet::OP_NEW<LogCommandParser>();
 }
 PacketLogger* RakNetworkFactory::GetPacketLogger( void )
 {
-	return new PacketLogger;
+	return RakNet::OP_NEW<PacketLogger>();
 }
 RakNetCommandParser* RakNetworkFactory::GetRakNetCommandParser( void )
 {
-	return new RakNetCommandParser;
+	return RakNet::OP_NEW<RakNetCommandParser>();
 }
 RakNetTransport* RakNetworkFactory::GetRakNetTransport( void )
 {
-	return new RakNetTransport;
+	return RakNet::OP_NEW<RakNetTransport>();
 }
 TelnetTransport* RakNetworkFactory::GetTelnetTransport( void )
 {
-	return new TelnetTransport;
+	return RakNet::OP_NEW<TelnetTransport>();
 }
 PacketConsoleLogger* RakNetworkFactory::GetPacketConsoleLogger( void )
 {
-	return new PacketConsoleLogger;
+	return RakNet::OP_NEW<PacketConsoleLogger>();
 }
 PacketFileLogger* RakNetworkFactory::GetPacketFileLogger( void )
 {
-	return new PacketFileLogger;
+	return RakNet::OP_NEW<PacketFileLogger>();
 }
 Router* RakNetworkFactory::GetRouter( void )
 {
-	return new Router;
+	return RakNet::OP_NEW<Router>();
 }
 ConnectionGraph* RakNetworkFactory::GetConnectionGraph( void )
 {
-	return new ConnectionGraph;
+	return RakNet::OP_NEW<ConnectionGraph>();
 }
 void RakNetworkFactory::DestroyRakPeerInterface( RakPeerInterface* i )
 {
-	delete ( RakPeer* ) i;
+	RakNet::OP_DELETE(( RakPeer* ) i);
 }
 void RakNetworkFactory::DestroyConsoleServer( ConsoleServer* i)
 {
-	delete ( ConsoleServer* ) i;
+	RakNet::OP_DELETE(( ConsoleServer* ) i);
 }
 void RakNetworkFactory::DestroyReplicaManager( ReplicaManager* i)
 {
-	delete ( ReplicaManager* ) i;
+	RakNet::OP_DELETE(( ReplicaManager* ) i);
 }
 void RakNetworkFactory::DestroyLogCommandParser( LogCommandParser* i)
 {
-	delete ( LogCommandParser* ) i;
+	RakNet::OP_DELETE(( LogCommandParser* ) i);
 }
 void RakNetworkFactory::DestroyPacketLogger( PacketLogger* i)
 {
-	delete ( PacketLogger* ) i;
+	RakNet::OP_DELETE(( PacketLogger* ) i);
 }
 void RakNetworkFactory::DestroyRakNetCommandParser( RakNetCommandParser* i )
 {
-	delete ( RakNetCommandParser* ) i;
+	RakNet::OP_DELETE(( RakNetCommandParser* ) i);
 }
 void RakNetworkFactory::DestroyRakNetTransport(  RakNetTransport* i )
 {
-	delete ( RakNetTransport* ) i;
+	RakNet::OP_DELETE(( RakNetTransport* ) i);
 }
 void RakNetworkFactory::DestroyTelnetTransport(  TelnetTransport* i )
 {
-	delete ( TelnetTransport* ) i;
+	RakNet::OP_DELETE(( TelnetTransport* ) i);
 }
 void RakNetworkFactory::DestroyPacketConsoleLogger(  PacketConsoleLogger* i )
 {
-	delete ( PacketConsoleLogger* ) i;
+	RakNet::OP_DELETE(( PacketConsoleLogger* ) i);
 }
 void RakNetworkFactory::DestroyPacketFileLogger(  PacketFileLogger* i )
 {
-	delete ( PacketFileLogger* ) i;
+	RakNet::OP_DELETE(( PacketFileLogger* ) i);
 }
 void RakNetworkFactory::DestroyRouter(  Router* i )
 {
-	delete ( Router* ) i;
+	RakNet::OP_DELETE(( Router* ) i);
 }
 void RakNetworkFactory::DestroyConnectionGraph(  ConnectionGraph* i )
 {
-	delete ( ConnectionGraph* ) i;
+	RakNet::OP_DELETE(( ConnectionGraph* ) i);
 }

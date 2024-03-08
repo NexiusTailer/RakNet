@@ -53,7 +53,7 @@ void ConsoleServer::AddCommandParser(CommandParserInterface *commandParserInterf
         if (_stricmp(commandParserList[i]->GetName(), commandParserInterface->GetName())==0)
 		{
 			// Naming conflict between two command parsers
-			assert(0);
+			RakAssert(0);
 			return;
 		}
 	}

@@ -63,7 +63,7 @@ NetworkIDObject* NetworkIDManager::GET_BASE_OBJECT_FROM_ID( NetworkID x )
 
 #if defined(NETWORK_ID_USE_PTR_TABLE) || defined (NETWORK_ID_USE_HASH)
 	// You can't use this technique in peer to peer mode.  Undefine NETWORK_ID_USE_PTR_TABLE in NetworkIDManager.h
-	assert(NetworkID::peerToPeerMode==false);
+	RakAssert(NetworkID::IsPeerToPeerMode()==false);
 	return IDArray[x.localSystemAddress];
 #else
 
@@ -87,7 +87,7 @@ void* NetworkIDManager::GET_OBJECT_FROM_ID( NetworkID x )
 		return 0;
 
 	// You can't use this technique in peer to peer mode.  Undefine NETWORK_ID_USE_PTR_TABLE in NetworkIDManager.h
-	assert(NetworkID::peerToPeerMode==false);
+	RakAssert(NetworkID::IsPeerToPeerMode()==false);
 	if (IDArray[x.localSystemAddress])
 	{
 		if (IDArray[x.localSystemAddress]->GetParent())
@@ -98,7 +98,7 @@ void* NetworkIDManager::GET_OBJECT_FROM_ID( NetworkID x )
 		{
 #ifdef _DEBUG
 			// If this assert hit then this object requires a call to SetParent and it never got one.
-			assert(IDArray[x.localSystemAddress]->RequiresSetParent()==false);
+			RakAssert(IDArray[x.localSystemAddress]->RequiresSetParent()==false);
 #endif
 			return IDArray[x.localSystemAddress];
 		}
@@ -115,7 +115,7 @@ void* NetworkIDManager::GET_OBJECT_FROM_ID( NetworkID x )
 		{
 #ifdef _DEBUG
 			// If this assert hit then this object requires a call to SetParent and it never got one.
-			assert(object->RequiresSetParent()==false);
+			RakAssert(object->RequiresSetParent()==false);
 #endif
 			return object;
 		}
@@ -129,13 +129,15 @@ NetworkIDManager::NetworkIDManager(void)
 {
 	calledSetIsNetworkIDAuthority=false;
 	sharedNetworkID=0;
+	externalSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
+	guid=UNASSIGNED_RAKNET_GUID;
 
 #if defined(NETWORK_ID_USE_PTR_TABLE) || defined (NETWORK_ID_USE_HASH)
 	// Last element is reserved for UNASSIGNED_NETWORK_ID
 	IDArray = (NetworkIDObject**) rakMalloc(sizeof(NetworkIDObject*) * 65534);
 	memset(IDArray,0,sizeof(NetworkIDObject*)*65534);
 	// You can't use this technique in peer to peer mode.  Undefine NETWORK_ID_USE_PTR_TABLE in NetworkIDManager.h
-	assert(NetworkID::peerToPeerMode==false);
+	RakAssert(NetworkID::IsPeerToPeerMode()==false);
 #endif
 }
 //-------------------------------------------------------------------------------------
@@ -189,4 +191,14 @@ SystemAddress NetworkIDManager::GetExternalSystemAddress(void)
 {
 	RakAssert(calledSetIsNetworkIDAuthority);
 	return externalSystemAddress;
+}
+//-------------------------------------------------------------------------------------
+void NetworkIDManager::SetGuid(RakNetGUID g)
+{
+	guid=g;
+}
+RakNetGUID NetworkIDManager::GetGuid(void)
+{
+	RakAssert(guid!=UNASSIGNED_RAKNET_GUID);
+	return guid;
 }

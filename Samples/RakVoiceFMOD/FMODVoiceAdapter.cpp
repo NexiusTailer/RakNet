@@ -35,10 +35,10 @@ bool FMODVoiceAdapter::SetupAdapter(FMOD::System *fmodSystem, RakVoice *rakVoice
 {
 	FMOD_RESULT fmodErr;
 
-	assert(fmodSystem);
-	assert(rakVoice);
+	RakAssert(fmodSystem);
+	RakAssert(rakVoice);
 	// Make sure rakVoice was initialized
-	assert((rakVoice->IsInitialized())&&(rakVoice->GetRakPeerInterface()!=NULL));
+	RakAssert((rakVoice->IsInitialized())&&(rakVoice->GetRakPeerInterface()!=NULL));
 
 	this->fmodSystem = fmodSystem;
 	this->rakVoice = rakVoice;
@@ -82,7 +82,7 @@ bool FMODVoiceAdapter::SetupAdapter(FMOD::System *fmodSystem, RakVoice *rakVoice
 
 void FMODVoiceAdapter::Update(void)
 {
-	assert(fmodSystem);
+	RakAssert(fmodSystem);
 	UpdateSound(true);
 	UpdateSound(false);
 }
@@ -96,7 +96,7 @@ void FMODVoiceAdapter::Release(void)
 	// Stop recording
 	bool recording=false;
 	err = fmodSystem->isRecording(&recording);
-	assert(err==FMOD_OK);
+	RakAssert(err==FMOD_OK);
 	if (recording){
 		fmodSystem->recordStop();
 	}
@@ -104,7 +104,7 @@ void FMODVoiceAdapter::Release(void)
 	// Stop what we hear
 	bool playing;
 	err = channel->isPlaying(&playing);
-	assert(err==FMOD_OK);
+	RakAssert(err==FMOD_OK);
 	if (playing){
 		channel->stop();
 	}
@@ -143,15 +143,15 @@ void FMODVoiceAdapter::UpdateSound(bool isRec)
 	unsigned int currPos;
 	if (isRec){
 		fmodErr=fmodSystem->getRecordPosition(&currPos);
-		assert(fmodErr==FMOD_OK);
+		RakAssert(fmodErr==FMOD_OK);
 	} else {
 		fmodErr=channel->getPosition(&currPos, FMOD_TIMEUNIT_PCM);
-		assert(fmodErr==FMOD_OK);
+		RakAssert(fmodErr==FMOD_OK);
 	}
 
 	// Get length of sound in samples
 	fmodErr=snd->getLength(&soundLength, FMOD_TIMEUNIT_PCM);
-	assert(fmodErr==FMOD_OK);
+	RakAssert(fmodErr==FMOD_OK);
 
 	// calculate some variables we'll need ahead
 	int bufferSizeBytes = rakVoice->GetBufferSizeBytes();

@@ -56,8 +56,8 @@ public:
 
 	/// Write a log to a channel.
 	/// Logs are not buffered, so only remote consoles connected and subscribing at the time you write will get the output.
-	/// \param[in] format Same as printf()
-	/// \param[in] ... Same as printf()
+	/// \param[in] format Same as RAKNET_DEBUG_PRINTF()
+	/// \param[in] ... Same as RAKNET_DEBUG_PRINTF()
 	void WriteLog(const char *channelName, const char *format, ...);
 
 	/// A callback for when \a systemAddress has connected to us.

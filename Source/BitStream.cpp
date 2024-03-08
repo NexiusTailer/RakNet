@@ -23,15 +23,15 @@
 #include <string.h>
 #include <stdlib.h>
 
-#ifdef _XBOX360
-#include "Console1Includes.h"
+#if defined(_XBOX) || defined(X360)
+#include "XBOX360Includes.h"
 #elif defined(_WIN32)
 #include <winsock2.h> // htonl
 #include <memory.h>
 #include <cmath>
 #include <float.h>
-#elif defined(_PS3)
-#include "Console2Includes.h"
+#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+#include "PS3Includes.h"
 #else
 #include <arpa/inet.h>
 #include <memory.h>
@@ -62,7 +62,7 @@ BitStream::BitStream()
 	data = ( unsigned char* ) stackData;
 	
 #ifdef _DEBUG	
-//	assert( data );
+//	RakAssert( data );
 #endif
 	//memset(data, 0, 32);
 	copyData = true;
@@ -83,7 +83,7 @@ BitStream::BitStream( const unsigned int initialBytesToAllocate )
 		numberOfBitsAllocated = initialBytesToAllocate << 3;
 	}
 #ifdef _DEBUG
-	assert( data );
+	RakAssert( data );
 #endif
 	// memset(data, 0, initialBytesToAllocate);
 	copyData = true;
@@ -110,7 +110,7 @@ BitStream::BitStream( unsigned char* _data, const unsigned int lengthInBytes, bo
 				data = ( unsigned char* ) rakMalloc( (size_t) lengthInBytes );
 			}
 #ifdef _DEBUG
-			assert( data );
+			RakAssert( data );
 #endif
 			memcpy( data, _data, (size_t) lengthInBytes );
 		}
@@ -125,7 +125,7 @@ BitStream::BitStream( unsigned char* _data, const unsigned int lengthInBytes, bo
 void BitStream::SetNumberOfBitsAllocated( const BitSize_t lengthInBits )
 {
 #ifdef _DEBUG
-	assert( lengthInBits >= ( BitSize_t ) numberOfBitsAllocated );
+	RakAssert( lengthInBits >= ( BitSize_t ) numberOfBitsAllocated );
 #endif	
 	numberOfBitsAllocated = lengthInBits;
 }
@@ -133,7 +133,7 @@ void BitStream::SetNumberOfBitsAllocated( const BitSize_t lengthInBits )
 BitStream::~BitStream()
 {
 	if ( copyData && numberOfBitsAllocated > (BITSTREAM_STACK_ALLOCATION_SIZE << 3))
-		RakFree( data );  // Use realloc and free so we are more efficient than delete and new for resizing
+		rakFree( data );  // Use realloc and free so we are more efficient than delete and new for resizing
 }
 
 void BitStream::Reset( void )
@@ -323,13 +323,6 @@ bool BitStream::ReadBit( void )
 // SetReadToByteAlignment at the corresponding read position
 void BitStream::WriteAlignedBytes( const unsigned char* input, const unsigned int numberOfBytesToWrite )
 {
-#ifdef _DEBUG
-	if (numberOfBytesToWrite<=0)
-	{
-		assert( numberOfBytesToWrite > 0 );
-	}
-#endif
-	
 	AlignWriteToByteBoundary();
 	Write((const char*) input, numberOfBytesToWrite);
 }
@@ -352,7 +345,7 @@ void BitStream::WriteAlignedBytesSafe( const char *input, const unsigned int inp
 bool BitStream::ReadAlignedBytes( unsigned char* output, const unsigned int numberOfBytesToRead )
 {
 #ifdef _DEBUG
-	assert( numberOfBytesToRead > 0 );
+	RakAssert( numberOfBytesToRead > 0 );
 #endif
 	
 	if ( numberOfBytesToRead <= 0 )
@@ -399,7 +392,7 @@ bool BitStream::ReadAlignedBytesSafeAlloc( char **input, unsigned int &inputLeng
 		inputLength=maxBytesToRead;
 	if (inputLength==0)
 		return true;
-	*input = (char*) rakMalloc( (size_t) BITS_TO_BYTES( inputLength ) );
+	*input = (char*) rakMalloc( (size_t) inputLength );
 	return ReadAlignedBytes((unsigned char*) *input, inputLength);
 }
 // Align the next write and/or read to a byte boundary.  This can be used to 'waste' bits to byte align for efficiency reasons
@@ -540,7 +533,7 @@ void BitStream::WriteCompressed( const unsigned char* input,
 bool BitStream::ReadBits( unsigned char *output, BitSize_t numberOfBitsToRead, const bool alignBitsToRight )
 {
 #ifdef _DEBUG
-//	assert( numberOfBitsToRead > 0 );
+//	RakAssert( numberOfBitsToRead > 0 );
 #endif
 	if (numberOfBitsToRead<=0)
 	  return false;
@@ -643,7 +636,7 @@ bool BitStream::ReadCompressed( unsigned char* output,
 	
 	// All but the first bytes are byteMatch.  If the upper half of the last byte is a 0 (positive) or 16 (negative) then what we read will be a 1 and the remaining 4 bits.
 	// Otherwise we read a 0 and the 8 bytes
-	//assert(readOffset+1 <=numberOfBitsUsed); // If this assert is hit the stream wasn't long enough to read from
+	//RakAssert(readOffset+1 <=numberOfBitsUsed); // If this assert is hit the stream wasn't long enough to read from
 	if ( readOffset + 1 > numberOfBitsUsed )
 		return false;
 		
@@ -683,7 +676,7 @@ void BitStream::AddBitsAndReallocate( const BitSize_t numberOfBitsToWrite )
 		// If this assert hits then we need to specify true for the third parameter in the constructor
 		// It needs to reallocate to hold all the data and can't do it unless we allocated to begin with
 		// Often hits if you call Write or Serialize on a read-only bitstream
-		assert( copyData == true );
+		RakAssert( copyData == true );
 #endif
 
 		// Less memory efficient but saves on news and deletes
@@ -707,11 +700,11 @@ void BitStream::AddBitsAndReallocate( const BitSize_t numberOfBitsToWrite )
 		}
 		else
 		{
-			data = ( unsigned char* ) RakRealloc( data, (size_t) amountToAllocate );
+			data = ( unsigned char* ) rakRealloc( data, (size_t) amountToAllocate );
 		}
 
 #ifdef _DEBUG
-		assert( data ); // Make sure realloc succeeded
+		RakAssert( data ); // Make sure realloc succeeded
 #endif
 		//  memset(data+newByteOffset, 0,  ((newNumberOfBitsAllocated-1)>>3) - ((numberOfBitsAllocated-1)>>3)); // Set the new data block to 0
 	}
@@ -727,41 +720,49 @@ BitSize_t BitStream::GetNumberOfBitsAllocated(void) const
 // Should hit if reads didn't match writes
 void BitStream::AssertStreamEmpty( void )
 {
-	assert( readOffset == numberOfBitsUsed );
+	RakAssert( readOffset == numberOfBitsUsed );
 }
-
-void BitStream::PrintBits( void ) const
+void BitStream::PrintBits( char *out ) const
 {
 	if ( numberOfBitsUsed <= 0 )
 	{
-		printf( "No bits\n" );
-		return ;
+		strcpy(out, "No bits\n" );
+		return;
 	}
-	
+
+	unsigned int strIndex=0;
 	for ( BitSize_t counter = 0; counter < BITS_TO_BYTES( numberOfBitsUsed ); counter++ )
 	{
 		BitSize_t stop;
-		
+
 		if ( counter == ( numberOfBitsUsed - 1 ) >> 3 )
 			stop = 8 - ( ( ( numberOfBitsUsed - 1 ) & 7 ) + 1 );
 		else
 			stop = 0;
-		
+
 		for ( BitSize_t counter2 = 7; counter2 >= stop; counter2-- )
 		{
 			if ( ( data[ counter ] >> counter2 ) & 1 )
-				putchar( '1' );
+				out[strIndex++]='1';
 			else
-				putchar( '0' );
+				out[strIndex++]='0';
 
 			if (counter2==0)
 				break;
 		}
-		
-		putchar( ' ' );
+
+		out[strIndex++]=' ';
 	}
-	
-	putchar( '\n' );
+
+	out[strIndex++]='\n';
+
+	out[strIndex++]=0;
+}
+void BitStream::PrintBits( void ) const
+{
+	char out[2048];
+	PrintBits(out);
+	RAKNET_DEBUG_PRINTF(out);
 }
 
 
@@ -770,7 +771,7 @@ void BitStream::PrintBits( void ) const
 BitSize_t BitStream::CopyData( unsigned char** _data ) const
 {
 #ifdef _DEBUG
-	assert( numberOfBitsUsed > 0 );
+	RakAssert( numberOfBitsUsed > 0 );
 #endif
 	
 	*_data = (unsigned char*) rakMalloc( (size_t) BITS_TO_BYTES( numberOfBitsUsed ) );
@@ -851,7 +852,7 @@ void BitStream::AssertCopyData( void )
 			unsigned char * newdata = ( unsigned char* ) rakMalloc( (size_t) BITS_TO_BYTES( numberOfBitsAllocated ) );
 #ifdef _DEBUG
 			
-			assert( data );
+			RakAssert( data );
 #endif
 			
 			memcpy( newdata, data, (size_t) BITS_TO_BYTES( numberOfBitsAllocated ) );
@@ -892,7 +893,7 @@ bool BitStream::IsBigEndian(void)
 }
 bool BitStream::IsNetworkOrder(void)
 {
-#if defined(_PS3)
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
 	return true;
 #else
 	static bool isNetworkOrder=(htonl(12345) == 12345);

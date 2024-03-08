@@ -153,6 +153,16 @@ void QuoteIfSpaces(char *str)
 		str[len+1]=0;
 	}
 }
+unsigned int GetFileLength(const char *path)
+{
+	FILE *fp = fopen(path, "rb");
+	if (fp==0) return 0;
+	fseek(fp, 0, SEEK_END);
+	unsigned int fileLength = ftell(fp);
+	fclose(fp);
+	return fileLength;
+
+}
 
 #ifdef _MSC_VER
 #pragma warning( pop )

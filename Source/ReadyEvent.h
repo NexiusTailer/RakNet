@@ -74,6 +74,13 @@ public:
 	/// \return True on success. False (failure) on unknown eventId
 	bool SetEvent(int eventId, bool isReady);
 
+	/// When systems can call SetEvent() with isReady==false, it is possible for one system to return true from IsEventCompleted() while the other systems return false
+	/// This can occur if a system SetEvent() with isReady==false while the completion message is still being transmitted.
+	/// If your game has the situation where some action should be taken on all systems when IsEventCompleted() is true for any system, then call ForceCompletion() when the action begins.
+	/// This will force all systems to return true from IsEventCompleted().
+	/// \param[in] eventId A user-defined identifier to immediately set as completed
+	bool ForceCompletion(int eventId);
+
 	/// Deletes an event.  We will no longer wait for this event, and any systems that we know have set the event will be forgotten.
 	/// Call this to clear memory when events are completed and you know you will never need them again.
 	/// \param[in] eventId A user-defined identifier
@@ -206,6 +213,7 @@ protected:
 	void OnReadyEventQuery(RakPeerInterface *peer, Packet *packet);
 	void PushCompletionPacket(unsigned eventId);
 	bool AddToWaitListInternal(unsigned eventIndex, SystemAddress address);
+	void OnReadyEventForceAllSet(RakPeerInterface *peer, Packet *packet);
 	void OnReadyEventPacketUpdate(RakPeerInterface *peer, Packet *packet);
 	void UpdateReadyStatus(unsigned eventIndex);
 	bool IsEventCompletedByIndex(unsigned eventIndex) const;

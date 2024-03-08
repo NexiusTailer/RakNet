@@ -46,10 +46,11 @@ public:
 	{
 		SystemAddressAndGroupId();
 		~SystemAddressAndGroupId();
-		SystemAddressAndGroupId(SystemAddress _systemAddress, ConnectionGraphGroupID _groupID);
+		SystemAddressAndGroupId(SystemAddress _systemAddress, ConnectionGraphGroupID _groupID, RakNetGUID _guid);
 
 		SystemAddress systemAddress;
 		ConnectionGraphGroupID groupId;
+		RakNetGUID guid;
 
 		bool operator==( const SystemAddressAndGroupId& right ) const;
 		bool operator!=( const SystemAddressAndGroupId& right ) const;
@@ -90,8 +91,9 @@ public:
 	/// We only add to the graph groups which we subscribe to
 	/// \param[in] peer The instance of RakPeer to send through
 	/// \param[in] systemAddress The system that is connected to us.
+	/// \param[in] guid The system that is connected to us.
 	/// \param[in] groupId Just a number representing a group.  Important: 0 is reserved to mean unassigned group ID and is assigned to all systems added with SetAutoAddNewConnections(true)
-	void AddNewConnection(RakPeerInterface *peer, SystemAddress systemAddress, ConnectionGraphGroupID groupId);
+	void AddNewConnection(RakPeerInterface *peer, SystemAddress systemAddress, RakNetGUID guid, ConnectionGraphGroupID groupId);
 
 	/// Sets our own group ID
 	/// Only used and valid when SetAutoAddNewConnections(false) is called.

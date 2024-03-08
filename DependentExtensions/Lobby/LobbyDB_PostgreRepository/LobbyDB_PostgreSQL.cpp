@@ -44,6 +44,7 @@ bool LobbyDB_PostgreSQL::CreateLobbyServerTables(void)
 	const char *createTablesStr =
 		"BEGIN;\n"
 		"\n"
+		"CREATE LANGUAGE plpgsql;\n"
 		"CREATE TABLE users (\n"
 		"userId_pk serial PRIMARY KEY UNIQUE,\n"
 		"handleID_fk integer UNIQUE,\n"

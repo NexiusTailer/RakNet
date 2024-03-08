@@ -11,12 +11,19 @@
 #pragma warning( push )
 #endif
 
+class ThreadDataInterface
+{
+public:
+	virtual void* PerThreadFactory(void *context)=0;
+	virtual void PerThreadDestructor(void* factoryResult, void *context)=0;
+};
+
 /// A simple class to create worker threads that processes a queue of functions with data.
 /// This class does not allocate or deallocate memory.  It is up to the user to handle memory management.
 /// InputType and OutputType are stored directly in a queue.  For large structures, if you plan to delete from the middle of the queue,
 /// you might wish to store pointers rather than the structures themselves so the array can shift efficiently.
 template <class InputType, class OutputType>
-struct RAK_DLL_EXPORT ThreadPool : public RakNet::RakMemoryOverride
+struct RAK_DLL_EXPORT ThreadPool
 {
 	ThreadPool();
 	~ThreadPool();
@@ -28,6 +35,9 @@ struct RAK_DLL_EXPORT ThreadPool : public RakNet::RakMemoryOverride
 	/// \param[in] _perThreadDataDestructor User callback to destroy data stored per thread, created by _perThreadDataFactory.  Pass 0 if not needed.
 	/// \return True on success, false on failure.
 	bool StartThreads(int numThreads, int stackSize, void* (*_perThreadDataFactory)()=0, void (*_perThreadDataDestructor)(void*)=0);
+
+	// Alternate form of _perThreadDataFactory, _perThreadDataDestructor
+	void SetThreadDataInterface(ThreadDataInterface *tdi, void *context);
 
 	/// Stops all threads
 	void StopThreads(void);
@@ -41,6 +51,11 @@ struct RAK_DLL_EXPORT ThreadPool : public RakNet::RakMemoryOverride
 	/// \param[in] workerThreadCallback The function to call from the thread
 	/// \param[in] inputData The parameter to pass to \a userCallback
 	void AddInput(OutputType (*workerThreadCallback)(InputType, bool *returnOutput, void* perThreadData), InputType inputData);
+
+	/// Adds to the output queue
+	/// Use it if you want to inject output into the same queue that the system uses. Normally you would not use this. Consider it a convenience function.
+	/// \param[in] outputData The output to inject
+	void AddOutput(OutputType outputData);
 
 	/// Returns true if output from GetOutput is waiting.
 	/// \return true if output is waiting, false otherwise
@@ -125,8 +140,10 @@ protected:
 	// at the same index
 	DataStructures::Queue<OutputType (*)(InputType, bool *, void*)> inputFunctionQueue;
 	DataStructures::Queue<InputType> inputQueue;
-
 	DataStructures::Queue<OutputType> outputQueue;
+
+	ThreadDataInterface *threadDataInterface;
+	void *tdiContext;
 
 	
 	template <class ThreadInputType, class ThreadOutputType>
@@ -187,6 +204,8 @@ void* WorkerThread( void* arguments )
 	void *perThreadData;
 	if (threadPool->perThreadDataFactory)
 		perThreadData=threadPool->perThreadDataFactory();
+	else if (threadPool->threadDataInterface)
+		perThreadData=threadPool->threadDataInterface->PerThreadFactory(threadPool->tdiContext);
 	else
 		perThreadData=0;
 
@@ -194,7 +213,6 @@ void* WorkerThread( void* arguments )
 	threadPool->numThreadsRunningMutex.Lock();
 	++threadPool->numThreadsRunning;
 	threadPool->numThreadsRunningMutex.Unlock();
-
 
 	while (1)
 	{
@@ -261,6 +279,8 @@ void* WorkerThread( void* arguments )
 
 	if (threadPool->perThreadDataDestructor)
 		threadPool->perThreadDataDestructor(perThreadData);
+	else if (threadPool->threadDataInterface)
+		threadPool->threadDataInterface->PerThreadDestructor(perThreadData, threadPool->tdiContext);
 
 	return 0;
 }
@@ -269,6 +289,9 @@ ThreadPool<InputType, OutputType>::ThreadPool()
 {
 	runThreads=false;
 	numThreadsRunning=0;
+	threadDataInterface=0;
+	tdiContext=0;
+
 }
 template <class InputType, class OutputType>
 ThreadPool<InputType, OutputType>::~ThreadPool()
@@ -276,7 +299,6 @@ ThreadPool<InputType, OutputType>::~ThreadPool()
 	StopThreads();
 	Clear();
 }
-
 template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::StartThreads(int numThreads, int stackSize, void* (*_perThreadDataFactory)(), void (*_perThreadDataDestructor)(void *))
 {
@@ -329,6 +351,12 @@ bool ThreadPool<InputType, OutputType>::StartThreads(int numThreads, int stackSi
 	return true;
 }
 template <class InputType, class OutputType>
+void ThreadPool<InputType, OutputType>::SetThreadDataInterface(ThreadDataInterface *tdi, void *context)
+{
+	threadDataInterface=tdi;
+	tdiContext=context;
+}
+template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::StopThreads(void)
 {
 	runThreadsMutex.Lock();
@@ -374,6 +402,13 @@ void ThreadPool<InputType, OutputType>::AddInput(OutputType (*workerThreadCallba
 	// Input data event
 	SetEvent(quitAndIncomingDataEvents[1]);
 #endif
+}
+template <class InputType, class OutputType>
+void ThreadPool<InputType, OutputType>::AddOutput(OutputType outputData)
+{
+	outputQueueMutex.Lock();
+	outputQueue.Push(outputData);
+	outputQueueMutex.Unlock();
 }
 template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::HasOutputFast(void)

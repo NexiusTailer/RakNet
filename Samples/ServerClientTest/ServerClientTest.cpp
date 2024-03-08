@@ -19,7 +19,7 @@
 #include <cstdio>
 #endif
 
-static const int NUM_CLIENTS=500;
+static const int NUM_CLIENTS=64;
 #define SERVER_PORT 66666
 #define RANDOM_DATA_SIZE 200
 char randomData[RANDOM_DATA_SIZE];

@@ -10,7 +10,7 @@ namespace RakNet
 	class BitStream;
 }
 
-class RAK_DLL_EXPORT TableSerializer : public RakNet::RakMemoryOverride
+class RAK_DLL_EXPORT TableSerializer
 {
 public:
 	static void SerializeTable(DataStructures::Table *in, RakNet::BitStream *out);
@@ -55,9 +55,9 @@ void main(void)
 	table.AddColumn("Score", DataStructures::Table::NUMERIC);
 	table.AddColumn("Players", DataStructures::Table::NUMERIC);
 	table.AddColumn("Empty Test Column", DataStructures::Table::STRING);
-	assert(table.GetColumnCount()==5);
+	RakAssert(table.GetColumnCount()==5);
 	row=table.AddRow(0);
-	assert(row);
+	RakAssert(row);
 	row->UpdateCell(0,"Kevin Jenkins");
 	row->UpdateCell(1,sizeof(dummydata), (char*)&dummydata);
 	row->UpdateCell(2,5);
@@ -77,7 +77,7 @@ void main(void)
 	row->UpdateCell(3,20);
 
 	row=table.AddRow(3);
-	assert(row);
+	RakAssert(row);
 	row->UpdateCell(0,"Kevin Jenkins");
 	row->UpdateCell(1,sizeof(dummydata), (char*)&dummydata);
 	row->UpdateCell(2,15);
@@ -85,7 +85,7 @@ void main(void)
 	row->UpdateCell(4,"col index 4");
 
 	row=table.AddRow(4);
-	assert(row);
+	RakAssert(row);
 	row->UpdateCell(0,"Kevin Jenkins");
 	row->UpdateCell(1,sizeof(dummydata), (char*)&dummydata);
 	//row->UpdateCell(2,25);
@@ -93,7 +93,7 @@ void main(void)
 	//row->UpdateCell(4,"should be unique");
 
 	row=table.AddRow(5);
-	assert(row);
+	RakAssert(row);
 	row->UpdateCell(0,"Kevin Jenkins");
 	row->UpdateCell(1,sizeof(dummydata), (char*)&dummydata);
 	//row->UpdateCell(2,25);
@@ -101,7 +101,7 @@ void main(void)
 	//row->UpdateCell(4,"should be unique");
 
 	row=table.AddRow(6);
-	assert(row);
+	RakAssert(row);
 	row->UpdateCell(0,"Kevin Jenkins");
 	row->UpdateCell(1,sizeof(dummydata), (char*)&dummydata);
 	row->UpdateCell(2,35);
@@ -109,11 +109,11 @@ void main(void)
 	//row->UpdateCell(4,"should be unique");
 
 	row=table.AddRow(7);
-	assert(row);
+	RakAssert(row);
 	row->UpdateCell(0,"Bob Jenkins");
 
 	row=table.AddRow(8);
-	assert(row);
+	RakAssert(row);
 	row->UpdateCell(0,"Zack Jenkins");
 
 	// Test multi-column sorting
@@ -130,11 +130,11 @@ void main(void)
 	table.SortTable(queries, 4, rows);
 	unsigned i;
 	char out[256];
-	printf("Sort: Ascending except for column index 3\n");
+	RAKNET_DEBUG_PRINTF("Sort: Ascending except for column index 3\n");
 	for (i=0; i < table.GetRowCount(); i++)
 	{
 		table.PrintRow(out,256,',',true, rows[i]);
-		printf("%s\n", out);
+		RAKNET_DEBUG_PRINTF("%s\n", out);
 	}
 
 	// Test query:
@@ -146,11 +146,11 @@ void main(void)
 	columnsToReturn[3]=4;
 	DataStructures::Table resultsTable;
 	table.QueryTable(columnsToReturn,4,0,0,&resultsTable);
-	printf("Query: Don't return column 3, and swap columns 0 and 2:\n");
+	RAKNET_DEBUG_PRINTF("Query: Don't return column 3, and swap columns 0 and 2:\n");
 	for (i=0; i < resultsTable.GetRowCount(); i++)
 	{
 		resultsTable.PrintRow(out,256,',',true, resultsTable.GetRowByIndex(i));
-		printf("%s\n", out);
+		RAKNET_DEBUG_PRINTF("%s\n", out);
 	}
 
 	// Test filter:
@@ -160,11 +160,11 @@ void main(void)
 	inclusionFilters[0].operation=DataStructures::Table::QF_IS_EMPTY;
 	// inclusionFilters[0].cellValue; // Unused for IS_EMPTY
 	table.QueryTable(0,0,inclusionFilters,1,&resultsTable);
-	printf("Filter: Only return rows with column index 4 empty:\n");
+	RAKNET_DEBUG_PRINTF("Filter: Only return rows with column index 4 empty:\n");
 	for (i=0; i < resultsTable.GetRowCount(); i++)
 	{
 		resultsTable.PrintRow(out,256,',',true, resultsTable.GetRowByIndex(i));
-		printf("%s\n", out);
+		RAKNET_DEBUG_PRINTF("%s\n", out);
 	}
 
 	// Column 5 empty and column 0 == Kevin Jenkins
@@ -174,29 +174,29 @@ void main(void)
 	inclusionFilters[1].operation=DataStructures::Table::QF_EQUAL;
 	inclusionFilters[1].cellValue.Set("Kevin Jenkins");
 	table.QueryTable(0,0,inclusionFilters,2,&resultsTable);
-	printf("Filter: Column 5 empty and column 0 == Kevin Jenkins:\n");
+	RAKNET_DEBUG_PRINTF("Filter: Column 5 empty and column 0 == Kevin Jenkins:\n");
 	for (i=0; i < resultsTable.GetRowCount(); i++)
 	{
 		resultsTable.PrintRow(out,256,',',true, resultsTable.GetRowByIndex(i));
-		printf("%s\n", out);
+		RAKNET_DEBUG_PRINTF("%s\n", out);
 	}
 
 	RakNet::BitStream bs;
-	printf("PreSerialize:\n");
+	RAKNET_DEBUG_PRINTF("PreSerialize:\n");
 	for (i=0; i < table.GetRowCount(); i++)
 	{
 		table.PrintRow(out,256,',',true, table.GetRowByIndex(i));
-		printf("%s\n", out);
+		RAKNET_DEBUG_PRINTF("%s\n", out);
 	}
 	StringCompressor::AddReference();
 	TableSerializer::Serialize(&table, &bs);
 	TableSerializer::Deserialize(&bs, &table);
 	StringCompressor::RemoveReference();
-	printf("PostDeserialize:\n");
+	RAKNET_DEBUG_PRINTF("PostDeserialize:\n");
 	for (i=0; i < table.GetRowCount(); i++)
 	{
 		table.PrintRow(out,256,',',true, table.GetRowByIndex(i));
-		printf("%s\n", out);
+		RAKNET_DEBUG_PRINTF("%s\n", out);
 	}
 	int a=5;
 }

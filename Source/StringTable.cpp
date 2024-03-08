@@ -1,6 +1,6 @@
 #include "StringTable.h"
 #include <string.h>
-#include <assert.h>
+#include "RakAssert.h"
 #include <stdio.h>
 #include "BitStream.h"
 #include "StringCompressor.h"
@@ -34,18 +34,18 @@ void StringTable::AddReference(void)
 {
 	if (++referenceCount==1)
 	{
-		instance = new StringTable;
+		instance = RakNet::OP_NEW<StringTable>();
 	}
 }
 void StringTable::RemoveReference(void)
 {
-	assert(referenceCount > 0);
+	RakAssert(referenceCount > 0);
 
 	if (referenceCount > 0)
 	{
 		if (--referenceCount==0)
 		{
-			delete instance;
+			RakNet::OP_DELETE(instance);
 			instance=0;
 		}
 	}
@@ -74,11 +74,11 @@ void StringTable::AddString(const char *str, bool copyString)
 	if (orderedStringList.Insert(sab.str,sab, true)!=(unsigned)-1)
 	{
 		if (copyString)
-			delete sab.str;
+			RakNet::OP_DELETE(sab.str);
 	}
 
 	// If this assert hits you need to increase the range of StringTableType
-	assert(orderedStringList.Size() < (StringTableType)-1);	
+	RakAssert(orderedStringList.Size() < (StringTableType)-1);	
 	
 }
 void StringTable::EncodeString( const char *input, int maxCharsToWrite, RakNet::BitStream *output )
@@ -103,7 +103,7 @@ void StringTable::EncodeString( const char *input, int maxCharsToWrite, RakNet::
 bool StringTable::DecodeString( char *output, int maxCharsToWrite, RakNet::BitStream *input )
 {
 	bool hasIndex;
-	assert(maxCharsToWrite>0);
+	RakAssert(maxCharsToWrite>0);
 
 	if (maxCharsToWrite==0)
 		return false;
@@ -123,7 +123,7 @@ bool StringTable::DecodeString( char *output, int maxCharsToWrite, RakNet::BitSt
 #ifdef _DEBUG
 			// Critical error - got a string index out of range, which means AddString was called more times on the remote system than on this system.
 			// All systems must call AddString the same number of types, with the same strings in the same order.
-			assert(0);
+			RakAssert(0);
 #endif
 			return false;
 		}
@@ -139,6 +139,6 @@ void StringTable::LogStringNotFound(const char *strName)
 	(void) strName;
 
 #ifdef _DEBUG
-	printf("Efficiency Warning! Unregistered String %s sent to StringTable.\n", strName);
+	RAKNET_DEBUG_PRINTF("Efficiency Warning! Unregistered String %s sent to StringTable.\n", strName);
 #endif
 }

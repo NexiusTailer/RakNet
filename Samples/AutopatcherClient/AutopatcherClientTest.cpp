@@ -22,26 +22,26 @@ class TestCB : public FileListTransferCBInterface
 public:
 	virtual bool OnFile(OnFileStruct *onFileStruct)
 	{
-		if (onFileStruct->context==PC_HASH_WITH_PATCH)
+		if (onFileStruct->context.op==PC_HASH_WITH_PATCH)
 			printf("Patched: ");
-		else if (onFileStruct->context==PC_WRITE_FILE)
+		else if (onFileStruct->context.op==PC_WRITE_FILE)
 			printf("Written: ");
-		else if (onFileStruct->context==PC_ERROR_FILE_WRITE_FAILURE)
+		else if (onFileStruct->context.op==PC_ERROR_FILE_WRITE_FAILURE)
 			printf("Write Failure: ");
-		else if (onFileStruct->context==PC_ERROR_PATCH_TARGET_MISSING)
+		else if (onFileStruct->context.op==PC_ERROR_PATCH_TARGET_MISSING)
 			printf("Patch target missing: ");
-		else if (onFileStruct->context==PC_ERROR_PATCH_APPLICATION_FAILURE)
+		else if (onFileStruct->context.op==PC_ERROR_PATCH_APPLICATION_FAILURE)
 			printf("Patch process failure: ");
-		else if (onFileStruct->context==PC_ERROR_PATCH_RESULT_CHECKSUM_FAILURE)
+		else if (onFileStruct->context.op==PC_ERROR_PATCH_RESULT_CHECKSUM_FAILURE)
 			printf("Patch checksum failure: ");
-		else if (onFileStruct->context==PC_NOTICE_WILL_COPY_ON_RESTART)
+		else if (onFileStruct->context.op==PC_NOTICE_WILL_COPY_ON_RESTART)
 			printf("Copy pending restart: ");
-		else if (onFileStruct->context==PC_NOTICE_FILE_DOWNLOADED)
+		else if (onFileStruct->context.op==PC_NOTICE_FILE_DOWNLOADED)
 			printf("Downloaded: ");
-		else if (onFileStruct->context==PC_NOTICE_FILE_DOWNLOADED_PATCH)
+		else if (onFileStruct->context.op==PC_NOTICE_FILE_DOWNLOADED_PATCH)
 			printf("Downloaded Patch: ");
 		else
-			assert(0);
+			RakAssert(0);
 
 
 		printf("%i. (100%%) %i/%i %s %ib->%ib / %ib->%ib\n", onFileStruct->setID, onFileStruct->fileIndex+1, onFileStruct->setCount,

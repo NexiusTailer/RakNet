@@ -18,9 +18,10 @@
 #ifndef __LIST_H
 #define __LIST_H 
 
-#include <assert.h>
+#include "RakAssert.h"
 #include <string.h> // memmove
 #include "Export.h"
+#include "RakMemoryOverride.h"
 
 /// Maximum unsigned long
 static const unsigned int MAX_UNSIGNED_LONG = 4294967295U;
@@ -52,6 +53,11 @@ namespace DataStructures
 		/// \param[in]  position The index into the array. 
 		/// \return The element at position \a position. 
 		list_type& operator[] ( const unsigned int position ) const;
+
+		/// Access an element by its index in the array 
+		/// \param[in]  position The index into the array. 
+		/// \return The element at position \a position. 
+		list_type& Get ( const unsigned int position ) const;
 
 		/// Push an element at the end of the stack
 		/// \param[in] input The new element. 
@@ -138,7 +144,7 @@ namespace DataStructures
 		List<list_type>::~List()
 	{
 		if (allocation_size>0)
-			delete [] listArray;
+			RakNet::OP_DELETE_ARRAY(listArray);
 	}
 
 
@@ -154,7 +160,7 @@ namespace DataStructures
 		}
 		else
 		{
-			listArray = new list_type [ original_copy.list_size ];
+			listArray = RakNet::OP_NEW_ARRAY<list_type >( original_copy.list_size );
 
 			for ( unsigned int counter = 0; counter < original_copy.list_size; ++counter )
 				listArray[ counter ] = original_copy.listArray[ counter ];
@@ -183,7 +189,7 @@ namespace DataStructures
 
 			else
 			{
-				listArray = new list_type [ original_copy.list_size ];
+				listArray = RakNet::OP_NEW_ARRAY<list_type >( original_copy.list_size );
 
 				for ( unsigned int counter = 0; counter < original_copy.list_size; ++counter )
 					listArray[ counter ] = original_copy.listArray[ counter ];
@@ -198,17 +204,24 @@ namespace DataStructures
 	}
 
 
-	template <class list_type>
-		inline list_type& List<list_type>::operator[] ( const unsigned int position ) const
-	{
-#ifdef _DEBUG
-		if (position>=list_size)
+		template <class list_type>
+			inline list_type& List<list_type>::operator[] ( const unsigned int position ) const
 		{
-			assert ( position < list_size );
+		#ifdef _DEBUG
+			if (position>=list_size)
+			{
+				RakAssert ( position < list_size );
+			}
+		#endif
+			return listArray[ position ];
 		}
-#endif
-		return listArray[ position ];
-	}
+
+		// Just here for debugging
+		template <class list_type>
+		inline list_type& List<list_type>::Get ( const unsigned int position ) const
+		{
+			return listArray[ position ];
+		}
 
 		template <class list_type>
 		void List<list_type>::Push(const list_type input)
@@ -220,7 +233,7 @@ namespace DataStructures
 		inline list_type& List<list_type>::Pop(void)
 		{
 #ifdef _DEBUG
-			assert(list_size>0);
+			RakAssert(list_size>0);
 #endif
 			--list_size;
 			return listArray[list_size];
@@ -232,7 +245,7 @@ namespace DataStructures
 #ifdef _DEBUG
 		if (position>list_size)
 		{
-			assert( position <= list_size );
+			RakAssert( position <= list_size );
 		}
 #endif
 
@@ -247,7 +260,7 @@ namespace DataStructures
 			else
 				allocation_size *= 2;
 
-			new_array = new list_type [ allocation_size ];
+			new_array = RakNet::OP_NEW_ARRAY<list_type >( allocation_size );
 
 			// copy old array over
 			for ( unsigned int counter = 0; counter < list_size; ++counter )
@@ -257,7 +270,7 @@ namespace DataStructures
 			//memcpy(new_array, listArray, list_size*sizeof(list_type));
 
 			// set old array to point to the newly allocated and twice as large array
-			delete[] listArray;
+			RakNet::OP_DELETE_ARRAY(listArray);
 
 			listArray = new_array;
 		}
@@ -292,7 +305,7 @@ namespace DataStructures
 			else
 				allocation_size *= 2;
 
-			new_array = new list_type [ allocation_size ];
+			new_array = RakNet::OP_NEW_ARRAY<list_type >( allocation_size );
 
 			if (listArray)
 			{
@@ -304,7 +317,7 @@ namespace DataStructures
 				//memcpy(new_array, listArray, list_size*sizeof(list_type));
 
 				// set old array to point to the newly allocated and twice as large array
-				delete[] listArray;
+				RakNet::OP_DELETE_ARRAY(listArray);
 			}
 			
 			listArray = new_array;
@@ -332,7 +345,7 @@ namespace DataStructures
 				list_type * new_array;
 				allocation_size = position + 1;
 
-				new_array = new list_type [ allocation_size ];
+				new_array = RakNet::OP_NEW_ARRAY<list_type >( allocation_size );
 
 				// copy old array over
 
@@ -343,7 +356,7 @@ namespace DataStructures
 				//memcpy(new_array, listArray, list_size*sizeof(list_type));
 
 				// set old array to point to the newly allocated array
-				delete[] listArray;
+				RakNet::OP_DELETE_ARRAY(listArray);
 
 				listArray = new_array;
 			}
@@ -357,7 +370,7 @@ namespace DataStructures
 
 #ifdef _DEBUG
 
-			assert( list_size == position + 1 );
+			RakAssert( list_size == position + 1 );
 
 #endif
 
@@ -377,7 +390,7 @@ namespace DataStructures
 #ifdef _DEBUG
 		if (position >= list_size)
 		{
-			assert( position < list_size );
+			RakAssert( position < list_size );
 			return;
 		}
 #endif
@@ -400,7 +413,7 @@ namespace DataStructures
 #ifdef _DEBUG
 			if (position >= list_size)
 			{
-				assert( position < list_size );
+				RakAssert( position < list_size );
 				return;
 			}
 #endif
@@ -413,7 +426,7 @@ namespace DataStructures
 	{
 		// Delete the last elements on the list.  No compression needed
 #ifdef _DEBUG
-		assert(list_size>=num);
+		RakAssert(list_size>=num);
 #endif
 		list_size-=num;
 	}
@@ -442,7 +455,7 @@ namespace DataStructures
 
 		if (allocation_size>512 || doNotDeallocateSmallBlocks==false)
 		{
-			delete [] listArray;
+			RakNet::OP_DELETE_ARRAY(listArray);
 			allocation_size = 0;
 			listArray = 0;
 		}
@@ -457,7 +470,7 @@ namespace DataStructures
 		if ( allocation_size == 0 )
 			return ;
 
-		new_array = new list_type [ allocation_size ];
+		new_array = RakNet::OP_NEW_ARRAY<list_type >( allocation_size );
 
 		// copy old array over
 		for ( unsigned int counter = 0; counter < list_size; ++counter )
@@ -467,7 +480,7 @@ namespace DataStructures
 		//memcpy(new_array, listArray, list_size*sizeof(list_type));
 
 		// set old array to point to the newly allocated array
-		delete[] listArray;
+		RakNet::OP_DELETE_ARRAY(listArray);
 
 		listArray = new_array;
 	}
@@ -488,7 +501,7 @@ namespace DataStructures
 
 			allocation_size=amountToAllocate;
 
-			new_array = new list_type [ allocation_size ];
+			new_array = RakNet::OP_NEW_ARRAY< list_type >( allocation_size );
 
 			if (listArray)
 			{
@@ -500,7 +513,7 @@ namespace DataStructures
 				//memcpy(new_array, listArray, list_size*sizeof(list_type));
 
 				// set old array to point to the newly allocated and twice as large array
-				delete[] listArray;
+				RakNet::OP_DELETE_ARRAY(listArray);
 			}
 
 			listArray = new_array;

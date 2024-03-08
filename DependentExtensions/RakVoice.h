@@ -43,6 +43,7 @@ struct VoiceChannel
 	// Index in is bytes.
 	// Write index points to the next byte to write to, which must be free.
 	unsigned outgoingReadIndex, outgoingWriteIndex;
+	bool isSendingVoiceData;
 	bool bufferOutput;
 	bool copiedOutgoingBufferToBufferedOutput;
 	unsigned short outgoingMessageNumber;
@@ -140,6 +141,11 @@ public:
 	/// \param[in] recipient The system to send voice data to
 	/// \param[in] inputBuffer The voice data.  The size of inputBuffer should be what was specified as bufferSizeBytes in Init
 	bool SendFrame(SystemAddress recipient, void *inputBuffer);
+
+	/// \brief Returns if we are currently sending voice data, accounting for voice activity detection
+	/// \param[in] Which system to check
+	/// \return If we are sending voice data for the specified system
+	bool IsSendingVoiceDataTo(SystemAddress recipient);
 
 	/// \brief Gets decoded voice data, from one or more remote senders
 	/// \param[out] outputBuffer The voice data.  The size of outputBuffer should be what was specified as bufferSizeBytes in Init

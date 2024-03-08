@@ -23,7 +23,7 @@
 #include "DS_Heap.h"
 #include "DS_Queue.h"
 #include "DS_Tree.h"
-#include <assert.h>
+#include "RakAssert.h"
 #include "RakMemoryOverride.h"
 #ifdef _DEBUG
 #include <stdio.h>
@@ -38,7 +38,7 @@
 namespace DataStructures
 {
 	template <class node_type, class weight_type, bool allow_unlinkedNodes>
-	class RAK_DLL_EXPORT WeightedGraph : public RakNet::RakMemoryOverride
+	class RAK_DLL_EXPORT WeightedGraph
 	{
 	public:
 		static void IMPLEMENT_DEFAULT_COMPARISON(void) {DataStructures::defaultMapKeyComparison<node_type>(node_type(),node_type());}
@@ -108,8 +108,8 @@ namespace DataStructures
 		{
 			rootNode=original_copy.rootNode;
 			costMatrixIndices=original_copy.costMatrixIndices;
-			costMatrix = new weight_type[costMatrixIndices.Size() * costMatrixIndices.Size()];
-			leastNodeArray = new node_type[costMatrixIndices.Size()];
+			costMatrix = RakNet::OP_NEW_ARRAY<weight_type>(costMatrixIndices.Size() * costMatrixIndices.Size());
+			leastNodeArray = RakNet::OP_NEW_ARRAY<node_type>(costMatrixIndices.Size());
 			memcpy(costMatrix, original_copy.costMatrix, costMatrixIndices.Size() * costMatrixIndices.Size() * sizeof(weight_type));
 			memcpy(leastNodeArray, original_copy.leastNodeArray, costMatrixIndices.Size() * sizeof(weight_type));
 		}
@@ -125,8 +125,8 @@ namespace DataStructures
 		{
 			rootNode=original_copy.rootNode;
 			costMatrixIndices=original_copy.costMatrixIndices;
-			costMatrix = new weight_type[costMatrixIndices.Size() * costMatrixIndices.Size()];
-			leastNodeArray = new node_type[costMatrixIndices.Size()];
+			costMatrix = RakNet::OP_NEW_ARRAY<weight_type>(costMatrixIndices.Size() * costMatrixIndices.Size());
+			leastNodeArray = RakNet::OP_NEW_ARRAY<node_type>(costMatrixIndices.Size());
 			memcpy(costMatrix, original_copy.costMatrix, costMatrixIndices.Size() * costMatrixIndices.Size() * sizeof(weight_type));
 			memcpy(leastNodeArray, original_copy.leastNodeArray, costMatrixIndices.Size() * sizeof(weight_type));
 		}
@@ -137,7 +137,7 @@ namespace DataStructures
 	template <class node_type, class weight_type, bool allow_unlinkedNodes>
 		void WeightedGraph<node_type, weight_type, allow_unlinkedNodes>::AddNode(const node_type &node)
 	{
-		adjacencyLists.SetNew(node, new DataStructures::Map<node_type, weight_type>);
+		adjacencyLists.SetNew(node, RakNet::OP_NEW<DataStructures::Map<node_type, weight_type> >());
 	}
 
 	template <class node_type, class weight_type, bool allow_unlinkedNodes>
@@ -149,7 +149,7 @@ namespace DataStructures
 		removeNodeQueue.Push(node);
 		while (removeNodeQueue.Size())
 		{
-			delete adjacencyLists.Pop(removeNodeQueue.Pop());
+			RakNet::OP_DELETE(adjacencyLists.Pop(removeNodeQueue.Pop()));
 
 			// Remove this node from all of the other lists as well
 			for (i=0; i < adjacencyLists.Size(); i++)
@@ -216,7 +216,7 @@ namespace DataStructures
 	{
 		unsigned i;
 		for (i=0; i < adjacencyLists.Size(); i++)
-			delete adjacencyLists[i];
+			RakNet::OP_DELETE(adjacencyLists[i]);
 		adjacencyLists.Clear();
 
 		ClearDijkstra();
@@ -362,7 +362,7 @@ namespace DataStructures
 
 		for (i=0; i < adjacencyList->Size(); i++)
 		{
-			nap2.node=new DataStructures::Tree<node_type>;
+			nap2.node=RakNet::OP_NEW<DataStructures::Tree<node_type> >();
 			nap2.node->data=adjacencyList->GetKeyAtIndex(i);
 			nap2.parent=current;
 			nodesToProcess.Push(nap2);
@@ -380,7 +380,7 @@ namespace DataStructures
 				key=adjacencyList->GetKeyAtIndex(i);
 				if (key!=nap.parent->data)
 				{
-					nap2.node=new DataStructures::Tree<node_type>;
+					nap2.node=RakNet::OP_NEW<DataStructures::Tree<node_type> >();
 					nap2.node->data=key;
 					nap2.parent=current;
 					nodesToProcess.Push(nap2);
@@ -398,8 +398,8 @@ namespace DataStructures
 		if (adjacencyLists.Size()==0)
 			return;
 
-		costMatrix = new weight_type[adjacencyLists.Size() * adjacencyLists.Size()];
-		leastNodeArray = new node_type[adjacencyLists.Size()];
+		costMatrix = RakNet::OP_NEW_ARRAY<weight_type>(adjacencyLists.Size() * adjacencyLists.Size());
+		leastNodeArray = RakNet::OP_NEW_ARRAY<node_type>(adjacencyLists.Size());
 
 		node_type currentNode;
 		unsigned col, row, row2, openSetIndex;
@@ -461,10 +461,10 @@ namespace DataStructures
 			{
 				for (j=0; j < adjacencyLists.Size(); j++)
 				{
-					printf("%2i ", costMatrix[i*adjacencyLists.Size() + j]);
+					RAKNET_DEBUG_PRINTF("%2i ", costMatrix[i*adjacencyLists.Size() + j]);
 				}
-				printf("Node=%i", leastNodeArray[i]);
-				printf("\n");
+				RAKNET_DEBUG_PRINTF("Node=%i", leastNodeArray[i]);
+				RAKNET_DEBUG_PRINTF("\n");
 			}
 			*/
 
@@ -489,10 +489,10 @@ namespace DataStructures
 		{
 			for (j=0; j < adjacencyLists.Size(); j++)
 			{
-				printf("%2i ", costMatrix[i*adjacencyLists.Size() + j]);
+				RAKNET_DEBUG_PRINTF("%2i ", costMatrix[i*adjacencyLists.Size() + j]);
 			}
-			printf("Node=%i", leastNodeArray[i]);
-			printf("\n");
+			RAKNET_DEBUG_PRINTF("Node=%i", leastNodeArray[i]);
+			RAKNET_DEBUG_PRINTF("\n");
 		}
 #endif
 		*/
@@ -506,8 +506,8 @@ namespace DataStructures
 		if (isValidPath)
 		{
 			isValidPath=false;
-			delete [] costMatrix;
-			delete [] leastNodeArray;
+			RakNet::OP_DELETE_ARRAY(costMatrix);
+			RakNet::OP_DELETE_ARRAY(leastNodeArray);
 			costMatrixIndices.Clear();
 		}
 	}
@@ -519,19 +519,19 @@ namespace DataStructures
 		unsigned i,j;
 		for (i=0; i < adjacencyLists.Size(); i++)
 		{
-			//printf("%i connected to ", i);
-			printf("%s connected to ", adjacencyLists.GetKeyAtIndex(i).systemAddress.ToString());
+			//RAKNET_DEBUG_PRINTF("%i connected to ", i);
+			RAKNET_DEBUG_PRINTF("%s connected to ", adjacencyLists.GetKeyAtIndex(i).systemAddress.ToString());
 
 			if (adjacencyLists[i]->Size()==0)
-				printf("<Empty>");
+				RAKNET_DEBUG_PRINTF("<Empty>");
 			else
 			{
 				for (j=0; j < adjacencyLists[i]->Size(); j++)
-				//	printf("%i (%.2f) ", adjacencyLists.GetIndexAtKey(adjacencyLists[i]->GetKeyAtIndex(j)), (float) adjacencyLists[i]->operator[](j) );
-					printf("%s (%.2f) ", adjacencyLists[i]->GetKeyAtIndex(j).systemAddress.ToString(), (float) adjacencyLists[i]->operator[](j) );
+				//	RAKNET_DEBUG_PRINTF("%i (%.2f) ", adjacencyLists.GetIndexAtKey(adjacencyLists[i]->GetKeyAtIndex(j)), (float) adjacencyLists[i]->operator[](j) );
+					RAKNET_DEBUG_PRINTF("%s (%.2f) ", adjacencyLists[i]->GetKeyAtIndex(j).systemAddress.ToString(), (float) adjacencyLists[i]->operator[](j) );
 			}
 
-			printf("\n");
+			RAKNET_DEBUG_PRINTF("\n");
 		}
 #endif
 	}

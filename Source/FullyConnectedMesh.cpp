@@ -21,7 +21,7 @@
 #include "ConnectionGraph.h"
 #include "NatPunchthrough.h"
 #include <string.h>
-#include <assert.h>
+#include "RakAssert.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -72,8 +72,8 @@ void FullyConnectedMesh::Update(RakPeerInterface *peer)
 
 PluginReceiveResult FullyConnectedMesh::OnReceive(RakPeerInterface *peer, Packet *packet)
 {
-	assert(packet);
-	assert(peer);
+	RakAssert(packet);
+	RakAssert(peer);
 
 	switch (packet->data[0])
 	{
@@ -83,23 +83,38 @@ PluginReceiveResult FullyConnectedMesh::OnReceive(RakPeerInterface *peer, Packet
 			b.IgnoreBits(8);
 			ConnectionGraphGroupID group1, group2;
 			SystemAddress node1, node2;
+			RakNetGUID guid1, guid2;
 			b.Read(node1);
 			b.Read(group1);
+			b.Read(guid1);
 			if (peer->IsConnected(node1,true)==false)
 			{
 				if (natPunchthrough)
+				{
 					natPunchthrough->Connect(node1, pw, pw ? passwordLength : 0, facilitator);
+				}
 				else
-					peer->Connect(node1.ToString(false), node1.port, pw, pw ? passwordLength : 0);
+				{
+					char str1[64];
+					node1.ToString(false, str1);
+					peer->Connect(str1, node1.port, pw, pw ? passwordLength : 0);
+				}
 			}				
 			b.Read(node2);
 			b.Read(group2);
+			b.Read(guid2);
 			if (peer->IsConnected(node2,true)==false)
 			{
 				if (natPunchthrough)
+				{
 					natPunchthrough->Connect(node2, pw, pw ? passwordLength : 0, facilitator);
+				}
 				else
-					peer->Connect(node2.ToString(false), node2.port, pw, pw ? passwordLength : 0);
+				{
+					char str1[64];
+					node2.ToString(false, str1);
+					peer->Connect(str1, node2.port, pw, pw ? passwordLength : 0);
+				}
 			}
 				
 			break;

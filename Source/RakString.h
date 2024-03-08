@@ -34,6 +34,9 @@ public:
 	/// Same as std::string::c_str
 	const char *C_String(void) const {return sharedString->c_str;}
 
+	// Lets you modify the string. Do not make the string longer - however, you can make it shorter, or change the contents.
+	char *C_StringUnsafe(void) {Clone(); return sharedString->c_str;}
+
 	/// Assigment operators
 	RakString& operator = ( const RakString& rhs );
 	RakString& operator = ( const char *str );
@@ -54,14 +57,20 @@ public:
 	bool operator==(const char *str) const;
 	bool operator==(char *str) const;
 
+	// Comparison
+	bool operator < ( const RakString& right ) const;
+	bool operator <= ( const RakString& right ) const;
+	bool operator > ( const RakString& right ) const;
+	bool operator >= ( const RakString& right ) const;
+
 	/// Inequality
 	bool operator!=(const RakString &rhs) const;
 
 	/// Change all characters to lowercase
-	void ToLower(void);
+	const char * ToLower(void);
 
 	/// Change all characters to uppercase
-	void ToUpper(void);
+	const char * ToUpper(void);
 
 	/// Set the value of the string
 	void Set(const char *format, ...);
@@ -75,8 +84,17 @@ public:
 	/// Replace character(s) in starting at index, for count, with c
 	void Replace(unsigned index, unsigned count, unsigned char c);
 
+	/// Replace character at index with c
+	void SetChar( unsigned index, unsigned char c );
+
+	/// Replace character at index with string s
+	void SetChar( unsigned index, RakNet::RakString s );
+
+	// Gets the substring starting at index for count characters
+	RakString SubStr(unsigned int index, unsigned int count) const;
+
 	/// Erase characters out of the string at index for count
-	void Erase(unsigned index, unsigned count);
+	void Erase(unsigned int index, unsigned int count);
 
 	/// Compare strings (case sensitive)
 	int StrCmp(const RakString &rhs) const;
@@ -96,12 +114,20 @@ public:
 	/// Does the given IP address match the IP address encoded into this string, accounting for wildcards?
 	bool IPAddressMatch(const char *IP);
 
+	/// Does the string contain non-printable characters other than spaces?
+	bool ContainsNonprintableExceptSpaces(void) const;
+
+	/// Is this a valid email address?
+	bool IsEmailAddress(void) const;
+
 	/// URL Encode the string. See http://www.codeguru.com/cpp/cpp/cpp_mfc/article.php/c4029/
 	void URLEncode(void);
 
 	/// RakString uses a freeList of old no-longer used strings
 	/// Call this function to clear this memory on shutdown
 	static void FreeMemory(void);
+	/// \internal
+	static void FreeMemoryNoMutex(void);
 
 	/// Serialize to a bitstream, uncompressed (slightly faster)
 	/// \param[out] bs Bitstream to serialize to
@@ -183,6 +209,9 @@ public:
 
 
 	static int RakStringComp( RakString const &key, RakString const &data );
+
+	static void LockMutex(void);
+	static void UnlockMutex(void);
 
 protected:
 	void Allocate(size_t len);

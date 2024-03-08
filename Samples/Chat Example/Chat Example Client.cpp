@@ -67,7 +67,7 @@ int main(void)
 	gets(ip);
 	client->AllowConnectionResponseIPMigration(false);
 	if (ip[0]==0)
-		strcpy(ip, "127.0.01");
+		strcpy(ip, "127.0.0.1");
 	
 		
 	puts("Enter the port to connect to");
@@ -90,7 +90,10 @@ int main(void)
 		exit(1);
 	}
 
-	puts("'quit' to quit. 'stat' to show stats. 'ping' to ping. Type to talk.");
+	printf("My IP is %s\n", client->GetLocalIP(0));
+	printf("My GUID is %s\n", client->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
+	puts("'quit' to quit. 'stat' to show stats. 'ping' to ping. 'disconnect' to disconnect. Type to talk.");
+	
 	char message[2048];
 
 	// Loop for input
@@ -126,6 +129,13 @@ int main(void)
 				printf("Ping=%i\n", client->GetAveragePing(client->GetSystemAddressFromIndex(0)));
 			
 
+				continue;
+			}
+
+			if (strcmp(message, "disconnect")==0)
+			{
+				client->CloseConnection(client->GetSystemAddressFromIndex(0),true,0);
+				printf("Disconnecting.\n");
 				continue;
 			}
 
@@ -203,7 +213,7 @@ int main(void)
 
 			case ID_CONNECTION_REQUEST_ACCEPTED:
 				// This tells the client they have connected
-				printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
+				printf("ID_CONNECTION_REQUEST_ACCEPTED to %s with GUID %s\n", p->systemAddress.ToString(), p->guid.ToString());
 				break;
 			default:
 					// It's a client, so just show the message

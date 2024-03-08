@@ -148,7 +148,7 @@ class Construct : public ReceiveConstructionInterface
 		else
 		{
 			// Unknown string
-			assert(0);
+			RakAssert(0);
 		}
 		return REPLICA_PROCESSING_DONE;
 	}

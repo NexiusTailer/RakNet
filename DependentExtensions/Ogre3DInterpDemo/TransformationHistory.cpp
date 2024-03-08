@@ -1,5 +1,6 @@
-#include "TransformationHistory.h"
 #include "RakAssert.h"
+#include "RakMemoryOverride.h"
+#include "TransformationHistory.h"
 
 TransformationHistoryCell::TransformationHistoryCell()
 {

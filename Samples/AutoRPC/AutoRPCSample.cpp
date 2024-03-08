@@ -81,7 +81,9 @@ void AUTO_RPC_CALLSPEC cFunc8(char a, short b, int c, long d, unsigned long long
 	printf("cFunc8: %i, %i, %i, %i, %i, %i, %i, %s, sender=%s\n", a, b, c, d, (unsigned long) e, f->bytes[0], g.bytes[0], i.ToString(), networkCaller==0 ? "N/A" : networkCaller->GetLastSenderAddress().ToString());
 }
 
-class BaseClass
+// AutoRPC has the restriction that NetworkIDObject must be the basemost derived class
+// Use RPC3 to get around this restriction
+class BaseClass : public NetworkIDObject
 {
 public:
 	virtual int AUTO_RPC_CALLSPEC objectMemberFunc(int a, const char *str, AutoRPC* networkCaller) {printf("Shouldn't see this"); return 0;}
@@ -94,7 +96,7 @@ public:
 	int a;
 };
 
-class DerivedClass : public MultipleInheritance, public BaseClass, public NetworkIDObject
+class DerivedClass : public MultipleInheritance, public BaseClass
 {
 public:
 	DerivedClass() {memberVariable=12;}
@@ -140,14 +142,13 @@ int main(void)
 	derivedClass.SetNetworkIDManager(&networkIDManager);
 	derivedClass.SetNetworkID(idZero);
 
-	printf("----------------\n");
-	printf("DEPRECIATED: Use DependentExtensions\\RPC3 \n");
-	printf("----------------\n");
-	printf("\n");
+	derivedClass.GetNetworkIDManager();
+
 	printf("Demonstration of the AutoRPC plugin.\n");
 	printf("It is similar to Raknet's RPC system, but automatically\n");
 	printf("serializes and deserializes the parameters to the function call\n");
 	printf("On Linux compile with -Wno-pmf-conversions.\n");
+	printf("-- DEPRECIATED -- Use RPC3 if possible.\n");
 	printf("Difficulty: Intermediate\n\n");
 
 	printf("(S)erver or (C)lient?: ");
@@ -190,8 +191,6 @@ int main(void)
 		rakPeer->Ping( "255.255.255.255", 50000, true, 0 );
 
 		printf("Client started. Will automatically connect to running servers.\n");
-
-		rakPeer->Connect("yaesu.chickenware.com", 50000,0,0,0);
 	}
 	rakPeer->AttachPlugin(&autoRpc);
 	

@@ -29,7 +29,7 @@
 /// \ingroup RAKNET_RPC 
 /// \internal
 /// \brief A container class for a list of RPCNodes
-struct RAK_DLL_EXPORT RPCMap : public RakNet::RakMemoryOverride
+struct RAK_DLL_EXPORT RPCMap
 {
 public:
 	RPCMap();

@@ -47,6 +47,7 @@ void main(int argc, char **argv)
 	char username[256];
 	strcpy(username, "postgres");
 	gets(password);
+	if (password[0]==0) strcpy(password, "aaaa");
 	strcpy(connectionString, "user=");
 	strcat(connectionString, username);
 	strcat(connectionString, " password=");

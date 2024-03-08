@@ -66,7 +66,7 @@ public:
 		if (strcmp(output, "Player")==0)
 		{
 			// The system automatically prevents duplicate creations
-			assert(player==0);
+			RakAssert(player==0);
 
 			player = new Player;
 			// Calling SetNetworkID is important and necessary, because all calls other than construction rely on being able to lookup an object by its network ID
@@ -93,7 +93,7 @@ public:
 		else if (strcmp(output, "Monster")==0)
 		{
 			// The system automatically prevents duplicate creations
-			assert(monster==0);
+			RakAssert(monster==0);
 
 			monster = new Monster;
 			// Calling SetNetworkID is important and necessary, because all calls other than construction rely on being able to lookup an object by its network ID
@@ -120,7 +120,7 @@ public:
 		else
 		{
 			// Unknown string
-			assert(0);
+			RakAssert(0);
 		}
 		return REPLICA_PROCESSING_DONE;
 	} 

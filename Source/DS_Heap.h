@@ -21,7 +21,7 @@
 #include "RakMemoryOverride.h"
 #include "DS_List.h"
 #include "Export.h"
-#include <assert.h>
+#include "RakAssert.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -32,7 +32,7 @@
 namespace DataStructures
 {
 	template <class weight_type, class data_type, bool isMaxHeap>
-	class RAK_DLL_EXPORT Heap : public RakNet::RakMemoryOverride
+	class RAK_DLL_EXPORT Heap
 	{
 	public:
 		struct HeapNode
@@ -113,7 +113,7 @@ namespace DataStructures
 		// While we have children, swap out with the larger of the two children.
 
 		// This line will assert on an empty heap
-		data_type returnValue=heap[0].data;
+		data_type returnValue=heap[startingIndex].data;
 
 		// Move the last element to the head, and re-heapify
 		heap[startingIndex]=heap[heap.Size()-1];
@@ -229,7 +229,7 @@ namespace DataStructures
 	unsigned Heap<weight_type, data_type, isMaxHeap>::Parent(const unsigned i) const
 	{
 #ifdef _DEBUG
-		assert(i!=0);
+		RakAssert(i!=0);
 #endif
 		return (i-1)/2;
 	}

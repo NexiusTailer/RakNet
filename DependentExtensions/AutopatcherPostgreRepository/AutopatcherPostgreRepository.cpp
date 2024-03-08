@@ -210,11 +210,11 @@ bool AutopatcherPostgreRepository::GetChangelistSinceDate(const char *applicatio
 			fileLengthPtr = PQgetvalue(result, rowIndex, fileLengthColumnIndex);
 			memcpy(&fileLength, fileLengthPtr, sizeof(fileLength));
 			fileLength=ntohl(fileLength); // This is asinine...
-			addedFiles->AddFile(hardDriveFilename, hardDriveHash, HASH_LENGTH, fileLength, 0);
+			addedFiles->AddFile(hardDriveFilename, hardDriveHash, HASH_LENGTH, fileLength, FileListNodeContext(0,0), false);
 		}
 		else
 		{
-			deletedFiles->AddFile(hardDriveFilename,0,0,0,0);
+			deletedFiles->AddFile(hardDriveFilename,0,0,0,FileListNodeContext(0,0), false);
 		}
 	}
 
@@ -238,7 +238,6 @@ bool AutopatcherPostgreRepository::GetChangelistSinceDate(const char *applicatio
 	
 	return true;
 }
-
 bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileList *input, FileList *patchList, char currentDate[64])
 {
 	PGresult *result;
@@ -267,10 +266,12 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 
 	// Go through the input list.
 	unsigned inputIndex;
-	char *userHash, *userFilename, *content, *contentHash;
-	char *fileId, *fileLength;
+	char *userHash, *userFilename, *contentHash;
+	// char *content;
+//	char *fileId, *fileLength;
 	char *patch;
-	int contentLength, patchLength;
+	// int contentLength;
+	int patchLength;
 //	int contentColumnIndex;
 	int contentHashIndex, fileIdIndex, fileLengthIndex;
 	char *outTemp[2];
@@ -285,7 +286,8 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 		if (userHash==0)
 		{
 			// If the user does not have a hash in the input list, get the contents of latest version of this named file and write it to the patch list
-			sprintf(query, "SELECT DISTINCT ON (filename) content FROM FileVersionHistory WHERE applicationId=%i AND filename=$1::text ORDER BY filename, fileId DESC;", applicationID);
+		//	sprintf(query, "SELECT DISTINCT ON (filename) content FROM FileVersionHistory WHERE applicationId=%i AND filename=$1::text ORDER BY filename, fileId DESC;", applicationID);
+			sprintf(query, "SELECT DISTINCT ON (filename) fileId, fileLength FROM FileVersionHistory WHERE applicationId=%i AND filename=$1::text ORDER BY filename, fileId DESC;", applicationID);
 			outTemp[0]=userFilename;
 			outLengths[0]=(int)strlen(userFilename);
 			formats[0]=PQEXECPARAM_FORMAT_BINARY;
@@ -298,12 +300,17 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 			numRows = PQntuples(result);
 			if (numRows>0)
 			{
-				// Shouldn't be necessary
-				//contentColumnIndex = PQfnumber(result, "content");
-				//content = PQgetvalue(result, 0, contentColumnIndex);
-				content = PQgetvalue(result, 0, 0);
-				contentLength=PQgetlength(result, 0, 0);
-				patchList->AddFile(userFilename, content, contentLength, contentLength, PC_WRITE_FILE);
+			//	content = PQgetvalue(result, 0, 0);
+			//	contentLength=PQgetlength(result, 0, 0);
+			//	patchList->AddFile(userFilename, content, contentLength, contentLength, FileListNodeContext(PC_WRITE_FILE,0),false);
+
+				int fileIdIndex = PQfnumber(result, "fileId");
+				int fileLengthIndex = PQfnumber(result, "fileLength");
+				int fileId = ntohl(*((int*)PQgetvalue(result, 0, fileIdIndex)));
+				int fileLength = ntohl(*((int*)PQgetvalue(result, 0, fileLengthIndex)));
+
+
+				patchList->AddFile(userFilename, 0, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId),true);
 			}
 			PQclear(result);
 		}
@@ -330,9 +337,14 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 				fileIdIndex = PQfnumber(result, "fileId");
 				fileLengthIndex = PQfnumber(result, "fileLength");
 				contentHash = PQgetvalue(result, 0, contentHashIndex);
-				fileId = PQgetvalue(result, 0, fileIdIndex);
-				fileLength = PQgetvalue(result, 0, fileLengthIndex);
-				int fileLengthInt = ntohl(*((int*)fileLength));
+				int fileIdInt = ntohl(*((int*)PQgetvalue(result, 0, fileIdIndex)));
+				int fileLengthInt = ntohl(*((int*)PQgetvalue(result, 0, fileLengthIndex)));
+//				fileId = PQgetvalue(result, 0, fileIdIndex);
+//				fileLength = PQgetvalue(result, 0, fileLengthIndex);
+//				int fileLengthInt = ntohl(*((int*)fileLength));
+
+//				unsigned int hash1 = SuperFastHashFile("C:/temp/RakNet_Icon_Final.psd");
+//				unsigned int hash2 = SuperFastHashFile("C:/temp/AutopatcherClient/RakNet_Icon_Final.psd");
 
 				if (memcmp(contentHash, userHash, HASH_LENGTH)!=0)
 				{
@@ -356,17 +368,14 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 					{
 						PQclear(patchResult);
 
-						outTemp[0]=fileId;
-						outLengths[0]=PQfsize(result, fileIdIndex);
-						formats[0]=PQEXECPARAM_FORMAT_BINARY;
+			//			outTemp[0]=fileId;
+			//			outLengths[0]=PQfsize(result, fileIdIndex);
+			//			formats[0]=PQEXECPARAM_FORMAT_BINARY;
 
-						// If no patch found, then this is a non-release version, or a very old version we are no longer tracking.
-						// Get the contents of latest version of this named file by fileId and return it.
-						// sprintf(query, "SELECT content FROM FileVersionHistory WHERE fileId=$1::integer;");
-					
+						/*
 						// Get 32000000 bytes at a time to workaround http://support.microsoft.com/kb/q201213
 						int fileIndex=0;
-						char *file = new char[fileLengthInt];
+						char *file = RakNet::OP_NEW char[fileLengthInt];
 						while (fileIndex < fileLengthInt)
 						{
 							sprintf(query, "SELECT substring(content from %i for 32000000) FROM FileVersionHistory WHERE fileId=$1::integer;", fileIndex, fileId);
@@ -383,33 +392,25 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 							PQclear(patchResult);
 							fileIndex+=32000000;
 						}
-
-						patchList->AddFile(userFilename, file, fileLengthInt, contentLength, PC_WRITE_FILE);
-						delete [] file;
-					
+*/
 
 						/*
-						sprintf(query, "SELECT substring(content from 0 for 32000) FROM FileVersionHistory WHERE fileId=$1::integer;");
-						outTemp[0]=fileId;
-						outLengths[0]=PQfsize(result, fileIdIndex);
-						formats[0]=PQEXECPARAM_FORMAT_BINARY;
-						patchResult = PQexecParams(pgConn, query,1,0,outTemp,outLengths,formats,PQEXECPARAM_FORMAT_BINARY);
-						if (IsResultSuccessful(patchResult)==false)
+						sprintf(query, "SELECT content FROM FileVersionHistory WHERE fileId=%i", fileIdInt);
+						patchResult = PQexecParams(pgConn, query,0,0,outTemp,outLengths,formats,PQEXECPARAM_FORMAT_BINARY);
+						if (IsResultSuccessful(patchResult, false)==false)
 						{
 							PQclear(patchResult);
 							return false;
 						}
-						numRows = PQntuples(patchResult);
-						if (numRows>0)
-						{
-							assert(numRows==1);
-							// Write the whole file
-							content = PQgetvalue(patchResult, 0, 0);
-							contentLength=PQgetlength(patchResult, 0, 0);
-							patchList->AddFile(userFilename, content, contentLength, contentLength, PC_WRITE_FILE);
-						}
-						PQclear(patchResult);
+						char *content = PQgetvalue(patchResult, 0, 0);
+						int contentLength=PQgetlength(patchResult, 0, 0);
+						unsigned int hash1 = SuperFastHashFile("C:/temp/RakNet_Icon_Final.psd");
+						unsigned int hash2 = SuperFastHash(content, contentLength);
 						*/
+
+						patchList->AddFile(userFilename, 0, fileLengthInt, fileLengthInt, FileListNodeContext(PC_WRITE_FILE,fileIdInt), true);
+//						patchList->AddFile(userFilename, file, fileLengthInt, contentLength, FileListNodeContext(PC_WRITE_FILE,0), true);
+//						RakNet::OP_DELETE_ARRAY file;
 					}
 					else
 					{
@@ -419,20 +420,20 @@ bool AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileL
 						patchLength=PQgetlength(patchResult, 0, 0);
 						// Bleh, get a stack overflow here
 						// char *temp = (char*) _alloca(patchLength+HASH_LENGTH);
-						char *temp = new char [patchLength + HASH_LENGTH];
+						char *temp = RakNet::OP_NEW_ARRAY<char>(patchLength + HASH_LENGTH);
 						memcpy(temp, contentHash, HASH_LENGTH);
 						memcpy(temp+HASH_LENGTH, patch, patchLength);
-						int len;
-						assert(PQfsize(result, fileLengthIndex)==sizeof(fileLength));
-						memcpy(&len, fileLength, sizeof(len));
-						len=ntohl(len);
+//						int len;
+//						assert(PQfsize(result, fileLengthIndex)==sizeof(fileLength));
+//						memcpy(&len, fileLength, sizeof(len));
+//						len=ntohl(len);
 					//	printf("send patch %i bytes\n", patchLength);
 					//	for (int i=0; i < patchLength; i++)
 					//		printf("%i ", patch[i]);
 					//	printf("\n");
-						patchList->AddFile(userFilename, temp, HASH_LENGTH+patchLength, len, PC_HASH_WITH_PATCH);
+						patchList->AddFile(userFilename, temp, HASH_LENGTH+patchLength, fileLengthInt, FileListNodeContext(PC_HASH_WITH_PATCH,0),false );
 						PQclear(patchResult);
-						delete [] temp;
+						RakNet::OP_DELETE_ARRAY(temp);
 					}
 				}
 				else
@@ -473,7 +474,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 {
 	FileList filesOnHarddrive;
 	filesOnHarddrive.SetCallback(cb);
-	filesOnHarddrive.AddFilesFromDirectory(applicationDirectory,"", true, true, true, 0);
+	filesOnHarddrive.AddFilesFromDirectory(applicationDirectory,"", true, true, true, FileListNodeContext(0,0));
 	if (filesOnHarddrive.fileList.Size()==0)
 	{
 		sprintf(lastError,"ERROR: Can't find files at %s in UpdateApplicationFiles\n",applicationDirectory);
@@ -594,7 +595,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 		// Unless set to false, file does not exist in query result or is different.
 		if (addFile==true)
 		{
-			newFiles.AddFile(hardDriveFilename, filesOnHarddrive.fileList[fileListIndex].data, filesOnHarddrive.fileList[fileListIndex].dataLengthBytes, filesOnHarddrive.fileList[fileListIndex].fileLengthBytes, 0);
+			newFiles.AddFile(hardDriveFilename, filesOnHarddrive.fileList[fileListIndex].data, filesOnHarddrive.fileList[fileListIndex].dataLengthBytes, filesOnHarddrive.fileList[fileListIndex].fileLengthBytes, FileListNodeContext(0,0), false);
 		}
 	}
 	
@@ -623,7 +624,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 		}
 
 		if (fileOnHarddrive==false)
-			deletedFiles.AddFile(queryFilename,0,0,0,0);
+			deletedFiles.AddFile(queryFilename,0,0,0,FileListNodeContext(0,0), false);
 	}
 
 	// Query memory and files on harddrive no longer needed.  Free this memory since generating all the patches is memory intensive.
@@ -768,7 +769,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 			}
 
 			// Done with this patch data
-			delete [] patch;
+			RakNet::OP_DELETE_ARRAY(patch);
 
 			PQclear(result);
 			PQclear(uploadResult);
@@ -840,4 +841,24 @@ const char *AutopatcherPostgreRepository::GetLastError(void) const
 {
 	return PostgreSQLInterface::GetLastError();
 }
+unsigned int AutopatcherPostgreRepository::GetFilePart( char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)
+{
+	PGresult *result;
+	char query[512];
+	char *content;
+	int contentLength;
 
+	// Seems that substring is 1 based for its index, so add 1 to startReadBytes
+	sprintf(query, "SELECT substring(content from %i for %i) FROM FileVersionHistory WHERE fileId=%i;", startReadBytes+1,numBytesToRead,context.fileId);
+	result = PQexecParams(pgConn, query,0,0,0,0,0,PQEXECPARAM_FORMAT_BINARY);
+	if (IsResultSuccessful(result, false)==false)
+	{
+		PQclear(result);
+		return 0;
+	}
+	content = PQgetvalue(result, 0, 0);
+	contentLength=PQgetlength(result, 0, 0);
+	memcpy(preallocatedDestination,content,contentLength);
+	PQclear(result);
+	return contentLength;
+}

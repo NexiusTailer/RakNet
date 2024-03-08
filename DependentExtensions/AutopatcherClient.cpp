@@ -41,7 +41,7 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 
 	strcpy(fullPathToDir, input->applicationDirectory);
 	strcat(fullPathToDir, input->onFileStruct.fileName);
-	if (input->onFileStruct.context==PC_WRITE_FILE)
+	if (input->onFileStruct.context.op==PC_WRITE_FILE)
 	{
 		if (WriteFileWithDirectories(fullPathToDir, (char*)input->onFileStruct.fileData, input->onFileStruct.finalDataLength)==false)
 		{
@@ -59,12 +59,12 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 		}
 		else
 		{
-			input->result=(PatchContext) input->onFileStruct.context;
+			input->result=(PatchContext) input->onFileStruct.context.op;
 		}
 	}
 	else
 	{
-		assert(input->onFileStruct.context==PC_HASH_WITH_PATCH);
+		RakAssert(input->onFileStruct.context.op==PC_HASH_WITH_PATCH);
 
 //		CSHA1 sha1;
 		FILE *fp;
@@ -79,7 +79,7 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 		input->prePatchLength = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
 		input->postPatchFile=0;
-		input->prePatchFile= new char [input->prePatchLength];
+		input->prePatchFile= (char*) rakMalloc(input->prePatchLength);
 		fread(input->prePatchFile, input->prePatchLength, 1, fp);
 		fclose(fp);
 
@@ -99,6 +99,8 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 //		sha1.Final();
 
 		unsigned int hash = SuperFastHash(input->postPatchFile, input->postPatchLength);
+		if (RakNet::BitStream::DoEndianSwap())
+			RakNet::BitStream::ReverseBytesInPlace((unsigned char*) &hash, sizeof(hash));
 
 		//if (memcmp(sha1.GetHash(), input->onFileStruct.fileData, HASH_LENGTH)!=0)
 		if (memcmp(&hash, input->onFileStruct.fileData, HASH_LENGTH)!=0)
@@ -123,7 +125,7 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 		}
 		else
 		{
-			input->result=(PatchContext)input->onFileStruct.context;
+			input->result=(PatchContext)input->onFileStruct.context.op;
 		}
 	}
 
@@ -161,24 +163,24 @@ public:
 		{
 			info = threadPool.GetInputAtIndex(i);
 			if (info->prePatchFile)
-				delete [] info->prePatchFile;
+				rakFree(info->prePatchFile);
 			if (info->postPatchFile)
-				delete [] info->postPatchFile;
+				rakFree(info->postPatchFile);
 			if (info->onFileStruct.fileData)
-				delete [] info->onFileStruct.fileData;
-			delete info;
+				rakFree(info->onFileStruct.fileData);
+			RakNet::OP_DELETE(info);
 		}
 		threadPool.ClearInput();
 		for (i=0; i < threadPool.OutputSize(); i++)
 		{
 			info = threadPool.GetOutputAtIndex(i);
 			if (info->prePatchFile)
-				delete [] info->prePatchFile;
+				rakFree(info->prePatchFile);
 			if (info->postPatchFile)
-				delete [] info->postPatchFile;
+				rakFree(info->postPatchFile);
 			if (info->onFileStruct.fileData)
-				delete [] info->onFileStruct.fileData;
-			delete info;
+				rakFree(info->onFileStruct.fileData);
+			RakNet::OP_DELETE(info);
 		}
 		threadPool.ClearOutput();
 	}
@@ -187,13 +189,13 @@ public:
 		if (threadPool.HasOutputFast() && threadPool.HasOutput())
 		{
 			AutopatcherClientThreadInfo *threadInfo = threadPool.GetOutput();
-			threadInfo->onFileStruct.context=threadInfo->result;
+			threadInfo->onFileStruct.context.op=threadInfo->result;
 			switch (threadInfo->result)
 			{
 				case PC_NOTICE_WILL_COPY_ON_RESTART:
 				{
 					client->CopyAndRestart(threadInfo->onFileStruct.fileName);
-					if (threadInfo->onFileStruct.context==PC_WRITE_FILE)
+					if (threadInfo->onFileStruct.context.op==PC_WRITE_FILE)
 					{
 						// Regular file in use but we can write the temporary file.  Restart and copy it over the existing
 						onFileCallback->OnFile(&threadInfo->onFileStruct);
@@ -201,7 +203,7 @@ public:
 					else
 					{
 						// Regular file in use but we can write the temporary file.  Restart and copy it over the existing
-						delete [] threadInfo->onFileStruct.fileData;
+						rakFree(threadInfo->onFileStruct.fileData);
 						threadInfo->onFileStruct.fileData=threadInfo->postPatchFile;
 						onFileCallback->OnFile(&threadInfo->onFileStruct);
 						threadInfo->onFileStruct.fileData=0;
@@ -210,13 +212,13 @@ public:
 				break;
 				case PC_ERROR_FILE_WRITE_FAILURE:
 				{
-					if (threadInfo->onFileStruct.context==PC_WRITE_FILE)
+					if (threadInfo->onFileStruct.context.op==PC_WRITE_FILE)
 					{
 						onFileCallback->OnFile(&threadInfo->onFileStruct);
 					}
 					else
 					{
-						delete [] threadInfo->onFileStruct.fileData;
+						rakFree(threadInfo->onFileStruct.fileData);
 						threadInfo->onFileStruct.fileData=threadInfo->postPatchFile;
 						threadInfo->onFileStruct.finalDataLength=threadInfo->postPatchLength;
 						onFileCallback->OnFile(&threadInfo->onFileStruct);
@@ -246,13 +248,13 @@ public:
 				break;
 				default:
 				{
-					if (threadInfo->onFileStruct.context==PC_WRITE_FILE)
+					if (threadInfo->onFileStruct.context.op==PC_WRITE_FILE)
 					{
 						onFileCallback->OnFile(&threadInfo->onFileStruct);
 					}
 					else
 					{
-						delete [] threadInfo->onFileStruct.fileData;
+						rakFree(threadInfo->onFileStruct.fileData);
 						threadInfo->onFileStruct.fileData=threadInfo->postPatchFile;
 						onFileCallback->OnFile(&threadInfo->onFileStruct);
 						threadInfo->onFileStruct.fileData=0;
@@ -262,12 +264,12 @@ public:
 			}
 
 			if (threadInfo->prePatchFile)
-				delete [] threadInfo->prePatchFile;
+				rakFree(threadInfo->prePatchFile);
 			if (threadInfo->postPatchFile)
-				delete [] threadInfo->postPatchFile;
+				rakFree(threadInfo->postPatchFile);
 			if (threadInfo->onFileStruct.fileData)
-				delete [] threadInfo->onFileStruct.fileData;
-			delete threadInfo;
+				rakFree(threadInfo->onFileStruct.fileData);
+			RakNet::OP_DELETE(threadInfo);
 		}
 
 		// If both input and output are empty, we are done.
@@ -302,15 +304,15 @@ public:
 	}
 	virtual bool OnFile(OnFileStruct *onFileStruct)
 	{
-		AutopatcherClientThreadInfo *inStruct = new AutopatcherClientThreadInfo;
+		AutopatcherClientThreadInfo *inStruct = RakNet::OP_NEW<AutopatcherClientThreadInfo>();
 		inStruct->prePatchFile=0;
 		inStruct->postPatchFile=0;
 		memcpy(&(inStruct->onFileStruct), onFileStruct, sizeof(OnFileStruct));
 		memcpy(inStruct->applicationDirectory,applicationDirectory,sizeof(applicationDirectory));
-		if (onFileStruct->context==PC_HASH_WITH_PATCH)
-			onFileStruct->context=PC_NOTICE_FILE_DOWNLOADED_PATCH;
+		if (onFileStruct->context.op==PC_HASH_WITH_PATCH)
+			onFileStruct->context.op=PC_NOTICE_FILE_DOWNLOADED_PATCH;
 		else
-			onFileStruct->context=PC_NOTICE_FILE_DOWNLOADED;
+			onFileStruct->context.op=PC_NOTICE_FILE_DOWNLOADED;
 		onFileCallback->OnFile(onFileStruct);
 		threadPool.AddInput(AutopatcherClientWorkerThread, inStruct);
 
@@ -383,11 +385,11 @@ bool AutopatcherClient::IsPatching(void) const
 }
 bool AutopatcherClient::PatchApplication(const char *_applicationName, const char *_applicationDirectory, const char *lastUpdateDate, SystemAddress host, FileListTransferCBInterface *onFileCallback, const char *restartOutputFilename, const char *pathToRestartExe)
 {
-    assert(applicationName);
-	assert(applicationDirectory);
-	assert(rakPeer);
-	assert(pathToRestartExe);
-	assert(restartOutputFilename);
+    RakAssert(applicationName);
+	RakAssert(applicationDirectory);
+	RakAssert(rakPeer);
+	RakAssert(pathToRestartExe);
+	RakAssert(restartOutputFilename);
 
 	if (rakPeer->GetIndexFromSystemAddress(host)==-1)
 		return false;
@@ -430,7 +432,7 @@ void AutopatcherClient::Update(RakPeerInterface *peer)
 		{
 			RakNet::BitStream outBitStream;
 			AutopatcherClientCallback *transferCallback;
-			transferCallback = new AutopatcherClientCallback;
+			transferCallback = RakNet::OP_NEW<AutopatcherClientCallback>();
 			strcpy(transferCallback->applicationDirectory, applicationDirectory);
 			transferCallback->onFileCallback=userCB;
 			transferCallback->client=this;
@@ -455,7 +457,7 @@ void AutopatcherClient::Update(RakPeerInterface *peer)
 
 			FILE *fp;
 			fp = fopen(copyOnRestartOut, "wt");
-			assert(fp);
+			RakAssert(fp);
 			if (fp)
 			{
 				fprintf(fp, "#Sleep 1000\n");
@@ -516,7 +518,7 @@ void AutopatcherClient::OnShutdown(RakPeerInterface *peer)
 
 PluginReceiveResult AutopatcherClient::OnCreationList(RakPeerInterface *peer, Packet *packet)
 {
-	assert(fileListTransfer);
+	RakAssert(fileListTransfer);
 	if (packet->systemAddress!=serverId)
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 
@@ -541,7 +543,7 @@ PluginReceiveResult AutopatcherClient::OnCreationList(RakPeerInterface *peer, Pa
 
 	// Prepare the transfer plugin to get a file list.
 	AutopatcherClientCallback *transferCallback;
-	transferCallback = new AutopatcherClientCallback;
+	transferCallback = RakNet::OP_NEW<AutopatcherClientCallback>();
 	strcpy(transferCallback->applicationDirectory, applicationDirectory);
 	transferCallback->onFileCallback=userCB;
 	transferCallback->client=this;
@@ -596,11 +598,11 @@ PluginReceiveResult AutopatcherClient::OnDownloadFinishedInternal(RakPeerInterfa
 void AutopatcherClient::CopyAndRestart(const char *filePath)
 {
 	// We weren't able to write applicationDirectory + filePath so we wrote applicationDirectory + filePath + COPY_ON_RESTART_EXTENSION instead
-	copyAndRestartList.AddFile(filePath, 0, 0, 0, 0);
+	copyAndRestartList.AddFile(filePath, 0, 0, 0, FileListNodeContext(0,0));
 }
 void AutopatcherClient::Redownload(const char *filePath)
 {
-	redownloadList.AddFile(filePath, 0, 0, 0, 0);
+	redownloadList.AddFile(filePath, 0, 0, 0, FileListNodeContext(0,0));
 }
 
 #ifdef _MSC_VER

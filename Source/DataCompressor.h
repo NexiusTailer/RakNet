@@ -24,7 +24,7 @@
 #include "Export.h"
 
 /// \brief Does compression on a block of data.  Not very good compression, but it's small and fast so is something you can compute at runtime.
-class RAK_DLL_EXPORT DataCompressor : public RakNet::RakMemoryOverride
+class RAK_DLL_EXPORT DataCompressor
 {
 public:
 	static void Compress( unsigned char *userData, unsigned sizeInBytes, RakNet::BitStream * output );

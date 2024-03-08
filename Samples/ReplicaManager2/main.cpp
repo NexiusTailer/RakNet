@@ -72,7 +72,7 @@ int main(void)
 	rakPeer->SetNetworkIDManager(&networkIdManager);
 	// The network ID authority is the system that creates the common numerical identifier used to lookup pointers.
 	// For client/server this is the server
-	// For peer to peer this would be true on every system, and you would also have call NetworkID::peerToPeerMode=true;
+	// For peer to peer this would be true on every system, and NETWORK_ID_SUPPORTS_PEER_TO_PEER should be defined in RakNetDefines.h
 	networkIdManager.SetIsNetworkIDAuthority(isServer);
 	// Start RakNet, up to 32 connections if the server
 	rakPeer->Startup(isServer ? 32 : 1,100,&sd,1);

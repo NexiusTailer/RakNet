@@ -56,13 +56,30 @@ bool ReadyEvent::SetEvent(int eventId, bool isReady)
 	}
 	return true;
 }
+bool ReadyEvent::ForceCompletion(int eventId)
+{
+	bool objectExists;
+	unsigned eventIndex = readyEventNodeList.GetIndexFromKey(eventId, &objectExists);
+	if (objectExists==false)
+	{
+		// Totally new event
+		CreateEvent(eventId, true);
+		eventIndex = readyEventNodeList.GetIndexFromKey(eventId, &objectExists);
+	}
+	
+	ReadyEventNode *ren = readyEventNodeList[eventIndex];
+	ren->eventStatus=ID_READY_EVENT_FORCE_ALL_SET;
+	UpdateReadyStatus(eventIndex);
+
+	return true;
+}
 bool ReadyEvent::DeleteEvent(int eventId)
 {
 	bool objectExists;
 	unsigned eventIndex = readyEventNodeList.GetIndexFromKey(eventId, &objectExists);
 	if (objectExists)
 	{
-		delete readyEventNodeList[eventIndex];
+		RakNet::OP_DELETE(readyEventNodeList[eventIndex]);
 		readyEventNodeList.RemoveAtIndex(eventIndex);
 		return true;
 	}
@@ -87,6 +104,8 @@ bool ReadyEvent::IsEventCompletionProcessing(int eventId) const
 		bool anyAllReady=false;
 		bool allAllReady=true;
 		ReadyEventNode *ren = readyEventNodeList[eventIndex];
+		if (ren->eventStatus==ID_READY_EVENT_FORCE_ALL_SET)
+			return false;
 		for (unsigned i=0; i < ren->systemList.Size(); i++)
 		{
 			if (ren->systemList[i].lastReceivedStatus==ID_READY_EVENT_ALL_SET)
@@ -262,11 +281,14 @@ PluginReceiveResult ReadyEvent::OnReceive(RakPeerInterface *peer, Packet *packet
 	case ID_READY_EVENT_UNSET:
 	case ID_READY_EVENT_SET:
 	case ID_READY_EVENT_ALL_SET:
-//		if (doPrint) {if (packet->systemAddress.port==60002)	printf("FROM 60002: "); else if (rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port==60002)	printf("TO 60002: "); printf("ID_READY_EVENT_SET\n");}
+//		if (doPrint) {if (packet->systemAddress.port==60002)	RAKNET_DEBUG_PRINTF("FROM 60002: "); else if (rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port==60002)	RAKNET_DEBUG_PRINTF("TO 60002: "); RAKNET_DEBUG_PRINTF("ID_READY_EVENT_SET\n");}
 		OnReadyEventPacketUpdate(peer, packet);
 		return RR_CONTINUE_PROCESSING;
+	case ID_READY_EVENT_FORCE_ALL_SET:
+		OnReadyEventForceAllSet(peer, packet);
+		return RR_CONTINUE_PROCESSING;
 	case ID_READY_EVENT_QUERY:
-//		if (doPrint) {if (packet->systemAddress.port==60002)	printf("FROM 60002: "); else if (rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port==60002)	printf("TO 60002: "); printf("ID_READY_EVENT_QUERY\n");}
+//		if (doPrint) {if (packet->systemAddress.port==60002)	RAKNET_DEBUG_PRINTF("FROM 60002: "); else if (rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port==60002)	RAKNET_DEBUG_PRINTF("TO 60002: "); RAKNET_DEBUG_PRINTF("ID_READY_EVENT_QUERY\n");}
 		OnReadyEventQuery(peer, packet);
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 	case ID_DISCONNECTION_NOTIFICATION:
@@ -295,6 +317,26 @@ bool ReadyEvent::AddToWaitListInternal(unsigned eventIndex, SystemAddress addres
 	}
 	return false;
 }
+void ReadyEvent::OnReadyEventForceAllSet(RakPeerInterface *peer, Packet *packet)
+{
+	(void) peer;
+
+	RakNet::BitStream incomingBitStream(packet->data, packet->length, false);
+	incomingBitStream.IgnoreBits(8);
+	int eventId;
+	incomingBitStream.Read(eventId);
+	bool objectExists;
+	unsigned readyIndex = readyEventNodeList.GetIndexFromKey(eventId, &objectExists);
+	if (objectExists)
+	{
+		ReadyEventNode *ren = readyEventNodeList[readyIndex];
+		if (ren->eventStatus!=ID_READY_EVENT_FORCE_ALL_SET)
+		{
+			ren->eventStatus=ID_READY_EVENT_FORCE_ALL_SET;
+			PushCompletionPacket(ren->eventId);
+		}
+	}
+}
 void ReadyEvent::OnReadyEventPacketUpdate(RakPeerInterface *peer, Packet *packet)
 {
 	(void) peer;
@@ -318,6 +360,9 @@ void ReadyEvent::OnReadyEventPacketUpdate(RakPeerInterface *peer, Packet *packet
 
 			bool wasCompleted = IsEventCompletedByIndex(readyIndex);
 			ren->systemList[systemIndex].lastReceivedStatus=packet->data[0];
+			// If forced all set, doesn't matter what the new packet is
+			if (ren->eventStatus==ID_READY_EVENT_FORCE_ALL_SET)
+				return;
 			UpdateReadyStatus(readyIndex);
 			if (wasCompleted==false && IsEventCompletedByIndex(readyIndex))
 				PushCompletionPacket(readyIndex);
@@ -362,6 +407,8 @@ bool ReadyEvent::SetEventByIndex(int eventIndex, bool isReady)
 		return true; // Success - no change
 	if (ren->eventStatus==ID_READY_EVENT_UNSET && isReady==false)
 		return true; // Success - no change
+	if (ren->eventStatus==ID_READY_EVENT_FORCE_ALL_SET)
+		return true; // Can't change
 
 	if (isReady)
 		ren->eventStatus=ID_READY_EVENT_SET;
@@ -383,6 +430,8 @@ bool ReadyEvent::IsEventCompletedByIndex(unsigned eventIndex) const
 {
 	ReadyEventNode *ren = readyEventNodeList[eventIndex];
 	unsigned i;
+	if (ren->eventStatus==ID_READY_EVENT_FORCE_ALL_SET)
+		return true;
 	if (ren->eventStatus!=ID_READY_EVENT_ALL_SET)
 		return false;
 	for (i=0; i < ren->systemList.Size(); i++)
@@ -396,14 +445,14 @@ void ReadyEvent::Clear(void)
 	unsigned i;
 	for (i=0; i < readyEventNodeList.Size(); i++)
 	{
-		delete readyEventNodeList[i];
+		RakNet::OP_DELETE(readyEventNodeList[i]);
 	}
 	readyEventNodeList.Clear();
 }
 
 unsigned ReadyEvent::CreateEvent(int eventId, bool isReady)
 {
-	ReadyEventNode *ren = new ReadyEventNode;
+	ReadyEventNode *ren = RakNet::OP_NEW<ReadyEventNode>();
 	ren->eventId=eventId;
 	if (isReady==false)
 		ren->eventStatus=ID_READY_EVENT_UNSET;

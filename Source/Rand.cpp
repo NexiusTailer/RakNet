@@ -48,6 +48,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "Rand.h"
 
 //
 // uint32 must be an unsigned integer type capable of holding at least 32
@@ -65,13 +67,42 @@
 #define loBits(u)      ((u) & 0x7FFFFFFFU)   // mask  the highest   bit of u
 #define mixBits(u, v)  (hiBit(u)|loBits(v))  // move hi bit of u to hi bit of v
 
-static unsigned int state[ N + 1 ];     // state vector + 1 extra to not violate ANSI C
-static unsigned int *next;        // next random value is computed from here
-static int left = -1; // can *next++ this many times before reloading
+static unsigned int _state[ N + 1 ];     // state vector + 1 extra to not violate ANSI C
+static unsigned int *_next;        // next random value is computed from here
+static int _left = -1; // can *next++ this many times before reloading
 
+void seedMT( unsigned int seed, unsigned int *state, unsigned int *&next, int &left );
+unsigned int reloadMT( unsigned int *state, unsigned int *&next, int &left );
+unsigned int randomMT( unsigned int *state, unsigned int *&next, int &left );
+void fillBufferMT( void *buffer, unsigned int bytes, unsigned int *state, unsigned int *&next, int &left );
+float frandomMT( unsigned int *state, unsigned int *&next, int &left );
 
-void seedMT( unsigned int seed )   // Defined in cokus_c.c
+// Uses global vars
+void seedMT( unsigned int seed )
 {
+	seedMT(seed, _state, _next, _left);
+}
+unsigned int reloadMT( void )
+{
+	return reloadMT(_state, _next, _left);
+}
+unsigned int randomMT( void )
+{
+	return randomMT(_state, _next, _left);
+}
+float frandomMT( void )
+{
+	return frandomMT(_state, _next, _left);
+}
+void fillBufferMT( void *buffer, unsigned int bytes )
+{
+	fillBufferMT(buffer, bytes, _state, _next, _left);
+}
+
+void seedMT( unsigned int seed, unsigned int *state, unsigned int *&next, int &left )   // Defined in cokus_c.c
+{
+	(void) next;
+
 	//
 	// We initialize state[0..(N-1)] via the generator
 	//
@@ -128,7 +159,7 @@ void seedMT( unsigned int seed )   // Defined in cokus_c.c
 }
 
 
-unsigned int reloadMT( void )
+unsigned int reloadMT( unsigned int *state, unsigned int *&next, int &left )
 {
 	register unsigned int * p0 = state, *p2 = state + 2, *pM = state + M, s0, s1;
 	register int j;
@@ -156,12 +187,12 @@ unsigned int reloadMT( void )
 }
 
 
-unsigned int randomMT( void )
+unsigned int randomMT( unsigned int *state, unsigned int *&next, int &left )
 {
 	unsigned int y;
 
 	if ( --left < 0 )
-		return ( reloadMT() );
+		return ( reloadMT(state, next, left) );
 
 	y = *next++;
 
@@ -177,9 +208,55 @@ unsigned int randomMT( void )
 	// return(y ^ (y >> 18)) % 32767;
 }
 
-float frandomMT( void )
+void fillBufferMT( void *buffer, unsigned int bytes, unsigned int *state, unsigned int *&next, int &left )
 {
-	return ( float ) ( ( double ) randomMT() / 4294967296.0 );
+	unsigned int offset=0;
+	unsigned int r;
+	while (bytes-offset>=sizeof(r))
+	{
+		r = randomMT();
+		memcpy((char*)buffer+offset, &r, sizeof(r));
+		offset+=sizeof(r);
+	}
+
+	r = randomMT(state, next, left);
+	memcpy((char*)buffer+offset, &r, bytes-offset);
+}
+
+float frandomMT( unsigned int *state, unsigned int *&next, int &left )
+{
+	return ( float ) ( ( double ) randomMT(state, next, left) / 4294967296.0 );
+}
+RakNetRandom::RakNetRandom()
+{
+	left=-1;
+}
+RakNetRandom::~RakNetRandom()
+{
+}
+void RakNetRandom::SeedMT( unsigned int seed )
+{
+	seedMT(seed, state, next, left);
+}
+
+unsigned int RakNetRandom::ReloadMT( void )
+{
+	return reloadMT(state, next, left);
+}
+
+unsigned int RakNetRandom::RandomMT( void )
+{
+	return randomMT(state, next, left);
+}
+
+float RakNetRandom::FrandomMT( void )
+{
+	return frandomMT(state, next, left);
+}
+
+void RakNetRandom::FillBufferMT( void *buffer, unsigned int bytes )
+{
+	fillBufferMT(buffer, bytes, state, next, left);
 }
 
 /*
@@ -194,7 +271,7 @@ seedMT(4357U);
 // print the first 2,002 random numbers seven to a line as an example
 
 for(j=0; j<2002; j++)
-printf(" %10lu%s", (unsigned int) randomMT(), (j%7)==6 ? "\n" : "");
+RAKNET_DEBUG_PRINTF(" %10lu%s", (unsigned int) randomMT(), (j%7)==6 ? "\n" : "");
 
 return(EXIT_SUCCESS);
 }

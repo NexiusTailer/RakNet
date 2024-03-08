@@ -49,7 +49,7 @@ char* FileVerifier::DeserializeAndValidate(RakNet::BitStream *bitStream)
 	if (bitStream->ReadCompressed(serializedDataSize)==false)
 	{
 #ifdef _DEBUG
-		assert(0); // Invalid serialized data
+		RakAssert(0); // Invalid serialized data
 #endif
 		return "Invalid bitstream";
 	}
@@ -66,7 +66,7 @@ char* FileVerifier::DeserializeAndValidate(RakNet::BitStream *bitStream)
 		if (filename[0]==0 || bitStream->Read(checkSum)==false)
 		{
 #ifdef _DEBUG
-			assert(0); // Invalid serialized data
+			RakAssert(0); // Invalid serialized data
 #endif
 			if (failedFilename[0])
 				return failedFilename;
@@ -133,7 +133,7 @@ void FileVerifier::AddFileForVerification(char *filename, bool requiredFile)
 
 	if (filename==0 || strlen(filename)>=256)
 	{
-		assert(0);
+		RakAssert(0);
 		return;
 	}
 
@@ -147,7 +147,7 @@ void FileVerifier::AddFileForVerification(char *filename, bool requiredFile)
 	
 	fp = fopen(filename, "rb");
 #ifdef _DEBUG
-	assert(fp);
+	RakAssert(fp);
 #endif
 	if (fp==0)
 		return;

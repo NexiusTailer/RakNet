@@ -75,11 +75,59 @@ void AutopatcherServer::Update(RakPeerInterface *peer)
 	while (threadPool.HasOutputFast() && threadPool.HasOutput())
 	{
 		rtab = threadPool.GetOutput();
+		if (rtab->operation==ResultTypeAndBitstream::GET_PATCH)
+		{
+			if (rtab->fatalError==false)
+			{
+				if (rtab->patchList->fileList.Size())
+					fileListTransfer->Send(rtab->patchList, rakPeer, rtab->systemAddress, rtab->setId, priority, orderingChannel, false, repository);
+
+				rtab->bitStream1.Write((unsigned char) ID_AUTOPATCHER_FINISHED_INTERNAL);
+				stringCompressor->EncodeString(rtab->currentDate.C_String(),64,&rtab->bitStream1);
+			}
+			else
+			{
+				rtab->bitStream1.Write((unsigned char) ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR);
+				stringCompressor->EncodeString(repository->GetLastError(), 256, &rtab->bitStream1);
+			}
+			RakNet::OP_DELETE(rtab->patchList);
+		}
+		else if (rtab->operation==ResultTypeAndBitstream::GET_CHANGELIST_SINCE_DATE)
+		{
+			if (rtab->fatalError==false)
+			{
+				if (rtab->deletedFiles->fileList.Size())
+				{
+					rtab->bitStream1.Write((unsigned char) ID_AUTOPATCHER_DELETION_LIST);
+					rtab->deletedFiles->Serialize(&rtab->bitStream1);
+				}
+
+				if (rtab->addedFiles->fileList.Size())
+				{
+					rtab->bitStream2.Write((unsigned char) ID_AUTOPATCHER_CREATION_LIST);
+					rtab->addedFiles->Serialize(&rtab->bitStream2);
+					stringCompressor->EncodeString(rtab->currentDate.C_String(),64,&rtab->bitStream2);
+					rtab->addedFiles->Clear();
+				}
+				else
+				{
+					rtab->bitStream2.Write((unsigned char) ID_AUTOPATCHER_FINISHED);
+					stringCompressor->EncodeString(rtab->currentDate.C_String(),64,&rtab->bitStream2);
+				}
+			}
+			else
+			{
+				rtab->bitStream2.Write((unsigned char) ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR);
+				stringCompressor->EncodeString(repository->GetLastError(), 256, &rtab->bitStream2);	
+			}
+			RakNet::OP_DELETE(rtab->deletedFiles);
+			RakNet::OP_DELETE(rtab->addedFiles);
+		}
 		if (rtab->bitStream1.GetNumberOfBitsUsed()>0)
 			rakPeer->Send(&(rtab->bitStream1), priority, RELIABLE_ORDERED, orderingChannel, rtab->systemAddress, false);
 		if (rtab->bitStream2.GetNumberOfBitsUsed()>0)
 			rakPeer->Send(&(rtab->bitStream2), priority, RELIABLE_ORDERED, orderingChannel, rtab->systemAddress, false);
-		delete rtab;
+		RakNet::OP_DELETE(rtab);
 	}	
 }
 PluginReceiveResult AutopatcherServer::OnReceive(RakPeerInterface *peer, Packet *packet)
@@ -88,13 +136,13 @@ PluginReceiveResult AutopatcherServer::OnReceive(RakPeerInterface *peer, Packet 
 	{
 	case ID_AUTOPATCHER_GET_CHANGELIST_SINCE_DATE:
 		OnGetChangelistSinceDate(peer, packet);
-		return RR_STOP_PROCESSING;
+		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 	case ID_AUTOPATCHER_GET_PATCH:
 		OnGetPatch(peer, packet);
-		return RR_STOP_PROCESSING;
+		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 	case ID_DISCONNECTION_NOTIFICATION:
 	case ID_CONNECTION_LOST:
-		RemoveFromThreadPool(packet->systemAddress);
+		OnCloseConnection(peer, packet->systemAddress);
 	break;
 	}
 
@@ -113,10 +161,16 @@ void AutopatcherServer::Clear(void)
 	unsigned i;
 	threadPool.StopThreads();
 	for (i=0; i < threadPool.InputSize(); i++)
-		rakPeer->DeallocatePacket(threadPool.GetInputAtIndex(i).packet);
+	{
+		RakNet::OP_DELETE(threadPool.GetInputAtIndex(i).clientList);
+	}
 	threadPool.ClearInput();
 	for (i=0; i < threadPool.OutputSize(); i++)
-		delete threadPool.GetOutputAtIndex(i);
+	{
+		RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->patchList);
+		RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->deletedFiles);
+		RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->addedFiles);
+	}
 	threadPool.ClearOutput();
 }
 #ifdef _MSC_VER
@@ -139,9 +193,9 @@ void AutopatcherServer::RemoveFromThreadPool(SystemAddress systemAddress)
 	threadPool.LockInput();
 	while (i < threadPool.InputSize())
 	{
-		if (threadPool.GetInputAtIndex(i).packet->systemAddress==systemAddress)
+		if (threadPool.GetInputAtIndex(i).systemAddress==systemAddress)
 		{
-			rakPeer->DeallocatePacket(threadPool.GetInputAtIndex(i).packet);
+			RakNet::OP_DELETE(threadPool.GetInputAtIndex(i).clientList);
 			threadPool.RemoveInputAtIndex(i);
 		}
 		else
@@ -155,7 +209,9 @@ void AutopatcherServer::RemoveFromThreadPool(SystemAddress systemAddress)
 	{
 		if (threadPool.GetOutputAtIndex(i)->systemAddress==systemAddress)
 		{
-			delete threadPool.GetOutputAtIndex(i);
+			RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->patchList);
+			RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->deletedFiles);
+			RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->addedFiles);
 			threadPool.RemoveOutputAtIndex(i);
 		}
 		else
@@ -163,126 +219,97 @@ void AutopatcherServer::RemoveFromThreadPool(SystemAddress systemAddress)
 	}
 	threadPool.UnlockOutput();
 }
-AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherServer::PatcherAndPacket pap, bool *returnOutput, void* perThreadData)
+AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherServer::ThreadData threadData, bool *returnOutput, void* perThreadData)
 {
-	Packet *packet = pap.packet;
-	AutopatcherServer *server = pap.server;
-
-	RakNet::BitStream inBitStream(packet->data, packet->length, false);
-	inBitStream.IgnoreBits(8);
-	char applicationName[512];
-	char lastUpdateDate[64];
-	stringCompressor->DecodeString(applicationName, 512, &inBitStream);
-	if (stringCompressor->DecodeString(lastUpdateDate, 64, &inBitStream)==false)
-	{
-		server->rakPeer->DeallocatePacket(packet);
-		*returnOutput=false;
-		return 0; // Invalid bitstream
-	}
-
+	
 	FileList addedFiles, deletedFiles;
 	char currentDate[64];
+	currentDate[0]=0;
+	AutopatcherServer *server = threadData.server;
 
-	AutopatcherServer::ResultTypeAndBitstream *rtab = new AutopatcherServer::ResultTypeAndBitstream;
-	rtab->systemAddress=pap.packet->systemAddress;
+	AutopatcherServer::ResultTypeAndBitstream *rtab = RakNet::OP_NEW<AutopatcherServer::ResultTypeAndBitstream>();
+	rtab->systemAddress=threadData.systemAddress;
+	rtab->deletedFiles=RakNet::OP_NEW<FileList>();
+	rtab->addedFiles=RakNet::OP_NEW<FileList>();
 
 	// Query the database for a changelist since this date
 	RakAssert(server);
-	if (server->repository->GetChangelistSinceDate(applicationName, &addedFiles, &deletedFiles, lastUpdateDate, currentDate))
+	if (server->repository->GetChangelistSinceDate(threadData.applicationName.C_String(), rtab->addedFiles, rtab->deletedFiles, threadData.lastUpdateDate.C_String(), currentDate))
 	{
-		if (deletedFiles.fileList.Size())
-		{
-			rtab->bitStream1.Write((unsigned char) ID_AUTOPATCHER_DELETION_LIST);
-			deletedFiles.Serialize(&rtab->bitStream1);
-		}
-
-		if (addedFiles.fileList.Size())
-		{
-			rtab->bitStream2.Write((unsigned char) ID_AUTOPATCHER_CREATION_LIST);
-			addedFiles.Serialize(&rtab->bitStream2);
-			stringCompressor->EncodeString(currentDate,64,&rtab->bitStream2);
-			addedFiles.Clear();
-		}
-		else
-		{
-			rtab->bitStream2.Write((unsigned char) ID_AUTOPATCHER_FINISHED);
-			stringCompressor->EncodeString(currentDate,64,&rtab->bitStream2);
-		}
+		rtab->fatalError=false;
 	}
 	else
 	{
-		rtab->bitStream2.Write((unsigned char) ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR);
-		stringCompressor->EncodeString(server->repository->GetLastError(), 256, &rtab->bitStream2);
+		rtab->fatalError=true;
 	}
 
+	rtab->operation=AutopatcherServer::ResultTypeAndBitstream::GET_CHANGELIST_SINCE_DATE;
+	rtab->currentDate=currentDate;
 	*returnOutput=true;
-	server->rakPeer->DeallocatePacket(packet);
 	return rtab;
 }
 void AutopatcherServer::OnGetChangelistSinceDate(RakPeerInterface *peer, Packet *packet)
 {
-	PatcherAndPacket pap;
-	pap.packet=packet;
-	pap.server=this;
-	threadPool.AddInput(GetChangelistSinceDateCB, pap);
-}
-AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::PatcherAndPacket pap, bool *returnOutput, void* perThreadData)
-{
-	Packet *packet = pap.packet;
-	AutopatcherServer *server = pap.server;
-
 	RakNet::BitStream inBitStream(packet->data, packet->length, false);
-	FileList clientList, patchList;
-	unsigned short setId;
-	char applicationName[512];
-
+	ThreadData threadData;
 	inBitStream.IgnoreBits(8);
-	inBitStream.Read(setId);
-	stringCompressor->DecodeString(applicationName, 512, &inBitStream);
-	if (clientList.Deserialize(&inBitStream)==false)
-	{
-		*returnOutput=false;
-		server->rakPeer->DeallocatePacket(packet);
-		return 0;
-	}
-	if (clientList.fileList.Size()==0)
-	{
-		RakAssert(0);
-		*returnOutput=false;
-		server->rakPeer->DeallocatePacket(packet);
-		return 0;
-	}
+	inBitStream.ReadCompressed(threadData.applicationName);
+	inBitStream.ReadCompressed(threadData.lastUpdateDate);
 
-	AutopatcherServer::ResultTypeAndBitstream *rtab = new AutopatcherServer::ResultTypeAndBitstream;
-	rtab->systemAddress=pap.packet->systemAddress;
+	threadData.server=this;
+	threadData.systemAddress=packet->systemAddress;
+	threadPool.AddInput(GetChangelistSinceDateCB, threadData);
+}
+AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadData threadData, bool *returnOutput, void* perThreadData)
+{
+	AutopatcherServer *server = threadData.server;
+
+	AutopatcherServer::ResultTypeAndBitstream *rtab = RakNet::OP_NEW<AutopatcherServer::ResultTypeAndBitstream>();
+	rtab->systemAddress=threadData.systemAddress;
+	rtab->patchList=RakNet::OP_NEW<FileList>();
 	RakAssert(server);
 	RakAssert(server->repository);
 	char currentDate[64];
-	if (server->repository->GetPatches(applicationName, &clientList, &patchList, currentDate))
-	{
-		if (patchList.fileList.Size())
-			server->fileListTransfer->Send(&patchList, server->rakPeer, packet->systemAddress, setId, server->priority, server->orderingChannel, false);
-
-		rtab->bitStream1.Write((unsigned char) ID_AUTOPATCHER_FINISHED_INTERNAL);
-		stringCompressor->EncodeString(currentDate,64,&rtab->bitStream1);
-
-	}
+	currentDate[0]=0;
+	if (server->repository->GetPatches(threadData.applicationName.C_String(), threadData.clientList, rtab->patchList, currentDate))
+		rtab->fatalError=false;
 	else
-	{
-		rtab->bitStream1.Write((unsigned char) ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR);
-		stringCompressor->EncodeString(server->repository->GetLastError(), 256, &rtab->bitStream1);
-	}
+		rtab->fatalError=true;
+	rtab->operation=AutopatcherServer::ResultTypeAndBitstream::GET_PATCH;
+	rtab->setId=threadData.setId;
+	rtab->currentDate=currentDate;
+
+	RakNet::OP_DELETE(threadData.clientList);
 
 	*returnOutput=true;
-	server->rakPeer->DeallocatePacket(packet);
 	return rtab;
 }
 void AutopatcherServer::OnGetPatch(RakPeerInterface *peer, Packet *packet)
 {
-	PatcherAndPacket pap;
-	pap.packet=packet;
-	pap.server=this;
-	threadPool.AddInput(GetPatchCB, pap);
+	RakNet::BitStream inBitStream(packet->data, packet->length, false);
+	
+	ThreadData threadData;
+	inBitStream.IgnoreBits(8);
+	inBitStream.Read(threadData.setId);
+	inBitStream.ReadCompressed(threadData.applicationName);
+	threadData.systemAddress=packet->systemAddress;
+	threadData.server=this;
+	threadData.clientList=RakNet::OP_NEW<FileList>();
+
+	if (threadData.clientList->Deserialize(&inBitStream)==false)
+	{
+		RakNet::OP_DELETE(threadData.clientList);
+		return;
+	}
+	if (threadData.clientList->fileList.Size()==0)
+	{
+		RakAssert(0);
+		RakNet::OP_DELETE(threadData.clientList);
+		return;
+	}
+
+	threadPool.AddInput(GetPatchCB, threadData);
+	return;
 }
 
 #ifdef _MSC_VER

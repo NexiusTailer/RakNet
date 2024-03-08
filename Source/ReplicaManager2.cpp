@@ -93,6 +93,9 @@ void ReplicaManager2::SendConstruction(Replica2 *replica, BitStream *replicaData
 	if (replica->GetNetworkID()!=UNASSIGNED_NETWORK_ID && replica->QueryIsConstructionAuthority()==false)
 		return;
 
+	if (recipient==UNASSIGNED_SYSTEM_ADDRESS && connectionList.Size()==0)
+		return;
+
 	RakAssert(replica->QueryConstruction(0)!=BQR_NEVER);
 
 	bool newConnection;
@@ -123,6 +126,7 @@ void ReplicaManager2::SendConstruction(Replica2 *replica, BitStream *replicaData
 
 		if (AddToAndWriteExclusionList(recipient, &bs, exclusionList)==false)
 			return;
+		bs.AlignWriteToByteBoundary();
 		bs.Write(replicaData);
 
 		// Lookup connection by target. If does not exist, create
@@ -149,6 +153,7 @@ void ReplicaManager2::SendConstruction(Replica2 *replica, BitStream *replicaData
 		DataStructures::OrderedList<SystemAddress, Connection_RM2*,ReplicaManager2::Connection_RM2CompBySystemAddress> culledOutput;
 		CullByAndAddToExclusionList(connectionList, culledOutput, exclusionList);
 		WriteExclusionList(&bs, exclusionList);
+		bs.AlignWriteToByteBoundary();
 		bs.Write(replicaData);
 
 		unsigned i;
@@ -179,6 +184,9 @@ void ReplicaManager2::SendDestruction(Replica2 *replica, BitStream *replicaData,
 						PacketPriority priority, PacketReliability reliability, char orderingChannel)
 {
 	if (replica==0)
+		return;
+
+	if (recipient==UNASSIGNED_SYSTEM_ADDRESS && connectionList.Size()==0)
 		return;
 
 	if (replica->QueryIsDestructionAuthority()==false)
@@ -216,6 +224,7 @@ void ReplicaManager2::SendDestruction(Replica2 *replica, BitStream *replicaData,
 		{
 			if (AddToAndWriteExclusionList(recipient, &bs, exclusionList)==false)
 				return;
+			bs.AlignWriteToByteBoundary();
 			bs.Write(replicaData);
 
 			Send(&bs, recipient, priority, reliability, orderingChannel);
@@ -226,6 +235,7 @@ void ReplicaManager2::SendDestruction(Replica2 *replica, BitStream *replicaData,
 			GetConnectionsWithReplicaConstructed(replica, output);
 			CullByAndAddToExclusionList(output, culledOutput, exclusionList);
 			WriteExclusionList(&bs, exclusionList);
+			bs.AlignWriteToByteBoundary();
 			bs.Write(replicaData);
 
 			unsigned i;
@@ -241,6 +251,9 @@ void ReplicaManager2::SendSerialize(Replica2 *replica, BitStream *replicaData, S
 						 PacketPriority priority, PacketReliability reliability, char orderingChannel)
 {
 	if (replica==0)
+		return;
+
+	if (recipient==UNASSIGNED_SYSTEM_ADDRESS && connectionList.Size()==0)
 		return;
 
 	if (replica->GetNetworkID()==UNASSIGNED_NETWORK_ID)
@@ -276,6 +289,7 @@ void ReplicaManager2::SendSerialize(Replica2 *replica, BitStream *replicaData, S
 
 		if (AddToAndWriteExclusionList(recipient, &bs, exclusionList)==false)
 			return;
+		bs.AlignWriteToByteBoundary();
 		bs.Write(replicaData);
 
 		// Send the packet
@@ -288,6 +302,7 @@ void ReplicaManager2::SendSerialize(Replica2 *replica, BitStream *replicaData, S
 
 		CullByAndAddToExclusionList(output, culledOutput, exclusionList);
 		WriteExclusionList(&bs, exclusionList);
+		bs.AlignWriteToByteBoundary();
 		bs.Write(replicaData);
 
 		unsigned i;
@@ -308,6 +323,9 @@ void ReplicaManager2::SendVisibility(Replica2 *replica, BitStream *replicaData, 
 
 	bool newConnection;
 	Connection_RM2* connection;
+
+	if (recipient==UNASSIGNED_SYSTEM_ADDRESS && connectionList.Size()==0)
+		return;
 
 	if (replica->GetNetworkID()==UNASSIGNED_NETWORK_ID)
 		return;
@@ -337,6 +355,7 @@ void ReplicaManager2::SendVisibility(Replica2 *replica, BitStream *replicaData, 
 		if (newConnection)
 			DownloadToNewConnection(connection, timestamp, defaultPacketPriority, defaultPacketReliablity, defaultOrderingChannel);
 
+		bs.AlignWriteToByteBoundary();
 		bs.Write(replicaData);
 
 		if (SerializationContext::IsVisibilityCommand(type))
@@ -354,6 +373,7 @@ void ReplicaManager2::SendVisibility(Replica2 *replica, BitStream *replicaData, 
 		DataStructures::OrderedList<SystemAddress, Connection_RM2*,ReplicaManager2::Connection_RM2CompBySystemAddress> culledOutput;
 		CullByAndAddToExclusionList(connectionList, culledOutput, exclusionList);
 		WriteExclusionList(&bs, exclusionList);
+		bs.AlignWriteToByteBoundary();
 		bs.Write(replicaData);
 
 		unsigned i;
@@ -573,6 +593,7 @@ Connection_RM2* ReplicaManager2::CreateConnectionIfDoesNotExist(SystemAddress sy
 		// If it crashes here, you need to call SetConnection_RM2Factory
 		Connection_RM2 *connection = connectionFactoryInterface->AllocConnection();
 		connection->SetSystemAddress(systemAddress);
+		connection->SetGuid(rakPeer->GetGuidFromSystemAddress(systemAddress));
 		connectionList.Insert(systemAddress, connection, false);
 		*newConnection=true;
 		return connection;
@@ -627,11 +648,13 @@ void ReplicaManager2::Reference(Replica2* replica, bool *newReference)
 		else if (queryResult!=BQR_NEVER)
 			variableSerializeReplicaOrderedList.Insert(replica,replica, false);
 
-		*newReference=true;
+		if (newReference)
+			*newReference=true;
 
 		return;
 	}
-	*newReference=false;
+	if (newReference)
+		*newReference=false;
 }
 void ReplicaManager2::AddConstructionReference(Connection_RM2* connection, Replica2* replica)
 {
@@ -734,6 +757,7 @@ PluginReceiveResult ReplicaManager2::OnDownloadStarted(unsigned char *packetData
 	unsigned char c;
 	incomingBitstream.Read(c);
 	serializationType=(SerializationType) c;
+	incomingBitstream.AlignReadToByteBoundary();
 	connection->DeserializeDownloadStarted(&incomingBitstream, sender, this, timestamp, serializationType);
 
 	if (newConnection)
@@ -751,6 +775,7 @@ PluginReceiveResult ReplicaManager2::OnDownloadComplete(unsigned char *packetDat
 	unsigned char c;
 	incomingBitstream.Read(c);
 	serializationType=(SerializationType) c;
+	incomingBitstream.AlignReadToByteBoundary();
 	connection->DeserializeDownloadComplete(&incomingBitstream, sender, this, timestamp, serializationType);
 
 	if (newConnection)
@@ -781,6 +806,8 @@ PluginReceiveResult ReplicaManager2::OnConstruction(unsigned char *packetData, i
 	exclusionList.Insert(sender,sender, false);
 
 	Replica2* replica;
+	// The prefix misaligns the data from the send, which is a problem if the user uses aligned data
+	incomingBitstream.AlignReadToByteBoundary();
 	replica = connection->ReceiveConstruct(&incomingBitstream, networkId, sender, localClientId, serializationType, this, timestamp,exclusionList);
 	if (replica)
 	{
@@ -814,6 +841,8 @@ PluginReceiveResult ReplicaManager2::OnDestruction(unsigned char *packetData, in
 			return RR_STOP_PROCESSING_AND_DEALLOCATE;
 		}
 
+		// The prefix misaligns the data from the send, which is a problem if the user uses aligned data
+		incomingBitstream.AlignReadToByteBoundary();
 		replica->ReceiveDestruction(sender, &incomingBitstream, serializationType, timestamp,exclusionList );
 	}
 	// else this object is unknown
@@ -849,6 +878,8 @@ PluginReceiveResult ReplicaManager2::OnVisibilityChange(unsigned char *packetDat
 			return RR_STOP_PROCESSING_AND_DEALLOCATE;
 		}
 
+		// The prefix misaligns the data from the send, which is a problem if the user uses aligned data
+		incomingBitstream.AlignReadToByteBoundary();
 		replica->ReceiveVisibility(sender, &incomingBitstream, serializationType, timestamp,exclusionList);
 
 		AddConstructionReference(connection, replica);
@@ -892,6 +923,8 @@ PluginReceiveResult ReplicaManager2::OnSerialize(unsigned char *packetData, int 
 
 		exclusionList.Insert(sender,sender, false);
 
+		// The prefix misaligns the data from the send, which is a problem if the user uses aligned data
+		incomingBitstream.AlignReadToByteBoundary();
 		replica->ReceiveSerialize(sender, &incomingBitstream, serializationType, timestamp,exclusionList);
 
 		AddConstructionReference(connection, replica);
@@ -984,53 +1017,58 @@ void ReplicaManager2::DownloadToNewConnection(Connection_RM2* connection, RakNet
 	serializationContext.timestamp=0;
 
 	// bs2 is so SerializeDownloadStarted can change the timestamp
+	bs2.AlignWriteToByteBoundary();
 	connection->SerializeDownloadStarted(&bs2, this, &serializationContext);
 	WriteHeader(&bs, ID_REPLICA_MANAGER_DOWNLOAD_STARTED, timestamp);
 	bs.Write((unsigned char) SEND_CONSTRUCTION_SERIALIZATION_AUTO_INITIAL_DOWNLOAD_TO_SYSTEM);
 	bs.Write(&bs2);
 	Send(&bs, connection->GetSystemAddress(), priority, reliability, orderingChannel);
 
+	DataStructures::List<Replica2*> initialDownloadList;
+	connection->SortInitialDownload(fullReplicaUnorderedList, initialDownloadList);
+
 	// Construct all objects before serializing them. This way the recipient will have valid NetworkID references.
 	// Send all objects that always exist
-	for (i=0; i < fullReplicaUnorderedList.Size(); i++)
+	for (i=0; i < initialDownloadList.Size(); i++)
 	{
-		if (fullReplicaUnorderedList[i]->QueryIsConstructionAuthority())
+		if (initialDownloadList[i]->QueryIsConstructionAuthority())
 		{
-			bqr=fullReplicaUnorderedList[i]->QueryConstruction(connection);
+			bqr=initialDownloadList[i]->QueryConstruction(connection);
 			if (bqr==BQR_ALWAYS || bqr==BQR_YES)
-				fullReplicaUnorderedList[i]->SendConstruction(systemAddress, SEND_CONSTRUCTION_SERIALIZATION_AUTO_INITIAL_DOWNLOAD_TO_SYSTEM);
+				initialDownloadList[i]->SendConstruction(systemAddress, SEND_CONSTRUCTION_SERIALIZATION_AUTO_INITIAL_DOWNLOAD_TO_SYSTEM);
 			// Remember for this particular connection that we already sent this update to this system
 			if (bqr==BQR_YES)
-				AddConstructionReference(connection, fullReplicaUnorderedList[i]);
+				AddConstructionReference(connection, initialDownloadList[i]);
 		}			
 	}
 
 	bool notVisible;
 
 	// Send all objects that are always visible
-	for (i=0; i < fullReplicaUnorderedList.Size(); i++)
+	for (i=0; i < initialDownloadList.Size(); i++)
 	{
 		notVisible=false;
-		if (fullReplicaUnorderedList[i]->QueryIsVisibilityAuthority())
+		if (initialDownloadList[i]->QueryIsVisibilityAuthority())
 		{
-			bqr=fullReplicaUnorderedList[i]->QueryVisibility(connection);
+			bqr=initialDownloadList[i]->QueryVisibility(connection);
 			if (bqr==BQR_ALWAYS || bqr==BQR_YES)
 			{
-				fullReplicaUnorderedList[i]->SendVisibility(systemAddress, SEND_VISIBILITY_AUTO_INITIAL_DOWNLOAD_TO_SYSTEM);
+				initialDownloadList[i]->SendVisibility(systemAddress, SEND_VISIBILITY_AUTO_INITIAL_DOWNLOAD_TO_SYSTEM);
 				// Remember for this particular connection that we already sent this update to this system
 				if (bqr==BQR_YES)
-					AddVisibilityReference(connection, fullReplicaUnorderedList[i]);
+					AddVisibilityReference(connection, initialDownloadList[i]);
 			}
 			else
 				notVisible=true;
 		}
 
-		if (fullReplicaUnorderedList[i]->QueryIsSerializationAuthority() && notVisible==false)
-			fullReplicaUnorderedList[i]->SendSerialize(systemAddress, SEND_DATA_SERIALIZATION_AUTO_INITIAL_DOWNLOAD_TO_SYSTEM);
+		if (initialDownloadList[i]->QueryIsSerializationAuthority() && notVisible==false)
+			initialDownloadList[i]->SendSerialize(systemAddress, SEND_DATA_SERIALIZATION_AUTO_INITIAL_DOWNLOAD_TO_SYSTEM);
 	}
 
 	bs.Reset();
 	// bs2 is so SerializeDownloadComplete can change the timestamp
+	bs2.AlignWriteToByteBoundary();
 	connection->SerializeDownloadComplete(&bs2, this,&serializationContext);
 	WriteHeader(&bs, ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE, timestamp);
 	bs.Write((unsigned char) SEND_CONSTRUCTION_SERIALIZATION_AUTO_INITIAL_DOWNLOAD_TO_SYSTEM);
@@ -1039,13 +1077,15 @@ void ReplicaManager2::DownloadToNewConnection(Connection_RM2* connection, RakNet
 }
 Replica2::Replica2()
 {
-	rm2=0; hasClientID=false;
+	rm2=0;
+	hasClientID=false;
 
 	DataStructures::Map<SerializationType, AutoSerializeEvent*>::IMPLEMENT_DEFAULT_COMPARISON();
 }
 Replica2::~Replica2()
 {
-	rm2->Dereference(this);
+	if (rm2)
+		rm2->Dereference(this);
 	if (hasClientID)
 		clientPtrArray[clientID]=0;
 	ClearAutoSerializeTimers();
@@ -1130,6 +1170,8 @@ void Replica2::SendConstruction(SystemAddress recipientAddress, SerializationTyp
 		localId=0;
 
 	DataStructures::OrderedList<SystemAddress,SystemAddress> exclusionList;
+	// // The prefix misaligns the data for the send, which is a problem if the user uses aligned data
+	bs.AlignWriteToByteBoundary();
 	if (SerializeConstruction(&bs, &defaultContext))
 		rm2->SendConstruction(this,&bs,recipientAddress,defaultContext.timestamp,true,exclusionList,localId,defaultContext.serializationType);
 }
@@ -1142,6 +1184,8 @@ void Replica2::SendDestruction(SystemAddress recipientAddress, SerializationType
 		defaultContext.serializationType=SEND_DESTRUCTION_GENERIC_TO_SYSTEM;
 
 	DataStructures::OrderedList<SystemAddress,SystemAddress> exclusionList;
+	// // The prefix misaligns the data for the send, which is a problem if the user uses aligned data
+	bs.AlignWriteToByteBoundary();
 	if (SerializeDestruction(&bs, &defaultContext))
 		rm2->SendDestruction(this,&bs,recipientAddress,defaultContext.timestamp,true,exclusionList,defaultContext.serializationType);
 }
@@ -1153,6 +1197,8 @@ void Replica2::SendSerialize(SystemAddress recipientAddress, SerializationType s
 	if (serializationType==UNDEFINED_REASON)
 		defaultContext.serializationType=SEND_SERIALIZATION_GENERIC_TO_SYSTEM;
 
+	// // The prefix misaligns the data for the send, which is a problem if the user uses aligned data
+	bs.AlignWriteToByteBoundary();
 	if (Serialize(&bs, &defaultContext))
 	{
 		DataStructures::OrderedList<SystemAddress,SystemAddress> exclusionList;
@@ -1167,6 +1213,8 @@ void Replica2::SendVisibility(SystemAddress recipientAddress, SerializationType 
 	if (serializationType==UNDEFINED_REASON)
 		defaultContext.serializationType=SEND_VISIBILITY_TRUE_TO_SYSTEM;
 
+	// // The prefix misaligns the data for the send, which is a problem if the user uses aligned data
+	bs.AlignWriteToByteBoundary();
 	if (SerializeVisibility(&bs, &defaultContext))
 	{
 		DataStructures::OrderedList<SystemAddress,SystemAddress> exclusionList;
@@ -1199,6 +1247,8 @@ void Replica2::BroadcastSerialize(SerializationContext *serializationContext)
 		if (usedContext->relaySourceAddress==usedContext->recipientAddress)
 			continue;
 		bs.Reset();
+		// // The prefix misaligns the data for the send, which is a problem if the user uses aligned data
+		bs.AlignWriteToByteBoundary();
 		if (Serialize(&bs, usedContext)==false)
 			continue;
 		exclusionList.Clear();
@@ -1298,21 +1348,18 @@ void Replica2::BroadcastConstruction(SerializationContext *serializationContext)
 		rm2->SendConstruction(this,&bs,usedContext->recipientAddress,usedContext->timestamp,true,exclusionList, localId, usedContext->serializationType);
 	}
 
-	// If this is a new object, then after sending construction we should send visibility and serialization if it is always visible or serialized
-	if (newReference)
-	{
-		bool notVisible=false;
-		BooleanQueryResult bqr;
-		bqr=QueryVisibility(0);
 
-		if (bqr==BQR_ALWAYS)
-			BroadcastVisibility(true);
-		else if (bqr==BQR_NEVER)
-			notVisible=true;
+	bool notVisible=false;
+	BooleanQueryResult bqr;
+	bqr=QueryVisibility(0);
 
-		if (notVisible==false)
-			BroadcastSerialize();
-	}
+	if (bqr==BQR_ALWAYS)
+		BroadcastVisibility(true);
+	else if (bqr==BQR_NEVER)
+		notVisible=true;
+
+	if (notVisible==false)
+		BroadcastSerialize();
 }
 Replica2 * Replica2::ReceiveConstructionReply(SystemAddress sender, BitStream *replicaData, bool constructionAllowed)
 {
@@ -1321,6 +1368,7 @@ Replica2 * Replica2::ReceiveConstructionReply(SystemAddress sender, BitStream *r
 
 	if (constructionAllowed==false)
 	{
+		//RakNet::OP_DELETE(this);
 		delete this;
 		return 0;
 	}
@@ -1459,6 +1507,7 @@ void Replica2::DeleteOnReceiveDestruction(SystemAddress sender, RakNet::BitStrea
 	(void) serializationType;
 	(void) timestamp;
 	(void) exclusionList;
+	//RakNet::OP_DELETE(this);
 	delete this;
 }
 void Replica2::ReceiveVisibility(SystemAddress sender, RakNet::BitStream *serializedObject, SerializationType serializationType, RakNetTime timestamp, DataStructures::OrderedList<SystemAddress,SystemAddress> &exclusionList)
@@ -1535,6 +1584,16 @@ bool Replica2::AllowRemoteConstruction(SystemAddress sender, RakNet::BitStream *
 void Replica2::ForceElapseAllAutoserializeTimers(bool resynchOnly)
 {
 	ElapseAutoSerializeTimers(99999999, resynchOnly);
+}
+void Replica2::OnConstructionComplete(RakNet::BitStream *replicaData, SystemAddress sender, SerializationType type, ReplicaManager2 *replicaManager, RakNetTime timestamp, NetworkID networkId, bool networkIDCollision)
+{
+	(void) replicaData;
+	(void) sender;
+	(void) type;
+	(void) replicaManager;
+	(void) timestamp;
+	(void) networkId;
+	(void) networkIDCollision;
 }
 void Replica2::ElapseAutoSerializeTimers(RakNetTime timeElapsed, bool resynchOnly)
 {
@@ -1634,7 +1693,7 @@ void Replica2::AddAutoSerializeTimer(RakNetTime interval, SerializationType seri
 	}
 	else
 	{		
-		AutoSerializeEvent *ase = new AutoSerializeEvent;
+		AutoSerializeEvent *ase = RakNet::OP_NEW<AutoSerializeEvent>();
 		ase->serializationType=serializationType;
 		ase->initialCountdown=interval;
 		ase->remainingCountdown=countdown;
@@ -1666,7 +1725,7 @@ void Replica2::CancelAutoSerializeTimer(SerializationType serializationType)
 	{
 		if (autoSerializeTimers[i]->serializationType==serializationType)
 		{
-			delete autoSerializeTimers[i];
+			RakNet::OP_DELETE(autoSerializeTimers[i]);
 			autoSerializeTimers.RemoveAtIndex(i);
 		}
 		else
@@ -1677,11 +1736,13 @@ void Replica2::ClearAutoSerializeTimers(void)
 {
 	unsigned i;
 	for (i=0; i < autoSerializeTimers.Size(); i++)
-		delete autoSerializeTimers[i];
+		RakNet::OP_DELETE(autoSerializeTimers[i]);
 	autoSerializeTimers.Clear();
 }
 Connection_RM2::Connection_RM2()
 {
+	rakNetGuid=UNASSIGNED_RAKNET_GUID;
+	systemAddress=UNASSIGNED_SYSTEM_ADDRESS;
 }
 Connection_RM2::~Connection_RM2()
 {
@@ -1797,7 +1858,7 @@ void Connection_RM2::SetConstructionByReplicaQuery(ReplicaManager2 *replicaManag
 		if (replicaManager->variableConstructReplicaOrderedList[i]->QueryIsConstructionAuthority())
 		{
 			res = replicaManager->variableConstructReplicaOrderedList[i]->QueryConstruction(this);
-			if (res==BQR_YES)
+			if (res==BQR_YES || res==BQR_ALWAYS) // TODO - optimize ALWAYS here
 				constructedObjects.InsertAtEnd(replicaManager->variableConstructReplicaOrderedList[i]);
 		}
 	}
@@ -1815,12 +1876,15 @@ void Connection_RM2::SetVisibilityByReplicaQuery(ReplicaManager2 *replicaManager
 		if (replicaManager->variableSerializeReplicaOrderedList[i]->QueryIsVisibilityAuthority())
 		{
 			res = replicaManager->variableSerializeReplicaOrderedList[i]->QueryVisibility(this);
-			if (res==BQR_YES)
+			if (res==BQR_YES || res==BQR_ALWAYS) // TODO - optimize ALWAYS here
 				currentVisibility.InsertAtEnd(replicaManager->variableSerializeReplicaOrderedList[i]);
 		}
 	}
 
 	SetVisibilityByList(currentVisibility, replicaManager);
+}
+void Connection_RM2::SortInitialDownload( const DataStructures::List<Replica2*> &orderedDownloadList, DataStructures::List<Replica2*> &initialDownloadList ) {
+		initialDownloadList = orderedDownloadList;
 }
 void Connection_RM2::SerializeDownloadStarted(RakNet::BitStream *objectData, ReplicaManager2 *replicaManager, SerializationContext *serializationContext) {
 	(void) objectData;
@@ -1859,6 +1923,8 @@ Replica2 * Connection_RM2::ReceiveConstruct(RakNet::BitStream *replicaData, Netw
 		obj = Replica2::clientPtrArray[localClientId];
 		if (obj)
 		{
+			// The prefix misaligns the data from the send, which is a problem if the user uses aligned data
+			replicaData->AlignReadToByteBoundary();
 			obj = obj->ReceiveConstructionReply(sender, replicaData, type==SEND_CONSTRUCTION_REPLY_ACCEPTED_TO_CLIENT);
 			obj->SetNetworkID(networkId);
 			replicaManager->Reference(obj, &newReference);
@@ -1882,6 +1948,7 @@ Replica2 * Connection_RM2::ReceiveConstruct(RakNet::BitStream *replicaData, Netw
 	{
 		// Create locally, relay, send back reply
 		bool collision = replicaManager->GetRakPeer()->GetNetworkIDManager()->GET_OBJECT_FROM_ID<NetworkIDObject*>( networkId )!=0;
+		replicaData->AlignReadToByteBoundary();
 		obj = Construct(replicaData, sender, type, replicaManager, timestamp, networkId, collision);
 		if (obj)
 		{
@@ -1891,6 +1958,7 @@ Replica2 * Connection_RM2::ReceiveConstruct(RakNet::BitStream *replicaData, Netw
 			{
 				if (type==SEND_CONSTRUCTION_REQUEST_TO_SERVER)
 					obj->SendConstruction(sender, SEND_CONSTRUCTION_REPLY_DENIED_TO_CLIENT);
+				//RakNet::OP_DELETE(obj);
 				delete obj;
 				obj=0;
 			}
@@ -1937,9 +2005,14 @@ Replica2 * Connection_RM2::ReceiveConstruct(RakNet::BitStream *replicaData, Netw
 				if (type==SEND_CONSTRUCTION_REQUEST_TO_SERVER)
 				{
 					DataStructures::OrderedList<SystemAddress,SystemAddress> emptyList;
+					// // The prefix misaligns the data for the send, which is a problem if the user uses aligned data
+					bs.AlignWriteToByteBoundary();
 					replicaManager->SendConstruction(obj, &bs, sender, timestamp, true,
 						emptyList, localClientId, SEND_CONSTRUCTION_REPLY_ACCEPTED_TO_CLIENT);
 				}
+
+				replicaData->AlignReadToByteBoundary();
+				obj->OnConstructionComplete(replicaData, sender, type, replicaManager, timestamp, networkId, collision);
 			}
 		}
 	}
@@ -1964,7 +2037,14 @@ SystemAddress Connection_RM2::GetSystemAddress(void) const
 {
 	return systemAddress;
 }
-
+void Connection_RM2::SetGuid(RakNetGUID guid)
+{
+	rakNetGuid=guid;
+}
+RakNetGUID Connection_RM2::GetGuid(void) const
+{
+	return rakNetGuid;
+}
 void Connection_RM2::Deref(Replica2* replica)
 {
 	lastConstructionList.RemoveIfExists(replica);

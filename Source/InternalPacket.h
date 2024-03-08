@@ -43,7 +43,7 @@ typedef RakNetTime RemoteSystemTimeType;
 
 /// Holds a user message, and related information
 /// Don't use a constructor or destructor, due to the memory pool I am using
-struct InternalPacket : public RakNet::RakMemoryOverride//<InternalPacket>
+struct InternalPacket//<InternalPacket>
 {
 	///True if this is an acknowledgment packet
 	//bool isAcknowledgement;
@@ -85,6 +85,8 @@ struct InternalPacket : public RakNet::RakMemoryOverride//<InternalPacket>
 	BitSize_t dataBitLength;
 	///Buffer is a pointer to the actual data, assuming this packet has data at all
 	unsigned char *data;
+	// How many attempts we made at sending this message
+	unsigned char timesSent;
 };
 
 #endif

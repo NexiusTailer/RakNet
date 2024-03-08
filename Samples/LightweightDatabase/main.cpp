@@ -263,8 +263,42 @@ void main(void)
 
 				if (ch=='q')
 				{
-					// TODO - let the user enter filters, columns, and rows to return.
-					databaseClient.QueryTable(tableName, tablePassword, 0, 0, 0, 0, 0, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
+					DatabaseFilter filter[255];
+					unsigned int numFilters=0;
+					while (1)
+					{
+						printf("Enter database filter column name, or hit enter when done.\n");
+						gets(filter[numFilters].columnName);
+						if (filter[numFilters].columnName[0]==0)
+							break;
+						printf("Enter column type\n1=STRING\n2=NUMERIC\n3=BINARY\n");
+						gets(str);
+						if (str[0]=='2')
+						{
+							filter[numFilters].columnType=DataStructures::Table::NUMERIC;
+							printf("Enter numeric value: ");
+							gets(str);
+							filter[numFilters].cellValue.Set(atoi(str));
+						}
+						else if (str[0]=='3')
+						{
+							filter[numFilters].columnType=DataStructures::Table::BINARY;
+						}
+						else
+						{
+							filter[numFilters].columnType=DataStructures::Table::STRING;
+							printf("Enter string value: ");
+							gets(str);
+							filter[numFilters].cellValue.Set(str);
+						}
+
+						filter[numFilters].operation=DataStructures::Table::QF_EQUAL;
+
+						numFilters++;
+					}
+					
+
+					databaseClient.QueryTable(tableName, tablePassword, 0, 0, (DatabaseFilter*) filter, numFilters, 0, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
 				}
 				else if (ch=='u')
 				{

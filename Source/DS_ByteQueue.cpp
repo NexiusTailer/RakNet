@@ -96,6 +96,6 @@ void ByteQueue::Print(void)
 {
 	unsigned i;
 	for (i=readOffset; i!=writeOffset; i++)
-		printf("%i ", data[i]);
-	printf("\n");
+		RAKNET_DEBUG_PRINTF("%i ", data[i]);
+	RAKNET_DEBUG_PRINTF("\n");
 }

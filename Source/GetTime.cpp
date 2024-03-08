@@ -14,17 +14,21 @@
 /// Software Foundation; either version 2 of the License, or (at your
 /// option) any later version.
 
-#include "GetTime.h"
-#ifdef _XBOX360
-#include "Console1Includes.h" // Developers of a certain platform will know what to do here.
-#elif defined(_WIN32)
+#if defined(_WIN32) && !defined(_XBOX) && !defined(X360)
 #include <windows.h>
+#endif
+
+#include "GetTime.h"
+#if defined(_XBOX) || defined(X360)
+#include "XBOX360Includes.h"
+#endif
+#if defined(_WIN32)
 DWORD mProcMask;
 DWORD mSysMask;
 HANDLE mThread;
 static LARGE_INTEGER yo;
-#elif defined(_PS3)
-#include "Console2Includes.h"
+#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+#include "PS3Includes.h"
 #include <sys/sys_time.h> // GetTime.cpp
 #include <stdint.h> // GetTime.cpp
 #include <sys/time_util.h> // GetTime.cpp
@@ -46,7 +50,7 @@ RakNetTime RakNet::GetTime( void )
 }
 RakNetTimeNS RakNet::GetTimeNS( void )
 {
-#if defined(_PS3)
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
 	uint64_t curTime;
 	if ( initialized == false)
 	{
@@ -58,14 +62,14 @@ RakNetTimeNS RakNet::GetTimeNS( void )
 		remainder=(curTime % ticksPerSecond);
 		initialTime = (RakNetTimeNS) quotient*(RakNetTimeNS)1000000 + (remainder*(RakNetTimeNS)1000000 / ticksPerSecond);
 		initialized = true;
-	}	
+	}
 #elif defined(_WIN32)
 	// Win32
 	if ( initialized == false)
 	{
 		initialized = true;
 
-#if !defined(_WIN32_WCE)
+#if !defined(_WIN32_WCE) && !defined(_XBOX) && !defined(X360)
 		// Save the current process
 		HANDLE mProc = GetCurrentProcess();
 
@@ -105,10 +109,10 @@ RakNetTimeNS RakNet::GetTimeNS( void )
 		initialized=true;
 		// I do this because otherwise RakNetTime in milliseconds won't work as it will underflow when dividing by 1000 to do the conversion
 		initialTime = ( tp.tv_sec ) * (RakNetTimeNS) 1000000 + ( tp.tv_usec );
-	}	
+	}
 #endif
 
-#if defined(_PS3)
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
 	// Use the function to get elapsed ticks, this is a macro.
 	_PS3_GetElapsedTicks(curTime);
 	uint64_t quotient, remainder;
@@ -121,21 +125,21 @@ RakNetTimeNS RakNet::GetTimeNS( void )
 
 	RakNetTimeNS curTime;
 	static RakNetTimeNS lastQueryVal=(RakNetTimeNS)0;
-	static unsigned long lastTickCountVal = GetTickCount();
+//	static unsigned long lastTickCountVal = GetTickCount();
 
 	LARGE_INTEGER PerfVal;
 
-#if !defined(_WIN32_WCE)
+#if !defined(_WIN32_WCE) && !defined(_XBOX) && !defined(X360)
 	// Set affinity to the first core
 	SetThreadAffinityMask(mThread, 1);
 #endif // !defined(_WIN32_WCE)
 
 	// Docs: On a multiprocessor computer, it should not matter which processor is called.
-	// However, you can get different results on different processors due to bugs in the basic input/output system (BIOS) or the hardware abstraction layer (HAL). To specify processor affinity for a thread, use the SetThreadAffinityMask function. 
+	// However, you can get different results on different processors due to bugs in the basic input/output system (BIOS) or the hardware abstraction layer (HAL). To specify processor affinity for a thread, use the SetThreadAffinityMask function.
 	// Query the timer
 	QueryPerformanceCounter( &PerfVal );
 
-#if !defined(_WIN32_WCE)
+#if !defined(_WIN32_WCE) && !defined(_XBOX) && !defined(X360)
 	// Reset affinity
 	SetThreadAffinityMask(mThread, mProcMask);
 #endif // !defined(_WIN32_WCE)
@@ -145,6 +149,13 @@ RakNetTimeNS RakNet::GetTimeNS( void )
 	remainder=((PerfVal.QuadPart) % yo.QuadPart);
 	curTime = (RakNetTimeNS) quotient*(RakNetTimeNS)1000000 + (remainder*(RakNetTimeNS)1000000 / yo.QuadPart);
 
+	// 08/26/08 - With the below workaround, the time seems to jump forward regardless.
+	// Just make sure the time doesn't go backwards
+	if (curTime < lastQueryVal)
+		return lastQueryVal;
+	lastQueryVal=curTime;
+
+	/*
 #if !defined(_WIN32_WCE)
 	if (lastQueryVal==0)
 	{
@@ -155,16 +166,18 @@ RakNetTimeNS RakNet::GetTimeNS( void )
 
 	// To workaround http://support.microsoft.com/kb/274323 where the timer can sometimes jump forward by hours or days
 	unsigned long curTickCount = GetTickCount();
-	unsigned elapsedTickCount = curTickCount - lastTickCountVal;
+	unsigned long elapsedTickCount = curTickCount - lastTickCountVal;
 	RakNetTimeNS elapsedQueryVal = curTime - lastQueryVal;
 	if (elapsedQueryVal/1000 > elapsedTickCount+100)
 	{
-		curTime=lastQueryVal+elapsedTickCount*1000;
+		curTime=(RakNetTimeNS)lastQueryVal+(RakNetTimeNS)elapsedTickCount*(RakNetTimeNS)1000;
 	}
 
 	lastTickCountVal=curTickCount;
 	lastQueryVal=curTime;
 #endif
+	*/
+
 	return curTime;
 
 #elif (defined(__GNUC__)  || defined(__GCCXML__))

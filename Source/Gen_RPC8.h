@@ -1,25 +1,24 @@
 #ifndef __GEN_RPC8_H
 #define __GEN_RPC8_H
 
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h> // memcpy
 #include <typeinfo>
-#ifdef _WIN32
+#if defined(_XBOX) || defined(X360)
+#include <XBOX360Includes.h>
+#elif defined (_WIN32)
 #include <windows.h>
 #endif
 #include <stddef.h>
 //#define ASSEMBLY_BLOCK asm
-#include "Types.h"
+//#include "Types.h"
 #include "BitStream.h"
 // #define AUTO_RPC_NO_ASM
-// #define AUTO_RPC_USE_DYNAMIC_CAST 1
 
 #ifdef _WIN64
 #define AUTO_RPC_NO_ASM
 #endif
-#include "NetworkIDObject.h"
 
 namespace GenRPC
 {
@@ -176,7 +175,7 @@ typedef double        HardwareReal;
 typedef unsigned long long NaturalWord;
 typedef double         HardwareReal;  // could be changed to __float128 on AMD64/nonwin
 
-#elif defined ( _PS3 )
+#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
 typedef double HardwareReal;
 typedef unsigned long long NaturalWord;
 #define AUTO_RPC_AUTORPC_WORD 64
@@ -204,14 +203,20 @@ typedef unsigned long long NaturalWord;
 		typedef unsigned int NaturalWord;
 	#endif
 #else
-	#if sizeof( long ) == 8
-		#define AUTORPC_WORD 64
-		typedef double HardwareReal;
-		typedef unsigned long long NaturalWord;
-	#else
+	#if defined(_XBOX) || defined(X360)
 		#define AUTORPC_WORD 32
 		typedef double HardwareReal;
 		typedef unsigned int NaturalWord;
+	#else
+		#if sizeof( long ) == 8
+			#define AUTORPC_WORD 64
+			typedef double HardwareReal;
+			typedef unsigned long long NaturalWord;
+		#else
+			#define AUTORPC_WORD 32
+			typedef double HardwareReal;
+			typedef unsigned int NaturalWord;
+		#endif
 	#endif
 #endif
 
@@ -757,266 +762,6 @@ void PushHeader( char*& p, item const i, bool endianSwap ) {
 	Push( p, f, false );
 }
 
-/// \internal
-/// This encodes the Pointer-to-a-Member-Function we use.
-struct PMF {
-	// This is necessary to make us look like a POD - but it's a crash waiting to happen.
-	PMF() 
-	{
-		;
-	}
-	// There is used to cast from the NetworkIDObject into the base object - the pointers stored in
-	// the structure's start address in memory.
-	void* (*castUp)(void*);
-#ifdef __GNUC__
-	typedef GenRPC::NaturalWord NaturalWord;
-
-	// GCC has a simple, consistent PMF structure.
-	union {
-		struct {
-			NaturalWord func_address_or_vtable_index;
-			NaturalWord class_offset;
-		};
-		NaturalWord raw_pointer[2];
-	};
-
-	// Copy constructor - so we can assign transparently.
-	PMF( PMF const& pmf ) 
-		: castUp( pmf.castUp ), 
-		func_address_or_vtable_index( pmf.func_address_or_vtable_index ),
-		class_offset( pmf.class_offset )
-	{
-		;
-	}
-
-	// This is provided som PMF can be initialised as null.
-	PMF( int i ) 
-		: castUp(0),
-		func_address_or_vtable_index( 0 ),
-		class_offset( 0 )
-	{
-		assert( i == 0  );
-	}
-
-	// Backwards compatibility - provide support for single-inheritance or non-object members.
-	PMF( void* func ) 
-		: castUp(0), 
-		func_address_or_vtable_index( reinterpret_cast<NaturalWord>( func ) ),
-		class_offset( 0 )
-	{
-		;
-	}
-
-	// Hack: allow construction from function-address/class offset; not sure this is used.
-	PMF( void* func, unsigned int offset ) 
-		: castUp( 0 ), func_address_or_vtable_index( reinterpret_cast<NaturalWord>( func ) ),
-		class_offset( offset )
-	{
-		;
-	}
-
-
-	// This initializes our PMF from the compiler's PMF.
-	template <typename Func>
-	PMF( Func func, void* (*_cast)(void*) ) 
-		: castUp( _cast ), 
-		func_address_or_vtable_index( ((NaturalWord*)&func)[0] ),
-		class_offset( ((NaturalWord*)&func)[1] )
-	{
-		assert( sizeof(func) == sizeof(NaturalWord[2]) );
-	}
-
-
-	// Return the address in memory of the function to ASM call, for a particular object
-	// The choice of void* as return type is for backwards compatibility.
-	void* computeFuncAddr( void* object ) {
-		if ( ( func_address_or_vtable_index & 1 ) == 0 ) 
-		{
-			return reinterpret_cast<void*>( func_address_or_vtable_index );
-		}
-		else 
-		{
-			register void* _object = computeThis(object);;
-			register char* vtable = (char*)*(NaturalWord**)_object;
-			return reinterpret_cast<void*>( *(NaturalWord*)( vtable + func_address_or_vtable_index - 1 ) );
-		}
-	}
-
-	// Take the object and return the address of the derived class to which this method belongs.
-	void* computeThis( void* object ) {
-		if ( castUp ) 
-			object = castUp( object );
-#ifdef AUTO_RPC_USE_DYNAMIC_CAST
-		if ( !object) 
-			return 0;
-#endif
-		return (void*)( (char*)object + class_offset );
-	}
-
-#elif _MSC_VER
-
-#pragma warning( push )
-
-typedef GenRPC::NaturalWord NaturalWord;
-
-#pragma warning( disable : 4201 ) // warning C4201: nonstandard extension used : nameless struct/union
-	union {
-		struct {
-			NaturalWord func_address;
-			NaturalWord class_offset;
-			NaturalWord vinheritance;
-			NaturalWord vtable_index;
-		};
-		NaturalWord raw_pointer[4];
-	};
-
-	// Copy constructor - so we can assign transparently.
-	PMF( PMF const& pmf ) 
-		: castUp( pmf.castUp ),
-		func_address( pmf.func_address ),
-		class_offset( pmf.class_offset ),
-		vinheritance( pmf.vinheritance ) ,
-		vtable_index( pmf.vtable_index ) 
-	{
-		;
-	}
-
-	// This is used to initializes a null PMF.
-	PMF( int i ) 
-		: castUp( 0 ),
-		func_address( 0 ),
-		class_offset( 0 ),
-		vinheritance( 0 ),
-		vtable_index( 0 ) 
-	{
-		assert( i == 0  );
-	}
-	// Backwards compatibility - provide support for single-inheritance or non-object member
-	PMF( void* func ) 
-		:  castUp( 0 ),
-#pragma warning( disable : 4311 ) // warning C4311: 'reinterpret_cast' : pointer truncation from 'void *' to 'GenRPC::PMF::NaturalWord'
-		func_address( reinterpret_cast<NaturalWord>( func ) ),
-		class_offset( 0 ),
-		vinheritance( 0 ),
-		vtable_index( 0 ) 
-	{
-		;
-	}
-
-	// Hack: allow construction from function-address/class offset
-	PMF( void* func, unsigned int offset ) 
-		: castUp( 0 ),
-#pragma warning( disable : 4311 ) // warning C4311: 'reinterpret_cast' : pointer truncation from 'void *' to 'GenRPC::PMF::NaturalWord'
-		func_address( reinterpret_cast<NaturalWord>( func ) ),
-		class_offset( offset ),
-		vinheritance( 0 ),
-		vtable_index( 0 )
-	{
-		;
-	}
-
-	// This initializes our PMF from the compiler's PMF.
-	template <typename Func>
-	PMF( Func func, void* (*_cast)(void*)  ) : castUp( _cast )
-	{
-		memset( raw_pointer, 0, sizeof(raw_pointer ) );
-		memcpy( raw_pointer, &func, sizeof( func ) );
-	}
-
-
-	// Return the address in memory of the function to ASM call, for a particular object
-	// The choice of void* as return type is for backwards compatibility.
-	void* computeFuncAddr( void* ) {
-#pragma warning( disable : 4312 ) // warning C4312: 'reinterpret_cast' : conversion from 'GenRPC::PMF::NaturalWord' to 'void *' of greater size
-		return reinterpret_cast<void*>( func_address );
-	}
-
-	// Take the object and return the address of the derived class to which this method belongs.
-	void* computeThis( void* object ) { 
-		// all offsets are relative to the base object - case up ensure we have that, at the cost of another
-		// another annoying virtual function call.  Need to merge both using a single virtual funciton call.
-		if ( castUp ) 
-			object = castUp( object );
-#ifdef AUTO_RPC_USE_DYNAMIC_CAST
-		// propogate failure of dynamic cast.
-		if ( !castUp )
-			return 0;
-#endif
-		if ( vtable_index ) {
-			NaturalWord** vtable = (NaturalWord**)((char*)object + vinheritance);
-			return (void*)( (char*)vtable + class_offset + (*vtable)[ vtable_index ] ); 
-		} else {
-			return (void*)( (char*)object + class_offset );
-		}
-	}
-
-#pragma warning ( pop )
-#else
-#error RakNet:AutoRPC: No support for your compilers PMF
-#endif 
-	bool operator==(PMF const& pmf) { return !memcmp( this, &pmf, sizeof(pmf) ); }
-	bool operator!=(PMF const& pmf) { return !operator==( pmf ); }
-};
-
-
-/// \internal Meta Programming - these return the # of args used by a function.
-template <typename R, class C>
-static inline int countFuncArgs( R(AUTO_RPC_CALLSPEC C::*)() ) { return 0; }
-
-template <typename R, class C, typename P1>
-static inline int countFuncArgs( R(AUTO_RPC_CALLSPEC C::*)(P1) ) { return 1; }
-
-template <typename R, class C, typename P1, typename P2>
-static inline int countFuncArgs( R(AUTO_RPC_CALLSPEC C::*)(P1, P2) ) { return 2; }
-
-template <typename R, class C, typename P1, typename P2, typename P3>
-static inline int countFuncArgs( R(AUTO_RPC_CALLSPEC C::*)(P1, P2, P3) ) { return 3; }
-
-template <typename R, class C, typename P1, typename P2, typename P3, typename P4>
-static inline int countFuncArgs( R(AUTO_RPC_CALLSPEC C::*)(P1, P2, P3, P4) ) { return 4; }
-
-template <typename R, class C, typename P1, typename P2, typename P3, typename P4, typename P5>
-static inline int countFuncArgs( R(AUTO_RPC_CALLSPEC C::*)(P1, P2, P3, P4, P5) ) { return 5; }
-
-template <typename R, class C, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6>
-static inline int countFuncArgs( R(AUTO_RPC_CALLSPEC C::*)(P1, P2, P3, P4, P5, P6) ) { return 6; }
-
-template <typename R, class C, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7>
-static inline int countFuncArgs( R(AUTO_RPC_CALLSPEC C::*)(P1, P2, P3, P4, P5, P6, P7) ) { return 7; }
-
-template <typename R, class C, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8>
-static inline int countFuncArgs( R(AUTO_RPC_CALLSPEC C::*)(P1, P2, P3, P4, P5, P6, P7, P8) ) { return 8; }
-
-template <typename R, class C, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8, typename P9>
-static inline int countFuncArgs( R(AUTO_RPC_CALLSPEC C::*)(P1, P2, P3, P4, P5, P6, P7, P8, P9) ) { return 9; }
-
-/// \internal
-/// This template provides provides a function that cast's Up from from NetworkIDObject to the base type. 
-template <class C>
-struct CastNetworkIDObject2 {
-	static void* castUp( void* object ) 
-	{		
-#ifdef AUTO_RPC_USE_DYNAMIC_CAST
-		return (void*) dynamic_cast< C* >( (NetworkIDObject*) object );
-#else
-		return (void*) ( C* ) ( (NetworkIDObject*) object );
-#endif
-	}
-};
-
-
-/// \internal 
-/// Template wrapper which initialises the PMF (Pointer to a Member Function) class for a particular a function.
-/// \note If you write &DerivedClass::func gcc will convert it into BaseClass::* for template methods, which is why 
-/// we use an intermediate variable of the precise type - to pass to the PMF constructor.
-template <class C, typename T>
-struct PMFWrapper : public PMF {
-	PMFWrapper( T _t ) : PMF( _t, CastNetworkIDObject2< C >::castUp ) 
-	{
-	}
-};
-
 }
 
 #endif
-

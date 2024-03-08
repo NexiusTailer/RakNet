@@ -17,13 +17,14 @@
 
 #include "TCPInterface.h"
 #ifdef _WIN32
+typedef int socklen_t;
 #else
 #include <sys/time.h>
 #include <unistd.h>
 #include <pthread.h>
 #endif
 #include <string.h>
-#include <assert.h>
+#include "RakAssert.h"
 #include <stdio.h>
 #include "RakAssert.h"
 #include "RakSleep.h"
@@ -32,7 +33,8 @@
 #endif
 
 #ifdef _WIN32
-#elif defined(_PS3)
+#include "WSAStartupSingleton.h"
+#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
 #define closesocket socketclose
 #else
 #define closesocket close
@@ -58,28 +60,15 @@ TCPInterface::TCPInterface()
 #endif
 
 #ifdef _WIN32
-
-	WSADATA winsockInfo;
-	if ( WSAStartup( MAKEWORD( 2, 2 ), &winsockInfo ) != 0 )
-	{
-#if defined(_WIN32) && !defined(_XBOX360) && defined(_DEBUG)
-		DWORD dwIOError = GetLastError();
-		LPVOID messageBuffer;
-		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
-			( LPTSTR ) & messageBuffer, 0, NULL );
-		// something has gone wrong here...
-		printf( "WSAStartup failed:Error code - %d\n%s", dwIOError, messageBuffer );
-		//Free the buffer.
-		LocalFree( messageBuffer );
-#endif
-	}
-
+	WSAStartupSingleton::AddRef();
 #endif
 }
 TCPInterface::~TCPInterface()
 {
 	Stop();
+#ifdef _WIN32
+	WSAStartupSingleton::Deref();
+#endif
 }
 bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnections)
 {
@@ -157,14 +146,14 @@ void TCPInterface::Stop(void)
 #if defined(OPEN_SSL_CLIENT_SUPPORT)
 		remoteClients[i]->FreeSSL();
 #endif
-		delete remoteClients[i];
+		RakNet::OP_DELETE(remoteClients[i]);
 	}
 	remoteClients.Clear();
 
 	for (i=0; i < remoteClientsInsertionQueue.Size(); i++)
 	{
 		closesocket(remoteClientsInsertionQueue[i]->socket);
-		delete remoteClientsInsertionQueue[i];
+		RakNet::OP_DELETE(remoteClientsInsertionQueue[i]);
 	}
 	remoteClientsInsertionQueue.Clear();
 
@@ -193,7 +182,7 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 			return UNASSIGNED_SYSTEM_ADDRESS;
 
 		RemoteClient *remoteClient;
-		remoteClient = new RemoteClient;
+		remoteClient = RakNet::OP_NEW<RemoteClient>();
 		remoteClient->socket=sockfd;
 		remoteClient->systemAddress.binaryAddress=inet_addr(host);
 		remoteClient->systemAddress.port=remotePort;
@@ -202,7 +191,7 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 	}
 	else
 	{
-		ThisPtrPlusSysAddr *s = new ThisPtrPlusSysAddr;
+		ThisPtrPlusSysAddr *s = RakNet::OP_NEW<ThisPtrPlusSysAddr>();
 		s->systemAddress.SetBinaryAddress(host);
 		s->systemAddress.port=remotePort;
 		s->tcpInterface=this;
@@ -211,7 +200,7 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 		int errorCode = RakNet::RakThread::Create(ConnectionAttemptLoop, s);
 		if (errorCode!=0)
 		{
-			delete s;
+			RakNet::OP_DELETE(s);
 			failedConnectionAttempts.Push(s->systemAddress);
 		}
 		return UNASSIGNED_SYSTEM_ADDRESS;
@@ -282,7 +271,7 @@ void TCPInterface::DeallocatePacket( Packet *packet )
 {
 	if (packet==0)
 		return;
-	assert(incomingMessages.CheckReadUnlockOrder(packet));
+	RakAssert(incomingMessages.CheckReadUnlockOrder(packet));
 	rakFree(packet->data);
 	incomingMessages.ReadUnlock();
 }
@@ -342,7 +331,7 @@ void TCPInterface::DeleteRemoteClient(RemoteClient *remoteClient, fd_set *except
 //	FD_CLR(remoteClient->socket, exceptionFD);
 	closesocket(remoteClient->socket);
 	//shutdown(remoteClient->socket, SD_SEND);
-	delete remoteClient;
+	RakNet::OP_DELETE(remoteClient);
 }
 
 void TCPInterface::InsertRemoteClient(RemoteClient* remoteClient)
@@ -356,7 +345,7 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort)
 {
 	sockaddr_in serverAddress;
 
-#if !defined(_XBOX360)
+#if !defined(_XBOX) && !defined(_X360)
 	struct hostent * server;
 	server = gethostbyname(host);
 	if (server == NULL)
@@ -372,7 +361,7 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort)
 	serverAddress.sin_port = htons( remotePort );
 
 
-#if !defined(_XBOX360)
+#if !defined(_XBOX) && !defined(_X360)
 	memcpy((char *)&serverAddress.sin_addr.s_addr, (char *)server->h_addr, server->h_length);
 #else
 	serverAddress.sin_addr.s_addr = inet_addr( host );
@@ -405,9 +394,11 @@ RAK_THREAD_DECLARATION(ConnectionAttemptLoop)
 	TCPInterface::ThisPtrPlusSysAddr *s = (TCPInterface::ThisPtrPlusSysAddr *) arguments;
 	SystemAddress systemAddress = s->systemAddress;
 	TCPInterface *tcpInterface = s->tcpInterface;
-	delete s;
+	RakNet::OP_DELETE(s);
 
-	SOCKET sockfd = tcpInterface->SocketConnect(systemAddress.ToString(false), systemAddress.port);
+	char str1[64];
+	systemAddress.ToString(false, str1);
+	SOCKET sockfd = tcpInterface->SocketConnect(str1, systemAddress.port);
 	if (sockfd==(SOCKET)-1)
 	{
 		tcpInterface->failedConnectionAttemptMutex.Lock();
@@ -417,7 +408,7 @@ RAK_THREAD_DECLARATION(ConnectionAttemptLoop)
 	}
 
 	RemoteClient *remoteClient;
-	remoteClient = new RemoteClient;
+	remoteClient = RakNet::OP_NEW<RemoteClient>();
 	remoteClient->socket=sockfd;
 	remoteClient->systemAddress=systemAddress;
 	tcpInterface->InsertRemoteClient(remoteClient);
@@ -572,7 +563,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 #ifdef _MSC_VER
 #pragma warning( disable : 4244 ) // warning C4127: conditional expression is constant
 #endif
-#if defined(_PS3)
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
 		selectResult=socketselect(largestDescriptor+1, &readFD, 0, &exceptionFD, &tv);
 #else
 		selectResult=(int) select(largestDescriptor+1, &readFD, 0, &exceptionFD, &tv);		
@@ -589,7 +580,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 
 				if (newSock != (SOCKET) -1)
 				{
-					remoteClient = new RemoteClient;
+					remoteClient = RakNet::OP_NEW<RemoteClient>();
 					remoteClient->socket=newSock;
 					remoteClient->systemAddress.binaryAddress=sockAddr.sin_addr.s_addr;
 					remoteClient->systemAddress.port=ntohs( sockAddr.sin_port);
@@ -604,7 +595,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 				else
 				{
 #ifdef _DO_PRINTF
-					printf("Error: connection failed\n");
+					RAKNET_DEBUG_PRINTF("Error: connection failed\n");
 #endif
 				}
 			}
@@ -614,7 +605,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 				int err;
 				int errlen = sizeof(err);
 				getsockopt(sts->listenSocket, SOL_SOCKET, SO_ERROR,(char*)&err, &errlen);
-				printf("Socket error %s on listening socket\n", err);
+				RAKNET_DEBUG_PRINTF("Socket error %s on listening socket\n", err);
 #endif
 			}
 			else
@@ -632,7 +623,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 							getsockopt(sts->listenSocket, SOL_SOCKET, SO_ERROR,(char*)&err, &errlen);
 							in_addr in;
 							in.s_addr = sts->remoteClients[i]->systemAddress.binaryAddress;
-							printf("Socket error %i on %s:%i\n", err,inet_ntoa( in ), sts->remoteClients[i]->systemAddress.port );
+							RAKNET_DEBUG_PRINTF("Socket error %i on %s:%i\n", err,inet_ntoa( in ), sts->remoteClients[i]->systemAddress.port );
 						}
 						
 #endif
@@ -687,7 +678,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 
 #if defined(_DO_PRINTF) && defined(_WIN32)
 			DWORD dwIOError = WSAGetLastError();
-			printf("Socket error %i\n", dwIOError);
+			RAKNET_DEBUG_PRINTF("Socket error %i\n", dwIOError);
 #endif
 		}
 

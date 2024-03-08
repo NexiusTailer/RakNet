@@ -69,7 +69,7 @@ namespace DataStructures
 	 * A.Add(10);
 	 * A.Add(15);
 	 * A.Add(5);
-	 * int* array = new int [A.Size()];
+	 * int* array = RakNet::OP_NEW<int >(A.Size());
 	 * A.DisplayInorder(array);
 	 * array[0]; // returns 5
 	 * array[1]; // returns 10
@@ -94,7 +94,7 @@ namespace DataStructures
 	 *
 	 */
 	template <class BinarySearchTreeType>
-	class RAK_DLL_EXPORT BinarySearchTree : public RakNet::RakMemoryOverride
+	class RAK_DLL_EXPORT BinarySearchTree
 	{
 	
 	public:
@@ -574,8 +574,8 @@ namespace DataStructures
 					parent->right = 0;
 			}
 			
-			delete node_to_delete->item;
-			delete node_to_delete;
+			RakNet::OP_DELETE(node_to_delete->item);
+			RakNet::OP_DELETE(node_to_delete);
 			BinarySearchTree_size--;
 			return parent;
 		}
@@ -594,9 +594,9 @@ namespace DataStructures
 				else
 					root = current->right; // Without a parent this must be the root node
 					
-				delete node_to_delete->item;
+				RakNet::OP_DELETE(node_to_delete->item);
 				
-				delete node_to_delete;
+				RakNet::OP_DELETE(node_to_delete);
 				
 				BinarySearchTree_size--;
 				
@@ -617,9 +617,9 @@ namespace DataStructures
 					else
 						root = current->left; // Without a parent this must be the root node
 						
-					delete node_to_delete->item;
+					RakNet::OP_DELETE(node_to_delete->item);
 					
-					delete node_to_delete;
+					RakNet::OP_DELETE(node_to_delete);
 					
 					BinarySearchTree_size--;
 					
@@ -638,7 +638,7 @@ namespace DataStructures
 						current = current->left;
 					}
 					
-					// Replace the value held by the node to delete with the value pointed to by current;
+					// Replace the value held by the node to RakNet::OP_DELETE(with the value pointed to by current);
 					*( node_to_delete->item ) = *( current->item );
 					
 					// Delete current.
@@ -650,9 +650,9 @@ namespace DataStructures
 						else
 							parent->left = 0;
 							
-						delete current->item;
+						RakNet::OP_DELETE(current->item);
 						
-						delete current;
+						RakNet::OP_DELETE(current);
 						
 						BinarySearchTree_size--;
 						
@@ -668,9 +668,9 @@ namespace DataStructures
 						else
 							parent->left = current->right;
 							
-						delete current->item;
+						RakNet::OP_DELETE(current->item);
 						
-						delete current;
+						RakNet::OP_DELETE(current);
 						
 						BinarySearchTree_size--;
 						
@@ -692,8 +692,8 @@ namespace DataStructures
 		if ( BinarySearchTree_size == 0 )
 		{
 			BinarySearchTree_size = 1;
-			root = new typename BinarySearchTree::node;
-			root->item = new BinarySearchTreeType;
+			root = RakNet::OP_NEW<typename BinarySearchTree::node>();
+			root->item = RakNet::OP_NEW<BinarySearchTreeType>();
 			*( root->item ) = input;
 			root->left = 0;
 			root->right = 0;
@@ -716,8 +716,8 @@ namespace DataStructures
 				{
 					if ( current->left == 0 )
 					{
-						current->left = new typename BinarySearchTree::node;
-						current->left->item = new BinarySearchTreeType;
+						current->left = RakNet::OP_NEW<typename BinarySearchTree::node>();
+						current->left->item = RakNet::OP_NEW<BinarySearchTreeType>();
 						current = current->left;
 						current->left = 0;
 						current->right = 0;
@@ -739,8 +739,8 @@ namespace DataStructures
 					{
 						if ( current->right == 0 )
 						{
-							current->right = new typename BinarySearchTree::node;
-							current->right->item = new BinarySearchTreeType;
+							current->right = RakNet::OP_NEW<typename BinarySearchTree::node>();
+							current->right->item = RakNet::OP_NEW<BinarySearchTreeType>();
 							current = current->right;
 							current->left = 0;
 							current->right = 0;
@@ -1094,8 +1094,8 @@ namespace DataStructures
 		{
 			if ( BinarySearchTree_size == 1 )
 			{
-				delete root->item;
-				delete root;
+				RakNet::OP_DELETE(root->item);
+				RakNet::OP_DELETE(root);
 				root = 0;
 				BinarySearchTree_size = 0;
 			}
@@ -1123,9 +1123,9 @@ namespace DataStructures
 						else
 							parent->right = 0;
 							
-						delete current->item;
+						RakNet::OP_DELETE(current->item);
 						
-						delete current;
+						RakNet::OP_DELETE(current);
 						
 						current = parent;
 						

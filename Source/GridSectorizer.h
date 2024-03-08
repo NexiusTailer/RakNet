@@ -11,7 +11,7 @@
 #include "DS_List.h"
 #endif
 
-class GridSectorizer : public RakNet::RakMemoryOverride
+class GridSectorizer
 {
 public:
 	GridSectorizer();

@@ -31,7 +31,7 @@ class NetworkIDManager;
 /// Then have that system send a message to all other systems, and include the value returned from GetNetworkID() in that packet.  All other systems should then create the same
 /// class of object, and call SetNetworkID() on that class with the NetworkID in the packet.
 /// \see the manual for more information on this.
-class RAK_DLL_EXPORT NetworkIDObject : public RakNet::RakMemoryOverride
+class RAK_DLL_EXPORT NetworkIDObject
 {
 public:
 	/// Constructor.  NetworkIDs, if IsNetworkIDAuthority() is true, are created here.

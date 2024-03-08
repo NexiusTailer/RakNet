@@ -19,7 +19,8 @@
 #define __NETWORK_TYPES_H
 
 #include "RakNetDefines.h"
-#include "RakNetTypes.h"
+#include "NativeTypes.h"
+#include "RakNetTime.h"
 #include "Export.h"
 #if !defined(_WIN32) && ((defined(__GNUC__)  || defined(__GCCXML__)))
 #include "stdint.h"
@@ -47,27 +48,6 @@ typedef unsigned char MessageID;
 
 typedef unsigned int BitSize_t;
 
-#ifndef _STDINT_H
-typedef unsigned char         uint8_t;
-typedef unsigned short        uint16_t;
-typedef unsigned int          uint32_t;
-typedef unsigned long long int    uint64_t;
-typedef signed char         int8_t;
-typedef signed short        int16_t;
-typedef signed int          int32_t;
-typedef signed long long   	int64_t;
-#endif
-
-// Define __GET_TIME_64BIT if you want to use large types for GetTime (takes more bandwidth when you transmit time though!)
-// You would want to do this if your system is going to run long enough to overflow the millisecond counter (over a month)
-#ifdef __GET_TIME_64BIT
-typedef unsigned long long RakNetTime;
-typedef unsigned long long RakNetTimeNS;
-#else
-typedef unsigned int RakNetTime;
-typedef unsigned long long RakNetTimeNS;
-#endif
-
 #if defined(_MSC_VER) && _MSC_VER > 0
 #define PRINTF_TIME_MODIFIER "I64"
 #else
@@ -78,17 +58,22 @@ typedef unsigned long long RakNetTimeNS;
 struct RAK_DLL_EXPORT SocketDescriptor
 {
 	SocketDescriptor();
-	SocketDescriptor(unsigned short _port, const char *_hostAddress);
+	SocketDescriptor(unsigned short _port, const char *_hostAddress, bool _isPS3LobbySocket=false);
 
 	/// The local port to bind to.  Pass 0 to have the OS autoassign a port.
 	unsigned short port;
 
 	/// The local network card address to bind to, such as "127.0.0.1".  Pass an empty string to use INADDR_ANY.
 	char hostAddress[32];
+
+	/// \internal
+	bool isPS3LobbySocket;
 };
 
-/// \brief Unique identifier for a system.
+/// \brief Network address for a system
 /// Corresponds to a network address
+/// This is not necessarily a unique identifier. For example, if a system has both LAN and internet connections, the system may be identified by either one, depending on who is communicating
+/// Use RakNetGUID for a unique per-instance of RakPeer to identify systems
 struct RAK_DLL_EXPORT SystemAddress
 {
 	///The peer address from inet_addr.
@@ -97,8 +82,14 @@ struct RAK_DLL_EXPORT SystemAddress
 	unsigned short port;
 
 	// Return the systemAddress as a string in the format <IP>:<Port>
-	// Note - returns a static string.  Not thread-safe or safe for multiple calls per line.
+	// Returns a static string
+	// NOT THREADSAFE
 	const char *ToString(bool writePort=true) const;
+
+	// Return the systemAddress as a string in the format <IP>:<Port>
+	// dest must be large enough to hold the output
+	// THREADSAFE
+	void ToString(bool writePort, char *dest) const;
 
 	// Sets the binary address part from a string.  Doesn't set the port
 	void SetBinaryAddress(const char *str);
@@ -116,60 +107,14 @@ struct RAK_DLL_EXPORT SystemAddress
 	bool operator < ( const SystemAddress& right ) const;
 };
 
-struct RAK_DLL_EXPORT NetworkID
-{
-	// Set this to true to use peer to peer mode for NetworkIDs.
-	// Obviously the value of this must match on all systems.
-	// True, and this will write the systemAddress portion with network sends.  Takes more bandwidth, but NetworkIDs can be locally generated
-	// False, and only localSystemAddress is used.
-	static bool peerToPeerMode;
-
-	// In peer to peer, we use both systemAddress and localSystemAddress
-	// In client / server, we only use localSystemAddress
-	SystemAddress systemAddress;
-	unsigned short localSystemAddress;
-
-	NetworkID& operator = ( const NetworkID& input );
-
-	static bool IsPeerToPeerMode(void);
-	static void SetPeerToPeerMode(bool isPeerToPeer);
-	bool operator==( const NetworkID& right ) const;
-	bool operator!=( const NetworkID& right ) const;
-	bool operator > ( const NetworkID& right ) const;
-	bool operator < ( const NetworkID& right ) const;
-};
 
 /// Size of SystemAddress data
 #define SystemAddress_Size 6
 
-/// This represents a user message from another system.
-struct Packet
-{
-	/// Server only - this is the index into the player array that this systemAddress maps to
-	SystemIndex systemIndex;
-
-	/// The system that send this packet.
-	SystemAddress systemAddress;
-
-	/// The length of the data in bytes
-	/// \deprecated You should use bitSize.
-	unsigned int length;
-
-	/// The length of the data in bits
-	BitSize_t bitSize;
-
-	/// The data from the sender
-	unsigned char* data;
-
-	/// @internal
-	/// Indicates whether to delete the data, or to simply delete the packet.
-	bool deleteData;
-};
-
 class RakPeerInterface;
 
 /// All RPC functions have the same parameter list - this structure.
-/// \depreciated Use the AutoRPC plugin instead
+/// \depreciated Use the AutoRPC or RPC3 plugin instead
 struct RPCParameters
 {
 	/// The data from the remote system
@@ -196,8 +141,36 @@ struct RPCParameters
 	RakNet::BitStream *replyToSender;
 };
 
-///  Index of an unassigned player
-const SystemIndex UNASSIGNED_PLAYER_INDEX = 65535;
+/// Uniquely identifies an instance of RakPeer. Use RakPeer::GetGuidFromSystemAddress() and RakPeer::GetSystemAddressFromGuid() to go between SystemAddress and RakNetGUID
+/// Use RakPeer::GetGuidFromSystemAddress(UNASSIGNED_SYSTSEM_ADDRESS) to get your own GUID
+struct RAK_DLL_EXPORT RakNetGUID
+{
+	uint32_t g[4];
+
+	// Return the GUID as a string
+	// Returns a static string
+	// NOT THREADSAFE
+	const char *ToString(void) const;
+
+	// Return the GUID as a string
+	// dest must be large enough to hold the output
+	// THREADSAFE
+	void ToString(char *dest) const;
+
+	RakNetGUID& operator = ( const RakNetGUID& input )
+	{
+		g[0]=input.g[0];
+		g[1]=input.g[1];
+		g[2]=input.g[2];
+		g[3]=input.g[3];
+		return *this;
+	}
+
+	bool operator==( const RakNetGUID& right ) const;
+	bool operator!=( const RakNetGUID& right ) const;
+	bool operator > ( const RakNetGUID& right ) const;
+	bool operator < ( const RakNetGUID& right ) const;
+};
 
 /// Index of an invalid SystemAddress
 const SystemAddress UNASSIGNED_SYSTEM_ADDRESS =
@@ -205,11 +178,84 @@ const SystemAddress UNASSIGNED_SYSTEM_ADDRESS =
 	0xFFFFFFFF, 0xFFFF
 };
 
-/// Unassigned object ID
-const NetworkID UNASSIGNED_NETWORK_ID =
+const RakNetGUID UNASSIGNED_RAKNET_GUID = 
 {
-	{0xFFFFFFFF, 0xFFFF}, 65535
+	{0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF}
 };
+
+struct RAK_DLL_EXPORT NetworkID
+{
+	NetworkID()
+	{
+#if defined NETWORK_ID_SUPPORTS_PEER_TO_PEER
+		guid = UNASSIGNED_RAKNET_GUID;
+		systemAddress=UNASSIGNED_SYSTEM_ADDRESS;
+#endif
+		localSystemAddress=65535;
+	}
+	~NetworkID() {}
+
+	/// \depreciated. Use NETWORK_ID_SUPPORTS_PEER_TO_PEER in RakNetDefines.h
+	// Set this to true to use peer to peer mode for NetworkIDs.
+	// Obviously the value of this must match on all systems.
+	// True, and this will write the systemAddress portion with network sends.  Takes more bandwidth, but NetworkIDs can be locally generated
+	// False, and only localSystemAddress is used.
+//	static bool peerToPeerMode;
+
+#if defined NETWORK_ID_SUPPORTS_PEER_TO_PEER
+	// Depreciated: Use guid instead
+	// In peer to peer, we use both systemAddress and localSystemAddress
+	// In client / server, we only use localSystemAddress
+	SystemAddress systemAddress;
+
+	RakNetGUID guid;
+#endif
+	unsigned short localSystemAddress;
+
+	NetworkID& operator = ( const NetworkID& input );
+
+	static bool IsPeerToPeerMode(void);
+	static void SetPeerToPeerMode(bool isPeerToPeer);
+	bool operator==( const NetworkID& right ) const;
+	bool operator!=( const NetworkID& right ) const;
+	bool operator > ( const NetworkID& right ) const;
+	bool operator < ( const NetworkID& right ) const;
+};
+
+/// This represents a user message from another system.
+struct Packet
+{
+	/// Server only - this is the index into the player array that this systemAddress maps to
+	SystemIndex systemIndex;
+
+	/// The system that send this packet.
+	SystemAddress systemAddress;
+
+	/// A unique identifier for the system that sent this packet, regardless of IP address (internal / external / remote system)
+	/// Only valid once a connection has been established (ID_CONNECTION_REQUEST_ACCEPTED, or ID_NEW_INCOMING_CONNECTION)
+	/// Until that time, will be UNASSIGNED_RAKNET_GUID
+	RakNetGUID guid;
+
+	/// The length of the data in bytes
+	/// \deprecated You should use bitSize.
+	unsigned int length;
+
+	/// The length of the data in bits
+	BitSize_t bitSize;
+
+	/// The data from the sender
+	unsigned char* data;
+
+	/// @internal
+	/// Indicates whether to delete the data, or to simply delete the packet.
+	bool deleteData;
+};
+
+///  Index of an unassigned player
+const SystemIndex UNASSIGNED_PLAYER_INDEX = 65535;
+
+/// Unassigned object ID
+const NetworkID UNASSIGNED_NETWORK_ID;
 
 const int PING_TIMES_ARRAY_SIZE = 5;
 

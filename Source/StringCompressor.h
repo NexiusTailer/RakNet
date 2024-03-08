@@ -38,7 +38,7 @@ class HuffmanEncodingTree;
 ///
 /// Only works with ASCII strings.  The default compression is for English.
 /// You can call GenerateTreeFromStrings to compress and decompress other languages efficiently as well.
-class RAK_DLL_EXPORT StringCompressor : public RakNet::RakMemoryOverride
+class RAK_DLL_EXPORT StringCompressor
 {
 public:
 	
@@ -89,11 +89,11 @@ public:
 	
 	/// Used so I can allocate and deallocate this singleton at runtime
 	static void RemoveReference(void);
-	
-private:
-	
+
 	/// Private Constructor	
 	StringCompressor();
+
+private:
 	
 	/// Singleton instance
 	static StringCompressor *instance;

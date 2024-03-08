@@ -1,4 +1,4 @@
-Project: Bigstream
+Project: Bitstream
 
 Description: Tutorial sample of using bitstreams
 

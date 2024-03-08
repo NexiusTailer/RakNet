@@ -4,8 +4,10 @@
 #include "MessageIdentifiers.h"
 #include "BitStream.h"
 #include "Replica.h"
+#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
 #include <memory.h>
-#include <assert.h>
+#endif
+#include "RakAssert.h"
 #include <stdio.h> // For my debug printfs
 #include "RakAssert.h"
 #include "NetworkIDManager.h"
@@ -89,7 +91,7 @@ void ReplicaManager::SetAutoParticipateNewConnections(bool autoAdd)
 }
 bool ReplicaManager::AddParticipant(SystemAddress systemAddress)
 {
-	assert(systemAddress!=UNASSIGNED_SYSTEM_ADDRESS);
+	RakAssert(systemAddress!=UNASSIGNED_SYSTEM_ADDRESS);
 
 	// If this player is already in the list of participants, just return.
 	ParticipantStruct *participantStruct;
@@ -98,7 +100,7 @@ bool ReplicaManager::AddParticipant(SystemAddress systemAddress)
 		return false;
 
 	// Create a new participant with this systemAddress
-	participantStruct = new ParticipantStruct;
+	participantStruct = RakNet::OP_NEW<ParticipantStruct>();
 	participantStruct->systemAddress=systemAddress;
 
 	// Signal that when done sending SendConstruction for each existing object, we call sendDownloadCompleteCB
@@ -153,7 +155,7 @@ bool ReplicaManager::AddParticipant(SystemAddress systemAddress)
 }
 bool ReplicaManager::RemoveParticipant(SystemAddress systemAddress)
 {
-	assert(systemAddress!=UNASSIGNED_SYSTEM_ADDRESS);
+	RakAssert(systemAddress!=UNASSIGNED_SYSTEM_ADDRESS);
 
 	// Find this participant by systemAddress
 	ParticipantStruct *participantStruct;
@@ -163,7 +165,7 @@ bool ReplicaManager::RemoveParticipant(SystemAddress systemAddress)
 	if (participantStruct)
 	{
 		participantList.Remove(systemAddress);
-		delete participantStruct;
+		RakNet::OP_DELETE(participantStruct);
 		return true;
 	}
 
@@ -172,7 +174,7 @@ bool ReplicaManager::RemoveParticipant(SystemAddress systemAddress)
 
 void ReplicaManager::Construct(Replica *replica, bool isCopy, SystemAddress systemAddress, bool broadcast)
 {
-	assert(replica);
+	RakAssert(replica);
 
 	unsigned i;
 	ParticipantStruct *participantStruct;
@@ -198,7 +200,7 @@ void ReplicaManager::Construct(Replica *replica, bool isCopy, SystemAddress syst
 				{
 #ifdef _DEBUG
 					// Implicit is only used for objects that were not already registered.
-					assert(isCopy==false);
+					RakAssert(isCopy==false);
 #endif
 					participantStruct->commandList[index].command|=REPLICA_EXPLICIT_CONSTRUCTION; // Set this bit
 					participantStruct->commandList[index].command&=0xFF ^ REPLICA_IMPLICIT_CONSTRUCTION; // Unset this bit
@@ -227,7 +229,7 @@ void ReplicaManager::Construct(Replica *replica, bool isCopy, SystemAddress syst
 }
 void ReplicaManager::Destruct(Replica *replica, SystemAddress systemAddress, bool broadcast)
 {
-	assert(replica);
+	RakAssert(replica);
 
 	bool sendTimestamp;
 	bool objectExists;
@@ -349,7 +351,7 @@ void ReplicaManager::DereferencePointer(Replica *replica)
 }
 void ReplicaManager::SetScope(Replica *replica, bool inScope, SystemAddress systemAddress, bool broadcast)
 {
-	assert(replica);
+	RakAssert(replica);
 
 	// Autoreference the pointer if necessary.  This way the user can call functions on an object without having to worry
 	// About the order of operations.
@@ -401,7 +403,7 @@ void ReplicaManager::SetScope(Replica *replica, bool inScope, SystemAddress syst
 }
 void ReplicaManager::SignalSerializeNeeded(Replica *replica, SystemAddress systemAddress, bool broadcast)
 {
-	assert(replica);
+	RakAssert(replica);
 
 	// Autoreference the pointer if necessary.  This way the user can call functions on an object without having to worry
 	// About the order of operations.
@@ -541,7 +543,7 @@ bool ReplicaManager::HasParticipant(SystemAddress systemAddress)
 }
 void ReplicaManager::SignalSerializationFlags(Replica *replica, SystemAddress systemAddress, bool broadcast, bool set, unsigned int flags)
 {
-	assert(replica);
+	RakAssert(replica);
 
 	// Autoreference the pointer if necessary.  This way the user can call functions on an object without having to worry
 	// About the order of operations.
@@ -594,7 +596,7 @@ void ReplicaManager::SignalSerializationFlags(Replica *replica, SystemAddress sy
 }
 unsigned int* ReplicaManager::AccessSerializationFlags(Replica *replica, SystemAddress systemAddress)
 {
-	assert(replica);
+	RakAssert(replica);
 
 	// Autoreference the pointer if necessary.  This way the user can call functions on an object without having to worry
 	// About the order of operations.
@@ -645,7 +647,7 @@ void ReplicaManager::Clear(void)
 	// Free all memory
 	unsigned i;
 	for (i=0; i < participantList.Size(); i++)
-		delete participantList[i];
+		RakNet::OP_DELETE(participantList[i]);
 	participantList.Clear();
 	replicatedObjects.Clear();
 	nextReferenceIndex=0;
@@ -733,7 +735,7 @@ void ReplicaManager::Update(RakPeerInterface *peer)
 				}
 				else
 				{
-					assert(sendDLComplete==REPLICA_PROCESS_LATER);
+					RakAssert(sendDLComplete==REPLICA_PROCESS_LATER);
 					// else REPLICA_PROCESS_LATER
 				}
 			}
@@ -751,7 +753,7 @@ void ReplicaManager::Update(RakPeerInterface *peer)
 		//	userFlags=participantStruct->commandList[commandListIndex].userFlags;
 			replicatedObjectsIndex=replicatedObjects.GetIndexFromKey(replica, &objectExists);
 #ifdef _DEBUG
-			assert(objectExists);
+			RakAssert(objectExists);
 #endif
 			if (objectExists==false)
 				continue;
@@ -834,7 +836,7 @@ void ReplicaManager::Update(RakPeerInterface *peer)
 					}
 					else // REPLICA_CANCEL_PROCESS
 					{
-						assert(res==REPLICA_CANCEL_PROCESS);
+						RakAssert(res==REPLICA_CANCEL_PROCESS);
 						participantStruct->commandList[commandListIndex].command=0;
 					}
 				}
@@ -979,7 +981,7 @@ void ReplicaManager::Update(RakPeerInterface *peer)
 							else
 							{
 								// if the user returns REPLICA_PROCESS_LATER, just continue with another CommandStruct.
-								assert(res==REPLICA_PROCESS_LATER);
+								RakAssert(res==REPLICA_PROCESS_LATER);
 							}
 						} while(res==REPLICA_PROCESS_AGAIN);
 					}
@@ -1031,13 +1033,13 @@ void ReplicaManager::Update(RakPeerInterface *peer)
 				}
 				else
 				{
-					assert(res==REPLICA_CANCEL_PROCESS);
+					RakAssert(res==REPLICA_CANCEL_PROCESS);
 				}
 			}
 			
 			// Done with this command, so delete it
-			delete receivedCommand->userData;
-			delete receivedCommand;
+			RakNet::OP_DELETE(receivedCommand->userData);
+			RakNet::OP_DELETE(receivedCommand);
 		}
 	}
 #ifdef _DEBUG
@@ -1123,7 +1125,7 @@ PluginReceiveResult ReplicaManager::OnReceive(RakPeerInterface *peer, Packet *pa
 			{
 				// Invalid packet
 #ifdef _DEBUG
-				assert(0);
+				RakAssert(0);
 #endif
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 			}
@@ -1138,11 +1140,11 @@ PluginReceiveResult ReplicaManager::OnReceive(RakPeerInterface *peer, Packet *pa
 					// Copy the data and add this to a queue that will call ProcessReceivedCommand again in Update.
 
 					// Allocate and copy structure
-					ReceivedCommand *rc = new ReceivedCommand;
+					ReceivedCommand *rc = RakNet::OP_NEW<ReceivedCommand>();
 					memcpy(rc, &receivedCommand, sizeof(ReceivedCommand));
 
 					// Allocate and copy inBitstream remaining data
-					rc->userData = new RakNet::BitStream;
+					rc->userData = RakNet::OP_NEW<RakNet::BitStream>();
 					rc->userData->Write(&inBitstream, inBitstream.GetNumberOfBitsUsed());
 
 					participantStruct->pendingCommands.Push(rc);
@@ -1191,7 +1193,7 @@ ReplicaReturnResult ReplicaManager::ProcessReceivedCommand(ParticipantStruct *pa
 			{
 				// Object already exists with this ID, but call construction anyway
 #ifdef _DEBUG
-				assert(_constructionCB);
+				RakAssert(_constructionCB);
 #endif
 				// Call the registered callback.  If it crashes, you forgot to register the callback in SetReceiveConstructionCB
 				return _constructionCB->ReceiveConstruction(receivedCommand->userData, receivedCommand->u1, receivedCommand->networkID, replica, receivedCommand->systemAddress, this);
@@ -1220,7 +1222,7 @@ ReplicaReturnResult ReplicaManager::ProcessReceivedCommand(ParticipantStruct *pa
 	{
 		// If networkID already exists on this system, ignore the packet
 #ifdef _DEBUG
-		assert(_constructionCB);
+		RakAssert(_constructionCB);
 #endif
 		// Call the registered callback.  If it crashes, you forgot to register the callback in SetReceiveConstructionCB
 		return _constructionCB->ReceiveConstruction(receivedCommand->userData, receivedCommand->u1, receivedCommand->networkID, replica, receivedCommand->systemAddress, this);
@@ -1256,8 +1258,8 @@ ReplicaManager::ParticipantStruct::~ParticipantStruct()
 	while ( pendingCommands.Size() )
 	{
 		receivedCommand=pendingCommands.Pop();
-		delete receivedCommand->userData;
-		delete receivedCommand;
+		RakNet::OP_DELETE(receivedCommand->userData);
+		RakNet::OP_DELETE(receivedCommand);
 	}
 }
 

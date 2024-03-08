@@ -19,7 +19,7 @@
   <TD>
     <p><span class="RakNetBlueHeader">Call C and C++ functions directly </span><BR>
         <BR>
-      The AutoRPC plugin adds remote procedure call capability beyond what the <a href="remoteprocedurecalls.html">default RPC functionality</a> in RakPeer provides. In essence, it allows you to call procedures on remote systems using the same syntax as if they were local, and without the need to serialize or deserialize parameters. Internally, it uses assembly to push the parameter list on and off the stack. This does have limitiations however, as the system cannot determine the type of parameters past some basic template checks. Use the newer <A HREF="rpc3.html">RPC3</A> system if you want more flexible functionality.</p>
+      The AutoRPC plugin adds remote procedure call capability beyond what the <a href="remoteprocedurecalls.html">default RPC functionality</a> in RakPeer provides. In essence, it allows you to call procedures on remote systems using the same syntax as if they were local, and without the need to serialize or deserialize parameters. Internally, it uses assembly to push the parameter list on and off the stack. This does have limitiations however, as the system cannot determine the type of parameters past some basic template checks. Use the newer <A HREF="RPC3Video.htm">RPC3</A> system if you want more flexible functionality.</p>
     <p><strong>Requirements:</strong></p>
     <ol><li> Function must be __cdecl</li>
       <li>Parameters must be passable using memcpy (stack parameters only). Use SetOutgoingExtraData and GetIncomingExtraData to pass non-passable parameters &quot;out of band&quot;.</li>
@@ -126,7 +126,7 @@
 <a href="networkidobject.html">NetworkIDManager</a><br>
 <a href="plugininterface.html">PluginInterface</a><BR>
 <A HREF="remoteprocedurecalls.html">RemoteProcedureCalls</A><BR>
-<A HREF="rpc3.html">RPC3</A><BR>
+<A HREF="RPC3Video.htm">RPC3</A><BR>
 
 </TD></TR></TABLE>
 </BODY>

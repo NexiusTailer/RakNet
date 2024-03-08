@@ -47,7 +47,7 @@ namespace RakNet
 	/// Furthermore, this must be done before sending packets that use this class, since the strings are ordered for fast lookup.  Adding after that time would mess up all the indices so don't do it.
 	/// Don't use this class to write strings which were not previously registered with AddString, since you just waste bandwidth then.  Use StringCompressor instead.
 	/// \brief Writes a string index, instead of the whole string
-	class RAK_DLL_EXPORT StringTable : public RakNet::RakMemoryOverride
+	class RAK_DLL_EXPORT StringTable
 	{
 	public:
 
@@ -84,13 +84,13 @@ namespace RakNet
 		/// Used so I can allocate and deallocate this singleton at runtime
 		static void RemoveReference(void);
 
+		/// Private Constructor	
+		StringTable();
+
 	protected:
 		/// Called when you mess up and send a string using this class that was not registered with AddString
 		/// \param[in] maxCharsToWrite Size, in bytes, of \a output .  A NULL terminator will always be appended to the output string.  If the maxCharsToWrite is not large enough, the string will be truncated.
 		void LogStringNotFound(const char *strName);
-
-		/// Private Constructor	
-		StringTable();
 
 		/// Singleton instance
 		static StringTable *instance;

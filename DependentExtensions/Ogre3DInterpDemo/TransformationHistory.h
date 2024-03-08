@@ -7,7 +7,7 @@
 #include "DS_Queue.h"
 #include "RakMemoryOverride.h"
 
-struct TransformationHistoryCell : public RakNet::RakMemoryOverride
+struct TransformationHistoryCell
 {
 	TransformationHistoryCell();
 	TransformationHistoryCell(RakNetTime t, const Ogre::Vector3& pos, const Ogre::Vector3& vel, const Ogre::Quaternion& quat  );
@@ -18,7 +18,7 @@ struct TransformationHistoryCell : public RakNet::RakMemoryOverride
 	Ogre::Vector3 velocity;
 };
 
-class TransformationHistory : public RakNet::RakMemoryOverride
+class TransformationHistory
 {
 public:
 	void Init(RakNetTime maxWriteInterval, RakNetTime maxHistoryTime);

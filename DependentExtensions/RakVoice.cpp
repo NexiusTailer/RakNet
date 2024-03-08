@@ -48,11 +48,11 @@ RakVoice::~RakVoice()
 void RakVoice::Init(unsigned short sampleRate, unsigned bufferSizeBytes)
 {
 	// Record the parameters
-	assert(sampleRate==8000 || sampleRate==16000 || sampleRate==32000);
+	RakAssert(sampleRate==8000 || sampleRate==16000 || sampleRate==32000);
 	this->sampleRate=sampleRate;
 	this->bufferSizeBytes=bufferSizeBytes;
 	bufferedOutputCount=bufferSizeBytes/SAMPLESIZE;
-	bufferedOutput = new float[bufferedOutputCount];
+	bufferedOutput = (float*) rakMalloc(sizeof(float)*bufferedOutputCount);
 	unsigned i;
 	for (i=0; i < bufferedOutputCount; i++)
 		bufferedOutput[i]=0.0f;
@@ -71,7 +71,7 @@ void RakVoice::Init(unsigned short sampleRate, unsigned bufferSizeBytes)
 }
 void RakVoice::Deinit(void)
 {
-	delete [] bufferedOutput;
+	rakFree(bufferedOutput);
 	CloseAllChannels();
 }
 void RakVoice::RequestVoiceChannel(SystemAddress recipient)
@@ -127,7 +127,7 @@ bool RakVoice::SendFrame(SystemAddress recipient, void *inputBuffer)
 			remainingBufferSize=channel->outgoingReadIndex-channel->outgoingWriteIndex;
 
 #ifdef _DEBUG
-		assert(remainingBufferSize>0 && remainingBufferSize <= totalBufferSize);
+		RakAssert(remainingBufferSize>0 && remainingBufferSize <= totalBufferSize);
 	//	printf("SendFrame: buff=%i writeIndex=%i readIndex=%i\n",remainingBufferSize, channel->outgoingWriteIndex, channel->outgoingReadIndex);
 
 		//printf("Writing %i bytes to write offset %i. %i %i.\n", bufferSizeBytes, channel->outgoingWriteIndex, *((char*)inputBuffer+channel->outgoingWriteIndex), *((char*)inputBuffer+channel->outgoingWriteIndex+bufferSizeBytes-1));
@@ -138,7 +138,7 @@ bool RakVoice::SendFrame(SystemAddress recipient, void *inputBuffer)
 		memcpy(channel->outgoingBuffer + channel->outgoingWriteIndex, inputBuffer, bufferSizeBytes );
 
 #ifdef _DEBUG
-		assert(channel->outgoingWriteIndex+bufferSizeBytes <= totalBufferSize);
+		RakAssert(channel->outgoingWriteIndex+bufferSizeBytes <= totalBufferSize);
 #endif
 
 
@@ -146,7 +146,7 @@ bool RakVoice::SendFrame(SystemAddress recipient, void *inputBuffer)
 		channel->outgoingWriteIndex+=bufferSizeBytes;
 #ifdef _DEBUG
 		// Verify that the write is aligned to the size of outgoingBuffer
-		assert(channel->outgoingWriteIndex <= totalBufferSize);
+		RakAssert(channel->outgoingWriteIndex <= totalBufferSize);
 #endif
 		if (channel->outgoingWriteIndex==totalBufferSize)
 			channel->outgoingWriteIndex=0;
@@ -155,7 +155,7 @@ bool RakVoice::SendFrame(SystemAddress recipient, void *inputBuffer)
 		{
 #ifdef _DEBUG
 			// This is actually a warning - it means that FRAME_OUTGOING_BUFFER_COUNT wasn't big enough and old data is being overwritten
-			assert(0);
+			RakAssert(0);
 #endif
 			// Force the read index up one block
 			channel->outgoingReadIndex=(channel->outgoingReadIndex+channel->speexOutgoingFrameSampleCount * SAMPLESIZE)%totalBufferSize;			
@@ -164,6 +164,17 @@ bool RakVoice::SendFrame(SystemAddress recipient, void *inputBuffer)
     	return true;
 	}
 	
+	return false;
+}
+bool RakVoice::IsSendingVoiceDataTo(SystemAddress recipient)
+{
+	bool objectExists;
+	unsigned index;
+	index = voiceChannels.GetIndexFromKey(recipient, &objectExists);
+
+	// Free the memory for this channel
+	if (objectExists)
+		return voiceChannels[index]->isSendingVoiceData;
 	return false;
 }
 void RakVoice::ReceiveFrame(void *outputBuffer)
@@ -315,6 +326,8 @@ void RakVoice::Update(RakPeerInterface *peer)
 
 		if (currentTime - channel->lastSend > 50) // Throttle to 20 sends a second
 		{
+			channel->isSendingVoiceData=false;
+
 			// Circular buffer so I have to do this to count how many bytes are available
 			if (channel->outgoingWriteIndex>=channel->outgoingReadIndex)
 				bytesAvailable=channel->outgoingWriteIndex-channel->outgoingReadIndex;
@@ -368,7 +381,7 @@ void RakVoice::Update(RakPeerInterface *peer)
 					if (channel->outgoingReadIndex + speexBlockSize >= totalBufferSize)
 					{
 #ifdef _DEBUG
-						assert(speexBlockSize < 2048-1);
+						RakAssert(speexBlockSize < 2048-1);
 #endif
 						unsigned t;
 						for (t=0; t < speexBlockSize; t++)
@@ -419,6 +432,8 @@ void RakVoice::Update(RakPeerInterface *peer)
 						continue;
 					}
 
+					channel->isSendingVoiceData=true;
+
 #ifdef _DEBUG
 //					printf("Update: bytesAvailable=%i writeIndex=%i readIndex=%i\n",bytesAvailable, channel->outgoingWriteIndex, channel->outgoingReadIndex);
 #endif
@@ -427,7 +442,7 @@ void RakVoice::Update(RakPeerInterface *peer)
 #ifdef _DEBUG
 					// If this assert hits then you need to increase the size of the temp buffer, but this is really a bug because
 					// voice packets should never be bigger than a few hundred bytes.
-					assert(bytesWritten!=2048-headerSize);
+					RakAssert(bytesWritten!=2048-headerSize);
 #endif
 
 //					static int bytesSent=0;
@@ -515,8 +530,8 @@ printf("%i ", voicePacketsSent++);
 }
 PluginReceiveResult RakVoice::OnReceive(RakPeerInterface *peer, Packet *packet)
 {
-	assert(packet);
-	assert(peer);
+	RakAssert(packet);
+	RakAssert(peer);
 
 	switch (packet->data[0]) 
 	{
@@ -545,6 +560,13 @@ void RakVoice::OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAdd
 
 void RakVoice::OnOpenChannelRequest(RakPeerInterface *peer, Packet *packet)
 {
+	if (voiceChannels.HasData(packet->systemAddress))
+		return;
+
+	// If the system is not initialized, just return
+	if (bufferedOutput==0)
+		return;
+
 	OpenChannel(peer,packet);
 
 	RakNet::BitStream out;
@@ -554,6 +576,9 @@ void RakVoice::OnOpenChannelRequest(RakPeerInterface *peer, Packet *packet)
 }
 void RakVoice::OnOpenChannelReply(RakPeerInterface *peer, Packet *packet)
 {
+	if (voiceChannels.HasData(packet->systemAddress))
+		return;
+
 	OpenChannel(peer, packet);
 }
 void RakVoice::OpenChannel(RakPeerInterface *peer, Packet *packet)
@@ -563,15 +588,16 @@ void RakVoice::OpenChannel(RakPeerInterface *peer, Packet *packet)
 
 	FreeChannelMemory(packet->systemAddress);
 
-	VoiceChannel *channel=new VoiceChannel;
+	VoiceChannel *channel=RakNet::OP_NEW<VoiceChannel>();
 	channel->systemAddress=packet->systemAddress;
+	channel->isSendingVoiceData=false;
 
 	if (in.Read(channel->remoteSampleRate)==false || (channel->remoteSampleRate!=8000 && channel->remoteSampleRate!=16000 && channel->remoteSampleRate!=32000))
 	{
 #ifdef _DEBUG
-		assert(0);
+		RakAssert(0);
 #endif
-		delete channel;
+		RakNet::OP_DELETE(channel);
 		return;
 	}
 
@@ -590,12 +616,12 @@ void RakVoice::OpenChannel(RakPeerInterface *peer, Packet *packet)
 		channel->dec_state=speex_decoder_init(&speex_uwb_mode);
 
 	// make sure encoder and decoder are created
-	assert((channel->enc_state)&&(channel->dec_state));
+	RakAssert((channel->enc_state)&&(channel->dec_state));
 
 	int ret;
 	ret=speex_encoder_ctl(channel->enc_state, SPEEX_GET_FRAME_SIZE, &channel->speexOutgoingFrameSampleCount);
-	assert(ret==0);
-	channel->outgoingBuffer = new char [bufferSizeBytes * FRAME_OUTGOING_BUFFER_COUNT];
+	RakAssert(ret==0);
+	channel->outgoingBuffer = (char*) rakMalloc(bufferSizeBytes * FRAME_OUTGOING_BUFFER_COUNT);
 	channel->outgoingReadIndex=0;
 	channel->outgoingWriteIndex=0;
 	channel->bufferOutput=true;
@@ -603,8 +629,8 @@ void RakVoice::OpenChannel(RakPeerInterface *peer, Packet *packet)
 	channel->copiedOutgoingBufferToBufferedOutput=false;
 
 	ret=speex_decoder_ctl(channel->dec_state, SPEEX_GET_FRAME_SIZE, &channel->speexIncomingFrameSampleCount);
-	assert(ret==0);
-	channel->incomingBuffer = new char [bufferSizeBytes * FRAME_INCOMING_BUFFER_COUNT];
+	RakAssert(ret==0);
+	channel->incomingBuffer = (char*) rakMalloc(bufferSizeBytes * FRAME_INCOMING_BUFFER_COUNT);
 	channel->incomingReadIndex=0;
 	channel->incomingWriteIndex=0;
 	channel->lastSend=0;
@@ -612,7 +638,7 @@ void RakVoice::OpenChannel(RakPeerInterface *peer, Packet *packet)
 
 	// Initialize preprocessor
 	channel->pre_state = speex_preprocess_state_init(channel->speexOutgoingFrameSampleCount, sampleRate);
-	assert(channel->pre_state);
+	RakAssert(channel->pre_state);
 
 	// Set encoder default parameters
 	SetEncoderParameter(channel->enc_state, SPEEX_SET_VBR, (defaultVBRState) ? 1 : 0 );
@@ -630,13 +656,13 @@ void RakVoice::SetEncoderParameter(void* enc_state, int vartype, int val)
 	if (enc_state){ 
 		// Set parameter for just one encoder
 		int ret = speex_encoder_ctl(enc_state, vartype, &val);
-		assert(ret==0);		
+		RakAssert(ret==0);		
 	} else {
 		// Set parameter for all encoders
 		for (unsigned int index=0; index < voiceChannels.Size(); index++)
 		{
 			int ret = speex_encoder_ctl(voiceChannels[index]->enc_state, vartype, &val);
-			assert(ret==0);
+			RakAssert(ret==0);
 		}
 	}
 }
@@ -646,20 +672,20 @@ void RakVoice::SetPreprocessorParameter(void* pre_state, int vartype, int val)
 	if (pre_state){
 		// Set parameter for just one preprocessor
 		int ret = speex_preprocess_ctl((SpeexPreprocessState*)pre_state, vartype, &val);
-		assert(ret==0);
+		RakAssert(ret==0);
 	} else {
 		// Set parameter for all decoders
 		for (unsigned int index=0; index < voiceChannels.Size(); index++)
 		{
 			int ret = speex_preprocess_ctl((SpeexPreprocessState*)voiceChannels[index]->pre_state, vartype, &val);
-			assert(ret==0);
+			RakAssert(ret==0);
 		}
 	}
 }
 
 void RakVoice::SetEncoderComplexity(int complexity)
 {
-	assert((complexity>=0)&&(complexity<=10));
+	RakAssert((complexity>=0)&&(complexity<=10));
 	SetEncoderParameter(NULL, SPEEX_SET_COMPLEXITY, complexity);
 	defaultEncoderComplexity = complexity;
 }
@@ -716,9 +742,9 @@ void RakVoice::FreeChannelMemory(unsigned index, bool removeIndex)
 	speex_encoder_destroy(channel->enc_state);
 	speex_decoder_destroy(channel->dec_state);
 	speex_preprocess_state_destroy((SpeexPreprocessState*)channel->pre_state);
-	delete [] channel->incomingBuffer;
-	delete [] channel->outgoingBuffer;
-	delete channel;
+	rakFree(channel->incomingBuffer);
+	rakFree(channel->outgoingBuffer);
+	RakNet::OP_DELETE(channel);
 	if (removeIndex)
 		voiceChannels.RemoveAtIndex(index);
 }
@@ -838,7 +864,7 @@ void RakVoice::WriteOutputToChannel(VoiceChannel *channel, char *dataToWrite)
 	{
 #ifdef _DEBUG
 		// This is actually a warning - it means that FRAME_INCOMING_BUFFER_COUNT wasn't big enough and old data is being overwritten
-		assert(0);
+		RakAssert(0);
 #endif
 		// Force the read index up one block
 		channel->incomingReadIndex+=bufferSizeBytes;

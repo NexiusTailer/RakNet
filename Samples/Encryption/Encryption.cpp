@@ -9,13 +9,9 @@
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
 #include "RakNetworkFactory.h"
+#include "RakNetTypes.h"
 #include <assert.h>
-
-#ifdef _WIN32
-#include <windows.h> // Sleep
-#else
-#include <unistd.h> // usleep
-#endif
+#include "RakSleep.h"
 
 void PrintOptions(void)
 {
@@ -56,6 +52,17 @@ int main(void)
 	bool keyLoaded; // Does D,E,N have values?
 
 	// RSACrypt is a class that handles RSA encryption/decryption internally
+	RSACrypt rsacrypt;
+
+	uint32_t e;
+	uint32_t modulus[RAKNET_RSA_FACTOR_LIMBS];
+	// e and modulus form the public key
+
+	// p,q is the private key
+	uint32_t p[RAKNET_RSA_FACTOR_LIMBS/2],q[RAKNET_RSA_FACTOR_LIMBS/2];
+
+	/*
+	// RSACrypt is a class that handles RSA encryption/decryption internally
 	big::RSACrypt<RSA_BIT_SIZE> rsacrypt;
 
 	// These are the sizes necessary for e,n,p,q
@@ -65,6 +72,7 @@ int main(void)
 	RSA_BIT_SIZE n;
 	BIGHALFSIZE(RSA_BIT_SIZE, p);
 	BIGHALFSIZE(RSA_BIT_SIZE, q);
+	*/
 
 	FILE *fp;
 	RakNetTime time;
@@ -72,6 +80,8 @@ int main(void)
 	rakPeer2=RakNetworkFactory::GetRakPeerInterface();
 	Packet *packet;
 	bool peer1GotMessage, peer2GotMessage;
+
+	seedMT(RakNet::GetTimeMS());
 
 	keyLoaded=false;
 
@@ -88,10 +98,20 @@ int main(void)
 
 		if (str[0]=='1')
 		{
+			printf("Generating %i bit key. This will take a while...\n", RAKNET_RSA_FACTOR_LIMBS*32);
+			rsacrypt.generatePrivateKey(RAKNET_RSA_FACTOR_LIMBS);
+			e=rsacrypt.getPublicExponent();
+			rsacrypt.getPublicModulus(modulus);
+			rsacrypt.getPrivateP(p);
+			rsacrypt.getPrivateQ(q);
+
+
+			/*
             printf("Generating %i byte key.  This will take a while...\n", sizeof(RSA_BIT_SIZE));
 			rsacrypt.generateKeys();
 			rsacrypt.getPublicKey(e,n);
 			rsacrypt.getPrivateKey(p,q);
+			*/
 			keyLoaded=true;
 			printf("Key generated.  Save to disk? (y/n)\n");
 			gets(str);
@@ -104,7 +124,8 @@ int main(void)
 					printf("Writing public key... ");
 					fp=fopen(str, "wb");
 					fwrite((char*)&e, sizeof(e), 1, fp);
-					fwrite((char*)n, sizeof(n), 1, fp);
+					fwrite((char*)modulus, sizeof(modulus), 1, fp);
+					//fwrite((char*)n, sizeof(n), 1, fp);
 					fclose(fp);
 					printf("Done.\n");
 				}
@@ -117,8 +138,10 @@ int main(void)
 				{
 					printf("Writing private key... ");
 					fp=fopen(str, "wb");
-					fwrite(p, sizeof(RSA_BIT_SIZE)/2,1,fp);
-					fwrite(q, sizeof(RSA_BIT_SIZE)/2, 1, fp);
+					fwrite(p, sizeof(p),1,fp);
+					fwrite(q, sizeof(q), 1, fp);
+					//fwrite(p, sizeof(RSA_BIT_SIZE)/2,1,fp);
+					//fwrite(q, sizeof(RSA_BIT_SIZE)/2, 1, fp);
 					fclose(fp);
 					printf("Done.\n");
 				}
@@ -138,7 +161,7 @@ int main(void)
 				{
 					printf("Loading public keys... ");
 					fread((char*)(&e), sizeof(e), 1, fp);
-					fread((char*)(n), sizeof(n), 1, fp);
+					fread((char*)(modulus), sizeof(modulus), 1, fp);
 					fclose(fp);
 					printf("Done.\n");
 
@@ -150,8 +173,10 @@ int main(void)
 						if (fp)
 						{
 							printf("Loading private key... ");
-							fread(p, sizeof(RSA_BIT_SIZE)/2, 1, fp);
-							fread(q, sizeof(RSA_BIT_SIZE)/2, 1, fp);
+							fread(p, sizeof(p), 1, fp);
+							fread(q, sizeof(q), 1, fp);
+							//fread(p, sizeof(RSA_BIT_SIZE)/2, 1, fp);
+							//fread(q, sizeof(RSA_BIT_SIZE)/2, 1, fp);
 							fclose(fp);
 							printf("Done.\n");
 							keyLoaded=true;
@@ -194,7 +219,8 @@ int main(void)
 					if (str[0]=='y' || str[0]=='Y')
 					{
 						printf("Using preloaded keys for the connecting system.\n");
-						rakPeer2->InitializeSecurity((char*)&e, (char*)n, 0, 0);
+						//rakPeer2->InitializeSecurity((char*)&e, (char*)n, 0, 0);
+						rakPeer2->InitializeSecurity((char*)&e, (char*)modulus, 0, 0);
 					}
 					else
 					{
@@ -245,11 +271,8 @@ int main(void)
 					PrintPacketHeader(packet);
 					rakPeer2->DeallocatePacket(packet);
 				}
-#ifdef WIN32
-				Sleep(30);
-#else
-				usleep(30*1000);
-#endif
+
+				RakSleep(30);
 			}
 
 			if (peer1GotMessage==false)

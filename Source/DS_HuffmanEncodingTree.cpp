@@ -17,7 +17,7 @@
 #include "DS_HuffmanEncodingTree.h"
 #include "DS_Queue.h"
 #include "BitStream.h"
-#include <assert.h> 
+#include "RakAssert.h" 
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -55,7 +55,7 @@ void HuffmanEncodingTree::FreeMemory( void )
 		if ( node->right )
 			nodeQueue.Push( node->right );
 
-		delete node;
+		RakNet::OP_DELETE(node);
 	}
 
 	// Delete the encoding table
@@ -81,7 +81,7 @@ void HuffmanEncodingTree::GenerateFromFrequencyTable( unsigned int frequencyTabl
 
 	for ( counter = 0; counter < 256; counter++ )
 	{
-		node = new HuffmanEncodingTreeNode;
+		node = RakNet::OP_NEW<HuffmanEncodingTreeNode>();
 		node->left = 0;
 		node->right = 0;
 		node->value = (unsigned char) counter;
@@ -107,7 +107,7 @@ void HuffmanEncodingTree::GenerateFromFrequencyTable( unsigned int frequencyTabl
 		HuffmanEncodingTreeNode *lesser, *greater;
 		lesser = huffmanEncodingTreeNodeList.Pop();
 		greater = huffmanEncodingTreeNodeList.Pop();
-		node = new HuffmanEncodingTreeNode;
+		node = RakNet::OP_NEW<HuffmanEncodingTreeNode>();
 		node->left = lesser;
 		node->right = greater;
 		node->weight = lesser->weight + greater->weight;
@@ -196,7 +196,7 @@ void HuffmanEncodingTree::EncodeArray( unsigned char *input, size_t sizeInBytes,
 			}
 
 #ifdef _DEBUG
-			assert( counter != 256 );  // Given 256 elements, we should always be able to find an input that would be >= 7 bits
+			RakAssert( counter != 256 );  // Given 256 elements, we should always be able to find an input that would be >= 7 bits
 
 #endif
 

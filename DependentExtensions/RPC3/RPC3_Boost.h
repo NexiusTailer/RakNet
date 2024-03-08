@@ -171,13 +171,13 @@ struct ReadBitstream
 	}
 };
 
-template <typename T>
+//template <typename T>
 struct ReadPtr
 {
-	template <typename T>
-	static inline void applyArray(RakNet::BitStream &bitStream, T *t) {bitStream >> (*t);}
-	template <typename T>
-	static inline void apply(RakNet::BitStream &bitStream, T *t) {bitStream >> (*t);}
+	template <typename T2>
+	static inline void applyArray(RakNet::BitStream &bitStream, T2 *t) {bitStream >> (*t);}
+	template <typename T2>
+	static inline void apply(RakNet::BitStream &bitStream, T2 *t) {bitStream >> (*t);}
 
 	static inline void apply(RakNet::BitStream &bitStream, char *&t) {applyStr(bitStream, (char *&) t);}
 	static inline void apply(RakNet::BitStream &bitStream, unsigned char *&t) {applyStr(bitStream, (char *&) t);}
@@ -199,8 +199,8 @@ struct DoRead
 {
 	typedef typename boost::mpl::if_<
 		boost::is_convertible<T*,RakNet::BitStream*>,
-		typename ReadBitstream,
-		typename ReadPtr<T> >::type type;
+		ReadBitstream,
+		ReadPtr >::type type;
 };
 
 
@@ -211,14 +211,14 @@ struct ReadWithoutNetworkIDNoPtr
 	{
 //		printf("ReadWithoutNetworkIDNoPtr\n");
 
-		DoRead< boost::remove_pointer<T>::type >::type::apply(* (args.bitStream),&t);
+		DoRead< typename boost::remove_pointer<T>::type >::type::apply(* (args.bitStream),&t);
 
 		return IRC_SUCCESS;
 	}
 
 	// typedef boost::mpl::false_ Cleanup;
-	template< typename T >
-	static void Cleanup(T &t) {}
+	template< typename T2 >
+	static void Cleanup(T2 &t) {}
 };
 
 template< typename T >
@@ -258,7 +258,7 @@ struct ReadWithNetworkIDPtr
 
 				if (t)
 				{
-					DoRead< boost::remove_pointer<T>::type >::type::apply(* (args.bitStream),t);
+					DoRead< typename boost::remove_pointer<T>::type >::type::apply(* (args.bitStream),t);
 				}
 				else
 				{
@@ -271,15 +271,15 @@ struct ReadWithNetworkIDPtr
 		return IRC_SUCCESS;
 	}
 
-	template< typename T >
-	static void Cleanup(T &t) {}
+	template< typename T2 >
+	static void Cleanup(T2 &t) {}
 };
 
 template< typename T >
 struct ReadWithoutNetworkIDPtr
 {
-	template <typename T>
-	static InvokeResultCodes apply(InvokeArgs &args, T &t)
+	template <typename T2>
+	static InvokeResultCodes apply(InvokeArgs &args, T2 &t)
 	{
 //		printf("ReadWithoutNetworkIDPtr\n");
 		
@@ -306,19 +306,19 @@ struct ReadWithoutNetworkIDPtr
 		{
 			for (unsigned int i=0; i < count; i++)
 			{
-				DoRead< boost::remove_pointer<T>::type >::type::applyArray(* (args.bitStream),t+i);
+				DoRead< typename boost::remove_pointer<T>::type >::type::applyArray(* (args.bitStream),t+i);
 			}
 		}
 		else
 		{
-			DoRead< boost::remove_pointer<T>::type >::type::apply(* (args.bitStream),t);
+			DoRead< typename boost::remove_pointer<T>::type >::type::apply(* (args.bitStream),t);
 		}
 
 		return IRC_SUCCESS;
 	}
 
-	template< typename T >
-	static void Cleanup(T &t) {
+	template< typename T2 >
+	static void Cleanup(T2 &t) {
 		if (t)
 			delete [] t;
 	}
@@ -334,8 +334,8 @@ struct SetRPC3Ptr
 	}
 
 	//typedef boost::mpl::false_ Cleanup;
-	template< typename T >
-	static void Cleanup(T &t) {}
+	template< typename T2 >
+	static void Cleanup(T2 &t) {}
 };
 
 /*
@@ -355,8 +355,8 @@ struct ReadWithoutNetworkID
 {
 	typedef typename boost::mpl::if_<
 		boost::is_pointer<T>
-		, typename ReadWithoutNetworkIDPtr<T> // true
-		, typename ReadWithoutNetworkIDNoPtr<T>
+		, ReadWithoutNetworkIDPtr<T> // true
+		, ReadWithoutNetworkIDNoPtr<T>
 	>::type type;
 };
 
@@ -409,7 +409,7 @@ struct GetReadFunction
 
 	typedef typename boost::mpl::if_<
 		typename ShouldReadNetworkID<T>::type
-		, typename ReadWithNetworkIDPtr<T>
+		, ReadWithNetworkIDPtr<T>
 		, typename ReadWithoutNetworkID<T>::type
 	>::type type;
 };
@@ -419,30 +419,9 @@ struct ProcessArgType
 {
 	typedef typename boost::mpl::if_<
 		typename IsRPC3Ptr<T>::type
-		, typename SetRPC3Ptr<T>
+		, SetRPC3Ptr<T>
 		, typename GetReadFunction<T>::type
 	>::type type;
-};
-
-template< typename Function
-	, class From = typename boost::mpl::begin< boost::function_types::parameter_types<Function> >::type
-	, class To   = typename boost::mpl::end< boost::function_types::parameter_types<Function> >::type
->
-struct BoostRPCInvoker_ThisPtr
-{
-	// add an argument to a Fusion cons-list for each parameter type
-	template<typename Args>
-	static inline
-		InvokeResultCodes apply(Function func, InvokeArgs &functionArgs, Args const &args)
-	{
-		typedef typename boost::mpl::deref<From>::type arg_type;
-		typedef typename boost::mpl::next<From>::type next_iter_type;
-
-		arg_type argType = (arg_type) *(functionArgs.thisPtr);
-
-		return BoostRPCInvoker<Function, next_iter_type, To>::apply
-			( func, functionArgs, boost::fusion::push_back(args, boost::ref(argType) ) );
-	}
 };
 
 template< typename Function
@@ -458,15 +437,37 @@ struct BoostRPCInvoker
 	{
 		typedef typename boost::mpl::deref<From>::type arg_type;
 		typedef typename boost::mpl::next<From>::type next_iter_type;
+		typedef typename boost::remove_reference<arg_type>::type arg_type_no_ref;
 
-		boost::remove_reference<arg_type>::type argType;
-		ProcessArgType< boost::remove_reference<arg_type>::type >::type::apply(functionArgs, argType);
+		arg_type_no_ref argType;
+		ProcessArgType< arg_type_no_ref >::type::apply(functionArgs, argType);
 
 		InvokeResultCodes irc = BoostRPCInvoker<Function, next_iter_type, To>::apply
 			( func, functionArgs, boost::fusion::push_back(args, boost::ref(argType) ) );
 
-		ProcessArgType< boost::remove_reference<arg_type>::type >::type::Cleanup(argType);
+		ProcessArgType< arg_type_no_ref >::type::Cleanup(argType);
 		return irc;
+	}
+};
+
+template< typename Function
+, class From = typename boost::mpl::begin< boost::function_types::parameter_types<Function> >::type
+, class To   = typename boost::mpl::end< boost::function_types::parameter_types<Function> >::type
+>
+struct BoostRPCInvoker_ThisPtr
+{
+	// add an argument to a Fusion cons-list for each parameter type
+	template<typename Args>
+	static inline
+		InvokeResultCodes apply(Function func, InvokeArgs &functionArgs, Args const &args)
+	{
+		typedef typename boost::mpl::deref<From>::type arg_type;
+		typedef typename boost::mpl::next<From>::type next_iter_type;
+
+		arg_type argType = (arg_type) *(functionArgs.thisPtr);
+
+		return BoostRPCInvoker<Function, next_iter_type, To>::apply
+			( func, functionArgs, boost::fusion::push_back(args, boost::ref(argType) ) );
 	}
 };
 
@@ -508,20 +509,20 @@ struct WriteBitstream
 	}
 };
 
-template <typename T>
+//template <typename T>
 struct WritePtr
 {
-	template <typename T>
-	static inline void applyArray(RakNet::BitStream &bitStream, T *t) {bitStream << (*t);}
-	template <typename T>
-	static inline void apply(RakNet::BitStream &bitStream, T *t) {bitStream << (*t);}
-	template <>
+	template <typename T2>
+	static inline void applyArray(RakNet::BitStream &bitStream, T2 *t) {bitStream << (*t);}
+	template <typename T2>
+	static inline void apply(RakNet::BitStream &bitStream, T2 *t) {bitStream << (*t);}
+//	template <>
 	static inline void apply(RakNet::BitStream &bitStream, char *t) {bitStream << t;}
-	template <>
+//	template <>
 	static inline void apply(RakNet::BitStream &bitStream, unsigned char *t) {bitStream << t;}
-	template <>
+//	template <>
 	static inline void apply(RakNet::BitStream &bitStream, const char *t) {bitStream << t;}
-	template <>
+//	template <>
 	static inline void apply(RakNet::BitStream &bitStream, const unsigned char *t) {bitStream << t;}
 };
 
@@ -530,8 +531,8 @@ struct DoWrite
 {
 	typedef typename boost::mpl::if_<
 		boost::is_convertible<T*,RakNet::BitStream*>,
-		typename WriteBitstream,
-		typename WritePtr<T> >::type type;
+		WriteBitstream,
+		WritePtr >::type type;
 };
 
 template <typename T>
@@ -565,7 +566,7 @@ struct WriteWithNetworkIDPtr
 				BitSize_t bitsUsed1=bitStream.GetNumberOfBitsUsed();
 				bitStream.Write(bitsUsed1);
 				bitsUsed1=bitStream.GetNumberOfBitsUsed();
-				DoWrite< boost::remove_pointer<T>::type >::type::apply(bitStream,t);
+				DoWrite< typename boost::remove_pointer<T>::type >::type::apply(bitStream,t);
 				BitSize_t writeOffset2 = bitStream.GetWriteOffset();
 				BitSize_t bitsUsed2=bitStream.GetNumberOfBitsUsed();
 				bitStream.SetWriteOffset(writeOffset1);
@@ -581,7 +582,7 @@ struct WriteWithoutNetworkIDNoPtr
 {
 	static void apply(RakNet::BitStream &bitStream, T& t)
 	{
-		DoWrite< boost::remove_pointer<T>::type >::type::apply(bitStream,&t);
+		DoWrite< typename boost::remove_pointer<T>::type >::type::apply(bitStream,&t);
 	}
 };
 
@@ -607,11 +608,11 @@ struct WriteWithoutNetworkIDPtr
 		if (isArray)
 		{
 			for (unsigned int i=0; i < tag.count; i++)
-				DoWrite< boost::remove_pointer<T>::type >::type::applyArray(bitStream,t+i);
+				DoWrite< typename boost::remove_pointer<T>::type >::type::applyArray(bitStream,t+i);
 		}
 		else
 		{
-			DoWrite< boost::remove_pointer<T>::type >::type::apply(bitStream,t);
+			DoWrite< typename boost::remove_pointer<T>::type >::type::apply(bitStream,t);
 		}
 		
 	}
@@ -622,26 +623,26 @@ struct SerializeCallParameterBranch
 {
 	typedef typename boost::mpl::if_<
 		typename IsRPC3Ptr<T>::type
-		, typename DoNothing<T>
-		, typename WriteWithoutNetworkIDPtr<T>
+		, DoNothing<T>
+		, WriteWithoutNetworkIDPtr<T>
 	>::type typeCheck1;
 
 	typedef typename boost::mpl::if_<
 		boost::is_pointer<T>
-		, typename typeCheck1
-		, typename WriteWithoutNetworkIDNoPtr<T>
+		, typeCheck1
+		, WriteWithoutNetworkIDNoPtr<T>
 	>::type typeCheck2;
 
 	typedef typename boost::mpl::if_<
 		typename ShouldReadNetworkID<T>::type
-		, typename WriteWithNetworkIDPtr<T>
-		, typename typeCheck2
+		, WriteWithNetworkIDPtr<T>
+		, typeCheck2
 	>::type type;
 };
 template<typename Function>
 struct GetBoundPointer_C
 {
-	typedef typename GetBoundPointer_C type;
+//	typedef typename GetBoundPointer_C type;
 	static FunctionPointer GetBoundPointer(Function f)
 	{
 		return FunctionPointer(false, boost::bind( & BoostRPCInvoker<Function>::template apply<boost::fusion::nil>, f, _1, boost::fusion::nil() ));
@@ -651,7 +652,7 @@ struct GetBoundPointer_C
 template<typename Function>
 struct GetBoundPointer_CPP
 {
-	typedef typename GetBoundPointer_CPP type;
+//	typedef typename GetBoundPointer_CPP type;
 	static FunctionPointer GetBoundPointer(Function f)
 	{
 		return FunctionPointer(true, boost::bind( & BoostRPCInvoker_ThisPtr<Function>::template apply<boost::fusion::nil>, f, _1, boost::fusion::nil() ));
@@ -662,8 +663,8 @@ FunctionPointer GetBoundPointer(Function f)
 {
 	return boost::mpl::if_<
 	boost::is_member_function_pointer<Function>
-	, typename GetBoundPointer_CPP<Function>::type // true
-	, typename GetBoundPointer_C<Function>::type
+	, GetBoundPointer_CPP<Function>
+	, GetBoundPointer_C<Function>
 	>::type::GetBoundPointer(f);
 	
 //	return FunctionPointer(true, boost::bind( & BoostRPCInvoker<Function>::template apply<boost::fusion::nil>, f, _1, boost::fusion::nil() ) );

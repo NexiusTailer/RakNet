@@ -7,6 +7,7 @@
 #include "BitStream.h"
 #include "MessageIdentifiers.h"
 #include "FileOperations.h"
+#include "IncrementalReadInterface.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -62,15 +63,16 @@ DirectoryDeltaTransfer::DirectoryDeltaTransfer()
 {
 	applicationDirectory[0]=0;
 	fileListTransfer=0;
-	availableUploads = new FileList;
+	availableUploads = RakNet::OP_NEW<FileList>();
 	rakPeer=0;
 	priority=HIGH_PRIORITY;
 	orderingChannel=0;
+	incrementalReadInterface=0;
 	compressOutgoingSends=false;
 }
 DirectoryDeltaTransfer::~DirectoryDeltaTransfer()
 {
-	delete availableUploads;
+	RakNet::OP_DELETE(availableUploads);
 }
 void DirectoryDeltaTransfer::SetFileListTransferPlugin(FileListTransfer *flt)
 {
@@ -99,7 +101,7 @@ void DirectoryDeltaTransfer::SetUploadSendParameters(PacketPriority _priority, c
 }
 void DirectoryDeltaTransfer::AddUploadsFromSubdirectory(const char *subdir)
 {
-	availableUploads->AddFilesFromDirectory(applicationDirectory, subdir, true, false, true, 0);
+	availableUploads->AddFilesFromDirectory(applicationDirectory, subdir, true, false, true, FileListNodeContext(0,0));
 }
 unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(const char *subdir, const char *outputSubdir, bool prependAppDirToOutputSubdir, SystemAddress host, FileListTransferCBInterface *onFileCallback, PacketPriority _priority, char _orderingChannel, FileListProgress *cb)
 {
@@ -110,10 +112,10 @@ unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(const char *subd
 	FileList localFiles;
 	localFiles.SetCallback(cb);
 	// Get a hash of all the files that we already have (if any)
-	localFiles.AddFilesFromDirectory(prependAppDirToOutputSubdir ? applicationDirectory : 0, outputSubdir, true, false, true, 0);
+	localFiles.AddFilesFromDirectory(prependAppDirToOutputSubdir ? applicationDirectory : 0, outputSubdir, true, false, true, FileListNodeContext(0,0));
 
 	// Prepare the callback data
-	transferCallback = new DDTCallback;
+	transferCallback = RakNet::OP_NEW<DDTCallback>();
 	if (subdir && subdir[0])
 	{
 		transferCallback->subdirLen=(unsigned int)strlen(subdir);
@@ -167,16 +169,19 @@ void DirectoryDeltaTransfer::OnDownloadRequest(RakPeerInterface *peer, Packet *p
 	if (remoteFileHash.Deserialize(&inBitstream)==false)
 	{
 #ifdef _DEBUG
-		assert(0);
+		RakAssert(0);
 #endif
 		return;
 	}
 
 	availableUploads->GetDeltaToCurrent(&remoteFileHash, &delta, subdir, remoteSubdir);
-	delta.PopulateDataFromDisk(applicationDirectory, true, false, true);
+	if (incrementalReadInterface==0)
+		delta.PopulateDataFromDisk(applicationDirectory, true, false, true);
+	else
+		delta.FlagFilesAsReferences();
 
 	// This will call the ddtCallback interface that was passed to FileListTransfer::SetupReceive on the remote system
-	fileListTransfer->Send(&delta, rakPeer, packet->systemAddress, setId, priority, orderingChannel, compressOutgoingSends);
+	fileListTransfer->Send(&delta, rakPeer, packet->systemAddress, setId, priority, orderingChannel, compressOutgoingSends, incrementalReadInterface, chunkSize);
 }
 void DirectoryDeltaTransfer::OnAttach(RakPeerInterface *peer)
 {
@@ -209,6 +214,12 @@ unsigned DirectoryDeltaTransfer::GetNumberOfFilesForUpload(void) const
 void DirectoryDeltaTransfer::SetCompressOutgoingSends(bool compress)
 {
 	compressOutgoingSends=compress;
+}
+
+void DirectoryDeltaTransfer::SetDownloadRequestIncrementalReadInterface(IncrementalReadInterface *_incrementalReadInterface, unsigned int _chunkSize)
+{
+	incrementalReadInterface=_incrementalReadInterface;
+	chunkSize=_chunkSize;
 }
 
 #ifdef _MSC_VER

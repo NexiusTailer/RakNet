@@ -29,8 +29,9 @@ TelnetTransport::~TelnetTransport()
 }
 bool TelnetTransport::Start(unsigned short port, bool serverMode)
 {
+	(void) serverMode;
     AutoAllocate();
-	assert(serverMode);
+	RakAssert(serverMode);
 	return tcpInterface->Start(port, 64);
 }
 void TelnetTransport::Stop(void)
@@ -39,8 +40,10 @@ void TelnetTransport::Stop(void)
 	tcpInterface->Stop();
 	unsigned i;
 	for (i=0; i < remoteClients.Size(); i++)
-		delete remoteClients[i];
+		RakNet::OP_DELETE(remoteClients[i]);
 	remoteClients.Clear();
+	RakNet::OP_DELETE(tcpInterface);
+	tcpInterface=0;
 }
 void TelnetTransport::Send(  SystemAddress systemAddress, const char *data,... )
 {
@@ -90,9 +93,9 @@ Packet* TelnetTransport::Receive( void )
 		unsigned i;
 		for (i=0; i < p->length; i++)
 		{
-			printf("%i ", p->data[i]);
+			RAKNET_DEBUG_PRINTF("%i ", p->data[i]);
 		}
-		printf("\n");
+		RAKNET_DEBUG_PRINTF("\n");
 		tcpInterface->DeallocatePacket(p);
 		return 0;
 	}
@@ -126,7 +129,7 @@ Packet* TelnetTransport::Receive( void )
 		if (remoteClients[i]->systemAddress==p->systemAddress)
 			remoteClient=remoteClients[i];
 	}
-	assert(remoteClient);
+	RakAssert(remoteClient);
 	if (remoteClient==0)
 	{
 		tcpInterface->DeallocatePacket(p);
@@ -159,7 +162,7 @@ Packet* TelnetTransport::Receive( void )
 		{
 			Packet *reassembledLine = (Packet*) rakMalloc(sizeof(Packet));
 			reassembledLine->length=(unsigned int) strlen(remoteClient->textInput);
-			assert(reassembledLine->length < REMOTE_MAX_TEXT_INPUT);
+			RakAssert(reassembledLine->length < REMOTE_MAX_TEXT_INPUT);
 			reassembledLine->data= (unsigned char*) rakMalloc( reassembledLine->length+1 );
 			memcpy(reassembledLine->data, remoteClient->textInput, reassembledLine->length);
 #ifdef _PRINTF_DEBUG
@@ -245,7 +248,7 @@ SystemAddress TelnetTransport::HasLostConnection(void)
 		{
 			if (remoteClients[i]->systemAddress==systemAddress)
 			{
-				delete remoteClients[i];
+				RakNet::OP_DELETE(remoteClients[i]);
 				remoteClients[i]=remoteClients[remoteClients.Size()-1];
 				remoteClients.RemoveFromEnd();
 			}
@@ -295,7 +298,7 @@ bool TelnetTransport::ReassembleLine(TelnetTransport::TelnetClient* remoteClient
 		remoteClient->textInput[remoteClient->cursorPosition]=0;
 		remoteClient->cursorPosition=0;
 #ifdef _PRINTF_DEBUG
-		printf("[Done] %s\n", remoteClient->textInput);
+		RAKNET_DEBUG_PRINTF("[Done] %s\n", remoteClient->textInput);
 #endif
 		return true;
 	}
@@ -305,7 +308,7 @@ bool TelnetTransport::ReassembleLine(TelnetTransport::TelnetClient* remoteClient
 		{
 			remoteClient->textInput[--remoteClient->cursorPosition]=0;
 #ifdef _PRINTF_DEBUG
-			printf("[Back] %s\n", remoteClient->textInput);
+			RAKNET_DEBUG_PRINTF("[Back] %s\n", remoteClient->textInput);
 #endif
 		}
 	}
@@ -315,7 +318,7 @@ bool TelnetTransport::ReassembleLine(TelnetTransport::TelnetClient* remoteClient
 		{
 			remoteClient->textInput[remoteClient->cursorPosition++]=c;
 #ifdef _PRINTF_DEBUG
-			printf("[Norm] %s\n", remoteClient->textInput);
+			RAKNET_DEBUG_PRINTF("[Norm] %s\n", remoteClient->textInput);
 #endif
 		}
 	}

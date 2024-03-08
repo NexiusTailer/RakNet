@@ -74,8 +74,8 @@ bool Router::Send( char *data, BitSize_t bitLength, PacketPriority priority, Pac
 	DataStructures::List<ConnectionGraph::SystemAddressAndGroupId> recipientList;
 	unsigned i;
 	for (i=0; i < recipients->Size(); i++)
-		recipientList.Insert(ConnectionGraph::SystemAddressAndGroupId(recipients->GetList()->operator [](i),0));
-	if (graph->GetSpanningTree(tree, &recipientList, ConnectionGraph::SystemAddressAndGroupId(root,0), 65535)==false)
+		recipientList.Insert(ConnectionGraph::SystemAddressAndGroupId(recipients->GetList()->operator [](i),0, UNASSIGNED_RAKNET_GUID));
+	if (graph->GetSpanningTree(tree, &recipientList, ConnectionGraph::SystemAddressAndGroupId(root,0,UNASSIGNED_RAKNET_GUID), 65535)==false)
 		return false;
 
 	RakNet::BitStream out;
@@ -135,7 +135,7 @@ void Router::SendTree(PacketPriority priority, PacketReliability reliability, ch
 
 		// Send to the first hop
 #ifdef _DO_PRINTF
-		printf("%i sending to %i\n", rakPeer->GetExternalID(tree->children[i]->data.systemAddress).port, tree->children[i]->data.systemAddress.port);
+		RAKNET_DEBUG_PRINTF("%i sending to %i\n", rakPeer->GetExternalID(tree->children[i]->data.systemAddress).port, tree->children[i]->data.systemAddress.port);
 #endif
 		rakPeer->Send(out, priority, reliability, orderingChannel, tree->children[i]->data.systemAddress, false);
 	}
@@ -148,7 +148,7 @@ PluginReceiveResult Router::OnReceive(RakPeerInterface *peer, Packet *packet)
 		(packet->length>5 && packet->data[0]==ID_TIMESTAMP && packet->data[5]==ID_ROUTE_AND_MULTICAST))
 	{
 #ifdef _DO_PRINTF
-		printf("%i got routed message from %i\n", peer->GetExternalID(packet->systemAddress).port, packet->systemAddress.port);
+		RAKNET_DEBUG_PRINTF("%i got routed message from %i\n", peer->GetExternalID(packet->systemAddress).port, packet->systemAddress.port);
 #endif
 		RakNetTime timestamp;
 		PacketPriority priority;
@@ -211,7 +211,7 @@ PluginReceiveResult Router::OnReceive(RakPeerInterface *peer, Packet *packet)
 		if (incomingBitstream.ReadCompressed(numberOfChildren)==false)
 		{
 #ifdef _DEBUG
-			assert(0);
+			RakAssert(0);
 #endif
 			return RR_STOP_PROCESSING_AND_DEALLOCATE;
 		}
@@ -246,7 +246,7 @@ PluginReceiveResult Router::OnReceive(RakPeerInterface *peer, Packet *packet)
 			}
 
 #ifdef _DO_PRINTF
-			printf("%i routing to %i\n", peer->GetExternalID(packet->systemAddress).port, immediateRecipient.port);
+			RAKNET_DEBUG_PRINTF("%i routing to %i\n", peer->GetExternalID(packet->systemAddress).port, immediateRecipient.port);
 #endif
 
 			// Send what we got so far
@@ -266,7 +266,7 @@ PluginReceiveResult Router::OnReceive(RakPeerInterface *peer, Packet *packet)
 		if (hasData)
 		{
 #ifdef _DO_PRINTF
-			printf("%i returning payload to user\n", peer->GetExternalID(packet->systemAddress).port);
+			RAKNET_DEBUG_PRINTF("%i returning payload to user\n", peer->GetExternalID(packet->systemAddress).port);
 #endif
 
 			if (packet->data[0]==ID_TIMESTAMP )

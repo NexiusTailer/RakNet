@@ -1,7 +1,10 @@
 #include "RakThread.h"
 #include "RakNetDefines.h"
 
-#ifdef _WIN32
+#if defined(_XBOX) || defined(X360)
+#include "XBOX360Includes.h"
+#include <process.h>
+#elif defined(_WIN32)
 #include <windows.h>
 #include <stdio.h>
 	#if !defined(_WIN32_WCE)
@@ -24,7 +27,7 @@ int RakThread::Create( void* start_address( void* ), void *arglist)
 #ifdef _WIN32
 	HANDLE threadHandle;
 	unsigned threadID = 0;
-#ifdef _XBOX360
+#if defined(_XBOX) || defined(X360)
 	threadHandle = (HANDLE) _beginthreadex( NULL, 0, start_address, arglist, 0, &threadID );
 #elif defined (_WIN32_WCE)
 	threadHandle = CreateThread(NULL,MAX_ALLOCA_STACK_ALLOCATION*2,start_address,arglist,0,(DWORD*)&threadID);

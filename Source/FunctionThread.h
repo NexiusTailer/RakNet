@@ -31,7 +31,7 @@ class Functor;
 
 /// FunctionThread takes a stream of classes that implement a processing function, processes them in a thread, and calls a callback with the result.
 /// It's a useful way to call blocking functions that you do not want to block, such as file writes and database operations.
-class RAK_DLL_EXPORT FunctionThread : public RakNet::RakMemoryOverride
+class RAK_DLL_EXPORT FunctionThread
 {
 public:
 	FunctionThread();
@@ -82,7 +82,7 @@ protected:
 
 /// A functor is a single unit of processing to send to the Function thread.
 /// Derive from it, add your data, and implement the processing function.
-class Functor : public RakNet::RakMemoryOverride
+class Functor
 {
 public:
 	Functor() {}
@@ -98,7 +98,7 @@ public:
 	virtual void HandleResult(bool wasCancelled, void *context)=0;
 };
 
-class RAK_DLL_EXPORT FunctionThreadDependentClass : public RakNet::RakMemoryOverride
+class RAK_DLL_EXPORT FunctionThreadDependentClass
 {
 public:
 	FunctionThreadDependentClass();

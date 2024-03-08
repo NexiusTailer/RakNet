@@ -24,7 +24,7 @@
 #include <process.h>
 #include "ExtendedOverlappedPool.h"
 #include <stdio.h>
-#include <assert.h>
+#include "RakAssert.h"
 
 // All these are used for the Read callback.  For general Asynch file IO you would change these
 #include "RakNetTypes.h"
@@ -164,13 +164,13 @@ BOOL ReadAsynch( HANDLE handle, ExtendedOverlappedStruct *extended )
 
 		if ( dwErrCode != ERROR_IO_PENDING )
 		{
-#if defined(_WIN32) && !defined(_XBOX360) && defined(_DEBUG)
+#if defined(_WIN32) && !defined(_XBOX) && defined(_DEBUG)
 			LPVOID messageBuffer;
 			FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 				NULL, dwErrCode, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
 				( LPTSTR ) & messageBuffer, 0, NULL );
 			// something has gone wrong here...
-			printf( "ReadFile failed:Error code - %d\n%s", dwErrCode, messageBuffer );
+			RAKNET_DEBUG_PRINTF( "ReadFile failed:Error code - %d\n%s", dwErrCode, messageBuffer );
 			//Free the buffer.
 			LocalFree( messageBuffer );
 #endif
@@ -184,10 +184,10 @@ BOOL ReadAsynch( HANDLE handle, ExtendedOverlappedStruct *extended )
 
 void WriteAsynch( HANDLE handle, ExtendedOverlappedStruct *extended )
 {
-	//printf("Beginning asynch write of %i bytes.\n",extended->length);
+	//RAKNET_DEBUG_PRINTF("Beginning asynch write of %i bytes.\n",extended->length);
 	//for (int i=0; i < extended->length && i < 10; i++)
-	// printf("%i ", extended->data[i]);
-	//printf("\n\n");
+	// RAKNET_DEBUG_PRINTF("%i ", extended->data[i]);
+	//RAKNET_DEBUG_PRINTF("\n\n");
 	BOOL success;
 	extended->read = false;
 	success = WriteFile( handle, extended->data, extended->length, 0, ( LPOVERLAPPED ) extended );
@@ -198,13 +198,13 @@ void WriteAsynch( HANDLE handle, ExtendedOverlappedStruct *extended )
 
 		if ( dwErrCode != ERROR_IO_PENDING )
 		{
-#if defined(_WIN32) && !defined(_XBOX360) && defined(_DEBUG)
+#if defined(_WIN32) && !defined(_XBOX) && defined(_DEBUG)
 			LPVOID messageBuffer;
 			FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 				NULL, dwErrCode, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
 				( LPTSTR ) & messageBuffer, 0, NULL );
 			// something has gone wrong here...
-			printf( "WriteFile failed:Error code - %d\n%s", dwErrCode, messageBuffer );
+			RAKNET_DEBUG_PRINTF( "WriteFile failed:Error code - %d\n%s", dwErrCode, messageBuffer );
 
 			//Free the buffer.
 			LocalFree( messageBuffer );
@@ -246,13 +246,13 @@ unsigned __stdcall ThreadPoolFunc( LPVOID arguments )
 			if ( dwIOError != ERROR_OPERATION_ABORTED )
 			{
 				// Print all but this very common error message
-#if defined(_WIN32) && !defined(_XBOX360) && defined(_DEBUG)
+#if defined(_WIN32) && !defined(_XBOX) && defined(_DEBUG)
 				LPVOID messageBuffer;
 				FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 					NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
 					( LPTSTR ) & messageBuffer, 0, NULL );
 				// something has gone wrong here...
-				printf( "GetQueuedCompletionStatus failed:Error code - %d\n%s", dwIOError, messageBuffer );
+				RAKNET_DEBUG_PRINTF( "GetQueuedCompletionStatus failed:Error code - %d\n%s", dwIOError, messageBuffer );
 
 				//Free the buffer.
 				LocalFree( messageBuffer );
@@ -267,10 +267,10 @@ HANDLE_ERROR:
 			// This socket is no longer used
 
 			if ( lpOverlapped )
-				delete lpOverlapped;
+				RakNet::OP_DELETE(lpOverlapped);
 
 			if ( lpClientContext )
-				delete lpClientContext;
+				RakNet::OP_DELETE(lpClientContext);
 
 			// If we are killing the threads, then we keep posting fake completion statuses until we get a fake one through the queue (i.e. lpOverlapped==0 as above)
 			// This way we delete all the data from the real calls before exiting the thread

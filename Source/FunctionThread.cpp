@@ -28,7 +28,7 @@ FunctionThread::~FunctionThread()
 }
 void FunctionThread::StartThreads(int numThreads)
 {
-	threadPool.StartThreads(numThreads, 0);
+	threadPool.StartThreads(numThreads, 0, 0, 0);
 }
 void FunctionThread::StopThreads(bool blockOnCurrentProcessing)
 {
@@ -103,7 +103,7 @@ FunctionThreadDependentClass::FunctionThreadDependentClass()
 FunctionThreadDependentClass::~FunctionThreadDependentClass()
 {
 	if (functionThreadWasAllocated)
-		delete functionThread;
+		RakNet::OP_DELETE(functionThread);
 }
 
 void FunctionThreadDependentClass::AssignFunctionThread(FunctionThread *ft)
@@ -111,7 +111,7 @@ void FunctionThreadDependentClass::AssignFunctionThread(FunctionThread *ft)
 	if (functionThread && functionThreadWasAllocated)
 	{
 		functionThread->StopThreads(true);
-		delete functionThread;
+		RakNet::OP_DELETE(functionThread);
 	}
 
 	functionThread=ft;
@@ -122,7 +122,7 @@ void FunctionThreadDependentClass::StartFunctionThread(void)
 {
 	if (functionThread==0)
 	{
-		functionThread = new FunctionThread;
+		functionThread = RakNet::OP_NEW<FunctionThread>();
 		functionThreadWasAllocated=true;
 	}
 

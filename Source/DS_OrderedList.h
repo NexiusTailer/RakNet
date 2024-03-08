@@ -34,7 +34,7 @@ namespace DataStructures
 
 	/// \note IMPORTANT! If you use defaultOrderedListComparison then call IMPLEMENT_DEFAULT_COMPARISON or you will get an unresolved external linker error.
 	template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)=defaultOrderedListComparison<key_type, data_type> >
-	class RAK_DLL_EXPORT OrderedList : public RakNet::RakMemoryOverride
+	class RAK_DLL_EXPORT OrderedList
 	{
 	public:
 		static void IMPLEMENT_DEFAULT_COMPARISON(void) {DataStructures::defaultOrderedListComparison<key_type, data_type>(key_type(),data_type());}
@@ -105,7 +105,7 @@ namespace DataStructures
 		bool objectExists;
 		unsigned index;
 		index = GetIndexFromKey(key, &objectExists, cf);
-		assert(objectExists);
+		RakAssert(objectExists);
 		return orderedList[index];
 	}
 	template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>
@@ -167,6 +167,7 @@ namespace DataStructures
 	template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>
 	unsigned OrderedList<key_type, data_type, default_comparison_function>::Insert(const key_type &key, const data_type &data, bool assertOnDuplicate, int (*cf)(const key_type&, const data_type&))
 	{
+		(void) assertOnDuplicate;
 		bool objectExists;
 		unsigned index;
 		index = GetIndexFromKey(key, &objectExists, cf);
@@ -175,7 +176,7 @@ namespace DataStructures
 		if (objectExists)
 		{
 			// This is usually a bug!  Use InsertAllowDuplicate if you want duplicates
-			assert(assertOnDuplicate==false);
+			RakAssert(assertOnDuplicate==false);
 			return (unsigned)-1;
 		}
 
@@ -199,10 +200,10 @@ namespace DataStructures
 		index = GetIndexFromKey(key, &objectExists, cf);
 
 		// Can't find the element to remove if this assert hits
-	//	assert(objectExists==true);
+	//	RakAssert(objectExists==true);
 		if (objectExists==false)
 		{
-			assert(objectExists==true);
+			RakAssert(objectExists==true);
 			return 0;
 		}
 

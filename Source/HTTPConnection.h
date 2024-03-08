@@ -34,7 +34,7 @@ struct SystemAddress;
 /// This class will handle connecting and reconnecting as necessary.
 ///
 /// Note that only one Post() can be handled at a time. 
-class RAK_DLL_EXPORT HTTPConnection : public RakNet::RakMemoryOverride
+class RAK_DLL_EXPORT HTTPConnection
 {
 public:
     /// Returns a HTTP object associated with this tcp connection

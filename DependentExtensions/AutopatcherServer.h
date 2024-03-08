@@ -24,12 +24,13 @@
 #include "PacketPriority.h"
 #include "ThreadPool.h"
 #include "BitStream.h"
+#include "RakString.h"
 
 class RakPeerInterface;
 class FileList;
 struct Packet;
-class FileListTransfer;
 class AutopatcherRepositoryInterface;
+class FileListTransfer;
 
 /// \addtogroup PLUGINS_GROUP
 /// \brief The server plugin for the autopatcher.  Must be running for the client to get patches.
@@ -75,27 +76,42 @@ public:
 	/// \internal For plugin handling
 	virtual void OnCloseConnection(RakPeerInterface *peer, SystemAddress systemAddress);
 
-	struct PatcherAndPacket
+	struct ThreadData
 	{
 		AutopatcherServer *server;
-		Packet *packet;
+		RakNet::RakString applicationName;
+		RakNet::RakString lastUpdateDate;
+		SystemAddress systemAddress;
+		FileList *clientList;
+		unsigned short setId;
 	};
 
 	struct ResultTypeAndBitstream
 	{
+		ResultTypeAndBitstream() {patchList=0; deletedFiles=0; addedFiles=0;}
 		int resultType;
 		SystemAddress systemAddress;
 		RakNet::BitStream bitStream1;
 		RakNet::BitStream bitStream2;
+		FileList *patchList;
+		FileList *deletedFiles, *addedFiles;
+		bool fatalError;
+		unsigned short setId;
+		RakNet::RakString currentDate;
+		enum
+		{
+			GET_CHANGELIST_SINCE_DATE,
+			GET_PATCH,
+		} operation;
 	};
 
 protected:
-	friend AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherServer::PatcherAndPacket pap, bool *returnOutput, void* perThreadData);
-	friend AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::PatcherAndPacket pap, bool *returnOutput, void* perThreadData);
+	friend AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherServer::ThreadData pap, bool *returnOutput, void* perThreadData);
+	friend AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadData pap, bool *returnOutput, void* perThreadData);
 	void OnGetChangelistSinceDate(RakPeerInterface *peer, Packet *packet);
 	void OnGetPatch(RakPeerInterface *peer, Packet *packet);
-	void RemoveFromThreadPool(SystemAddress systemAddress);
 
+	void RemoveFromThreadPool(SystemAddress systemAddress);
 	AutopatcherRepositoryInterface *repository;
 	FileListTransfer *fileListTransfer;
 	RakPeerInterface *rakPeer;
@@ -104,7 +120,7 @@ protected:
 
 	// The point of the threadPool is so that SQL queries, which are blocking, happen in the thread and don't slow down the rest of the application
 	// The threadPool has a queue for incoming processing requests.  As systems disconnect their pending requests are removed from the list.
-	ThreadPool<PatcherAndPacket, ResultTypeAndBitstream*> threadPool;
+	ThreadPool<ThreadData, ResultTypeAndBitstream*> threadPool;
 };
 
 #endif

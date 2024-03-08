@@ -2,6 +2,7 @@
 #define __FILE_LIST_TRANSFER_CALLBACK_INTERFACE_H
 
 #include "RakMemoryOverride.h"
+#include "FileListNodeContext.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -10,7 +11,7 @@
 /// \brief Used by FileListTransfer plugin as a callback for when we get a file.
 /// You get the last file when fileIndex==setCount
 /// \sa FileListTransfer
-class FileListTransferCBInterface : public RakNet::RakMemoryOverride
+class FileListTransferCBInterface
 {
 public:
 	struct OnFileStruct
@@ -45,7 +46,7 @@ public:
 
 		/// User data passed to one of the functions in the FileList class.
 		/// However, on error, this is instead changed to one of the enumerations in the PatchContext structure.
-		unsigned char context;
+		FileListNodeContext context;
 	};
 
 	FileListTransferCBInterface() {}

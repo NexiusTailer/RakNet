@@ -18,7 +18,7 @@
 #include "NetworkIDManager.h"
 #include "RakAssert.h"
 
-#if !defined (_WIN32) && !defined (_XBOX360)
+#if !defined (_WIN32) && !defined (_XBOX) && !defined(X360)
 #include <alloca.h>
 #endif
 
@@ -107,7 +107,7 @@ void NetworkIDObject::SetNetworkID( NetworkID id )
 
 	if ( networkID == id )
 	{
-		// printf("NetworkIDObject passed %i which already exists in the tree.  SetID ignored", id);
+		// RAKNET_DEBUG_PRINTF("NetworkIDObject passed %i which already exists in the tree.  SetID ignored", id);
 		return ;
 	}
 
@@ -122,7 +122,7 @@ void NetworkIDObject::SetNetworkID( NetworkID id )
 
 	if ( collision )   // Tree should have only unique values.  The new value is already in use.
 	{
-		//printf("Warning: NetworkIDObject::SetID passed %i, which has an existing node in the tree.  Old node removed, which will cause the item pointed to to be inaccessible to the network", id);
+		//RAKNET_DEBUG_PRINTF("Warning: NetworkIDObject::SetID passed %i, which has an existing node in the tree.  Old node removed, which will cause the item pointed to to be inaccessible to the network", id);
 		networkIDManager->IDTree.Del( NetworkIDNode( collision->networkID, collision->object ) );
 	}
 
@@ -161,7 +161,7 @@ void NetworkIDObject::SetParent( void *_parent )
 		NetworkIDNode *nodeArray;
 
 		bool usedAlloca=false;
-	#if !defined(_XBOX360)
+	#if !defined(_XBOX) && !defined(X360)
 		if (sizeof(NetworkIDNode) * size < MAX_ALLOCA_STACK_ALLOCATION)
 		{
 			nodeArray = (NetworkIDNode*) alloca(sizeof(NetworkIDNode) * size);
@@ -169,7 +169,7 @@ void NetworkIDObject::SetParent( void *_parent )
 		}
 		else
 	#endif
-			nodeArray = new NetworkIDNode[size];
+			nodeArray = RakNet::OP_NEW_ARRAY<NetworkIDNode>(size);
 
 		networkIDManager->IDTree.DisplayBreadthFirstSearch( nodeArray );
 		for (i=0; i < size; i++)
@@ -179,7 +179,7 @@ void NetworkIDObject::SetParent( void *_parent )
 		}
 
 		if (usedAlloca==false)
-			delete [] nodeArray;
+			RakNet::OP_DELETE_ARRAY(nodeArray);
 #endif
 	}
 #endif
@@ -216,11 +216,19 @@ void NetworkIDObject::GenerateID(void)
 	do
 	{
 		networkID.localSystemAddress=networkIDManager->sharedNetworkID++;
-		if (NetworkID::peerToPeerMode)
+		if (NetworkID::IsPeerToPeerMode())
 		{
-			 // If this assert hits you forgot to call SetExternalSystemAddress
-			RakAssert(networkIDManager->externalSystemAddress!=UNASSIGNED_SYSTEM_ADDRESS);
-			networkID.systemAddress=networkIDManager->externalSystemAddress;
+			if (networkIDManager->GetGuid()==UNASSIGNED_RAKNET_GUID)
+			{
+				 // If this assert hits you forgot to call SetGUID and SetExternalSystemAddress
+				RakAssert(networkIDManager->externalSystemAddress!=UNASSIGNED_SYSTEM_ADDRESS);
+				networkID.systemAddress=networkIDManager->externalSystemAddress;
+			}
+			else
+			{
+				networkID.guid=networkIDManager->GetGuid();
+				networkID.systemAddress=networkIDManager->externalSystemAddress;
+			}
 		}
 		collision = networkIDManager->IDTree.GetPointerToNode( NetworkIDNode( ( networkID ), 0 ) );
 	}

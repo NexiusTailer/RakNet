@@ -48,8 +48,7 @@ int main(void)
     HTTPConnection httpConnection(tcp, "jenkinssoftware.com");
    
     // This adds specific parsing functionality to HTTPConnection, in order to communicate with DirectoryServer.php
-	// See http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1818.0 for why we have currenttimestamp
-    PHPDirectoryServer phpDirectoryServer(httpConnection, "/raknet/DirectoryServer.php?unique=currenttimestamp");
+    PHPDirectoryServer phpDirectoryServer(httpConnection, "/raknet/DirectoryServer.php");
 
 	// Set fields with columnname / value
     phpDirectoryServer.SetField("beehive","inthewater");

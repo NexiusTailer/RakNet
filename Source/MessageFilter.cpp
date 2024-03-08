@@ -210,7 +210,7 @@ void MessageFilter::DeallocateFilterSet(FilterSet* filterSet)
 	unsigned i;
 	for (i=0; i < filterSet->allowedRPCs.Size(); i++)
 		rakFree(filterSet->allowedRPCs[i]);
-	delete filterSet;
+	RakNet::OP_DELETE(filterSet);
 }
 FilterSet* MessageFilter::GetFilterSetByID(int filterSetID)
 {
@@ -222,7 +222,7 @@ FilterSet* MessageFilter::GetFilterSetByID(int filterSetID)
 		return filterList[index];
 	else
 	{
-		FilterSet *newFilterSet = new FilterSet;
+		FilterSet *newFilterSet = RakNet::OP_NEW<FilterSet>();
 		memset(newFilterSet->allowedIDs, 0, MESSAGE_FILTER_MAX_MESSAGE_ID * sizeof(bool));
 		newFilterSet->banOnFilterTimeExceed=false;
 		newFilterSet->kickOnDisallowedMessage=false;
@@ -255,7 +255,11 @@ void MessageFilter::OnInvalidMessage(RakPeerInterface *peer, FilterSet *filterSe
 	if (filterSet->invalidMessageCallback)
 		filterSet->invalidMessageCallback(peer, systemAddress, filterSet->filterSetID, filterSet->disallowedCallbackUserData, messageID);
 	if (filterSet->banOnDisallowedMessage)
-		peer->AddToBanList(systemAddress.ToString(false), filterSet->disallowedMessageBanTimeMS);
+	{
+		char str1[64];
+		systemAddress.ToString(false, str1);
+		peer->AddToBanList(str1, filterSet->disallowedMessageBanTimeMS);
+	}
 	if (filterSet->kickOnDisallowedMessage)
 		peer->CloseConnection(systemAddress, true, 0);
 }
@@ -275,7 +279,11 @@ void MessageFilter::Update(RakPeerInterface *peer)
 				systemList[index].filter->timeoutCallback(peer, systemList[index].systemAddress, systemList[index].filter->filterSetID, systemList[index].filter->timeoutUserData);
 
 			if (systemList[index].filter->banOnFilterTimeExceed)
-				peer->AddToBanList(systemList[index].systemAddress.ToString(false), systemList[index].filter->timeExceedBanTimeMS);
+			{
+				char str1[64];
+				systemList[index].systemAddress.ToString(false, str1);
+				peer->AddToBanList(str1, systemList[index].filter->timeExceedBanTimeMS);
+			}
 			peer->CloseConnection(systemList[index].systemAddress, true, 0);
 			systemList.RemoveAtIndex(index);
 		}

@@ -191,6 +191,8 @@ enum DefaultMessageIDTypes
 	ID_NAT_SEND_OFFLINE_MESSAGE_AT_TIME,
 	/// NATPunchthrough plugin - The facilitator is already attempting this connection
 	ID_NAT_IN_PROGRESS,
+	/// NATPunchthrough plugin - Another system tried to connect to us, and failed. See guid and system address field in the Packet structure
+	ID_NAT_REMOTE_CONNECTION_ATTEMPT_FAILED,
 
 	/// LightweightDatabase plugin - Query
 	ID_DATABASE_QUERY_REQUEST,
@@ -229,6 +231,33 @@ enum DefaultMessageIDTypes
 	/// Auto RPC error code
 	/// See AutoRPC.h for codes, stored in packet->data[1]
 	ID_RPC_REMOTE_ERROR,
+
+	/// FileListTransfer transferring large files in chunks that are read only when needed, to save memory
+	ID_FILE_LIST_REFERENCE_PUSH,
+
+	/// Force the ready event to all set
+	ID_READY_EVENT_FORCE_ALL_SET,
+
+	/// Rooms function
+	ID_ROOMS_EXECUTE_FUNC,
+	ID_ROOMS_LOGON_STATUS,
+	ID_ROOMS_HANDLE_CHANGE,
+
+	/// Lobby2 message
+	ID_LOBBY2_SEND_MESSAGE,
+	ID_LOBBY2_SERVER_ERROR,
+
+	// RAKNET_PROTOCOL_VERSION in RakNetVersion.h does not match on the remote system what we have on our system
+	// This means the two systems cannot communicate.
+	// The 2nd byte of the message contains the value of RAKNET_PROTOCOL_VERSION for the remote system
+	ID_INCOMPATIBLE_PROTOCOL_VERSION,
+
+	/// FCMHost plugin telling another system we are adding them as a participant
+	ID_FCM_HOST_ADD_PARTICIPANT_REQUEST,
+	/// FCMHost plugin notifying the user that the host has changed. 2nd byte is FCMHostGroupID
+	ID_FCM_HOST_CHANGED,
+	// FCMHost plugin sent us a new list
+	ID_FCM_HOST_LIST_UPDATE,
 
 	// For the user to use.  Start your first enumeration at this value.
 	ID_USER_PACKET_ENUM,

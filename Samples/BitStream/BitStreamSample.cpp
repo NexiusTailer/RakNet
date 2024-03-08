@@ -17,8 +17,9 @@
 
 #ifdef _COMPATIBILITY_1
 #include "Compatibility1Includes.h" // Developers of a certain platform will know what to do here.
-#elif defined(_PS3)
+#elif defined(_PS3) || defined(__PS3__)
 #include "Console2SampleIncludes.h"
+#elif defined (_XBOX)
 #elif defined(_WIN32)
 #include <windows.h> // Sleep
 #else
@@ -114,7 +115,7 @@ void clientRPC(RPCParameters *rpcParameters)
 	quit=true;
 }
 
-#ifdef _PS3
+#if defined(_PS3) || defined(__PS3__)
 _PS3_SetSystemProcessParams
 #endif
 
@@ -126,7 +127,7 @@ int main(void)
 #define getch getchar
 #endif
 
-#ifdef _PS3
+#if defined(_PS3) || defined(__PS3__)
 	PS3LoadModules();
 #endif
 	quit=false;

@@ -5,6 +5,7 @@
 #include <cstring> // For strlen
 #include <stdio.h>
 #include "MessageIdentifiers.h"
+#include "GetTime.h"
 
 #ifdef _WIN32
 #include <windows.h> // Sleep
@@ -34,6 +35,8 @@ int main(void)
 	peer2->Startup(1, 0, &socketDescriptor, 1);
 	peer1->SetOfflinePingResponse("Offline Ping Data", (int)strlen("Offline Ping Data")+1);
 
+	printf("Peer 1 guid = %s\n", peer1->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
+	printf("Peer 2 guid = %s\n", peer2->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
 	printf("Systems started.  Waiting for advertise system packet\n");
 
 	// Wait for connection to complete
@@ -43,6 +46,7 @@ int main(void)
 	usleep(300 * 1000);
 #endif
 
+	printf("Sending advertise system from %s\n", peer1->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
 	peer1->AdvertiseSystem("127.0.0.1", 60002,"hello world", (int)strlen("hello world")+1);
 
 	while (nextTest!=2)
@@ -57,22 +61,25 @@ int main(void)
 					printf("Got Advertise system with data: %s\n", packet->data+1);
 				else
 					printf("Got Advertise system with no data\n");
+				printf("Was sent from GUID %s\n", packet->guid.ToString());
 
+				printf("Sending ping from %s\n", peer2->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
 				peer2->Ping("127.0.0.1", 60001, false);
 				nextTest++;
 			}
 			else if (packet->data[0]==ID_PONG)
 			{
 				// Peer or client. Response from a ping for an unconnected system.
-				RakNetTime time, dataLength;
-				memcpy( ( char* ) & time, packet->data + sizeof( unsigned char ), sizeof( RakNetTime ) );
+				RakNetTime packetTime, dataLength;
+				RakNetTime curTime = RakNet::GetTime();
+				memcpy( ( char* ) & packetTime, packet->data + sizeof( unsigned char ), sizeof( RakNetTime ) );
 				dataLength = packet->length - sizeof( unsigned char ) - sizeof( RakNetTime );
-				printf("%s", peer2->GetInternalID().ToString());
 				if (peer2->IsLocalIP(packet->systemAddress.ToString(false)))
 					printf("ID_PONG from our own");
 				else
 					printf( "ID_PONG from");
-				printf(" %s on %p.\nPing is %i\nData is %i bytes long.\n", packet->systemAddress.ToString(), peer2, time, dataLength );
+				printf(" %s on %p.\nPing is %i\nData is %i bytes long.\n", packet->systemAddress.ToString(), peer2, curTime-packetTime, dataLength );
+				printf("Was sent from GUID %s\n", packet->guid.ToString());
 
 				if ( dataLength > 0 )
 					printf( "Data is %s\n", packet->data + sizeof( unsigned char ) + sizeof( RakNetTime ) );

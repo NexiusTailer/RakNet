@@ -25,8 +25,10 @@ namespace RakNet
 	class BitStream;
 }
 
+#include "IncrementalReadInterface.h"
+
 /// An interface used by AutopatcherServer to get the data necessary to run an autopatcher.  This is up to you to implement for custom repository solutions.
-class AutopatcherRepositoryInterface
+class AutopatcherRepositoryInterface : public IncrementalReadInterface
 {
 public:
 	/// Get list of files added and deleted since a certain date.  This is used by AutopatcherServer and not usually explicitly called.

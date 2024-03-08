@@ -18,11 +18,13 @@
 #include "DS_HuffmanEncodingTree.h"
 #include "BitStream.h"
 #include "RakString.h"
-#include <assert.h>
+#include "RakAssert.h"
 #include <string.h>
+#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
 #include <memory.h>
-#if defined(_PS3)
-#include "Console2Includes.h"
+#endif
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+#include "PS3Includes.h"
 #endif
 
 using namespace RakNet;
@@ -34,18 +36,18 @@ void StringCompressor::AddReference(void)
 {
 	if (++referenceCount==1)
 	{
-		instance = new StringCompressor;
+		instance = RakNet::OP_NEW<StringCompressor>();
 	}
 }
 void StringCompressor::RemoveReference(void)
 {
-	assert(referenceCount > 0);
+	RakAssert(referenceCount > 0);
 
 	if (referenceCount > 0)
 	{
 		if (--referenceCount==0)
 		{
-			delete instance;
+			RakNet::OP_DELETE(instance);
 			instance=0;
 		}
 	}
@@ -321,7 +323,7 @@ StringCompressor::StringCompressor()
 	DataStructures::Map<int, HuffmanEncodingTree *>::IMPLEMENT_DEFAULT_COMPARISON();
 
 	// Make a default tree immediately, since this is used for RPC possibly from multiple threads at the same time
-	HuffmanEncodingTree *huffmanEncodingTree = new HuffmanEncodingTree;
+	HuffmanEncodingTree *huffmanEncodingTree = RakNet::OP_NEW<HuffmanEncodingTree>();
 	huffmanEncodingTree->GenerateFromFrequencyTable( englishCharacterFrequencies );
 
 	huffmanEncodingTrees.Set(0, huffmanEncodingTree);
@@ -332,7 +334,7 @@ void StringCompressor::GenerateTreeFromStrings( unsigned char *input, unsigned i
 	if (huffmanEncodingTrees.Has(languageID))
 	{
 		huffmanEncodingTree = huffmanEncodingTrees.Get(languageID);
-		delete huffmanEncodingTree;
+		RakNet::OP_DELETE(huffmanEncodingTree);
 	}
 
 	unsigned index;
@@ -349,7 +351,7 @@ void StringCompressor::GenerateTreeFromStrings( unsigned char *input, unsigned i
 		frequencyTable[ input[ index ] ] ++;
 
 	// Build the tree
-	huffmanEncodingTree = new HuffmanEncodingTree;
+	huffmanEncodingTree = RakNet::OP_NEW<HuffmanEncodingTree>();
 	huffmanEncodingTree->GenerateFromFrequencyTable( frequencyTable );
 	huffmanEncodingTrees.Set(languageID, huffmanEncodingTree);
 }
@@ -357,7 +359,7 @@ void StringCompressor::GenerateTreeFromStrings( unsigned char *input, unsigned i
 StringCompressor::~StringCompressor()
 {
 	for (unsigned i=0; i < huffmanEncodingTrees.Size(); i++)
-		delete huffmanEncodingTrees[i];
+		RakNet::OP_DELETE(huffmanEncodingTrees[i]);
 }
 
 void StringCompressor::EncodeString( const char *input, int maxCharsToWrite, RakNet::BitStream *output, int languageID )
@@ -452,7 +454,7 @@ bool StringCompressor::DecodeString( std::string *output, int maxCharsToWrite, R
 	char *destinationBlock;
 	bool out;
 
-#ifndef _XBOX360
+#if !defined(_XBOX) && !defined(_X360)
 	if (maxCharsToWrite < MAX_ALLOCA_STACK_ALLOCATION)
 	{
 		destinationBlock = (char*) alloca(maxCharsToWrite);
@@ -486,7 +488,7 @@ bool StringCompressor::DecodeString( RakString *output, int maxCharsToWrite, Rak
 	char *destinationBlock;
 	bool out;
 
-#ifndef _XBOX360
+#if !defined(_XBOX) && !defined(_X360)
 	if (maxCharsToWrite < MAX_ALLOCA_STACK_ALLOCATION)
 	{
 		destinationBlock = (char*) alloca(maxCharsToWrite);

@@ -82,8 +82,7 @@ int main(void)
 	server->SetOccasionalPing(true);
 
 	printf("My IP is %s\n", server->GetLocalIP(0));
-
-
+	printf("My GUID is %s\n", server->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
 	puts("'quit' to quit. 'stat' to show stats. 'ping' to ping.\n'ban' to ban an IP from connecting.\n'kick to kick the first connected player.\nType to talk.");
 	char message[2048];
 
@@ -145,7 +144,7 @@ int main(void)
 
 
 			// Message now holds what we want to broadcast
-			char message2[420];
+			char message2[2048];
 			// Append Server: to the message so clients know that it ORIGINATED from the server
 			// All messages to all clients come from the server either directly or by being
 			// relayed from other clients
@@ -185,7 +184,7 @@ int main(void)
 		
 			case ID_NEW_INCOMING_CONNECTION:
 				 // Somebody connected.  We have their IP now
-				printf("ID_NEW_INCOMING_CONNECTION from %s\n", p->systemAddress.ToString());
+				printf("ID_NEW_INCOMING_CONNECTION from %s with GUID %s\n", p->systemAddress.ToString(), p->guid.ToString());
 				clientID=p->systemAddress; // Record the player ID of the client
 				break;
 
@@ -235,7 +234,7 @@ unsigned char GetPacketIdentifier(Packet *p)
 
 	if ((unsigned char)p->data[0] == ID_TIMESTAMP)
 	{
-		assert(p->length > sizeof(unsigned char) + sizeof(unsigned long));
+		RakAssert(p->length > sizeof(unsigned char) + sizeof(unsigned long));
 		return (unsigned char) p->data[sizeof(unsigned char) + sizeof(unsigned long)];
 	}
 	else

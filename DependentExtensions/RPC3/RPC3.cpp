@@ -3,7 +3,6 @@
 #include "RakAssert.h"
 #include "StringCompressor.h"
 #include "BitStream.h"
-#include "Types.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
 #include "NetworkIDObject.h"
@@ -49,7 +48,7 @@ bool RPC3::UnregisterFunction(const char *uniqueIdentifier)
 bool RPC3::IsFunctionRegistered(const char *uniqueIdentifier)
 {
 	unsigned i = GetLocalFunctionIndex(uniqueIdentifier);
-	return i!=-1;
+	return (bool) (i!=(unsigned)-1);
 }
 
 void RPC3::SetTimestamp(RakNetTime timeStamp)

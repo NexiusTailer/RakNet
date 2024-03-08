@@ -10,13 +10,13 @@ GridSectorizer::GridSectorizer()
 GridSectorizer::~GridSectorizer()
 {
 	if (grid)
-		delete [] grid;
+		RakNet::OP_DELETE_ARRAY(grid);
 }
 void GridSectorizer::Init(const float _maxCellWidth, const float _maxCellHeight, const float minX, const float minY, const float maxX, const float maxY)
 {
 	RakAssert(_maxCellWidth > 0.0f && _maxCellHeight > 0.0f);
 	if (grid)
-		delete [] grid;
+		RakNet::OP_DELETE_ARRAY(grid);
 
 	cellOriginX=minX;
 	cellOriginY=minY;
@@ -31,10 +31,10 @@ void GridSectorizer::Init(const float _maxCellWidth, const float _maxCellHeight,
 	invCellHeight = 1.0f / cellHeight;
 
 #ifdef _USE_ORDERED_LIST
-	grid = new DataStructures::OrderedList<void*, void*>[gridCellWidthCount*gridCellHeightCount];
+	grid = RakNet::OP_NEW<DataStructures::OrderedList<void*, void*>>(gridCellWidthCount*gridCellHeightCount);
 	DataStructures::OrderedList<void*,void*>::IMPLEMENT_DEFAULT_COMPARISON();
 #else
-	grid = new DataStructures::List<void*>[gridCellWidthCount*gridCellHeightCount];
+	grid = RakNet::OP_NEW_ARRAY<DataStructures::List<void*> >(gridCellWidthCount*gridCellHeightCount);
 #endif
 }
 void GridSectorizer::AddEntry(void *entry, const float minX, const float minY, const float maxX, const float maxY)

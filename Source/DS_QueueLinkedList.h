@@ -28,7 +28,7 @@ namespace DataStructures
 {
 	/// \brief A queue implemented using a linked list.  Rarely used.
 	template <class QueueType>
-	class RAK_DLL_EXPORT QueueLinkedList : public RakNet::RakMemoryOverride
+	class RAK_DLL_EXPORT QueueLinkedList
 	{
 	
 	public:

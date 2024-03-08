@@ -32,9 +32,10 @@ void main(void)
 		strcpy(receiver, "destination@host.com");
 	printf("Enter password needed to send: ");
 	gets(password);
-	strcpy(password, "mygmailpassword");
+	if (password[0]==0)
+		strcpy(password, "mygmailpassword");
 
-	fileList.AddFile("quote.txt", quote, (const unsigned int) strlen(quote), 0, 0);
+	fileList.AddFile("quote.txt", quote, (const unsigned int) strlen(quote), (const unsigned int) strlen(quote), FileListNodeContext(0,0));
 	const char *sendResult=emailSender.Send(mailServer,
 		25,
 		senderUsername,

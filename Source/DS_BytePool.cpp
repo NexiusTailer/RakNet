@@ -1,5 +1,5 @@
 #include "DS_BytePool.h"
-#include <assert.h>
+#include "RakAssert.h"
 #ifndef __APPLE__
 // Use stdlib and not malloc for compatibility
 #include <stdlib.h>
@@ -86,7 +86,7 @@ unsigned char *BytePool::Allocate(int bytesWanted)
 void BytePool::Release(unsigned char *data)
 {
 #ifdef _DISABLE_BYTE_POOL
-	RakFree(data);
+	_rakFree(data);
 #endif
 	unsigned char *realData = data-1;
 	switch (realData[0])
@@ -131,7 +131,7 @@ void BytePool::Release(unsigned char *data)
 		rakFree(realData);
 		break;
 	default:
-		assert(0);
+		RakAssert(0);
 		break;
 	}
 }

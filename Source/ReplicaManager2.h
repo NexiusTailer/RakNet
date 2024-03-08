@@ -40,7 +40,8 @@ class Connection_RM2Factory;
 
 /// \brief These are the types of events that can cause network data to be transmitted. 
 /// \ingroup REPLICA_MANAGER_2_GROUP
-enum SerializationType
+typedef int SerializationType;
+enum
 {
 	/// Serialization command initiated by the user
 	SEND_SERIALIZATION_GENERIC_TO_SYSTEM,
@@ -126,7 +127,7 @@ enum SerializationType
 /// \pre Call RakPeer::SetNetworkIDManager()
 /// \pre This system is a server or peer: Call NetworkIDManager::SetIsNetworkIDAuthority(true).
 /// \pre This system is a client:  Call NetworkIDManager::SetIsNetworkIDAuthority(false).
-/// \pre If peer to peer, set NetworkID::peerToPeerMode=true, and comment out NETWORK_ID_USE_PTR_TABLE in NetworkIDManager.h
+/// \pre If peer to peer, NETWORK_ID_SUPPORTS_PEER_TO_PEER should be defined in RakNetDefines.h
 /// \ingroup REPLICA_MANAGER_2_GROUP
 class RAK_DLL_EXPORT ReplicaManager2 : public PluginInterface
 {
@@ -186,7 +187,7 @@ public:
 	/// Sends a construction command to one or more systems, which will be relayed throughout the network.
 	/// Recipient(s) will allocate the connection via Connection_RM2Factory::AllocConnection() if it does not already exist.
 	/// Will trigger a call on the remote system(s) to Connection_RM2::Construct()
-	/// \note If using peer-to-peer, don't forget to set NetworkID::peerToPeerMode=true and comment out NETWORK_ID_USE_PTR_TABLE in NetworkIDManager.h.
+	/// \note If using peer-to-peer, NETWORK_ID_SUPPORTS_PEER_TO_PEER should be defined in RakNetDefines.h.
 	/// \note This is a low level function. Beginners may wish to use Replica2::SendConstruction() or Replica2::BroadcastConstruction(). You can also override Replica2::QueryConstruction()
 	/// \param[in] replica The class to construct remotely
 	/// \param[in] replicaData User-defined serialized data representing how to construct the class. Could be the name of the class, a unique identifier, or other methods
@@ -412,7 +413,7 @@ enum RAK_DLL_EXPORT BooleanQueryResult
 
 /// \brief Contextual information about serialization, passed to some functions in Replica2
 /// \ingroup REPLICA_MANAGER_2_GROUP
-struct RAK_DLL_EXPORT SerializationContext : public RakNet::RakMemoryOverride
+struct RAK_DLL_EXPORT SerializationContext
 {
 	SerializationContext() {}
 	~SerializationContext() {}
@@ -470,7 +471,7 @@ public:
 
 	/// Construct this object on other systems
 	/// Triggers a call to SerializeConstruction()
-	/// \note If using peer-to-peer, don't forget to set NetworkID::peerToPeerMode=true and comment out NETWORK_ID_USE_PTR_TABLE in NetworkIDManager.h
+	/// \note If using peer-to-peer, NETWORK_ID_SUPPORTS_PEER_TO_PEER should be defined in RakNetDefines.h
 	/// \param[in] recipientAddress Which system to send to
 	/// \param[in] serializationType What type of command this is. Use UNDEFINED_REASON to have a type chosen automatically
 	virtual void SendConstruction(SystemAddress recipientAddress, SerializationType serializationType=UNDEFINED_REASON);
@@ -664,6 +665,16 @@ public:
 	/// \param[in] resynchOnly If true, do not send a Serialize() message if the data has changed
 	virtual void ForceElapseAllAutoserializeTimers(bool resynchOnly);
 
+	/// A call to Connection_RM2 Construct() has completed and the object is now internally referenced
+	/// \param[in] replicaData Whatever was written \a bitStream in Replica2::SerializeConstruction()
+	/// \param[in] type Whatever was written \a serializationType in Replica2::SerializeConstruction()
+	/// \param[in] replicaManager ReplicaManager2 instance that created this class.
+	/// \param[in] timestamp timestamp sent with Replica2::SerializeConstruction(), 0 for none.
+	/// \param[in] networkId NetworkID that will be assigned automatically to the new object after this function returns
+	/// \param[in] networkIDCollision True if the network ID that should be assigned to this object is already in use. Usuallly this is because the object already exists, and you should just read your data and return 0.
+	/// \return Return 0 to signal that construction failed or was refused for this object. Otherwise return the object that was created. A reference will be held to this object, and SetNetworkID() and SetReplicaManager() will be called automatically.
+	virtual void OnConstructionComplete(RakNet::BitStream *replicaData, SystemAddress sender, SerializationType type, ReplicaManager2 *replicaManager, RakNetTime timestamp, NetworkID networkId, bool networkIDCollision);
+
 protected:
 
 	virtual void ReceiveSerialize(SystemAddress sender, RakNet::BitStream *serializedObject, SerializationType serializationType, RakNetTime timestamp, DataStructures::OrderedList<SystemAddress,SystemAddress> &exclusionList );
@@ -680,7 +691,6 @@ protected:
 
 	bool hasClientID;
 	unsigned char clientID;
-	SystemAddress creatorSystem;
 	ReplicaManager2 *rm2;
 
 	struct AutoSerializeEvent
@@ -725,6 +735,7 @@ public:
 	/// Factory function, used to create instances of your game objects
 	/// Encoding is entirely up to you. \a replicaData will hold whatever was written \a bitStream in Replica2::SerializeConstruction()
 	/// One efficient way to do it is to use StringTable.h. This allows you to send predetermined strings over the network at a cost of 9 bits, up to 65536 strings
+	/// \note The object is not yet referenced by ReplicaManager2 in this callback. Use Replica2::OnConstructionComplete() to perform functionality such as AutoSerialize()
 	/// \param[in] replicaData Whatever was written \a bitStream in Replica2::SerializeConstruction()
 	/// \param[in] type Whatever was written \a serializationType in Replica2::SerializeConstruction()
 	/// \param[in] replicaManager ReplicaManager2 instance that created this class.
@@ -733,6 +744,15 @@ public:
 	/// \param[in] networkIDCollision True if the network ID that should be assigned to this object is already in use. Usuallly this is because the object already exists, and you should just read your data and return 0.
 	/// \return Return 0 to signal that construction failed or was refused for this object. Otherwise return the object that was created. A reference will be held to this object, and SetNetworkID() and SetReplicaManager() will be called automatically.
 	virtual Replica2* Construct(RakNet::BitStream *replicaData, SystemAddress sender, SerializationType type, ReplicaManager2 *replicaManager, RakNetTime timestamp, NetworkID networkId, bool networkIDCollision)=0;
+
+	/// CALLBACK:
+	/// Called before a download is sent to a new connection, called after ID_REPLICA_MANAGER_DOWNLOAD_STARTED is sent.
+	/// Gives you control over the list of objects to be downloaded. For greater control, you can override ReplicaManager2::DownloadToNewConnection
+	/// Defaults to send everything in the default order
+	/// \param[in] fullReplicaUnorderedList The list of all known objects in the order they were originally known about by the system (the first time used by any function)
+	/// \param[out] orderedDownloadList An empty list. Copy fullReplicaUnorderedList to this list to send everything. Leave elements out to not send them. Add them to the list in a different order to send them in that order.
+	virtual void SortInitialDownload( const DataStructures::List<Replica2*> &orderedDownloadList, DataStructures::List<Replica2*> &initialDownloadList );
+
 
 	/// CALLBACK:
 	/// Called before a download is sent to a new connection
@@ -804,6 +824,11 @@ public:
 	/// Get the system address associated with this class instance.
 	SystemAddress GetSystemAddress(void) const;
 
+	/// Set the guid to use with this class instance. This is set internally when the object is created
+	void SetGuid(RakNetGUID guid);
+
+	/// Get the guid associated with this class instance.
+	RakNetGUID GetGuid(void) const;
 	
 protected:
 	void Deref(Replica2* replica);
@@ -822,6 +847,7 @@ protected:
 
 	// Address of this participant
 	SystemAddress systemAddress;
+	RakNetGUID rakNetGuid;
 
 	DataStructures::OrderedList<Replica2*, Replica2*, ReplicaManager2::Replica2ObjectComp> lastConstructionList;
 	DataStructures::OrderedList<Replica2*, Replica2*, ReplicaManager2::Replica2ObjectComp> lastSerializationList;

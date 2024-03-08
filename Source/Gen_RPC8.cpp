@@ -47,6 +47,7 @@ void GenRPC::SerializeHeader(char *&out, unsigned int numParams)
 	//*writeOffset+=sizeof(unsigned char);
 }
 
+
 //
 // @params
 //            call: [IN/OUT] workspace to build parameters that we will pass to function
@@ -105,8 +106,8 @@ bool GenRPC::DeserializeParametersAndBuildCall(
 		for ( unsigned int i = 0; i < serializedArgs; i++ )
 		{
 
-			// read heade entry
-			int const plen = *(unsigned int*)header;
+			// read header entry
+			int plen = *(unsigned int*)header;
 			header += sizeof( unsigned int );
 			unsigned char const flags = *( header++ );
 
@@ -477,7 +478,6 @@ bool GenRPC::CallWithStack( CallParams& call, void *functionPtr ) {
 		mov         r15,rsp\n\
 		lea         rbx,[rdi+8]\n\
 		sub         r8,r8\n\
-		sub         rsp,8\n\
 		sub         rcx,6\n\
 		lea         r9,[rsi + 6 * 8]\n\
 		jbe         .L1\n\
@@ -507,7 +507,7 @@ bool GenRPC::CallWithStack( CallParams& call, void *functionPtr ) {
 		call         rax\n\
 		mov          rsp,r15\n\
 		pop          r15\n\
-                pop          rbx\n\
+		pop          rbx\n\
 		.att_syntax prefix"\
 		: /* no outputs */\
 		: "D" ( &call ), "S" (functionPtr)\
@@ -756,4 +756,3 @@ bool GenRPC::CallWithStack( CallParams& call, void *functionPtr ) {
 #endif
 }
 // --8<---8<----8<----8<---END
-

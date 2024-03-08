@@ -30,7 +30,7 @@
 /// \li \em 1430. The size VPN and PPTP prefer.
 /// \li \em 1400. Maximum size for AOL DSL.
 /// \li \em 576. Typical value to connect to dial-up ISPs.
-#ifdef _XBOX360
+#if defined(_XBOX) || defined(X360)
 #define DEFAULT_MTU_SIZE 1264
 #else
 #define DEFAULT_MTU_SIZE 1492
@@ -38,6 +38,10 @@
 
 /// The largest value for an UDP datagram
 /// \sa RakPeer::SetMTUSize()
+#if defined(_XBOX) || defined(X360)
+#define MAXIMUM_MTU_SIZE 1264
+#else
 #define MAXIMUM_MTU_SIZE 1492
+#endif
 
 #endif

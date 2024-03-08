@@ -25,7 +25,7 @@
 /// As these data structures are stand-alone, you can use them outside of RakNet for your own projects if you wish.
 namespace DataStructures
 {
-	class ByteQueue : public RakNet::RakMemoryOverride
+	class ByteQueue
 	{
 	public:
 		ByteQueue();

@@ -31,7 +31,7 @@ class CommandParserInterface;
 /// The TransportInterface will be used to send data between the server and the client.  The connecting client must support the
 /// protocol used by your derivation of TransportInterface . TelnetTransport and RakNetTransport are two such derivations .
 /// When a command is sent by a remote console, it will be processed by your implementations of CommandParserInterface
-class RAK_DLL_EXPORT ConsoleServer : public RakNet::RakMemoryOverride
+class RAK_DLL_EXPORT ConsoleServer
 {
 public:
 	ConsoleServer();

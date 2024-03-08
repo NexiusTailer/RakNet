@@ -93,7 +93,7 @@ LONG ProcessException(struct _EXCEPTION_POINTERS *ExceptionInfo)
 
 		if (CrashReporter::controls.actionToTake & AOC_SILENT_MODE)
 		{
-			sprintf(silentModeEmailBody, "%s version %s has crashed.\r\nIt was compiled on %s %s.\r\n", CrashReporter::controls.appName,CrashReporter::controls.appVersion, __DATE__, __TIME__);
+		sprintf(silentModeEmailBody, "%s%s version %s has crashed.\r\nIt was compiled on %s %s.\r\n", CrashReporter::controls.emailBody, CrashReporter::controls.appName,CrashReporter::controls.appVersion, __DATE__, __TIME__);
 
 			if (CrashReporter::controls.actionToTake & AOC_WRITE_TO_DISK)
 				sprintf(silentModeEmailBody+strlen(silentModeEmailBody), "Minidump written to %s \r\n", dumpFilepath);
@@ -126,7 +126,7 @@ LONG ProcessException(struct _EXCEPTION_POINTERS *ExceptionInfo)
 
 		if (CrashReporter::controls.actionToTake & AOC_SILENT_MODE)
 		{
-			sprintf(silentModeEmailBody, "%s version %s has crashed.\r\nIt was compiled on %s %s.\r\n", CrashReporter::controls.appName,CrashReporter::controls.appVersion, __DATE__, __TIME__);
+			sprintf(silentModeEmailBody, "%s%s version %s has crashed.\r\nIt was compiled on %s %s.\r\n", CrashReporter::controls.emailBody, CrashReporter::controls.appName,CrashReporter::controls.appVersion, __DATE__, __TIME__);
 
 			if (CrashReporter::controls.actionToTake & AOC_WRITE_TO_DISK)
 				sprintf(silentModeEmailBody+strlen(silentModeEmailBody), "Minidump written to %s \r\n", dumpFilepath);
@@ -134,7 +134,7 @@ LONG ProcessException(struct _EXCEPTION_POINTERS *ExceptionInfo)
 			// Silently send email with attachment
 			EmailSender emailSender;
 			FileList files;
-			files.AddFile(dumpFilepath,dumpFilename,0);
+			files.AddFile(dumpFilepath,dumpFilename,FileListNodeContext(0,0));
 			emailSender.Send(CrashReporter::controls.SMTPServer,
 				25,
 				CrashReporter::controls.SMTPAccountName,

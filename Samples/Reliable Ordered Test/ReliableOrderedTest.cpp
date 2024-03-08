@@ -111,7 +111,8 @@ int main(void)
 
 	printf("Test running.\n");
 
-	while (currentTime < quitTime)
+	//while (currentTime < quitTime)
+	while (1)
 	{
 #ifdef _WIN32
 		if (kbhit())

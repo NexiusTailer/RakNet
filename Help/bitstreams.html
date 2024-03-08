@@ -34,23 +34,97 @@ What this means is you will save bits if your data under half its maximum range.
 <BR>
 Finally, you can write bits.  Most of the time you will not care about this.  However, when writing booleans it will automatically only write one bit.  This can also be very useful for encryption since your data will no longer be byte aligned.<BR>
 <BR>
-Writing Data
+<B>Writing Data</B>
 </p>
-Writing data is a snap.  Create a bitstream, and call the Write method for each of your data types.  If your data type is a native type, then the correct overloaded version will be called.  If the data type is your own type, you must cast it first as in<BR>
+Bitstream is templated to take any type of data. If this is a built-in type, such as NetworkIDObject, it uses partial template specialization to write the type more efficiently. If it's a native type, or a structure, it writes the individual bits, similar to memcpy. You can pass structs containing multiple data members to bitstreams. However, you may wish to serialize each individual element to do correct <A HREF="http://en.wikipedia.org/wiki/Endianness">endian</A> swapping (needed for communication between PCs and Macs, for example). Note: if you want to support endian swapping, you should also comment out __BITSTREAM_NATIVE_END in RakNetDefines.h. This is uncommented by default as a speed optimization.<BR>
 <BR>
-bitStream.Write((char*)&myType, sizeof(myType);<BR>
+<span class="RakNetCode">
+struct MyVector<BR>
+{<BR>
+float x,y,z;<BR>
+} myVector;<BR>
+<BR>
+// No endian swapping<BR>
+bitStream.Write(myVector);<BR>
+<BR>
+// With endian swapping<BR>
+#undef __BITSTREAM_NATIVE_END<BR>
+bitStream.Write(myVector.x);<BR>
+bitStream.Write(myVector.y);<BR>
+bitStream.Write(myVector.z);<BR>
+<BR>
+// You can also override operator left shift and right shift<BR>
+RakNet::BitStream& operator &lt;&lt; (RakNet::BitStream& out, MyVector& in)<BR>
+{<BR>
+	out.WriteNormVector(in.x,in.y,in.z);<BR>
+	return out;<BR>
+}<BR>
+RakNet::BitStream& operator &gt;&gt; (RakNet::BitStream& in, MyVector& out)<BR>
+{<BR>
+	bool success = in.ReadNormVector(out.x,out.y,out.z);<BR>
+	assert(success);<BR>
+	return in;<BR>
+}<BR>
+<BR>
+// Read from bitstream<BR>
+myVector << bitStream;<BR>
+// Write to bitstream<BR>
+myVector >> bitStream;<BR>
+</span>
 <BR>
 Optional - One of the constructor versions takes a length in bytes as a parameter.  If you have an idea of the size of your data you can pass this number when creating the bitstream to avoid internal reallocations.<BR>
 <BR>
 See <A HREF="creatingpackets.html">Creating Packets</A> for more details.<BR>
 <BR>
-Reading Data
+<B>Reading Data</B>
 <BR>
 <BR>
 Reading data is equally simple.  Create a bitstream, and in the constructor assign it your data.<BR>
 <BR>
+<span class="RakNetCode">
+	
 // Assuming we have a Packet *<BR>
 BitStream myBitStream(packet->data, packet->length, false);<BR>
+
+struct MyVector<BR>
+{<BR>
+float x,y,z;<BR>
+} myVector;<BR>
+<BR>
+// No endian swapping<BR>
+bitStream.Read(myVector);<BR>
+<BR>
+// With endian swapping (__BITSTREAM_NATIVE_END should just be commented in RakNetDefines.h)<BR>
+#undef __BITSTREAM_NATIVE_END<BR>
+#include "BitStream.h"
+bitStream.Read(myVector.x);<BR>
+bitStream.Read(myVector.y);<BR>
+bitStream.Read(myVector.z);<BR>
+<BR>
+</span>
+See <A HREF="receivingpackets.html">Receiving Packets</A> for a more complete example.<BR>
+<BR>
+
+<B>Serializing Data</B>
+<BR>
+<BR>
+You can have the same function read and write, by using BitStream::Serialize() instead of Read() or Write().<BR>
+<BR>
+<span class="RakNetCode">
+	
+struct MyVector<BR>
+{<BR>
+float x,y,z;<BR>
+// writeToBitstream==true means write, writeToBitstream==false means read<BR>
+void Serialize(bool writeToBitstream, BitStream *bs)<BR>
+{<BR>
+ bs->Serialize(writeToBitstream, x);<BR>
+ bs->Serialize(writeToBitstream, y);<BR>
+ bs->Serialize(writeToBitstream, z);<BR>
+}<BR>
+} myVector;<BR>
+</span>
+
 <BR>
 See <A HREF="receivingpackets.html">Receiving Packets</A> for a more complete example.<BR>
 <BR>

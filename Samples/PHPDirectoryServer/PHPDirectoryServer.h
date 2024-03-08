@@ -36,7 +36,7 @@ struct SystemAddress;
 /// Call Update() periodically
 /// Pass packets to this class with ProcessDataPacket(). These packets should be returned by TCPInterface on a connection handled by an instance of HTTPInterface. See main.cpp in the sample PHPDirectoryServer for how this is done.
 ///
-class RAK_DLL_EXPORT PHPDirectoryServer : public RakNet::RakMemoryOverride
+class RAK_DLL_EXPORT PHPDirectoryServer
 {
 public:
 	/// \param[in] http This should be initialized with the server you

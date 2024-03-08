@@ -23,13 +23,9 @@
 #include "RakMemoryOverride.h"
 #include "NetworkIDObject.h"
 
-
-// O(1) instead of O(log2n) but takes more memory if less than 1/3 of the mappings are used.
-// #define NETWORK_ID_USE_PTR_TABLE
-
 /// \internal
 /// \brief A node in the AVL tree that holds the mapping between NetworkID and pointers.
-struct RAK_DLL_EXPORT NetworkIDNode : public RakNet::RakMemoryOverride
+struct RAK_DLL_EXPORT NetworkIDNode
 {
 	NetworkID networkID;
 	NetworkIDObject *object;
@@ -44,7 +40,7 @@ struct RAK_DLL_EXPORT NetworkIDNode : public RakNet::RakMemoryOverride
 /// An instance of this class is required to use the ObjectID to pointer lookup system
 /// You should have one instance of this class per game instance.
 /// Call SetIsNetworkIDAuthority before using any functions of this class, or of NetworkIDObject
-class RAK_DLL_EXPORT NetworkIDManager : public RakNet::RakMemoryOverride
+class RAK_DLL_EXPORT NetworkIDManager
 {
 public:
 	NetworkIDManager(void);
@@ -54,12 +50,13 @@ public:
 	/// This way, systems can send that id in packets to refer to objects (you can't send pointers because the memory allocations may be different).
 	/// In a client/server environment, the system that creates unique IDs would be the server.
 	/// If you are using peer to peer or other situations where you don't have a single system to assign ids, 
-	/// set this to true, and set NetworkID::peerToPeerMode to true
+	/// set this to true, and be sure NETWORK_ID_SUPPORTS_PEER_TO_PEER is defined in RakNetDefines.h
 	void SetIsNetworkIDAuthority(bool isAuthority);
 
 	/// \return Returns what was passed to SetIsNetworkIDAuthority()
 	bool IsNetworkIDAuthority(void) const;
 
+	/// \Depreciated. Use SetGuid and GetGuid instead
 	/// Necessary for peer to peer, as NetworkIDs are then composed of your external player Id (doesn't matter which, as long as unique)
 	/// plus the usual object ID number.
 	/// Get this from RakPeer::GetExternalSystemAddress) one time, the first time you make a connection.
@@ -67,6 +64,13 @@ public:
 	/// \param[in] systemAddress Your external systemAddress
 	void SetExternalSystemAddress(SystemAddress systemAddress);
 	SystemAddress GetExternalSystemAddress(void);
+
+	/// Necessary for peer to peer, as NetworkIDs are then composed of your external player Id (doesn't matter which, as long as unique)
+	/// plus the usual object ID number.
+	/// Get this from RakPeer::GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS) one time, the first time you make a connection.
+	/// \pre You must first call SetNetworkIDManager before using this function
+	void SetGuid(RakNetGUID g);
+	RakNetGUID GetGuid(void);	
 
 	/// These function is only meant to be used when saving games as you
 	/// should save the HIGHEST value staticItemID has achieved upon save
@@ -104,6 +108,8 @@ public:
 	}
 
 protected:
+	RakNetGUID guid;
+	// Depreciated - use guid instead. This has the problem that it can be different between the LAN and the internet, or duplicated on different LANs
 	SystemAddress externalSystemAddress;
 	unsigned short sharedNetworkID;
 	bool isNetworkIDAuthority;

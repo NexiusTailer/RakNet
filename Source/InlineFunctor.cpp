@@ -2,6 +2,8 @@
 
 void InlineFunctor::HandleResult(bool wasCancelled, void *context)
 {
+	(void) wasCancelled;
+	(void) context;
 	ifp->Pop(callDepth);
 }
 

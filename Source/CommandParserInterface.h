@@ -41,7 +41,7 @@ int RAK_DLL_EXPORT RegisteredCommandComp( const char* const & key, const Registe
 /// CommandParserInterface provides a set of functions and interfaces that plug into the ConsoleServer class.
 /// Each CommandParserInterface works at the same time as other interfaces in the system.
 /// \brief The interface used by command parsers.
-class RAK_DLL_EXPORT CommandParserInterface : public RakNet::RakMemoryOverride
+class RAK_DLL_EXPORT CommandParserInterface
 {
 public:
 	CommandParserInterface();

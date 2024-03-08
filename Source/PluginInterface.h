@@ -49,7 +49,7 @@ enum PluginReceiveResult
 /// \sa FullyConnectedMesh
 /// \sa PacketLogger
 /// \ingroup PLUGINS_GROUP
-class RAK_DLL_EXPORT PluginInterface : public RakNet::RakMemoryOverride
+class RAK_DLL_EXPORT PluginInterface
 {
 public:
 	PluginInterface();

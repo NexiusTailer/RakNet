@@ -10,7 +10,7 @@
 #include "RakMemoryOverride.h"
 
 /// Generates and validates checksums
-class CheckSum : public RakNet::RakMemoryOverride
+class CheckSum
 {
 
 public:

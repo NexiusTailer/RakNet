@@ -66,7 +66,7 @@ bool AutopatcherMySQLRepository::CreateAutopatcherTables(void)
 		"CREATE TABLE FileVersionHistory ("
 		"fileID INT AUTO_INCREMENT,"
 		"applicationID INT NOT NULL, "
-		"filename TEXT NOT NULL,"
+		"filename VARCHAR(255) NOT NULL,"
 		"fileLength  INT,"
 		"content LONGBLOB,"
 		"contentHash TINYBLOB,"
@@ -78,6 +78,14 @@ bool AutopatcherMySQLRepository::CreateAutopatcherTables(void)
 		"changeSetID INT NOT NULL,"
 		"userName TEXT NOT NULL,"
 		"PRIMARY KEY (fileID)); "
+		)) {Rollback(); return false;}
+
+	if (!ExecuteBlockingCommand(
+		"CREATE INDEX FV_appID on FileVersionHistory(applicationID);"
+		)) {Rollback(); return false;}
+
+	if (!ExecuteBlockingCommand(
+		"CREATE INDEX FV_fname on FileVersionHistory(filename);"
 		)) {Rollback(); return false;}
 
 	if (!ExecuteBlockingCommand(
@@ -105,6 +113,8 @@ bool AutopatcherMySQLRepository::DestroyAutopatcherTables(void)
 	if (!IsConnected())
 		return false;
 
+	ExecuteBlockingCommand("DROP INDEX FV_appID;");
+	ExecuteBlockingCommand("DROP INDEX FV_fname;");
 	ExecuteBlockingCommand("DROP TABLE Applications CASCADE;");
 	ExecuteBlockingCommand("DROP TABLE FileVersionHistory CASCADE;");
 	return ExecuteBlockingCommand("DROP VIEW AutoPatcherView;");
@@ -167,11 +177,11 @@ bool AutopatcherMySQLRepository::GetChangelistSinceDate(const char *applicationN
 		{
 			const char * hardDriveHash = row [2]; 
 			int fileLength = atoi (row [1]);
-			addedFiles->AddFile(hardDriveFilename, hardDriveHash, HASH_LENGTH, fileLength, 0);
+			addedFiles->AddFile(hardDriveFilename, hardDriveHash, HASH_LENGTH, fileLength, FileListNodeContext(0,0), false);
 		}
 		else
 		{
-			deletedFiles->AddFile(hardDriveFilename,0,0,0,0);
+			deletedFiles->AddFile(hardDriveFilename,0,0,0,FileListNodeContext(0,0), false);
 		}
 	}
 	mysql_free_result (result);
@@ -207,9 +217,14 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 		if (userHash==0)
 		{
 			// If the user does not have a hash in the input list, get the contents of latest version of this named file and write it to the patch list
-			sprintf(query, "SELECT content FROM FileVersionHistory "
-			               "JOIN (SELECT max(fileId) maxId FROM FileVersionHistory WHERE applicationId=%i AND filename='%s') MaxId "
-			               "ON FileVersionHistory.fileId = MaxId.maxId", 
+		//	sprintf(query, "SELECT content FROM FileVersionHistory "
+		//	               "JOIN (SELECT max(fileId) maxId FROM FileVersionHistory WHERE applicationId=%i AND filename='%s') MaxId "
+		//	               "ON FileVersionHistory.fileId = MaxId.maxId", 
+		//		applicationID, fn);
+
+			sprintf(query, "SELECT fileId, fileLength FROM FileVersionHistory "
+				"JOIN (SELECT max(fileId) maxId FROM FileVersionHistory WHERE applicationId=%i AND filename='%s') MaxId "
+				"ON FileVersionHistory.fileId = MaxId.maxId", 
 				applicationID, fn);
 
 			MYSQL_RES * result = 0;
@@ -222,9 +237,12 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 			MYSQL_ROW row = mysql_fetch_row (result);	
 			if (row != 0)
 			{
-				const char * content = row [0];
-				unsigned long contentLength=mysql_fetch_lengths (result) [0];
-				patchList->AddFile(userFilename, content, contentLength, contentLength, PC_WRITE_FILE);
+				//const char * content = row [0];
+				//unsigned long contentLength=mysql_fetch_lengths (result) [0];
+				//patchList->AddFile(userFilename, content, contentLength, contentLength, FileListNodeContext(PC_WRITE_FILE,0));
+				const int fileId = atoi (row [0]); 
+				const int fileLength = atoi (row [1]); 
+				patchList->AddFile(userFilename, 0, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId), true);
 			}
 			mysql_free_result(result);
 		}
@@ -275,6 +293,8 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 					{
 						// If no patch found, then this is a non-release version, or a very old version we are no longer tracking.
 						// Get the contents of latest version of this named file by fileId and return it.
+
+						/*
 						sprintf(query, "SELECT content FROM FileVersionHistory WHERE fileId=%d;", fileId);
 
 						if (mysql_query (mySqlConnection, query) != 0)
@@ -284,14 +304,15 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 							return false;
 						}
 
-						// Possible TODO - Get 32000000 bytes at a time to workaround http://support.microsoft.com/kb/q201213
 						MYSQL_RES * substrresult = mysql_store_result (mySqlConnection);
 						MYSQL_ROW row = mysql_fetch_row (substrresult);
 						char * file = row [0];
 						unsigned long contentLength = mysql_fetch_lengths (substrresult) [0];
 						
-						patchList->AddFile(userFilename, file, fileLength, contentLength, PC_WRITE_FILE);
+						patchList->AddFile(userFilename, file, fileLength, contentLength, FileListNodeContext(PC_WRITE_FILE,0));
 						mysql_free_result(substrresult);
+						*/
+						patchList->AddFile(userFilename, 0, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId), true);
 					}
 					else
 					{
@@ -304,7 +325,7 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 						memcpy(temp, contentHash, HASH_LENGTH);
 						memcpy(temp+HASH_LENGTH, patch, patchLength);
 
-						patchList->AddFile(userFilename, temp, HASH_LENGTH+patchLength, fileLength, PC_HASH_WITH_PATCH);
+						patchList->AddFile(userFilename, temp, HASH_LENGTH+patchLength, fileLength, FileListNodeContext(PC_HASH_WITH_PATCH,0) );
 						delete [] temp;
 					}
 
@@ -343,7 +364,7 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 	int prepareResult;
 	my_bool falseVar=false;
 	RakNet::RakString escapedApplicationName = GetEscapedString(applicationName);
-	filesOnHarddrive.AddFilesFromDirectory(applicationDirectory,"", true, true, true, 0);
+	filesOnHarddrive.AddFilesFromDirectory(applicationDirectory,"", true, true, true, FileListNodeContext(0,0));
 	if (filesOnHarddrive.fileList.Size()==0)
 	{
 		sprintf(lastError,"ERROR: Can't find files at %s in UpdateApplicationFiles\n",applicationDirectory);
@@ -440,7 +461,7 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 		// Unless set to false, file does not exist in query result or is different.
 		if (addFile)
 		{
-			newFiles.AddFile(hardDriveFilename, filesOnHarddrive.fileList[fileListIndex].data, filesOnHarddrive.fileList[fileListIndex].dataLengthBytes, filesOnHarddrive.fileList[fileListIndex].fileLengthBytes, 0);
+			newFiles.AddFile(hardDriveFilename, filesOnHarddrive.fileList[fileListIndex].data, filesOnHarddrive.fileList[fileListIndex].dataLengthBytes, filesOnHarddrive.fileList[fileListIndex].fileLengthBytes, FileListNodeContext(0,0), false);
 		}
 	}
 	
@@ -467,7 +488,7 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 		}
 
 		if (!fileOnHarddrive)
-			deletedFiles.AddFile(fi.filename,0,0,0,0);
+			deletedFiles.AddFile(fi.filename,0,0,0,FileListNodeContext(0,0), false);
 	}
 
 	// files on harddrive no longer needed.  Free this memory since generating all the patches is memory intensive.
@@ -664,4 +685,28 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 const char *AutopatcherMySQLRepository::GetLastError(void) const
 {
 	return MySQLInterface::GetLastError();
+}
+unsigned int AutopatcherMySQLRepository::GetFilePart( char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)
+{
+	char query[512];
+	sprintf(query, "SELECT substring(content from %i for %i) FROM FileVersionHistory WHERE fileId=%i;", startReadBytes+1,numBytesToRead,context.fileId);
+
+	MYSQL_RES * result = 0;
+	if (!ExecuteBlockingCommand (query, &result))
+	{
+		return 0;
+	}
+
+	MYSQL_ROW row = mysql_fetch_row (result);	
+	if (row != 0)
+	{
+		const char * content = row [0];
+		unsigned long contentLength=mysql_fetch_lengths (result) [0];
+		memcpy(preallocatedDestination,content,contentLength);
+		mysql_free_result (result);
+		return contentLength;
+	}
+
+	mysql_free_result (result);
+	return 0;
 }

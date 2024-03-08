@@ -1,6 +1,5 @@
 /// \file
 /// \brief Automatically serializing and deserializing RPC system. More advanced RPC, but possibly not cross-platform
-/// \note Semi-depreciated. RPC3 found at DependentExtensions/RPC3 has more features and is easier to use. But if you do not want to link with Boost this version still works.
 ///
 /// This file is part of RakNet Copyright 2003 Kevin Jenkins.
 ///
@@ -28,7 +27,6 @@ class NetworkIDManager;
 #include "BitStream.h"
 #include "Gen_RPC8.h"
 #include "RakString.h"
-#include "NetworkIDObject.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -43,11 +41,10 @@ namespace RakNet
 /// Maximum amount of data that can be passed on the stack in a function call
 #define ARPC_MAX_STACK_SIZE 65536
 
-
-/// Get a pointer to a function member of a C++ class.
+#if defined (_WIN32)
+/// Easier way to get a pointer to a function member of a C++ class
 /// \note Recommended you use ARPC_REGISTER_CPP_FUNCTION0 to ARPC_REGISTER_CPP_FUNCTION9 (below)
-/// \note Cannot validate the number of parameters is correctly passed.
-/// \note You must use one of these macros, or the code will be broken.
+/// \note ARPC_REGISTER_CPP_FUNCTION is not Linux compatible, and cannot validate the number of parameters is correctly passed.
 /// \param[in] autoRPCInstance A pointer to an instance of AutoRPC
 /// \param[in] _IDENTIFIER_ C string identifier to use on the remote system to call the function
 /// \param[in] _RETURN_ Return value of the function
@@ -55,64 +52,73 @@ namespace RakNet
 /// \param[in] _FUNCTION_ Name of the function
 /// \param[in] _PARAMS_ Parameter list, include parenthesis
 #define ARPC_REGISTER_CPP_FUNCTION(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS_) \
-	(autoRPCInstance)->RegisterFunction( (_IDENTIFIER_), GenRPC::PMFWrapper<_CLASS_, _RETURN_(AUTO_RPC_CALLSPEC _CLASS_::*) _PARAMS_ >( &_CLASS_::_FUNCTION_), true, -1 )
+{ \
+union \
+{ \
+	_RETURN_ (AUTO_RPC_CALLSPEC _CLASS_::*__memberFunctionPtr)_PARAMS_; \
+	void* __voidFunc; \
+}; \
+	__memberFunctionPtr=&_CLASS_::_FUNCTION_; \
+	(autoRPCInstance)->RegisterFunction(_IDENTIFIER_, __voidFunc, true, -1); \
+}
 
-/// Get a pointer to a function member of a C++ class.
-/// \note Recommended you use ARPC_REGISTER_CPP_FUNCTION0 to ARPC_REGISTER_CPP_FUNCTION9 (below)
-/// \note Cannot validate the number of parameters is correctly passed.
-/// \note You must use one of these macros, or the code will be broken.
-/// \param[in] autoRPCInstance A pointer to an instance of AutoRPC
-/// \param[in] _IDENTIFIER_ C string identifier to use on the remote system to call the function
-/// \param[in] _RETURN_ Return value of the function
-/// \param[in] _CLASS_ Base-most class of the containing class that contains your function
-/// \param[in] _FUNCTION_ Name of the function
-/// \param[in] _PARAMS_ Parameter list, include parenthesis
-/// \param[in] _PARAM_COUNT_ Number of parameters.
+/// \internal Used by ARPC_REGISTER_CPP_FUNCTION0 to ARPC_REGISTER_CPP_FUNCTION9
 #define ARPC_REGISTER_CPP_FUNCTIONX(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS_, _PARAM_COUNT_) \
-	(autoRPCInstance)->RegisterFunction( (_IDENTIFIER_), GenRPC::PMFWrapper<_CLASS_, _RETURN_(AUTO_RPC_CALLSPEC _CLASS_::*) _PARAMS_>( &_CLASS_::_FUNCTION_), true, _PARAM_COUNT_ )
+	{ \
+	union \
+	{ \
+	_RETURN_ (AUTO_RPC_CALLSPEC _CLASS_::*__memberFunctionPtr)_PARAMS_; \
+	void* __voidFunc; \
+}; \
+	__memberFunctionPtr=&_CLASS_::_FUNCTION_; \
+	(autoRPCInstance)->RegisterFunction(_IDENTIFIER_, __voidFunc, true, _PARAM_COUNT_); \
+}
 
-// These uses the ISO C99 varadic macros, so, in theory, *should* be 100% standards compliant.
+/// Same as ARPC_REGISTER_CPP_FUNCTION, but specifies how many parameters the function has
+#define ARPC_REGISTER_CPP_FUNCTION0(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_) (autoRPCInstance)->RegisterFunction(_IDENTIFIER_, __voidFunc, true, 0);
+#define ARPC_REGISTER_CPP_FUNCTION1(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_) ARPC_REGISTER_CPP_FUNCTIONX(autoRPCInstance,_IDENTIFIER_,_RETURN_,_CLASS_,_FUNCTION_,(_PARAMS1_), 0)
+#define ARPC_REGISTER_CPP_FUNCTION2(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_) ARPC_REGISTER_CPP_FUNCTIONX(autoRPCInstance,_IDENTIFIER_,_RETURN_,_CLASS_,_FUNCTION_,(_PARAMS1_,_PARAMS2_), 1)
+#define ARPC_REGISTER_CPP_FUNCTION3(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_, _PARAMS3_) ARPC_REGISTER_CPP_FUNCTIONX(autoRPCInstance,_IDENTIFIER_,_RETURN_,_CLASS_,_FUNCTION_,(_PARAMS1_,_PARAMS2_,_PARAMS3_), 2)
+#define ARPC_REGISTER_CPP_FUNCTION4(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_) ARPC_REGISTER_CPP_FUNCTIONX(autoRPCInstance,_IDENTIFIER_,_RETURN_,_CLASS_,_FUNCTION_,(_PARAMS1_,_PARAMS2_,_PARAMS3_,_PARAMS4_), 3)
+#define ARPC_REGISTER_CPP_FUNCTION5(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_, _PARAMS5_) ARPC_REGISTER_CPP_FUNCTIONX(autoRPCInstance,_IDENTIFIER_,_RETURN_,_CLASS_,_FUNCTION_,(_PARAMS1_,_PARAMS2_,_PARAMS3_,_PARAMS4_,_PARAMS5_), 4)
+#define ARPC_REGISTER_CPP_FUNCTION6(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_, _PARAMS5_, _PARAMS6_) ARPC_REGISTER_CPP_FUNCTIONX(autoRPCInstance,_IDENTIFIER_,_RETURN_,_CLASS_,_FUNCTION_,(_PARAMS1_,_PARAMS2_,_PARAMS3_,_PARAMS4_,_PARAMS5_,_PARAMS6_), 5)
+#define ARPC_REGISTER_CPP_FUNCTION7(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_, _PARAMS5_, _PARAMS6_, _PARAMS7_) ARPC_REGISTER_CPP_FUNCTIONX(autoRPCInstance,_IDENTIFIER_,_RETURN_,_CLASS_,_FUNCTION_,(_PARAMS1_,_PARAMS2_,_PARAMS3_,_PARAMS4_,_PARAMS5_,_PARAMS6_,_PARAMS7_), 6)
+#define ARPC_REGISTER_CPP_FUNCTION8(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_, _PARAMS5_, _PARAMS6_, _PARAMS7_, _PARAMS8_) ARPC_REGISTER_CPP_FUNCTIONX(autoRPCInstance,_IDENTIFIER_,_RETURN_,_CLASS_,_FUNCTION_,(_PARAMS1_,_PARAMS2_,_PARAMS3_,_PARAMS4_,_PARAMS5_,_PARAMS6_,_PARAMS7_,_PARAMS8_), 7)
+#define ARPC_REGISTER_CPP_FUNCTION9(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_, _PARAMS5_, _PARAMS6_, _PARAMS7_, _PARAMS8_, _PARAMS9_) ARPC_REGISTER_CPP_FUNCTIONX(autoRPCInstance,_IDENTIFIER_,_RETURN_,_CLASS_,_FUNCTION_,(_PARAMS1_,_PARAMS2_,_PARAMS3_,_PARAMS4_,_PARAMS5_,_PARAMS6_,_PARAMS7_,_PARAMS8_,_PARAMS9_), 8)
+
+#else
+
 #define ARPC_REGISTER_CPP_FUNCTION0(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_) \
-	(autoRPCInstance)->RegisterFunction((_IDENTIFIER_), GenRPC::PMFWrapper<_CLASS_, _RETURN_(AUTO_RPC_CALLSPEC _CLASS_::*)()>( &_CLASS_::_FUNCTION_ ), true, 0 )
+	(autoRPCInstance)->RegisterFunction((_IDENTIFIER_), (void*)(_RETURN_ (*) (_CLASS_*)) &_CLASS_::_FUNCTION_, true, 0 );
 
-/// Get a pointer to a function member of a C++ class
-/// \param[in] autoRPCInstance A pointer to an instance of AutoRPC
-/// \param[in] _IDENTIFIER_ C string identifier to use on the remote system to call the function
-/// \param[in] _RETURN_ Return value of the function
-/// \param[in] _CLASS_ Base-most class of the containing class that contains your function
-/// \param[in] _FUNCTION_ Name of the function
-// NB I have no idea why the "-1" is here - it may be a bug, but it was present in the original macros.
-#define ARPC_REGISTER_CPP_FUNCTION_N(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, ...) \
-	(autoRPCInstance)->RegisterFunction( (_IDENTIFIER_), GenRPC::PMFWrapper<_CLASS_, _RETURN_(AUTO_RPC_CALLSPEC _CLASS_::*)(__VA_ARGS__)>( &_CLASS_::_FUNCTION_), true, GenRPC::countFuncArgs( &_CLASS_::_FUNCTION_ ) - 1 )
+#define ARPC_REGISTER_CPP_FUNCTION1(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_) \
+	(autoRPCInstance)->RegisterFunction((_IDENTIFIER_), (void*)(_RETURN_ (*) (_CLASS_*, _PARAMS1_ )) &_CLASS_::_FUNCTION_, true, 0 );
 
-// These are historic - you can just use the ARPC_REGISTER_CPP_FUNCTION_N
-#define ARPC_REGISTER_CPP_FUNCTION1(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, ...) \
-	ARPC_REGISTER_CPP_FUNCTION_N( autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, __VA_ARGS__)
+#define ARPC_REGISTER_CPP_FUNCTION2(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_) \
+	(autoRPCInstance)->RegisterFunction((_IDENTIFIER_), (void*)(_RETURN_ (*) (_CLASS_*, _PARAMS1_, _PARAMS2_ )) &_CLASS_::_FUNCTION_, true, 1 );
 
-#define ARPC_REGISTER_CPP_FUNCTION2(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, ...) \
-	ARPC_REGISTER_CPP_FUNCTION_N( autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, __VA_ARGS__)
+#define ARPC_REGISTER_CPP_FUNCTION3(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_, _PARAMS3_) \
+	(autoRPCInstance)->RegisterFunction((_IDENTIFIER_), (void*)(_RETURN_ (*) (_CLASS_*, _PARAMS1_, _PARAMS2_, _PARAMS3_ )) &_CLASS_::_FUNCTION_, true, 2 );
 
-#define ARPC_REGISTER_CPP_FUNCTION3(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, ...) \
-	ARPC_REGISTER_CPP_FUNCTION_N( autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, __VA_ARGS__)
+#define ARPC_REGISTER_CPP_FUNCTION4(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_) \
+	(autoRPCInstance)->RegisterFunction((_IDENTIFIER_), (void*)(_RETURN_ (*) (_CLASS_*, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_ )) &_CLASS_::_FUNCTION_, true, 3 );
 
-#define ARPC_REGISTER_CPP_FUNCTION4(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, ...) \
-	ARPC_REGISTER_CPP_FUNCTION_N( autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, __VA_ARGS__)
+#define ARPC_REGISTER_CPP_FUNCTION5(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_, _PARAMS5_) \
+	(autoRPCInstance)->RegisterFunction((_IDENTIFIER_), (void*)(_RETURN_ (*) (_CLASS_*, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_, _PARAMS5_ )) &_CLASS_::_FUNCTION_, true, 4 );
 
-#define ARPC_REGISTER_CPP_FUNCTION5(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, ...) \
-	ARPC_REGISTER_CPP_FUNCTION_N( autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, __VA_ARGS__)
+#define ARPC_REGISTER_CPP_FUNCTION6(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_, _PARAMS5_, _PARAMS6_) \
+	(autoRPCInstance)->RegisterFunction((_IDENTIFIER_), (void*)(_RETURN_ (*) (_CLASS_*, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_, _PARAMS5_, _PARAMS6_ )) &_CLASS_::_FUNCTION_, true, 5 );
 
-#define ARPC_REGISTER_CPP_FUNCTION6(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, ...) \
-	ARPC_REGISTER_CPP_FUNCTION_N( autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, __VA_ARGS__)
+#define ARPC_REGISTER_CPP_FUNCTION7(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_, _PARAMS5_, _PARAMS6_, _PARAMS7_) \
+	(autoRPCInstance)->RegisterFunction((_IDENTIFIER_), (void*)(_RETURN_ (*) (_CLASS_*, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_, _PARAMS5_, _PARAMS6_, _PARAMS7_ )) &_CLASS_::_FUNCTION_, true, 6 );
 
-#define ARPC_REGISTER_CPP_FUNCTION7(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, ...) \
-	ARPC_REGISTER_CPP_FUNCTION_N( autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, __VA_ARGS__)
+#define ARPC_REGISTER_CPP_FUNCTION8(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_, _PARAMS5_, _PARAMS6_, _PARAMS7_, _PARAMS8_) \
+	(autoRPCInstance)->RegisterFunction((_IDENTIFIER_), (void*)(_RETURN_ (*) (_CLASS_*, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_, _PARAMS5_, _PARAMS6_, _PARAMS7_, _PARAMS8_ )) &_CLASS_::_FUNCTION_, true, 7 );
 
-#define ARPC_REGISTER_CPP_FUNCTION8(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, ...) \
-	ARPC_REGISTER_CPP_FUNCTION_N( autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, __VA_ARGS__)
+#define ARPC_REGISTER_CPP_FUNCTION9(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_, _PARAMS5_, _PARAMS6_, _PARAMS7_, _PARAMS8_, _PARAMS9_) \
+	(autoRPCInstance)->RegisterFunction((_IDENTIFIER_), (void*)(_RETURN_ (*) (_CLASS_*, _PARAMS1_, _PARAMS2_, _PARAMS3_, _PARAMS4_, _PARAMS5_, _PARAMS6_, _PARAMS7_, _PARAMS8_, _PARAMS9_ )) &_CLASS_::_FUNCTION_, true, 8 );
 
-#define ARPC_REGISTER_CPP_FUNCTION9(autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, ...) \
-	ARPC_REGISTER_CPP_FUNCTION_N( autoRPCInstance, _IDENTIFIER_, _RETURN_, _CLASS_, _FUNCTION_, __VA_ARGS__)
-
+#endif
 
 /// Error codes returned by a remote system as to why an RPC function call cannot execute
 /// Follows packet ID ID_RPC_REMOTE_ERROR
@@ -161,7 +167,6 @@ enum RPCErrorCodes
 /// Disadvantages is that all parameters must be passable on the stack using memcpy (shallow copy). For other types of parameters, use SetOutgoingExtraData() and GetIncomingExtraData()
 /// Pointers are automatically dereferenced and the contents copied with memcpy
 /// Use the old system, or regular message passing, if you need greater flexibility
-/// \note Semi-depreciated. Use DependentExtensions\RPC3 unless you do not want to link with Boost
 /// \ingroup AUTO_RPC_GROUP
 class AutoRPC : public PluginInterface
 {
@@ -177,17 +182,13 @@ public:
 	/// \param[in] idMan Pointer to the network ID manager to use
 	void SetNetworkIDManager(NetworkIDManager *idMan);
 
-	/// Registers a function pointer to be callable given an identifier for the pointer.
+	/// Registers a function pointer to be callable given an identifier for the pointer
 	/// \param[in] uniqueIdentifier String identifying the function. Recommended that this is the name of the function
 	/// \param[in] functionPtr Pointer to the function. For C, just pass the name of the function. For C++, use ARPC_REGISTER_CPP_FUNCTION
 	/// \param[in] isObjectMember false if a C function. True if a member function of an object (C++)
 	/// \param[in] parameterCount Optional parameter to tell the system how many parameters this function has. If specified, and the wrong number of parameters are called by the remote system, the call is rejected. -1 indicates undefined
 	/// \return True on success, false on uniqueIdentifier already used
-	/// \note Only use this for C functions; for C++ use one of the ARPC_REGISTER_CPP_FUNCTION_XXX macros
 	bool RegisterFunction(const char *uniqueIdentifier, void *functionPtr, bool isObjectMember, char parameterCount=-1);
-
-	/// \internal Registers a function - using a PMF structure.
-	bool RegisterFunction(const char *uniqueIdentifier, GenRPC::PMF pmf, bool isObjectMember, char parameterCount=-1);
 
 	/// Unregisters a function pointer to be callable given an identifier for the pointer
 	/// \note This is not safe to call while connected
@@ -242,7 +243,7 @@ public:
 
 	/// Returns the currently running RPC call identifier, set from RegisterFunction::uniqueIdentifier
 	/// Returns an empty string "" if none
-	/// \Return which RPC call is currently running
+	/// \return which RPC call is currently running
 	const char *GetCurrentExecution(void) const;
 
 	/// Gets the bitstream written to via SetOutgoingExtraData().
@@ -373,7 +374,7 @@ public:
 		SetTimestamp(timeStamp);
 		SetSendParams(priority, reliability, orderingChannel);
 		SetRecipientAddress(systemAddress, broadcast);
-		SetRecipientObject(networkID);
+		SetRecipientObject(networkID);		
 		char stack[ARPC_MAX_STACK_SIZE];
 		unsigned int bytesOnStack = GenRPC::BuildStack(stack);
 		return SendCall(uniqueIdentifier, stack, bytesOnStack, 0);
@@ -576,14 +577,12 @@ public:
 		bool isObjectMember;
 	};
 
-
-
 	/// \internal
 	/// The RPC identifier, and a pointer to the function
 	struct LocalRPCFunction
 	{
 		RPCIdentifier identifier;
-		GenRPC::PMF  functionPtr;
+		void *functionPtr;
 		char parameterCount;
 	};
 
@@ -650,4 +649,3 @@ protected:
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
-

@@ -20,17 +20,16 @@
 #define __SOCKET_LAYER_H
 
 #include "RakMemoryOverride.h"
-#ifdef _XBOX360
-#include "Console1Includes.h"
-#elif defined(_PS3)
-#include "Console2Includes.h"
+#if defined(_XBOX) || defined(X360)
+#include "XBOX360Includes.h"
+#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+#include "PS3Includes.h"
 typedef int SOCKET;
+#elif defined(_XBOX) || defined(X360)
 #elif defined(_WIN32)
 // IP_DONTFRAGMENT is different between winsock 1 and winsock 2.  Therefore, Winsock2.h must be linked againt Ws2_32.lib
 // winsock.h must be linked against WSock32.lib.  If these two are mixed up the flag won't work correctly
 #include <winsock2.h>
-#include <ws2tcpip.h>
-//#include "RakMemoryOverride.h"
 #else
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -47,7 +46,7 @@ typedef int SOCKET;
 class RakPeer;
 
 // A platform independent implementation of Berkeley sockets, with settings used by RakNet
-class SocketLayer : public RakNet::RakMemoryOverride
+class SocketLayer
 {
 
 public:
@@ -77,13 +76,14 @@ public:
 	/// \param[in] blockingSocket 
 	/// \return A new socket used for accepting clients 
 	SOCKET CreateBoundSocket( unsigned short port, bool blockingSocket, const char *forceHostAddress );
+	SOCKET CreateBoundSocket_PS3Lobby( unsigned short port, bool blockingSocket, const char *forceHostAddress );
 
 	/// Returns if this specified port is in use, for UDP
 	/// \param[in] port the port number 
 	/// \return If this port is already in use
 	static bool IsPortInUse(unsigned short port);
 
-	#if !defined(_XBOX360)
+	#if !defined(_XBOX) && !defined(X360)
 	const char* DomainNameToIP( const char *domainName );
 	#endif
 	
@@ -104,13 +104,13 @@ public:
 	/// \param[in] errorCode An error code if an error occured .
 	/// \param[in] connectionSocketIndex Which of the sockets in RakPeer we are using
 	/// \return Returns true if you successfully read data, false on error.
-	int RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode, unsigned connectionSocketIndex );
+	int RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode, unsigned connectionSocketIndex, bool isPs3LobbySocket );
 	
-#if !defined(_XBOX360)
+#if !defined(_XBOX) && !defined(_X360)
 	/// Retrieve all local IP address in a string format.
 	/// \param[in] s The socket whose port we are referring to
 	/// \param[in] ipList An array of ip address in dotted notation.
-	void GetMyIP( char ipList[ 10 ][ 16 ] );
+	void GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ] );
 #endif
 	
 	/// Call sendto (UDP obviously)
@@ -120,7 +120,7 @@ public:
 	/// \param[in] ip The address of the remote host in dotted notation.
 	/// \param[in] port The port number to send to.
 	/// \return 0 on success, nonzero on failure.
-	int SendTo( SOCKET s, const char *data, int length, const char ip[ 16 ], unsigned short port );
+	int SendTo( SOCKET s, const char *data, int length, const char ip[ 16 ], unsigned short port, bool isPs3LobbySocket );
 
 	/// Call sendto (UDP obviously)
 	/// It won't reach the recipient, except on a LAN
@@ -141,7 +141,7 @@ public:
 	/// \param[in] binaryAddress The address of the remote host in binary format.
 	/// \param[in] port The port number to send to.
 	/// \return 0 on success, nonzero on failure.
-	int SendTo( SOCKET s, const char *data, int length, unsigned int binaryAddress, unsigned short port );
+	int SendTo( SOCKET s, const char *data, int length, unsigned int binaryAddress, unsigned short port, bool isPs3LobbySocket );
 
 	/// Returns the local port, useful when passing 0 as the startup port.
 	/// \param[in] s The socket whose port we are referring to
@@ -150,13 +150,9 @@ public:
 
 private:
 
-	static bool socketLayerStarted;
-
-#ifdef _WIN32
-	static WSADATA winsockInfo;
-#endif
 
 	static SocketLayer I;
+	void SetSocketOptions( SOCKET listenSocket);
 };
 
 #endif

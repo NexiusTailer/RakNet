@@ -20,9 +20,10 @@
 
 #include "Rijndael.h"
 #include "RakMemoryOverride.h"
+class RakNetRandom;
 
 /// Encrypts and decrypts data blocks.
-class DataBlockEncryptor : public RakNet::RakMemoryOverride
+class DataBlockEncryptor
 {
 
 public:
@@ -49,7 +50,7 @@ public:
 	/// \param[in] inputLength the size of the @em input buffer 
 	/// \param[in] output the output buffer to store encrypted data 
 	/// \param[in] outputLength the size of the output buffer 
-	void Encrypt( unsigned char *input, unsigned int inputLength, unsigned char *output, unsigned int *outputLength );
+	void Encrypt( unsigned char *input, unsigned int inputLength, unsigned char *output, unsigned int *outputLength, RakNetRandom *rnr );
 	
 	/// Decryption removes bytes, as few as 6.  Output should be large enough to hold this.
 	/// Output can be the same memory block as input

@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions;./../../DependentExtensions/bzip2-1.0.3;./../../DependentExtensions/AutopatcherPostgreRepository"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;./../../DependentExtensions/AutopatcherPostgreRepository;./../../DependentExtensions/PostgreSQLInterface"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -71,7 +71,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions;./../../DependentExtensions/bzip2-1.0.3;./../../DependentExtensions/AutopatcherPostgreRepository"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;./../../DependentExtensions/AutopatcherPostgreRepository;./../../DependentExtensions/PostgreSQLInterface"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"

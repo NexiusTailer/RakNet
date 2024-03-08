@@ -42,6 +42,89 @@ See the sample at <I>Samples\Encryption</I> to see how to save and load keys.
 </TD>
 </TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">How secure connections work</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<B>The system that requires that connections be secure calls RakPeer::InitializeSecurity().</B><BR>
+<BR>
+InitializeSecurity in turn calls<BR>
+rsacrypt.generatePrivateKey(RAKNET_RSA_FACTOR_LIMBS);<BR>
+<BR>
+rsacrypt is a member variable of RakPeer. The same private key is used for all remote systems.<BR>
+<BR>
+You can also call InitializeSecurity passing the public keys. If you do so, these public keys are checked when you connect to another system with the corresponding private keys. This is important to know who you are talking to - e.g. prevent a man in the middle attack.<BR>
+<BR>
+<BR>
+<B>Every 10 seconds, a 20 byte random number is generated. This random number is used on the system receiving connections (the server).</B><BR>
+See GenerateSYNCookieRandomNumber()<BR>
+<BR>
+
+<B>When a connection request arrives to the server, it calls RakPeer::SecuredConnectionResponse()</B><BR>
+SecuredConnectionResponse() will hash the SYN cookie, the source port, and the source IP address<BR>
+<BR>
+// Hash the SYN-Cookie<BR>
+// s2c syn-cookie = SHA1_HASH(source ip address + source port + random number)<BR>
+sha1.Reset();<BR>
+sha1.Update( ( unsigned char* ) & systemAddress.binaryAddress, sizeof( systemAddress.binaryAddress ) );<BR>
+sha1.Update( ( unsigned char* ) & systemAddress.port, sizeof( systemAddress.port ) );<BR>
+sha1.Update( ( unsigned char* ) & ( newRandomNumber ), sizeof(newRandomNumber) );<BR>
+sha1.Final();<BR>
+<BR>
+The hashed SYN-Cookie, and the public keys e and modulus are sent back to the system that wants to connect.<BR>
+<BR>
+<B>The system that wants to connect gets the packet and calls RakPeer::SecuredConnectionConfirmation()</B><BR>
+<BR>
+It copies out e and the modulus, and compares that to the known public key, if one was set. If it doesn't match, it aborts the connection process.<BR>
+<BR>
+The system that wants to connect creates a 20 byte random number. It writes this number to the message, then encrypts it with the public key<BR>
+<BR>
+memcpy( message, randomNumber, sizeof( randomNumber ) );<BR>
+privKeyPncrypt.setPublicKey( n, RAKNET_RSA_FACTOR_LIMBS, e );<BR>
+privKeyPncrypt.encrypt( encryptedMessage, message );<BR>
+<BR>
+The other systems AESKey is XORED with our random number<BR>
+// Take the remote system's AESKey (SynCookie) and XOR with our random number.<BR>
+for ( j = 0; j < 16; j++ )<BR>
+	remoteSystem->AESKey[ j ] = data[ 1 + j ] ^ randomNumber[ j ];<BR>
+<BR>
+Lastly, it replies to the other system<BR>
+// c2s RSA(random number), same syn-cookie<BR>
+<BR>
+<B>Now on the server, when it gets that packet, it hashes the SYN-Cookie</B><BR>
+<BR>
+// Hash the SYN-Cookie<BR>
+// s2c syn-cookie = SHA1_HASH(source ip address + source port + random number)<BR>
+sha1.Reset();<BR>
+sha1.Update( ( unsigned char* ) & systemAddress.binaryAddress, sizeof( systemAddress.binaryAddress ) );<BR>
+sha1.Update( ( unsigned char* ) & systemAddress.port, sizeof( systemAddress.port ) );<BR>
+sha1.Update( ( unsigned char* ) & ( newRandomNumber ), 20 );<BR>
+sha1.Final();<BR>
+<BR>
+<B>This is checked against the packet, to make sure this packet is from the same system we have been talking to all along</B><BR>
+<BR>
+// Confirm if<BR>
+//syn-cookie ?= HASH(source ip address + source port + last random number)<BR>
+//syn-cookie ?= HASH(source ip address + source port + current random number)<BR>
+<BR>
+<B>If the hash (using SHA1) passes, then the connection is accepted.</B><BR>
+<BR>
+// On connection accept, AES key is c2s RSA_Decrypt(random number) XOR s2c syn-cookie<BR>
+// Get the random number from the other system first<BR>
+memcpy( encryptedMessage, data + 1 + 20, sizeof( encryptedMessage ) );<BR>
+// Use rsaCrypt to decrypt this random number<BR>
+rsacrypt.decrypt( message, encryptedMessage );<BR>
+<BR>
+The 16 byte AES KEY is read out, XORED with the decrypted random number<BR>
+// Save the AES key<BR>
+for ( i = 0; i < 16; i++ )<BR>
+AESKey[ i ] = data[ 1 + i ] ^ ( ( unsigned char* ) ( message ) ) [ i ];<BR>
+<BR>
+
+
+</TD>
+</TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
 <img src="spacer.gif" width="8" height="1">See Also</td>
 </tr></table>
 <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>

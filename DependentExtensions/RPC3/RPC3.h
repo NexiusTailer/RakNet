@@ -157,7 +157,7 @@ public:
 
 	/// Returns the currently running RPC call identifier, set from RegisterFunction::uniqueIdentifier
 	/// Returns an empty string "" if none
-	/// \Return which RPC call is currently running
+	/// \return which RPC call is currently running
 	const char *GetCurrentExecution(void) const;
 
 	/// Calls a remote function, using as send parameters whatever was last passed to SetTimestamp(), SetSendParams(), SetRecipientAddress(), and SetRecipientObject()

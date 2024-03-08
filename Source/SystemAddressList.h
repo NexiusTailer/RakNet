@@ -21,7 +21,7 @@
 #include "RakNetTypes.h"
 #include "DS_OrderedList.h"
 
-class SystemAddressList : public RakNet::RakMemoryOverride
+class SystemAddressList
 {
 public:
 	SystemAddressList();
