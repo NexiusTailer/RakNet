@@ -9,9 +9,9 @@
 #include "SimpleMutex.h"
 #include "Lobby2Presence.h"
 
-#if defined(_XBOX) || defined(X360)
-                            
-#endif
+
+
+
 
 #pragma once
 
@@ -298,11 +298,13 @@ struct Lobby2Message
 
 	/// Just a number, uniquely identifying each allocation of Lobby2Message.
 	/// Use it if you need to lookup queries on the callback reply
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                                       
-#else
+
+
+
+
+
 	uint64_t requestId;
-#endif
+
 
 	/// Just a number, representing which instance of Lobby2Callbacks should process the result of this operation
 	/// -1 means all
@@ -311,9 +313,9 @@ struct Lobby2Message
 	/// Used for consoles
 	int extendedResultCode;
 
-#if defined(_XBOX) || defined(X360)
-                                 
-#endif
+
+
+
 
 	void AddRef(void) {refCountMutex.Lock(); refCount++; refCountMutex.Unlock(); }
 	void Deref(void) {refCountMutex.Lock(); refCount--; refCountMutex.Unlock();}

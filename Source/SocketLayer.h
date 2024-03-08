@@ -113,12 +113,12 @@ public:
 	/// \param[in] listenSocket the socket to set
 	static void SetNonBlocking( SOCKET listenSocket);
 
-#if !defined(_XBOX) && !defined(_X360)
+
 	/// Retrieve all local IP address in a string format.
 	/// \param[in] s The socket whose port we are referring to
 	/// \param[in] ipList An array of ip address in dotted notation.
 	static void GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
-#endif
+
 	
 	/// Call sendto (UDP obviously)
 	/// \param[in] s the socket

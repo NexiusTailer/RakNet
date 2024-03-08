@@ -17,11 +17,11 @@
 #include "RakNetTypes.h"
 #include "RakAssert.h"
 #include "RakString.h"
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                 
-#else
+
+
+
 #include <cmath>
-#endif
+
 #include <float.h>
 
 #ifdef _MSC_VER

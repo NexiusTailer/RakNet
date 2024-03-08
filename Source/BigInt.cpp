@@ -1,4 +1,4 @@
-#if !defined(_XBOX) && !defined(X360)
+
 
 #include "BigInt.h"
 #include <ctype.h>
@@ -456,7 +456,7 @@ namespace big
     	uint32_t M)			// 32-bit number
 	{
 		// This function is roughly 85% of the cost of exponentiation
-#if defined(ASSEMBLY_INTEL_SYNTAX) && !defined (_XBOX) && !defined(X360)
+#if defined(ASSEMBLY_INTEL_SYNTAX) 
 		ASSEMBLY_BLOCK // VS.NET, x86, 32-bit words
 		{
 			mov esi, [B]
@@ -1810,4 +1810,4 @@ loop_done:
 	}
 }
 
-#endif
+

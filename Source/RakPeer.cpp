@@ -11,8 +11,8 @@
 #include "WSAStartupSingleton.h"
 
 #ifdef _WIN32
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                               
+
+
 #else
 #define closesocket close
 #include <unistd.h>
@@ -59,9 +59,9 @@ RAK_THREAD_DECLARATION(UDTConnect);
 #include <stdlib.h> // malloc
 #endif
 
-#if defined(_XBOX) || defined(X360)
-  
-#elif defined(_WIN32)
+
+
+#if   defined(_WIN32)
 //
 #else
 /*
@@ -81,11 +81,11 @@ extern void Console2GetIPAndPort(unsigned int, char *, unsigned short *, unsigne
 
 
 static const int NUM_MTU_SIZES=3;
-#if defined(_XBOX) || defined(X360)
-                                                                                   
-#else
+
+
+
 static const int mtuSizes[NUM_MTU_SIZES]={MAXIMUM_MTU_SIZE, 1200, 576};
-#endif
+
 
 
 #include "RakAlloca.h"
@@ -224,7 +224,7 @@ RakPeer::RakPeer()
 	RakNet::StringTable::AddReference();
 	WSAStartupSingleton::AddRef();
 
-#if !defined(_XBOX) && !defined(_WIN32_WCE) && !defined(X360)
+#if   !defined(_WIN32_WCE) 
 	usingSecurity = false;
 #endif
 	memset( frequencyTable, 0, sizeof( unsigned int ) * 256 );
@@ -338,22 +338,22 @@ bool RakPeer::Startup( unsigned short maxConnections, int _threadSleepTimer, Soc
 
 	if (threadPriority==-99999)
 	{
-#if defined(_XBOX) || defined(X360)
-                   
-#elif defined(_WIN32)
+
+
+#if   defined(_WIN32)
 		threadPriority=0;
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                      
+
+
 #else
 		threadPriority=1000;
 #endif
 	}
 
 	// Fill out ipList structure
-#if !defined(_XBOX) && !defined(X360)
+
 	memset( ipList, 0, sizeof( char ) * 16 * MAXIMUM_NUMBER_OF_INTERNAL_IDS );
 	SocketLayer::GetMyIP( ipList,binaryAddresses );
-#endif
+
 
 	unsigned int i;
 	if (myGuid==UNASSIGNED_RAKNET_GUID)
@@ -553,7 +553,7 @@ bool RakPeer::Startup( unsigned short maxConnections, int _threadSleepTimer, Soc
 
 		for (int ipIndex=0; ipIndex < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ipIndex++)
 		{
-#if !defined(_XBOX) && !defined(X360)
+
 			if (ipList[ipIndex][0])
 			{
 				mySystemAddress[ipIndex].port = SocketLayer::GetLocalPort(socketList[0]->s);
@@ -564,9 +564,9 @@ bool RakPeer::Startup( unsigned short maxConnections, int _threadSleepTimer, Soc
 			}
 			else
 				mySystemAddress[ipIndex]=UNASSIGNED_SYSTEM_ADDRESS;
-#else
-			mySystemAddress[ipIndex]=UNASSIGNED_SYSTEM_ADDRESS;
-#endif
+
+
+
 		}
 
 		if ( isMainLoopThreadActive == false )
@@ -639,7 +639,7 @@ bool RakPeer::Startup( unsigned short maxConnections, int _threadSleepTimer, Soc
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void RakPeer::InitializeSecurity(const char *pubKeyE, const char *pubKeyN, const char *privKeyP, const char *privKeyQ )
 {
-#if !defined(_XBOX) && !defined(_WIN32_WCE) && !defined(X360)
+#if   !defined(_WIN32_WCE) 
 	if ( endThreads == false )
 		return ;
 
@@ -702,7 +702,7 @@ void RakPeer::InitializeSecurity(const char *pubKeyE, const char *pubKeyN, const
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void RakPeer::DisableSecurity( void )
 {
-#if !defined(_XBOX) && !defined(_WIN32_WCE) && !defined(X360)
+#if   !defined(_WIN32_WCE) 
 	if ( endThreads == false )
 		return ;
 
@@ -1670,11 +1670,11 @@ bool RakPeer::RPC( const char* uniqueID, const char *data, BitSize_t bitLength, 
 
 	if (broadcast==false)
 	{
-#if !defined(_XBOX) && !defined(X360)
+
 		sendList=(unsigned *)alloca(sizeof(unsigned));
-#else
-		sendList = (unsigned int*) rakMalloc_Ex(sizeof(unsigned), __FILE__, __LINE__);
-#endif
+
+
+
 		remoteSystemIndex=GetIndexFromSystemAddress( systemIdentifier.systemAddress, false );
 		if (remoteSystemIndex!=(unsigned)-1 &&
 			remoteSystemList[remoteSystemIndex].isActive &&
@@ -1690,11 +1690,11 @@ bool RakPeer::RPC( const char* uniqueID, const char *data, BitSize_t bitLength, 
 	}
 	else
 	{
-#if !defined(_XBOX) && !defined(X360)
+
 		sendList=(unsigned *)alloca(sizeof(unsigned)*maximumNumberOfPeers);
-#else
-		sendList = (unsigned int*) rakMalloc_Ex(sizeof(unsigned)*maximumNumberOfPeers, __FILE__, __LINE__);
-#endif
+
+
+
 
 		for ( remoteSystemIndex = 0; remoteSystemIndex < maximumNumberOfPeers; remoteSystemIndex++ )
 		{
@@ -1705,9 +1705,9 @@ bool RakPeer::RPC( const char* uniqueID, const char *data, BitSize_t bitLength, 
 
 	if (sendListSize==0 && routeSend==false)
 	{
-#if defined(_XBOX) || defined(X360)
-                                            
-#endif
+
+
+
 
 		return false;
 	}
@@ -1768,9 +1768,9 @@ bool RakPeer::RPC( const char* uniqueID, const char *data, BitSize_t bitLength, 
 			Send(&outgoingBitStream, priority, reliability, orderingChannel, remoteSystemList[sendList[sendListIndex]].systemAddress, false);
 	}
 
-#if defined(_XBOX) || defined(X360)
-                                                       
-#endif
+
+
+
 
 	if (replyFromTarget)
 	{
@@ -2560,7 +2560,7 @@ SystemAddress RakPeer::GetInternalID( const SystemAddress systemAddress, const i
 	}
 	else
 	{
-#if !defined(_XBOX) && !defined(X360)
+
 //		SystemAddress returnValue;
 		RemoteSystemStruct * remoteSystem = GetRemoteSystemFromSystemAddress( systemAddress, false, true );
 		if (remoteSystem==0)
@@ -2576,9 +2576,9 @@ SystemAddress RakPeer::GetInternalID( const SystemAddress systemAddress, const i
 		returnValue.binaryAddress=sa.sin_addr.s_addr;
 		return returnValue;
 */
-#else
-		return UNASSIGNED_SYSTEM_ADDRESS;
-#endif
+
+
+
 	}
 }
 
@@ -2813,17 +2813,17 @@ int RakPeer::GetMTUSize( const SystemAddress target ) const
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 unsigned int RakPeer::GetNumberOfAddresses( void )
 {
-#if !defined(_XBOX) && !defined(X360)
+
 	int i = 0;
 
 	while ( ipList[ i ][ 0 ] )
 		i++;
 
 	return i;
-#else
-	RakAssert(0);
-	return 0;
-#endif
+
+
+
+
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2836,18 +2836,18 @@ const char* RakPeer::GetLocalIP( unsigned int index )
 	if (IsActive()==false)
 	{
 	// Fill out ipList structure
-#if !defined(_XBOX) && !defined(X360)
+
 	memset( ipList, 0, sizeof( char ) * 16 * MAXIMUM_NUMBER_OF_INTERNAL_IDS );
 	SocketLayer::GetMyIP( ipList,binaryAddresses );
-#endif
+
 	}
 
-#if !defined(_XBOX) && !defined(X360)
+
 	return ipList[ index ];
-#else
-	RakAssert(0);
-	return 0;
-#endif
+
+
+
+
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2860,7 +2860,7 @@ bool RakPeer::IsLocalIP( const char *ip )
 	if (ip==0 || ip[0]==0)
 		return false;
 
-#if !defined(_XBOX) && !defined(X360)
+
 	if (strcmp(ip, "127.0.0.1")==0 || strcmp(ip, "localhost")==0)
 		return true;
 
@@ -2871,10 +2871,10 @@ bool RakPeer::IsLocalIP( const char *ip )
 		if (strcmp(ip, GetLocalIP(i))==0)
 			return true;
 	}
-#else
-	if (strcmp(ip, "2130706433")==0) // 127.0.0.1 big endian
-		return true;
-#endif
+
+
+
+
 	return false;
 }
 
@@ -3851,12 +3851,12 @@ void RakPeer::ParseConnectionRequestPacket( RakPeer::RemoteSystemStruct *remoteS
 		{
 			remoteSystem->connectMode=RemoteSystemStruct::HANDLING_CONNECTION_REQUEST;
 
-#if !defined(_XBOX) && !defined(X360)
+
 			char str1[64];
 			systemAddress.ToString(false, str1);
 			if ( usingSecurity == false ||
 				IsInSecurityExceptionList(str1))
-#endif
+
 			{
 #ifdef _TEST_AES
 				unsigned char AESKey[ 16 ];
@@ -3870,10 +3870,10 @@ void RakPeer::ParseConnectionRequestPacket( RakPeer::RemoteSystemStruct *remoteS
 				OnConnectionRequest( remoteSystem, 0, false, incomingTimestamp );
 #endif
 			}
-#if !defined(_XBOX) && !defined(X360)
+
 			else
 				SecuredConnectionResponse( systemAddress );
-#endif
+
 		}
 		else
 		{
@@ -4594,14 +4594,14 @@ bool RakPeer::HandleRPCPacket( const char *data, int length, SystemAddress syste
 
 		// We have to copy into a new data chunk because the user data might not be byte aligned.
 		bool usedAlloca=false;
-#if !defined(_XBOX) && !defined(X360)
+
 		if (BITS_TO_BYTES( incomingBitStream.GetNumberOfUnreadBits() ) < MAX_ALLOCA_STACK_ALLOCATION)
 		{
 			userData = ( unsigned char* ) alloca( (size_t) BITS_TO_BYTES( incomingBitStream.GetNumberOfUnreadBits() ) );
 			usedAlloca=true;
 		}
 		else
-#endif
+
 			userData = (unsigned char*) rakMalloc_Ex((size_t) BITS_TO_BYTES(incomingBitStream.GetNumberOfUnreadBits()), __FILE__, __LINE__);
 
 
@@ -4613,9 +4613,9 @@ bool RakPeer::HandleRPCPacket( const char *data, int length, SystemAddress syste
 #ifdef _DEBUG
 			RakAssert( 0 );
 #endif
-			#if defined(_XBOX) || defined(X360)
-                                             
-			#endif
+
+
+
 
 			return false; // Not enough data to read
 		}
@@ -4691,7 +4691,7 @@ bool RakPeer::IsLoopbackAddress(const AddressOrGUID &systemIdentifier, bool matc
 	// Used to see if we are sending to ourselves
 	char str[64];
 	sa.ToString(false,str);
-#if !defined(_XBOX) && !defined(X360)
+
 	bool isLoopback=strcmp(str,"127.0.0.1")==0;
 	if (matchPort==false && isLoopback)
 		return true;
@@ -4708,38 +4708,38 @@ bool RakPeer::IsLoopbackAddress(const AddressOrGUID &systemIdentifier, bool matc
 				(isLoopback && sa.port==mySystemAddress[ipIndex].port))
 				return true;
 	}
-#else
-	bool isLoopback=strcmp(str,"2130706433")==0;
-	if (isLoopback)
-	{
-		if (matchPort==false)
-		{
-			return true;
-		}
-		else
-		{
-			for (int ipIndex=0; ipIndex < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ipIndex++)
-				if (mySystemAddress[ipIndex]==sa ||
-					(isLoopback && sa.port==mySystemAddress[ipIndex].port))
-					return true;
-		}
-	}
-#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	return sa==firstExternalID;
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 SystemAddress RakPeer::GetLoopbackAddress(void) const
 {
-#if !defined(_XBOX) && !defined(X360)
+
 	return mySystemAddress[0];
-#else
-	return firstExternalID;
-#endif
+
+
+
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void RakPeer::GenerateSYNCookieRandomNumber( void )
 {
-#if !defined(_XBOX) && !defined(_WIN32_WCE) && !defined(X360)
+#if   !defined(_WIN32_WCE) 
 	unsigned int number;
 	int i;
 	memcpy( oldRandomNumber, newRandomNumber, sizeof( newRandomNumber ) );
@@ -4757,7 +4757,7 @@ void RakPeer::GenerateSYNCookieRandomNumber( void )
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void RakPeer::SecuredConnectionResponse( const SystemAddress systemAddress )
 {
-#if !defined(_XBOX) && !defined(_WIN32_WCE) && !defined(X360)
+#if   !defined(_WIN32_WCE) 
 	CSHA1 sha1;
 //	RSA_BIT_SIZE n;
 //	big::uint32_t e;
@@ -4820,7 +4820,7 @@ void RakPeer::SecuredConnectionResponse( const SystemAddress systemAddress )
 
 void RakPeer::SecuredConnectionConfirmation( RakPeer::RemoteSystemStruct * remoteSystem, char* data )
 {
-#if !defined(_XBOX) && !defined(_WIN32_WCE) && !defined(X360)
+#if   !defined(_WIN32_WCE) 
 	int i, j;
 	unsigned char randomNumber[ 20 ];
 	unsigned int number;
@@ -5240,11 +5240,11 @@ bool RakPeer::SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPri
 			return false;
 		}
 
-#if !defined(_XBOX) && !defined(X360)
+
 		sendList=(unsigned *)alloca(sizeof(unsigned));
-#else
-		sendList = (unsigned *) rakMalloc_Ex(sizeof(unsigned), __FILE__, __LINE__);
-#endif
+
+
+
 
 		if (remoteSystemList[remoteSystemIndex].isActive &&
 			remoteSystemList[remoteSystemIndex].connectMode!=RemoteSystemStruct::DISCONNECT_ASAP &&
@@ -5257,13 +5257,13 @@ bool RakPeer::SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPri
 	}
 	else
 	{
-#if !defined(_XBOX) && !defined(X360)
+
 	//sendList=(unsigned *)alloca(sizeof(unsigned)*remoteSystemListSize);
 		sendList=(unsigned *)alloca(sizeof(unsigned)*maximumNumberOfPeers);
-#else
-	//sendList = RakNet::OP_NEW<unsigned[remoteSystemListSize]>( __FILE__, __LINE__ );
-		sendList = (unsigned *) rakMalloc_Ex(sizeof(unsigned)*maximumNumberOfPeers, __FILE__, __LINE__);
-#endif
+
+
+
+
 
 		// remoteSystemList in network thread
 		unsigned int idx;
@@ -5279,9 +5279,9 @@ bool RakPeer::SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPri
 
 	if (sendListSize==0)
 	{
-#if defined(_XBOX) && !defined(X360)
-                                            
-#endif
+
+
+
 		return false;
 	}
 
@@ -5323,9 +5323,9 @@ bool RakPeer::SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPri
 			remoteSystemList[sendList[sendListIndex]].lastReliableSend=(RakNetTime)(currentTime/(RakNetTimeUS)1000);
 	}
 
-#if defined(_XBOX) && !defined(X360)
-                                           
-#endif
+
+
+
 
 	// Return value only meaningful if true was passed for useCallerDataAllocation.  Means the reliability layer used that data copy, so the caller should not deallocate it
 	return callerDataAllocationUsed;
@@ -5442,11 +5442,15 @@ inline void RakPeer::AddPacketToProducer(Packet *p)
 void RakPeer::GenerateGUID(void)
 {
 	// Mac address is a poor solution because you can't have multiple connections from the same system
-#if defined(_XBOX) || defined(X360)
-                                                                                                                                                     
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                                                                                     
-#elif defined(_WIN32)
+
+
+
+
+
+
+
+
+#if   defined(_WIN32)
 	myGuid.g=RakNet::GetTimeUS();
 
 	RakNetTimeUS lastTime, thisTime;
@@ -5487,7 +5491,7 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 	Packet *packet;
 	unsigned i;
 
-#if !defined(_XBOX) && !defined(X360)
+
 	char str1[64];
 	systemAddress.ToString(false, str1);
 	if (rakPeer->IsBanned( str1 ))
@@ -5507,7 +5511,7 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 
 		return true;
 	}
-#endif
+
 
 
 	// The reason for all this is that the reliability layer has no way to tell between offline messages that arrived late for a player that is now connected,
@@ -5800,9 +5804,9 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 				if (rcs->actionToTake==RakPeer::RequestedConnectionStruct::CONNECT && rcs->systemAddress==systemAddress)
 				{
 					connectionAttemptCancelled=true;
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                
-#endif
+
+
+
 
 					rakPeer->requestedConnectionQueue.RemoveAtIndex(i);
 					RakNet::OP_DELETE(rcs,__FILE__,__LINE__);
@@ -6646,11 +6650,11 @@ bool RakPeer::RunUpdateCycle( RakNetTimeUS timeNS, RakNetTime timeMS )
 #ifdef _DO_PRINTF
 						RAKNET_DEBUG_PRINTF("Temporarily banning %i:%i for sending nonsense data\n", systemAddress.binaryAddress, systemAddress.port);
 #endif
-#if !defined(_XBOX) && !defined(X360)
+
 						char str1[64];
 						systemAddress.ToString(false, str1);
 						AddToBanList(str1, remoteSystem->reliabilityLayer.GetTimeoutTime());
-#endif
+
 
 						rakFree_Ex(data, __FILE__, __LINE__ );
 					}
@@ -6788,7 +6792,7 @@ bool RakPeer::RunUpdateCycle( RakNetTimeUS timeNS, RakNetTime timeMS )
                         remoteSystem->rpcMap.AddIdentifierAtIndex((char*)output,index);
 						rakFree_Ex(data, __FILE__, __LINE__ );
 					}
-#if !defined(_XBOX) && !defined(_WIN32_WCE) && !defined(X360)
+#if   !defined(_WIN32_WCE) 
 					else if ( (unsigned char)(data)[0] == ID_SECURED_CONNECTION_RESPONSE &&
 						byteSize == 1 + sizeof( uint32_t ) + sizeof( uint32_t ) * RAKNET_RSA_FACTOR_LIMBS + 20 )
 					{

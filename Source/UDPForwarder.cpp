@@ -137,11 +137,11 @@ void UDPForwarder::UpdateThreaded(void)
 			largestDescriptor = forwardList[i]->socket;
 	}
 
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                    
-#else
+
+
+
 	selectResult=(int) select((int) largestDescriptor+1, &readFD, 0, 0, &tv);
-#endif
+
 
 	char data[ MAXIMUM_MTU_SIZE ];
 	sockaddr_in sa;
@@ -173,7 +173,7 @@ void UDPForwarder::UpdateThreaded(void)
 
 			if (receivedDataLen<0)
 			{
-#if defined(_WIN32) && defined(_DEBUG) && !defined(_XBOX) && !defined(X360)
+#if defined(_WIN32) && defined(_DEBUG) 
 				DWORD dwIOError = WSAGetLastError();
 
 				if (dwIOError!=WSAECONNRESET && dwIOError!=WSAEINTR && dwIOError!=WSAETIMEDOUT)

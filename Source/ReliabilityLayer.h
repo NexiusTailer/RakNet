@@ -556,6 +556,7 @@ private:
 	DataStructures::MemoryPool<InternalPacketRefCountedData> refCountedDataPool;
 
 	BPSTracker bpsMetrics[RNS_PER_SECOND_METRICS_COUNT];
+	CCTimeType lastBpsClear;
 };
 
 #endif

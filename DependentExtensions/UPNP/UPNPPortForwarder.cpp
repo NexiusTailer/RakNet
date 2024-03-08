@@ -168,11 +168,11 @@ void GetGateways(char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ])
 
 
 #if defined(_XBOX) || defined(X360)
-                                   
+static const int THREAD_PRIORITY=0;
 #elif defined(_WIN32)
 static const int THREAD_PRIORITY=0;
 #elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                      
+static const int THREAD_PRIORITY=1000;
 #else
 static const int THREAD_PRIORITY=1000;
 #endif

@@ -5,7 +5,7 @@
 /// Usage of RakNet is subject to the appropriate license agreement.
 
 
-#if defined(_WIN32) && !defined(_XBOX) && !defined(X360)
+#if defined(_WIN32) 
 #include "WindowsIncludes.h"
 // To call timeGetTime
 // on Code::Blocks, this needs to be libwinmm.a instead
@@ -13,15 +13,20 @@
 #endif
 
 #include "GetTime.h"
-#if defined(_XBOX) || defined(X360)
-                            
-#endif
+
+
+
 #if defined(_WIN32)
 DWORD mProcMask;
 DWORD mSysMask;
 HANDLE mThread;
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                                                                                                                                  
+
+
+
+
+
+
+
 #else
 #include <sys/time.h>
 #include <unistd.h>
@@ -66,11 +71,49 @@ RakNetTime RakNet::GetTime( void )
 {
 	return (RakNetTime)(GetTimeNS()/1000);
 }
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-#elif defined(_XBOX) || defined(X360)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-#elif defined(_WIN32) && !defined(_XBOX) && !defined(X360)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if   defined(_WIN32) 
 RakNetTimeUS GetTimeUS_Windows( void )
 {
 	if ( initialized == false)
@@ -138,11 +181,11 @@ RakNetTimeUS GetTimeUS_Linux( void )
 
 RakNetTimeUS RakNet::GetTimeNS( void )
 {
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                        
-#elif defined(_XBOX) || defined(X360)
-                        
-#elif defined(_WIN32)
+
+
+
+
+#if   defined(_WIN32)
 	return GetTimeUS_Windows();
 #else
 	return GetTimeUS_Linux();

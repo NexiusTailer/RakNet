@@ -384,6 +384,7 @@ void ReliabilityLayer::InitializeVariables( int MTUSize )
 	bandwidthExceededStatistic=false;
 	remoteSystemTime=0;
 	unreliableTimeout=0;
+	lastBpsClear=0;
 
 	// Disable packet pairs
 	countdownToNextPacketPair=15;
@@ -1487,6 +1488,23 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 		statistics.BPSLimitByOutgoingBandwidthLimit=false;
 	}
 
+	unsigned int i;
+	if (time > lastBpsClear+
+#if CC_TIME_TYPE_BYTES==4
+		100
+#else
+		100000
+#endif
+		)
+	{
+		for (i=0; i < RNS_PER_SECOND_METRICS_COUNT; i++)
+		{
+			bpsMetrics[i].ClearExpired1(time);
+		}
+
+		lastBpsClear=time;
+	}
+
 	if (hasDataToSendOrResend==true)
 	{
 		InternalPacket *internalPacket;
@@ -2062,7 +2080,8 @@ unsigned ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSeque
 	//	bool deleted;
 	//	deleted=resendTree.Delete(messageNumber, internalPacket);
 	internalPacket = resendBuffer[messageNumber & RESEND_BUFFER_ARRAY_MASK];
-	if (internalPacket)
+	// May ask to remove twice, for example resend twice, then second ack
+	if (internalPacket && internalPacket->reliableMessageNumber==messageNumber)
 	{
 		ValidateResendList();
 		resendBuffer[messageNumber & RESEND_BUFFER_ARRAY_MASK]=0;
@@ -2204,7 +2223,7 @@ BitSize_t ReliabilityLayer::WriteToBitStreamFromInternalPacket( RakNet::BitStrea
 	if (internalPacket->reliability==UNRELIABLE_WITH_ACK_RECEIPT)
 		tempChar=UNRELIABLE;
 	else if (internalPacket->reliability==RELIABLE_WITH_ACK_RECEIPT)
-		tempChar=RELIABLE_WITH_ACK_RECEIPT;
+		tempChar=RELIABLE;
 	else if (internalPacket->reliability==RELIABLE_ORDERED_WITH_ACK_RECEIPT)
 		tempChar=RELIABLE_ORDERED;
 	else
@@ -2503,14 +2522,14 @@ void ReliabilityLayer::SplitPacket( InternalPacket *internalPacket )
 	// Optimization
 	// internalPacketArray = RakNet::OP_NEW<InternalPacket*>(internalPacket->splitPacketCount, __FILE__, __LINE__ );
 	bool usedAlloca=false;
-#if !defined(_XBOX) && !defined(_X360)
+
 	if (sizeof( InternalPacket* ) * internalPacket->splitPacketCount < MAX_ALLOCA_STACK_ALLOCATION)
 	{
 		internalPacketArray = ( InternalPacket** ) alloca( sizeof( InternalPacket* ) * internalPacket->splitPacketCount );
 		usedAlloca=true;
 	}
 	else
-#endif
+
 		internalPacketArray = (InternalPacket**) rakMalloc_Ex( sizeof(InternalPacket*) * internalPacket->splitPacketCount, __FILE__, __LINE__ );
 
 	for ( i = 0; i < ( int ) internalPacket->splitPacketCount; i++ )
@@ -3023,13 +3042,9 @@ void ReliabilityLayer::UpdateThreadedMemory(void)
 //-------------------------------------------------------------------------------------------------------
 bool ReliabilityLayer::AckTimeout(RakNetTimeMS curTime)
 {
-	return curTime-timeLastDatagramArrived>timeoutTime;
-	// 
-	// #if CC_TIME_TYPE_BYTES==4
-	// 	return curTime > timeResendQueueNonEmpty && timeResendQueueNonEmpty && curTime - timeResendQueueNonEmpty > timeoutTime;
-	// #else
-	// 	return curTime > timeResendQueueNonEmpty/(RakNetTimeUS)1000 && timeResendQueueNonEmpty && curTime - timeResendQueueNonEmpty/(RakNetTimeUS)1000 > timeoutTime;
-	// #endif
+	// I check timeLastDatagramArrived-curTime because with threading it is possible that timeLastDatagramArrived is
+	// slightly greater than curTime, in which case this is NOT an ack timeout
+	return (timeLastDatagramArrived-curTime)>10000 && curTime-timeLastDatagramArrived>timeoutTime;
 }
 //-------------------------------------------------------------------------------------------------------
 CCTimeType ReliabilityLayer::GetNextSendTime(void) const

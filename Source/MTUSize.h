@@ -23,10 +23,10 @@
 /// \li \em 576. Typical value to connect to dial-up ISPs.
 /// The largest value for an UDP datagram
 /// \sa RakPeer::SetMTUSize()
-#if defined(_XBOX) || defined(X360)
-                             
-#else
+
+
+
 #define MAXIMUM_MTU_SIZE 1492
-#endif
+
 
 #endif

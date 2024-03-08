@@ -1,4 +1,4 @@
-#if !defined(_XBOX) && !defined(X360)
+
 
 #include "RSACrypt.h"
 //#include "Random.hpp"
@@ -223,4 +223,4 @@ bool RSACrypt::decrypt(uint32_t *pt, const uint32_t *ct)
 	return true;
 }
 
-#endif
+

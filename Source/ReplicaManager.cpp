@@ -7,9 +7,9 @@
 #include "MessageIdentifiers.h"
 #include "BitStream.h"
 #include "Replica.h"
-#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
+
 #include <memory.h>
-#endif
+
 #include "RakAssert.h"
 #include <stdio.h> // For my debug printfs
 #include "RakAssert.h"

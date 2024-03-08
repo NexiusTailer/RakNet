@@ -1000,11 +1000,11 @@ protected:
 	// Constructor not called!
 	struct RecvFromStruct
 	{
-#if (defined(_XBOX) || defined(_X360)) && defined(RAKNET_USE_VDP)
-		char data[MAXIMUM_MTU_SIZE*2];
-#else
+
+
+
 		char data[MAXIMUM_MTU_SIZE];
-#endif
+
 		int bytesRead;
 		SystemAddress systemAddress;
 		RakNetTimeUS timeRead;
@@ -1087,7 +1087,7 @@ protected:
 	unsigned short _minExtraPing, _extraPingVariance;
 #endif
 
-#if !defined(_XBOX) && !defined(_WIN32_WCE) && !defined(X360)
+#if   !defined(_WIN32_WCE) 
 	/// Encryption and security
 	RSACrypt rsacrypt;
 	uint32_t publicKeyE;

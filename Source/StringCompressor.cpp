@@ -11,12 +11,12 @@
 #include "RakString.h"
 #include "RakAssert.h"
 #include <string.h>
-#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
+
 #include <memory.h>
-#endif
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                        
-#endif
+
+
+
+
 
 using namespace RakNet;
 
@@ -445,7 +445,7 @@ bool StringCompressor::DecodeString( std::string *output, int maxCharsToWrite, R
 	char *destinationBlock;
 	bool out;
 
-#if !defined(_XBOX) && !defined(_X360)
+
 	if (maxCharsToWrite < MAX_ALLOCA_STACK_ALLOCATION)
 	{
 		destinationBlock = (char*) alloca(maxCharsToWrite);
@@ -453,7 +453,7 @@ bool StringCompressor::DecodeString( std::string *output, int maxCharsToWrite, R
 		*output=destinationBlock;
 	}
 	else
-#endif
+
 	{
 		destinationBlock = (char*) rakMalloc_Ex( maxCharsToWrite, __FILE__, __LINE__ );
 		out=DecodeString(destinationBlock, maxCharsToWrite, input, languageID);
@@ -479,7 +479,7 @@ bool StringCompressor::DecodeString( RakString *output, int maxCharsToWrite, Rak
 	char *destinationBlock;
 	bool out;
 
-#if !defined(_XBOX) && !defined(_X360)
+
 	if (maxCharsToWrite < MAX_ALLOCA_STACK_ALLOCATION)
 	{
 		destinationBlock = (char*) alloca(maxCharsToWrite);
@@ -487,7 +487,7 @@ bool StringCompressor::DecodeString( RakString *output, int maxCharsToWrite, Rak
 		*output=destinationBlock;
 	}
 	else
-#endif
+
 	{
 		destinationBlock = (char*) rakMalloc_Ex( maxCharsToWrite, __FILE__, __LINE__ );
 		out=DecodeString(destinationBlock, maxCharsToWrite, input, languageID);

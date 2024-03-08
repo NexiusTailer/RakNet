@@ -1,4 +1,4 @@
-#if !defined(_XBOX) && !defined(X360)
+
 
 #ifndef RSA_CRYPT_HPP
 #define RSA_CRYPT_HPP
@@ -42,4 +42,4 @@ public:
 
 #endif // RSA_CRYPT_HPP
 
-#endif
+

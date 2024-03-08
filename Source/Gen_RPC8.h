@@ -11,9 +11,9 @@
 #include <stdio.h>
 #include <string.h> // memcpy
 #include <typeinfo>
-#if defined(_XBOX) || defined(X360)
-                            
-#elif defined (_WIN32)
+
+
+#if   defined (_WIN32)
 #include "WindowsIncludes.h"
 #endif
 #include <stddef.h>
@@ -181,8 +181,18 @@ typedef double        HardwareReal;
 typedef unsigned long long NaturalWord;
 typedef double         HardwareReal;  // could be changed to __float128 on AMD64/nonwin
 
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                                                                                                                                                                                                                                                                                                                                   
+
+
+
+
+
+
+
+
+
+
+
+
 #elif defined(_M_PPC) || defined( __POWERPC__ )
 
 #include <limits.h>
@@ -199,9 +209,11 @@ typedef double         HardwareReal;  // could be changed to __float128 on AMD64
 		typedef unsigned int NaturalWord;
 	#endif
 #else
-	#if defined(_XBOX) || defined(X360)
-                                                                                              
-	#else
+
+
+
+
+
 		#if sizeof( long ) == 8
 			#define AUTORPC_WORD 64
 			typedef double HardwareReal;
@@ -211,7 +223,7 @@ typedef double         HardwareReal;  // could be changed to __float128 on AMD64
 			typedef double HardwareReal;
 			typedef unsigned int NaturalWord;
 		#endif
-	#endif
+
 #endif
 
 #define AUTO_RPC_INT_REG_PARAMS 8

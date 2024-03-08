@@ -4,7 +4,7 @@
 /// Usage of RakNet is subject to the appropriate license agreement.
 ///
 
-#if !defined(_XBOX) && !defined(X360)
+
 
 /*
  * BigInts are stored as 32-bit integer arrays.
@@ -415,4 +415,4 @@ namespace big
 
 #endif // include guard
 
-#endif
+

@@ -27,8 +27,8 @@
 static const unsigned HASH_LENGTH=sizeof(unsigned int);
 
 // alloca
-#if defined(_XBOX) || defined(X360)
-#elif defined(_WIN32)
+
+#if   defined(_WIN32)
 #include <malloc.h>
 #else
 #if !defined ( __FreeBSD__ )
@@ -96,7 +96,7 @@ void FileList::AddFile(const char *filepath, const char *filename, FileListNodeC
 	}
 
 
-#if !defined(_XBOX) && !defined(_X360)
+
 	bool usedAlloca=false;
 	if (length < MAX_ALLOCA_STACK_ALLOCATION)
 	{
@@ -104,7 +104,7 @@ void FileList::AddFile(const char *filepath, const char *filename, FileListNodeC
 		usedAlloca=true;
 	}
 	else
-#endif
+
 	{
 		data = (char*) rakMalloc_Ex( length, __FILE__, __LINE__ );
 	}
@@ -113,9 +113,9 @@ void FileList::AddFile(const char *filepath, const char *filename, FileListNodeC
 	AddFile(filename, filepath, data, length, length, context);
 	fclose(fp);
 
-#if !defined(_XBOX) && !defined(_X360)
+
 	if (usedAlloca==false)
-#endif
+
 		rakFree_Ex(data, __FILE__, __LINE__ );
 
 }

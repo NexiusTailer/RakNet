@@ -10,8 +10,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#if defined(_XBOX) || defined(X360)
-#elif defined(_WIN32)
+
+#if   defined(_WIN32)
 // IP_DONTFRAGMENT is different between winsock 1 and winsock 2.  Therefore, Winsock2.h must be linked againt Ws2_32.lib
 // winsock.h must be linked against WSock32.lib.  If these two are mixed up the flag won't work correctly
 #include <winsock2.h>
@@ -92,9 +92,15 @@ void SystemAddress::ToString(bool writePort, char *dest) const
 		return;
 	}
 
-#if defined(_XBOX) || defined(X360)
-                                                                                                                      
-#else
+
+
+
+
+
+
+
+
+
 
 	
 	in_addr in;
@@ -108,7 +114,7 @@ void SystemAddress::ToString(bool writePort, char *dest) const
 		strcat(dest, ":");
 		Itoa(port, dest+strlen(dest), 10);
 	}
-#endif
+
 }
 SystemAddress::SystemAddress() {*this=UNASSIGNED_SYSTEM_ADDRESS; systemIndex=(SystemIndex)-1;}
 SystemAddress::SystemAddress(const char *a, unsigned short b) {SetBinaryAddress(a); port=b; systemIndex=(SystemIndex)-1;};
@@ -165,13 +171,22 @@ void SystemAddress::SetBinaryAddress(const char *str)
 			portPart[portIndex]=0;
 		}
 
-#if defined(_XBOX) || defined(X360)
-                                                                                                                                                                                                                                                        
-#else
+
+
+
+
+
+
+
+
+
+
+
+
 		if (IPPart[0])
 			binaryAddress=inet_addr(IPPart);
 
-#endif
+
 
 		if (portPart[0])
 			port=(unsigned short) atoi(portPart);
@@ -312,12 +327,12 @@ bool RakNetGUID::FromString(const char *source)
 	if (source==0)
 		return false;
 
-#if defined(_XBOX) || defined(_X360)
-                   
-#elif defined(WIN32)
+
+
+#if   defined(WIN32)
 	g=_atoi64(source);
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                         
+
+
 #else
 	// Changed from g=strtoull(source,0,10); for android
 	g=strtoull(source, (char **)NULL, 10);

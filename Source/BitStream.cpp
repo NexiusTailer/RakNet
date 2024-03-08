@@ -16,15 +16,15 @@
 
 #include "SocketIncludes.h"
 
-#if defined(_XBOX) || defined(X360)
-                            
-#elif defined(_WIN32)
+
+
+#if   defined(_WIN32)
 #include <winsock2.h> // htonl
 #include <memory.h>
 #include <cmath>
 #include <float.h>
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                        
+
+
 #else
 #include <arpa/inet.h>
 #include <memory.h>
@@ -982,12 +982,12 @@ void BitStream::AssertCopyData( void )
 }
 bool BitStream::IsNetworkOrderInternal(void)
 {
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-             
-#else
+
+
+
 	static const bool isNetworkOrder=(htonl(12345) == 12345);
 	return isNetworkOrder;
-#endif
+
 }
 void BitStream::ReverseBytes(unsigned char *inByteArray, unsigned char *inOutByteArray, const unsigned int length)
 {

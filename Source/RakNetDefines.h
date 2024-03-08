@@ -79,15 +79,15 @@
 #endif
 
 #ifndef RakAssert
-#if defined(_XBOX) || defined(X360)
-                    
-#else
+
+
+
 #if defined(_DEBUG)
 #define RakAssert(x) assert(x);
 #else
 #define RakAssert(x) 
 #endif
-#endif
+
 #endif
 
 /// This controls the amount of memory used per connection. If more than this many datagrams are sent without an ack, then the ack has no effect

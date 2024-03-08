@@ -3,9 +3,9 @@
 #include <string.h>
 #include "RakAssert.h"
 #include <stdio.h>
-#if defined(_XBOX) || defined(X360)
-                            
-#elif defined(_WIN32)
+
+
+#if   defined(_WIN32)
 // IP_DONTFRAGMENT is different between winsock 1 and winsock 2.  Therefore, Winsock2.h must be linked againt Ws2_32.lib
 // winsock.h must be linked against WSock32.lib.  If these two are mixed up the flag won't work correctly
 #include <winsock2.h>
@@ -145,14 +145,14 @@ void CommandParserInterface::ReturnResult(char *res, const char *command, Transp
 }
 void CommandParserInterface::ReturnResult(SystemAddress res, const char *command, TransportInterface *transport, SystemAddress systemAddress)
 {
-#if !defined(_XBOX) && !defined(_X360)
+
 	in_addr in;
 	in.s_addr = systemAddress.binaryAddress;
 	inet_ntoa( in );
 	transport->Send(systemAddress, "%s returned %s %i:%i\r\n", command,inet_ntoa( in ),res.binaryAddress, res.port);
-#else
-	transport->Send(systemAddress, "%s returned %i:%i\r\n", command,res.binaryAddress, res.port);
-#endif
+
+
+
 }
 SystemAddress CommandParserInterface::IntegersToSystemAddress(int binaryAddress, int port)
 {

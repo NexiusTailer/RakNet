@@ -150,14 +150,14 @@ void NetworkIDObject::SetParent( void *_parent )
 		NetworkIDNode *nodeArray;
 
 		bool usedAlloca=false;
-	#if !defined(_XBOX) && !defined(X360)
+
 		if (sizeof(NetworkIDNode) * size < MAX_ALLOCA_STACK_ALLOCATION)
 		{
 			nodeArray = (NetworkIDNode*) alloca(sizeof(NetworkIDNode) * size);
 			usedAlloca=true;
 		}
 		else
-	#endif
+
 			nodeArray = RakNet::OP_NEW_ARRAY<NetworkIDNode>(size, __FILE__, __LINE__ );
 
 		networkIDManager->IDTree.DisplayBreadthFirstSearch( nodeArray );

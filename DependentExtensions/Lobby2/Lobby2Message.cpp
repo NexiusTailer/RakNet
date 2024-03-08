@@ -155,9 +155,9 @@ void Lobby2Callbacks::MessageResult(Notification_Console_Local_Users_Changed *me
 void Lobby2Callbacks::MessageResult(Notification_ReceivedDataMessageFromUser *message) {ExecuteDefaultResult(message);}
 
 Lobby2Message::Lobby2Message() {refCount=1; requestId=(unsigned int)-1; callbackId=(unsigned char)-1;
-#if defined(_XBOX) || defined(X360)
-                                                   
-#endif
+
+
+
 }
 void Lobby2Message::SerializeBase(bool writeToBitstream, bool serializeOutput, BitStream *bitStream)
 {

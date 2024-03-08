@@ -9,8 +9,8 @@
 #ifndef __CLIENT_CONTEXT_STRUCT_H
 #define __CLIENT_CONTEXT_STRUCT_H
 
-#if defined(_XBOX) || defined(X360)
-#elif defined(_WIN32)
+
+#if   defined(_WIN32)
 //#include "WindowsIncludes.h"
 #endif
 #include "RakNetTypes.h"

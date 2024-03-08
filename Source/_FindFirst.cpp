@@ -7,9 +7,9 @@
 #include "DS_List.h"
 
 #include <sys/stat.h>
-#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
+
 #include <fnmatch.h>
-#endif
+
 
 static DataStructures::List< _findinfo_t* > fileInfo;
 	
@@ -58,9 +58,36 @@ long _findfirst(const char *name, _finddata_t *f)
         else return ret;
 }
 
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-#else
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 int _findnext(long h, _finddata_t *f)
 {
 	RakAssert(h >= 0 && h < (long)fileInfo.Size());
@@ -105,7 +132,7 @@ int _findnext(long h, _finddata_t *f)
 
 	return -1;
 }
-#endif
+
 
 
 

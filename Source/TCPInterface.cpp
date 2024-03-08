@@ -80,12 +80,12 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 
 	if (threadPriority==-99999)
 	{
-#if defined(_XBOX) || defined(X360)
-                   
-#elif defined(_WIN32)
+
+
+#if   defined(_WIN32)
 		threadPriority=0;
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                      
+
+
 #else
 		threadPriority=1000;
 #endif
@@ -536,12 +536,12 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort)
 {
 	sockaddr_in serverAddress;
 
-#if !defined(_XBOX) && !defined(_X360)
+
 	struct hostent * server;
 	server = gethostbyname(host);
 	if (server == NULL)
 		return (SOCKET) -1;
-#endif
+
 
 	SOCKET sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd < 0) 
@@ -556,7 +556,8 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort)
 	unsigned long nonblocking = 1;
 	ioctlsocket( sockfd, FIONBIO, &nonblocking );
 #elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                                        
+	int sock_opt=1;
+	setsockopt(sockfd, SOL_SOCKET, SO_NBIO, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 #else
 	fcntl( sockfd, F_SETFL, O_NONBLOCK );
 #endif
@@ -566,11 +567,11 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort)
 	setsockopt(sockfd, SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 
 
-#if !defined(_XBOX) && !defined(_X360)
+
 	memcpy((char *)&serverAddress.sin_addr.s_addr, (char *)server->h_addr, server->h_length);
-#else
-	serverAddress.sin_addr.s_addr = inet_addr( host );
-#endif
+
+
+
 
 	blockingSocketListMutex.Lock();
 	blockingSocketList.Insert(sockfd, __FILE__, __LINE__);
@@ -726,11 +727,11 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 #ifdef _MSC_VER
 #pragma warning( disable : 4244 ) // warning C4127: conditional expression is constant
 #endif
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                        
-#else
+
+
+
 			selectResult=(int) select(largestDescriptor+1, &readFD, &writeFD, &exceptionFD, &tv);		
-#endif
+
 
 			if (selectResult<=0)
 				break;
@@ -965,9 +966,7 @@ int RemoteClient::Send(const char *data, unsigned int length)
 	int err;
 	if (ssl)
 	{
-		err = SSL_write (ssl, data, length);
-		RakAssert(err>0);
-		return 0;
+		return SSL_write (ssl, data, length);
 	}
 	else
 		return send(socket, data, length, 0);
