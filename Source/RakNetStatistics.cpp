@@ -37,14 +37,9 @@ void RAK_DLL_EXPORT StatisticsToString( RakNetStatistics *s, char *buffer, int v
 
 	else if ( verbosityLevel == 1 )
 	{
-		RakNetTime time = RakNet::GetTime();
-		double elapsedTime;
-//		double bpsSent;
-//		double bpsReceived;
-		elapsedTime = (time-s->connectionStartTime) / 1000.0f;
-	//	bpsSent = (double) s->totalBitsSent / elapsedTime;
-	//	bpsReceived= (double) s->bitsReceived / elapsedTime;
-		// Verbosity level 1
+//		RakNetTime time = RakNet::GetTime();
+// 		double elapsedTime;
+// 		elapsedTime = (time-s->connectionStartTime) / 1000.0f;
 
 		sprintf( buffer,
 			"Messages in Send buffer: %u\n"

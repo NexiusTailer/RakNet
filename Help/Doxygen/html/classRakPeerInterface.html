@@ -456,7 +456,7 @@ Allow or disallow connection responses from any IP. Normally this should be fals
 <div class="memdoc">
 
 <p>
-Adds simulated ping and packet loss to the outgoing data flow. To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and packetloss value on each. You can exclude network simulator code with the _RELEASE define to decrease code size <dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000029">Deprecated:</a></b></dt><dd>Use <a href="http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0">http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0</a> instead. </dd></dl>
+Adds simulated ping and packet loss to the outgoing data flow. To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and packetloss value on each. You can exclude network simulator code with the _RELEASE define to decrease code size <dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000029">Deprecated:</a></b></dt><dd>Use <a href="http://www.jenkinssoftware.com/forum/index.php?topic=1671.0">http://www.jenkinssoftware.com/forum/index.php?topic=1671.0</a> instead. </dd></dl>
 <dl class="note" compact><dt><b>Note:</b></dt><dd>Doesn't work past version 3.6201 </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -653,7 +653,7 @@ Connect to the specified host (ip or domain name) and server port. Calling Conne
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>timeoutTime</em>&nbsp;</td><td>How long to keep the connection alive before dropping it on unable to send a reliable message. 0 to use the default from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS); </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True on successful initiation. False on incorrect parameters, internal error, or too many existing peers. Returning true does not mean you connected! </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True on successful initiation. False if you are already connected to this system, a connection to the system is pending, the domain name cannot be resolved, incorrect parameters, internal error, or too many existing peers. Returning true does not mean you connected! </dd></dl>
 
 <p>Implemented in <a class="el" href="classRakPeer.html#c7ba51ef72df78a7da4b7e6d5e2c8276">RakPeer</a>.</p>
 
@@ -1108,7 +1108,7 @@ Same as GetSystemAddressFromIndex but returns <a class="el" href="structRakNetGU
 <div class="memdoc">
 
 <p>
-Given a connected system, give us the unique GUID representing that instance of <a class="el" href="classRakPeer.html" title="Main interface for network communications.">RakPeer</a>. This will be the same on all systems connected to that instance of <a class="el" href="classRakPeer.html" title="Main interface for network communications.">RakPeer</a>, even if the external system addresses are different Currently O(log(n)), but this may be improved in the future. If you use this frequently, you may want to cache the value as it won't change. If <em>input</em> is UNASSIGNED_SYSTEM_ADDRESS, will return your own GUID <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Call <a class="el" href="classRakPeerInterface.html#5888ca97f61ec4147913ac9ec902688b" title="Starts the network threads, opens the listen port.">Startup()</a> first, or the function will return UNASSIGNED_RAKNET_GUID </dd></dl>
+Given a connected system, give us the unique GUID representing that instance of <a class="el" href="classRakPeer.html" title="Main interface for network communications.">RakPeer</a>. This will be the same on all systems connected to that instance of <a class="el" href="classRakPeer.html" title="Main interface for network communications.">RakPeer</a>, even if the external system addresses are different Currently O(log(n)), but this may be improved in the future. If you use this frequently, you may want to cache the value as it won't change. Returns UNASSIGNED_RAKNET_GUID if system address can't be found. If <em>input</em> is UNASSIGNED_SYSTEM_ADDRESS, will return your own GUID <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Call <a class="el" href="classRakPeerInterface.html#5888ca97f61ec4147913ac9ec902688b" title="Starts the network threads, opens the listen port.">Startup()</a> first, or the function will return UNASSIGNED_RAKNET_GUID </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>input</em>&nbsp;</td><td>The system address of the system we are connected to </td></tr>
@@ -2917,7 +2917,7 @@ Set _RAKNET_THREADSAFE in RakNetDefines.h if you want to call <a class="el" href
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="RakPeerInterface_8h.html">RakPeerInterface.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Jan 6 08:24:48 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 4 22:17:51 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

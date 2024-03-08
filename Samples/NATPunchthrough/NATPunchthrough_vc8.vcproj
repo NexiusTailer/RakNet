@@ -6,6 +6,7 @@
 	ProjectGUID="{468EBA01-34C6-4F75-8E05-606851624304}"
 	RootNamespace="NATPunchthrough"
 	Keyword="Win32Proj"
+	AssemblyReferenceSearchPaths="&quot;..\UPNP\Release&quot;;&quot;..\UPNP\Debug&quot;"
 	>
 	<Platforms>
 		<Platform
@@ -175,6 +176,10 @@
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{661BBBA4-F154-48B7-991C-36B881F0D091}"
+			RelativePathToProject=".\Samples\UPNP\UPNP.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter
@@ -186,23 +191,31 @@
 				RelativePath=".\main.cpp"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="UPNP"
+			>
 			<Filter
-				Name="UPNP"
+				Name="Source Files"
 				>
 				<File
-					RelativePath="..\UPNP\upnpnat.cpp"
+					RelativePath="..\UPNP\EventReceiver.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\UPNP\upnpnat.h"
+					RelativePath="..\UPNP\UPNPCallBackInterface.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\UPNP\xmlParser.cpp"
+					RelativePath="..\UPNP\UPNPNATInternal.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\UPNP\xmlParser.h"
+					RelativePath="..\UPNP\UPNPPortForwarder.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UPNP\XMLParser.cpp"
 					>
 				</File>
 			</Filter>

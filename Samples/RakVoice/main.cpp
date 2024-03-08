@@ -10,6 +10,7 @@
 #include "RakNetStatistics.h"
 #include "NatPunchthroughClient.h"
 #include "BitStream.h"
+#include "Getche.h"
 
 /// To test sending to myself. Also uncomment in RakVoice.cpp
 //#define _TEST_LOOPBACK
@@ -129,6 +130,8 @@ int main(void)
 	useNatPunchthrough=(getche()=='y');
 	printf("\n");
 	char facilitatorIP[256];
+	{//Linux fix. Won't compile without it. Because of the goto error above, the scope is ambigious. Make it a block to define that it will not be used after the jump.
+	//Doesn't change current logic
 	SystemAddress facilitator;
 	if (useNatPunchthrough)
 	{
@@ -327,6 +330,7 @@ int main(void)
 
 
 		Pa_Sleep( 30 );
+	}
 	}
 
 	err = Pa_CloseStream( stream );

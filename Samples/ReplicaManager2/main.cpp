@@ -19,6 +19,7 @@
 #include "FormatString.h"
 #include "StringCompressor.h"
 #include "TestObjects.h"
+#include "Getche.h"
 
 // ReplicaManager2 is in the namespace RakNet
 using namespace RakNet;

@@ -215,6 +215,7 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 	SystemAddress currentSystem;
 
 	Packet *packet;
+	destroyList.Clear(false,__FILE__,__LINE__);
 
 
 
@@ -223,8 +224,9 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 	//Initializations of the arrays
 	for (int i=0;i<clientNum;i++)
 	{
-		
+
 		clientList[i]=RakNetworkFactory::GetRakPeerInterface();
+		destroyList.Push(clientList[i],__FILE__,__LINE__);
 
 		clientList[i]->Startup(1,30,&SocketDescriptor(), 1);
 
@@ -238,6 +240,7 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 
 
 	server=RakNetworkFactory::GetRakPeerInterface();
+	destroyList.Push(server,__FILE__,__LINE__);
 	server->Startup(clientNum, 30, &SocketDescriptor(60000,0), 1);
 	server->SetMaximumIncomingConnections(clientNum);
 
@@ -305,7 +308,7 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 
 		RakSleep(100);
 
-	
+
 		//Connect
 
 		for (int i=0;i<clientNum;i++)
@@ -407,11 +410,8 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 
 				DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
 			}
-			for (int i=0;i<clientNum;i++)//Clean
-			{
-				RakNetworkFactory::DestroyRakPeerInterface(clientList[i]);
-			}
-			RakNetworkFactory::DestroyRakPeerInterface(server);
+	
+			
 
 			return 2;
 
@@ -422,11 +422,8 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakNet::RakSt
 	}
 
 
-	for (int i=0;i<clientNum;i++)//Clean
-	{
-		RakNetworkFactory::DestroyRakPeerInterface(clientList[i]);
-	}
-	RakNetworkFactory::DestroyRakPeerInterface(server);
+
+	
 
 	if (isVerbose)
 		printf("Pass\n");
@@ -474,4 +471,15 @@ ManyClientsOneServerBlockingTest::ManyClientsOneServerBlockingTest(void)
 
 ManyClientsOneServerBlockingTest::~ManyClientsOneServerBlockingTest(void)
 {
+}
+
+
+void ManyClientsOneServerBlockingTest::DestroyPeers()
+{
+
+	int theSize=destroyList.Size();
+
+	for (int i=0; i < theSize; i++)
+		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+
 }

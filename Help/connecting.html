@@ -209,9 +209,7 @@ ID_INVALID_PASSWORD.</li>
 passwordData</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">connectionSocketIndex is obsolete, do not use</li>
 </ul>
-<p>Connect() will return true for a successful attempt, false if you are
-  already connected to this system, a connection to the system is pending, or if the domain name cannot be
-  resolved.<br>
+<p>Connect() will return true for a successful attempt, false if you are already connected to this system, a connection to the system is pending,  the domain name cannot be resolved, incorrect parameters, internal error, or too many existing peers.<br>
   <br>
   <span style="font-style: italic;">Note: Connect()
     returning true does NOT mean you are connected. If successful the message ID_CONNECTION_REQUEST_ACCEPTED should be received. If not you will recieve one of the error messages.</span></p>

@@ -14,12 +14,14 @@
 #include "Kbhit.h"
 #include <stdio.h> // Printf
 #include "WindowsIncludes.h" // Sleep
-#include <process.h>
+//#include <process.h>
+#include "RakThread.h"
+#include "RakSleep.h"
 
 RakPeerInterface *peer1, *peer2;
 bool endThreads;
 
-unsigned __stdcall ProducerThread( LPVOID arguments )
+RAK_THREAD_DECLARATION(ProducerThread)
 {
 	char i = *((char *) arguments);
 	char out[2];
@@ -35,12 +37,13 @@ unsigned __stdcall ProducerThread( LPVOID arguments )
 			peer2->Send(out, 2, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
 
 //		printf("Thread %i done writing\n", i);
-		Sleep(0);
+		RakSleep(0);
 	}
-	return 1;
+	
+	return 0;
 }
 
-unsigned __stdcall ConsumerThread( LPVOID arguments )
+RAK_THREAD_DECLARATION(ConsumerThread)
 {
 	char i = *((char *) arguments);
 	Packet *p;
@@ -63,12 +66,13 @@ unsigned __stdcall ConsumerThread( LPVOID arguments )
 				peer2->DeallocatePacket(p);
 		}
 
-        Sleep(0);		
+        RakSleep(0);		
 	}
-	return 1;
+
+	return 0;
 }
 
-void main(void)
+int main()
 {
 	peer1=RakNetworkFactory::GetRakPeerInterface();
 	peer2=RakNetworkFactory::GetRakPeerInterface();
@@ -78,7 +82,7 @@ void main(void)
 	peer1->Startup(1,0,&socketDescriptor, 1);
 	socketDescriptor.port=1235;
 	peer2->Startup(1,0,&socketDescriptor, 1);
-	Sleep(500);
+	RakSleep(500);
 	peer1->Connect("127.0.0.1", 1235, 0, 0);
 	peer2->Connect("127.0.0.1", 1234, 0, 0);
 
@@ -104,12 +108,12 @@ void main(void)
 	for (i=0; i< 10; i++)
 	{
 		count[i]=i;
-		_beginthreadex( NULL, 0, ProducerThread, count+i, 0, &threadId );
+		RakNet::RakThread::Create(&ProducerThread, count+i);
 	}
 	for (; i < 20; i++)
 	{
 		count[i]=i;
-		_beginthreadex( NULL, 0, ConsumerThread, count+i, 0, &threadId );
+		RakNet::RakThread::Create(&ConsumerThread, count+i );
 	}
 
 	printf("Running test\n");
@@ -117,11 +121,13 @@ void main(void)
 	while (RakNet::GetTime() < endTime)
 	{
 
-		Sleep(0);
+		RakSleep(0);
 	}
 	endThreads=true;
 	printf("Test done!\n");
 
 	RakNetworkFactory::DestroyRakPeerInterface(peer1);
 	RakNetworkFactory::DestroyRakPeerInterface(peer2);
+
+	return 0;
 }

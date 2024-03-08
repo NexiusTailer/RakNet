@@ -11,9 +11,14 @@
 #else
 #include "Kbhit.h"
 #include <unistd.h> // usleep
+#include <strings.h>
+
+//linux doesn't have stricmp but strcasecmp is same functionality
+#define stricmp strcasecmp
 #endif
 
-void main(void)
+
+int main()
 {
 	Packet *packet;
 	RakPeerInterface *rakPeer;
@@ -42,7 +47,7 @@ void main(void)
 			{
 				printf("Goodbye.\n");
 				rakPeer->Shutdown(500, 0);
-				return;
+				return 0;
 			}
 			else if (stricmp(command, "/disconnect")==0)
 			{
@@ -165,5 +170,7 @@ void main(void)
 #else
 		usleep(30 * 1000);
 #endif
+
+	return 0;
 	}
 }

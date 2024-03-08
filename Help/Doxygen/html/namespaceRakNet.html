@@ -85,6 +85,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1StringTable.html">StringTable</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Writes a string index, instead of the whole string.  <a href="classRakNet_1_1StringTable.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html">TeamBalancer</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set and network team selection (supports peer to peer or client/server).  <a href="classRakNet_1_1TeamBalancer.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPForwarder.html">UDPForwarder</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Forwards UDP datagrams. Independent of RakNet's protocol.  <a href="classRakNet_1_1UDPForwarder.html#_details">More...</a><br></td></tr>
@@ -207,6 +210,12 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Client__PerTitleBinaryStorage.html">Client_PerTitleBinaryStorage</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">For each combination of user and title, structures can be stored.  <a href="structRakNet_1_1Client__PerTitleBinaryStorage.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Client__SetPresence.html">Client_SetPresence</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets in-memory information about your login state, such as which game you are playing, or if you are playing a game Online friends will be notified when you presence changes.  <a href="structRakNet_1_1Client__SetPresence.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Client__GetPresence.html">Client_GetPresence</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets in-memory information about a user's login state, such as which game they are playing, or if they are playing a game This can also be a quick way to query if a user is logged in or not. If they are not logged in, <em>presence</em> will be set to <a class="el" href="structRakNet_1_1Lobby2Presence.html#c02f863240768e80f5892ccbaef8d0eda534a1b8f22cb3b699d9c3e395b48c2d" title="Returned by Client_GetPresence() if you query for a user that is not online, whether...">Lobby2Presence::NOT_ONLINE</a>.  <a href="structRakNet_1_1Client__GetPresence.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Friends__SendInvite.html">Friends_SendInvite</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Stores in the database an add friend invite from my handle to their handle. The combination of my handle and their handle must be unique, so you cannot send more than one add friend invite to a single user. Sends an email to their handle the subject, body, and binary data. Note: if myHandle is ignored by theirHandle, then the function fails. See <a class="el" href="structRakNet_1_1Client__StartIgnore.html" title="Adds the specified user to an ignore list for my user. Recommended to store the primary...">Client_StartIgnore</a>.  <a href="structRakNet_1_1Friends__SendInvite.html#_details">More...</a><br></td></tr>
@@ -381,6 +390,8 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Plugin.html">Lobby2Plugin</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Both <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base class for the lobby server, without database specific functionality.">Lobby2Server</a> and <a class="el" href="classRakNet_1_1Lobby2Client.html" title="Class used to send commands to Lobby2Server.">Lobby2Client</a> derive from this class.  <a href="classRakNet_1_1Lobby2Plugin.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Presence.html">Lobby2Presence</a></td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2ServerCommand.html">Lobby2ServerCommand</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a></td></tr>
@@ -568,6 +579,8 @@ You are no longer in the room.  <a href="structRakNet_1_1RoomDestroyedOnModerato
 typedef int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__REPLICA__MANAGER__2__GROUP.html#g7e1e22ee6206552dc62613e6caf027c4">SerializationType</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">These are the types of events that can cause network data to be transmitted. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__TEAM__BALANCER__GROUP.html#g79c7825649955f28135498fb3d9f6894">TeamId</a></td></tr>
+
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#c20c52e6dc585406689d52db29925bba">RPCErrorCodes</a> { <br>
 &nbsp;&nbsp;<a class="el" href="group__RPC__3__GROUP.html#ggc20c52e6dc585406689d52db29925bbadb2af6809c1b915b09b0e801a6e457dc">RPC_ERROR_NETWORK_ID_MANAGER_UNAVAILABLE</a>, 
@@ -600,7 +613,10 @@ typedef int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <a class="el" href="namespaceRakNet.html#81848fd95488939c0b3e217209f3113985b9244642c4226779a1702153310147">NAT_TYPE_ADDRESS_RESTRICTED</a>, 
 <a class="el" href="namespaceRakNet.html#81848fd95488939c0b3e217209f31139535283d246a7f5e16837d39f7cc3a49a">NAT_TYPE_PORT_RESTRICTED</a>, 
 <br>
-&nbsp;&nbsp;<a class="el" href="namespaceRakNet.html#81848fd95488939c0b3e217209f311390fe9820fcb6c01ea039c04165f8a38f8">NAT_TYPE_SYMMETRIC</a>
+&nbsp;&nbsp;<a class="el" href="namespaceRakNet.html#81848fd95488939c0b3e217209f311390fe9820fcb6c01ea039c04165f8a38f8">NAT_TYPE_SYMMETRIC</a>, 
+<a class="el" href="namespaceRakNet.html#81848fd95488939c0b3e217209f31139b32a2fbe3377ff3060d1975910ee5ee9">NAT_TYPE_UKNOWN</a>, 
+<a class="el" href="namespaceRakNet.html#81848fd95488939c0b3e217209f31139bd9c6bf5948fea28bf8d8513a4ef1b1d">NAT_TYPE_DETECTION_IN_PROGRESS</a>, 
+<a class="el" href="namespaceRakNet.html#81848fd95488939c0b3e217209f3113916b9a0a7400130f9f1b046426a8ae7d0">NAT_TYPE_SUPPORTS_UPNP</a>
 <br>
  }</td></tr>
 
@@ -828,6 +844,12 @@ Accepts datagrams to a port as long as the datagram source IP address is a syste
 Same as address-restricted cone NAT, but we had to send to both the correct remote IP address and correct remote port. The same source address and port to a different destination uses the same mapping. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="81848fd95488939c0b3e217209f311390fe9820fcb6c01ea039c04165f8a38f8"></a><!-- doxytag: member="NAT_TYPE_SYMMETRIC" ref="81848fd95488939c0b3e217209f311390fe9820fcb6c01ea039c04165f8a38f8" args="" -->NAT_TYPE_SYMMETRIC</em>&nbsp;</td><td>
 A different port is chosen for every remote destination. The same source address and port to a different destination uses a different mapping. Since the port will be different, the first external punchthrough attempt will fail. For this to work it requires port-prediction (MAX_PREDICTIVE_PORT_RANGE&gt;1) and that the router chooses ports sequentially. </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="81848fd95488939c0b3e217209f31139b32a2fbe3377ff3060d1975910ee5ee9"></a><!-- doxytag: member="NAT_TYPE_UKNOWN" ref="81848fd95488939c0b3e217209f31139b32a2fbe3377ff3060d1975910ee5ee9" args="" -->NAT_TYPE_UKNOWN</em>&nbsp;</td><td>
+Hasn't been determined. NATTypeDetectionClient does not use this, but other plugins might. </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="81848fd95488939c0b3e217209f31139bd9c6bf5948fea28bf8d8513a4ef1b1d"></a><!-- doxytag: member="NAT_TYPE_DETECTION_IN_PROGRESS" ref="81848fd95488939c0b3e217209f31139bd9c6bf5948fea28bf8d8513a4ef1b1d" args="" -->NAT_TYPE_DETECTION_IN_PROGRESS</em>&nbsp;</td><td>
+In progress. NATTypeDetectionClient does not use this, but other plugins might. </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="81848fd95488939c0b3e217209f3113916b9a0a7400130f9f1b046426a8ae7d0"></a><!-- doxytag: member="NAT_TYPE_SUPPORTS_UPNP" ref="81848fd95488939c0b3e217209f3113916b9a0a7400130f9f1b046426a8ae7d0" args="" -->NAT_TYPE_SUPPORTS_UPNP</em>&nbsp;</td><td>
+Didn't bother figuring it out, as we support UPNP, so it is equivalent to NAT_TYPE_NONE. NATTypeDetectionClient does not use this, but other plugins might. </td></tr>
 </table>
 </dl>
 
@@ -967,7 +989,7 @@ Return a friendly string representing the enumeration None and relaxed can conne
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Jan 6 08:24:49 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 4 22:17:52 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

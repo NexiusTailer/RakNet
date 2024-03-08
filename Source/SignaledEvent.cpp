@@ -85,12 +85,12 @@ void SignaledEvent::WaitOnEvent(int timeoutMs)
 	}
 	isSignaledMutex.Unlock();
 
-	int               rc;
+//	int               rc;
 	struct timespec   ts;
 
 	// Else wait for SetEvent to be called
 #if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                                                                                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                                                                                                          
 	#else
 		struct timeval    tp;
 		rc =  gettimeofday(&tp, NULL);

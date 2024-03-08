@@ -27,7 +27,7 @@
 #define LISTEN_PORT 60000
 #define MAX_INCOMING_CONNECTIONS 8
 
-void main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	printf("Server starting... ");
 	AutopatcherServer autopatcherServer;
@@ -46,7 +46,7 @@ void main(int argc, char **argv)
 	if (packetizedTCP.Start(LISTEN_PORT,MAX_INCOMING_CONNECTIONS)==false)
 	{
 		printf("Failed to start TCP. Is the port already in use?");
-		return;
+		return 1;
 	}
 	packetizedTCP.AttachPlugin(&autopatcherServer);
 	packetizedTCP.AttachPlugin(&fileListTransfer);
@@ -76,7 +76,7 @@ void main(int argc, char **argv)
 		if (connectionObject[conIdx].Connect(connectionString)==false)
 		{
 			printf("Database connection failed.\n");
-			return;
+			return 1;
 		}
 	}
 
@@ -191,7 +191,7 @@ void main(int argc, char **argv)
 			}
 		}
 
-		Sleep(30);
+		RakSleep(30);
 	}
 
 
@@ -200,4 +200,7 @@ void main(int argc, char **argv)
 #else
 	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
 #endif
+
+
+return 0;
 }

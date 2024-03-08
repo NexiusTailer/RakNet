@@ -51,6 +51,7 @@ public:
 	C() {c=3;} int c;
 	virtual void ClassMemberFunc(A *a1, A &a2, C *c1, C &c2, D *d1, D &d2, RakNet::BitStream *bs1, RakNet::BitStream &bs2, RakNet::RPC3 *rpc3Inst);
 	void ClassMemberFunc2(RakNet::RPC3 *rpc3Inst);
+	virtual void TestSlot(void) {printf("C::TestSlot\n");}
 };
 
 class D : public B, public NetworkIDObject {
@@ -58,6 +59,7 @@ public:
 	D() {for (int i=0; i < 10; i++) tenBytes[i]=i;}
 	char tenBytes[10];
 	bool Verify(void) {for (int i=0; i < 10; i++) if (tenBytes[i]!=i) return false; return true;}
+	virtual void TestSlot(void) {printf("D::TestSlot\n");}
 };
 
 // The number of parameters for a C++ function is limited by BOOST_FUSION_INVOKE_MAX_ARITY-1 found in boost/fusion/functional/invocation/limits.hpp
@@ -148,6 +150,14 @@ int main(void)
 	printf("serializes and deserializes the parameters to the function call\n");
 	printf("Difficulty: Intermediate\n\n");
 
+	DataStructures::OrderedList<int,int> ol;
+	ol.Insert(3,3,false,__FILE__,__LINE__);
+	ol.Insert(4,4,false,__FILE__,__LINE__);
+	ol.Insert(5,5,false,__FILE__,__LINE__);
+	ol.Insert(4,4,false,__FILE__,__LINE__);
+	bool objectExists;
+	int idx = ol.GetIndexFromKey(4,&objectExists);
+
 	RakPeerInterface *rakPeer;
 	SystemAddress tempAddr = UNASSIGNED_SYSTEM_ADDRESS;
 	A a;
@@ -175,6 +185,10 @@ int main(void)
 	// Note the & operator as the macro and RPC3::RegisterFunction takes a class pointer
 	RPC3_REGISTER_FUNCTION(&rpc3Inst, &C::ClassMemberFunc);
 	RPC3_REGISTER_FUNCTION(&rpc3Inst, &C::ClassMemberFunc2);
+
+	// All slots are called when a signal is sent. This is true whether the slot is local or remote
+	rpc3Inst.RegisterSlot("TestSlot",&C::TestSlot, c.GetNetworkID(), 0);
+	rpc3Inst.RegisterSlot("TestSlot",&D::TestSlot, d.GetNetworkID(), 0);
 
 	printf("(S)erver or (C)lient?: ");
 	bool isServer;
@@ -292,6 +306,7 @@ int main(void)
 			for (int i=0; i < sizeof(intArray)/sizeof(int); i++)
 				intArray[i]=i;
 			CFunc(rs, intArray,&c,c,"Test string (2)",&normalizedVector,normalizedVector,0);
+			rpc3Inst.Signal("TestSlot");
 		}
 
 		RakSleep(0);

@@ -37,6 +37,20 @@ int main(int argc, char *argv[])
 	testList.Push(new ManyClientsOneServerBlockingTest(),__FILE__,__LINE__);
 	testList.Push(new ManyClientsOneServerNonBlockingTest(),__FILE__,__LINE__);
 	testList.Push(new ManyClientsOneServerDeallocateBlockingTest(),__FILE__,__LINE__);
+	testList.Push(new ReliableOrderedConvertedTest(),__FILE__,__LINE__);
+	testList.Push(new DroppedConnectionConvertTest(),__FILE__,__LINE__);
+	testList.Push(new ComprehensiveConvertTest(),__FILE__,__LINE__);
+	testList.Push(new CrossConnectionConvertTest(),__FILE__,__LINE__);
+	testList.Push(new PingTestsTest(),__FILE__,__LINE__);
+	testList.Push(new OfflineMessagesConvertTest(),__FILE__,__LINE__);
+	testList.Push(new CompressionConvertTest(),__FILE__,__LINE__);
+	testList.Push(new LocalIsConnectedTest(),__FILE__,__LINE__);
+	testList.Push(new SecurityFunctionsTest(),__FILE__,__LINE__);
+	testList.Push(new ConnectWithSocketTest(),__FILE__,__LINE__);
+	testList.Push(new SystemAddressAndGuidTest(),__FILE__,__LINE__);	
+	testList.Push(new PacketAndLowLevelTestsTest(),__FILE__,__LINE__);
+	testList.Push(new MiscellaneousTestsTest(),__FILE__,__LINE__);
+
 
 	testListSize=testList.Size();
 
@@ -76,12 +90,14 @@ int main(int argc, char *argv[])
 		{
 			printf("\n\nRunning test %s.\n\n",testList[i]->GetTestName().C_String());
 			returnVal=testList[i]->RunTest(noParamsList,isVerbose,disallowTestToPause);
+			testList[i]->DestroyPeers();
 
 			if (returnVal==0)
 			{passedTests++;}
 			else
 			{
 				printf("Test %s returned with error %s",testList[i]->GetTestName().C_String(),testList[i]->ErrorCodeToString(returnVal).C_String());
+		
 			}
 		}
 
@@ -129,12 +145,14 @@ int main(int argc, char *argv[])
 
 				printf("\n\nRunning test %s.\n\n",testList[testsToRunIndexes[i]]->GetTestName().C_String());
 				returnVal=testList[testsToRunIndexes[i]]->RunTest(noParamsList,isVerbose,disallowTestToPause);
+				testList[i]->DestroyPeers();
 
 				if (returnVal==0)
 				{passedTests++;}
 				else
 				{
 					printf("Test %s returned with error %s",testList[testsToRunIndexes[i]]->GetTestName().C_String(),testList[testsToRunIndexes[i]]->ErrorCodeToString(returnVal).C_String());
+
 				}
 			}
 		}

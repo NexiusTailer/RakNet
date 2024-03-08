@@ -60,6 +60,12 @@ Inheritance diagram for RakNet::RoomsPlugin:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#92be4d16a2a000e1547750ac667c627f">SetRoomsCallback</a> (RoomsCallback *_roomsCallback)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the callback to get notification and <a class="el" href="classRakNet_1_1RoomsPlugin.html#88194af5ce6cbc83a1af4b4bae7c56b1" title="Execute a function, using the system address passed to SetServerAddress();.">ExecuteFunc()</a> results.  <a href="#92be4d16a2a000e1547750ac667c627f"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#f5b0ede7fe5bc2dd5e3cf113a69460c0">AddRoomsCallback</a> (RoomsCallback *_roomsCallback)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a callback to get notification and <a class="el" href="classRakNet_1_1RoomsPlugin.html#88194af5ce6cbc83a1af4b4bae7c56b1" title="Execute a function, using the system address passed to SetServerAddress();.">ExecuteFunc()</a> results.  <a href="#f5b0ede7fe5bc2dd5e3cf113a69460c0"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#a4f30b65c7dec91c6b35670e7bccc45a">RemoveRoomsCallback</a> (RoomsCallback *_roomsCallback)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a callback to get notification and <a class="el" href="classRakNet_1_1RoomsPlugin.html#88194af5ce6cbc83a1af4b4bae7c56b1" title="Execute a function, using the system address passed to SetServerAddress();.">ExecuteFunc()</a> results.  <a href="#a4f30b65c7dec91c6b35670e7bccc45a"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#88194af5ce6cbc83a1af4b4bae7c56b1">ExecuteFunc</a> (<a class="el" href="structRakNet_1_1RoomsPluginFunc.html">RoomsPluginFunc</a> *func)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Execute a function, using the system address passed to <a class="el" href="classRakNet_1_1RoomsPlugin.html#6bbf9f7511bfa2fad06154abee6da29d" title="Sets the remote server address that is running RoomsPlugin. Send calls will go to...">SetServerAddress()</a>;.  <a href="#88194af5ce6cbc83a1af4b4bae7c56b1"></a><br></td></tr>
@@ -190,6 +196,33 @@ Add a <a class="el" href="structSystemAddress.html" title="Network address for a
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The address to add </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="f5b0ede7fe5bc2dd5e3cf113a69460c0"></a><!-- doxytag: member="RakNet::RoomsPlugin::AddRoomsCallback" ref="f5b0ede7fe5bc2dd5e3cf113a69460c0" args="(RoomsCallback *_roomsCallback)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::RoomsPlugin::AddRoomsCallback           </td>
+          <td>(</td>
+          <td class="paramtype">RoomsCallback *&nbsp;</td>
+          <td class="paramname"> <em>_roomsCallback</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Add a callback to get notification and <a class="el" href="classRakNet_1_1RoomsPlugin.html#88194af5ce6cbc83a1af4b4bae7c56b1" title="Execute a function, using the system address passed to SetServerAddress();.">ExecuteFunc()</a> results. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_roomsCallback</em>&nbsp;</td><td>Class instance to get callbacks on. Should remain a valid pointer for the duration of the plugin execution. </td></tr>
   </table>
 </dl>
 
@@ -510,6 +543,33 @@ Remove a <a class="el" href="structSystemAddress.html" title="Network address fo
 
 </div>
 </div><p>
+<a class="anchor" name="a4f30b65c7dec91c6b35670e7bccc45a"></a><!-- doxytag: member="RakNet::RoomsPlugin::RemoveRoomsCallback" ref="a4f30b65c7dec91c6b35670e7bccc45a" args="(RoomsCallback *_roomsCallback)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::RoomsPlugin::RemoveRoomsCallback           </td>
+          <td>(</td>
+          <td class="paramtype">RoomsCallback *&nbsp;</td>
+          <td class="paramname"> <em>_roomsCallback</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Remove a callback to get notification and <a class="el" href="classRakNet_1_1RoomsPlugin.html#88194af5ce6cbc83a1af4b4bae7c56b1" title="Execute a function, using the system address passed to SetServerAddress();.">ExecuteFunc()</a> results. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_roomsCallback</em>&nbsp;</td><td>Class instance to no longer get callbacks on. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <a class="anchor" name="14cfd5d620048075b0240e17f1480f59"></a><!-- doxytag: member="RakNet::RoomsPlugin::SetOrderingChannel" ref="14cfd5d620048075b0240e17f1480f59" args="(char oc)" -->
 <div class="memitem">
 <div class="memproto">
@@ -667,7 +727,7 @@ Only used on the server. Locally perform any desired functions, such as logging 
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/DependentExtensions/Lobby2/Rooms/<a class="el" href="RoomsPlugin_8h.html">RoomsPlugin.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Jan 6 08:24:51 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 4 22:17:55 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

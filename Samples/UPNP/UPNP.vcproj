@@ -61,8 +61,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib"
+				AdditionalDependencies="ws2_32.lib"
 				LinkIncremental="2"
+				ManifestFile="$(IntDir)\$(TargetFileName).embed.manifest"
+				IgnoreAllDefaultLibraries="false"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -179,15 +181,27 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\test.cpp"
+				RelativePath=".\EventReceiver.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\upnpnat.cpp"
+				RelativePath=".\Test.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\xmlParser.cpp"
+				RelativePath=".\UPNPCallBackInterface.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UPNPNATInternal.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UPNPPortForwarder.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\XMLParser.cpp"
 				>
 			</File>
 		</Filter>
@@ -197,11 +211,23 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\upnpnat.h"
+				RelativePath=".\EventReceiver.h"
 				>
 			</File>
 			<File
-				RelativePath=".\xmlParser.h"
+				RelativePath=".\UPNPCallBackInterface.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UPNPNATInternal.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UPNPPortForwarder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\XMLParser.h"
 				>
 			</File>
 		</Filter>

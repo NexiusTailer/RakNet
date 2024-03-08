@@ -40,6 +40,8 @@ RakNet includes the source, along with the projects to make the DLL and static l
     <li>Add to "Additional Include Directories" your directory with the source files.<font color="#666666" size="2" face="Geneva, Verdana, Arial, Helvetica, sans-serif" class="G10"></li>
     <li>Import ws2_32.lib, or wsock32.lib if you don't have Winsock 2 installed.  In MSVC 7 you can right click on the project, select configuration properties / linker / input / additional dependencies and type "ws2_32.lib" in there.</li>
     <li>Set your project to use multi-threaded runtime libraries.  In MSVC 7 you can right click on the project, select configuration properties / C/C++ / Code Generation / Runtime Library and change it to Multi-threaded (/MT).</li>
+    <li>Add _RAKNET_DLL to the Preprocessor Definitions. In VS Project Properties -> Configuration Properties -> C/C++ -> PreProcessor -> Preprocessor Definitions</li>
+    <li>Set the character set to "not set".In VS Project Properties -> Configuration Properties -> General-> Character Set </li>
     <li>Optionally set your <A HREF="preprocessordirectives.html">preprocessor directives.</A></li>
     <li>Then hit F7 or the equivalent to build your DLL and Lib.</li>
   </ol>

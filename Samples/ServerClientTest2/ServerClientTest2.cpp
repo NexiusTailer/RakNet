@@ -12,11 +12,13 @@
 #include "RakAssert.h"
 #include "RakSleep.h"
 
+
 #ifdef _WIN32
 #include "WindowsIncludes.h" // Sleep
 #else
 #include <unistd.h> // usleep
 #include <cstdio>
+#include "Getche.h"
 #endif
 
 static const int NUM_CLIENTS=128;
@@ -281,7 +283,7 @@ int main(void)
 		}
 
 		time = RakNet::GetTime();
-		Sleep(30);
+		RakSleep(30);
 	}
 
 	if (mode==0 || mode==2)

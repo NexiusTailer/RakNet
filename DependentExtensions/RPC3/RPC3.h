@@ -15,11 +15,14 @@
 class RakPeerInterface;
 class NetworkIDManager;
 #include "PluginInterface2.h"
-#include "DS_Map.h"
+//#include "DS_Map.h"
 #include "PacketPriority.h"
 #include "RakNetTypes.h"
 #include "BitStream.h"
 #include "RakString.h"
+#include "NetworkIDObject.h"
+#include "DS_StringKeyedHash.h"
+#include "DS_OrderedList.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -68,6 +71,7 @@ enum RPCErrorCodes
 
 /// \brief The RPC3 plugin allows you to call remote functions as if they were local functions, using the standard function call syntax
 /// \details No serialization or deserialization is needed.<BR>
+/// As of this writing, the system is not threadsafe.<BR>
 /// Features:<BR>
 /// <LI>Pointers to classes that derive from NetworkID are automatically looked up using NetworkIDManager
 /// <LI>Types are written to BitStream, meaning built-in serialization operations are performed, including endian swapping
@@ -87,6 +91,7 @@ public:
 	/// \param[in] idMan Pointer to the network ID manager to use
 	void SetNetworkIDManager(NetworkIDManager *idMan);
 
+	/// Register a function pointer as callable using RPC()
 	/// \param[in] uniqueIdentifier String identifying the function. Recommended that this is the name of the function
 	/// \param[in] functionPtr Pointer to the function. For C, just pass the name of the function. For C++, use ARPC_REGISTER_CPP_FUNCTION
 	/// \return True on success, false on uniqueIdentifier already used
@@ -96,8 +101,59 @@ public:
 		if (IsFunctionRegistered(uniqueIdentifier)) return false;
 		_RPC3::FunctionPointer fp;
 		fp= _RPC3::GetBoundPointer(functionPtr);
-		localFunctions.Insert(LocalRPCFunction(uniqueIdentifier,fp), __FILE__, __LINE__ );
+		localFunctions.Push(uniqueIdentifier,RakNet::OP_NEW_1<LocalRPCFunction>( __FILE__, __LINE__, fp ),__FILE__, __LINE__);
 		return true;
+	}
+
+	/// \internal
+	// Callable object, along with priority to call relative to other objects
+	struct LocalSlotObject
+	{
+		LocalSlotObject() {}
+		LocalSlotObject(NetworkID _associatedObject,unsigned int _registrationCount,int _callPriority,_RPC3::FunctionPointer _functionPointer)
+		{associatedObject=_associatedObject;registrationCount=_registrationCount;callPriority=_callPriority;functionPointer=_functionPointer;}
+		~LocalSlotObject() {}
+
+		// Used so slots are called in the order they are registered
+		NetworkID associatedObject;
+		unsigned int registrationCount;
+		int callPriority;
+		_RPC3::FunctionPointer functionPointer;
+	};
+	/// \internal
+	/// Identifies an RPC function, by string identifier and if it is a C or C++ function
+	typedef RakString RPCIdentifier;
+	static int LocalSlotObjectComp( const LocalSlotObject &key, const LocalSlotObject &data );
+	/// \internal
+	struct LocalSlot
+	{
+//		RPCIdentifier identifier;
+		DataStructures::OrderedList<LocalSlotObject,LocalSlotObject,LocalSlotObjectComp> slotObjects;
+	};
+	/// Register a slot, which is a function pointer to one or more instances of a class that supports this function signature
+	/// When a signal occurs, all slots with the same identifier are called.
+	/// \param[in] sharedIdentifier A string to identify the slot. Recommended to be the same as the name of the function.
+	/// \param[in] functionPtr Pointer to the function. For C, just pass the name of the function. For C++, use ARPC_REGISTER_CPP_FUNCTION
+	/// \param[in] objectInstance If 0, then this slot is just a regular C function. Otherwise, this is a member of the given class instance.
+	/// \param[in] callPriority Slots are called by order of the highest callPriority first. For slots with the same priority, they are called in the order they are registered
+	template<typename Function>
+	void RegisterSlot(const char *sharedIdentifier, Function functionPtr, NetworkID objectInstanceId, int callPriority)
+	{
+		_RPC3::FunctionPointer fp;
+		fp= _RPC3::GetBoundPointer(functionPtr);
+		LocalSlotObject lso(objectInstanceId, nextSlotRegistrationCount++, callPriority, _RPC3::GetBoundPointer(functionPtr));
+		DataStructures::StringKeyedHashIndex idx = GetLocalSlotIndex(sharedIdentifier);
+		LocalSlot *localSlot;
+		if (idx.IsInvalid())
+		{
+			localSlot = RakNet::OP_NEW<LocalSlot>(__FILE__,__LINE__);
+			localSlots.Push(sharedIdentifier, localSlot,__FILE__,__LINE__);
+		}
+		else
+		{
+			localSlot=localSlots.ItemAtIndex(idx);
+		}
+		localSlot->slotObjects.Insert(lso,lso,true,__FILE__,__LINE__);
 	}
 
 	/// Unregisters a function pointer to be callable given an identifier for the pointer
@@ -146,6 +202,9 @@ public:
 	/// \return Last system to send an RPC call using this system
 	SystemAddress GetLastSenderAddress(void) const;
 
+	/// If called while processing a slot, no further slots for the currently executing signal will be executed
+	void InterruptSignal(void);
+
 	/// Returns the instance of RakPeer this plugin was attached to
 	RakPeerInterface *GetRakPeer(void) const;
 
@@ -172,20 +231,20 @@ public:
 	/// \param[in] uniqueIdentifier parameter of the same name passed to RegisterFunction() on the remote system
 	bool Call(const char *uniqueIdentifier){
 		RakNet::BitStream bitStream;
-		return SendCall(uniqueIdentifier, 0, &bitStream);
+		return SendCallOrSignal(uniqueIdentifier, 0, &bitStream, true);
 	}
 	template <class P1>
 	bool Call(const char *uniqueIdentifier, P1 &p1)	{
 		RakNet::BitStream bitStream;
 		_RPC3::SerializeCallParameterBranch<P1>::type::apply(bitStream, p1);
-		return SendCall(uniqueIdentifier, 1, &bitStream);
+		return SendCallOrSignal(uniqueIdentifier, 1, &bitStream, true);
 	}
 	template <class P1, class P2>
 	bool Call(const char *uniqueIdentifier, P1 &p1, P2 &p2)	{
 		RakNet::BitStream bitStream;
 		_RPC3::SerializeCallParameterBranch<P1>::type::apply(bitStream, p1);
 		_RPC3::SerializeCallParameterBranch<P2>::type::apply(bitStream, p2);
-		return SendCall(uniqueIdentifier, 2, &bitStream);
+		return SendCallOrSignal(uniqueIdentifier, 2, &bitStream, true);
 	}
 	template <class P1, class P2, class P3>
 	bool Call(const char *uniqueIdentifier, P1 &p1, P2 &p2, P3 &p3)	{
@@ -193,7 +252,7 @@ public:
 		_RPC3::SerializeCallParameterBranch<P1>::type::apply(bitStream, p1);
 		_RPC3::SerializeCallParameterBranch<P2>::type::apply(bitStream, p2);
 		_RPC3::SerializeCallParameterBranch<P3>::type::apply(bitStream, p3);
-		return SendCall(uniqueIdentifier, 3, &bitStream);
+		return SendCallOrSignal(uniqueIdentifier, 3, &bitStream, true);
 	}
 	template <class P1, class P2, class P3, class P4>
 	bool Call(const char *uniqueIdentifier, P1 &p1, P2 &p2, P3 &p3, P4 &p4)	{
@@ -202,7 +261,7 @@ public:
 		_RPC3::SerializeCallParameterBranch<P2>::type::apply(bitStream, p2);
 		_RPC3::SerializeCallParameterBranch<P3>::type::apply(bitStream, p3);
 		_RPC3::SerializeCallParameterBranch<P4>::type::apply(bitStream, p4);
-		return SendCall(uniqueIdentifier, 4, &bitStream);
+		return SendCallOrSignal(uniqueIdentifier, 4, &bitStream, true);
 	}
 	template <class P1, class P2, class P3, class P4, class P5>
 	bool Call(const char *uniqueIdentifier, P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5)	{
@@ -212,7 +271,7 @@ public:
 		_RPC3::SerializeCallParameterBranch<P3>::type::apply(bitStream, p3);
 		_RPC3::SerializeCallParameterBranch<P4>::type::apply(bitStream, p4);
 		_RPC3::SerializeCallParameterBranch<P5>::type::apply(bitStream, p5);
-		return SendCall(uniqueIdentifier, 5, &bitStream);
+		return SendCallOrSignal(uniqueIdentifier, 5, &bitStream, true);
 	}
 	template <class P1, class P2, class P3, class P4, class P5, class P6>
 	bool Call(const char *uniqueIdentifier, P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6)	{
@@ -223,7 +282,7 @@ public:
 		_RPC3::SerializeCallParameterBranch<P4>::type::apply(bitStream, p4);
 		_RPC3::SerializeCallParameterBranch<P5>::type::apply(bitStream, p5);
 		_RPC3::SerializeCallParameterBranch<P6>::type::apply(bitStream, p6);
-		return SendCall(uniqueIdentifier, 6, &bitStream);
+		return SendCallOrSignal(uniqueIdentifier, 6, &bitStream, true);
 	}
 	template <class P1, class P2, class P3, class P4, class P5, class P6, class P7>
 	bool Call(const char *uniqueIdentifier, P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6, P7 &p7)	{
@@ -235,7 +294,7 @@ public:
 		_RPC3::SerializeCallParameterBranch<P5>::type::apply(bitStream, p5);
 		_RPC3::SerializeCallParameterBranch<P6>::type::apply(bitStream, p6);
 		_RPC3::SerializeCallParameterBranch<P7>::type::apply(bitStream, p7);
-		return SendCall(uniqueIdentifier, 7, &bitStream);
+		return SendCallOrSignal(uniqueIdentifier, 7, &bitStream, true);
 	}
 	template <class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8>
 	bool Call(const char *uniqueIdentifier, P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6, P7 &p7, P8 &p8)	{
@@ -248,7 +307,7 @@ public:
 		_RPC3::SerializeCallParameterBranch<P6>::type::apply(bitStream, p6);
 		_RPC3::SerializeCallParameterBranch<P7>::type::apply(bitStream, p7);
 		_RPC3::SerializeCallParameterBranch<P8>::type::apply(bitStream, p8);
-		return SendCall(uniqueIdentifier, 8, &bitStream);
+		return SendCallOrSignal(uniqueIdentifier, 8, &bitStream, true);
 	}
 	template <class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9>
 	bool Call(const char *uniqueIdentifier, P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6, P7 &p7, P8 &p8, P9 &p9)	{
@@ -263,7 +322,7 @@ public:
 		_RPC3::SerializeCallParameterBranch<P8>::type::apply(bitStream, p8);
 		_RPC3::SerializeCallParameterBranch<P9>::type::apply(bitStream, p9);
 		// bitStream.PrintBits();
-		return SendCall(uniqueIdentifier, 9, &bitStream);
+		return SendCallOrSignal(uniqueIdentifier, 9, &bitStream, true);
 	}
 	template <class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10>
 	bool Call(const char *uniqueIdentifier, P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6, P7 &p7, P8 &p8, P9 &p9, P10 &p10)	{
@@ -279,7 +338,7 @@ public:
 		_RPC3::SerializeCallParameterBranch<P9>::type::apply(bitStream, p9);
 		_RPC3::SerializeCallParameterBranch<P10>::type::apply(bitStream, p10);
 		// bitStream.PrintBits();
-		return SendCall(uniqueIdentifier, 10, &bitStream);
+		return SendCallOrSignal(uniqueIdentifier, 10, &bitStream, true);
 	}
 
 	struct CallExplicitParameters
@@ -484,35 +543,282 @@ public:
 	template <class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10>
 	bool CallCPP(const char *uniqueIdentifier, NetworkID nid, P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6, P7 &p7, P8 &p8, P9 &p9, P10 &p10)	{ SetRecipientObject(nid); return Call(uniqueIdentifier,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10); }
 
+	// ---------------------------- Signals and slots ----------------------------------
+
+	/// Calls zero or more functions identified by sharedIdentifier.
+	/// Uses as send parameters whatever was last passed to SetTimestamp(), SetSendParams(), and SetRecipientAddress()
+	/// You can use CallExplicit() instead of Call() to force yourself not to forget to set parameters
+	/// 
+	/// See the Call() function for a description of parameters
+	///
+	/// \param[in] sharedIdentifier parameter of the same name passed to RegisterSlot() on the remote system
+	bool Signal(const char *sharedIdentifier){
+		RakNet::BitStream bitStream;
+		InvokeSignal(GetLocalSlotIndex(sharedIdentifier), &bitStream, true);
+		return SendCallOrSignal(sharedIdentifier, 0, &bitStream, false);
+	}
+	template <class P1>
+	bool Signal(const char *sharedIdentifier, P1 &p1)	{
+		RakNet::BitStream bitStream;
+		_RPC3::SerializeCallParameterBranch<P1>::type::apply(bitStream, p1);
+		InvokeSignal(GetLocalSlotIndex(sharedIdentifier), &bitStream, true);
+		return SendCallOrSignal(sharedIdentifier, 1, &bitStream, false);
+	}
+	template <class P1, class P2>
+	bool Signal(const char *sharedIdentifier, P1 &p1, P2 &p2)	{
+		RakNet::BitStream bitStream;
+		_RPC3::SerializeCallParameterBranch<P1>::type::apply(bitStream, p1);
+		_RPC3::SerializeCallParameterBranch<P2>::type::apply(bitStream, p2);
+		InvokeSignal(GetLocalSlotIndex(sharedIdentifier), &bitStream, true);
+		return SendCallOrSignal(sharedIdentifier, 2, &bitStream, false);
+	}
+	template <class P1, class P2, class P3>
+	bool Signal(const char *sharedIdentifier, P1 &p1, P2 &p2, P3 &p3)	{
+		RakNet::BitStream bitStream;
+		_RPC3::SerializeCallParameterBranch<P1>::type::apply(bitStream, p1);
+		_RPC3::SerializeCallParameterBranch<P2>::type::apply(bitStream, p2);
+		_RPC3::SerializeCallParameterBranch<P3>::type::apply(bitStream, p3);
+		InvokeSignal(GetLocalSlotIndex(sharedIdentifier), &bitStream, true);
+		return SendCallOrSignal(sharedIdentifier, 3, &bitStream, false);
+	}
+	template <class P1, class P2, class P3, class P4>
+	bool Signal(const char *sharedIdentifier, P1 &p1, P2 &p2, P3 &p3, P4 &p4)	{
+		RakNet::BitStream bitStream;
+		_RPC3::SerializeCallParameterBranch<P1>::type::apply(bitStream, p1);
+		_RPC3::SerializeCallParameterBranch<P2>::type::apply(bitStream, p2);
+		_RPC3::SerializeCallParameterBranch<P3>::type::apply(bitStream, p3);
+		_RPC3::SerializeCallParameterBranch<P4>::type::apply(bitStream, p4);
+		InvokeSignal(GetLocalSlotIndex(sharedIdentifier), &bitStream, true);
+		return SendCallOrSignal(sharedIdentifier, 4, &bitStream, false);
+	}
+	template <class P1, class P2, class P3, class P4, class P5>
+	bool Signal(const char *sharedIdentifier, P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5)	{
+		RakNet::BitStream bitStream;
+		_RPC3::SerializeCallParameterBranch<P1>::type::apply(bitStream, p1);
+		_RPC3::SerializeCallParameterBranch<P2>::type::apply(bitStream, p2);
+		_RPC3::SerializeCallParameterBranch<P3>::type::apply(bitStream, p3);
+		_RPC3::SerializeCallParameterBranch<P4>::type::apply(bitStream, p4);
+		_RPC3::SerializeCallParameterBranch<P5>::type::apply(bitStream, p5);
+		InvokeSignal(GetLocalSlotIndex(sharedIdentifier), &bitStream, true);
+		return SendCallOrSignal(sharedIdentifier, 5, &bitStream, false);
+	}
+	template <class P1, class P2, class P3, class P4, class P5, class P6>
+	bool Signal(const char *sharedIdentifier, P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6)	{
+		RakNet::BitStream bitStream;
+		_RPC3::SerializeCallParameterBranch<P1>::type::apply(bitStream, p1);
+		_RPC3::SerializeCallParameterBranch<P2>::type::apply(bitStream, p2);
+		_RPC3::SerializeCallParameterBranch<P3>::type::apply(bitStream, p3);
+		_RPC3::SerializeCallParameterBranch<P4>::type::apply(bitStream, p4);
+		_RPC3::SerializeCallParameterBranch<P5>::type::apply(bitStream, p5);
+		_RPC3::SerializeCallParameterBranch<P6>::type::apply(bitStream, p6);
+		InvokeSignal(GetLocalSlotIndex(sharedIdentifier), &bitStream, true);
+		return SendCallOrSignal(sharedIdentifier, 6, &bitStream, false);
+	}
+	template <class P1, class P2, class P3, class P4, class P5, class P6, class P7>
+	bool Signal(const char *sharedIdentifier, P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6, P7 &p7)	{
+		RakNet::BitStream bitStream;
+		_RPC3::SerializeCallParameterBranch<P1>::type::apply(bitStream, p1);
+		_RPC3::SerializeCallParameterBranch<P2>::type::apply(bitStream, p2);
+		_RPC3::SerializeCallParameterBranch<P3>::type::apply(bitStream, p3);
+		_RPC3::SerializeCallParameterBranch<P4>::type::apply(bitStream, p4);
+		_RPC3::SerializeCallParameterBranch<P5>::type::apply(bitStream, p5);
+		_RPC3::SerializeCallParameterBranch<P6>::type::apply(bitStream, p6);
+		_RPC3::SerializeCallParameterBranch<P7>::type::apply(bitStream, p7);
+		InvokeSignal(GetLocalSlotIndex(sharedIdentifier), &bitStream, true);
+		return SendCallOrSignal(sharedIdentifier, 7, &bitStream, false);
+	}
+	template <class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8>
+	bool Signal(const char *sharedIdentifier, P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6, P7 &p7, P8 &p8)	{
+		RakNet::BitStream bitStream;
+		_RPC3::SerializeCallParameterBranch<P1>::type::apply(bitStream, p1);
+		_RPC3::SerializeCallParameterBranch<P2>::type::apply(bitStream, p2);
+		_RPC3::SerializeCallParameterBranch<P3>::type::apply(bitStream, p3);
+		_RPC3::SerializeCallParameterBranch<P4>::type::apply(bitStream, p4);
+		_RPC3::SerializeCallParameterBranch<P5>::type::apply(bitStream, p5);
+		_RPC3::SerializeCallParameterBranch<P6>::type::apply(bitStream, p6);
+		_RPC3::SerializeCallParameterBranch<P7>::type::apply(bitStream, p7);
+		_RPC3::SerializeCallParameterBranch<P8>::type::apply(bitStream, p8);
+		InvokeSignal(GetLocalSlotIndex(sharedIdentifier), &bitStream, true);
+		return SendCallOrSignal(sharedIdentifier, 8, &bitStream, false);
+	}
+	template <class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9>
+	bool Signal(const char *sharedIdentifier, P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6, P7 &p7, P8 &p8, P9 &p9)	{
+		RakNet::BitStream bitStream;
+		_RPC3::SerializeCallParameterBranch<P1>::type::apply(bitStream, p1);
+		_RPC3::SerializeCallParameterBranch<P2>::type::apply(bitStream, p2);
+		_RPC3::SerializeCallParameterBranch<P3>::type::apply(bitStream, p3);
+		_RPC3::SerializeCallParameterBranch<P4>::type::apply(bitStream, p4);
+		_RPC3::SerializeCallParameterBranch<P5>::type::apply(bitStream, p5);
+		_RPC3::SerializeCallParameterBranch<P6>::type::apply(bitStream, p6);
+		_RPC3::SerializeCallParameterBranch<P7>::type::apply(bitStream, p7);
+		_RPC3::SerializeCallParameterBranch<P8>::type::apply(bitStream, p8);
+		_RPC3::SerializeCallParameterBranch<P9>::type::apply(bitStream, p9);
+		InvokeSignal(GetLocalSlotIndex(sharedIdentifier), &bitStream, true);
+		return SendCallOrSignal(sharedIdentifier, 9, &bitStream, false);
+	}
+	template <class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10>
+	bool Signal(const char *sharedIdentifier, P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6, P7 &p7, P8 &p8, P9 &p9, P10 &p10)	{
+		RakNet::BitStream bitStream;
+		_RPC3::SerializeCallParameterBranch<P1>::type::apply(bitStream, p1);
+		_RPC3::SerializeCallParameterBranch<P2>::type::apply(bitStream, p2);
+		_RPC3::SerializeCallParameterBranch<P3>::type::apply(bitStream, p3);
+		_RPC3::SerializeCallParameterBranch<P4>::type::apply(bitStream, p4);
+		_RPC3::SerializeCallParameterBranch<P5>::type::apply(bitStream, p5);
+		_RPC3::SerializeCallParameterBranch<P6>::type::apply(bitStream, p6);
+		_RPC3::SerializeCallParameterBranch<P7>::type::apply(bitStream, p7);
+		_RPC3::SerializeCallParameterBranch<P8>::type::apply(bitStream, p8);
+		_RPC3::SerializeCallParameterBranch<P9>::type::apply(bitStream, p9);
+		_RPC3::SerializeCallParameterBranch<P10>::type::apply(bitStream, p10);
+		InvokeSignal(GetLocalSlotIndex(sharedIdentifier), &bitStream, true);
+		return SendCallOrSignal(sharedIdentifier, 10, &bitStream, false);
+	}
+
+	struct SignalExplicitParameters
+	{
+		SignalExplicitParameters(
+			SystemAddress _systemAddress=UNASSIGNED_SYSTEM_ADDRESS,
+			bool _broadcast=true, RakNetTime _timeStamp=0, PacketPriority _priority=HIGH_PRIORITY,
+			PacketReliability _reliability=RELIABLE_ORDERED, char _orderingChannel=0
+			) : systemAddress(_systemAddress), broadcast(_broadcast), timeStamp(_timeStamp), priority(_priority), reliability(_reliability), orderingChannel(_orderingChannel)
+		{}
+		SystemAddress systemAddress;
+		bool broadcast;
+		RakNetTime timeStamp;
+		PacketPriority priority;
+		PacketReliability reliability;
+		char orderingChannel;
+	};
+
+	/// Same as Signal(), but you are forced to specify the remote system parameters
+	bool SignalExplicit(const char *sharedIdentifier, const SignalExplicitParameters * const signalExplicitParameters){
+		SetTimestamp(signalExplicitParameters->timeStamp);
+		SetSendParams(signalExplicitParameters->priority, signalExplicitParameters->reliability, signalExplicitParameters->orderingChannel);
+		SetRecipientAddress(signalExplicitParameters->systemAddress, signalExplicitParameters->broadcast);
+		return Signal(sharedIdentifier);
+	}
+	template <class P1 >
+	bool SignalExplicit(const char *sharedIdentifier, const SignalExplicitParameters * const signalExplicitParameters,
+		P1 &p1
+		)	{
+			SetTimestamp(signalExplicitParameters->timeStamp);
+			SetSendParams(signalExplicitParameters->priority, signalExplicitParameters->reliability, signalExplicitParameters->orderingChannel);
+			SetRecipientAddress(signalExplicitParameters->systemAddress, signalExplicitParameters->broadcast);
+			return Signal(sharedIdentifier, p1);
+	}
+	template <class P1, class P2 >
+	bool SignalExplicit(const char *sharedIdentifier, const SignalExplicitParameters * const signalExplicitParameters,
+		P1 &p1, P2 &p2
+		)	{
+			SetTimestamp(signalExplicitParameters->timeStamp);
+			SetSendParams(signalExplicitParameters->priority, signalExplicitParameters->reliability, signalExplicitParameters->orderingChannel);
+			SetRecipientAddress(signalExplicitParameters->systemAddress, signalExplicitParameters->broadcast);
+			return Signal(sharedIdentifier, p1, p2);
+	}
+	template <class P1, class P2, class P3 >
+	bool SignalExplicit(const char *sharedIdentifier, const SignalExplicitParameters * const signalExplicitParameters,
+		P1 &p1, P2 &p2, P3 &p3
+		)	{
+			SetTimestamp(signalExplicitParameters->timeStamp);
+			SetSendParams(signalExplicitParameters->priority, signalExplicitParameters->reliability, signalExplicitParameters->orderingChannel);
+			SetRecipientAddress(signalExplicitParameters->systemAddress, signalExplicitParameters->broadcast);
+			return Signal(sharedIdentifier, p1, p2, p3);
+	}
+	template <class P1, class P2, class P3, class P4 >
+	bool SignalExplicit(const char *sharedIdentifier, const SignalExplicitParameters * const signalExplicitParameters,
+		P1 &p1, P2 &p2, P3 &p3, P4 &p4
+		)	{
+			SetTimestamp(signalExplicitParameters->timeStamp);
+			SetSendParams(signalExplicitParameters->priority, signalExplicitParameters->reliability, signalExplicitParameters->orderingChannel);
+			SetRecipientAddress(signalExplicitParameters->systemAddress, signalExplicitParameters->broadcast);
+			return Signal(sharedIdentifier, p1, p2, p3, p4);
+	}
+	template <class P1, class P2, class P3, class P4, class P5 >
+	bool SignalExplicit(const char *sharedIdentifier, const SignalExplicitParameters * const signalExplicitParameters,
+		P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5
+		)	{
+			SetTimestamp(signalExplicitParameters->timeStamp);
+			SetSendParams(signalExplicitParameters->priority, signalExplicitParameters->reliability, signalExplicitParameters->orderingChannel);
+			SetRecipientAddress(signalExplicitParameters->systemAddress, signalExplicitParameters->broadcast);
+			return Signal(sharedIdentifier, p1, p2, p3, p4, p5);
+	}
+	template <class P1, class P2, class P3, class P4, class P5, class P6 >
+	bool SignalExplicit(const char *sharedIdentifier, const SignalExplicitParameters * const signalExplicitParameters,
+		P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6
+		)	{
+			SetTimestamp(signalExplicitParameters->timeStamp);
+			SetSendParams(signalExplicitParameters->priority, signalExplicitParameters->reliability, signalExplicitParameters->orderingChannel);
+			SetRecipientAddress(signalExplicitParameters->systemAddress, signalExplicitParameters->broadcast);
+			return Signal(sharedIdentifier, p1, p2, p3, p4, p5, p6);
+	}
+	template <class P1, class P2, class P3, class P4, class P5, class P6, class P7 >
+	bool SignalExplicit(const char *sharedIdentifier, const SignalExplicitParameters * const signalExplicitParameters,
+		P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6, P7 &p7
+		)	{
+			SetTimestamp(signalExplicitParameters->timeStamp);
+			SetSendParams(signalExplicitParameters->priority, signalExplicitParameters->reliability, signalExplicitParameters->orderingChannel);
+			SetRecipientAddress(signalExplicitParameters->systemAddress, signalExplicitParameters->broadcast);
+			return Signal(sharedIdentifier, p1, p2, p3, p4, p5, p6, p7);
+	}
+	template <class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8 >
+	bool SignalExplicit(const char *sharedIdentifier, const SignalExplicitParameters * const signalExplicitParameters,
+		P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6, P7 &p7, P8 &p8
+		)	{
+			SetTimestamp(signalExplicitParameters->timeStamp);
+			SetSendParams(signalExplicitParameters->priority, signalExplicitParameters->reliability, signalExplicitParameters->orderingChannel);
+			SetRecipientAddress(signalExplicitParameters->systemAddress, signalExplicitParameters->broadcast);
+			return Signal(sharedIdentifier, p1, p2, p3, p4, p5, p6, p7, p8);
+	}
+	template <class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9 >
+	bool SignalExplicit(const char *sharedIdentifier, const SignalExplicitParameters * const signalExplicitParameters,
+		P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6, P7 &p7, P8 &p8, P9 &p9
+		)	{
+			SetTimestamp(signalExplicitParameters->timeStamp);
+			SetSendParams(signalExplicitParameters->priority, signalExplicitParameters->reliability, signalExplicitParameters->orderingChannel);
+			SetRecipientAddress(signalExplicitParameters->systemAddress, signalExplicitParameters->broadcast);
+			return Signal(sharedIdentifier, p1, p2, p3, p4, p5, p6, p7, p8, p9);
+	}
+	template <class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8, class P9, class P10 >
+	bool SignalExplicit(const char *sharedIdentifier, const SignalExplicitParameters * const signalExplicitParameters,
+		P1 &p1, P2 &p2, P3 &p3, P4 &p4, P5 &p5, P6 &p6, P7 &p7, P8 &p8, P9 &p9, P10 &p10
+		)	{
+			SetTimestamp(signalExplicitParameters->timeStamp);
+			SetSendParams(signalExplicitParameters->priority, signalExplicitParameters->reliability, signalExplicitParameters->orderingChannel);
+			SetRecipientAddress(signalExplicitParameters->systemAddress, signalExplicitParameters->broadcast);
+			return Signal(sharedIdentifier, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+	}
+
+
 	// ---------------------------- ALL INTERNAL AFTER HERE ----------------------------
-	/// \internal
-	/// Identifies an RPC function, by string identifier and if it is a C or C++ function
-	typedef RakString RPCIdentifier;
 
 	/// \internal
 	/// The RPC identifier, and a pointer to the function
 	struct LocalRPCFunction
 	{
 		LocalRPCFunction() {}
-		LocalRPCFunction(RPCIdentifier _identifier, _RPC3::FunctionPointer _functionPointer) {identifier=_identifier; functionPointer=_functionPointer;};
-		RPCIdentifier identifier;
+		LocalRPCFunction(_RPC3::FunctionPointer _functionPointer) {functionPointer=_functionPointer;};
+//		LocalRPCFunction(RPCIdentifier _identifier, _RPC3::FunctionPointer _functionPointer) {identifier=_identifier; functionPointer=_functionPointer;};
+//		RPCIdentifier identifier;
 		_RPC3::FunctionPointer functionPointer;
 	};
 
 	/// \internal
 	/// The RPC identifier, and the index of the function on a remote system
-	struct RemoteRPCFunction
-	{
-		RPCIdentifier identifier;
-		unsigned int functionIndex;
-	};
-
-	/// \internal
-	static int RemoteRPCFunctionComp( const RPCIdentifier &key, const RemoteRPCFunction &data );
+// 	struct RemoteRPCFunction
+// 	{
+// 		RPCIdentifier identifier;
+// 		unsigned int functionIndex;
+// 	};
+// 
+// 	/// \internal
+// 	static int RemoteRPCFunctionComp( const RPCIdentifier &key, const RemoteRPCFunction &data );
 
 	/// \internal
 	/// Sends the RPC call, with a given serialized function
-	bool SendCall(RakString uniqueIdentifier, char parameterCount, RakNet::BitStream *serializedParameters);
+	bool SendCallOrSignal(RakString uniqueIdentifier, char parameterCount, RakNet::BitStream *serializedParameters, bool isCall);
+
+	/// Call a given signal with a bitstream representing the parameter list
+	void InvokeSignal(DataStructures::StringKeyedHashIndex functionIndex, RakNet::BitStream *serializedParameters, bool temporarilySetUSA);
+
 
 	protected:
 
@@ -522,18 +828,24 @@ public:
 	void OnAttach(void);
 	virtual PluginReceiveResult OnReceive(Packet *packet);
 	virtual void OnRPC3Call(SystemAddress systemAddress, unsigned char *data, unsigned int lengthInBytes);
-	virtual void OnRPCRemoteIndex(SystemAddress systemAddress, unsigned char *data, unsigned int lengthInBytes);
+//	virtual void OnRPCRemoteIndex(SystemAddress systemAddress, unsigned char *data, unsigned int lengthInBytes);
 	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	virtual void OnShutdown(void);
 
 	void Clear(void);
 
 	void SendError(SystemAddress target, unsigned char errorCode, const char *functionName);
-	unsigned GetLocalFunctionIndex(RPCIdentifier identifier);
-	bool GetRemoteFunctionIndex(SystemAddress systemAddress, RPCIdentifier identifier, unsigned int *outerIndex, unsigned int *innerIndex);
+	DataStructures::StringKeyedHashIndex GetLocalFunctionIndex(RPCIdentifier identifier);
+	DataStructures::StringKeyedHashIndex GetLocalSlotIndex(const char *sharedIdentifier);
+//	bool GetRemoteFunctionIndex(SystemAddress systemAddress, RPCIdentifier identifier, unsigned int *outerIndex, unsigned int *innerIndex, bool isCall);
 
-	DataStructures::List<LocalRPCFunction> localFunctions;
-	DataStructures::Map<SystemAddress, DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, RPC3::RemoteRPCFunctionComp> *> remoteFunctions;
+	DataStructures::StringKeyedHash<LocalSlot*,256> localSlots;
+	DataStructures::StringKeyedHash<LocalRPCFunction*,256> localFunctions;
+
+// 	DataStructures::List<LocalSlot*> localSlots;
+// 	DataStructures::List<LocalRPCFunction> localFunctions;
+
+//	DataStructures::Map<SystemAddress, DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, RPC3::RemoteRPCFunctionComp> *> remoteFunctions, remoteSlots;
 	RakNetTime outgoingTimestamp;
 	PacketPriority outgoingPriority;
 	PacketReliability outgoingReliability;
@@ -549,6 +861,11 @@ public:
 
 	NetworkIDManager *networkIdManager;
 	char currentExecution[512];
+
+	/// Used so slots are called in the order they are registered
+	unsigned int nextSlotRegistrationCount;
+
+	bool interruptSignal;
 
 };
 

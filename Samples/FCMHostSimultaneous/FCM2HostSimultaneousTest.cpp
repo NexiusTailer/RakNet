@@ -17,7 +17,7 @@
 #define NUM_PEERS 8
 RakPeerInterface *rakPeer[NUM_PEERS];
 
-void main(void)
+int main()
 {
 	FullyConnectedMesh2 fcm2[NUM_PEERS];
 	ConnectionGraph2 cg2[NUM_PEERS];
@@ -136,4 +136,5 @@ void main(void)
 	{
 		RakNetworkFactory::DestroyRakPeerInterface(rakPeer[i]);
 	}
+	return 0;
 }

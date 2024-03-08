@@ -11,6 +11,7 @@
 #include "GetTime.h"
 #include "RakAssert.h"
 #include "RakSleep.h"
+#include "Getche.h"
 
 #ifdef _WIN32
 #include "WindowsIncludes.h" // Sleep
@@ -244,7 +245,7 @@ int main(void)
 		}
 
 		time = RakNet::GetTime();
-		Sleep(30);
+		RakSleep(30);
 	}
 
 	printf("Test completed");

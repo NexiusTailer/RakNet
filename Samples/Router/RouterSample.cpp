@@ -9,6 +9,7 @@
 #include "StringCompressor.h"
 #include "ConnectionGraph.h"
 #include "Router.h"
+#include "RakSleep.h"
 
 #ifdef _COMPATIBILITY_1
 #include "Compatibility1Includes.h" // Developers of a certain platform will know what to do here.
@@ -29,7 +30,7 @@ void TestRPC(RPCParameters *rpcParameters)
 
 void GetInputIndices(int *chainIndex, int *chainNodeIndex);
 
-int main(void)
+int main()
 {
 	RakPeerInterface *chain[CHAIN_LENGTH];
 	RakPeerInterface *chainNodes[CHAIN_NODES_LENGTH * CHAIN_LENGTH];
@@ -84,7 +85,7 @@ int main(void)
 		for (j=0; j < CHAIN_NODES_LENGTH; j++)
 			chainNodes[i*CHAIN_NODES_LENGTH+j]->Connect("127.0.0.1", 50000+i, 0, 0);
 
-	Sleep(500);
+	RakSleep(500);
 
 	printf("Commands:\n(Q)uit\n(S)end message\n");
 
@@ -186,11 +187,9 @@ int main(void)
 			}
 		}
 		
-#ifdef _WIN32
-		Sleep(0);
-#else
-		usleep(0 * 1000);
-#endif
+
+		RakSleep(0);
+
 	}
 
 	for (i=0; i < CHAIN_LENGTH; i++)

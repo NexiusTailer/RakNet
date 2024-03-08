@@ -2,7 +2,7 @@
 #include "FileList.h"
 #include <stdio.h>
 
-void main(void)
+int main()
 {
 	printf("A C++ class used to send email, such as for servers.\n");
 	printf("TLS support (such as for Gmail) requires OPEN_SSL_CLIENT_SUPPORT to be defined\nin RakNetDefines.h.\n");
@@ -61,4 +61,6 @@ void main(void)
 	printf("Press enter to quit.\n");
 	char buff[256];
 	gets(buff);
+
+	return 0;
 }

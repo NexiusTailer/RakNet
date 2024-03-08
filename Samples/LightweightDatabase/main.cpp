@@ -12,8 +12,9 @@
 #include "MessageIdentifiers.h"
 #include "Kbhit.h"
 #include <stdlib.h>
+#include "Getche.h"
 
-void main(void)
+int main()
 {
 	char ch;
 	bool isServer;
@@ -422,4 +423,5 @@ void main(void)
 
 	rakPeer->Shutdown(100,0);
 	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	return 0;
 }

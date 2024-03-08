@@ -211,14 +211,32 @@ During the very first connect loop any connect returns false.
 
 Connect function returns false and peer is not connected to anything,pending a connection, or disconnecting.
 
+
+GetTimeoutTime does not match the set timeout.
+
+RakPeerInterface Functions used, tested indirectly by its use:
+Startup
+Connect
+SetMaximumIncomingConnections
+Receive
+Send
+DeallocatePacket
+GetSystemList
+SetMaximumIncomingConnections
+
+RakPeerInterface Functions Explicitly Tested:
+GetTimeoutTime
+SetTimeoutTime
+Connect
+IsConnected
+
 */
 int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
 {
 
-	const int clientNum= 256;
+	
 
-	RakPeerInterface *clientList[clientNum];//A list of clients
-	RakPeerInterface *server;
+
 
 
 
@@ -250,7 +268,20 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 	server=RakNetworkFactory::GetRakPeerInterface();
 	server->Startup(clientNum, 30, &SocketDescriptor(60000,0), 1);
 	server->SetMaximumIncomingConnections(clientNum);
-	server->SetTimeoutTime(1000,UNASSIGNED_SYSTEM_ADDRESS);
+
+	const int timeoutTime=1000;
+	server->SetTimeoutTime(timeoutTime,UNASSIGNED_SYSTEM_ADDRESS);
+
+	int retTimeout=server->GetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
+	if (retTimeout!=timeoutTime)
+	{
+
+		if (isVerbose)
+			DebugTools::ShowError("GetTimeoutTime did not match the timeout that was set. \n",!noPauses && isVerbose,__LINE__,__FILE__);
+
+		return 3;
+
+	}
 
 
 
@@ -286,8 +317,8 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 	DataStructures::List< RakNetGUID > guidList;
 
 
-
-	printf("Entering disconnect loop \n");
+	if (isVerbose)
+		printf("Entering disconnect loop \n");
 
 
 	while(RakNet::GetTime()-entryTime<30000)//Run for 30 Secoonds
@@ -307,6 +338,7 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 
 				RakNetworkFactory::DestroyRakPeerInterface(clientList[i]);
 				clientList[i]=RakNetworkFactory::GetRakPeerInterface();
+	
 
 				clientList[i]->Startup(1,30,&SocketDescriptor(), 1);
 			}
@@ -423,11 +455,7 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 
 				DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
 			}
-			for (int i=0;i<clientNum;i++)//Clean
-			{
-				RakNetworkFactory::DestroyRakPeerInterface(clientList[i]);
-			}
-			RakNetworkFactory::DestroyRakPeerInterface(server);
+
 
 			return 2;
 
@@ -438,11 +466,6 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 	}
 
 
-	for (int i=0;i<clientNum;i++)//Clean
-	{
-		RakNetworkFactory::DestroyRakPeerInterface(clientList[i]);
-	}
-	RakNetworkFactory::DestroyRakPeerInterface(server);
 
 	if (isVerbose)
 		printf("Pass\n");
@@ -470,11 +493,16 @@ RakNet::RakString ManyClientsOneServerDeallocateBlockingTest::ErrorCodeToString(
 		break;
 
 	case 1:
-		return "The connect function failed.";
+		return "The connect function failed";
 		break;
 
 	case 2:
-		return "Peers did not connect normally.";
+		return "Peers did not connect normally";
+		break;
+
+
+	case 3:
+		return "GetTimeoutTime did not match the timeout that was set";
 		break;
 
 	default:
@@ -490,4 +518,18 @@ ManyClientsOneServerDeallocateBlockingTest::ManyClientsOneServerDeallocateBlocki
 
 ManyClientsOneServerDeallocateBlockingTest::~ManyClientsOneServerDeallocateBlockingTest(void)
 {
+}
+
+
+void ManyClientsOneServerDeallocateBlockingTest::DestroyPeers()
+{
+
+
+
+	for (int i=0; i < clientNum; i++)
+		RakNetworkFactory::DestroyRakPeerInterface(clientList[i]);
+
+
+	RakNetworkFactory::DestroyRakPeerInterface(server);
+
 }

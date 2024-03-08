@@ -399,8 +399,6 @@ const int PING_TIMES_ARRAY_SIZE = 5;
 /// \deprecated Use RakNet::RPC3 instead
 #define UNREGISTER_CLASS_MEMBER_RPC(networkObject, className, functionName) (networkObject)->UnregisterAsRemoteProcedureCall((#className "_" #functionName))
 
-
-
 struct RAK_DLL_EXPORT uint24_t
 {
 	uint32_t val;

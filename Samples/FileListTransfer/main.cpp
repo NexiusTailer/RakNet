@@ -85,7 +85,7 @@ class TestFileListProgress : public FileListProgress
 	}
 } testFileListProgress;
 
-void main(void)
+int main()
 {
 	printf("This sample demonstrates incrementally sending a file with\n");
 	printf("the FileListTransferPlugin. Incremental sends will read and send the.\n");
@@ -137,7 +137,7 @@ void main(void)
 		RakNetworkFactory::DestroyRakPeerInterface(peer1);
 		RakNetworkFactory::DestroyRakPeerInterface(peer1);
 #endif
-		return;
+		return 1;
 	}
 	fileList.AddFile(file.C_String(), file.C_String(), 0, fileLength, fileLength, FileListNodeContext(0,0), true);
 	// Wait for the connection
@@ -197,4 +197,7 @@ void main(void)
 	RakNetworkFactory::DestroyRakPeerInterface(peer1);
 	RakNetworkFactory::DestroyRakPeerInterface(peer1);
 #endif
+
+
+	return 0;
 }

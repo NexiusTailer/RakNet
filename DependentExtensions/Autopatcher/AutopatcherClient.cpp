@@ -458,10 +458,20 @@ void AutopatcherClient::Update(void)
 				unsigned i;
 				for (i=0; i < copyAndRestartList.fileList.Size(); i++)
 				{
-					fprintf(fp, "del /q \"%s%s\"\n", applicationDirectory, copyAndRestartList.fileList[i].filename);
-					fprintf(fp, "rename \"%s%s%s\" \"%s\"\n", applicationDirectory, copyAndRestartList.fileList[i].filename, COPY_ON_RESTART_EXTENSION, copyAndRestartList.fileList[i].filename);
+#ifdef _WIN32
+					fprintf(fp, "del /q \"%s%s\"\n", applicationDirectory, copyAndRestartList.fileList[i].filename.C_String());
+					fprintf(fp, "rename \"%s%s%s\" \"%s\"\n", applicationDirectory, copyAndRestartList.fileList[i].filename.C_String(), COPY_ON_RESTART_EXTENSION, copyAndRestartList.fileList[i].filename.C_String());
+#else
+					fprintf(fp, "rm -f \"%s%s\"\n", applicationDirectory, copyAndRestartList.fileList[i].filename.C_String());
+					fprintf(fp, "mv \"%s%s%s\" \"%s\"\n", applicationDirectory, copyAndRestartList.fileList[i].filename.C_String(), COPY_ON_RESTART_EXTENSION, copyAndRestartList.fileList[i].filename.C_String());
+#endif
 				}
+#ifdef _WIN32
 				fprintf(fp, "#CreateProcess \"%s\"\n", restartExe);
+#else
+				fprintf(fp, "chmod +x \"%s\"\n", restartExe);
+				fprintf(fp, "#CreateProcess \"%s\" &\n", restartExe);
+#endif
 				fprintf(fp, "#DeleteThisFile\n");
 				fclose(fp);
 			}

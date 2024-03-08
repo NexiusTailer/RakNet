@@ -15,6 +15,7 @@
 #include "RakString.h"
 #include "GetTime.h"
 #include "SocketLayer.h"
+#include "Getche.h"
 
 enum
 {

@@ -522,6 +522,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\TeamBalancer.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\TelnetTransport.cpp"
 				>
 			</File>
@@ -701,6 +705,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\DS_RangeList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\DS_StringKeyedHash.h"
 				>
 			</File>
 			<File
@@ -1117,6 +1125,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\TCPInterface.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\TeamBalancer.h"
 				>
 			</File>
 			<File

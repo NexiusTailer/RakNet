@@ -144,7 +144,7 @@ public:
 	/// \param[in] sendConnectionAttemptCount Number of datagrams to send to the other system to try to connect.
 	/// \param[in] timeBetweenSendConnectionAttemptsMS Time to elapse before a datagram is sent to the other system to try to connect. After sendConnectionAttemptCount number of attempts, ID_CONNECTION_ATTEMPT_FAILED is returned.
 	/// \param[in] timeoutTime Time to elapse before dropping the connection if a reliable message could not be sent. 0 to use the default value from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
-	/// \return True on successful initiation. False on incorrect parameters, internal error, or too many existing peers.
+	/// \return True on successful initiation. False if you are already connected to this system, a connection to the system is pending,  the domain name cannot be resolved, incorrect parameters, internal error, or too many existing peers.
 	/// \note Returning true does not mean you are connected!
 	bool Connect( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex=0, unsigned sendConnectionAttemptCount=12, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNetTime timeoutTime=0 );
 

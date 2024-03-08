@@ -10,7 +10,7 @@
 #include "RakSleep.h"
 #include "UDPForwarder.h"
 
-void main(void)
+int main()
 {
 	RakPeerInterface *rakPeer[2];
 	rakPeer[0]=RakNetworkFactory::GetRakPeerInterface();
@@ -44,7 +44,7 @@ void main(void)
 	if (!udpForwarder.StartForwarding(peer0Addr,peer1Addr, timeoutOnNoDataMS, 0, &peer0To1FowardPort, &peer1To0FowardPort,0,0))
 	{
 		printf("Socket error\n");
-		return;
+		return 1;
 	}
 
 	// Send a connect message to the forwarder, on the port to forward to rakPeer[1]
@@ -93,4 +93,5 @@ void main(void)
 	rakPeer[1]->Shutdown(100,0);
 	RakNetworkFactory::DestroyRakPeerInterface(rakPeer[0]);
 	RakNetworkFactory::DestroyRakPeerInterface(rakPeer[1]);
+	return 0;
 }

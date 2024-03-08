@@ -9,7 +9,7 @@ Do this for about 10 seconds. Then allow them all to connect for one last time.
 
 This test also tests the cancelpendingconnections.
 
-Also tests nonblocking connects, the simpler one PeerConnectDisconnect tests withoput it
+Also tests nonblocking connects, the simpler one PeerConnectDisconnect tests without it
 
 
 Good ideas for changes:
@@ -23,7 +23,7 @@ Randomize sending the disconnect notes
 
 
 Success conditions:
-All connected normally.
+All connected normally and pending requests get canceled normally.
 
 Failure conditions:
 Doesn't reconnect normally.
@@ -32,6 +32,8 @@ During the very first connect loop any connect returns false.
 
 Connect function returns false and peer is not connected to anything.
 
+Pending request is not canceled.
+
 */
 int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses)
 {
@@ -39,7 +41,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 	const int peerNum= 8;
 	const int maxConnections=peerNum*3;//Max allowed connections for test set to times 3 to eliminate problem variables
 	RakPeerInterface *peerList[peerNum];//A list of 8 peers
-	int connectionAmount[peerNum];//Counter for me to keep track of connection requests and accepts
+
 
 
 	char str[512];
@@ -47,6 +49,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 	SystemAddress currentSystem;
 
 	Packet *packet;
+	destroyList.Clear(false,__FILE__,__LINE__);
 
 
 
@@ -56,7 +59,8 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 	for (int i=0;i<peerNum;i++)
 	{
 		peerList[i]=RakNetworkFactory::GetRakPeerInterface();
-		connectionAmount[i]=0;
+		destroyList.Push(peerList[i],__FILE__,__LINE__);
+
 
 
 
@@ -71,22 +75,19 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 	//Connect all the peers together
 
-	strcpy(str, "127.0.0.1");
-
 	for (int i=0;i<peerNum;i++)
 	{
 
 		for (int j=i+1;j<peerNum;j++)//Start at i+1 so don't connect two of the same together.
 		{
 
-			if (!peerList[i]->Connect(str, 60000+j, 0,0))
+			if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
 			{
 
 				if (isVerbose)
-					printf("Problem while calling connect. Enter to continue. \n");
+					DebugTools::ShowError("Problem while calling connect.",!noPauses && isVerbose,__LINE__,__FILE__);
 
-				if (!noPauses && isVerbose)
-					gets(str);
+
 				return 1;//This fails the test, don't bother going on.
 
 			}
@@ -105,7 +106,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 
 	printf("Entering disconnect loop \n");
-
+	bool printedYet;
 
 	while(RakNet::GetTime()-entryTime<10000)//Run for 10 Secoonds
 	{
@@ -131,7 +132,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 		RakSleep(100);
 		//Clear pending if not finished
-		strcpy(str, "127.0.0.1");
+
 
 		int before[peerNum],after[peerNum];
 		for (int i=0;i<peerNum;i++)
@@ -142,7 +143,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 			for (int j=i+1;j<peerNum;j++)//Start at i+1 so don't connect two of the same together.
 			{
 
-				currentSystem.SetBinaryAddress(str);
+				currentSystem.SetBinaryAddress("127.0.0.1");
 				currentSystem.port=60000+j;
 
 
@@ -166,9 +167,10 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 			}
 
 		}
-	
 
 
+
+		RakSleep(100);
 		//Connect
 
 		for (int i=0;i<peerNum;i++)
@@ -179,23 +181,13 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 
 
-				if (!peerList[i]->Connect(str, 60000+j, 0,0))
+				if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
 				{
 
 
 					currentSystem.SetBinaryAddress(str);
 					currentSystem.port=60000+j;
-					/*
 
-					The reason for this code originally was to breakpoint right after we get a list of
-					connections. The list was zero so it did not return false because it
-					was already connected.
-
-					However I mad it into a condition to see if it failed when there are no connections.
-
-					This will be changed to see if it fails but is not connected to target peer.
-
-					*/
 
 					peerList[i]->GetSystemList(systemList,guidList);//Get connectionlist
 
@@ -207,19 +199,20 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 					if(after[i]!=-1&&before[i]==after[i]&&!peerList[i]->IsConnected (currentSystem,false,true) )//Did we drop a pending connection? 
 					{
 						if (isVerbose)
-							printf("Did not cancel the pending request \n");
+							DebugTools::ShowError("Did not cancel the pending request \n",!noPauses && isVerbose,__LINE__,__FILE__);
 
-						//if (!noPauses && isVerbose)
-						//gets(str);
+						return 3;
+
+
 					}
 
-					if (len==0)//No connections, should not fail.
+					if (!peerList[i]->IsConnected (currentSystem,true,true))
 					{
 						if (isVerbose)
-							printf("Problem while calling connect. \n");
+							DebugTools::ShowError("Problem while calling connect. \n",!noPauses && isVerbose,__LINE__,__FILE__);
 
-						if (!noPauses && isVerbose)
-							gets(str);
+
+
 						return 1;//This fails the test, don't bother going on.
 					}
 
@@ -234,14 +227,20 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 		for (int i=0;i<peerNum;i++)//Receive for all peers
 		{
-			if (isVerbose)
-				printf("For peer %i\n",i);
+
+			printedYet=false;
 
 			packet=peerList[i]->Receive();
 
 
 			while(packet)
 			{
+
+				if (isVerbose&&!printedYet)
+				{
+					printf("For peer %i\n",i);
+					printedYet=true;
+				}
 				switch (packet->data[0])
 				{
 				case ID_REMOTE_DISCONNECTION_NOTIFICATION:
@@ -322,14 +321,19 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 		for (int i=0;i<peerNum;i++)//Receive for all peers
 		{
-			if (isVerbose)
-				printf("For peer %i\n",i);
+			printedYet=false;
 
 			packet=peerList[i]->Receive();
 
 
 			while(packet)
 			{
+
+				if (isVerbose&&!printedYet)
+				{
+					printf("For peer %i\n",i);
+					printedYet=true;
+				}
 				switch (packet->data[0])
 				{
 				case ID_REMOTE_DISCONNECTION_NOTIFICATION:
@@ -401,7 +405,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 	}
 
 	//Connect
-	strcpy(str, "127.0.0.1");
+
 	for (int i=0;i<peerNum;i++)
 	{
 
@@ -409,13 +413,13 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 		{
 
 
-			currentSystem.SetBinaryAddress(str);
+			currentSystem.SetBinaryAddress("127.0.0.1");
 			currentSystem.port=60000+j;
 
 			peerList[i]->CancelConnectionAttempt(currentSystem);  	//Make sure a connection is not pending before trying to connect.
 
 
-			if (!peerList[i]->Connect(str, 60000+j, 0,0))
+			if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
 			{
 
 
@@ -429,10 +433,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 				{
 
 					if (isVerbose)
-						printf("Problem while calling connect. \n");
-
-					if (!noPauses && isVerbose)
-						gets(str);
+						DebugTools::ShowError("Problem while calling connect \n",!noPauses && isVerbose,__LINE__,__FILE__);
 
 					return 1;//This fails the test, don't bother going on.
 				}
@@ -455,14 +456,18 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 		for (int i=0;i<peerNum;i++)//Receive for all peers
 		{
-			if (isVerbose)
-				printf("For peer %i\n",i);
 
+			printedYet=false;
 			packet=peerList[i]->Receive();
 
 
 			while(packet)
 			{
+				if (isVerbose&&!printedYet)
+				{
+					printf("For peer %i\n",i);
+					printedYet=true;
+				}
 				switch (packet->data[0])
 				{
 				case ID_REMOTE_DISCONNECTION_NOTIFICATION:
@@ -545,18 +550,8 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 
 
 			if (isVerbose)
-				printf("Not all peers reconnected normally.\n");
+				DebugTools::ShowError("Not all peers reconnected normally.\n ",!noPauses && isVerbose,__LINE__,__FILE__);
 
-			if (!noPauses && isVerbose)
-			{
-				printf("Press enter to continue \n");
-				gets(pauseStr);
-			}
-
-			for (int i=0;i<peerNum;i++)//Clean
-			{
-				RakNetworkFactory::DestroyRakPeerInterface(peerList[i]);
-			}
 
 
 
@@ -570,10 +565,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 	}
 
 
-	for (int i=0;i<peerNum;i++)//Clean
-	{
-		RakNetworkFactory::DestroyRakPeerInterface(peerList[i]);
-	}
+
 
 	if (isVerbose)
 		printf("Pass\n");
@@ -608,6 +600,10 @@ RakNet::RakString PeerConnectDisconnectWithCancelPendingTest::ErrorCodeToString(
 		return "Peers did not connect normally.";
 		break;
 
+	case 3:
+		return "Pending connection was not canceled.";
+		break;
+
 	default:
 		return "Undefined Error";
 	}
@@ -622,4 +618,15 @@ PeerConnectDisconnectWithCancelPendingTest::PeerConnectDisconnectWithCancelPendi
 
 PeerConnectDisconnectWithCancelPendingTest::~PeerConnectDisconnectWithCancelPendingTest(void)
 {
+}
+
+
+void PeerConnectDisconnectWithCancelPendingTest::DestroyPeers()
+{
+
+	int theSize=destroyList.Size();
+
+	for (int i=0; i < theSize; i++)
+		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+
 }

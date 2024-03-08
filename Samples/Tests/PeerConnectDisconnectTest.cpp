@@ -1,11 +1,11 @@
 #include "PeerConnectDisconnectTest.h"
-#include "DebugTools.h"
+
 
 void PeerConnectDisconnectTest::WaitForConnectionRequestsToComplete(RakPeerInterface **peerList, int peerNum, bool isVerbose)
 {
 	SystemAddress currentSystem;
 	bool msgWasPrinted=false;
-	
+
 	for (int i=0;i<peerNum;i++)
 	{
 		for (int j=i+1;j<peerNum;j++)//Start at i+1 so don't connect two of the same together.
@@ -138,14 +138,12 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 	const int peerNum= 8;
 	const int maxConnections=peerNum*3;//Max allowed connections for test set to times 3 to eliminate problem variables
 	RakPeerInterface *peerList[peerNum];//A list of 8 peers
-	int connectionAmount[peerNum];//Counter for me to keep track of connection requests and accepts
 
 
-	char str[512];
-	char pauseStr[512];
 	SystemAddress currentSystem;
 
 	Packet *packet;
+	destroyList.Clear(false,__FILE__,__LINE__);
 
 
 
@@ -155,7 +153,7 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 	for (int i=0;i<peerNum;i++)
 	{
 		peerList[i]=RakNetworkFactory::GetRakPeerInterface();
-		connectionAmount[i]=0;
+		destroyList.Push(peerList[i],__FILE__,__LINE__);
 
 
 
@@ -170,7 +168,7 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 
 	//Connect all the peers together
 
-	strcpy(str, "127.0.0.1");
+
 
 	for (int i=0;i<peerNum;i++)
 	{
@@ -178,13 +176,12 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 		for (int j=i+1;j<peerNum;j++)//Start at i+1 so don't connect two of the same together.
 		{
 
-			if (!peerList[i]->Connect(str, 60000+j, 0,0))
+			if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
 			{
 
 				if (isVerbose)
-					printf("Problem while calling connect.\n");
+					DebugTools::ShowError("Problem while calling connect.\n",!noPauses && isVerbose,__LINE__,__FILE__);
 
-				DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
 				return 1;//This fails the test, don't bother going on.
 
 			}
@@ -231,7 +228,7 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 
 		RakSleep(100);
 
-		strcpy(str, "127.0.0.1");
+
 		//Connect
 
 		for (int i=0;i<peerNum;i++)
@@ -240,21 +237,21 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 			for (int j=i+1;j<peerNum;j++)//Start at i+1 so don't connect two of the same together.
 			{
 
-				currentSystem.SetBinaryAddress(str);
+				currentSystem.SetBinaryAddress("127.0.0.1");
 				currentSystem.port=60000+j;
 				if(!peerList[i]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
 				{
 
 
-					if (!peerList[i]->Connect(str, 60000+j, 0,0))
+					if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
 					{
 
 
 
 						if (isVerbose)
-							printf("Problem while calling connect. \n");
+							DebugTools::ShowError("Problem while calling connect.\n",!noPauses && isVerbose,__LINE__,__FILE__);
 
-						DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
+
 						return 1;//This fails the test, don't bother going on.
 
 
@@ -276,34 +273,33 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 	printf("Connecting peers\n");
 
 	//Connect
-	strcpy(str, "127.0.0.1");
+
 	for (int i=0;i<peerNum;i++)
 	{
 
 		for (int j=i+1;j<peerNum;j++)//Start at i+1 so don't connect two of the same together.
 		{
-			currentSystem.SetBinaryAddress(str);
+			currentSystem.SetBinaryAddress("127.0.0.1");
 			currentSystem.port=60000+j;
 
 			if(!peerList[i]->IsConnected (currentSystem,true,true) )//Are we connected or is there a pending operation ?
 			{
 				printf("Calling Connect() for peer %i to peer %i.\n",i,j);
 
-				if (!peerList[i]->Connect(str, 60000+j, 0,0))
+				if (!peerList[i]->Connect("127.0.0.1", 60000+j, 0,0))
 				{
 					peerList[i]->GetSystemList(systemList,guidList);//Get connectionlist
 					int len=systemList.Size();
 
 
-					//	if (len==0)//No connections, should not fail.
-					//	{
+
 
 					if (isVerbose)
-						printf("Problem while calling connect. \n");
+						DebugTools::ShowError("Problem while calling connect.\n",!noPauses && isVerbose,__LINE__,__FILE__);
 
-					DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
+
 					return 1;//This fails the test, don't bother going on.
-					//	}
+
 
 				}
 			}
@@ -332,15 +328,14 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 
 
 			if (isVerbose)
+			{
 				printf("Not all peers reconnected normally.\nFailed on peer number %i with %i peers\n",i,connNum);
 
 
-			DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
-
-			for (int i=0;i<peerNum;i++)//Clean
-			{
-				RakNetworkFactory::DestroyRakPeerInterface(peerList[i]);
+				DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
 			}
+
+
 
 
 			return 2;
@@ -352,10 +347,7 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakNet::RakString> p
 	}
 
 
-	for (int i=0;i<peerNum;i++)//Clean
-	{
-		RakNetworkFactory::DestroyRakPeerInterface(peerList[i]);
-	}
+	
 
 	if (isVerbose)
 		printf("Pass\n");
@@ -403,4 +395,13 @@ PeerConnectDisconnectTest::PeerConnectDisconnectTest(void)
 
 PeerConnectDisconnectTest::~PeerConnectDisconnectTest(void)
 {
+}
+void PeerConnectDisconnectTest::DestroyPeers()
+{
+
+	int theSize=destroyList.Size();
+
+	for (int i=0; i < theSize; i++)
+		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+
 }

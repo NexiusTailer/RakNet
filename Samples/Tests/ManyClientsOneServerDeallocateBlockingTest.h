@@ -21,8 +21,13 @@ public:
 	int RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses);//should return 0 if no error, or the error number
 	RakNet::RakString GetTestName();
 	RakNet::RakString ErrorCodeToString(int errorCode);
+	void DestroyPeers();
 
 protected:
 	void WaitForConnectionRequestsToComplete(RakPeerInterface **peerList, int peerNum, bool isVerbose);
 	void WaitAndPrintResults(RakPeerInterface **peerList, int peerNum, bool isVerbose,RakPeerInterface *server);
+private:
+	static const int clientNum= 256;
+	RakPeerInterface *clientList[clientNum];//A list of clients
+	RakPeerInterface *server;
 };

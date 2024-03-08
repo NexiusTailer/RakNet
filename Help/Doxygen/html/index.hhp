@@ -125,6 +125,7 @@ StringCompressor_8h.html
 StringTable_8h.html
 SystemAddressList_8h.html
 TCPInterface_8h.html
+TeamBalancer_8h.html
 TelnetTransport_8h.html
 ThreadsafePacketLogger_8h.html
 TransportInterface_8h.html
@@ -154,6 +155,7 @@ group__REPLICA__MANAGER__GROUP3.html
 group__ROUTER__GROUP.html
 group__ROUTER__2__GROUP.html
 group__RAKNET__RPC.html
+group__TEAM__BALANCER__GROUP.html
 group__UDP__PROXY__GROUP.html
 group__LOBBY__2__GROUP.html
 group__LOBBY__2__COMMANDS.html
@@ -409,6 +411,8 @@ classDataStructures_1_1Queue.html
 classDataStructures_1_1Queue-members.html
 classDataStructures_1_1QueueLinkedList.html
 classDataStructures_1_1QueueLinkedList-members.html
+classDataStructures_1_1StringKeyedHash.html
+classDataStructures_1_1StringKeyedHash-members.html
 classDataStructures_1_1Table.html
 classDataStructures_1_1Table-members.html
 structDataStructures_1_1Table_1_1Cell.html
@@ -460,6 +464,8 @@ classRakNet_1_1Router2.html
 classRakNet_1_1Router2-members.html
 classRakNet_1_1StringTable.html
 classRakNet_1_1StringTable-members.html
+classRakNet_1_1TeamBalancer.html
+classRakNet_1_1TeamBalancer-members.html
 classRakNet_1_1UDPForwarder.html
 classRakNet_1_1UDPForwarder-members.html
 structRakNet_1_1UDPProxyClientResultHandler.html
@@ -544,6 +550,10 @@ structRakNet_1_1Client__GetIgnoreList.html
 structRakNet_1_1Client__GetIgnoreList-members.html
 structRakNet_1_1Client__PerTitleBinaryStorage.html
 structRakNet_1_1Client__PerTitleBinaryStorage-members.html
+structRakNet_1_1Client__SetPresence.html
+structRakNet_1_1Client__SetPresence-members.html
+structRakNet_1_1Client__GetPresence.html
+structRakNet_1_1Client__GetPresence-members.html
 structRakNet_1_1Friends__SendInvite.html
 structRakNet_1_1Friends__SendInvite-members.html
 structRakNet_1_1Friends__AcceptInvite.html
@@ -660,6 +670,8 @@ structRakNet_1_1Clans__GetPosts.html
 structRakNet_1_1Clans__GetPosts-members.html
 classRakNet_1_1Lobby2Plugin.html
 classRakNet_1_1Lobby2Plugin-members.html
+structRakNet_1_1Lobby2Presence.html
+structRakNet_1_1Lobby2Presence-members.html
 structRakNet_1_1Lobby2ServerCommand.html
 structRakNet_1_1Lobby2ServerCommand-members.html
 classRakNet_1_1Lobby2Server.html

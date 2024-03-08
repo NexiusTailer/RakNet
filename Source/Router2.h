@@ -118,6 +118,7 @@ protected:
 	void OnQueryForwardingReply(Packet *packet);
 	void OnRequestForwarding(Packet *packet);
 	void OnMiniPunchReply(Packet *packet);
+	void OnMiniPunchReplyBounce(Packet *packet);
 	void OnForwardingSuccess(Packet *packet);
 	int GetLargestPingAmongConnectedSystems(void) const;
 	void ReturnToUser(MessageID messageId, RakNetGUID endpointGuid, SystemAddress systemAddress);
@@ -135,7 +136,7 @@ protected:
 	void ClearAll(void);
 	int ReturnFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endpointGuid);
 	void SendFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endpointGuid);
-	void SendForwardingSuccess(RakNetGUID sourceGuid, RakNetGUID endpointGuid);
+	void SendForwardingSuccess(RakNetGUID sourceGuid, RakNetGUID endpointGuid, unsigned short sourceToDstPort);
 	void SendOOBFromRakNetPort(OutOfBandIdentifiers oob, BitStream *extraData, SystemAddress sa);
 	void SendOOBFromSpecifiedSocket(OutOfBandIdentifiers oob, SystemAddress sa, SOCKET socket);
 	void SendOOBMessages(MiniPunchRequest *mpr);

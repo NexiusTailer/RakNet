@@ -108,6 +108,10 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#464be88f54571ff835975ae48ff15ed8">GetBufferedBytesToReturn</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress) const </td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#e6518711e046fc752ca40d4eb96da416">SetLoopbackMode</a> (bool enabled)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#41c7d0beb67b0371c1255c6f00d1f5df">IsLoopbackMode</a> (void) const </td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ff54cd16e0a0bb3f3e7b326c803de875"></a><!-- doxytag: member="RakVoice::OnShutdown" ref="ff54cd16e0a0bb3f3e7b326c803de875" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakVoice.html#ff54cd16e0a0bb3f3e7b326c803de875">OnShutdown</a> (void)</td></tr>
 
@@ -346,6 +350,27 @@ Starts <a class="el" href="classRakVoice.html" title="Voice compression and tran
 
 <p>
 Returns true or false, indicating if the object has been initialized <dl class="return" compact><dt><b>Returns:</b></dt><dd>true if initialized, false otherwise. </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="41c7d0beb67b0371c1255c6f00d1f5df"></a><!-- doxytag: member="RakVoice::IsLoopbackMode" ref="41c7d0beb67b0371c1255c6f00d1f5df" args="(void) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakVoice::IsLoopbackMode           </td>
+          <td>(</td>
+          <td class="paramtype">void&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns true or false, indicating if the loopback mode is enabled <dl class="return" compact><dt><b>Returns:</b></dt><dd>true if enabled, false otherwise. </dd></dl>
 
 </div>
 </div><p>
@@ -638,6 +663,31 @@ Changes encoder complexity Specifying higher values might help when encoding non
 
 </div>
 </div><p>
+<a class="anchor" name="e6518711e046fc752ca40d4eb96da416"></a><!-- doxytag: member="RakVoice::SetLoopbackMode" ref="e6518711e046fc752ca40d4eb96da416" args="(bool enabled)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakVoice::SetLoopbackMode           </td>
+          <td>(</td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>enabled</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Enables/disables loopback mode <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>true</em>&nbsp;</td><td>to enable, false to disable </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <a class="anchor" name="47c64a6bf3ee923e2eb70bb107b3a3dc"></a><!-- doxytag: member="RakVoice::SetNoiseFilter" ref="47c64a6bf3ee923e2eb70bb107b3a3dc" args="(bool enable)" -->
 <div class="memitem">
 <div class="memproto">
@@ -725,7 +775,7 @@ Enables or disables VBR VBR is variable bitrate. Uses less bandwidth but more CP
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/DependentExtensions/<a class="el" href="RakVoice_8h.html">RakVoice.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Jan 6 08:24:48 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 4 22:17:51 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

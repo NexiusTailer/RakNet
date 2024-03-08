@@ -13,6 +13,7 @@ class RakPeerInterface;
 #include "RakNetTypes.h"
 #include "PluginInterface2.h"
 #include "DS_OrderedList.h"
+#include "NativeTypes.h"
 
 // How many frames large to make the circular buffers in the VoiceChannel structure
 #define FRAME_OUTGOING_BUFFER_COUNT 100
@@ -168,6 +169,14 @@ public:
 	/// \return Number of bytes on the read buffer.
 	unsigned GetBufferedBytesToReturn(SystemAddress systemAddress) const;
 
+	/// Enables/disables loopback mode
+	/// \param[in] true to enable, false to disable
+	void SetLoopbackMode(bool enabled);
+
+	/// Returns true or false, indicating if the loopback mode is enabled
+	/// \return true if enabled, false otherwise.
+	bool IsLoopbackMode(void) const;
+
 	// --------------------------------------------------------------------------------------------
 	// Message handling functions
 	// --------------------------------------------------------------------------------------------
@@ -178,7 +187,7 @@ public:
 protected:
 	void OnOpenChannelRequest(Packet *packet);
 	void OnOpenChannelReply(Packet *packet);
-	void OnVoiceData(Packet *packet);
+	virtual void OnVoiceData(Packet *packet);
 	void OpenChannel(Packet *packet);
 	void FreeChannelMemory(SystemAddress recipient);
 	void FreeChannelMemory(unsigned index, bool removeIndex);
@@ -187,7 +196,7 @@ protected:
 	void SetPreprocessorParameter(void* pre_state, int vartype, int val);
 	
 	DataStructures::OrderedList<SystemAddress, VoiceChannel*, VoiceChannelComp> voiceChannels;
-	int sampleRate;
+	int32_t sampleRate;
 	unsigned bufferSizeBytes;
 	float *bufferedOutput;
 	unsigned bufferedOutputCount;
@@ -196,6 +205,7 @@ protected:
 	bool defaultVADState;
 	bool defaultDENOISEState;
 	bool defaultVBRState;
+	bool loopbackMode;
 
 };
 

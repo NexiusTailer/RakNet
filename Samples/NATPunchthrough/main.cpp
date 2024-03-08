@@ -6,6 +6,7 @@
 /// Usage of RakNet is subject to the appropriate license agreement.
 
 
+
 #include "RakPeerInterface.h"
 #include "RakSleep.h"
 #include <stdio.h>
@@ -30,9 +31,14 @@
 #include "UDPProxyClient.h"
 #include "NatTypeDetectionServer.h"
 
+
+#define USE_UPNP
+
 #ifdef USE_UPNP
-// This file is in Samples/upnp
-#include "upnpnat.h"
+// These files are in Samples/upnp
+#include "UPNPPortForwarder.h"
+#include "UPNPCallBackInterface.h"
+#include "EventReceiver.h"
 #endif
 
 static const unsigned short NAT_PUNCHTHROUGH_FACILITATOR_PORT=60481;
@@ -46,20 +52,23 @@ static const char *COORDINATOR_PASSWORD="Dummy Coordinator Password";
 void OpenWithUPNP(NatPunchthroughClient *npc)
 {
 	printf("Opening UPNP...\n");
-	UPNPNAT nat;
-	nat.init();
-	if(!nat.discovery()){
-		printf("discovery error is %s\n",nat.get_last_error());
-		return;
-	}
-	// I'm not sure what use the first parameter is
-	// The second parameter is the internal IP address for RakNet
-	// The third parameter is the port other systems will connect to. The way NATPunchthrough is implemented
-	// The fourth parameter is the internal port that RakNet is bound on
-	if(!nat.add_port_mapping("Description",npc->GetUPNPInternalAddress().C_String(), npc->GetUPNPExternalPort(), npc->GetUPNPInternalPort(),"UDP")){
-		printf("add_port_mapping error is %s\n",nat.get_last_error());
-		return;
-	}
+
+
+	UPNPPortForwarder forwarder;
+
+	EventReceiver * eventObject= new EventReceiver(1);
+
+	forwarder.OpenPortOnInterface(npc->GetUPNPInternalPort(),eventObject,npc->GetUPNPInternalAddress(),npc->GetUPNPExternalPort());
+
+
+
+
+	while(eventObject->IsRunningAnyThread())
+	{}
+
+	delete eventObject;
+
+
 };
 #endif
 

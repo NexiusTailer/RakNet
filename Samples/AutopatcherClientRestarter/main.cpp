@@ -7,17 +7,27 @@
 #else
 #include <unistd.h> // usleep
 #include <cstdio>
+#include <signal.h>  //kill
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 #endif
+
+#include <iostream>
+
+using namespace std;
 
 // This is a simple tool to take the output of PatchApplication::restartOutputFilename
 // Perform file operations while that application is not running, and then relaunch that application
-void main(int argc, char **argv)
+int main(int argc, char **argv)
 {
+	// Run commands on argv[1] and launch argv[2];
 	// Run commands on argv[1] and launch argv[2];
 	if (argc!=2)
 	{
 		printf("Usage: FileContainingCommands\n");
-		return;
+		return 1;
 	}
 
 	bool deleteFile=false;
@@ -26,14 +36,14 @@ void main(int argc, char **argv)
 	if (fp==0)
 	{
 		printf("Error: Cannot open %s\n", argv[1]);
-		return;
+		return 1;
 	}
 
 	char buff[256];
 	int offset=0;
 
 	if (fgets(buff,255,fp)==0)
-		return;
+		return 1;
 	buff[strlen(buff)]=0;
 	while (buff[0])
 	{
@@ -50,6 +60,7 @@ void main(int argc, char **argv)
 			deleteFile=true;
 		else if (strncmp(buff, "#CreateProcess ", 15)==0)
 		{
+#ifdef _WIN32
 			PROCESS_INFORMATION pi;
 			STARTUPINFO si;
 
@@ -67,10 +78,17 @@ void main(int argc, char **argv)
 				NULL, NULL,
 				&si,
 				&pi))
-				return;
+				return 1;
 
 			CloseHandle( pi.hProcess );
 			CloseHandle( pi.hThread );
+#else
+            char PathName[255];
+
+            strcpy(PathName, buff+15);
+
+            system(PathName);  //This actually runs the application.
+#endif
 		}
 		else
 		{
@@ -81,7 +99,7 @@ void main(int argc, char **argv)
 			break;
 		buff[strlen(buff)]=0;
 	}
-	
+
 	fclose(fp);
 
 	// Done!

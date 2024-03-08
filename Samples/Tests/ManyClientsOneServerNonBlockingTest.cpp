@@ -51,6 +51,7 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 	//SystemAddress currentSystem;
 
 	Packet *packet;
+	destroyList.Clear(false,__FILE__,__LINE__);
 
 
 
@@ -60,6 +61,7 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 	for (int i=0;i<clientNum;i++)
 	{
 		clientList[i]=RakNetworkFactory::GetRakPeerInterface();
+		destroyList.Push(clientList[i],__FILE__,__LINE__);
 
 		clientList[i]->Startup(1,30,&SocketDescriptor(), 1);
 
@@ -73,6 +75,7 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 
 	server=RakNetworkFactory::GetRakPeerInterface();
+	destroyList.Push(server,__FILE__,__LINE__);
 	server->Startup(clientNum, 30, &SocketDescriptor(60000,0), 1);
 	server->SetMaximumIncomingConnections(clientNum);
 
@@ -176,14 +179,19 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 		//Server receive
 
-		if (isVerbose)
-			printf("For server\n");
+
 
 		packet=server->Receive();
 
+		if (isVerbose&&packet)
+			printf("For server\n");
 
 		while(packet)
 		{
+
+
+
+
 			switch (packet->data[0])
 			{
 			case ID_REMOTE_DISCONNECTION_NOTIFICATION:
@@ -255,14 +263,18 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 		for (int i=0;i<clientNum;i++)//Receive for all peers
 		{
-			if (isVerbose)
-				printf("For peer %i\n",i);
+
 
 			packet=clientList[i]->Receive();
 
+			if (isVerbose&&packet)
+				printf("For peer %i\n",i);
 
 			while(packet)
 			{
+
+
+
 				switch (packet->data[0])
 				{
 				case ID_REMOTE_DISCONNECTION_NOTIFICATION:
@@ -345,9 +357,14 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 		packet=server->Receive();
 
+		if (isVerbose&&packet)
+			printf("For server\n");
 
 		while(packet)
 		{
+
+
+
 			switch (packet->data[0])
 			{
 			case ID_REMOTE_DISCONNECTION_NOTIFICATION:
@@ -417,14 +434,17 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 		for (int i=0;i<clientNum;i++)//Receive for all peers
 		{
-			if (isVerbose)
-				printf("For peer %i\n",i);
+
 
 			packet=clientList[i]->Receive();
-
+			if (isVerbose&&packet)
+				printf("For peer %i\n",i);
 
 			while(packet)
 			{
+
+
+
 				switch (packet->data[0])
 				{
 				case ID_REMOTE_DISCONNECTION_NOTIFICATION:
@@ -527,7 +547,7 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 
 				return 1;//This fails the test, don't bother going on.
-		
+
 
 			}
 		}
@@ -550,10 +570,14 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 		//Server receive
 
 		packet=server->Receive();
-
+		if (isVerbose&&packet)
+			printf("For server\n");
 
 		while(packet)
 		{
+
+
+
 			switch (packet->data[0])
 			{
 			case ID_REMOTE_DISCONNECTION_NOTIFICATION:
@@ -624,14 +648,16 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 
 		for (int i=0;i<clientNum;i++)//Receive for all clients
 		{
-			if (isVerbose)
-				printf("For peer %i\n",i);
+
 
 			packet=clientList[i]->Receive();
+			if (isVerbose&&packet)
+				printf("For peer %i\n",i);
 
 
 			while(packet)
 			{
+
 				switch (packet->data[0])
 				{
 				case ID_REMOTE_DISCONNECTION_NOTIFICATION:
@@ -720,11 +746,8 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 			if (isVerbose)
 				DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
 
-			for (int i=0;i<clientNum;i++)//Clean
-			{
-				RakNetworkFactory::DestroyRakPeerInterface(clientList[i]);
-			}
-			RakNetworkFactory::DestroyRakPeerInterface(server);
+		
+			
 
 			return 2;
 
@@ -735,11 +758,8 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakNet::Ra
 	}
 
 
-	for (int i=0;i<clientNum;i++)//Clean
-	{
-		RakNetworkFactory::DestroyRakPeerInterface(clientList[i]);
-	}
-	RakNetworkFactory::DestroyRakPeerInterface(server);
+
+	
 
 	if (isVerbose)
 		printf("Pass\n");
@@ -788,4 +808,15 @@ ManyClientsOneServerNonBlockingTest::ManyClientsOneServerNonBlockingTest(void)
 
 ManyClientsOneServerNonBlockingTest::~ManyClientsOneServerNonBlockingTest(void)
 {
+}
+
+
+void ManyClientsOneServerNonBlockingTest::DestroyPeers()
+{
+
+	int theSize=destroyList.Size();
+
+	for (int i=0; i < theSize; i++)
+		RakNetworkFactory::DestroyRakPeerInterface(destroyList[i]);
+
 }

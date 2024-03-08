@@ -1,0 +1,586 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="RoomsAndLobbyGFx3"
+	ProjectGUID="{6F755B9D-02B6-43DF-8CC7-CA0E304AF110}"
+	RootNamespace="RoomsPluginGFx3"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions/GFx3;./../../DependentExtensions/Lobby2;./../../DependentExtensions/Lobby2/Rooms;&quot;$(GFXSDK)\Src\GRenderer&quot;;&quot;$(GFXSDK)\Src\GKernel&quot;;&quot;$(GFXSDK)\Src\GFxXML&quot;;&quot;$(GFXSDK)\Include&quot;;&quot;$(GFXSDK)\Apps\Demos\FxPlayer&quot;;&quot;$(GFXSDK)\Apps\Demos\Common&quot;;&quot;$(GFXSDK)\Apps\CLIKLobby&quot;;&quot;$(GFXSDK)\3rdParty\fmod\pc\x64\inc&quot;;&quot;$(GFXSDK)\Src\GSoundRenderer&quot;;./PC;./"
+				PreprocessorDefinitions="FXPLAYER_RENDER_DIRECT3D;GFC_NO_SOUND;AUTOMANAGE_RAKNET_INSTANCES"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="4"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib libgfx.lib libgfx_expat.lib libjpeg.lib zlib.lib imm32.lib winmm.lib libgrenderer_d3d9.lib d3dx9.lib d3d9.lib expat.lib XInput.lib fmodexL_vc.lib dsound.lib"
+				AdditionalLibraryDirectories="&quot;$(DXSDK_DIR)\Lib\x86&quot;;&quot;$(GFXSDK)\3rdParty\expat-2.0.1\lib\Win32\Msvc80\Debug&quot;;&quot;$(GFXSDK)\Lib\$(PlatformName)\Msvc80\Debug&quot;;&quot;$(GFXSDK)\3rdParty\zlib-1.2.3\Lib\$(PlatformName)\Msvc80\Debug&quot;;&quot;$(GFXSDK)\3rdParty\jpeg-6b\Lib\$(PlatformName)\Msvc80\Debug&quot;;&quot;$(GFXSDK)\3rdParty\fmod\pc\Win32\lib&quot;"
+				GenerateDebugInformation="true"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="2"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions/GFx3;./../../DependentExtensions/Lobby2;./../../DependentExtensions/Lobby2/Rooms;&quot;$(GFXSDK)\Src\GRenderer&quot;;&quot;$(GFXSDK)\Src\GKernel&quot;;&quot;$(GFXSDK)\Src\GFxXML&quot;;&quot;$(GFXSDK)\Include&quot;;&quot;$(GFXSDK)\Apps\Demos\FxPlayer&quot;;&quot;$(GFXSDK)\Apps\Demos\Common&quot;;&quot;$(GFXSDK)\Apps\CLIKLobby&quot;;&quot;$(GFXSDK)\3rdParty\fmod\pc\x64\inc&quot;;&quot;$(GFXSDK)\Src\GSoundRenderer&quot;;./PC;./"
+				PreprocessorDefinitions="FXPLAYER_RENDER_DIRECT3D;GFC_NO_SOUND;AUTOMANAGE_RAKNET_INSTANCES"
+				RuntimeLibrary="2"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="./../../lib/RakNetLibStatic.lib libgfx_expat.lib ws2_32.lib libgfx.lib libjpeg.lib zlib.lib imm32.lib winmm.lib libgrenderer_d3d9.lib d3dx9.lib d3d9.lib expat.lib XInput.lib fmodexL_vc.lib dsound.lib"
+				AdditionalLibraryDirectories="&quot;$(DXSDK_DIR)\Lib\x86&quot;;&quot;$(GFXSDK)\3rdParty\expat-2.0.1\lib\Win32\Msvc80\Release&quot;;&quot;$(GFXSDK)\Lib\$(PlatformName)\Msvc80\Release\&quot;;&quot;$(GFXSDK)\3rdParty\zlib-1.2.3\Lib\$(PlatformName)\Msvc80\Release&quot;;&quot;$(GFXSDK)\3rdParty\jpeg-6b\Lib\$(PlatformName)\Msvc80\Release&quot;;&quot;$(GFXSDK)\3rdParty\fmod\pc\Win32\lib&quot;"
+				GenerateDebugInformation="true"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			>
+			<File
+				RelativePath="..\..\DependentExtensions\GFx3\FxGameDelegate.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Lobby2Presence.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LobbyController.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LobbyDataProvider.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			>
+			<File
+				RelativePath="..\..\DependentExtensions\GFx3\FxGameDelegate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Lobby2Presence.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LobbyController.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LobbyDataProvider.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			>
+		</Filter>
+		<Filter
+			Name="CLIKLobby"
+			>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\CLIKLobby\FxPlayerLobby.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\CLIKLobby\LobbyMessageBuffer.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\CLIKLobby\LobbyProfileManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\CLIKLobby\LobbyProfileManager.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\CLIKLobby\LobbyTypes.h"
+				>
+			</File>
+			<Filter
+				Name="Offline"
+				>
+				<File
+					RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\CLIKLobby\Offline\OfflineData.cpp"
+					>
+				</File>
+				<File
+					RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\CLIKLobby\Offline\OfflineDataProvider.cpp"
+					>
+				</File>
+				<File
+					RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\CLIKLobby\Offline\OfflineDataProvider.h"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Framework"
+			>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\Direct3DWin32App.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\Direct3DWin32App.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FileFindWin32.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FontConfigParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FontConfigParser.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxApp.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxApp.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxDevice.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxDevice.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxDeviceDirect3D.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxDeviceDirect3D.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxFontProviderHUD.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxFontProviderHUD.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxSettings.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxSettings.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxSoundFMOD.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxSoundFMOD.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxWin32App.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxWin32App.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxWin32DebugPopups.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxXInputApp.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\FxXInputApp.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\MathLib.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\Common\MathLib.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="GFxXMLExpat"
+			>
+		</Filter>
+		<Filter
+			Name="FxPlayer"
+			>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxHeapStatItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxHeapStatItem.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxHUD.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxHUD.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxHUDTreeControl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxHUDTreeControl.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxPlayerConfig.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxPlayerLog.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxPlayerStats.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxPlayerStats.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxReportCollector.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxReportCollector.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxResourceStats.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxResourceStats.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxSharedObjectManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxSharedObjectManager.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxStatItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Apps\Demos\FxPlayer\FxStatItem.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="GSoundRenderer"
+			>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Src\GSoundRenderer\GSoundRendererComImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Src\GSoundRenderer\GSoundRendererComImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Src\GSoundRenderer\GSoundRendererFMOD.h"
+				>
+			</File>
+			<File
+				RelativePath="C:\Program Files (x86)\Scaleform\GFx SDK 3.0\Src\GSoundRenderer\GSoundRendererFMODImpl.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="DataProvider_PC"
+			>
+			<File
+				RelativePath=".\PC\RakNetDataProvider_PC.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PC\RakNetDataProvider_PC.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Lobby2Client_PC_Only"
+			>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Lobby2Client.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Lobby2Client.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Lobby2Message.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Lobby2Message.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Lobby2Plugin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Lobby2Plugin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Lobby2ResultCode.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Lobby2ResultCode.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="RoomsPlugin_PC_Only"
+			>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Rooms\IntervalTimer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Rooms\IntervalTimer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Rooms\ProfanityFilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Rooms\ProfanityFilter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Rooms\RoomsContainer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Rooms\RoomsContainer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Rooms\RoomsErrorCodes.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Rooms\RoomsErrorCodes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Rooms\RoomsPlugin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Rooms\RoomsPlugin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Rooms\RoomTypes.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\Lobby2\Rooms\RoomTypes.h"
+				>
+			</File>
+		</Filter>
+		<File
+			RelativePath=".\readme.txt"
+			>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

@@ -13,12 +13,12 @@
 #include <stdio.h> // Printf
 #include "WindowsIncludes.h" // Sleep
 #include "Rand.h"
-
+#include "RakSleep.h"
 #include "PacketLogger.h"
 
 #define NUM_PEERS 8
 
-void main(void)
+int main()
 {
 	ConnectionGraph connectionGraph[NUM_PEERS];
 	RakPeerInterface *rakPeer[NUM_PEERS];
@@ -40,7 +40,7 @@ void main(void)
 		rakPeer[i]->AttachPlugin(&connectionGraph[i]);
 	}
 
-	Sleep(100);
+	RakSleep(100);
 
 	while (1)
 	{
@@ -48,7 +48,7 @@ void main(void)
 		{
 			rakPeer[i]->DeallocatePacket(rakPeer[i]->Receive());
 		}
-		Sleep(0);
+		RakSleep(0);
 
 		if (kbhit())
 		{
@@ -96,4 +96,5 @@ void main(void)
 			}
 		}
 	}
+	return 0;
 }

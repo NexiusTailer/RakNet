@@ -1695,36 +1695,10 @@ namespace RakNet
 #ifdef _DEBUG
 		RakAssert(x <= 1.01 && y <= 1.01 && z <= 1.01 && x >= -1.01 && y >= -1.01 && z >= -1.01);
 #endif
-		if (x>1.0)
-			x=1.0;
-		if (y>1.0)
-			y=1.0;
-		if (z>1.0)
-			z=1.0;
-		if (x<-1.0)
-			x=-1.0;
-		if (y<-1.0)
-			y=-1.0;
-		if (z<-1.0)
-			z=-1.0;
 
-		Write((bool) (x < 0.0));
-		if (y==0.0)
-			Write(true);
-		else
-		{
-			Write(false);
-			WriteCompressed((float)y);
-			//Write((unsigned short)((y+1.0f)*32767.5f));
-		}
-		if (z==0.0)
-			Write(true);
-		else
-		{
-			Write(false);
-			WriteCompressed((float)z);
-			//Write((unsigned short)((z+1.0f)*32767.5f));
-		}
+		WriteFloat16((float)x,-1.0f,1.0f);
+		WriteFloat16((float)y,-1.0f,1.0f);
+		WriteFloat16((float)z,-1.0f,1.0f);
 	}
 
 	template <class templateType> // templateType for this function must be a float or double
@@ -1797,43 +1771,9 @@ namespace RakNet
 	template <class templateType> // templateType for this function must be a float or double
 		bool BitStream::ReadNormVector( templateType &x, templateType &y, templateType &z )
 	{
-		//	unsigned short sy, sz;
-		bool yZero, zZero;
-		bool xNeg;
-		float cy,cz;
-
-		Read(xNeg);
-
-		Read(yZero);
-		if (yZero)
-			y=0.0;
-		else
-		{
-			ReadCompressed((float)cy);
-			y=cy;
-			//Read(sy);
-			//y=((float)sy / 32767.5f - 1.0f);
-		}
-
-		if (!Read(zZero))
-			return false;
-
-		if (zZero)
-			z=0.0;
-		else
-		{
-			//	if (!Read(sz))
-			//		return false;
-
-			//	z=((float)sz / 32767.5f - 1.0f);
-			if (!ReadCompressed((float)cz))
-				return false;
-			z=cz;
-		}
-
-		x = (templateType) (sqrtf((templateType)1.0 - y*y - z*z));
-		if (xNeg)
-			x=-x;
+		ReadFloat16((float)x,-1.0f,1.0f);
+		ReadFloat16((float)y,-1.0f,1.0f);
+		ReadFloat16((float)z,-1.0f,1.0f);
 		return true;
 	}
 

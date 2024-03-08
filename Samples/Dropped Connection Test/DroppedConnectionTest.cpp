@@ -39,8 +39,9 @@ int main(void)
 	int sender;
 	
 	// Buffer for input (an ugly hack to keep *nix happy)
-//	char buff[256];
-
+	#ifndef _WIN32
+	char buff[256];
+	#endif
 	// Used to refer to systems.  We already know the IP
 	unsigned short serverPort = 20000;
 	serverID.binaryAddress=inet_addr("127.0.0.1");

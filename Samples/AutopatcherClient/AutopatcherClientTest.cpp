@@ -45,7 +45,7 @@ public:
 			RakAssert(0);
 
 
-		printf("%i. (100%%) %i/%i %s %ib / ib\n", onFileStruct->setID, onFileStruct->fileIndex+1, onFileStruct->numberOfFilesInThisSet,
+		printf("%i. (100%%) %i/%i %s %ib / %ib\n", onFileStruct->setID, onFileStruct->fileIndex+1, onFileStruct->numberOfFilesInThisSet,
 			onFileStruct->fileName, onFileStruct->byteLengthOfThisFile,
 			onFileStruct->byteLengthOfThisSet);
 
@@ -55,10 +55,10 @@ public:
 
 	virtual void OnFileProgress(FileProgressStruct *fps)
 	{
-		printf("Downloading: %i. (%i%%) %i/%i %s %ib / %ib\n", onFileStruct->setID, (int) (100.0*(double)partCount/(double)partTotal),
-			onFileStruct->fileIndex+1, onFileStruct->numberOfFilesInThisSet, onFileStruct->fileName,
-			onFileStruct->byteLengthOfThisFile,
-			onFileStruct->byteLengthOfThisSet);
+		printf("Downloading: %i. (%i%%) %i/%i %s %ib / %ib\n", fps->onFileStruct->setID, (int) (100.0*(double)fps->partCount/(double)fps->partTotal),
+			fps->onFileStruct->fileIndex+1, fps->onFileStruct->numberOfFilesInThisSet, fps->onFileStruct->fileName,
+			fps->onFileStruct->byteLengthOfThisFile,
+			fps->onFileStruct->byteLengthOfThisSet);
 	}
 
 } transferCallback;
@@ -141,7 +141,7 @@ int main(int argc, char **argv)
 	bool patchImmediately=argc==5 && argv[4][0]=='1';
 
 	if (patchImmediately==false)
-		printf("Hit 'q' to quit, 'p' to patch, 'c' to cancel the patch.\n");
+		printf("Hit 'q' to quit, 'p' to patch, 'c' to cancel the patch. 'r' to reconnect. 'd' to disconnect.\n");
 	else
 		printf("Hit 'q' to quit, 'c' to cancel the patch.\n");
 
@@ -226,6 +226,22 @@ int main(int argc, char **argv)
 
 		if (ch=='q')
 			break;
+		else if (ch=='r')
+		{
+#ifdef USE_TCP
+			packetizedTCP.Connect(buff,60000,false);
+#else
+			rakPeer->Connect(buff, 60000, 0, 0);
+#endif
+		}
+		else if (ch=='d')
+		{
+#ifdef USE_TCP
+			packetizedTCP.CloseConnection(serverAddress);
+#else
+			rakPeer->CloseConnection(serverAddress, true);
+#endif
+		}
 		else if (ch=='p' || (serverAddress!=UNASSIGNED_SYSTEM_ADDRESS && patchImmediately==true))
 		{
 			patchImmediately=false;

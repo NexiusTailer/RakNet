@@ -23,4 +23,7 @@ public:
 	int RunTest(DataStructures::List<RakNet::RakString> params,bool isVerbose,bool noPauses);//should return 0 if no error, or the error number
 	RakNet::RakString GetTestName();
 	RakNet::RakString ErrorCodeToString(int errorCode);
+	void DestroyPeers();
+private:
+	DataStructures::List <RakPeerInterface *> destroyList;
 };

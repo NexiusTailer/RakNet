@@ -274,7 +274,7 @@ void RunCoordinator(void)
 	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
 }
 
-void main(void)
+int main()
 {	
 	printf("UDPProxy is a system to tell a server to forward datagrams between two systems.\n");
 	printf("These datagrams can be from any two clients, even clients not running RakNet.\n");
@@ -306,4 +306,5 @@ void main(void)
 		UDPProxyClientResultHandler_Test t;
 		t.RunClient();
 	}
+	return 0;
 }

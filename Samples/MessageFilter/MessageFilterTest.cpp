@@ -5,7 +5,7 @@
 #include "RakSleep.h"
 #include <stdio.h>
 
-void main(void)
+int main()
 {
 	// The message filter parses all incoming messages and only allows messages of a certain type
 	MessageFilter messageFilter;
@@ -111,4 +111,5 @@ void main(void)
 	printf("Done.\n");
 	RakNetworkFactory::DestroyRakPeerInterface(peer1);
 	RakNetworkFactory::DestroyRakPeerInterface(peer2);
+	return 0;
 }

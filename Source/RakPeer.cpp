@@ -82,9 +82,12 @@ extern void Console2GetIPAndPort(unsigned int, char *, unsigned short *, unsigne
 static const int NUM_MTU_SIZES=3;
 #if defined(_XBOX) || defined(X360)
                                                                                    
+#elif __PC__
+static const int mtuSizes[NUM_MTU_SIZES]={1200, 1200, 576};
 #else
-static const int mtuSizes[NUM_MTU_SIZES]={MAXIMUM_MTU_SIZE, 1400, 576};
+static const int mtuSizes[NUM_MTU_SIZES]={MAXIMUM_MTU_SIZE, 1200, 576};
 #endif
+
 
 #include "RakAlloca.h"
 
@@ -386,7 +389,7 @@ bool RakPeer::Startup( unsigned short maxConnections, int _threadSleepTimer, Soc
 		else // if (socketDescriptors[i].socketType==SocketDescriptor::PS3_LOBBY_UDP)
 			rns->s = (unsigned int) SocketLayer::Instance()->CreateBoundSocket_PS3Lobby( socketDescriptors[i].port, true, socketDescriptors[i].hostAddress );
 
-		if (rns->s==(SOCKET)-1)
+		if ((SOCKET)rns->s==(SOCKET)-1)
 		{
 			DerefAllSockets();
 			return false;
@@ -2396,12 +2399,12 @@ int RakPeer::GetLastPing( const AddressOrGUID systemIdentifier ) const
 	if ( remoteSystem == 0 )
 		return -1;
 
-	return (int)(remoteSystem->reliabilityLayer.GetAckPing()/(RakNetTimeUS)1000);
+//	return (int)(remoteSystem->reliabilityLayer.GetAckPing()/(RakNetTimeUS)1000);
 
-//	if ( remoteSystem->pingAndClockDifferentialWriteIndex == 0 )
-//		return remoteSystem->pingAndClockDifferential[ PING_TIMES_ARRAY_SIZE - 1 ].pingTime;
-//	else
-//		return remoteSystem->pingAndClockDifferential[ remoteSystem->pingAndClockDifferentialWriteIndex - 1 ].pingTime;
+	if ( remoteSystem->pingAndClockDifferentialWriteIndex == 0 )
+		return remoteSystem->pingAndClockDifferential[ PING_TIMES_ARRAY_SIZE - 1 ].pingTime;
+	else
+		return remoteSystem->pingAndClockDifferential[ remoteSystem->pingAndClockDifferentialWriteIndex - 1 ].pingTime;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2858,7 +2861,6 @@ int RakPeer::GetSplitMessageProgressInterval(void) const
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void RakPeer::SetUnreliableTimeout(RakNetTime timeoutMS)
 {
-	RakAssert(timeoutMS>=0);
 	unreliableTimeout=timeoutMS;
 	for ( unsigned short i = 0; i < maximumNumberOfPeers; i++ )
 		remoteSystemList[ i ].reliabilityLayer.SetUnreliableTimeout(unreliableTimeout);
@@ -3398,7 +3400,6 @@ bool RakPeer::SendOutOfBand(const char *host, unsigned short remotePort, Message
 
 	// This is a security measure.  Don't send data longer than this value
 	RakAssert(dataLength <= MAX_OFFLINE_DATA_LENGTH);
-	RakAssert(dataLength>=0);
 
 	if ( NonNumericHostString( host ) )
 	{
@@ -3713,7 +3714,7 @@ RakPeer::RemoteSystemStruct *RakPeer::GetRemoteSystemFromSystemAddress( const Sy
 	if (calledFromNetworkThread)
 	{
 		unsigned int index = GetRemoteSystemIndex(systemAddress);
-		if (index!=-1)
+		if (index!=(unsigned int) -1)
 		{
 			if (onlyActive==false || remoteSystemList[ index ].isActive==true )
 			{
@@ -4019,7 +4020,7 @@ RakPeer::RemoteSystemStruct * RakPeer::AssignSystemAddressToRemoteSystemList( co
 							rns->s = (unsigned int) SocketLayer::Instance()->CreateBoundSocket( bindingAddress.port, true, ipList[foundIndex], 0 );
 						else
 							rns->s = (unsigned int) SocketLayer::Instance()->CreateBoundSocket_PS3Lobby( bindingAddress.port, true, ipList[foundIndex] );
-						if (rns->s==(SOCKET)-1)
+						if ((SOCKET)rns->s==(SOCKET)-1)
 						{
 							// Can't bind. Just use whatever socket it came in on
 							remoteSystem->rakNetSocket=incomingRakNetSocket;
@@ -5190,7 +5191,7 @@ bool RakPeer::SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPri
 		unsigned int idx;
 		for ( idx = 0; idx < maximumNumberOfPeers; idx++ )
 		{
-			if (remoteSystemIndex!=-1 && idx==remoteSystemIndex)
+			if (remoteSystemIndex!=(unsigned int) -1 && idx==remoteSystemIndex)
 				continue;
 
 			if ( remoteSystemList[ idx ].isActive && remoteSystemList[ idx ].systemAddress != UNASSIGNED_SYSTEM_ADDRESS )
@@ -5486,6 +5487,10 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 			packet->data[0]=ID_PONG;
 			// Don't endian swap the time, so the user can do so when reading out as a bitstream
 			memcpy(packet->data+sizeof(unsigned char), data+sizeof(unsigned char), sizeof(RakNetTime));
+// 			RakNetTime test1;
+// 			memcpy(&test1,data+sizeof(unsigned char), sizeof(RakNetTime));
+// 			RakNetTime test2;
+// 			test2=RakNet::GetTime();
 			memcpy(packet->data+sizeof(unsigned char)+sizeof(RakNetTime), data+sizeof(unsigned char)+sizeof(RakNetTime)+RakNetGUID::size()+sizeof(OFFLINE_MESSAGE_DATA_ID), length-sizeof(unsigned char)-sizeof(RakNetTime)-RakNetGUID::size()-sizeof(OFFLINE_MESSAGE_DATA_ID));
 			packet->bitSize = BYTES_TO_BITS(packet->length);
 			packet->systemAddress = systemAddress;
@@ -6200,13 +6205,21 @@ bool RakPeer::RunUpdateCycle( void )
 					if (rcs->socket.IsNull())
 					{
 						SocketLayer::SetDoNotFragment(socketList[rcs->socketIndex]->s, 1);
-						SocketLayer::Instance()->SendTo( socketList[rcs->socketIndex]->s, (const char*) bitStream.GetData(), bitStream.GetNumberOfBytesUsed(), rcs->systemAddress.binaryAddress, rcs->systemAddress.port, socketList[rcs->socketIndex]->remotePortRakNetWasStartedOn_PS3 );
+						if (SocketLayer::Instance()->SendTo( socketList[rcs->socketIndex]->s, (const char*) bitStream.GetData(), bitStream.GetNumberOfBytesUsed(), rcs->systemAddress.binaryAddress, rcs->systemAddress.port, socketList[rcs->socketIndex]->remotePortRakNetWasStartedOn_PS3 )==-10040)
+						{
+							// Don't use this MTU size again
+							rcs->requestsMade = (MTUSizeIndex + 1) * (rcs->sendConnectionAttemptCount/NUM_MTU_SIZES);
+						}
 						SocketLayer::SetDoNotFragment(socketList[rcs->socketIndex]->s, 0);
 					}
 					else
 					{
 						SocketLayer::SetDoNotFragment(rcs->socket->s, 1);
-						SocketLayer::Instance()->SendTo( rcs->socket->s, (const char*) bitStream.GetData(), bitStream.GetNumberOfBytesUsed(), rcs->systemAddress.binaryAddress, rcs->systemAddress.port, socketList[rcs->socketIndex]->remotePortRakNetWasStartedOn_PS3 );
+						if (SocketLayer::Instance()->SendTo( rcs->socket->s, (const char*) bitStream.GetData(), bitStream.GetNumberOfBytesUsed(), rcs->systemAddress.binaryAddress, rcs->systemAddress.port, socketList[rcs->socketIndex]->remotePortRakNetWasStartedOn_PS3 )==-10040)
+						{
+							// Don't use this MTU size again
+							rcs->requestsMade = (MTUSizeIndex + 1) * (rcs->sendConnectionAttemptCount/NUM_MTU_SIZES);
+						}
 						SocketLayer::SetDoNotFragment(socketList[rcs->socketIndex]->s, 0);
 					}
 				//	printf("ID_OPEN_CONNECTION_REQUEST\n");
@@ -6592,7 +6605,8 @@ bool RakPeer::RunUpdateCycle( void )
 						byteSize == 1 + 20 + sizeof( uint32_t ) * RAKNET_RSA_FACTOR_LIMBS )
 					{
 						CSHA1 sha1;
-						bool confirmedHash, newRandNumber;
+						bool confirmedHash;
+						//bool newRandNumber;
 
 						confirmedHash = false;
 
@@ -6604,7 +6618,7 @@ bool RakPeer::RunUpdateCycle( void )
 						sha1.Update( ( unsigned char* ) & ( newRandomNumber ), 20 );
 						sha1.Final();
 
-						newRandNumber = false;
+						//newRandNumber = false;
 
 						// Confirm if
 						//syn-cookie ?= HASH(source ip address + source port + last random number)

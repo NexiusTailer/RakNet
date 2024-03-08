@@ -563,10 +563,14 @@ PGresult * PostgreSQLInterface::QueryVariadic( const char * input, ... )
 		if (preparedQueries[preparedQueryIndex].StrICmp(inputStr)==0)
 			break;
 	}
+
+	// Find out how many params there are
+	// Find out the type of each param (%f, %s)
+	indices.Clear(false, __FILE__, __LINE__);
+	GetTypeMappingIndices( input, indices );
+
 	if (preparedQueryIndex==preparedQueries.Size())
 	{
-		indices.Clear(false, __FILE__, __LINE__);
-		GetTypeMappingIndices( input, indices );
 //		if (indices.Size()>0)
 //			query += " (";
 		RakNet::RakString formatCopy;
@@ -613,10 +617,6 @@ PGresult * PostgreSQLInterface::QueryVariadic( const char * input, ... )
 //	char *paramData[512];
 //	int paramLength[512];
 //	int paramFormat[512];
-
-	// Find out how many params there are
-	// Find out the type of each param (%f, %s)
-	GetTypeMappingIndices( input, indices );
 
 	va_list argptr;
 	va_start(argptr, input);

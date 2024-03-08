@@ -309,6 +309,7 @@ Improve randomness of random number for FullyConnectedMesh2<BR>
 3.715 (12/11/2009) Fix bug returning ID_ALREADY_CONNECTED. You can now also pass a RakNetGuid to most places in RakPeer you previously passed a SystemAddress. Change disconnect timeout method.<BR>
 3.716 (12/29/2009) Fix bug introduced in 3.714 causing players to get disconnected. FileListTransfer now supports incremental writes in addition to incremental reads. Reduce per-datagram overhead by 4 bytes once the bandwidth capacity has been determined.<BR>
 3.717 (1/05/2010) Fix a hashing bug affecting players reconnecting. Add RakPeerInterface::IsConnectionAttemptPending<BR>
+3.718 (02/04/2010) 64 bit fixes. Lower second attempt MTU detection to 1200. Skip MTU sends that will fail anyway. Add TeamBalancer plugin. Add threaded version of UPNP. Add signals and slots support for RPC3. Fix autopatcher building. Add Router2 plugin.<BR>
  </TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
 <img src="spacer.gif" width="8" height="1">See Also</td>

@@ -59,6 +59,8 @@ const char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#6eda78ce277dfa2575ec9d13a8c19b13">operator[]</a> (const unsigned int position) const </td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Character index. Do not use to change the string however. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#0516f3513b09234ea392419ca8344045">Find</a> (const char *stringToFind, size_t pos=0)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8a34592015f4dbedb01084bf592f146b"></a><!-- doxytag: member="RakNet::RakString::operator==" ref="8a34592015f4dbedb01084bf592f146b" args="(const RakString &amp;rhs) const " -->
 bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#8a34592015f4dbedb01084bf592f146b">operator==</a> (const <a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;rhs) const </td></tr>
 
@@ -79,6 +81,8 @@ const char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#65c2fce7fb202deed3e6b0b05b0d0b77">Set</a> (const char *format,...)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the value of the string. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1RakString.html">RakString</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#e31938d97fee2505f2d353e78f566a1c">Assign</a> (const char *str, size_t pos, size_t n)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e022e3749d4c3a40c81634ab1aea55ce"></a><!-- doxytag: member="RakNet::RakString::IsEmpty" ref="e022e3749d4c3a40c81634ab1aea55ce" args="(void) const " -->
 bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#e022e3749d4c3a40c81634ab1aea55ce">IsEmpty</a> (void) const </td></tr>
 
@@ -178,6 +182,10 @@ bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static <a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#6220f7e457fda28d722c83ee95d9baa9">NonVariadic</a> (const char *str)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="79f546baedf74c64a820297b40590250"></a><!-- doxytag: member="RakNet::RakString::ToInteger" ref="79f546baedf74c64a820297b40590250" args="(const char *str)" -->
+static unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#79f546baedf74c64a820297b40590250">ToInteger</a> (const char *str)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Has the string into an unsigned int. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#f2d5179a4683c4c47181fc4d3998cc9f">FreeMemory</a> (void)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e7c203a84b2d03b70d97a7bb79c6a84e"></a><!-- doxytag: member="RakNet::RakString::Serialize" ref="e7c203a84b2d03b70d97a7bb79c6a84e" args="(const char *str, BitStream *bs)" -->
@@ -206,6 +214,49 @@ static unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class=
 String class. 
 <p>
 Has the following improvements over std::string -Reference counting: Suitable to store in lists -Variadic assignment operator -Doesn't cause linker errors <hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="e31938d97fee2505f2d353e78f566a1c"></a><!-- doxytag: member="RakNet::RakString::Assign" ref="e31938d97fee2505f2d353e78f566a1c" args="(const char *str, size_t pos, size_t n)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classRakNet_1_1RakString.html">RakString</a> RakNet::RakString::Assign           </td>
+          <td>(</td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>str</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&nbsp;</td>
+          <td class="paramname"> <em>pos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&nbsp;</td>
+          <td class="paramname"> <em>n</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Sets a copy of a substring of str as the new content. The substring is the portion of str that begins at the character position pos and takes up to n characters (it takes less than n if the end of str is reached before). <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>str</em>&nbsp;</td><td>The string to copy in </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>pos</em>&nbsp;</td><td>The position on str to start the copy </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>n</em>&nbsp;</td><td>How many chars to copy </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>Returns the string, note that the current string is set to that value as well </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="b5bf3364843b0b354a28582e1b2f35d4"></a><!-- doxytag: member="RakNet::RakString::Deserialize" ref="b5bf3364843b0b354a28582e1b2f35d4" args="(BitStream *bs)" -->
 <div class="memitem">
 <div class="memproto">
@@ -266,6 +317,42 @@ Deserialize compressed string, written by SerializeCompressed <dl compact><dt><b
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true if the deserialization was successful </dd></dl>
 <dl class="pre" compact><dt><b>Precondition:</b></dt><dd><a class="el" href="classStringCompressor.html#2f022ecc1ff2bd74015a54e8261e442e" title="Used so I can allocate and deallocate this singleton at runtime.">StringCompressor::AddReference</a> must have been called to instantiate the class (Happens automatically from <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85" title="Starts the network threads and opens the listen port.">RakPeer::Startup()</a>) </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="0516f3513b09234ea392419ca8344045"></a><!-- doxytag: member="RakNet::RakString::Find" ref="0516f3513b09234ea392419ca8344045" args="(const char *stringToFind, size_t pos=0)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t RakNet::RakString::Find           </td>
+          <td>(</td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>stringToFind</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&nbsp;</td>
+          <td class="paramname"> <em>pos</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+String class find replacement Searches the string for the content specified in stringToFind and returns the position of the first occurrence in the string. Search only includes characters on or after position pos, ignoring any possible occurrences in previous locations. <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>stringToFind</em>&nbsp;</td><td>The string to find inside of this object's string </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>pos</em>&nbsp;</td><td>The position in the string to start the search </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>Returns the position of the first occurrence in the string. </dd></dl>
 
 </div>
 </div><p>
@@ -380,7 +467,7 @@ Serialize to a bitstream, compressed (better bandwidth usage) <dl compact><dt><b
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/RakString.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Jan 6 08:24:49 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 4 22:17:52 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

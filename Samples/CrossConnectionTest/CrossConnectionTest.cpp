@@ -17,7 +17,7 @@
 #include "BitStream.h"
 #include "GetTime.h"
 
-void main(void)
+int main()
 {
 	printf("An internal test to test two peers connecting to each other\n");
 	printf("at the same time.  This causes bugs so I fix them here\n");
@@ -155,4 +155,6 @@ void main(void)
 	}
 
 	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+
+	return 0;
 }

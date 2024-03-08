@@ -15,6 +15,7 @@
 #include "Kbhit.h"
 #include <stdio.h> // Printf
 #include "WindowsIncludes.h" // Sleep
+#include "RakSleep.h"
 
 void DoSpeedTest(PacketReliability packetReliability, unsigned sendSize);
 
@@ -22,10 +23,10 @@ RakNetTime currentTime, lastTime;
 unsigned messagesPerSecond,i,lastPrint;
 RakPeerInterface *peer1, *peer2;
 
-void main(void)
+int main()
 {
 	printf("Current implementations run out of memory before speed.\n");
-	return;
+	return 1;
 
 	peer1=RakNetworkFactory::GetRakPeerInterface();
 	peer2=RakNetworkFactory::GetRakPeerInterface();
@@ -59,6 +60,8 @@ void main(void)
 //	getch();
 	RakNetworkFactory::DestroyRakPeerInterface(peer1);
 	RakNetworkFactory::DestroyRakPeerInterface(peer2);
+
+	return 0;
 }
 
 void DoSpeedTest(PacketReliability packetReliability, unsigned sendSize)
@@ -76,7 +79,7 @@ void DoSpeedTest(PacketReliability packetReliability, unsigned sendSize)
 	peer2->Startup(1,0,&socketDescriptor, 1);
 	peer1->Connect("127.0.0.1", 1235, 0, 0);
 	peer2->Connect("127.0.0.1", 1234, 0, 0);
-	Sleep(500);
+	RakSleep(500);
 	
 	messagesPerSecond=1000;
 	lastTime=currentTime=RakNet::GetTime();
@@ -135,7 +138,7 @@ void DoSpeedTest(PacketReliability packetReliability, unsigned sendSize)
 			peer2->DeallocatePacket(p);
 			p=peer2->Receive();
 		}
-		Sleep(0);
+		RakSleep(0);
 	}
 
 	// This means that messages were added faster than they were acknowledged

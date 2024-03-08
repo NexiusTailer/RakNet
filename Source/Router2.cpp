@@ -82,7 +82,7 @@ bool Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLost
 	DataStructures::List<RakNetGUID> guids;
 	rakPeerInterface->GetSystemList(addresses, guids);
 	cr->requestState=R2RS_REQUEST_STATE_QUERY_FORWARDING;
-	cr->pingTimeout=RakNet::GetTimeMS()+largestPing*2;
+	cr->pingTimeout=RakNet::GetTimeMS()+largestPing*2+300;
 	cr->endpointGuid=endpointGuid;
 	cr->returnConnectionLostOnFailure=returnConnectionLostOnFailure;
 	for (unsigned int i=0; i < guids.Size(); i++)
@@ -135,25 +135,21 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
 				OnQueryForwarding(packet);
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 			}
-			break;
 		case ID_ROUTER_2_REPLY_FORWARDING:
 			{
 				OnQueryForwardingReply(packet);
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 			}
-			break;
 		case ID_ROUTER_2_REQUEST_FORWARDING:
 			{
 				OnRequestForwarding(packet);
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 			}
-			break;
 		case ID_ROUTER_2_FORWARDING_SUCCESS:
 			{
 				OnForwardingSuccess(packet);
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 			}
-			break;
 		}
 	}
 	else if (packet->data[0]==ID_OUT_OF_BAND_INTERNAL && packet->length>=2)
@@ -161,19 +157,28 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
 		switch (packet->data[1])
 		{
 			case ID_ROUTER_2_REPLY_TO_SENDER_PORT:
-				SendOOBFromRakNetPort(ID_ROUTER_2_MINI_PUNCH_REPLY, 0, packet->systemAddress);
-				return RR_STOP_PROCESSING_AND_DEALLOCATE;
+				{
+					RakNet::BitStream bsOut;
+					bsOut.Write(packet->guid);
+					SendOOBFromRakNetPort(ID_ROUTER_2_MINI_PUNCH_REPLY, &bsOut, packet->systemAddress);
+					return RR_STOP_PROCESSING_AND_DEALLOCATE;
+				}
 			case ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT:
-				bs.IgnoreBytes(2);
-				sa.binaryAddress=packet->systemAddress.binaryAddress;
-				bs.Read(sa.port);
-				SendOOBFromRakNetPort(ID_ROUTER_2_MINI_PUNCH_REPLY, 0, sa);
-				return RR_STOP_PROCESSING_AND_DEALLOCATE;
+				{
+					RakNet::BitStream bsOut;
+					bsOut.Write(packet->guid);
+					bs.IgnoreBytes(2);
+					sa.binaryAddress=packet->systemAddress.binaryAddress;
+					bs.Read(sa.port);
+					RakAssert(sa.port!=0);
+					SendOOBFromRakNetPort(ID_ROUTER_2_MINI_PUNCH_REPLY, &bsOut, sa);
+					return RR_STOP_PROCESSING_AND_DEALLOCATE;
+				}
 			case ID_ROUTER_2_MINI_PUNCH_REPLY:
-				// TODO:
-				// Problem: This message itself was forwarded. We want to create the socket but not forward it until reply success
-				// We also need to then read on the forwarding socket until forwarding begins
 				OnMiniPunchReply(packet);
+				return RR_STOP_PROCESSING_AND_DEALLOCATE;
+			case ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE:
+				OnMiniPunchReplyBounce(packet);
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 		}
 	}
@@ -290,7 +295,7 @@ void Router2::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetG
 	while (connectionRequestIndex < connectionRequests.Size())
 	{
 		unsigned int connectionRequestGuidIndex = connectionRequests[connectionRequestIndex]->GetGuidIndex(rakNetGUID);
-		if (connectionRequestGuidIndex>=0)
+		if (connectionRequestGuidIndex!=(unsigned int)-1)
 		{
 			connectionRequests[connectionRequestIndex]->connectionRequestSystems.RemoveAtIndexFast(connectionRequestGuidIndex);
 			if (UpdateForwarding(connectionRequestIndex)==false)
@@ -516,12 +521,13 @@ void Router2::OnQueryForwardingReply(Packet *packet)
 		RemoveConnectionRequest(connectionRequestIndex);
 	}
 }
-void Router2::SendForwardingSuccess(RakNetGUID sourceGuid, RakNetGUID endpointGuid)
+void Router2::SendForwardingSuccess(RakNetGUID sourceGuid, RakNetGUID endpointGuid, unsigned short sourceToDstPort)
 {
 	RakNet::BitStream bsOut;
 	bsOut.Write((MessageID)ID_ROUTER_2_INTERNAL);
 	bsOut.Write((unsigned char) ID_ROUTER_2_FORWARDING_SUCCESS);
 	bsOut.Write(endpointGuid);
+	bsOut.Write(sourceToDstPort);
 	rakPeerInterface->Send(&bsOut,MEDIUM_PRIORITY,RELIABLE_ORDERED,0,sourceGuid,false);
 }
 void Router2::SendOOBFromRakNetPort(OutOfBandIdentifiers oob, BitStream *extraData, SystemAddress sa)
@@ -556,11 +562,13 @@ void Router2::SendOOBMessages(Router2::MiniPunchRequest *mpr)
 	// Tell source to send to srcToDestPort
 	RakNet::BitStream extraData;
 	extraData.Write(mpr->srcToDestPort);
+	RakAssert(mpr->srcToDestPort!=0);
 	SendOOBFromRakNetPort(ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT, &extraData, mpr->sourceAddress);
 
 	// Tell destination to send to destToSourcePort
 	extraData.Reset();
 	extraData.Write(mpr->destToSourcePort);
+	RakAssert(mpr->destToSourcePort);
 	SendOOBFromRakNetPort(ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT, &extraData, mpr->endpointAddress);
 }
 void Router2::OnRequestForwarding(Packet *packet)
@@ -588,7 +596,7 @@ void Router2::OnRequestForwarding(Packet *packet)
 
 	if (result==UDPFORWARDER_FORWARDING_ALREADY_EXISTS)
 	{
-		SendForwardingSuccess(packet->guid, endpointGuid);
+		SendForwardingSuccess(packet->guid, endpointGuid, srcToDestPort);
 	}
 	else if (result==UDPFORWARDER_NO_SOCKETS || result==UDPFORWARDER_INVALID_PARAMETERS)
 	{
@@ -614,19 +622,16 @@ void Router2::OnRequestForwarding(Packet *packet)
 		int ping1 = rakPeerInterface->GetAveragePing(packet->guid);
 		int ping2 = rakPeerInterface->GetAveragePing(endpointGuid);
 		if (ping1>ping2)
-			miniPunchRequest.timeout=RakNet::GetTimeMS()+ping1*3+300;
+			miniPunchRequest.timeout=RakNet::GetTimeMS()+ping1*8+300;
 		else
-			miniPunchRequest.timeout=RakNet::GetTimeMS()+ping2*3+300;
+			miniPunchRequest.timeout=RakNet::GetTimeMS()+ping2*8+300;
 		miniPunchRequest.nextAction=RakNet::GetTimeMS()+100;
 		SendOOBMessages(&miniPunchRequest);
 		miniPunchesInProgress.Push(miniPunchRequest,__FILE__,__LINE__);
 	}
 }
-void Router2::OnMiniPunchReply(Packet *packet)
+void Router2::OnMiniPunchReplyBounce(Packet *packet)
 {
-	RakNet::BitStream bs(packet->data, packet->length, false);
-	bs.IgnoreBytes(sizeof(MessageID) + sizeof(unsigned char));
-
 	// Find stored punch request
 	unsigned int i=0;
 	while (i < miniPunchesInProgress.Size())
@@ -640,7 +645,7 @@ void Router2::OnMiniPunchReply(Packet *packet)
 			if (miniPunchesInProgress[i].gotReplyFromEndpoint==true &&
 				miniPunchesInProgress[i].gotReplyFromSource==true)
 			{
-				SendForwardingSuccess(miniPunchesInProgress[i].sourceGuid, miniPunchesInProgress[i].endpointGuid);
+				SendForwardingSuccess(miniPunchesInProgress[i].sourceGuid, miniPunchesInProgress[i].endpointGuid, miniPunchesInProgress[i].srcToDestPort);
 				miniPunchesInProgress.RemoveAtIndexFast(i);
 			}
 			else
@@ -652,12 +657,22 @@ void Router2::OnMiniPunchReply(Packet *packet)
 			i++;
 	}
 }
+void Router2::OnMiniPunchReply(Packet *packet)
+{
+	RakNet::BitStream bs(packet->data, packet->length, false);
+	bs.IgnoreBytes(sizeof(MessageID) + sizeof(unsigned char));
+	RakNetGUID routerGuid;
+	bs.Read(routerGuid);
+	SendOOBFromRakNetPort(ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE, 0, rakPeerInterface->GetSystemAddressFromGuid(routerGuid));
+}
 void Router2::OnForwardingSuccess(Packet *packet)
 {
 	RakNet::BitStream bs(packet->data, packet->length, false);
 	bs.IgnoreBytes(sizeof(MessageID) + sizeof(unsigned char));
 	RakNetGUID endpointGuid;
 	bs.Read(endpointGuid);
+	unsigned short sourceToDestPort;
+	bs.Read(sourceToDestPort);
 
 	unsigned int forwardingIndex;
 	for (forwardingIndex=0; forwardingIndex < forwardedConnectionList.Size(); forwardingIndex++)
@@ -676,13 +691,14 @@ void Router2::OnForwardingSuccess(Packet *packet)
 	{
 		char ipAddressString[32];
 		packet->systemAddress.ToString(false, ipAddressString);
-		rakPeerInterface->Connect(ipAddressString, packet->systemAddress.port, 0,0);
+		rakPeerInterface->Connect(ipAddressString, sourceToDestPort, 0,0);
 
 		// removeFrom connectionRequests;
 		unsigned int connectionRequestIndex = GetConnectionRequestIndex(endpointGuid);
 		ForwardedConnection fc;
 		fc.endpointGuid=endpointGuid;
 		fc.intermediaryAddress=packet->systemAddress;
+		fc.intermediaryAddress.port=sourceToDestPort;
 		fc.intermediaryGuid=packet->guid;
 		fc.returnConnectionLostOnFailure=connectionRequests[connectionRequestIndex]->returnConnectionLostOnFailure;
 		// add to forwarding list

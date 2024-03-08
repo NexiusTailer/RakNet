@@ -179,11 +179,39 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\CommonFunctions.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ComprehensiveConvertTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CompressionConvertTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ConnectWithSocketTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CrossConnectionConvertTest.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DebugTools.cpp"
 				>
 			</File>
 			<File
+				RelativePath=".\DroppedConnectionConvertTest.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\EightPeerTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LocalIsConnectedTest.cpp"
 				>
 			</File>
 			<File
@@ -203,6 +231,26 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MiscellaneousTestsTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OfflineMessagesConvertTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PacketAndLowLevelTestsTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PacketChangerPlugin.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PacketDropPlugin.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PeerConnectDisconnectTest.cpp"
 				>
 			</File>
@@ -211,7 +259,31 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ReliableOrderedTest.cpp"
+				RelativePath=".\PingTestsTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RakTimer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ReliableOrderedConvertedTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RouterInterfaceTester.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SecurityFunctionsTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SystemAddressAndGuidTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestHelpers.cpp"
 				>
 			</File>
 			<File
@@ -229,7 +301,31 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\CommonFunctions.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ComprehensiveConvertTest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CompressionConvertTest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ConnectWithSocketTest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CrossConnectionConvertTest.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DebugTools.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DroppedConnectionConvertTest.h"
 				>
 			</File>
 			<File
@@ -238,6 +334,10 @@
 			</File>
 			<File
 				RelativePath=".\IncludeAllTests.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LocalIsConnectedTest.h"
 				>
 			</File>
 			<File
@@ -257,6 +357,26 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MiscellaneousTestsTest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OfflineMessagesConvertTest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PacketAndLowLevelTestsTest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PacketChangerPlugin.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PacketDropPlugin.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PeerConnectDisconnectTest.h"
 				>
 			</File>
@@ -265,7 +385,31 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ReliableOrderedTest.h"
+				RelativePath=".\PingTestsTest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\RakTimer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ReliableOrderedConvertedTest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\RouterInterfaceTester.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SecurityFunctionsTest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SystemAddressAndGuidTest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TestHelpers.h"
 				>
 			</File>
 			<File

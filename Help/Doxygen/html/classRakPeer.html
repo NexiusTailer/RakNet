@@ -896,7 +896,7 @@ The connection is successful when <a class="el" href="classRakPeer.html#ca0cb46f
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>timeoutTime</em>&nbsp;</td><td>Time to elapse before dropping the connection if a reliable message could not be sent. 0 to use the default value from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS); </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True on successful initiation. False on incorrect parameters, internal error, or too many existing peers. </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True on successful initiation. False if you are already connected to this system, a connection to the system is pending, the domain name cannot be resolved, incorrect parameters, internal error, or too many existing peers. </dd></dl>
 <dl class="note" compact><dt><b>Note:</b></dt><dd>Returning true does not mean you are connected! </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#8d7ac1a40bbaa75455fb262d80b311a8">RakPeerInterface</a>.</p>
@@ -3666,7 +3666,7 @@ This is an array of pointers to RemoteSystemStruct This allows us to preallocate
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="RakPeer_8h.html">RakPeer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Jan 6 08:24:48 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Feb 4 22:17:51 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

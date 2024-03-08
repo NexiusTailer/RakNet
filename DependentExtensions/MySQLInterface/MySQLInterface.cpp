@@ -4,6 +4,15 @@
 #include "FormatString.h"
 #include "LinuxStrings.h"
 
+
+
+#ifdef _WIN32
+#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+
+#else
+#include <stdlib.h>//atoi
+#endif
+
 #ifdef _WIN32
 #include <Winsock2.h>
 #endif

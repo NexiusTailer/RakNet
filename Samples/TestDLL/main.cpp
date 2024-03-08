@@ -24,7 +24,7 @@ void MyFree (void *p)
 
 
 // This project is used to test the DLL system to make sure necessary classes are exported
-void main(void)
+int main()
 {
 	// Just test allocation and deallocation across the DLL.  If it crashes it failed, otherwise it worked.
 	ConsoleServer* a=RakNetworkFactory::GetConsoleServer( );
@@ -61,5 +61,6 @@ void main(void)
 	RakNetworkFactory::DestroyRakPeerInterface(f);
 	RakNetworkFactory::DestroyRouter(g);
 	RakNetworkFactory::DestroyConnectionGraph(h);
+	return 0;
 }
 

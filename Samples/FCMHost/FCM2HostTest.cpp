@@ -16,7 +16,7 @@
 
 RakPeerInterface *rakPeer;
 
-void main(void)
+int main()
 {
 	FullyConnectedMesh2 fcm2;
 	ConnectionGraph2 cg2;
@@ -107,4 +107,5 @@ void main(void)
 	}
 
 	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+	return 0;
 }
