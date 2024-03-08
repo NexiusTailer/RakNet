@@ -119,7 +119,8 @@ int main(void)
 	printf("\nMy IP addresses:\n");
 	for (unsigned int i=0; i < server->GetNumberOfAddresses(); i++)
 	{
-		printf("%i. %s\n", i+1, server->GetLocalIP(i));
+		RakNet::SystemAddress sa = server->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS, i);
+		printf("%i. %s (LAN=%i)\n", i+1, sa.ToString(false), sa.IsLANAddress());
 	}
 
 	printf("\nMy GUID is %s\n", server->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());

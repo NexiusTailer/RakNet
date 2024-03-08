@@ -31,6 +31,9 @@
 #include "Itoa.h"
 #include "SocketLayer.h"
 #include "SocketDefines.h"
+#if (defined(__GNUC__)  || defined(__GCCXML__)) && !defined(__WIN32__)
+#include <netdb.h>
+#endif
 
 #ifdef _DO_PRINTF
 #endif
@@ -1170,7 +1173,18 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 								incomingMessage->data = (unsigned char*) rakMalloc_Ex( len+1, _FILE_AND_LINE_ );
 								memcpy(incomingMessage->data, data, len);
 								incomingMessage->data[len]=0; // Null terminate this so we can print it out as regular strings.  This is different from RakNet which does not do this.
-//								printf("RECV: %s\n",incomingMessage->data);
+								// printf("RECV: %s\n",incomingMessage->data);
+								/*
+								if (1)
+								{
+									static FILE *fp=0;
+									if (fp==0)
+									{
+										fp = fopen("tcpRcv.txt", "wb");
+									}
+									fwrite(data,1,len,fp);
+								}
+								*/
 								incomingMessage->length=len;
 								incomingMessage->deleteData=true; // actually means came from SPSC, rather than AllocatePacket
 								incomingMessage->systemAddress=sts->remoteClients[i].systemAddress;
@@ -1287,7 +1301,7 @@ void RemoteClient::SendOrBuffer(const char **data, const unsigned int *lengths, 
 	}
 }
 #if OPEN_SSL_CLIENT_SUPPORT==1
-void RemoteClient::InitSSL(SSL_CTX* ctx, SSL_METHOD *meth)
+bool RemoteClient::InitSSL(SSL_CTX* ctx, SSL_METHOD *meth)
 {
 	(void) meth;
 
@@ -1296,13 +1310,21 @@ void RemoteClient::InitSSL(SSL_CTX* ctx, SSL_METHOD *meth)
 	int res;
 	res = SSL_set_fd (ssl, socket);
 	if (res!=1)
+	{
 		printf("SSL_set_fd error: %s\n", ERR_reason_error_string(ERR_get_error()));
+		SSL_free(ssl);
+		ssl=0;
+		return false;
+	}
 	RakAssert(res==1);
 	res = SSL_connect (ssl);
 	if (res<0)
 	{
 		unsigned long err = ERR_get_error();
 		printf("SSL_connect error: %s\n", ERR_reason_error_string(err));
+		SSL_free(ssl);
+		ssl=0;
+		return false;
 	}
 	else if (res==0)
 	{
@@ -1348,7 +1370,14 @@ void RemoteClient::InitSSL(SSL_CTX* ctx, SSL_METHOD *meth)
 		}
 
 	}
-	RakAssert(res==1);
+
+	if (res!=1)
+	{
+		SSL_free(ssl);
+		ssl=0;
+		return false;
+	}
+	return true;
 }
 void RemoteClient::DisconnectSSL(void)
 {

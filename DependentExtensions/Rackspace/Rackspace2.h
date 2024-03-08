@@ -43,7 +43,7 @@ namespace RakNet
 	{
 	public:
 		virtual void OnTCPFailure(void)=0;
-		virtual void OnTransmissionFailed(RakString postStr, RakString authURLDomain)=0;
+		virtual void OnTransmissionFailed(HTTPConnection2 *httpConnection2, RakString postStr, RakString authURLDomain)=0;
 		virtual void OnResponse(Rackspace2ResponseCode r2rc, RakString responseReceived, int contentOffset)=0;
 		virtual void OnEmptyResponse(RakString stringTransmitted)=0;
 		virtual void OnMessage(const char *message, RakString responseReceived, RakString stringTransmitted, int contentOffset)=0;

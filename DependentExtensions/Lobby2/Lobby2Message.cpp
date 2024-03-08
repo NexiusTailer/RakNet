@@ -286,7 +286,7 @@ bool Lobby2Message::ValidateEmailAddress( RakString *text )
 	return true;
 }
 bool Lobby2Message::PrevalidateInput(void) {return true;}
-bool Lobby2Message::ClientImpl( RakNet::Lobby2Plugin *client) { (void)client; resultCode=L2RC_UNSUPPORTED_PLATFORM; return true; }
+bool Lobby2Message::ClientImpl( RakNet::Lobby2Plugin *client) { (void)client; return true; }
 bool Lobby2Message::ServerPreDBMemoryImpl( Lobby2Server *server, RakString userHandle ) { (void)server; (void)userHandle; return false; }
 void Lobby2Message::ServerPostDBMemoryImpl( Lobby2Server *server, RakString userHandle ) { (void)server; (void)userHandle; }
 bool Lobby2Message::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface ) { (void)command; (void)databaseInterface; resultCode=L2RC_COUNT; return true; }

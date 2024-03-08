@@ -74,6 +74,8 @@ Inheritance diagram for RakNet::NatPunchthroughClient:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:ab830402dee86fc7b557e098f4ccdd4f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#ab830402dee86fc7b557e098f4ccdd4f1">FindRouterPortStride</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;facilitator)</td></tr>
+<tr class="separator:ab830402dee86fc7b557e098f4ccdd4f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92dbda7c976d5973c5cd6a3e0aea95c0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#a92dbda7c976d5973c5cd6a3e0aea95c0">OpenNAT</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> destination, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;facilitator)</td></tr>
 <tr class="separator:a92dbda7c976d5973c5cd6a3e0aea95c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6131cc61e5af13399db4358fbb7b0d15"><td class="memItemLeft" align="right" valign="top">PunchthroughConfiguration *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#a6131cc61e5af13399db4358fbb7b0d15">GetPunchthroughConfiguration</a> (void)</td></tr>
@@ -135,6 +137,29 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
  Will simultaneously connect with another client once ports are estimated. </p>
 <dl class="section see"><dt>See Also</dt><dd><a class="el" href="classRakNet_1_1NatTypeDetectionClient.html" title="Client code for NatTypeDetection.">NatTypeDetectionClient</a> See also <a href="http://www.jenkinssoftware.com/raknet/manual/natpunchthrough.html">http://www.jenkinssoftware.com/raknet/manual/natpunchthrough.html</a> </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="ab830402dee86fc7b557e098f4ccdd4f1"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::NatPunchthroughClient::FindRouterPortStride </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&#160;</td>
+          <td class="paramname"><em>facilitator</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>If the instance of <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> running NATPunchthroughServer was bound to two IP addresses, then you can call <a class="el" href="classRakNet_1_1NatPunchthroughClient.html#ab830402dee86fc7b557e098f4ccdd4f1">FindRouterPortStride()</a> This will determine the stride that your router uses when assigning ports, if your router is full-cone This function is also called automatically when you call OpenNAT - however, calling it earlier when you are connected to the facilitator will speed up the process </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">destination</td><td>The system to punch. Must already be connected to <em>facilitator</em> </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a6131cc61e5af13399db4358fbb7b0d15"></a>
 <div class="memitem">
 <div class="memproto">
@@ -352,7 +377,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu May 30 2013 11:46:14 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Aug 20 2013 22:51:59 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

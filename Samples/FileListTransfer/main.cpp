@@ -173,7 +173,7 @@ int main()
 #endif
 		return 1;
 	}
-	fileList.AddFile(file.C_String(), file.C_String(), 0, fileLength, fileLength, FileListNodeContext(0,0), true);
+	fileList.AddFile(file.C_String(), file.C_String(), 0, fileLength, fileLength, FileListNodeContext(0,0,0,0), true);
 	// Wait for the connection
 	printf("File added.\n");
 	RakSleep(100);

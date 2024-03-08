@@ -20,9 +20,14 @@ using namespace RakNet;
 #define NUM_PEERS 4
 RakNet::RakPeerInterface *rakPeer[NUM_PEERS];
 
+class FullyConnectedMesh2_UserData : public FullyConnectedMesh2
+{
+	virtual void WriteVJCUserData(RakNet::BitStream *bsOut) {bsOut->Write(RakString("test"));}
+};
+
 int main()
 {
-	FullyConnectedMesh2 fcm2[NUM_PEERS];
+	FullyConnectedMesh2_UserData fcm2[NUM_PEERS];
 
 	for (int i=0; i < NUM_PEERS; i++)
 	{
@@ -101,8 +106,16 @@ int main()
 					break;
 
 				case ID_FCM2_VERIFIED_JOIN_CAPABLE:
-					printf("%s: ID_FCM2_VERIFIED_JOIN_CAPABLE from %s\n", rakPeer[peerIndex]->GetMyGUID().ToString(), packet->guid.ToString());
-					fcm2[peerIndex].RespondOnVerifiedJoinCapable(packet, true, 0);
+					{
+						RakNet::BitStream bs(packet->data,packet->length,false);
+						FullyConnectedMesh2::SkipToVJCUserData(&bs);
+						RakString testStr;
+						bs.Read(testStr);
+
+						printf("%s: ID_FCM2_VERIFIED_JOIN_CAPABLE from %s\n", rakPeer[peerIndex]->GetMyGUID().ToString(), packet->guid.ToString());
+						printf("STR: %s\n", testStr.C_String());
+						fcm2[peerIndex].RespondOnVerifiedJoinCapable(packet, true, 0);
+					}
 					break;
 
 				case ID_FCM2_VERIFIED_JOIN_ACCEPTED:

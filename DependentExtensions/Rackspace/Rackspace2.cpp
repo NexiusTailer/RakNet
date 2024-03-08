@@ -27,18 +27,18 @@ void Rackspace2::Update(void)
 	sa = tcp->HasCompletedConnectionAttempt();
 	if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
 	{
-		printf("Rackspace2 TCP: Connected to %s\n", sa.ToString());
+		//printf("Rackspace2 TCP: Connected to %s\n", sa.ToString());
 //		serverAddress = sa;
 	}
 	for (packet = tcp->Receive(); packet; tcp->DeallocatePacket(packet), packet = tcp->Receive())
 		;
 	sa = tcp->HasFailedConnectionAttempt();
-	if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
-		printf("Rackspace2 TCP: Failed connection attempt to %s\n", sa.ToString());
+	//if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
+	//	printf("Rackspace2 TCP: Failed connection attempt to %s\n", sa.ToString());
 	sa = tcp->HasLostConnection();
 	if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
 	{
-		printf("Rackspace2 TCP: Lost connection to %s\n", sa.ToString());
+		//printf("Rackspace2 TCP: Lost connection to %s\n", sa.ToString());
 		//		serverAddress=UNASSIGNED_SYSTEM_ADDRESS;
 	}
 
@@ -244,11 +244,11 @@ void Rackspace2::AddOperation(RakNet::RakString URL, OpType opType, json_t *data
 	else
 		requestStr = RakString::FormatForPUT(URL, "application/json", jsonStr, extraBody);
 
-	bool b = httpConnection2->TransmitRequest(requestStr,authURLDomain, 443);
+	bool b = httpConnection2->TransmitRequest(requestStr,authURLDomain, 443, true);
 	if (!b)
 	{
 		if (eventCallback)
-			eventCallback->OnTransmissionFailed(requestStr, authURLDomain);
+			eventCallback->OnTransmissionFailed(httpConnection2, requestStr, authURLDomain);
 	}
 	if (data)
 	{

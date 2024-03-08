@@ -700,7 +700,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Set the host that will perform balancing calculations and send notifications. </p>
 <p>Operations that can cause conflicts due to latency, such as joining teams, are operated on by the host. The result is sent to all systems added with <a class="el" href="classRakNet_1_1TM__World.html#a75531795fd1adc74d7edae660c4ecc17" title="Add a new system to send team and team member updates to.">AddParticipant()</a> For a client/server game, call <a class="el" href="classRakNet_1_1TM__World.html#a8de7c1244f4b38d2ad612c3c98d614ca" title="Set the host that will perform balancing calculations and send notifications.">SetHost()</a> with the server's <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> value on all systems (including the server itself). If you call TeamManager::SetTopology(TM_CLIENT_SERVER), the server will also relay messages between participants. For a peer to peer game, call <a class="el" href="classRakNet_1_1TM__World.html#a8de7c1244f4b38d2ad612c3c98d614ca" title="Set the host that will perform balancing calculations and send notifications.">SetHost()</a> on the same peer when host migration occurs. Use TeamManager::SetTopology(TM_PEER_TO_PEER) in this case. </p>
-<dl class="section note"><dt>Note</dt><dd>If using <a class="el" href="classRakNet_1_1FullyConnectedMesh2.html" title="Fully connected mesh plugin, revision 2.">FullyConnectedMesh2</a>, <a class="el" href="classRakNet_1_1TM__World.html#a8de7c1244f4b38d2ad612c3c98d614ca" title="Set the host that will perform balancing calculations and send notifications.">SetHost()</a> is called automatically when ID_FCM2_NEW_HOST is returned. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If using FullyConnectedMesh2, <a class="el" href="classRakNet_1_1TM__World.html#a8de7c1244f4b38d2ad612c3c98d614ca" title="Set the host that will perform balancing calculations and send notifications.">SetHost()</a> is called automatically when ID_FCM2_NEW_HOST is returned. </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">_hostGuid</td><td>The host, which is the system that will serialize and resolve team disputes and calculate team balancing. </td></tr>
@@ -716,7 +716,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu May 30 2013 11:46:15 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Aug 20 2013 22:52:00 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

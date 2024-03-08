@@ -655,6 +655,20 @@ ReplicaManager3: Calling Reference twice on the same Replica3 will no longer ass
 StatisticsHistory: Fix recent sum of squares
 HTTPConnection2: Fix IPV6
 ComprehensivePCGame: now uses asynch UPNP check
+4.08 (7/9/13)
+NatPunchthroughServer: Fixed crash when the sender guid is equal to the recipient guid
+HTTPConnection2: Now supports chunked responses
+Lobby2: Fix always returning resultCode=L2RC_UNSUPPORTED_PLATFORM; on the PC
+MasterServer2: Use JSON_PRESERVE_ORDER when using SSL
+PS4: Updated sample to work with current SDK. Fixed incorrect endian reporting
+FullyConnectedMesh2: Add SkipToVJCUserData(), WriteVJCUserData() in case the user wants to add data to verified join responses
+NATPuncthroughClient: Detect port stride and better estimate future router port mappings
+NetworkIDManager: Add Clear() function
+RakSleep (affects RakPeer and others): Fix memory leak on Linux
+RandSync: Added, use with ReplicaManager3 to synch random number generators
+ReplicaManager3: Minor fixes
+SocketLayer: Add #include netdb.h for Linux compilation
+Documentation: Improved NAT traversal architecture
 </pre>
 <BR>
 </p></TD></TR></TABLE>

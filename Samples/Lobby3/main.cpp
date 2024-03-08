@@ -25,7 +25,10 @@ void main_RakNet(void)
 	//const char *serverURL = "lobby3.raknet.com";
 	//const unsigned int serverPort=80;
 	//const unsigned int serverPort=8888;
-	const unsigned int serverPort=443;
+	//const bool useSSL=true;
+	const bool useSSL=false;
+	//const unsigned int serverPort=443;
+	const unsigned int serverPort=8080;
 
 
 
@@ -36,17 +39,17 @@ void main_RakNet(void)
 	json_object_set(jsonObject, "__appId", json_string("defaultAppId1"));
 	json_object_set(jsonObject, "__customTableId", json_string("defaultCustomTableId"));
 	json_object_set(jsonObject, "__timeToLiveSec", json_integer(0));
-	json_object_set(jsonObject, "__timeToIdleSec", json_integer(0));
+	json_object_set(jsonObject, "__timeToIdleSec", json_integer(6000));
 	json_object_set(jsonObject, "__key", json_integer(0));
 	json_object_set(jsonObject, "__mergeMode", json_string("OVERWRITE_EXISTING"));
-	json_object_set(jsonObject, "__autoFields", json_string("svrTimestamp,svrIP,svrSerial,svrGeoIP"));
+	//json_object_set(jsonObject, "__autoFields", json_string("svrTimestamp,svrIP,svrSerial,svrGeoIP"));
 	json_object_set(jsonObject, "__fieldMetadata", json_string("sampleField1Key(_ownerRW,_putMin),sampleField2Key(_userRW,_putSum)"));
 	json_object_set(jsonObject, "__protocol", json_integer(0));
 	json_object_set(jsonObject, "sampleField1Key", json_integer(1));
 	json_object_set(jsonObject, "sampleField2Key", json_integer(2));
 
 	// JSON_COMPACT is required or it won't match json-lib
-	char *jsonStr = json_dumps(jsonObject, JSON_COMPACT);
+	char *jsonStr = json_dumps(jsonObject, JSON_COMPACT | JSON_PRESERVE_ORDER);
 	printf(jsonStr);
 
 
@@ -59,7 +62,7 @@ void main_RakNet(void)
 	int bytesWritten = Base64Encoding(output, sizeof(output), outputBase64);
 	//outputBase64[bytesWritten]=0;
 	json_object_set(jsonObject, "__hash", json_string(outputBase64));
-	jsonStr = json_dumps(jsonObject, 0);
+	jsonStr = json_dumps(jsonObject, JSON_COMPACT | JSON_PRESERVE_ORDER);
 
 	// GAE SSL https://developers.google.com/appengine/docs/ssl
 	char URI[128];
@@ -76,8 +79,9 @@ void main_RakNet(void)
 	RakSleep(100);
 	SystemAddress serverAddr = tcp->HasCompletedConnectionAttempt();
 	RakAssert(serverAddr!=UNASSIGNED_SYSTEM_ADDRESS);
-	tcp->StartSSLClient(serverAddr);
-//	tcp->Send(rspost.C_String(), rspost.GetLength(), serverAddr, false);
+	if (useSSL)
+		tcp->StartSSLClient(serverAddr);
+	tcp->Send(rspost.C_String(), rspost.GetLength(), serverAddr, false);
 	RakSleep(1000);
 	Packet *p;
 	

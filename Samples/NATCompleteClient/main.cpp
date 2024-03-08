@@ -24,7 +24,7 @@
 
 using namespace RakNet;
 
-#define RAKPEER_PORT 0
+#define DEFAULT_RAKPEER_PORT 50000
 #define RAKPEER_PORT_STR "0"
 #define DEFAULT_SERVER_PORT "61111"
 #define DEFAULT_SERVER_ADDRESS "natpunch.jenkinssoftware.com"
@@ -37,10 +37,10 @@ enum SampleResult
 };
 
 #define SUPPORT_UPNP FAILED
-#define SUPPORT_NAT_TYPE_DETECTION PENDING
+#define SUPPORT_NAT_TYPE_DETECTION FAILED
 #define SUPPORT_NAT_PUNCHTHROUGH PENDING
-#define SUPPORT_ROUTER2 PENDING
-#define SUPPORT_UDP_PROXY PENDING
+#define SUPPORT_ROUTER2 FAILED
+#define SUPPORT_UDP_PROXY FAILED
 
 struct SampleFramework
 {
@@ -142,6 +142,11 @@ SystemAddress ConnectBlocking(RakNet::RakPeerInterface *rakPeer, const char *hos
 			if (packet->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
 			{
 				return packet->systemAddress;
+			}
+			else if (packet->data[0]==ID_NO_FREE_INCOMING_CONNECTIONS)
+			{
+				printf("ID_NO_FREE_INCOMING_CONNECTIONS");
+				return RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 			}
 			else
 			{
@@ -348,6 +353,8 @@ struct NatTypeDetectionFramework : public SampleFramework
 
 struct NatPunchthoughClientFramework : public SampleFramework, public NatPunchthroughDebugInterface_Printf
 {
+	SystemAddress serverAddress;
+
 	// Set to FAILED to skip this test
 	NatPunchthoughClientFramework() { sampleResult=SUPPORT_NAT_PUNCHTHROUGH; npClient=0;}
 	virtual const char * QueryName(void) {return "NatPunchthoughClientFramework";}
@@ -359,7 +366,7 @@ struct NatPunchthoughClientFramework : public SampleFramework, public NatPunchth
 	{
 		if (sampleResult==FAILED) return;
 
-		SystemAddress serverAddress=SelectAmongConnectedSystems(rakPeer, "NatPunchthroughServer");
+		serverAddress=SelectAmongConnectedSystems(rakPeer, "NatPunchthroughServer");
 		if (serverAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 		{
 			serverAddress=ConnectBlocking(rakPeer, "NatPunchthroughServer", DEFAULT_SERVER_ADDRESS, DEFAULT_SERVER_PORT);
@@ -370,14 +377,15 @@ struct NatPunchthoughClientFramework : public SampleFramework, public NatPunchth
 				return;
 			}
 		}
-		
-		char guid[128];
-		printf("Enter RakNetGuid of the remote system, which should have already connected\nto the server.\nOr press enter to just listen.\n");
-		Gets(guid,sizeof(guid));
+
 		npClient = new NatPunchthroughClient;
 		npClient->SetDebugInterface(this);
 		rakPeer->AttachPlugin(npClient);
 
+
+		char guid[128];
+		printf("Enter RakNetGuid of the remote system, which should have already connected\nto the server.\nOr press enter to just listen.\n");
+		Gets(guid,sizeof(guid));
 		if (guid[0])
 		{
 			RakNetGUID remoteSystemGuid;
@@ -392,6 +400,10 @@ struct NatPunchthoughClientFramework : public SampleFramework, public NatPunchth
 			printf("Listening\n");
 			printf("My GUID is %s\n", rakPeer->GetMyGUID().ToString());
 			isListening=true;
+
+			// Find the stride of our router in advance
+			npClient->FindRouterPortStride(serverAddress);
+
 		}
 	}
 
@@ -443,7 +455,22 @@ struct NatPunchthoughClientFramework : public SampleFramework, public NatPunchth
 				printf("NAT punch success to remote system %s.\n", packet->systemAddress.ToString(true));
 			else
 				printf("NAT punch success from remote system %s.\n", packet->systemAddress.ToString(true));
-			sampleResult=SUCCEEDED;
+
+			char guid[128];
+			printf("Enter RakNetGuid of the remote system, which should have already connected.\nOr press enter to quit.\n");
+			Gets(guid,sizeof(guid));
+			if (guid[0])
+			{
+				RakNetGUID remoteSystemGuid;
+				remoteSystemGuid.FromString(guid);
+				npClient->OpenNAT(remoteSystemGuid, serverAddress);
+			
+				timeout=RakNet::GetTimeMS() + 10000;
+			}
+			else
+			{
+				sampleResult=SUCCEEDED;
+			}
 		}
 	}
 	virtual void Update(RakNet::RakPeerInterface *rakPeer)
@@ -695,7 +722,7 @@ void PrintPacketMessages(Packet *packet, RakPeerInterface *rakPeer)
 		break;
 
 	case ID_CONNECTION_LOST:
-		printf("ID_CONNECTION_LOST\n");
+		printf("ID_CONNECTION_LOST from %s\n", packet->systemAddress.ToString(true));
 		break;
 
 	case ID_CONNECTION_REQUEST_ACCEPTED:
@@ -718,11 +745,18 @@ enum FeatureList
 int main(void)
 {
 	RakNet::RakPeerInterface *rakPeer=RakNet::RakPeerInterface::GetInstance();
-	RakNet::SocketDescriptor sd(RAKPEER_PORT,0);
+	printf("Enter local port, or press enter for default: ");
+	char buff[64];
+	Gets(buff,sizeof(buff));
+	unsigned short port = DEFAULT_RAKPEER_PORT;
+	if (buff[0]!=0)
+		port = atoi(buff);
+	RakNet::SocketDescriptor sd(port,0);
 	if (rakPeer->Startup(32,&sd,1)!=RakNet::RAKNET_STARTED)
 	{
 		printf("Failed to start rakPeer! Quitting\n");
 		RakNet::RakPeerInterface::DestroyInstance(rakPeer);
+		getch();
 		return 1;
 	}
 	rakPeer->SetMaximumIncomingConnections(32);
@@ -750,7 +784,7 @@ int main(void)
 	printf("\nDo you have a server running the NATCompleteServer project? (y/n): ");
 
 	char responseLetter=getche();
-	bool hasServer=responseLetter=='y' || responseLetter=='Y';
+	bool hasServer=responseLetter=='y' || responseLetter=='Y' || responseLetter==' ';
 	printf("\n");
 	if (hasServer==false)
 		printf("Note: Only UPNP and Router2 are supported without a server\nYou may want to consider using the Lobby2/Steam project. They host the\nservers for you.\n\n");
@@ -768,6 +802,7 @@ int main(void)
 			if (currentStage==FEATURE_LIST_COUNT)
 			{
 				printf("Connectivity not possible. Exiting\n");
+				getch();
 				return 1;
 			}
 		}
@@ -810,6 +845,7 @@ int main(void)
 						printf("Connectivity not possible. Exiting\n");
 						rakPeer->Shutdown(100);
 						RakNet::RakPeerInterface::DestroyInstance(rakPeer);
+						getch();
 						return 1;
 					}
 					else
@@ -844,6 +880,7 @@ int main(void)
 						printf("Press enter to quit.\n");
 						char temp[32];
 						Gets(temp,sizeof(temp));
+						getch();
 						return 1;
 					}
 
@@ -874,15 +911,17 @@ int main(void)
 
 						rakPeer->Shutdown(100);
 						RakNet::RakPeerInterface::DestroyInstance(rakPeer);
+						getch();
 						return 1;
 					}
 					break;
 				}
 			}
 
-			RakSleep(100);
+			RakSleep(30);
 		}
 	}
 
+	getch();
 	return 0;
 }

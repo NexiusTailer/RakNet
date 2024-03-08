@@ -137,7 +137,7 @@ LONG ProcessException(struct _EXCEPTION_POINTERS *ExceptionInfo)
 			// Silently send email with attachment
 			EmailSender emailSender;
 			FileList files;
-			files.AddFile(dumpFilepath,dumpFilename,FileListNodeContext(0,0));
+			files.AddFile(dumpFilepath,dumpFilename,FileListNodeContext(0,0,0,0));
 			emailSender.Send(CrashReporter::controls.SMTPServer,
 				25,
 				CrashReporter::controls.SMTPAccountName,

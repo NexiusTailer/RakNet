@@ -121,13 +121,13 @@ bool CloudServerHelper::StartRakPeer(RakNet::RakPeerInterface *rakPeer)
 		return false;
 	}
 	rakPeer->SetMaximumIncomingConnections(RakNet::CloudServerHelper::allowedIncomingConnections);
-	rakPeer->SetTimeoutTime(60000,UNASSIGNED_SYSTEM_ADDRESS);
+	//rakPeer->SetTimeoutTime(60000,UNASSIGNED_SYSTEM_ADDRESS);
 	return true;
 }
 
 Packet *CloudServerHelper::ConnectToRakPeer(const char *host, unsigned short port, RakPeerInterface *rakPeer)
 {
-	printf("Connecting to %s\n", host);
+	printf("RakPeer: Connecting to %s\n", host);
 	ConnectionAttemptResult car;
 	car = rakPeer->Connect(host, port, 0, 0);
 	if (car!=CONNECTION_ATTEMPT_STARTED)
@@ -440,6 +440,14 @@ int CloudServerHelper::OnJoinCloudResult(
 	else if (result==ID_ALREADY_CONNECTED)
 	{
 		printf("Connected to self. DNS entry already points to this server.\n");
+
+		/*
+		if (SetHostDNSToThisSystemBlocking()==false)
+		return 1;
+
+		// dynDNS gets our public IP when it succeeds
+		strcpy( myPublicIP, dynDNS->GetMyPublicIP());
+		*/
 
 		// dnsHost is always public, so if I can connect through it that's my public IP
 		RakNetSocket2::DomainNameToIP( rakPeerIpOrDomain, myPublicIP );

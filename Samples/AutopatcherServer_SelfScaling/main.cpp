@@ -134,7 +134,14 @@ public:
 		printf("Using image id %s for new servers\n", spawningImageId);
 	}
 	virtual void OnTCPFailure(void){ printf("--ERROR--: OnTCPFailure()\n"); }
-	virtual void OnTransmissionFailed(RakString postStr, RakString authURLDomain){ printf("--ERROR--: OnTransmissionFailed(). postStr=%s authURLDomain=%s\n", postStr.C_String(), authURLDomain.C_String()); }
+	virtual void OnTransmissionFailed(HTTPConnection2 *httpConnection2, RakString postStr, RakString authURLDomain)
+	{
+		printf("--ERROR--: OnTransmissionFailed().\npostStr=%s\nauthURLDomain=%s\n", postStr.C_String(), authURLDomain.C_String());
+
+		RakSleep(30000);
+		printf("Retrying...\n");
+		httpConnection2->TransmitRequest(postStr,authURLDomain, 443, true);
+	}
 	virtual void OnEmptyResponse(RakString stringTransmitted) {
 		printf("--ERROR--: OnEmptyResponse(). stringTransmitted=%s", stringTransmitted.C_String());
 	}
@@ -248,16 +255,27 @@ public:
 
 			if (cshState==GETTING_SERVERS)
 			{
-				printf("Could not find a server with this IP address\n");
-				printf("Continue anyway (y/n)?\n");
-				if (getch()=='y')
+// 				printf("Could not find a server with this IP address\n");
+// 				printf("Continue anyway (y/n)?\n");
+// 				if (getch()=='y')
+// 				{
+				
+				for (int k=0; k < rakPeer->GetNumberOfAddresses(); k++)
 				{
-					json_t *arrayElement = json_array_get(serversArray, 0);
-					CopyServerDetails(arrayElement, rakPeer->GetLocalIP(0));
-					cshState=GOT_MY_SERVER;;
+					SystemAddress sa = rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS,k);
+					if (sa.IsLANAddress()==false)
+					{
+						json_t *arrayElement = json_array_get(serversArray, 0);
+						CopyServerDetails(arrayElement, rakPeer->GetLocalIP(0));
+						cshState=GOT_MY_SERVER;;
+						break;
+					}
 				}
-				else
-					cshState=CANNOT_FIND_MY_SERVER;
+
+					
+// 				}
+// 				else
+// 					cshState=CANNOT_FIND_MY_SERVER;
 			}
 
 			json_decref(root);
@@ -527,7 +545,7 @@ public:
 
 		return true;
 	}
-	void UpdateHostIPAsynch(void) {
+	void UpdateHostIPAsynch(SystemAddress sa) {
 		if (appState!=AP_RUNNING)
 			return;
 
@@ -540,8 +558,8 @@ public:
 		RakString url("%s/domains/%i/records/%s", rackspaceDNSURL, raknetPatcherDomainId, patchHostRecordID);
 
 		json_t *jsonObject = json_object();
-		json_object_set(jsonObject, "data", json_string(rakPeer->GetLocalIP(0)));
-		printf("Setting DNS to %s\n", rakPeer->GetLocalIP(0));
+		json_object_set(jsonObject, "data", json_string(sa.ToString(false)));
+		printf("Setting DNS to %s\n", sa.ToString(false));
 		// TESTING HACK
 		// json_object_set(jsonObject, "data", json_string("198.61.202.20"));
 		json_object_set(jsonObject, "name", json_string(patcherHostSubdomainURL));
@@ -615,9 +633,16 @@ public:
 		RakNetGUID newHost = packet->guid;
 		if (newHost==rakPeer->GetMyGUID() && oldHost!=newHost)
 		{
-			printf("Assuming host. Updating DNS\n");
-
-			UpdateHostIPAsynch();
+			for (unsigned int i=0; i < rakPeer->GetNumberOfAddresses(); i++)
+			{
+				SystemAddress sa = rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS,i);
+				if (sa.IsLANAddress()==false)
+				{
+					printf("Assuming host. Updating DNS\n");
+					UpdateHostIPAsynch(sa);
+					break;
+				}
+			}
 		}
 	}
 
@@ -638,9 +663,31 @@ public:
 	) {
 		if (packet->data[0]==ID_CONNECTION_ATTEMPT_FAILED)
 		{
-			printf("Failed connection. Changing DNS to point to this system.\n");
 
-			UpdateHostIPAsynch();
+			for (unsigned int i=0; i < rakPeer->GetNumberOfAddresses(); i++)
+			{
+				SystemAddress sa = rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS,i);
+				if (sa.IsLANAddress()==false)
+				{
+					printf("Failed connection. Changing DNS to point to this system.\n");
+					UpdateHostIPAsynch(sa);
+					break;
+				}
+			}
+		}
+		else if (packet->data[0]==ID_ALREADY_CONNECTED && packet->systemAddress.IsLANAddress())
+		{
+			for (unsigned int i=0; i < rakPeer->GetNumberOfAddresses(); i++)
+			{
+				SystemAddress sa = rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS,i);
+				if (sa.IsLANAddress()==false)
+				{
+					printf("Connected to self-LAN address. Changing DNS to point to this system.\n");
+
+					UpdateHostIPAsynch(sa);
+					return CloudServerHelper::OnJoinCloudResult(packet, rakPeer, cloudServer, cloudClient, fullyConnectedMesh2, twoWayAuthentication, connectionGraph2, sa.ToString(false), myPublicIP);
+				}
+			}
 		}
 
 		return CloudServerHelper::OnJoinCloudResult(packet, rakPeer, cloudServer, cloudClient, fullyConnectedMesh2, twoWayAuthentication, connectionGraph2, rakPeerIpOrDomain, myPublicIP);
@@ -685,7 +732,7 @@ protected:
 
 } *cloudServerHelper;
 
-class AutopatcherLoadNotifier : public RakNet::AutopatcherServerLoadNotifier_Printf
+class AutopatcherLoadNotifier : public RakNet::AutopatcherServerLoadNotifier
 {
 	void AutopatcherLoadNotifier::OnQueueUpdate(SystemAddress remoteSystem,
 		AutopatcherServerLoadNotifier::RequestType requestType,
@@ -694,7 +741,7 @@ class AutopatcherLoadNotifier : public RakNet::AutopatcherServerLoadNotifier_Pri
 	{
 		autopatcherLoad=autopatcherState->requestsQueued+autopatcherState->requestsWorking;
 
-		AutopatcherServerLoadNotifier_Printf::OnQueueUpdate(remoteSystem, requestType, queueOperation, autopatcherState);
+		//AutopatcherServerLoadNotifier_Printf::OnQueueUpdate(remoteSystem, requestType, queueOperation, autopatcherState);
 	}
 
 	void AutopatcherLoadNotifier::OnGetChangelistCompleted(
@@ -704,7 +751,7 @@ class AutopatcherLoadNotifier : public RakNet::AutopatcherServerLoadNotifier_Pri
 	{
 		autopatcherLoad=autopatcherState->requestsQueued+autopatcherState->requestsWorking;
 
-		AutopatcherServerLoadNotifier_Printf::OnGetChangelistCompleted(remoteSystem, getChangelistResult, autopatcherState);
+		//AutopatcherServerLoadNotifier_Printf::OnGetChangelistCompleted(remoteSystem, getChangelistResult, autopatcherState);
 	}
 
 	void AutopatcherLoadNotifier::OnGetPatchCompleted(SystemAddress remoteSystem,
@@ -713,7 +760,7 @@ class AutopatcherLoadNotifier : public RakNet::AutopatcherServerLoadNotifier_Pri
 	{
 		autopatcherLoad=autopatcherState->requestsQueued+autopatcherState->requestsWorking;
 
-		AutopatcherServerLoadNotifier_Printf::OnGetPatchCompleted(remoteSystem, patchResult, autopatcherState);
+		//AutopatcherServerLoadNotifier_Printf::OnGetPatchCompleted(remoteSystem, patchResult, autopatcherState);
 	}
 };
 
@@ -846,12 +893,6 @@ int main(int argc, char **argv)
 	}
 
 	rakPeer = RakNet::RakPeerInterface::GetInstance();
-	RakNet::PacketizedTCP packetizedTCP;
-	if (packetizedTCP.Start(LISTEN_PORT_TCP_PATCHER,cloudServerHelper->allowedIncomingConnections)==false)
-	{
-		printf("Failed to start TCP. Is the port already in use?");
-		return 1;
-	}
 
 
 	RakNet::Time timeForNextLoadCheck=RakNet::GetTime()+LOAD_CHECK_INTERVAL;
@@ -859,6 +900,14 @@ int main(int argc, char **argv)
 	if (!cloudServerHelper->AuthenticateWithRackspaceBlocking())
 	{
 		printf("Exiting due to failed startup with Rackspace\n");
+		return 1;
+	}
+
+	// This does not work unless it comes after AuthenticateWithRackspaceBlocking
+	RakNet::PacketizedTCP packetizedTCP;
+	if (packetizedTCP.Start(LISTEN_PORT_TCP_PATCHER,cloudServerHelper->allowedIncomingConnections)==false)
+	{
+		printf("Failed to start TCP. Is the port already in use?");
 		return 1;
 	}
 
@@ -1242,8 +1291,18 @@ int main(int argc, char **argv)
 
 				printf("Remote servers will shutdown when all users are done\n");
 				printf("Disconnected from remote servers\n");
-				printf("Updating host DNS entry to this server\n");
-				cloudServerHelper->UpdateHostIPAsynch();
+				
+
+				for (unsigned int i=0; i < rakPeer->GetNumberOfAddresses(); i++)
+				{
+					SystemAddress sa = rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS,i);
+					if (sa.IsLANAddress()==false)
+					{
+						printf("Updating host DNS entry to this server\n");
+						cloudServerHelper->UpdateHostIPAsynch(sa);
+						break;
+					}
+				}
 			}
 			else if (ch=='l')
 			{

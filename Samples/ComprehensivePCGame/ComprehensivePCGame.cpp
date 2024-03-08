@@ -298,15 +298,20 @@ public:
 
 	json_t* GetMasterServerQueryResult(void)
 	{
-		if (masterServerQueryResult)
-		{
-			void *iter = json_object_iter(masterServerQueryResult);
-			return json_object_iter_value(iter);
-		}
-		else
-		{
+		if (masterServerQueryResult == 0)
 			return 0;
+		void *iter = json_object_iter(masterServerQueryResult);
+		while (iter)
+		{
+			const char *firstKey = json_object_iter_key(iter);
+			if (stricmp(firstKey, "GET")==0)
+			{
+				return json_object_iter_value(iter);
+			}
+			iter = json_object_iter_next(masterServerQueryResult, iter);
+			RakAssert(iter != 0);
 		}
+		return 0;
 	}
 
 	// The GET request returns a string. I use http://www.digip.org/jansson/ to parse the string, and store the results.
@@ -1221,6 +1226,7 @@ int main(void)
 							if (stricmp(firstKey, "GET")==0)
 							{
 								game->SetMasterServerQueryResult(root);
+								root=0;
 
 								json_t* jsonArray = json_object_iter_value(iter);
 								size_t arraySize = json_array_size(jsonArray);
@@ -1285,12 +1291,12 @@ int main(void)
 				}
 				else if (ch=='j' || ch=='J')
 				{
-					size_t arraySize;
-					json_t *queryResult = game->GetMasterServerQueryResult();
-					if (queryResult)
-						arraySize = json_array_size(queryResult);
-					else
-						arraySize = 0;
+					size_t arraySize = 0;
+					json_t *jsonArray = game->GetMasterServerQueryResult();
+					if (jsonArray)
+					{
+						arraySize = json_array_size(jsonArray);
+					}
 
 					// Join room
 					if (arraySize==0)
@@ -1318,7 +1324,7 @@ int main(void)
 						}
 						else
 						{
-							json_t* object = json_array_get(queryResult, index);
+							json_t* object = json_array_get(jsonArray, index);
 							json_t* guidVal = json_object_get(object, "guid");
 							RakAssert(guidVal->type==JSON_STRING);
 							RakNetGUID clientGUID;
@@ -1455,10 +1461,11 @@ int main(void)
 
 		// The game host updates the master server
 		RakNet::Time t = RakNet::GetTime();
-		if (((fullyConnectedMesh2->IsConnectedHost() || game->users.Size()==1) &&
-			t > game->whenToNextUpdateMasterServer) &&
-			game->phase == Game::IN_LOBBY_WITH_HOST ||
-			game->phase == Game::IN_GAME
+		if ((fullyConnectedMesh2->IsConnectedHost() || game->users.Size()==1) &&
+			t > game->whenToNextUpdateMasterServer &&
+			(game->phase == Game::IN_LOBBY_WITH_HOST ||
+			game->phase == Game::IN_GAME ||
+			game->phase == Game::IN_LOBBY_WAITING_FOR_HOST)
 			)
 		{
 			PostRoomToMaster();

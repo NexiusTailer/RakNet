@@ -411,6 +411,22 @@ SystemAddress::SystemAddress(const char *str, unsigned short port)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #ifdef _MSC_VER
 #pragma warning( disable : 4996 )  // The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strnicmp. See online help for details.
 #endif
@@ -441,6 +457,15 @@ void SystemAddress::FixForIPVersion(const SystemAddress &boundAddressToSocket)
 // 			address.addr4.sin_addr.s_addr=boundAddressToSocket.address.addr4.sin_addr.s_addr;
 // 		}
 	}
+}
+bool SystemAddress::IsLANAddress(void)
+{
+//	return address.addr4.sin_addr.S_un.S_un_b.s_b1==10 || address.addr4.sin_addr.S_un.s_b1==192;
+#if defined(__WIN32__)
+	return address.addr4.sin_addr.S_un.S_un_b.s_b1==10 || address.addr4.sin_addr.S_un.S_un_b.s_b1==192;
+#else
+	return (address.addr4.sin_addr.s_addr >> 24) == 10 || (address.addr4.sin_addr.s_addr >> 24) == 192;
+#endif
 }
 bool SystemAddress::SetBinaryAddress(const char *str, char portDelineator)
 {
@@ -640,7 +665,18 @@ bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersi
 		hints.ai_family = AF_UNSPEC;
 	getaddrinfo(ipPart, "", &hints, &servinfo);
 	if (servinfo==0)
-		return false;
+	{
+		if (ipVersion==6)
+		{
+			ipVersion=4;
+			hints.ai_family = AF_UNSPEC;
+			getaddrinfo(ipPart, "", &hints, &servinfo);
+			if (servinfo==0)
+				return false;
+		}
+		else
+			return false;
+	}
 	RakAssert(servinfo);
 	
 	unsigned short oldPort = address.addr4.sin_port;
@@ -649,7 +685,7 @@ bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersi
 	{
 // 		if (ipVersion==6)
 // 		{
-			address.addr4.sin_family=AF_INET6;
+//			address.addr4.sin_family=AF_INET6;
 // 			memset(&address.addr6,0,sizeof(address.addr6));
 // 			memcpy(address.addr6.sin6_addr.s6_addr+12,&((struct sockaddr_in *)servinfo->ai_addr)->sin_addr.s_addr,sizeof(unsigned long));
 // 		}

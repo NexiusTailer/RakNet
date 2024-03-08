@@ -173,6 +173,8 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr class="separator:a4eb8b0f288db5425906cd72ee5f8fae9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afdc6e658512d2f01d6bb211758721f21"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#afdc6e658512d2f01d6bb211758721f21">SetOccasionalPing</a> (bool doPing)=0</td></tr>
 <tr class="separator:afdc6e658512d2f01d6bb211758721f21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7fa284803461a09efeffd65d73068c51"><td class="memItemLeft" align="right" valign="top">virtual RakNet::Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a7fa284803461a09efeffd65d73068c51">GetClockDifferential</a> (const AddressOrGUID systemIdentifier)=0</td></tr>
+<tr class="separator:a7fa284803461a09efeffd65d73068c51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40b198325a1a4f4a1ff3b1a1741b89eb"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a40b198325a1a4f4a1ff3b1a1741b89eb">SetOfflinePingResponse</a> (const char *data, const unsigned int length)=0</td></tr>
 <tr class="separator:a40b198325a1a4f4a1ff3b1a1741b89eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae61f8651e8a45acec5bdf04384777a86"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#ae61f8651e8a45acec5bdf04384777a86">GetOfflinePingResponse</a> (char **data, unsigned int *length)=0</td></tr>
@@ -1026,6 +1028,39 @@ It is possible to immediately get back ID_CONNECTION_ATTEMPT_FAILED if you excee
 </dl>
 
 <p>Implemented in <a class="el" href="classRakNet_1_1RakPeer.html#abc607f77d9724097030d2da6868074b3">RakNet::RakPeer</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a7fa284803461a09efeffd65d73068c51"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual RakNet::Time RakNet::RakPeerInterface::GetClockDifferential </td>
+          <td>(</td>
+          <td class="paramtype">const AddressOrGUID&#160;</td>
+          <td class="paramname"><em>systemIdentifier</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Return the clock difference between your system and the specified system Subtract <a class="el" href="classRakNet_1_1RakPeerInterface.html#a7fa284803461a09efeffd65d73068c51">GetClockDifferential()</a> from a time returned by the remote system to get that time relative to your own system Returns 0 if the system is unknown </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">systemIdentifier</td><td>Which system we are referring to </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classRakNet_1_1RakPeer.html#ac1f87a029e47963ae24838ec87c1a076">RakNet::RakPeer</a>.</p>
 
 </div>
 </div>
@@ -2821,7 +2856,7 @@ LIBCAT_SECURITY must be defined to 1 in NativeFeatureIncludes.h for this functio
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Set a C callback to be called whenever a datagram arrives Return true from the callback to have <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> handle the datagram. Return false and <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> will ignore the datagram. This can be used to filter incoming datagrams by system, or to share a recvfrom socket with <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> RNS2RecvStruct will only remain valid for the duration of the call </p>
+<p>Set a C callback to be called whenever a datagram arrives Return true from the callback to have <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> handle the datagram. Return false and <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> will ignore the datagram. This can be used to filter incoming datagrams by system, or to share a recvfrom socket with <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> RNS2RecvStruct will only remain valid for the duration of the call If the incoming datagram is not from your game at all, it is a <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher that can be used f...">RakNet</a> packet. If the incoming datagram has an IP address that matches a known address from your game, then check the first byte of data. For <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher that can be used f...">RakNet</a> connected systems, the first bit is always 1. So for your own game packets, make sure the first bit is always 0. </p>
 
 <p>Implemented in <a class="el" href="classRakNet_1_1RakPeer.html#a959a1dc3d239d3c5114bc781144d3b73">RakNet::RakPeer</a>.</p>
 
@@ -3374,7 +3409,7 @@ On Android, add the necessary permission to your application's androidmanifest.x
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu May 30 2013 11:46:15 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Aug 20 2013 22:51:59 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

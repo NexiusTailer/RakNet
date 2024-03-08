@@ -207,10 +207,10 @@ virtual RM3ActionOnPopConnection&#160;</td><td class="memItemRight" valign="bott
 <tr class="inherit_header pub_methods_classRakNet_1_1NetworkIDObject"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classRakNet_1_1NetworkIDObject')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classRakNet_1_1NetworkIDObject.html">RakNet::NetworkIDObject</a></td></tr>
 <tr class="memitem:abb1048648224a0c27fea7cb04f444310 inherit pub_methods_classRakNet_1_1NetworkIDObject"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NetworkIDObject.html#abb1048648224a0c27fea7cb04f444310">SetNetworkIDManager</a> (<a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a> *manager)</td></tr>
 <tr class="separator:abb1048648224a0c27fea7cb04f444310 inherit pub_methods_classRakNet_1_1NetworkIDObject"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee16018ebb4c0c53e2ff9209f216a690 inherit pub_methods_classRakNet_1_1NetworkIDObject"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aee16018ebb4c0c53e2ff9209f216a690"></a>
-virtual <a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NetworkIDObject.html#aee16018ebb4c0c53e2ff9209f216a690">GetNetworkIDManager</a> (void)</td></tr>
-<tr class="memdesc:aee16018ebb4c0c53e2ff9209f216a690 inherit pub_methods_classRakNet_1_1NetworkIDObject"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns what was passed to SetNetworkIDManager. <br/></td></tr>
-<tr class="separator:aee16018ebb4c0c53e2ff9209f216a690 inherit pub_methods_classRakNet_1_1NetworkIDObject"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3be9f98153dfb91a16d16a8a63aca3d inherit pub_methods_classRakNet_1_1NetworkIDObject"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac3be9f98153dfb91a16d16a8a63aca3d"></a>
+virtual <a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NetworkIDObject.html#ac3be9f98153dfb91a16d16a8a63aca3d">GetNetworkIDManager</a> (void) const </td></tr>
+<tr class="memdesc:ac3be9f98153dfb91a16d16a8a63aca3d inherit pub_methods_classRakNet_1_1NetworkIDObject"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns what was passed to SetNetworkIDManager. <br/></td></tr>
+<tr class="separator:ac3be9f98153dfb91a16d16a8a63aca3d inherit pub_methods_classRakNet_1_1NetworkIDObject"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e2454899578ba16379491fc0aa45bb6 inherit pub_methods_classRakNet_1_1NetworkIDObject"><td class="memItemLeft" align="right" valign="top">virtual NetworkID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NetworkIDObject.html#a4e2454899578ba16379491fc0aa45bb6">GetNetworkID</a> (void)</td></tr>
 <tr class="separator:a4e2454899578ba16379491fc0aa45bb6 inherit pub_methods_classRakNet_1_1NetworkIDObject"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ebfffe7c5bb1a87888b9c3bd940cf35 inherit pub_methods_classRakNet_1_1NetworkIDObject"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NetworkIDObject.html#a5ebfffe7c5bb1a87888b9c3bd940cf35">SetNetworkID</a> (NetworkID id)</td></tr>
@@ -277,7 +277,7 @@ Got a remote message to delete this object which passed <a class="el" href="clas
 <li>
 <a class="el" href="classRakNet_1_1ReplicaManager3.html#af7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3.">ReplicaManager3::SetAutoManageConnections()</a> was called autoDestroy true (which is the default setting), and a remote system that owns this object disconnected) OR &lt;&gt; <br/>
  Override with {delete this;} to actually delete the object (and any other processing you wish).<br/>
- If you don't want to delete the object, just do nothing, however, the system will not know this so you are responsible for deleting it yoruself later.<br/>
+ If you don't want to delete the object, just do nothing, however, the system will not know this. You may wish to call Dereference() if the object should no longer be networked, but remain in memory. You are responsible for deleting it yoruself later.<br/>
  destructionBitstream may be 0 if the object was deleted locally </li>
 </ol>
 
@@ -985,7 +985,7 @@ template&lt;class parent_type &gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu May 30 2013 11:46:15 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Aug 20 2013 22:52:00 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>
