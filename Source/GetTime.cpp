@@ -125,6 +125,8 @@ RakNetTimeUS RakNet::GetTimeNS( void )
 	// Just make sure the time doesn't go backwards
 	if (curTime < lastQueryVal)
 		return lastQueryVal;
+
+#if !defined(_XBOX) && !defined(X360)
 	DWORD tgt = timeGetTime();
 	RakNetTimeMS timeInMS = curTime/1000;
 	if (timeInMS>tgt+1000)
@@ -132,6 +134,7 @@ RakNetTimeUS RakNet::GetTimeNS( void )
 		// To workaround http://support.microsoft.com/kb/274323 where the timer can sometimes jump forward by hours or days
 		curTime=(RakNetTimeUS) tgt * (RakNetTimeUS) 1000;
 	}
+#endif
 	lastQueryVal=curTime;
 
 	return curTime;

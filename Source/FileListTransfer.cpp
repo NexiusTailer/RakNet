@@ -693,7 +693,11 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFileAndIsNotDow
 		totalNotifications=1;
 	else
 		totalNotifications = onFileStruct.byteLengthOfThisFile / chunkLength + 1;
-	currentNotificationIndex = offset / chunkLength;
+
+	if (chunkLength==0)
+		currentNotificationIndex = 0;
+	else
+		currentNotificationIndex = offset / chunkLength; 
 
 	fps.onFileStruct=&onFileStruct;
 	fps.partCount=currentNotificationIndex;

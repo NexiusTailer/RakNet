@@ -3133,7 +3133,6 @@ void ReliabilityLayer::AllocInternalPacketData(InternalPacket *internalPacket, u
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::FreeInternalPacketData(InternalPacket *internalPacket, const char *file, unsigned int line)
 {
-	RakAssert(outgoingPacketBuffer.Size()==0 || outgoingPacketBuffer.Peek()->dataBitLength<BYTES_TO_BITS(MAXIMUM_MTU_SIZE));
 	if (internalPacket==0)
 		return;
 
@@ -3152,8 +3151,6 @@ void ReliabilityLayer::FreeInternalPacketData(InternalPacket *internalPacket, co
 	{
 		rakFree_Ex(internalPacket->data, file, line );
 	}
-
-	RakAssert(outgoingPacketBuffer.Size()==0 || outgoingPacketBuffer.Peek()->dataBitLength<BYTES_TO_BITS(MAXIMUM_MTU_SIZE));
 }
 //-------------------------------------------------------------------------------------------------------
 unsigned int ReliabilityLayer::GetMaxDatagramSizeExcludingMessageHeaderBytes(void)

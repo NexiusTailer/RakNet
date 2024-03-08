@@ -305,6 +305,10 @@ public:
 	/// \param[in] target Which system to cancel
 	virtual void CancelConnectionAttempt( const SystemAddress target )=0;
 
+	/// Returns if a particular systemAddress has a pending or in progress connection attempt
+	/// \param[in] systemAddress The SystemAddress we are referring to
+	virtual bool IsConnectionAttemptPending( const SystemAddress systemAddress )=0;
+
 	/// Returns if a particular systemAddress is connected to us (this also returns true if we are in the process of connecting)
 	/// \param[in] systemAddress The SystemAddress we are referring to
 	/// \param[in] includeInProgress If true, also return true for connections that are in progress but haven't completed
@@ -315,7 +319,7 @@ public:
 	/// Given a systemAddress, returns an index from 0 to the maximum number of players allowed - 1.
 	/// \param[in] systemAddress The SystemAddress we are referring to
 	/// \return The index of this SystemAddress or -1 on system not found.
-	virtual int GetIndexFromSystemAddress( const SystemAddress systemAddress )=0;
+	virtual int GetIndexFromSystemAddress( const SystemAddress systemAddress ) const=0;
 
 	/// This function is only useful for looping through all systems
 	/// Given an index, will return a SystemAddress.

@@ -60,7 +60,7 @@
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#b775f22d9d981995ca6bee08d3dc2564">GetGUIDFromIndex</a>(int index)</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#1b01ce06741a582c9e9599966dd55733">GetGuidFromSystemAddress</a>(const SystemAddress input) const </td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#3d16efedd2007d917e613a78f816baba">GetIncomingPassword</a>(char *passwordData, int *passwordDataLength)</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="classRakPeer.html#e8766bc81b61738b79ec5f7aedb21fb9">GetIndexFromSystemAddress</a>(const SystemAddress systemAddress)</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakPeer.html#d3cd736fca1b11b8e652f630f9045c06">GetIndexFromSystemAddress</a>(const SystemAddress systemAddress) const </td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#3bd1460173bdc15fcca80d75ba2e9305">GetInternalID</a>(const SystemAddress systemAddress=UNASSIGNED_SYSTEM_ADDRESS, const int index=0) const </td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#ccd128e02e2b699f286d23ec3c7b0d67">GetLastPing</a>(const AddressOrGUID systemIdentifier) const </td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#ac2a0b2392d0a1eb3ca08f11a180dbc2">GetLocalIP</a>(unsigned int index)</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
@@ -90,6 +90,7 @@
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#52ff3b23878d11d8b00473835d44b1f5">IsActive</a>(void) const </td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#e1ad09ea9ca5ea8bd4a00f78e22a5abc">IsBanned</a>(const char *IP)</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#ca0cb46f8b48b2f2d5da83377c918064">IsConnected</a>(const AddressOrGUID systemIdentifier, bool includeInProgress=false, bool includeDisconnecting=false)</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakPeer.html#bb93b5dbfb9a7f7d64365340d5516e73">IsConnectionAttemptPending</a>(const SystemAddress systemAddress)</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#4541da876eef1161bd7460f2cbfcc3bd">IsInSecurityExceptionList</a>(const char *ip)</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#251f0972c417a8770548a354a10178f5">IsLocalIP</a>(const char *ip)</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#55544eb11720fe938193c6b79bc65d18">isMainLoopThreadActive</a></td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [protected]</code></td></tr>
@@ -141,7 +142,7 @@
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#db105b82e90bebddaa273ba7e6ba08ad">~RakPeer</a>()</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeerInterface.html#a22a37ed504b982fe53ca570a2fc01ca">~RakPeerInterface</a>()</td><td><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a></td><td><code> [inline, virtual]</code></td></tr>
 </table></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Dec 29 11:22:35 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Jan 6 08:24:48 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

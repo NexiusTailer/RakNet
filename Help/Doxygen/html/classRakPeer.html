@@ -148,12 +148,14 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#01b140bb9e6a90a0c1867a5101131fd1">CancelConnectionAttempt</a> (const <a class="el" href="structSystemAddress.html">SystemAddress</a> target)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Cancel a pending connection attempt.  <a href="#01b140bb9e6a90a0c1867a5101131fd1"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#bb93b5dbfb9a7f7d64365340d5516e73">IsConnectionAttemptPending</a> (const <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#ca0cb46f8b48b2f2d5da83377c918064">IsConnected</a> (const AddressOrGUID systemIdentifier, bool includeInProgress=false, bool includeDisconnecting=false)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns if a particular systemAddress is connected to us.  <a href="#ca0cb46f8b48b2f2d5da83377c918064"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#e8766bc81b61738b79ec5f7aedb21fb9">GetIndexFromSystemAddress</a> (const <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#d3cd736fca1b11b8e652f630f9045c06">GetIndexFromSystemAddress</a> (const <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress) const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Given <em>systemAddress</em>, returns its index into remoteSystemList.  <a href="#e8766bc81b61738b79ec5f7aedb21fb9"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Given <em>systemAddress</em>, returns its index into remoteSystemList.  <a href="#d3cd736fca1b11b8e652f630f9045c06"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#1645d13c35dd97674b445dcb4b3756aa">GetSystemAddressFromIndex</a> (int index)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Given <em>index</em> into remoteSystemList, will return a <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a>. This function is only useful for looping through all systems.  <a href="#1645d13c35dd97674b445dcb4b3756aa"></a><br></td></tr>
@@ -1451,7 +1453,7 @@ Gets the password passed to SetIncomingPassword.
 
 </div>
 </div><p>
-<a class="anchor" name="e8766bc81b61738b79ec5f7aedb21fb9"></a><!-- doxytag: member="RakPeer::GetIndexFromSystemAddress" ref="e8766bc81b61738b79ec5f7aedb21fb9" args="(const SystemAddress systemAddress)" -->
+<a class="anchor" name="d3cd736fca1b11b8e652f630f9045c06"></a><!-- doxytag: member="RakPeer::GetIndexFromSystemAddress" ref="d3cd736fca1b11b8e652f630f9045c06" args="(const SystemAddress systemAddress) const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1461,7 +1463,7 @@ Gets the password passed to SetIncomingPassword.
           <td class="paramtype">const <a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
+          <td> const<code> [virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -1477,7 +1479,7 @@ Values range from 0 to the maximum number of players allowed - 1. This includes 
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>The index of this <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> or -1 on system not found. </dd></dl>
 
-<p>Implements <a class="el" href="classRakPeerInterface.html#fb15913736f25c2e2f737e4bf43168c3">RakPeerInterface</a>.</p>
+<p>Implements <a class="el" href="classRakPeerInterface.html#a632a927cf449da8ca834b82297b1714">RakPeerInterface</a>.</p>
 
 </div>
 </div><p>
@@ -2382,6 +2384,33 @@ Returns if a particular systemAddress is connected to us.
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True if this system is connected and active, false otherwise. </dd></dl>
 
 <p>Implements <a class="el" href="classRakPeerInterface.html#c0a269d7e31d41214502bc05025e4b86">RakPeerInterface</a>.</p>
+
+</div>
+</div><p>
+<a class="anchor" name="bb93b5dbfb9a7f7d64365340d5516e73"></a><!-- doxytag: member="RakPeer::IsConnectionAttemptPending" ref="bb93b5dbfb9a7f7d64365340d5516e73" args="(const SystemAddress systemAddress)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakPeer::IsConnectionAttemptPending           </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns if a particular systemAddress has a pending or in progress connection attempt <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> we are referring to </td></tr>
+  </table>
+</dl>
+
+<p>Implements <a class="el" href="classRakPeerInterface.html#70fb82af25f946ed82a0f4756896af5b">RakPeerInterface</a>.</p>
 
 </div>
 </div><p>
@@ -3637,7 +3666,7 @@ This is an array of pointers to RemoteSystemStruct This allows us to preallocate
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="RakPeer_8h.html">RakPeer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Dec 29 11:22:35 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Jan 6 08:24:48 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

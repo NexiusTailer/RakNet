@@ -27,7 +27,10 @@ bool operator==( const DataStructures::MLKeyRef<UDPForwarder::SrcAndDest> &input
 
 
 UDPForwarder::ForwardEntry::ForwardEntry() {readSocket=INVALID_SOCKET; timeLastDatagramForwarded=RakNet::GetTime();}
-UDPForwarder::ForwardEntry::~ForwardEntry() {if (readSocket!=INVALID_SOCKET) closesocket(readSocket);}
+UDPForwarder::ForwardEntry::~ForwardEntry() {
+	if (readSocket!=INVALID_SOCKET)
+		closesocket(readSocket);
+}
 
 UDPForwarder::UDPForwarder()
 {
@@ -175,15 +178,10 @@ void UDPForwarder::UpdateThreaded(void)
 							forwardList.RemoveAtIndex(destIndex,__FILE__,__LINE__);
 							feSource->srcAndDest.source.port=portnum;
 							feDest->srcAndDest.destination.port=portnum;
+
 							// Reinsert to preserve list order
-							if (forwardList.GetIndexOf(feSource->srcAndDest)==(DataStructures::DefaultIndexType)-1)
-								forwardList.Push(feSource,feSource->srcAndDest,__FILE__,__LINE__);
-							else
-								RakNet::OP_DELETE(feSource,__FILE__,__LINE__);
-							if (forwardList.GetIndexOf(feDest->srcAndDest)==(DataStructures::DefaultIndexType)-1)
-								forwardList.Push(feDest,feDest->srcAndDest,__FILE__,__LINE__);
-							else
-								RakNet::OP_DELETE(feDest,__FILE__,__LINE__);
+							forwardList.Push(feSource,feSource->srcAndDest,__FILE__,__LINE__);
+							forwardList.Push(feDest,feDest->srcAndDest,__FILE__,__LINE__);
 
 							feSource->timeLastDatagramForwarded=curTime;
 							feDest->timeLastDatagramForwarded=curTime;
@@ -238,6 +236,8 @@ unsigned short UDPForwarder::AddForwardingEntry(SrcAndDest srcAndDest, RakNetTim
 		fe->timeoutOnNoDataMS=timeoutOnNoDataMS;
 		fe->readSocket = socket( AF_INET, SOCK_DGRAM, 0 );
 		fe->updatedSourceAddress=false;
+
+		//printf("Made socket %i\n", fe->readSocket);
 
 		// This doubles the max throughput rate
 		sock_opt=1024*256;

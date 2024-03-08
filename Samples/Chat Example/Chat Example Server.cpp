@@ -41,7 +41,7 @@ int main(void)
 	RakPeerInterface *server=RakNetworkFactory::GetRakPeerInterface();
 	RakNetStatistics *rss;
 	server->SetIncomingPassword("Rumpelstiltskin", (int)strlen("Rumpelstiltskin"));
-	server->SetTimeoutTime(5000,UNASSIGNED_SYSTEM_ADDRESS);
+	server->SetTimeoutTime(30000,UNASSIGNED_SYSTEM_ADDRESS);
 //	PacketLogger packetLogger;
 //	server->AttachPlugin(&packetLogger);
 

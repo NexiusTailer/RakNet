@@ -115,6 +115,7 @@ ReplicaManager2_8h.html
 ReplicaManager3_8h.html
 Rijndael_8h.html
 Router_8h.html
+Router2_8h.html
 RPCMap_8h.html
 RPCNode_8h.html
 SimpleMutex_8h.html
@@ -151,6 +152,7 @@ group__REPLICA__MANAGER__GROUP1.html
 group__REPLICA__MANAGER__2__GROUP.html
 group__REPLICA__MANAGER__GROUP3.html
 group__ROUTER__GROUP.html
+group__ROUTER__2__GROUP.html
 group__RAKNET__RPC.html
 group__UDP__PROXY__GROUP.html
 group__LOBBY__2__GROUP.html
@@ -454,6 +456,8 @@ classRakNet_1_1Connection__RM3.html
 classRakNet_1_1Connection__RM3-members.html
 classRakNet_1_1Replica3.html
 classRakNet_1_1Replica3-members.html
+classRakNet_1_1Router2.html
+classRakNet_1_1Router2-members.html
 classRakNet_1_1StringTable.html
 classRakNet_1_1StringTable-members.html
 classRakNet_1_1UDPForwarder.html

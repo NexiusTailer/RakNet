@@ -1,5 +1,10 @@
-/*
 #include "Router2.h"
+#include "RakPeerInterface.h"
+#include "BitStream.h"
+#include "RakNetTime.h"
+#include "GetTime.h"
+#include "DS_OrderedList.h"
+#include "SocketLayer.h"
 
 using namespace RakNet;
 
@@ -43,23 +48,33 @@ void Router2::ClearConnectionRequests(void)
 	{
 		RakNet::OP_DELETE(connectionRequests[i],__FILE__,__LINE__);
 	}
+	connectionRequests.Clear(false,__FILE__,__LINE__);
 }
-void Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLostOnFailure)
+bool Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLostOnFailure)
 {
 	// if (alreadyConnected to endpointGuid) Return false
-	if (rakPeerInterface->IsConnected(endpointGuid,false,false)==false)
+	if (rakPeerInterface->IsConnected(endpointGuid,false,false)==true)
+	{
+		printf("Router2 failed at %s:%i\n", __FILE__, __LINE__);
 		return false;
+	}
 
 	int largestPing = GetLargestPingAmongConnectedSystems();
 	if (largestPing<0)
 	{
+		printf("Router2 failed at %s:%i\n", __FILE__, __LINE__);
+
 		// Not connected to anyone
 		return false;
 	}
 
 	// ALready in progress?
 	if (GetConnectionRequestIndex(endpointGuid)!=(unsigned int)-1)
-		return;
+	{
+		printf("Router2 failed at %s:%i\n", __FILE__, __LINE__);
+
+		return false;
+	}
 
 	// StoreRequest(endpointGuid, Largest(ping*2), systemsSentTo). Set state REQUEST_STATE_QUERY_FORWARDING
 	Router2::ConnnectRequest *cr = RakNet::OP_NEW<Router2::ConnnectRequest>(__FILE__,__LINE__);
@@ -70,7 +85,7 @@ void Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLost
 	cr->pingTimeout=RakNet::GetTimeMS()+largestPing*2;
 	cr->endpointGuid=endpointGuid;
 	cr->returnConnectionLostOnFailure=returnConnectionLostOnFailure;
-	for (int i=0; i < guids.Size(); i++)
+	for (unsigned int i=0; i < guids.Size(); i++)
 	{
 		ConnectionRequestSystem crs;
 		crs.guid=guids[i];
@@ -85,6 +100,7 @@ void Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLost
 	bsOut.Write((unsigned char) ID_ROUTER_2_QUERY_FORWARDING);
 	bsOut.Write(endpointGuid);
 	rakPeerInterface->Send(&bsOut,MEDIUM_PRIORITY,RELIABLE_ORDERED,0,UNASSIGNED_SYSTEM_ADDRESS,true);
+	return true;
 }
 void Router2::Connect(RakNetGUID endpointGuid)
 {
@@ -108,6 +124,8 @@ void Router2::SetMaximumForwardingRequests(int max)
 }
 PluginReceiveResult Router2::OnReceive(Packet *packet)
 {
+	SystemAddress sa;
+	RakNet::BitStream bs(packet->data,packet->length,false);
 	if (packet->data[0]==ID_ROUTER_2_INTERNAL)
 	{
 		switch (packet->data[1])
@@ -130,9 +148,9 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 			}
 			break;
-		case ID_ROUTER_2_FORWARDING_SUCCESS
+		case ID_ROUTER_2_FORWARDING_SUCCESS:
 			{
-				OnForwardingSuccess();
+				OnForwardingSuccess(packet);
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 			}
 			break;
@@ -146,18 +164,18 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
 				SendOOBFromRakNetPort(ID_ROUTER_2_MINI_PUNCH_REPLY, 0, packet->systemAddress);
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 			case ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT:
-				RakNet::BitStream bs(packet->data,packet->length,false);
 				bs.IgnoreBytes(2);
-				SystemAddress sa;
 				sa.binaryAddress=packet->systemAddress.binaryAddress;
 				bs.Read(sa.port);
 				SendOOBFromRakNetPort(ID_ROUTER_2_MINI_PUNCH_REPLY, 0, sa);
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 			case ID_ROUTER_2_MINI_PUNCH_REPLY:
+				// TODO:
+				// Problem: This message itself was forwarded. We want to create the socket but not forward it until reply success
+				// We also need to then read on the forwarding socket until forwarding begins
 				OnMiniPunchReply(packet);
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 		}
-		break;
 	}
 	else if (packet->data[0]==ID_CONNECTION_ATTEMPT_FAILED)
 	{
@@ -229,6 +247,8 @@ void Router2::Update(void)
 	{
 		if (miniPunchesInProgress[i].timeout<curTime)
 		{
+			printf("Router2 failed at %s:%i\n", __FILE__, __LINE__);
+
 			ReturnFailureOnCannotForward(miniPunchesInProgress[i].sourceGuid, miniPunchesInProgress[i].endpointGuid);
 			miniPunchesInProgress.RemoveAtIndexFast(i);
 		}
@@ -244,6 +264,10 @@ void Router2::Update(void)
 }
 void Router2::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
+	(void) lostConnectionReason;
+	(void) systemAddress;
+
+
 	unsigned int forwardedConnectionIndex=0;
 	while (forwardedConnectionIndex<forwardedConnectionList.Size())
 	{
@@ -300,9 +324,13 @@ void Router2::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetG
 }
 void Router2::OnFailedConnectionAttempt(SystemAddress systemAddress, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason)
 {
+	(void) failedConnectionAttemptReason;
+	(void) systemAddress;
 }
 void Router2::OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
 {
+	(void) isIncoming;
+
 	unsigned int forwardedConnectionIndex=0;
 	while (forwardedConnectionIndex<forwardedConnectionList.Size())
 	{
@@ -316,11 +344,12 @@ void Router2::OnShutdown(void)
 {
 	ClearAll();
 }
-void Router2::UpdateForwarding(unsigned int connectionRequestIndex)
+bool Router2::UpdateForwarding(unsigned int connectionRequestIndex)
 {
 	ConnnectRequest* connectionRequest = connectionRequests[connectionRequestIndex];
 	if (connectionRequest->connectionRequestSystems.Size()==0)
 	{
+		printf("Router2 failed at %s:%i\n", __FILE__, __LINE__);
 		if (connectionRequest->returnConnectionLostOnFailure)
 			ReturnToUser(ID_CONNECTION_LOST, connectionRequest->endpointGuid, UNASSIGNED_SYSTEM_ADDRESS);
 		else
@@ -361,11 +390,14 @@ int ConnectionRequestSystemComp( const Router2::ConnectionRequestSystem & key, c
 void Router2::RequestForwarding(unsigned int connectionRequestIndex)
 {
 	ConnnectRequest* connectionRequest = connectionRequests[connectionRequestIndex];
-	RakAssert(connectionRequest->requestState=R2RS_REQUEST_STATE_QUERY_FORWARDING);
+	RakAssert(connectionRequest->requestState==R2RS_REQUEST_STATE_QUERY_FORWARDING);
 	connectionRequest->requestState=REQUEST_STATE_REQUEST_FORWARDING;
 
 	if (connectionRequest->GetGuidIndex(connectionRequest->lastRequestedForwardingSystem)!=(unsigned int)-1)
+	{
+		printf("Router2 failed at %s:%i\n", __FILE__, __LINE__);
 		return;
+	}
 
 	// Prioritize systems to request forwarding
 	DataStructures::OrderedList<ConnectionRequestSystem, ConnectionRequestSystem, ConnectionRequestSystemComp> commandList;
@@ -373,7 +405,11 @@ void Router2::RequestForwarding(unsigned int connectionRequestIndex)
 	for (connectionRequestGuidIndex=0; connectionRequestGuidIndex < connectionRequest->connectionRequestSystems.Size(); connectionRequestGuidIndex++)
 	{
 		RakAssert(connectionRequest->connectionRequestSystems[connectionRequestGuidIndex].pingToEndpoint>=0);
-		commandList.Insert(connectionRequest->connectionRequestSystems[connectionRequestGuidIndex]);
+		commandList.Insert(connectionRequest->connectionRequestSystems[connectionRequestGuidIndex],
+			connectionRequest->connectionRequestSystems[connectionRequestGuidIndex],
+			true,
+			__FILE__,
+			__LINE__);
 	}
 
 	connectionRequest->lastRequestedForwardingSystem=commandList[0].guid;
@@ -383,9 +419,6 @@ void Router2::RequestForwarding(unsigned int connectionRequestIndex)
 	bsOut.Write((unsigned char) ID_ROUTER_2_REQUEST_FORWARDING);
 	bsOut.Write(connectionRequest->endpointGuid);
 	rakPeerInterface->Send(&bsOut,MEDIUM_PRIORITY,RELIABLE_ORDERED,0,connectionRequest->lastRequestedForwardingSystem,false);
-}
-bool Router2::QueryForwarding(RakNetGUID endpointGuid)
-{
 }
 void Router2::SendFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endpointGuid)
 {
@@ -401,6 +434,7 @@ int Router2::ReturnFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endp
 	// If the number of systems we are currently forwarding>=maxForwarding, return ID_ROUTER_2_REPLY_FORWARDING,endpointGuid,false
 	if (udpForwarder==0 || udpForwarder->GetUsedForwardEntries()/2>maximumForwardingRequests)
 	{
+		printf("Router2 failed at %s:%i\n", __FILE__, __LINE__);
 		SendFailureOnCannotForward(sourceGuid,endpointGuid);
 		return -1;
 	}
@@ -409,6 +443,7 @@ int Router2::ReturnFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endp
 	pingToEndpoint = rakPeerInterface->GetAveragePing(endpointGuid);
 	if (pingToEndpoint==-1)
 	{
+		printf("Router2 failed at %s:%i\n", __FILE__, __LINE__);
 		SendFailureOnCannotForward(sourceGuid,endpointGuid);
 		return -1;
 	}
@@ -424,7 +459,10 @@ void Router2::OnQueryForwarding(Packet *packet)
 
 	int pingToEndpoint = ReturnFailureOnCannotForward(packet->guid, endpointGuid);
 	if (pingToEndpoint==-1)
+	{
+		printf("Router2 failed at %s:%i\n", __FILE__, __LINE__);
 		return;
+	}
 
 	// If we are connected to endpointGuid, reply ID_ROUTER_2_REPLY_FORWARDING,endpointGuid,true,ping,numCurrentlyForwarding
 	RakNet::BitStream bsOut;
@@ -446,10 +484,16 @@ void Router2::OnQueryForwardingReply(Packet *packet)
 
 	unsigned int connectionRequestIndex = GetConnectionRequestIndex(endpointGuid);
 	if (connectionRequestIndex==(unsigned int)-1)
+	{
+		printf("Router2 failed at %s:%i\n", __FILE__, __LINE__);
 		return;
+	}
 	unsigned int connectionRequestGuidIndex = connectionRequests[connectionRequestIndex]->GetGuidIndex(packet->guid);
 	if (connectionRequestGuidIndex==(unsigned int)-1)
+	{
+		printf("Router2 failed at %s:%i\n", __FILE__, __LINE__);
 		return;
+	}
 
 	bool canForward;
 	bs.Read(canForward);
@@ -482,13 +526,16 @@ void Router2::SendForwardingSuccess(RakNetGUID sourceGuid, RakNetGUID endpointGu
 }
 void Router2::SendOOBFromRakNetPort(OutOfBandIdentifiers oob, BitStream *extraData, SystemAddress sa)
 {
-	RakNet::BitStream oob;
-	oob.Write((unsigned char)oob);
+	RakNet::BitStream oobBs;
+	oobBs.Write((unsigned char)oob);
 	if (extraData)
-		oob.Write(*extraData);
+	{
+		extraData->ResetReadPointer();
+		oobBs.Write(*extraData);
+	}
 	char ipAddressString[32];
 	sa.ToString(false, ipAddressString);
-	rakPeerInterface->SendOutOfBand((const char*) ipAddressString,sa.port,(MessageID) ID_OUT_OF_BAND_INTERNAL,(const char*) oob.GetData(),oob.GetNumberOfBytesUsed());
+	rakPeerInterface->SendOutOfBand((const char*) ipAddressString,sa.port,(MessageID) ID_OUT_OF_BAND_INTERNAL,(const char*) oobBs.GetData(),oobBs.GetNumberOfBytesUsed());
 }
 void Router2::SendOOBFromSpecifiedSocket(OutOfBandIdentifiers oob, SystemAddress sa, SOCKET socket)
 {
@@ -501,10 +548,10 @@ void Router2::SendOOBMessages(Router2::MiniPunchRequest *mpr)
 {
 	// Mini NAT punch
 	// Send from srcToDestPort to packet->systemAddress (source). If the message arrives, the remote system should reply.
-	SendOOBFromSpecifiedSocket(ID_ROUTER_2_REPLY_TO_SENDER_PORT, mpr->sourceAddress, mpr->srcToDestSocket);
+	SendOOBFromSpecifiedSocket(ID_ROUTER_2_REPLY_TO_SENDER_PORT, mpr->sourceAddress, mpr->destToSourceSocket);
 
 	// Send from destToSourcePort to endpointSystemAddress (destination). If the message arrives, the remote system should reply.
-	SendOOBFromSpecifiedSocket(ID_ROUTER_2_REPLY_TO_SENDER_PORT, mpr->endpointAddress, mpr->destToSourceSocket);
+	SendOOBFromSpecifiedSocket(ID_ROUTER_2_REPLY_TO_SENDER_PORT, mpr->endpointAddress, mpr->srcToDestSocket);
 
 	// Tell source to send to srcToDestPort
 	RakNet::BitStream extraData;
@@ -525,7 +572,10 @@ void Router2::OnRequestForwarding(Packet *packet)
 
 	int pingToEndpoint = ReturnFailureOnCannotForward(packet->guid, endpointGuid);
 	if (pingToEndpoint==-1)
+	{
+		printf("Router2 failed at %s:%i\n", __FILE__, __LINE__);
 		return;
+	}
 
 	unsigned short srcToDestPort;
 	unsigned short destToSourcePort;
@@ -542,8 +592,9 @@ void Router2::OnRequestForwarding(Packet *packet)
 	}
 	else if (result==UDPFORWARDER_NO_SOCKETS || result==UDPFORWARDER_INVALID_PARAMETERS)
 	{
+		printf("Router2 failed at %s:%i\n", __FILE__, __LINE__);
 		RakAssert(result!=UDPFORWARDER_INVALID_PARAMETERS);
-		SendFailureOnCannotForward();
+		SendFailureOnCannotForward(packet->guid, endpointGuid);
 	}
 	else
 	{
@@ -563,9 +614,9 @@ void Router2::OnRequestForwarding(Packet *packet)
 		int ping1 = rakPeerInterface->GetAveragePing(packet->guid);
 		int ping2 = rakPeerInterface->GetAveragePing(endpointGuid);
 		if (ping1>ping2)
-			miniPunchRequest.timeout=ping1*3+300;
+			miniPunchRequest.timeout=RakNet::GetTimeMS()+ping1*3+300;
 		else
-			miniPunchRequest.timeout=ping2*3+300;
+			miniPunchRequest.timeout=RakNet::GetTimeMS()+ping2*3+300;
 		miniPunchRequest.nextAction=RakNet::GetTimeMS()+100;
 		SendOOBMessages(&miniPunchRequest);
 		miniPunchesInProgress.Push(miniPunchRequest,__FILE__,__LINE__);
@@ -645,13 +696,17 @@ int Router2::GetLargestPingAmongConnectedSystems(void) const
 	int largestPing=-1;
 	unsigned short maxPeers = rakPeerInterface->GetMaximumNumberOfPeers();
 	if (maxPeers==0)
-		return;
+		return 9999;
 	unsigned short index;
-	for (index=0; index < rakPeerInterface->GetIndexFromSystemAddress(); index++)
+	for (index=0; index < rakPeerInterface->GetMaximumNumberOfPeers(); index++)
 	{
-		avePing=rakPeerInterface->GetAveragePing(rakPeerInterface->GetGUIDFromIndex(index));
-		if (avePing>largestPing)
-			largestPing=avePing;
+		RakNetGUID g = rakPeerInterface->GetGUIDFromIndex(index);
+		if (g!=UNASSIGNED_RAKNET_GUID)
+		{
+			avePing=rakPeerInterface->GetAveragePing(rakPeerInterface->GetGUIDFromIndex(index));
+			if (avePing>largestPing)
+				largestPing=avePing;
+		}
 	}
 	return largestPing;
 }
@@ -671,7 +726,7 @@ unsigned int Router2::ConnnectRequest::GetGuidIndex(RakNetGUID guid)
 	unsigned int i;
 	for (i=0; i < connectionRequestSystems.Size(); i++)
 	{
-		if (connectionRequestSystems[i]==guid)
+		if (connectionRequestSystems[i].guid==guid)
 			return i;
 	}
 	return (unsigned int) -1;
@@ -695,4 +750,3 @@ void Router2::ClearAll(void)
 	ClearMinipunches();
 	ClearForwardedConnections();
 }
-*/

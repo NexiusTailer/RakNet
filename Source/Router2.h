@@ -1,4 +1,3 @@
-/*
 /// \file
 /// \brief Router2 plugin. Allows you to connect to a system by routing packets through another system that is connected to both you and the destination. Useful for getting around NATs.
 ///
@@ -16,6 +15,7 @@ class RakPeerInterface;
 #include "PacketPriority.h"
 #include "Export.h"
 #include "UDPForwarder.h"
+#include "MessageIdentifiers.h"
 
 namespace RakNet
 {
@@ -35,7 +35,14 @@ public:
 	virtual ~Router2();
 
 	/// Query all connected systems to connect through them to a third system.
+	/// System will return ID_ROUTER_2_FORWARDING_NO_PATH if unable to connect.
+	/// Else you will get ID_CONNECTION_REQUEST_ACCEPTED with Packet::guid equal to endpointGuid
+	/// \note The SystemAddress for a connection should not be used - always use RakNetGuid as the address can change at any time.
+	/// When the address changes, you will get ID_ROUTER_2_REROUTED
 	void Connect(RakNetGUID endpointGuid);
+
+	/// Set the maximum number of bidirectional connections this system will support
+	/// Defaults to 0
 	void SetMaximumForwardingRequests(int max);
 
 	// --------------------------------------------------------------------------------------------
@@ -104,10 +111,9 @@ public:
 
 protected:
 
-	void UpdateForwarding(unsigned int connectionRequestIndex);
+	bool UpdateForwarding(unsigned int connectionRequestIndex);
 	void RemoveConnectionRequest(unsigned int connectionRequestIndex);
 	void RequestForwarding(unsigned int connectionRequestIndex);
-	bool QueryForwarding(RakNetGUID endpointGuid);
 	void OnQueryForwarding(Packet *packet);
 	void OnQueryForwardingReply(Packet *packet);
 	void OnRequestForwarding(Packet *packet);
@@ -115,7 +121,7 @@ protected:
 	void OnForwardingSuccess(Packet *packet);
 	int GetLargestPingAmongConnectedSystems(void) const;
 	void ReturnToUser(MessageID messageId, RakNetGUID endpointGuid, SystemAddress systemAddress);
-	void ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLostOnFailure);
+	bool ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLostOnFailure);
 
 	UDPForwarder *udpForwarder;
 	int maximumForwardingRequests;
@@ -138,4 +144,3 @@ protected:
 }
 
 #endif
-*/

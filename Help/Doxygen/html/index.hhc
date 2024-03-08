@@ -64,6 +64,9 @@
       <LI><OBJECT type="text/sitemap"><param name="Name" value="Router"><param name="Local" value="group__ROUTER__GROUP.html"><param name="ImageNumber" value="11"></OBJECT>
         <UL>
         </UL>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="Router2"><param name="Local" value="group__ROUTER__2__GROUP.html"><param name="ImageNumber" value="11"></OBJECT>
+        <UL>
+        </UL>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="UDPProxy"><param name="Local" value="group__UDP__PROXY__GROUP.html"><param name="ImageNumber" value="11"></OBJECT>
         <UL>
         </UL>
@@ -328,6 +331,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::RoomsPluginFunc"><param name="Local" value="structRakNet_1_1RoomsPluginFunc.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::RoomsPluginNotification"><param name="Local" value="structRakNet_1_1RoomsPluginNotification.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="Router"><param name="Local" value="classRouter.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::Router2"><param name="Local" value="classRakNet_1_1Router2.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RouterInterface"><param name="Local" value="classRouterInterface.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::RPC3"><param name="Local" value="classRakNet_1_1RPC3.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RPCParameters"><param name="Local" value="structRPCParameters.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -586,6 +590,7 @@
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::ReplicaManager2"><param name="Local" value="classRakNet_1_1ReplicaManager2.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::ReplicaManager3"><param name="Local" value="classRakNet_1_1ReplicaManager3.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::RoomsPlugin"><param name="Local" value="classRakNet_1_1RoomsPlugin.html"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::Router2"><param name="Local" value="classRakNet_1_1Router2.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::RPC3"><param name="Local" value="classRakNet_1_1RPC3.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::SQLite3ClientPlugin"><param name="Local" value="classRakNet_1_1SQLite3ClientPlugin.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::SQLite3ServerPlugin"><param name="Local" value="classRakNet_1_1SQLite3ServerPlugin.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -816,6 +821,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="c:/RakNet/Source/ReplicaManager3.h"><param name="Local" value="ReplicaManager3_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="c:/RakNet/Source/Rijndael.h"><param name="Local" value="Rijndael_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="c:/RakNet/Source/Router.h"><param name="Local" value="Router_8h.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="c:/RakNet/Source/Router2.h"><param name="Local" value="Router2_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="c:/RakNet/Source/RPCMap.h"><param name="Local" value="RPCMap_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="c:/RakNet/Source/RPCNode.h"><param name="Local" value="RPCNode_8h.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="c:/RakNet/Source/SimpleMutex.h"><param name="Local" value="SimpleMutex_8h.html"><param name="ImageNumber" value="11"></OBJECT>

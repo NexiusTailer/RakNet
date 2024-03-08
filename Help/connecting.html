@@ -210,14 +210,11 @@ passwordData</li>
 <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">connectionSocketIndex is obsolete, do not use</li>
 </ul>
 <p>Connect() will return true for a successful attempt, false if you are
-  already connected to this system, or if the domain name cannot be
+  already connected to this system, a connection to the system is pending, or if the domain name cannot be
   resolved.<br>
   <br>
   <span style="font-style: italic;">Note: Connect()
-    returning true does NOT mean you are connected. It means you should
-    wait for the message ID_CONNECTION_REQUEST_ACCEPTED or
-    ID_CONNECTION_ATTEMPT_FAILED. In the meantime, your GUI should show a
-    waiting screen.</span></p>
+    returning true does NOT mean you are connected. If successful the message ID_CONNECTION_REQUEST_ACCEPTED should be received. If not you will recieve one of the error messages.</span></p>
 <p class="RakNetBlueHeader">Troubleshooting connection failure</p>
 <p> If ID_CONNECTION_ATTEMPT_FAILED is
   returned, this means you could not connect to that system. Possible

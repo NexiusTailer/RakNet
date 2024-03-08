@@ -652,6 +652,19 @@ int SocketLayer::SendTo_PC( SOCKET s, const char *data, int length, unsigned int
 		len = sendto( s, data, length, 0, ( const sockaddr* ) & sa, sizeof( sa ) );
 		if (len<0)
 		{
+
+#if defined(_WIN32) && !defined(_XBOX) && defined(_DEBUG) && !defined(X360)
+			DWORD dwIOError = GetLastError();
+			LPVOID messageBuffer;
+			FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+				NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
+				( LPTSTR ) &messageBuffer, 0, NULL );
+			// something has gone wrong here...
+			RAKNET_DEBUG_PRINTF( "SendTo_PC failed:Error code - %d\n%s", dwIOError, messageBuffer );
+			//Free the buffer.
+			LocalFree( messageBuffer );
+#endif
+
 			printf("sendto failed with code %i for char %i and length %i.\n", len, data[0], length);
 		}
 	}

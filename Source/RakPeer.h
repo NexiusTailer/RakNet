@@ -344,6 +344,10 @@ public:
 	/// \param[in] target Target system to cancel.
 	void CancelConnectionAttempt( const SystemAddress target );
 
+	/// Returns if a particular systemAddress has a pending or in progress connection attempt
+	/// \param[in] systemAddress The SystemAddress we are referring to
+	bool IsConnectionAttemptPending( const SystemAddress systemAddress );
+
 	/// \brief Returns if a particular systemAddress is connected to us.
 	///	\note This can also be made to return true if we are in the process of connecting.
 	/// \param[in] systemAddress The SystemAddress we are referring to
@@ -357,7 +361,7 @@ public:
 	/// This includes systems which were formerly connected, but are now not connected.
 	/// \param[in] systemAddress The SystemAddress we are referring to
 	/// \return The index of this SystemAddress or -1 on system not found.
-	int GetIndexFromSystemAddress( const SystemAddress systemAddress );
+	int GetIndexFromSystemAddress( const SystemAddress systemAddress ) const;
 
 	/// \brief Given \a index into remoteSystemList, will return a SystemAddress.
 	/// This function is only useful for looping through all systems.
@@ -720,7 +724,7 @@ public:
 	/// \internal
 	bool SendOutOfBand(const char *host, unsigned short remotePort, MessageID header, const char *data, BitSize_t dataLength, unsigned connectionSocketIndex=0 );
 
-	static Packet *AllocPacket(unsigned dataSize, const char *file, unsigned int line);
+	// static Packet *AllocPacket(unsigned dataSize, const char *file, unsigned int line);
 
 	/// \internal
 	/// \brief Holds the clock differences between systems, along with the ping
@@ -786,7 +790,7 @@ protected:
 	// This is done to provide custom RPC handling when in a blocking RPC
 	Packet* ReceiveIgnoreRPC( void );
 
-	int GetIndexFromSystemAddress( const SystemAddress systemAddress, bool calledFromNetworkThread );
+	int GetIndexFromSystemAddress( const SystemAddress systemAddress, bool calledFromNetworkThread ) const;
 	int GetIndexFromGuid( const RakNetGUID guid );
 
 	//void RemoveFromRequestedConnectionsList( const SystemAddress systemAddress );
@@ -1122,6 +1126,7 @@ protected:
 
 	SimpleMutex packetReturnMutex;
 	DataStructures::Queue<Packet*> packetReturnQueue;
+	Packet *AllocPacket(unsigned dataSize, const char *file, unsigned int line);
 	Packet *AllocPacket(unsigned dataSize, unsigned char *data, const char *file, unsigned int line);
 
 

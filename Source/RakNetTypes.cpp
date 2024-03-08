@@ -77,7 +77,7 @@ bool SystemAddress::operator<( const SystemAddress& right ) const
 const char *SystemAddress::ToString(bool writePort) const
 {
 	static unsigned char strIndex=0;
-	static char str[8][22];
+	static char str[8][30];
 
 	unsigned char lastStrIndex=strIndex;
 	strIndex++;

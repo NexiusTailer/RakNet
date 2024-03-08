@@ -37,6 +37,9 @@ The sample illustrates the following concepts:
 
 **********************************************************************/
 
+// RakNet: Fix 'fd_set' : 'struct' type redefinition
+#include "WindowsIncludes.h"
+
 // GFx Includes
 #include "GFile.h"
 #include "GFxPlayer.h"
