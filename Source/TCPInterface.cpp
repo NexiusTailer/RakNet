@@ -68,10 +68,12 @@ TCPInterface::~TCPInterface()
 	StringCompressor::RemoveReference();
 	RakNet::StringTable::RemoveReference();
 }
-bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnections, unsigned short maxConnections, int threadPriority)
+bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnections, unsigned short maxConnections, int _threadPriority)
 {
 	if (isStarted)
 		return false;
+
+	threadPriority=_threadPriority;
 
 	if (threadPriority==-99999)
 	{
@@ -251,7 +253,7 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 		s->tcpInterface=this;
 
 		// Start the connection thread
-		int errorCode = RakNet::RakThread::Create(ConnectionAttemptLoop, s);
+		int errorCode = RakNet::RakThread::Create(ConnectionAttemptLoop, s, threadPriority);
 		if (errorCode!=0)
 		{
 			RakNet::OP_DELETE(s, __FILE__, __LINE__);

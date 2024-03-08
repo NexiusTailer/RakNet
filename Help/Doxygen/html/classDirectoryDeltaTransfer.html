@@ -57,7 +57,7 @@ Inheritance diagram for DirectoryDeltaTransfer:</div>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the local root directory to base all file uploads and downloads off of.  <a href="#69d9b024578bdc4a00ec0ea950da35d1"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDirectoryDeltaTransfer.html#10e33cbc427567e6d755e2b989bad153">SetUploadSendParameters</a> (<a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> _priority, char _orderingChannel)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">What parameters to use for the <a class="el" href="classRakPeerInterface.html#cc8848069091fa7610e9da5d8aa4925e">RakPeerInterface::Send()</a> call when uploading files.  <a href="#10e33cbc427567e6d755e2b989bad153"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">What parameters to use for the <a class="el" href="classRakPeerInterface.html#616de5a586b570f497005f43c587f153">RakPeerInterface::Send()</a> call when uploading files.  <a href="#10e33cbc427567e6d755e2b989bad153"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDirectoryDeltaTransfer.html#28bfa222b37e01ef6318702a3f1597c5">AddUploadsFromSubdirectory</a> (const char *subdir)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add all files in the specified subdirectory recursively.  <a href="#28bfa222b37e01ef6318702a3f1597c5"></a><br></td></tr>
@@ -194,8 +194,8 @@ Downloads files from the matching parameter <em>subdir</em> in AddUploadsFromSub
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>prependAppDirToOutputSubdir</em>&nbsp;</td><td>True to prepend outputSubdir with pathToApplication when determining the final output path. Usually you want this to be true. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>host</em>&nbsp;</td><td>The address of the remote system to send the message to. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>onFileCallback</em>&nbsp;</td><td>Callback to call per-file (optional). When fileIndex+1==setCount in the callback then the download is done </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_priority</em>&nbsp;</td><td>See <a class="el" href="classRakPeerInterface.html#cc8848069091fa7610e9da5d8aa4925e">RakPeerInterface::Send()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakPeerInterface.html#cc8848069091fa7610e9da5d8aa4925e">RakPeerInterface::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_priority</em>&nbsp;</td><td>See <a class="el" href="classRakPeerInterface.html#616de5a586b570f497005f43c587f153">RakPeerInterface::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakPeerInterface.html#616de5a586b570f497005f43c587f153">RakPeerInterface::Send()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>cb</em>&nbsp;</td><td>Callback to get progress updates. Pass 0 to not use. </td></tr>
   </table>
 </dl>
@@ -398,12 +398,12 @@ So you need an instance of that plugin registered with <a class="el" href="class
 <div class="memdoc">
 
 <p>
-What parameters to use for the <a class="el" href="classRakPeerInterface.html#cc8848069091fa7610e9da5d8aa4925e">RakPeerInterface::Send()</a> call when uploading files. 
+What parameters to use for the <a class="el" href="classRakPeerInterface.html#616de5a586b570f497005f43c587f153">RakPeerInterface::Send()</a> call when uploading files. 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_priority</em>&nbsp;</td><td>See <a class="el" href="classRakPeerInterface.html#cc8848069091fa7610e9da5d8aa4925e">RakPeerInterface::Send()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakPeerInterface.html#cc8848069091fa7610e9da5d8aa4925e">RakPeerInterface::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_priority</em>&nbsp;</td><td>See <a class="el" href="classRakPeerInterface.html#616de5a586b570f497005f43c587f153">RakPeerInterface::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakPeerInterface.html#616de5a586b570f497005f43c587f153">RakPeerInterface::Send()</a> </td></tr>
   </table>
 </dl>
 
@@ -412,7 +412,7 @@ What parameters to use for the <a class="el" href="classRakPeerInterface.html#cc
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="DirectoryDeltaTransfer_8h.html">DirectoryDeltaTransfer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Dec 7 19:18:30 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 11 12:22:54 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -86,13 +86,13 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeerInterface.html#190feb3608caded7772f4bea292e15f9">GetConnectionList</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> *remoteSystems, unsigned short *numberOfSystems) const =0</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeerInterface.html#cc8848069091fa7610e9da5d8aa4925e">Send</a> (const char *data, const int length, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast)=0</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeerInterface.html#616de5a586b570f497005f43c587f153">Send</a> (const char *data, const int length, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast)=0</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeerInterface.html#aa2ae363bd5a7f8f631bf8b949681df1">SendLoopback</a> (const char *data, const int length)=0</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeerInterface.html#b0418480ae55eebcbde341c9c2673e15">Send</a> (const <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast)=0</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeerInterface.html#13b6818209af326ecaba9af93705121c">Send</a> (const <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast)=0</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeerInterface.html#bc2ecea237f8805b0b498048abb90eeb">SendList</a> (const char **data, const int *lengths, const int numParameters, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast)=0</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeerInterface.html#4a5b563f41a9d4307932ccdf45103384">SendList</a> (const char **data, const int *lengths, const int numParameters, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast)=0</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="structPacket.html">Packet</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeerInterface.html#b92ff92041d251011bc166f6abdf119d">Receive</a> (void)=0</td></tr>
 
@@ -112,9 +112,9 @@ virtual unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="classNetworkIDManager.html">NetworkIDManager</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeerInterface.html#9f0b16758bb5bf43c0bd53dc1882ab61">GetNetworkIDManager</a> (void) const =0</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#g5588d6c7bc7eeb7f87515ca536f3729c">RPC</a> (const char *uniqueID, const char *data, BitSize_t bitLength, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *replyFromTarget)=0</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#ge8f0f2bb5fa29ddb5e1e795733848a2b">RPC</a> (const char *uniqueID, const char *data, BitSize_t bitLength, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *replyFromTarget)=0</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#ge644fc210e9237acd4fad227a0cf214c">RPC</a> (const char *uniqueID, const <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *replyFromTarget)=0</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#g3dd6d44bd3c48716e7850d4bf7a48d3a">RPC</a> (const char *uniqueID, const <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *replyFromTarget)=0</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeerInterface.html#46d50d2581077e4856f7dc841197dd19">CloseConnection</a> (const <a class="el" href="structSystemAddress.html">SystemAddress</a> target, bool sendDisconnectionNotification, unsigned char orderingChannel=0, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> disconnectionNotificationPriority=LOW_PRIORITY)=0</td></tr>
 
@@ -234,6 +234,8 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeerInterface.html#0188ac9d8c95fb82d9f7e0a222b4e91f">IsNetworkSimulatorActive</a> (void)=0</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="structRakNetStatistics.html">RakNetStatistics</a> *const&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeerInterface.html#bbf8226d5e904df116b22ab7a3568e4f">GetStatistics</a> (const <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetStatistics.html">RakNetStatistics</a> *rns=0)=0</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="structRakNetBandwidth.html">RakNetBandwidth</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeerInterface.html#cf23cc4f0f8de310fcc4eb7cbe51b90c">GetBandwidth</a> (const <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetBandwidth.html">RakNetBandwidth</a> *output)=0</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -908,6 +910,44 @@ Returns the average of all ping times read for the specific system or -1 if none
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>The ping time for this system, or -1 </dd></dl>
 
 <p>Implemented in <a class="el" href="classRakPeer.html#f416be8df0633bb2a8af8cdd22b6c17f">RakPeer</a>.</p>
+
+</div>
+</div><p>
+<a class="anchor" name="cf23cc4f0f8de310fcc4eb7cbe51b90c"></a><!-- doxytag: member="RakPeerInterface::GetBandwidth" ref="cf23cc4f0f8de310fcc4eb7cbe51b90c" args="(const SystemAddress systemAddress, RakNetBandwidth *output)=0" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="structRakNetBandwidth.html">RakNetBandwidth</a>* RakPeerInterface::GetBandwidth           </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramname"> <em>systemAddress</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structRakNetBandwidth.html">RakNetBandwidth</a> *&nbsp;</td>
+          <td class="paramname"> <em>output</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [pure virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns a simpler version of GetStatistics, used to check bandwidth utilization for a given connection <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Which system to check the bandwidth for. If UNASSIGNED_SYSTEM_ADDRESS, returns the average among all systems </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>output</em>&nbsp;</td><td>Structure to write to </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>Returns <em>output</em> </dd></dl>
+
+<p>Implemented in <a class="el" href="classRakPeer.html#6766d74df6d1a725dd8a94ae1a0ecb71">RakPeer</a>.</p>
 
 </div>
 </div><p>
@@ -2092,7 +2132,7 @@ Remove a specific connection previously added via AddToSecurityExceptionList <dl
 
 </div>
 </div><p>
-<a class="anchor" name="b0418480ae55eebcbde341c9c2673e15"></a><!-- doxytag: member="RakPeerInterface::Send" ref="b0418480ae55eebcbde341c9c2673e15" args="(const RakNet::BitStream *bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast)=0" -->
+<a class="anchor" name="13b6818209af326ecaba9af93705121c"></a><!-- doxytag: member="RakPeerInterface::Send" ref="13b6818209af326ecaba9af93705121c" args="(const RakNet::BitStream *bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast)=0" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -2123,8 +2163,8 @@ Remove a specific connection previously added via AddToSecurityExceptionList <dl
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -2148,18 +2188,18 @@ Sends a block of data to the specified system that you are connected to. Same as
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>What priority level to send on. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>How reliability to send this data. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>When using ordered or sequenced messages, what channel to order these on. Messages are only ordered relative to other messages on the same stream </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Who to send this packet to, or in the case of broadcasting who not to send it to. Use UNASSIGNED_SYSTEM_ADDRESS to specify none </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemIdentifier</em>&nbsp;</td><td>Who to send this packet to, or in the case of broadcasting who not to send it to. Pass either a <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> structure or a <a class="el" href="structRakNetGUID.html">RakNetGUID</a> structure. Use UNASSIGNED_SYSTEM_ADDRESS or to specify none </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to. </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>False on bad input. True otherwise. </dd></dl>
 <dl class="note" compact><dt><b>Note:</b></dt><dd>COMMON MISTAKE: When writing the first byte, bitStream-&gt;Write((unsigned char) ID_MY_TYPE) be sure it is casted to a byte, and you are not writing a 4 byte enumeration. </dd></dl>
 
-<p>Implemented in <a class="el" href="classRakPeer.html#c3798ef62d4fcaf901281dc7bfc18368">RakPeer</a>.</p>
+<p>Implemented in <a class="el" href="classRakPeer.html#7eda4083a0a9aabb7f6791200ae5a076">RakPeer</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="cc8848069091fa7610e9da5d8aa4925e"></a><!-- doxytag: member="RakPeerInterface::Send" ref="cc8848069091fa7610e9da5d8aa4925e" args="(const char *data, const int length, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast)=0" -->
+<a class="anchor" name="616de5a586b570f497005f43c587f153"></a><!-- doxytag: member="RakPeerInterface::Send" ref="616de5a586b570f497005f43c587f153" args="(const char *data, const int length, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast)=0" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -2196,8 +2236,8 @@ Sends a block of data to the specified system that you are connected to. Same as
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -2222,17 +2262,17 @@ Sends a block of data to the specified system that you are connected to. This fu
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>What priority level to send on. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>How reliability to send this data. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>When using ordered or sequenced messages, what channel to order these on. Messages are only ordered relative to other messages on the same stream </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Who to send this packet to, or in the case of broadcasting who not to send it to. Use UNASSIGNED_SYSTEM_ADDRESS to specify none </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemIdentifier</em>&nbsp;</td><td>Who to send this packet to, or in the case of broadcasting who not to send it to. Pass either a <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> structure or a <a class="el" href="structRakNetGUID.html">RakNetGUID</a> structure. Use UNASSIGNED_SYSTEM_ADDRESS or to specify none </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to. </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>False on bad input. True otherwise. </dd></dl>
 
-<p>Implemented in <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be">RakPeer</a>.</p>
+<p>Implemented in <a class="el" href="classRakPeer.html#f1ba142c575e8a7b656a76b937a810ff">RakPeer</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="bc2ecea237f8805b0b498048abb90eeb"></a><!-- doxytag: member="RakPeerInterface::SendList" ref="bc2ecea237f8805b0b498048abb90eeb" args="(const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast)=0" -->
+<a class="anchor" name="4a5b563f41a9d4307932ccdf45103384"></a><!-- doxytag: member="RakPeerInterface::SendList" ref="4a5b563f41a9d4307932ccdf45103384" args="(const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast)=0" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -2275,8 +2315,8 @@ Sends a block of data to the specified system that you are connected to. This fu
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -2304,13 +2344,13 @@ This function only works while the connected <dl compact><dt><b>Parameters:</b><
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>What priority level to send on. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>How reliability to send this data. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>When using ordered or sequenced messages, what channel to order these on. Messages are only ordered relative to other messages on the same stream </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Who to send this packet to, or in the case of broadcasting who not to send it to. Use UNASSIGNED_SYSTEM_ADDRESS to specify none </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemIdentifier</em>&nbsp;</td><td>Who to send this packet to, or in the case of broadcasting who not to send it to. Pass either a <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> structure or a <a class="el" href="structRakNetGUID.html">RakNetGUID</a> structure. Use UNASSIGNED_SYSTEM_ADDRESS or to specify none </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to. </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>False on bad input. True otherwise. </dd></dl>
 
-<p>Implemented in <a class="el" href="classRakPeer.html#7060e48a58e704a92d7124445fe3bcf2">RakPeer</a>.</p>
+<p>Implemented in <a class="el" href="classRakPeer.html#603cc617f28ed334a814931b58ff70d1">RakPeer</a>.</p>
 
 </div>
 </div><p>
@@ -2848,7 +2888,7 @@ Set _RAKNET_THREADSAFE in RakNetDefines.h if you want to call <a class="el" href
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="RakPeerInterface_8h.html">RakPeerInterface.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Dec 7 19:18:31 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 11 12:22:55 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

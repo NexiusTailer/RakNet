@@ -1157,6 +1157,7 @@ void Lobby2ClientGFx3Impl::Accept(CallbackProcessor* cbreg)
 	cbreg->Process( "f2c_RegisterAccountStateQuery", &::f2c_RegisterAccountStateQuery );
 	cbreg->Process( "f2c_DeleteAccount", &::f2c_DeleteAccount );
 	cbreg->Process( "f2c_LoginToAccount", &::f2c_LoginToAccount );
+	cbreg->Process( "f2c_GetAccountDetails", &::f2c_GetAccountDetails );
 	cbreg->Process( "f2c_DisconnectFromServer", &::f2c_DisconnectFromServer );
 	cbreg->Process( "f2c_CheckCDKey", &::f2c_CheckCDKey );
 	cbreg->Process( "f2c_RegisterAccount", &::f2c_RegisterAccount );

@@ -149,6 +149,8 @@ public:
 	/// \return A pointer to a static struct, filled out with current statistical information.
 	RakNetStatistics * const GetStatistics( RakNetStatistics *rns );
 
+	RakNetBandwidth * const GetBandwidth( RakNetBandwidth *b );
+
 	///Are we waiting for any data to be sent out or be processed by the player?
 	bool IsOutgoingDataWaiting(void);
 	bool AreAcksWaiting(void);
@@ -330,7 +332,8 @@ private:
 	// Set to zero when it becomes empty
 	// Set to the current time if it is not zero, and we get incoming data
 	// If the current time - timeResendQueueNonEmpty is greater than a threshold, we are disconnected
-	CCTimeType timeResendQueueNonEmpty;
+//	CCTimeType timeResendQueueNonEmpty;
+	RakNetTimeMS timeLastDatagramArrived;
 
 
 	// If we backoff due to packetloss, don't remeasure until all waiting resends have gone out or else we overcount
@@ -345,6 +348,7 @@ private:
 	void InitHeapWeights(void);
 	reliabilityHeapWeightType GetNextWeight(int priorityLevel);
 	unsigned int messageInSendBuffer[NUMBER_OF_PRIORITIES];
+	double bytesInSendBuffer[NUMBER_OF_PRIORITIES];
 
 
     DataStructures::OrderedList<SplitPacketIdType, SplitPacketChannel*, SplitPacketChannelComp> splitPacketChannelList;

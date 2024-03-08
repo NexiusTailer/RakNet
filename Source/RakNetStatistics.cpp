@@ -215,3 +215,23 @@ void RAK_DLL_EXPORT StatisticsToString( RakNetStatistics *s, char *buffer, int v
 			t);
 	}
 }
+
+void BandwidthToString( RakNetBandwidth *s, char *buffer )
+{
+	if (s->bytesPerSecondLimit!=0.0)
+	{
+		double percentageUsed;
+		percentageUsed=100.0 * s->bytesPerSecondOutgoing/s->bytesPerSecondLimit;
+		sprintf( buffer,
+			"Sending %.2f / %.2f MBPS. %.0f%% of capacity. %.0f bytes buffered.\n",
+			s->bytesPerSecondOutgoing/1000000.0, s->bytesPerSecondLimit/1000000.0, percentageUsed, s->bytesBuffered
+			);
+	}
+	else
+	{
+		sprintf( buffer,
+			"Sending %.2f MBPS. Unknown capacity. %.0f bytes buffered.\n",
+			s->bytesPerSecondOutgoing/1000000.0, s->bytesPerSecondLimit/1000000.0, s->bytesBuffered
+			);
+	}
+}

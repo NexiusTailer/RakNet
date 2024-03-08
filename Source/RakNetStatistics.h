@@ -125,7 +125,7 @@ struct RAK_DLL_EXPORT RakNetStatistics
 
 
 
-	RakNetStatistics operator +=(const RakNetStatistics& other)
+	RakNetStatistics& operator +=(const RakNetStatistics& other)
 	{
 		unsigned i;
 		for (i=0; i < NUMBER_OF_PRIORITIES; i++)
@@ -180,5 +180,42 @@ struct RAK_DLL_EXPORT RakNetStatistics
 /// 2 high 
 /// 3 debugging congestion control
 void RAK_DLL_EXPORT StatisticsToString( RakNetStatistics *s, char *buffer, int verbosityLevel );
+
+/// A simpler version of RakNetStatistics used to check bandwidth utilization
+struct RAK_DLL_EXPORT RakNetBandwidth
+{
+	/// How many bytes per second you are currently sending
+	double bytesPerSecondOutgoing;
+
+	/// How many bytes per second you can send.
+	double bytesPerSecondLimit;
+
+	/// How many bytes are waiting to be sent, because the outgoing bandwidth is less than the limit.
+	/// If this number is greater than 0, you are sending faster than the connection can support
+	double bytesBuffered;
+
+	RakNetBandwidth& operator +=(const RakNetBandwidth& other)
+	{
+		bytesPerSecondOutgoing+=other.bytesPerSecondOutgoing;
+		// Limit doesn't apply when taking averages
+	//	bytesPerSecondLimit+=other.bytesPerSecondLimit;
+		bytesBuffered+=other.bytesBuffered;
+		return *this;
+	}
+	RakNetBandwidth& operator /=(int count)
+	{
+		if (count>0)
+		{
+			bytesPerSecondOutgoing/=count;
+			// Limit doesn't apply when taking averages
+			//bytesPerSecondLimit/=count;
+			bytesBuffered/=count;
+		}
+		return *this;
+	}
+	void Reset(void) {bytesPerSecondOutgoing=0; bytesPerSecondLimit=0; bytesBuffered=0;}
+};
+
+void RAK_DLL_EXPORT BandwidthToString( RakNetBandwidth *s, char *buffer );
 
 #endif

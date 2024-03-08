@@ -65,6 +65,7 @@ int main(void)
 	}
 	if (client)
 	{
+		client->SetTimeoutTime(2000,UNASSIGNED_SYSTEM_ADDRESS);
 		SocketDescriptor socketDescriptor(0,0);
 		client->Startup(1, 10, &socketDescriptor, 1);
 		client->SetSplitMessageProgressInterval(10000); // Get ID_DOWNLOAD_PROGRESS notifications
@@ -72,6 +73,7 @@ int main(void)
 	}
 	if (server)
 	{
+		server->SetTimeoutTime(2000,UNASSIGNED_SYSTEM_ADDRESS);
 		SocketDescriptor socketDescriptor(60000,0);
 		server->SetMaximumIncomingConnections(4);
 		server->Startup(4, 10, &socketDescriptor, 1);
@@ -144,7 +146,6 @@ int main(void)
 					unsigned int progress;
 					unsigned int total;
 					unsigned int partLength;
-					RakNetStatistics *rss=client->GetStatistics(client->GetSystemAddressFromIndex(0));
 
 					// Disable endian swapping on reading this, as it's generated locally in ReliabilityLayer.cpp
 					progressBS.ReadBits( (unsigned char* ) &progress, BYTES_TO_BITS(sizeof(progress)), true );
@@ -209,8 +210,8 @@ int main(void)
 		if (RakNet::GetTime() > nextStatTime)
 		{
 			nextStatTime=RakNet::GetTime()+1000;
-			RakNetStatistics *rssSender;
-			RakNetStatistics *rssReceiver;
+			RakNetBandwidth rssSender;
+			RakNetBandwidth rssReceiver;
 			if (server)
 			{
 				unsigned int i;
@@ -220,8 +221,8 @@ int main(void)
 				{
 					for (i=0; i < numSystems; i++)
 					{
-						rssSender=server->GetStatistics(server->GetSystemAddressFromIndex(i));
-						StatisticsToString(rssSender, text, 3);
+						server->GetBandwidth(server->GetSystemAddressFromIndex(i), &rssSender);
+						BandwidthToString(&rssSender, text);
 						printf("==== System %i ====\n", i+1);
 						printf("%s\n\n", text);
 					}
@@ -229,12 +230,9 @@ int main(void)
 			}
 			if (client && server==0)
 			{
-				rssReceiver=client->GetStatistics(client->GetSystemAddressFromIndex(0));
-				if (rssReceiver)
-				{
-					StatisticsToString(rssReceiver, text, 3);
-					printf("%s\n\n", text);
-				}
+				client->GetBandwidth(client->GetSystemAddressFromIndex(0), &rssReceiver);
+				BandwidthToString(&rssReceiver, text);
+				printf("%s\n\n", text);
 			}
 		}
 

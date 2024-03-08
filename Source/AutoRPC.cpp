@@ -109,9 +109,9 @@ void AutoRPC::SetSendParams(PacketPriority priority, PacketReliability reliabili
 	outgoingReliability=reliability;
 	outgoingOrderingChannel=orderingChannel;
 }
-void AutoRPC::SetRecipientAddress(SystemAddress systemAddress, bool broadcast)
+void AutoRPC::SetRecipientAddress(AddressOrGUID systemIdentifier, bool broadcast)
 {
-	outgoingSystemAddress=systemAddress;
+	outgoingSystemIdentifier=systemIdentifier;
 	outgoingBroadcast=broadcast;
 }
 void AutoRPC::SetRecipientObject(NetworkID networkID)
@@ -185,6 +185,11 @@ bool AutoRPC::SendCall(const char *uniqueIdentifier, const char *stack, unsigned
 	// This is so the call SetWriteOffset works
 	bs.AlignWriteToByteBoundary();
 	BitSize_t writeOffset = bs.GetWriteOffset();
+	SystemAddress outgoingSystemAddress;
+	if (outgoingSystemIdentifier.rakNetGuid!=UNASSIGNED_RAKNET_GUID)
+		outgoingSystemAddress = rakPeerInterface->GetSystemAddressFromGuid(outgoingSystemIdentifier.rakNetGuid);
+	else
+		outgoingSystemAddress = outgoingSystemIdentifier.systemAddress;
 	if (outgoingBroadcast)
 	{
 		unsigned systemIndex;
@@ -242,7 +247,7 @@ bool AutoRPC::SendCall(const char *uniqueIdentifier, const char *stack, unsigned
 }
 void AutoRPC::OnAttach(void)
 {
-	outgoingSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
+	outgoingSystemIdentifier.SetUndefined();
 	outgoingNetworkID=UNASSIGNED_NETWORK_ID;
 	incomingSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
 

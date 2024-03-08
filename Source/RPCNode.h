@@ -18,7 +18,7 @@ class RakPeerInterface;
 
 
 /// \defgroup RAKNET_RPC Remote Procedure Call Subsystem 
-/// \depreciated Use RPC3
+/// \Deprecated Use RPC3
 /// \brief A system to call C or object member procudures on other systems, and even to return return values.
 
 /// \ingroup RAKNET_RPC 

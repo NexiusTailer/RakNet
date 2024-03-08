@@ -41,7 +41,7 @@ public:
 
 	/// Starts the TCP server on the indicated port
 	/// \param[in] threadPriority Passed to thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. WARNING!!! On Linux, 0 means highest priority! You MUST set this to something valid based on the values used by your other threads
-	bool Start(unsigned short port, unsigned short maxIncomingConnections, unsigned short maxConnections=0, int threadPriority=-99999);
+	bool Start(unsigned short port, unsigned short maxIncomingConnections, unsigned short maxConnections=0, int _threadPriority=-99999);
 
 	/// Stops the TCP server
 	void Stop(void);
@@ -136,6 +136,8 @@ protected:
 	DataStructures::ThreadsafeAllocatingQueue<RemoteClient*> newRemoteClients;
 	SimpleMutex completedConnectionAttemptMutex, failedConnectionAttemptMutex;
 	DataStructures::Queue<SystemAddress> completedConnectionAttempts, failedConnectionAttempts;
+
+	int threadPriority;
 
 	DataStructures::List<SOCKET> blockingSocketList;
 	SimpleMutex blockingSocketListMutex;

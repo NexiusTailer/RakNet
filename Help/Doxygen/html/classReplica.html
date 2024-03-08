@@ -454,8 +454,8 @@ Called when <a class="el" href="classReplicaManager.html#1dba75dce05f3f559c97ffd
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>sendTimestamp</em>&nbsp;</td><td>Set to true to include a timestamp with the message. This will be reflected in the timestamp parameter Deserialize. Defaults to false. </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>outBitStream</em>&nbsp;</td><td>The data you want to write in the message. If you do not write to outBitStream and return true, then no send will occur for this participant. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lastSendTime</em>&nbsp;</td><td>The last time Serialize returned true and outBitStream was written to. 0 if this is the first time the function has ever been called for this <em>systemAddress</em> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>Passed to <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send</a> for the send call. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>Passed to <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send</a> for the send call. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>Passed to <a class="el" href="classRakPeer.html#f1ba142c575e8a7b656a76b937a810ff" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send</a> for the send call. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>Passed to <a class="el" href="classRakPeer.html#f1ba142c575e8a7b656a76b937a810ff" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send</a> for the send call. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>currentTime</em>&nbsp;</td><td>The current time that would be returned by <a class="el" href="namespaceRakNet.html#aa2d77435e0bf2c56c77f6f41739d4b4" title="Returns the value from QueryPerformanceCounter. This is the function RakNet uses...">RakNet::GetTime()</a>. That's a slow call I do already, so you can use the parameter instead of having to call it yourself. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>The participant we are sending to. </td></tr>
     <tr><td valign="top"><tt>[in,out]</tt>&nbsp;</td><td valign="top"><em>flags</em>&nbsp;</td><td>Per-object per-system serialization flags modified by this function, <a class="el" href="classReplicaManager.html#b24556810cd7362fd3f70833ff811c78">ReplicaManager::SignalSerializationFlags</a>, and <a class="el" href="classReplicaManager.html#a01939a74a2618b57cb57ef2134744e2">ReplicaManager::AccessSerializationFlags</a>. Useful for simple customization of what you serialize based on application events. This value is not automatically reset. </td></tr>
@@ -468,7 +468,7 @@ Called when <a class="el" href="classReplicaManager.html#1dba75dce05f3f559c97ffd
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="Replica_8h.html">Replica.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Dec 7 19:18:31 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 11 12:22:55 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

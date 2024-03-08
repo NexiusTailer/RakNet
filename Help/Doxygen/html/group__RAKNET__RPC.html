@@ -57,9 +57,9 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#g3dd3a014e7e3ab37489fdc3d9c77d072">RakPeer::SetNetworkIDManager</a> (<a class="el" href="classNetworkIDManager.html">NetworkIDManager</a> *manager)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#gec72dad5a98f639a015130f784adbb29">RakPeer::RPC</a> (const char *uniqueID, const char *data, BitSize_t bitLength, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *replyFromTarget)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#gb26a0210cfe59ce179245b37d452c7ce">RakPeer::RPC</a> (const char *uniqueID, const char *data, BitSize_t bitLength, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *replyFromTarget)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#gb07776a842829a0e911354e5657345d3">RakPeer::RPC</a> (const char *uniqueID, const <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *replyFromTarget)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#gbbe0b3eb71fcb07079cd3f1837663550">RakPeer::RPC</a> (const char *uniqueID, const <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *replyFromTarget)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#g99333f28b2b884f6e8be6477e4567732">RakPeerInterface::RegisterAsRemoteProcedureCall</a> (const char *uniqueID, void(*functionPointer)(<a class="el" href="structRPCParameters.html">RPCParameters</a> *rpcParms))=0</td></tr>
 
@@ -69,9 +69,9 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#g2213ab20dee5f864383e559e3d8cac7e">RakPeerInterface::SetNetworkIDManager</a> (<a class="el" href="classNetworkIDManager.html">NetworkIDManager</a> *manager)=0</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#g5588d6c7bc7eeb7f87515ca536f3729c">RakPeerInterface::RPC</a> (const char *uniqueID, const char *data, BitSize_t bitLength, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *replyFromTarget)=0</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#ge8f0f2bb5fa29ddb5e1e795733848a2b">RakPeerInterface::RPC</a> (const char *uniqueID, const char *data, BitSize_t bitLength, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *replyFromTarget)=0</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#ge644fc210e9237acd4fad227a0cf214c">RakPeerInterface::RPC</a> (const char *uniqueID, const <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *replyFromTarget)=0</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RAKNET__RPC.html#g3dd6d44bd3c48716e7850d4bf7a48d3a">RakPeerInterface::RPC</a> (const char *uniqueID, const <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *replyFromTarget)=0</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -342,7 +342,7 @@ Register a C++ member function as available for calling as a remote procedure ca
 
 </div>
 </div><p>
-<a class="anchor" name="ge644fc210e9237acd4fad227a0cf214c"></a><!-- doxytag: member="RakPeerInterface::RPC" ref="ge644fc210e9237acd4fad227a0cf214c" args="(const char *uniqueID, const RakNet::BitStream *bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget)=0" -->
+<a class="anchor" name="g3dd6d44bd3c48716e7850d4bf7a48d3a"></a><!-- doxytag: member="RakPeerInterface::RPC" ref="g3dd6d44bd3c48716e7850d4bf7a48d3a" args="(const char *uniqueID, const RakNet::BitStream *bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget)=0" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -379,8 +379,8 @@ Register a C++ member function as available for calling as a remote procedure ca
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -424,7 +424,7 @@ Calls a C function on the remote system that was already registered using Regist
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>What priority level to send on. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a>. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>How reliability to send this data. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a>. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>When using ordered or sequenced message, what channel to order these on. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Who to send this message to, or in the case of broadcasting who not to send it to. Use UNASSIGNED_SYSTEM_ADDRESS to specify none </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Who to send this message to, or in the case of broadcasting who not to send it to. Pass either a <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> structure or a <a class="el" href="structRakNetGUID.html">RakNetGUID</a> structure. Use UNASSIGNED_SYSTEM_ADDRESS or to specify none </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>includedTimestamp</em>&nbsp;</td><td>Pass a timestamp if you wish, to be adjusted in the usual fashion as per ID_TIMESTAMP. Pass 0 to not include a timestamp. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkID</em>&nbsp;</td><td>For static functions, pass UNASSIGNED_NETWORK_ID. For member functions, you must derive from <a class="el" href="classNetworkIDObject.html" title="Unique shared ids for each object instance.">NetworkIDObject</a> and pass the value returned by <a class="el" href="classNetworkIDObject.html#abdc99584edb874b8b7affd1a43c8d95">NetworkIDObject::GetNetworkID</a> for that object. </td></tr>
@@ -433,11 +433,11 @@ Calls a C function on the remote system that was already registered using Regist
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True on a successful packet send (this does not indicate the recipient performed the call), false on failure </dd></dl>
 
-<p>Implemented in <a class="el" href="group__RAKNET__RPC.html#gb07776a842829a0e911354e5657345d3">RakPeer</a>.</p>
+<p>Implemented in <a class="el" href="group__RAKNET__RPC.html#gbbe0b3eb71fcb07079cd3f1837663550">RakPeer</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="g5588d6c7bc7eeb7f87515ca536f3729c"></a><!-- doxytag: member="RakPeerInterface::RPC" ref="g5588d6c7bc7eeb7f87515ca536f3729c" args="(const char *uniqueID, const char *data, BitSize_t bitLength, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget)=0" -->
+<a class="anchor" name="ge8f0f2bb5fa29ddb5e1e795733848a2b"></a><!-- doxytag: member="RakPeerInterface::RPC" ref="ge8f0f2bb5fa29ddb5e1e795733848a2b" args="(const char *uniqueID, const char *data, BitSize_t bitLength, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget)=0" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -480,8 +480,8 @@ Calls a C function on the remote system that was already registered using Regist
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -525,7 +525,7 @@ Calls a C function on the remote system that was already registered using <a cla
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>What priority level to send on. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a>. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>How reliability to send this data. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a>. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>When using ordered or sequenced message, what channel to order these on. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Who to send this message to, or in the case of broadcasting who not to send it to. Use UNASSIGNED_SYSTEM_ADDRESS to specify none </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Who to send this message to, or in the case of broadcasting who not to send it to. Pass either a <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> structure or a <a class="el" href="structRakNetGUID.html">RakNetGUID</a> structure. Use UNASSIGNED_SYSTEM_ADDRESS or to specify none </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>includedTimestamp</em>&nbsp;</td><td>Pass a timestamp if you wish, to be adjusted in the usual fashion as per ID_TIMESTAMP. Pass 0 to not include a timestamp. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkID</em>&nbsp;</td><td>For static functions, pass UNASSIGNED_NETWORK_ID. For member functions, you must derive from <a class="el" href="classNetworkIDObject.html" title="Unique shared ids for each object instance.">NetworkIDObject</a> and pass the value returned by <a class="el" href="classNetworkIDObject.html#abdc99584edb874b8b7affd1a43c8d95">NetworkIDObject::GetNetworkID</a> for that object. </td></tr>
@@ -534,11 +534,11 @@ Calls a C function on the remote system that was already registered using <a cla
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True on a successful packet send (this does not indicate the recipient performed the call), false on failure </dd></dl>
 
-<p>Implemented in <a class="el" href="group__RAKNET__RPC.html#gec72dad5a98f639a015130f784adbb29">RakPeer</a>.</p>
+<p>Implemented in <a class="el" href="group__RAKNET__RPC.html#gb26a0210cfe59ce179245b37d452c7ce">RakPeer</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="gb07776a842829a0e911354e5657345d3"></a><!-- doxytag: member="RakPeer::RPC" ref="gb07776a842829a0e911354e5657345d3" args="(const char *uniqueID, const RakNet::BitStream *bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget)" -->
+<a class="anchor" name="gbbe0b3eb71fcb07079cd3f1837663550"></a><!-- doxytag: member="RakPeer::RPC" ref="gbbe0b3eb71fcb07079cd3f1837663550" args="(const char *uniqueID, const RakNet::BitStream *bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -575,8 +575,8 @@ Calls a C function on the remote system that was already registered using <a cla
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -612,6 +612,7 @@ Calls a C function on the remote system that was already registered using <a cla
 <div class="memdoc">
 
 <p>
+------------------------------------------- Deprecated -------------------------<p>
 Calls a C function on the remote system that was already registered using RegisterAsRemoteProcedureCall. If you want that function to return data you should call RPC from that system in the same wayReturns true on a successful packet send (this does not indicate the recipient performed the call), false on failure <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>To use object member RPC (networkID!=UNASSIGNED_OBJECT_ID), The recipient must have called SetNetworkIDManager so the system can handle the object lookups </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -621,7 +622,7 @@ Calls a C function on the remote system that was already registered using Regist
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>What priority level to send on. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a>. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>How reliability to send this data. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a>. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>When using ordered or sequenced message, what channel to order these on. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Who to send this message to, or in the case of broadcasting who not to send it to. Use UNASSIGNED_SYSTEM_ADDRESS to specify none </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Who to send this message to, or in the case of broadcasting who not to send it to. Pass either a <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> structure or a <a class="el" href="structRakNetGUID.html">RakNetGUID</a> structure. Use UNASSIGNED_SYSTEM_ADDRESS or to specify none </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>includedTimestamp</em>&nbsp;</td><td>Pass a timestamp if you wish, to be adjusted in the usual fashion as per ID_TIMESTAMP. Pass 0 to not include a timestamp. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkID</em>&nbsp;</td><td>For static functions, pass UNASSIGNED_NETWORK_ID. For member functions, you must derive from <a class="el" href="classNetworkIDObject.html" title="Unique shared ids for each object instance.">NetworkIDObject</a> and pass the value returned by <a class="el" href="classNetworkIDObject.html#abdc99584edb874b8b7affd1a43c8d95">NetworkIDObject::GetNetworkID</a> for that object. </td></tr>
@@ -629,13 +630,13 @@ Calls a C function on the remote system that was already registered using Regist
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True on a successful packet send (this does not indicate the recipient performed the call), false on failure </dd></dl>
-<dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000021">Deprecated:</a></b></dt><dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a>. This only correctly works for C functions. For C++, it only works for Windows. It is less flexible than RPC3 </dd></dl>
+<dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000021">Deprecated:</a></b></dt><dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a>. This only correctly works for C functions. For C++, it only works for Windows. It is less flexible than RPC3 ------------------------------------------- Deprecated ------------------------- </dd></dl>
 
-<p>Implements <a class="el" href="group__RAKNET__RPC.html#ge644fc210e9237acd4fad227a0cf214c">RakPeerInterface</a>.</p>
+<p>Implements <a class="el" href="group__RAKNET__RPC.html#g3dd6d44bd3c48716e7850d4bf7a48d3a">RakPeerInterface</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="gec72dad5a98f639a015130f784adbb29"></a><!-- doxytag: member="RakPeer::RPC" ref="gec72dad5a98f639a015130f784adbb29" args="(const char *uniqueID, const char *data, BitSize_t bitLength, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget)" -->
+<a class="anchor" name="gb26a0210cfe59ce179245b37d452c7ce"></a><!-- doxytag: member="RakPeer::RPC" ref="gb26a0210cfe59ce179245b37d452c7ce" args="(const char *uniqueID, const char *data, BitSize_t bitLength, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -678,8 +679,8 @@ Calls a C function on the remote system that was already registered using Regist
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -715,6 +716,7 @@ Calls a C function on the remote system that was already registered using Regist
 <div class="memdoc">
 
 <p>
+------------------------------------------- Deprecated -------------------------<p>
 Calls a C function on the remote system that was already registered using <a class="el" href="group__RAKNET__RPC.html#gc253d708a039e60aa0aaafca3f9a1d41">RegisterAsRemoteProcedureCall()</a>. <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>To use object member RPC (networkID!=UNASSIGNED_OBJECT_ID), The recipient must have called SetNetworkIDManager so the system can handle the object lookups </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -724,7 +726,7 @@ Calls a C function on the remote system that was already registered using <a cla
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>What priority level to send on. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a>. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>How reliability to send this data. See <a class="el" href="PacketPriority_8h.html" title="This file contains enumerations for packet priority and reliability enumerations...">PacketPriority.h</a>. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>When using ordered or sequenced message, what channel to order these on. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Who to send this message to, or in the case of broadcasting who not to send it to. Use UNASSIGNED_SYSTEM_ADDRESS to specify none </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Who to send this message to, or in the case of broadcasting who not to send it to. Pass either a <a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> structure or a <a class="el" href="structRakNetGUID.html">RakNetGUID</a> structure. Use UNASSIGNED_SYSTEM_ADDRESS or to specify none </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>includedTimestamp</em>&nbsp;</td><td>Pass a timestamp if you wish, to be adjusted in the usual fashion as per ID_TIMESTAMP. Pass 0 to not include a timestamp. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkID</em>&nbsp;</td><td>For static functions, pass UNASSIGNED_NETWORK_ID. For member functions, you must derive from <a class="el" href="classNetworkIDObject.html" title="Unique shared ids for each object instance.">NetworkIDObject</a> and pass the value returned by <a class="el" href="classNetworkIDObject.html#abdc99584edb874b8b7affd1a43c8d95">NetworkIDObject::GetNetworkID</a> for that object. </td></tr>
@@ -732,9 +734,9 @@ Calls a C function on the remote system that was already registered using <a cla
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True on a successful packet send (this does not indicate the recipient performed the call), false on failure </dd></dl>
-<dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000020">Deprecated:</a></b></dt><dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a>. This only correctly works for C functions. For C++, it only works for Windows. It is less flexible than RPC3 </dd></dl>
+<dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000020">Deprecated:</a></b></dt><dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a>. This only correctly works for C functions. For C++, it only works for Windows. It is less flexible than RPC3 ------------------------------------------- Deprecated ------------------------- </dd></dl>
 
-<p>Implements <a class="el" href="group__RAKNET__RPC.html#g5588d6c7bc7eeb7f87515ca536f3729c">RakPeerInterface</a>.</p>
+<p>Implements <a class="el" href="group__RAKNET__RPC.html#ge8f0f2bb5fa29ddb5e1e795733848a2b">RakPeerInterface</a>.</p>
 
 </div>
 </div><p>
@@ -849,7 +851,7 @@ Unregisters a C function as available for calling as a remote procedure call tha
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Dec 7 19:18:30 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 11 12:22:54 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

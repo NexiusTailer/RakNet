@@ -192,10 +192,10 @@ public:
 	/// \param[in] priority Priority level to send on.  See PacketPriority.h
 	/// \param[in] reliability How reliably to send this data.  See PacketPriority.h
 	/// \param[in] orderingChannel When using ordered or sequenced messages, the channel to order these on. Messages are only ordered relative to other messages on the same stream.
-	/// \param[in] systemAddress Who to send this packet to, or in the case of broadcasting who not to send it to.  Use UNASSIGNED_SYSTEM_ADDRESS to specify none
+	/// \param[in] systemIdentifier Who to send this packet to, or in the case of broadcasting who not to send it to. Pass either a SystemAddress structure or a RakNetGUID structure. Use UNASSIGNED_SYSTEM_ADDRESS or to specify none
 	/// \param[in] broadcast True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to.
 	/// \return False on bad input. True otherwise.
-	bool Send( const char *data, const int length, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast );
+	bool Send( const char *data, const int length, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast );
 
 	/// \brief "Send" to yourself rather than a remote system.
 	/// \details The message will be processed through the plugins and returned to the game as usual.
@@ -212,11 +212,11 @@ public:
 	/// \param[in] priority Priority level to send on.  See PacketPriority.h
 	/// \param[in] reliability How reliably to send this data.  See PacketPriority.h
 	/// \param[in] orderingChannel Channel to order the messages on, when using ordered or sequenced messages. Messages are only ordered relative to other messages on the same stream.
-	/// \param[in] systemAddress System Address to send this packet to, or in the case of broadcasting, the address not to send it to.  Use UNASSIGNED_SYSTEM_ADDRESS to specify none.
+	/// \param[in] systemIdentifier System Address or RakNetGUID to send this packet to, or in the case of broadcasting, the address not to send it to.  Use UNASSIGNED_SYSTEM_ADDRESS to specify none.
 	/// \param[in] broadcast True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to.
 	/// \return False on bad input. True otherwise.
 	/// \note COMMON MISTAKE: When writing the first byte, bitStream->Write((unsigned char) ID_MY_TYPE) be sure it is casted to a byte, and you are not writing a 4 byte enumeration.
-	bool Send( const RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast );
+	bool Send( const RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast );
 
 	/// \brief Sends multiple blocks of data, concatenating them automatically.
 	///
@@ -234,11 +234,11 @@ public:
 	/// \param[in] priority Priority level to send on.  See PacketPriority.h
 	/// \param[in] reliability How reliably to send this data.  See PacketPriority.h
 	/// \param[in] orderingChannel Channel to order the messages on, when using ordered or sequenced messages. Messages are only ordered relative to other messages on the same stream.
-	/// \param[in] systemAddress System Address to send this packet to, or in the case of broadcasting, the address not to send it to.  Use UNASSIGNED_SYSTEM_ADDRESS to specify none.
+	/// \param[in] systemIdentifier System Address or RakNetGUID to send this packet to, or in the case of broadcasting, the address not to send it to.  Use UNASSIGNED_SYSTEM_ADDRESS to specify none.
 	/// \param[in] broadcast True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to.
 	/// \return False on bad input. True otherwise.
 	/// \note Doesn't support the router plugin.
-	bool SendList( const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast );
+	bool SendList( const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast );
 
 	/// \brief Gets a message from the incoming message queue.
 	/// \details Use DeallocatePacket() to deallocate the message after you are done with it.
@@ -287,6 +287,7 @@ public:
 	/// \return Returns the value passed to SetNetworkIDManager or 0 if never called.
 	NetworkIDManager *GetNetworkIDManager(void) const;
 
+	/// ------------------------------------------- Deprecated -------------------------
 	/// \ingroup RAKNET_RPC
 	/// Calls a C function on the remote system that was already registered using RegisterAsRemoteProcedureCall().
 	/// \pre To use object member RPC (networkID!=UNASSIGNED_OBJECT_ID), The recipient must have called SetNetworkIDManager so the system can handle the object lookups
@@ -296,15 +297,17 @@ public:
 	/// \param[in] priority What priority level to send on. See PacketPriority.h.
 	/// \param[in] reliability How reliability to send this data. See PacketPriority.h.
 	/// \param[in] orderingChannel When using ordered or sequenced message, what channel to order these on.
-	/// \param[in] systemAddress Who to send this message to, or in the case of broadcasting who not to send it to.  Use UNASSIGNED_SYSTEM_ADDRESS to specify none
+	/// \param[in] systemAddress Who to send this message to, or in the case of broadcasting who not to send it to.  Pass either a SystemAddress structure or a RakNetGUID structure. Use UNASSIGNED_SYSTEM_ADDRESS or to specify none
 	/// \param[in] broadcast True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to.
 	/// \param[in] includedTimestamp Pass a timestamp if you wish, to be adjusted in the usual fashion as per ID_TIMESTAMP.  Pass 0 to not include a timestamp.
 	/// \param[in] networkID For static functions, pass UNASSIGNED_NETWORK_ID.  For member functions, you must derive from NetworkIDObject and pass the value returned by NetworkIDObject::GetNetworkID for that object.
 	/// \param[in] replyFromTarget If 0, this function is non-blocking.  Otherwise it will block while waiting for a reply from the target procedure, which should be remotely written to RPCParameters::replyToSender and copied to replyFromTarget.  The block will return early on disconnect or if the sent packet is unreliable and more than 3X the ping has elapsed.
 	/// \return True on a successful packet send (this does not indicate the recipient performed the call), false on failure
 	/// \deprecated Use RakNet::RPC3. This only correctly works for C functions. For C++, it only works for Windows. It is less flexible than RPC3
-	bool RPC( const char* uniqueID, const char *data, BitSize_t bitLength, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget );
+	/// ------------------------------------------- Deprecated -------------------------
+	bool RPC( const char* uniqueID, const char *data, BitSize_t bitLength, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget );
 
+	/// ------------------------------------------- Deprecated -------------------------
 	/// \ingroup RAKNET_RPC
 	/// Calls a C function on the remote system that was already registered using RegisterAsRemoteProcedureCall.
 	/// If you want that function to return data you should call RPC from that system in the same wayReturns true on a successful packet
@@ -316,14 +319,15 @@ public:
 	/// \param[in] priority What priority level to send on. See PacketPriority.h.
 	/// \param[in] reliability How reliability to send this data. See PacketPriority.h.
 	/// \param[in] orderingChannel When using ordered or sequenced message, what channel to order these on.
-	/// \param[in] systemAddress Who to send this message to, or in the case of broadcasting who not to send it to.  Use UNASSIGNED_SYSTEM_ADDRESS to specify none
+	/// \param[in] systemAddress Who to send this message to, or in the case of broadcasting who not to send it to.  Pass either a SystemAddress structure or a RakNetGUID structure. Use UNASSIGNED_SYSTEM_ADDRESS or to specify none
 	/// \param[in] broadcast True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to.
 	/// \param[in] includedTimestamp Pass a timestamp if you wish, to be adjusted in the usual fashion as per ID_TIMESTAMP.  Pass 0 to not include a timestamp.
 	/// \param[in] networkID For static functions, pass UNASSIGNED_NETWORK_ID.  For member functions, you must derive from NetworkIDObject and pass the value returned by NetworkIDObject::GetNetworkID for that object.
 	/// \param[in] replyFromTarget If 0, this function is non-blocking.  Otherwise it will block while waiting for a reply from the target procedure, which should be remotely written to RPCParameters::replyToSender and copied to replyFromTarget.  The block will return early on disconnect or if the sent packet is unreliable and more than 3X the ping has elapsed.
 	/// \return True on a successful packet send (this does not indicate the recipient performed the call), false on failure
 	/// \deprecated Use RakNet::RPC3. This only correctly works for C functions. For C++, it only works for Windows. It is less flexible than RPC3
-	bool RPC( const char* uniqueID, const RakNet::BitStream *bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget );
+	/// ------------------------------------------- Deprecated -------------------------
+	bool RPC( const char* uniqueID, const RakNet::BitStream *bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, RakNet::BitStream *replyFromTarget );
 	
 	// -------------------------------------------------------------------------------------------- Connection Management Functions--------------------------------------------------------------------------------------------
 	/// \brief Close the connection to another host (if we initiated the connection it will disconnect, if they did it will kick them out).
@@ -477,7 +481,7 @@ public:
 	/// \return timeoutTime for a given system.
 	RakNetTime GetTimeoutTime( const SystemAddress target );
 
-	/// \depreciated 8/12/09 MTU automatically calculated during connection process 
+	/// \Deprecated 8/12/09 MTU automatically calculated during connection process 
 	/// Set the MTU per datagram.  It's important to set this correctly - otherwise packets will be needlessly split, decreasing performance and throughput.
 	/// Maximum allowed size is MAXIMUM_MTU_SIZE.
 	/// Too high of a value will cause packets not to arrive at worst and be fragmented at best.
@@ -605,9 +609,11 @@ public:
 	/// \param[in] pushAtHead True to push the packet so that the next receive call returns it.  False to push it at the end of the queue (obviously pushing it at the end makes the packets out of order)
 	void PushBackPacket( Packet *packet, bool pushAtHead );
 
+	/// ------------------------------------------- Deprecated -------------------------
 	/// \Internal
 	/// \deprecated This was added without considering proper architecture
 	// \param[in] routerInterface The router to use to route messages to systems not directly connected to this system.
+	/// ------------------------------------------- Deprecated -------------------------
 	void SetRouterInterface( RouterInterface *routerInterface );
 
 	/// \Internal
@@ -672,6 +678,12 @@ public:
 	/// \sa RakNetStatistics.h
 	RakNetStatistics * const GetStatistics( const SystemAddress systemAddress, RakNetStatistics *rns=0 );
 	bool GetStatistics( const int index, RakNetStatistics *rns );
+
+	/// Returns a simpler version of GetStatistics, used to check bandwidth utilization for a given connection
+	/// \param[in] systemAddress Which system to check the bandwidth for. If UNASSIGNED_SYSTEM_ADDRESS, returns the average among all systems
+	/// \param[out] output Structure to write to
+	/// \return Returns \a output
+	RakNetBandwidth * GetBandwidth(const SystemAddress systemAddress, RakNetBandwidth *output );
 
 	/// \Returns how many messages are waiting when you call Receive()
 	virtual unsigned int GetReceiveBufferSize(void);
@@ -759,6 +771,7 @@ protected:
 	/// \param[in] systemAddress The player identifier 
 	/// \return 0 if none
 	RemoteSystemStruct *GetRemoteSystemFromSystemAddress( const SystemAddress systemAddress, bool calledFromNetworkThread, bool onlyActive ) const;
+	RakPeer::RemoteSystemStruct *GetRemoteSystem( const AddressOrGUID systemIdentifier, bool calledFromNetworkThread, bool onlyActive ) const;
 	void ValidateRemoteSystemLookup(void) const;
 	RemoteSystemStruct *GetRemoteSystemFromGUID( const RakNetGUID guid ) const;
 	///Parse out a connection request packet
@@ -791,7 +804,7 @@ protected:
 	/// \param[in] systemAddress The sender of the packet 
 	void HandleRPCReplyPacket( const char *data, int length, SystemAddress systemAddress );
 
-	bool IsLoopbackAddress(SystemAddress sa, bool matchPort) const;
+	bool IsLoopbackAddress(const AddressOrGUID &systemIdentifier, bool matchPort) const;
 	SystemAddress GetLoopbackAddress(void) const;
 
 	///Set this to true to terminate the Peer thread execution 
@@ -901,7 +914,7 @@ protected:
 		PacketPriority priority;
 		PacketReliability reliability;
 		char orderingChannel;
-		SystemAddress systemAddress;
+		AddressOrGUID systemIdentifier;
 		bool broadcast;
 		RemoteSystemStruct::ConnectMode connectionMode;
 		NetworkID networkID;
@@ -962,10 +975,10 @@ protected:
 	void PingInternal( const SystemAddress target, bool performImmediate, PacketReliability reliability );
 	bool ValidSendTarget(SystemAddress systemAddress, bool broadcast);
 	// This stores the user send calls to be handled by the update thread.  This way we don't have thread contention over systemAddresss
-	void CloseConnectionInternal( const SystemAddress target, bool sendDisconnectionNotification, bool performImmediate, unsigned char orderingChannel, PacketPriority disconnectionNotificationPriority );
-	void SendBuffered( const char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RemoteSystemStruct::ConnectMode connectionMode );
-	void SendBufferedList( const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RemoteSystemStruct::ConnectMode connectionMode );
-	bool SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, bool useCallerDataAllocation, RakNetTimeUS currentTime );
+	void CloseConnectionInternal( const AddressOrGUID& systemIdentifier, bool sendDisconnectionNotification, bool performImmediate, unsigned char orderingChannel, PacketPriority disconnectionNotificationPriority );
+	void SendBuffered( const char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RemoteSystemStruct::ConnectMode connectionMode );
+	void SendBufferedList( const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RemoteSystemStruct::ConnectMode connectionMode );
+	bool SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, bool useCallerDataAllocation, RakNetTimeUS currentTime );
 	//bool HandleBufferedRPC(BufferedCommandStruct *bcs, RakNetTime time);
 	void ClearBufferedCommands(void);
 	void ClearBufferedPackets(void);
@@ -1003,6 +1016,7 @@ protected:
 
 	// Generate and store a unique GUID
 	void GenerateGUID(void);
+	unsigned int GetSystemIndexFromGuid( const RakNetGUID input ) const;
 	RakNetGUID myGuid;
 
 	unsigned maxOutgoingBPS;

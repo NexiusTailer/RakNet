@@ -6,12 +6,6 @@
 
 using namespace RakNet;
 
-namespace Bob
-{
-	int i;
-}
-
-
 DEFINE_MULTILIST_PTR_TO_MEMBER_COMPARISONS(LastSerializationResult,Replica3*,replica);
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -705,6 +699,8 @@ void ReplicaManager3::Update(void)
 			sp.curTime=time;
 			Connection_RM3 *connection;
 			SendSerializeIfChangedResult ssicr;
+			sp.messageTimestamp=0;
+			sp.pro=defaultSendParameters;
 			for (index=0; index < connectionList.GetSize(); index++)
 			{
 				connection = connectionList[index];
@@ -713,8 +709,6 @@ void ReplicaManager3::Update(void)
 				while (index2 < connection->queryToSerializeReplicaList.GetSize())
 				{
 					sp.destinationConnection=connection;
-					sp.messageTimestamp=0;
-					sp.pro=defaultSendParameters;
 					sp.whenLastSerialized=connection->queryToSerializeReplicaList[index2]->whenLastSerialized;
 					RakAssert( !( sp.pro.reliability > RELIABLE_SEQUENCED || sp.pro.reliability < 0 ) );
 					RakAssert( !( sp.pro.priority > NUMBER_OF_PRIORITIES || sp.pro.priority < 0 ) );

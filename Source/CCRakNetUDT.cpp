@@ -67,7 +67,7 @@ void CCRakNetUDT::Init(CCTimeType curTime, uint32_t maxDatagramPayload)
 	totalUserDataBytesSent=0;
 	oldestUnsentAck=0;
 	rttSum=0;
-	rttLow=-1;
+	rttLow=(uint32_t) -1;
 	MAXIMUM_MTU_INCLUDING_UDP_HEADER=maxDatagramPayload;
 	CWND_MAX_THRESHOLD=25600;
 #if CC_TIME_TYPE_BYTES==4
@@ -89,6 +89,7 @@ void CCRakNetUDT::Init(CCTimeType curTime, uint32_t maxDatagramPayload)
 	rttHistoryWriteCount=0;
 	rttHistoryIndex=0;
 	gotPacketlossThisUpdate=false;
+	estimatedLinkCapacityBytesPerSecond=0;
 	//	lastSndUpdateTime=0;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
@@ -489,6 +490,10 @@ void CCRakNetUDT::OnNAK(CCTimeType curTime, DatagramSequenceNumberType nakSequen
 
 	if (nakSequenceNumber>=nextDatagramSYNUpdate || gotPacketlossThisUpdate==false)
 	{
+		// Should use highest value, not random packetloss
+//		if (estimatedLinkCapacityBytesPerSecond!=0.0)
+//			estimatedLinkCapacityBytesPerSecond=(1.0/SND) * 1000000.0;
+
 		// Slow down sends
 		SND*=1.04;
 
@@ -509,15 +514,17 @@ void CCRakNetUDT::EndSlowStart(void)
 	RakAssert(isInSlowStart==true);
 	RakAssert(AS!=UNDEFINED_TRANSFER_RATE);
 
+	estimatedLinkCapacityBytesPerSecond=AS * 1000000.0;
+
 	isInSlowStart=false;
 	SND=1.0/AS;
 	CapMinSnd(__FILE__,__LINE__);
 
-	printf("ENDING SLOW START\n");
+	// printf("ENDING SLOW START\n");
 #if CC_TIME_TYPE_BYTES==4
-	printf("Initial SND=%f Kilobytes per second\n", 1.0/SND);
+//	printf("Initial SND=%f Kilobytes per second\n", 1.0/SND);
 #else
-	printf("Initial SND=%f Megabytes per second\n", 1.0/SND);
+//	printf("Initial SND=%f Megabytes per second\n", 1.0/SND);
 #endif
 	if (SND > .1)
 		PrintLowBandwidthWarning();	
@@ -757,6 +764,8 @@ void CCRakNetUDT::UpdateWindowSizeAndAckOnAckPerSyn(CCTimeType curTime, CCTimeTy
 			// If rtt is increasing, decrease send rate
 			if (rtt32>average+(average-rttLow))
 			{
+				estimatedLinkCapacityBytesPerSecond=(1.0/SND) * 1000000.0;
+
 				// Increase time between sends up to once per rtt
 				SND*=1.04;
 				//			printf("+++ rtt=%i average=%i cap=%i\n", rtt32,average,average+(average-low)+((average-low)>>3));

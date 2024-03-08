@@ -160,7 +160,8 @@ class CCRakNetUDT
 	BytesPerMicrosecond GetLocalReceiveRate(CCTimeType currentTime) const;
 	BytesPerMicrosecond GetRemoveReceiveRate(void) const {return AS;}
 	//BytesPerMicrosecond GetEstimatedBandwidth(void) const {return B;}
-	BytesPerMicrosecond GetEstimatedBandwidth(void) const {return 0.0;}
+	BytesPerMicrosecond GetEstimatedBandwidth(void) const {return GetLinkCapacityBytesPerSecond()*1000000.0;}
+	double GetLinkCapacityBytesPerSecond(void) const {return estimatedLinkCapacityBytesPerSecond;};
 
 	/// Query for statistics
 	double GetRTT(void) const;
@@ -344,6 +345,7 @@ class CCRakNetUDT
 	bool gotPacketlossThisUpdate;
 	uint32_t rttSum, rttLow;
 //	CCTimeType lastSndUpdateTime;
+	double estimatedLinkCapacityBytesPerSecond;
 
 	// --------------------------- PROTECTED METHODS ---------------------------
 	/// Update nextSYNUpdate by SYN, or the same amount past the current time if no updates have occurred for a long time

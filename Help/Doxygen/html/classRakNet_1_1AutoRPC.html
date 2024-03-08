@@ -58,7 +58,7 @@ Inheritance diagram for RakNet::AutoRPC:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams</a> (<a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress</a> (AddressOrGUID systemIdentifier, bool broadcast)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject</a> (NetworkID networkID)</td></tr>
 
@@ -102,31 +102,31 @@ Inheritance diagram for RakNet::AutoRPC:</div>
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 &gt; </td></tr>
 <tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#4a9403b13da7c6ad7517165686e98c96">Call</a> (const char *uniqueIdentifier, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#df3b0263c8775e94b2509e690ccc04da">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, NetworkID networkID)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#e8ec23cf171187616c9b3fdee84058b3">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID)</td></tr>
 
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class P1 &gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#67bc101f5607af37498dce5a109b935a">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, NetworkID networkID, P1 p1)</td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#c18cade7e72163ebfb24462975c6e4e4">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1)</td></tr>
 
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class P1 , class P2 &gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#c3b9c8c1c321fe929ed6d8499d8e5ad8">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, NetworkID networkID, P1 p1, P2 p2)</td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#d120d3fd8412683e4e25e8b1ac79f560">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1, P2 p2)</td></tr>
 
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class P1 , class P2 , class P3 &gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#33ac63b6504d57b48048c635e7a195a3">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3)</td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#d6683d4263632ada0481a432155b3030">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3)</td></tr>
 
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class P1 , class P2 , class P3 , class P4 &gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#e5092016a2798fec2acac4c9b634083f">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4)</td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#2fe2f6b0100c0b577c0c70b4cd66d16b">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4)</td></tr>
 
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class P1 , class P2 , class P3 , class P4 , class P5 &gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#669dcf9659ebe683b3dee883b7e2dc53">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)</td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#c70538565327728d3b9da9d42f25c8e2">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)</td></tr>
 
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class P1 , class P2 , class P3 , class P4 , class P5 , class P6 &gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#452e78e94eb3e5d92b2082fdca8b0d8f">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)</td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#3a0aeb8e5b46b4a01805d022d515229d">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)</td></tr>
 
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 &gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#836f761f2ba7d134b49b51f77ac0bd56">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7)</td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#02a7a63d4e4ee4276220ca6d9e4f1be1">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7)</td></tr>
 
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 &gt; </td></tr>
-<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#80f6006931f6216aeea18d76032a3b39">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8)</td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#1c2230e2dcbf5784c68f2f29ecc12279">CallExplicit</a> (const char *uniqueIdentifier, RakNetTime timeStamp, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8)</td></tr>
 
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutoRPC.html#996ee3e43efe17773fe3e27f550479e0">OnAttach</a> (void)</td></tr>
@@ -213,7 +213,7 @@ template&lt;class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , cl
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -288,7 +288,7 @@ template&lt;class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , cl
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -357,7 +357,7 @@ template&lt;class P1 , class P2 , class P3 , class P4 , class P5 , class P6 &gt;
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -420,7 +420,7 @@ template&lt;class P1 , class P2 , class P3 , class P4 , class P5 &gt; </div>
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -477,7 +477,7 @@ template&lt;class P1 , class P2 , class P3 , class P4 &gt; </div>
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -528,7 +528,7 @@ template&lt;class P1 , class P2 , class P3 &gt; </div>
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -573,7 +573,7 @@ template&lt;class P1 , class P2 &gt; </div>
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -612,7 +612,7 @@ template&lt;class P1 &gt; </div>
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -640,7 +640,7 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -651,7 +651,7 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
 
 </div>
 </div><p>
-<a class="anchor" name="80f6006931f6216aeea18d76032a3b39"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="80f6006931f6216aeea18d76032a3b39" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8)" -->
+<a class="anchor" name="1c2230e2dcbf5784c68f2f29ecc12279"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="1c2230e2dcbf5784c68f2f29ecc12279" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -690,8 +690,8 @@ template&lt;class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , cl
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -763,7 +763,7 @@ template&lt;class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , cl
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -772,8 +772,8 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkID</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> </td></tr>
   </table>
 </dl>
@@ -781,7 +781,7 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
 
 </div>
 </div><p>
-<a class="anchor" name="836f761f2ba7d134b49b51f77ac0bd56"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="836f761f2ba7d134b49b51f77ac0bd56" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7)" -->
+<a class="anchor" name="02a7a63d4e4ee4276220ca6d9e4f1be1"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="02a7a63d4e4ee4276220ca6d9e4f1be1" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -820,8 +820,8 @@ template&lt;class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , cl
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -887,7 +887,7 @@ template&lt;class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , cl
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -896,8 +896,8 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkID</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> </td></tr>
   </table>
 </dl>
@@ -905,7 +905,7 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
 
 </div>
 </div><p>
-<a class="anchor" name="452e78e94eb3e5d92b2082fdca8b0d8f"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="452e78e94eb3e5d92b2082fdca8b0d8f" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)" -->
+<a class="anchor" name="3a0aeb8e5b46b4a01805d022d515229d"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="3a0aeb8e5b46b4a01805d022d515229d" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -944,8 +944,8 @@ template&lt;class P1 , class P2 , class P3 , class P4 , class P5 , class P6 &gt;
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1005,7 +1005,7 @@ template&lt;class P1 , class P2 , class P3 , class P4 , class P5 , class P6 &gt;
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -1014,8 +1014,8 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkID</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> </td></tr>
   </table>
 </dl>
@@ -1023,7 +1023,7 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
 
 </div>
 </div><p>
-<a class="anchor" name="669dcf9659ebe683b3dee883b7e2dc53"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="669dcf9659ebe683b3dee883b7e2dc53" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)" -->
+<a class="anchor" name="c70538565327728d3b9da9d42f25c8e2"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="c70538565327728d3b9da9d42f25c8e2" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -1062,8 +1062,8 @@ template&lt;class P1 , class P2 , class P3 , class P4 , class P5 &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1117,7 +1117,7 @@ template&lt;class P1 , class P2 , class P3 , class P4 , class P5 &gt; </div>
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -1126,8 +1126,8 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkID</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> </td></tr>
   </table>
 </dl>
@@ -1135,7 +1135,7 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
 
 </div>
 </div><p>
-<a class="anchor" name="e5092016a2798fec2acac4c9b634083f"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="e5092016a2798fec2acac4c9b634083f" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4)" -->
+<a class="anchor" name="2fe2f6b0100c0b577c0c70b4cd66d16b"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="2fe2f6b0100c0b577c0c70b4cd66d16b" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3, P4 p4)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -1174,8 +1174,8 @@ template&lt;class P1 , class P2 , class P3 , class P4 &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1223,7 +1223,7 @@ template&lt;class P1 , class P2 , class P3 , class P4 &gt; </div>
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -1232,8 +1232,8 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkID</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> </td></tr>
   </table>
 </dl>
@@ -1241,7 +1241,7 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
 
 </div>
 </div><p>
-<a class="anchor" name="33ac63b6504d57b48048c635e7a195a3"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="33ac63b6504d57b48048c635e7a195a3" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3)" -->
+<a class="anchor" name="d6683d4263632ada0481a432155b3030"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="d6683d4263632ada0481a432155b3030" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1, P2 p2, P3 p3)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -1280,8 +1280,8 @@ template&lt;class P1 , class P2 , class P3 &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1323,7 +1323,7 @@ template&lt;class P1 , class P2 , class P3 &gt; </div>
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -1332,8 +1332,8 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkID</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> </td></tr>
   </table>
 </dl>
@@ -1341,7 +1341,7 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
 
 </div>
 </div><p>
-<a class="anchor" name="c3b9c8c1c321fe929ed6d8499d8e5ad8"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="c3b9c8c1c321fe929ed6d8499d8e5ad8" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, NetworkID networkID, P1 p1, P2 p2)" -->
+<a class="anchor" name="d120d3fd8412683e4e25e8b1ac79f560"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="d120d3fd8412683e4e25e8b1ac79f560" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1, P2 p2)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -1380,8 +1380,8 @@ template&lt;class P1 , class P2 &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1417,7 +1417,7 @@ template&lt;class P1 , class P2 &gt; </div>
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -1426,8 +1426,8 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkID</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> </td></tr>
   </table>
 </dl>
@@ -1435,7 +1435,7 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
 
 </div>
 </div><p>
-<a class="anchor" name="67bc101f5607af37498dce5a109b935a"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="67bc101f5607af37498dce5a109b935a" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, NetworkID networkID, P1 p1)" -->
+<a class="anchor" name="c18cade7e72163ebfb24462975c6e4e4"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="c18cade7e72163ebfb24462975c6e4e4" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID, P1 p1)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -1474,8 +1474,8 @@ template&lt;class P1 &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1505,7 +1505,7 @@ template&lt;class P1 &gt; </div>
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -1514,8 +1514,8 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkID</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> </td></tr>
   </table>
 </dl>
@@ -1523,7 +1523,7 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
 
 </div>
 </div><p>
-<a class="anchor" name="df3b0263c8775e94b2509e690ccc04da"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="df3b0263c8775e94b2509e690ccc04da" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, NetworkID networkID)" -->
+<a class="anchor" name="e8ec23cf171187616c9b3fdee84058b3"></a><!-- doxytag: member="RakNet::AutoRPC::CallExplicit" ref="e8ec23cf171187616c9b3fdee84058b3" args="(const char *uniqueIdentifier, RakNetTime timeStamp, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, NetworkID networkID)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1560,8 +1560,8 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">const AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1585,7 +1585,7 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a>, <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> Passed parameter(s), if any, are passed via memcpy and pushed on the stack for the remote function <dl class="note" compact><dt><b>Note:</b></dt><dd>This ONLY works with variables that are passable via memcpy! If you need more flexibility, use <a class="el" href="classRakNet_1_1AutoRPC.html#52b33fb092e29f095f8dd909693139e7">SetOutgoingExtraData()</a> and <a class="el" href="classRakNet_1_1AutoRPC.html#b25a2694cc1ea40613bc8ad32b1d77e4">GetIncomingExtraData()</a> <p>
 The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRPC.html">AutoRPC</a>, is pushed as the last parameter on the stack. See AutoRPCSample.ccp for an example of this </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -1594,8 +1594,8 @@ The this pointer, for this instance of <a class="el" href="classRakNet_1_1AutoRP
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">SetSendParams()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#2ed8e97f4c3a948cb224710673b9bafc">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#d6d25528ac2efd757cff7817a90d40fd">SetRecipientAddress()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkID</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1AutoRPC.html#844f6446b5c741ba8bbe1841c7188cec">SetRecipientObject()</a> </td></tr>
   </table>
 </dl>
@@ -1882,15 +1882,15 @@ Write extra data to pass for all following calls to <a class="el" href="classRak
 
 </div>
 </div><p>
-<a class="anchor" name="2ed8e97f4c3a948cb224710673b9bafc"></a><!-- doxytag: member="RakNet::AutoRPC::SetRecipientAddress" ref="2ed8e97f4c3a948cb224710673b9bafc" args="(SystemAddress systemAddress, bool broadcast)" -->
+<a class="anchor" name="d6d25528ac2efd757cff7817a90d40fd"></a><!-- doxytag: member="RakNet::AutoRPC::SetRecipientAddress" ref="d6d25528ac2efd757cff7817a90d40fd" args="(AddressOrGUID systemIdentifier, bool broadcast)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void RakNet::AutoRPC::SetRecipientAddress           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype">AddressOrGUID&nbsp;</td>
+          <td class="paramname"> <em>systemIdentifier</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1910,8 +1910,8 @@ Write extra data to pass for all following calls to <a class="el" href="classRak
 <p>
 Set system to send to for all following calls to <a class="el" href="classRakNet_1_1AutoRPC.html#b8798b20b4e34648c19735a1fcc87f56">Call()</a> Defaults to UNASSIGNED_SYSTEM_ADDRESS, broadcast=true <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemIdentifier</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#f1ba142c575e8a7b656a76b937a810ff" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#f1ba142c575e8a7b656a76b937a810ff" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
   </table>
 </dl>
 
@@ -1975,11 +1975,11 @@ Set the NetworkID to pass for all following calls to <a class="el" href="classRa
 <div class="memdoc">
 
 <p>
-Set parameters to pass to <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> for all following calls to <a class="el" href="classRakNet_1_1AutoRPC.html#b8798b20b4e34648c19735a1fcc87f56">Call()</a> Deafults to HIGH_PRIORITY, RELIABLE_ORDERED, ordering channel 0 <dl compact><dt><b>Parameters:</b></dt><dd>
+Set parameters to pass to <a class="el" href="classRakPeer.html#f1ba142c575e8a7b656a76b937a810ff" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> for all following calls to <a class="el" href="classRakNet_1_1AutoRPC.html#b8798b20b4e34648c19735a1fcc87f56">Call()</a> Deafults to HIGH_PRIORITY, RELIABLE_ORDERED, ordering channel 0 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#3acee6622f9526d877fed911669377be" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#f1ba142c575e8a7b656a76b937a810ff" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#f1ba142c575e8a7b656a76b937a810ff" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakPeer.html#f1ba142c575e8a7b656a76b937a810ff" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
   </table>
 </dl>
 
@@ -2050,7 +2050,7 @@ Unregisters a function pointer to be callable given an identifier for the pointe
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="AutoRPC_8h.html">AutoRPC.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Dec 7 19:18:32 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 11 12:22:55 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

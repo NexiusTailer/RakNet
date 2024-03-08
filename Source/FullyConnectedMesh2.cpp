@@ -226,6 +226,9 @@ void FullyConnectedMesh2::PushNewHost(const RakNetGUID &guid)
 }
 void FullyConnectedMesh2::SendFCMGuidRequest(RakNetGUID rakNetGuid)
 {
+	if (rakNetGuid==rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
+		return;
+
 	RakNet::BitStream bsOut;
 	bsOut.Write((MessageID)ID_FCM2_REQUEST_FCMGUID);
 	if (ourFCMGuid==0)
@@ -239,7 +242,7 @@ void FullyConnectedMesh2::SendFCMGuidRequest(RakNetGUID rakNetGuid)
 		bsOut.Write(totalConnectionCount);
 		bsOut.Write(ourFCMGuid);
 	}
-	rakPeerInterface->Send(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,rakPeerInterface->GetSystemAddressFromGuid(rakNetGuid),false);
+ 	rakPeerInterface->Send(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,rakNetGuid,false);
 }
 void FullyConnectedMesh2::SendOurFCMGuid(SystemAddress addr)
 {

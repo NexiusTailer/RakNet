@@ -190,6 +190,54 @@ const RakNetGUID UNASSIGNED_RAKNET_GUID((uint64_t)-1);
 //	0xFFFFFFFFFFFFFFFF
 //};
 
+
+struct RAK_DLL_EXPORT AddressOrGUID
+{
+	RakNetGUID rakNetGuid;
+	SystemAddress systemAddress;
+
+	SystemIndex GetSystemIndex(void) const {if (rakNetGuid!=UNASSIGNED_RAKNET_GUID) return rakNetGuid.systemIndex; else return systemAddress.systemIndex;}
+	bool IsUndefined(void) const {return rakNetGuid==UNASSIGNED_RAKNET_GUID && systemAddress==UNASSIGNED_SYSTEM_ADDRESS;}
+	void SetUndefined(void) {rakNetGuid=UNASSIGNED_RAKNET_GUID; systemAddress=UNASSIGNED_SYSTEM_ADDRESS;}
+
+	AddressOrGUID() {}
+	AddressOrGUID( const AddressOrGUID& input )
+	{
+		rakNetGuid=input.rakNetGuid;
+		systemAddress=input.systemAddress;
+	}
+	AddressOrGUID( const SystemAddress& input )
+	{
+		rakNetGuid=UNASSIGNED_RAKNET_GUID;
+		systemAddress=input;
+	}
+	AddressOrGUID( const RakNetGUID& input )
+	{
+		rakNetGuid=input;
+		systemAddress=UNASSIGNED_SYSTEM_ADDRESS;
+	}
+	AddressOrGUID& operator = ( const AddressOrGUID& input )
+	{
+		rakNetGuid=input.rakNetGuid;
+		systemAddress=input.systemAddress;
+		return *this;
+	}
+
+	AddressOrGUID& operator = ( const SystemAddress& input )
+	{
+		rakNetGuid=UNASSIGNED_RAKNET_GUID;
+		systemAddress=input;
+		return *this;
+	}
+
+	AddressOrGUID& operator = ( const RakNetGUID& input )
+	{
+		rakNetGuid=input;
+		systemAddress=UNASSIGNED_SYSTEM_ADDRESS;
+		return *this;
+	}
+};
+
 struct RAK_DLL_EXPORT NetworkID
 {
 	NetworkID()
@@ -267,7 +315,7 @@ const NetworkID UNASSIGNED_NETWORK_ID;
 const int PING_TIMES_ARRAY_SIZE = 5;
 
 /// \brief RPC Function Implementation
-/// \depreciated Use RPC3
+/// \Deprecated Use RPC3
 /// \details The Remote Procedure Call Subsystem provide the RPC paradigm to
 /// RakNet user. It consists in providing remote function call over the
 /// network.  A call to a remote function require you to prepare the

@@ -312,6 +312,8 @@ classPacketOutputWindowLogger.html
 classPacketOutputWindowLogger-members.html
 classPluginInterface2.html
 classPluginInterface2-members.html
+structRakNetBandwidth.html
+structRakNetBandwidth-members.html
 classRakNetCommandParser.html
 classRakNetCommandParser-members.html
 structRakNetGUID.html

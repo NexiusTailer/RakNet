@@ -324,7 +324,8 @@ void ReliabilityLayer::InitializeVariables( int MTUSize )
 	deadConnection = cheater = false;
 	timeOfLastContinualSend=0;
 
-	timeResendQueueNonEmpty = 0;
+	// timeResendQueueNonEmpty = 0;
+	timeLastDatagramArrived=RakNet::GetTimeMS();
 //	packetlossThisSample=false;
 //	backoffThisSample=0;
 //	packetlossThisSampleResendCount=0;
@@ -361,7 +362,10 @@ void ReliabilityLayer::InitializeVariables( int MTUSize )
 
 	InitHeapWeights();
 	for (int i=0; i < NUMBER_OF_PRIORITIES; i++)
+	{
 		messageInSendBuffer[i]=0;
+		bytesInSendBuffer[i]=0.0;
+	}
 
 	InitPacketlossTracker();
 }
@@ -546,6 +550,8 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 	if ( length <= 2 || buffer == 0 )   // Length of 1 is a connection request resend that we just ignore
 		return true;
 
+	timeLastDatagramArrived=RakNet::GetTimeMS();
+
 	bytesReceivedThisHistogram+=length;
 
 //	CCTimeType time;
@@ -575,8 +581,8 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 //	time = RakNet::GetTimeNS();
 
 	// Set to the current time if it is not zero, and we get incoming data
-	if (timeResendQueueNonEmpty!=0)
-		timeResendQueueNonEmpty=timeRead;
+// 	if (timeResendQueueNonEmpty!=0)
+// 		timeResendQueueNonEmpty=timeRead;
 
 	DatagramHeaderFormat dhf;
 	dhf.Deserialize(&socketData);
@@ -1180,6 +1186,7 @@ bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPri
 	outgoingPacketBuffer.Push( GetNextWeight(internalPacket->priority), internalPacket, __FILE__, __LINE__  );
 	RakAssert(outgoingPacketBuffer.Size()==0 || outgoingPacketBuffer.Peek()->dataBitLength<BYTES_TO_BITS(MAXIMUM_MTU_SIZE));
 	messageInSendBuffer[(int)internalPacket->priority]++;
+	bytesInSendBuffer[(int)internalPacket->priority]+=(double) BITS_TO_BYTES(internalPacket->dataBitLength);
 
 	//	sendPacketSet[priority].WriteUnlock();
 	return true;
@@ -1470,6 +1477,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 							outgoingPacketBuffer.Pop(0);
 							RakAssert(outgoingPacketBuffer.Size()==0 || outgoingPacketBuffer.Peek()->dataBitLength<BYTES_TO_BITS(MAXIMUM_MTU_SIZE));
 							messageInSendBuffer[(int)internalPacket->priority]--;
+							bytesInSendBuffer[(int)internalPacket->priority]-=(double) BITS_TO_BYTES(internalPacket->dataBitLength);
 							ReleaseToInternalPacketPool( internalPacket );
 							continue;
 						}
@@ -1496,17 +1504,18 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 						outgoingPacketBuffer.Pop(0);
 						RakAssert(outgoingPacketBuffer.Size()==0 || outgoingPacketBuffer.Peek()->dataBitLength<BYTES_TO_BITS(MAXIMUM_MTU_SIZE));
 						messageInSendBuffer[(int)internalPacket->priority]--;
+						bytesInSendBuffer[(int)internalPacket->priority]-=(double) BITS_TO_BYTES(internalPacket->dataBitLength);
 						if (isReliable)
 						{
 							RakAssert(internalPacket->messageNumberAssigned==false);
 							internalPacket->messageNumberAssigned=true;
 							internalPacket->reliableMessageNumber=sendReliableMessageNumberIndex;
 							// Set to the current time when the resend queue is no longer empty
-							if (numPacketsOnResendBuffer==0)
-							{
-								RakAssert(resendLinkedListHead==0);
-								timeResendQueueNonEmpty=time;
-							}
+// 							if (numPacketsOnResendBuffer==0)
+// 							{
+// 								RakAssert(resendLinkedListHead==0);
+// 								timeResendQueueNonEmpty=time;
+// 							}
 
 
 							internalPacket->nextActionTime = congestionManager.GetRTOForRetransmission()+time;
@@ -1895,9 +1904,9 @@ unsigned ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSeque
 
 
 		// Set to zero when it becomes empty
-		if (resendLinkedListHead==0)
-			timeResendQueueNonEmpty=0;
-		ValidateResendList();
+// 		if (resendLinkedListHead==0)
+// 			timeResendQueueNonEmpty=0;
+// 		ValidateResendList();
 
 		//printf("GOT_ACK:%i ", messageNumber);
 
@@ -2326,6 +2335,7 @@ void ReliabilityLayer::SplitPacket( InternalPacket *internalPacket )
 		outgoingPacketBuffer.PushSeries(GetNextWeight(internalPacketArray[ i ]->priority), internalPacketArray[ i ], __FILE__, __LINE__);
 		RakAssert(outgoingPacketBuffer.Size()==0 || outgoingPacketBuffer.Peek()->dataBitLength<BYTES_TO_BITS(MAXIMUM_MTU_SIZE));
 		messageInSendBuffer[(int)internalPacketArray[ i ]->priority]++;
+		bytesInSendBuffer[(int)(int)internalPacketArray[ i ]->priority]+=(double) BITS_TO_BYTES(internalPacketArray[ i ]->dataBitLength);
 		//		workingPacket=sendPacketSet[internalPacket->priority].WriteLock();
 		//		memcpy(workingPacket, internalPacketArray[ i ], sizeof(InternalPacket));
 		//		sendPacketSet[internalPacket->priority].WriteUnlock();
@@ -2625,7 +2635,6 @@ RakNetStatistics * const ReliabilityLayer::GetStatistics( RakNetStatistics *rns 
 
 	rns->bitsPerSecondSent=bytesSentLastHistogram*10*8; // Polls 10 times a second
 	rns->bitsPerSecondReceived=bytesReceivedLastHistogram*10*8;
-	rns->estimatedLinkCapacityMBPS=congestionManager.GetEstimatedBandwidth();
 
 	rns->messagesWaitingForReassembly = 0;
 	for (i=0; i < splitPacketChannelList.Size(); i++)
@@ -2654,6 +2663,21 @@ RakNetStatistics * const ReliabilityLayer::GetStatistics( RakNetStatistics *rns 
 
 	return rns;
 }
+//-------------------------------------------------------------------------------------------------------
+RakNetBandwidth * const ReliabilityLayer::GetBandwidth( RakNetBandwidth *b )
+{
+	b->Reset();
+
+	int i;
+	for ( i = 0; i < NUMBER_OF_PRIORITIES; i++ )
+		b->bytesBuffered+=bytesInSendBuffer[i];
+//	b->bytesPerSecondOutgoing=bytesSentThisHistogram*10.0;
+	b->bytesPerSecondOutgoing=congestionManager.GetLocalSendRate()*1000000.0;
+	b->bytesPerSecondLimit=congestionManager.GetLinkCapacityBytesPerSecond();
+	if (b->bytesPerSecondOutgoing>b->bytesPerSecondLimit && b->bytesPerSecondLimit!=0.0)
+		b->bytesPerSecondLimit=b->bytesPerSecondOutgoing;
+	return b;
+}
 
 //-------------------------------------------------------------------------------------------------------
 // Returns the number of packets in the resend queue, not counting holes
@@ -2679,11 +2703,13 @@ void ReliabilityLayer::UpdateThreadedMemory(void)
 //-------------------------------------------------------------------------------------------------------
 bool ReliabilityLayer::AckTimeout(RakNetTimeMS curTime)
 {
-#if CC_TIME_TYPE_BYTES==4
-	return curTime > timeResendQueueNonEmpty && timeResendQueueNonEmpty && curTime - timeResendQueueNonEmpty > timeoutTime;
-#else
-	return curTime > timeResendQueueNonEmpty/(RakNetTimeUS)1000 && timeResendQueueNonEmpty && curTime - timeResendQueueNonEmpty/(RakNetTimeUS)1000 > timeoutTime;
-#endif
+	return curTime-timeLastDatagramArrived>timeoutTime;
+// 
+// #if CC_TIME_TYPE_BYTES==4
+// 	return curTime > timeResendQueueNonEmpty && timeResendQueueNonEmpty && curTime - timeResendQueueNonEmpty > timeoutTime;
+// #else
+// 	return curTime > timeResendQueueNonEmpty/(RakNetTimeUS)1000 && timeResendQueueNonEmpty && curTime - timeResendQueueNonEmpty/(RakNetTimeUS)1000 > timeoutTime;
+// #endif
 }
 //-------------------------------------------------------------------------------------------------------
 CCTimeType ReliabilityLayer::GetNextSendTime(void) const

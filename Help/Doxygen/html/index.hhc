@@ -278,6 +278,7 @@
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::QueueLinkedList< QueueType >"><param name="Local" value="classDataStructures_1_1QueueLinkedList.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::QuickJoinEnteredRoom_Notification"><param name="Local" value="structRakNet_1_1QuickJoinEnteredRoom__Notification.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNet::QuickJoinExpired_Notification"><param name="Local" value="structRakNet_1_1QuickJoinExpired__Notification.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNetBandwidth"><param name="Local" value="structRakNetBandwidth.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNetCommandParser"><param name="Local" value="classRakNetCommandParser.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNetGUID"><param name="Local" value="structRakNetGUID.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNetStatistics"><param name="Local" value="structRakNetStatistics.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -599,6 +600,7 @@
     </UL>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::Queue< queue_type >"><param name="Local" value="classDataStructures_1_1Queue.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="DataStructures::QueueLinkedList< QueueType >"><param name="Local" value="classDataStructures_1_1QueueLinkedList.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNetBandwidth"><param name="Local" value="structRakNetBandwidth.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNetGUID"><param name="Local" value="structRakNetGUID.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakNetStatistics"><param name="Local" value="structRakNetStatistics.html"><param name="ImageNumber" value="11"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="RakPeerInterface"><param name="Local" value="classRakPeerInterface.html"><param name="ImageNumber" value="1"></OBJECT>
