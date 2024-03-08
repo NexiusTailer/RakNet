@@ -50,7 +50,7 @@ PluginReceiveResult Lobby2Client::OnReceive(Packet *packet)
 
 	return RR_CONTINUE_PROCESSING;
 }
-void Lobby2Client::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void Lobby2Client::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	(void)systemAddress;
 	(void)rakNetGUID;

@@ -9,6 +9,8 @@
 
 using namespace RakNet;
 
+STATIC_FACTORY_DEFINITIONS(CloudClient,CloudClient);
+
 CloudClient::CloudClient()
 {
 	callback=0;

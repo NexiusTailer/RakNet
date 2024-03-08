@@ -52,6 +52,7 @@ int main(void)
 		printf("Starting server.\n");
 		// The server has to be started to respond to pings.
 		RakNet::SocketDescriptor socketDescriptor(atoi(serverPort),0);
+		socketDescriptor.socketFamily=AF_INET; // Only IPV4 supports broadcast on 255.255.255.255
 		b = server->Startup(2, &socketDescriptor, 1)==RakNet::RAKNET_STARTED;
 		server->SetMaximumIncomingConnections(2);
 		if (b)
@@ -77,6 +78,7 @@ int main(void)
 		if (serverPort[0]==0)
 			strcpy(serverPort, "60001");
 		RakNet::SocketDescriptor socketDescriptor(atoi(clientPort),0);
+		socketDescriptor.socketFamily=AF_INET; // Only IPV4 supports broadcast on 255.255.255.255
 		client->Startup(1, &socketDescriptor, 1);
 
 		// Connecting the client is very simple.  0 means we don't care about

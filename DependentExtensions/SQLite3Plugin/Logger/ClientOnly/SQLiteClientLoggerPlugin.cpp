@@ -23,7 +23,7 @@ SQLiteClientLoggerPlugin::~SQLiteClientLoggerPlugin()
 	if (logger==this)
 		logger=0;
 }
-void SQLiteClientLoggerPlugin::SetServerParameters(SystemAddress systemAddress, RakNet::RakString _dbIdentifier)
+void SQLiteClientLoggerPlugin::SetServerParameters(const SystemAddress &systemAddress, RakNet::RakString _dbIdentifier)
 {
 	serverAddress=systemAddress;
 	dbIdentifier=_dbIdentifier;

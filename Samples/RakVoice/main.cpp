@@ -142,8 +142,8 @@ int main(void)
 		Gets(facilitatorIP,sizeof(facilitatorIP));
 		if (facilitatorIP[0]==0)
 			strcpy(facilitatorIP, "94.198.81.195");
-		facilitator.SetBinaryAddress(facilitatorIP);
-		facilitator.port=NAT_PUNCHTHROUGH_FACILITATOR_PORT;
+		facilitator.FromString(facilitatorIP);
+		facilitator.SetPort(NAT_PUNCHTHROUGH_FACILITATOR_PORT);
 		rakPeer->Connect(facilitatorIP, NAT_PUNCHTHROUGH_FACILITATOR_PORT, 0, 0);
 		printf("Connecting to facilitator...\n");
 	}
@@ -301,7 +301,7 @@ int main(void)
 			else if (p->data[0]==ID_NAT_PUNCHTHROUGH_SUCCEEDED)
 			{
 				printf("ID_NAT_PUNCHTHROUGH_SUCCEEDED for %s. Connecting...\n", p->guid.ToString());
-				rakPeer->Connect(p->systemAddress.ToString(false),p->systemAddress.port,0,0);
+				rakPeer->Connect(p->systemAddress.ToString(false),p->systemAddress.GetPort(),0,0);
 			}
 			else if (p->data[0]==ID_ALREADY_CONNECTED)
 			{

@@ -186,7 +186,7 @@ public:
 	virtual void OnShutdown(void);
 	virtual void Update(void);
 	virtual PluginReceiveResult OnReceive(Packet *packet);
-	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 protected:
 	void OnOpenChannelRequest(Packet *packet);
 	void OnOpenChannelReply(Packet *packet);

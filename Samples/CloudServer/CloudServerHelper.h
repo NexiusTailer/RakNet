@@ -12,7 +12,7 @@ class TwoWayAuthentication;
 class FullyConnectedMesh2;
 class ConnectionGraph2;
 
-class SampleFilter : public CloudServerQueryFilter
+class CloudServerHelperFilter : public CloudServerQueryFilter
 {
 public:
 	virtual bool OnPostRequest(RakNetGUID clientGuid, SystemAddress clientAddress, CloudKey key, uint32_t dataLength, const char *data);
@@ -23,6 +23,9 @@ public:
 	RakNetGUID serverGuid;
 };
 
+// To use this class without DynDNS, you only need the CloudServer class. and CloudServerHelperFilter
+// The only function you need is CloudServerHelper::OnPacket() for CloudServerHelper::OnConnectionCountChange
+// For setup, call cloudServer->AddQueryFilter(sampleFilter);
 struct CloudServerHelper
 {
 	static const char *dnsHost;
@@ -44,7 +47,7 @@ struct CloudServerHelper
 	static MessageID AuthenticateRemoteServerBlocking(RakPeerInterface *rakPeer, TwoWayAuthentication *twoWayAuthentication, RakNetGUID remoteSystem);
 	static void SetupPlugins(
 		RakNet::CloudServer *cloudServer,
-		RakNet::SampleFilter *sampleFilter,
+		RakNet::CloudServerHelperFilter *sampleFilter,
 		RakNet::CloudClient *cloudClient,
 		RakNet::FullyConnectedMesh2 *fullyConnectedMesh2,
 		RakNet::TwoWayAuthentication *twoWayAuthentication,
@@ -62,11 +65,12 @@ struct CloudServerHelper
 		DynDNS *dynDNS
 		);
 
+	// Call when the number of client connections change
+	// Usually internal
+	static void OnConnectionCountChange(RakPeerInterface *rakPeer, CloudClient *cloudClient);
 protected:
 	// Call when you get ID_FCM2_NEW_HOST
 	static void OnFCMNewHost(Packet *packet, RakPeerInterface *rakPeer, DynDNS *dynDNS);
-	// Call when the number of client connections change
-	static void OnConnectionCountChange(RakPeerInterface *rakPeer, CloudClient *cloudClient);
 };
 
 } // namespace RakNet

@@ -492,7 +492,7 @@ void AutopatcherClient::Update(void)
 		}
 	}
 }
-void AutopatcherClient::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void AutopatcherClient::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	if (systemAddress==serverId)
 		Clear();

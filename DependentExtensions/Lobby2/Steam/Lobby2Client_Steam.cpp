@@ -185,8 +185,8 @@ void Lobby2Client_Steam::OnLobbyCreated( LobbyCreated_t *pCallback, bool bIOFail
 			printf("\nNumber of Steam Lobby Members:%i in Lobby Name:%s\n", SteamMatchmaking()->GetNumLobbyMembers(roomId), callbackResult->roomName.C_String());
 			RoomMember roomMember;
 			roomMember.steamIDRemote=SteamMatchmaking()->GetLobbyOwner(roomId).ConvertToUint64();
-			roomMember.systemAddress.binaryAddress=nextFreeSystemAddress++;
-			roomMember.systemAddress.port=STEAM_UNUSED_PORT;
+			roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
+			roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
 			roomMembers.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_); // GetLobbyMemberByIndex( roomId, 0 ).ConvertToUint64());
 			
 			CallCBWithResultCode(callbackResult, L2RC_SUCCESS);
@@ -219,8 +219,8 @@ void Lobby2Client_Steam::OnLobbyJoined( LobbyEnter_t *pCallback, bool bIOFailure
 				// First push to prevent being notified of ourselves
 				RoomMember roomMember;
 				roomMember.steamIDRemote=SteamUser()->GetSteamID().ConvertToUint64();
-				roomMember.systemAddress.binaryAddress=nextFreeSystemAddress++;
-				roomMember.systemAddress.port=STEAM_UNUSED_PORT;
+				roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
+				roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
 				roomMembers.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_);
 
 				CallRoomCallbacks();
@@ -237,8 +237,8 @@ void Lobby2Client_Steam::OnLobbyJoined( LobbyEnter_t *pCallback, bool bIOFailure
 				if (rmi==roomMembers.Size())
 				{
 					roomMember.steamIDRemote=SteamMatchmaking()->GetLobbyOwner(roomId).ConvertToUint64();
-					roomMember.systemAddress.binaryAddress=nextFreeSystemAddress++;
-					roomMember.systemAddress.port=STEAM_UNUSED_PORT;
+					roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
+					roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
 					roomMembers.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_);
 				}
 
@@ -368,8 +368,8 @@ void Lobby2Client_Steam::CallRoomCallbacks()
 		{
 			RoomMember roomMember;
 			roomMember.steamIDRemote=currentMembers[currentMemberIndex];
-			roomMember.systemAddress.binaryAddress=nextFreeSystemAddress++;
-			roomMember.systemAddress.port=STEAM_UNUSED_PORT;
+			roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
+			roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
 			updatedRoomMembers.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_);
 
 			// new member
@@ -402,8 +402,8 @@ void Lobby2Client_Steam::CallRoomCallbacks()
 	{
 		RoomMember roomMember;
 		roomMember.steamIDRemote=currentMembers[currentMemberIndex];
-		roomMember.systemAddress.binaryAddress=nextFreeSystemAddress++;
-		roomMember.systemAddress.port=STEAM_UNUSED_PORT;
+		roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
+		roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
 		updatedRoomMembers.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_);
 
 		// new member
@@ -479,7 +479,7 @@ void Lobby2Client_Steam::NotifyLeaveRoom(void)
 	ClearRoom();
 }
 
-int Lobby2Client_Steam::RakNetSendTo( SOCKET s, const char *data, int length, SystemAddress systemAddress )
+int Lobby2Client_Steam::RakNetSendTo( SOCKET s, const char *data, int length, const SystemAddress &systemAddress )
 {
 	bool objectExists;
 	DataStructures::DefaultIndexType i = roomMembers.GetIndexFromKey(systemAddress, &objectExists);
@@ -490,9 +490,9 @@ int Lobby2Client_Steam::RakNetSendTo( SOCKET s, const char *data, int length, Sy
 		else
 			return 0;
 	}
-	else if (systemAddress.port!=STEAM_UNUSED_PORT)
+	else if (systemAddress.GetPort()!=STEAM_UNUSED_PORT)
 	{
-		return SocketLayer::SendTo_PC(s,data,length,systemAddress.binaryAddress,systemAddress.port,_FILE_AND_LINE_);
+		return SocketLayer::SendTo_PC(s,data,length,systemAddress,_FILE_AND_LINE_);
 	}
 	return 0;
 }
@@ -529,7 +529,7 @@ void Lobby2Client_Steam::OnRakPeerShutdown(void)
 {
 	ClearRoom();
 }
-void Lobby2Client_Steam::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void Lobby2Client_Steam::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	(void) lostConnectionReason;
 	(void) rakNetGUID;

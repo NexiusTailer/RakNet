@@ -2,6 +2,7 @@
 #elif defined (_WIN32)
 #include <WinSock2.h>
 #include <windows.h>
+#include <Ws2tcpip.h>
 
 // Must always include Winsock2.h before windows.h
 // or else:

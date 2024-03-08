@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 	if (!RakNet::CloudServerHelper::StartRakPeer(rakPeer))
 		return 1;
 
-	RakNet::SampleFilter sampleFilter; // Keeps clients from updating stuff to the server they are not supposed to
+	RakNet::CloudServerHelperFilter sampleFilter; // Keeps clients from updating stuff to the server they are not supposed to
 	sampleFilter.serverGuid=rakPeer->GetMyGUID();
 	RakNet::CloudServerHelper::SetupPlugins(&cloudServer, &sampleFilter, &cloudClient, &fullyConnectedMesh2, &twoWayAuthentication,&connectionGraph2, RakNet::CloudServerHelper::serverToServerPassword);
 

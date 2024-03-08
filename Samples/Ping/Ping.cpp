@@ -136,7 +136,7 @@ int main(void)
 				bsIn.IgnoreBytes(1);
 				bsIn.Read(time);
 				dataLength = p->length - sizeof(unsigned char) - sizeof(RakNet::TimeMS);
-				printf("ID_UNCONNECTED_PONG from SystemAddress:%u:%u.\n", p->systemAddress.binaryAddress, p->systemAddress.port);
+				printf("ID_UNCONNECTED_PONG from SystemAddress %s.\n", p->systemAddress.ToString(true));
 				printf("Time is %i\n",time);
 				printf("Ping is %i\n", (unsigned int)(RakNet::GetTimeMS()-time));
 				printf("Data is %i bytes long.\n", dataLength);

@@ -24,7 +24,7 @@ unsigned short CloudServerHelper::allowedOutgoingConnections;
 
 #define CLOUD_SERVER_CONNECTION_COUNT_PRIMARY_KEY "CloudConnCount"
 
-bool SampleFilter::OnPostRequest(RakNetGUID clientGuid, SystemAddress clientAddress, CloudKey key, uint32_t dataLength, const char *data)
+bool CloudServerHelperFilter::OnPostRequest(RakNetGUID clientGuid, SystemAddress clientAddress, CloudKey key, uint32_t dataLength, const char *data)
 {
 	if (clientGuid!=serverGuid)
 	{
@@ -33,9 +33,9 @@ bool SampleFilter::OnPostRequest(RakNetGUID clientGuid, SystemAddress clientAddr
 	}
 	return true;
 }
-bool SampleFilter::OnReleaseRequest(RakNetGUID clientGuid, SystemAddress clientAddress, DataStructures::List<CloudKey> &cloudKeys) {return true;}
-bool SampleFilter::OnGetRequest(RakNetGUID clientGuid, SystemAddress clientAddress, CloudQuery &query, DataStructures::List<RakNetGUID> &specificSystems) {return true;}
-bool SampleFilter::OnUnsubscribeRequest(RakNetGUID clientGuid, SystemAddress clientAddress, DataStructures::List<CloudKey> &cloudKeys, DataStructures::List<RakNetGUID> &specificSystems) {return true;}
+bool CloudServerHelperFilter::OnReleaseRequest(RakNetGUID clientGuid, SystemAddress clientAddress, DataStructures::List<CloudKey> &cloudKeys) {return true;}
+bool CloudServerHelperFilter::OnGetRequest(RakNetGUID clientGuid, SystemAddress clientAddress, CloudQuery &query, DataStructures::List<RakNetGUID> &specificSystems) {return true;}
+bool CloudServerHelperFilter::OnUnsubscribeRequest(RakNetGUID clientGuid, SystemAddress clientAddress, DataStructures::List<CloudKey> &cloudKeys, DataStructures::List<RakNetGUID> &specificSystems) {return true;}
 
 
 bool CloudServerHelper::ParseCommandLineParameters(int argc, char **argv)
@@ -231,7 +231,7 @@ MessageID CloudServerHelper::AuthenticateRemoteServerBlocking(RakPeerInterface *
 }
 void CloudServerHelper::SetupPlugins(
 	RakNet::CloudServer *cloudServer,
-	RakNet::SampleFilter *sampleFilter,
+	RakNet::CloudServerHelperFilter *sampleFilter,
 	RakNet::CloudClient *cloudClient,
 	RakNet::FullyConnectedMesh2 *fullyConnectedMesh2,
 	RakNet::TwoWayAuthentication *twoWayAuthentication,
@@ -441,8 +441,7 @@ int CloudServerHelper::JoinCloud(
 
 	// Force the external server address for queries. Otherwise it would report 127.0.0.1 since the client is on localhost
 	SystemAddress forceAddress;
-	forceAddress.SetBinaryAddress(myPublicIP);
-	forceAddress.port=RakNet::CloudServerHelper::serverPort;
+	forceAddress.FromString(myPublicIP,RakNet::CloudServerHelper::serverPort);
 	cloudServer->ForceExternalSystemAddress(forceAddress);
 
 	OnConnectionCountChange(rakPeer, cloudClient);

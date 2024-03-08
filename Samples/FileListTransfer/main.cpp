@@ -10,6 +10,7 @@
 #include "BitStream.h"
 #include "IncrementalReadInterface.h"
 #include "PacketizedTCP.h"
+#include "SocketLayer.h"
 #include <stdio.h>
 #include "Gets.h"
 
@@ -112,9 +113,19 @@ int main()
 	RakNet::FileListTransfer flt1, flt2;
 #ifdef USE_TCP
 	RakNet::PacketizedTCP tcp1, tcp2;
-	tcp1.Start(60000,1);
-	tcp2.Start(60001,1);
-	tcp2.Connect("127.0.0.1",60000,false);
+	const bool testInet6=true;
+	if (testInet6)
+	{
+		tcp1.Start(60000,1,-99999,AF_INET6);
+		tcp2.Start(60001,1,-99999,AF_INET6);
+		tcp2.Connect("::1",60000,false,AF_INET6);
+	}
+	else
+	{
+		tcp1.Start(60000,1,-99999,AF_INET);
+		tcp2.Start(60001,1,-99999,AF_INET);
+		tcp2.Connect("127.0.0.1",60000,false,AF_INET);
+	}
 	tcp1.AttachPlugin(&flt1);
 	tcp2.AttachPlugin(&flt2);
 #else
@@ -140,7 +151,7 @@ int main()
 	char str[256];
 	Gets(str, sizeof(str));
 	if (str[0]==0)
-		strcpy(str, "D:\\RakNet4\\Lib\\RakNetLibStaticDebug.lib");
+		strcpy(str, "D:\\RakNet\\Lib\\RakNetLibStaticDebug.lib");
 	file=str;
 	fileCopy=file+"_copy";
 	// Reference this file, rather than add it in memory. Will send 1000 byte chunks. The reason to do this is so the whole file does not have to be in memory at once

@@ -45,8 +45,7 @@ int main(void)
 		printf("Enter remote IP: ");
 		Gets(text,BIG_PACKET_SIZE);
 		if (text[0]==0)
-			strcpy(text, "127.0.0.1");
-		//	strcpy(text, "94.198.81.195"); // dx in Europe
+			strcpy(text, "94.198.81.195"); // dx in Europe
 	}
 	else if (ch=='s')
 	{
@@ -59,24 +58,61 @@ int main(void)
 		server=RakNet::RakPeerInterface::GetInstance();;
 		strcpy(text, "127.0.0.1");
 	}
-	if (client)
-	{
-		client->SetTimeoutTime(5000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
-		RakNet::SocketDescriptor socketDescriptor(0,0);
-		client->Startup(1, &socketDescriptor, 1);
-		client->SetSplitMessageProgressInterval(10000); // Get ID_DOWNLOAD_PROGRESS notifications
-		client->Connect(text, 60000, 0, 0);
-	//	client->SetPerConnectionOutgoingBandwidthLimit(28800);
-	}
+
+	// Test IPV6
+	int socketFamily;
+	socketFamily=AF_INET6;
+//	socketFamily=AF_INET;
+
 	if (server)
 	{
 		server->SetTimeoutTime(5000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 		RakNet::SocketDescriptor socketDescriptor(60000,0);
+		socketDescriptor.socketFamily=socketFamily;
 		server->SetMaximumIncomingConnections(4);
-		server->Startup(4, &socketDescriptor, 1);
+		StartupResult sr;
+		sr=server->Startup(4, &socketDescriptor, 1);
+		if (sr!=RAKNET_STARTED)
+		{
+			printf("Server failed to start. Error=%i\n", sr);
+			return 1;
+		}
 	//	server->SetPerConnectionOutgoingBandwidthLimit(28800);
+
+		printf("Started server on %s\n", server->GetMyBoundAddress().ToString(true));
+	}
+	if (client)
+	{
+		client->SetTimeoutTime(5000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+		RakNet::SocketDescriptor socketDescriptor(0,0);
+		socketDescriptor.socketFamily=socketFamily;
+		StartupResult sr;
+		sr=client->Startup(4, &socketDescriptor, 1);
+		if (sr!=RAKNET_STARTED)
+		{
+			printf("Client failed to start. Error=%i\n", sr);
+			return 1;
+		}
+		client->SetSplitMessageProgressInterval(10000); // Get ID_DOWNLOAD_PROGRESS notifications
+		//	client->SetPerConnectionOutgoingBandwidthLimit(28800);
+
+		printf("Started client on %s\n", client->GetMyBoundAddress().ToString(true));
+
+		client->Connect(text, 60000, 0, 0);
 	}
 	RakSleep(500);
+
+	printf("My IP addresses:\n");
+	RakPeerInterface *rakPeer;
+	if (server)
+		rakPeer=server;
+	else
+		rakPeer=client;
+	unsigned int i;
+	for (i=0; i < rakPeer->GetNumberOfAddresses(); i++)
+	{
+		printf("%i. %s\n", i+1, rakPeer->GetLocalIP(i));
+	}
 
 
 	// Always apply the network simulator on two systems, never just one, with half the values on each.

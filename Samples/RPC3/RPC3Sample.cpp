@@ -206,6 +206,7 @@ int main(void)
 	if (isServer)
 	{
 		RakNet::SocketDescriptor socketDescriptor(50000,0);
+		socketDescriptor.socketFamily=AF_INET; // Only IPV4 supports broadcast on 255.255.255.255
 		rakPeer->Startup(10, &socketDescriptor, 1);
 		rakPeer->SetMaximumIncomingConnections(10);
 		printf("Server started.\n");
@@ -213,6 +214,7 @@ int main(void)
 	else
 	{
 		RakNet::SocketDescriptor socketDescriptor(0,0);
+		socketDescriptor.socketFamily=AF_INET; // Only IPV4 supports broadcast on 255.255.255.255
 		rakPeer->Startup(1, &socketDescriptor, 1);
 
 		// Send out a LAN broadcast to find other instances on the same computer
@@ -243,7 +245,7 @@ int main(void)
 				break;
 			case ID_UNCONNECTED_PONG:
 				// Found the server
-				rakPeer->Connect(p->systemAddress.ToString(false),p->systemAddress.port,0,0,0);
+				rakPeer->Connect(p->systemAddress.ToString(false),p->systemAddress.GetPort(),0,0,0);
 				break;
 			case ID_CONNECTION_REQUEST_ACCEPTED:
 				// This tells the client they have connected

@@ -78,7 +78,7 @@ bool ConnectionGraph2::ConnectionExists(RakNetGUID g1, RakNetGUID g2)
 	sag.guid=g2;
 	return remoteSystems[idx]->remoteConnections.HasData(sag);
 }
-void ConnectionGraph2::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void ConnectionGraph2::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	// Send notice to all existing connections
 	RakNet::BitStream bs;
@@ -106,7 +106,7 @@ bool ConnectionGraph2::GetAutoProcessNewConnections(void) const
 {
 	return autoProcessNewConnections;
 }
-void ConnectionGraph2::AddParticipant(SystemAddress systemAddress, RakNetGUID rakNetGUID)
+void ConnectionGraph2::AddParticipant(const SystemAddress &systemAddress, RakNetGUID rakNetGUID)
 {
 	// Relay the new connection to other systems.
 	RakNet::BitStream bs;
@@ -155,7 +155,14 @@ void ConnectionGraph2::AddParticipant(SystemAddress systemAddress, RakNetGUID ra
 		remoteSystems.InsertAtIndex(remoteSystem,ii,_FILE_AND_LINE_);
 	}
 }
-void ConnectionGraph2::OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
+void ConnectionGraph2::GetParticipantList(DataStructures::OrderedList<RakNetGUID, RakNetGUID> &participantList)
+{
+	participantList.Clear(true, _FILE_AND_LINE_);
+	unsigned int i;
+	for (i=0; i < remoteSystems.Size(); i++)
+		participantList.InsertAtEnd(remoteSystems[i]->guid, _FILE_AND_LINE_);
+}
+void ConnectionGraph2::OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
 {
 	(void) isIncoming;
 	if (autoProcessNewConnections)

@@ -173,7 +173,7 @@ void PrintConnections()
 					{
 						systemAddress=fullyConnectedMeshPlugin[i].GetPeerIDAtIndex(j);
 						if (systemAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
-							printf("%i ", systemAddress.port);
+							printf("%i ", systemAddress.GetPort());
 					}
 
 					printf("\n");
@@ -184,7 +184,7 @@ void PrintConnections()
 					{
 						systemAddress=rakPeer[i]->GetSystemAddressFromIndex(j);
 						if (systemAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
-							printf("%i ", systemAddress.port);
+							printf("%i ", systemAddress.GetPort());
 					}
 
 					printf("\n");
@@ -224,11 +224,11 @@ void PrintConnections()
 			if (packet)
 			{
 				if (packet->data[0]==ID_CONNECTION_ATTEMPT_FAILED)
-					printf("%i: ID_CONNECTION_ATTEMPT_FAILED to %i\n", 60000+i, packet->systemAddress.port);
+					printf("%i: ID_CONNECTION_ATTEMPT_FAILED to %i\n", 60000+i, packet->systemAddress.GetPort());
 	//			if (packet->data[0]==ID_NEW_INCOMING_CONNECTION)
-	//				printf("%i: ID_NEW_INCOMING_CONNECTION from %i\n", 60000+i, packet->systemAddress.port);
+	//				printf("%i: ID_NEW_INCOMING_CONNECTION from %i\n", 60000+i, packet->systemAddress.GetPort());
 	//			if (packet->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
-	//				printf("%i: ID_CONNECTION_REQUEST_ACCEPTED from %i\n", 60000+i, packet->systemAddress.port);
+	//				printf("%i: ID_CONNECTION_REQUEST_ACCEPTED from %i\n", 60000+i, packet->systemAddress.GetPort());
 				rakPeer[i]->DeallocatePacket(packet);
 			}
 		}

@@ -86,7 +86,7 @@ Inheritance diagram for RakNet::ReadyEvent:</div>
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g89998adaafb29e5d879113b992161085">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReadyEvent.html#2dd5308b4ee75a877c53404477a3c637">OnReceive</a> (<a class="el" href="structRakNet_1_1Packet.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReadyEvent.html#5985935342af408d87bd4b752490a5c8">OnClosedConnection</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReadyEvent.html#cf26f69ce62bcbfe5077c61aa2c40f45">OnClosedConnection</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="26a546e1fad47a20aee022aad42446df"></a><!-- doxytag: member="RakNet::ReadyEvent::OnRakPeerShutdown" ref="26a546e1fad47a20aee022aad42446df" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReadyEvent.html#26a546e1fad47a20aee022aad42446df">OnRakPeerShutdown</a> (void)</td></tr>
@@ -473,14 +473,14 @@ Returns if a particular system is waiting on a particular event. <dl compact><dt
 
 </div>
 </div><p>
-<a class="anchor" name="5985935342af408d87bd4b752490a5c8"></a><!-- doxytag: member="RakNet::ReadyEvent::OnClosedConnection" ref="5985935342af408d87bd4b752490a5c8" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
+<a class="anchor" name="cf26f69ce62bcbfe5077c61aa2c40f45"></a><!-- doxytag: member="RakNet::ReadyEvent::OnClosedConnection" ref="cf26f69ce62bcbfe5077c61aa2c40f45" args="(const SystemAddress &amp;systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">virtual void RakNet::ReadyEvent::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -513,7 +513,7 @@ Called when a connection is dropped because the user called <a class="el" href="
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#b6b48bb474e340ad27c8ef9b98fae051">RakNet::PluginInterface2</a>.</p>
+<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#80c7612ca1a5dcfeec0b52d8049a71ea">RakNet::PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -643,9 +643,9 @@ This channel will be used for all <a class="el" href="classRakNet_1_1RakPeer.htm
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/temp/RakNet4/Source/<a class="el" href="ReadyEvent_8h.html">ReadyEvent.h</a></ul>
+<li>d:/temp/RakNet/Source/<a class="el" href="ReadyEvent_8h.html">ReadyEvent.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:29 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 8 13:04:37 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

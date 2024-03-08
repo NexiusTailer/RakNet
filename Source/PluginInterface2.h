@@ -109,13 +109,13 @@ public:
 	/// \param[in] systemAddress The system whose connection was closed
 	/// \param[in] rakNetGuid The guid of the specified system
 	/// \param[in] lostConnectionReason How the connection was closed: manually, connection lost, or notification of disconnection
-	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason ){(void) systemAddress; (void) rakNetGUID; (void) lostConnectionReason;}
+	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason ){(void) systemAddress; (void) rakNetGUID; (void) lostConnectionReason;}
 
 	/// Called when we got a new connection
 	/// \param[in] systemAddress Address of the new connection
 	/// \param[in] rakNetGuid The guid of the specified system
 	/// \param[in] isIncoming If true, this is ID_NEW_INCOMING_CONNECTION, or the equivalent
-	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming) {(void) systemAddress; (void) rakNetGUID; (void) isIncoming;}
+	virtual void OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming) {(void) systemAddress; (void) rakNetGUID; (void) isIncoming;}
 
 	/// Called when a connection attempt fails
 	/// \param[in] packet Packet to be returned to the user

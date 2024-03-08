@@ -64,7 +64,11 @@ public:
 	/// Do not call ProcessNewConnection() manually otherwise
 	/// \param[in] The packet->SystemAddress member
 	/// \param[in] The packet->guid member
-	void AddParticipant(SystemAddress systemAddress, RakNetGUID rakNetGUID);
+	void AddParticipant(const SystemAddress &systemAddress, RakNetGUID rakNetGUID);
+
+	/// Get the participants added with AddParticipant()
+	/// \param[out] participantList Participants added with AddParticipant();
+	void GetParticipantList(DataStructures::OrderedList<RakNetGUID, RakNetGUID> &participantList);
 
 	/// \internal
 	struct SystemAddressAndGuid
@@ -86,9 +90,9 @@ public:
 	
 protected:
 	/// \internal
-	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	/// \internal
-	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
+	virtual void OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 	/// \internal
 	virtual PluginReceiveResult OnReceive(Packet *packet);
 

@@ -45,7 +45,8 @@ public class RakNetGUID : IDisposable {
 
 	public override int GetHashCode()
 	{
-		return (int)(this.g%int.MaxValue);
+		// return (int)(this.g%int.MaxValue);
+		 return (int) ToUint32(this);
 	}
 
 	public static bool operator ==(RakNetGUID a, RakNetGUID b)
@@ -121,8 +122,8 @@ public class RakNetGUID : IDisposable {
     return ret;
   }
 
-  public static uint ToInteger(RakNetGUID g) {
-    uint ret = RakNetPINVOKE.RakNetGUID_ToInteger(RakNetGUID.getCPtr(g));
+  public static uint ToUint32(RakNetGUID g) {
+    uint ret = RakNetPINVOKE.RakNetGUID_ToUint32(RakNetGUID.getCPtr(g));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }

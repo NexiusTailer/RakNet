@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;./../../Source;C:\irrlicht-1.7.1\include"
+				AdditionalIncludeDirectories="./;./../../Source;C:\irrlicht-1.7.1\include;./../../DependentExtensions/miniupnpc-1.5"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib"
+				AdditionalDependencies="ws2_32.lib IPHlpApi.lib"
 				OutputFile="$(OutDir)/IrrlichtRakNetDemo.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
@@ -120,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;./../../Source;C:\irrlicht-1.7.1\include"
+				AdditionalIncludeDirectories="./;./../../Source;C:\irrlicht-1.7.1\include;./../../DependentExtensions/miniupnpc-1.5"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -139,7 +139,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStatic.lib ws2_32.lib"
+				AdditionalDependencies="ws2_32.lib IPHlpApi.lib"
 				OutputFile="$(OutDir)/IrrlichtRakNetDemo.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
@@ -179,6 +179,82 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="miniupnpc-1.5"
+			>
+			<File
+				RelativePath="..\miniupnpc-1.5\connecthostport.c"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\connecthostport.h"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\igd_desc_parse.c"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\igd_desc_parse.h"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\minisoap.c"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\minisoap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\miniupnpc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\miniupnpc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\miniwget.c"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\miniwget.h"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\minixml.c"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\minixml.h"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\upnpcommands.c"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\upnpcommands.h"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\upnperrors.c"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\upnperrors.h"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\upnpreplyparse.c"
+				>
+			</File>
+			<File
+				RelativePath="..\miniupnpc-1.5\upnpreplyparse.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\CDemo.cpp"
 			>
@@ -197,14 +273,6 @@
 		</File>
 		<File
 			RelativePath=".\main.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\Samples\PHPDirectoryServer2\PHPDirectoryServer2.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\Samples\PHPDirectoryServer2\PHPDirectoryServer2.h"
 			>
 		</File>
 		<File

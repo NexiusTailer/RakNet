@@ -53,6 +53,10 @@ public class UDPProxyServer : PluginInterface2 {
   public UDPProxyServer() : this(RakNetPINVOKE.new_UDPProxyServer(), true) {
   }
 
+  public void SetSocketFamily(ushort _socketFamily) {
+    RakNetPINVOKE.UDPProxyServer_SetSocketFamily(swigCPtr, _socketFamily);
+  }
+
   public void SetResultHandler(UDPProxyServerResultHandler rh) {
     RakNetPINVOKE.UDPProxyServer_SetResultHandler(swigCPtr, UDPProxyServerResultHandler.getCPtr(rh));
   }

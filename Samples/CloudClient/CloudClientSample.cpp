@@ -177,7 +177,7 @@ int main(int argc, char **argv)
 						// Alternatively, just call Startup() with 2 slots instead of 1
 						RakSleep(500);
 
-						rakPeer->Connect(lowestConnectionAddress.ToString(false), lowestConnectionAddress.port, 0, 0);
+						rakPeer->Connect(lowestConnectionAddress.ToString(false), lowestConnectionAddress.GetPort(), 0, 0);
 						didRebalance=true;
 					}
 

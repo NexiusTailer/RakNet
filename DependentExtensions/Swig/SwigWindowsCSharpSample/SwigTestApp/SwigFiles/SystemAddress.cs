@@ -45,7 +45,8 @@ public class SystemAddress : IDisposable {
 
 	public override int GetHashCode()
 	{    
-		return (int)((this.port+this.binaryAddress)% int.MaxValue);
+		// return (int)((this.port+this.binaryAddress)% int.MaxValue);
+		return (int) ToInteger(this);
 	}
 	public static bool operator ==(SystemAddress a, SystemAddress b)
 	{
@@ -102,38 +103,18 @@ public class SystemAddress : IDisposable {
   public SystemAddress() : this(RakNetPINVOKE.new_SystemAddress__SWIG_0(), true) {
   }
 
-  public SystemAddress(string a, ushort b) : this(RakNetPINVOKE.new_SystemAddress__SWIG_1(a, b), true) {
+  public SystemAddress(string str) : this(RakNetPINVOKE.new_SystemAddress__SWIG_1(str), true) {
   }
 
-  public SystemAddress(uint a, ushort b) : this(RakNetPINVOKE.new_SystemAddress__SWIG_2(a, b), true) {
+  public SystemAddress(string str, ushort port) : this(RakNetPINVOKE.new_SystemAddress__SWIG_2(str, port), true) {
   }
 
-  public uint binaryAddress {
+  public ushort debugPort {
     set {
-      RakNetPINVOKE.SystemAddress_binaryAddress_set(swigCPtr, value);
+      RakNetPINVOKE.SystemAddress_debugPort_set(swigCPtr, value);
     } 
     get {
-      uint ret = RakNetPINVOKE.SystemAddress_binaryAddress_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public ushort port {
-    set {
-      RakNetPINVOKE.SystemAddress_port_set(swigCPtr, value);
-    } 
-    get {
-      ushort ret = RakNetPINVOKE.SystemAddress_port_get(swigCPtr);
-      return ret;
-    } 
-  }
-
-  public ushort systemIndex {
-    set {
-      RakNetPINVOKE.SystemAddress_systemIndex_set(swigCPtr, value);
-    } 
-    get {
-      ushort ret = RakNetPINVOKE.SystemAddress_systemIndex_get(swigCPtr);
+      ushort ret = RakNetPINVOKE.SystemAddress_debugPort_get(swigCPtr);
       return ret;
     } 
   }
@@ -149,13 +130,111 @@ public class SystemAddress : IDisposable {
     return ret;
   }
 
-  public string ToString(bool writePort) {
-    string ret = RakNetPINVOKE.SystemAddress_ToString(swigCPtr, writePort);
+  public byte GetIPVersion() {
+    byte ret = RakNetPINVOKE.SystemAddress_GetIPVersion(swigCPtr);
     return ret;
   }
 
+  public uint GetIPPROTO() {
+    uint ret = RakNetPINVOKE.SystemAddress_GetIPPROTO(swigCPtr);
+    return ret;
+  }
+
+  public void SetToLoopback() {
+    RakNetPINVOKE.SystemAddress_SetToLoopback__SWIG_0(swigCPtr);
+  }
+
+  public void SetToLoopback(byte ipVersion) {
+    RakNetPINVOKE.SystemAddress_SetToLoopback__SWIG_1(swigCPtr, ipVersion);
+  }
+
+  public string ToString(bool writePort, char portDelineator) {
+    string ret = RakNetPINVOKE.SystemAddress_ToString__SWIG_0(swigCPtr, writePort, portDelineator);
+    return ret;
+  }
+
+  public string ToString(bool writePort) {
+    string ret = RakNetPINVOKE.SystemAddress_ToString__SWIG_1(swigCPtr, writePort);
+    return ret;
+  }
+
+  public void ToString(bool writePort, string dest, char portDelineator) {
+    RakNetPINVOKE.SystemAddress_ToString__SWIG_2(swigCPtr, writePort, dest, portDelineator);
+  }
+
+  public bool FromString(string str, char portDelineator, int ipVersion) {
+    bool ret = RakNetPINVOKE.SystemAddress_FromString__SWIG_0(swigCPtr, str, portDelineator, ipVersion);
+    return ret;
+  }
+
+  public bool FromString(string str, char portDelineator) {
+    bool ret = RakNetPINVOKE.SystemAddress_FromString__SWIG_1(swigCPtr, str, portDelineator);
+    return ret;
+  }
+
+  public bool FromString(string str) {
+    bool ret = RakNetPINVOKE.SystemAddress_FromString__SWIG_2(swigCPtr, str);
+    return ret;
+  }
+
+  public bool FromStringExplicitPort(string str, ushort port, int ipVersion) {
+    bool ret = RakNetPINVOKE.SystemAddress_FromStringExplicitPort__SWIG_0(swigCPtr, str, port, ipVersion);
+    return ret;
+  }
+
+  public bool FromStringExplicitPort(string str, ushort port) {
+    bool ret = RakNetPINVOKE.SystemAddress_FromStringExplicitPort__SWIG_1(swigCPtr, str, port);
+    return ret;
+  }
+
+  public void CopyPort(SystemAddress right) {
+    RakNetPINVOKE.SystemAddress_CopyPort(swigCPtr, SystemAddress.getCPtr(right));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public bool EqualsExcludingPort(SystemAddress right) {
+    bool ret = RakNetPINVOKE.SystemAddress_EqualsExcludingPort(swigCPtr, SystemAddress.getCPtr(right));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public ushort GetPort() {
+    ushort ret = RakNetPINVOKE.SystemAddress_GetPort(swigCPtr);
+    return ret;
+  }
+
+  public ushort GetPortNetworkOrder() {
+    ushort ret = RakNetPINVOKE.SystemAddress_GetPortNetworkOrder(swigCPtr);
+    return ret;
+  }
+
+  public void SetPort(ushort s) {
+    RakNetPINVOKE.SystemAddress_SetPort(swigCPtr, s);
+  }
+
+  public void SetPortNetworkOrder(ushort s) {
+    RakNetPINVOKE.SystemAddress_SetPortNetworkOrder(swigCPtr, s);
+  }
+
+  public void SetBinaryAddress(string str, char portDelineator) {
+    RakNetPINVOKE.SystemAddress_SetBinaryAddress__SWIG_0(swigCPtr, str, portDelineator);
+  }
+
   public void SetBinaryAddress(string str) {
-    RakNetPINVOKE.SystemAddress_SetBinaryAddress(swigCPtr, str);
+    RakNetPINVOKE.SystemAddress_SetBinaryAddress__SWIG_1(swigCPtr, str);
+  }
+
+  public void ToString_Old(bool writePort, string dest, char portDelineator) {
+    RakNetPINVOKE.SystemAddress_ToString_Old__SWIG_0(swigCPtr, writePort, dest, portDelineator);
+  }
+
+  public void ToString_Old(bool writePort, string dest) {
+    RakNetPINVOKE.SystemAddress_ToString_Old__SWIG_1(swigCPtr, writePort, dest);
+  }
+
+  public void FixForIPVersion(SystemAddress boundAddressToSocket) {
+    RakNetPINVOKE.SystemAddress_FixForIPVersion(swigCPtr, SystemAddress.getCPtr(boundAddressToSocket));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public SystemAddress CopyData(SystemAddress input) {
@@ -186,6 +265,16 @@ public class SystemAddress : IDisposable {
     bool ret = RakNetPINVOKE.SystemAddress_OpLess(swigCPtr, SystemAddress.getCPtr(right));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
+  }
+
+  public ushort systemIndex {
+    set {
+      RakNetPINVOKE.SystemAddress_systemIndex_set(swigCPtr, value);
+    } 
+    get {
+      ushort ret = RakNetPINVOKE.SystemAddress_systemIndex_get(swigCPtr);
+      return ret;
+    } 
   }
 
 }

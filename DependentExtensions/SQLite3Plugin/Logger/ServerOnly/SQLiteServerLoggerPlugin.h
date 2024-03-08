@@ -93,7 +93,7 @@ namespace RakNet
 		/// \internal For plugin handling
 		virtual PluginReceiveResult OnReceive(Packet *packet);
 		/// \internal For plugin handling
-		virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+		virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 		/// \internal For plugin handling
 		virtual void OnShutdown(void);
 		virtual void OnAttach(void);

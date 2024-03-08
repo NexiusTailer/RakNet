@@ -288,6 +288,7 @@ IGNORERAKPEERANDINTERFACE(GetConnectionList( SystemAddress *remoteSystems, unsig
 %ignore RakNet::ConnectionGraph2::RemoteSystem;
 %ignore RakNet::ConnectionGraph2::RemoteSystemComp;
 %ignore RakNet::ConnectionGraph2::GetConnectionList;
+%ignore RakNet::ConnectionGraph2::GetParticipantList;
 
 #ifdef SWIG_ADDITIONAL_SQL_LITE
 //LogParameter

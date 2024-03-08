@@ -415,7 +415,7 @@ STRUCT_CUSTOM_GENERAL_ARRAY_TYPEMAP(fileDataIsCached,fileDataCache,char *fileDat
 #ifdef SWIG_ADDITIONAL_AUTOPATCHER
 	%pragma(csharp) modulecode=
 	%{ 
-	    public static readonly SystemAddress UNASSIGNED_SYSTEM_ADDRESS = new SystemAddress(0xFFFFFFFF, 0xFFFF);
+	    public static readonly SystemAddress UNASSIGNED_SYSTEM_ADDRESS = new SystemAddress();
 	    public static readonly RakNetGUID UNASSIGNED_RAKNET_GUID = new RakNetGUID(ulong.MaxValue);
 
 	    public static void StatisticsToString(RakNetStatistics s, out string buffer, int verbosityLevel) 
@@ -436,7 +436,7 @@ STRUCT_CUSTOM_GENERAL_ARRAY_TYPEMAP(fileDataIsCached,fileDataCache,char *fileDat
 #else
 	%pragma(csharp) modulecode=
 	%{ 
-	    public static readonly SystemAddress UNASSIGNED_SYSTEM_ADDRESS = new SystemAddress(0xFFFFFFFF, 0xFFFF);
+	    public static readonly SystemAddress UNASSIGNED_SYSTEM_ADDRESS = new SystemAddress();
 	    public static readonly RakNetGUID UNASSIGNED_RAKNET_GUID = new RakNetGUID(ulong.MaxValue);
 
 	    public static void StatisticsToString(RakNetStatistics s, out string buffer, int verbosityLevel) 
@@ -738,7 +738,8 @@ using System.Runtime.InteropServices;
 
 	public override int GetHashCode()
 	{    
-		return (int)((this.port+this.binaryAddress)% int.MaxValue);
+		// return (int)((this.port+this.binaryAddress)% int.MaxValue);
+		return (int) ToInteger(this);
 	}
 	public static bool operator ==(SystemAddress a, SystemAddress b)
 	{
@@ -806,7 +807,8 @@ using System.Runtime.InteropServices;
 
 	public override int GetHashCode()
 	{
-		return (int)(this.g%int.MaxValue);
+		// return (int)(this.g%int.MaxValue);
+		 return (int) ToUint32(this);
 	}
 
 	public static bool operator ==(RakNetGUID a, RakNetGUID b)
@@ -1301,7 +1303,16 @@ using System.Collections.Generic;
             saOut[i] = passListSystemAddress[i];
         }
         return returnVal;
-
+    }
+    
+    public void GetParticipantList(RakNetGUID[] participantList)
+    {
+			RakNetListRakNetGUID passListGUID = new RakNetListRakNetGUID();
+			GetParticipantListHelper(passListGUID);
+			for (int i = 0; i < participantList.Length && i < passListGUID.Size(); i++)
+			{
+			  participantList[i] = passListGUID[i];
+			}
     }
 
 %}

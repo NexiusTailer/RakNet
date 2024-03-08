@@ -17,6 +17,7 @@ struct RAK_DLL_EXPORT RakNetSocket
 	unsigned int s;
 	unsigned int userConnectionSocketIndex;
 	SystemAddress boundAddress;
+	unsigned short socketFamily;
 
 #if defined (_WIN32) && defined(USE_WAIT_FOR_MULTIPLE_EVENTS)
 	void* recvEvent;

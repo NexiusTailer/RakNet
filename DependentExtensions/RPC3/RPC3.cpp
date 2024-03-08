@@ -75,7 +75,7 @@ void RPC3::SetSendParams(PacketPriority priority, PacketReliability reliability,
 	outgoingOrderingChannel=orderingChannel;
 }
 
-void RPC3::SetRecipientAddress(SystemAddress systemAddress, bool broadcast)
+void RPC3::SetRecipientAddress(const SystemAddress &systemAddress, bool broadcast)
 {
 	outgoingSystemAddress=systemAddress;
 	outgoingBroadcast=broadcast;
@@ -243,7 +243,7 @@ PluginReceiveResult RPC3::OnReceive(Packet *packet)
 	return RR_CONTINUE_PROCESSING;
 }
 
-void RPC3::OnRPC3Call(SystemAddress systemAddress, unsigned char *data, unsigned int lengthInBytes)
+void RPC3::OnRPC3Call(const SystemAddress &systemAddress, unsigned char *data, unsigned int lengthInBytes)
 {
 	RakNet::BitStream bs(data,lengthInBytes,false);
 
@@ -467,7 +467,7 @@ void RPC3::InvokeSignal(DataStructures::HashIndex functionIndex, RakNet::BitStre
 	if (temporarilySetUSA)
 		incomingSystemAddress=lastIncomingAddress;
 }
-// void RPC3::OnRPCRemoteIndex(SystemAddress systemAddress, unsigned char *data, unsigned int lengthInBytes)
+// void RPC3::OnRPCRemoteIndex(const SystemAddress &systemAddress, unsigned char *data, unsigned int lengthInBytes)
 // {
 // 	// A remote system has given us their internal index for a particular function.
 // 	// Store it and use it from now on, to save bandwidth and search time
@@ -521,7 +521,7 @@ void RPC3::InvokeSignal(DataStructures::HashIndex functionIndex, RakNet::BitStre
 // 	}
 // }
 
-void RPC3::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void RPC3::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 // 	if (remoteFunctions.Has(systemAddress))
 // 	{
@@ -589,7 +589,7 @@ void RPC3::SendError(SystemAddress target, unsigned char errorCode, const char *
 	SendUnified(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, target, false);
 }
 
-// bool RPC3::GetRemoteFunctionIndex(SystemAddress systemAddress, RPC3::RPCIdentifier identifier, unsigned int *outerIndex, unsigned int *innerIndex, bool isCall)
+// bool RPC3::GetRemoteFunctionIndex(const SystemAddress &systemAddress, RPC3::RPCIdentifier identifier, unsigned int *outerIndex, unsigned int *innerIndex, bool isCall)
 // {
 // 	bool objectExists=false;
 // 	if (isCall)

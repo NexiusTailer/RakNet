@@ -70,8 +70,18 @@ public class UDPForwarder : IDisposable {
     return ret;
   }
 
-  public UDPForwarderResult StartForwarding(SystemAddress source, SystemAddress destination, uint timeoutOnNoDataMS, string forceHostAddress, out ushort forwardingPort, out uint forwardingSocket) {
-    UDPForwarderResult ret = (UDPForwarderResult)RakNetPINVOKE.UDPForwarder_StartForwarding(swigCPtr, SystemAddress.getCPtr(source), SystemAddress.getCPtr(destination), timeoutOnNoDataMS, forceHostAddress, out forwardingPort, out forwardingSocket);
+  public short socketFamily {
+    set {
+      RakNetPINVOKE.UDPForwarder_socketFamily_set(swigCPtr, value);
+    } 
+    get {
+      short ret = RakNetPINVOKE.UDPForwarder_socketFamily_get(swigCPtr);
+      return ret;
+    } 
+  }
+
+  public UDPForwarderResult StartForwarding(SystemAddress source, SystemAddress destination, uint timeoutOnNoDataMS, string forceHostAddress, ushort socketFamily, out ushort forwardingPort, out uint forwardingSocket) {
+    UDPForwarderResult ret = (UDPForwarderResult)RakNetPINVOKE.UDPForwarder_StartForwarding(swigCPtr, SystemAddress.getCPtr(source), SystemAddress.getCPtr(destination), timeoutOnNoDataMS, forceHostAddress, socketFamily, out forwardingPort, out forwardingSocket);
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
@@ -107,8 +117,12 @@ public class UDPForwarder : IDisposable {
     RakNetPINVOKE.UDPForwarder_UpdateThreaded(swigCPtr);
   }
 
-  public UDPForwarderResult StartForwardingThreaded(SystemAddress source, SystemAddress destination, uint timeoutOnNoDataMS, string forceHostAddress, out ushort forwardingPort, out uint forwardingSocket) {
-    UDPForwarderResult ret = (UDPForwarderResult)RakNetPINVOKE.UDPForwarder_StartForwardingThreaded(swigCPtr, SystemAddress.getCPtr(source), SystemAddress.getCPtr(destination), timeoutOnNoDataMS, forceHostAddress, out forwardingPort, out forwardingSocket);
+  public void UpdateThreaded_Old() {
+    RakNetPINVOKE.UDPForwarder_UpdateThreaded_Old(swigCPtr);
+  }
+
+  public UDPForwarderResult StartForwardingThreaded(SystemAddress source, SystemAddress destination, uint timeoutOnNoDataMS, string forceHostAddress, ushort socketFamily, out ushort forwardingPort, out uint forwardingSocket) {
+    UDPForwarderResult ret = (UDPForwarderResult)RakNetPINVOKE.UDPForwarder_StartForwardingThreaded(swigCPtr, SystemAddress.getCPtr(source), SystemAddress.getCPtr(destination), timeoutOnNoDataMS, forceHostAddress, socketFamily, out forwardingPort, out forwardingSocket);
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
@@ -126,6 +140,12 @@ public class UDPForwarder : IDisposable {
       ushort ret = RakNetPINVOKE.UDPForwarder_maxForwardEntries_get(swigCPtr);
       return ret;
     } 
+  }
+
+  public UDPForwarderResult AddForwardingEntry(SWIGTYPE_p_RakNet__UDPForwarder__SrcAndDest srcAndDest, uint timeoutOnNoDataMS, SWIGTYPE_p_unsigned_short port, string forceHostAddress, short socketFamily) {
+    UDPForwarderResult ret = (UDPForwarderResult)RakNetPINVOKE.UDPForwarder_AddForwardingEntry(swigCPtr, SWIGTYPE_p_RakNet__UDPForwarder__SrcAndDest.getCPtr(srcAndDest), timeoutOnNoDataMS, SWIGTYPE_p_unsigned_short.getCPtr(port), forceHostAddress, socketFamily);
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
+    return ret;
   }
 
   public bool isRunning {

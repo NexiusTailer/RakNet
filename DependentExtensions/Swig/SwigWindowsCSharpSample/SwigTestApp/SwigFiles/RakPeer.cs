@@ -363,6 +363,16 @@ public class RakPeer : RakPeerInterface {
     return ret;
   }
 
+  public override SystemAddress GetMyBoundAddress(int socketIndex) {
+    SystemAddress ret = new SystemAddress(RakNetPINVOKE.RakPeer_GetMyBoundAddress__SWIG_0(swigCPtr, socketIndex), true);
+    return ret;
+  }
+
+  public override SystemAddress GetMyBoundAddress() {
+    SystemAddress ret = new SystemAddress(RakNetPINVOKE.RakPeer_GetMyBoundAddress__SWIG_1(swigCPtr), true);
+    return ret;
+  }
+
   public override RakNetGUID GetGuidFromSystemAddress(SystemAddress input) {
     RakNetGUID ret = new RakNetGUID(RakNetPINVOKE.RakPeer_GetGuidFromSystemAddress(swigCPtr, SystemAddress.getCPtr(input)), false);
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();

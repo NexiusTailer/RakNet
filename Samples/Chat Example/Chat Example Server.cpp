@@ -87,29 +87,44 @@ int main(void)
 	// Starting the server is very simple.  2 players allowed.
 	// 0 means we don't care about a connectionValidationInteger, and false
 	// for low priority threads
-	RakNet::SocketDescriptor socketDescriptor(atoi(portstring),0);
-	bool b = server->Startup(4, &socketDescriptor, 1 )==RakNet::RAKNET_STARTED;
+	// I am creating two socketDesciptors, to create two sockets. One using IPV6 and the other IPV4
+	RakNet::SocketDescriptor socketDescriptors[2];
+	socketDescriptors[0].port=atoi(portstring);
+	socketDescriptors[0].socketFamily=AF_INET; // Test out IPV4
+	socketDescriptors[1].port=atoi(portstring);
+	socketDescriptors[1].socketFamily=AF_INET6; // Test out IPV6
+	bool b = server->Startup(4, socketDescriptors, 2 )==RakNet::RAKNET_STARTED;
 	server->SetMaximumIncomingConnections(4);
-	if (b)
-		puts("Server started, waiting for connections.");
-	else
-	{ 
-		puts("Server failed to start.  Terminating.");
-		exit(1);
+	if (!b)
+	{
+		printf("Failed to start dual IPV4 and IPV6 ports. Trying IPV4 only.\n");
+
+		// Try again, but leave out IPV6
+		b = server->Startup(4, socketDescriptors, 1 )==RakNet::RAKNET_STARTED;
+		if (!b)
+		{
+			puts("Server failed to start.  Terminating.");
+			exit(1);
+		}
 	}
 	server->SetOccasionalPing(true);
 	server->SetUnreliableTimeout(1000);
 
 	DataStructures::List<RakNet::RakNetSmartPtr < RakNet::RakNetSocket> > sockets;
 	server->GetSockets(sockets);
-	printf("Ports used by RakNet:\n");
+	printf("Socket addresses used by RakNet:\n");
 	for (unsigned int i=0; i < sockets.Size(); i++)
 	{
-		printf("%i. %i\n", i+1, sockets[i]->boundAddress.port);
+		printf("%i. %s\n", i+1, sockets[i]->boundAddress.ToString(true));
 	}
 
-	printf("My IP is %s\n", server->GetLocalIP(0));
-	printf("My GUID is %s\n", server->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
+	printf("\nMy IP addresses:\n");
+	for (i=0; i < server->GetNumberOfAddresses(); i++)
+	{
+		printf("%i. %s\n", i+1, server->GetLocalIP(i));
+	}
+
+	printf("\nMy GUID is %s\n", server->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
 	puts("'quit' to quit. 'stat' to show stats. 'ping' to ping.\n'ban' to ban an IP from connecting.\n'kick to kick the first connected player.\nType to talk.");
 	char message[2048];
 

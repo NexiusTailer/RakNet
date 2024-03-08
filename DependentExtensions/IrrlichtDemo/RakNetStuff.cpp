@@ -12,10 +12,8 @@ RakPeerInterface *rakPeer;
 NetworkIDManager *networkIDManager;
 ReplicaManager3Irrlicht *replicaManager3;
 NatPunchthroughClient *natPunchthroughClient;
-UDPProxyClient *udpProxyClient;
-TCPInterface *tcpInterface;
-HTTPConnection *httpConnection;
-PHPDirectoryServer2 *phpDirectoryServer2;
+CloudClient *cloudClient;
+RakNet::FullyConnectedMesh2 *fullyConnectedMesh2;
 PlayerReplica *playerReplica;
 
 /*
@@ -81,11 +79,14 @@ void InstantiateRakNetClasses(void)
 	rakPeer=RakNet::RakPeerInterface::GetInstance();
 	// Using fixed port so we can use AdvertiseSystem and connect on the LAN if the server is not available.
 	RakNet::SocketDescriptor sd(1234,0);
-	while (SocketLayer::IsPortInUse(sd.port)==true)
+	sd.socketFamily=AF_INET; // Only IPV4 supports broadcast on 255.255.255.255
+	while (SocketLayer::IsPortInUse(sd.port, sd.hostAddress, sd.socketFamily)==true)
 		sd.port++;
 	// +1 is for the connection to the NAT punchthrough server
 	rakPeer->Startup(MAX_PLAYERS+1,&sd,1);
 	rakPeer->SetMaximumIncomingConnections(MAX_PLAYERS);
+	// Fast disconnect for easier testing of host migration
+	rakPeer->SetTimeoutTime(5000,UNASSIGNED_SYSTEM_ADDRESS);
 	// ReplicaManager3 replies on NetworkIDManager. It assigns numbers to objects so they can be looked up over the network
 	// It's a class in case you wanted to have multiple worlds, then you could have multiple instances of NetworkIDManager
 	networkIDManager=new NetworkIDManager;
@@ -101,20 +102,13 @@ void InstantiateRakNetClasses(void)
 	// Lets you connect through routers
 	natPunchthroughClient=new NatPunchthroughClient;
 	rakPeer->AttachPlugin(natPunchthroughClient);
-	// If NatPunchthroughClient fails, this will forward messages
-	udpProxyClient=new UDPProxyClient;
-	rakPeer->AttachPlugin(udpProxyClient);
-	// All the rest is to connect to http://www.jenkinssoftware.com/raknet/DirectoryServer.php and upload/download the player list so we know about other people
-	tcpInterface=new TCPInterface;
-	bool tcpStarted=tcpInterface->Start(TCP_PORT,0);
-	RakAssert(tcpStarted);
-	httpConnection=new HTTPConnection;
-	httpConnection->Init(tcpInterface, "jenkinssoftware.com");
-	phpDirectoryServer2=new PHPDirectoryServer2;
-	phpDirectoryServer2->Init(httpConnection, "/raknet/DirectoryServer.php");
-	phpDirectoryServer2->SetField("RakNetGUID",rakPeer->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
-	// Upload our own game instance
-	phpDirectoryServer2->UploadAndDownloadTable("a", "a", "IrrlichtDemo", rakPeer->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS).port, true);
+	// Uploads game instance, basically client half of a directory server
+	// Server code is in NATCompleteServer sample
+	cloudClient=new CloudClient;
+	rakPeer->AttachPlugin(cloudClient);
+	fullyConnectedMesh2=new FullyConnectedMesh2;
+	fullyConnectedMesh2->SetAutoparticipateConnections(false);
+	rakPeer->AttachPlugin(fullyConnectedMesh2);
 	// Connect to the NAT punchthrough server
 	ConnectionAttemptResult car = rakPeer->Connect(DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP, DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_PORT,0,0);
 	RakAssert(car==CONNECTION_ATTEMPT_STARTED);
@@ -130,10 +124,8 @@ void DeinitializeRakNetClasses(void)
 	delete networkIDManager;
 	delete replicaManager3;
 	delete natPunchthroughClient;
-	delete udpProxyClient;
-	delete httpConnection;
-	delete tcpInterface;
-	delete phpDirectoryServer2;
+	delete cloudClient;
+	delete fullyConnectedMesh2;
 	// ReplicaManager3 deletes all referenced objects, including this one
 	//playerReplica->PreDestruction(0);
 	//delete playerReplica;

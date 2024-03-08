@@ -67,7 +67,7 @@ Inheritance diagram for RakNet::RPC3:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC3.html#45965705d026ad3f694091dc87e9ec3a">SetSendParams</a> (<a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC3.html#a12ab1d1ab68a62eebf9098cb347ee51">SetRecipientAddress</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, bool broadcast)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC3.html#aa4ee68113b755c490ab3a780a8d0b02">SetRecipientAddress</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, bool broadcast)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC3.html#9d008c1ce2c713e15acc3bef644b5770">SetRecipientObject</a> (NetworkID networkID)</td></tr>
 
@@ -106,7 +106,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the interface is attached. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g89998adaafb29e5d879113b992161085">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC3.html#f3124837c8700edcb202c3244531228e">OnReceive</a> (<a class="el" href="structRakNet_1_1Packet.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC3.html#71cefbcf7434eb9b1acb50385796df5e">OnClosedConnection</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC3.html#38629f8313e294fba524f941fcb09e09">OnClosedConnection</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
 
 <tr><td colspan="2"><br><h2>Protected Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d0300cf1ce772c72ad51893786d580bb"></a><!-- doxytag: member="RakNet::RPC3::nextSlotRegistrationCount" ref="d0300cf1ce772c72ad51893786d580bb" args="" -->
@@ -139,7 +139,7 @@ No serialization or deserialization is needed.<br>
 <div class="memdoc">
 
 <p>
-Calls a remote function, using as send parameters whatever was last passed to <a class="el" href="classRakNet_1_1RPC3.html#cc00399d088daa7b67bc87d1bfa265e8">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1RPC3.html#45965705d026ad3f694091dc87e9ec3a">SetSendParams()</a>, <a class="el" href="classRakNet_1_1RPC3.html#a12ab1d1ab68a62eebf9098cb347ee51">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1RPC3.html#9d008c1ce2c713e15acc3bef644b5770">SetRecipientObject()</a> If you call a C++ class member function, don't forget to first call <a class="el" href="classRakNet_1_1RPC3.html#9d008c1ce2c713e15acc3bef644b5770">SetRecipientObject()</a>. You can use <a class="el" href="classRakNet_1_1RPC3.html#c13a953871b07e55594bd49582652b80">CallExplicit()</a> instead of <a class="el" href="classRakNet_1_1RPC3.html#78fc5dd5e2e325cfbac3feb7cdcf5fcb">Call()</a> to force yourself not to forget.<p>
+Calls a remote function, using as send parameters whatever was last passed to <a class="el" href="classRakNet_1_1RPC3.html#cc00399d088daa7b67bc87d1bfa265e8">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1RPC3.html#45965705d026ad3f694091dc87e9ec3a">SetSendParams()</a>, <a class="el" href="classRakNet_1_1RPC3.html#aa4ee68113b755c490ab3a780a8d0b02">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1RPC3.html#9d008c1ce2c713e15acc3bef644b5770">SetRecipientObject()</a> If you call a C++ class member function, don't forget to first call <a class="el" href="classRakNet_1_1RPC3.html#9d008c1ce2c713e15acc3bef644b5770">SetRecipientObject()</a>. You can use <a class="el" href="classRakNet_1_1RPC3.html#c13a953871b07e55594bd49582652b80">CallExplicit()</a> instead of <a class="el" href="classRakNet_1_1RPC3.html#78fc5dd5e2e325cfbac3feb7cdcf5fcb">Call()</a> to force yourself not to forget.<p>
 Parameters passed to Call are processed as follows: 1. If the parameter is not a pointer 2. - And you overloaded <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a>&amp; operator&lt;&lt;(RakNet::BitStream&amp; out, MyClass&amp; in) then that will be used to do the serialization 3. - Otherwise, it will use bitStream.Write(myClass); <a class="el" href="classRakNet_1_1BitStream.html">BitStream</a> already defines specializations for <a class="el" href="classRakNet_1_1NetworkIDObject.html" title="Unique shared ids for each object instance.">NetworkIDObject</a>, <a class="el" href="structRakNet_1_1SystemAddress.html" title="Network address for a system.">SystemAddress</a>, other BitStreams 4. If the parameter is a pointer 5. - And the pointer can be converted to <a class="el" href="classRakNet_1_1NetworkIDObject.html" title="Unique shared ids for each object instance.">NetworkIDObject</a>, then it will write bitStream.Write(myClass-&gt;GetNetworkID()); To make it also dereference the pointer, use RakNet::_RPC3::Deref(myClass) 6. - And the pointer can not be converted to NetworkID, but it is a pointer to <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a>, then it is skipped 7. Otherwise, the pointer is dereferenced and written as in step 2 and 3.<p>
 <dl class="note" compact><dt><b>Note:</b></dt><dd>If you need endian swapping (Mac talking to PC for example), you pretty much need to define operator &lt;&lt; and operator &gt;&gt; for all classes you want to serialize. Otherwise the member variables will not be endian swapped. <p>
 If the call fails on the remote system, you will get back ID_RPC_REMOTE_ERROR. packet-&gt;data[1] will contain one of the values of RPCErrorCodes. packet-&gt;data[2] and on will contain the name of the function.</dd></dl>
@@ -177,7 +177,7 @@ If the call fails on the remote system, you will get back ID_RPC_REMOTE_ERROR. p
 <div class="memdoc">
 
 <p>
-Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1RPC3.html#cc00399d088daa7b67bc87d1bfa265e8">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1RPC3.html#45965705d026ad3f694091dc87e9ec3a">SetSendParams()</a>, <a class="el" href="classRakNet_1_1RPC3.html#a12ab1d1ab68a62eebf9098cb347ee51">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1RPC3.html#9d008c1ce2c713e15acc3bef644b5770">SetRecipientObject()</a> Passed parameter(s), if any, are serialized using operator &lt;&lt; with <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a>. If you provide an overload it will be used, otherwise the seriailzation is equivalent to memcpy except for native <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> types (<a class="el" href="classRakNet_1_1NetworkIDObject.html" title="Unique shared ids for each object instance.">NetworkIDObject</a>, <a class="el" href="structRakNet_1_1SystemAddress.html" title="Network address for a system.">SystemAddress</a>, etc.) If the type is a pointer to a type deriving from <a class="el" href="classRakNet_1_1NetworkIDObject.html" title="Unique shared ids for each object instance.">NetworkIDObject</a>, then only the NetworkID is sent, and the object looked up on the remote system. Otherwise, the pointer is dereferenced and the contents serialized as usual. <dl class="note" compact><dt><b>Note:</b></dt><dd>The this pointer, for this instance of <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RPC3</a>, is pushed as the last parameter on the stack. See RPC3Sample.cpp for an example of this <p>
+Calls a remote function, using whatever was last passed to <a class="el" href="classRakNet_1_1RPC3.html#cc00399d088daa7b67bc87d1bfa265e8">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1RPC3.html#45965705d026ad3f694091dc87e9ec3a">SetSendParams()</a>, <a class="el" href="classRakNet_1_1RPC3.html#aa4ee68113b755c490ab3a780a8d0b02">SetRecipientAddress()</a>, and <a class="el" href="classRakNet_1_1RPC3.html#9d008c1ce2c713e15acc3bef644b5770">SetRecipientObject()</a> Passed parameter(s), if any, are serialized using operator &lt;&lt; with <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a>. If you provide an overload it will be used, otherwise the seriailzation is equivalent to memcpy except for native <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> types (<a class="el" href="classRakNet_1_1NetworkIDObject.html" title="Unique shared ids for each object instance.">NetworkIDObject</a>, <a class="el" href="structRakNet_1_1SystemAddress.html" title="Network address for a system.">SystemAddress</a>, etc.) If the type is a pointer to a type deriving from <a class="el" href="classRakNet_1_1NetworkIDObject.html" title="Unique shared ids for each object instance.">NetworkIDObject</a>, then only the NetworkID is sent, and the object looked up on the remote system. Otherwise, the pointer is dereferenced and the contents serialized as usual. <dl class="note" compact><dt><b>Note:</b></dt><dd>The this pointer, for this instance of <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RPC3</a>, is pushed as the last parameter on the stack. See RPC3Sample.cpp for an example of this <p>
 If the call fails on the remote system, you will get back ID_RPC_REMOTE_ERROR. packet-&gt;data[1] will contain one of the values of RPCErrorCodes. packet-&gt;data[2] and on will contain the name of the function. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -186,8 +186,8 @@ If the call fails on the remote system, you will get back ID_RPC_REMOTE_ERROR. p
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1RPC3.html#45965705d026ad3f694091dc87e9ec3a">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>reliability</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1RPC3.html#45965705d026ad3f694091dc87e9ec3a">SetSendParams()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1RPC3.html#45965705d026ad3f694091dc87e9ec3a">SetSendParams()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1RPC3.html#a12ab1d1ab68a62eebf9098cb347ee51">SetRecipientAddress()</a> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1RPC3.html#a12ab1d1ab68a62eebf9098cb347ee51">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1RPC3.html#aa4ee68113b755c490ab3a780a8d0b02">SetRecipientAddress()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1RPC3.html#aa4ee68113b755c490ab3a780a8d0b02">SetRecipientAddress()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>networkID</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1RPC3.html#9d008c1ce2c713e15acc3bef644b5770">SetRecipientObject()</a> </td></tr>
   </table>
 </dl>
@@ -283,14 +283,14 @@ Returns if a function identifier was previously registered on this system with <
 
 </div>
 </div><p>
-<a class="anchor" name="71cefbcf7434eb9b1acb50385796df5e"></a><!-- doxytag: member="RakNet::RPC3::OnClosedConnection" ref="71cefbcf7434eb9b1acb50385796df5e" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
+<a class="anchor" name="38629f8313e294fba524f941fcb09e09"></a><!-- doxytag: member="RakNet::RPC3::OnClosedConnection" ref="38629f8313e294fba524f941fcb09e09" args="(const SystemAddress &amp;systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">virtual void RakNet::RPC3::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -323,7 +323,7 @@ Called when a connection is dropped because the user called <a class="el" href="
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#b6b48bb474e340ad27c8ef9b98fae051">RakNet::PluginInterface2</a>.</p>
+<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#80c7612ca1a5dcfeec0b52d8049a71ea">RakNet::PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -469,14 +469,14 @@ Sets the network ID manager to use for object lookup Required to call C++ object
 
 </div>
 </div><p>
-<a class="anchor" name="a12ab1d1ab68a62eebf9098cb347ee51"></a><!-- doxytag: member="RakNet::RPC3::SetRecipientAddress" ref="a12ab1d1ab68a62eebf9098cb347ee51" args="(SystemAddress systemAddress, bool broadcast)" -->
+<a class="anchor" name="aa4ee68113b755c490ab3a780a8d0b02"></a><!-- doxytag: member="RakNet::RPC3::SetRecipientAddress" ref="aa4ee68113b755c490ab3a780a8d0b02" args="(const SystemAddress &amp;systemAddress, bool broadcast)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void RakNet::RPC3::SetRecipientAddress           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -495,7 +495,7 @@ Sets the network ID manager to use for object lookup Required to call C++ object
 <div class="memdoc">
 
 <p>
-Set system to send to for all following calls to <a class="el" href="classRakNet_1_1RPC3.html#78fc5dd5e2e325cfbac3feb7cdcf5fcb">Call()</a> Defaults to <a class="el" href="namespaceRakNet.html#59a6bc5e96781717452fe5b10844d6a9" title="Index of an invalid SystemAddress.">RakNet::UNASSIGNED_SYSTEM_ADDRESS</a>, broadcast=true <dl compact><dt><b>Parameters:</b></dt><dd>
+Set system to send to for all following calls to <a class="el" href="classRakNet_1_1RPC3.html#78fc5dd5e2e325cfbac3feb7cdcf5fcb">Call()</a> Defaults to <a class="el" href="namespaceRakNet.html#80c95b4ed53f42911a6fa92b85e929cf" title="Index of an invalid SystemAddress.">RakNet::UNASSIGNED_SYSTEM_ADDRESS</a>, broadcast=true <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1RakPeer.html#1ee7422f744ab606c92b4ed4b28db40e" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>broadcast</em>&nbsp;</td><td>See <a class="el" href="classRakNet_1_1RakPeer.html#1ee7422f744ab606c92b4ed4b28db40e" title="Sends a block of data to the specified system that you are connected to.">RakPeer::Send()</a> </td></tr>
@@ -614,7 +614,7 @@ Send or stop sending a timestamp with all following calls to <a class="el" href=
 <div class="memdoc">
 
 <p>
-Calls zero or more functions identified by sharedIdentifier. Uses as send parameters whatever was last passed to <a class="el" href="classRakNet_1_1RPC3.html#cc00399d088daa7b67bc87d1bfa265e8">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1RPC3.html#45965705d026ad3f694091dc87e9ec3a">SetSendParams()</a>, and <a class="el" href="classRakNet_1_1RPC3.html#a12ab1d1ab68a62eebf9098cb347ee51">SetRecipientAddress()</a> You can use <a class="el" href="classRakNet_1_1RPC3.html#c13a953871b07e55594bd49582652b80">CallExplicit()</a> instead of <a class="el" href="classRakNet_1_1RPC3.html#78fc5dd5e2e325cfbac3feb7cdcf5fcb">Call()</a> to force yourself not to forget to set parameters<p>
+Calls zero or more functions identified by sharedIdentifier. Uses as send parameters whatever was last passed to <a class="el" href="classRakNet_1_1RPC3.html#cc00399d088daa7b67bc87d1bfa265e8">SetTimestamp()</a>, <a class="el" href="classRakNet_1_1RPC3.html#45965705d026ad3f694091dc87e9ec3a">SetSendParams()</a>, and <a class="el" href="classRakNet_1_1RPC3.html#aa4ee68113b755c490ab3a780a8d0b02">SetRecipientAddress()</a> You can use <a class="el" href="classRakNet_1_1RPC3.html#c13a953871b07e55594bd49582652b80">CallExplicit()</a> instead of <a class="el" href="classRakNet_1_1RPC3.html#78fc5dd5e2e325cfbac3feb7cdcf5fcb">Call()</a> to force yourself not to forget to set parameters<p>
 See the <a class="el" href="classRakNet_1_1RPC3.html#78fc5dd5e2e325cfbac3feb7cdcf5fcb">Call()</a> function for a description of parameters<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -651,9 +651,9 @@ Unregisters a function pointer to be callable given an identifier for the pointe
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/temp/RakNet4/DependentExtensions/RPC3/<a class="el" href="RPC3_8h.html">RPC3.h</a></ul>
+<li>d:/temp/RakNet/DependentExtensions/RPC3/<a class="el" href="RPC3_8h.html">RPC3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:32 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 8 13:04:40 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

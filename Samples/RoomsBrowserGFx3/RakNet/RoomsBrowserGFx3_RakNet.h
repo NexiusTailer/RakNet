@@ -103,42 +103,42 @@ public:
 	virtual void MessageResult(RakNet::Notification_Friends_StatusChange *message);
 
 	// PluginInterface2
-	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
-	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
+	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	virtual void OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 	virtual void OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason);
 	virtual PluginReceiveResult OnReceive(Packet *packet);
 
 	/// Rooms callbacks
-	virtual void CreateRoom_Callback( SystemAddress senderAddress, RakNet::CreateRoom_Func *callResult);
-	virtual void SearchByFilter_Callback( SystemAddress senderAddress, RakNet::SearchByFilter_Func *callResult);
-	virtual void JoinByFilter_Callback( SystemAddress senderAddress, RakNet::JoinByFilter_Func *callResult);
-	virtual void Chat_Callback( SystemAddress senderAddress, RakNet::Chat_Func *callResult);
-	virtual void Chat_Callback( SystemAddress senderAddress, RakNet::Chat_Notification *notification);
-	virtual void LeaveRoom_Callback( SystemAddress senderAddress, RakNet::LeaveRoom_Func *callResult);
-	virtual void SendInvite_Callback( SystemAddress senderAddress, RakNet::SendInvite_Func *callResult);
-	virtual void StartSpectating_Callback( SystemAddress senderAddress, RakNet::StartSpectating_Func *callResult);
-	virtual void StopSpectating_Callback( SystemAddress senderAddress, RakNet::StopSpectating_Func *callResult);
-	virtual void GrantModerator_Callback( SystemAddress senderAddress, RakNet::GrantModerator_Func *callResult);
-	virtual void SetReadyStatus_Callback( SystemAddress senderAddress, RakNet::SetReadyStatus_Func *callResult);
-	virtual void GetReadyStatus_Callback( SystemAddress senderAddress, RakNet::GetReadyStatus_Func *callResult);
-	virtual void SetRoomLockState_Callback( SystemAddress senderAddress, RakNet::SetRoomLockState_Func *callResult);
-	virtual void GetRoomLockState_Callback( SystemAddress senderAddress, RakNet::GetRoomLockState_Func *callResult);
-	virtual void AreAllMembersReady_Callback( SystemAddress senderAddress, RakNet::AreAllMembersReady_Func *callResult);
-	virtual void KickMember_Callback( SystemAddress senderAddress, RakNet::KickMember_Func *callResult);
-	virtual void GetRoomProperties_Callback( SystemAddress senderAddress, RakNet::GetRoomProperties_Func *callResult);
+	virtual void CreateRoom_Callback( const SystemAddress &senderAddress, RakNet::CreateRoom_Func *callResult);
+	virtual void SearchByFilter_Callback( const SystemAddress &senderAddress, RakNet::SearchByFilter_Func *callResult);
+	virtual void JoinByFilter_Callback( const SystemAddress &senderAddress, RakNet::JoinByFilter_Func *callResult);
+	virtual void Chat_Callback( const SystemAddress &senderAddress, RakNet::Chat_Func *callResult);
+	virtual void Chat_Callback( const SystemAddress &senderAddress, RakNet::Chat_Notification *notification);
+	virtual void LeaveRoom_Callback( const SystemAddress &senderAddress, RakNet::LeaveRoom_Func *callResult);
+	virtual void SendInvite_Callback( const SystemAddress &senderAddress, RakNet::SendInvite_Func *callResult);
+	virtual void StartSpectating_Callback( const SystemAddress &senderAddress, RakNet::StartSpectating_Func *callResult);
+	virtual void StopSpectating_Callback( const SystemAddress &senderAddress, RakNet::StopSpectating_Func *callResult);
+	virtual void GrantModerator_Callback( const SystemAddress &senderAddress, RakNet::GrantModerator_Func *callResult);
+	virtual void SetReadyStatus_Callback( const SystemAddress &senderAddress, RakNet::SetReadyStatus_Func *callResult);
+	virtual void GetReadyStatus_Callback( const SystemAddress &senderAddress, RakNet::GetReadyStatus_Func *callResult);
+	virtual void SetRoomLockState_Callback( const SystemAddress &senderAddress, RakNet::SetRoomLockState_Func *callResult);
+	virtual void GetRoomLockState_Callback( const SystemAddress &senderAddress, RakNet::GetRoomLockState_Func *callResult);
+	virtual void AreAllMembersReady_Callback( const SystemAddress &senderAddress, RakNet::AreAllMembersReady_Func *callResult);
+	virtual void KickMember_Callback( const SystemAddress &senderAddress, RakNet::KickMember_Func *callResult);
+	virtual void GetRoomProperties_Callback( const SystemAddress &senderAddress, RakNet::GetRoomProperties_Func *callResult);
 
 	// Notifications due to other room members
-	virtual void RoomMemberStartedSpectating_Callback( SystemAddress senderAddress, RakNet::RoomMemberStartedSpectating_Notification *notification);
-	virtual void RoomMemberStoppedSpectating_Callback( SystemAddress senderAddress, RakNet::RoomMemberStoppedSpectating_Notification *notification);
-	virtual void ModeratorChanged_Callback( SystemAddress senderAddress, RakNet::ModeratorChanged_Notification *notification);
-	virtual void RoomMemberReadyStatusSet_Callback( SystemAddress senderAddress, RakNet::RoomMemberReadyStatusSet_Notification *notification);
-	virtual void RoomLockStateSet_Callback( SystemAddress senderAddress, RakNet::RoomLockStateSet_Notification *notification);
-	virtual void RoomMemberKicked_Callback( SystemAddress senderAddress, RakNet::RoomMemberKicked_Notification *notification);
-	virtual void RoomMemberLeftRoom_Callback( SystemAddress senderAddress, RakNet::RoomMemberLeftRoom_Notification *notification);
-	virtual void RoomMemberJoinedRoom_Callback( SystemAddress senderAddress, RakNet::RoomMemberJoinedRoom_Notification *notification);
-	virtual void RoomInvitationSent_Callback( SystemAddress senderAddress, RakNet::RoomInvitationSent_Notification *notification);
-	virtual void RoomInvitationWithdrawn_Callback( SystemAddress senderAddress, RakNet::RoomInvitationWithdrawn_Notification *notification);
-	virtual void RoomDestroyedOnModeratorLeft_Callback( SystemAddress senderAddress, RakNet::RoomDestroyedOnModeratorLeft_Notification *notification);
+	virtual void RoomMemberStartedSpectating_Callback( const SystemAddress &senderAddress, RakNet::RoomMemberStartedSpectating_Notification *notification);
+	virtual void RoomMemberStoppedSpectating_Callback( const SystemAddress &senderAddress, RakNet::RoomMemberStoppedSpectating_Notification *notification);
+	virtual void ModeratorChanged_Callback( const SystemAddress &senderAddress, RakNet::ModeratorChanged_Notification *notification);
+	virtual void RoomMemberReadyStatusSet_Callback( const SystemAddress &senderAddress, RakNet::RoomMemberReadyStatusSet_Notification *notification);
+	virtual void RoomLockStateSet_Callback( const SystemAddress &senderAddress, RakNet::RoomLockStateSet_Notification *notification);
+	virtual void RoomMemberKicked_Callback( const SystemAddress &senderAddress, RakNet::RoomMemberKicked_Notification *notification);
+	virtual void RoomMemberLeftRoom_Callback( const SystemAddress &senderAddress, RakNet::RoomMemberLeftRoom_Notification *notification);
+	virtual void RoomMemberJoinedRoom_Callback( const SystemAddress &senderAddress, RakNet::RoomMemberJoinedRoom_Notification *notification);
+	virtual void RoomInvitationSent_Callback( const SystemAddress &senderAddress, RakNet::RoomInvitationSent_Notification *notification);
+	virtual void RoomInvitationWithdrawn_Callback( const SystemAddress &senderAddress, RakNet::RoomInvitationWithdrawn_Notification *notification);
+	virtual void RoomDestroyedOnModeratorLeft_Callback( const SystemAddress &senderAddress, RakNet::RoomDestroyedOnModeratorLeft_Notification *notification);
 
 	RakNet::Lobby2Client *lobby2Client;
 	RakNet::Lobby2MessageFactory *msgFactory;

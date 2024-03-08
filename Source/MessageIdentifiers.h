@@ -208,11 +208,19 @@ enum DefaultMessageIDTypes
 	/// NATPunchthrough plugin: internal
 	ID_NAT_PUNCHTHROUGH_REQUEST,
 	/// NATPunchthrough plugin: internal
+	ID_NAT_GROUP_PUNCHTHROUGH_REQUEST,
+	/// NATPunchthrough plugin: internal
+	ID_NAT_GROUP_PUNCHTHROUGH_REPLY,
+	/// NATPunchthrough plugin: internal
 	ID_NAT_CONNECT_AT_TIME,
 	/// NATPunchthrough plugin: internal
 	ID_NAT_GET_MOST_RECENT_PORT,
 	/// NATPunchthrough plugin: internal
 	ID_NAT_CLIENT_READY,
+	/// NATPunchthrough plugin: internal
+	ID_NAT_CONFIRM_CONNECTION_TO_SERVER,
+	/// NATPunchthrough plugin: internal
+	ID_NAT_GROUP_PUNCHTHROUGH_FAILURE_NOTIFICATION,
 
 	/// NATPunchthrough plugin: Destination system is not connected to the server. Bytes starting at offset 1 contains the
 	///  RakNetGUID destination field of NatPunchthroughClient::OpenNAT().
@@ -230,9 +238,18 @@ enum DefaultMessageIDTypes
 	/// NATPunchthrough plugin: This message is generated on the local system, and does not come from the network.
 	///  packet::guid contains the destination field of NatPunchthroughClient::OpenNAT(). Byte 1 contains 1 if you are the sender, 0 if not
 	ID_NAT_PUNCHTHROUGH_FAILED,
-	/// NATPunchthrough plugin: Punchthrough suceeded. See packet::systemAddress and packet::guid. Byte 1 contains 1 if you are the sender,
+	/// NATPunchthrough plugin: Punchthrough succeeded. See packet::systemAddress and packet::guid. Byte 1 contains 1 if you are the sender,
 	///  0 if not. You can now use RakPeer::Connect() or other calls to communicate with this system.
 	ID_NAT_PUNCHTHROUGH_SUCCEEDED,
+	/// NATPunchthrough plugin: OpenNATGroup failed.
+	/// packet::guid contains the destination field of NatPunchthroughClient::OpenNAT()
+	/// Data format starts at byte 1: (unsigned short) passedSystemsCount, List<SystemAddress> passedSystems, (unsigned short) failedSystemsCount, List<RakNetGuid> failedSystems
+	ID_NAT_GROUP_PUNCH_FAILED,
+	/// NATPunchthrough plugin: OpenNATGroup succeeded.
+	/// packet::guid contains the destination field of NatPunchthroughClient::OpenNATGroup()
+	/// You can now use RakPeer::Connect() or other calls to communicate with these systems
+	/// Data format starts at byte 1: (unsigned short) passedSystemsCount, List<SystemAddress> passedSystems
+	ID_NAT_GROUP_PUNCH_SUCCEEDED,
 
 	/// ReadyEvent plugin - Set the ready state for a particular system
 	/// First 4 bytes after the message contains the id
@@ -277,6 +294,8 @@ enum DefaultMessageIDTypes
 	ID_FCM2_RESPOND_CONNECTION_COUNT,
 	/// \internal For FullyConnectedMesh2 plugin
 	ID_FCM2_INFORM_FCMGUID,
+	/// \internal For FullyConnectedMesh2 plugin
+	ID_FCM2_UPDATE_MIN_TOTAL_CONNECTION_COUNT,
 
 	/// UDP proxy messages. Second byte indicates type.
 	ID_UDP_PROXY_GENERAL,

@@ -38,11 +38,7 @@ int main()
 	RakPeerInterface * f=RakPeerInterface::GetInstance( );
 	SystemAddress sa = UNASSIGNED_SYSTEM_ADDRESS;
 
-	char ip_list[MAXIMUM_NUMBER_OF_INTERNAL_IDS][16];
-	unsigned int binary_addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
-	SocketLayer::GetMyIP(ip_list,binary_addresses);
-	
-	SocketDescriptor sd(5555,ip_list[0]);
+	SocketDescriptor sd(5555,0);
 	if(f->Startup(32,&sd,1) != RAKNET_STARTED) {		
 			printf("NetworkNode::startup(): failed to start server\n");
 			return 0;

@@ -111,7 +111,7 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update is called every time a packet is checked for . <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g89998adaafb29e5d879113b992161085">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#1cefcb0c0027d0bcdb966987eec9ad77">OnReceive</a> (<a class="el" href="structRakNet_1_1Packet.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#8d47648c0c5f98b0f40b62389cf9f2c5">OnClosedConnection</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RoomsPlugin.html#613f3693d1709bfc8ec0195ff84eb429">OnClosedConnection</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
 
 <tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8c580074c49b918b138bb9a91e775257"></a><!-- doxytag: member="RakNet::RoomsPlugin::SerializeLogin" ref="8c580074c49b918b138bb9a91e775257" args="(RakNet::RakString userName, SystemAddress userAddress, RakNetGUID guid, RakNet::BitStream *bs)" -->
@@ -372,7 +372,7 @@ Only participants can perform operations <dl compact><dt><b>Parameters:</b></dt>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>userName</em>&nbsp;</td><td>A unique string identifying the user </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>roomsParticipantAddress</em>&nbsp;</td><td>The address of the user </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>guid</em>&nbsp;</td><td>The guid of the user </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>loginServerAddress</em>&nbsp;</td><td>The server adding this user. Use <a class="el" href="namespaceRakNet.html#59a6bc5e96781717452fe5b10844d6a9" title="Index of an invalid SystemAddress.">RakNet::UNASSIGNED_SYSTEM_ADDRESS</a> for not applicable. Otherwise, the address must previously have been added using <a class="el" href="classRakNet_1_1RoomsPlugin.html#2f7d51bd655dad92b8d72c67957a62b4" title="Add a SystemAddress to a list that will be checked when LoginRoomsParticipant() and...">AddLoginServerAddress()</a> or the function will fail. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>loginServerAddress</em>&nbsp;</td><td>The server adding this user. Use <a class="el" href="namespaceRakNet.html#80c95b4ed53f42911a6fa92b85e929cf" title="Index of an invalid SystemAddress.">RakNet::UNASSIGNED_SYSTEM_ADDRESS</a> for not applicable. Otherwise, the address must previously have been added using <a class="el" href="classRakNet_1_1RoomsPlugin.html#2f7d51bd655dad92b8d72c67957a62b4" title="Add a SystemAddress to a list that will be checked when LoginRoomsParticipant() and...">AddLoginServerAddress()</a> or the function will fail. </td></tr>
   </table>
 </dl>
 
@@ -409,20 +409,20 @@ Removes a participant from the system.
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>userName</em>&nbsp;</td><td>A unique string identifying the user </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>loginServerAddress</em>&nbsp;</td><td>The server removing. Use <a class="el" href="namespaceRakNet.html#59a6bc5e96781717452fe5b10844d6a9" title="Index of an invalid SystemAddress.">RakNet::UNASSIGNED_SYSTEM_ADDRESS</a> for not applicable. Otherwise, the address must previously have been added using <a class="el" href="classRakNet_1_1RoomsPlugin.html#2f7d51bd655dad92b8d72c67957a62b4" title="Add a SystemAddress to a list that will be checked when LoginRoomsParticipant() and...">AddLoginServerAddress()</a> or the function will fail. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>loginServerAddress</em>&nbsp;</td><td>The server removing. Use <a class="el" href="namespaceRakNet.html#80c95b4ed53f42911a6fa92b85e929cf" title="Index of an invalid SystemAddress.">RakNet::UNASSIGNED_SYSTEM_ADDRESS</a> for not applicable. Otherwise, the address must previously have been added using <a class="el" href="classRakNet_1_1RoomsPlugin.html#2f7d51bd655dad92b8d72c67957a62b4" title="Add a SystemAddress to a list that will be checked when LoginRoomsParticipant() and...">AddLoginServerAddress()</a> or the function will fail. </td></tr>
   </table>
 </dl>
 
 </div>
 </div><p>
-<a class="anchor" name="8d47648c0c5f98b0f40b62389cf9f2c5"></a><!-- doxytag: member="RakNet::RoomsPlugin::OnClosedConnection" ref="8d47648c0c5f98b0f40b62389cf9f2c5" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
+<a class="anchor" name="613f3693d1709bfc8ec0195ff84eb429"></a><!-- doxytag: member="RakNet::RoomsPlugin::OnClosedConnection" ref="613f3693d1709bfc8ec0195ff84eb429" args="(const SystemAddress &amp;systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">virtual void RakNet::RoomsPlugin::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -455,7 +455,7 @@ Called when a connection is dropped because the user called <a class="el" href="
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#b6b48bb474e340ad27c8ef9b98fae051">RakNet::PluginInterface2</a>.</p>
+<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#80c7612ca1a5dcfeec0b52d8049a71ea">RakNet::PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -696,9 +696,9 @@ Only used on the server. Locally perform any desired functions, such as logging 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/temp/RakNet4/DependentExtensions/Lobby2/Rooms/<a class="el" href="RoomsPlugin_8h.html">RoomsPlugin.h</a></ul>
+<li>d:/temp/RakNet/DependentExtensions/Lobby2/Rooms/<a class="el" href="RoomsPlugin_8h.html">RoomsPlugin.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:32 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 8 13:04:40 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

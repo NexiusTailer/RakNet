@@ -371,6 +371,16 @@ public class RakPeerInterface : IDisposable {
     return ret;
   }
 
+  public virtual SystemAddress GetMyBoundAddress(int socketIndex) {
+    SystemAddress ret = new SystemAddress(RakNetPINVOKE.RakPeerInterface_GetMyBoundAddress__SWIG_0(swigCPtr, socketIndex), true);
+    return ret;
+  }
+
+  public virtual SystemAddress GetMyBoundAddress() {
+    SystemAddress ret = new SystemAddress(RakNetPINVOKE.RakPeerInterface_GetMyBoundAddress__SWIG_1(swigCPtr), true);
+    return ret;
+  }
+
   public static ulong Get64BitUniqueRandomNumber() {
     ulong ret = RakNetPINVOKE.RakPeerInterface_Get64BitUniqueRandomNumber();
     return ret;

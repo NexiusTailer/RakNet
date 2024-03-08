@@ -72,7 +72,7 @@ public:
 	virtual void Update(void);
 	/// \internal For plugin handling
 	virtual PluginReceiveResult OnReceive(Packet *packet);
-	void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	/// \internal For plugin handling
 	virtual void OnShutdown(void);
 	void OnThreadCompletion(void);

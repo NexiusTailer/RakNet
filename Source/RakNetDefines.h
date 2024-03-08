@@ -111,4 +111,16 @@
 #define PREALLOCATE_LARGE_MESSAGES 0
 #endif
 
+#ifndef RAKNET_SUPPORT_IPV6
+#define RAKNET_SUPPORT_IPV6 1
+#endif
+
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                                                   
+#endif
+
+#if defined(_XBOX) || defined(X360)
+                                                   
+#endif
+
 #endif // __RAKNET_DEFINES_H

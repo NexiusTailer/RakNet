@@ -1106,12 +1106,24 @@ namespace RakNet
 	template <>
 		inline void BitStream::Write(const SystemAddress &inTemplateVar)
 	{
-		// Hide the address so routers don't modify it
-		SystemAddress var2=inTemplateVar;
-		var2.binaryAddress=~inTemplateVar.binaryAddress;
-		// Don't endian swap the address
-		WriteBits((unsigned char*)&var2.binaryAddress, sizeof(var2.binaryAddress)*8, true);
-		Write(var2.port);
+		Write(inTemplateVar.GetIPVersion());
+		if (inTemplateVar.GetIPVersion()==4)
+		{
+			// Hide the address so routers don't modify it
+			SystemAddress var2=inTemplateVar;
+			unsigned long binaryAddress=~inTemplateVar.address.addr4.sin_addr.s_addr;
+			// Don't endian swap the address or port
+			WriteBits((unsigned char*)&binaryAddress, sizeof(binaryAddress)*8, true);
+			unsigned short p = var2.GetPortNetworkOrder();
+			WriteBits((unsigned char*)&p, sizeof(unsigned short)*8, true);
+		}
+		else
+		{
+#if RAKNET_SUPPORT_IPV6==1
+			// Don't endian swap
+			WriteBits((const unsigned char*) &inTemplateVar.address.addr6, sizeof(inTemplateVar.address.addr6)*8, true);
+#endif
+		}
 	}
 
 	template <>
@@ -1188,42 +1200,6 @@ namespace RakNet
 			Write(currentValue);
 		}
 	}
-
-		/*
-	/// \brief Write a systemAddress.  
-	/// \details If the current value is different from the last value
-	/// the current value will be written.  Otherwise, a single bit will be written
-	/// \param[in] currentValue The current value to write
-	/// \param[in] lastValue The last value to compare against
-	template <>
-		inline void BitStream::WriteDelta(SystemAddress currentValue, SystemAddress lastValue)
-	{
-		if (currentValue==lastValue)
-		{
-			Write(false);
-		}
-		else
-		{
-			Write(true);
-			Write(currentValue);
-		}
-	}
-
-	template <>
-		inline void BitStream::WriteDelta(RakNetGUID currentValue, RakNetGUID lastValue)
-		{
-			if (currentValue==lastValue)
-			{
-				Write(false);
-			}
-			else
-			{
-				Write(true);
-				Write(currentValue);
-			}
-		}
-
-	*/
 
 	/// \brief Write a bool delta. Same thing as just calling Write
 	/// \param[in] currentValue The current value to write
@@ -1462,12 +1438,31 @@ namespace RakNet
 	template <>
 		inline bool BitStream::Read(SystemAddress &outTemplateVar)
 	{
-		// Read(var.binaryAddress);
-		// Don't endian swap the address
-		ReadBits( ( unsigned char* ) & outTemplateVar.binaryAddress, sizeof(outTemplateVar.binaryAddress) * 8, true );
-		// Unhide the IP address, done to prevent routers from changing it
-		outTemplateVar.binaryAddress=~outTemplateVar.binaryAddress;
-		return Read(outTemplateVar.port);
+		unsigned char ipVersion;
+		Read(ipVersion);
+		if (ipVersion==4)
+		{
+			outTemplateVar.address.addr4.sin_family=AF_INET;
+			// Read(var.binaryAddress);
+			// Don't endian swap the address or port
+			unsigned long binaryAddress;
+			ReadBits( ( unsigned char* ) & binaryAddress, sizeof(binaryAddress) * 8, true );
+			// Unhide the IP address, done to prevent routers from changing it
+			outTemplateVar.address.addr4.sin_addr.s_addr=~binaryAddress;
+			bool b = ReadBits(( unsigned char* ) & outTemplateVar.address.addr4.sin_port, sizeof(outTemplateVar.address.addr4.sin_port) * 8, true);
+			outTemplateVar.debugPort=ntohs(outTemplateVar.address.addr4.sin_port);
+			return b;
+		}
+		else
+		{
+#if RAKNET_SUPPORT_IPV6==1
+			bool b = ReadBits((unsigned char*) &outTemplateVar.address.addr6, sizeof(outTemplateVar.address.addr6)*8, true);
+			outTemplateVar.debugPort=ntohs(outTemplateVar.address.addr6.sin6_port);
+			return b;
+#else
+			return false;
+#endif
+		}	
 	}
 
 	template <>

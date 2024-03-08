@@ -808,7 +808,7 @@ void CloudServer::OnServerToServerGetResponse(Packet *packet)
 		getRequests.RemoveAtIndex(getRequestIndex);
 	}
 }
-void CloudServer::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void CloudServer::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	(void) lostConnectionReason;
 	(void) systemAddress;

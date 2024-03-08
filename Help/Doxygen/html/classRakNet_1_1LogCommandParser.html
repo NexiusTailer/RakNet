@@ -52,29 +52,29 @@ Inheritance diagram for RakNet::LogCommandParser:</div>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">One of these structures is created per player.  <a href="structRakNet_1_1LogCommandParser_1_1SystemAddressAndChannel.html#_details">More...</a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#463fc154645ab1b80b9fc5930d9c84fd">OnCommand</a> (const char *command, unsigned numParameters, char **parameterList, <a class="el" href="classRakNet_1_1TransportInterface.html">TransportInterface</a> *transport, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, const char *originalString)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#ceb0d8004cef19e78cd630b68c680c63">OnCommand</a> (const char *command, unsigned numParameters, char **parameterList, <a class="el" href="classRakNet_1_1TransportInterface.html">TransportInterface</a> *transport, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, const char *originalString)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">const char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#037b5b2323e7135c85bbcb3a271e4890">GetName</a> (void) const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#4bb493b544a9308649c3e845ae518726">SendHelp</a> (<a class="el" href="classRakNet_1_1TransportInterface.html">TransportInterface</a> *transport, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#6e7b04559fd0ba7e65d52f85a47b3819">SendHelp</a> (<a class="el" href="classRakNet_1_1TransportInterface.html">TransportInterface</a> *transport, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#921eaa0b9ce3d59f265b19b015a65370">AddChannel</a> (const char *channelName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">All logs must be associated with a channel. This is a filter so that remote clients only get logs for a system they care about.  <a href="#921eaa0b9ce3d59f265b19b015a65370"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#2811b62171be28fed86ce6e2477c8cf9">WriteLog</a> (const char *channelName, const char *format,...)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#b80f378cc12d6c8cd7fc8416e9bd388e">OnNewIncomingConnection</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="classRakNet_1_1TransportInterface.html">TransportInterface</a> *transport)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#399c67161aa82888fe2facf7bfda3c53">OnNewIncomingConnection</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, <a class="el" href="classRakNet_1_1TransportInterface.html">TransportInterface</a> *transport)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#b4f3ec67754e8c6669cef4ffd273c722">OnConnectionLost</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="classRakNet_1_1TransportInterface.html">TransportInterface</a> *transport)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#8d46296b09f54817d0200e8a557bc802">OnConnectionLost</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, <a class="el" href="classRakNet_1_1TransportInterface.html">TransportInterface</a> *transport)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#87fb1e549a73610575f8ec89077d9fdc">OnTransportChange</a> (<a class="el" href="classRakNet_1_1TransportInterface.html">TransportInterface</a> *transport)</td></tr>
 
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#76f27e9f51de553d49a812337e58c63d">PrintChannels</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="classRakNet_1_1TransportInterface.html">TransportInterface</a> *transport) const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#e1cb6d17a66cfc18261d18b0964a9de7">PrintChannels</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, <a class="el" href="classRakNet_1_1TransportInterface.html">TransportInterface</a> *transport) const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#e742ccb2529a54e67c217bfd353d7e70">Unsubscribe</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, const char *channelName)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#615d8f7044092dee6bdfd52066d3e6dc">Unsubscribe</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, const char *channelName)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#ca969ab08c7d2b91a903adc0293804c7">Subscribe</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, const char *channelName)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#3f479d9fb28698d197c6ac51c7b25b0b">Subscribe</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, const char *channelName)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1LogCommandParser.html#09d6177683edf34c5aa8dca6738805f6">GetChannelIndexFromName</a> (const char *channelName)</td></tr>
 
@@ -170,7 +170,7 @@ You are responsible for overriding this function and returning a static string, 
 
 </div>
 </div><p>
-<a class="anchor" name="463fc154645ab1b80b9fc5930d9c84fd"></a><!-- doxytag: member="RakNet::LogCommandParser::OnCommand" ref="463fc154645ab1b80b9fc5930d9c84fd" args="(const char *command, unsigned numParameters, char **parameterList, TransportInterface *transport, SystemAddress systemAddress, const char *originalString)" -->
+<a class="anchor" name="ceb0d8004cef19e78cd630b68c680c63"></a><!-- doxytag: member="RakNet::LogCommandParser::OnCommand" ref="ceb0d8004cef19e78cd630b68c680c63" args="(const char *command, unsigned numParameters, char **parameterList, TransportInterface *transport, const SystemAddress &amp;systemAddress, const char *originalString)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -201,7 +201,7 @@ You are responsible for overriding this function and returning a static string, 
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -231,18 +231,18 @@ Given <em>command</em> with parameters <em>parameterList</em> , do whatever proc
   </table>
 </dl>
 
-<p>Implements <a class="el" href="classRakNet_1_1CommandParserInterface.html#df7fc633ea058ee7a5c9c5149dd9b21b">RakNet::CommandParserInterface</a>.</p>
+<p>Implements <a class="el" href="classRakNet_1_1CommandParserInterface.html#c568282654986ad63d680d68a98cf757">RakNet::CommandParserInterface</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="b4f3ec67754e8c6669cef4ffd273c722"></a><!-- doxytag: member="RakNet::LogCommandParser::OnConnectionLost" ref="b4f3ec67754e8c6669cef4ffd273c722" args="(SystemAddress systemAddress, TransportInterface *transport)" -->
+<a class="anchor" name="8d46296b09f54817d0200e8a557bc802"></a><!-- doxytag: member="RakNet::LogCommandParser::OnConnectionLost" ref="8d46296b09f54817d0200e8a557bc802" args="(const SystemAddress &amp;systemAddress, TransportInterface *transport)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void RakNet::LogCommandParser::OnConnectionLost           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -268,18 +268,18 @@ A callback for when <em>systemAddress</em> has disconnected, either gracefully o
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classRakNet_1_1CommandParserInterface.html#deed79f64e9e4a740ec93967d4462942">RakNet::CommandParserInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classRakNet_1_1CommandParserInterface.html#a275db3922ed1c27fc5ee7ecd6913d4b">RakNet::CommandParserInterface</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="b80f378cc12d6c8cd7fc8416e9bd388e"></a><!-- doxytag: member="RakNet::LogCommandParser::OnNewIncomingConnection" ref="b80f378cc12d6c8cd7fc8416e9bd388e" args="(SystemAddress systemAddress, TransportInterface *transport)" -->
+<a class="anchor" name="399c67161aa82888fe2facf7bfda3c53"></a><!-- doxytag: member="RakNet::LogCommandParser::OnNewIncomingConnection" ref="399c67161aa82888fe2facf7bfda3c53" args="(const SystemAddress &amp;systemAddress, TransportInterface *transport)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void RakNet::LogCommandParser::OnNewIncomingConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -305,7 +305,7 @@ A callback for when <em>systemAddress</em> has connected to us. <dl compact><dt>
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classRakNet_1_1CommandParserInterface.html#95054893dfc324d0886e30febf925c03">RakNet::CommandParserInterface</a>.</p>
+<p>Reimplemented from <a class="el" href="classRakNet_1_1CommandParserInterface.html#98004a0af5237980fdc160f6c6fcdc79">RakNet::CommandParserInterface</a>.</p>
 
 </div>
 </div><p>
@@ -336,14 +336,14 @@ This is called every time transport interface is registered. If you want to save
 
 </div>
 </div><p>
-<a class="anchor" name="76f27e9f51de553d49a812337e58c63d"></a><!-- doxytag: member="RakNet::LogCommandParser::PrintChannels" ref="76f27e9f51de553d49a812337e58c63d" args="(SystemAddress systemAddress, TransportInterface *transport) const " -->
+<a class="anchor" name="e1cb6d17a66cfc18261d18b0964a9de7"></a><!-- doxytag: member="RakNet::LogCommandParser::PrintChannels" ref="e1cb6d17a66cfc18261d18b0964a9de7" args="(const SystemAddress &amp;systemAddress, TransportInterface *transport) const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void RakNet::LogCommandParser::PrintChannels           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -371,7 +371,7 @@ Sends the currently active channels to the user <dl compact><dt><b>Parameters:</
 
 </div>
 </div><p>
-<a class="anchor" name="4bb493b544a9308649c3e845ae518726"></a><!-- doxytag: member="RakNet::LogCommandParser::SendHelp" ref="4bb493b544a9308649c3e845ae518726" args="(TransportInterface *transport, SystemAddress systemAddress)" -->
+<a class="anchor" name="6e7b04559fd0ba7e65d52f85a47b3819"></a><!-- doxytag: member="RakNet::LogCommandParser::SendHelp" ref="6e7b04559fd0ba7e65d52f85a47b3819" args="(TransportInterface *transport, const SystemAddress &amp;systemAddress)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -384,7 +384,7 @@ Sends the currently active channels to the user <dl compact><dt><b>Parameters:</
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -404,18 +404,18 @@ A callback for when you are expected to send a brief description of your parser 
   </table>
 </dl>
 
-<p>Implements <a class="el" href="classRakNet_1_1CommandParserInterface.html#995545875a2320c4f8ab39a7c702b530">RakNet::CommandParserInterface</a>.</p>
+<p>Implements <a class="el" href="classRakNet_1_1CommandParserInterface.html#6abf857d697bb11230ac0b153c17624a">RakNet::CommandParserInterface</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="ca969ab08c7d2b91a903adc0293804c7"></a><!-- doxytag: member="RakNet::LogCommandParser::Subscribe" ref="ca969ab08c7d2b91a903adc0293804c7" args="(SystemAddress systemAddress, const char *channelName)" -->
+<a class="anchor" name="3f479d9fb28698d197c6ac51c7b25b0b"></a><!-- doxytag: member="RakNet::LogCommandParser::Subscribe" ref="3f479d9fb28698d197c6ac51c7b25b0b" args="(const SystemAddress &amp;systemAddress, const char *channelName)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">unsigned RakNet::LogCommandParser::Subscribe           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -443,14 +443,14 @@ Subscribe a user to a channel (or to all channels) <dl compact><dt><b>Parameters
 
 </div>
 </div><p>
-<a class="anchor" name="e742ccb2529a54e67c217bfd353d7e70"></a><!-- doxytag: member="RakNet::LogCommandParser::Unsubscribe" ref="e742ccb2529a54e67c217bfd353d7e70" args="(SystemAddress systemAddress, const char *channelName)" -->
+<a class="anchor" name="615d8f7044092dee6bdfd52066d3e6dc"></a><!-- doxytag: member="RakNet::LogCommandParser::Unsubscribe" ref="615d8f7044092dee6bdfd52066d3e6dc" args="(const SystemAddress &amp;systemAddress, const char *channelName)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">unsigned RakNet::LogCommandParser::Unsubscribe           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -520,9 +520,9 @@ Write a log to a channel. Logs are not buffered, so only remote consoles connect
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/temp/RakNet4/Source/<a class="el" href="LogCommandParser_8h.html">LogCommandParser.h</a></ul>
+<li>d:/temp/RakNet/Source/<a class="el" href="LogCommandParser_8h.html">LogCommandParser.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:28 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 8 13:04:36 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

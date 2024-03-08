@@ -48,11 +48,11 @@ Inheritance diagram for RakNet::RakNetCommandParser:</div>
 <a href="classRakNet_1_1RakNetCommandParser-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakNetCommandParser.html#eba8330fdfdb481f750223b6d5ea9aa3">OnCommand</a> (const char *command, unsigned numParameters, char **parameterList, <a class="el" href="classRakNet_1_1TransportInterface.html">TransportInterface</a> *transport, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, const char *originalString)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakNetCommandParser.html#34a1aa5896a8d854cd7fc88675c45533">OnCommand</a> (const char *command, unsigned numParameters, char **parameterList, <a class="el" href="classRakNet_1_1TransportInterface.html">TransportInterface</a> *transport, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, const char *originalString)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">const char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakNetCommandParser.html#b7529704693ad768ef769f5fe49911cd">GetName</a> (void) const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakNetCommandParser.html#a32a801029dfd3b16a7f05ab8486b664">SendHelp</a> (<a class="el" href="classRakNet_1_1TransportInterface.html">TransportInterface</a> *transport, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakNetCommandParser.html#d7cff9f3086a6390fd72d4ca2826f271">SendHelp</a> (<a class="el" href="classRakNet_1_1TransportInterface.html">TransportInterface</a> *transport, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakNetCommandParser.html#e5364eb9cc511171218089cee5a1c42d">SetRakPeerInterface</a> (<a class="el" href="classRakNet_1_1RakPeerInterface.html">RakNet::RakPeerInterface</a> *rakPeer)</td></tr>
 
@@ -87,7 +87,7 @@ You are responsible for overriding this function and returning a static string, 
 
 </div>
 </div><p>
-<a class="anchor" name="eba8330fdfdb481f750223b6d5ea9aa3"></a><!-- doxytag: member="RakNet::RakNetCommandParser::OnCommand" ref="eba8330fdfdb481f750223b6d5ea9aa3" args="(const char *command, unsigned numParameters, char **parameterList, TransportInterface *transport, SystemAddress systemAddress, const char *originalString)" -->
+<a class="anchor" name="34a1aa5896a8d854cd7fc88675c45533"></a><!-- doxytag: member="RakNet::RakNetCommandParser::OnCommand" ref="34a1aa5896a8d854cd7fc88675c45533" args="(const char *command, unsigned numParameters, char **parameterList, TransportInterface *transport, const SystemAddress &amp;systemAddress, const char *originalString)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -118,7 +118,7 @@ You are responsible for overriding this function and returning a static string, 
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -148,11 +148,11 @@ Given <em>command</em> with parameters <em>parameterList</em> , do whatever proc
   </table>
 </dl>
 
-<p>Implements <a class="el" href="classRakNet_1_1CommandParserInterface.html#df7fc633ea058ee7a5c9c5149dd9b21b">RakNet::CommandParserInterface</a>.</p>
+<p>Implements <a class="el" href="classRakNet_1_1CommandParserInterface.html#c568282654986ad63d680d68a98cf757">RakNet::CommandParserInterface</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="a32a801029dfd3b16a7f05ab8486b664"></a><!-- doxytag: member="RakNet::RakNetCommandParser::SendHelp" ref="a32a801029dfd3b16a7f05ab8486b664" args="(TransportInterface *transport, SystemAddress systemAddress)" -->
+<a class="anchor" name="d7cff9f3086a6390fd72d4ca2826f271"></a><!-- doxytag: member="RakNet::RakNetCommandParser::SendHelp" ref="d7cff9f3086a6390fd72d4ca2826f271" args="(TransportInterface *transport, const SystemAddress &amp;systemAddress)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -165,7 +165,7 @@ Given <em>command</em> with parameters <em>parameterList</em> , do whatever proc
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -185,7 +185,7 @@ A callback for when you are expected to send a brief description of your parser 
   </table>
 </dl>
 
-<p>Implements <a class="el" href="classRakNet_1_1CommandParserInterface.html#995545875a2320c4f8ab39a7c702b530">RakNet::CommandParserInterface</a>.</p>
+<p>Implements <a class="el" href="classRakNet_1_1CommandParserInterface.html#6abf857d697bb11230ac0b153c17624a">RakNet::CommandParserInterface</a>.</p>
 
 </div>
 </div><p>
@@ -215,9 +215,9 @@ Records the instance of <a class="el" href="classRakNet_1_1RakPeer.html" title="
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/temp/RakNet4/Source/<a class="el" href="RakNetCommandParser_8h.html">RakNetCommandParser.h</a></ul>
+<li>d:/temp/RakNet/Source/<a class="el" href="RakNetCommandParser_8h.html">RakNetCommandParser.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:29 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 8 13:04:37 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

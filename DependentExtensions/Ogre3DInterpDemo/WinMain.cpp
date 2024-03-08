@@ -293,7 +293,7 @@ public:
 class PopcornSampleConnection : public Connection_RM3
 {
 public:
-	PopcornSampleConnection(SystemAddress _systemAddress, RakNetGUID _guid) : Connection_RM3(_systemAddress,_guid) {}
+	PopcornSampleConnection(const SystemAddress &_systemAddress, RakNetGUID _guid) : Connection_RM3(_systemAddress,_guid) {}
 	virtual ~PopcornSampleConnection() {}
 
 	// Callback used to create objects
@@ -311,7 +311,7 @@ public:
 };
 class PopcornDemoRM3 : public ReplicaManager3
 {
-	virtual Connection_RM3* AllocConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID) const {return new PopcornSampleConnection(systemAddress,rakNetGUID);}
+	virtual Connection_RM3* AllocConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID) const {return new PopcornSampleConnection(systemAddress,rakNetGUID);}
 	virtual void DeallocConnection(Connection_RM3 *connection) const {delete connection;}
 };
 PopcornDemoRM3 replicaManager3;
@@ -432,15 +432,22 @@ public:
 			{
 				// Start RakNet, up to 32 connections if the server
 				rakPeer = RakNet::RakPeerInterface::GetInstance();
-				rakPeer->Startup(isServer ? 32 : 1,&sd,1);
+				StartupResult sr = rakPeer->Startup(isServer ? 32 : 1,&sd,1);
+				RakAssert(sr==RAKNET_STARTED);
 				rakPeer->AttachPlugin(&replicaManager3);
 				replicaManager3.SetNetworkIDManager(&networkIdManager);
 				//rakPeer->SetNetworkIDManager(&networkIdManager);
 				// The server should allow systems to connect. Clients do not need to unless you want to use RakVoice or for some other reason want to transmit directly between systems.
 				if (isServer)
+				{
 					rakPeer->SetMaximumIncomingConnections(32);
+				}
 				else
-					rakPeer->Connect(SERVER_IP_ADDRESS,SERVER_PORT,0,0);
+				{
+					ConnectionAttemptResult car = rakPeer->Connect(SERVER_IP_ADDRESS,SERVER_PORT,0,0);
+					RakAssert(car==CONNECTION_ATTEMPT_STARTED);
+
+				}
 				replicaManager3.SetAutoSerializeInterval(DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES);
 
 				// StringTable has to be called after RakPeer started, or else first call StringTable::AddRef() yourself

@@ -573,6 +573,9 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_PREALLOCATE_LARGE_MESSAGES_get")]
   public static extern int PREALLOCATE_LARGE_MESSAGES_get();
 
+  [DllImport("RakNet", EntryPoint="CSharp_RAKNET_SUPPORT_IPV6_get")]
+  public static extern int RAKNET_SUPPORT_IPV6_get();
+
   [DllImport("RakNet", EntryPoint="CSharp_LIBCAT_SECURITY_get")]
   public static extern int LIBCAT_SECURITY_get();
 
@@ -759,6 +762,12 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_SocketDescriptor_hostAddress_get")]
   public static extern string SocketDescriptor_hostAddress_get(HandleRef jarg1);
 
+  [DllImport("RakNet", EntryPoint="CSharp_SocketDescriptor_socketFamily_set")]
+  public static extern void SocketDescriptor_socketFamily_set(HandleRef jarg1, short jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SocketDescriptor_socketFamily_get")]
+  public static extern short SocketDescriptor_socketFamily_get(HandleRef jarg1);
+
   [DllImport("RakNet", EntryPoint="CSharp_SocketDescriptor_remotePortRakNetWasStartedOn_PS3_set")]
   public static extern void SocketDescriptor_remotePortRakNetWasStartedOn_PS3_set(HandleRef jarg1, ushort jarg2);
 
@@ -781,28 +790,16 @@ class RakNetPINVOKE {
   public static extern IntPtr new_SystemAddress__SWIG_0();
 
   [DllImport("RakNet", EntryPoint="CSharp_new_SystemAddress__SWIG_1")]
-  public static extern IntPtr new_SystemAddress__SWIG_1(string jarg1, ushort jarg2);
+  public static extern IntPtr new_SystemAddress__SWIG_1(string jarg1);
 
   [DllImport("RakNet", EntryPoint="CSharp_new_SystemAddress__SWIG_2")]
-  public static extern IntPtr new_SystemAddress__SWIG_2(uint jarg1, ushort jarg2);
+  public static extern IntPtr new_SystemAddress__SWIG_2(string jarg1, ushort jarg2);
 
-  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_binaryAddress_set")]
-  public static extern void SystemAddress_binaryAddress_set(HandleRef jarg1, uint jarg2);
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_debugPort_set")]
+  public static extern void SystemAddress_debugPort_set(HandleRef jarg1, ushort jarg2);
 
-  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_binaryAddress_get")]
-  public static extern uint SystemAddress_binaryAddress_get(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_port_set")]
-  public static extern void SystemAddress_port_set(HandleRef jarg1, ushort jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_port_get")]
-  public static extern ushort SystemAddress_port_get(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_systemIndex_set")]
-  public static extern void SystemAddress_systemIndex_set(HandleRef jarg1, ushort jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_systemIndex_get")]
-  public static extern ushort SystemAddress_systemIndex_get(HandleRef jarg1);
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_debugPort_get")]
+  public static extern ushort SystemAddress_debugPort_get(HandleRef jarg1);
 
   [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_size")]
   public static extern int SystemAddress_size();
@@ -810,11 +807,74 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_ToInteger")]
   public static extern uint SystemAddress_ToInteger(HandleRef jarg1);
 
-  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_ToString")]
-  public static extern string SystemAddress_ToString(HandleRef jarg1, bool jarg2);
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_GetIPVersion")]
+  public static extern byte SystemAddress_GetIPVersion(HandleRef jarg1);
 
-  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_SetBinaryAddress")]
-  public static extern void SystemAddress_SetBinaryAddress(HandleRef jarg1, string jarg2);
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_GetIPPROTO")]
+  public static extern uint SystemAddress_GetIPPROTO(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_SetToLoopback__SWIG_0")]
+  public static extern void SystemAddress_SetToLoopback__SWIG_0(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_SetToLoopback__SWIG_1")]
+  public static extern void SystemAddress_SetToLoopback__SWIG_1(HandleRef jarg1, byte jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_ToString__SWIG_0")]
+  public static extern string SystemAddress_ToString__SWIG_0(HandleRef jarg1, bool jarg2, char jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_ToString__SWIG_1")]
+  public static extern string SystemAddress_ToString__SWIG_1(HandleRef jarg1, bool jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_ToString__SWIG_2")]
+  public static extern void SystemAddress_ToString__SWIG_2(HandleRef jarg1, bool jarg2, string jarg3, char jarg4);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_FromString__SWIG_0")]
+  public static extern bool SystemAddress_FromString__SWIG_0(HandleRef jarg1, string jarg2, char jarg3, int jarg4);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_FromString__SWIG_1")]
+  public static extern bool SystemAddress_FromString__SWIG_1(HandleRef jarg1, string jarg2, char jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_FromString__SWIG_2")]
+  public static extern bool SystemAddress_FromString__SWIG_2(HandleRef jarg1, string jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_FromStringExplicitPort__SWIG_0")]
+  public static extern bool SystemAddress_FromStringExplicitPort__SWIG_0(HandleRef jarg1, string jarg2, ushort jarg3, int jarg4);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_FromStringExplicitPort__SWIG_1")]
+  public static extern bool SystemAddress_FromStringExplicitPort__SWIG_1(HandleRef jarg1, string jarg2, ushort jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_CopyPort")]
+  public static extern void SystemAddress_CopyPort(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_EqualsExcludingPort")]
+  public static extern bool SystemAddress_EqualsExcludingPort(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_GetPort")]
+  public static extern ushort SystemAddress_GetPort(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_GetPortNetworkOrder")]
+  public static extern ushort SystemAddress_GetPortNetworkOrder(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_SetPort")]
+  public static extern void SystemAddress_SetPort(HandleRef jarg1, ushort jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_SetPortNetworkOrder")]
+  public static extern void SystemAddress_SetPortNetworkOrder(HandleRef jarg1, ushort jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_SetBinaryAddress__SWIG_0")]
+  public static extern void SystemAddress_SetBinaryAddress__SWIG_0(HandleRef jarg1, string jarg2, char jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_SetBinaryAddress__SWIG_1")]
+  public static extern void SystemAddress_SetBinaryAddress__SWIG_1(HandleRef jarg1, string jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_ToString_Old__SWIG_0")]
+  public static extern void SystemAddress_ToString_Old__SWIG_0(HandleRef jarg1, bool jarg2, string jarg3, char jarg4);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_ToString_Old__SWIG_1")]
+  public static extern void SystemAddress_ToString_Old__SWIG_1(HandleRef jarg1, bool jarg2, string jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_FixForIPVersion")]
+  public static extern void SystemAddress_FixForIPVersion(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_CopyData")]
   public static extern IntPtr SystemAddress_CopyData(HandleRef jarg1, HandleRef jarg2);
@@ -830,6 +890,12 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_OpLess")]
   public static extern bool SystemAddress_OpLess(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_systemIndex_set")]
+  public static extern void SystemAddress_systemIndex_set(HandleRef jarg1, ushort jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_systemIndex_get")]
+  public static extern ushort SystemAddress_systemIndex_get(HandleRef jarg1);
 
   [DllImport("RakNet", EntryPoint="CSharp_delete_SystemAddress")]
   public static extern void delete_SystemAddress(HandleRef jarg1);
@@ -852,8 +918,8 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_RakNetGUID_FromString")]
   public static extern bool RakNetGUID_FromString(HandleRef jarg1, string jarg2);
 
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetGUID_ToInteger")]
-  public static extern uint RakNetGUID_ToInteger(HandleRef jarg1);
+  [DllImport("RakNet", EntryPoint="CSharp_RakNetGUID_ToUint32")]
+  public static extern uint RakNetGUID_ToUint32(HandleRef jarg1);
 
   [DllImport("RakNet", EntryPoint="CSharp_RakNetGUID_CopyData")]
   public static extern IntPtr RakNetGUID_CopyData(HandleRef jarg1, HandleRef jarg2);
@@ -2025,6 +2091,12 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_RakNetSocket_boundAddress_get")]
   public static extern IntPtr RakNetSocket_boundAddress_get(HandleRef jarg1);
 
+  [DllImport("RakNet", EntryPoint="CSharp_RakNetSocket_socketFamily_set")]
+  public static extern void RakNetSocket_socketFamily_set(HandleRef jarg1, ushort jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_RakNetSocket_socketFamily_get")]
+  public static extern ushort RakNetSocket_socketFamily_get(HandleRef jarg1);
+
   [DllImport("RakNet", EntryPoint="CSharp_RakNetSocket_remotePortRakNetWasStartedOn_PS3_set")]
   public static extern void RakNetSocket_remotePortRakNetWasStartedOn_PS3_set(HandleRef jarg1, ushort jarg2);
 
@@ -2382,6 +2454,12 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_RakPeerInterface_GetMyGUID")]
   public static extern IntPtr RakPeerInterface_GetMyGUID(HandleRef jarg1);
 
+  [DllImport("RakNet", EntryPoint="CSharp_RakPeerInterface_GetMyBoundAddress__SWIG_0")]
+  public static extern IntPtr RakPeerInterface_GetMyBoundAddress__SWIG_0(HandleRef jarg1, int jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_RakPeerInterface_GetMyBoundAddress__SWIG_1")]
+  public static extern IntPtr RakPeerInterface_GetMyBoundAddress__SWIG_1(HandleRef jarg1);
+
   [DllImport("RakNet", EntryPoint="CSharp_RakPeerInterface_Get64BitUniqueRandomNumber")]
   public static extern ulong RakPeerInterface_Get64BitUniqueRandomNumber();
 
@@ -2715,6 +2793,12 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_RakPeer_GetMyGUID")]
   public static extern IntPtr RakPeer_GetMyGUID(HandleRef jarg1);
 
+  [DllImport("RakNet", EntryPoint="CSharp_RakPeer_GetMyBoundAddress__SWIG_0")]
+  public static extern IntPtr RakPeer_GetMyBoundAddress__SWIG_0(HandleRef jarg1, int jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_RakPeer_GetMyBoundAddress__SWIG_1")]
+  public static extern IntPtr RakPeer_GetMyBoundAddress__SWIG_1(HandleRef jarg1);
+
   [DllImport("RakNet", EntryPoint="CSharp_RakPeer_GetGuidFromSystemAddress")]
   public static extern IntPtr RakPeer_GetGuidFromSystemAddress(HandleRef jarg1, HandleRef jarg2);
 
@@ -3030,20 +3114,20 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_OpenNAT")]
   public static extern bool NatPunchthroughClient_OpenNAT(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
 
+  [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_OpenNATGroup")]
+  public static extern bool NatPunchthroughClient_OpenNATGroup(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
+
   [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_GetPunchthroughConfiguration")]
   public static extern IntPtr NatPunchthroughClient_GetPunchthroughConfiguration(HandleRef jarg1);
 
   [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_SetDebugInterface")]
   public static extern void NatPunchthroughClient_SetDebugInterface(HandleRef jarg1, HandleRef jarg2);
 
-  [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_GetUPNPExternalPort")]
-  public static extern ushort NatPunchthroughClient_GetUPNPExternalPort(HandleRef jarg1);
+  [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_GetGuidsForGroupPunchthroughRequest")]
+  public static extern void NatPunchthroughClient_GetGuidsForGroupPunchthroughRequest(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
 
-  [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_GetUPNPInternalPort")]
-  public static extern ushort NatPunchthroughClient_GetUPNPInternalPort(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_GetUPNPInternalAddress")]
-  public static extern IntPtr NatPunchthroughClient_GetUPNPInternalAddress(HandleRef jarg1);
+  [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_GetUPNPPortMappings")]
+  public static extern void NatPunchthroughClient_GetUPNPPortMappings(HandleRef jarg1, string jarg2, string jarg3, HandleRef jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_Clear")]
   public static extern void NatPunchthroughClient_Clear(HandleRef jarg1);
@@ -3071,6 +3155,9 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp_delete_Router2")]
   public static extern void delete_Router2(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_Router2_SetSocketFamily")]
+  public static extern void Router2_SetSocketFamily(HandleRef jarg1, ushort jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_Router2_EstablishRouting")]
   public static extern void Router2_EstablishRouting(HandleRef jarg1, HandleRef jarg2);
@@ -3180,6 +3267,9 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_AddParticipant")]
   public static extern void FullyConnectedMesh2_AddParticipant(HandleRef jarg1, HandleRef jarg2);
 
+  [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_GetParticipantList")]
+  public static extern void FullyConnectedMesh2_GetParticipantList(HandleRef jarg1, HandleRef jarg2);
+
   [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_ConnectToRemoteNewIncomingConnections")]
   public static extern void FullyConnectedMesh2_ConnectToRemoteNewIncomingConnections(HandleRef jarg1, HandleRef jarg2);
 
@@ -3191,6 +3281,9 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_GetParticipantCount__SWIG_1")]
   public static extern void FullyConnectedMesh2_GetParticipantCount__SWIG_1(HandleRef jarg1, out uint jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_GetTotalConnectionCount")]
+  public static extern uint FullyConnectedMesh2_GetTotalConnectionCount(HandleRef jarg1);
 
   [DllImport("RakNet", EntryPoint="CSharp_ReadyEvent_GetInstance")]
   public static extern IntPtr ReadyEvent_GetInstance();
@@ -3375,8 +3468,14 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_GetUsedForwardEntries")]
   public static extern int UDPForwarder_GetUsedForwardEntries(HandleRef jarg1);
 
+  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_socketFamily_set")]
+  public static extern void UDPForwarder_socketFamily_set(HandleRef jarg1, short jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_socketFamily_get")]
+  public static extern short UDPForwarder_socketFamily_get(HandleRef jarg1);
+
   [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_StartForwarding")]
-  public static extern int UDPForwarder_StartForwarding(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, uint jarg4, string jarg5, out ushort jarg6, out uint jarg7);
+  public static extern int UDPForwarder_StartForwarding(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, uint jarg4, string jarg5, ushort jarg6, out ushort jarg7, out uint jarg8);
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_StopForwarding")]
   public static extern void UDPForwarder_StopForwarding(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
@@ -3396,8 +3495,11 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_UpdateThreaded")]
   public static extern void UDPForwarder_UpdateThreaded(HandleRef jarg1);
 
+  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_UpdateThreaded_Old")]
+  public static extern void UDPForwarder_UpdateThreaded_Old(HandleRef jarg1);
+
   [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_StartForwardingThreaded")]
-  public static extern int UDPForwarder_StartForwardingThreaded(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, uint jarg4, string jarg5, out ushort jarg6, out uint jarg7);
+  public static extern int UDPForwarder_StartForwardingThreaded(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, uint jarg4, string jarg5, ushort jarg6, out ushort jarg7, out uint jarg8);
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_StopForwardingThreaded")]
   public static extern void UDPForwarder_StopForwardingThreaded(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
@@ -3407,6 +3509,9 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_maxForwardEntries_get")]
   public static extern ushort UDPForwarder_maxForwardEntries_get(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_AddForwardingEntry")]
+  public static extern int UDPForwarder_AddForwardingEntry(HandleRef jarg1, HandleRef jarg2, uint jarg3, HandleRef jarg4, string jarg5, short jarg6);
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_isRunning_set")]
   public static extern void UDPForwarder_isRunning_set(HandleRef jarg1, bool jarg2);
@@ -3452,6 +3557,9 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp_delete_UDPProxyServer")]
   public static extern void delete_UDPProxyServer(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_UDPProxyServer_SetSocketFamily")]
+  public static extern void UDPProxyServer_SetSocketFamily(HandleRef jarg1, ushort jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPProxyServer_SetResultHandler")]
   public static extern void UDPProxyServer_SetResultHandler(HandleRef jarg1, HandleRef jarg2);
@@ -3903,6 +4011,9 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_CommandParserInterface_OnTransportChange")]
   public static extern void CommandParserInterface_OnTransportChange(HandleRef jarg1, HandleRef jarg2);
 
+  [DllImport("RakNet", EntryPoint="CSharp_CommandParserInterface_SendCommandList")]
+  public static extern void CommandParserInterface_SendCommandList(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
+
   [DllImport("RakNet", EntryPoint="CSharp_CommandParserInterface_VARIABLE_NUMBER_OF_PARAMETERS_get")]
   public static extern byte CommandParserInterface_VARIABLE_NUMBER_OF_PARAMETERS_get();
 
@@ -3923,9 +4034,6 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp_CommandParserInterface_ReturnResult__SWIG_4")]
   public static extern void CommandParserInterface_ReturnResult__SWIG_4(HandleRef jarg1, string jarg2, HandleRef jarg3, HandleRef jarg4);
-
-  [DllImport("RakNet", EntryPoint="CSharp_CommandParserInterface_IntegersToSystemAddress")]
-  public static extern IntPtr CommandParserInterface_IntegersToSystemAddress(HandleRef jarg1, int jarg2, int jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_LogCommandParser_GetInstance")]
   public static extern IntPtr LogCommandParser_GetInstance();
@@ -4142,6 +4250,9 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp_ConnectionGraph2_GetConnectionListForRemoteSystemHelper")]
   public static extern bool ConnectionGraph2_GetConnectionListForRemoteSystemHelper(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, HandleRef jarg4, ref uint jarg5);
+
+  [DllImport("RakNet", EntryPoint="CSharp_ConnectionGraph2_GetParticipantListHelper")]
+  public static extern void ConnectionGraph2_GetParticipantListHelper(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_new_RakNetListRakNetGUID__SWIG_0")]
   public static extern IntPtr new_RakNetListRakNetGUID__SWIG_0();

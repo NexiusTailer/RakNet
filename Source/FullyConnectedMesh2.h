@@ -79,6 +79,10 @@ public:
 	/// \param[in] participant The new participant
 	void AddParticipant(RakNetGUID rakNetGuid);
 
+	/// Get the participants added with AddParticipant()
+	/// \param[out] participantList Participants added with AddParticipant();
+	void GetParticipantList(DataStructures::List<RakNetGUID> &participantList);
+
 	/// Connect to all systems from ID_REMOTE_NEW_INCOMING_CONNECTION
 	/// You can call this if SetConnectOnNewRemoteConnection is false
 	/// \param[in] packet The packet containing ID_REMOTE_NEW_INCOMING_CONNECTION
@@ -103,9 +107,9 @@ public:
 	/// \internal
 	virtual void OnRakPeerShutdown(void);
 	/// \internal
-	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	/// \internal
-	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
+	virtual void OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 
 	/// \internal
 	struct FCM2Participant
@@ -119,6 +123,9 @@ public:
 		RakNetGUID rakNetGuid;
 	};
 
+	/// \internal for debugging
+	unsigned int GetTotalConnectionCount(void) const;
+
 protected:
 	void PushNewHost(const RakNetGUID &guid, RakNetGUID oldHost);
 	void SendOurFCMGuid(SystemAddress addr);
@@ -127,6 +134,7 @@ protected:
 	void OnRequestFCMGuid(Packet *packet);
 	void OnRespondConnectionCount(Packet *packet);
 	void OnInformFCMGuid(Packet *packet);
+	void OnUpdateMinTotalConnectionCount(Packet *packet);
 	void AssignOurFCMGuid(void);
 	void CalculateHost(RakNetGUID *rakNetGuid, FCM2Guid *fcm2Guid);
 	bool AddParticipantInternal( RakNetGUID rakNetGuid, FCM2Guid theirFCMGuid );
@@ -149,7 +157,7 @@ protected:
 	FCM2Guid ourFCMGuid;
 
 	/// List of systems we know the FCM2Guid for
-	DataStructures::List<FCM2Participant> participantList;
+	DataStructures::List<FCM2Participant> fcm2ParticipantList;
 
 	RakNetGUID lastPushedHost;
 

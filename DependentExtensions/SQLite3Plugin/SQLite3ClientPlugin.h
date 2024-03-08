@@ -104,7 +104,7 @@ public:
 	/// \param[in] systemAddress See RakPeerInterface::Send()
 	/// \return Query ID. Will be returned in _sqlite3_exec
 	unsigned int _sqlite3_exec(RakNet::RakString dbIdentifier, RakNet::RakString inputStatement,
-		PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress);
+		PacketPriority priority, PacketReliability reliability, char orderingChannel, const SystemAddress &systemAddress);
 
 	/// \internal For plugin handling
 	virtual PluginReceiveResult OnReceive(Packet *packet);

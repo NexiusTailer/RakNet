@@ -53,6 +53,7 @@ RAKPEERANDINTERFACESETPRIVATE(GetBandwidth);
 
 //ConnectionGraph2
 %csmethodmodifiers RakNet::ConnectionGraph2::GetConnectionListForRemoteSystemHelper "private"
+%csmethodmodifiers RakNet::ConnectionGraph2::GetParticipantListHelper "private"
 
 #ifdef SWIG_ADDITIONAL_AUTOPATCHER
 	//AutopatcherServer

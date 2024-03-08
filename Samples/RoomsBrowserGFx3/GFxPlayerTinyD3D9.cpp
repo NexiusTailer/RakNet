@@ -278,7 +278,8 @@ int FxPlayerTiny::Run()
 	rakPeer->SetTimeoutTime(5000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 	unsigned short lanServerPort=5555;
 	RakNet::SocketDescriptor sd(lanServerPort,0);
-	while (RakNet::SocketLayer::IsPortInUse(sd.port)==true)
+	sd.socketFamily=AF_INET; // Only IPV4 supports broadcast on 255.255.255.255
+	while (RakNet::SocketLayer::IsPortInUse(sd.port, sd.hostAddress, sd.socketFamily)==true)
 		sd.port++;
 	rakPeer->Startup(8,&sd, 1);
 	rakPeer->SetMaximumIncomingConnections(8);

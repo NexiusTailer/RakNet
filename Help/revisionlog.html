@@ -382,7 +382,18 @@
   Consoles are now officially supported.
   Autopatcher can now serve more users at a time than there are threads. AutopatcherServer has a callback to inform the user of the current application load. FileListTransfer now supports incremental reads in a thread.
   NAT punchthrough now has a punch with TTL step to get past dual port-restricted routers
-  Added CloudServer/CloudClient plugins
+  Added CloudServer/CloudClient plugins<BR>
+  4.01 (2/8/2011)
+  Note: This version is not network traffic backwards compatible with 4.0.
+  Added IPV6 support and corresponding documentation.
+  In most cases SystemAddress is now passed by const reference. Users of ReplicaManager3 may need to match the function definitions of derived functions.
+  Unused connection slots are now skipped during RakPeer thread ticks.
+  Added OpenNATGroup feature to NatPunchthroughClient, enabling NATPunchthrough to not report completion until until all desired remote systems have been punched.
+  Replaced old Codeproject based UPNP implementation with miniupnpc 1.5 for NATCompleteClient.
+  RakNetGUID::ToInteger() renamed to RakNetGUID::ToUint32().<BR>
+  PS3: Fixed accessing deallocated memory when searching rooms
+  PS3: Fix Console_SearchRooms and Console_GetRoomDetails not returning integer and binary properties
+  XBOX 360: Fixed RakVoice_360, was previously not working
   <br>
   <br>
   <BR>

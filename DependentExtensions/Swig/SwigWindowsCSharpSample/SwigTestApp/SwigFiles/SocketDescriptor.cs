@@ -67,6 +67,16 @@ public class SocketDescriptor : IDisposable {
     } 
   }
 
+  public short socketFamily {
+    set {
+      RakNetPINVOKE.SocketDescriptor_socketFamily_set(swigCPtr, value);
+    } 
+    get {
+      short ret = RakNetPINVOKE.SocketDescriptor_socketFamily_get(swigCPtr);
+      return ret;
+    } 
+  }
+
   public ushort remotePortRakNetWasStartedOn_PS3 {
     set {
       RakNetPINVOKE.SocketDescriptor_remotePortRakNetWasStartedOn_PS3_set(swigCPtr, value);

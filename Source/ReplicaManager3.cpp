@@ -296,7 +296,7 @@ Connection_RM3* ReplicaManager3::GetConnectionAtIndex(unsigned index) const
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Connection_RM3* ReplicaManager3::GetConnectionBySystemAddress(SystemAddress sa) const
+Connection_RM3* ReplicaManager3::GetConnectionBySystemAddress(const SystemAddress &sa) const
 {
 	DataStructures::DefaultIndexType index;
 	for (index=0; index < connectionList.GetSize(); index++)
@@ -717,7 +717,7 @@ void ReplicaManager3::Update(void)
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void ReplicaManager3::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void ReplicaManager3::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	(void) lostConnectionReason;
 	(void) systemAddress;
@@ -731,7 +731,7 @@ void ReplicaManager3::OnClosedConnection(SystemAddress systemAddress, RakNetGUID
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void ReplicaManager3::OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
+void ReplicaManager3::OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
 {
 	(void) isIncoming;
 	if (autoCreateConnections)
@@ -1137,7 +1137,7 @@ Replica3* ReplicaManager3::GetReplicaByNetworkID(NetworkID networkId)
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-void ReplicaManager3::BroadcastDestructionList(DataStructures::Multilist<ML_STACK, Replica3*> &replicaList, SystemAddress exclusionAddress)
+void ReplicaManager3::BroadcastDestructionList(DataStructures::Multilist<ML_STACK, Replica3*> &replicaList, const SystemAddress &exclusionAddress)
 {
 	RakNet::BitStream bsOut;
 	DataStructures::DefaultIndexType i,j;
@@ -1189,7 +1189,7 @@ void ReplicaManager3::BroadcastDestructionList(DataStructures::Multilist<ML_STAC
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-void ReplicaManager3::BroadcastDestruction(Replica3 *replica, SystemAddress exclusionAddress)
+void ReplicaManager3::BroadcastDestruction(Replica3 *replica, const SystemAddress &exclusionAddress)
 {
 	DataStructures::Multilist<ML_STACK, Replica3*> replicaList;
 	replicaList.Push(replica, _FILE_AND_LINE_ );
@@ -1201,7 +1201,7 @@ void ReplicaManager3::BroadcastDestruction(Replica3 *replica, SystemAddress excl
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Connection_RM3::Connection_RM3(SystemAddress _systemAddress, RakNetGUID _guid)
+Connection_RM3::Connection_RM3(const SystemAddress &_systemAddress, RakNetGUID _guid)
 : systemAddress(_systemAddress), guid(_guid)
 {
 	isValidated=false;

@@ -1,4 +1,4 @@
-RakNet 4.0
+RakNet 4.01
 Copyright 2002-2005 Kevin Jenkins (rakkar@jenkinssoftware.com).
 This API and the code herein created by and wholly and privately owned by Kevin Jenkins except where specifically indicated otherwise.
 Licensed under the "RakNet" brand by Jenkins Software and subject to the terms of the relevant licensing agreement available at http://www.jenkinssoftware.com
@@ -56,7 +56,8 @@ You might have to copy *.dll from cygwin\bin as well.
 -----------------------------------------
 Linux users
 -----------------------------------------
-Use cmake, or "g++ -lpthread *.cpp" in the /Source directory.
+Use cmake, or "g++ -lpthread -g *.cpp" in the /Source directory.
+See http://www.unknownroad.com/rtfm/gdbtut/gdbstack.html for debugging
 
 -----------------------------------------
 DevCPP Users
@@ -150,7 +151,7 @@ D:\cygwin\home\Kevin\android-ndk-r4b\samples\RakNet\jni\junction.exe -s D:\cygwi
 To unjunction I used:
 D:\cygwin\home\Kevin\android-ndk-r4b\samples\RakNet\jni\junction.exe -d D:\cygwin\home\Kevin\android-ndk-r4b\samples\RakNet\jni\RakNetSources
 
-From within the CYWGIN enviroment, navigate to ome\Kevin\android-ndk-r4b\samples\RakNet. Then type
+From within the CYWGIN enviroment, navigate to home\Kevin\android-ndk-r4b\samples\RakNet. Then type
 ../../ndk-build
 
 Everything should build and you should end up with a .so file.

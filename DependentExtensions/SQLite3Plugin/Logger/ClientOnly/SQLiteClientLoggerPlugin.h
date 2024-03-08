@@ -69,7 +69,7 @@ namespace RakNet
 		/// Required to use the system. Call SetServerParameters() before calling sqlLog() or functionLog()
 		/// systemAddress Address of the server we are already connected to
 		/// _dbIdentifier session identifier. If the server is using CREATE_SHARED_NAMED_DB_HANDLE or CREATE_EACH_NAMED_DB_HANDLE then this is the name of the created file. Otherwise, it is the dbIdentifier passed to SQLite3ServerPlugin::AddDBHandle();
-		void SetServerParameters(SystemAddress systemAddress, RakNet::RakString _dbIdentifier);
+		void SetServerParameters(const SystemAddress &systemAddress, RakNet::RakString _dbIdentifier);
 
 		/// Every entry in the table has a tick count
 		/// Call this function to increment it by one

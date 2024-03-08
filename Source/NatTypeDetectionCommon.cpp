@@ -82,7 +82,7 @@ const char *RakNet::NATTypeDetectionResultToStringFriendly(NATTypeDetectionResul
 
 SOCKET RakNet::CreateNonblockingBoundSocket(const char *bindAddr )
 {
-	SOCKET s = SocketLayer::CreateBoundSocket( 0, false, bindAddr, true, 0 );
+	SOCKET s = SocketLayer::CreateBoundSocket( 0, false, bindAddr, true, 0, AF_INET );
 	#ifdef _WIN32
 		unsigned long nonblocking = 1;
 		ioctlsocket( s, FIONBIO, &nonblocking );
@@ -105,8 +105,10 @@ int RakNet::NatTypeRecvFrom(char *data, SOCKET socket, SystemAddress &sender)
 	int len = recvfrom( socket, data, MAXIMUM_MTU_SIZE, flag, ( sockaddr* ) & sa, ( socklen_t* ) & len2 );
 	if (len>0)
 	{
-		sender.binaryAddress = sa.sin_addr.s_addr;
-		sender.port = ntohs( sa.sin_port );
+		sender.address.addr4.sin_family=AF_INET;
+		sender.address.addr4.sin_addr.s_addr = sa.sin_addr.s_addr;
+		//sender.SetPort( ntohs( sa.sin_port ) );
+		sender.SetPort( ntohs( sa.sin_port ) );
 	}
 	return len;
 }

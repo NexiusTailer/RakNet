@@ -496,6 +496,14 @@ STRUCT_UNSIGNED_INT64_ARRAY_EXTEND_SPECIAL_RAKNETSTATISTICS(SetValueOverLastSeco
 
 		return returnVal;
 	}
+	
+	void GetParticipantListHelper( DataStructures::List<RakNetGUID> * guidOut)
+	{
+		DataStructures::OrderedList<RakNetGUID, RakNetGUID> participantList;
+		self->GetParticipantList(participantList);
+		for (unsigned int i=0; i < participantList.Size(); i++)
+			guidOut->Insert(participantList[i],__FILE__,__LINE__);
+	}
 
 }
 

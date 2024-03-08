@@ -130,7 +130,7 @@ Here is a list of all documented class members with links to the class documenta
 <li>GetConnectionByGUID()
 : <a class="el" href="classRakNet_1_1ReplicaManager3.html#508498bc416c653124bb9c8df17e28fb">RakNet::ReplicaManager3</a>
 <li>GetConnectionBySystemAddress()
-: <a class="el" href="classRakNet_1_1ReplicaManager3.html#3b4ba43cd0f401ecc9fff5b9f7a63c2e">RakNet::ReplicaManager3</a>
+: <a class="el" href="classRakNet_1_1ReplicaManager3.html#07b59eed23727fa032abdcdfa21addd1">RakNet::ReplicaManager3</a>
 <li>GetConnectionCount()
 : <a class="el" href="classRakNet_1_1ReplicaManager3.html#30450ca043c6594a855bbd9257ad264a">RakNet::ReplicaManager3</a>
 <li>GetConnectionList()
@@ -179,6 +179,8 @@ Here is a list of all documented class members with links to the class documenta
 <li>GetGuidFromSystemAddress()
 : <a class="el" href="classRakNet_1_1RakPeer.html#41fcd1175cb8fee67b12835944ed51da">RakNet::RakPeer</a>
 , <a class="el" href="classRakNet_1_1RakPeerInterface.html#ac8203dda2ba1271e753bd113b259173">RakNet::RakPeerInterface</a>
+<li>GetGuidsForGroupPunchthroughRequest()
+: <a class="el" href="classRakNet_1_1NatPunchthroughClient.html#9c86f7935743abdbf29d9b34a043fb47">RakNet::NatPunchthroughClient</a>
 <li>GetHostSystem()
 : <a class="el" href="classRakNet_1_1FullyConnectedMesh2.html#b45a7bcb5f76db83b3289bda7bdd082a">RakNet::FullyConnectedMesh2</a>
 <li>GetID()
@@ -203,6 +205,8 @@ Here is a list of all documented class members with links to the class documenta
 <li>GetInternalID()
 : <a class="el" href="classRakNet_1_1RakPeer.html#cf82a248aa543c9ec04567c14004fea5">RakNet::RakPeer</a>
 , <a class="el" href="classRakNet_1_1RakPeerInterface.html#928a49c193687ccef547f7ea3634bb54">RakNet::RakPeerInterface</a>
+<li>GetIPVersion()
+: <a class="el" href="structRakNet_1_1SystemAddress.html#98445edfff09041744e3951e6acc3103">RakNet::SystemAddress</a>
 <li>GetLastError()
 : <a class="el" href="classRakNet_1_1AutopatcherRepositoryInterface.html#4975ce3c8337d41e4e0ac2d2f01f1c83">RakNet::AutopatcherRepositoryInterface</a>
 , <a class="el" href="classRakNet_1_1AutopatcherPostgreRepository.html#342c992202426d8f507246202acd63f6">RakNet::AutopatcherPostgreRepository</a>
@@ -239,6 +243,9 @@ Here is a list of all documented class members with links to the class documenta
 , <a class="el" href="classRakNet_1_1RakPeerInterface.html#f7359755639152292a3e35b6fb9877bb">RakNet::RakPeerInterface</a>
 <li>GetMultilistType()
 : <a class="el" href="classDataStructures_1_1Multilist.html#b3a1eb26b60fc9742c3d9d842b1807cc">DataStructures::Multilist&lt; _MultilistType, _DataType, _KeyType, _IndexType &gt;</a>
+<li>GetMyBoundAddress()
+: <a class="el" href="classRakNet_1_1RakPeerInterface.html#a6abdf47bc3e2e016ccd0171a05e125b">RakNet::RakPeerInterface</a>
+, <a class="el" href="classRakNet_1_1RakPeer.html#1566deab65341e8b665f7643b3a3bcf9">RakNet::RakPeer</a>
 <li>GetMyGUID()
 : <a class="el" href="classRakNet_1_1RakPeer.html#235dbac30fb41b88db95448cc3d57f8d">RakNet::RakPeer</a>
 , <a class="el" href="classRakNet_1_1RakPeerInterface.html#a3d096a442aae7d97f33a7c3223d4594">RakNet::RakPeerInterface</a>
@@ -255,8 +262,8 @@ Here is a list of all documented class members with links to the class documenta
 : <a class="el" href="classRakNet_1_1NetworkIDObject.html#ee16018ebb4c0c53e2ff9209f216a690">RakNet::NetworkIDObject</a>
 , <a class="el" href="classRakNet_1_1ReplicaManager3.html#be5d17ed5bba9a7ef1df85f574cdfbc0">RakNet::ReplicaManager3</a>
 <li>GetNextSendReceipt()
-: <a class="el" href="classRakNet_1_1RakPeer.html#1d6e283f476bdd4ed8b9b4c56693ecd1">RakNet::RakPeer</a>
-, <a class="el" href="classRakNet_1_1RakPeerInterface.html#8587fe2920712adddfa06950ff6b8998">RakNet::RakPeerInterface</a>
+: <a class="el" href="classRakNet_1_1RakPeerInterface.html#8587fe2920712adddfa06950ff6b8998">RakNet::RakPeerInterface</a>
+, <a class="el" href="classRakNet_1_1RakPeer.html#1d6e283f476bdd4ed8b9b4c56693ecd1">RakNet::RakPeer</a>
 <li>GetNumberOfAddresses()
 : <a class="el" href="classRakNet_1_1RakPeer.html#ca51c8583f3995217a940bf592d7140c">RakNet::RakPeer</a>
 , <a class="el" href="classRakNet_1_1RakPeerInterface.html#59b3cee62120132170dcf065b84114b2">RakNet::RakPeerInterface</a>
@@ -277,12 +284,17 @@ Here is a list of all documented class members with links to the class documenta
 : <a class="el" href="structThreadPool.html#de45848613e8230e5324edabe40fcde9">ThreadPool&lt; InputType, OutputType &gt;</a>
 <li>GetParent()
 : <a class="el" href="classRakNet_1_1NetworkIDObject.html#6f48e0e1854cbc49cde9e9c9f7d3f679">RakNet::NetworkIDObject</a>
+<li>GetParticipantList()
+: <a class="el" href="classRakNet_1_1FullyConnectedMesh2.html#b8c2c85a79a0e288de454fdb5f7fe5fc">RakNet::FullyConnectedMesh2</a>
+, <a class="el" href="classRakNet_1_1ConnectionGraph2.html#3ab46435da8f6dc2c392d9b47bae7ef7">RakNet::ConnectionGraph2</a>
 <li>GetPatches()
-: <a class="el" href="classRakNet_1_1AutopatcherPostgreRepository.html#395dfcd4597594613ea6e66eb68e3bbe">RakNet::AutopatcherPostgreRepository</a>
+: <a class="el" href="classRakNet_1_1AutopatcherRepositoryInterface.html#eef254e9049ad550462b8b521f0b49cd">RakNet::AutopatcherRepositoryInterface</a>
 , <a class="el" href="classRakNet_1_1AutopatcherMySQLRepository.html#ba8c6c0311c9c21b7632d44fb30bf8c7">RakNet::AutopatcherMySQLRepository</a>
-, <a class="el" href="classRakNet_1_1AutopatcherRepositoryInterface.html#eef254e9049ad550462b8b521f0b49cd">RakNet::AutopatcherRepositoryInterface</a>
+, <a class="el" href="classRakNet_1_1AutopatcherPostgreRepository.html#395dfcd4597594613ea6e66eb68e3bbe">RakNet::AutopatcherPostgreRepository</a>
 <li>GetPendingFilesToAddress()
 : <a class="el" href="classRakNet_1_1FileListTransfer.html#a4d7662f9112a282c81b3e5a937e560c">RakNet::FileListTransfer</a>
+<li>GetPort()
+: <a class="el" href="structRakNet_1_1SystemAddress.html#9fe44689bf3c863952d25d88c299b215">RakNet::SystemAddress</a>
 <li>GetPresence()
 : <a class="el" href="classRakNet_1_1Lobby2Server.html#a498fdb38fcac5e2391ab38cca3c5a5d">RakNet::Lobby2Server</a>
 <li>GetPtr()
@@ -300,8 +312,8 @@ Here is a list of all documented class members with links to the class documenta
 <li>GetReadyStatus()
 : <a class="el" href="classRakNet_1_1ReadyEvent.html#e0e28180b08404315084b4023b757c87">RakNet::ReadyEvent</a>
 <li>GetReceiveBufferSize()
-: <a class="el" href="classRakNet_1_1RakPeerInterface.html#8f0971a8d45efdf1ce30946195195736">RakNet::RakPeerInterface</a>
-, <a class="el" href="classRakNet_1_1RakPeer.html#df51ef909abde91448a0a5d17e1da65c">RakNet::RakPeer</a>
+: <a class="el" href="classRakNet_1_1RakPeer.html#df51ef909abde91448a0a5d17e1da65c">RakNet::RakPeer</a>
+, <a class="el" href="classRakNet_1_1RakPeerInterface.html#8f0971a8d45efdf1ce30946195195736">RakNet::RakPeerInterface</a>
 <li>GetReferencedReplicaList()
 : <a class="el" href="classRakNet_1_1ReplicaManager3.html#b0e700277d18c3b063871fe33abdec62">RakNet::ReplicaManager3</a>
 <li>GetRemoteServers()
@@ -333,21 +345,20 @@ Here is a list of all documented class members with links to the class documenta
 <li>GetSize()
 : <a class="el" href="classDataStructures_1_1Multilist.html#374ed61cd2124ffd01e0bab732f89e61">DataStructures::Multilist&lt; _MultilistType, _DataType, _KeyType, _IndexType &gt;</a>
 <li>GetSocket()
-: <a class="el" href="classRakNet_1_1RakPeer.html#01149dc59b7a3fa0c8c5702ccce9e128">RakNet::RakPeer</a>
-, <a class="el" href="classRakNet_1_1RakPeerInterface.html#2ac541ad6ae2fcfdf14ab805bdb3caf9">RakNet::RakPeerInterface</a>
+: <a class="el" href="classRakNet_1_1RakPeerInterface.html#2ac541ad6ae2fcfdf14ab805bdb3caf9">RakNet::RakPeerInterface</a>
+, <a class="el" href="classRakNet_1_1RakPeer.html#01149dc59b7a3fa0c8c5702ccce9e128">RakNet::RakPeer</a>
 <li>GetSockets()
-: <a class="el" href="classRakNet_1_1RakPeer.html#ec22a93469511414b6df792a8d6d872c">RakNet::RakPeer</a>
-, <a class="el" href="classRakNet_1_1RakPeerInterface.html#52329111685593de4d56f5a0d64e93fb">RakNet::RakPeerInterface</a>
+: <a class="el" href="classRakNet_1_1RakPeerInterface.html#52329111685593de4d56f5a0d64e93fb">RakNet::RakPeerInterface</a>
+, <a class="el" href="classRakNet_1_1RakPeer.html#ec22a93469511414b6df792a8d6d872c">RakNet::RakPeer</a>
 <li>GetSortOrder()
 : <a class="el" href="classDataStructures_1_1Multilist.html#800048ec6f280da5e7a161a22a43b87b">DataStructures::Multilist&lt; _MultilistType, _DataType, _KeyType, _IndexType &gt;</a>
 <li>GetSplitMessageProgressInterval()
 : <a class="el" href="classRakNet_1_1RakPeer.html#f9f01256eab673794028fe48980ef6fa">RakNet::RakPeer</a>
 , <a class="el" href="classRakNet_1_1RakPeerInterface.html#bd4be92bcad53af859e502127c060247">RakNet::RakPeerInterface</a>
 <li>GetStatistics()
-: <a class="el" href="classRakNet_1_1RakPeer.html#59f65a234929846d6213bb5e43797778">RakNet::RakPeer</a>
+: <a class="el" href="classRakNet_1_1ReliabilityLayer.html#09e4d34890b2f3163616efd717c6069f">RakNet::ReliabilityLayer</a>
 , <a class="el" href="classRakNet_1_1RakPeerInterface.html#87e528130f7f0f21597a338769fe7139">RakNet::RakPeerInterface</a>
 , <a class="el" href="classRakNet_1_1RakPeer.html#0d31a8a91862a6c796730dc3a35f98ee">RakNet::RakPeer</a>
-, <a class="el" href="classRakNet_1_1ReliabilityLayer.html#09e4d34890b2f3163616efd717c6069f">RakNet::ReliabilityLayer</a>
 <li>GetSystemAddress()
 : <a class="el" href="classRakNet_1_1Connection__RM3.html#4282ffedd8130d793f32ea5bfa2ba0b3">RakNet::Connection_RM3</a>
 <li>GetSystemAddressFromGuid()
@@ -361,18 +372,14 @@ Here is a list of all documented class members with links to the class documenta
 <li>GetSystemFilterSet()
 : <a class="el" href="classRakNet_1_1MessageFilter.html#be03dc6ec1d3aee02c26317b5a49fc34">RakNet::MessageFilter</a>
 <li>GetSystemList()
-: <a class="el" href="classRakNet_1_1RakPeer.html#a4b6b55f7832da33b2e07a721263cfce">RakNet::RakPeer</a>
-, <a class="el" href="classRakNet_1_1RakPeerInterface.html#2e7b4c02c1f15c7e35c4b8f8eb986326">RakNet::RakPeerInterface</a>
+: <a class="el" href="classRakNet_1_1RakPeerInterface.html#a1939c66f7190e3c647a6a685a6eb248">RakNet::RakPeerInterface</a>
+, <a class="el" href="classRakNet_1_1RakPeer.html#791779bb9714e830f19a5f12961576d7">RakNet::RakPeer</a>
 <li>GetTimeoutTime()
-: <a class="el" href="classRakNet_1_1ReliabilityLayer.html#36dcac9c07138222392a4c1314c23a8f">RakNet::ReliabilityLayer</a>
-, <a class="el" href="classRakNet_1_1RakPeerInterface.html#0fd3a4d282327944ee50b00c79baf420">RakNet::RakPeerInterface</a>
+: <a class="el" href="classRakNet_1_1RakPeerInterface.html#0fd3a4d282327944ee50b00c79baf420">RakNet::RakPeerInterface</a>
 , <a class="el" href="classRakNet_1_1RakPeer.html#12dc51372f2a5a109f3c6a55ba799763">RakNet::RakPeer</a>
-<li>GetUPNPExternalPort()
-: <a class="el" href="classRakNet_1_1NatPunchthroughClient.html#13f0096b84f407ad0c852c2fe02d1c38">RakNet::NatPunchthroughClient</a>
-<li>GetUPNPInternalAddress()
-: <a class="el" href="classRakNet_1_1NatPunchthroughClient.html#15fc17817997b89258926fd191f19ef9">RakNet::NatPunchthroughClient</a>
-<li>GetUPNPInternalPort()
-: <a class="el" href="classRakNet_1_1NatPunchthroughClient.html#1245d8d39800b22e77265a69211608a0">RakNet::NatPunchthroughClient</a>
+, <a class="el" href="classRakNet_1_1ReliabilityLayer.html#36dcac9c07138222392a4c1314c23a8f">RakNet::ReliabilityLayer</a>
+<li>GetUPNPPortMappings()
+: <a class="el" href="classRakNet_1_1NatPunchthroughClient.html#621163bc6be3e7d6f6c6b4d9c8e5f938">RakNet::NatPunchthroughClient</a>
 <li>GetUsedForwardEntries()
 : <a class="el" href="classRakNet_1_1UDPForwarder.html#905a55dfed3c5580971c1324cf014fbf">RakNet::UDPForwarder</a>
 <li>GetWorldID()
@@ -381,7 +388,7 @@ Here is a list of all documented class members with links to the class documenta
 : <a class="el" href="structRakNet_1_1Packet.html#c6df86ad7879c10dc1ac0624d5c7b329">RakNet::Packet</a>
 </ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:28 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 8 13:04:36 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

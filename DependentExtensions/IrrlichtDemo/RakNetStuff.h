@@ -6,6 +6,8 @@
 #include "RakPeerInterface.h"
 #include "ReplicaManager3.h"
 #include "NatPunchthroughClient.h"
+#include "CloudClient.h"
+#include "FullyConnectedMesh2.h"
 #include "UDPProxyClient.h"
 #include "TCPInterface.h"
 #include "HTTPConnection.h"
@@ -25,10 +27,8 @@ extern RakNet::RakPeerInterface *rakPeer; // Basic communication
 extern RakNet::NetworkIDManager *networkIDManager; // Unique IDs per network object
 extern ReplicaManager3Irrlicht *replicaManager3; // Autoreplicate network objects
 extern RakNet::NatPunchthroughClient *natPunchthroughClient; // Connect peer to peer through routers
-extern RakNet::UDPProxyClient *udpProxyClient; // Use a proxy if natPunchthroughClient fails
-extern RakNet::TCPInterface *tcpInterface; // Connect to a webserver to list and get the list of players
-extern RakNet::HTTPConnection *httpConnection; /// Connect to a webserver to list and get the list of players
-extern RakNet::PHPDirectoryServer2 *phpDirectoryServer2; // Connect to a webserver to list and get the list of players
+extern RakNet::CloudClient *cloudClient; // Used to upload game instance to the cloud
+extern RakNet::FullyConnectedMesh2 *fullyConnectedMesh2; // Used to find out who is the session host
 extern PlayerReplica *playerReplica; // Network object that represents the player
 
 // A NAT punchthrough and proxy server Jenkins Software is hosting for free, should usually be online
@@ -138,7 +138,7 @@ public:
 };
 class Connection_RM3Irrlicht : public RakNet::Connection_RM3 {
 public:
-	Connection_RM3Irrlicht(RakNet::SystemAddress _systemAddress, RakNet::RakNetGUID _guid, CDemo *_demo) : RakNet::Connection_RM3(_systemAddress, _guid) {demo=_demo;}
+	Connection_RM3Irrlicht(const RakNet::SystemAddress &_systemAddress, RakNet::RakNetGUID _guid, CDemo *_demo) : RakNet::Connection_RM3(_systemAddress, _guid) {demo=_demo;}
 	virtual ~Connection_RM3Irrlicht() {}
 
 	virtual RakNet::Replica3 *AllocReplica(RakNet::BitStream *allocationId, RakNet::ReplicaManager3 *replicaManager3);
@@ -149,7 +149,7 @@ protected:
 class ReplicaManager3Irrlicht : public RakNet::ReplicaManager3
 {
 public:
-	virtual RakNet::Connection_RM3* AllocConnection(RakNet::SystemAddress systemAddress, RakNet::RakNetGUID rakNetGUID) const {
+	virtual RakNet::Connection_RM3* AllocConnection(const RakNet::SystemAddress &systemAddress, RakNet::RakNetGUID rakNetGUID) const {
 		return new Connection_RM3Irrlicht(systemAddress,rakNetGUID,demo);
 	}
 	virtual void DeallocConnection(RakNet::Connection_RM3 *connection) const {

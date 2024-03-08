@@ -15,6 +15,8 @@
 #include "SocketLayer.h"
 #include "Getche.h"
 #include "Gets.h"
+#include "CloudServerHelper.h"
+#include "CloudClient.h"
 
 using namespace RakNet;
 
@@ -31,10 +33,17 @@ enum FeatureList
 	NAT_PUNCHTHROUGH_SERVER,
 	UDP_PROXY_COORDINATOR,
 	UDP_PROXY_SERVER,
+	CLOUD_SERVER,
 	FEATURE_LIST_COUNT,
 };
 
 #define RAKPEER_PORT 61111
+
+#define NatTypeDetectionServerFramework_Supported QUERY
+#define NatPunchthroughServerFramework_Supported QUERY
+#define UDPProxyCoordinatorFramework_Supported QUERY
+#define UDPProxyServerFramework_Supported QUERY
+#define CloudServerFramework_Supported QUERY
 
 struct SampleFramework
 {
@@ -42,7 +51,7 @@ struct SampleFramework
 	virtual const char * QueryRequirements(void)=0;
 	virtual const char * QueryFunction(void)=0;
 	virtual void Init(RakNet::RakPeerInterface *rakPeer)=0;
-	virtual void ProcessPacket(Packet *packet)=0;
+	virtual void ProcessPacket(RakNet::RakPeerInterface *rakPeer, Packet *packet)=0;
 	virtual void Shutdown(RakNet::RakPeerInterface *rakPeer)=0;
 
 	FeatureSupport isSupported;
@@ -50,7 +59,7 @@ struct SampleFramework
 
 struct NatTypeDetectionServerFramework : public SampleFramework
 {
-	NatTypeDetectionServerFramework() {isSupported=QUERY; ntds=0;}
+	NatTypeDetectionServerFramework() {isSupported=NatTypeDetectionServerFramework_Supported; ntds=0;}
 	virtual const char * QueryName(void) {return "NatTypeDetectionServer";}
 	virtual const char * QueryRequirements(void) {return "Requires 4 IP addresses";}
 	virtual const char * QueryFunction(void) {return "Determines router type to filter by connectable systems.\nOne instance needed, multiple instances may exist to spread workload.";}
@@ -61,12 +70,11 @@ struct NatTypeDetectionServerFramework : public SampleFramework
 			ntds = new NatTypeDetectionServer;
 			rakPeer->AttachPlugin(ntds);
 
-			char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
-			unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
-			SocketLayer::GetMyIP( ipList, binaryAddresses );
+			SystemAddress ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ];
+			SocketLayer::GetMyIP( ipList );
 			for (int i=0; i<4; i++)
 			{
-				if (ipList[i][0]==0 && i < MAXIMUM_NUMBER_OF_INTERNAL_IDS)
+				if (ipList[i]==UNASSIGNED_SYSTEM_ADDRESS && i < MAXIMUM_NUMBER_OF_INTERNAL_IDS)
 				{
 					printf("Failed. Not enough IP addresses to bind to.\n");
 					rakPeer->DetachPlugin(ntds);
@@ -76,11 +84,15 @@ struct NatTypeDetectionServerFramework : public SampleFramework
 					return;
 				}
 			}
-			printf("Starting %s on %s, %s, %s.\n", QueryName(), ipList[1], ipList[2], ipList[3]);
-			ntds->Startup(ipList[1], ipList[2], ipList[3]);
+			char ipListStr1[128],ipListStr2[128],ipListStr3[128];
+			ipList[1].ToString(false,ipListStr1);
+			ipList[2].ToString(false,ipListStr2);
+			ipList[3].ToString(false,ipListStr3);
+			printf("Starting %s on %s, %s, %s.\n", QueryName(), ipListStr1, ipListStr2, ipListStr3);
+			ntds->Startup(ipListStr1, ipListStr2, ipListStr3);
 		}
 	}
-	virtual void ProcessPacket(Packet *packet)
+	virtual void ProcessPacket(RakNet::RakPeerInterface *rakPeer, Packet *packet)
 	{
 	}
 	virtual void Shutdown(RakNet::RakPeerInterface *rakPeer)
@@ -97,7 +109,7 @@ struct NatTypeDetectionServerFramework : public SampleFramework
 };
 struct NatPunchthroughServerFramework : public SampleFramework, public NatPunchthroughServerDebugInterface_Printf
 {
-	NatPunchthroughServerFramework() {isSupported=QUERY; nps=0;}
+	NatPunchthroughServerFramework() {isSupported=NatPunchthroughServerFramework_Supported; nps=0;}
 	virtual const char * QueryName(void) {return "NatPunchthroughServerFramework";}
 	virtual const char * QueryRequirements(void) {return "None";}
 	virtual const char * QueryFunction(void) {return "Coordinates NATPunchthroughClient.";}
@@ -110,7 +122,7 @@ struct NatPunchthroughServerFramework : public SampleFramework, public NatPuncht
 			nps->SetDebugInterface(this);
 		}
 	}
-	virtual void ProcessPacket(Packet *packet)
+	virtual void ProcessPacket(RakNet::RakPeerInterface *rakPeer, Packet *packet)
 	{
 	}
 	virtual void Shutdown(RakNet::RakPeerInterface *rakPeer)
@@ -127,7 +139,7 @@ struct NatPunchthroughServerFramework : public SampleFramework, public NatPuncht
 };
 struct UDPProxyCoordinatorFramework : public SampleFramework
 {
-	UDPProxyCoordinatorFramework() {isSupported=QUERY;}
+	UDPProxyCoordinatorFramework() {isSupported=UDPProxyCoordinatorFramework_Supported;}
 	virtual const char * QueryName(void) {return "UDPProxyCoordinator";}
 	virtual const char * QueryRequirements(void) {return "Bandwidth to handle a few hundred bytes per game session.";}
 	virtual const char * QueryFunction(void) {return "Coordinates UDPProxyClient to find available UDPProxyServer.\nExactly one instance required.";}
@@ -149,7 +161,7 @@ struct UDPProxyCoordinatorFramework : public SampleFramework
 			udppc->SetRemoteLoginPassword(password);
 		}
 	}
-	virtual void ProcessPacket(Packet *packet)
+	virtual void ProcessPacket(RakNet::RakPeerInterface *rakPeer, Packet *packet)
 	{
 	}
 	virtual void Shutdown(RakNet::RakPeerInterface *rakPeer)
@@ -240,7 +252,7 @@ SystemAddress ConnectBlocking(RakNet::RakPeerInterface *rakPeer, const char *hos
 }
 struct UDPProxyServerFramework : public SampleFramework, public UDPProxyServerResultHandler
 {
-	UDPProxyServerFramework() {isSupported=QUERY;}
+	UDPProxyServerFramework() {isSupported=UDPProxyServerFramework_Supported;}
 	virtual const char * QueryName(void) {return "UDPProxyServer";}
 	virtual const char * QueryRequirements(void) {return "Bandwidth to handle forwarded game traffic.";}
 	virtual const char * QueryFunction(void) {return "Allows game clients to forward network traffic transparently.\nOne or more instances required, can be added at runtime.";}
@@ -257,7 +269,7 @@ struct UDPProxyServerFramework : public SampleFramework, public UDPProxyServerRe
 				printf("\n");
 				if (ch=='1' || ch==13) // 13 is just pressing return
 				{
-					coordinatorAddress=rakPeer->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+					coordinatorAddress=rakPeer->GetMyBoundAddress().ToString(true);
 				}
 				else if (ch=='2')
 				{
@@ -300,7 +312,7 @@ struct UDPProxyServerFramework : public SampleFramework, public UDPProxyServerRe
 			}
 		}
 	}
-	virtual void ProcessPacket(Packet *packet)
+	virtual void ProcessPacket(RakNet::RakPeerInterface *rakPeer, Packet *packet)
 	{
 	}
 	virtual void Shutdown(RakNet::RakPeerInterface *rakPeer)
@@ -338,13 +350,65 @@ struct UDPProxyServerFramework : public SampleFramework, public UDPProxyServerRe
 
 	UDPProxyServer *udpps;
 };
+struct CloudServerFramework : public SampleFramework
+{
+	CloudServerFramework() {isSupported=CloudServerFramework_Supported;}
+	virtual const char * QueryName(void) {return "CloudServer";}
+	virtual const char * QueryRequirements(void) {return "None.";}
+	virtual const char * QueryFunction(void) {return "Single instance cloud server that maintains connection counts\nUseful as a directory server to find other client instances.";}
+	virtual void Init(RakNet::RakPeerInterface *rakPeer)
+	{
+		if (isSupported==SUPPORTED)
+		{
+			cloudServer = new CloudServer;
+			rakPeer->AttachPlugin(cloudServer);
+			cloudClient = new CloudClient;
+			rakPeer->AttachPlugin(cloudClient);
+			cloudServerHelperFilter = new CloudServerHelperFilter;
+			cloudServer->AddQueryFilter(cloudServerHelperFilter);
+			RakNet::CloudServerHelper::OnConnectionCountChange(rakPeer, cloudClient);
+		}
+	}
+	virtual void ProcessPacket(RakNet::RakPeerInterface *rakPeer, Packet *packet)
+	{
+		switch (packet->data[0])
+		{
+		case ID_NEW_INCOMING_CONNECTION:
+			printf("Got connection to %s\n", packet->systemAddress.ToString(true));
+			RakNet::CloudServerHelper::OnConnectionCountChange(rakPeer, cloudClient);
+			break;
+		case ID_CONNECTION_LOST:
+		case ID_DISCONNECTION_NOTIFICATION:
+			printf("Lost connection to %s\n", packet->systemAddress.ToString(true));
+			RakNet::CloudServerHelper::OnConnectionCountChange(rakPeer, cloudClient);
+			break;
+		}
+	}
+	virtual void Shutdown(RakNet::RakPeerInterface *rakPeer)
+	{
+		if (cloudServer)
+		{
+			rakPeer->DetachPlugin(cloudServer);
+			delete cloudServer;
+			cloudServer=0;
+			rakPeer->DetachPlugin(cloudClient);
+			delete cloudClient;
+			cloudClient=0;
+			delete cloudServerHelperFilter;
+			cloudServerHelperFilter=0;
+		}
+	}
+
+	RakNet::CloudServer *cloudServer;
+	RakNet::CloudClient *cloudClient;
+	RakNet::CloudServerHelperFilter *cloudServerHelperFilter;
+};
 int main()
 {
 	RakNet::RakPeerInterface *rakPeer=RakNet::RakPeerInterface::GetInstance();
-	char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
-	unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
-	SocketLayer::GetMyIP( ipList, binaryAddresses );
-	RakNet::SocketDescriptor sd(RAKPEER_PORT,ipList[0]);
+	SystemAddress ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ];
+	SocketLayer::GetMyIP( ipList );
+	RakNet::SocketDescriptor sd(RAKPEER_PORT,ipList[0].ToString(false));
 	if (rakPeer->Startup(32,&sd,1)!=RakNet::RAKNET_STARTED)
 	{
 		RakNet::SocketDescriptor sd2(RAKPEER_PORT,0);
@@ -363,6 +427,7 @@ int main()
 	samples[i++] = new NatPunchthroughServerFramework;
 	samples[i++] = new UDPProxyCoordinatorFramework;
 	samples[i++] = new UDPProxyServerFramework;
+	samples[i++] = new CloudServerFramework;
 	assert(i==FEATURE_LIST_COUNT);
 
 	bool isFirstPrint=true;
@@ -458,7 +523,7 @@ int main()
 		{
 			for (i=0; i < FEATURE_LIST_COUNT; i++)
 			{
-				samples[i]->ProcessPacket(packet);
+				samples[i]->ProcessPacket(rakPeer, packet);
 			}
 		}
 

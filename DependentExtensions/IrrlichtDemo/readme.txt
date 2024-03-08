@@ -20,21 +20,15 @@ Description: Demonstrates Irrlicht modified with RakNet for peer to peer multipl
 Dependencies: For windows Irrlicht version 1.7.1 is assumed to be installed at C:\irrlicht-1.7.1 . If you don't have it installed here, change the project paths. IrrKlang included by default with permission of the author. The website for Irrlicht is http://irrlicht.sourceforge.net/
 For linux version 1.7.1 or higher may be used, irrKlang headers and .so file is also required for the linux version.
 
-Related projects: NatPunchthrough, UDPProxy, PHPDirectoryServer
+Related projects: NatPunchthroughServer, DependentExtensions\miniupnpc-1.5
 
 For help and support, please visit http://www.jenkinssoftware.com
 
 ------------------ NETWORKING FLOW ------------------
 
-Once the user press Start Demo, InstantiateRakNetClasses is called. It allocates all RakNet classes including the dependent plugins. It also begins a TCP request to jenkinssoftware.com/raknet/DirectoryServer.php, both to upload our own RakNetGUID, and to download whatever values other peers uploaded. It will also try to connect to the NAT punchthrough server hosted by Jenkins Software.
+Once the user press Start Demo, InstantiateRakNetClasses is called. It allocates all RakNet classes including the dependent plugins. It will also try to connect to the NATCompleteServer sample hosted  hosted by Jenkins Software.
 
-The HTTP server will respond at the line:
-
-phpDirectoryServer->ProcessHTTPRead(httpConnection->Read())
-
-If it succeeds, the code will proceed to read all rows returned and push every RakNetGUID to the systemsToConnectTo queue. If it fails, it will return the appropriate message, and nothing further will happen.
-
-Once we are connected to the NATPunchthroughServer (See ID_CONNECTION_REQUEST_ACCEPTED), isConnectedToNATPunchthroughServer is set to true. While true, it will pop all RakNetGUID in the systemsToConnectTo queue and call NatPunchthroughClient::OpenNAT for each of these systems.
+Once we are connected to the NATPunchthroughServer (See ID_CONNECTION_REQUEST_ACCEPTED), UPNP will run to open the router if possible. It will try to open the external port connected to the NATPunchthroughServer. It will map that to the internal port used by RakNet. If it succeeds, NATPunchthrough should automatically succeed for this system. Next, the cloudServer will be queried for active connections. If any connections are returned, NATPunchthroughClient::OpenNATGroup() to open the router for those systems. On success, those systems are connected to. If there are no existing games, or on failure, a new game is started.
 
 Incoming packets are checked in UpdateRakNet(). If the NAT punchthrough fails, it will use the proxy server instead. CDemoderives from UDPProxyClientResultHandler, which will get the results of the proxy connection attempt through it callback interfaces.
 
@@ -69,7 +63,7 @@ That's it :)
 1. I picked peer to peer because then I do not have to run a game server and it makes the sample simpler. It also lets me test and demonstrate NAT Punchthrough class. Were I to run a game server, it would have to use Irrlicht's NULL renderer, load the level, and perform all the same game functionality as the clients.
 2. Peer to peer is very insecure from a cheating standpoint. For example, each peer determines for themselves if the ball hits them. This design is only suitable for games that cannot be hacked, such as console games, or if using anti-cheat measures (such as Punkbuster).
 3. Because the ball effect in Irrlicht and the BallReplica class for the actual gameplay are disjoint, were a player to disconnect and his ball deleted, the visible effect would still be there. This is a minor bug. It could be fixed by adding a reference to the particle effect, and removing the particle when the ball is destroyed.
-4. Since all peers connect to the same PHPDirectoryServer, there is essentially only one game world, in that everyone will connect to everyone. This could be changed by using different game names in PHPDirectoryServer::UploadTable
+4. Since all peers connect to the same CloudServer, there is essentially only one game world
 5. Yes, this was really written in two days :) Irrlicht and RakNet are awesome together.
 
 Have fun!

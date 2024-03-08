@@ -568,7 +568,7 @@ PluginReceiveResult RakVoice::OnReceive(Packet *packet)
 
 	return RR_CONTINUE_PROCESSING;
 }
-void RakVoice::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void RakVoice::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	(void)systemAddress;
 

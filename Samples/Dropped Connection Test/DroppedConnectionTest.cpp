@@ -43,21 +43,19 @@ int main(void)
 	#ifndef _WIN32
 	char buff[256];
 	#endif
-	// Used to refer to systems.  We already know the IP
-	unsigned short serverPort = 20000;
-	serverID.binaryAddress=inet_addr("127.0.0.1");
-	serverID.port=serverPort;
 
 	printf("This is a project I use internally to test if dropped connections are detected\n");
 	printf("Difficulty: Intermediate\n\n");
 
 	printf("Dropped Connection Test.\n");
-	
+
+	unsigned short serverPort = 20000;
 	server=RakNet::RakPeerInterface::GetInstance();
 //	server->InitializeSecurity(0,0,0,0);
 	RakNet::SocketDescriptor socketDescriptor(serverPort,0);
 	server->Startup(NUMBER_OF_CLIENTS, &socketDescriptor, 1);
 	server->SetMaximumIncomingConnections(NUMBER_OF_CLIENTS);
+	server->SetTimeoutTime(10000,UNASSIGNED_SYSTEM_ADDRESS);
 
 	for (index=0; index < NUMBER_OF_CLIENTS; index++)
 	{
@@ -185,26 +183,27 @@ int main(void)
 				switch (p->data[0])
 				{
 				case ID_CONNECTION_REQUEST_ACCEPTED:
-					printf("%i: %ID_CONNECTION_REQUEST_ACCEPTED from %i.\n",sender, p->systemAddress.port);
+					printf("%i: %ID_CONNECTION_REQUEST_ACCEPTED from %i.\n",sender, p->systemAddress.GetPort());
+					serverID=p->systemAddress;
 					break;
 				case ID_DISCONNECTION_NOTIFICATION:
 					// Connection lost normally
-					printf("%i: ID_DISCONNECTION_NOTIFICATION from %i.\n",sender, p->systemAddress.port);
+					printf("%i: ID_DISCONNECTION_NOTIFICATION from %i.\n",sender, p->systemAddress.GetPort());
 					break;
 
 				case ID_NEW_INCOMING_CONNECTION:
 					// Somebody connected.  We have their IP now
-					printf("%i: ID_NEW_INCOMING_CONNECTION from %i.\n",sender, p->systemAddress.port);
+					printf("%i: ID_NEW_INCOMING_CONNECTION from %i.\n",sender, p->systemAddress.GetPort());
 					break;
 
 				case ID_CONNECTION_LOST:
 					// Couldn't deliver a reliable packet - i.e. the other system was abnormally
 					// terminated
-					printf("%i: ID_CONNECTION_LOST from %i.\n",sender, p->systemAddress.port);
+					printf("%i: ID_CONNECTION_LOST from %i.\n",sender, p->systemAddress.GetPort());
 					break;
 
 				case ID_NO_FREE_INCOMING_CONNECTIONS:
-					printf("%i: ID_NO_FREE_INCOMING_CONNECTIONS from %i.\n",sender, p->systemAddress.port);
+					printf("%i: ID_NO_FREE_INCOMING_CONNECTIONS from %i.\n",sender, p->systemAddress.GetPort());
 					break;
 
 				default:

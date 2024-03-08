@@ -1298,7 +1298,7 @@ void Lobby2ClientGFx3Impl::Accept(CallbackProcessor* cbreg)
 
 
 }
-void Lobby2ClientGFx3Impl::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void Lobby2ClientGFx3Impl::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	if (systemAddress==lobby2Client->GetServerAddress())
 	{
@@ -1319,7 +1319,7 @@ void Lobby2ClientGFx3Impl::OnClosedConnection(SystemAddress systemAddress, RakNe
 		FxDelegate::Invoke2(movie, "c2f_NotifyConnectionLost", rargs);
 	}
 }
-void Lobby2ClientGFx3Impl::OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
+void Lobby2ClientGFx3Impl::OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
 {
 	if (systemAddress==lobby2Client->GetServerAddress())
 	{

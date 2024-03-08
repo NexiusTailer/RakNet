@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./../../Source"
+				AdditionalIncludeDirectories="./../../Source;./../CloudServer"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -117,7 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./../../Source;&quot;$(SolutionDir)DependentExtensions\XML&quot;"
+				AdditionalIncludeDirectories="./../../Source;./../CloudServer"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -178,6 +178,14 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath="..\CloudServer\CloudServerHelper.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\CloudServer\CloudServerHelper.h"
+				>
+			</File>
 			<File
 				RelativePath=".\main.cpp"
 				>

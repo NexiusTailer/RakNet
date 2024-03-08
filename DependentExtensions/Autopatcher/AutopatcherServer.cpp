@@ -222,7 +222,7 @@ void AutopatcherServer::OnStartup(RakPeerInterface *peer)
 #ifdef _MSC_VER
 #pragma warning( disable : 4100 ) // warning C4100: <variable name> : unreferenced formal parameter
 #endif
-void AutopatcherServer::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void AutopatcherServer::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	RemoveFromThreadPool(systemAddress);
 
@@ -547,7 +547,7 @@ void AutopatcherServer::CallPacketCallback(Packet *packet, AutopatcherServerLoad
 		loadNotifier->OnQueueUpdate(packet->systemAddress, requestType, queueOperation, &autopatcherState);
 	}
 }
-void AutopatcherServer::CallPatchCompleteCallback(SystemAddress systemAddress, AutopatcherServerLoadNotifier::PatchResult patchResult)
+void AutopatcherServer::CallPatchCompleteCallback(const SystemAddress &systemAddress, AutopatcherServerLoadNotifier::PatchResult patchResult)
 {
 	if (loadNotifier)
 	{

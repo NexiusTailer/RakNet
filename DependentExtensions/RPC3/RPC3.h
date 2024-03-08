@@ -181,7 +181,7 @@ public:
 	/// Defaults to RakNet::UNASSIGNED_SYSTEM_ADDRESS, broadcast=true
 	/// \param[in] systemAddress See RakPeer::Send()
 	/// \param[in] broadcast See RakPeer::Send()
-	void SetRecipientAddress(SystemAddress systemAddress, bool broadcast);
+	void SetRecipientAddress(const SystemAddress &systemAddress, bool broadcast);
 
 	/// Set the NetworkID to pass for all following calls to Call()
 	/// Defaults to UNASSIGNED_NETWORK_ID (none)
@@ -826,9 +826,9 @@ public:
 	// --------------------------------------------------------------------------------------------
 	void OnAttach(void);
 	virtual PluginReceiveResult OnReceive(Packet *packet);
-	virtual void OnRPC3Call(SystemAddress systemAddress, unsigned char *data, unsigned int lengthInBytes);
-//	virtual void OnRPCRemoteIndex(SystemAddress systemAddress, unsigned char *data, unsigned int lengthInBytes);
-	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	virtual void OnRPC3Call(const SystemAddress &systemAddress, unsigned char *data, unsigned int lengthInBytes);
+//	virtual void OnRPCRemoteIndex(const SystemAddress &systemAddress, unsigned char *data, unsigned int lengthInBytes);
+	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	virtual void OnShutdown(void);
 
 	void Clear(void);
@@ -836,7 +836,7 @@ public:
 	void SendError(SystemAddress target, unsigned char errorCode, const char *functionName);
 	DataStructures::HashIndex GetLocalFunctionIndex(RPCIdentifier identifier);
 	DataStructures::HashIndex GetLocalSlotIndex(const char *sharedIdentifier);
-//	bool GetRemoteFunctionIndex(SystemAddress systemAddress, RPCIdentifier identifier, unsigned int *outerIndex, unsigned int *innerIndex, bool isCall);
+//	bool GetRemoteFunctionIndex(const SystemAddress &systemAddress, RPCIdentifier identifier, unsigned int *outerIndex, unsigned int *innerIndex, bool isCall);
 
 	DataStructures::Hash<RakNet::RakString, LocalSlot*,256, RakNet::RakString::ToInteger> localSlots;
 	DataStructures::Hash<RakNet::RakString, LocalRPCFunction*,256, RakNet::RakString::ToInteger> localFunctions;

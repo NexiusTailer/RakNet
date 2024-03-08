@@ -27,13 +27,16 @@ int main()
 	rakPeer->AttachPlugin(&cg2);
 	fcm2.SetAutoparticipateConnections(true);
 	RakNet::SocketDescriptor sd;
+	sd.socketFamily=AF_INET; // Only IPV4 supports broadcast on 255.255.255.255
 	sd.port=60000;
-	while (SocketLayer::IsPortInUse(sd.port)==true)
+	while (SocketLayer::IsPortInUse(sd.port, sd.hostAddress, sd.socketFamily)==true)
 		sd.port++;
-	rakPeer->Startup(8,&sd,1);
+	StartupResult sr = rakPeer->Startup(8,&sd,1);
+	RakAssert(sr==RAKNET_STARTED);
 	rakPeer->SetMaximumIncomingConnections(8);
 	rakPeer->SetTimeoutTime(1000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 	printf("Our guid is %s\n", rakPeer->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
+	printf("Started on %s\n", rakPeer->GetMyBoundAddress().ToString(true));
 
 //	PacketLogger packetLogger;
 //	rakPeer->AttachPlugin(&packetLogger);
@@ -72,7 +75,8 @@ int main()
 				break;
 
 			case ID_ADVERTISE_SYSTEM:
-				rakPeer->Connect(packet->systemAddress.ToString(false), packet->systemAddress.port,0,0);
+				if (packet->guid!=rakPeer->GetMyGUID())
+					rakPeer->Connect(packet->systemAddress.ToString(false), packet->systemAddress.GetPort(),0,0);
 				break;
 
 			case ID_FCM2_NEW_HOST:
@@ -133,7 +137,7 @@ int main()
 		RakSleep(30);
 		for (int i=0; i < 32; i++)
 		{
-			if (rakPeer->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS,0).port!=60000+i)
+			if (rakPeer->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS,0).GetPort()!=60000+i)
 				rakPeer->AdvertiseSystem("255.255.255.255", 60000+i, 0,0,0);
 		}
 	}

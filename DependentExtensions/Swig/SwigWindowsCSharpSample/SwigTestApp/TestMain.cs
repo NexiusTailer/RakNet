@@ -49,9 +49,7 @@ namespace SwigTestApp
             testServer.Startup(1, new SocketDescriptor(60001, "127.0.0.1"), 1);
             testServer.SetMaximumIncomingConnections(1);
 
-            Console.WriteLine("Press enter to start RakString send and receive loop using BitStream.\nBitStream read done into RakString");
-            Console.WriteLine("Loop will run for 15 seconds");
-            Console.ReadLine();
+            Console.WriteLine("Send and receive loop using BitStream.\nBitStream read done into RakString");
 
             testClient.Connect("127.0.0.1", 60001, "", 0);
 
@@ -66,7 +64,7 @@ namespace SwigTestApp
             startTimeSpan = (DateTime.UtcNow - new DateTime(1970, 1, 1));
             loopNumber = 0;
 
-            while (startTimeSpan.TotalSeconds + 15 > (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds)
+            while (startTimeSpan.TotalSeconds + 5 > (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds)
             {
                 testPacket = testServer.Receive();
                 if (testPacket != null && testPacket.data[0] == (byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM)
@@ -83,13 +81,15 @@ namespace SwigTestApp
                 testClient.Send(rakStringTestSendBitStream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, new AddressOrGUID(new SystemAddress("127.0.0.1", 60001)), false);
             }
 
-            Console.WriteLine("Press enter to start String send and receive loop using BitStream.\nBitStream read done into String");
-            Console.WriteLine("Loop will run for 15 seconds");
-            Console.ReadLine();
+            Console.WriteLine("String send and receive loop using BitStream.\nBitStream read done into String");
+
+            SystemAddress[] remoteSystems;
+            ushort numberOfSystems=1;
+            testServer.GetConnectionList(out remoteSystems, ref numberOfSystems);
 
             startTimeSpan = (DateTime.UtcNow - new DateTime(1970, 1, 1));
             loopNumber = 0;
-            while (startTimeSpan.TotalSeconds + 15 > (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds)
+            while (startTimeSpan.TotalSeconds + 5 > (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds)
             {
                 testPacket = testServer.Receive();
                 if (testPacket != null && testPacket.data[0] == (byte)DefaultMessageIDTypes.ID_USER_PACKET_ENUM)

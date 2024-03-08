@@ -24,6 +24,8 @@ typedef int socklen_t;
 #include "RakSleep.h"
 #include "StringCompressor.h"
 #include "StringTable.h"
+#include "Itoa.h"
+#include "SocketLayer.h"
 
 #ifdef _DO_PRINTF
 #endif
@@ -76,7 +78,7 @@ TCPInterface::~TCPInterface()
 	StringCompressor::RemoveReference();
 	RakNet::StringTable::RemoveReference();
 }
-bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnections, unsigned short maxConnections, int _threadPriority)
+bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnections, unsigned short maxConnections, int _threadPriority, unsigned short socketFamily)
 {
 	if (isStarted)
 		return false;
@@ -104,6 +106,8 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 	remoteClientsLength=maxConnections;
 	remoteClients=RakNet::OP_NEW_ARRAY<RemoteClient>(maxConnections,_FILE_AND_LINE_);
 
+
+#if RAKNET_SUPPORT_IPV6!=1
 	if (maxIncomingConnections>0)
 	{
 		listenSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -120,6 +124,47 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 
 		listen(listenSocket, maxIncomingConnections);
 	}
+#else
+	listenSocket=INVALID_SOCKET;
+	if (maxIncomingConnections>0)
+	{
+		struct addrinfo hints;
+		memset(&hints, 0, sizeof (addrinfo)); // make sure the struct is empty
+		hints.ai_family = socketFamily;     // don't care IPv4 or IPv6
+		hints.ai_socktype = SOCK_STREAM; // TCP sockets
+		hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
+		struct addrinfo *servinfo=0, *aip;  // will point to the results
+		char portStr[32];
+		Itoa(port,portStr,10);
+
+		getaddrinfo(0, portStr, &hints, &servinfo);
+		for (aip = servinfo; aip != NULL; aip = aip->ai_next)
+		{
+			// Open socket. The address type depends on what
+			// getaddrinfo() gave us.
+			listenSocket = socket(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
+			if (listenSocket != INVALID_SOCKET)
+			{
+				int ret = bind( listenSocket, aip->ai_addr, (int) aip->ai_addrlen );
+				if (ret>=0)
+				{
+					break;
+				}
+				else
+				{
+					closesocket(listenSocket);
+					listenSocket=INVALID_SOCKET;
+				}
+			}
+		}
+
+		if (listenSocket==INVALID_SOCKET)
+			return false;
+
+		listen(listenSocket, maxIncomingConnections);
+	}
+#endif // #if RAKNET_SUPPORT_IPV6!=1
+	
 
 	// Start the update thread
 	int errorCode = RakNet::RakThread::Create(UpdateTCPInterfaceLoop, this, threadPriority);
@@ -202,7 +247,7 @@ void TCPInterface::Stop(void)
 	activeSSLConnections.Clear(false, _FILE_AND_LINE_);
 #endif
 }
-SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort, bool block)
+SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort, bool block, unsigned short socketFamily)
 {
 	if (threadRunning==false)
 		return UNASSIGNED_SYSTEM_ADDRESS;
@@ -225,11 +270,11 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 	if (block)
 	{
 		SystemAddress systemAddress;
-		systemAddress.binaryAddress=inet_addr(host);
-		systemAddress.port=remotePort;
+		systemAddress.address.addr4.sin_addr.s_addr=inet_addr(host);
+		systemAddress.SetPort(remotePort);
 		systemAddress.systemIndex=(SystemIndex) newRemoteClientIndex;
 
-		SOCKET sockfd = SocketConnect(host, remotePort);
+		SOCKET sockfd = SocketConnect(host, remotePort, socketFamily);
 		if (sockfd==(SOCKET)-1)
 		{
 			remoteClients[newRemoteClientIndex].isActiveMutex.Lock();
@@ -255,10 +300,10 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 	else
 	{
 		ThisPtrPlusSysAddr *s = RakNet::OP_NEW<ThisPtrPlusSysAddr>( _FILE_AND_LINE_ );
-		s->systemAddress.SetBinaryAddress(host);
-		s->systemAddress.port=remotePort;
+		s->systemAddress.FromStringExplicitPort(host,remotePort);
 		s->systemAddress.systemIndex=(SystemIndex) newRemoteClientIndex;
 		s->tcpInterface=this;
+		s->socketFamily=socketFamily;
 
 		// Start the connection thread
 		int errorCode = RakNet::RakThread::Create(ConnectionAttemptLoop, s, threadPriority);
@@ -296,11 +341,11 @@ bool TCPInterface::IsSSLActive(SystemAddress systemAddress)
 	return activeSSLConnections.GetIndexOf(systemAddress)!=-1;
 }
 #endif
-void TCPInterface::Send( const char *data, unsigned length, SystemAddress systemAddress, bool broadcast )
+void TCPInterface::Send( const char *data, unsigned length, const SystemAddress &systemAddress, bool broadcast )
 {
 	SendList( &data, &length, 1, systemAddress,broadcast );
 }
-bool TCPInterface::SendList( const char **data, const unsigned int *lengths, const int numParameters, SystemAddress systemAddress, bool broadcast )
+bool TCPInterface::SendList( const char **data, const unsigned int *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast )
 {
 	if (isStarted==false)
 		return false;
@@ -609,8 +654,11 @@ unsigned int TCPInterface::GetOutgoingDataBufferSize(SystemAddress systemAddress
 	}
 	return bytesWritten;
 }
-SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort)
+SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, unsigned short socketFamily)
 {
+	int connectResult;
+
+#if RAKNET_SUPPORT_IPV6!=1
 	sockaddr_in serverAddress;
 
 #if !defined(_XBOX) && !defined(_X360)
@@ -628,20 +676,8 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort)
 	serverAddress.sin_family = AF_INET;
 	serverAddress.sin_port = htons( remotePort );
 
-	/*
-#ifdef _WIN32
-	unsigned long nonblocking = 1;
-	ioctlsocket( sockfd, FIONBIO, &nonblocking );
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                                        
-#else
-	fcntl( sockfd, F_SETFL, O_NONBLOCK );
-#endif
-	*/
-
 	int sock_opt=1024*256;
 	setsockopt(sockfd, SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
-
 
 #if !defined(_XBOX) && !defined(_X360)
 	memcpy((char *)&serverAddress.sin_addr.s_addr, (char *)server->h_addr, server->h_length);
@@ -654,17 +690,37 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort)
 	blockingSocketListMutex.Unlock();
 
 	// This is blocking
-	int connectResult = connect( sockfd, ( struct sockaddr * ) &serverAddress, sizeof( struct sockaddr ) );
+	connectResult = connect( sockfd, ( struct sockaddr * ) &serverAddress, sizeof( struct sockaddr ) );
 
-	unsigned sockfdIndex;
+#else
+
+
+	struct addrinfo hints, *res;
+	int sockfd;
+	memset(&hints, 0, sizeof hints);
+	hints.ai_family = socketFamily;
+	hints.ai_socktype = SOCK_STREAM;
+	char portStr[32];
+	Itoa(remotePort,portStr,10);
+	getaddrinfo(host, portStr, &hints, &res);
+	sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 	blockingSocketListMutex.Lock();
-	sockfdIndex=blockingSocketList.GetIndexOf(sockfd);
-	if (sockfdIndex!=(unsigned)-1)
-		blockingSocketList.RemoveAtIndexFast(sockfdIndex);
+	blockingSocketList.Insert(sockfd, _FILE_AND_LINE_);
 	blockingSocketListMutex.Unlock();
+	connectResult=connect(sockfd, res->ai_addr, res->ai_addrlen);
+	freeaddrinfo(res); // free the linked-list
+
+#endif // #if RAKNET_SUPPORT_IPV6!=1
 
 	if (connectResult==-1)
 	{
+		unsigned sockfdIndex;
+		blockingSocketListMutex.Lock();
+		sockfdIndex=blockingSocketList.GetIndexOf(sockfd);
+		if (sockfdIndex!=(unsigned)-1)
+			blockingSocketList.RemoveAtIndexFast(sockfdIndex);
+		blockingSocketListMutex.Unlock();
+
 		closesocket(sockfd);
 		return (SOCKET) -1;
 	}
@@ -678,11 +734,12 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
 	SystemAddress systemAddress = s->systemAddress;
 	TCPInterface *tcpInterface = s->tcpInterface;
 	int newRemoteClientIndex=systemAddress.systemIndex;
+	unsigned short socketFamily = s->socketFamily;
 	RakNet::OP_DELETE(s, _FILE_AND_LINE_);
 
 	char str1[64];
 	systemAddress.ToString(false, str1);
-	SOCKET sockfd = tcpInterface->SocketConnect(str1, systemAddress.port);
+	SOCKET sockfd = tcpInterface->SocketConnect(str1, systemAddress.GetPort(), socketFamily);
 	if (sockfd==(SOCKET)-1)
 	{
 		tcpInterface->remoteClients[newRemoteClientIndex].isActiveMutex.Lock();
@@ -720,8 +777,14 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 	fd_set      readFD, exceptionFD, writeFD;
 	sts->threadRunning=true;
 
+#if RAKNET_SUPPORT_IPV6!=1
 	sockaddr_in sockAddr;
 	int sockAddrSize = sizeof(sockAddr);
+#else
+	struct sockaddr_storage sockAddr;
+	socklen_t sockAddrSize = sizeof(sockAddr);
+#endif
+
 
 	int len;
 	SOCKET newSock;
@@ -826,10 +889,24 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 						if (sts->remoteClients[newRemoteClientIndex].isActive==false)
 						{
 							sts->remoteClients[newRemoteClientIndex].socket=newSock;
-							sts->remoteClients[newRemoteClientIndex].systemAddress.binaryAddress=sockAddr.sin_addr.s_addr;
-							sts->remoteClients[newRemoteClientIndex].systemAddress.port=ntohs( sockAddr.sin_port);
-							sts->remoteClients[newRemoteClientIndex].systemAddress.systemIndex=newRemoteClientIndex;
 
+#if RAKNET_SUPPORT_IPV6!=1
+							sts->remoteClients[newRemoteClientIndex].systemAddress.address.addr4.sin_addr.s_addr=sockAddr.sin_addr.s_addr;
+							sts->remoteClients[newRemoteClientIndex].systemAddress.SetPortNetworkOrder( sockAddr.sin_port);
+							sts->remoteClients[newRemoteClientIndex].systemAddress.systemIndex=newRemoteClientIndex;
+#else
+							if (sockAddr.ss_family==AF_INET)
+							{
+								memcpy(&sts->remoteClients[newRemoteClientIndex].systemAddress.address.addr4,(sockaddr_in *)&sockAddr,sizeof(sockaddr_in));
+							//	sts->remoteClients[newRemoteClientIndex].systemAddress.address.addr4.sin_port=ntohs( sts->remoteClients[newRemoteClientIndex].systemAddress.address.addr4.sin_port );
+							}
+							else
+							{
+								memcpy(&sts->remoteClients[newRemoteClientIndex].systemAddress.address.addr6,(sockaddr_in6 *)&sockAddr,sizeof(sockaddr_in6));
+							//	sts->remoteClients[newRemoteClientIndex].systemAddress.address.addr6.sin6_port=ntohs( sts->remoteClients[newRemoteClientIndex].systemAddress.address.addr6.sin6_port );
+							}
+
+#endif // #if RAKNET_SUPPORT_IPV6!=1
 							sts->remoteClients[newRemoteClientIndex].SetActive(true);
 							sts->remoteClients[newRemoteClientIndex].isActiveMutex.Unlock();
 
@@ -876,18 +953,18 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 
 					if (FD_ISSET(sts->remoteClients[i].socket, &exceptionFD))
 					{
-#ifdef _DO_PRINTF
-						if (sts->listenSocket!=-1)
-						{
-							int err;
-							int errlen = sizeof(err);
-							getsockopt(sts->listenSocket, SOL_SOCKET, SO_ERROR,(char*)&err, &errlen);
-							in_addr in;
-							in.s_addr = sts->remoteClients[i].systemAddress.binaryAddress;
-							RAKNET_DEBUG_PRINTF("Socket error %i on %s:%i\n", err,inet_ntoa( in ), sts->remoteClients[i].systemAddress.port );
-						}
-						
-#endif
+// #ifdef _DO_PRINTF
+// 						if (sts->listenSocket!=-1)
+// 						{
+// 							int err;
+// 							int errlen = sizeof(err);
+// 							getsockopt(sts->listenSocket, SOL_SOCKET, SO_ERROR,(char*)&err, &errlen);
+// 							in_addr in;
+// 							in.s_addr = sts->remoteClients[i].systemAddress.binaryAddress;
+// 							RAKNET_DEBUG_PRINTF("Socket error %i on %s:%i\n", err,inet_ntoa( in ), sts->remoteClients[i].systemAddress.GetPort() );
+// 						}
+// 						
+// #endif
 						// Connection lost abruptly
 						SystemAddress *lostConnectionSystemAddress=sts->lostConnections.Allocate( _FILE_AND_LINE_ );
 						*lostConnectionSystemAddress=sts->remoteClients[i].systemAddress;

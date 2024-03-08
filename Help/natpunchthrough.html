@@ -23,7 +23,8 @@
 	  <p>The problem with NAT is that remote computers cannot initiate sends to local computers because no mapping yet exists. Therefore, if two computers both behind NAT try to connect, neither will be able to do so. This is a problem with voice communication, peer to peer games, or games where your users host and the host is behind a NAT. In the old days your users would have to go to their router configuration screen and setup a mapping. However, in modern applications users are not usually required to do this, thanks to NatPunchthrough.</p>
 	  <p><span class="RakNetBlueHeader">NAT Punchthrough Overview</span></p>
 <p>	    The NatPunchthroughClient.cpp plugin requires a user hosted server, not behind NAT, running NatPunchthroughServer.cpp that both clients can connect to. The server will find the external IP address of each client, and tell both clients to connect to that address at the same time. If that fails, each client will attempt to estimate the ports used by the other. If that fails, the process repeats once again, in case later port estimation opened a prior port. If that also fails, the plugin returns ID_NAT_PUNCHTHROUGH_FAILED.      </p>
-<p>Note: If you publish through Steam, we also provide <a href="steamlobby.html">SteamLobby</a>, which uses servers hosted by Valve, in which case NATPunchthrough is not necessary.</p>
+<p>Note 1: If you publish through Steam, we also provide <a href="steamlobby.html">SteamLobby</a>, which uses servers hosted by Valve, in which case NATPunchthrough is not necessary.<br>
+  Note 2: NAT Punchthrough is not necessary if exclusively using <a href="ipv6support.html">IPV6</a>. </p>
 <p><span class="RakNetBlueHeader">NAT Punchthrough Algorithm</span></p>
 <ol>
   <li> Peer P1 wants to connect to peer P2, both of whom are connected to a third Non-NAT system, F</li>
@@ -173,7 +174,8 @@ If you find more hosting solutions, <A HREF="mailto:rakkar@jenkinssoftware.com">
       </table>
       <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
         <TR>
-          <TD> <p><A HREF="index.html">Index</A><BR>
+          <TD> <p><A HREF="index.html">Index</A><br>
+              <a href="ipv6support.html">IPV6 support </a><BR>
             <A HREF="lightweightdatabase.html">Lightweight Database</A><BR>
             <A HREF="nattypedetection.html">NAT type detection</A><br>
             <a href="steamlobby.html">SteamLobby</a><br>

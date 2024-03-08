@@ -214,7 +214,7 @@ void TwoWayAuthentication::OnRakPeerShutdown(void)
 {
 	Clear();
 }
-void TwoWayAuthentication::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void TwoWayAuthentication::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	(void) lostConnectionReason;
 

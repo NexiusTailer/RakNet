@@ -71,6 +71,10 @@ public:
 	UDPProxyServer();
 	~UDPProxyServer();
 
+	/// Sets the socket family to use, either IPV4 or IPV6
+	/// \param[in] socketFamily For IPV4, use AF_INET (default). For IPV6, use AF_INET6. To autoselect, use AF_UNSPEC.
+	void SetSocketFamily(unsigned short _socketFamily);
+
 	/// Receives the results of calling LoginToCoordinator()
 	/// Set before calling LoginToCoordinator or you won't know what happened
 	/// \param[in] resultHandler 
@@ -93,7 +97,7 @@ public:
 	/// \internal
 	virtual void Update(void);
 	virtual PluginReceiveResult OnReceive(Packet *packet);
-	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	virtual void OnRakPeerStartup(void);
 	virtual void OnRakPeerShutdown(void);
 
@@ -104,6 +108,7 @@ protected:
 	DataStructures::Multilist<ML_ORDERED_LIST, SystemAddress> loggedInCoordinators;
 
 	UDPProxyServerResultHandler *resultHandler;
+	unsigned short socketFamily;
 
 };
 

@@ -59,6 +59,12 @@ public class NatPunchthroughClient : PluginInterface2 {
     return ret;
   }
 
+  public bool OpenNATGroup(RakNetGUID destination, SystemAddress facilitator) {
+    bool ret = RakNetPINVOKE.NatPunchthroughClient_OpenNATGroup(swigCPtr, RakNetGUID.getCPtr(destination), SystemAddress.getCPtr(facilitator));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
   public PunchthroughConfiguration GetPunchthroughConfiguration() {
     IntPtr cPtr = RakNetPINVOKE.NatPunchthroughClient_GetPunchthroughConfiguration(swigCPtr);
     PunchthroughConfiguration ret = (cPtr == IntPtr.Zero) ? null : new PunchthroughConfiguration(cPtr, false);
@@ -69,19 +75,14 @@ public class NatPunchthroughClient : PluginInterface2 {
     RakNetPINVOKE.NatPunchthroughClient_SetDebugInterface(swigCPtr, NatPunchthroughDebugInterface.getCPtr(i));
   }
 
-  public ushort GetUPNPExternalPort() {
-    ushort ret = RakNetPINVOKE.NatPunchthroughClient_GetUPNPExternalPort(swigCPtr);
-    return ret;
+  public virtual void GetGuidsForGroupPunchthroughRequest(RakNetGUID excludeThisGuid, RakNetListRakNetGUID guids) {
+    RakNetPINVOKE.NatPunchthroughClient_GetGuidsForGroupPunchthroughRequest(swigCPtr, RakNetGUID.getCPtr(excludeThisGuid), RakNetListRakNetGUID.getCPtr(guids));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public ushort GetUPNPInternalPort() {
-    ushort ret = RakNetPINVOKE.NatPunchthroughClient_GetUPNPInternalPort(swigCPtr);
-    return ret;
-  }
-
-  public RakString GetUPNPInternalAddress() {
-    RakString ret = new RakString(RakNetPINVOKE.NatPunchthroughClient_GetUPNPInternalAddress(swigCPtr), true);
-    return ret;
+  public void GetUPNPPortMappings(string externalPort, string internalPort, SystemAddress natPunchthroughServerAddress) {
+    RakNetPINVOKE.NatPunchthroughClient_GetUPNPPortMappings(swigCPtr, externalPort, internalPort, SystemAddress.getCPtr(natPunchthroughServerAddress));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void Clear() {

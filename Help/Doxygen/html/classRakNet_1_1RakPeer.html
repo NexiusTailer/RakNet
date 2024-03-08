@@ -144,9 +144,9 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#994301b7a75108bafaf7479ab1a09db1">GetGUIDFromIndex</a> (int index)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Same as GetSystemAddressFromIndex but returns <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>.  <a href="#994301b7a75108bafaf7479ab1a09db1"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#a4b6b55f7832da33b2e07a721263cfce">GetSystemList</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &gt; &amp;addresses, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &gt; &amp;guids)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#791779bb9714e830f19a5f12961576d7">GetSystemList</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &gt; &amp;addresses, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &gt; &amp;guids) const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Same as calling GetSystemAddressFromIndex and GetGUIDFromIndex for all systems, but more efficient Indices match each other, so <em>addresses</em>[0] and <em>guids</em>[0] refer to the same system.  <a href="#a4b6b55f7832da33b2e07a721263cfce"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Same as calling GetSystemAddressFromIndex and GetGUIDFromIndex for all systems, but more efficient Indices match each other, so <em>addresses</em>[0] and <em>guids</em>[0] refer to the same system.  <a href="#791779bb9714e830f19a5f12961576d7"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#d403c131efe8bfe6f3c5280e110b9b2d">AddToBanList</a> (const char *IP, RakNet::TimeMS milliseconds=0)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Bans an IP from connecting.  <a href="#d403c131efe8bfe6f3c5280e110b9b2d"></a><br></td></tr>
@@ -186,7 +186,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#ec33659d51a00eed12bd1dc8a24071b0">GetOfflinePingResponse</a> (char **data, unsigned int *length)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns pointers to a copy of the <em>data</em> passed to SetOfflinePingResponse.  <a href="#ec33659d51a00eed12bd1dc8a24071b0"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#cf82a248aa543c9ec04567c14004fea5">GetInternalID</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress=UNASSIGNED_SYSTEM_ADDRESS, const int index=0) const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#cf82a248aa543c9ec04567c14004fea5">GetInternalID</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress=<a class="el" href="namespaceRakNet.html#80c95b4ed53f42911a6fa92b85e929cf">UNASSIGNED_SYSTEM_ADDRESS</a>, const int index=0) const </td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the unique address identifier that represents you or another system on the the network and is based on your local IP / port.  <a href="#cf82a248aa543c9ec04567c14004fea5"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#96f0e923c413fe2319d17862605d6622">GetExternalID</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> target) const </td></tr>
@@ -196,6 +196,10 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 const <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#235dbac30fb41b88db95448cc3d57f8d">GetMyGUID</a> (void)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return my own GUID. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1566deab65341e8b665f7643b3a3bcf9"></a><!-- doxytag: member="RakNet::RakPeer::GetMyBoundAddress" ref="1566deab65341e8b665f7643b3a3bcf9" args="(const int socketIndex=0)" -->
+<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#1566deab65341e8b665f7643b3a3bcf9">GetMyBoundAddress</a> (const int socketIndex=0)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return the address bound to a socket at the specified index. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">const <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#41fcd1175cb8fee67b12835944ed51da">GetGuidFromSystemAddress</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> input) const </td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Given a connected system address, this method gives the unique GUID representing that instance of <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a>. This will be the same on all systems connected to that instance of <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a>, even if the external system addresses are different. Complexity is O(log2(n)). If <em>input</em> is UNASSIGNED_SYSTEM_ADDRESS, will return your own GUID.  <a href="#41fcd1175cb8fee67b12835944ed51da"></a><br></td></tr>
@@ -278,8 +282,8 @@ virtual unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">RemoteSystemStruct *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#380285f3ca2ce6bc081fc8fcb4541cc9">GetRemoteSystemFromSystemAddress</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, bool calledFromNetworkThread, bool onlyActive) const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b81399a212de4facf940b762ffdaa961"></a><!-- doxytag: member="RakNet::RakPeer::ParseConnectionRequestPacket" ref="b81399a212de4facf940b762ffdaa961" args="(RakPeer::RemoteSystemStruct *remoteSystem, SystemAddress systemAddress, const char *data, int byteSize)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#b81399a212de4facf940b762ffdaa961">ParseConnectionRequestPacket</a> (RakPeer::RemoteSystemStruct *remoteSystem, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, const char *data, int byteSize)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e483d3f2306ada5fc2d79bde1663130d"></a><!-- doxytag: member="RakNet::RakPeer::ParseConnectionRequestPacket" ref="e483d3f2306ada5fc2d79bde1663130d" args="(RakPeer::RemoteSystemStruct *remoteSystem, const SystemAddress &amp;systemAddress, const char *data, int byteSize)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#e483d3f2306ada5fc2d79bde1663130d">ParseConnectionRequestPacket</a> (RakPeer::RemoteSystemStruct *remoteSystem, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, const char *data, int byteSize)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Parse out a connection request packet. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bff708e05373259e91ec0a863fbaf375"></a><!-- doxytag: member="RakNet::RakPeer::NotifyAndFlagForShutdown" ref="bff708e05373259e91ec0a863fbaf375" args="(const SystemAddress systemAddress, bool performImmediate, unsigned char orderingChannel, PacketPriority disconnectionNotificationPriority)" -->
@@ -293,9 +297,9 @@ unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">RemoteSystemStruct *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#79cae32303c426eee75c4d5d22175059">AssignSystemAddressToRemoteSystemList</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, RemoteSystemStruct::ConnectMode connectionMode, RakNetSmartPtr&lt; RakNetSocket &gt; incomingRakNetSocket, bool *thisIPConnectedRecently, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> bindingAddress, int incomingMTU, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> guid, bool useSecurity)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get a free remote system from the list and assign our systemAddress to it.  <a href="#79cae32303c426eee75c4d5d22175059"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#afde00a1a630aa72ca49eca96060f478">ShiftIncomingTimestamp</a> (unsigned char *data, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress) const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#9251492e6d3d0538111c1d90be554b2d">ShiftIncomingTimestamp</a> (unsigned char *data, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress) const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adjust the timestamp of the incoming packet to be relative to this system.  <a href="#afde00a1a630aa72ca49eca96060f478"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adjust the timestamp of the incoming packet to be relative to this system.  <a href="#9251492e6d3d0538111c1d90be554b2d"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">RakNet::Time&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#1e23c8101ff1db0f6d6429afb7b1e711">GetBestClockDifferential</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress) const </td></tr>
 
 <tr><td colspan="2"><br><h2>Protected Attributes</h2></td></tr>
@@ -318,6 +322,8 @@ volatile bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Local Player ID. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">RemoteSystemStruct *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#433a287f35dd77985ae4ac579e6adf76">remoteSystemList</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">RemoteSystemStruct **&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#d8cab96454717bfcbc2cfda6f88d8cc0">activeSystemList</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f4ed36c02a71245b4159ddee3be909a1"></a><!-- doxytag: member="RakNet::RakPeer::updateCycleIsRunning" ref="f4ed36c02a71245b4159ddee3be909a1" args="" -->
 bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#f4ed36c02a71245b4159ddee3be909a1">updateCycleIsRunning</a></td></tr>
@@ -1354,7 +1360,7 @@ Values range from 0 to the maximum number of players allowed - 1. This includes 
           <td class="memname"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> RakNet::RakPeer::GetInternalID           </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em> = <code>UNASSIGNED_SYSTEM_ADDRESS</code>, </td>
+          <td class="paramname"> <em>systemAddress</em> = <code><a class="el" href="namespaceRakNet.html#80c95b4ed53f42911a6fa92b85e929cf">UNASSIGNED_SYSTEM_ADDRESS</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1374,6 +1380,7 @@ Values range from 0 to the maximum number of players allowed - 1. This includes 
 <p>
 Returns the unique address identifier that represents you or another system on the the network and is based on your local IP / port. 
 <p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>Not supported by the XBOX </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Use UNASSIGNED_SYSTEM_ADDRESS to get your behind-LAN address. Use a connected system to get their behind-LAN address </td></tr>
@@ -1903,7 +1910,7 @@ Given <em>index</em> into remoteSystemList, will return a <a class="el" href="st
 
 </div>
 </div><p>
-<a class="anchor" name="a4b6b55f7832da33b2e07a721263cfce"></a><!-- doxytag: member="RakNet::RakPeer::GetSystemList" ref="a4b6b55f7832da33b2e07a721263cfce" args="(DataStructures::List&lt; SystemAddress &gt; &amp;addresses, DataStructures::List&lt; RakNetGUID &gt; &amp;guids)" -->
+<a class="anchor" name="791779bb9714e830f19a5f12961576d7"></a><!-- doxytag: member="RakNet::RakPeer::GetSystemList" ref="791779bb9714e830f19a5f12961576d7" args="(DataStructures::List&lt; SystemAddress &gt; &amp;addresses, DataStructures::List&lt; RakNetGUID &gt; &amp;guids) const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1922,7 +1929,7 @@ Given <em>index</em> into remoteSystemList, will return a <a class="el" href="st
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td></td><td><code> [virtual]</code></td>
+          <td></td><td></td><td> const<code> [virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -1938,7 +1945,7 @@ Same as calling GetSystemAddressFromIndex and GetGUIDFromIndex for all systems, 
   </table>
 </dl>
 
-<p>Implements <a class="el" href="classRakNet_1_1RakPeerInterface.html#2e7b4c02c1f15c7e35c4b8f8eb986326">RakNet::RakPeerInterface</a>.</p>
+<p>Implements <a class="el" href="classRakNet_1_1RakPeerInterface.html#a1939c66f7190e3c647a6a685a6eb248">RakNet::RakPeerInterface</a>.</p>
 
 </div>
 </div><p>
@@ -3052,7 +3059,7 @@ If you need code to run in the same thread as RakNet's update thread, this funct
 
 </div>
 </div><p>
-<a class="anchor" name="afde00a1a630aa72ca49eca96060f478"></a><!-- doxytag: member="RakNet::RakPeer::ShiftIncomingTimestamp" ref="afde00a1a630aa72ca49eca96060f478" args="(unsigned char *data, SystemAddress systemAddress) const " -->
+<a class="anchor" name="9251492e6d3d0538111c1d90be554b2d"></a><!-- doxytag: member="RakNet::RakPeer::ShiftIncomingTimestamp" ref="9251492e6d3d0538111c1d90be554b2d" args="(unsigned char *data, const SystemAddress &amp;systemAddress) const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -3065,7 +3072,7 @@ If you need code to run in the same thread as RakNet's update thread, this funct
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -3193,6 +3200,21 @@ Call SetMaximumIncomingConnections if you want to accept incoming connections. <
 </div>
 </div><p>
 <hr><h2>Member Data Documentation</h2>
+<a class="anchor" name="d8cab96454717bfcbc2cfda6f88d8cc0"></a><!-- doxytag: member="RakNet::RakPeer::activeSystemList" ref="d8cab96454717bfcbc2cfda6f88d8cc0" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">RemoteSystemStruct** <a class="el" href="classRakNet_1_1RakPeer.html#d8cab96454717bfcbc2cfda6f88d8cc0">RakNet::RakPeer::activeSystemList</a><code> [protected]</code>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+activeSystemList holds a list of pointers and is preallocated to be the same size as remoteSystemList. It is updated only by the network thread, but read by both threads When the isActive member of RemoteSystemStruct is set to true or false, that system is added to this list of pointers Threadsafe because RemoteSystemStruct is preallocated, and the list is only added to, not removed from 
+</div>
+</div><p>
 <a class="anchor" name="9d820f9f09600401b3689a599242832a"></a><!-- doxytag: member="RakNet::RakPeer::allowConnectionResponseIPMigration" ref="9d820f9f09600401b3689a599242832a" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -3292,9 +3314,9 @@ This is used to return a number to the user when they call Send identifying the 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/temp/RakNet4/Source/<a class="el" href="RakPeer_8h.html">RakPeer.h</a></ul>
+<li>d:/temp/RakNet/Source/<a class="el" href="RakPeer_8h.html">RakPeer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:29 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 8 13:04:37 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

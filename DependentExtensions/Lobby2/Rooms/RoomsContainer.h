@@ -34,7 +34,7 @@ public:
 	// Name is used for persistent invites and bans. Name should be unique among all participants or else the invites and bans will be applied to the wrong players
 	RakNet::RakString GetName(void) const {return name;}
 	void SetName(const char *str) {name = str;}
-	void SetSystemAddress(SystemAddress sa) {systemAddress=sa;}
+	void SetSystemAddress(const SystemAddress &sa) {systemAddress=sa;}
 	SystemAddress GetSystemAddress(void) const {return systemAddress;}
 	void SetGUID(RakNetGUID g) {guid=g;}
 	RakNetGUID GetGUID(void) const {return guid;}

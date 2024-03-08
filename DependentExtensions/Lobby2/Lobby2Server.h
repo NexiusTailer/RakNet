@@ -166,7 +166,7 @@ protected:
 
 	void Update(void);
 	PluginReceiveResult OnReceive(Packet *packet);
-	void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	void OnShutdown(void);
 	void OnMessage(Packet *packet);
 	void Clear(void);

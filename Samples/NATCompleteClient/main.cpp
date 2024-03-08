@@ -11,11 +11,16 @@
 #include "NatPunchthroughClient.h"
 #include "NatTypeDetectionClient.h"
 #include "Getche.h"
-#include "UPNPPortForwarder.h"
 #include "GetTime.h"
 #include "Router2.h"
 #include "UDPProxyClient.h"
 #include "Gets.h"
+#include "Itoa.h"
+
+// To include miniupnp, see Samples\NATCompleteClient\readme.txt
+#include "miniupnpc.h"
+#include "upnpcommands.h"
+#include "upnperrors.h"
 
 using namespace RakNet;
 
@@ -31,18 +36,11 @@ enum SampleResult
 	SUCCEEDED
 };
 
-// #define SUPPORT_UPNP PENDING
-// #define SUPPORT_NAT_TYPE_DETECTION PENDING
-// #define SUPPORT_NAT_PUNCHTHROUGH PENDING
-// #define SUPPORT_ROUTER2 PENDING
-// #define SUPPORT_UDP_PROXY PENDING
-
-#define SUPPORT_UPNP FAILED
-#define SUPPORT_NAT_TYPE_DETECTION FAILED
+#define SUPPORT_UPNP PENDING
+#define SUPPORT_NAT_TYPE_DETECTION PENDING
 #define SUPPORT_NAT_PUNCHTHROUGH PENDING
-#define SUPPORT_ROUTER2 FAILED
-#define SUPPORT_UDP_PROXY FAILED
-
+#define SUPPORT_ROUTER2 PENDING
+#define SUPPORT_UDP_PROXY PENDING
 
 struct SampleFramework
 {
@@ -59,84 +57,6 @@ struct SampleFramework
 	SampleResult sampleResult;
 };
 
-struct UPNPFramework : public SampleFramework, public UPNPCallbackInterface
-{
-	UPNPFramework() { sampleResult=SUPPORT_UPNP; upnp=0;} 
-	virtual const char * QueryName(void) {return "UPNPFramework";}
-	virtual bool QueryRequiresServer(void) {return false;}
-	virtual const char * QueryFunction(void) {return "Use UPNP to open the router";}
-	virtual const char * QuerySuccess(void) {return "Other systems can now connect to you on the opened port.";}
-	virtual bool QueryQuitOnSuccess(void) {return true;}
-	virtual void Init(RakNet::RakPeerInterface *rakPeer)
-	{
-		if (sampleResult==FAILED) return;
-
-		upnp = new UPNPPortForwarder;
-		DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
-		rakPeer->GetSockets(sockets);
-		upnp->OpenPortOnInterface(this,sockets[0]->boundAddress.port, "ALL");
-	}
-
-	virtual void ProcessPacket(Packet *packet)
-	{
-	}
-	virtual void Update(RakNet::RakPeerInterface *rakPeer)
-	{
-		if (sampleResult==FAILED) return;
-
-		upnp->CallCallbacks();
-	}
-	virtual void Shutdown(RakNet::RakPeerInterface *rakPeer)
-	{
-		delete upnp;
-		upnp=0;
-	}
-
-	virtual void UPNPStatusUpdate(RakNet::RakString stringToPrint) {
-		printf("%s\n", stringToPrint.C_String());
-	}
-
-	virtual void QueryUPNPSupport_Result(QueryUPNPSupportResult *result) {
-		unsigned int i;
-		if (result->interfacesFound.Size()==0)
-		{
-			printf("Router does not support UPNP\n");
-			sampleResult=FAILED;
-			return;
-		}
-		printf("UPNP supported interfaces found:\n");
-		for (i=0; i < result->interfacesFound.Size(); i++)
-		{
-			printf("%i. %s", i+1, result->interfacesFound[i].C_String());
-		}
-		sampleResult=SUCCEEDED;		
-	}
-
-	virtual void OpenPortOnInterface_Result(OpenPortResult *result)
-	{
-		unsigned int i;
-		if (result->interfacesFound.Size()==0)
-		{
-			printf("Router does not support UPNP\n");
-			sampleResult=FAILED;
-			return;
-		}
-		printf("UPNP supported interfaces found:\n");
-		bool anySucceeded=false;
-		for (i=0; i < result->interfacesFound.Size(); i++)
-		{
-			if (result->succeeded[i]==true)
-				anySucceeded=true;
-			printf("%i. %s. Supports UPNP: %s\n", i+1, result->interfacesFound[i].C_String(), result->succeeded[i]==true ? "Yes" : "No");
-		}
-		if (anySucceeded)
-			sampleResult=SUCCEEDED;		
-		else
-			sampleResult=FAILED;
-	}
-
-	UPNPPortForwarder *upnp;
-};
 SystemAddress SelectAmongConnectedSystems(RakNet::RakPeerInterface *rakPeer, const char *hostName)
 {
 	DataStructures::List<SystemAddress> addresses;
@@ -231,6 +151,97 @@ SystemAddress ConnectBlocking(RakNet::RakPeerInterface *rakPeer, const char *hos
 		}
 	}
 }
+struct UPNPFramework : public SampleFramework
+{
+	UPNPFramework() { sampleResult=SUPPORT_UPNP;} 
+	virtual const char * QueryName(void) {return "UPNPFramework";}
+	virtual bool QueryRequiresServer(void) {return false;}
+	virtual const char * QueryFunction(void) {return "Use UPNP to open the router";}
+	virtual const char * QuerySuccess(void) {return "Other systems can now connect to you on the opened port.";}
+	virtual bool QueryQuitOnSuccess(void) {return true;}
+	virtual void Init(RakNet::RakPeerInterface *rakPeer)
+	{
+		if (sampleResult==FAILED) return;
+
+		struct UPNPDev * devlist = 0;
+		devlist = upnpDiscover(2000, 0, 0, 0);
+		if (devlist)
+		{
+			printf("List of UPNP devices found on the network :\n");
+			struct UPNPDev * device;
+			for(device = devlist; device; device = device->pNext)
+			{
+				printf(" desc: %s\n st: %s\n\n",
+					device->descURL, device->st);
+			}
+
+			char lanaddr[64];	/* my ip address on the LAN */
+			struct UPNPUrls urls;
+			struct IGDdatas data;
+			if (UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))==1)
+			{
+				SystemAddress serverAddress=SelectAmongConnectedSystems(rakPeer, "NatTypeDetectionServer");
+				if (serverAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
+				{
+					serverAddress=ConnectBlocking(rakPeer, "NatTypeDetectionServer", DEFAULT_SERVER_ADDRESS, DEFAULT_SERVER_PORT);
+					if (serverAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
+					{
+						printf("Failed to connect to a server.\n");
+						sampleResult=FAILED;
+						return;
+					}
+				}
+
+				DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
+				rakPeer->GetSockets(sockets);
+
+				char iport[32];
+				Itoa(sockets[0]->boundAddress.GetPort(),iport,10);
+				char eport[32];
+				Itoa(rakPeer->GetExternalID(serverAddress).GetPort(),eport,10);
+
+				int r = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
+					 eport, iport, lanaddr, 0, "UDP", 0);
+
+				if(r!=UPNPCOMMAND_SUCCESS)
+					printf("AddPortMapping(%s, %s, %s) failed with code %d (%s)\n",
+					eport, iport, lanaddr, r, strupnperror(r));
+
+				char intPort[6];
+				char intClient[16];
+				r = UPNP_GetSpecificPortMappingEntry(urls.controlURL,
+					data.first.servicetype,
+					eport, "UDP",
+					intClient, intPort);
+
+				if(r!=UPNPCOMMAND_SUCCESS)
+				{
+					printf("GetSpecificPortMappingEntry() failed with code %d (%s)\n",
+					r, strupnperror(r));
+					sampleResult=FAILED;
+				}
+				else
+					sampleResult=SUCCEEDED;
+			}
+			else
+				sampleResult=FAILED;
+		}
+		else
+			sampleResult=FAILED;
+	}
+
+	virtual void ProcessPacket(Packet *packet)
+	{
+	}
+	virtual void Update(RakNet::RakPeerInterface *rakPeer)
+	{
+		if (sampleResult==FAILED) return;
+	}
+	virtual void Shutdown(RakNet::RakPeerInterface *rakPeer)
+	{
+	}
+
+};
 struct NatTypeDetectionFramework : public SampleFramework
 {
 	// Set to FAILED to skip this test

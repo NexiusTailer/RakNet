@@ -26,7 +26,7 @@ RAK_THREAD_DECLARATION(ProducerThread)
 {
 	char i = *((char *) arguments);
 	char out[2];
-	out[0]=ID_USER_PACKET_ENUM;
+	out[0]=(char) ID_USER_PACKET_ENUM;
 	out[1]=i;
 
 	while (endThreads==false)

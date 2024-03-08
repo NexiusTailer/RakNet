@@ -33,7 +33,8 @@ int main()
 		fcm2[i].SetAutoparticipateConnections(true);
 		RakNet::SocketDescriptor sd;
 		sd.port=60000+i;
-		rakPeer[i]->Startup(NUM_PEERS,&sd,1);
+		StartupResult sr = rakPeer[i]->Startup(NUM_PEERS,&sd,1);
+		RakAssert(sr==RAKNET_STARTED);
 		rakPeer[i]->SetMaximumIncomingConnections(NUM_PEERS);
 		rakPeer[i]->SetTimeoutTime(1000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 		printf("Our guid is %s\n", rakPeer[i]->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
@@ -45,7 +46,8 @@ int main()
 		{
 			if (i==j)
 				continue;
-			rakPeer[i]->Connect("127.0.0.1", 60000+j, 0, 0 );
+			ConnectionAttemptResult car = rakPeer[i]->Connect("127.0.0.1", 60000+j, 0, 0 );
+			RakAssert(car==CONNECTION_ATTEMPT_STARTED);
 		}
 	}
 
@@ -64,7 +66,9 @@ int main()
 					// Connection lost normally
 					printf("%i. ID_DISCONNECTION_NOTIFICATION\n", i);
 					break;
-
+				case ID_CONNECTION_ATTEMPT_FAILED:
+					printf("%i. ID_CONNECTION_ATTEMPT_FAILED\n", i);
+					break;
 
 				case ID_NEW_INCOMING_CONNECTION:
 					// Somebody connected.  We have their IP now
@@ -110,10 +114,11 @@ int main()
 					fcm2[i].GetParticipantCount(&participantList);
 					weAreHost=fcm2[i].IsHostSystem();
 					hostGuid=fcm2[i].GetHostSystem();
+					
 					if (weAreHost)
-						printf("%i. %iP myGuid=%s, hostGuid=%s (Y)\n",i, participantList, rakPeer[i]->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString(), hostGuid.ToString());
+						printf("%i. %iP myGuid=%s, hostGuid=%s tcc=%i (Y)\n",i, participantList, rakPeer[i]->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString(), hostGuid.ToString(), fcm2[i].GetTotalConnectionCount());
 					else
-						printf("%i. %iP myGuid=%s, hostGuid=%s (N)\n",i, participantList, rakPeer[i]->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString(), hostGuid.ToString());
+						printf("%i. %iP myGuid=%s, hostGuid=%s tcc=%i (N)\n",i, participantList, rakPeer[i]->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString(), hostGuid.ToString(), fcm2[i].GetTotalConnectionCount());
 				}
 			}
 			if (ch=='d' || ch=='D')

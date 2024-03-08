@@ -6,6 +6,11 @@
 // RakNet includes
 #include "GetTime.h"
 #include "MessageIdentifiers.h"
+#include "Itoa.h"
+#include "RakNetSmartPtr.h"
+#include "miniupnpc.h"
+#include "upnpcommands.h"
+#include "upnperrors.h"
 
 CDemo::CDemo(bool f, bool m, bool s, bool a, bool v, bool fsaa, video::E_DRIVER_TYPE d, core::stringw &_playerName)
 : fullscreen(f), music(m), shadows(s), additive(a), vsync(v), aa(fsaa),
@@ -19,7 +24,7 @@ CDemo::CDemo(bool f, bool m, bool s, bool a, bool v, bool fsaa, video::E_DRIVER_
  currentScene(-2), backColor(0), statusText(0), inOutFader(0),
  quakeLevelMesh(0), quakeLevelNode(0), skyboxNode(0), model1(0), model2(0),
  campFire(0), metaSelector(0), mapSelector(0), sceneStartTime(0),
- timeForThisScene(0), isConnectedToNATPunchthroughServer(false), whenOutputMessageStarted(0)
+ timeForThisScene(0), whenOutputMessageStarted(0), isConnectedToNATPunchthroughServer(false)
 {
 	for (u32 i=0; i<KEY_KEY_CODES_COUNT; ++i)
 		KeyIsDown[i] = false;
@@ -93,7 +98,6 @@ void CDemo::run()
 	InstantiateRakNetClasses();
 
 	// Hook RakNet stuff into this class
-	udpProxyClient->SetResultHandler(this);
 	playerReplica->playerName=RakNet::RakString(dest);
 	playerReplica->demo=this;
 	replicaManager3->demo=this;
@@ -981,6 +985,9 @@ void CDemo::UpdateRakNet(void)
 			break;
 		case ID_NEW_INCOMING_CONNECTION:
 			{
+				// Add as participants all except the directory server
+				fullyConnectedMesh2->AddParticipant(packet->guid);
+
 				PushMessage(RakNet::RakString("New incoming connection from ") + targetName + RakNet::RakString("."));
 				
 				// Add this system as a new player
@@ -993,12 +1000,78 @@ void CDemo::UpdateRakNet(void)
 				if (packet->systemAddress==facilitatorSystemAddress)
 				{
 					isConnectedToNATPunchthroughServer=true;
+
+					// Open UPNP.
+					struct UPNPDev * devlist = 0;
+					devlist = upnpDiscover(1000, 0, 0, 0);
+					if (devlist)
+					{
+						char lanaddr[64];	/* my ip address on the LAN */
+						struct UPNPUrls urls;
+						struct IGDdatas data;
+						if (UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))==1)
+						{
+							// External port is the port people will be connecting to us on. This is our port as seen by the directory server
+							// Internal port is the port RakNet was internally started on
+							char eport[32], iport[32];
+							natPunchthroughClient->GetUPNPPortMappings(eport, iport, facilitatorSystemAddress);
+
+							int r = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
+								eport, iport, lanaddr, 0, "UDP", 0);
+
+							if(r==UPNPCOMMAND_SUCCESS)
+							{
+								// UPNP done
+							}
+
+						}
+					}
+					
+					// Query cloud for other running game instances
+					RakNet::CloudQuery cloudQuery;
+					cloudQuery.keys.Push(RakNet::CloudKey("IrrlichtDemo",0),_FILE_AND_LINE_);
+					cloudClient->Get(&cloudQuery, packet->guid);
 				}
 				else
 				{
+					// Add as participants all except the directory server
+					fullyConnectedMesh2->AddParticipant(packet->guid);
+
 					// Add this system as a new player
 					replicaManager3->PushConnection(replicaManager3->AllocConnection(packet->systemAddress, packet->guid));
 				}
+			}
+			break;
+		case ID_FCM2_NEW_HOST:
+			{
+				if (packet->guid==rakPeer->GetMyGUID())
+				{
+					// Original host dropped. I am the new session host. Upload to the cloud so new players join this system.
+					RakNet::CloudKey cloudKey("IrrlichtDemo",0);
+					cloudClient->Post(&cloudKey, 0, 0, rakPeer->GetGuidFromSystemAddress(facilitatorSystemAddress));
+				}
+			}
+			break;
+		case ID_CLOUD_GET_RESPONSE:
+			{
+				PushMessage(RakNet::RakString("Got response from directory server"));
+
+				RakNet::CloudQueryResult cloudQueryResult;
+				cloudClient->OnGetReponse(&cloudQueryResult, packet);
+				if (cloudQueryResult.rowsReturned.Size()>0)
+				{
+					// Connect to the first game instance
+					// Will return ID_NAT_GROUP_PUNCH_SUCCEEDED on success
+					natPunchthroughClient->OpenNATGroup(cloudQueryResult.rowsReturned[0]->clientGUID, facilitatorSystemAddress);
+				}
+				else
+				{
+					// Start as a new game instance because no other games are running
+					RakNet::CloudKey cloudKey("IrrlichtDemo",0);
+					cloudClient->Post(&cloudKey, 0, 0, packet->guid);
+				}
+
+				cloudClient->DeallocateWithDefaultAllocator(&cloudQueryResult);
 			}
 			break;
 		case ID_CONNECTION_ATTEMPT_FAILED:
@@ -1048,33 +1121,29 @@ void CDemo::UpdateRakNet(void)
 				PushMessage(RakNet::RakString("NAT punchthrough to ") + targetName + RakNet::RakString(" in progress (skipping)."));
 			}
 			break;
-		case ID_NAT_PUNCHTHROUGH_FAILED:
+		case ID_NAT_GROUP_PUNCH_SUCCEEDED:
 			{
-				targetName=packet->guid.ToString();
-				unsigned char weAreSender=packet->data[1];
-				if (weAreSender)
+				// Punched all remote systems in that game session. Connect to them all at once.
+				RakNet::BitStream bs(packet->data,packet->length,false);
+				bs.IgnoreBytes(sizeof(RakNet::MessageID));
+				unsigned short count;
+				bs.Read(count);
+				unsigned short i;
+				for (i=0; i < count; i++)
 				{
-					PushMessage(RakNet::RakString("Punchthrough to ") + targetName + RakNet::RakString(" failed. Using proxy."));
-					udpProxyClient->RequestForwarding(facilitatorSystemAddress, RakNet::UNASSIGNED_SYSTEM_ADDRESS, packet->guid, 7000);
-				}
-				else
-				{
-					PushMessage(RakNet::RakString("Punchthrough to ") + targetName + RakNet::RakString(" failed. Remote system should connect via proxy."));
+					RakNet::SystemAddress sa;
+					bs.Read(sa);
+					unsigned char addrStr[64];
+					sa.ToString(false,(char*)addrStr);
+					rakPeer->Connect((char*)addrStr,sa.GetPort(),0,0);
 				}
 			}
 			break;
-		case ID_NAT_PUNCHTHROUGH_SUCCEEDED:
+		case ID_NAT_GROUP_PUNCH_FAILED:
 			{
-				unsigned char weAreSender=packet->data[1];
-				if (weAreSender)
-				{
-					PushMessage(RakNet::RakString("Punchthrough to ") + targetName + RakNet::RakString(" succeeded. Connecting."));
-					rakPeer->Connect(packet->systemAddress.ToString(false), packet->systemAddress.port,0,0);
-				}
-				else
-				{
-					PushMessage(RakNet::RakString("Punchthrough to ") + targetName + RakNet::RakString(" succeeded."));
-				}
+				char guidStr[64];
+				packet->guid.ToString(guidStr);
+				PushMessage(RakNet::RakString("NAT punchthrough to ") + guidStr + RakNet::RakString(" failed."));
 			}
 			break;
 		case ID_ADVERTISE_SYSTEM:
@@ -1082,84 +1151,11 @@ void CDemo::UpdateRakNet(void)
 			{
 				char hostIP[32];
 				packet->systemAddress.ToString(false,hostIP);
-				rakPeer->Connect(hostIP,packet->systemAddress.port,0,0);
+				rakPeer->Connect(hostIP,packet->systemAddress.GetPort(),0,0);
 			}
 			break;
 		}
 	}
-	for (packet=tcpInterface->Receive(); packet; tcpInterface->DeallocatePacket(packet), packet=tcpInterface->Receive())
-	{
-		httpConnection->ProcessTCPPacket(packet);
-	}
-	if (httpConnection->HasRead())
-	{
-		RakNet::RakString httpResult = httpConnection->Read();
-		// Good response, let the PHPDirectoryServer2 class handle the data
-		// If resultCode is not an empty string, then we got something other than a table
-		// (such as delete row success notification, or the message is for HTTP only and not for this class).
-		RakNet::HTTPReadResult readResult = phpDirectoryServer2->ProcessHTTPRead(httpResult);
-
-		if (readResult==RakNet::HTTP_RESULT_GOT_TABLE)
-		{
-			/// Got a table which was stored internally. Print it out
-			const DataStructures::Table *games = phpDirectoryServer2->GetLastDownloadedTable();
-			// __GAME_NAME is an automatic column passed to PHPDirectoryServer::UploadTable
-			unsigned int gameNameIndex = games->ColumnIndex("__GAME_NAME");
-			// RakNet::RakNetGUID is a column we manually added using our own GUID with PHPDirectoryServer::SetField
-			// We need to use RakNet::RakNetGUID because NAT punchthrough refers to systems by RakNet::RakNetGUID, rather than by RakNet::SystemAddress
-			unsigned int guidIndex = games->ColumnIndex("RakNetGUID");
-			RakAssert(guidIndex!=(unsigned int )-1);
-			DataStructures::Table::Row *row;
-			unsigned int i;
-			unsigned int tableSize=0, connectionCount=0;
-			DataStructures::Page<unsigned, DataStructures::Table::Row*, _TABLE_BPLUS_TREE_ORDER> *cur = games->GetRows().GetListHead();
-			while (cur)
-			{
-				for (i=0; i < (unsigned)cur->size; i++)
-				{
-					RakAssert(gameNameIndex!=-1);
-					row = cur->data[i];
-					// Make sure it's the same game, since the PHPDirectoryServer can return other games too
-					if (gameNameIndex!=(unsigned int) -1 && strcmp(row->cells[gameNameIndex]->c, "IrrlichtDemo")==0)
-					{
-						tableSize++;
-						RakNet::RakString guidStr = row->cells[guidIndex]->c;
-						RakNet::RakNetGUID guid;
-						guid.FromString(guidStr.C_String());
-						// Connect as long as I'm not connecting to myself
-						if (guid!=rakPeer->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS))
-						{
-							connectionCount++;
-							systemsToConnectTo.Push(guid);
-						}
-					}
-				}
-				cur=cur->next;
-			}
-			PushMessage(RakNet::RakString("DirectoryServer returned %i rows, of which we are connecting to %i",tableSize,connectionCount));
-		}
-	}
-
-	// Update our two classes so they can do time-based updates
-	httpConnection->Update();
-	phpDirectoryServer2->Update();
-
-	// Start punchthrough to all pending systems, which we got from the PHP directory server code about 20 lines above
-	if (isConnectedToNATPunchthroughServer)
-	{
-		while (systemsToConnectTo.GetSize()>0)
-		{
-			RakNet::RakNetGUID g = systemsToConnectTo.Pop(_FILE_AND_LINE_);
-			natPunchthroughClient->OpenNAT(g, facilitatorSystemAddress);
-			targetName=g.ToString();
-			PushMessage(RakNet::RakString("Punchthrough to ") + targetName + RakNet::RakString(" started."));
-		}
-	}
-	
-	// Update non-plugin helper classes.
-	// This keeps our system listed on the PHP directory server
-	httpConnection->Update();
-	phpDirectoryServer2->Update();
 
 	// Call the Update function for networked game objects added to BaseIrrlichtReplica once the game is ready
 	if (currentScene>=1)
@@ -1169,35 +1165,7 @@ void CDemo::UpdateRakNet(void)
 			((BaseIrrlichtReplica*)(replicaManager3->GetReplicaAtIndex(idx)))->Update(curTime);;
 	}	
 }
-void CDemo::OnForwardingSuccess(const char *proxyIPAddress, unsigned short proxyPort,
-										RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
-{
-	RakNet::RakString targetName = targetAddress.ToString();
-	PushMessage(RakNet::RakString("Proxy forwarding to ") + targetName + RakNet::RakString(" through %s:%i succeeded. Connecting.", proxyIPAddress, proxyPort));
-	rakPeer->Connect(proxyIPAddress, proxyPort,0,0);
-}
-void CDemo::OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort,
-											 RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
-{
-	RakNet::RakString targetName = proxyIPAddress;
-	PushMessage(RakNet::RakString("%s has setup forwarding to us through proxy %s:%i.\n", sourceAddress.ToString(false), proxyIPAddress,proxyPort));
-}
-void CDemo::OnNoServersOnline(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
-{
-	PushMessage(RakNet::RakString("RakNet::RakString(No proxy servers online. Unable to connect to %s.", sourceAddress.ToString(true)));
-}
-void CDemo::OnRecipientNotConnected(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)
-{
-	PushMessage(RakNet::RakString("Failure: Recipient not connected to coordinator.\n"));
-}
-void CDemo::OnAllServersBusy(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
-{
-	PushMessage(RakNet::RakString("No proxy servers available. Unable to connect to %s.", sourceAddress.ToString(true)));
-}
-void CDemo::OnForwardingInProgress(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
-{
-	PushMessage(RakNet::RakString("Forwarding to %s already in progress. Ignoring.", sourceAddress.ToString(true)));
-}
+
 bool CDemo::IsKeyDown(EKEY_CODE keyCode) const {return KeyIsDown[keyCode];}
 bool CDemo::IsMovementKeyDown(void) const {return KeyIsDown[KEY_UP] | 
 KeyIsDown[KEY_DOWN] | 

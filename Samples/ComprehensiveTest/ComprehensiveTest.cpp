@@ -91,7 +91,7 @@ int main(void)
 				printf("%i: ", 60000+numSystems);
 				for (i=0; i < numSystems; i++)
 				{
-					printf("%i: ", remoteSystems[i].port);
+					printf("%i: ", remoteSystems[i].GetPort());
 				}
 				printf("\n");
 #endif
@@ -125,7 +125,7 @@ int main(void)
 #endif
 
 			peerIndex=randomMT()%NUM_PEERS;
-			sprintf(data+3, "dataLength=%i priority=%i reliability=%i orderingChannel=%i target=%i broadcast=%i\n", dataLength, priority, reliability, orderingChannel, target.port, broadcast);
+			sprintf(data+3, "dataLength=%i priority=%i reliability=%i orderingChannel=%i target=%i broadcast=%i\n", dataLength, priority, reliability, orderingChannel, target.GetPort(), broadcast);
 			//unsigned short localPort=60000+i;
 #ifdef _VERIFY_RECIPIENTS
 			memcpy((char*)data+1, (char*)&target.port, sizeof(unsigned short));
@@ -158,7 +158,7 @@ int main(void)
 			broadcast=false; // Temporarily in so I can check recipients
 #endif
 
-			sprintf(data+3, "dataLength=%i priority=%i reliability=%i orderingChannel=%i target=%i broadcast=%i\n", dataLength, priority, reliability, orderingChannel, target.port, broadcast);
+			sprintf(data+3, "dataLength=%i priority=%i reliability=%i orderingChannel=%i target=%i broadcast=%i\n", dataLength, priority, reliability, orderingChannel, target.GetPort(), broadcast);
 #ifdef _VERIFY_RECIPIENTS
 			memcpy((char*)data, (char*)&target.port, sizeof(unsigned short));
 #endif
@@ -203,7 +203,7 @@ int main(void)
 			{
 				StatisticsToString(rss, data, 0);
 #ifdef _DO_PRINTF
-				printf("Statistics for local system %i:\n%s", mySystemAddress.port, data);
+				printf("Statistics for local system %i:\n%s", mySystemAddress.GetPort(), data);
 #endif
 			}
 			
@@ -212,7 +212,7 @@ int main(void)
 			{
 				StatisticsToString(rss, data, 0);
 #ifdef _DO_PRINTF
-				printf("Statistics for target system %i:\n%s", target.port, data);
+				printf("Statistics for target system %i:\n%s", target.GetPort(), data);
 #endif
 			}			
 		}

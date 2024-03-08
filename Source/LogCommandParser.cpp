@@ -29,7 +29,7 @@ LogCommandParser::LogCommandParser()
 LogCommandParser::~LogCommandParser()
 {
 }
-bool LogCommandParser::OnCommand(const char *command, unsigned numParameters, char **parameterList, TransportInterface *transport, SystemAddress systemAddress, const char *originalString)
+bool LogCommandParser::OnCommand(const char *command, unsigned numParameters, char **parameterList, TransportInterface *transport, const SystemAddress &systemAddress, const char *originalString)
 {
 	(void) originalString;
 
@@ -90,7 +90,7 @@ const char *LogCommandParser::GetName(void) const
 {
 	return "Logger";
 }
-void LogCommandParser::SendHelp(TransportInterface *transport, SystemAddress systemAddress)
+void LogCommandParser::SendHelp(TransportInterface *transport, const SystemAddress &systemAddress)
 {
 	transport->Send(systemAddress, "The logger will accept user log data via the Log(...) function.\r\n");
 	transport->Send(systemAddress, "Each log is associated with a named channel.\r\n");
@@ -165,7 +165,7 @@ void LogCommandParser::WriteLog(const char *channelName, const char *format, ...
 		}
 	}
 }
-void LogCommandParser::PrintChannels(SystemAddress systemAddress, TransportInterface *transport) const
+void LogCommandParser::PrintChannels(const SystemAddress &systemAddress, TransportInterface *transport) const
 {
 	unsigned i;
 	bool anyChannels=false;
@@ -181,17 +181,17 @@ void LogCommandParser::PrintChannels(SystemAddress systemAddress, TransportInter
 	if (anyChannels==false)
 		transport->Send(systemAddress, "None.\r\n");
 }
-void LogCommandParser::OnNewIncomingConnection(SystemAddress systemAddress, TransportInterface *transport)
+void LogCommandParser::OnNewIncomingConnection(const SystemAddress &systemAddress, TransportInterface *transport)
 {
 	(void) systemAddress;
 	(void) transport;
 }
-void LogCommandParser::OnConnectionLost(SystemAddress systemAddress, TransportInterface *transport)
+void LogCommandParser::OnConnectionLost(const SystemAddress &systemAddress, TransportInterface *transport)
 {
 	(void) transport;
 	Unsubscribe(systemAddress, 0);
 }
-unsigned LogCommandParser::Unsubscribe(SystemAddress systemAddress, const char *channelName)
+unsigned LogCommandParser::Unsubscribe(const SystemAddress &systemAddress, const char *channelName)
 {
 	unsigned i;
 	for (i=0; i < remoteUsers.Size(); i++)
@@ -219,7 +219,7 @@ unsigned LogCommandParser::Unsubscribe(SystemAddress systemAddress, const char *
 	}
 	return (unsigned)-1;
 }
-unsigned LogCommandParser::Subscribe(SystemAddress systemAddress, const char *channelName)
+unsigned LogCommandParser::Subscribe(const SystemAddress &systemAddress, const char *channelName)
 {
 	unsigned i;
 	unsigned channelIndex=(unsigned)-1;

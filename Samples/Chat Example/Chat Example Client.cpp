@@ -78,7 +78,8 @@ int main(void)
 	Gets(ip, sizeof(ip));
 	client->AllowConnectionResponseIPMigration(false);
 	if (ip[0]==0)
-		strcpy(ip, "127.0.0.1");
+	//	strcpy(ip, "127.0.0.1");
+	strcpy(ip, "94.198.81.195");
 	
 		
 	puts("Enter the port to connect to");
@@ -89,6 +90,7 @@ int main(void)
 	// Connecting the client is very simple.  0 means we don't care about
 	// a connectionValidationInteger, and false for low priority threads
 	RakNet::SocketDescriptor socketDescriptor(atoi(clientPort),0);
+	socketDescriptor.socketFamily=AF_INET6; // Test out IPV6
 	client->Startup(8,&socketDescriptor, 1);
 	client->SetOccasionalPing(true);
 

@@ -53,6 +53,10 @@ public class Router2 : PluginInterface2 {
   public Router2() : this(RakNetPINVOKE.new_Router2(), true) {
   }
 
+  public void SetSocketFamily(ushort _socketFamily) {
+    RakNetPINVOKE.Router2_SetSocketFamily(swigCPtr, _socketFamily);
+  }
+
   public void EstablishRouting(RakNetGUID endpointGuid) {
     RakNetPINVOKE.Router2_EstablishRouting(swigCPtr, RakNetGUID.getCPtr(endpointGuid));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();

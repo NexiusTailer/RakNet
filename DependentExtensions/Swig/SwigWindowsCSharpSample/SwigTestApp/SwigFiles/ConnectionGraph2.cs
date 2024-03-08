@@ -63,7 +63,16 @@ public class ConnectionGraph2 : PluginInterface2 {
             saOut[i] = passListSystemAddress[i];
         }
         return returnVal;
-
+    }
+    
+    public void GetParticipantList(RakNetGUID[] participantList)
+    {
+			RakNetListRakNetGUID passListGUID = new RakNetListRakNetGUID();
+			GetParticipantListHelper(passListGUID);
+			for (int i = 0; i < participantList.Length && i < passListGUID.Size(); i++)
+			{
+			  participantList[i] = passListGUID[i];
+			}
     }
 
 
@@ -110,6 +119,10 @@ public class ConnectionGraph2 : PluginInterface2 {
     bool ret = RakNetPINVOKE.ConnectionGraph2_GetConnectionListForRemoteSystemHelper(swigCPtr, RakNetGUID.getCPtr(remoteSystemGuid), RakNetListSystemAddress.getCPtr(saOut), RakNetListRakNetGUID.getCPtr(guidOut), ref inOutLength);
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
+  }
+
+  private void GetParticipantListHelper(RakNetListRakNetGUID guidOut) {
+    RakNetPINVOKE.ConnectionGraph2_GetParticipantListHelper(swigCPtr, RakNetListRakNetGUID.getCPtr(guidOut));
   }
 
 }

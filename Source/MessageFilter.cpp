@@ -287,7 +287,7 @@ void MessageFilter::Update(void)
 		whenLastTimeoutCheck=curTime+1000;
 	}
 }
-void MessageFilter::OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
+void MessageFilter::OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
 {
 	(void) systemAddress;
 	(void) rakNetGUID;
@@ -301,7 +301,7 @@ void MessageFilter::OnNewConnection(SystemAddress systemAddress, RakNetGUID rakN
 	if (autoAddNewConnectionsToFilter>=0 && systemList.HasData(aog)==false)
 		SetSystemFilterSet(aog, autoAddNewConnectionsToFilter);
 }
-void MessageFilter::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void MessageFilter::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	(void) rakNetGUID;
 	(void) lostConnectionReason;

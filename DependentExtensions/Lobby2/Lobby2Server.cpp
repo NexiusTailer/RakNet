@@ -160,7 +160,7 @@ void Lobby2Server::OnShutdown(void)
 {
 	Clear();
 }
-void Lobby2Server::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void Lobby2Server::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	(void)rakNetGUID;
 	(void)lostConnectionReason;

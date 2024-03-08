@@ -107,8 +107,8 @@ int main(int argc, char **argv)
 		printf("Enter server IP: ");
 		Gets(buff,sizeof(buff));
 		if (buff[0]==0)
-			//	strcpy(buff, "94.198.81.195");
-			strcpy(buff, "127.0.0.1");
+			strcpy(buff, "94.198.81.195");
+			//strcpy(buff, "127.0.0.1");
 	}
 	else
 		strcpy(buff, argv[1]);

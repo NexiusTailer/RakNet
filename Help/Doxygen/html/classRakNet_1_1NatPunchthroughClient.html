@@ -51,29 +51,31 @@ Inheritance diagram for RakNet::NatPunchthroughClient:</div>
 <a href="classRakNet_1_1NatPunchthroughClient-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3ccf26c816a539d41b384036dc7803d6"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::OpenNAT" ref="3ccf26c816a539d41b384036dc7803d6" args="(RakNetGUID destination, SystemAddress facilitator)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#3ccf26c816a539d41b384036dc7803d6">OpenNAT</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> destination, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> facilitator)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#92dbda7c976d5973c5cd6a3e0aea95c0">OpenNAT</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> destination, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;facilitator)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Punchthrough a NAT. Doesn't connect, just tries to setup the routing table. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#53bfa34adf5e537fba0321b1e8ae53db">OpenNATGroup</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> destination, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;facilitator)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PunchthroughConfiguration *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#6131cc61e5af13399db4358fbb7b0d15">GetPunchthroughConfiguration</a> (void)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#7bc339aacd4c7f355ebfbab17059c4a0">SetDebugInterface</a> (NatPunchthroughDebugInterface *i)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#13f0096b84f407ad0c852c2fe02d1c38">GetUPNPExternalPort</a> (void) const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9c86f7935743abdbf29d9b34a043fb47"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::GetGuidsForGroupPunchthroughRequest" ref="9c86f7935743abdbf29d9b34a043fb47" args="(RakNetGUID excludeThisGuid, DataStructures::List&lt; RakNetGUID &gt; &amp;guids)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#9c86f7935743abdbf29d9b34a043fb47">GetGuidsForGroupPunchthroughRequest</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> excludeThisGuid, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &gt; &amp;guids)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#1245d8d39800b22e77265a69211608a0">GetUPNPInternalPort</a> (void) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns all systems except sender by default, ovveride to change. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="621163bc6be3e7d6f6c6b4d9c8e5f938"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::GetUPNPPortMappings" ref="621163bc6be3e7d6f6c6b4d9c8e5f938" args="(char *externalPort, char *internalPort, const SystemAddress &amp;natPunchthroughServerAddress)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#621163bc6be3e7d6f6c6b4d9c8e5f938">GetUPNPPortMappings</a> (char *externalPort, char *internalPort, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;natPunchthroughServerAddress)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#15fc17817997b89258926fd191f19ef9">GetUPNPInternalAddress</a> (void) const </td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the port mappings you should pass to UPNP (for miniupnpc-1.5, for the function UPNP_AddPortMapping). <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fdb000c77864073b54260e4e882a3010"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::Update" ref="fdb000c77864073b54260e4e882a3010" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#fdb000c77864073b54260e4e882a3010">Update</a> (void)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update is called every time a packet is checked for . <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g89998adaafb29e5d879113b992161085">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#417a0812408c178e1e95d8983389e286">OnReceive</a> (<a class="el" href="structRakNet_1_1Packet.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#bec5389e2ef2c9f6d59e3dd4f084f0dc">OnNewConnection</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, bool isIncoming)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#9819ed681b72317c2c97fc1f2abfc947">OnNewConnection</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, bool isIncoming)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#1dc73d7e8935532ba7d101f3ac1c6299">OnClosedConnection</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#67db8e781fea747763df43240a29a84f">OnClosedConnection</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bec4863d26aa274f92e710245669d13b"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::OnAttach" ref="bec4863d26aa274f92e710245669d13b" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#bec4863d26aa274f92e710245669d13b">OnAttach</a> (void)</td></tr>
@@ -115,78 +117,14 @@ Maintain connection to <a class="el" href="classRakNet_1_1NatPunchthroughServer.
 Modify the system configuration if desired Don't modify the variables in the structure while punchthrough is in progress 
 </div>
 </div><p>
-<a class="anchor" name="13f0096b84f407ad0c852c2fe02d1c38"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::GetUPNPExternalPort" ref="13f0096b84f407ad0c852c2fe02d1c38" args="(void) const " -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned short RakNet::NatPunchthroughClient::GetUPNPExternalPort           </td>
-          <td>(</td>
-          <td class="paramtype">void&nbsp;</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Returns the port on the router that incoming messages will be sent to UPNP needs to know this (See UPNP project) <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Must have connected to the facilitator first </dd></dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>Port that incoming messages will be sent to, from other clients. This probably won't be the same port <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> was started on. </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="15fc17817997b89258926fd191f19ef9"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::GetUPNPInternalAddress" ref="15fc17817997b89258926fd191f19ef9" args="(void) const " -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> RakNet::NatPunchthroughClient::GetUPNPInternalAddress           </td>
-          <td>(</td>
-          <td class="paramtype">void&nbsp;</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Returns our locally bound system address Equivalent to calling rakPeer-&gt;GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).ToString(false); <dl class="return" compact><dt><b>Returns:</b></dt><dd>Internal address that UPNP should forward messages to </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="1245d8d39800b22e77265a69211608a0"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::GetUPNPInternalPort" ref="1245d8d39800b22e77265a69211608a0" args="(void) const " -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned short RakNet::NatPunchthroughClient::GetUPNPInternalPort           </td>
-          <td>(</td>
-          <td class="paramtype">void&nbsp;</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Returns our internal port that <a class="el" href="namespaceRakNet.html" title="Simple class to send changes between directories. In essence, a simple autopatcher...">RakNet</a> was started on Equivalent to calling rakPeer-&gt;GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port <dl class="return" compact><dt><b>Returns:</b></dt><dd>Port that incoming messages will arrive on, on our actual system. </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="1dc73d7e8935532ba7d101f3ac1c6299"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::OnClosedConnection" ref="1dc73d7e8935532ba7d101f3ac1c6299" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
+<a class="anchor" name="67db8e781fea747763df43240a29a84f"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::OnClosedConnection" ref="67db8e781fea747763df43240a29a84f" args="(const SystemAddress &amp;systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">virtual void RakNet::NatPunchthroughClient::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -219,18 +157,18 @@ Called when a connection is dropped because the user called <a class="el" href="
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#b6b48bb474e340ad27c8ef9b98fae051">RakNet::PluginInterface2</a>.</p>
+<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#80c7612ca1a5dcfeec0b52d8049a71ea">RakNet::PluginInterface2</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="bec5389e2ef2c9f6d59e3dd4f084f0dc"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::OnNewConnection" ref="bec5389e2ef2c9f6d59e3dd4f084f0dc" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)" -->
+<a class="anchor" name="9819ed681b72317c2c97fc1f2abfc947"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::OnNewConnection" ref="9819ed681b72317c2c97fc1f2abfc947" args="(const SystemAddress &amp;systemAddress, RakNetGUID rakNetGUID, bool isIncoming)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">virtual void RakNet::NatPunchthroughClient::OnNewConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -263,7 +201,7 @@ Called when we got a new connection <dl compact><dt><b>Parameters:</b></dt><dd>
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#1ca873976b94ccb03ad2ba73b2dae95e">RakNet::PluginInterface2</a>.</p>
+<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#bf13327cc10f772ba06dff8f2687f8ae">RakNet::PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -295,6 +233,72 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 
 </div>
 </div><p>
+<a class="anchor" name="92dbda7c976d5973c5cd6a3e0aea95c0"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::OpenNAT" ref="92dbda7c976d5973c5cd6a3e0aea95c0" args="(RakNetGUID destination, const SystemAddress &amp;facilitator)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakNet::NatPunchthroughClient::OpenNAT           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>destination</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>facilitator</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Punchthrough a NAT. Doesn't connect, just tries to setup the routing table <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>destination</em>&nbsp;</td><td>The system to punch. Must already be connected to <em>facilitator</em> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>facilitator</em>&nbsp;</td><td>A system we are already connected to running the <a class="el" href="classRakNet_1_1NatPunchthroughServer.html" title="Server code for NATPunchthrough.">NatPunchthroughServer</a> plugin </td></tr>
+  </table>
+</dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#53bfa34adf5e537fba0321b1e8ae53db">OpenNATGroup()</a> You will get <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3ffdbfc82c9c5d38c9c1f99d3244ed865">ID_NAT_PUNCHTHROUGH_SUCCEEDED</a> on success You will get <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3b4a8fb1b8f1cf8d84c1ca12bce33554e">ID_NAT_TARGET_NOT_CONNECTED</a>, <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3fada41cc29bd7576f36f4adab1d0bc05">ID_NAT_TARGET_UNRESPONSIVE</a>, <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd30a8781eb6bf0d36ced05ecba17c8d6ca">ID_NAT_CONNECTION_TO_TARGET_LOST</a>, <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3c5d56d718ed0c497a00d57fae678fe54">ID_NAT_ALREADY_IN_PROGRESS</a>, or <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3bcd2f6fe83d1ab366fe70163bbb141d7">ID_NAT_PUNCHTHROUGH_FAILED</a> on failures of various types However, if you lose connection to the facilitator, you may not necessarily get above </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="53bfa34adf5e537fba0321b1e8ae53db"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::OpenNATGroup" ref="53bfa34adf5e537fba0321b1e8ae53db" args="(RakNetGUID destination, const SystemAddress &amp;facilitator)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakNet::NatPunchthroughClient::OpenNATGroup           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>destination</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>facilitator</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Punchthrough a NAT, and also every system the <em>destination</em> is connected to or has called <a class="el" href="classRakNet_1_1NatPunchthroughClient.html#53bfa34adf5e537fba0321b1e8ae53db">OpenNATGroup()</a> to <em>destination</em> This is useful for peer to peer games where you want to connect to every system in the remote session, not just one particular system If we cannot punch to any system in the group, then the punchthrough is considered a failure <dl class="note" compact><dt><b>Note:</b></dt><dd>For cloud computing, all systems in the group must be connected to the same facilitator since we're only specifying one You will get ID_NAT_GROUP_PUNCH_SUCCEEDED on success You will get ID_NAT_TARGET_NOT_CONNECTED, ID_NAT_ALREADY_IN_PROGRESS, or ID_NAT_GROUP_PUNCH_FAILED on failures of various types However, if you lose connection to the facilitator, you may not necessarily get above </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="7bc339aacd4c7f355ebfbab17059c4a0"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::SetDebugInterface" ref="7bc339aacd4c7f355ebfbab17059c4a0" args="(NatPunchthroughDebugInterface *i)" -->
 <div class="memitem">
 <div class="memproto">
@@ -321,9 +325,9 @@ Sets a callback to be called with debug messages <dl compact><dt><b>Parameters:<
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/temp/RakNet4/Source/<a class="el" href="NatPunchthroughClient_8h.html">NatPunchthroughClient.h</a></ul>
+<li>d:/temp/RakNet/Source/<a class="el" href="NatPunchthroughClient_8h.html">NatPunchthroughClient.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:29 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 8 13:04:36 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

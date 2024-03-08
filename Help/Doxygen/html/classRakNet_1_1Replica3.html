@@ -103,9 +103,9 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g993da25eb23b67455e2438971c51429c">RM3SerializationResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b22441365145bf552f89e09">Serialize</a> (<a class="el" href="structRakNet_1_1SerializeParameters.html">RakNet::SerializeParameters</a> *serializeParameters)=0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Serialize our class to a bitstream.  <a href="#6e59b6a75b22441365145bf552f89e09"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#61eb31f27074dae04ae7168eb2712c3b">OnSerializeTransmission</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#8592979715abe47348f23443d423f1fa">OnSerializeTransmission</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the class is actually transmitted via <a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b22441365145bf552f89e09" title="Serialize our class to a bitstream.">Serialize()</a>.  <a href="#61eb31f27074dae04ae7168eb2712c3b"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the class is actually transmitted via <a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b22441365145bf552f89e09" title="Serialize our class to a bitstream.">Serialize()</a>.  <a href="#8592979715abe47348f23443d423f1fa"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#dc3ca56ef4fe3ad95e381c7d72f0956f">Deserialize</a> (RakNet::DeserializeParameters *deserializeParameters)=0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Read what was written in <a class="el" href="classRakNet_1_1Replica3.html#6e59b6a75b22441365145bf552f89e09" title="Serialize our class to a bitstream.">Serialize()</a>.  <a href="#dc3ca56ef4fe3ad95e381c7d72f0956f"></a><br></td></tr>
@@ -472,7 +472,7 @@ creatingSystemGUID is set the first time Reference() is called, or if we get the
 
 </div>
 </div><p>
-<a class="anchor" name="61eb31f27074dae04ae7168eb2712c3b"></a><!-- doxytag: member="RakNet::Replica3::OnSerializeTransmission" ref="61eb31f27074dae04ae7168eb2712c3b" args="(RakNet::BitStream *bitStream, SystemAddress systemAddress)" -->
+<a class="anchor" name="8592979715abe47348f23443d423f1fa"></a><!-- doxytag: member="RakNet::Replica3::OnSerializeTransmission" ref="8592979715abe47348f23443d423f1fa" args="(RakNet::BitStream *bitStream, const SystemAddress &amp;systemAddress)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -485,7 +485,7 @@ creatingSystemGUID is set the first time Reference() is called, or if we get the
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -1287,9 +1287,9 @@ GUID of the system that first called Reference() on this object. Transmitted aut
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/temp/RakNet4/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
+<li>d:/temp/RakNet/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:30 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 8 13:04:37 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

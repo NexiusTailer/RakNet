@@ -96,6 +96,11 @@ public class FullyConnectedMesh2 : PluginInterface2 {
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
+  public void GetParticipantList(RakNetListRakNetGUID participantList) {
+    RakNetPINVOKE.FullyConnectedMesh2_GetParticipantList(swigCPtr, RakNetListRakNetGUID.getCPtr(participantList));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public void ConnectToRemoteNewIncomingConnections(Packet packet) {
     RakNetPINVOKE.FullyConnectedMesh2_ConnectToRemoteNewIncomingConnections(swigCPtr, Packet.getCPtr(packet));
   }
@@ -111,6 +116,11 @@ public class FullyConnectedMesh2 : PluginInterface2 {
 
   public void GetParticipantCount(out uint participantListSize) {
     RakNetPINVOKE.FullyConnectedMesh2_GetParticipantCount__SWIG_1(swigCPtr, out participantListSize);
+  }
+
+  public uint GetTotalConnectionCount() {
+    uint ret = RakNetPINVOKE.FullyConnectedMesh2_GetTotalConnectionCount(swigCPtr);
+    return ret;
   }
 
 }

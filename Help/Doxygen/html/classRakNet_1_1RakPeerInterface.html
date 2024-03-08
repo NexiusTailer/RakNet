@@ -120,7 +120,7 @@ virtual unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#b1b9f9bde28faa2e4c79d09c7613c4b1">GetGUIDFromIndex</a> (int index)=0</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#2e7b4c02c1f15c7e35c4b8f8eb986326">GetSystemList</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &gt; &amp;addresses, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &gt; &amp;guids)=0</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a1939c66f7190e3c647a6a685a6eb248">GetSystemList</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &gt; &amp;addresses, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &gt; &amp;guids) const =0</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#b44199db81cf4fa834d42efc5eb5ae77">AddToBanList</a> (const char *IP, RakNet::TimeMS milliseconds=0)=0</td></tr>
 
@@ -150,7 +150,7 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#e61f8651e8a45acec5bdf04384777a86">GetOfflinePingResponse</a> (char **data, unsigned int *length)=0</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#928a49c193687ccef547f7ea3634bb54">GetInternalID</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress=UNASSIGNED_SYSTEM_ADDRESS, const int index=0) const =0</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#928a49c193687ccef547f7ea3634bb54">GetInternalID</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress=<a class="el" href="namespaceRakNet.html#80c95b4ed53f42911a6fa92b85e929cf">UNASSIGNED_SYSTEM_ADDRESS</a>, const int index=0) const =0</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#94602ad7356b4a99f862f9793327c325">GetExternalID</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> target) const =0</td></tr>
 
@@ -158,6 +158,10 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 virtual const <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a3d096a442aae7d97f33a7c3223d4594">GetMyGUID</a> (void)=0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return my own GUID. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a6abdf47bc3e2e016ccd0171a05e125b"></a><!-- doxytag: member="RakNet::RakPeerInterface::GetMyBoundAddress" ref="a6abdf47bc3e2e016ccd0171a05e125b" args="(const int socketIndex=0)=0" -->
+virtual <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a6abdf47bc3e2e016ccd0171a05e125b">GetMyBoundAddress</a> (const int socketIndex=0)=0</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return the address bound to a socket at the specified index. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual const <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &amp;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#ac8203dda2ba1271e753bd113b259173">GetGuidFromSystemAddress</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> input) const =0</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#daaff66118400b6bbcb31c11419cd791">GetSystemAddressFromGuid</a> (const <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> input) const =0</td></tr>
@@ -1104,7 +1108,7 @@ Given a systemAddress, returns an index from 0 to the maximum number of players 
           <td class="memname">virtual <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> RakNet::RakPeerInterface::GetInternalID           </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em> = <code>UNASSIGNED_SYSTEM_ADDRESS</code>, </td>
+          <td class="paramname"> <em>systemAddress</em> = <code><a class="el" href="namespaceRakNet.html#80c95b4ed53f42911a6fa92b85e929cf">UNASSIGNED_SYSTEM_ADDRESS</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1122,7 +1126,8 @@ Given a systemAddress, returns an index from 0 to the maximum number of players 
 <div class="memdoc">
 
 <p>
-Return the unique address identifier that represents you or another system on the the network and is based on your local IP / port. <dl compact><dt><b>Parameters:</b></dt><dd>
+Return the unique address identifier that represents you or another system on the the network and is based on your local IP / port. <dl class="note" compact><dt><b>Note:</b></dt><dd>Not supported by the XBOX </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Use UNASSIGNED_SYSTEM_ADDRESS to get your behind-LAN address. Use a connected system to get their behind-LAN address </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>index</em>&nbsp;</td><td>When you have multiple internal IDs, which index to return? Currently limited to MAXIMUM_NUMBER_OF_INTERNAL_IDS (so the maximum value of this variable is MAXIMUM_NUMBER_OF_INTERNAL_IDS-1) </td></tr>
@@ -1505,7 +1510,7 @@ This function is only useful for looping through all systems Given an index, wil
 
 </div>
 </div><p>
-<a class="anchor" name="2e7b4c02c1f15c7e35c4b8f8eb986326"></a><!-- doxytag: member="RakNet::RakPeerInterface::GetSystemList" ref="2e7b4c02c1f15c7e35c4b8f8eb986326" args="(DataStructures::List&lt; SystemAddress &gt; &amp;addresses, DataStructures::List&lt; RakNetGUID &gt; &amp;guids)=0" -->
+<a class="anchor" name="a1939c66f7190e3c647a6a685a6eb248"></a><!-- doxytag: member="RakNet::RakPeerInterface::GetSystemList" ref="a1939c66f7190e3c647a6a685a6eb248" args="(DataStructures::List&lt; SystemAddress &gt; &amp;addresses, DataStructures::List&lt; RakNetGUID &gt; &amp;guids) const =0" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1524,7 +1529,7 @@ This function is only useful for looping through all systems Given an index, wil
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td></td><td><code> [pure virtual]</code></td>
+          <td></td><td></td><td> const<code> [pure virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -1538,7 +1543,7 @@ Same as calling GetSystemAddressFromIndex and GetGUIDFromIndex for all systems, 
   </table>
 </dl>
 
-<p>Implemented in <a class="el" href="classRakNet_1_1RakPeer.html#a4b6b55f7832da33b2e07a721263cfce">RakNet::RakPeer</a>.</p>
+<p>Implemented in <a class="el" href="classRakNet_1_1RakPeer.html#791779bb9714e830f19a5f12961576d7">RakNet::RakPeer</a>.</p>
 
 </div>
 </div><p>
@@ -2721,9 +2726,9 @@ You must call this before calling <a class="el" href="classRakNet_1_1RakPeerInte
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/temp/RakNet4/Source/<a class="el" href="RakPeerInterface_8h.html">RakPeerInterface.h</a></ul>
+<li>d:/temp/RakNet/Source/<a class="el" href="RakPeerInterface_8h.html">RakPeerInterface.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:29 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 8 13:04:37 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

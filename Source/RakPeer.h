@@ -313,7 +313,7 @@ public:
 	/// Indices match each other, so \a addresses[0] and \a guids[0] refer to the same system
 	/// \param[out] addresses All system addresses. Size of the list is the number of connections. Size of the \a addresses list will match the size of the \a guids list.
 	/// \param[out] guids All guids. Size of the list is the number of connections. Size of the list will match the size of the \a addresses list.
-	void GetSystemList(DataStructures::List<SystemAddress> &addresses, DataStructures::List<RakNetGUID> &guids);
+	void GetSystemList(DataStructures::List<SystemAddress> &addresses, DataStructures::List<RakNetGUID> &guids) const;
 
 	/// \brief Bans an IP from connecting.
 	/// \details Banned IPs persist between connections but are not saved on shutdown nor loaded on startup.
@@ -391,6 +391,7 @@ public:
 	
 	//--------------------------------------------------------------------------------------------Network Functions - Functions dealing with the network in general--------------------------------------------------------------------------------------------
 	/// \brief Returns the unique address identifier that represents you or another system on the the network and is based on your local IP / port.
+	/// \note Not supported by the XBOX
 	/// \param[in] systemAddress Use UNASSIGNED_SYSTEM_ADDRESS to get your behind-LAN address. Use a connected system to get their behind-LAN address
 	/// \param[in] index When you have multiple internal IDs, which index to return? Currently limited to MAXIMUM_NUMBER_OF_INTERNAL_IDS (so the maximum value of this variable is MAXIMUM_NUMBER_OF_INTERNAL_IDS-1)
 	/// \return Identifier of your system internally, which may not be how other systems see if you if you are behind a NAT or proxy
@@ -402,6 +403,9 @@ public:
 
 	/// Return my own GUID
 	const RakNetGUID GetMyGUID(void);
+
+	/// Return the address bound to a socket at the specified index
+	SystemAddress GetMyBoundAddress(const int socketIndex=0);
 
 	/// \brief  Given a connected system address, this method gives the unique GUID representing that instance of RakPeer.
 	/// This will be the same on all systems connected to that instance of RakPeer, even if the external system addresses are different.
@@ -518,7 +522,7 @@ public:
 	/// \brief For a given system identified by \a guid, change the SystemAddress to send to.
 	/// \param[in] guid The connection we are referring to
 	/// \param[in] systemAddress The new address to send to
-	void ChangeSystemAddress(RakNetGUID guid, SystemAddress systemAddress);
+	void ChangeSystemAddress(RakNetGUID guid, const SystemAddress &systemAddress);
 
 	/// \brief Returns a packet for you to write to if you want to create a Packet for some reason.
 	/// You can add it to the receive buffer with PushBackPacket
@@ -620,6 +624,7 @@ public:
 		int MTUSize;
 		// Reference counted socket to send back on
 		RakNetSmartPtr<RakNetSocket> rakNetSocket;
+		SystemIndex remoteSystemIndex;
 
 #if LIBCAT_SECURITY==1
 		// Cached answer used internally by RakPeer to prevent DoS attacks based on the connexion handshake
@@ -639,7 +644,7 @@ protected:
 	friend RAK_THREAD_DECLARATION(RecvFromLoop);
 	friend RAK_THREAD_DECLARATION(UDTConnect);
 
-	friend bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNetSmartPtr<RakNetSocket> rakNetSocket, bool *isOfflineMessage, RakNet::TimeUS timeRead );
+	friend bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNetSmartPtr<RakNetSocket> rakNetSocket, bool *isOfflineMessage, RakNet::TimeUS timeRead );
 	friend void ProcessNetworkPacket( const SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNet::TimeUS timeRead );
 	friend void ProcessNetworkPacket( const SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNetSmartPtr<RakNetSocket> rakNetSocket, RakNet::TimeUS timeRead );
 
@@ -658,7 +663,7 @@ protected:
 	void ValidateRemoteSystemLookup(void) const;
 	RemoteSystemStruct *GetRemoteSystemFromGUID( const RakNetGUID guid, bool onlyActive ) const;
 	///Parse out a connection request packet
-	void ParseConnectionRequestPacket( RakPeer::RemoteSystemStruct *remoteSystem, SystemAddress systemAddress, const char *data, int byteSize);
+	void ParseConnectionRequestPacket( RakPeer::RemoteSystemStruct *remoteSystem, const SystemAddress &systemAddress, const char *data, int byteSize);
 	void OnConnectionRequest( RakPeer::RemoteSystemStruct *remoteSystem, RakNet::Time incomingTimestamp );
 	///Send a reliable disconnect packet to this player and disconnect them when it is delivered
 	void NotifyAndFlagForShutdown( const SystemAddress systemAddress, bool performImmediate, unsigned char orderingChannel, PacketPriority disconnectionNotificationPriority );
@@ -676,7 +681,7 @@ protected:
 	///	\brief Adjust the timestamp of the incoming packet to be relative to this system.
 	/// \param[in] data	Data in the incoming packet.
 	/// \param[in] systemAddress Sender of the incoming packet.
-	void ShiftIncomingTimestamp( unsigned char *data, SystemAddress systemAddress ) const;
+	void ShiftIncomingTimestamp( unsigned char *data, const SystemAddress &systemAddress ) const;
 	/// Get the most accurate clock differential for a certain player.
 	/// \param[in] systemAddress The player with whose clock the time difference is calculated.
 	/// \returns The clock differential for a certain player.
@@ -709,20 +714,28 @@ protected:
 	/// Another benefit is that is lets us add and remove active players simply by setting systemAddress
 	/// and moving elements in the list by copying pointers variables without affecting running threads, even if they are in the reliability layer
 	RemoteSystemStruct* remoteSystemList;
+	/// activeSystemList holds a list of pointers and is preallocated to be the same size as remoteSystemList. It is updated only by the network thread, but read by both threads
+	/// When the isActive member of RemoteSystemStruct is set to true or false, that system is added to this list of pointers
+	/// Threadsafe because RemoteSystemStruct is preallocated, and the list is only added to, not removed from
+	RemoteSystemStruct** activeSystemList;
+	unsigned int activeSystemListSize;
 
 	// Use a hash, with binaryAddress plus port mod length as the index
 	RemoteSystemIndex **remoteSystemLookup;
-	unsigned int RemoteSystemLookupHashIndex(SystemAddress sa) const;
-	void ReferenceRemoteSystem(SystemAddress sa, unsigned int remoteSystemListIndex);
-	void DereferenceRemoteSystem(SystemAddress sa);
-	RemoteSystemStruct* GetRemoteSystem(SystemAddress sa) const;
-	unsigned int GetRemoteSystemIndex(SystemAddress sa) const;
+	unsigned int RemoteSystemLookupHashIndex(const SystemAddress &sa) const;
+	void ReferenceRemoteSystem(const SystemAddress &sa, unsigned int remoteSystemListIndex);
+	void DereferenceRemoteSystem(const SystemAddress &sa);
+	RemoteSystemStruct* GetRemoteSystem(const SystemAddress &sa) const;
+	unsigned int GetRemoteSystemIndex(const SystemAddress &sa) const;
 	void ClearRemoteSystemLookup(void);
 	DataStructures::MemoryPool<RemoteSystemIndex> remoteSystemIndexPool;
 
-//	unsigned int LookupIndexUsingHashIndex(SystemAddress sa) const;
-//	unsigned int RemoteSystemListIndexUsingHashIndex(SystemAddress sa) const;
-//	unsigned int FirstFreeRemoteSystemLookupIndex(SystemAddress sa) const;
+	void AddToActiveSystemList(unsigned int remoteSystemListIndex);
+	void RemoveFromActiveSystemList(const SystemAddress &sa);
+
+//	unsigned int LookupIndexUsingHashIndex(const SystemAddress &sa) const;
+//	unsigned int RemoteSystemListIndexUsingHashIndex(const SystemAddress &sa) const;
+//	unsigned int FirstFreeRemoteSystemLookupIndex(const SystemAddress &sa) const;
 	
 	enum
 	{
@@ -855,7 +868,6 @@ protected:
 	bool AllowIncomingConnections(void) const;
 
 	void PingInternal( const SystemAddress target, bool performImmediate, PacketReliability reliability );
-	bool ValidSendTarget(SystemAddress systemAddress, bool broadcast);
 	// This stores the user send calls to be handled by the update thread.  This way we don't have thread contention over systemAddresss
 	void CloseConnectionInternal( const AddressOrGUID& systemIdentifier, bool sendDisconnectionNotification, bool performImmediate, unsigned char orderingChannel, PacketPriority disconnectionNotificationPriority );
 	void SendBuffered( const char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RemoteSystemStruct::ConnectMode connectionMode, uint32_t receipt );
@@ -910,8 +922,7 @@ protected:
 	// Systems in this list will not go through the secure connection process, even when secure connections are turned on. Wildcards are accepted.
 	DataStructures::List<RakNet::RakString> securityExceptionList;
 
-	char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
-	unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
+	SystemAddress ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ];
 
 	bool allowInternalRouting;
 

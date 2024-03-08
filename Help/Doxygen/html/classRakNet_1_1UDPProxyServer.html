@@ -51,6 +51,8 @@ Inheritance diagram for RakNet::UDPProxyServer:</div>
 <a href="classRakNet_1_1UDPProxyServer-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyServer.html#8199854134e7999703f64c2cb0f31506">SetSocketFamily</a> (unsigned short _socketFamily)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyServer.html#abdc998e85afbce5190711262318468c">SetResultHandler</a> (<a class="el" href="structRakNet_1_1UDPProxyServerResultHandler.html">UDPProxyServerResultHandler</a> *rh)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyServer.html#32edaff2aec11cce6a138897b0e2a158">LoginToCoordinator</a> (<a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> password, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> coordinatorAddress)</td></tr>
@@ -69,7 +71,7 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update is called every time a packet is checked for . <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g89998adaafb29e5d879113b992161085">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyServer.html#051c38b321e54ba658b2e3eb2224940e">OnReceive</a> (<a class="el" href="structRakNet_1_1Packet.html">Packet</a> *packet)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyServer.html#a32937092d4aa45314e7bdf15f1549f0">OnClosedConnection</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyServer.html#39620eefb2fdb1a1811880d872ce87d0">OnClosedConnection</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="80f7ee5d6e821cd0653cc28502db4666"></a><!-- doxytag: member="RakNet::UDPProxyServer::OnRakPeerStartup" ref="80f7ee5d6e821cd0653cc28502db4666" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyServer.html#80f7ee5d6e821cd0653cc28502db4666">OnRakPeerStartup</a> (void)</td></tr>
@@ -121,14 +123,14 @@ Coordinator must have set a password with <a class="el" href="classRakNet_1_1UDP
 
 </div>
 </div><p>
-<a class="anchor" name="a32937092d4aa45314e7bdf15f1549f0"></a><!-- doxytag: member="RakNet::UDPProxyServer::OnClosedConnection" ref="a32937092d4aa45314e7bdf15f1549f0" args="(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
+<a class="anchor" name="39620eefb2fdb1a1811880d872ce87d0"></a><!-- doxytag: member="RakNet::UDPProxyServer::OnClosedConnection" ref="39620eefb2fdb1a1811880d872ce87d0" args="(const SystemAddress &amp;systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">virtual void RakNet::UDPProxyServer::OnClosedConnection           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -161,7 +163,7 @@ Called when a connection is dropped because the user called <a class="el" href="
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#b6b48bb474e340ad27c8ef9b98fae051">RakNet::PluginInterface2</a>.</p>
+<p>Reimplemented from <a class="el" href="classRakNet_1_1PluginInterface2.html#80c7612ca1a5dcfeec0b52d8049a71ea">RakNet::PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -218,6 +220,31 @@ Receives the results of calling <a class="el" href="classRakNet_1_1UDPProxyServe
 
 </div>
 </div><p>
+<a class="anchor" name="8199854134e7999703f64c2cb0f31506"></a><!-- doxytag: member="RakNet::UDPProxyServer::SetSocketFamily" ref="8199854134e7999703f64c2cb0f31506" args="(unsigned short _socketFamily)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::UDPProxyServer::SetSocketFamily           </td>
+          <td>(</td>
+          <td class="paramtype">unsigned short&nbsp;</td>
+          <td class="paramname"> <em>_socketFamily</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Sets the socket family to use, either IPV4 or IPV6 <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>socketFamily</em>&nbsp;</td><td>For IPV4, use AF_INET (default). For IPV6, use AF_INET6. To autoselect, use AF_UNSPEC. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <hr><h2>Member Data Documentation</h2>
 <a class="anchor" name="7664fd65087f57acc4d2c602a1a30d24"></a><!-- doxytag: member="RakNet::UDPProxyServer::udpForwarder" ref="7664fd65087f57acc4d2c602a1a30d24" args="" -->
 <div class="memitem">
@@ -235,9 +262,9 @@ Operative class that performs the forwarding Exposed so you can call <a class="e
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/temp/RakNet4/Source/<a class="el" href="UDPProxyServer_8h.html">UDPProxyServer.h</a></ul>
+<li>d:/temp/RakNet/Source/<a class="el" href="UDPProxyServer_8h.html">UDPProxyServer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:30 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 8 13:04:38 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

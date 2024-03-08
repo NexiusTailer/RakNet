@@ -53,7 +53,7 @@ const float BALL_DIAMETER=25.0f;
 #include "RakString.h"
 #include "RakNetTime.h"
 
-class CDemo : public IEventReceiver, public RakNet::UDPProxyClientResultHandler
+class CDemo : public IEventReceiver
 {
 public:
 
@@ -142,28 +142,18 @@ private:
 
 	// Per-tick game update for RakNet
 	void UpdateRakNet(void);
-	// Callbacks from RakNet::UDPProxyClientResultHandler
-	virtual void OnForwardingSuccess(const char *proxyIPAddress, unsigned short proxyPort,
-		RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
-	virtual void OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort,
-		RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
-	virtual void OnNoServersOnline(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
-	virtual void OnRecipientNotConnected(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin);
-	virtual void OnAllServersBusy(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
-	virtual void OnForwardingInProgress(RakNet::SystemAddress proxyCoordinator, RakNet::SystemAddress sourceAddress, RakNet::SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin);
 	// Holds output messages
 	DataStructures::Multilist<ML_QUEUE, RakNet::RakString> outputMessages;
 	RakNet::TimeMS whenOutputMessageStarted;
 	void PushMessage(RakNet::RakString rs);
 	const char *GetCurrentMessage(void);
-	// Systems to try to connect to with NAT punchthrough
-	DataStructures::Multilist<ML_QUEUE, RakNet::RakNetGUID> systemsToConnectTo;
-	bool isConnectedToNATPunchthroughServer;
 	// We use this array to store the current state of each key
 	bool KeyIsDown[KEY_KEY_CODES_COUNT];
 	// Bounding box of syndney.md2, extended by BALL_DIAMETER/2 for collision against shots
 	core::aabbox3df syndeyBoundingBox;
 	void CalculateSyndeyBoundingBox(void);
+
+	bool isConnectedToNATPunchthroughServer;
 };
 
 #endif

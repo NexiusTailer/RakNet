@@ -44,13 +44,13 @@ public:
 	uint64_t GetRoomID(void) const {return roomId;}
 
 	/// Called when SendTo would otherwise occur.
-	virtual int RakNetSendTo( SOCKET s, const char *data, int length, SystemAddress systemAddress );
+	virtual int RakNetSendTo( SOCKET s, const char *data, int length, const SystemAddress &systemAddress );
 
 	/// Called when RecvFrom would otherwise occur. Return number of bytes read. Write data into dataOut
 	virtual int RakNetRecvFrom( const SOCKET sIn, RakPeer *rakPeerIn, char dataOut[ MAXIMUM_MTU_SIZE ], SystemAddress *senderOut, bool calledFromMainThread);
 
 	virtual void OnRakPeerShutdown(void);
-	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	virtual void OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason);
 	virtual void OnAttach(void);
 	virtual void OnDetach(void);

@@ -44,19 +44,27 @@ int main(int argc, char **argv)
 			sendCount++;
 		}
 
-		RakSleep(100);
-
 		RakNet::Packet *p;
 		for (p=sender->Receive(); p; sender->DeallocatePacket(p), p=sender->Receive())
-			;    
-		for (p=receiver->Receive(); p; receiver->DeallocatePacket(p), p=receiver->Receive())
+			;
+
+		RakNet::Time timeout=RakNet::GetTime()+1000;
+		while (RakNet::GetTime()<timeout)
 		{
-			if (p->data[0]==ID_USER_PACKET_ENUM)
-				receiveCount++;
-			for (unsigned int i=1; i < p->length; i++)
+			for (p=receiver->Receive(); p; receiver->DeallocatePacket(p), p=receiver->Receive())
 			{
-				RakAssert(data[i]==i%256);
+				if (p->data[0]==ID_USER_PACKET_ENUM)
+				{
+					receiveCount++;
+				}
+				for (unsigned int i=1; i < p->length; i++)
+				{
+					RakAssert(data[i]==i%256);
+				}
 			}
+			RakSleep(30);
+			if (receiveCount==sendCount)
+				break;
 		}
 
 		if (sendCount==receiveCount)

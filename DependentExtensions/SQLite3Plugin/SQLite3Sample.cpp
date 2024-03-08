@@ -51,7 +51,7 @@ public:
 	}
 
 	// Implemented event callback from base class PluginInterface2
-	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 	{
 		// Call down to the base class in case it does anything in the future (right now it does nothing)
 		SQLite3ServerPlugin::OnClosedConnection(systemAddress, rakNetGUID, lostConnectionReason);
@@ -70,7 +70,7 @@ public:
 	}
 
 	// Implemented event callback from base class PluginInterface2
-	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
+	virtual void OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
 	{
 		// Call down to the base class in case it does anything in the future (right now it does nothing)
 		SQLite3ServerPlugin::OnNewConnection(systemAddress, rakNetGUID, isIncoming);

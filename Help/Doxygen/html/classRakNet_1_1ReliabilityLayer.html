@@ -47,13 +47,13 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">RakNet::TimeMS&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#36dcac9c07138222392a4c1314c23a8f">GetTimeoutTime</a> (void)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#b4de41ccc30bd6c945ca4f9c176a5985">HandleSocketReceiveFromConnectedPlayer</a> (const char *buffer, unsigned int length, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1PluginInterface2.html">PluginInterface2</a> * &gt; &amp;messageHandlerList, int MTUSize, SOCKET s, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, CCTimeType timeRead)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#73f5d0ea515c8c84ad2105a43e02aac1">HandleSocketReceiveFromConnectedPlayer</a> (const char *buffer, unsigned int length, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1PluginInterface2.html">PluginInterface2</a> * &gt; &amp;messageHandlerList, int MTUSize, SOCKET s, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, CCTimeType timeRead)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">BitSize_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#9dcac79ba7f4f69424c586f267dbf0a1">Receive</a> (unsigned char **data)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#1c0cec3e2e22dc8a5e66906f659e226a">Send</a> (char *data, BitSize_t numberOfBitsToSend, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, unsigned char orderingChannel, bool makeDataCopy, int MTUSize, CCTimeType currentTime, uint32_t receipt)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#ced9bea8c6281d7d32febe1215b99bd1">Update</a> (SOCKET s, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, int MTUSize, CCTimeType time, unsigned bitsPerSecondLimit, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1PluginInterface2.html">PluginInterface2</a> * &gt; &amp;messageHandlerList, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#b7fee4a307f4c33e052282dec33db111">Update</a> (SOCKET s, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, int MTUSize, CCTimeType time, unsigned bitsPerSecondLimit, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1PluginInterface2.html">PluginInterface2</a> * &gt; &amp;messageHandlerList, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReliabilityLayer.html#efec7668d83301e70d97f2a5f174b6f3">IsDeadConnection</a> (void) const </td></tr>
 
@@ -122,7 +122,7 @@ Returns the value passed to SetTimeoutTime. or the default if it was never calle
 
 </div>
 </div><p>
-<a class="anchor" name="b4de41ccc30bd6c945ca4f9c176a5985"></a><!-- doxytag: member="RakNet::ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer" ref="b4de41ccc30bd6c945ca4f9c176a5985" args="(const char *buffer, unsigned int length, SystemAddress systemAddress, DataStructures::List&lt; PluginInterface2 * &gt; &amp;messageHandlerList, int MTUSize, SOCKET s, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, CCTimeType timeRead)" -->
+<a class="anchor" name="73f5d0ea515c8c84ad2105a43e02aac1"></a><!-- doxytag: member="RakNet::ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer" ref="73f5d0ea515c8c84ad2105a43e02aac1" args="(const char *buffer, unsigned int length, SystemAddress &amp;systemAddress, DataStructures::List&lt; PluginInterface2 * &gt; &amp;messageHandlerList, int MTUSize, SOCKET s, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, CCTimeType timeRead)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -141,7 +141,7 @@ Returns the value passed to SetTimeoutTime. or the default if it was never calle
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -392,7 +392,7 @@ Set the time, in MS, to use before considering ourselves disconnected after not 
 
 </div>
 </div><p>
-<a class="anchor" name="ced9bea8c6281d7d32febe1215b99bd1"></a><!-- doxytag: member="RakNet::ReliabilityLayer::Update" ref="ced9bea8c6281d7d32febe1215b99bd1" args="(SOCKET s, SystemAddress systemAddress, int MTUSize, CCTimeType time, unsigned bitsPerSecondLimit, DataStructures::List&lt; PluginInterface2 * &gt; &amp;messageHandlerList, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions)" -->
+<a class="anchor" name="b7fee4a307f4c33e052282dec33db111"></a><!-- doxytag: member="RakNet::ReliabilityLayer::Update" ref="b7fee4a307f4c33e052282dec33db111" args="(SOCKET s, SystemAddress &amp;systemAddress, int MTUSize, CCTimeType time, unsigned bitsPerSecondLimit, DataStructures::List&lt; PluginInterface2 * &gt; &amp;messageHandlerList, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -405,7 +405,7 @@ Set the time, in MS, to use before considering ourselves disconnected after not 
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
           <td class="paramname"> <em>systemAddress</em>, </td>
         </tr>
         <tr>
@@ -474,9 +474,9 @@ Call once per game cycle. Handles internal lists and actually does the send. <dl
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>d:/temp/RakNet4/Source/<a class="el" href="ReliabilityLayer_8h.html">ReliabilityLayer.h</a></ul>
+<li>d:/temp/RakNet/Source/<a class="el" href="ReliabilityLayer_8h.html">ReliabilityLayer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jan 2 15:33:29 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 8 13:04:37 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

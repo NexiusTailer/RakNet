@@ -107,13 +107,16 @@ void main(void)
 	rakPeer->AttachPlugin(&udpProxyServer);
 	rakPeer->AttachPlugin(&udpProxyCoordinator);
 	rakPeer->AttachPlugin(&natTypeDetectionServer);
-	char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
-	unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
-	RakNet::SocketLayer::GetMyIP( ipList, binaryAddresses );
-	natTypeDetectionServer.Startup(ipList[1], ipList[2], ipList[3]);
+	char ipListStr[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 128 ];
+	RakNet::SystemAddress ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ];
+	for (int i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
+		ipList[i].ToString(false,ipListStr[i]);
+	RakNet::SocketLayer::GetMyIP( ipList );
+	natTypeDetectionServer.Startup(ipListStr[1], ipListStr[2], ipListStr[3]);
 	// Login proxy server to proxy coordinator
 	// Normally the proxy server is on a different computer. Here, we login to our own IP address since the plugin is on the same system
-	udpProxyServer.LoginToCoordinator(COORDINATOR_PASSWORD, rakPeer->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS));
+
+	udpProxyServer.LoginToCoordinator(COORDINATOR_PASSWORD, rakPeer->GetMyBoundAddress());
 #endif
 
 	RakNet::Packet *packet;

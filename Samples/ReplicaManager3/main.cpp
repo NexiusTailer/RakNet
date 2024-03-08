@@ -306,7 +306,7 @@ struct P2PReplica : public SampleReplica {
 
 class SampleConnection : public Connection_RM3 {
 public:
-	SampleConnection(SystemAddress _systemAddress, RakNetGUID _guid) : Connection_RM3(_systemAddress, _guid) {}
+	SampleConnection(const SystemAddress &_systemAddress, RakNetGUID _guid) : Connection_RM3(_systemAddress, _guid) {}
 	virtual ~SampleConnection() {}
 
 	// See documentation - Makes all messages between ID_REPLICA_MANAGER_DOWNLOAD_STARTED and ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE arrive in one tick
@@ -328,7 +328,7 @@ protected:
 
 class ReplicaManager3Sample : public ReplicaManager3
 {
-	virtual Connection_RM3* AllocConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID) const {
+	virtual Connection_RM3* AllocConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID) const {
 		return new SampleConnection(systemAddress,rakNetGUID);
 	}
 	virtual void DeallocConnection(Connection_RM3 *connection) const {
@@ -340,6 +340,7 @@ int main(void)
 {
 	char ch;
 	RakNet::SocketDescriptor sd;
+	sd.socketFamily=AF_INET; // Only IPV4 supports broadcast on 255.255.255.255
 	char ip[128];
 	static const int SERVER_PORT=12345;
 
@@ -374,7 +375,7 @@ int main(void)
 	{
 		topology=P2P;
 		sd.port=SERVER_PORT;
-		while (SocketLayer::IsPortInUse(sd.port)==true)
+		while (SocketLayer::IsPortInUse(sd.port,sd.hostAddress,sd.socketFamily)==true)
 			sd.port++;
 	}
 
@@ -428,11 +429,13 @@ int main(void)
 				printf("ID_CONNECTION_LOST\n");
 				break;
 			case ID_ADVERTISE_SYSTEM:
-				// The conditional is needed because ID_ADVERTISE_SYSTEM may be from a system we are connected to, but replying on a different address.
-				if (rakPeer->GetSystemAddressFromGuid(packet->guid)==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
+				// The first conditional is needed because ID_ADVERTISE_SYSTEM may be from a system we are connected to, but replying on a different address.
+				// The second conditional is because AdvertiseSystem also sends to the loopback
+				if (rakPeer->GetSystemAddressFromGuid(packet->guid)==RakNet::UNASSIGNED_SYSTEM_ADDRESS &&
+					rakPeer->GetMyGUID()!=packet->guid)
 				{
 					printf("Connecting to %s\n", packet->systemAddress.ToString(true));
-					rakPeer->Connect(packet->systemAddress.ToString(false), packet->systemAddress.port,0,0);
+					rakPeer->Connect(packet->systemAddress.ToString(false), packet->systemAddress.GetPort(),0,0);
 				}
 				break;
 			case ID_SND_RECEIPT_LOSS:
@@ -504,7 +507,7 @@ int main(void)
 		RakSleep(30);
 		for (int i=0; i < 4; i++)
 		{
-			if (rakPeer->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS,0).port!=SERVER_PORT+i)
+			if (rakPeer->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS,0).GetPort()!=SERVER_PORT+i)
 				rakPeer->AdvertiseSystem("255.255.255.255", SERVER_PORT+i, 0,0,0);
 		}
 	}

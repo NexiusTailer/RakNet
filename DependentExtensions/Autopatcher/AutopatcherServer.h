@@ -178,7 +178,7 @@ public:
 	/// \internal For plugin handling
 	virtual void OnStartup(RakPeerInterface *peer);
 	/// \internal For plugin handling
-	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 
 	struct ThreadData
 	{
@@ -247,7 +247,7 @@ protected:
 
 	AutopatcherServerLoadNotifier *loadNotifier;
 	void CallPacketCallback(Packet *packet, AutopatcherServerLoadNotifier::QueueOperation queueOperation);
-	void CallPatchCompleteCallback(SystemAddress systemAddress, AutopatcherServerLoadNotifier::PatchResult patchResult);
+	void CallPatchCompleteCallback(const SystemAddress &systemAddress, AutopatcherServerLoadNotifier::PatchResult patchResult);
 
 };
 

@@ -34,20 +34,22 @@ int main()
 
 	// Address is probably 192.168.0.1. Fix it to be 127.0.0.1.
 	// Only necessary to do this when connecting through the loopback on the local system. In a real system we'd stick with the external IP
-	RakNet::SystemAddress peer0Addr = rakPeer[0]->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS);
-	RakNet::SystemAddress peer1Addr = rakPeer[1]->GetInternalID(RakNet::UNASSIGNED_SYSTEM_ADDRESS);
-	peer0Addr.SetBinaryAddress("127.0.0.1");
-	peer1Addr.SetBinaryAddress("127.0.0.1");
+	RakNet::SystemAddress peer0Addr = rakPeer[0]->GetMyBoundAddress();
+	RakAssert(peer0Addr!=RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+	RakNet::SystemAddress peer1Addr = rakPeer[1]->GetMyBoundAddress();
+	RakAssert(peer1Addr!=RakNet::UNASSIGNED_SYSTEM_ADDRESS);
+// 	peer0Addr.FromString("127.0.0.1");
+// 	peer1Addr.FromString("127.0.0.1");
 
 	unsigned short fowardPort;
-	if (!udpForwarder.StartForwarding(peer0Addr,peer1Addr, timeoutOnNoDataMS, 0, &fowardPort,0))
+	if (!udpForwarder.StartForwarding(peer0Addr,peer1Addr, timeoutOnNoDataMS, 0, AF_INET, &fowardPort,0))
 	{
 		printf("Socket error\n");
 		return 1;
 	}
 
 	// Send a connect message to the forwarder, on the port to forward to rakPeer[1]
-	rakPeer[0]->Connect("127.0.0.1", fowardPort, 0, 0);
+	rakPeer[0]->Connect(peer1Addr.ToString(false), fowardPort, 0, 0);
 	
 	printf("'q'uit.\n");
 	RakNet::Packet *p;
