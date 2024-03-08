@@ -39,7 +39,6 @@
       <li>Define STATICLIB in the preprocessor if necessary (See DependentExtensions\miniupnpc-1.5\declspec.h)</li>
       <li>Link ws2_32.lib and IPHlpApi.Lib</li>
     </ol>
-    <p>See below for a simpler solution.</p>
     <p><strong>Step 1: Connect to the server</strong></p>
 <p>Connect to your server running NATCompleteServer using the usual method RakPeerInterface::Connect().</p>
     <p><strong>Step 2: Detect router type</strong></p>
@@ -151,7 +150,7 @@ cloudClient-&gt;Post(&amp;cloudKey, bs.GetData(), bs.GetNumberOfBytesUsed(), ser
 <ol>
   <li>Run step 1 as above</li>
   <li>Call the OpenUPNP() function in step 3. You don't need to upload any status to the server. If the function fails, just ignore it.</li>
-  <li>Call NatPunchthroughClient::OpenNATGroup() on whichever player is the session/room host. You will get ID_NAT_GROUP_PUNCH_SUCCEEDED, or a faiure code. If a failure code, then you can't connect to that room and should tell the user to open the game port on their router.</li>
+  <li>Call NatPunchthroughClient::OpenNATGroup() on whichever player is the session/room host. You will get ID_NAT_GROUP_PUNCH_SUCCEEDED, or a failure code. If a failure code, then you can't connect to that room and should tell the user to open the game port on their router.</li>
 </ol>
 <p>See the sample <em>\Samples\NATSimplePeer</em></p></TD>
 </TR></TABLE>

@@ -24,7 +24,7 @@
     </p>
   <p>Peer to peer first person shooter demo showing off PHPDirectoryServer, ReplicaManager3, and NAT punchthrough. </p>
   <p><em>Download from</em>: <a href="http://irrlicht.sourceforge.net/downloads.html">http://irrlicht.sourceforge.net/downloads.html</a></p>
-  <p><em>Unpack to</em>: C:\irrlicht-1.7.1\include</p>
+  <p><em>Unpack to</em>: C:\irrlicht-1.7.2\include</p>
   <p>&nbsp;</p>
   <h3><a href="ogre3dinterpdemo.html">Ogre3DInterpDemo</a></h3>
 Client/Server ReplicaManager3 and interpolation demo
@@ -35,7 +35,8 @@ Client/Server ReplicaManager3 and interpolation demo
 One of two supported database backends for the AutopatcherServer project, which is required to use AutopatcherClient. You only need one of the two.
 <p><em>Download from</em>: http://dev.mysql.com/downloads/</p>
   <p><em>Unpack to</em>: C:\Program Files (x86)\MySQL\MySQL Server 5.1</p>
-  <p>&nbsp;</p>
+  <p>Note: MySQL is an order of magnitude slower than PostgreSQL with AutopatcherServer.</p>
+<p>&nbsp;</p>
   <h3><a href="autopatcher.html">AutopatcherPostgreSQLRepository</a></h3>
   One of two supported database backends for the AutopatcherServer project, which is required to use AutopatcherClient. You only need one of the two.
 During installation be sure to check developer tools, or the header files will not be installed.
@@ -52,7 +53,7 @@ Database backend for the Lobby2 system, supporting users, clans, friends, and ot
   <p>&nbsp;</p>
   <p><strong>RoomsAndLobbyGFx3
    </strong></p>
-  <p> Visual front-end for the RoomsPlugin and Lobby2 systems, with the ability to login and display a list of rooms. Note: Scaleform requires registration and is non-free. </p>
+  <p> Visual front-end for the RoomsPlugin and Lobby2 systems, with the ability to login and display a list of rooms. Note: Scaleform requires registration and is not-free. </p>
   <p><em>Download from</em>: http://www.scaleform.com/</p>
   <p><em>Unpack to</em>: Doesn't matter, uses enviroment variable $(GFXSDK)</p>
   <p>&nbsp;</p>
@@ -75,7 +76,8 @@ Note: FMOD is not necessarily free.
   <h3><a href="RPC3Video.htm">RPC3</a></h3>
 Remote procedure calls using C++ and semi-automatic serialization. Includes support for networked <a href="http://en.wikipedia.org/wiki/Signals_and_slots">signals and slots</a>. Note: The majority of boost is not required, only those files actually used by RPC3. If you don't want to use Boost, you can use the RPC4 plugin instead which has similar functionality to the RPC found in RakNet version 3.
 <p><em>Download from</em>: http://www.boost.org/users/download/</p>
-  <p><em>Unpack to</em>: c:/boost_1_43_0</p>
+  <p><em>Unpack to</em>: c:/boost_1_46_1</p>
+  <p>Note: You can use RPC4 if you do not want to install Boost, it however cannot call directly into C++ member functions or automatically serialize method parameters.</p>
   <p>&nbsp;</p>
 <p>&nbsp;</p>
   <p>&nbsp;</p>

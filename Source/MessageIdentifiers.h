@@ -175,8 +175,6 @@ enum DefaultMessageIDTypes
 	ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE,
 	/// Serialize construction for an object that already exists on the remote system
 	ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING,
-	ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_REJECTED,
-	ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_ACCEPTED,
 
 	/// RakVoice plugin - Open a communication channel
 	ID_RAKVOICE_OPEN_CHANNEL_REQUEST,
@@ -287,6 +285,7 @@ enum DefaultMessageIDTypes
 	ID_LOBBY2_SERVER_ERROR,
 
 	/// Informs user of a new host GUID. Packet::Guid contains this new host RakNetGuid. The old host can be read out using BitStream->Read(RakNetGuid) starting on byte 1
+	/// This is not returned until connected to a remote system
 	ID_FCM2_NEW_HOST,
 	/// \internal For FullyConnectedMesh2 plugin
 	ID_FCM2_REQUEST_FCMGUID,

@@ -130,6 +130,7 @@ class NetworkIDManager;
 		/// \param[in] bitStream bitStream encoded data to send to the function callback
 		void CallLoopback( const char* uniqueID, RakNet::BitStream * bitStream );
 
+		/// \deprecated, use Signal()
 		/// Send to the specified remote instance of RakPeer.
 		/// \param[in] uniqueID Identifier originally passed to RegisterFunction() on the remote system(s)
 		/// \param[in] bitStream bitStream encoded data to send to the function callback
@@ -140,7 +141,7 @@ class NetworkIDManager;
 		/// \param[in] broadcast See RakPeerInterface::Send()
 		void Call( const char* uniqueID, RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast );
 
-		/// \brief Same as call, but don't return until the remote system 
+		/// \brief Same as call, but don't return until the remote system replies.
 		/// Broadcasting parameter does not exist, this can only call one remote system
 		/// \note This function does not return until the remote system responds, disconnects, or was never connected to begin with
 		/// \param[in] Identifier originally passed to RegisterBlockingFunction() on the remote system(s)

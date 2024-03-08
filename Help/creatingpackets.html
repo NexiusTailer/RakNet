@@ -71,16 +71,16 @@ sending. Since both the sender and the recipient can share the same
 source file defining the structure, you avoid casting mistakes. There
 is also no risk of getting the data out of order, or using the wrong
 types. The disadvantage of creating a structure is that you often have
-to change and recompile many files to do so. You also lose the
-compression you can automatically perform with the bitstream class.<br>
+to change and recompile many files to do so. You lose the
+compression you can automatically perform with the bitstream class. And RakNet cannot automatically endian-swap the structure members.<br>
 <br>
 The advantage of using a bitstream is that you don't have to change any
 external files to use it. Simply create the bitstream, write the data
 you want in whatever order you want, and send it. You can use the
 'compressed' version of the read and write methods to write using fewer
-bits and it will write bools using only one bit. You can also write
+bits and it will write bools using only one bit. You can write
 data out dynamically, writing certain values if certain conditions are
-true or false. The disadvantage of a bitstream is you are now
+true or false. BitStream will automatically endian-swap members written with Serialize(), Write(), or Read(). The disadvantage of a bitstream is you are now
 susceptible to make mistakes. You can read data in a way that does not
 complement how you wrote it - the wrong order, a wrong data type, or
 other mistakes.<br>
@@ -284,12 +284,12 @@ Packets with Bitstreams</span></td>
   <p>    Wrong:      <br>
     <span class="RakNetCode">bitStream-&gt;Write(ID_SET_TIMED_MINE);</span></p>
   <p>    In the second case, RakNet will see the first byte is 0, which is
-    reserved internally to ID_INTERNAL_PING, and you will never get it.<br>
-    <font class="G10" color="#666666" size="2"><br>
-      <strong class="RakNetBlueHeader">Writing
-        strings</strong>
-      <br>
-      <br>
+    reserved internally to ID_INTERNAL_PING, and you will never get it.</p>
+  <p><font class="G10" color="#666666" size="2"><br>
+    <strong class="RakNetBlueHeader">Writing
+      strings</strong>
+    <br>
+    <br>
     It is possible to write strings using the array overload of the
     BitStream. One way to do it would be to write the length, then the data
     such as:</p>
@@ -325,6 +325,7 @@ Packets with Bitstreams</span></td>
   <p><span class="RakNetCode">bitStream-&gt;write(rakString);</span><br>
     <br>
     RakString is approximately 3X faster than std::string.</p>
+  <p>Use RakWString for Unicode support.</p>
   <p><i>Programmer's notes:</i><br>
     <br>
     1. You can also write structs

@@ -22,7 +22,7 @@
       <ol>
         <li>Server: Call SetupReceive(...) with the address of a system to allow a file send, and a <strong>FileListTransferCBInterface</strong> derived callback handler to be called as the data arrives.</li>
         <li>Client: Encode the files you want to send into the <strong>FileList</strong> class.</li>
-        <li>Client: Call Send(...) with your <strong>FileList</strong> class instance, a user-defined ID to identify this set of files, parameters to pass to RakPeerInterface::Send(), and a boolean indicating if the files should be compressed or not. Compression is not very fast, so it's best to leave that off unless bandwidth is at a premium.        </li>
+        <li>Client: Call Send(...) with your <strong>FileList</strong> class instance, a user-defined ID to identify this set of files, parameters to pass to RakPeerInterface::Send() or TCPInterface::Send(), and a boolean indicating if the files should be compressed or not. Compression is not very fast, so it's best to leave that off unless bandwidth is at a premium.        </li>
       </ol>
   </TR>
 </TABLE>

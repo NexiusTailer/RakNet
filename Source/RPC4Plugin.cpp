@@ -335,7 +335,7 @@ bool RPC4::CallBlocking( const char* uniqueID, RakNet::BitStream * bitStream, Pa
 	RakAssert(rakPeerInterface);
 	ConnectionState cs;
 	cs = rakPeerInterface->GetConnectionState(systemIdentifier);
-	if (cs!=IS_CONNECTED && cs!=IS_LOOPBACK)
+	if (cs!=IS_CONNECTED)
 		return false;
 
 	SendUnified(&out,priority,reliability,orderingChannel,systemIdentifier,false);
@@ -521,7 +521,7 @@ PluginReceiveResult RPC4::OnReceive(Packet *packet)
 				SendUnified(&out,IMMEDIATE_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
 			}
 		}
-		if (packet->data[1]==ID_RPC4_SIGNAL)
+		else if (packet->data[1]==ID_RPC4_SIGNAL)
 		{
 			RakNet::RakString sharedIdentifier;
 			bsIn.ReadCompressed(sharedIdentifier);

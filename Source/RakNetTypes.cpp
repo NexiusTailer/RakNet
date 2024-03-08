@@ -218,6 +218,24 @@ void SystemAddress::SetToLoopback(unsigned char ipVersion)
 		FromString(IPV6_LOOPBACK, 0, ipVersion);
 	}
 }
+bool SystemAddress::IsLoopback(void) const
+{
+	if (GetIPVersion()==4)
+	{
+		unsigned long l = htonl(address.addr4.sin_addr.s_addr);
+		if (htonl(address.addr4.sin_addr.s_addr)==2130706433)
+			return true;
+	}
+#if RAKNET_SUPPORT_IPV6==1
+	else
+	{
+		const static char localhost[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
+		if (memcmp(&address.addr6.sin6_addr, localhost, 16)==0)
+			return true;
+	}
+#endif
+	return false;
+}
 void SystemAddress::ToString_Old(bool writePort, char *dest, char portDelineator) const
 {
 	if (*this==UNASSIGNED_SYSTEM_ADDRESS)

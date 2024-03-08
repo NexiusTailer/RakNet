@@ -59,7 +59,7 @@ Inheritance diagram for RakNet::RPC4:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="274362402c9476feb9575d06b75a5263"></a><!-- doxytag: member="RakNet::RPC4::RegisterBlockingFunction" ref="274362402c9476feb9575d06b75a5263" args="(const char *uniqueID, void(*functionPointer)(RakNet::BitStream *userData, RakNet::BitStream *returnData, Packet *packet))" -->
 bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC4.html#274362402c9476feb9575d06b75a5263">RegisterBlockingFunction</a> (const char *uniqueID, void(*functionPointer)(<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *userData, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *returnData, <a class="el" href="structRakNet_1_1Packet.html">Packet</a> *packet))</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Same as <em>RegisterFunction</em>, but is called with <a class="el" href="classRakNet_1_1RPC4.html#c224d0d8b1f23817488c14b9fe2d2d36" title="Same as call, but don&#39;t return until the remote system Broadcasting parameter...">CallBlocking()</a> instead of <a class="el" href="classRakNet_1_1RPC4.html#fcf702778c734ec2cd0a0513e77fb380">Call()</a> and returns a value to the caller. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Same as <em>RegisterFunction</em>, but is called with <a class="el" href="classRakNet_1_1RPC4.html#c224d0d8b1f23817488c14b9fe2d2d36" title="Same as call, but don&#39;t return until the remote system replies. Broadcasting...">CallBlocking()</a> instead of <a class="el" href="classRakNet_1_1RPC4.html#fcf702778c734ec2cd0a0513e77fb380">Call()</a> and returns a value to the caller. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC4.html#71f5f6d32e12adf3715d9c5faea25439">RegisterLocalCallback</a> (const char *uniqueID, <a class="el" href="namespaceRakNet.html#1b2f3bf4bad2bb6a8360a12295fbed0c">MessageID</a> messageId)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC4.html#c2fe5e7ffa410c7203e15e1885c72e73">UnregisterFunction</a> (const char *uniqueID)</td></tr>
@@ -79,7 +79,7 @@ bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC4.html#c224d0d8b1f23817488c14b9fe2d2d36">CallBlocking</a> (const char *uniqueID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *returnData)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Same as call, but don't return until the remote system Broadcasting parameter does not exist, this can only call one remote system.  <a href="#c224d0d8b1f23817488c14b9fe2d2d36"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Same as call, but don't return until the remote system replies. Broadcasting parameter does not exist, this can only call one remote system.  <a href="#c224d0d8b1f23817488c14b9fe2d2d36"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RPC4.html#fd3487232245b9d7d7d9e332bf09155d">Signal</a> (const char *sharedIdentifier, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> priority, <a class="el" href="PacketPriority_8h.html#e41fa01235e99dced384d137fa874a7e">PacketReliability</a> reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, bool invokeLocal)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f0e31a1377408727bfa0afe19dda4261"></a><!-- doxytag: member="RakNet::RPC4::InterruptSignal" ref="f0e31a1377408727bfa0afe19dda4261" args="(void)" -->
@@ -160,7 +160,8 @@ It is for users that want to use RPC, but do not want to use boost. You do not h
 <div class="memdoc">
 
 <p>
-Send to the specified remote instance of <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a>. <dl compact><dt><b>Parameters:</b></dt><dd>
+<dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000006">Deprecated:</a></b></dt><dd>, use <a class="el" href="classRakNet_1_1RPC4.html#fd3487232245b9d7d7d9e332bf09155d">Signal()</a> Send to the specified remote instance of <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a>. </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>uniqueID</em>&nbsp;</td><td>Identifier originally passed to <a class="el" href="classRakNet_1_1RPC4.html#62122f90344dbfc064f9b14e0f565b23" title="Register a function pointer to be callable from a remote system.">RegisterFunction()</a> on the remote system(s) </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>bitStream</em>&nbsp;</td><td>bitStream encoded data to send to the function callback </td></tr>
@@ -230,7 +231,7 @@ Send to the specified remote instance of <a class="el" href="classRakNet_1_1RakP
 <div class="memdoc">
 
 <p>
-Same as call, but don't return until the remote system Broadcasting parameter does not exist, this can only call one remote system. 
+Same as call, but don't return until the remote system replies. Broadcasting parameter does not exist, this can only call one remote system. 
 <p>
 <dl class="note" compact><dt><b>Note:</b></dt><dd>This function does not return until the remote system responds, disconnects, or was never connected to begin with </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -599,7 +600,7 @@ Remove the association created with <a class="el" href="classRakNet_1_1RPC4.html
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="RPC4Plugin_8h.html">RPC4Plugin.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jun 30 11:04:30 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jul 19 09:27:10 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

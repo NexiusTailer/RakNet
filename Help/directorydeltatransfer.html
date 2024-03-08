@@ -22,10 +22,11 @@
   <TR>
     <TD><p><span class="RakNetBlueHeader">Send file differences between directories automatically</span><BR>
         <BR>
-      DirectoryDeltaTransfer.h is useful if you allow user-moddable content. For example, if each server has a /skins directory, you could run this plugin to upload that directory to the clients. Each client that does not already have a particular skin will get it. You will get download progress notifications via a user-supplied callback.</p>
+      DirectoryDeltaTransfer.h is useful if you allow user-moddable content. For example, if each server has a /skins directory, you could run this plugin to upload that directory to the clients. Each client that does not already have a particular skin will get it. You will get download progress notifications via a user-supplied callback. DirectoryDeltaTransfer relies on the FileListTransfer plugin to actually transmit hte files.</p>
       <p>Usage:</p>
       <ol>
         <li>Attach the plugin and connect to the remote system</li>
+        <li>Server and client: Call directoryDeltaTransfer.SetFileListTransferPlugin(&amp;fileListTransfer);</li>
         <li>Server: set the application directory: <span class="style1"><code> directoryDeltaTransfer.SetApplicationDirectory(&quot;c:\myGame&quot;);</code></span></li>
         <li>Server: set the download directory: <span class="RakNetCode">directoryDeltaTransfer.AddUploadsFromSubdirectory(&quot;skins&quot;);</span></li>
         <li>Client: to download call: <span class="RakNetCode">directoryDeltaTransfer.DownloadFromSubdirectory(&quot;skins&quot;, &quot;downloaded\skins&quot;, true, serverAddress, &amp;transferCallback, HIGH_PRIORITY, 0);</span></li>
@@ -42,7 +43,8 @@
 </table>
     <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
       <TR>
-        <TD> <A HREF="index.html">Index</A><BR>          </TD>
+        <TD> <A HREF="index.html">Index</A><br>
+        <A HREF="filelisttransfer.html">FileListTransfer</A> <BR>          </TD>
       </TR>
     </TABLE></TD>
 </TR></TABLE>

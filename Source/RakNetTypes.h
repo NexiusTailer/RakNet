@@ -56,8 +56,6 @@ enum ConnectionAttemptResult
 /// Returned from RakPeerInterface::GetConnectionState()
 enum ConnectionState
 {
-	/// Not applicable, because the passed address is the loopback address
-	IS_LOOPBACK,
 	/// Connect() was called, but the process hasn't started yet
 	IS_PENDING,
 	/// Processing the connection attempt
@@ -221,6 +219,9 @@ struct RAK_DLL_EXPORT SystemAddress
 	/// Call SetToLoopback() with a specific IP version
 	/// \param[in] ipVersion Either 4 for IPV4 or 6 for IPV6
 	void SetToLoopback(unsigned char ipVersion);
+
+	/// \return If was set to 127.0.0.1 or ::1
+	bool IsLoopback(void) const;
 
 	// Return the systemAddress as a string in the format <IP>|<Port>
 	// Returns a static string
@@ -401,10 +402,6 @@ typedef uint64_t NetworkID;
 /// This represents a user message from another system.
 struct Packet
 {
-	// This is now in the systemAddress struct and is used for lookups automatically
-	/// Server only - this is the index into the player array that this systemAddress maps to
-//	SystemIndex systemIndex;
-
 	/// The system that send this packet.
 	SystemAddress systemAddress;
 

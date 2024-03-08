@@ -140,7 +140,10 @@ void Lobby2Client_Steam_Impl::OnLobbyDataUpdatedCallback( LobbyDataUpdate_t *pCa
 				{
 					callbackResult->roomName=pchLobbyName;
 				}
-				CallCBWithResultCode(callbackResult, L2RC_SUCCESS);
+				if (pCallback->m_bSuccess)
+					CallCBWithResultCode(callbackResult, L2RC_SUCCESS);
+				else
+					CallCBWithResultCode(callbackResult, L2RC_Console_GetRoomDetails_NO_ROOMS_FOUND);
 				msgFactory->Dealloc(callbackResult);
 				deferredCallbacks.RemoveAtIndex(i);
 				break;
@@ -177,8 +180,16 @@ void Lobby2Client_Steam_Impl::OnLobbyCreated( LobbyCreated_t *pCallback, bool bI
 			roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
 			roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
 			roomMembers.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_); // GetLobbyMemberByIndex( roomId, 0 ).ConvertToUint64());
-			
-			CallCBWithResultCode(callbackResult, L2RC_SUCCESS);
+
+			callbackResult->extendedResultCode=pCallback->m_eResult;
+			if (pCallback->m_eResult==k_EResultOK)
+			{
+				CallCBWithResultCode(callbackResult, L2RC_SUCCESS);
+			}
+			else
+			{
+				CallCBWithResultCode(callbackResult, L2RC_GENERAL_ERROR);
+			}
 			msgFactory->Dealloc(callbackResult);
 			deferredCallbacks.RemoveAtIndex(i);
 
@@ -288,7 +299,10 @@ void Lobby2Client_Steam_Impl::OnLobbyDataUpdate( LobbyDataUpdate_t *pCallback )
 	Notification_Console_UpdateRoomParameters_Steam notification;
 	notification.roomId=roomId;
 	notification.roomNewName=SteamMatchmaking()->GetLobbyData( roomId, "name" );
-	CallCBWithResultCode(&notification, L2RC_SUCCESS);
+	if (pCallback->m_bSuccess)
+		CallCBWithResultCode(&notification, L2RC_SUCCESS);
+	else
+		CallCBWithResultCode(&notification, L2RC_Console_GetRoomDetails_NO_ROOMS_FOUND);
 }
 void Lobby2Client_Steam_Impl::OnLobbyChatUpdate( LobbyChatUpdate_t *pCallback )
 {

@@ -65,7 +65,7 @@ handshake.GenerateServerKey(public_key, private_key);</span><br>
 <p>You should generate the public key on a remote system in advance of trying to connect to that system. The   reason is that the public key is used to identify the remote system, so you know the system that replied is the one you are actually trying to connect to. An attacker might know the public key, but they wouldn't know the private key (which you keep secret) so they would not be able to establish a connection with you.<br>
   <br>
   For peer to peer, you should run a dedicated server, which itself is secure. Distribute the   client with the public key to that server known in advance. Connect to   that server, upload the peer's public key into a database, and then wait   for incoming connections. Correspondingly, when a peer wants to   connect, connect to that server, download the public key for that peer,   and use that public key for connections.</p>
-<p>  You can rent a discounted dedicated server from dx.net at http://www.dx.net/raknet_dx.php</p>
+<p>  You can rent a discounted dedicated server from dx.net at <a href="http://www.dx.net/raknet_dx.php">http://www.dx.net/raknet_dx.php</a></p>
 <p>Alternate solutions:</p>
 <ol>
   <li>You can use PHPDirectoryServer to pass the public keys. While not secure, it will work with a PHP enabled webhost (typically $5 to $10 a month)  and it's more secure than option 2 which is</li>

@@ -81,7 +81,7 @@ int main()
 
 			case ID_FCM2_NEW_HOST:
 				{
-				if (packet->systemAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
+				if (packet->guid==rakPeer->GetMyGUID())
 					printf("Got new host (ourselves)");
 				else
 					printf("Got new host %s, GUID=%s", packet->systemAddress.ToString(true), packet->guid.ToString());

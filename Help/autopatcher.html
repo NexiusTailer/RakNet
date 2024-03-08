@@ -121,8 +121,9 @@ Pass the interface to your repository with this function.  RakNet comes with Aut
       <p>AutopatcherServer has an additional optimization through the function CacheMostRecentPatch(). This will store the most recent patch in memory if using AutopatcherPostgreRepository. If the time passed to PatchApplication() is greater than the most recent patch, the patch is skipped entirely. If it is less than the most recent patch, but still greater than the patch prior to that, the patch is served from memory instead of disk. For this to work, every time you get ID_AUTOPATCHER_FINISHED call AutopatcherClient::GetServerDate(), save it to disk, and use that date for the next call to PatchApplication().</p>
       <p>Summary of performance tips:</p>
       <OL>
-      <LI>The autopatcher was not performanced designed to serve the application, only to patch.
- Your users should download from FTP or a webserver as much as possible before patching.     <LI>Use AutopatcherServer::CacheMostRecentPatch()      if using AutopatcherPostgreRepository
+      <LI>The autopatcher was not designed to serve the entire application, only to patch.
+ Your users should download from FTP or a webserver as much as possible before patching.     
+      <LI>Use AutopatcherServer::CacheMostRecentPatch()      if using AutopatcherPostgreRepository
       <LI>AutopatcherPostgreRepository is about 10x faster than AutopatcherMySQLRepository even without CacheMostRecentPatch()     
       <LI>If 0 is passed to lastUpdateDate for AutopatcherClient::PatchApplication, this generates a full-scan of every file accessing the database for each file. Do not do it except on user request to repair corrupted installations.<br>
         <LI>To distribute your application, call time() on the server immediately after  UpdateApplicationFiles(). Store that value with the client distribution, and use as the default to  lastUpdateParameter for the first call to
@@ -131,7 +132,7 @@ Pass the interface to your repository with this function.  RakNet comes with Aut
       <LI>With CacheMostRecentPatch(), only the most recent patch is stored in memory, so do not call UpdateApplicationFiles pointlessly.      
       </OL>
       <p><strong>Notes on memory usage:</strong></p>
-<p>Patches are created with code from Colin Percival <a href="http://www.daemonology.net/bsdiff/">http://www.daemonology.net/bsdiff/</a> . The patching algorithm uses   <a href="http://www.cs.lth.se/Research/Algorithms/Papers/jesper5.ps"> Larsson and Sadakane's qsufsort</a> and is quite memory intensive, and not recommended for files over several hundred megabytes. If you use CacheMostRecentPatch() whatever the size of your most recent patch is, is also kept in memory. Additionally, file transfer takes about 8 megabytes per user.</p></TD>
+<p>Patches are created with code from Colin Percival <a href="http://www.daemonology.net/bsdiff/">http://www.daemonology.net/bsdiff/</a> . The patching algorithm uses   <a href="http://www.cs.lth.se/Research/Algorithms/Papers/jesper5.ps"> Larsson and Sadakane's qsufsort</a> and is quite memory intensive, and not recommended for files over several hundred megabytes. If you use CacheMostRecentPatch() your most recent patch is also kept in memory. Additionally, file transfer takes about 8 megabytes of memory per user.</p></TD>
 </TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
 <img src="spacer.gif" width="8" height="1">See Also</td>

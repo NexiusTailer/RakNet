@@ -86,8 +86,8 @@
 <br>
 &nbsp;&nbsp;<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3fc78fef27ae5f482a72cc8cc0e0b021f">ID_REPLICA_MANAGER_DOWNLOAD_STARTED</a>, 
 <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3afdebb4d76e2675e8aaf8f7d39ae58d4">ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE</a>, 
-<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd383c8140a3d5a85d4d53b7568231a121a">ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING</a>
-, <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3bbe6fdcfe6a28b7613544e72e107f844">ID_RAKVOICE_OPEN_CHANNEL_REQUEST</a>, 
+<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd383c8140a3d5a85d4d53b7568231a121a">ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING</a>, 
+<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3bbe6fdcfe6a28b7613544e72e107f844">ID_RAKVOICE_OPEN_CHANNEL_REQUEST</a>, 
 <br>
 &nbsp;&nbsp;<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd326d3dc9d0b88aa674b4287f55ccd2184">ID_RAKVOICE_OPEN_CHANNEL_REPLY</a>, 
 <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3233dde0aced8e4209096ce96dc23cc12">ID_RAKVOICE_CLOSE_CHANNEL</a>, 
@@ -352,7 +352,7 @@ Rooms function. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd3c4e942421ec32c967215bdf15f0e9f70"></a><!-- doxytag: member="ID_LOBBY2_SEND_MESSAGE" ref="c1b471af280629f5ace02e586d5bcfd3c4e942421ec32c967215bdf15f0e9f70" args="" -->ID_LOBBY2_SEND_MESSAGE</em>&nbsp;</td><td>
 Lobby2 message. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd36e185e616ae184abde909e8f3e0bdeb3"></a><!-- doxytag: member="ID_FCM2_NEW_HOST" ref="c1b471af280629f5ace02e586d5bcfd36e185e616ae184abde909e8f3e0bdeb3" args="" -->ID_FCM2_NEW_HOST</em>&nbsp;</td><td>
-Informs user of a new host GUID. Packet::Guid contains this new host RakNetGuid. The old host can be read out using BitStream-&gt;Read(RakNetGuid) starting on byte 1. </td></tr>
+Informs user of a new host GUID. Packet::Guid contains this new host RakNetGuid. The old host can be read out using BitStream-&gt;Read(RakNetGuid) starting on byte 1 This is not returned until connected to a remote system </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd3d56b0bee1058a1be9f8634faeeb94874"></a><!-- doxytag: member="ID_UDP_PROXY_GENERAL" ref="c1b471af280629f5ace02e586d5bcfd3d56b0bee1058a1be9f8634faeeb94874" args="" -->ID_UDP_PROXY_GENERAL</em>&nbsp;</td><td>
 UDP proxy messages. Second byte indicates type. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd33dcbcea2b9552a7cb9bad7b2bb1d6c86"></a><!-- doxytag: member="ID_SQLite3_EXEC" ref="c1b471af280629f5ace02e586d5bcfd33dcbcea2b9552a7cb9bad7b2bb1d6c86" args="" -->ID_SQLite3_EXEC</em>&nbsp;</td><td>
@@ -402,7 +402,7 @@ CloudClient / CloudServer. </td></tr>
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jun 30 11:04:27 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jul 19 09:27:08 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

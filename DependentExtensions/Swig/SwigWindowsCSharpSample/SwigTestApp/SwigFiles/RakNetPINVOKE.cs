@@ -840,6 +840,9 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_SetToLoopback__SWIG_1")]
   public static extern void SystemAddress_SetToLoopback__SWIG_1(HandleRef jarg1, byte jarg2);
 
+  [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_IsLoopback")]
+  public static extern bool SystemAddress_IsLoopback(HandleRef jarg1);
+
   [DllImport("RakNet", EntryPoint="CSharp_SystemAddress_ToString__SWIG_0")]
   public static extern string SystemAddress_ToString__SWIG_0(HandleRef jarg1, bool jarg2, char jarg3);
 

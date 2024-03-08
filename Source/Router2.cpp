@@ -204,11 +204,6 @@ void Router2::EstablishRouting(RakNetGUID endpointGuid)
                 "(already connected to the %I64d)\n", __FILE__, __LINE__, endpointGuid.g ));
 		return;
 	}
-	if (cs==IS_LOOPBACK)
-	{
-		printf("Router2 failed at %s:%i (loopback)\n", _FILE_AND_LINE_);
-		return;
-	}
 
 	ConnectInternal(endpointGuid,false);
 }

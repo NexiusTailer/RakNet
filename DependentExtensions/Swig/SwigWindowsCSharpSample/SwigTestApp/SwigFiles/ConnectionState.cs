@@ -9,7 +9,6 @@
 namespace RakNet {
 
 public enum ConnectionState {
-  IS_LOOPBACK,
   IS_PENDING,
   IS_CONNECTING,
   IS_CONNECTED,

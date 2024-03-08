@@ -105,15 +105,6 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3Composite.html#93bedef73e62c6893d47cd0482807f4c">Deserialize</a> (RakNet::DeserializeParameters *deserializeParameters)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Read what was written in <a class="el" href="classRakNet_1_1Replica3Composite.html#9cdd70fda45a5375a14d61e4c372463d" title="Serialize our class to a bitstream.">Serialize()</a>.  <a href="#93bedef73e62c6893d47cd0482807f4c"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3Composite.html#1e2af098918b82b8fcfebe00b2ea52ef">SerializeConstructionRequestAccepted</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *serializationBitstream, <a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *requestingConnection)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write data for when an object creation request is accepted.  <a href="#1e2af098918b82b8fcfebe00b2ea52ef"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3Composite.html#02e24b4c82f57d19bebd1c104b80552d">DeserializeConstructionRequestAccepted</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *serializationBitstream, <a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *acceptingConnection)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3Composite.html#0aa650e8238059eb08b8cc192fe37c89">SerializeConstructionRequestRejected</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *serializationBitstream, <a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *requestingConnection)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3Composite.html#fe87c07da1db0a100daef5bd395a0812">DeserializeConstructionRequestRejected</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *serializationBitstream, <a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *rejectingConnection)</td></tr>
-
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="73424eca7c3bdd1140d82c2ee635fffe"></a><!-- doxytag: member="RakNet::Replica3Composite::PostSerializeConstruction" ref="73424eca7c3bdd1140d82c2ee635fffe" args="(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3Composite.html#73424eca7c3bdd1140d82c2ee635fffe">PostSerializeConstruction</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *constructionBitstream, <a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection)</td></tr>
 
@@ -273,84 +264,6 @@ template&lt;class parent_type &gt; </div>
 <p>
 Same as <a class="el" href="classRakNet_1_1Replica3Composite.html#387379441c90fcb6381d0227c42c5712" title="Read data written by Replica3::SerializeConstruction().">DeserializeConstruction()</a>, but for an object that already exists on the remote system. Used if you return RM3CS_ALREADY_EXISTS_REMOTELY from QueryConstruction 
 <p>Reimplemented from <a class="el" href="classRakNet_1_1Replica3.html#1949dd5597c106d7538ed602133ec04d">RakNet::Replica3</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="02e24b4c82f57d19bebd1c104b80552d"></a><!-- doxytag: member="RakNet::Replica3Composite::DeserializeConstructionRequestAccepted" ref="02e24b4c82f57d19bebd1c104b80552d" args="(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *acceptingConnection)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class parent_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void <a class="el" href="classRakNet_1_1Replica3Composite.html">RakNet::Replica3Composite</a>&lt; parent_type &gt;::DeserializeConstructionRequestAccepted           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *&nbsp;</td>
-          <td class="paramname"> <em>serializationBitstream</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *&nbsp;</td>
-          <td class="paramname"> <em>acceptingConnection</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [inline, virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Receive the result of SerializeConstructionRequestAccepted <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>serializationBitstream</em>&nbsp;</td><td>Source bitstream to read from </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>acceptingConnection</em>&nbsp;</td><td>Which system sent to us </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classRakNet_1_1Replica3.html#c3e616e8d857faf75a82029277558fc7">RakNet::Replica3</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="fe87c07da1db0a100daef5bd395a0812"></a><!-- doxytag: member="RakNet::Replica3Composite::DeserializeConstructionRequestRejected" ref="fe87c07da1db0a100daef5bd395a0812" args="(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *rejectingConnection)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class parent_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void <a class="el" href="classRakNet_1_1Replica3Composite.html">RakNet::Replica3Composite</a>&lt; parent_type &gt;::DeserializeConstructionRequestRejected           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *&nbsp;</td>
-          <td class="paramname"> <em>serializationBitstream</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *&nbsp;</td>
-          <td class="paramname"> <em>rejectingConnection</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [inline, virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Receive the result of DeserializeConstructionRequestRejected <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>serializationBitstream</em>&nbsp;</td><td>Source bitstream to read from </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>requestingConnection</em>&nbsp;</td><td>Which system sent to us </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classRakNet_1_1Replica3.html#d76a171b4bc6747bd204c3b4471efab4">RakNet::Replica3</a>.</p>
 
 </div>
 </div><p>
@@ -634,7 +547,7 @@ template&lt;class parent_type &gt; </div>
 <p>
 We're about to call <a class="el" href="classRakNet_1_1Replica3Composite.html#387379441c90fcb6381d0227c42c5712" title="Read data written by Replica3::SerializeConstruction().">DeserializeConstruction()</a> on this <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>. If <a class="el" href="classRakNet_1_1Replica3Composite.html#e5f099064ed5168d7bb180aec8ca2eb5" title="We&#39;re about to call DeserializeConstruction() on this Replica3. If QueryRemoteConstruction()...">QueryRemoteConstruction()</a> returns false, this object is deleted instead. 
 <p>
-By default, <a class="el" href="classRakNet_1_1Replica3.html#f5d3b25a95bbd91020d035ce9f6476a9" title="Default call for QueryRemoteConstruction(). Allow the server to create this object...">QueryRemoteConstruction_ServerConstruction()</a> does not allow clients to create objects. The client will get <a class="el" href="classRakNet_1_1Replica3.html#d76a171b4bc6747bd204c3b4471efab4">Replica3::DeserializeConstructionRequestRejected()</a>.<br>
+By default, <a class="el" href="classRakNet_1_1Replica3.html#f5d3b25a95bbd91020d035ce9f6476a9" title="Default call for QueryRemoteConstruction(). Allow the server to create this object...">QueryRemoteConstruction_ServerConstruction()</a> does not allow clients to create objects. The client will get Replica3::DeserializeConstructionRequestRejected().<br>
  If you want the client to be able to potentially create objects for client/server, override accordingly.<br>
  Other variants of QueryRemoteConstruction_* just return true. <dl class="note" compact><dt><b>Note:</b></dt><dd>Defaults are provided: <a class="el" href="classRakNet_1_1Replica3.html#6f398550955711b0a2b8366ca6627835" title="Default call for QueryRemoteConstruction().">QueryRemoteConstruction_PeerToPeer()</a>, <a class="el" href="classRakNet_1_1Replica3.html#f5d3b25a95bbd91020d035ce9f6476a9" title="Default call for QueryRemoteConstruction(). Allow the server to create this object...">QueryRemoteConstruction_ServerConstruction()</a>, <a class="el" href="classRakNet_1_1Replica3.html#8d72273c247770401da9d54b6bad4d16">QueryRemoteConstruction_ClientConstruction()</a>. Return one of these functions for a working default for the relevant topology. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
@@ -789,90 +702,6 @@ Same as <a class="el" href="classRakNet_1_1Replica3Composite.html#75be39067450e1
 
 </div>
 </div><p>
-<a class="anchor" name="1e2af098918b82b8fcfebe00b2ea52ef"></a><!-- doxytag: member="RakNet::Replica3Composite::SerializeConstructionRequestAccepted" ref="1e2af098918b82b8fcfebe00b2ea52ef" args="(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *requestingConnection)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class parent_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void <a class="el" href="classRakNet_1_1Replica3Composite.html">RakNet::Replica3Composite</a>&lt; parent_type &gt;::SerializeConstructionRequestAccepted           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *&nbsp;</td>
-          <td class="paramname"> <em>serializationBitstream</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *&nbsp;</td>
-          <td class="paramname"> <em>requestingConnection</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [inline, virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Write data for when an object creation request is accepted. 
-<p>
-If a system creates an object and NetworkIDManager::IsNetworkIDAuthority() returns false, then the object cannot locally assign NetworkID, which means that the object cannot be used over the network.<br>
- The object will call <a class="el" href="classRakNet_1_1Replica3Composite.html#75be39067450e1d717473408600a9c73" title="Write data to be sent only when the object is constructed on a remote system.">SerializeConstruction()</a> and sent over the network with a temporary id.<br>
- When the object is created by a system where NetworkIDManager::IsNetworkIDAuthority() returns true, <a class="el" href="classRakNet_1_1Replica3Composite.html#1e2af098918b82b8fcfebe00b2ea52ef" title="Write data for when an object creation request is accepted.">SerializeConstructionRequestAccepted()</a> will be called with the opportunity to write additional data if desired.<br>
- The sender will then receive serializationBitstream in <a class="el" href="classRakNet_1_1Replica3Composite.html#02e24b4c82f57d19bebd1c104b80552d">DeserializeConstructionRequestAccepted()</a>, after the NetworkID has been assigned.<br>
- This is not pure virtual, because it is not often used and is not necessary for the system to work. <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>serializationBitstream</em>&nbsp;</td><td>Destination bitstream to write to </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>requestingConnection</em>&nbsp;</td><td>Which system sent to us </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classRakNet_1_1Replica3.html#93a497860461a2edec4935fca6959fb7">RakNet::Replica3</a>.</p>
-
-</div>
-</div><p>
-<a class="anchor" name="0aa650e8238059eb08b8cc192fe37c89"></a><!-- doxytag: member="RakNet::Replica3Composite::SerializeConstructionRequestRejected" ref="0aa650e8238059eb08b8cc192fe37c89" args="(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *requestingConnection)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class parent_type &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void <a class="el" href="classRakNet_1_1Replica3Composite.html">RakNet::Replica3Composite</a>&lt; parent_type &gt;::SerializeConstructionRequestRejected           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *&nbsp;</td>
-          <td class="paramname"> <em>serializationBitstream</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *&nbsp;</td>
-          <td class="paramname"> <em>requestingConnection</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [inline, virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Same as <a class="el" href="classRakNet_1_1Replica3Composite.html#1e2af098918b82b8fcfebe00b2ea52ef" title="Write data for when an object creation request is accepted.">SerializeConstructionRequestAccepted()</a>, but the client construction request was rejected <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>serializationBitstream</em>&nbsp;</td><td>Destination bitstream to write to </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>requestingConnection</em>&nbsp;</td><td>Which system sent to us </td></tr>
-  </table>
-</dl>
-
-<p>Reimplemented from <a class="el" href="classRakNet_1_1Replica3.html#3d66fea21a1b8defab83bc6d7ef2a4f9">RakNet::Replica3</a>.</p>
-
-</div>
-</div><p>
 <a class="anchor" name="c02df3fd25db390ebaed1bb0773a5086"></a><!-- doxytag: member="RakNet::Replica3Composite::SerializeDestruction" ref="c02df3fd25db390ebaed1bb0773a5086" args="(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *destinationConnection)" -->
 <div class="memitem">
 <div class="memproto">
@@ -960,7 +789,7 @@ The value written to <em>allocationIdBitstream</em> will be passed to <a class="
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jun 30 11:04:29 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jul 19 09:27:10 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

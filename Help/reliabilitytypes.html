@@ -78,17 +78,17 @@ enum PacketReliability
 </p>
 <p><strong>Acknowledgment recipts</strong></p>
 <p><em>*_<span class="RakNetCode">WITH_ACK_RECEIPT</span></em></p>
-<p>By specifying one of the PacketReliability types that contain _WITH_ACK_RECEIPT, you can request that RakPeerInterface notify you when a message has been acknowledged by the remote system, or delivery has timed out.</p>
-<p>Calls to RakPeerInterface::Send() or RakPeerInterface::SendLists() return a 4 byte unsigned integer representing an ID for the message sent. When using _WITH_ACK_RECEIPT, this same ID will be returned to you when you call RakPeerInterface::Receive(). In the packet, byte 0 will be either ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS. Bytes 1-4 inclusive will contain the same number returned to you from Send() or SendLists().</p>
-<p>ID_SND_RECEIPT_ACKED means that the message arrived. For reliable sends, this is all you will ever get.</p>
-<p>ID_SND_RECEIPT_LOSS is only returned for UNRELIABLE_WITH_ACK_RECEIPT and UNRELIABLE_SEQUENCED_WITH_ACK_RECEIPT. It means that an ack for the message did not arrive within the threshhold  given for message resends (roughly a multiple of your ping). It could mean any of the following:</p>
+<p class="RakNetManualTextBody">By specifying one of the PacketReliability types that contain _WITH_ACK_RECEIPT, you can request that RakPeerInterface notify you when a message has been acknowledged by the remote system, or delivery has timed out.</p>
+<p class="RakNetManualTextBody">Calls to RakPeerInterface::Send() or RakPeerInterface::SendLists() return a 4 byte unsigned integer representing an ID for the message sent. When using _WITH_ACK_RECEIPT, this same ID will be returned to you when you call RakPeerInterface::Receive(). In the packet, byte 0 will be either ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS. Bytes 1-4 inclusive will contain the same number returned to you from Send() or SendLists().</p>
+<p class="RakNetManualTextBody">ID_SND_RECEIPT_ACKED means that the message arrived. For reliable sends, this is all you will ever get.</p>
+<p class="RakNetManualTextBody">ID_SND_RECEIPT_LOSS is only returned for UNRELIABLE_WITH_ACK_RECEIPT and UNRELIABLE_SEQUENCED_WITH_ACK_RECEIPT. It means that an ack for the message did not arrive within the threshhold  given for message resends (roughly a multiple of your ping). It could mean any of the following:</p>
 <ul>
-  <li>The message was lost in transmission</li>
-  <li>The message arrived, but the ack was lost in transmission</li>
-  <li>The message arrived, and the ack arrived, but arrived later than the threshhold (a ping spike)</li>
+  <li class="RakNetManualTextBody">The message was lost in transmission</li>
+  <li class="RakNetManualTextBody">The message arrived, but the ack was lost in transmission</li>
+  <li class="RakNetManualTextBody">The message arrived, and the ack arrived, but arrived later than the threshhold (a ping spike)</li>
   </ul>
-<p>It usually means one of the first two.</p>
-<p>Here's an example of reading out the return receipt:</p>
+<p class="RakNetManualTextBody">It usually means one of the first two.</p>
+<p class="RakNetManualTextBody">Here's an example of reading out the return receipt:</p>
 <p class="RakNetCode">packet = rakPeer-&gt;Receive();<br>
   while (packet)<br>
   {<br>
@@ -106,7 +106,7 @@ break;<br>
 sender-&gt;DeallocatePacket(packet);<br>
   packet = sender-&gt;Receive();<br>
   }</p>
-<p class="RakNetCode">The typical reason you would want to use this is to know if unreliable messages arrived or not. Sometimes you want to resend unreliable messages, but with more up-to-date data, rather than relying on RELIABLE to just resend the old data until it arrives. To do so, when you send you unreliable data you would internally create a mapping between the number returned by Send() or SendLists() and reference that number when the return receipt arrives. If the receipt is ID_SND_RECEIPT_LOSS, you can resend whatever message that Send() or SendLists() call contained.</p>
+<p class="RakNetManualTextBody">The typical reason you would want to use this is to know if unreliable messages arrived or not. Sometimes you want to resend unreliable messages, but with more up-to-date data, rather than relying on RELIABLE to just resend the old data until it arrives. To do so, when you send you unreliable data you would internally create a mapping between the number returned by Send() or SendLists() and reference that number when the return receipt arrives. If the receipt is ID_SND_RECEIPT_LOSS, you can resend whatever message that Send() or SendLists() call contained.</p>
 <p><strong>Advanced send types</strong></p>
 <p class="RakNetCode"><em>Send most recent values on resends</em></p>
 <p>When RakNet resends a message, it can only send what you gave to it originally. For data that changes continually (position for example) you may only want to resend the most recent value. To do so, send the data using UNRELIABLE_WITH_ACK_RECEIPT. Call RakPeer::GetNextSendReceipt() and pass the value to RakPeer::Send(). And in memory store an association between what type of message that was, and the send receipt. If you get ID_SND_RECEIPT_ACKED, delete the association (the message was delivered). If you get ID_SND_RECEIPT_LOSS, resend the message using the most current values.</p>
@@ -119,13 +119,13 @@ sender-&gt;DeallocatePacket(packet);<br>
   const SequenceNumberType halfSpan =(SequenceNumberType) (((SequenceNumberType)(const SequenceNumberType)-1)/(SequenceNumberType)2);<br>
   return b!=a &amp;&amp; b-a&gt;halfSpan;<br>
   }</p>
-<p class="RakNetCode"><em>Sequenced data, rather than sequenced messages</em></p>
-<p class="RakNetCode">RakNet's sequencing only works on the entire message. However, sometimes you want to sequence data at a higher level of granularity. For example, suppose you had both position and health sequenced.</p>
-<p class="RakNetCode">Message A contains health<br>
+<p class="RakNetManualTextBody"><em>Sequenced data, rather than sequenced messages</em></p>
+<p class="RakNetManualTextBody">RakNet's sequencing only works on the entire message. However, sometimes you want to sequence data at a higher level of granularity. For example, suppose you had both position and health sequenced.</p>
+<p class="RakNetManualTextBody">Message A contains health<br>
   Message B contains both health and position<br>
   Message C contains position</p>
-<p class="RakNetCode">Using normal sequencing, if the messages arrived in the order A,C,B, message B would be discarded. However, you lose useful information, since message B contains a more recent health value and could have been used.</p>
-<p class="RakNetCode">You can subsequence on data manually by writing your own sequence number per variable that you are serializing (as described above). Then send the data using a non-sequenced send type depending on your needs, UNRELIABLE, UNRELIABLE_WITH_ACK_RECEIPT, RELIABLE, etc. While this does incur more bandwidth and processing overhead, it has the advantage that every update can be processed as soon as possible.</p></TD>
+<p class="RakNetManualTextBody">Using normal sequencing, if the messages arrived in the order A,C,B, message B would be discarded. However, you lose useful information, since message B contains a more recent health value and could have been used.</p>
+<p class="RakNetManualTextBody">You can subsequence on data manually by writing your own sequence number per variable that you are serializing (as described above). Then send the data using a non-sequenced send type depending on your needs, UNRELIABLE, UNRELIABLE_WITH_ACK_RECEIPT, RELIABLE, etc. While this does incur more bandwidth and processing overhead, it has the advantage that every update can be processed as soon as possible.</p></TD>
 </TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92">
 <img src="spacer.gif" width="8" height="1"><span class="RakNetWhiteHeader">See Also</span></td>

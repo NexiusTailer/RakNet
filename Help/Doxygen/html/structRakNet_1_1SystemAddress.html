@@ -51,6 +51,8 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Call <a class="el" href="structRakNet_1_1SystemAddress.html#53d3920059f3790320d360ccf2a61d14" title="Call SetToLoopback(), with whatever IP version is currently held. Defaults to IPV4...">SetToLoopback()</a>, with whatever IP version is currently held. Defaults to IPV4. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SystemAddress.html#4afe777a3fed63583f5b3addb6f4d50d">SetToLoopback</a> (unsigned char ipVersion)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SystemAddress.html#5be63790082254493fa50429d87a95f9">IsLoopback</a> (void) const </td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SystemAddress.html#e1ad8bd3b4f24478980437476391d6ab">FromString</a> (const char *str, char portDelineator='|', int ipVersion=0)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4ab0e4c91b94c7a4173bc2fdd286ccf8"></a><!-- doxytag: member="RakNet::SystemAddress::FromStringExplicitPort" ref="4ab0e4c91b94c7a4173bc2fdd286ccf8" args="(const char *str, unsigned short port, int ipVersion=0)" -->
@@ -167,6 +169,27 @@ Return the IP version, either IPV4 or IPV6 <dl class="return" compact><dt><b>Ret
 
 </div>
 </div><p>
+<a class="anchor" name="5be63790082254493fa50429d87a95f9"></a><!-- doxytag: member="RakNet::SystemAddress::IsLoopback" ref="5be63790082254493fa50429d87a95f9" args="(void) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakNet::SystemAddress::IsLoopback           </td>
+          <td>(</td>
+          <td class="paramtype">void&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>If was set to 127.0.0.1 or ::1 </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="4afe777a3fed63583f5b3addb6f4d50d"></a><!-- doxytag: member="RakNet::SystemAddress::SetToLoopback" ref="4afe777a3fed63583f5b3addb6f4d50d" args="(unsigned char ipVersion)" -->
 <div class="memitem">
 <div class="memproto">
@@ -195,7 +218,7 @@ Call <a class="el" href="structRakNet_1_1SystemAddress.html#53d3920059f3790320d3
 <hr>The documentation for this struct was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="RakNetTypes_8h.html">RakNetTypes.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jun 30 11:04:29 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jul 19 09:27:09 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -1512,9 +1512,6 @@ ConnectionState RakPeer::GetConnectionState(const AddressOrGUID systemIdentifier
 	int index;
 	if (systemIdentifier.systemAddress!=UNASSIGNED_SYSTEM_ADDRESS)
 	{
-		if (IsLoopbackAddress(systemIdentifier.systemAddress,true))
-			return IS_LOOPBACK;
-
 		index = GetIndexFromSystemAddress(systemIdentifier.systemAddress, false);
 	}
 	else
@@ -1544,8 +1541,8 @@ ConnectionState RakPeer::GetConnectionState(const AddressOrGUID systemIdentifier
 		return IS_CONNECTING;
 	case RemoteSystemStruct::CONNECTED:
 		return IS_CONNECTED;
-	case RemoteSystemStruct::NO_ACTION:
-		return IS_LOOPBACK; // this is actually just an error - returning to remove warning
+    default:
+		return IS_NOT_CONNECTED;
 	}
 
 	return IS_NOT_CONNECTED;

@@ -3029,13 +3029,9 @@ unsigned int ReliabilityLayer::GetResendListDataSize(void) const
 //-------------------------------------------------------------------------------------------------------
 bool ReliabilityLayer::AckTimeout(RakNet::Time curTime)
 {
-	return curTime-timeLastDatagramArrived>timeoutTime;
-	// 
-	// #if CC_TIME_TYPE_BYTES==4
-	// 	return curTime > timeResendQueueNonEmpty && timeResendQueueNonEmpty && curTime - timeResendQueueNonEmpty > timeoutTime;
-	// #else
-	// 	return curTime > timeResendQueueNonEmpty/(RakNet::TimeUS)1000 && timeResendQueueNonEmpty && curTime - timeResendQueueNonEmpty/(RakNet::TimeUS)1000 > timeoutTime;
-	// #endif
+	// I check timeLastDatagramArrived-curTime because with threading it is possible that timeLastDatagramArrived is
+	// slightly greater than curTime, in which case this is NOT an ack timeout
+	return (timeLastDatagramArrived-curTime)>10000 && curTime-timeLastDatagramArrived>timeoutTime;
 }
 //-------------------------------------------------------------------------------------------------------
 CCTimeType ReliabilityLayer::GetNextSendTime(void) const

@@ -39,7 +39,9 @@ NetworkIDObject *NetworkIDManager::GET_BASE_OBJECT_FROM_ID(NetworkID x)
 }
 NetworkID NetworkIDManager::GetNewNetworkID(void)
 {
-	return startingOffset++;
+    while (GET_BASE_OBJECT_FROM_ID(++startingOffset))
+        ;
+    return startingOffset;
 }
 unsigned int NetworkIDManager::NetworkIDToHashIndex(NetworkID networkId)
 {

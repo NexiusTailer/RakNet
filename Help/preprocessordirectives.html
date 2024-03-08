@@ -15,7 +15,7 @@
 </tr></table>
 <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
   <TD>
-    <p>Define any of these values in RakNetDefinesOverrides.h to override. These are the defaults as set in RakNetDefines.h</p>
+    <p>Define any of these values in RakNetDefinesOverrides.h to override. These are the defaults as set in RakNetDefines.h. Also see NativeFeatureIncludes.h to not compile in features you do not use.</p>
     <p class="RakNetCode">/// Define __GET_TIME_64BIT to have RakNet::TimeMS use a 64, rather than 32 bit value.  A 32 bit value will overflow after about 5 weeks.<br>
       /// However, this doubles the bandwidth use for sending times, so don't do it unless you have a reason to.<br>
       /// Comment out if you are using the iPod Touch TG. See http://www.jenkinssoftware.com/forum/index.php?topic=2717.0<br>

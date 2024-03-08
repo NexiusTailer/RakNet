@@ -464,16 +464,6 @@ PluginReceiveResult ReplicaManager3::OnReceive(Packet *packet)
 		if (incomingWorldId!=worldId)
 			return RR_CONTINUE_PROCESSING;
 		return OnSerialize(packet, packet->data, packet->length, packet->guid, timestamp, packetDataOffset);
-	case ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_REJECTED:
-		if (incomingWorldId!=worldId)
-			return RR_CONTINUE_PROCESSING;
-		OnLocalConstructionRejected(packet->data, packet->length, packet->guid, packetDataOffset);
-		break;
-	case ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_ACCEPTED:
-		if (incomingWorldId!=worldId)
-			return RR_CONTINUE_PROCESSING;
-		OnLocalConstructionAccepted(packet->data, packet->length, packet->guid, packetDataOffset);
-		break;
 	case ID_REPLICA_MANAGER_DOWNLOAD_STARTED:
 		if (packet->wasGeneratedLocally==false)
 		{
@@ -538,21 +528,24 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3)
 		{
 			lsr=queryToConstructReplicaList[index];
 			constructionState=lsr->replica->QueryConstruction(this, replicaManager3);
-			if (constructionState==RM3CS_ALREADY_EXISTS_REMOTELY)
+			if (constructionState==RM3CS_ALREADY_EXISTS_REMOTELY || constructionState==RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT)
 			{
 				OnReplicaAlreadyExists(index, replicaManager3);
 
-				// Serialize construction data to this connection
-				RakNet::BitStream bsOut;
-				bsOut.Write((MessageID)ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING);
-				bsOut.Write(replicaManager3->GetWorldID());
-				NetworkID networkId;
-				networkId=lsr->replica->GetNetworkID();
-				bsOut.Write(networkId);
-				BitSize_t bitsWritten = bsOut.GetNumberOfBitsUsed();
-				lsr->replica->SerializeConstructionExisting(&bsOut, this);
-				if (bsOut.GetNumberOfBitsUsed()!=bitsWritten)
-					replicaManager3->SendUnified(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,GetSystemAddress(), false);
+				if (constructionState==RM3CS_ALREADY_EXISTS_REMOTELY)
+				{
+					// Serialize construction data to this connection
+					RakNet::BitStream bsOut;
+					bsOut.Write((MessageID)ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING);
+					bsOut.Write(replicaManager3->GetWorldID());
+					NetworkID networkId;
+					networkId=lsr->replica->GetNetworkID();
+					bsOut.Write(networkId);
+					BitSize_t bitsWritten = bsOut.GetNumberOfBitsUsed();
+					lsr->replica->SerializeConstructionExisting(&bsOut, this);
+					if (bsOut.GetNumberOfBitsUsed()!=bitsWritten)
+						replicaManager3->SendUnified(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,GetSystemAddress(), false);
+				}
 
 				// Serialize first serialization to this connection.
 				// This is done here, as it isn't done in PushConstruction
@@ -873,17 +866,6 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 		if (!replica->QueryRemoteConstruction(connection) ||
 			!replica->DeserializeConstruction(&bsIn, connection))
 		{
-			// Overtake this message to mean construction rejected
-			if (networkId==UNASSIGNED_NETWORK_ID)
-			{
-				RakNet::BitStream bsOut;
-				bsOut.Write((MessageID)ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_REJECTED);
-				bsOut.Write(worldId);
-				bsOut.Write(networkId);
-				replica->SerializeConstructionRequestRejected(&bsOut,connection);
-				rakPeerInterface->Send(&bsOut, defaultSendParameters.priority, defaultSendParameters.reliability, defaultSendParameters.orderingChannel, connection->GetSystemAddress(), false, defaultSendParameters.sendReceipt);
-			}
-
 			replica->replicaManager=0;
 			replica->DeallocReplica(connection);
 			bsIn.SetReadOffset(streamEnd);
@@ -892,16 +874,6 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 
 		bsIn.SetReadOffset(streamEnd);
 
-		if (networkId==UNASSIGNED_NETWORK_ID)
-		{
-			// Overtake this message to mean construction accepted
-			RakNet::BitStream bsOut;
-			bsOut.Write((MessageID)ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_ACCEPTED);
-			bsOut.Write(worldId);
-			bsOut.Write(replica->GetNetworkID());
-			replica->SerializeConstructionRequestAccepted(&bsOut,connection);
-			rakPeerInterface->Send(&bsOut, defaultSendParameters.priority, defaultSendParameters.reliability, defaultSendParameters.orderingChannel, connection->GetSystemAddress(), false, defaultSendParameters.sendReceipt);
-		}
 		bsIn.AlignReadToByteBoundary();
 
 		// Register the replica
@@ -1082,81 +1054,6 @@ PluginReceiveResult ReplicaManager3::OnDownloadComplete(Packet *packet, unsigned
 	bsIn.IgnoreBytes(packetDataOffset);
 	connection->DeserializeOnDownloadComplete(&bsIn);
 	return RR_CONTINUE_PROCESSING;
-}
-
-// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-void ReplicaManager3::OnLocalConstructionRejected(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset)
-{
-	Connection_RM3 *connection = GetConnectionByGUID(senderGuid);
-	if (connection==0)
-		return;
-	RakNet::BitStream bsIn(packetData,packetDataLength,false);
-	bsIn.IgnoreBytes(packetDataOffset);
-	NetworkID networkId;
-	bsIn.Read(networkId);
-	Replica3 *nio = networkIDManager->GET_OBJECT_FROM_ID<Replica3*>(networkId);
-	if (nio)
-	{
-		nio->DeserializeConstructionRequestRejected(&bsIn,connection);
-	}
-}
-
-// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-void ReplicaManager3::OnLocalConstructionAccepted(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset)
-{
-	Connection_RM3 *connection = GetConnectionByGUID(senderGuid);
-	if (connection==0)
-		return;
-	RakNet::BitStream bsIn(packetData,packetDataLength,false);
-	bsIn.IgnoreBytes(packetDataOffset);
-	NetworkID assignedNetworkId;
-	bsIn.Read(assignedNetworkId);
-	DataStructures::DefaultIndexType index;
-	DataStructures::DefaultIndexType index2;
-	Replica3 *replica;
-	SerializeParameters sp;
-	sp.whenLastSerialized=0;
-	RakNet::BitStream emptyBs;
-	for (index=0; index < (DataStructures::DefaultIndexType) RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; index++)
-		sp.lastSentBitstream[index]=&emptyBs;
-	RM3SerializationResult res;
-	replica = networkIDManager->GET_OBJECT_FROM_ID<Replica3 *>(assignedNetworkId);
-	if (replica)
-	{
-		index2=connection->constructedReplicaList.GetIndexOf(replica);
-		if (index2!=(DataStructures::DefaultIndexType)-1)
-		{
-			LastSerializationResult *lsr = connection->constructedReplicaList[index2];
-
-			replica->SetNetworkID(assignedNetworkId);
-			replica->DeserializeConstructionRequestAccepted(&bsIn,connection);
-			sp.destinationConnection=connection;
-
-			// Immediately serialize
-			res = replica->Serialize(&sp);
-			if (res!=RM3SR_NEVER_SERIALIZE_FOR_THIS_CONNECTION &&
-				res!=RM3SR_DO_NOT_SERIALIZE &&
-				res!=RM3SR_SERIALIZED_UNIQUELY)
-			{
-				sp.destinationConnection=connection;
-				sp.messageTimestamp=0;
-				for (int i=0; i < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; i++)
-					sp.pro[i]=defaultSendParameters;
-				bool allIndices[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS];
-				for (int z=0; z < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; z++)
-				{
-					allIndices[z]=true;
-				}
-				if (connection->SendSerialize(replica, allIndices, sp.outputBitstream, sp.messageTimestamp, sp.pro, rakPeerInterface, worldId)==SSICR_SENT_DATA)
-					lsr->replica->whenLastSerialized=RakNet::GetTimeMS();
-			}
-
-			// Start serialization queries
-			connection->queryToSerializeReplicaList.Push(lsr,lsr->replica,_FILE_AND_LINE_);
-		}
-	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1660,8 +1557,7 @@ void Connection_RM3::OnConstructToThisConnection(DataStructures::DefaultIndexTyp
 	//assert(queryToDestructReplicaList.GetIndexOf(lsr->replica)==(DataStructures::DefaultIndexType)-1);
 	queryToDestructReplicaList.Push(lsr,lsr->replica,_FILE_AND_LINE_);
 	//assert(queryToSerializeReplicaList.GetIndexOf(lsr->replica)==(DataStructures::DefaultIndexType)-1);
-	if (lsr->replica->GetNetworkID()!=UNASSIGNED_NETWORK_ID)
-		queryToSerializeReplicaList.Push(lsr,lsr->replica,_FILE_AND_LINE_);
+	queryToSerializeReplicaList.Push(lsr,lsr->replica,_FILE_AND_LINE_);
 	ValidateLists(replicaManager);
 }
 
@@ -1675,8 +1571,7 @@ void Connection_RM3::OnConstructToThisConnection(Replica3 *replica, ReplicaManag
 	LastSerializationResult* lsr=RakNet::OP_NEW<LastSerializationResult>(_FILE_AND_LINE_);
 	lsr->replica=replica;
 	constructedReplicaList.Push(lsr,replica,_FILE_AND_LINE_);
-	if (lsr->replica->GetNetworkID()!=UNASSIGNED_NETWORK_ID)
-		queryToSerializeReplicaList.Push(lsr,lsr->replica,_FILE_AND_LINE_);
+	queryToSerializeReplicaList.Push(lsr,lsr->replica,_FILE_AND_LINE_);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2009,22 +1904,19 @@ void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, Replic
 		}
 
 		RM3SerializationResult res = replica->Serialize(&sp);
-		if (replica->GetNetworkID()!=UNASSIGNED_NETWORK_ID)
+		if (res!=RM3SR_NEVER_SERIALIZE_FOR_THIS_CONNECTION &&
+			res!=RM3SR_DO_NOT_SERIALIZE &&
+			res!=RM3SR_SERIALIZED_UNIQUELY)
 		{
-			if (res!=RM3SR_NEVER_SERIALIZE_FOR_THIS_CONNECTION &&
-				res!=RM3SR_DO_NOT_SERIALIZE &&
-				res!=RM3SR_SERIALIZED_UNIQUELY)
+			bool allIndices[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS];
+			for (int z=0; z < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; z++)
 			{
-				bool allIndices[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS];
-				for (int z=0; z < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; z++)
-				{
-					sp.bitsWrittenSoFar+=sp.outputBitstream[z].GetNumberOfBitsUsed();
-					allIndices[z]=true;
-				}
-				SendSerialize(replica, allIndices, sp.outputBitstream, sp.messageTimestamp, sp.pro, rakPeer, worldId);
-				newObjects[newListIndex]->whenLastSerialized=t;
-
+				sp.bitsWrittenSoFar+=sp.outputBitstream[z].GetNumberOfBitsUsed();
+				allIndices[z]=true;
 			}
+			SendSerialize(replica, allIndices, sp.outputBitstream, sp.messageTimestamp, sp.pro, rakPeer, worldId);
+			newObjects[newListIndex]->whenLastSerialized=t;
+
 		}
 		// else wait for construction request accepted before serializing
 	}

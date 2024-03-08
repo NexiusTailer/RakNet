@@ -148,6 +148,11 @@ public class SystemAddress : IDisposable {
     RakNetPINVOKE.SystemAddress_SetToLoopback__SWIG_1(swigCPtr, ipVersion);
   }
 
+  public bool IsLoopback() {
+    bool ret = RakNetPINVOKE.SystemAddress_IsLoopback(swigCPtr);
+    return ret;
+  }
+
   public string ToString(bool writePort, char portDelineator) {
     string ret = RakNetPINVOKE.SystemAddress_ToString__SWIG_0(swigCPtr, writePort, portDelineator);
     return ret;

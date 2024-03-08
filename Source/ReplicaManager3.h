@@ -250,8 +250,6 @@ protected:
 	PluginReceiveResult OnSerialize(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, RakNet::Time timestamp, unsigned char packetDataOffset);
 	PluginReceiveResult OnDownloadStarted(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 	PluginReceiveResult OnDownloadComplete(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
-	void OnLocalConstructionRejected(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
-	void OnLocalConstructionAccepted(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 
 	RakNet::Connection_RM3 * PopConnection(DataStructures::DefaultIndexType index);
 	Replica3* GetReplicaByNetworkID(NetworkID networkId);
@@ -625,6 +623,9 @@ enum RM3ConstructionState
 	/// Will call SerializeConstructionExisting() to the object on the remote system
 	RM3CS_ALREADY_EXISTS_REMOTELY,
 
+	/// Same as RM3CS_ALREADY_EXISTS_REMOTELY but does not call SerializeConstructionExisting()
+	RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT,
+
 	/// This object will never be sent to this system
 	RM3CS_NEVER_CONSTRUCT,
 	
@@ -843,31 +844,6 @@ public:
 	/// \param[in] sourceConnection Which system sent to us
 	virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters)=0;
 
-	/// \brief Write data for when an object creation request is accepted
-	/// \details If a system creates an object and NetworkIDManager::IsNetworkIDAuthority() returns false, then the object cannot locally assign NetworkID, which means that the object cannot be used over the network.<BR>
-	/// The object will call SerializeConstruction() and sent over the network with a temporary id.<BR>
-	/// When the object is created by a system where NetworkIDManager::IsNetworkIDAuthority() returns true, SerializeConstructionRequestAccepted() will be called with the opportunity to write additional data if desired.<BR>
-	/// The sender will then receive serializationBitstream in DeserializeConstructionRequestAccepted(), after the NetworkID has been assigned.<BR>
-	/// This is not pure virtual, because it is not often used and is not necessary for the system to work.
-	/// \param[out] serializationBitstream Destination bitstream to write to
-	/// \param[in] requestingConnection Which system sent to us
-	virtual void SerializeConstructionRequestAccepted(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *requestingConnection) {(void) serializationBitstream; (void) requestingConnection;}
-
-	/// Receive the result of SerializeConstructionRequestAccepted
-	/// \param[in] serializationBitstream Source bitstream to read from
-	/// \param[in] acceptingConnection Which system sent to us
-	virtual void DeserializeConstructionRequestAccepted(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *acceptingConnection) {(void) serializationBitstream; (void) acceptingConnection;}
-
-	/// Same as SerializeConstructionRequestAccepted(), but the client construction request was rejected
-	/// \param[out] serializationBitstream  Destination bitstream to write to
-	/// \param[in] requestingConnection Which system sent to us
-	virtual void SerializeConstructionRequestRejected(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *requestingConnection) {(void) serializationBitstream; (void) requestingConnection;}
-
-	/// Receive the result of DeserializeConstructionRequestRejected
-	/// \param[in] serializationBitstream Source bitstream to read from
-	/// \param[in] requestingConnection Which system sent to us
-	virtual void DeserializeConstructionRequestRejected(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *rejectingConnection) {(void) serializationBitstream; (void) rejectingConnection;}
-
 	/// \brief Called after SerializeConstruction completes for all objects in a given update tick.<BR>
 	/// Writes to PostDeserializeConstruction(), which is called after all objects are created for a given Construction tick().
 	/// Override to send data to PostDeserializeConstruction(), such as the NetworkID of other objects to resolve pointers to
@@ -947,6 +923,9 @@ public:
 	/// \return System that originally created this object
 	RakNetGUID GetCreatingSystemGUID(void) const;
 
+    /// \return If ReplicaManager3::Reference() was called on this object.
+	bool WasReferenced(void) const {return replicaManager!=0;}
+
 	/// GUID of the system that first called Reference() on this object.
 	/// Transmitted automatically when the object is constructed
 	RakNetGUID creatingSystemGUID;
@@ -992,10 +971,6 @@ public:
 	virtual RM3SerializationResult Serialize(RakNet::SerializeParameters *serializeParameters) {return r3CompositeOwner->Serialize(serializeParameters);}
 	virtual void OnSerializeTransmission(RakNet::BitStream *bitStream, const SystemAddress &systemAddress) {r3CompositeOwner->OnSerializeTransmission(bitStream, systemAddress);}
 	virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters) {r3CompositeOwner->Deserialize(deserializeParameters);}
-	virtual void SerializeConstructionRequestAccepted(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *requestingConnection) {r3CompositeOwner->SerializeConstructionRequestAccepted(serializationBitstream, requestingConnection);}
-	virtual void DeserializeConstructionRequestAccepted(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *acceptingConnection) {r3CompositeOwner->DeserializeConstructionRequestAccepted(serializationBitstream, acceptingConnection);}
-	virtual void SerializeConstructionRequestRejected(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *requestingConnection) {r3CompositeOwner->SerializeConstructionRequestRejected(serializationBitstream, requestingConnection);}
-	virtual void DeserializeConstructionRequestRejected(RakNet::BitStream *serializationBitstream, RakNet::Connection_RM3 *rejectingConnection) {r3CompositeOwner->DeserializeConstructionRequestRejected(serializationBitstream, rejectingConnection);}
 	virtual void PostSerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {r3CompositeOwner->PostSerializeConstruction(constructionBitstream, destinationConnection);}
 	virtual void PostDeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {r3CompositeOwner->PostDeserializeConstruction(constructionBitstream, sourceConnection);}
 	virtual void PreDestruction(RakNet::Connection_RM3 *sourceConnection) {r3CompositeOwner->PreDestruction(sourceConnection);}

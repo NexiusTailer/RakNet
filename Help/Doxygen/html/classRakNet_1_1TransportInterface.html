@@ -214,7 +214,7 @@ If a new system connects to you, you should queue that event and return the syst
 <div class="memdoc">
 
 <p>
-Return a string. The string should be allocated and written to <a class="el" href="structRakNet_1_1Packet.html#63e46b85c8ca156b205a124e54659614" title="The data from the sender.">Packet::data</a> . The byte length should be written to <a class="el" href="structRakNet_1_1Packet.html#114883d23f7133c77808651a33420d0f" title="The length of the data in bytes.">Packet::length</a> . The player/address should be written to <a class="el" href="structRakNet_1_1Packet.html#bf432112847cb3ce458935b8a5ae4089" title="Server only - this is the index into the player array that this systemAddress maps...">Packet::systemAddress</a> If your transport protocol adds special formatting to the data stream you should parse it out before returning it in the packet and thus only return a string in <a class="el" href="structRakNet_1_1Packet.html#63e46b85c8ca156b205a124e54659614" title="The data from the sender.">Packet::data</a> <dl class="return" compact><dt><b>Returns:</b></dt><dd>The packet structure containing the result of Receive, or 0 if no data is available </dd></dl>
+Return a string. The string should be allocated and written to <a class="el" href="structRakNet_1_1Packet.html#63e46b85c8ca156b205a124e54659614" title="The data from the sender.">Packet::data</a> . The byte length should be written to <a class="el" href="structRakNet_1_1Packet.html#114883d23f7133c77808651a33420d0f" title="The length of the data in bytes.">Packet::length</a> . The player/address should be written to <a class="el" href="structRakNet_1_1Packet.html#bf432112847cb3ce458935b8a5ae4089" title="The system that send this packet.">Packet::systemAddress</a> If your transport protocol adds special formatting to the data stream you should parse it out before returning it in the packet and thus only return a string in <a class="el" href="structRakNet_1_1Packet.html#63e46b85c8ca156b205a124e54659614" title="The data from the sender.">Packet::data</a> <dl class="return" compact><dt><b>Returns:</b></dt><dd>The packet structure containing the result of Receive, or 0 if no data is available </dd></dl>
 
 <p>Implemented in <a class="el" href="classRakNet_1_1RakNetTransport2.html#1f51afa7fad8d03ffc3b814af206b7d3">RakNet::RakNetTransport2</a>, and <a class="el" href="classRakNet_1_1TelnetTransport.html#a8094ab92c365840955273594a74727d">RakNet::TelnetTransport</a>.</p>
 
@@ -305,7 +305,7 @@ Start the transport provider on the indicated port. <dl compact><dt><b>Parameter
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="TransportInterface_8h.html">TransportInterface.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jun 30 11:04:30 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jul 19 09:27:10 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

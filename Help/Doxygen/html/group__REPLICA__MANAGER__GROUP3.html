@@ -39,10 +39,14 @@
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Base class for your replicated objects for the <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> system.  <a href="classRakNet_1_1Replica3.html#_details">More...</a><br></td></tr>
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g16aaecf3c23582f0de6652b348ccfa38">RakNet::RM3ConstructionState</a> { <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg16aaecf3c23582f0de6652b348ccfa38508beae91f54ce89c22160c43a608fe1">RakNet::RM3CS_SEND_CONSTRUCTION</a>, 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g16aaecf3c23582f0de6652b348ccfa38">RakNet::RM3ConstructionState</a> { <br>
+&nbsp;&nbsp;<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg16aaecf3c23582f0de6652b348ccfa38508beae91f54ce89c22160c43a608fe1">RakNet::RM3CS_SEND_CONSTRUCTION</a>, 
 <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg16aaecf3c23582f0de6652b348ccfa38830fdf9eb729456bb62c8f3116afe260">RakNet::RM3CS_ALREADY_EXISTS_REMOTELY</a>, 
+<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg16aaecf3c23582f0de6652b348ccfa38526a86138ec25d79d3981860bd09d4e3">RakNet::RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT</a>, 
 <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg16aaecf3c23582f0de6652b348ccfa387340e8e1ecf573595a196376ac02eb3c">RakNet::RM3CS_NEVER_CONSTRUCT</a>, 
-<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg16aaecf3c23582f0de6652b348ccfa3828922f257ecef864a4490ec6aae6a48b">RakNet::RM3CS_NO_ACTION</a>
+<br>
+&nbsp;&nbsp;<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg16aaecf3c23582f0de6652b348ccfa3828922f257ecef864a4490ec6aae6a48b">RakNet::RM3CS_NO_ACTION</a>
+<br>
  }</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return codes for Connection_RM3::GetConstructionState() and Replica3::QueryConstruction().  <a href="group__REPLICA__MANAGER__GROUP3.html#g16aaecf3c23582f0de6652b348ccfa38">More...</a><br></td></tr>
@@ -91,6 +95,8 @@ Indicates what state the object should be in for the remote system <dl compact><
 This object should exist on the remote system. Send a construction message if necessary If the NetworkID is already in use, it will not do anything If it is not in use, it will create the object, and then call DeserializeConstruction </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="gg16aaecf3c23582f0de6652b348ccfa38830fdf9eb729456bb62c8f3116afe260"></a><!-- doxytag: member="RM3CS_ALREADY_EXISTS_REMOTELY" ref="gg16aaecf3c23582f0de6652b348ccfa38830fdf9eb729456bb62c8f3116afe260" args="" -->RM3CS_ALREADY_EXISTS_REMOTELY</em>&nbsp;</td><td>
 This object should exist on the remote system. The other system already has the object, and the object will never be deleted. This is true of objects that are loaded with the level, for example. Treat it as if it existed, without sending a construction message. Will call SerializeConstructionExisting() to the object on the remote system </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="gg16aaecf3c23582f0de6652b348ccfa38526a86138ec25d79d3981860bd09d4e3"></a><!-- doxytag: member="RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT" ref="gg16aaecf3c23582f0de6652b348ccfa38526a86138ec25d79d3981860bd09d4e3" args="" -->RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT</em>&nbsp;</td><td>
+Same as RM3CS_ALREADY_EXISTS_REMOTELY but does not call SerializeConstructionExisting(). </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="gg16aaecf3c23582f0de6652b348ccfa387340e8e1ecf573595a196376ac02eb3c"></a><!-- doxytag: member="RM3CS_NEVER_CONSTRUCT" ref="gg16aaecf3c23582f0de6652b348ccfa387340e8e1ecf573595a196376ac02eb3c" args="" -->RM3CS_NEVER_CONSTRUCT</em>&nbsp;</td><td>
 This object will never be sent to this system. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="gg16aaecf3c23582f0de6652b348ccfa3828922f257ecef864a4490ec6aae6a48b"></a><!-- doxytag: member="RM3CS_NO_ACTION" ref="gg16aaecf3c23582f0de6652b348ccfa3828922f257ecef864a4490ec6aae6a48b" args="" -->RM3CS_NO_ACTION</em>&nbsp;</td><td>
@@ -184,7 +190,7 @@ Never serialize this object for this connection Useful for objects that are down
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jun 30 11:04:28 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jul 19 09:27:08 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -17,18 +17,19 @@
 <span class="RakNetBlueHeader">Description</span><BR>
 <BR>
 
-The bitstream class is a helper class under the namespace RakNet that is used to wrap a dynamic array for the purpose of packing and unpacking bits.  Its main three benefits are:
+The bitstream class is a helper class under the namespace RakNet that is used to wrap a dynamic array for the purpose of packing and unpacking bits.  Its main four benefits are:
 <OL>
 <LI>Creating packets dynamically
 <LI>Compression
 <LI>Writing Bits
+<LI>Endian swapping
 </OL>
 <p>With structs you have to predefine your structures and cast them to a (char*).  With a bitstream, you can choose to write blocks at runtime, depending on the context.  Bitstreams can compress the native types using the SerializeBitsFromIntegerRange and SerializeFloat16().<BR>
   <BR>
   You can also write bits.  Most of the time you will not care about this.  However, when writing booleans it will automatically only write one bit.  This can also be very useful for encryption since your data will no longer be byte aligned.<BR>
   <BR>
   <B>Writing Data</B></p>
-<p>Bitstream is templated to take any type of data. If this is a built-in type, such as NetworkIDObject, it uses partial template specialization to write the type more efficiently. If it's a native type, or a structure, it writes the individual bits, similar to memcpy. You can pass structs containing multiple data members to bitstreams. However, you may wish to serialize each individual element to do correct <A HREF="http://en.wikipedia.org/wiki/Endianness">endian</A> swapping (needed for communication between PCs and Macs, for example). Note: if you want to support endian swapping, you should also comment out __BITSTREAM_NATIVE_END in RakNetDefines.h. This is uncommented by default as a speed optimization.<BR>
+<p>Bitstream is templated to take any type of data. If this is a built-in type, such as NetworkIDObject, it uses partial template specialization to write the type more efficiently. If it's a native type, or a structure, it writes the individual bits, similar to memcpy. You can pass structs containing multiple data members to bitstreams. However, you may wish to serialize each individual element to do correct <A HREF="http://en.wikipedia.org/wiki/Endianness">endian</A> swapping (needed for communication between PCs and Macs, for example).<BR>
   <BR>
   <span class="RakNetCode">
     struct MyVector<BR>
