@@ -1,3 +1,4 @@
+/*
 #include "RakNetSocket.h"
 #include "RakMemoryOverride.h"
 
@@ -80,12 +81,12 @@ RakNetSocket* RakNetSocket::Create
 
 	#ifdef __native_client__
 		sock = ((PPB_UDPSocket_Private_0_4*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))->Create(_chromeInstance);
-
-
+	#elif defined(SN_TARGET_PSP2)
+		sock = sceNetSocket( "RakNetSocket::Create", SCE_NET_AF_INET, SCE_NET_SOCK_DGRAM_P2P, 0 );
 	#elif defined(WINDOWS_STORE_RT)
 		sock = WinRTCreateDatagramSocket(af,type,protocol);
-
-
+	#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+		sock = socket__( AF_INET, SOCK_DGRAM_P2P, 0 );
 	#else
 		sock = socket__(af, type, protocol);
 	#endif
@@ -138,9 +139,10 @@ int RakNetSocket::SetSockOpt(
 int RakNetSocket::Shutdown(		
 			  int how)
 {
-
+	#ifndef SN_TARGET_PSP2
 		return shutdown__(s,how);
-
-
-
+	#else
+		return 0;
+	#endif
 }
+*/

@@ -9,6 +9,7 @@
 #include "DS_OrderedList.h"
 #include "SocketLayer.h"
 #include "FormatString.h"
+#include "SocketDefines.h"
 
 using namespace RakNet;
 
@@ -904,12 +905,23 @@ void Router2::SendOOBFromRakNetPort(OutOfBandIdentifiers oob, BitStream *extraDa
 	sa.ToString(false, ipAddressString);
 	rakPeerInterface->SendOutOfBand((const char*) ipAddressString,sa.GetPort(),(const char*) oobBs.GetData(),oobBs.GetNumberOfBytesUsed());
 }
-void Router2::SendOOBFromSpecifiedSocket(OutOfBandIdentifiers oob, SystemAddress sa, RakNetSocket* socket)
+void Router2::SendOOBFromSpecifiedSocket(OutOfBandIdentifiers oob, SystemAddress sa, __UDPSOCKET__ socket)
 {
 	RakNet::BitStream bs;
 	rakPeerInterface->WriteOutOfBandHeader(&bs);
 	bs.Write((unsigned char) oob);
-	SocketLayer::SendTo_PC( socket, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), sa, __FILE__, __LINE__  );
+	// SocketLayer::SendTo_PC( socket, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), sa, __FILE__, __LINE__  );
+
+	if (sa.address.addr4.sin_family==AF_INET)
+	{
+		sendto__( socket, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), 0, ( const sockaddr* ) & sa.address.addr4, sizeof( sockaddr_in ) );
+	}
+	else
+	{
+#if RAKNET_SUPPORT_IPV6==1
+		sendto__( socket, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), 0, ( const sockaddr* ) & sa.address.addr6, sizeof( sockaddr_in6 ) );
+#endif
+	}
 }
 void Router2::SendOOBMessages(Router2::MiniPunchRequest *mpr)
 {
@@ -964,7 +976,7 @@ void Router2::OnRequestForwarding(Packet *packet)
 	}
 
 	unsigned short forwardingPort=0;
-	RakNetSocket* forwardingSocket=0;
+	__UDPSOCKET__ forwardingSocket=INVALID_SOCKET;
 	SystemAddress endpointSystemAddress = rakPeerInterface->GetSystemAddressFromGuid(endpointGuid);
 	UDPForwarderResult result = udpForwarder->StartForwarding(
 		packet->systemAddress, endpointSystemAddress, 30000, 0, socketFamily,

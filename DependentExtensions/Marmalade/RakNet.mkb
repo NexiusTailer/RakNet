@@ -7,6 +7,7 @@ includepath ../../Source
 files
 {
 	(../../Source)
+	Base64Encoder.cpp
 	BitStream.cpp
 	CCRakNetSlidingWindow.cpp
 	CCRakNetUDT.cpp
@@ -38,6 +39,7 @@ files
 	gettimeofday.cpp
 	GridSectorizer.cpp
 	HTTPConnection.cpp
+	HTTPConnection2.cpp
 	IncrementalReadInterface.cpp
 	Itoa.cpp
 	LinuxStrings.cpp
@@ -61,6 +63,14 @@ files
 	RakMemoryOverride.cpp
 	RakNetCommandParser.cpp
 	RakNetSocket.cpp
+	RakNetSocket2.cpp
+	RakNetSocket2_360_720.cpp
+	RakNetSocket2_Berkley.cpp
+	RakNetSocket2_NativeClient.cpp
+	RakNetSocket2_PS3_PS4.cpp
+	RakNetSocket2_Vita.cpp
+	RakNetSocket2_Windows_Linux.cpp
+	RakNetSocket2_Windows_Linux_360.cpp
 	RakNetStatistics.cpp
 	RakNetTransport2.cpp
 	RakNetTypes.cpp
@@ -70,8 +80,8 @@ files
 	RakThread.cpp
 	RakWString.cpp
 	Rand.cpp
-	rdlmalloc.cpp
 	ReadyEvent.cpp
+	RelayPlugin.cpp
 	ReliabilityLayer.cpp
 	ReplicaManager3.cpp
 	Router2.cpp

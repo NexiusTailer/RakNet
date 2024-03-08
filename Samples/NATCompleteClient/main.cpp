@@ -27,7 +27,7 @@ using namespace RakNet;
 #define RAKPEER_PORT 0
 #define RAKPEER_PORT_STR "0"
 #define DEFAULT_SERVER_PORT "61111"
-#define DEFAULT_SERVER_ADDRESS "94.198.81.195"
+#define DEFAULT_SERVER_ADDRESS "natpunch.jenkinssoftware.com"
 
 enum SampleResult
 {
@@ -36,7 +36,7 @@ enum SampleResult
 	SUCCEEDED
 };
 
-#define SUPPORT_UPNP PENDING
+#define SUPPORT_UPNP FAILED
 #define SUPPORT_NAT_TYPE_DETECTION PENDING
 #define SUPPORT_NAT_PUNCHTHROUGH PENDING
 #define SUPPORT_ROUTER2 PENDING

@@ -10,6 +10,7 @@ files
 	(../../Source)
 	AutopatcherPatchContext.h
 	AutopatcherRepositoryInterface.h
+	Base64Encoder.h
 	BitStream.h
 	CCRakNetSlidingWindow.h
 	CCRakNetUDT.h
@@ -62,6 +63,7 @@ files
 	gettimeofday.h
 	GridSectorizer.h
 	HTTPConnection.h
+	HTTPConnection2.h
 	IncrementalReadInterface.h
 	InternalPacket.h
 	Itoa.h
@@ -100,6 +102,7 @@ files
 	RakNetDefinesOverrides.h
 	RakNetSmartPtr.h
 	RakNetSocket.h
+	RakNetSocket2.h
 	RakNetStatistics.h
 	RakNetTime.h
 	RakNetTransport2.h
@@ -112,10 +115,9 @@ files
 	RakThread.h
 	RakWString.h
 	Rand.h
-	rdlmalloc-options.h
-	rdlmalloc.h
 	ReadyEvent.h
 	RefCountedObj.h
+	RelayPlugin.h
 	ReliabilityLayer.h
 	ReplicaEnums.h
 	ReplicaManager3.h

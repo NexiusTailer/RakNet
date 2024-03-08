@@ -100,10 +100,7 @@ bool TCPInterface::CreateListenSocket(unsigned short port, unsigned short maxInc
 
 	serverAddress.sin_port = htons(port);
 
-	RakNetSocket rns;
-	rns.s=listenSocket;
-	SocketLayer::SetSocketOptions(&rns, false, false);
-	rns.s=0;
+	SocketLayer::SetSocketOptions(listenSocket, false, false);
 
 	if (bind__(listenSocket,(struct sockaddr *) &serverAddress,sizeof(serverAddress)) < 0)
 		return false;
@@ -143,10 +140,7 @@ bool TCPInterface::CreateListenSocket(unsigned short port, unsigned short maxInc
 	if (listenSocket==0)
 		return false;
 
-	RakNetSocket rns;
-	rns.s=listenSocket;
-	SocketLayer::SetSocketOptions(&rns, false, false);
-	rns.s=0;
+	SocketLayer::SetSocketOptions(listenSocket, false, false);
 
 	listen__(listenSocket, maxIncomingConnections);
 #endif // #if RAKNET_SUPPORT_IPV6!=1

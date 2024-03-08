@@ -12,10 +12,10 @@
 
 #include "SocketIncludes.h"
 #include "RakNetTypes.h"
+#include "RakNetSocket2.h"
 
 namespace RakNet
 {
-	struct RakNetSocket;
 
 	/// All possible types of NATs (except NAT_TYPE_COUNT, which is an internal value) 
 	enum NATTypeDetectionResult
@@ -53,14 +53,15 @@ namespace RakNet
 	RAK_DLL_EXPORT const char * NATTypeDetectionResultToStringFriendly(NATTypeDetectionResult type);
 
 	/// \internal
-	RAK_DLL_EXPORT RakNetSocket* CreateNonblockingBoundSocket(const char *bindAddr
+	RAK_DLL_EXPORT RakNetSocket2* CreateNonblockingBoundSocket(const char *bindAddr
 #ifdef __native_client__
 		,_PP_Instance_ chromeInstance
 #endif
+		, RNS2EventHandler *eventHandler
 		);
 
 	/// \internal
-	int NatTypeRecvFrom(char *data, RakNetSocket* socket, SystemAddress &sender);
+	//int NatTypeRecvFrom(char *data, RakNetSocket2* socket, SystemAddress &sender, RNS2EventHandler *eventHandler);
 }
 
 #endif // #if _RAKNET_SUPPORT_NatTypeDetectionServer==1 || _RAKNET_SUPPORT_NatTypeDetectionClient==1

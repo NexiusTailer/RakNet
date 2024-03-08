@@ -44,7 +44,7 @@ sdArray[0].port=SERVER_PORT_1;</BR>
   <BR class="RakNetCode">OnRakNetStarted();</BR>
   </span>
 <P>This is for advanced users that want to bind multiple network cards. For example one card to go to the secure server behind the LAN, and another to the internet. To access the different bindings, you would pass the index of the binding to use to functions in RakPeerInterface that have a connectionSocketIndex parameter.</p>
-<P>IPV6 is the newer internet protocol. Instead of addresses such as 94.198.81.195, you may have an address such as fe80::7c:31f7:fec4:27de%14. Encoding takes 16 bytes instead of 4, so IPV6 is less efficient for games. On the positive side, NAT Punchthrough is not needed and should not be used with IPV6 because there are enough addresses that routers do not need to create address mappings.</p>
+<P>IPV6 is the newer internet protocol. Instead of addresses such as 127.0.0.1, you may have an address such as fe80::7c:31f7:fec4:27de%14. Encoding takes 16 bytes instead of 4, so IPV6 is less efficient for games. On the positive side, NAT Punchthrough is not needed and should not be used with IPV6 because there are enough addresses that routers do not need to create address mappings.</p>
 <P>IPV6 is disabled by default. To enable IPV6 support, set the socket family to AF_INET6. For example:<br>
   <span class="RakNetCode">socketDescriptor.socketFamily=AF_INET6;</span></p>
 <P>IPV6 sockets can only connect to other IPV6 sockets. Similarly, IPV4 (The default) can only connect to other IPV4 sockets.</p>

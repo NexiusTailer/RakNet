@@ -2,7 +2,6 @@
 #if _RAKNET_SUPPORT_NatTypeDetectionClient==1
 
 #include "NatTypeDetectionClient.h"
-#include "RakNetSocket.h"
 #include "RakNetSmartPtr.h"
 #include "BitStream.h"
 #include "SocketIncludes.h"
@@ -45,17 +44,22 @@ void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress)
 #ifdef __native_client__
 			, sockets[0]->chromeInstance
 #endif
+			,this
 			);
-		c2Port=SocketLayer::GetLocalPort(c2);
+		//c2Port=SocketLayer::GetLocalPort(c2);
 	}
 
+#if !defined(__native_client__) && !defined(WINDOWS_STORE_RT)
+	if (c2->IsBerkleySocket())
+		((RNS2_Berkley*) c2)->CreateRecvPollingThread(0);
+#endif
 
 	serverAddress=_serverAddress;
 
 	RakNet::BitStream bs;
 	bs.Write((unsigned char)ID_NAT_TYPE_DETECTION_REQUEST);
 	bs.Write(true); // IsRequest
-	bs.Write(c2Port);
+	bs.Write(c2->GetBoundAddress().GetPort());
 	rakPeerInterface->Send(&bs,MEDIUM_PRIORITY,RELIABLE,0,serverAddress,false);
 }
 void NatTypeDetectionClient::OnCompletion(NATTypeDetectionResult result)
@@ -90,14 +94,28 @@ void NatTypeDetectionClient::Update(void)
 {
 	if (IsInProgress())
 	{
-		char data[ MAXIMUM_MTU_SIZE ];
-		int len;
-		SystemAddress sender;
-		len=NatTypeRecvFrom(data, c2, sender);
-		if (len==1 && data[0]==NAT_TYPE_NONE)
+		RNS2RecvStruct *recvStruct;
+		bufferedPacketsMutex.Lock();
+		if (bufferedPackets.Size()>0)
+			recvStruct=bufferedPackets.Pop();
+		else
+			recvStruct=0;
+		bufferedPacketsMutex.Unlock();
+		while (recvStruct)
 		{
-			OnCompletion(NAT_TYPE_NONE);
-			RakAssert(IsInProgress()==false);
+			if (recvStruct->bytesRead==1 && recvStruct->data[0]==NAT_TYPE_NONE)
+			{
+				OnCompletion(NAT_TYPE_NONE);
+				RakAssert(IsInProgress()==false);
+			}
+			DeallocRNS2RecvStruct(recvStruct, _FILE_AND_LINE_);
+
+			bufferedPacketsMutex.Lock();
+			if (bufferedPackets.Size()>0)
+				recvStruct=bufferedPackets.Pop();
+			else
+				recvStruct=0;
+			bufferedPacketsMutex.Unlock();
 		}
 	}
 }
@@ -173,10 +191,36 @@ void NatTypeDetectionClient::Shutdown(void)
 	serverAddress=UNASSIGNED_SYSTEM_ADDRESS;
 	if (c2!=0)
 	{
+#if !defined(__native_client__) && !defined(WINDOWS_STORE_RT)
+		if (c2->IsBerkleySocket())
+			((RNS2_Berkley *)c2)->BlockOnStopRecvPollingThread();
+#endif
+
 		RakNet::OP_DELETE(c2, _FILE_AND_LINE_);
 		c2=0;
 	}
 
+	bufferedPacketsMutex.Lock();
+	while (bufferedPackets.Size())
+		RakNet::OP_DELETE(bufferedPackets.Pop(), _FILE_AND_LINE_);
+	bufferedPacketsMutex.Unlock();
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void NatTypeDetectionClient::DeallocRNS2RecvStruct(RNS2RecvStruct *s, const char *file, unsigned int line)
+{
+	RakNet::OP_DELETE(s, file, line);
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+RNS2RecvStruct *NatTypeDetectionClient::AllocRNS2RecvStruct(const char *file, unsigned int line)
+{
+	return RakNet::OP_NEW<RNS2RecvStruct>(file,line);
+}
+void NatTypeDetectionClient::OnRNS2Recv(RNS2RecvStruct *recvStruct)
+{
+	bufferedPacketsMutex.Lock();
+	bufferedPackets.Push(recvStruct,_FILE_AND_LINE_);
+	bufferedPacketsMutex.Unlock();
 }
 
 #endif // _RAKNET_SUPPORT_*

@@ -442,8 +442,6 @@ RNS2Socket RNS2_Berkley::GetSocket(void) const {return rns2Socket;}
 
 
 
-
-
 #if   defined(_WIN32)
 RNS2_Windows::RNS2_Windows() {slo=0;}
 RNS2_Windows::~RNS2_Windows() {}

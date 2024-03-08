@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{4D1901AC-A543-4733-B0A6-7F22684894C1}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -130,7 +130,6 @@
     <Compile Include="SwigFiles\RakNetListUnsignedShort.cs" />
     <Compile Include="SwigFiles\RakNetPageRow.cs" />
     <Compile Include="SwigFiles\RakNetPINVOKE.cs" />
-    <Compile Include="SwigFiles\RakNetSocket.cs" />
     <Compile Include="SwigFiles\RakNetStatistics.cs" />
     <Compile Include="SwigFiles\RakPeer.cs" />
     <Compile Include="SwigFiles\RakPeerInterface.cs" />
@@ -147,13 +146,17 @@
     <Compile Include="SwigFiles\SortQuery.cs" />
     <Compile Include="SwigFiles\StartupResult.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_bool.cs" />
+    <Compile Include="SwigFiles\SWIGTYPE_p_DataStructures__ListT_RakNetSocket2_p_t.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_DataStructures__ListT_RakNet__TM_TeamMember_p_t.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_DataStructures__ListT_RakNet__TM_Team_p_t.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_double.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_p_RakNet__TM_Team.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_p_RakNet__TM_TeamMember.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_p_RakNet__TM_World.cs" />
+    <Compile Include="SwigFiles\SWIGTYPE_p_RakNet__ReadyEvent__RemoteSystem.cs" />
+    <Compile Include="SwigFiles\SWIGTYPE_p_RakNet__TCPInterface.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_RakNet__TM_World__JoinRequestHelper.cs" />
+    <Compile Include="SwigFiles\SWIGTYPE_p_RNS2RecvStruct.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_unsigned_char.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_unsigned_int.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_unsigned_long_long.cs" />

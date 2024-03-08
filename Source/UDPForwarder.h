@@ -27,8 +27,6 @@
 namespace RakNet
 {
 
-struct RakNetSocket;
-
 enum UDPForwarderResult
 {
 	UDPFORWARDER_FORWARDING_ALREADY_EXISTS,
@@ -81,7 +79,7 @@ public:
 	UDPForwarderResult StartForwarding(
 		SystemAddress source, SystemAddress destination, RakNet::TimeMS timeoutOnNoDataMS,
 		const char *forceHostAddress, unsigned short socketFamily,
-		unsigned short *forwardingPort, RakNetSocket **forwardingSocket);
+		unsigned short *forwardingPort, __UDPSOCKET__ *forwardingSocket);
 
 	/// No longer forward datagrams from source to destination
 	/// \param[in] source The source IP and port
@@ -95,7 +93,7 @@ public:
 		~ForwardEntry();
 		SystemAddress addr1Unconfirmed, addr2Unconfirmed, addr1Confirmed, addr2Confirmed;
 		RakNet::TimeMS timeLastDatagramForwarded;
-		RakNetSocket* socket;
+		__UDPSOCKET__ socket;
 		RakNet::TimeMS timeoutOnNoDataMS;
 		short socketFamily;
 	};
@@ -122,7 +120,7 @@ protected:
 	struct StartForwardingOutputStruct
 	{
 		unsigned short forwardingPort;
-		RakNetSocket* forwardingSocket;
+		__UDPSOCKET__ forwardingSocket;
 		UDPForwarderResult result;
 		unsigned int inputId;
 	};

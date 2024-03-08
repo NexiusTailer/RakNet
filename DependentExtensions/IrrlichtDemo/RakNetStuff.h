@@ -33,7 +33,7 @@ extern PlayerReplica *playerReplica; // Network object that represents the playe
 
 // A NAT punchthrough and proxy server Jenkins Software is hosting for free, should usually be online
 #define DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_PORT 61111
-#define DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP "94.198.81.195"
+#define DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP "natpunch.jenkinssoftware.com"
 
 void InstantiateRakNetClasses(void);
 void DeinitializeRakNetClasses(void);

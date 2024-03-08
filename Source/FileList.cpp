@@ -703,7 +703,7 @@ void FileList::WriteDataToDisk(const char *applicationDirectory)
 }
 
 #ifdef _MSC_VER
-#pragma warning( disable : 4966 ) // unlink declared deprecated by Microsoft in order to make it harder to be cross platform.  I don't agree it's deprecated.
+#pragma warning( disable : 4996 ) // unlink declared deprecated by Microsoft in order to make it harder to be cross platform.  I don't agree it's deprecated.
 #endif
 void FileList::DeleteFiles(const char *applicationDirectory)
 {
