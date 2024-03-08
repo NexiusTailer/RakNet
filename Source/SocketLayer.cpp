@@ -792,7 +792,7 @@ SOCKET SocketLayer::CreateBoundSocket( unsigned short port, bool blockingSocket,
 }
 const char* SocketLayer::DomainNameToIP_Old( const char *domainName )
 {
-	struct in_addr addr;
+	static struct in_addr addr;
 	memset(&addr,0,sizeof(in_addr));
 
 

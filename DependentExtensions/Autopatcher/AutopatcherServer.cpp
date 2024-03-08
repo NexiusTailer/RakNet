@@ -387,6 +387,7 @@ PluginReceiveResult AutopatcherServer::OnGetChangelistSinceDate(Packet *packet)
 {
 	RakNet::BitStream inBitStream(packet->data, packet->length, false);
 	ThreadData threadData;
+	threadData.clientList=0;
 	inBitStream.IgnoreBits(8);
 	inBitStream.ReadCompressed(threadData.applicationName);
 	inBitStream.Read(threadData.lastUpdateDate);
@@ -444,6 +445,7 @@ void AutopatcherServer::OnGetChangelistSinceDateInt(Packet *packet)
 {
 	RakNet::BitStream inBitStream(packet->data, packet->length, false);
 	ThreadData threadData;
+	threadData.clientList=0;
 	inBitStream.IgnoreBits(8);
 	inBitStream.ReadCompressed(threadData.applicationName);
 	inBitStream.Read(threadData.lastUpdateDate);

@@ -145,9 +145,9 @@
 <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3128ee3a0bf13e0b463e0dd12db5ad50a">ID_ROUTER_2_FORWARDING_ESTABLISHED</a>, 
 <br>
 &nbsp;&nbsp;<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3e5c2bfca3da7660a9a6b5b4703a01839">ID_ROUTER_2_REROUTED</a>
-, <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3cd0390148288ade2da494f4ba266b2b4">ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING</a>, 
-<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3e388bbb96d3a716b3b0f2f7b7a3cc6de">ID_TEAM_BALANCER_TEAMS_LOCKED</a>, 
-<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd342266a19aa17158f228bf0baaec39e6d">ID_TEAM_BALANCER_TEAM_ASSIGNED</a>, 
+, <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd31f19168e95bb4a33feccb5e04c662817">ID_TEAM_BALANCER_REQUESTED_TEAM_FULL</a>, 
+<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3c083d8c4da64d860c0ef882c6e140a94">ID_TEAM_BALANCER_REQUESTED_TEAM_LOCKED</a>
+, <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd342266a19aa17158f228bf0baaec39e6d">ID_TEAM_BALANCER_TEAM_ASSIGNED</a>, 
 <br>
 &nbsp;&nbsp;<a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3c5eade8d2878375aec8badfe66f0558a">ID_LIGHTSPEED_INTEGRATION</a>, 
 <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd366b9b4ed4bf98d68352adb840f3d4239">ID_XBOX_LOBBY</a>, 
@@ -376,10 +376,10 @@ Connect as follows:<p>
 <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> bs(packet-&gt;data, packet-&gt;length, false); bs.IgnoreBytes(sizeof(MessageID)); RakNetGUID endpointGuid; bs.Read(endpointGuid); unsigned short sourceToDestPort; bs.Read(sourceToDestPort); char ipAddressString[32]; packet-&gt;systemAddress.ToString(false, ipAddressString); rakPeerInterface-&gt;Connect(ipAddressString, sourceToDestPort, 0,0); </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd3e5c2bfca3da7660a9a6b5b4703a01839"></a><!-- doxytag: member="ID_ROUTER_2_REROUTED" ref="c1b471af280629f5ace02e586d5bcfd3e5c2bfca3da7660a9a6b5b4703a01839" args="" -->ID_ROUTER_2_REROUTED</em>&nbsp;</td><td>
 The IP address for a forwarded connection has changed Read endpointGuid and port as per ID_ROUTER_2_FORWARDING_ESTABLISHED </td></tr>
-<tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd3cd0390148288ade2da494f4ba266b2b4"></a><!-- doxytag: member="ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING" ref="c1b471af280629f5ace02e586d5bcfd3cd0390148288ade2da494f4ba266b2b4" args="" -->ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING</em>&nbsp;</td><td>
-Cannot switch to the desired team because it is full. However, if someone on that team leaves, you will get ID_TEAM_BALANCER_SET_TEAM later. Byte 1 contains the team you requested to join. Following bytes contain NetworkID of which member. </td></tr>
-<tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd3e388bbb96d3a716b3b0f2f7b7a3cc6de"></a><!-- doxytag: member="ID_TEAM_BALANCER_TEAMS_LOCKED" ref="c1b471af280629f5ace02e586d5bcfd3e388bbb96d3a716b3b0f2f7b7a3cc6de" args="" -->ID_TEAM_BALANCER_TEAMS_LOCKED</em>&nbsp;</td><td>
-Cannot switch to the desired team because all teams are locked. However, if someone on that team leaves, you will get ID_TEAM_BALANCER_SET_TEAM later. Byte 1 contains the team you requested to join. </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd31f19168e95bb4a33feccb5e04c662817"></a><!-- doxytag: member="ID_TEAM_BALANCER_REQUESTED_TEAM_FULL" ref="c1b471af280629f5ace02e586d5bcfd31f19168e95bb4a33feccb5e04c662817" args="" -->ID_TEAM_BALANCER_REQUESTED_TEAM_FULL</em>&nbsp;</td><td>
+Cannot switch to the desired team because it is full. However, if someone on that team leaves, you will get ID_TEAM_BALANCER_TEAM_ASSIGNED later. For TeamBalancer: Byte 1 contains the team you requested to join. Following bytes contain NetworkID of which member </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd3c083d8c4da64d860c0ef882c6e140a94"></a><!-- doxytag: member="ID_TEAM_BALANCER_REQUESTED_TEAM_LOCKED" ref="c1b471af280629f5ace02e586d5bcfd3c083d8c4da64d860c0ef882c6e140a94" args="" -->ID_TEAM_BALANCER_REQUESTED_TEAM_LOCKED</em>&nbsp;</td><td>
+Cannot switch to the desired team because all teams are locked. However, if someone on that team leaves, you will get ID_TEAM_BALANCER_SET_TEAM later. For TeamBalancer: Byte 1 contains the team you requested to join. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd342266a19aa17158f228bf0baaec39e6d"></a><!-- doxytag: member="ID_TEAM_BALANCER_TEAM_ASSIGNED" ref="c1b471af280629f5ace02e586d5bcfd342266a19aa17158f228bf0baaec39e6d" args="" -->ID_TEAM_BALANCER_TEAM_ASSIGNED</em>&nbsp;</td><td>
 Team balancer plugin informing you of your team. Byte 1 contains the team you requested to join. Following bytes contain NetworkID of which member. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="c1b471af280629f5ace02e586d5bcfd3c5eade8d2878375aec8badfe66f0558a"></a><!-- doxytag: member="ID_LIGHTSPEED_INTEGRATION" ref="c1b471af280629f5ace02e586d5bcfd3c5eade8d2878375aec8badfe66f0558a" args="" -->ID_LIGHTSPEED_INTEGRATION</em>&nbsp;</td><td>
@@ -402,7 +402,7 @@ CloudClient / CloudServer. </td></tr>
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 1 13:33:46 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 4 21:34:39 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

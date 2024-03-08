@@ -499,7 +499,7 @@ int main(void)
 				// 	B. Delete these objects on my own system
 				replicaManager.GetReplicasCreatedByMe(replicaListOut);
 				replicaManager.BroadcastDestructionList(replicaListOut, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
-				for (int i=0; i < replicaListOut.Size(); i++)
+				for (unsigned int i=0; i < replicaListOut.Size(); i++)
 					RakNet::OP_DELETE(replicaListOut[i], _FILE_AND_LINE_);
 			}
 

@@ -349,6 +349,8 @@ StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor 
 		threadPriority=0;
 
 
+
+
 #else
 		threadPriority=1000;
 #endif
@@ -518,6 +520,7 @@ StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor 
 	{
 		updateCycleIsRunning = false;
 		endThreads = false;
+		firstExternalID=UNASSIGNED_SYSTEM_ADDRESS;
 
 		ClearBufferedCommands();
 		ClearBufferedPackets();
@@ -2194,7 +2197,7 @@ bool RakPeer::GetClientPublicKeyFromSystemAddress( const SystemAddress input, ch
 		{
 			if (remoteSystemList[ i ].systemAddress == input )
 			{
-				copy_source = remoteSystemList[ input.systemIndex ].client_public_key;
+				copy_source = remoteSystemList[ i ].client_public_key;
 				break;
 			}
 		}
@@ -3818,6 +3821,11 @@ void RakPeer::SendBuffered( const char *data, BitSize_t numberOfBitsToSend, Pack
 		bufferedCommands.Deallocate(bcs, _FILE_AND_LINE_);
 		return;
 	}
+	
+	RakAssert( !( reliability >= NUMBER_OF_RELIABILITIES || reliability < 0 ) );
+	RakAssert( !( priority > NUMBER_OF_PRIORITIES || priority < 0 ) );
+	RakAssert( !( orderingChannel >= NUMBER_OF_ORDERED_STREAMS ) );
+
 	memcpy(bcs->data, data, (size_t) BITS_TO_BYTES(numberOfBitsToSend));
 	bcs->numberOfBitsToSend=numberOfBitsToSend;
 	bcs->priority=priority;
@@ -3873,6 +3881,10 @@ void RakPeer::SendBufferedList( const char **data, const int *lengths, const int
 		rakFree_Ex(dataAggregate,_FILE_AND_LINE_);
 		return;
 	}
+
+	RakAssert( !( reliability >= NUMBER_OF_RELIABILITIES || reliability < 0 ) );
+	RakAssert( !( priority > NUMBER_OF_PRIORITIES || priority < 0 ) );
+	RakAssert( !( orderingChannel >= NUMBER_OF_ORDERED_STREAMS ) );
 
 	bcs=bufferedCommands.Allocate( _FILE_AND_LINE_ );
 	bcs->data = dataAggregate;
@@ -5514,8 +5526,15 @@ bool RakPeer::RunUpdateCycle( RakNet::TimeUS timeNS, RakNet::Time timeMS, BitStr
 							//					newIncomingConnectionStruct.Deserialize( nICS_BS );
 
 							remoteSystem->myExternalSystemAddress = bsSystemAddress;
-							firstExternalID=bsSystemAddress;
-							firstExternalID.debugPort=ntohs(firstExternalID.address.addr4.sin_port);
+
+							// Bug: If A connects to B through R, A's firstExternalID is set to R. If A tries to send to R, sends to loopback because R==firstExternalID
+							// Correct fix is to specify in Connect() if target is through a proxy.
+							// However, in practice you have to connect to something else first anyway to know about the proxy. So setting once only is good enough
+							if (firstExternalID==UNASSIGNED_SYSTEM_ADDRESS)
+							{
+								firstExternalID=bsSystemAddress;
+								firstExternalID.debugPort=ntohs(firstExternalID.address.addr4.sin_port);
+							}
 
 							// Send this info down to the game
 							packet=AllocPacket(byteSize, data, _FILE_AND_LINE_);
@@ -5648,8 +5667,14 @@ bool RakPeer::RunUpdateCycle( RakNet::TimeUS timeNS, RakNet::Time timeMS, BitStr
 								remoteSystem->myExternalSystemAddress = externalID;
 								remoteSystem->connectMode=RemoteSystemStruct::CONNECTED;
 
-								firstExternalID=externalID;
-								firstExternalID.debugPort=ntohs(firstExternalID.address.addr4.sin_port);
+								// Bug: If A connects to B through R, A's firstExternalID is set to R. If A tries to send to R, sends to loopback because R==firstExternalID
+								// Correct fix is to specify in Connect() if target is through a proxy.
+								// However, in practice you have to connect to something else first anyway to know about the proxy. So setting once only is good enough
+								if (firstExternalID==UNASSIGNED_SYSTEM_ADDRESS)
+								{
+									firstExternalID=externalID;
+									firstExternalID.debugPort=ntohs(firstExternalID.address.addr4.sin_port);
+								}
 
 								// Send the connection request complete to the game
 								packet=AllocPacket(byteSize, data, _FILE_AND_LINE_);

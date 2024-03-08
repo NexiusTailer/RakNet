@@ -32,6 +32,15 @@ void PluginInterface2::SendUnified( const RakNet::BitStream * bitStream, PacketP
 		packetizedTCP->Send((const char*) bitStream->GetData(), bitStream->GetNumberOfBytesUsed(), systemIdentifier.systemAddress, broadcast);
 #endif
 }
+void PluginInterface2::SendUnified( const char * data, const int length, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast )
+{
+	if (rakPeerInterface)
+		rakPeerInterface->Send(data, length, priority,reliability,orderingChannel,systemIdentifier,broadcast);
+#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
+	else
+		packetizedTCP->Send(data, length, systemIdentifier.systemAddress, broadcast);
+#endif
+}
 Packet *PluginInterface2::AllocatePacketUnified(unsigned dataSize)
 {
 	if (rakPeerInterface)

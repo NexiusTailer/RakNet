@@ -28,7 +28,7 @@ public:
 	bool OnFile(
 		OnFileStruct *onFileStruct)
 	{
-		printf("%i. (100%%) %i/%i %s %ib / %ib\n",
+		printf("OnFile: %i. (100%%) %i/%i %s %ib / %ib\n",
 			onFileStruct->setID,
 			onFileStruct->fileIndex+1,
 			onFileStruct->numberOfFilesInThisSet,
@@ -57,13 +57,15 @@ public:
 
 	virtual void OnFileProgress(FileProgressStruct *fps)
 	{
-		printf("%i partCount=%i partTotal=%i (%i%%) %i/%i %s %ib / %ib\n",
+		printf("OnFileProgress: %i partCount=%i partTotal=%i (%i%%) %i/%i %s %ib/%ib %ib/%ib total\n",
 			fps->onFileStruct->setID,
-			fps->partCount, fps->partTotal, (int) (100.0*(double)fps->partCount/(double)fps->partTotal),
+			fps->partCount, fps->partTotal, (int) (100.0*(double)fps->onFileStruct->bytesDownloadedForThisFile/(double)fps->onFileStruct->byteLengthOfThisFile),
 			fps->onFileStruct->fileIndex+1,
 			fps->onFileStruct->numberOfFilesInThisSet,
 			fps->onFileStruct->fileName,
+			fps->onFileStruct->bytesDownloadedForThisFile,
 			fps->onFileStruct->byteLengthOfThisFile,
+			fps->onFileStruct->bytesDownloadedForThisSet,
 			fps->onFileStruct->byteLengthOfThisSet,
 			fps->firstDataChunk);
 	}
@@ -113,7 +115,11 @@ int main()
 	RakNet::FileListTransfer flt1, flt2;
 #ifdef USE_TCP
 	RakNet::PacketizedTCP tcp1, tcp2;
+	#if RAKNET_SUPPORT_IPV6==1
 	const bool testInet6=true;
+	#else
+	const bool testInet6=false;
+	#endif
 	if (testInet6)
 	{
 		tcp1.Start(60000,1,-99999,AF_INET6);

@@ -30,6 +30,10 @@ namespace RakNet
 class Connection_RM3;
 class Replica3;
 
+/// \ingroup REPLICA_MANAGER_GROUP3
+/// Used for multiple worlds. World 0 is created automatically by default
+typedef uint8_t WorldId;
+
 
 /// \internal
 /// \ingroup REPLICA_MANAGER_GROUP3
@@ -99,84 +103,104 @@ public:
 	/// \param[in] autoDestroy Automatically call ReplicaManager3::DeallocConnection() for each dropped connection. Defaults to true.
 	void SetAutoManageConnections(bool autoCreate, bool autoDestroy);
 
+	/// \return What was passed to the autoCreate parameter of SetAutoManageConnections()
+	bool GetAutoCreateConnections(void) const;
+
+	/// \return What was passed to the autoDestroy parameter of SetAutoManageConnections()
+	bool GetAutoDestroyConnections(void) const;
+
 	/// \brief Track a new Connection_RM3 instance
 	/// \details If \a autoCreate is false for SetAutoManageConnections(), then you need this function to add new instances of Connection_RM3 yourself.<BR>
 	/// You don't need to track this pointer yourself, you can get it with GetConnectionAtIndex(), GetConnectionByGUID(), or GetConnectionBySystemAddress().<BR>
 	/// \param[in] newConnection The new connection instance to track.
-	bool PushConnection(RakNet::Connection_RM3 *newConnection);
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
+	bool PushConnection(RakNet::Connection_RM3 *newConnection, WorldId worldId=0);
 
 	/// \brief Stop tracking a connection
 	/// \details On call, for each replica returned by GetReplicasCreatedByGuid(), QueryActionOnPopConnection() will be called. Depending on the return value, this may delete the corresponding replica.<BR>
 	/// If autoDestroy is true in the call to SetAutoManageConnections() (true by default) then this is called automatically when the connection is lost. In that case, the returned connection instance is deleted.<BR>
 	/// \param[in] guid of the connection to get. Passed to ReplicaManager3::AllocConnection() originally. 
-	RakNet::Connection_RM3 * PopConnection(RakNetGUID guid);
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
+	RakNet::Connection_RM3 * PopConnection(RakNetGUID guid, WorldId worldId=0);
 
 	/// \brief Adds a replicated object to the system.
 	/// \details Anytime you create a new object that derives from Replica3, and you want ReplicaManager3 to use it, pass it to Reference().<BR>
 	/// Remote systems already connected will potentially download this object the next time ReplicaManager3::Update() is called, which happens every time you call RakPeerInterface::Receive().<BR>
 	/// You can also call ReplicaManager3::Update() manually to send referenced objects right away
 	/// \param[in] replica3 The object to start tracking
-	void Reference(RakNet::Replica3 *replica3);
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
+	void Reference(RakNet::Replica3 *replica3, WorldId worldId=0);
 
 	/// \brief Removes a replicated object from the system.
 	/// \details The object is not deallocated, it is up to the caller to do so.<BR>
 	/// This is called automatically from the destructor of Replica3, so you don't need to call it manually unless you want to stop tracking an object before it is destroyed.
 	/// \param[in] replica3 The object to stop tracking
-	void Dereference(RakNet::Replica3 *replica3);
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
+	void Dereference(RakNet::Replica3 *replica3, WorldId worldId=0);
 
 	/// \brief Removes multiple replicated objects from the system.
 	/// \details Same as Dereference(), but for a list of objects.<BR>
 	/// Useful with the lists returned by GetReplicasCreatedByGuid(), GetReplicasCreatedByMe(), or GetReferencedReplicaList().<BR>
 	/// \param[in] replicaListIn List of objects
-	void DereferenceList(DataStructures::List<Replica3*> &replicaListIn);
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
+	void DereferenceList(DataStructures::List<Replica3*> &replicaListIn, WorldId worldId=0);
 
 	/// \brief Returns all objects originally created by a particular system
 	/// \details Originally created is defined as the value of Replica3::creatingSystemGUID, which is automatically assigned in ReplicaManager3::Reference().<BR>
 	/// You do not have to be directly connected to that system to get the objects originally created by that system.<BR>
 	/// \param[in] guid GUID of the system we are referring to. Originally passed as the \a guid parameter to ReplicaManager3::AllocConnection()
 	/// \param[out] List of Replica3 instances to be returned
-	void GetReplicasCreatedByGuid(RakNetGUID guid, DataStructures::List<Replica3*> &replicaListOut);
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
+	void GetReplicasCreatedByGuid(RakNetGUID guid, DataStructures::List<Replica3*> &replicaListOut, WorldId worldId=0);
 
 	/// \brief Returns all objects originally created by your system
 	/// \details Calls GetReplicasCreatedByGuid() for your own system guid.
 	/// \param[out] List of Replica3 instances to be returned
-	void GetReplicasCreatedByMe(DataStructures::List<Replica3*> &replicaListOut);
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
+	void GetReplicasCreatedByMe(DataStructures::List<Replica3*> &replicaListOut, WorldId worldId=0);
 
 	/// \brief Returns the entire list of Replicas that we know about.
 	/// \details This is all Replica3 instances passed to Reference, as well as instances we downloaded and created via Connection_RM3::AllocReference()
 	/// \param[out] List of Replica3 instances to be returned
-	void GetReferencedReplicaList(DataStructures::List<Replica3*> &replicaListOut);
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
+	void GetReferencedReplicaList(DataStructures::List<Replica3*> &replicaListOut, WorldId worldId=0);
 
 	/// \brief Returns the number of replicas known about
 	/// \details Returns the size of the list that would be returned by GetReferencedReplicaList()
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
 	/// \return How many replica objects are in the list of replica objects
-	unsigned GetReplicaCount(void) const;
+	unsigned GetReplicaCount(WorldId worldId=0) const;
 
 	/// \brief Returns a replica by index
 	/// \details Returns one of the items in the list that would be returned by GetReferencedReplicaList()
 	/// \param[in] index An index, from 0 to GetReplicaCount()-1.
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
 	/// \return A Replica3 instance
-	Replica3 *GetReplicaAtIndex(unsigned index);
+	Replica3 *GetReplicaAtIndex(unsigned index, WorldId worldId=0);
 
 	/// \brief Returns the number of connections
 	/// \details Returns the number of connections added with ReplicaManager3::PushConnection(), minus the number removed with ReplicaManager3::PopConnection()
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
 	/// \return The number of registered connections
-	unsigned int GetConnectionCount(void) const;
+	unsigned int GetConnectionCount(WorldId worldId=0) const;
 
 	/// \brief Returns a connection pointer previously added with PushConnection()
 	/// \param[in] index An index, from 0 to GetConnectionCount()-1.
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
 	/// \return A Connection_RM3 pointer
-	Connection_RM3* GetConnectionAtIndex(unsigned index) const;
+	Connection_RM3* GetConnectionAtIndex(unsigned index, WorldId worldId=0) const;
 
 	/// \brief Returns a connection pointer previously added with PushConnection()
 	/// \param[in] sa The system address of the connection to return
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
 	/// \return A Connection_RM3 pointer, or 0 if not found
-	Connection_RM3* GetConnectionBySystemAddress(const SystemAddress &sa) const;
+	Connection_RM3* GetConnectionBySystemAddress(const SystemAddress &sa, WorldId worldId=0) const;
 
 	/// \brief Returns a connection pointer previously added with PushConnection.()
 	/// \param[in] guid The guid of the connection to return
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
 	/// \return A Connection_RM3 pointer, or 0 if not found
-	Connection_RM3* GetConnectionByGUID(RakNetGUID guid) const;
+	Connection_RM3* GetConnectionByGUID(RakNetGUID guid, WorldId worldId=0) const;
 
 	/// \param[in] Default ordering channel to use for object creation, destruction, and serializations
 	void SetDefaultOrderingChannel(char def);
@@ -197,34 +221,46 @@ public:
 	/// \brief Return the connections that we think have an instance of the specified Replica3 instance
 	/// \details This can be wrong, for example if that system locally deleted the outside the scope of ReplicaManager3, if QueryRemoteConstruction() returned false, or if DeserializeConstruction() returned false.
 	/// \param[in] replica The replica to check against.
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
 	/// \param[out] connectionsThatHaveConstructedThisReplica Populated with connection instances that we believe have \a replica allocated
-	void GetConnectionsThatHaveReplicaConstructed(Replica3 *replica, DataStructures::List<Connection_RM3*> &connectionsThatHaveConstructedThisReplica);
+	void GetConnectionsThatHaveReplicaConstructed(Replica3 *replica, DataStructures::List<Connection_RM3*> &connectionsThatHaveConstructedThisReplica, WorldId worldId=0);
 
-	/// \brief Defines the unique instance of ReplicaManager3 if multiple instances are on the same instance of RakPeerInterface
-	/// \details ReplicaManager3 supports multiple instances of itself attached to the same instance of rakPeer, in case your game has multiple worlds.<BR>
-	/// Call SetWorldID with a different number for each instance.<BR>
-	/// The default worldID is 0.<BR>
-	/// To use multiple worlds, you will also need to call ReplicaManager3::SetNetworkIDManager() to have a different NetworkIDManager instance per world
-	void SetWorldID(unsigned char id);
+	/// \brief ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager, list of connections, replicas, etc
+	/// A world with id 0 is created automatically. If you want multiple worlds, use this function, and ReplicaManager3::SetNetworkIDManager() to have a different NetworkIDManager instance per world
+	void AddWorld(WorldId worldId);
 
-	/// \return Whatever was passed to SetWorldID(), or 0 if it was never called.
-	unsigned char GetWorldID(void) const;
+	/// \brief Deallocate a world added with AddWorld, or the default world with id 0
+	/// Deallocating a world will also stop tracking and updating all connections and replicas associated with that world.
+	void RemoveWorld(WorldId worldId);
+
+	/// \brief Get one of the WorldId values added with AddWorld()
+	/// \details WorldId 0 is created by default. Worlds will not necessarily be in the order added with AddWorld(). Edit RemoveWorld() changing RemoveAtIndexFast() to RemoveAtIndex() to preserve order.
+	/// \param[in] index A value between 0 and GetWorldCount()-1
+	/// \return One of the WorldId values added with AddWorld()
+	WorldId GetWorldIdAtIndex(unsigned int index);
+
+	/// \brief Returns the number of world id specifiers in memory, added with AddWorld() and removed with RemoveWorld()
+	/// \return The number of worlds added
+	unsigned int GetWorldCount(void) const;
 
 	/// \details Sets the networkIDManager instance that this plugin relys upon.<BR>
 	/// Uses whatever instance is attached to RakPeerInterface if unset.<BR>
 	/// To support multiple worlds, you should set it to a different manager for each instance of the plugin
 	/// \param[in] _networkIDManager The externally allocated NetworkIDManager instance for this plugin to use.
-	void SetNetworkIDManager(NetworkIDManager *_networkIDManager);
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
+	void SetNetworkIDManager(NetworkIDManager *_networkIDManager, WorldId worldId=0);
 
 	/// Returns what was passed to SetNetworkIDManager(), or the instance on RakPeerInterface if unset.
-	NetworkIDManager *GetNetworkIDManager(void) const;
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
+	NetworkIDManager *GetNetworkIDManager(WorldId worldId=0) const;
 
 	/// \details Send a network command to destroy one or more Replica3 instances
 	/// Usually you won't need this, but use Replica3::BroadcastDestruction() instead.
 	/// The objects are unaffected locally
 	/// \param[in] replicaList List of Replica3 objects to tell other systems to destroy.
 	/// \param[in] exclusionAddress Which system to not send to. UNASSIGNED_SYSTEM_ADDRESS to send to all.
-	void BroadcastDestructionList(DataStructures::List<Replica3*> &replicaListSource, const SystemAddress &exclusionAddress);
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
+	void BroadcastDestructionList(DataStructures::List<Replica3*> &replicaListSource, const SystemAddress &exclusionAddress, WorldId worldId=0);
 
 	/// \internal
 	/// \details Tell other systems that have this replica to destroy this replica.<BR>
@@ -241,6 +277,18 @@ public:
 
 	/// Call interfaces, send data
 	virtual void Update(void);
+
+	/// \internal
+	struct RM3World
+	{
+		RM3World();
+		void Clear(ReplicaManager3 *replicaManager3);
+
+		DataStructures::List<Connection_RM3*> connectionList;
+		DataStructures::List<Replica3*> userReplicaList;
+		WorldId worldId;
+		NetworkIDManager *networkIDManager;
+	};
 protected:
 	virtual PluginReceiveResult OnReceive(Packet *packet);
 	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
@@ -248,26 +296,26 @@ protected:
 	virtual void OnRakPeerShutdown(void);
 	virtual void OnDetach(void);
 
-	PluginReceiveResult OnConstruction(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
-	PluginReceiveResult OnSerialize(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, RakNet::Time timestamp, unsigned char packetDataOffset);
-	PluginReceiveResult OnDownloadStarted(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
-	PluginReceiveResult OnDownloadComplete(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
+	PluginReceiveResult OnConstruction(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset, WorldId worldId);
+	PluginReceiveResult OnSerialize(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, RakNet::Time timestamp, unsigned char packetDataOffset, WorldId worldId);
+	PluginReceiveResult OnDownloadStarted(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset, WorldId worldId);
+	PluginReceiveResult OnDownloadComplete(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset, WorldId worldId);
 
 	void DeallocReplicaNoBroadcastDestruction(RakNet::Connection_RM3 *connection, RakNet::Replica3 *replica3);
-	RakNet::Connection_RM3 * PopConnection(unsigned int index);
-	Replica3* GetReplicaByNetworkID(NetworkID networkId);
-	unsigned int ReferenceInternal(RakNet::Replica3 *replica3);
-
-	DataStructures::List<Connection_RM3*> connectionList;
-	DataStructures::List<Replica3*> userReplicaList;
+	RakNet::Connection_RM3 * PopConnection(unsigned int index, WorldId worldId);
+	Replica3* GetReplicaByNetworkID(NetworkID networkId, WorldId worldId);
+	unsigned int ReferenceInternal(RakNet::Replica3 *replica3, WorldId worldId);
 
 	PRO defaultSendParameters;
 	RakNet::Time autoSerializeInterval;
 	RakNet::Time lastAutoSerializeOccurance;
-	unsigned char worldId;
-	NetworkIDManager *networkIDManager;
 	bool autoCreateConnections, autoDestroyConnections;
 	Replica3 *currentlyDeallocatingReplica;
+
+	// For O(1) lookup
+	RM3World *worldsArray[255];
+	// For fast traversal
+	DataStructures::List<RM3World *> worldsList;
 
 	friend class Connection_RM3;
 };
@@ -289,6 +337,7 @@ struct LastSerializationResult
 	~LastSerializationResult();
 	
 	/// The replica instance we serialized
+	/// \note replica MUST be the first member of this struct because I cast from replica to LastSerializationResult in Update()
 	RakNet::Replica3 *replica;
 	//bool neverSerialize;
 //	bool isConstructed;
@@ -463,6 +512,20 @@ public:
 		DataStructures::List<Replica3*> newReplicasToCreate,
 		DataStructures::List<Replica3*> existingReplicasToDestroy) {}
 
+	/// \brief Override which replicas to serialize and in what order for a connection for a ReplicaManager3::Update() cycle
+	/// \details By default, Connection_RM3 will iterate through queryToSerializeReplicaList and call QuerySerialization() on each Replica in that list
+	/// queryToSerializeReplicaList is populated in the order in which ReplicaManager3::Reference() is called for those objects.
+	/// If you write to to \a replicasToSerialize and return true, you can control in what order and for which replicas to call QuerySerialization()
+	/// Example use case:
+	/// We have more data to send then the bandwidth supports, so want to prioritize sends. For example enemies shooting are more important than animation effects
+	/// When QuerySerializationList(), sort objects by priority, and write the list to \a replicasToSerialize, optionally skipping objects with a lower serialization frequency
+	/// If you hit your bandwidth limit when checking SerializeParameters::bitsWrittenSoFar, you can return RM3SR_DO_NOT_SERIALIZE for all remaining items
+	/// \note Only replicas written to replicasToSerialize are transmitted. Even if you returned RM3SR_SERIALIZED_ALWAYS a prior ReplicaManager3::Update() cycle, the replica will not be transmitted if it is not in replicasToSerialize
+	/// \note If you do not know what objects are candidates for serialization, you can use queryToSerializeReplicaList as a source for your filtering or sorting operations
+	/// \param[in] replicasToSerialize List of replicas to call QuerySerialization() on
+	/// \return Return true to use replicasToSerialize (replicasToSerialize may be empty if desired). Otherwise return false.
+	virtual bool QuerySerializationList(DataStructures::List<Replica3*> &replicasToSerialize) {(void) replicasToSerialize; return false;}
+
 	/// \internal This is used internally - however, you can also call it manually to send a data update for a remote replica.<BR>
 	/// \brief Sends over a serialization update for \a replica.<BR>
 	/// NetworkID::GetNetworkID() is written automatically, serializationData is the object data.<BR>
@@ -471,17 +534,17 @@ public:
 	/// \param[in] timestamp 0 means no timestamp. Otherwise message is prepended with ID_TIMESTAMP
 	/// \param[in] sendParameters Parameters on how to send
 	/// \param[in] rakPeer Instance of RakPeerInterface to send on
-	/// \param[in] worldId Which world, see ReplicaManager3::SetWorldID()
+	/// \param[in] worldId Which world, see ReplicaManager3::AddWorld()
 	virtual SendSerializeIfChangedResult SendSerialize(RakNet::Replica3 *replica, bool indicesToSend[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNet::BitStream serializationData[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNet::Time timestamp, PRO sendParameters[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNet::RakPeerInterface *rakPeer, unsigned char worldId);
 
 	/// \internal
 	/// \details Calls Connection_RM3::SendSerialize() if Replica3::Serialize() returns a different result than what is contained in \a lastSerializationResult.<BR>
 	/// Used by autoserialization in Connection_RM3::OnAutoserializeInterval()
-	/// \param[in] queryToSerializeIndex Index into queryToSerializeReplicaList for whichever replica this is
+	/// \param[in] lsr Item in the queryToSerializeReplicaList
 	/// \param[in] sp Controlling parameters over the serialization
 	/// \param[in] rakPeer Instance of RakPeerInterface to send on
-	/// \param[in] worldId Which world, see ReplicaManager3::SetWorldID()
-	virtual SendSerializeIfChangedResult SendSerializeIfChanged(unsigned int queryToSerializeIndex, SerializeParameters *sp, RakNet::RakPeerInterface *rakPeer, unsigned char worldId, ReplicaManager3 *replicaManager);
+	/// \param[in] worldId Which world, see ReplicaManager3::AddWorld()
+	virtual SendSerializeIfChangedResult SendSerializeIfChanged(LastSerializationResult *lsr, SerializeParameters *sp, RakNet::RakPeerInterface *rakPeer, unsigned char worldId, ReplicaManager3 *replicaManager);
 
 	/// \internal
 	/// \brief Given a list of objects that were created and destroyed, serialize and send them to another system.
@@ -489,23 +552,15 @@ public:
 	/// \param[in] deletedObjects Objects to serialize destruction
 	/// \param[in] sendParameters Controlling parameters over the serialization
 	/// \param[in] rakPeer Instance of RakPeerInterface to send on
-	/// \param[in] worldId Which world, see ReplicaManager3::SetWorldID()
+	/// \param[in] worldId Which world, see ReplicaManager3::AddWorld()
 	/// \param[in] replicaManager3 ReplicaManager3 instance
 	virtual void SendConstruction(DataStructures::List<Replica3*> &newObjects, DataStructures::List<Replica3*> &deletedObjects, PRO sendParameters, RakNet::RakPeerInterface *rakPeer, unsigned char worldId, ReplicaManager3 *replicaManager3);
 
 	/// \internal
-	/// Remove from \a newObjectsIn objects that already exist and save to \a newObjectsOut
-	/// Remove from \a deletedObjectsIn objects that do not exist, and save to \a deletedObjectsOut
-	void CullUniqueNewAndDeletedObjects(DataStructures::List<Replica3*> &newObjectsIn,
-		DataStructures::List<Replica3*> &deletedObjectsIn,
-		DataStructures::List<Replica3*> &newObjectsOut,
-		DataStructures::List<Replica3*> &deletedObjectsOut);
+	void SendValidation(RakNet::RakPeerInterface *rakPeer, WorldId worldId);
 
 	/// \internal
-	void SendValidation(RakNet::RakPeerInterface *rakPeer, unsigned char worldId);
-
-	/// \internal
-	void AutoConstructByQuery(ReplicaManager3 *replicaManager3);
+	void AutoConstructByQuery(ReplicaManager3 *replicaManager3, WorldId worldId);
 
 
 	// Internal - does the other system have this connection too? Validated means we can now use it
@@ -515,6 +570,8 @@ public:
 
 	static int Replica3LSRComp( Replica3 * const &replica3, LastSerializationResult * const &data );
 
+	// Internal
+	void ClearDownloadGroup(RakPeerInterface *rakPeerInterface);
 protected:
 
 	SystemAddress systemAddress;
@@ -572,13 +629,13 @@ protected:
 	void OnNeverConstruct(unsigned int queryToConstructIdx, ReplicaManager3 *replicaManager);
 	void OnConstructToThisConnection(unsigned int queryToConstructIdx, ReplicaManager3 *replicaManager);
 	void OnConstructToThisConnection(Replica3 *replica, ReplicaManager3 *replicaManager);
-	void OnNeverSerialize(unsigned int queryToSerializeIndex, ReplicaManager3 *replicaManager);
+	void OnNeverSerialize(LastSerializationResult *lsr, ReplicaManager3 *replicaManager);
 	void OnReplicaAlreadyExists(unsigned int queryToConstructIdx, ReplicaManager3 *replicaManager);
 	void OnDownloadExisting(Replica3* replica3, ReplicaManager3 *replicaManager);
 	void OnSendDestructionFromQuery(unsigned int queryToDestructIdx, ReplicaManager3 *replicaManager);
 	void OnDoNotQueryDestruction(unsigned int queryToDestructIdx, ReplicaManager3 *replicaManager);
 	void ValidateLists(ReplicaManager3 *replicaManager) const;
-	void SendSerializeHeader(RakNet::Replica3 *replica, RakNet::Time timestamp, RakNet::BitStream *bs, unsigned char worldId);
+	void SendSerializeHeader(RakNet::Replica3 *replica, RakNet::Time timestamp, RakNet::BitStream *bs, WorldId worldId);
 	
 	// The list of objects that our local system and this remote system both have
 	// Either we sent this object to them, or they sent this object to us
@@ -604,7 +661,6 @@ protected:
 	// Packets will be gathered and not returned until ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE arrives
 	bool groupConstructionAndSerialize;
 	DataStructures::Queue<Packet*> downloadGroup;
-	void ClearDownloadGroup(RakPeerInterface *rakPeerInterface);
 
 	friend class ReplicaManager3;
 private:
@@ -918,8 +974,10 @@ public:
 	/// \param[in] destinationConnection destinationConnection parameter passed to QueryConstruction()
 	/// \param[in] isThisTheServer True if this system is the server, false if not.
 	virtual RM3ConstructionState QueryConstruction_ClientConstruction(RakNet::Connection_RM3 *destinationConnection, bool isThisTheServer);
+	
 	/// Default call for QueryRemoteConstruction().
 	/// \details Both the client and the server is allowed to create this object. The network topology is client/server
+	/// The code means on the client or the server, allow creation of Replica3 instances
 	/// \param[in] sourceConnection destinationConnection parameter passed to QueryConstruction()
 	/// \param[in] isThisTheServer True if this system is the server, false if not.
 	virtual bool QueryRemoteConstruction_ClientConstruction(RakNet::Connection_RM3 *sourceConnection, bool isThisTheServer);
@@ -929,8 +987,10 @@ public:
 	/// \param[in] destinationConnection destinationConnection parameter passed to QueryConstruction()
 	/// \param[in] isThisTheServer True if this system is the server, false if not.
 	virtual RM3ConstructionState QueryConstruction_ServerConstruction(RakNet::Connection_RM3 *destinationConnection, bool isThisTheServer);
+
 	/// \brief Default call for QueryRemoteConstruction(). Allow the server to create this object, but not the client.
 	/// \details Only the server is allowed to create this object. The network topology is client/server
+	/// The code means if this is the server, and I got a command to create a Replica3 to ignore it. If this is the client, to allow it.
 	/// \param[in] sourceConnection destinationConnection parameter passed to QueryConstruction()
 	/// \param[in] isThisTheServer True if this system is the server, false if not.
 	virtual bool QueryRemoteConstruction_ServerConstruction(RakNet::Connection_RM3 *sourceConnection, bool isThisTheServer);
@@ -992,6 +1052,7 @@ public:
 	LastSerializationResultBS lastSentSerialization;
 	RakNet::Time whenLastSerialized;
 	bool forceSendUntilNextUpdate;
+	LastSerializationResult *lsr;
 };
 
 /// \brief Use Replica3 through composition instead of inheritance by containing an instance of this templated class

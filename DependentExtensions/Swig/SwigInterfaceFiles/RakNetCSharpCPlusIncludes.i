@@ -57,7 +57,8 @@ typedef unsigned int SOCKET;
 #include "UDPProxyClient.h"
 #include "FullyConnectedMesh2.h"
 #include "ReadyEvent.h"
-#include "TeamBalancer.h"
+//#include "TeamBalancer.h"
+#include "TeamManager.h"
 #include "NatPunchthroughServer.h"
 #include "UDPForwarder.h"
 #include "UDPProxyServer.h"
@@ -80,6 +81,7 @@ typedef unsigned int SOCKET;
 #include "PacketFileLogger.h"//
 #include "DS_Multilist.h"
 #include "ConnectionGraph2.h"
+#include "GetTime.h"
 //#include "RakNetTransport2.h"
 //#include "RoomsPlugin.h"
 //Macros

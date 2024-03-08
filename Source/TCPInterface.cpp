@@ -352,7 +352,7 @@ void TCPInterface::StartSSLClient(SystemAddress systemAddress)
 	{
 		sharedSslMutex.Lock();
 		SSLeay_add_ssl_algorithms();
-		meth = (SSL_METHOD*) SSLv2_client_method();
+		meth = (SSL_METHOD*) SSLv23_client_method();
 		SSL_load_error_strings();
 		ctx = SSL_CTX_new (meth);
 		RakAssert(ctx!=0);
@@ -1170,8 +1170,53 @@ void RemoteClient::InitSSL(SSL_CTX* ctx, SSL_METHOD *meth)
 
 	ssl = SSL_new (ctx);                         
 	RakAssert(ssl);    
-	SSL_set_fd (ssl, socket);
-	SSL_connect (ssl);
+	int res;
+	res = SSL_set_fd (ssl, socket);
+	if (res!=1)
+		printf("SSL_set_fd error: %s\n", ERR_reason_error_string(ERR_get_error()));
+	RakAssert(res==1);
+	res = SSL_connect (ssl);
+	if (res<0)
+	{
+		printf("SSL_connect error: %s\n", ERR_reason_error_string(ERR_get_error()));
+	}
+	else if (res==0)
+	{
+		// The TLS/SSL handshake was not successful but was shut down controlled and by the specifications of the TLS/SSL protocol. Call SSL_get_error() with the return value ret to find out the reason. 
+		int err = SSL_get_error(ssl, res);
+		switch (err)
+		{
+		case SSL_ERROR_NONE:
+			printf("SSL_ERROR_NONE\n");
+			break;
+		case SSL_ERROR_ZERO_RETURN:
+			printf("SSL_ERROR_ZERO_RETURN\n");
+			break;
+		case SSL_ERROR_WANT_READ:
+			printf("SSL_ERROR_WANT_READ\n");
+			break;
+		case SSL_ERROR_WANT_WRITE:
+			printf("SSL_ERROR_WANT_WRITE\n");
+			break;
+		case SSL_ERROR_WANT_CONNECT:
+			printf("SSL_ERROR_WANT_CONNECT\n");
+			break;
+		case SSL_ERROR_WANT_ACCEPT:
+			printf("SSL_ERROR_WANT_ACCEPT\n");
+			break;
+		case SSL_ERROR_WANT_X509_LOOKUP:
+			printf("SSL_ERROR_WANT_X509_LOOKUP\n");
+			break;
+		case SSL_ERROR_SYSCALL:
+			printf("SSL_ERROR_SYSCALL\n");
+			break;
+		case SSL_ERROR_SSL:
+			printf("SSL_ERROR_SSL\n");
+			break;
+		}
+
+	}
+	RakAssert(res==1);
 }
 void RemoteClient::DisconnectSSL(void)
 {
@@ -1185,11 +1230,8 @@ void RemoteClient::FreeSSL(void)
 }
 int RemoteClient::Send(const char *data, unsigned int length)
 {
-	int err;
 	if (ssl)
-	{
 		return SSL_write (ssl, data, length);
-	}
 	else
 		return send__(socket, data, length, 0);
 }

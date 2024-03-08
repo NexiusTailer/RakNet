@@ -49,6 +49,7 @@
 		<LI>return RM3CS_ALREADY_EXISTS_REMOTELY from QueryConstruction() from the host/server. Otherwise return RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT.
 		<LI>WriteAllocationID(), SerializeConstruction(), DeserializeConstruction() are not used for static objects, and can have empty implementations.
 		<LI>If the object should also never be destroyed over the network, Implement QueryActionOnPopConnection(), to return RM3AOPC_DO_NOTHING. SerializeDestruction(), DeserializeDestruction(), DeallocReplica() can have empty implementations.
+		<LI>Return whatever you want from QueryRemoteConstruction(), as it will not be called
 		<LI>Implement QuerySerialization() to return RM3QSR_CALL_SERIALIZE from the system that serializes the object, typically the peer to peer host or the server. If a system is not currently but can later become a host, such as for peer to peer with host migration, return RM3QSR_DO_NOT_CALL_SERIALIZE. Otherwise return RM3QSR_NEVER_CALL_SERIALIZE.
         <LI>Write to the BitStream in SerializeConstructionExisting() your one-time initialization data, and read it in DeserializeConstructionExisting(). This function is called if and only if QueryConstruction returns RM3CS_ALREADY_EXISTS_REMOTELY.
 		<LI>Write per-tick serialization data in Serialize(), and read it in Deserialize().
@@ -61,14 +62,15 @@
     	<LI><span class="RakNetCode">fullyConnectedMesh2-&gt;SetAutoparticipateConnections(false);</span> (optional)</LI>
     	<LI>Start connections to all remote systems</LI>
       	<LI>On ID_CONNECTION_REQUEST_ACCEPTED or ID_NEW_INCOMING_CONNECTION, execute:<br>
-          <span class="RakNetCode">fullyConnectedMesh2-&gt;AddParticipant(packet-&gt;guid);<br>
-      if (fullyConnectedMesh2-&gt;GetConnectedHost()!=UNASSIGNED_RAKNET_GUID)<br>
-      {
-      <br>
-      DataStructures::List&lt;RakNetGUID&gt; participantList;<br>
-      fullyConnectedMesh2-&gt;GetParticipantList(participantList);<br>
-      RM3AllocConnections(participantList);<br>
-}</span></LI>
+          <span class="RakNetCode">
+          	
+          // Add mid-game joins to ReplicaManager3 as long as we know who the host is<BR>
+					if (fullyConnectedMesh2-&gt;GetConnectedHost()!=UNASSIGNED_RAKNET_GUID)<BR>
+					{<BR>
+						bool success = replicaManager3-&gt;PushConnection(replicaManager3-&gt;AllocConnection(packet-&gt;systemAddress, packet-&gt;guid));<BR>
+						RakAssert(success);<BR>
+					}<BR>
+</span></LI>
       	<LI>On ID_FCM2_NEW_HOST execute:<br>
       	  <span class="RakNetCode">BitStream bsIn(packet-&gt;data, packet-&gt;length, false);<br>
       	  bsIn.IgnoreBytes(sizeof(MessageID));<br>
@@ -76,22 +78,26 @@
       	  bsIn.Read(oldHost);<br>
       	  if (oldHost==UNASSIGNED_RAKNET_GUID)<br>
       	  { <br>
-DataStructures::List&lt;RakNetGUID&gt; participantList;<br>
-fullyConnectedMesh2-&gt;GetParticipantList(participantList);<br>
-RM3AllocConnections(participantList); <br>
+// First time calculated host. Add existing connections to ReplicaManager3<BR>
+AddFullyConnectedMesh2ParticipantsToReplicaManager3(); <br>
 }</span></LI>
-      	<LI><span class="RakNetCode">void RM3AllocConnections(DataStructures::List&lt;RakNetGUID&gt; &amp;participantList)<br>
-      	  {<br>
-      	  for (unsigned int i=0; i &lt; 
-      	  participantList.Size(); i++)<br>
-      	  {<br>
-      	  Connection_RM3 *connection =    	  replicaManager3-&gt;AllocConnection(rakPeer-&gt;GetSystemAddressFromGuid(participantList[i]), participantList[i]);<br>
-      	  if (replicaManager3-&gt;PushConnection(connection)==false)<br>
-      	  replicaManager3-&gt;DeallocConnection(connection);
-      	  <br>
-      	  }
-      	  <br>
-      	  }   	    </span></LI>
+      	<LI><span class="RakNetCode">
+      		
+void AddFullyConnectedMesh2ParticipantsToReplicaManager3(void)<br>
+{<br>
+	{<br>
+		DataStructures::List<RakNetGUID> participantList;<br>
+		fullyConnectedMesh2-&gt;GetParticipantList(participantList);<br>
+		for (unsigned int i=0; i < participantList.Size(); i++)<br>
+		{<br>
+			Connection_RM3 *connection = replicaManager3-&gt;AllocConnection(rakPeer-&gt;GetSystemAddressFromGuid(participantList[i]), participantList[i]);<br>
+			if (replicaManager3-&gt;PushConnection(connection)==false)<br>
+				replicaManager3-&gt;DeallocConnection(connection);<br>
+		}<br>
+};<br>
+
+      	  
+      	  </span></LI>
      </OL>
       <p><em>Explanation:</em></p>
       <p>Line 1, the first parameter to Replicamanager3::SetAutoManageConnections() is set to false in order to disable ReplicaManager3 from automatically calling PushConnection(), because you want to delay systems from participating in Replicamanager3 until a host has been determined. The second parameter is up to you.</p>

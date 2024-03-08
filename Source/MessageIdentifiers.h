@@ -266,7 +266,7 @@ enum DefaultMessageIDTypes
 	/// Lobby packets. Second byte indicates type.
 	ID_LOBBY_GENERAL,
 
-	// RPC3, RPC4Plugin error
+	// RPC3, RPC4 error
 	ID_RPC_REMOTE_ERROR,
 	/// Plugin based replacement for RPC system
 	ID_RPC_PLUGIN,
@@ -339,11 +339,14 @@ enum DefaultMessageIDTypes
 	/// \internal Used by the team balancer plugin
 	ID_TEAM_BALANCER_INTERNAL,
 	/// Cannot switch to the desired team because it is full. However, if someone on that team leaves, you will
-	///  get ID_TEAM_BALANCER_SET_TEAM later. Byte 1 contains the team you requested to join. Following bytes contain NetworkID of which member.
-	ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING,
+	///  get ID_TEAM_BALANCER_TEAM_ASSIGNED later.
+	/// For TeamBalancer: Byte 1 contains the team you requested to join. Following bytes contain NetworkID of which member
+	ID_TEAM_BALANCER_REQUESTED_TEAM_FULL,
 	/// Cannot switch to the desired team because all teams are locked. However, if someone on that team leaves,
-	///  you will get ID_TEAM_BALANCER_SET_TEAM later. Byte 1 contains the team you requested to join.
-	ID_TEAM_BALANCER_TEAMS_LOCKED,
+	///  you will get ID_TEAM_BALANCER_SET_TEAM later.
+	/// For TeamBalancer: Byte 1 contains the team you requested to join.
+	ID_TEAM_BALANCER_REQUESTED_TEAM_LOCKED,
+	ID_TEAM_BALANCER_TEAM_REQUESTED_CANCELLED,
 	/// Team balancer plugin informing you of your team. Byte 1 contains the team you requested to join. Following bytes contain NetworkID of which member.
 	ID_TEAM_BALANCER_TEAM_ASSIGNED,
 

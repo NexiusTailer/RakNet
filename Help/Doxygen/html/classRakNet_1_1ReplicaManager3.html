@@ -60,48 +60,52 @@ Inheritance diagram for RakNet::ReplicaManager3:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e">SetAutoManageConnections</a> (bool autoCreate, bool autoDestroy)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Enable or disable automatically assigning connections to new instances of <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a>.  <a href="#f7e33dfb956e311cde40a97c9f89dc8e"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#8c076754cf73ec47ea31a95c9c3f27f8">PushConnection</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *newConnection)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#71cf90c3a8441becc6080a6dbff8965a">GetAutoCreateConnections</a> (void) const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Track a new <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> instance.  <a href="#8c076754cf73ec47ea31a95c9c3f27f8"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#200726c38288e43321ba1a50fe17d698">PopConnection</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> guid)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#0684b19dc05fe5f8cf9ca588b47f8223">GetAutoDestroyConnections</a> (void) const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Stop tracking a connection.  <a href="#200726c38288e43321ba1a50fe17d698"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#db56b06f09b0379483aeeecfed0805b6">Reference</a> (<a class="el" href="classRakNet_1_1Replica3.html">RakNet::Replica3</a> *replica3)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#5497b1ce378391cd617cec81ce7d8b94">PushConnection</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *newConnection, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds a replicated object to the system.  <a href="#db56b06f09b0379483aeeecfed0805b6"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#ae0f5dfc750be2606f2ba05c16721bc8">Dereference</a> (<a class="el" href="classRakNet_1_1Replica3.html">RakNet::Replica3</a> *replica3)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Track a new <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> instance.  <a href="#5497b1ce378391cd617cec81ce7d8b94"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#8e0a4be1310f582f98462a1831467402">PopConnection</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> guid, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes a replicated object from the system.  <a href="#ae0f5dfc750be2606f2ba05c16721bc8"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#a1375c70004d9ce42a38b7818097ef80">DereferenceList</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;replicaListIn)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Stop tracking a connection.  <a href="#8e0a4be1310f582f98462a1831467402"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#9046d827471c0be651b54b7efb7b6f28">Reference</a> (<a class="el" href="classRakNet_1_1Replica3.html">RakNet::Replica3</a> *replica3, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes multiple replicated objects from the system.  <a href="#a1375c70004d9ce42a38b7818097ef80"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#1bcf6620c2e2b3e691eed3a96a34dfc4">GetReplicasCreatedByGuid</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> guid, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;replicaListOut)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds a replicated object to the system.  <a href="#9046d827471c0be651b54b7efb7b6f28"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#4bd439b6f0479a20236cc29ac36a6ff2">Dereference</a> (<a class="el" href="classRakNet_1_1Replica3.html">RakNet::Replica3</a> *replica3, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns all objects originally created by a particular system.  <a href="#1bcf6620c2e2b3e691eed3a96a34dfc4"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#7a5173d1d8428450c50f0cd2fb16e07d">GetReplicasCreatedByMe</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;replicaListOut)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes a replicated object from the system.  <a href="#4bd439b6f0479a20236cc29ac36a6ff2"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#5426d3a746720ee8a8d9f1e1961f4a60">DereferenceList</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;replicaListIn, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns all objects originally created by your system.  <a href="#7a5173d1d8428450c50f0cd2fb16e07d"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#487025805889984373ded221da3d063f">GetReferencedReplicaList</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;replicaListOut)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes multiple replicated objects from the system.  <a href="#5426d3a746720ee8a8d9f1e1961f4a60"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#deb8596077be0f06f808ca475942bda1">GetReplicasCreatedByGuid</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> guid, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;replicaListOut, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the entire list of Replicas that we know about.  <a href="#487025805889984373ded221da3d063f"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#4ce7ebc4aaf0b238daabf38f4e30f0f0">GetReplicaCount</a> (void) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns all objects originally created by a particular system.  <a href="#deb8596077be0f06f808ca475942bda1"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#f134995196f488ab2d6488c1e0dd0fa9">GetReplicasCreatedByMe</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;replicaListOut, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the number of replicas known about.  <a href="#4ce7ebc4aaf0b238daabf38f4e30f0f0"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#70aefafc569aa912d2705c9cbd3120f0">GetReplicaAtIndex</a> (unsigned index)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns all objects originally created by your system.  <a href="#f134995196f488ab2d6488c1e0dd0fa9"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#30065a01eec701daed0a4310834286ba">GetReferencedReplicaList</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;replicaListOut, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a replica by index.  <a href="#70aefafc569aa912d2705c9cbd3120f0"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#e3fe04eb5b5d1a4e4dc71af3b04ee392">GetConnectionCount</a> (void) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the entire list of Replicas that we know about.  <a href="#30065a01eec701daed0a4310834286ba"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#f15943bf2667aadeff0a2e7a7f79629f">GetReplicaCount</a> (<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0) const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the number of connections.  <a href="#e3fe04eb5b5d1a4e4dc71af3b04ee392"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#f807a58b272373f60c7f336bc86d1920">GetConnectionAtIndex</a> (unsigned index) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the number of replicas known about.  <a href="#f15943bf2667aadeff0a2e7a7f79629f"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#e090d01f6e02425ebca4c1988f309de7">GetReplicaAtIndex</a> (unsigned index, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a connection pointer previously added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#8c076754cf73ec47ea31a95c9c3f27f8" title="Track a new Connection_RM3 instance.">PushConnection()</a>.  <a href="#f807a58b272373f60c7f336bc86d1920"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#07b59eed23727fa032abdcdfa21addd1">GetConnectionBySystemAddress</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;sa) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a replica by index.  <a href="#e090d01f6e02425ebca4c1988f309de7"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#d5335d9001f0ae1b0278f671eb455956">GetConnectionCount</a> (<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0) const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a connection pointer previously added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#8c076754cf73ec47ea31a95c9c3f27f8" title="Track a new Connection_RM3 instance.">PushConnection()</a>.  <a href="#07b59eed23727fa032abdcdfa21addd1"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#508498bc416c653124bb9c8df17e28fb">GetConnectionByGUID</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> guid) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the number of connections.  <a href="#d5335d9001f0ae1b0278f671eb455956"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#3f239e372b43f60bb27163ab5011fe17">GetConnectionAtIndex</a> (unsigned index, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0) const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a connection pointer previously added with PushConnection.().  <a href="#508498bc416c653124bb9c8df17e28fb"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a connection pointer previously added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#5497b1ce378391cd617cec81ce7d8b94" title="Track a new Connection_RM3 instance.">PushConnection()</a>.  <a href="#3f239e372b43f60bb27163ab5011fe17"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#b2eb6fff3e5a71113442b75975801d70">GetConnectionBySystemAddress</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;sa, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0) const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a connection pointer previously added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#5497b1ce378391cd617cec81ce7d8b94" title="Track a new Connection_RM3 instance.">PushConnection()</a>.  <a href="#b2eb6fff3e5a71113442b75975801d70"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#f43d3d10f0369d38a481090a6609a48f">GetConnectionByGUID</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> guid, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0) const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns a connection pointer previously added with PushConnection.().  <a href="#f43d3d10f0369d38a481090a6609a48f"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#7e01d9098c06ad5c9eac71506fad6b13">SetDefaultOrderingChannel</a> (char def)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#fcbcfde423edca9e386f59c2f054e753">SetDefaultPacketPriority</a> (<a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> def)</td></tr>
@@ -110,21 +114,28 @@ Inheritance diagram for RakNet::ReplicaManager3:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#06af43f52ae3148e763ad9223c308639">SetAutoSerializeInterval</a> (RakNet::Time intervalMS)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#ed30eebaaf4baa7c613e6944c40954d6">GetConnectionsThatHaveReplicaConstructed</a> (<a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> *replica, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a> * &gt; &amp;connectionsThatHaveConstructedThisReplica)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#9b87ac17416a6f00452a13f8279523e3">GetConnectionsThatHaveReplicaConstructed</a> (<a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> *replica, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a> * &gt; &amp;connectionsThatHaveConstructedThisReplica, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return the connections that we think have an instance of the specified <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instance.  <a href="#ed30eebaaf4baa7c613e6944c40954d6"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#bd277d2c0b25c5e5864a23fa32c96606">SetWorldID</a> (unsigned char id)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return the connections that we think have an instance of the specified <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instance.  <a href="#9b87ac17416a6f00452a13f8279523e3"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a0c70560e7dd9bda8b50ff3909f78248"></a><!-- doxytag: member="RakNet::ReplicaManager3::AddWorld" ref="a0c70560e7dd9bda8b50ff3909f78248" args="(WorldId worldId)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248">AddWorld</a> (<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Defines the unique instance of <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> if multiple instances are on the same instance of <a class="el" href="classRakNet_1_1RakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a>.  <a href="#bd277d2c0b25c5e5864a23fa32c96606"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#4f7e8d40cf70d0aadccb6c3246ad34c4">GetWorldID</a> (void) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> can support multiple worlds, where each world has a separate <a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a>, list of connections, replicas, etc A world with id 0 is created automatically. If you want multiple worlds, use this function, and <a class="el" href="classRakNet_1_1ReplicaManager3.html#916816210240e1f1d38478cea311999e">ReplicaManager3::SetNetworkIDManager()</a> to have a different <a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a> instance per world. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="18b55ef2c0606b05896e2b4a5103ab21"></a><!-- doxytag: member="RakNet::ReplicaManager3::RemoveWorld" ref="18b55ef2c0606b05896e2b4a5103ab21" args="(WorldId worldId)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#18b55ef2c0606b05896e2b4a5103ab21">RemoveWorld</a> (<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#d5b83d8fccbf9cd4ff4fec40272aa67d">SetNetworkIDManager</a> (<a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a> *_networkIDManager)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Deallocate a world added with AddWorld, or the default world with id 0 Deallocating a world will also stop tracking and updating all connections and replicas associated with that world. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#d1db1ccc77de2ca4fc324405ddac63a6">GetWorldIdAtIndex</a> (unsigned int index)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="be5d17ed5bba9a7ef1df85f574cdfbc0"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetNetworkIDManager" ref="be5d17ed5bba9a7ef1df85f574cdfbc0" args="(void) const " -->
-<a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#be5d17ed5bba9a7ef1df85f574cdfbc0">GetNetworkIDManager</a> (void) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get one of the WorldId values added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a>.  <a href="#d1db1ccc77de2ca4fc324405ddac63a6"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#891d12ab7939014c08dd9da67981fab1">GetWorldCount</a> (void) const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns what was passed to <a class="el" href="classRakNet_1_1ReplicaManager3.html#d5b83d8fccbf9cd4ff4fec40272aa67d">SetNetworkIDManager()</a>, or the instance on <a class="el" href="classRakNet_1_1RakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a> if unset. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#3fcfb686534ae7152010e893a9423900">BroadcastDestructionList</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;replicaListSource, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;exclusionAddress)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the number of world id specifiers in memory, added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> and removed with <a class="el" href="classRakNet_1_1ReplicaManager3.html#18b55ef2c0606b05896e2b4a5103ab21" title="Deallocate a world added with AddWorld, or the default world with id 0 Deallocating...">RemoveWorld()</a>.  <a href="#891d12ab7939014c08dd9da67981fab1"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#916816210240e1f1d38478cea311999e">SetNetworkIDManager</a> (<a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a> *_networkIDManager, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#55a26c19127b186be5653022ed45a514">GetNetworkIDManager</a> (<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0) const </td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#4df5f5e2e47b69b1abe22ba8b445e385">BroadcastDestructionList</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;replicaListSource, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;exclusionAddress, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8aa2fdb5b20aeeab74b037bc1632c9e9"></a><!-- doxytag: member="RakNet::ReplicaManager3::Update" ref="8aa2fdb5b20aeeab74b037bc1632c9e9" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9">Update</a> (void)</td></tr>
@@ -160,7 +171,7 @@ Derive from <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="Syst
 <li>
 Derive your networked game objects from <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>. All pure virtuals have to be implemented, however defaults are provided for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">Replica3::QueryConstruction()</a>, <a class="el" href="classRakNet_1_1Replica3.html#79bd207fb79055d2b39943eb1c6b1f58" title="We&#39;re about to call DeserializeConstruction() on this Replica3. If QueryRemoteConstruction()...">Replica3::QueryRemoteConstruction()</a>, and <a class="el" href="classRakNet_1_1Replica3.html#bc1b2daa5c1a908ddd2d6df44da7e9aa" title="Implement with QuerySerialization_ClientSerializable(), QuerySerialization_ServerSerializable()...">Replica3::QuerySerialization()</a> depending on your network architecture. </li>
 <li>
-When a new game object is created on the local system, pass it to <a class="el" href="classRakNet_1_1ReplicaManager3.html#db56b06f09b0379483aeeecfed0805b6" title="Adds a replicated object to the system.">ReplicaManager3::Reference()</a>. </li>
+When a new game object is created on the local system, pass it to <a class="el" href="classRakNet_1_1ReplicaManager3.html#9046d827471c0be651b54b7efb7b6f28" title="Adds a replicated object to the system.">ReplicaManager3::Reference()</a>. </li>
 <li>
 When a game object is destroyed on the local system, and you want other systems to know about it, call <a class="el" href="classRakNet_1_1Replica3.html#7c6a22d575326cddec3a70eb1c2568f2">Replica3::BroadcastDestruction()</a> </li>
 </ol>
@@ -197,8 +208,8 @@ Implement to return a game specific derivation of <a class="el" href="classRakNe
 The connection object represents a remote system connected to you that is using the <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> system.<br>
  It has functions to perform operations per-connection.<br>
  <a class="el" href="classRakNet_1_1ReplicaManager3.html#de7df800d3dfd31bdd44de76172eb912" title="Implement to return a game specific derivation of Connection_RM3.">AllocConnection()</a> and <a class="el" href="classRakNet_1_1ReplicaManager3.html#78b449c8e3caa9a343a7d273f768687c" title="Implement to destroy a class instanced returned by AllocConnection().">DeallocConnection()</a> are factory functions to create and destroy instances of the connection object.<br>
- It is used if autoCreate is true via <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a> (true by default). Otherwise, the function is not called, and you will have to call <a class="el" href="classRakNet_1_1ReplicaManager3.html#8c076754cf73ec47ea31a95c9c3f27f8" title="Track a new Connection_RM3 instance.">PushConnection()</a> manually<br>
- <dl class="note" compact><dt><b>Note:</b></dt><dd>If you do not want a new network connection to immediately download game objects, <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a> and <a class="el" href="classRakNet_1_1ReplicaManager3.html#8c076754cf73ec47ea31a95c9c3f27f8" title="Track a new Connection_RM3 instance.">PushConnection()</a> are how you do this. </dd></dl>
+ It is used if autoCreate is true via <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a> (true by default). Otherwise, the function is not called, and you will have to call <a class="el" href="classRakNet_1_1ReplicaManager3.html#5497b1ce378391cd617cec81ce7d8b94" title="Track a new Connection_RM3 instance.">PushConnection()</a> manually<br>
+ <dl class="note" compact><dt><b>Note:</b></dt><dd>If you do not want a new network connection to immediately download game objects, <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a> and <a class="el" href="classRakNet_1_1ReplicaManager3.html#5497b1ce378391cd617cec81ce7d8b94" title="Track a new Connection_RM3 instance.">PushConnection()</a> are how you do this. </dd></dl>
 <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a> </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -210,7 +221,7 @@ The connection object represents a remote system connected to you that is using 
 
 </div>
 </div><p>
-<a class="anchor" name="3fcfb686534ae7152010e893a9423900"></a><!-- doxytag: member="RakNet::ReplicaManager3::BroadcastDestructionList" ref="3fcfb686534ae7152010e893a9423900" args="(DataStructures::List&lt; Replica3 * &gt; &amp;replicaListSource, const SystemAddress &amp;exclusionAddress)" -->
+<a class="anchor" name="4df5f5e2e47b69b1abe22ba8b445e385"></a><!-- doxytag: member="RakNet::ReplicaManager3::BroadcastDestructionList" ref="4df5f5e2e47b69b1abe22ba8b445e385" args="(DataStructures::List&lt; Replica3 * &gt; &amp;replicaListSource, const SystemAddress &amp;exclusionAddress, WorldId worldId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -224,7 +235,13 @@ The connection object represents a remote system connected to you that is using 
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
-          <td class="paramname"> <em>exclusionAddress</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>exclusionAddress</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -240,6 +257,7 @@ Send a network command to destroy one or more <a class="el" href="classRakNet_1_
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>replicaList</em>&nbsp;</td><td>List of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> objects to tell other systems to destroy. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>exclusionAddress</em>&nbsp;</td><td>Which system to not send to. UNASSIGNED_SYSTEM_ADDRESS to send to all. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
   </table>
 </dl>
 
@@ -273,7 +291,7 @@ Most likely just implement as {delete connection;}<br>
 
 </div>
 </div><p>
-<a class="anchor" name="ae0f5dfc750be2606f2ba05c16721bc8"></a><!-- doxytag: member="RakNet::ReplicaManager3::Dereference" ref="ae0f5dfc750be2606f2ba05c16721bc8" args="(RakNet::Replica3 *replica3)" -->
+<a class="anchor" name="4bd439b6f0479a20236cc29ac36a6ff2"></a><!-- doxytag: member="RakNet::ReplicaManager3::Dereference" ref="4bd439b6f0479a20236cc29ac36a6ff2" args="(RakNet::Replica3 *replica3, WorldId worldId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -281,9 +299,18 @@ Most likely just implement as {delete connection;}<br>
           <td class="memname">void RakNet::ReplicaManager3::Dereference           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classRakNet_1_1Replica3.html">RakNet::Replica3</a> *&nbsp;</td>
-          <td class="paramname"> <em>replica3</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
+          <td class="paramname"> <em>replica3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
         </tr>
       </table>
 </div>
@@ -296,12 +323,13 @@ The object is not deallocated, it is up to the caller to do so.<br>
  This is called automatically from the destructor of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, so you don't need to call it manually unless you want to stop tracking an object before it is destroyed. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>replica3</em>&nbsp;</td><td>The object to stop tracking </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
   </table>
 </dl>
 
 </div>
 </div><p>
-<a class="anchor" name="a1375c70004d9ce42a38b7818097ef80"></a><!-- doxytag: member="RakNet::ReplicaManager3::DereferenceList" ref="a1375c70004d9ce42a38b7818097ef80" args="(DataStructures::List&lt; Replica3 * &gt; &amp;replicaListIn)" -->
+<a class="anchor" name="5426d3a746720ee8a8d9f1e1961f4a60"></a><!-- doxytag: member="RakNet::ReplicaManager3::DereferenceList" ref="5426d3a746720ee8a8d9f1e1961f4a60" args="(DataStructures::List&lt; Replica3 * &gt; &amp;replicaListIn, WorldId worldId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -309,9 +337,18 @@ The object is not deallocated, it is up to the caller to do so.<br>
           <td class="memname">void RakNet::ReplicaManager3::DereferenceList           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;&nbsp;</td>
-          <td class="paramname"> <em>replicaListIn</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
+          <td class="paramname"> <em>replicaListIn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
         </tr>
       </table>
 </div>
@@ -320,106 +357,23 @@ The object is not deallocated, it is up to the caller to do so.<br>
 <p>
 Removes multiple replicated objects from the system. 
 <p>
-Same as <a class="el" href="classRakNet_1_1ReplicaManager3.html#ae0f5dfc750be2606f2ba05c16721bc8" title="Removes a replicated object from the system.">Dereference()</a>, but for a list of objects.<br>
- Useful with the lists returned by <a class="el" href="classRakNet_1_1ReplicaManager3.html#1bcf6620c2e2b3e691eed3a96a34dfc4" title="Returns all objects originally created by a particular system.">GetReplicasCreatedByGuid()</a>, <a class="el" href="classRakNet_1_1ReplicaManager3.html#7a5173d1d8428450c50f0cd2fb16e07d" title="Returns all objects originally created by your system.">GetReplicasCreatedByMe()</a>, or <a class="el" href="classRakNet_1_1ReplicaManager3.html#487025805889984373ded221da3d063f" title="Returns the entire list of Replicas that we know about.">GetReferencedReplicaList()</a>.<br>
+Same as <a class="el" href="classRakNet_1_1ReplicaManager3.html#4bd439b6f0479a20236cc29ac36a6ff2" title="Removes a replicated object from the system.">Dereference()</a>, but for a list of objects.<br>
+ Useful with the lists returned by <a class="el" href="classRakNet_1_1ReplicaManager3.html#deb8596077be0f06f808ca475942bda1" title="Returns all objects originally created by a particular system.">GetReplicasCreatedByGuid()</a>, <a class="el" href="classRakNet_1_1ReplicaManager3.html#f134995196f488ab2d6488c1e0dd0fa9" title="Returns all objects originally created by your system.">GetReplicasCreatedByMe()</a>, or <a class="el" href="classRakNet_1_1ReplicaManager3.html#30065a01eec701daed0a4310834286ba" title="Returns the entire list of Replicas that we know about.">GetReferencedReplicaList()</a>.<br>
  <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>replicaListIn</em>&nbsp;</td><td>List of objects </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
   </table>
 </dl>
 
 </div>
 </div><p>
-<a class="anchor" name="f807a58b272373f60c7f336bc86d1920"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetConnectionAtIndex" ref="f807a58b272373f60c7f336bc86d1920" args="(unsigned index) const " -->
+<a class="anchor" name="71cf90c3a8441becc6080a6dbff8965a"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetAutoCreateConnections" ref="71cf90c3a8441becc6080a6dbff8965a" args="(void) const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a>* RakNet::ReplicaManager3::GetConnectionAtIndex           </td>
-          <td>(</td>
-          <td class="paramtype">unsigned&nbsp;</td>
-          <td class="paramname"> <em>index</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Returns a connection pointer previously added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#8c076754cf73ec47ea31a95c9c3f27f8" title="Track a new Connection_RM3 instance.">PushConnection()</a>. 
-<p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>index</em>&nbsp;</td><td>An index, from 0 to <a class="el" href="classRakNet_1_1ReplicaManager3.html#e3fe04eb5b5d1a4e4dc71af3b04ee392" title="Returns the number of connections.">GetConnectionCount()</a>-1. </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>A <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> pointer </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="508498bc416c653124bb9c8df17e28fb"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetConnectionByGUID" ref="508498bc416c653124bb9c8df17e28fb" args="(RakNetGUID guid) const " -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a>* RakNet::ReplicaManager3::GetConnectionByGUID           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td>
-          <td class="paramname"> <em>guid</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Returns a connection pointer previously added with PushConnection.(). 
-<p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>guid</em>&nbsp;</td><td>The guid of the connection to return </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>A <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> pointer, or 0 if not found </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="07b59eed23727fa032abdcdfa21addd1"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetConnectionBySystemAddress" ref="07b59eed23727fa032abdcdfa21addd1" args="(const SystemAddress &amp;sa) const " -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a>* RakNet::ReplicaManager3::GetConnectionBySystemAddress           </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
-          <td class="paramname"> <em>sa</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Returns a connection pointer previously added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#8c076754cf73ec47ea31a95c9c3f27f8" title="Track a new Connection_RM3 instance.">PushConnection()</a>. 
-<p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>sa</em>&nbsp;</td><td>The system address of the connection to return </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>A <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> pointer, or 0 if not found </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="e3fe04eb5b5d1a4e4dc71af3b04ee392"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetConnectionCount" ref="e3fe04eb5b5d1a4e4dc71af3b04ee392" args="(void) const " -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned int RakNet::ReplicaManager3::GetConnectionCount           </td>
+          <td class="memname">bool RakNet::ReplicaManager3::GetAutoCreateConnections           </td>
           <td>(</td>
           <td class="paramtype">void&nbsp;</td>
           <td class="paramname">          </td>
@@ -431,13 +385,174 @@ Returns a connection pointer previously added with <a class="el" href="classRakN
 <div class="memdoc">
 
 <p>
-Returns the number of connections. 
-<p>
-Returns the number of connections added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#8c076754cf73ec47ea31a95c9c3f27f8" title="Track a new Connection_RM3 instance.">ReplicaManager3::PushConnection()</a>, minus the number removed with <a class="el" href="classRakNet_1_1ReplicaManager3.html#200726c38288e43321ba1a50fe17d698" title="Stop tracking a connection.">ReplicaManager3::PopConnection()</a> <dl class="return" compact><dt><b>Returns:</b></dt><dd>The number of registered connections </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>What was passed to the autoCreate parameter of <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a> </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="ed30eebaaf4baa7c613e6944c40954d6"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetConnectionsThatHaveReplicaConstructed" ref="ed30eebaaf4baa7c613e6944c40954d6" args="(Replica3 *replica, DataStructures::List&lt; Connection_RM3 * &gt; &amp;connectionsThatHaveConstructedThisReplica)" -->
+<a class="anchor" name="0684b19dc05fe5f8cf9ca588b47f8223"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetAutoDestroyConnections" ref="0684b19dc05fe5f8cf9ca588b47f8223" args="(void) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakNet::ReplicaManager3::GetAutoDestroyConnections           </td>
+          <td>(</td>
+          <td class="paramtype">void&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>What was passed to the autoDestroy parameter of <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a> </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="3f239e372b43f60bb27163ab5011fe17"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetConnectionAtIndex" ref="3f239e372b43f60bb27163ab5011fe17" args="(unsigned index, WorldId worldId=0) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a>* RakNet::ReplicaManager3::GetConnectionAtIndex           </td>
+          <td>(</td>
+          <td class="paramtype">unsigned&nbsp;</td>
+          <td class="paramname"> <em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns a connection pointer previously added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#5497b1ce378391cd617cec81ce7d8b94" title="Track a new Connection_RM3 instance.">PushConnection()</a>. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>index</em>&nbsp;</td><td>An index, from 0 to <a class="el" href="classRakNet_1_1ReplicaManager3.html#d5335d9001f0ae1b0278f671eb455956" title="Returns the number of connections.">GetConnectionCount()</a>-1. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>A <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> pointer </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="f43d3d10f0369d38a481090a6609a48f"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetConnectionByGUID" ref="f43d3d10f0369d38a481090a6609a48f" args="(RakNetGUID guid, WorldId worldId=0) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a>* RakNet::ReplicaManager3::GetConnectionByGUID           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td>
+          <td class="paramname"> <em>guid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns a connection pointer previously added with PushConnection.(). 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>guid</em>&nbsp;</td><td>The guid of the connection to return </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>A <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> pointer, or 0 if not found </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="b2eb6fff3e5a71113442b75975801d70"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetConnectionBySystemAddress" ref="b2eb6fff3e5a71113442b75975801d70" args="(const SystemAddress &amp;sa, WorldId worldId=0) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a>* RakNet::ReplicaManager3::GetConnectionBySystemAddress           </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>sa</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns a connection pointer previously added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#5497b1ce378391cd617cec81ce7d8b94" title="Track a new Connection_RM3 instance.">PushConnection()</a>. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>sa</em>&nbsp;</td><td>The system address of the connection to return </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>A <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> pointer, or 0 if not found </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="d5335d9001f0ae1b0278f671eb455956"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetConnectionCount" ref="d5335d9001f0ae1b0278f671eb455956" args="(WorldId worldId=0) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int RakNet::ReplicaManager3::GetConnectionCount           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns the number of connections. 
+<p>
+Returns the number of connections added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#5497b1ce378391cd617cec81ce7d8b94" title="Track a new Connection_RM3 instance.">ReplicaManager3::PushConnection()</a>, minus the number removed with <a class="el" href="classRakNet_1_1ReplicaManager3.html#8e0a4be1310f582f98462a1831467402" title="Stop tracking a connection.">ReplicaManager3::PopConnection()</a> <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>The number of registered connections </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="9b87ac17416a6f00452a13f8279523e3"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetConnectionsThatHaveReplicaConstructed" ref="9b87ac17416a6f00452a13f8279523e3" args="(Replica3 *replica, DataStructures::List&lt; Connection_RM3 * &gt; &amp;connectionsThatHaveConstructedThisReplica, WorldId worldId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -451,7 +566,13 @@ Returns the number of connections added with <a class="el" href="classRakNet_1_1
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a> * &gt; &amp;&nbsp;</td>
-          <td class="paramname"> <em>connectionsThatHaveConstructedThisReplica</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>connectionsThatHaveConstructedThisReplica</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -468,13 +589,39 @@ Return the connections that we think have an instance of the specified <a class=
 This can be wrong, for example if that system locally deleted the outside the scope of <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a>, if QueryRemoteConstruction() returned false, or if DeserializeConstruction() returned false. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>replica</em>&nbsp;</td><td>The replica to check against. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>connectionsThatHaveConstructedThisReplica</em>&nbsp;</td><td>Populated with connection instances that we believe have <em>replica</em> allocated </td></tr>
   </table>
 </dl>
 
 </div>
 </div><p>
-<a class="anchor" name="487025805889984373ded221da3d063f"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetReferencedReplicaList" ref="487025805889984373ded221da3d063f" args="(DataStructures::List&lt; Replica3 * &gt; &amp;replicaListOut)" -->
+<a class="anchor" name="55a26c19127b186be5653022ed45a514"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetNetworkIDManager" ref="55a26c19127b186be5653022ed45a514" args="(WorldId worldId=0) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a>* RakNet::ReplicaManager3::GetNetworkIDManager           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns what was passed to <a class="el" href="classRakNet_1_1ReplicaManager3.html#916816210240e1f1d38478cea311999e">SetNetworkIDManager()</a>, or the instance on <a class="el" href="classRakNet_1_1RakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a> if unset. <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="30065a01eec701daed0a4310834286ba"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetReferencedReplicaList" ref="30065a01eec701daed0a4310834286ba" args="(DataStructures::List&lt; Replica3 * &gt; &amp;replicaListOut, WorldId worldId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -482,9 +629,18 @@ This can be wrong, for example if that system locally deleted the outside the sc
           <td class="memname">void RakNet::ReplicaManager3::GetReferencedReplicaList           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;&nbsp;</td>
-          <td class="paramname"> <em>replicaListOut</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
+          <td class="paramname"> <em>replicaListOut</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
         </tr>
       </table>
 </div>
@@ -496,12 +652,13 @@ Returns the entire list of Replicas that we know about.
 This is all <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instances passed to Reference, as well as instances we downloaded and created via Connection_RM3::AllocReference() <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>List</em>&nbsp;</td><td>of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instances to be returned </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
   </table>
 </dl>
 
 </div>
 </div><p>
-<a class="anchor" name="70aefafc569aa912d2705c9cbd3120f0"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetReplicaAtIndex" ref="70aefafc569aa912d2705c9cbd3120f0" args="(unsigned index)" -->
+<a class="anchor" name="e090d01f6e02425ebca4c1988f309de7"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetReplicaAtIndex" ref="e090d01f6e02425ebca4c1988f309de7" args="(unsigned index, WorldId worldId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -509,9 +666,18 @@ This is all <a class="el" href="classRakNet_1_1Replica3.html" title="Base class 
           <td class="memname"><a class="el" href="classRakNet_1_1Replica3.html">Replica3</a>* RakNet::ReplicaManager3::GetReplicaAtIndex           </td>
           <td>(</td>
           <td class="paramtype">unsigned&nbsp;</td>
-          <td class="paramname"> <em>index</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
+          <td class="paramname"> <em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
         </tr>
       </table>
 </div>
@@ -520,24 +686,25 @@ This is all <a class="el" href="classRakNet_1_1Replica3.html" title="Base class 
 <p>
 Returns a replica by index. 
 <p>
-Returns one of the items in the list that would be returned by <a class="el" href="classRakNet_1_1ReplicaManager3.html#487025805889984373ded221da3d063f" title="Returns the entire list of Replicas that we know about.">GetReferencedReplicaList()</a> <dl compact><dt><b>Parameters:</b></dt><dd>
+Returns one of the items in the list that would be returned by <a class="el" href="classRakNet_1_1ReplicaManager3.html#30065a01eec701daed0a4310834286ba" title="Returns the entire list of Replicas that we know about.">GetReferencedReplicaList()</a> <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>index</em>&nbsp;</td><td>An index, from 0 to <a class="el" href="classRakNet_1_1ReplicaManager3.html#4ce7ebc4aaf0b238daabf38f4e30f0f0" title="Returns the number of replicas known about.">GetReplicaCount()</a>-1. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>index</em>&nbsp;</td><td>An index, from 0 to <a class="el" href="classRakNet_1_1ReplicaManager3.html#f15943bf2667aadeff0a2e7a7f79629f" title="Returns the number of replicas known about.">GetReplicaCount()</a>-1. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>A <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instance </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="4ce7ebc4aaf0b238daabf38f4e30f0f0"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetReplicaCount" ref="4ce7ebc4aaf0b238daabf38f4e30f0f0" args="(void) const " -->
+<a class="anchor" name="f15943bf2667aadeff0a2e7a7f79629f"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetReplicaCount" ref="f15943bf2667aadeff0a2e7a7f79629f" args="(WorldId worldId=0) const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">unsigned RakNet::ReplicaManager3::GetReplicaCount           </td>
           <td>(</td>
-          <td class="paramtype">void&nbsp;</td>
-          <td class="paramname">          </td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td> const</td>
         </tr>
@@ -548,11 +715,16 @@ Returns one of the items in the list that would be returned by <a class="el" hre
 <p>
 Returns the number of replicas known about. 
 <p>
-Returns the size of the list that would be returned by <a class="el" href="classRakNet_1_1ReplicaManager3.html#487025805889984373ded221da3d063f" title="Returns the entire list of Replicas that we know about.">GetReferencedReplicaList()</a> <dl class="return" compact><dt><b>Returns:</b></dt><dd>How many replica objects are in the list of replica objects </dd></dl>
+Returns the size of the list that would be returned by <a class="el" href="classRakNet_1_1ReplicaManager3.html#30065a01eec701daed0a4310834286ba" title="Returns the entire list of Replicas that we know about.">GetReferencedReplicaList()</a> <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>How many replica objects are in the list of replica objects </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="1bcf6620c2e2b3e691eed3a96a34dfc4"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetReplicasCreatedByGuid" ref="1bcf6620c2e2b3e691eed3a96a34dfc4" args="(RakNetGUID guid, DataStructures::List&lt; Replica3 * &gt; &amp;replicaListOut)" -->
+<a class="anchor" name="deb8596077be0f06f808ca475942bda1"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetReplicasCreatedByGuid" ref="deb8596077be0f06f808ca475942bda1" args="(RakNetGUID guid, DataStructures::List&lt; Replica3 * &gt; &amp;replicaListOut, WorldId worldId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -566,7 +738,13 @@ Returns the size of the list that would be returned by <a class="el" href="class
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;&nbsp;</td>
-          <td class="paramname"> <em>replicaListOut</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>replicaListOut</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -580,18 +758,19 @@ Returns the size of the list that would be returned by <a class="el" href="class
 <p>
 Returns all objects originally created by a particular system. 
 <p>
-Originally created is defined as the value of <a class="el" href="classRakNet_1_1Replica3.html#02e865cdf4292bd4dd8c9795ebb3bb05">Replica3::creatingSystemGUID</a>, which is automatically assigned in <a class="el" href="classRakNet_1_1ReplicaManager3.html#db56b06f09b0379483aeeecfed0805b6" title="Adds a replicated object to the system.">ReplicaManager3::Reference()</a>.<br>
+Originally created is defined as the value of <a class="el" href="classRakNet_1_1Replica3.html#02e865cdf4292bd4dd8c9795ebb3bb05">Replica3::creatingSystemGUID</a>, which is automatically assigned in <a class="el" href="classRakNet_1_1ReplicaManager3.html#9046d827471c0be651b54b7efb7b6f28" title="Adds a replicated object to the system.">ReplicaManager3::Reference()</a>.<br>
  You do not have to be directly connected to that system to get the objects originally created by that system.<br>
  <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>guid</em>&nbsp;</td><td>GUID of the system we are referring to. Originally passed as the <em>guid</em> parameter to <a class="el" href="classRakNet_1_1ReplicaManager3.html#de7df800d3dfd31bdd44de76172eb912" title="Implement to return a game specific derivation of Connection_RM3.">ReplicaManager3::AllocConnection()</a> </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>List</em>&nbsp;</td><td>of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instances to be returned </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
   </table>
 </dl>
 
 </div>
 </div><p>
-<a class="anchor" name="7a5173d1d8428450c50f0cd2fb16e07d"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetReplicasCreatedByMe" ref="7a5173d1d8428450c50f0cd2fb16e07d" args="(DataStructures::List&lt; Replica3 * &gt; &amp;replicaListOut)" -->
+<a class="anchor" name="f134995196f488ab2d6488c1e0dd0fa9"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetReplicasCreatedByMe" ref="f134995196f488ab2d6488c1e0dd0fa9" args="(DataStructures::List&lt; Replica3 * &gt; &amp;replicaListOut, WorldId worldId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -599,9 +778,18 @@ Originally created is defined as the value of <a class="el" href="classRakNet_1_
           <td class="memname">void RakNet::ReplicaManager3::GetReplicasCreatedByMe           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;&nbsp;</td>
-          <td class="paramname"> <em>replicaListOut</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
+          <td class="paramname"> <em>replicaListOut</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
         </tr>
       </table>
 </div>
@@ -610,20 +798,21 @@ Originally created is defined as the value of <a class="el" href="classRakNet_1_
 <p>
 Returns all objects originally created by your system. 
 <p>
-Calls <a class="el" href="classRakNet_1_1ReplicaManager3.html#1bcf6620c2e2b3e691eed3a96a34dfc4" title="Returns all objects originally created by a particular system.">GetReplicasCreatedByGuid()</a> for your own system guid. <dl compact><dt><b>Parameters:</b></dt><dd>
+Calls <a class="el" href="classRakNet_1_1ReplicaManager3.html#deb8596077be0f06f808ca475942bda1" title="Returns all objects originally created by a particular system.">GetReplicasCreatedByGuid()</a> for your own system guid. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>List</em>&nbsp;</td><td>of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instances to be returned </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
   </table>
 </dl>
 
 </div>
 </div><p>
-<a class="anchor" name="4f7e8d40cf70d0aadccb6c3246ad34c4"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetWorldID" ref="4f7e8d40cf70d0aadccb6c3246ad34c4" args="(void) const " -->
+<a class="anchor" name="891d12ab7939014c08dd9da67981fab1"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetWorldCount" ref="891d12ab7939014c08dd9da67981fab1" args="(void) const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned char RakNet::ReplicaManager3::GetWorldID           </td>
+          <td class="memname">unsigned int RakNet::ReplicaManager3::GetWorldCount           </td>
           <td>(</td>
           <td class="paramtype">void&nbsp;</td>
           <td class="paramname">          </td>
@@ -635,7 +824,37 @@ Calls <a class="el" href="classRakNet_1_1ReplicaManager3.html#1bcf6620c2e2b3e691
 <div class="memdoc">
 
 <p>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>Whatever was passed to <a class="el" href="classRakNet_1_1ReplicaManager3.html#bd277d2c0b25c5e5864a23fa32c96606" title="Defines the unique instance of ReplicaManager3 if multiple instances are on the same...">SetWorldID()</a>, or 0 if it was never called. </dd></dl>
+Returns the number of world id specifiers in memory, added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> and removed with <a class="el" href="classRakNet_1_1ReplicaManager3.html#18b55ef2c0606b05896e2b4a5103ab21" title="Deallocate a world added with AddWorld, or the default world with id 0 Deallocating...">RemoveWorld()</a>. 
+<p>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>The number of worlds added </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="d1db1ccc77de2ca4fc324405ddac63a6"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetWorldIdAtIndex" ref="d1db1ccc77de2ca4fc324405ddac63a6" args="(unsigned int index)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> RakNet::ReplicaManager3::GetWorldIdAtIndex           </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&nbsp;</td>
+          <td class="paramname"> <em>index</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get one of the WorldId values added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a>. 
+<p>
+WorldId 0 is created by default. Worlds will not necessarily be in the order added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a>. Edit <a class="el" href="classRakNet_1_1ReplicaManager3.html#18b55ef2c0606b05896e2b4a5103ab21" title="Deallocate a world added with AddWorld, or the default world with id 0 Deallocating...">RemoveWorld()</a> changing RemoveAtIndexFast() to RemoveAtIndex() to preserve order. <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>index</em>&nbsp;</td><td>A value between 0 and <a class="el" href="classRakNet_1_1ReplicaManager3.html#891d12ab7939014c08dd9da67981fab1" title="Returns the number of world id specifiers in memory, added with AddWorld() and removed...">GetWorldCount()</a>-1 </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>One of the WorldId values added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </dd></dl>
 
 </div>
 </div><p>
@@ -755,7 +974,7 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 
 </div>
 </div><p>
-<a class="anchor" name="200726c38288e43321ba1a50fe17d698"></a><!-- doxytag: member="RakNet::ReplicaManager3::PopConnection" ref="200726c38288e43321ba1a50fe17d698" args="(RakNetGUID guid)" -->
+<a class="anchor" name="8e0a4be1310f582f98462a1831467402"></a><!-- doxytag: member="RakNet::ReplicaManager3::PopConnection" ref="8e0a4be1310f582f98462a1831467402" args="(RakNetGUID guid, WorldId worldId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -763,9 +982,18 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
           <td class="memname"><a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a>* RakNet::ReplicaManager3::PopConnection           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td>
-          <td class="paramname"> <em>guid</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
+          <td class="paramname"> <em>guid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
         </tr>
       </table>
 </div>
@@ -774,17 +1002,18 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 <p>
 Stop tracking a connection. 
 <p>
-On call, for each replica returned by <a class="el" href="classRakNet_1_1ReplicaManager3.html#1bcf6620c2e2b3e691eed3a96a34dfc4" title="Returns all objects originally created by a particular system.">GetReplicasCreatedByGuid()</a>, QueryActionOnPopConnection() will be called. Depending on the return value, this may delete the corresponding replica.<br>
+On call, for each replica returned by <a class="el" href="classRakNet_1_1ReplicaManager3.html#deb8596077be0f06f808ca475942bda1" title="Returns all objects originally created by a particular system.">GetReplicasCreatedByGuid()</a>, QueryActionOnPopConnection() will be called. Depending on the return value, this may delete the corresponding replica.<br>
  If autoDestroy is true in the call to <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a> (true by default) then this is called automatically when the connection is lost. In that case, the returned connection instance is deleted.<br>
  <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>guid</em>&nbsp;</td><td>of the connection to get. Passed to <a class="el" href="classRakNet_1_1ReplicaManager3.html#de7df800d3dfd31bdd44de76172eb912" title="Implement to return a game specific derivation of Connection_RM3.">ReplicaManager3::AllocConnection()</a> originally. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
   </table>
 </dl>
 
 </div>
 </div><p>
-<a class="anchor" name="8c076754cf73ec47ea31a95c9c3f27f8"></a><!-- doxytag: member="RakNet::ReplicaManager3::PushConnection" ref="8c076754cf73ec47ea31a95c9c3f27f8" args="(RakNet::Connection_RM3 *newConnection)" -->
+<a class="anchor" name="5497b1ce378391cd617cec81ce7d8b94"></a><!-- doxytag: member="RakNet::ReplicaManager3::PushConnection" ref="5497b1ce378391cd617cec81ce7d8b94" args="(RakNet::Connection_RM3 *newConnection, WorldId worldId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -792,9 +1021,18 @@ On call, for each replica returned by <a class="el" href="classRakNet_1_1Replica
           <td class="memname">bool RakNet::ReplicaManager3::PushConnection           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *&nbsp;</td>
-          <td class="paramname"> <em>newConnection</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
+          <td class="paramname"> <em>newConnection</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
         </tr>
       </table>
 </div>
@@ -804,16 +1042,17 @@ On call, for each replica returned by <a class="el" href="classRakNet_1_1Replica
 Track a new <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> instance. 
 <p>
 If <em>autoCreate</em> is false for <a class="el" href="classRakNet_1_1ReplicaManager3.html#f7e33dfb956e311cde40a97c9f89dc8e" title="Enable or disable automatically assigning connections to new instances of Connection_RM3...">SetAutoManageConnections()</a>, then you need this function to add new instances of <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> yourself.<br>
- You don't need to track this pointer yourself, you can get it with <a class="el" href="classRakNet_1_1ReplicaManager3.html#f807a58b272373f60c7f336bc86d1920" title="Returns a connection pointer previously added with PushConnection().">GetConnectionAtIndex()</a>, <a class="el" href="classRakNet_1_1ReplicaManager3.html#508498bc416c653124bb9c8df17e28fb" title="Returns a connection pointer previously added with PushConnection.().">GetConnectionByGUID()</a>, or <a class="el" href="classRakNet_1_1ReplicaManager3.html#07b59eed23727fa032abdcdfa21addd1" title="Returns a connection pointer previously added with PushConnection().">GetConnectionBySystemAddress()</a>.<br>
+ You don't need to track this pointer yourself, you can get it with <a class="el" href="classRakNet_1_1ReplicaManager3.html#3f239e372b43f60bb27163ab5011fe17" title="Returns a connection pointer previously added with PushConnection().">GetConnectionAtIndex()</a>, <a class="el" href="classRakNet_1_1ReplicaManager3.html#f43d3d10f0369d38a481090a6609a48f" title="Returns a connection pointer previously added with PushConnection.().">GetConnectionByGUID()</a>, or <a class="el" href="classRakNet_1_1ReplicaManager3.html#b2eb6fff3e5a71113442b75975801d70" title="Returns a connection pointer previously added with PushConnection().">GetConnectionBySystemAddress()</a>.<br>
  <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>newConnection</em>&nbsp;</td><td>The new connection instance to track. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
   </table>
 </dl>
 
 </div>
 </div><p>
-<a class="anchor" name="db56b06f09b0379483aeeecfed0805b6"></a><!-- doxytag: member="RakNet::ReplicaManager3::Reference" ref="db56b06f09b0379483aeeecfed0805b6" args="(RakNet::Replica3 *replica3)" -->
+<a class="anchor" name="9046d827471c0be651b54b7efb7b6f28"></a><!-- doxytag: member="RakNet::ReplicaManager3::Reference" ref="9046d827471c0be651b54b7efb7b6f28" args="(RakNet::Replica3 *replica3, WorldId worldId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -821,9 +1060,18 @@ If <em>autoCreate</em> is false for <a class="el" href="classRakNet_1_1ReplicaMa
           <td class="memname">void RakNet::ReplicaManager3::Reference           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classRakNet_1_1Replica3.html">RakNet::Replica3</a> *&nbsp;</td>
-          <td class="paramname"> <em>replica3</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
+          <td class="paramname"> <em>replica3</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
         </tr>
       </table>
 </div>
@@ -832,11 +1080,12 @@ If <em>autoCreate</em> is false for <a class="el" href="classRakNet_1_1ReplicaMa
 <p>
 Adds a replicated object to the system. 
 <p>
-Anytime you create a new object that derives from <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, and you want <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> to use it, pass it to <a class="el" href="classRakNet_1_1ReplicaManager3.html#db56b06f09b0379483aeeecfed0805b6" title="Adds a replicated object to the system.">Reference()</a>.<br>
+Anytime you create a new object that derives from <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, and you want <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> to use it, pass it to <a class="el" href="classRakNet_1_1ReplicaManager3.html#9046d827471c0be651b54b7efb7b6f28" title="Adds a replicated object to the system.">Reference()</a>.<br>
  Remote systems already connected will potentially download this object the next time <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Call interfaces, send data.">ReplicaManager3::Update()</a> is called, which happens every time you call <a class="el" href="classRakNet_1_1RakPeerInterface.html#1c50453d9dee600920aeabd62ad7c119">RakPeerInterface::Receive()</a>.<br>
  You can also call <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Call interfaces, send data.">ReplicaManager3::Update()</a> manually to send referenced objects right away <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>replica3</em>&nbsp;</td><td>The object to start tracking </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
   </table>
 </dl>
 
@@ -873,7 +1122,7 @@ Enable or disable automatically assigning connections to new instances of <a cla
 <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> can automatically create and/or destroy <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> as systems connect or disconnect from <a class="el" href="classRakNet_1_1RakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a>.<br>
  By default this is on, to make the system easier to learn and setup.<br>
  If you don't want all connections to take part in the game, or you want to delay when a connection downloads the game, set <em>autoCreate</em> to false.<br>
- If you want to delay deleting a connection that has dropped, set <em>autoDestroy</em> to false. If you do this, then you must call <a class="el" href="classRakNet_1_1ReplicaManager3.html#200726c38288e43321ba1a50fe17d698" title="Stop tracking a connection.">PopConnection()</a> to remove that connection from being internally tracked. You'll also have to delete the connection instance on your own.<br>
+ If you want to delay deleting a connection that has dropped, set <em>autoDestroy</em> to false. If you do this, then you must call <a class="el" href="classRakNet_1_1ReplicaManager3.html#8e0a4be1310f582f98462a1831467402" title="Stop tracking a connection.">PopConnection()</a> to remove that connection from being internally tracked. You'll also have to delete the connection instance on your own.<br>
  <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>autoCreate</em>&nbsp;</td><td>Automatically call <a class="el" href="classRakNet_1_1ReplicaManager3.html#de7df800d3dfd31bdd44de76172eb912" title="Implement to return a game specific derivation of Connection_RM3.">ReplicaManager3::AllocConnection()</a> for each new connection. Defaults to true. </td></tr>
@@ -987,7 +1236,7 @@ Every <em>intervalMS</em> milliseconds, Connection_RM3::OnAutoserializeInterval(
 
 </div>
 </div><p>
-<a class="anchor" name="d5b83d8fccbf9cd4ff4fec40272aa67d"></a><!-- doxytag: member="RakNet::ReplicaManager3::SetNetworkIDManager" ref="d5b83d8fccbf9cd4ff4fec40272aa67d" args="(NetworkIDManager *_networkIDManager)" -->
+<a class="anchor" name="916816210240e1f1d38478cea311999e"></a><!-- doxytag: member="RakNet::ReplicaManager3::SetNetworkIDManager" ref="916816210240e1f1d38478cea311999e" args="(NetworkIDManager *_networkIDManager, WorldId worldId=0)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -995,9 +1244,18 @@ Every <em>intervalMS</em> milliseconds, Connection_RM3::OnAutoserializeInterval(
           <td class="memname">void RakNet::ReplicaManager3::SetNetworkIDManager           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a> *&nbsp;</td>
-          <td class="paramname"> <em>_networkIDManager</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
+          <td class="paramname"> <em>_networkIDManager</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
         </tr>
       </table>
 </div>
@@ -1009,40 +1267,16 @@ Sets the networkIDManager instance that this plugin relys upon.<br>
  To support multiple worlds, you should set it to a different manager for each instance of the plugin <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_networkIDManager</em>&nbsp;</td><td>The externally allocated <a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a> instance for this plugin to use. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
   </table>
 </dl>
 
 </div>
 </div><p>
-<a class="anchor" name="bd277d2c0b25c5e5864a23fa32c96606"></a><!-- doxytag: member="RakNet::ReplicaManager3::SetWorldID" ref="bd277d2c0b25c5e5864a23fa32c96606" args="(unsigned char id)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void RakNet::ReplicaManager3::SetWorldID           </td>
-          <td>(</td>
-          <td class="paramtype">unsigned char&nbsp;</td>
-          <td class="paramname"> <em>id</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Defines the unique instance of <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> if multiple instances are on the same instance of <a class="el" href="classRakNet_1_1RakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a>. 
-<p>
-<a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> supports multiple instances of itself attached to the same instance of rakPeer, in case your game has multiple worlds.<br>
- Call SetWorldID with a different number for each instance.<br>
- The default worldID is 0.<br>
- To use multiple worlds, you will also need to call <a class="el" href="classRakNet_1_1ReplicaManager3.html#d5b83d8fccbf9cd4ff4fec40272aa67d">ReplicaManager3::SetNetworkIDManager()</a> to have a different <a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a> instance per world 
-</div>
-</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 1 13:33:48 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 4 21:34:41 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

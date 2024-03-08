@@ -92,7 +92,8 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 Set and network team selection (supports peer to peer or client/server). 
 <p>
 Automatically handles transmission and resolution of team selection, including team switching and balancing.<br>
- Usage: TODO <hr><h2>Member Enumeration Documentation</h2>
+ Usage: TODO <dl compact><dt><b><a class="el" href="deprecated.html#_deprecated000010">Deprecated:</a></b></dt><dd>Use <a class="el" href="classRakNet_1_1TeamManager.html" title="Automates networking and list management for teams.">TeamManager</a> intead </dd></dl>
+<hr><h2>Member Enumeration Documentation</h2>
 <a class="anchor" name="615ce461958441f9a0a559ba14610172"></a><!-- doxytag: member="RakNet::TeamBalancer::DefaultAssigmentAlgorithm" ref="615ce461958441f9a0a559ba14610172" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -137,7 +138,7 @@ Join the team with the lowest index that has open slots. </td></tr>
 If ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING is returned after a call to <a class="el" href="classRakNet_1_1TeamBalancer.html#7f8b6ff520c365a18903c7e66b7146a8">RequestSpecificTeam()</a>, the request will stay in memory on the host and execute when available, or until the teams become locked. You can cancel the request by calling <a class="el" href="classRakNet_1_1TeamBalancer.html#03f15610ca6e59eacd83037908480e2b">CancelRequestSpecificTeam()</a>, in which case you will stay on your existing team. <dl class="note" compact><dt><b>Note:</b></dt><dd>Due to latency, even after calling <a class="el" href="classRakNet_1_1TeamBalancer.html#03f15610ca6e59eacd83037908480e2b">CancelRequestSpecificTeam()</a> you may still get ID_TEAM_BALANCER_SET_TEAM if the packet was already in transmission. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>memberId</em>&nbsp;</td><td>If there is more than one player per computer, this number identifies that player. Use any consistent value, such as UNASSINGED_NETWORK_ID if there is only one player. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>memberId</em>&nbsp;</td><td>If there is more than one player per computer, this number identifies that player. Use any consistent value, such as UNASSIGNED_NETWORK_ID if there is only one player. </td></tr>
   </table>
 </dl>
 
@@ -162,7 +163,7 @@ If ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING is returned after a call to <a
 <p>
 If you called <a class="el" href="classRakNet_1_1TeamBalancer.html#7f8b6ff520c365a18903c7e66b7146a8">RequestSpecificTeam()</a> or <a class="el" href="classRakNet_1_1TeamBalancer.html#1b2f42019a0d7fd31598c9e043f818ed">RequestAnyTeam()</a> with a value for <em>memberId</em> that Has since been deleted, call <a class="el" href="classRakNet_1_1TeamBalancer.html#8f114f374593f29eb92499a73ef40935">DeleteMember()</a>. to notify this plugin of that event. Not necessary with only one team member per system <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>memberId</em>&nbsp;</td><td>If there is more than one player per computer, this number identifies that player. Use any consistent value, such as UNASSINGED_NETWORK_ID if there is only one player. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>memberId</em>&nbsp;</td><td>If there is more than one player per computer, this number identifies that player. Use any consistent value, such as UNASSIGNED_NETWORK_ID if there is only one player. </td></tr>
   </table>
 </dl>
 
@@ -188,7 +189,7 @@ If you called <a class="el" href="classRakNet_1_1TeamBalancer.html#7f8b6ff520c36
 Returns your team. As your team changes, you are notified through the ID_TEAM_BALANCER_TEAM_ASSIGNED packet in byte 1. Returns UNASSIGNED_TEAM_ID initially <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>For this to return anything other than UNASSIGNED_TEAM_ID, connect to a properly initialized host and <a class="el" href="classRakNet_1_1TeamBalancer.html#7f8b6ff520c365a18903c7e66b7146a8">RequestSpecificTeam()</a> or <a class="el" href="classRakNet_1_1TeamBalancer.html#1b2f42019a0d7fd31598c9e043f818ed">RequestAnyTeam()</a> first </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>memberId</em>&nbsp;</td><td>If there is more than one player per computer, this number identifies that player. Use any consistent value, such as UNASSINGED_NETWORK_ID if there is only one player. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>memberId</em>&nbsp;</td><td>If there is more than one player per computer, this number identifies that player. Use any consistent value, such as UNASSIGNED_NETWORK_ID if there is only one player. </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>UNASSIGNED_TEAM_ID for no team. Otherwise, the index should range from 0 to one less than the size of the list passed to SetTeamSizeLimits() on the host </dd></dl>
@@ -287,7 +288,7 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 Allow host to pick your team, based on whatever algorithm it uses for default team assignments. This only has an effect if you are not currently on a team (<a class="el" href="classRakNet_1_1TeamBalancer.html#fd1a578737b825716c648f791859676d">GetMyTeam()</a> returns UNASSIGNED_TEAM_ID) <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Call SetTeamSizeLimits() on the host and call SetHostGuid() on this system </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>memberId</em>&nbsp;</td><td>If there is more than one player per computer, this number identifies that player. Use any consistent value, such as UNASSINGED_NETWORK_ID if there is only one player. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>memberId</em>&nbsp;</td><td>If there is more than one player per computer, this number identifies that player. Use any consistent value, such as UNASSIGNED_NETWORK_ID if there is only one player. </td></tr>
   </table>
 </dl>
 
@@ -322,7 +323,7 @@ Allow host to pick your team, based on whatever algorithm it uses for default te
 Set your requested team. UNASSIGNED_TEAM_ID means no team. After enough time for network communication, ID_TEAM_BALANCER_SET_TEAM will be returned with your current team, or If team switch is not possible, ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING or ID_TEAM_BALANCER_TEAMS_LOCKED will be returned. In the case of ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING the request will stay in memory. ID_TEAM_BALANCER_SET_TEAM will be returned when someone on the desired team leaves or wants to switch to your team. If SetLockTeams(true) is called while you have a request pending, you will get ID_TEAM_BALANCER_TEAMS_LOCKED <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Call SetTeamSizeLimits() on the host and call SetHostGuid() on this system. If the host is not running the <a class="el" href="classRakNet_1_1TeamBalancer.html" title="Set and network team selection (supports peer to peer or client/server).">TeamBalancer</a> plugin or did not have SetTeamSizeLimits() called, then you will not get any response. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>memberId</em>&nbsp;</td><td>If there is more than one player per computer, this number identifies that player. Use any consistent value, such as UNASSINGED_NETWORK_ID if there is only one player. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>memberId</em>&nbsp;</td><td>If there is more than one player per computer, this number identifies that player. Use any consistent value, such as UNASSIGNED_NETWORK_ID if there is only one player. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>desiredTeam</em>&nbsp;</td><td>An index representing your team number. The index should range from 0 to one less than the size of the list passed to SetTeamSizeLimits() on the host. You can also pass UNASSIGNED_TEAM_ID to not be on any team (such as if spectating) </td></tr>
   </table>
 </dl>
@@ -451,7 +452,7 @@ Set the limit to the number of players on the specified team.
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="TeamBalancer_8h.html">TeamBalancer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 1 13:33:48 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 4 21:34:41 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

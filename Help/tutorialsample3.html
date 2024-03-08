@@ -52,10 +52,12 @@ int main(void)
 
 	if ((str[0]=='c')||(str[0]=='C'))
 	{
-		peer-&gt;Startup(1,&RakNet::SocketDescriptor(), 1);
+		RakNet::SocketDescriptor sd;
+		peer-&gt;Startup(1,&amp;sd, 1);
 		isServer = false;
 	} else {
-		peer-&gt;Startup(MAX_CLIENTS,  &RakNet::SocketDescriptor(SERVER_PORT,0), 1);
+		RakNet::SocketDescriptor sd(SERVER_PORT,0);
+		peer-&gt;Startup(MAX_CLIENTS, &amp;sd, 1);
 		isServer = true;
 	}
 

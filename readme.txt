@@ -1,4 +1,4 @@
-RakNet 4.036
+RakNet 4.037
 Copyright 2002-2005 Kevin Jenkins (rakkar@jenkinssoftware.com).
 This API and the code herein created by and wholly and privately owned by Kevin Jenkins except where specifically indicated otherwise.
 Licensed under the "RakNet" brand by Jenkins Software and subject to the terms of the relevant licensing agreement available at http://www.jenkinssoftware.com
@@ -79,6 +79,8 @@ Command to build BigPacketTest from /Source directory
 g++ -lpthread -I./ ../Samples/BigPacketTest/BigPacketTest.cpp *.cpp
 Or with debugging info on
 g++ -g -lpthread -I./ ../Samples/BigPacketTest/BigPacketTest.cpp *.cpp
+
+If you get /usr/local/lib/libraknet.so: undefined reference to `__sync_fetch_and_add_4 then build with -march=i686 
 
 To debug:
 http://www.unknownroad.com/rtfm/gdbtut/gdbstack.html

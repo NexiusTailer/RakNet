@@ -645,6 +645,9 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp__RAKNET_SUPPORT_TeamBalancer_get")]
   public static extern int _RAKNET_SUPPORT_TeamBalancer_get();
 
+  [DllImport("RakNet", EntryPoint="CSharp__RAKNET_SUPPORT_TeamManager_get")]
+  public static extern int _RAKNET_SUPPORT_TeamManager_get();
+
   [DllImport("RakNet", EntryPoint="CSharp__RAKNET_SUPPORT_UDPProxyClient_get")]
   public static extern int _RAKNET_SUPPORT_UDPProxyClient_get();
 
@@ -701,21 +704,6 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp__RAKNET_SUPPORT_UDPForwarder_get")]
   public static extern int _RAKNET_SUPPORT_UDPForwarder_get();
-
-  [DllImport("RakNet", EntryPoint="CSharp_new_ReferenceCounter")]
-  public static extern IntPtr new_ReferenceCounter();
-
-  [DllImport("RakNet", EntryPoint="CSharp_delete_ReferenceCounter")]
-  public static extern void delete_ReferenceCounter(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_ReferenceCounter_AddRef")]
-  public static extern void ReferenceCounter_AddRef(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_ReferenceCounter_Release")]
-  public static extern int ReferenceCounter_Release(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_ReferenceCounter_GetRefCount")]
-  public static extern int ReferenceCounter_GetRefCount(HandleRef jarg1);
 
   [DllImport("RakNet", EntryPoint="CSharp_new_SimpleMutex")]
   public static extern IntPtr new_SimpleMutex();
@@ -2233,16 +2221,16 @@ class RakNetPINVOKE {
   public static extern float RakNetStatistics_packetlossTotal_get(HandleRef jarg1);
 
   [DllImport("RakNet", EntryPoint="CSharp_RakNetStatistics_SetBytesInSendBuffer")]
-  public static extern void RakNetStatistics_SetBytesInSendBuffer(HandleRef jarg1, [In, MarshalAs(UnmanagedType.LPArray)]double[] jarg2, int jarg3);
+  public static extern void RakNetStatistics_SetBytesInSendBuffer(HandleRef jarg1, [Out, MarshalAs(UnmanagedType.LPArray)]double[] jarg2, int jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_RakNetStatistics_SetMessageInSendBuffer")]
-  public static extern void RakNetStatistics_SetMessageInSendBuffer(HandleRef jarg1, [In, Out, MarshalAs(UnmanagedType.LPArray)]uint[] jarg2, int jarg3);
+  public static extern void RakNetStatistics_SetMessageInSendBuffer(HandleRef jarg1, [Out, MarshalAs(UnmanagedType.LPArray)]uint[] jarg2, int jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_RakNetStatistics_SetRunningTotal")]
-  public static extern void RakNetStatistics_SetRunningTotal(HandleRef jarg1, [In, Out, MarshalAs(UnmanagedType.LPArray)]ulong[] jarg2, int jarg3);
+  public static extern void RakNetStatistics_SetRunningTotal(HandleRef jarg1, [Out, MarshalAs(UnmanagedType.LPArray)]ulong[] jarg2, int jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_RakNetStatistics_SetValueOverLastSecond")]
-  public static extern void RakNetStatistics_SetValueOverLastSecond(HandleRef jarg1, [In, Out, MarshalAs(UnmanagedType.LPArray)]ulong[] jarg2, int jarg3);
+  public static extern void RakNetStatistics_SetValueOverLastSecond(HandleRef jarg1, [Out, MarshalAs(UnmanagedType.LPArray)]ulong[] jarg2, int jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_new_RakNetStatistics")]
   public static extern IntPtr new_RakNetStatistics();
@@ -3393,47 +3381,326 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_ReadyEvent_SetSendChannel")]
   public static extern void ReadyEvent_SetSendChannel(HandleRef jarg1, byte jarg2);
 
-  [DllImport("RakNet", EntryPoint="CSharp_UNASSIGNED_TEAM_ID_get")]
-  public static extern int UNASSIGNED_TEAM_ID_get();
+  [DllImport("RakNet", EntryPoint="CSharp_ALLOW_JOIN_ANY_AVAILABLE_TEAM_get")]
+  public static extern int ALLOW_JOIN_ANY_AVAILABLE_TEAM_get();
 
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_GetInstance")]
-  public static extern IntPtr TeamBalancer_GetInstance();
+  [DllImport("RakNet", EntryPoint="CSharp_ALLOW_JOIN_SPECIFIC_TEAM_get")]
+  public static extern int ALLOW_JOIN_SPECIFIC_TEAM_get();
 
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_DestroyInstance")]
-  public static extern void TeamBalancer_DestroyInstance(HandleRef jarg1);
+  [DllImport("RakNet", EntryPoint="CSharp_ALLOW_JOIN_REBALANCING_get")]
+  public static extern int ALLOW_JOIN_REBALANCING_get();
 
-  [DllImport("RakNet", EntryPoint="CSharp_new_TeamBalancer")]
-  public static extern IntPtr new_TeamBalancer();
+  [DllImport("RakNet", EntryPoint="CSharp_new_TeamSelection__SWIG_0")]
+  public static extern IntPtr new_TeamSelection__SWIG_0();
 
-  [DllImport("RakNet", EntryPoint="CSharp_delete_TeamBalancer")]
-  public static extern void delete_TeamBalancer(HandleRef jarg1);
+  [DllImport("RakNet", EntryPoint="CSharp_new_TeamSelection__SWIG_1")]
+  public static extern IntPtr new_TeamSelection__SWIG_1(int jarg1);
 
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_SetTeamSizeLimit")]
-  public static extern void TeamBalancer_SetTeamSizeLimit(HandleRef jarg1, byte jarg2, ushort jarg3);
+  [DllImport("RakNet", EntryPoint="CSharp_new_TeamSelection__SWIG_2")]
+  public static extern IntPtr new_TeamSelection__SWIG_2(int jarg1, HandleRef jarg2);
 
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_SetDefaultAssignmentAlgorithm")]
-  public static extern void TeamBalancer_SetDefaultAssignmentAlgorithm(HandleRef jarg1, int jarg2);
+  [DllImport("RakNet", EntryPoint="CSharp_new_TeamSelection__SWIG_3")]
+  public static extern IntPtr new_TeamSelection__SWIG_3(int jarg1, byte jarg2);
 
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_SetForceEvenTeams")]
-  public static extern void TeamBalancer_SetForceEvenTeams(HandleRef jarg1, bool jarg2);
+  [DllImport("RakNet", EntryPoint="CSharp_TeamSelection_joinTeamType_set")]
+  public static extern void TeamSelection_joinTeamType_set(HandleRef jarg1, int jarg2);
 
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_SetLockTeams")]
-  public static extern void TeamBalancer_SetLockTeams(HandleRef jarg1, bool jarg2);
+  [DllImport("RakNet", EntryPoint="CSharp_TeamSelection_joinTeamType_get")]
+  public static extern int TeamSelection_joinTeamType_get(HandleRef jarg1);
 
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_RequestSpecificTeam")]
-  public static extern void TeamBalancer_RequestSpecificTeam(HandleRef jarg1, ulong jarg2, byte jarg3);
+  [DllImport("RakNet", EntryPoint="CSharp_TeamSelection_AnyAvailable")]
+  public static extern IntPtr TeamSelection_AnyAvailable();
 
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_CancelRequestSpecificTeam")]
-  public static extern void TeamBalancer_CancelRequestSpecificTeam(HandleRef jarg1, ulong jarg2);
+  [DllImport("RakNet", EntryPoint="CSharp_TeamSelection_SpecificTeam")]
+  public static extern IntPtr TeamSelection_SpecificTeam(HandleRef jarg1);
 
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_RequestAnyTeam")]
-  public static extern void TeamBalancer_RequestAnyTeam(HandleRef jarg1, ulong jarg2);
+  [DllImport("RakNet", EntryPoint="CSharp_TeamSelection_NoTeam")]
+  public static extern IntPtr TeamSelection_NoTeam(byte jarg1);
 
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_GetMyTeam")]
-  public static extern byte TeamBalancer_GetMyTeam(HandleRef jarg1, ulong jarg2);
+  [DllImport("RakNet", EntryPoint="CSharp_delete_TeamSelection")]
+  public static extern void delete_TeamSelection(HandleRef jarg1);
 
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_DeleteMember")]
-  public static extern void TeamBalancer_DeleteMember(HandleRef jarg1, ulong jarg2);
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_GetInstance")]
+  public static extern IntPtr TM_TeamMember_GetInstance();
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_DestroyInstance")]
+  public static extern void TM_TeamMember_DestroyInstance(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_new_TM_TeamMember")]
+  public static extern IntPtr new_TM_TeamMember();
+
+  [DllImport("RakNet", EntryPoint="CSharp_delete_TM_TeamMember")]
+  public static extern void delete_TM_TeamMember(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_RequestTeam")]
+  public static extern bool TM_TeamMember_RequestTeam(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_RequestTeamSwitch")]
+  public static extern bool TM_TeamMember_RequestTeamSwitch(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_GetRequestedTeam")]
+  public static extern IntPtr TM_TeamMember_GetRequestedTeam(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_GetRequestedSpecificTeams")]
+  public static extern void TM_TeamMember_GetRequestedSpecificTeams(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_HasRequestedTeam")]
+  public static extern bool TM_TeamMember_HasRequestedTeam(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_GetRequestedTeamIndex")]
+  public static extern uint TM_TeamMember_GetRequestedTeamIndex(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_GetRequestedTeamCount")]
+  public static extern uint TM_TeamMember_GetRequestedTeamCount(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_CancelTeamRequest")]
+  public static extern bool TM_TeamMember_CancelTeamRequest(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_LeaveTeam")]
+  public static extern bool TM_TeamMember_LeaveTeam(HandleRef jarg1, HandleRef jarg2, byte jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_LeaveAllTeams")]
+  public static extern bool TM_TeamMember_LeaveAllTeams(HandleRef jarg1, byte jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_GetCurrentTeam")]
+  public static extern IntPtr TM_TeamMember_GetCurrentTeam(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_GetCurrentTeamCount")]
+  public static extern uint TM_TeamMember_GetCurrentTeamCount(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_GetCurrentTeamByIndex")]
+  public static extern IntPtr TM_TeamMember_GetCurrentTeamByIndex(HandleRef jarg1, uint jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_GetCurrentTeams")]
+  public static extern void TM_TeamMember_GetCurrentTeams(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_GetLastTeams")]
+  public static extern void TM_TeamMember_GetLastTeams(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_IsOnTeam")]
+  public static extern bool TM_TeamMember_IsOnTeam(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_GetNetworkID")]
+  public static extern ulong TM_TeamMember_GetNetworkID(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_GetTM_World")]
+  public static extern IntPtr TM_TeamMember_GetTM_World(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_SerializeConstruction")]
+  public static extern void TM_TeamMember_SerializeConstruction(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_DeserializeConstruction")]
+  public static extern bool TM_TeamMember_DeserializeConstruction(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_SetOwner")]
+  public static extern void TM_TeamMember_SetOwner(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_GetOwner")]
+  public static extern IntPtr TM_TeamMember_GetOwner(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_GetNoTeamId")]
+  public static extern byte TM_TeamMember_GetNoTeamId(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_GetWorldIndex")]
+  public static extern uint TM_TeamMember_GetWorldIndex(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_TeamMember_ToUint32")]
+  public static extern uint TM_TeamMember_ToUint32(ulong jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_GetInstance")]
+  public static extern IntPtr TM_Team_GetInstance();
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_DestroyInstance")]
+  public static extern void TM_Team_DestroyInstance(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_new_TM_Team")]
+  public static extern IntPtr new_TM_Team();
+
+  [DllImport("RakNet", EntryPoint="CSharp_delete_TM_Team")]
+  public static extern void delete_TM_Team(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_SetMemberLimit")]
+  public static extern bool TM_Team_SetMemberLimit(HandleRef jarg1, ushort jarg2, byte jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_GetMemberLimit")]
+  public static extern ushort TM_Team_GetMemberLimit(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_GetMemberLimitSetting")]
+  public static extern ushort TM_Team_GetMemberLimitSetting(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_SetJoinPermissions")]
+  public static extern bool TM_Team_SetJoinPermissions(HandleRef jarg1, byte jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_GetJoinPermissions")]
+  public static extern byte TM_Team_GetJoinPermissions(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_LeaveTeam")]
+  public static extern void TM_Team_LeaveTeam(HandleRef jarg1, HandleRef jarg2, byte jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_GetBalancingApplies")]
+  public static extern bool TM_Team_GetBalancingApplies(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_GetTeamMembers")]
+  public static extern void TM_Team_GetTeamMembers(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_GetTeamMembersCount")]
+  public static extern uint TM_Team_GetTeamMembersCount(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_GetTeamMemberByIndex")]
+  public static extern IntPtr TM_Team_GetTeamMemberByIndex(HandleRef jarg1, uint jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_GetNetworkID")]
+  public static extern ulong TM_Team_GetNetworkID(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_GetTM_World")]
+  public static extern IntPtr TM_Team_GetTM_World(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_SerializeConstruction")]
+  public static extern void TM_Team_SerializeConstruction(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_DeserializeConstruction")]
+  public static extern bool TM_Team_DeserializeConstruction(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_SetOwner")]
+  public static extern void TM_Team_SetOwner(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_GetOwner")]
+  public static extern IntPtr TM_Team_GetOwner(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_GetWorldIndex")]
+  public static extern uint TM_Team_GetWorldIndex(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_Team_ToUint32")]
+  public static extern uint TM_Team_ToUint32(ulong jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_new_TM_World")]
+  public static extern IntPtr new_TM_World();
+
+  [DllImport("RakNet", EntryPoint="CSharp_delete_TM_World")]
+  public static extern void delete_TM_World(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_GetTeamManager")]
+  public static extern IntPtr TM_World_GetTeamManager(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_AddParticipant")]
+  public static extern void TM_World_AddParticipant(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_RemoveParticipant")]
+  public static extern void TM_World_RemoveParticipant(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_SetAutoManageConnections")]
+  public static extern void TM_World_SetAutoManageConnections(HandleRef jarg1, bool jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_GetParticipantList")]
+  public static extern void TM_World_GetParticipantList(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_ReferenceTeam")]
+  public static extern void TM_World_ReferenceTeam(HandleRef jarg1, HandleRef jarg2, ulong jarg3, bool jarg4);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_DereferenceTeam")]
+  public static extern void TM_World_DereferenceTeam(HandleRef jarg1, HandleRef jarg2, byte jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_GetTeamCount")]
+  public static extern uint TM_World_GetTeamCount(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_GetTeamByIndex")]
+  public static extern IntPtr TM_World_GetTeamByIndex(HandleRef jarg1, uint jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_GetTeamByNetworkID")]
+  public static extern IntPtr TM_World_GetTeamByNetworkID(HandleRef jarg1, ulong jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_GetTeamIndex")]
+  public static extern uint TM_World_GetTeamIndex(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_ReferenceTeamMember")]
+  public static extern void TM_World_ReferenceTeamMember(HandleRef jarg1, HandleRef jarg2, ulong jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_DereferenceTeamMember")]
+  public static extern void TM_World_DereferenceTeamMember(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_GetTeamMemberCount")]
+  public static extern uint TM_World_GetTeamMemberCount(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_GetTeamMemberByIndex")]
+  public static extern IntPtr TM_World_GetTeamMemberByIndex(HandleRef jarg1, uint jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_GetTeamMemberIDByIndex")]
+  public static extern ulong TM_World_GetTeamMemberIDByIndex(HandleRef jarg1, uint jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_GetTeamMemberByNetworkID")]
+  public static extern IntPtr TM_World_GetTeamMemberByNetworkID(HandleRef jarg1, ulong jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_GetTeamMemberIndex")]
+  public static extern uint TM_World_GetTeamMemberIndex(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_SetBalanceTeams")]
+  public static extern bool TM_World_SetBalanceTeams(HandleRef jarg1, bool jarg2, byte jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_GetBalanceTeams")]
+  public static extern bool TM_World_GetBalanceTeams(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_SetHost")]
+  public static extern void TM_World_SetHost(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_GetHost")]
+  public static extern IntPtr TM_World_GetHost(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_GetWorldId")]
+  public static extern byte TM_World_GetWorldId(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_Clear")]
+  public static extern void TM_World_Clear(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TM_World_JoinRequestHelperComp")]
+  public static extern int TM_World_JoinRequestHelperComp(ulong jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TeamManager_GetInstance")]
+  public static extern IntPtr TeamManager_GetInstance();
+
+  [DllImport("RakNet", EntryPoint="CSharp_TeamManager_DestroyInstance")]
+  public static extern void TeamManager_DestroyInstance(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_new_TeamManager")]
+  public static extern IntPtr new_TeamManager();
+
+  [DllImport("RakNet", EntryPoint="CSharp_delete_TeamManager")]
+  public static extern void delete_TeamManager(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TeamManager_AddWorld")]
+  public static extern IntPtr TeamManager_AddWorld(HandleRef jarg1, byte jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TeamManager_RemoveWorld")]
+  public static extern void TeamManager_RemoveWorld(HandleRef jarg1, byte jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TeamManager_GetWorldCount")]
+  public static extern uint TeamManager_GetWorldCount(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TeamManager_GetWorldAtIndex")]
+  public static extern IntPtr TeamManager_GetWorldAtIndex(HandleRef jarg1, uint jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TeamManager_GetWorldWithId")]
+  public static extern IntPtr TeamManager_GetWorldWithId(HandleRef jarg1, byte jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TeamManager_SetAutoManageConnections")]
+  public static extern void TeamManager_SetAutoManageConnections(HandleRef jarg1, bool jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TeamManager_SetTopology")]
+  public static extern void TeamManager_SetTopology(HandleRef jarg1, int jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TeamManager_DecomposeTeamFull")]
+  public static extern void TeamManager_DecomposeTeamFull(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, HandleRef jarg4, HandleRef jarg5, HandleRef jarg6, HandleRef jarg7, HandleRef jarg8, HandleRef jarg9);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TeamManager_DecomposeTeamLocked")]
+  public static extern void TeamManager_DecomposeTeamLocked(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, HandleRef jarg4, HandleRef jarg5, HandleRef jarg6, HandleRef jarg7, HandleRef jarg8, HandleRef jarg9);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TeamManager_Clear")]
+  public static extern void TeamManager_Clear(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TeamManager_DecodeTeamAssigned")]
+  public static extern void TeamManager_DecodeTeamAssigned(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, HandleRef jarg4);
+
+  [DllImport("RakNet", EntryPoint="CSharp_TeamManager_DecodeTeamCancelled")]
+  public static extern void TeamManager_DecodeTeamCancelled(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, HandleRef jarg4, HandleRef jarg5);
 
   [DllImport("RakNet", EntryPoint="CSharp_delete_NatPunchthroughServerDebugInterface")]
   public static extern void delete_NatPunchthroughServerDebugInterface(HandleRef jarg1);
@@ -4278,6 +4545,21 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_ConnectionGraph2_GetParticipantListHelper")]
   public static extern void ConnectionGraph2_GetParticipantListHelper(HandleRef jarg1, HandleRef jarg2);
 
+  [DllImport("RakNet", EntryPoint="CSharp_GetTime")]
+  public static extern ulong GetTime();
+
+  [DllImport("RakNet", EntryPoint="CSharp_GetTimeMS")]
+  public static extern uint GetTimeMS();
+
+  [DllImport("RakNet", EntryPoint="CSharp_GetTimeUS")]
+  public static extern ulong GetTimeUS();
+
+  [DllImport("RakNet", EntryPoint="CSharp_GreaterThan")]
+  public static extern bool GreaterThan(ulong jarg1, ulong jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_LessThan")]
+  public static extern bool LessThan(ulong jarg1, ulong jarg2);
+
   [DllImport("RakNet", EntryPoint="CSharp_new_RakNetListRakNetGUID__SWIG_0")]
   public static extern IntPtr new_RakNetListRakNetGUID__SWIG_0();
 
@@ -4800,66 +5082,6 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_RakNetListSortQuery_Compress")]
   public static extern void RakNetListSortQuery_Compress(HandleRef jarg1, string jarg2, uint jarg3);
 
-  [DllImport("RakNet", EntryPoint="CSharp_new_RakNetListRakNetSmartPtrRakNetSocket__SWIG_0")]
-  public static extern IntPtr new_RakNetListRakNetSmartPtrRakNetSocket__SWIG_0();
-
-  [DllImport("RakNet", EntryPoint="CSharp_delete_RakNetListRakNetSmartPtrRakNetSocket")]
-  public static extern void delete_RakNetListRakNetSmartPtrRakNetSocket(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_new_RakNetListRakNetSmartPtrRakNetSocket__SWIG_1")]
-  public static extern IntPtr new_RakNetListRakNetSmartPtrRakNetSocket__SWIG_1(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_CopyData")]
-  public static extern IntPtr RakNetListRakNetSmartPtrRakNetSocket_CopyData(HandleRef jarg1, HandleRef jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_Get")]
-  public static extern IntPtr RakNetListRakNetSmartPtrRakNetSocket_Get(HandleRef jarg1, uint jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_Push")]
-  public static extern void RakNetListRakNetSmartPtrRakNetSocket_Push(HandleRef jarg1, HandleRef jarg2, string jarg3, uint jarg4);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_Pop")]
-  public static extern IntPtr RakNetListRakNetSmartPtrRakNetSocket_Pop(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_Insert__SWIG_0")]
-  public static extern void RakNetListRakNetSmartPtrRakNetSocket_Insert__SWIG_0(HandleRef jarg1, HandleRef jarg2, uint jarg3, string jarg4, uint jarg5);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_Insert__SWIG_1")]
-  public static extern void RakNetListRakNetSmartPtrRakNetSocket_Insert__SWIG_1(HandleRef jarg1, HandleRef jarg2, string jarg3, uint jarg4);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_Replace__SWIG_0")]
-  public static extern void RakNetListRakNetSmartPtrRakNetSocket_Replace__SWIG_0(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, uint jarg4, string jarg5, uint jarg6);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_Replace__SWIG_1")]
-  public static extern void RakNetListRakNetSmartPtrRakNetSocket_Replace__SWIG_1(HandleRef jarg1, HandleRef jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_RemoveAtIndex")]
-  public static extern void RakNetListRakNetSmartPtrRakNetSocket_RemoveAtIndex(HandleRef jarg1, uint jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_RemoveAtIndexFast")]
-  public static extern void RakNetListRakNetSmartPtrRakNetSocket_RemoveAtIndexFast(HandleRef jarg1, uint jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_RemoveFromEnd__SWIG_0")]
-  public static extern void RakNetListRakNetSmartPtrRakNetSocket_RemoveFromEnd__SWIG_0(HandleRef jarg1, uint jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_RemoveFromEnd__SWIG_1")]
-  public static extern void RakNetListRakNetSmartPtrRakNetSocket_RemoveFromEnd__SWIG_1(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_GetIndexOf")]
-  public static extern uint RakNetListRakNetSmartPtrRakNetSocket_GetIndexOf(HandleRef jarg1, HandleRef jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_Size")]
-  public static extern uint RakNetListRakNetSmartPtrRakNetSocket_Size(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_Clear")]
-  public static extern void RakNetListRakNetSmartPtrRakNetSocket_Clear(HandleRef jarg1, bool jarg2, string jarg3, uint jarg4);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_Preallocate")]
-  public static extern void RakNetListRakNetSmartPtrRakNetSocket_Preallocate(HandleRef jarg1, uint jarg2, string jarg3, uint jarg4);
-
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetListRakNetSmartPtrRakNetSocket_Compress")]
-  public static extern void RakNetListRakNetSmartPtrRakNetSocket_Compress(HandleRef jarg1, string jarg2, uint jarg3);
-
   [DllImport("RakNet", EntryPoint="CSharp_new_RakNetListCellPointer__SWIG_0")]
   public static extern IntPtr new_RakNetListCellPointer__SWIG_0();
 
@@ -5172,8 +5394,8 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_ReadyEvent_SWIGUpcast")]
   public static extern IntPtr ReadyEvent_SWIGUpcast(IntPtr jarg1);
 
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_SWIGUpcast")]
-  public static extern IntPtr TeamBalancer_SWIGUpcast(IntPtr jarg1);
+  [DllImport("RakNet", EntryPoint="CSharp_TeamManager_SWIGUpcast")]
+  public static extern IntPtr TeamManager_SWIGUpcast(IntPtr jarg1);
 
   [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughServerDebugInterface_Printf_SWIGUpcast")]
   public static extern IntPtr NatPunchthroughServerDebugInterface_Printf_SWIGUpcast(IntPtr jarg1);

@@ -74,7 +74,7 @@ enum RPCErrorCodes
 /// <LI>Pointers to classes that derive from NetworkID are automatically looked up using NetworkIDManager
 /// <LI>Types are written to BitStream, meaning built-in serialization operations are performed, including endian swapping
 /// <LI>Types can customize autoserialization by providing an implementation of operator << and operator >> to and from BitStream
-/// \note You cannot use RPC4Plugin at the same time as RPC3
+/// \note You cannot use RPC4 at the same time as RPC3
 /// \ingroup RPC_3_GROUP
 class RPC3 : public PluginInterface2
 {

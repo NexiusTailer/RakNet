@@ -35,7 +35,12 @@
  BR&gt; 1. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#e755cec2f8482621b134f1537a818d98" title="Call before doing one or more SerializeVariable calls when the data will be sent...">BeginUnreliableAckedSerialize()</a>, <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#d3c9911d1d42bd432d622c98097f14a3" title="Call before doing one or more SerializeVariable calls for data that may be sent differently...">BeginUniqueSerialize()</a>, or <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#3ba21dc59bc10fa337c02d79a785e344" title="Call before doing one or more SerializeVariable calls for data that is sent with...">BeginIdenticalSerialize()</a>. In the case of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, this would be in the Serialize() call<br>
  2. For each variable of the type in step 1, call Serialize(). The same variables must be serialized every tick()<br>
  3. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#08a27cab67d35fd2fa80fefcc6a0ff13" title="Call after BeginUnreliableAckedSerialize(), BeginUniqueSerialize(), or BeginIdenticalSerialize()...">EndSerialize()</a><br>
- 4. Repeat step 1 for each of the other categories of how to send varaibles.  
+ 4. Repeat step 1 for each of the other categories of how to send varaibles<br>
+ BR&gt; On the receiver:<br>
+ BR&gt; 1. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#5cea057c2704378cc1268af235ff7b1e" title="Call when you receive the BitStream written by SerializeVariable(), before calling...">BeginDeserialize()</a>. In the case of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, this would be in the Deserialize() call<br>
+ 2. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#35fbe67a2fd7c19d44b2fd71a4e3eaa3">DeserializeVariable()</a> for each variable, in the same order as was Serialized()<br>
+ 3. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#08a27cab67d35fd2fa80fefcc6a0ff13" title="Call after BeginUnreliableAckedSerialize(), BeginUniqueSerialize(), or BeginIdenticalSerialize()...">EndSerialize()</a><br>
+.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;VariableDeltaSerializer.h&gt;</code>
@@ -88,10 +93,14 @@ Class to compare memory values of variables in a current state to a prior state 
  BR&gt; 1. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#e755cec2f8482621b134f1537a818d98" title="Call before doing one or more SerializeVariable calls when the data will be sent...">BeginUnreliableAckedSerialize()</a>, <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#d3c9911d1d42bd432d622c98097f14a3" title="Call before doing one or more SerializeVariable calls for data that may be sent differently...">BeginUniqueSerialize()</a>, or <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#3ba21dc59bc10fa337c02d79a785e344" title="Call before doing one or more SerializeVariable calls for data that is sent with...">BeginIdenticalSerialize()</a>. In the case of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, this would be in the Serialize() call<br>
  2. For each variable of the type in step 1, call Serialize(). The same variables must be serialized every tick()<br>
  3. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#08a27cab67d35fd2fa80fefcc6a0ff13" title="Call after BeginUnreliableAckedSerialize(), BeginUniqueSerialize(), or BeginIdenticalSerialize()...">EndSerialize()</a><br>
- 4. Repeat step 1 for each of the other categories of how to send varaibles. 
+ 4. Repeat step 1 for each of the other categories of how to send varaibles<br>
+ BR&gt; On the receiver:<br>
+ BR&gt; 1. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#5cea057c2704378cc1268af235ff7b1e" title="Call when you receive the BitStream written by SerializeVariable(), before calling...">BeginDeserialize()</a>. In the case of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, this would be in the Deserialize() call<br>
+ 2. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#35fbe67a2fd7c19d44b2fd71a4e3eaa3">DeserializeVariable()</a> for each variable, in the same order as was Serialized()<br>
+ 3. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#08a27cab67d35fd2fa80fefcc6a0ff13" title="Call after BeginUnreliableAckedSerialize(), BeginUniqueSerialize(), or BeginIdenticalSerialize()...">EndSerialize()</a><br>
+. 
 <p>
-On the receiver:<p>
-1. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#5cea057c2704378cc1268af235ff7b1e" title="Call when you receive the BitStream written by SerializeVariable(), before calling...">BeginDeserialize()</a>. In the case of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, this would be in the Deserialize() call 2. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#35fbe67a2fd7c19d44b2fd71a4e3eaa3">DeserializeVariable()</a> for each variable, in the same order as was Serialized() 3. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#08a27cab67d35fd2fa80fefcc6a0ff13" title="Call after BeginUnreliableAckedSerialize(), BeginUniqueSerialize(), or BeginIdenticalSerialize()...">EndSerialize()</a> <dl class="see" compact><dt><b>See also:</b></dt><dd>The <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> sample </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd>The <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> sample </dd></dl>
 <hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="36242a91f3fd4891d20b804792b60daf"></a><!-- doxytag: member="RakNet::VariableDeltaSerializer::AddRemoteSystemVariableHistory" ref="36242a91f3fd4891d20b804792b60daf" args="(RakNetGUID guid)" -->
 <div class="memitem">
@@ -537,7 +546,7 @@ A list of RemoteSystemVariableHistory indexed by guid, one per connection that w
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/VariableDeltaSerializer.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 1 13:33:48 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 4 21:34:41 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

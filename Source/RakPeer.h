@@ -391,11 +391,11 @@ public:
 	void GetOfflinePingResponse( char **data, unsigned int *length );
 	
 	//--------------------------------------------------------------------------------------------Network Functions - Functions dealing with the network in general--------------------------------------------------------------------------------------------
-	/// \brief Returns the unique address identifier that represents you or another system on the the network and is based on your local IP / port.
+	/// \brief Returns the unique address identifier that represents you or another system on the the network
 	/// \note Not supported by the XBOX
-	/// \param[in] systemAddress Use UNASSIGNED_SYSTEM_ADDRESS to get your behind-LAN address. Use a connected system to get their behind-LAN address
+	/// \param[in] systemAddress Use UNASSIGNED_SYSTEM_ADDRESS to get your behind-LAN address. Use a connected system to get their behind-LAN address. This does not return the port.
 	/// \param[in] index When you have multiple internal IDs, which index to return? Currently limited to MAXIMUM_NUMBER_OF_INTERNAL_IDS (so the maximum value of this variable is MAXIMUM_NUMBER_OF_INTERNAL_IDS-1)
-	/// \return Identifier of your system internally, which may not be how other systems see if you if you are behind a NAT or proxy
+	/// \return Identifier of your system internally, which may not be how other systems see if you if you are behind a NAT or proxy.
 	SystemAddress GetInternalID( const SystemAddress systemAddress=UNASSIGNED_SYSTEM_ADDRESS, const int index=0 ) const;
 
 	/// \brief Returns the unique address identifier that represents the target on the the network and is based on the target's external IP / port.

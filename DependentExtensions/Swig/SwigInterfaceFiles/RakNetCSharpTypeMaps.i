@@ -60,9 +60,10 @@ CSHARP_ARRAYS(char *,string)
 %apply unsigned int *OUTPUT {unsigned int *outLength};
 
 //RakNetStatistics
-%apply unsigned int INOUT[] {unsigned int *inUnsignedIntArray};
-%apply unsigned long long INOUT[] {uint64_t  * inUint64Array};
-%apply double INPUT[] {double * inDoubleArray};
+%apply unsigned int OUTPUT[] {unsigned int *inUnsignedIntArray};
+%apply unsigned long long OUTPUT[] {unsigned long long  *inUint64Array};
+//%apply ulong OUTPUT[] {uint64_t *inUint64Array};
+%apply double OUTPUT[] {double *inDoubleArray};
 
 //Inouts for serialize and such
 %apply long long &INOUT {long long &inOutTemplateVar};
@@ -249,8 +250,8 @@ STRUCT_CUSTOM_GENERAL_ARRAY_TYPEMAP_LOOP_COPY(messageInSendBufferIsCached,messag
 
 namespace RakNet
 {
-STRUCT_CUSTOM_GENERAL_ARRAY_TYPEMAP_LOOP_COPY(runningTotalIsCached,runningTotalCache,uint64_t runningTotal [ RNS_PER_SECOND_METRICS_COUNT ],ulong,long,SetRunningTotal,RakNetStatistics_runningTotal_get,RakNet::RakNetStatistics,RNSPerSecondMetrics.RNS_PER_SECOND_METRICS_COUNT,(ulong));
-STRUCT_CUSTOM_GENERAL_ARRAY_TYPEMAP_LOOP_COPY(valueOverLastSecondIsCached,valueOverLastSecondCache,uint64_t valueOverLastSecond [ RNS_PER_SECOND_METRICS_COUNT ],ulong,long,SetValueOverLastSecond,RakNetStatistics_valueOverLastSecond_get,RakNet::RakNetStatistics,RNSPerSecondMetrics.RNS_PER_SECOND_METRICS_COUNT,(ulong));
+STRUCT_CUSTOM_GENERAL_ARRAY_TYPEMAP_LOOP_COPY(runningTotalIsCached,runningTotalCache,unsigned long long runningTotal [ RNS_PER_SECOND_METRICS_COUNT ],ulong,long,SetRunningTotal,RakNetStatistics_runningTotal_get,RakNet::RakNetStatistics,RNSPerSecondMetrics.RNS_PER_SECOND_METRICS_COUNT,(ulong));
+STRUCT_CUSTOM_GENERAL_ARRAY_TYPEMAP_LOOP_COPY(valueOverLastSecondIsCached,valueOverLastSecondCache,unsigned long long valueOverLastSecond [ RNS_PER_SECOND_METRICS_COUNT ],ulong,long,SetValueOverLastSecond,RakNetStatistics_valueOverLastSecond_get,RakNet::RakNetStatistics,RNSPerSecondMetrics.RNS_PER_SECOND_METRICS_COUNT,(ulong));
 }
 
 %typemap(imtype, out="IntPtr") char *firstDataChunk "IntPtr"
@@ -1031,6 +1032,7 @@ using System.Runtime.InteropServices;
 	}
 %}
 
+/*
 %typemap(cscode) RakNetSmartPtr<RakNetSocket>
 %{
 	public static bool operator ==(RakNetSmartPtrRakNetSocket a, RakNetSmartPtrRakNetSocket b)
@@ -1065,6 +1067,7 @@ using System.Runtime.InteropServices;
 		return a.OpGreater(b);
 	}
 %}
+*/
 
 %typemap(csimports) RakNet::uint24_t
 %{
@@ -1326,14 +1329,14 @@ STRUCT_UNSIGNED_CHAR_ARRAY_ONLY_CSCODE(dataIsCached,dataCache)*/
 %typemap(cscode) RakNet::RakNetStatistics
 %{
 
-    private bool bytesInSendBufferIsCached  = false;
-    private bool messageInSendBufferIsCached  = false;
-    private bool runningTotalIsCached  = false;
-    private bool valueOverLastSecondIsCached  = false;
- private double[] bytesInSendBufferCache;
- private uint[] messageInSendBufferCache;
- private ulong[] runningTotalCache;
- private ulong[] valueOverLastSecondCache;
+	private bool bytesInSendBufferIsCached  = false;
+	private bool messageInSendBufferIsCached  = false;
+	private bool runningTotalIsCached  = false;
+	private bool valueOverLastSecondIsCached  = false;
+	private double[] bytesInSendBufferCache;
+	private uint[] messageInSendBufferCache;
+	private ulong[] runningTotalCache;
+	private ulong[] valueOverLastSecondCache;
 %}
 
 %define STRUCT_CUSTOM_UNSIGNED_CHAR_ARRAY_TYPEMAP(BOOLNAME,CACHENAME,CTYPE,IN_DATA_CHANGE_FUNCTION,IN_DATA_GET_FUNCTION,IN_CLASS,IN_LEN_METHOD)

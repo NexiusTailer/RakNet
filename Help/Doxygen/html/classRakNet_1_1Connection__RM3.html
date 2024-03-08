@@ -78,6 +78,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#0e56165106162a4579be3829fe86975c">QueryReplicaList</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; newReplicasToCreate, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; existingReplicasToDestroy)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Callback used when <a class="el" href="classRakNet_1_1Connection__RM3.html#918f5c8d69e2ede6c9469fd9ade96d32" title="Queries how to get the list of objects that exist on remote systems.">QueryConstructionMode()</a> returns QUERY_CONNECTION_FOR_REPLICA_LIST.  <a href="#0e56165106162a4579be3829fe86975c"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#9dc79ed7a9252f7ae358b62ec1fbb195">QuerySerializationList</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;replicasToSerialize)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Override which replicas to serialize and in what order for a connection for a <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Call interfaces, send data.">ReplicaManager3::Update()</a> cycle.  <a href="#9dc79ed7a9252f7ae358b62ec1fbb195"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Each remote system is represented by <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a>. Used to allocate <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> and track which instances have been allocated. 
@@ -393,6 +396,36 @@ This advantage of this callback is if that there are many objects that a particu
 
 </div>
 </div><p>
+<a class="anchor" name="9dc79ed7a9252f7ae358b62ec1fbb195"></a><!-- doxytag: member="RakNet::Connection_RM3::QuerySerializationList" ref="9dc79ed7a9252f7ae358b62ec1fbb195" args="(DataStructures::List&lt; Replica3 * &gt; &amp;replicasToSerialize)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool RakNet::Connection_RM3::QuerySerializationList           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>replicasToSerialize</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Override which replicas to serialize and in what order for a connection for a <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Call interfaces, send data.">ReplicaManager3::Update()</a> cycle. 
+<p>
+By default, <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a> will iterate through queryToSerializeReplicaList and call QuerySerialization() on each Replica in that list queryToSerializeReplicaList is populated in the order in which <a class="el" href="classRakNet_1_1ReplicaManager3.html#9046d827471c0be651b54b7efb7b6f28" title="Adds a replicated object to the system.">ReplicaManager3::Reference()</a> is called for those objects. If you write to to <em>replicasToSerialize</em> and return true, you can control in what order and for which replicas to call QuerySerialization() Example use case: We have more data to send then the bandwidth supports, so want to prioritize sends. For example enemies shooting are more important than animation effects When <a class="el" href="classRakNet_1_1Connection__RM3.html#9dc79ed7a9252f7ae358b62ec1fbb195" title="Override which replicas to serialize and in what order for a connection for a ReplicaManager3::Updat...">QuerySerializationList()</a>, sort objects by priority, and write the list to <em>replicasToSerialize</em>, optionally skipping objects with a lower serialization frequency If you hit your bandwidth limit when checking <a class="el" href="structRakNet_1_1SerializeParameters.html#c69a7436aa2040a35ba5c43079609321">SerializeParameters::bitsWrittenSoFar</a>, you can return RM3SR_DO_NOT_SERIALIZE for all remaining items <dl class="note" compact><dt><b>Note:</b></dt><dd>Only replicas written to replicasToSerialize are transmitted. Even if you returned RM3SR_SERIALIZED_ALWAYS a prior <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Call interfaces, send data.">ReplicaManager3::Update()</a> cycle, the replica will not be transmitted if it is not in replicasToSerialize <p>
+If you do not know what objects are candidates for serialization, you can use queryToSerializeReplicaList as a source for your filtering or sorting operations </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>replicasToSerialize</em>&nbsp;</td><td>List of replicas to call QuerySerialization() on </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>Return true to use replicasToSerialize (replicasToSerialize may be empty if desired). Otherwise return false. </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="536d4413a4243b6732bc2a503d14d03e"></a><!-- doxytag: member="RakNet::Connection_RM3::SerializeOnDownloadComplete" ref="536d4413a4243b6732bc2a503d14d03e" args="(RakNet::BitStream *bitStream)" -->
 <div class="memitem">
 <div class="memproto">
@@ -446,7 +479,7 @@ When a new connection connects, before sending any objects, <a class="el" href="
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 1 13:33:48 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 4 21:34:41 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

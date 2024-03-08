@@ -55,10 +55,14 @@ public:
 
 	virtual void OnFileProgress(FileProgressStruct *fps)
 	{
-		printf("Downloading: %i. (%i%%) %i/%i %s %ib / %ib\n", fps->onFileStruct->setID, (int) (100.0*(double)fps->partCount/(double)fps->partTotal),
+		printf("Downloading: %i. (%i%%) %i/%i %s %ib/%ib %ib/%ib total\n", fps->onFileStruct->setID,
+			(int) (100.0*(double)fps->onFileStruct->bytesDownloadedForThisFile/(double)fps->onFileStruct->byteLengthOfThisFile),
 			fps->onFileStruct->fileIndex+1, fps->onFileStruct->numberOfFilesInThisSet, fps->onFileStruct->fileName,
-			fps->onFileStruct->byteLengthOfThisFile,
-			fps->onFileStruct->byteLengthOfThisSet);
+			fps->onFileStruct->bytesDownloadedForThisFile,
+			fps->onFileStruct->byteLengthOfThisFile,			
+			fps->onFileStruct->bytesDownloadedForThisSet,
+			fps->onFileStruct->byteLengthOfThisSet
+			);
 	}
 
 } transferCallback;

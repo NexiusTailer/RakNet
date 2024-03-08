@@ -207,7 +207,7 @@ To use, derive your class, or a member of your class, from <a class="el" href="c
 <div class="memdoc">
 
 <p>
-Before deleting a local instance of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, call <a class="el" href="classRakNet_1_1Replica3.html#7c6a22d575326cddec3a70eb1c2568f2">Replica3::BroadcastDestruction()</a> for the deletion notification to go out on the network. It is not necessary to call <a class="el" href="classRakNet_1_1ReplicaManager3.html#ae0f5dfc750be2606f2ba05c16721bc8" title="Removes a replicated object from the system.">ReplicaManager3::Dereference()</a>, as this happens automatically in the destructor 
+Before deleting a local instance of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, call <a class="el" href="classRakNet_1_1Replica3.html#7c6a22d575326cddec3a70eb1c2568f2">Replica3::BroadcastDestruction()</a> for the deletion notification to go out on the network. It is not necessary to call <a class="el" href="classRakNet_1_1ReplicaManager3.html#4bd439b6f0479a20236cc29ac36a6ff2" title="Removes a replicated object from the system.">ReplicaManager3::Dereference()</a>, as this happens automatically in the destructor 
 </div>
 </div><p>
 <hr><h2>Member Function Documentation</h2>
@@ -396,7 +396,7 @@ Same as <a class="el" href="classRakNet_1_1Replica3.html#8e18c95612054b601ce0149
 <p>
 Read data written by <a class="el" href="classRakNet_1_1Replica3.html#c78ab07796290ede00559de9d4ceb72d" title="Write extra data to send with the object deletion event, if desired.">Replica3::SerializeDestruction()</a>. 
 <p>
-Return true to delete the object. <a class="el" href="classRakNet_1_1Replica3.html#7c6a22d575326cddec3a70eb1c2568f2">BroadcastDestruction()</a> will be called automatically, followed by <a class="el" href="classRakNet_1_1ReplicaManager3.html#ae0f5dfc750be2606f2ba05c16721bc8" title="Removes a replicated object from the system.">ReplicaManager3::Dereference</a>.<br>
+Return true to delete the object. <a class="el" href="classRakNet_1_1Replica3.html#7c6a22d575326cddec3a70eb1c2568f2">BroadcastDestruction()</a> will be called automatically, followed by <a class="el" href="classRakNet_1_1ReplicaManager3.html#4bd439b6f0479a20236cc29ac36a6ff2" title="Removes a replicated object from the system.">ReplicaManager3::Dereference</a>.<br>
  Return false to not delete it. If you delete it at a later point, you are responsible for calling <a class="el" href="classRakNet_1_1Replica3.html#7c6a22d575326cddec3a70eb1c2568f2">BroadcastDestruction()</a> yourself. 
 <p>Implemented in <a class="el" href="classRakNet_1_1Replica3Composite.html#16992d92f94580265ae4bba1a199b5ab">RakNet::Replica3Composite&lt; parent_type &gt;</a>.</p>
 
@@ -804,7 +804,7 @@ By default, <a class="el" href="classRakNet_1_1Replica3.html#f5d3b25a95bbd91020d
 <div class="memdoc">
 
 <p>
-Default call for <a class="el" href="classRakNet_1_1Replica3.html#79bd207fb79055d2b39943eb1c6b1f58" title="We&#39;re about to call DeserializeConstruction() on this Replica3. If QueryRemoteConstruction()...">QueryRemoteConstruction()</a>. Both the client and the server is allowed to create this object. The network topology is client/server <dl compact><dt><b>Parameters:</b></dt><dd>
+Default call for <a class="el" href="classRakNet_1_1Replica3.html#79bd207fb79055d2b39943eb1c6b1f58" title="We&#39;re about to call DeserializeConstruction() on this Replica3. If QueryRemoteConstruction()...">QueryRemoteConstruction()</a>. Both the client and the server is allowed to create this object. The network topology is client/server The code means on the client or the server, allow creation of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instances <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>sourceConnection</em>&nbsp;</td><td>destinationConnection parameter passed to <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">QueryConstruction()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>isThisTheServer</em>&nbsp;</td><td>True if this system is the server, false if not. </td></tr>
@@ -868,7 +868,7 @@ All clients are allowed to create all objects. The object is not relayed when re
 <p>
 Default call for <a class="el" href="classRakNet_1_1Replica3.html#79bd207fb79055d2b39943eb1c6b1f58" title="We&#39;re about to call DeserializeConstruction() on this Replica3. If QueryRemoteConstruction()...">QueryRemoteConstruction()</a>. Allow the server to create this object, but not the client. 
 <p>
-Only the server is allowed to create this object. The network topology is client/server <dl compact><dt><b>Parameters:</b></dt><dd>
+Only the server is allowed to create this object. The network topology is client/server The code means if this is the server, and I got a command to create a <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> to ignore it. If this is the client, to allow it. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>sourceConnection</em>&nbsp;</td><td>destinationConnection parameter passed to <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">QueryConstruction()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>isThisTheServer</em>&nbsp;</td><td>True if this system is the server, false if not. </td></tr>
@@ -1177,7 +1177,7 @@ Write extra data to send with the object deletion event, if desired.
 <div class="memdoc">
 
 <p>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>If <a class="el" href="classRakNet_1_1ReplicaManager3.html#db56b06f09b0379483aeeecfed0805b6" title="Adds a replicated object to the system.">ReplicaManager3::Reference()</a> was called on this object. </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>If <a class="el" href="classRakNet_1_1ReplicaManager3.html#9046d827471c0be651b54b7efb7b6f28" title="Adds a replicated object to the system.">ReplicaManager3::Reference()</a> was called on this object. </dd></dl>
 
 </div>
 </div><p>
@@ -1241,7 +1241,7 @@ GUID of the system that first called Reference() on this object. Transmitted aut
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 1 13:33:48 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 4 21:34:41 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

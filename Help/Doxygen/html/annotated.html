@@ -293,9 +293,14 @@ You are no longer in the room </td></tr>
   <tr><td class="indexkey"><a class="el" href="structDataStructures_1_1Table_1_1ColumnDescriptor.html">DataStructures::Table::ColumnDescriptor</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="structDataStructures_1_1Table_1_1Row.html">DataStructures::Table::Row</a></td><td class="indexvalue">Stores the list of cells for this row, and a special flag used for internal sorting </td></tr>
   <tr><td class="indexkey"><a class="el" href="classRakNet_1_1TeamBalancer.html">RakNet::TeamBalancer</a></td><td class="indexvalue">Set and network team selection (supports peer to peer or client/server) </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classRakNet_1_1TeamManager.html">RakNet::TeamManager</a></td><td class="indexvalue">Automates networking and list management for teams </td></tr>
+  <tr><td class="indexkey"><a class="el" href="structRakNet_1_1TeamSelection.html">RakNet::TeamSelection</a></td><td class="indexvalue">Parameter to <a class="el" href="classRakNet_1_1TM__World.html#13c60cbb4d1894aece9e1b1b9887601f" title="Register a TM_TeamMember object with this system.">TM_World::ReferenceTeamMember()</a> </td></tr>
   <tr><td class="indexkey"><a class="el" href="classRakNet_1_1TelnetTransport.html">RakNet::TelnetTransport</a></td><td class="indexvalue">Use <a class="el" href="classRakNet_1_1TelnetTransport.html" title="Use TelnetTransport to easily allow windows telnet to connect to your ConsoleServer...">TelnetTransport</a> to easily allow windows telnet to connect to your <a class="el" href="classRakNet_1_1ConsoleServer.html" title="The main entry point for the server portion of your remote console application support...">ConsoleServer</a> </td></tr>
   <tr><td class="indexkey"><a class="el" href="structThreadPool.html">ThreadPool&lt; InputType, OutputType &gt;</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classRakNet_1_1ThreadsafePacketLogger.html">RakNet::ThreadsafePacketLogger</a></td><td class="indexvalue">Same as <a class="el" href="classRakNet_1_1PacketLogger.html" title="Writes incoming and outgoing messages to the screen. This will write all incoming...">PacketLogger</a>, but writes output in the user thread </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classRakNet_1_1TM__Team.html">RakNet::TM_Team</a></td><td class="indexvalue">A team, containing a list of <a class="el" href="classRakNet_1_1TM__TeamMember.html" title="A member of one or more teams.">TM_TeamMember</a> instances </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classRakNet_1_1TM__TeamMember.html">RakNet::TM_TeamMember</a></td><td class="indexvalue">A member of one or more teams </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classRakNet_1_1TM__World.html">RakNet::TM_World</a></td><td class="indexvalue">Stores a list of teams which may be enforcing a balanced number of members </td></tr>
   <tr><td class="indexkey"><a class="el" href="classRakNet_1_1TransportInterface.html">RakNet::TransportInterface</a></td><td class="indexvalue">Defines an interface that is used to send and receive null-terminated strings </td></tr>
   <tr><td class="indexkey"><a class="el" href="classRakNet_1_1TwoWayAuthentication.html">RakNet::TwoWayAuthentication</a></td><td class="indexvalue">Implements two way authentication </td></tr>
   <tr><td class="indexkey"><a class="el" href="classRakNet_1_1UDPForwarder.html">RakNet::UDPForwarder</a></td><td class="indexvalue">Forwards UDP datagrams. Independent of RakNet's protocol </td></tr>
@@ -311,11 +316,16 @@ You are no longer in the room </td></tr>
  BR&gt; 1. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#e755cec2f8482621b134f1537a818d98" title="Call before doing one or more SerializeVariable calls when the data will be sent...">BeginUnreliableAckedSerialize()</a>, <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#d3c9911d1d42bd432d622c98097f14a3" title="Call before doing one or more SerializeVariable calls for data that may be sent differently...">BeginUniqueSerialize()</a>, or <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#3ba21dc59bc10fa337c02d79a785e344" title="Call before doing one or more SerializeVariable calls for data that is sent with...">BeginIdenticalSerialize()</a>. In the case of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, this would be in the Serialize() call<br>
  2. For each variable of the type in step 1, call Serialize(). The same variables must be serialized every tick()<br>
  3. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#08a27cab67d35fd2fa80fefcc6a0ff13" title="Call after BeginUnreliableAckedSerialize(), BeginUniqueSerialize(), or BeginIdenticalSerialize()...">EndSerialize()</a><br>
- 4. Repeat step 1 for each of the other categories of how to send varaibles </td></tr>
+ 4. Repeat step 1 for each of the other categories of how to send varaibles<br>
+ BR&gt; On the receiver:<br>
+ BR&gt; 1. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#5cea057c2704378cc1268af235ff7b1e" title="Call when you receive the BitStream written by SerializeVariable(), before calling...">BeginDeserialize()</a>. In the case of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, this would be in the Deserialize() call<br>
+ 2. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#35fbe67a2fd7c19d44b2fd71a4e3eaa3">DeserializeVariable()</a> for each variable, in the same order as was Serialized()<br>
+ 3. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#08a27cab67d35fd2fa80fefcc6a0ff13" title="Call after BeginUnreliableAckedSerialize(), BeginUniqueSerialize(), or BeginIdenticalSerialize()...">EndSerialize()</a><br>
+ </td></tr>
   <tr><td class="indexkey"><a class="el" href="classRakNet_1_1VariableListDeltaTracker.html">RakNet::VariableListDeltaTracker</a></td><td class="indexvalue"></td></tr>
 </table>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 1 13:33:46 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 4 21:34:39 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

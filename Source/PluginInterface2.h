@@ -178,9 +178,11 @@ public:
 	/// \internal
 	void SetPacketizedTCP( PacketizedTCP *ptr );
 #endif
+
 protected:
 	// Send through either rakPeerInterface or packetizedTCP, whichever is available
 	void SendUnified( const RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast );
+	void SendUnified( const char * data, const int length, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast );
 	bool SendListUnified( const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast );
 
 	Packet *AllocatePacketUnified(unsigned dataSize);

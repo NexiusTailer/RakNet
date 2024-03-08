@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./../../Source;&quot;./../../DependentExtensions/openssl-1.0.0d/include&quot;"
+				AdditionalIncludeDirectories="./../../Source;&quot;./../../DependentExtensions/openssl-1.0.0d/include&quot;;./../../DependentExtensions"
 				PreprocessorDefinitions="WIN32;_DEBUG;_RAKNET_LIB;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -112,7 +112,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./../../Source;&quot;./../../DependentExtensions/openssl-1.0.0d/include&quot;"
+				AdditionalIncludeDirectories="./../../Source;&quot;./../../DependentExtensions/openssl-1.0.0d/include&quot;;./../../DependentExtensions"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_RELEASE;_RAKNET_LIB;_CRT_NONSTDC_NO_DEPRECATE"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
@@ -489,6 +489,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\TeamBalancer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\TeamManager.cpp"
 				>
 			</File>
 			<File
@@ -1071,6 +1075,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\TeamBalancer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\TeamManager.h"
 				>
 			</File>
 			<File

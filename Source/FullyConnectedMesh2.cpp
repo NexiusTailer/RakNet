@@ -500,7 +500,7 @@ void FullyConnectedMesh2::CalculateAndPushHost(void)
 		{
 			hostRakNetGuid=newHostGuid;
 			hostFCM2Guid=newFcmGuid;
-			PushNewHost(hostRakNetGuid, hostRakNetGuid);
+			PushNewHost(hostRakNetGuid, lastPushedHost);
 		}
 	}
 }

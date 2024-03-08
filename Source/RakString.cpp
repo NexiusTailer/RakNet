@@ -1129,6 +1129,12 @@ void RakString::Assign(const char *str)
 }
 void RakString::Assign(const char *str, va_list ap)
 {
+	if (str==0 || str[0]==0)
+	{
+		sharedString=&emptyString;
+		return;
+	}
+
 	char stackBuff[512];
 	if (_vsnprintf(stackBuff, 512, str, ap)!=-1
 #ifndef _WIN32

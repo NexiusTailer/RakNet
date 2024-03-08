@@ -1,5 +1,6 @@
 /// \file
 /// \brief Adds networking to AllGamesRoomsContainer. Lets you create, join, search, and destroy matchmaking rooms for players
+/// \sa TeamManager TeamManager performs some of the same functions as RoomsPlugin in a more flexible way
 ///
 /// This file is part of RakNet Copyright 2003 Jenkins Software LLC
 ///
@@ -814,6 +815,8 @@ struct RoomsCallback
 /// <LI>As users go offline, call RoomsPlugin::LogoffRoomsParticipant();
 /// </OL>
 /// \sa AllGamesRoomsContainer
+/// \sa TeamManager TeamManager performs some of the same functions as RoomsPlugin in a more flexible way
+/// \sa 
 /// \ingroup ROOMS_GROUP
 class RAK_DLL_EXPORT RoomsPlugin : public PluginInterface2, public RoomsCallback
 {

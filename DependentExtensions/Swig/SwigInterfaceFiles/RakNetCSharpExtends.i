@@ -265,7 +265,7 @@ RAKPEERANDINTERFACEEXTEND()
 %enddef
 
 %define STRUCT_UNSIGNED_INT64_ARRAY_EXTEND_SPECIAL_RAKNETSTATISTICS(IN_FUNCTION_NAME,IN_DATA_NAME)
-	void IN_FUNCTION_NAME (uint64_t  * inUint64Array,int numUint64)
+	void IN_FUNCTION_NAME (unsigned long long int  * inUint64Array,int numUint64)
 	{
 	for (int i=0;i<numUint64;i++)
 	{

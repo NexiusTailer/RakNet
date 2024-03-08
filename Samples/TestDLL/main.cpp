@@ -9,6 +9,7 @@
 #include "DS_List.h"
 #include "SocketLayer.h"
 #include "RakSleep.h"
+#include "TCPInterface.h"
 
 using namespace RakNet;
 
@@ -36,6 +37,7 @@ int main()
 	PacketLogger* d=PacketLogger::GetInstance( );
 	RakNetCommandParser* e=RakNetCommandParser::GetInstance( );
 	RakPeerInterface * f=RakPeerInterface::GetInstance( );
+	TCPInterface *g=TCPInterface::GetInstance();
 	SystemAddress sa = UNASSIGNED_SYSTEM_ADDRESS;
 
 	SocketDescriptor sd(5555,0);
@@ -73,6 +75,7 @@ int main()
 	PacketLogger::DestroyInstance( d );
 	RakNetCommandParser::DestroyInstance( e );
 	RakNet::RakPeerInterface::DestroyInstance( f );
+	TCPInterface::DestroyInstance( g );
 
 	return 0;
 }

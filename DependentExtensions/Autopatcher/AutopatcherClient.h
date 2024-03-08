@@ -14,6 +14,7 @@
 #include "PluginInterface2.h"
 #include "PacketPriority.h"
 #include "FileList.h"
+#include "SimpleMutex.h"
 
 namespace RakNet
 {
@@ -100,7 +101,9 @@ protected:
 	FileListTransferCBInterface *userCB;
 	bool patchComplete;
 	FileList redownloadList, copyAndRestartList;
+
 	bool processThreadCompletion;
+	SimpleMutex processThreadCompletionMutex;
 };
 
 } // namespace RakNet

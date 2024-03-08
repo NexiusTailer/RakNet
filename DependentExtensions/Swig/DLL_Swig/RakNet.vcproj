@@ -401,10 +401,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\Source\DS_ThreadsafePrimitives.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\..\Source\DS_Tree.h"
 			>
 		</File>
@@ -753,14 +749,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\SwigOutput\CplusDLLIncludes\RakNet_wrap.cxx"
-			>
-		</File>
-		<File
-			RelativePath="..\SwigOutput\CplusDLLIncludes\RakNet_wrap.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\..\Source\RakNetCommandParser.cpp"
 			>
 		</File>
@@ -905,10 +893,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\Source\Replica.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\..\Source\ReplicaEnums.h"
 			>
 		</File>
@@ -985,6 +969,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Source\SocketDefines.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Source\SocketIncludes.h"
 			>
 		</File>
@@ -1042,6 +1030,14 @@
 		</File>
 		<File
 			RelativePath="..\..\..\Source\TeamBalancer.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\TeamManager.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\TeamManager.h"
 			>
 		</File>
 		<File

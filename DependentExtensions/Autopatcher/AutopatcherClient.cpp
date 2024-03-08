@@ -194,6 +194,7 @@ public:
 		}
 		threadPool.ClearOutput();
 	}
+	// Update is run in the user thread
 	virtual bool Update(void)
 	{
 		if (threadPool.HasOutputFast() && threadPool.HasOutput())
@@ -387,7 +388,9 @@ void AutopatcherClient::CancelDownload(void)
 }
 void AutopatcherClient::OnThreadCompletion(void)
 {
+	processThreadCompletionMutex.Lock();
 	processThreadCompletion=true;
+	processThreadCompletionMutex.Unlock();
 }
 bool AutopatcherClient::IsPatching(void) const
 {
@@ -413,7 +416,9 @@ bool AutopatcherClient::PatchApplication(const char *_applicationName, const cha
 	userCB=onFileCallback;
 	strcpy(copyOnRestartOut, restartOutputFilename);
 	strcpy(restartExe, pathToRestartExe);
+	processThreadCompletionMutex.Lock();
 	processThreadCompletion=false;
+	processThreadCompletionMutex.Unlock();
 
 	RakNet::BitStream outBitStream;
 	outBitStream.Write((unsigned char)ID_AUTOPATCHER_GET_CHANGELIST_SINCE_DATE);
@@ -427,9 +432,12 @@ bool AutopatcherClient::PatchApplication(const char *_applicationName, const cha
 #endif
 void AutopatcherClient::Update(void)
 {
+	processThreadCompletionMutex.Lock();
 	if (processThreadCompletion)
 	{
 		processThreadCompletion=false;
+		processThreadCompletionMutex.Unlock();
+
 		fileListTransfer->RemoveReceiver(serverId);
 
 		// If redownload list, process it
@@ -496,6 +504,10 @@ void AutopatcherClient::Update(void)
 			p->systemAddress.systemIndex=serverIdIndex;
 			PushBackPacketUnified(p,false);
 		}
+	}
+	else
+	{
+		processThreadCompletionMutex.Unlock();
 	}
 }
 void AutopatcherClient::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )

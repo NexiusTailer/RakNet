@@ -139,38 +139,38 @@ int main(void)
 			}
 			else
 			{
-			keyLoaded=true;
-			printf("Keys generated.  Save to disk? (y/n)\n");
+				keyLoaded=true;
+				printf("Keys generated.  Save to disk? (y/n)\n");
 
-			Gets(str, sizeof(str));
-			if (str[0]=='y' || str[0]=='Y')
-			{
-					printf("Enter filename to save public key to: ");
 				Gets(str, sizeof(str));
-                if (str[0])
+				if (str[0]=='y' || str[0]=='Y')
 				{
-					printf("Writing public key... ");
-					fp=fopen(str, "wb");
-						fwrite(public_key, sizeof(public_key), 1, fp);
-					fclose(fp);
-					printf("Done.\n");
-				}
-				else
-					printf("\nKey not written.\n");
+						printf("Enter filename to save public key to: ");
+					Gets(str, sizeof(str));
+					if (str[0])
+					{
+						printf("Writing public key... ");
+						fp=fopen(str, "wb");
+							fwrite(public_key, sizeof(public_key), 1, fp);
+						fclose(fp);
+						printf("Done.\n");
+					}
+					else
+						printf("\nKey not written.\n");
 
-				printf("Enter filename to save private key to: ");
-				Gets(str, sizeof(str));
-				if (str[0])
-				{
-					printf("Writing private key... ");
-					fp=fopen(str, "wb");
-						fwrite(private_key, sizeof(private_key), 1, fp);
-					fclose(fp);
-					printf("Done.\n");
+					printf("Enter filename to save private key to: ");
+					Gets(str, sizeof(str));
+					if (str[0])
+					{
+						printf("Writing private key... ");
+						fp=fopen(str, "wb");
+							fwrite(private_key, sizeof(private_key), 1, fp);
+						fclose(fp);
+						printf("Done.\n");
+					}
+					else
+						printf("\nKey not written.\n");
 				}
-				else
-					printf("\nKey not written.\n");
-			}
 			}
 			PrintOptions();
 		}
@@ -260,22 +260,22 @@ int main(void)
 						run_test = false;
 					}
 				}
+			}
 
-				if (str[0] == '4')
+			if (str[0] == '4')
+			{
+				printf("Generating client keys...");
+
+				// Generate a (public, private) server key pair
+				if (!handshake.GenerateServerKey(client_public_key, client_private_key))
 				{
-					printf("Generating client keys...");
+					printf("ERROR:Unable to generate client keys for some reason!\n");
 
-					// Generate a (public, private) server key pair
-					if (!handshake.GenerateServerKey(client_public_key, client_private_key))
-					{
-						printf("ERROR:Unable to generate client keys for some reason!\n");
-
-						run_test = false;
-					}
-					else
-					{
-						printf("Key generation complete.\n");
-					}
+					run_test = false;
+				}
+				else
+				{
+					printf("Key generation complete.\n");
 				}
 			}
 

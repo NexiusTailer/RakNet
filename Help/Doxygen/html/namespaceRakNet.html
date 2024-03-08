@@ -230,6 +230,21 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html">TeamBalancer</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set and network team selection (supports peer to peer or client/server).  <a href="classRakNet_1_1TeamBalancer.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1TeamSelection.html">TeamSelection</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Parameter to <a class="el" href="classRakNet_1_1TM__World.html#13c60cbb4d1894aece9e1b1b9887601f" title="Register a TM_TeamMember object with this system.">TM_World::ReferenceTeamMember()</a>.  <a href="structRakNet_1_1TeamSelection.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TM__TeamMember.html">TM_TeamMember</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A member of one or more teams.  <a href="classRakNet_1_1TM__TeamMember.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TM__Team.html">TM_Team</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A team, containing a list of <a class="el" href="classRakNet_1_1TM__TeamMember.html" title="A member of one or more teams.">TM_TeamMember</a> instances.  <a href="classRakNet_1_1TM__Team.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TM__World.html">TM_World</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Stores a list of teams which may be enforcing a balanced number of members.  <a href="classRakNet_1_1TM__World.html#_details">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamManager.html">TeamManager</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Automates networking and list management for teams.  <a href="classRakNet_1_1TeamManager.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TelnetTransport.html">TelnetTransport</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Use <a class="el" href="classRakNet_1_1TelnetTransport.html" title="Use TelnetTransport to easily allow windows telnet to connect to your ConsoleServer...">TelnetTransport</a> to easily allow windows telnet to connect to your <a class="el" href="classRakNet_1_1ConsoleServer.html" title="The main entry point for the server portion of your remote console application support...">ConsoleServer</a>.  <a href="classRakNet_1_1TelnetTransport.html#_details">More...</a><br></td></tr>
@@ -266,7 +281,12 @@
  BR&gt; 1. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#e755cec2f8482621b134f1537a818d98" title="Call before doing one or more SerializeVariable calls when the data will be sent...">BeginUnreliableAckedSerialize()</a>, <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#d3c9911d1d42bd432d622c98097f14a3" title="Call before doing one or more SerializeVariable calls for data that may be sent differently...">BeginUniqueSerialize()</a>, or <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#3ba21dc59bc10fa337c02d79a785e344" title="Call before doing one or more SerializeVariable calls for data that is sent with...">BeginIdenticalSerialize()</a>. In the case of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, this would be in the Serialize() call<br>
  2. For each variable of the type in step 1, call Serialize(). The same variables must be serialized every tick()<br>
  3. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#08a27cab67d35fd2fa80fefcc6a0ff13" title="Call after BeginUnreliableAckedSerialize(), BeginUniqueSerialize(), or BeginIdenticalSerialize()...">EndSerialize()</a><br>
- 4. Repeat step 1 for each of the other categories of how to send varaibles.  <a href="classRakNet_1_1VariableDeltaSerializer.html#_details">More...</a><br></td></tr>
+ 4. Repeat step 1 for each of the other categories of how to send varaibles<br>
+ BR&gt; On the receiver:<br>
+ BR&gt; 1. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#5cea057c2704378cc1268af235ff7b1e" title="Call when you receive the BitStream written by SerializeVariable(), before calling...">BeginDeserialize()</a>. In the case of <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, this would be in the Deserialize() call<br>
+ 2. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#35fbe67a2fd7c19d44b2fd71a4e3eaa3">DeserializeVariable()</a> for each variable, in the same order as was Serialized()<br>
+ 3. Call <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#08a27cab67d35fd2fa80fefcc6a0ff13" title="Call after BeginUnreliableAckedSerialize(), BeginUniqueSerialize(), or BeginIdenticalSerialize()...">EndSerialize()</a><br>
+.  <a href="classRakNet_1_1VariableDeltaSerializer.html#_details">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1VariableListDeltaTracker.html">VariableListDeltaTracker</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakVoice.html">RakVoice</a></td></tr>
@@ -769,7 +789,15 @@ You are no longer in the room.  <a href="structRakNet_1_1RoomDestroyedOnModerato
 typedef unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#1b2f3bf4bad2bb6a8360a12295fbed0c">MessageID</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">First byte of a network message. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef uint8_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a></td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">typedef unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__TEAM__BALANCER__GROUP.html#g79c7825649955f28135498fb3d9f6894">TeamId</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="gdd1e99b7724ceb0f6794f46de31a6b02"></a><!-- doxytag: member="RakNet::NoTeamId" ref="gdd1e99b7724ceb0f6794f46de31a6b02" args="" -->
+typedef unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__TEAM__MANAGER__GROUP.html#gdd1e99b7724ceb0f6794f46de31a6b02">NoTeamId</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A subcategory of not being on a team. For example, 0 may mean no team for a player, while 1 may mean no team for a spectator. Defined by the user. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef uint16_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__TEAM__MANAGER__GROUP.html#g236290d3c5e0d6b3b4559ba851f02bed">TeamMemberLimit</a></td></tr>
 
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#81848fd95488939c0b3e217209f31139">NATTypeDetectionResult</a> { <br>
@@ -899,6 +927,11 @@ typedef unsigned char&nbsp;</td><td class="memItemRight" valign="bottom"><a clas
  }</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Error codes returned by a remote system as to why an RPC function call cannot execute.  <a href="group__RPC__PLUGIN__GROUP.html#gc20c52e6dc585406689d52db29925bba">More...</a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__TEAM__MANAGER__GROUP.html#g8a8704b992ae17ee4789b2ba4cc4b34b">JoinTeamType</a> { <a class="el" href="group__TEAM__MANAGER__GROUP.html#gg8a8704b992ae17ee4789b2ba4cc4b34b6edb2bdfc2a37d3db8dd862c92d0b316">JOIN_ANY_AVAILABLE_TEAM</a>, 
+<a class="el" href="group__TEAM__MANAGER__GROUP.html#gg8a8704b992ae17ee4789b2ba4cc4b34b4711c36301a77fa9a6f6783487fc451f">JOIN_SPECIFIC_TEAM</a>, 
+<a class="el" href="group__TEAM__MANAGER__GROUP.html#gg8a8704b992ae17ee4789b2ba4cc4b34bc7bae805f1fae12f6827f644bfd8e292">JOIN_NO_TEAM</a>
+ }</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__LOBBY__2__COMMANDS.html#gf20aff5b3604dbaad834c046a03d8299">Lobby2MessageID</a> </td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__RPC__3__GROUP.html#gc20c52e6dc585406689d52db29925bba">RPCErrorCodes</a> { <br>
@@ -943,6 +976,16 @@ RAK_DLL_EXPORT const char *&nbsp;</td><td class="memItemRight" valign="bottom"><
 <tr><td class="memItemLeft" nowrap align="right" valign="top">RAK_DLL_EXPORT const char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#a400a447c631b730d879855b65fe2f67">NATTypeDetectionResultToStringFriendly</a> (<a class="el" href="namespaceRakNet.html#81848fd95488939c0b3e217209f31139">NATTypeDetectionResult</a> type)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void RAK_DLL_EXPORT&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#49d0ff9db0d324a890e9c08add72a131">StatisticsToString</a> (<a class="el" href="structRakNet_1_1RakNetStatistics.html">RakNetStatistics</a> *s, char *buffer, int verbosityLevel)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#c83efdd1c4b9360990c23c8d052701bc">__L2_MSG_DB_HEADER</a> (Console_GetRoomDetails, Steam)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#5c7fffd70254be44f1dfcc19e7d5b94b">__L2_MSG_DB_HEADER</a> (Console_CreateRoom, Steam)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#30f722d248230f6563c20b3879a79491">__L2_MSG_DB_HEADER</a> (Console_JoinRoom, Steam)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#f7d6ce032761602ea6ab51db817e9153">__L2_MSG_DB_HEADER</a> (Console_LeaveRoom, Steam)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#d2930973d259684741dcc83f06b5c5d1">__L2_MSG_DB_HEADER</a> (Console_SendRoomChatMessage, Steam)</td></tr>
 
 <tr><td colspan="2"><br><h2>Variables</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="80c95b4ed53f42911a6fa92b85e929cf"></a><!-- doxytag: member="RakNet::UNASSIGNED_SYSTEM_ADDRESS" ref="80c95b4ed53f42911a6fa92b85e929cf" args="" -->
@@ -1157,6 +1200,163 @@ How many actual bytes were received, including overead and acks. </td></tr>
 </div>
 </div><p>
 <hr><h2>Function Documentation</h2>
+<a class="anchor" name="d2930973d259684741dcc83f06b5c5d1"></a><!-- doxytag: member="RakNet::__L2_MSG_DB_HEADER" ref="d2930973d259684741dcc83f06b5c5d1" args="(Console_SendRoomChatMessage, Steam)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">RakNet::__L2_MSG_DB_HEADER           </td>
+          <td>(</td>
+          <td class="paramtype">Console_SendRoomChatMessage&nbsp;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Steam&nbsp;</td>
+          <td class="paramname"></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+<p>
+Input 
+</div>
+</div><p>
+<a class="anchor" name="f7d6ce032761602ea6ab51db817e9153"></a><!-- doxytag: member="RakNet::__L2_MSG_DB_HEADER" ref="f7d6ce032761602ea6ab51db817e9153" args="(Console_LeaveRoom, Steam)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">RakNet::__L2_MSG_DB_HEADER           </td>
+          <td>(</td>
+          <td class="paramtype">Console_LeaveRoom&nbsp;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Steam&nbsp;</td>
+          <td class="paramname"></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+<p>
+Input 
+</div>
+</div><p>
+<a class="anchor" name="30f722d248230f6563c20b3879a79491"></a><!-- doxytag: member="RakNet::__L2_MSG_DB_HEADER" ref="30f722d248230f6563c20b3879a79491" args="(Console_JoinRoom, Steam)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">RakNet::__L2_MSG_DB_HEADER           </td>
+          <td>(</td>
+          <td class="paramtype">Console_JoinRoom&nbsp;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Steam&nbsp;</td>
+          <td class="paramname"></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+<p>
+Input 
+</div>
+</div><p>
+<a class="anchor" name="5c7fffd70254be44f1dfcc19e7d5b94b"></a><!-- doxytag: member="RakNet::__L2_MSG_DB_HEADER" ref="5c7fffd70254be44f1dfcc19e7d5b94b" args="(Console_CreateRoom, Steam)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">RakNet::__L2_MSG_DB_HEADER           </td>
+          <td>(</td>
+          <td class="paramtype">Console_CreateRoom&nbsp;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Steam&nbsp;</td>
+          <td class="paramname"></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+<p>
+Input If public, anyone can join. Else friends only<p>
+Output 
+</div>
+</div><p>
+<a class="anchor" name="c83efdd1c4b9360990c23c8d052701bc"></a><!-- doxytag: member="RakNet::__L2_MSG_DB_HEADER" ref="c83efdd1c4b9360990c23c8d052701bc" args="(Console_GetRoomDetails, Steam)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">RakNet::__L2_MSG_DB_HEADER           </td>
+          <td>(</td>
+          <td class="paramtype">Console_GetRoomDetails&nbsp;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Steam&nbsp;</td>
+          <td class="paramname"></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+<p>
+Input<p>
+Output 
+</div>
+</div><p>
 <a class="anchor" name="1b3644d668610a1cb839748907c83e65"></a><!-- doxytag: member="RakNet::CanConnect" ref="1b3644d668610a1cb839748907c83e65" args="(NATTypeDetectionResult type1, NATTypeDetectionResult type2)" -->
 <div class="memitem">
 <div class="memproto">
@@ -1312,7 +1512,7 @@ Verbosity level currently supports 0 (low), 1 (medium), 2 (high) <dl compact><dt
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 1 13:33:47 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 4 21:34:39 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

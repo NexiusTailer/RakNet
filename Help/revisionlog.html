@@ -540,6 +540,21 @@ FileListTransfer: Fixed showing 0% for OnFileProgress for the last part of a fil
 UDPProxy: Added targetGuid to the callbacks that didn't already have it in UDPProxyClientResultHandler
 RakString: Added GetLengthUTF8 and TruncateUTF8
 Irrlicht demo: Updated to Irrlicht 1.7.2
+4.037 (4/4/2012)
+RakPeer: Fixed bad memory access in GetClientPublicKeyFromSystemAddress(). Fixed incorrectly sending to self through loopback when sending through UDPForwader.
+ReplicaManager3: Now supports multiple worlds with one instance of the plugin, as opposed to requiring one instance per world before. This improves world lookup speed per packet from O(n) to O(1) when using multiple worlds. Added Connection_RM3::QuerySerializationList() so the user can control in what order and how many Replica3 instances are serialized for a ReplicaManager3::Update() cycle. Can be used to prioritize what Replica3 instances are serialized while under limited bandwidth by checking SerializeParameters::bitsWrittenSoFar
+Vita: Lobby2Client_Vita now completed for basic operations.
+PS3: Use npId.handle.data to support cross-play with Vita.
+TeamManager: New feature added to manage teams in games. Plugin, sample, manual page added. Replaces TeamBalancer, which is now obsolete.
+AutopatcherServer: Fixed crash that could occur on a client disconnect while data was moving between threads. Clarified output from sample AutopatcherClient sample.
+LibCat: Source/cat moved to DependentExtensions/cat. Removed FastDelegate to improve compilation compatibility
+TCP Interface: Changed SSLv2_client_method to SSLv23_client_method(). Fixes samples for EmailSender class and to Rackspace.
+FileListTransfer: Ensure each thread only works on one system at a time. Previously, subsequent calls would add files to the thread already working causing shared memory errors. Changed reported value for byteLengthOfThisSet to actual bytes sent, not just total size of files. Return transport layer based progress notification on incremental read chunks. Clarified output from sample.
+Swig / C#: Exposed GetTime(). Fixed compilation on Linux.
+FullyConnectedMesh2: Changed to return UNASSIGNED_RAKNET_GUID as last host on first ID_FCM2_NEW_HOST notification
+Encryption: Fixed sample when using two-way authentication
+CloudServer: Fixed bad check of OnReleaseRequest
+Lobby2Client_Steam: Fixed steam integration to cancel an operation when the callback object had already been destroyed.
 </pre>
 <BR>
 </p></TD></TR></TABLE>

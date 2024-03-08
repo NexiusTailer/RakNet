@@ -40,10 +40,10 @@ struct FileListReceiver;
 /// \details Similar to the DirectoryDeltaTransfer plugin, except that it doesn't send deltas based on pre-existing files or actually write the files to disk.
 ///
 /// Usage:
-/// Call SetupReceive to allow one file set to arrive.  The value returned by FileListTransfer::SetupReceive()
-/// is the setID that is allowed.
-/// It's up to you to transmit this value to the other system, along with information indicating what kind of files you want to get.
-/// The other system should then prepare a FileList and call FileListTransfer::Send(), passing the return value of FileListTransfer::SetupReceive()
+/// Call SetupReceive to allow one file set to arrive.  The value returned by FileListTransfer::SetupReceive()<BR>
+/// is the setID that is allowed.<BR>
+/// It's up to you to transmit this value to the other system, along with information indicating what kind of files you want to get.<BR>
+/// The other system should then prepare a FileList and call FileListTransfer::Send(), passing the return value of FileListTransfer::SetupReceive()<BR>
 /// as the \a setID parameter to FileListTransfer::Send()
 /// \ingroup FILE_LIST_TRANSFER_GROUP
 class RAK_DLL_EXPORT FileListTransfer : public PluginInterface2
@@ -123,7 +123,7 @@ protected:
 
 	void OnReferencePush(Packet *packet, bool fullFile);
 	void OnReferencePushAck(Packet *packet);
-	void SendIRIToAddress(SystemAddress systemAddress);
+	void SendIRIToAddress(SystemAddress systemAddress, unsigned short setId);
 
 	DataStructures::Map<unsigned short, FileListReceiver*> fileListReceivers;
 	unsigned short setId;
@@ -135,7 +135,7 @@ protected:
 		PacketPriority packetPriority;
 		char orderingChannel;
 		unsigned int currentOffset;
-		unsigned short setID;
+		////unsigned short setID;
 		unsigned int setIndex;
 		IncrementalReadInterface *incrementalReadInterface;
 		unsigned int chunkSize;
@@ -149,6 +149,9 @@ protected:
 		void Deref(void);
 
 		SystemAddress systemAddress;
+		unsigned short setId;
+
+		//// SimpleMutex filesToPushMutex;
 		DataStructures::Queue<FileToPush*> filesToPush;
 	};
 	DataStructures::List< FileToPushRecipient* > fileToPushRecipientList;
@@ -159,6 +162,7 @@ protected:
 	{
 		FileListTransfer *fileListTransfer;
 		SystemAddress systemAddress;
+		unsigned short setId;
 	};
 
 	ThreadPool<ThreadData, int> threadPool;

@@ -150,6 +150,7 @@ ADD_LIST_TYPE(SortQuery,SortQuery,RakNetListSortQuery);
 // %template(RakNetSmartPtrRakNetSocket) RakNetSmartPtr<RakNetSocket>;
 
 //Can't use the macro because it won't include the space then nested templates won't work
+/*
 %typemap(cscode) DataStructures::List<RakNetSmartPtr<RakNetSocket> >
 %{
     public RakNetSmartPtrRakNetSocket this[int index]  
@@ -166,6 +167,7 @@ ADD_LIST_TYPE(SortQuery,SortQuery,RakNetListSortQuery);
 %}
 
 %template(RakNetListRakNetSmartPtrRakNetSocket) DataStructures::List <RakNetSmartPtr<RakNetSocket> >;
+*/
 
 %define ADD_POINTER_LIST_TYPE(CTYPE,CSTYPE,RENAME_TYPE)
 %ignore DataStructures::List<CTYPE>::Get;

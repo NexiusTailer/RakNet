@@ -284,12 +284,12 @@ PluginReceiveResult TeamBalancer::OnReceive(Packet *packet)
 			return OnTeamAssigned(packet);
 		}
 
-		case ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING:
+		case ID_TEAM_BALANCER_REQUESTED_TEAM_FULL:
 		{
 			return OnRequestedTeamChangePending(packet);
 		}
 
-		case ID_TEAM_BALANCER_TEAMS_LOCKED:
+		case ID_TEAM_BALANCER_REQUESTED_TEAM_LOCKED:
 		{
 			return OnTeamsLocked(packet);
 		}
@@ -480,7 +480,8 @@ void TeamBalancer::OnRequestSpecificTeam(Packet *packet)
 	if (tm.requestedTeam==UNASSIGNED_TEAM_ID)
 	{
 		NotifyNoTeam(tm.memberId, packet->guid);
-		RemoveTeamMember(memberIndex);
+		if (memberIndex != (unsigned int) -1)
+			RemoveTeamMember(memberIndex);
 		return;
 	}
 
@@ -836,14 +837,14 @@ TeamId TeamBalancer::MoveMemberThatWantsToJoinTeamInternal(TeamId teamId)
 void TeamBalancer::NotifyTeamsLocked(RakNetGUID target, TeamId requestedTeam)
 {
 	BitStream bsOut;
-	bsOut.Write((MessageID)ID_TEAM_BALANCER_TEAMS_LOCKED);
+	bsOut.Write((MessageID)ID_TEAM_BALANCER_REQUESTED_TEAM_LOCKED);
 	bsOut.Write(requestedTeam);
 	rakPeerInterface->Send(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,target,false);
 }
 void TeamBalancer::NotifyTeamSwitchPending(RakNetGUID target, TeamId requestedTeam, NetworkID memberId)
 {
 	BitStream bsOut;
-	bsOut.Write((MessageID)ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING);
+	bsOut.Write((MessageID)ID_TEAM_BALANCER_REQUESTED_TEAM_FULL);
 	bsOut.Write(requestedTeam);
 	bsOut.Write(memberId);
 	rakPeerInterface->Send(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,target,false);

@@ -80,6 +80,31 @@ public class RakNet {
     } 
   }
 
+  public static ulong GetTime() {
+    ulong ret = RakNetPINVOKE.GetTime();
+    return ret;
+  }
+
+  public static uint GetTimeMS() {
+    uint ret = RakNetPINVOKE.GetTimeMS();
+    return ret;
+  }
+
+  public static ulong GetTimeUS() {
+    ulong ret = RakNetPINVOKE.GetTimeUS();
+    return ret;
+  }
+
+  public static bool GreaterThan(ulong a, ulong b) {
+    bool ret = RakNetPINVOKE.GreaterThan(a, b);
+    return ret;
+  }
+
+  public static bool LessThan(ulong a, ulong b) {
+    bool ret = RakNetPINVOKE.LessThan(a, b);
+    return ret;
+  }
+
   public static readonly int SWIG_CSHARP_NO_IMCLASS_STATIC_CONSTRUCTOR = RakNetPINVOKE.SWIG_CSHARP_NO_IMCLASS_STATIC_CONSTRUCTOR_get();
   public static readonly int __GET_TIME_64BIT = RakNetPINVOKE.__GET_TIME_64BIT_get();
   public static readonly int MAX_ALLOCA_STACK_ALLOCATION = RakNetPINVOKE.MAX_ALLOCA_STACK_ALLOCATION_get();
@@ -117,6 +142,7 @@ public class RakNet {
   public static readonly int _RAKNET_SUPPORT_Router2 = RakNetPINVOKE._RAKNET_SUPPORT_Router2_get();
   public static readonly int _RAKNET_SUPPORT_RPC4Plugin = RakNetPINVOKE._RAKNET_SUPPORT_RPC4Plugin_get();
   public static readonly int _RAKNET_SUPPORT_TeamBalancer = RakNetPINVOKE._RAKNET_SUPPORT_TeamBalancer_get();
+  public static readonly int _RAKNET_SUPPORT_TeamManager = RakNetPINVOKE._RAKNET_SUPPORT_TeamManager_get();
   public static readonly int _RAKNET_SUPPORT_UDPProxyClient = RakNetPINVOKE._RAKNET_SUPPORT_UDPProxyClient_get();
   public static readonly int _RAKNET_SUPPORT_UDPProxyCoordinator = RakNetPINVOKE._RAKNET_SUPPORT_UDPProxyCoordinator_get();
   public static readonly int _RAKNET_SUPPORT_UDPProxyServer = RakNetPINVOKE._RAKNET_SUPPORT_UDPProxyServer_get();
@@ -139,7 +165,9 @@ public class RakNet {
   public static readonly int INVALID_SOCKET = RakNetPINVOKE.INVALID_SOCKET_get();
   public static readonly string PRINTF_64_BIT_MODIFIER = RakNetPINVOKE.PRINTF_64_BIT_MODIFIER_get();
   public static readonly int NETWORK_ID_MANAGER_HASH_LENGTH = RakNetPINVOKE.NETWORK_ID_MANAGER_HASH_LENGTH_get();
-  public static readonly int UNASSIGNED_TEAM_ID = RakNetPINVOKE.UNASSIGNED_TEAM_ID_get();
+  public static readonly int ALLOW_JOIN_ANY_AVAILABLE_TEAM = RakNetPINVOKE.ALLOW_JOIN_ANY_AVAILABLE_TEAM_get();
+  public static readonly int ALLOW_JOIN_SPECIFIC_TEAM = RakNetPINVOKE.ALLOW_JOIN_SPECIFIC_TEAM_get();
+  public static readonly int ALLOW_JOIN_REBALANCING = RakNetPINVOKE.ALLOW_JOIN_REBALANCING_get();
   public static readonly int _TABLE_BPLUS_TREE_ORDER = RakNetPINVOKE._TABLE_BPLUS_TREE_ORDER_get();
   public static readonly int _TABLE_MAX_COLUMN_NAME_LENGTH = RakNetPINVOKE._TABLE_MAX_COLUMN_NAME_LENGTH_get();
   public static readonly int REMOTE_MAX_TEXT_INPUT = RakNetPINVOKE.REMOTE_MAX_TEXT_INPUT_get();

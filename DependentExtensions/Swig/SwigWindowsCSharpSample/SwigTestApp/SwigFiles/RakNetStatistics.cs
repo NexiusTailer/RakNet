@@ -67,14 +67,14 @@ public class RakNetStatistics : IDisposable {
   }
 
 
-    private bool bytesInSendBufferIsCached  = false;
-    private bool messageInSendBufferIsCached  = false;
-    private bool runningTotalIsCached  = false;
-    private bool valueOverLastSecondIsCached  = false;
- private double[] bytesInSendBufferCache;
- private uint[] messageInSendBufferCache;
- private ulong[] runningTotalCache;
- private ulong[] valueOverLastSecondCache;
+	private bool bytesInSendBufferIsCached  = false;
+	private bool messageInSendBufferIsCached  = false;
+	private bool runningTotalIsCached  = false;
+	private bool valueOverLastSecondIsCached  = false;
+	private double[] bytesInSendBufferCache;
+	private uint[] messageInSendBufferCache;
+	private ulong[] runningTotalCache;
+	private ulong[] valueOverLastSecondCache;
 
   public ulong[] valueOverLastSecond {
 	set 

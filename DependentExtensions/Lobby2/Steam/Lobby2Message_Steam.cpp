@@ -30,7 +30,8 @@ Console_SearchRooms_Steam::Console_SearchRooms_Steam()
 }
 Console_SearchRooms_Steam::~Console_SearchRooms_Steam()
 {
-	RakNet::OP_DELETE(m_SteamCallResultLobbyMatchList, _FILE_AND_LINE_);
+	// Cast to make sure destructor gets called
+	RakNet::OP_DELETE((CCallResult<Lobby2Client_Steam_Impl, LobbyMatchList_t>*)m_SteamCallResultLobbyMatchList, _FILE_AND_LINE_);
 }
 bool Console_SearchRooms_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 {
@@ -48,7 +49,7 @@ void Console_SearchRooms_Steam::DebugMsg(RakNet::RakString &out) const
 		return;
 	}
 	out.Set("%i rooms found", roomNames.GetSize());
-	for (unsigned int i=0; i < roomNames.GetSize(); i++)
+	for (DataStructures::DefaultIndexType i=0; i < roomNames.GetSize(); i++)
 	{
 		out += RakNet::RakString("\n%i. %s. ID=%"PRINTF_64_BIT_MODIFIER"u", i+1, roomNames[i].C_String(), roomIds[i]);
 	}
@@ -67,7 +68,8 @@ Console_CreateRoom_Steam::Console_CreateRoom_Steam()
 }
 Console_CreateRoom_Steam::~Console_CreateRoom_Steam()
 {
-	RakNet::OP_DELETE(m_SteamCallResultLobbyCreated, _FILE_AND_LINE_);
+	// Cast to make sure destructor gets called
+	RakNet::OP_DELETE((CCallResult<Lobby2Client_Steam_Impl, LobbyCreated_t>*)m_SteamCallResultLobbyCreated, _FILE_AND_LINE_);
 }
 bool Console_CreateRoom_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 {
@@ -87,7 +89,8 @@ Console_JoinRoom_Steam::Console_JoinRoom_Steam()
 }
 Console_JoinRoom_Steam::~Console_JoinRoom_Steam()
 {
-	RakNet::OP_DELETE(m_SteamCallResultLobbyEntered, _FILE_AND_LINE_);
+	// Cast to make sure destructor gets called
+	RakNet::OP_DELETE((CCallResult<Lobby2Client_Steam_Impl, LobbyEnter_t>*)m_SteamCallResultLobbyEntered, _FILE_AND_LINE_);
 }
 bool Console_JoinRoom_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 {
