@@ -514,8 +514,8 @@ public:
 	/// \param[out] newReplicasToCreate Anything in this list will be created on the remote system
 	/// \param[out] existingReplicasToDestroy Anything in this list will be destroyed on the remote system
 	virtual void QueryReplicaList(
-		DataStructures::List<Replica3*> newReplicasToCreate,
-		DataStructures::List<Replica3*> existingReplicasToDestroy) {}
+		DataStructures::List<Replica3*> &newReplicasToCreate,
+		DataStructures::List<Replica3*> &existingReplicasToDestroy) {(void) newReplicasToCreate; (void) existingReplicasToDestroy;}
 
 	/// \brief Override which replicas to serialize and in what order for a connection for a ReplicaManager3::Update() cycle
 	/// \details By default, Connection_RM3 will iterate through queryToSerializeReplicaList and call QuerySerialization() on each Replica in that list

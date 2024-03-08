@@ -1,39 +1,32 @@
 cmake_minimum_required(VERSION 2.6)
-project(RakNetStatic)
+project(LibStatic)
 
 FILE(GLOB ALL_HEADER_SRCS ${RakNet_SOURCE_DIR}/Source/*.h)
 FILE(GLOB ALL_CPP_SRCS ${RakNet_SOURCE_DIR}/Source/*.cpp)
 
-include_directories(${RakNet_SOURCE_DIR}/Source) 
+include_directories(${RakNet_SOURCE_DIR}/Source ${RakNet_SOURCE_DIR}/DependentExtensions/openssl-1.0.0d/include ${RakNet_SOURCE_DIR}/DependentExtensions) 
+
+add_library(LibStatic STATIC ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS} readme.txt)
+
 IF(WIN32 AND NOT UNIX)
-	add_library(RakNetStatic STATIC ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS} readme.txt)
-ELSE(WIN32 AND NOT UNIX)
-	add_library(RakNetStatic STATIC ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS} readme.txt)
+	SET( CMAKE_CXX_FLAGS "/D WIN32 /D _RAKNET_LIB /D _CRT_NONSTDC_NO_DEPRECATE /D _CRT_SECURE_NO_DEPRECATE /GS- /GR- ")
 ENDIF(WIN32 AND NOT UNIX)
 
 IF(WIN32 AND NOT UNIX)
-	IF(NOT ${CMAKE_GENERATOR} STREQUAL "MSYS Makefiles")
-		SET( CMAKE_CXX_FLAGS "/D WIN32 /D _RAKNET_LIB /D _CRT_NONSTDC_NO_DEPRECATE /D _CRT_SECURE_NO_DEPRECATE ")
-	ELSE(NOT ${CMAKE_GENERATOR} STREQUAL "MSYS Makefiles")
-		SET( CMAKE_CXX_FLAGS "-D WIN32 -D _RAKNET_LIB -D _CRT_NONSTDC_NO_DEPRECATE -D _CRT_SECURE_NO_DEPRECATE ")
-	ENDIF(NOT ${CMAKE_GENERATOR} STREQUAL "MSYS Makefiles")
-ENDIF(WIN32 AND NOT UNIX)
-
-IF(WIN32 AND NOT UNIX)
-	target_link_libraries (RakNetStatic ${RAKNET_LIBRARY_LIBS})
+	target_link_libraries (LibStatic ${RAKNET_LIBRARY_LIBS})
 
 	IF(NOT ${CMAKE_GENERATOR} STREQUAL "MSYS Makefiles")
 
 		IF(${CMAKE_GENERATOR} STREQUAL "Visual Studio 10" OR ${CMAKE_GENERATOR} STREQUAL "Visual Studio 10 Win64")
-			set_target_properties(RakNetStatic PROPERTIES STATIC_LIBRARY_FLAGS "/NODEFAULTLIB:\"LIBCD.lib LIBCMTD.lib MSVCRT.lib\"" )
+			set_target_properties(LibStatic PROPERTIES STATIC_LIBRARY_FLAGS "/NODEFAULTLIB:\"LIBCD.lib LIBCMTD.lib MSVCRT.lib\"" )
 		ELSE(${CMAKE_GENERATOR} STREQUAL "Visual Studio 10" OR ${CMAKE_GENERATOR} STREQUAL "Visual Studio 10 Win64")
-			set_target_properties(RakNetStatic PROPERTIES STATIC_LIBRARY_FLAGS "/NODEFAULTLIB:&quot;LIBCD.lib LIBCMTD.lib MSVCRT.lib&quot;" )
+			set_target_properties(LibStatic PROPERTIES STATIC_LIBRARY_FLAGS "/NODEFAULTLIB:&quot;LIBCD.lib LIBCMTD.lib MSVCRT.lib&quot;" )
 		ENDIF(${CMAKE_GENERATOR} STREQUAL "Visual Studio 10" OR ${CMAKE_GENERATOR} STREQUAL "Visual Studio 10 Win64")
 	ENDIF(NOT ${CMAKE_GENERATOR} STREQUAL "MSYS Makefiles")
 
 ELSE(WIN32 AND NOT UNIX)
-	target_link_libraries (RakNetStatic ${RAKNET_LIBRARY_LIBS})
-	INSTALL(TARGETS RakNetStatic DESTINATION ${RakNet_SOURCE_DIR}/Lib/LibStatic)
+	target_link_libraries (LibStatic ${RAKNET_LIBRARY_LIBS})
+	INSTALL(TARGETS LibStatic DESTINATION ${RakNet_SOURCE_DIR}/Lib/LibStatic)
 	INSTALL(FILES ${ALL_HEADER_SRCS} DESTINATION ${RakNet_SOURCE_DIR}/include/raknet)
 ENDIF(WIN32 AND NOT UNIX)
 

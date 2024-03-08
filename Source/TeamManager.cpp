@@ -32,14 +32,17 @@ STATIC_FACTORY_DEFINITIONS(TeamManager,TeamManager);
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int TM_World::JoinRequestHelperComp(const RakNet::Time &key, const TM_World::JoinRequestHelper &data)
+int TM_World::JoinRequestHelperComp(const TM_World::JoinRequestHelper &key, const TM_World::JoinRequestHelper &data)
 {
-	if (key < data.whenRequestMade)
+	if (key.whenRequestMade < data.whenRequestMade)
 		return -1;
-	if (key == data.whenRequestMade )
-		return 0;
-	return -1;
-
+	if (key.whenRequestMade > data.whenRequestMade)
+		return 1;
+	if (key.requestIndex < data.requestIndex)
+		return -1;
+	if (key.requestIndex > data.requestIndex)
+		return 1;
+	return 0;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -477,8 +480,11 @@ bool TM_TeamMember::DeserializeConstruction(TeamManager *teamManager, BitStream 
 	for (unsigned int i=0; i < teamsRequestedSize; i++)
 	{
 		RequestedTeam rt;
+		rt.isTeamSwitch=false;
+		rt.requested=false;
+		rt.whenRequested=0;
 		constructionBitstream->Read(rt.isTeamSwitch);
-		bool hasTeamToLeave;
+		bool hasTeamToLeave=false;
 		constructionBitstream->Read(hasTeamToLeave);
 		NetworkID teamToLeaveId;
 		if (hasTeamToLeave)
@@ -489,7 +495,7 @@ bool TM_TeamMember::DeserializeConstruction(TeamManager *teamManager, BitStream 
 		}
 		else
 			rt.teamToLeave=0;
-		bool hasTeamRequested;
+		bool hasTeamRequested=false;
 		success=constructionBitstream->Read(hasTeamRequested);
 		NetworkID teamRequestedId;
 		if (hasTeamRequested)
@@ -498,7 +504,8 @@ bool TM_TeamMember::DeserializeConstruction(TeamManager *teamManager, BitStream 
 			rt.requested = world->GetTeamByNetworkID(teamRequestedId);
 			RakAssert(rt.requested);
 		}
-		rt.whenRequested=i;
+		rt.whenRequested=RakNet::GetTime();
+		rt.requestIndex=world->teamRequestIndex++; // In case whenRequested is the same between two teams when sorting team requests
 		if (
 			(hasTeamToLeave==false || (hasTeamToLeave==true && rt.teamToLeave!=0)) &&
 			(hasTeamRequested==false || (hasTeamRequested==true && rt.requested!=0))
@@ -661,6 +668,7 @@ void TM_TeamMember::UpdateTeamsRequestedToAny(void)
 	teamsRequested.Clear(true, _FILE_AND_LINE_);
 	joinTeamType=JOIN_ANY_AVAILABLE_TEAM;
 	whenJoinAnyRequested=RakNet::GetTime();
+	joinAnyRequestIndex=world->teamRequestIndex++; // In case whenRequested is the same between two teams when sorting team requests
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -682,6 +690,7 @@ void TM_TeamMember::AddToRequestedTeams(TM_Team *teamToJoin)
 	rt.requested=teamToJoin;
 	rt.teamToLeave=0;
 	rt.whenRequested=RakNet::GetTime();
+	rt.requestIndex=world->teamRequestIndex++; // In case whenRequested is the same between two teams when sorting team requests
 	teamsRequested.Push(rt, _FILE_AND_LINE_ );
 }
 
@@ -696,6 +705,7 @@ void TM_TeamMember::AddToRequestedTeams(TM_Team *teamToJoin, TM_Team *teamToLeav
 	rt.requested=teamToJoin;
 	rt.teamToLeave=teamToLeave;
 	rt.whenRequested=RakNet::GetTime();
+	rt.requestIndex=world->teamRequestIndex++; // In case whenRequested is the same between two teams when sorting team requests
 	teamsRequested.Push(rt, _FILE_AND_LINE_ );
 }
 
@@ -1047,6 +1057,7 @@ TM_World::TM_World()
 	hostGuid=UNASSIGNED_RAKNET_GUID;
 	worldId=0;
 	autoAddParticipants=true;
+	teamRequestIndex=0;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1453,7 +1464,7 @@ void TM_World::FillRequestedSlots(void)
 	unsigned int teamIndex, indexIntoTeamsRequested = (unsigned int)-1;
 	TM_Team *team;
 	TM_TeamMember *teamMember;
-	DataStructures::OrderedList<RakNet::Time, TM_World::JoinRequestHelper, JoinRequestHelperComp> joinRequests;
+	DataStructures::OrderedList<TM_World::JoinRequestHelper, TM_World::JoinRequestHelper, JoinRequestHelperComp> joinRequests;
 	GetSortedJoinRequests(joinRequests);
 	unsigned int joinRequestIndex;
 
@@ -1587,7 +1598,7 @@ unsigned int TM_World::GetAvailableTeamIndexWithFewestMembers(TeamMemberLimit se
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TM_World::GetSortedJoinRequests(DataStructures::OrderedList<RakNet::Time, TM_World::JoinRequestHelper, JoinRequestHelperComp> &joinRequests)
+void TM_World::GetSortedJoinRequests(DataStructures::OrderedList<TM_World::JoinRequestHelper, TM_World::JoinRequestHelper, JoinRequestHelperComp> &joinRequests)
 {
 	unsigned int i;
 
@@ -1601,7 +1612,8 @@ void TM_World::GetSortedJoinRequests(DataStructures::OrderedList<RakNet::Time, T
 				TM_World::JoinRequestHelper jrh;
 				jrh.whenRequestMade=teamMember->whenJoinAnyRequested;
 				jrh.teamMemberIndex=i;
-				joinRequests.Insert(jrh.whenRequestMade, jrh, true, _FILE_AND_LINE_);
+				jrh.requestIndex=teamMember->joinAnyRequestIndex;
+				joinRequests.Insert(jrh, jrh, true, _FILE_AND_LINE_);
 			}
 		}
 		else
@@ -1613,7 +1625,8 @@ void TM_World::GetSortedJoinRequests(DataStructures::OrderedList<RakNet::Time, T
 				jrh.whenRequestMade=teamMember->teamsRequested[j].whenRequested;
 				jrh.teamMemberIndex=i;
 				jrh.indexIntoTeamsRequested=j;
-				joinRequests.Insert(jrh.whenRequestMade, jrh, true, _FILE_AND_LINE_);
+				jrh.requestIndex=teamMember->teamsRequested[j].requestIndex;
+				joinRequests.Insert(jrh, jrh, true, _FILE_AND_LINE_);
 			}
 
 		}
@@ -2036,7 +2049,7 @@ void TeamManager::DecodeTeamCancelled(Packet *packet, TM_World **world, TM_TeamM
 	bsIn.IgnoreBytes(sizeof(MessageID));
 	bsIn.Read(worldId);
 	bsIn.Read(teamMemberId);
-	bool sp;
+	bool sp=false;
 	*world = GetWorldWithId(worldId);
 	if (*world)
 	{
@@ -2432,7 +2445,7 @@ void TeamManager::OnJoinRequestedTeam(Packet *packet, TM_World *world)
 	NetworkID teamToJoinNetworkId;
 	bsIn.Read(teamToJoinNetworkId);
 	TM_Team *teamToJoin = world->GetTeamByNetworkID(teamToJoinNetworkId);
-	bool isTeamSwitch;
+	bool isTeamSwitch=false;
 	bool switchSpecificTeam=false;
 	NetworkID teamToLeaveNetworkId=UNASSIGNED_NETWORK_ID;
 	TM_Team *teamToLeave=0;
@@ -2581,7 +2594,7 @@ void TeamManager::OnRemoveFromTeamsRequestedAndAddTeam(Packet *packet, TM_World 
 	TM_TeamMember *teamMember = world->GetTeamMemberByNetworkID(networkId);
 	NetworkID teamNetworkId;
 	bsIn.Read(teamNetworkId);
-	bool isTeamSwitch, switchSpecificTeam=false;
+	bool isTeamSwitch=false, switchSpecificTeam=false;
 	NetworkID teamToLeaveNetworkId;
 	TM_Team *teamToLeave=0;
 	bsIn.Read(isTeamSwitch);
@@ -2620,7 +2633,7 @@ void TeamManager::OnAddToRequestedTeams(Packet *packet, TM_World *world)
 	bsIn.Read(teamNetworkId);
 	TM_Team *team = world->GetTeamByNetworkID(teamNetworkId);
 
-	bool isTeamSwitch;
+	bool isTeamSwitch=false;
 	bool switchSpecificTeam=false;
 	NetworkID teamToLeaveNetworkId=UNASSIGNED_NETWORK_ID;
 	TM_Team *teamToLeave=0;
@@ -2655,7 +2668,7 @@ bool TeamManager::OnRemoveFromRequestedTeams(Packet *packet, TM_World *world)
 	NetworkID networkId;
 	bsIn.Read(networkId);
 	TM_TeamMember *teamMember = world->GetTeamMemberByNetworkID(networkId);
-	bool hasSpecificTeam;
+	bool hasSpecificTeam=false;
 	NetworkID teamNetworkId;
 	TM_Team *team;
 	bsIn.Read(hasSpecificTeam);
@@ -2793,7 +2806,7 @@ void TeamManager::OnSetBalanceTeams(Packet *packet, TM_World *world)
 {
 	BitStream bsIn(packet->data,packet->length,false);
 	bsIn.IgnoreBytes(2+sizeof(WorldId));
-	bool balanceTeams;
+	bool balanceTeams=false;
 	bsIn.Read(balanceTeams);
 	NoTeamId noTeamId;
 	bsIn.Read(noTeamId);
@@ -2819,7 +2832,7 @@ void TeamManager::OnSetBalanceTeamsInitial(Packet *packet, TM_World *world)
 {
 	BitStream bsIn(packet->data,packet->length,false);
 	bsIn.IgnoreBytes(2+sizeof(WorldId));
-	bool balanceTeams;
+	bool balanceTeams=false;
 	bsIn.Read(balanceTeams);
 	world->balanceTeamsIsActive=balanceTeams;
 }

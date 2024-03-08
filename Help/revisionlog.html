@@ -587,6 +587,16 @@ Fixed RakWString when serialzing between systems that have different sizes for w
 TeamManager: Now ignores duplicate team member insertions
 StatisticsHistory: Fix sorting values, add ability to merge entries with the same timestamp
 ReplicaManager3: Change signature for OnSerializeTransmission
+4.06 (10/11/2012)
+RakPeer: Improve congestion control being too sensitive to latency variation, reducing bandwidth by about 50% on megabyte and faster connections.
+PS3, Vita: Marshal system callbacks to happen on user thread. Was previously causing thread corruption of rooms list.
+XBOX 360: Fix crash on disconnect when XnetQosServiceLookup fails.
+ReplicaManager3: Fix QueryReplicaList not passing arguments by reference. Fix QUERY_CONNECTION_FOR_REPLICA_LIST when destroying Replicas.
+RoomsPlugin: Fixed being able to issue commands for any user, rather than just the one(s) you have logged in with.
+Native Client support: Added beta support for Native Client. Requires define RAKPEER_USER_THREADED and for the user to execute RakPeer::RunRecvFromOnce() and RakPeer::RunUpdateCycle() from the main thread.
+Team Manager: Fix JoinRequestHelperComp function.
+RPC4Plugin: Fix sending return value when using CallBlocking().
+Cmake: Simplified in order to fix build errors.
 </pre>
 <BR>
 </p></TD></TR></TABLE>

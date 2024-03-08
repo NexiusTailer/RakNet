@@ -38,7 +38,7 @@ enum PluginReceiveResult
 	RR_CONTINUE_PROCESSING,
 
 	/// The plugin is going to hold on to this message.  Do not deallocate it but do not pass it to other plugins either.
-	RR_STOP_PROCESSING,
+	RR_STOP_PROCESSING
 };
 
 /// Reasons why a connection was lost
@@ -69,7 +69,7 @@ enum PI2_FailedConnectionAttemptReason
 	FCAR_IP_RECENTLY_CONNECTED,
 	FCAR_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY,
 	FCAR_OUR_SYSTEM_REQUIRES_SECURITY,
-	FCAR_PUBLIC_KEY_MISMATCH,
+	FCAR_PUBLIC_KEY_MISMATCH
 };
 
 /// RakNet's plugin system. Each plugin processes the following events:

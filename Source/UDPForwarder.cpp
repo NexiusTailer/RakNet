@@ -163,6 +163,7 @@ void UDPForwarder::StopForwarding(SystemAddress source, SystemAddress destinatio
 }
 void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
 {
+#ifndef __native_client__
 	char data[ MAXIMUM_MTU_SIZE ];
 
 #if RAKNET_SUPPORT_IPV6==1
@@ -332,6 +333,7 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
 	while ( len == 0 );
 
 	forwardEntry->timeLastDatagramForwarded=curTime;
+#endif  // __native_client__
 }
 void UDPForwarder::UpdateUDPForwarder(void)
 {
@@ -345,6 +347,10 @@ void UDPForwarder::UpdateUDPForwarder(void)
 
 	StartForwardingInputStruct *sfis;
 	StartForwardingOutputStruct sfos;
+	sfos.forwardingSocket=INVALID_SOCKET;
+	sfos.forwardingPort=0;
+	sfos.inputId=0;
+	sfos.result=UDPFORWARDER_RESULT_COUNT;
 	while (1)
 	{
 		sfis = startForwardingInput.Pop();

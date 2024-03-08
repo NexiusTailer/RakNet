@@ -51,7 +51,7 @@ STATIC_FACTORY_DEFINITIONS(TCPInterface,TCPInterface);
 
 TCPInterface::TCPInterface()
 {
-	listenSocket=(SOCKET) -1;
+	listenSocket=INVALID_SOCKET;
 	remoteClients=0;
 	remoteClientsLength=0;
 
@@ -81,6 +81,9 @@ TCPInterface::~TCPInterface()
 }
 bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnections, unsigned short maxConnections, int _threadPriority, unsigned short socketFamily)
 {
+#ifdef __native_client__
+	return false;
+#else
 	(void) socketFamily;
 
 	if (isStarted.GetValue()>0)
@@ -189,9 +192,11 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 		RakSleep(0);
 
 	return true;
+#endif  // __native_client__
 }
 void TCPInterface::Stop(void)
 {
+#ifndef __native_client__
 	if (isStarted.GetValue()==0)
 		return;
 
@@ -203,7 +208,7 @@ void TCPInterface::Stop(void)
 
 	isStarted.Decrement();
 
-	if (listenSocket!=(SOCKET) -1)
+	if (listenSocket!=INVALID_SOCKET)
 	{
 #ifdef _WIN32
 		shutdown__(listenSocket, SD_BOTH);
@@ -227,7 +232,7 @@ void TCPInterface::Stop(void)
 		RakSleep(15);
 
 	RakSleep(100);
-	listenSocket=(SOCKET) -1;
+	listenSocket=INVALID_SOCKET;
 
 	// Stuff from here on to the end of the function is not threadsafe
 	for (i=0; i < (unsigned int) remoteClientsLength; i++)
@@ -266,6 +271,7 @@ void TCPInterface::Stop(void)
 
 
 
+#endif  // __native_client__
 }
 SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort, bool block, unsigned short socketFamily)
 {
@@ -297,7 +303,7 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 		systemAddress.ToString(false,buffout);
 
 		SOCKET sockfd = SocketConnect(buffout, remotePort, socketFamily);
-		if (sockfd==(SOCKET)-1)
+		if (sockfd==INVALID_SOCKET)
 		{
 			remoteClients[newRemoteClientIndex].isActiveMutex.Lock();
 			remoteClients[newRemoteClientIndex].SetActive(false);
@@ -688,6 +694,9 @@ unsigned int TCPInterface::GetOutgoingDataBufferSize(SystemAddress systemAddress
 }
 SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, unsigned short socketFamily)
 {
+#ifdef __native_client__
+	return INVALID_SOCKET;
+#else
 	int connectResult;
 	(void) socketFamily;
 
@@ -698,12 +707,12 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, 
 	struct hostent * server;
 	server = gethostbyname(host);
 	if (server == NULL)
-		return (SOCKET) -1;
+		return INVALID_SOCKET;
 
 
 	SOCKET sockfd = socket__(AF_INET, SOCK_STREAM, 0);
 	if (sockfd < 0) 
-		return (SOCKET) -1;
+		return INVALID_SOCKET;
 
 	memset(&serverAddress, 0, sizeof(serverAddress));
 	serverAddress.sin_family = AF_INET;
@@ -757,10 +766,11 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, 
 		blockingSocketListMutex.Unlock();
 
 		closesocket__(sockfd);
-		return (SOCKET) -1;
+		return INVALID_SOCKET;
 	}
 
 	return sockfd;
+#endif  // __native_client__
 }
 
 RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
@@ -781,7 +791,7 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
 	char str1[64];
 	systemAddress.ToString(false, str1);
 	SOCKET sockfd = tcpInterface->SocketConnect(str1, systemAddress.GetPort(), socketFamily);
-	if (sockfd==(SOCKET)-1)
+	if (sockfd==INVALID_SOCKET)
 	{
 		tcpInterface->remoteClients[newRemoteClientIndex].isActiveMutex.Lock();
 		tcpInterface->remoteClients[newRemoteClientIndex].SetActive(false);
@@ -895,7 +905,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 #pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
 #endif
 			largestDescriptor=0;
-			if (sts->listenSocket!=(SOCKET) -1)
+			if (sts->listenSocket!=INVALID_SOCKET)
 			{
 				FD_SET(sts->listenSocket, &readFD);
 				FD_SET(sts->listenSocket, &exceptionFD);
@@ -936,11 +946,11 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 			if (selectResult<=0)
 				break;
 
-			if (sts->listenSocket!=(SOCKET) -1 && FD_ISSET(sts->listenSocket, &readFD))
+			if (sts->listenSocket!=INVALID_SOCKET && FD_ISSET(sts->listenSocket, &readFD))
 			{
 				newSock = accept__(sts->listenSocket, (sockaddr*)&sockAddr, (socklen_t*)&sockAddrSize);
 
-				if (newSock != (SOCKET) -1)
+				if (newSock != INVALID_SOCKET)
 				{
 					int newRemoteClientIndex=-1;
 					for (newRemoteClientIndex=0; newRemoteClientIndex < sts->remoteClientsLength; newRemoteClientIndex++)
@@ -991,7 +1001,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 #endif
 				}
 			}
-			else if (sts->listenSocket!=(SOCKET) -1 && FD_ISSET(sts->listenSocket, &exceptionFD))
+			else if (sts->listenSocket!=INVALID_SOCKET && FD_ISSET(sts->listenSocket, &exceptionFD))
 			{
 #ifdef _DO_PRINTF
 				int err;
@@ -1012,7 +1022,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 					}
 					// calling FD_ISSET with -1 as socket (that’s what INVALID_SOCKET is set to) produces a bus error under Linux 64-Bit
 					SOCKET socketCopy = sts->remoteClients[i].socket;
-					if (socketCopy == (SOCKET)-1)
+					if (socketCopy == INVALID_SOCKET)
 					{
 						i++;
 						continue;
@@ -1255,11 +1265,19 @@ int RemoteClient::Recv(char *data, const int dataSize)
 #else
 int RemoteClient::Send(const char *data, unsigned int length)
 {
+#ifdef __native_client__
+	return -1;
+#else
 	return send__(socket, data, length, 0);
+#endif
 }
 int RemoteClient::Recv(char *data, const int dataSize)
 {
+#ifdef __native_client__
+	return -1;
+#else
 	return recv__(socket, data, dataSize, 0);
+#endif
 }
 #endif
 

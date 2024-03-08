@@ -7,10 +7,11 @@
 #include "RakSleep.h"
 #include "BitStream.h"
 #include "MessageIdentifiers.h"
+#include "Gets.h"
 
 using namespace RakNet;
 
-RakPeerInterface *rakPeer1, *rakPeer2;
+RakPeerInterface *rakPeer;
 
 void CFunc1( RakNet::BitStream *bitStream, Packet *packet )
 {
@@ -32,50 +33,90 @@ void CFunc2( RakNet::BitStream *bitStream, Packet *packet )
 	printf("%s\n", data.C_String());
 };
 
+void CFunc3( RakNet::BitStream *bitStream, RakNet::BitStream *returnData, Packet *packet )
+{
+	printf("CFunc3 ");
+	RakNet::RakString data;
+	int offset=bitStream->GetReadOffset();
+	bool read = bitStream->ReadCompressed(data);
+	RakAssert(read);
+	printf("%s\n", data.C_String());
+	returnData->WriteCompressed("CFunc3 returnData");
+};
+
 int main(void)
 {
 	printf("Demonstration of the RPC4 plugin.\n");
 	printf("Difficulty: Beginner\n\n");
 
-	rakPeer1=RakNet::RakPeerInterface::GetInstance();
-	rakPeer2=RakNet::RakPeerInterface::GetInstance();
-	RakNet::SocketDescriptor sd1(1234,0);
-	RakNet::SocketDescriptor sd2(1235,0);
-	rakPeer1->Startup(8,&sd1,1);
-	rakPeer2->Startup(8,&sd2,1);
-	rakPeer1->SetMaximumIncomingConnections(8);
-	rakPeer2->Connect("127.0.0.1", sd1.port, 0, 0);
-	RakSleep(100);
-	RPC4 rpc1, rpc2;
-	rakPeer1->AttachPlugin(&rpc1);
-	rakPeer2->AttachPlugin(&rpc2);
-	rpc1.RegisterSlot("Event1", CFunc1, 0);
-	rpc2.RegisterSlot("Event1", CFunc1, 0);
-	rpc1.RegisterSlot("Event1", CFunc2, 0);
-	rpc2.RegisterSlot("Event1", CFunc2, 0);
-	RakNet::BitStream testBs;
-	testBs.WriteCompressed("testData");
-	rpc1.Signal("Event1", &testBs, HIGH_PRIORITY,RELIABLE_ORDERED,0,rakPeer2->GetSystemAddressFromIndex(0),false, true);
+	rakPeer=RakNet::RakPeerInterface::GetInstance();
+	
+	// Holds user data
+	char ip[64], serverPort[30], clientPort[30];
+
+	// Get our input
+	puts("Enter the port to listen on");
+	Gets(clientPort,sizeof(clientPort));
+	if (clientPort[0]==0)
+		strcpy(clientPort, "0");
+	
+	RakNet::SocketDescriptor sd1(atoi(clientPort),0);
+	rakPeer->Startup(8,&sd1,1);
+	rakPeer->SetMaximumIncomingConnections(8);
+
+	puts("Enter IP to connect to, or enter for none");
+	Gets(ip, sizeof(ip));
+	rakPeer->AllowConnectionResponseIPMigration(false);
+
+	RPC4 rpc;
+	rakPeer->AttachPlugin(&rpc);
+	rpc.RegisterSlot("Event1", CFunc1, 0);
+	rpc.RegisterSlot("Event1", CFunc2, 0);
+	rpc.RegisterBlockingFunction("Blocking", CFunc3);
 
 	RakNet::Packet *packet;
-	packet = rakPeer1->Receive();
-	RakAssert(packet->data[0]==ID_NEW_INCOMING_CONNECTION);
-	rakPeer1->DeallocatePacket(packet);
-	
-	packet = rakPeer2->Receive();
-	RakAssert(packet->data[0]==ID_CONNECTION_REQUEST_ACCEPTED);
-	rakPeer2->DeallocatePacket(packet);
-	
-	RakSleep(100);
-	for (packet=rakPeer1->Receive(); packet; rakPeer1->DeallocatePacket(packet), rakPeer1->Receive())
-		;
-	for (packet=rakPeer2->Receive(); packet; rakPeer2->DeallocatePacket(packet), rakPeer2->Receive())
-		;
+	if (ip[0])
+	{
+		puts("Enter the port to connect to");
+		Gets(serverPort,sizeof(serverPort));
+		rakPeer->Connect(ip, atoi(serverPort), 0, 0);
 
-	rakPeer1->Shutdown(100,0);
-	rakPeer2->Shutdown(100,0);
-	RakNet::RakPeerInterface::DestroyInstance(rakPeer1);
-	RakNet::RakPeerInterface::DestroyInstance(rakPeer2);
+		RakSleep(1000);
+
+		for (packet=rakPeer->Receive(); packet; rakPeer->DeallocatePacket(packet), packet=rakPeer->Receive())
+			;
+
+		RakNet::BitStream testBs;
+		testBs.WriteCompressed("testData");
+	//	rpc.Signal("Event1", &testBs, HIGH_PRIORITY,RELIABLE_ORDERED,0,rakPeer->GetSystemAddressFromIndex(0),false, true);
+
+		RakSleep(100);
+		for (packet=rakPeer->Receive(); packet; rakPeer->DeallocatePacket(packet), rakPeer->Receive())
+			;
+
+		// Needs 2 program instances, because while the call is blocking rakPeer2->Receive() isn't getting called
+		RakNet::BitStream testBlockingReturn;
+		rpc.CallBlocking("Blocking", &testBs, HIGH_PRIORITY,RELIABLE_ORDERED,0,rakPeer->GetSystemAddressFromIndex(0),&testBlockingReturn);
+
+		RakNet::RakString data;
+		bool read = testBlockingReturn.ReadCompressed(data);
+		printf("%s\n", data.C_String());
+	}
+	else
+	{
+		printf("Waiting for connections.\n");
+
+		while (1)
+		{
+			RakSleep(100);
+			for (packet=rakPeer->Receive(); packet; rakPeer->DeallocatePacket(packet), packet=rakPeer->Receive())
+				;
+		}
+	}
+	
+
+	rakPeer->Shutdown(100,0);
+	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 
 	return 1;
 }

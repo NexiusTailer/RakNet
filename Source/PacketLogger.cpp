@@ -133,9 +133,9 @@ void PacketLogger::OnReliabilityLayerNotification(const char *errorMessage, cons
 	char str[1024];
 	char *type;
 	if (isError)
-		type="RcvErr";
+		type=(char*) "RcvErr";
 	else
-		type="RcvWrn";
+		type=(char*) "RcvWrn";
 	FormatLine(str, type, errorMessage, 0, 0, "", bitsUsed, RakNet::GetTime(), rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
 	AddToLog(str);
 	RakAssert(isError==false);

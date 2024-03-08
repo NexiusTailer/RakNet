@@ -49,7 +49,7 @@ RPC4GlobalRegistration::RPC4GlobalRegistration(const char* uniqueID, void ( *fun
 	}
 	globalRegistrationBuffer[globalRegistrationIndex].registerFunctionPointer=functionPointer;
 	globalRegistrationBuffer[globalRegistrationIndex].registerBlockingFunctionPointer=0;
-	RakAssert(callPriority!=0xFFFFFFFF);
+	RakAssert(callPriority!=(int) 0xFFFFFFFF);
 	globalRegistrationBuffer[globalRegistrationIndex].callPriority=callPriority;
 	globalRegistrationIndex++;
 }
@@ -392,7 +392,8 @@ bool RPC4::CallBlocking( const char* uniqueID, RakNet::BitStream * bitStream, Pa
 		}
 	}
 
-	returnData->Read(blockingReturnValue);
+	returnData->Write(blockingReturnValue);
+	returnData->ResetReadPointer();
 	return true;
 }
 void RPC4::Signal(const char *sharedIdentifier, RakNet::BitStream *bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, bool invokeLocal)
@@ -555,7 +556,7 @@ PluginReceiveResult RPC4::OnReceive(Packet *packet)
 		{
 			RakAssert(packet->data[1]==ID_RPC4_RETURN);
 			blockingReturnValue.Reset();
-			blockingReturnValue.Read(bsIn);
+			blockingReturnValue.Write(bsIn);
 			gotBlockingReturnValue=true;
 		}
 		

@@ -211,7 +211,7 @@ int main()
 		RakNet::SystemAddress sa;
 		sa = tcp1.HasNewIncomingConnection();
 		if (sa!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
-			flt1.Send(&fileList,0,sa,0,HIGH_PRIORITY,0, &incrementalReadInterface, 2000000);
+			flt1.Send(&fileList,0,sa,0,HIGH_PRIORITY,0, &incrementalReadInterface, 2000 * 1024);
 		tcp1.DeallocatePacket(packet1);
 		tcp2.DeallocatePacket(packet2);
 #else

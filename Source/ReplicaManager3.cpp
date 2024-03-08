@@ -794,14 +794,20 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3, Worl
 			exists=false;
 			bool objectExists;
 			idx1=constructedReplicaList.GetIndexFromKey(destroyedReplicasCulled[idx2], &objectExists);
-			RakAssert(objectExists);
 			if (objectExists)
 			{
-				OnSendDestructionFromQuery(idx1,replicaManager3);
-			}
+				constructedReplicaList.RemoveAtIndex(idx1);
 
-			// If this assert hits, the user tried to destroy a replica that doesn't exist on the remote system
-			RakAssert(exists);
+				unsigned int j;
+				for (j=0; j < queryToSerializeReplicaList.Size(); j++)
+				{
+					if (queryToSerializeReplicaList[j]->replica->GetNetworkID()==destroyedReplicasCulled[idx2]->GetNetworkID() )
+					{
+						queryToSerializeReplicaList.RemoveAtIndex(j);
+						break;
+					}
+				}
+			}
 		}
 	}
 

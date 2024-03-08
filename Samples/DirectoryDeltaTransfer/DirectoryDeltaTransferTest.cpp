@@ -22,7 +22,7 @@
 #include <unistd.h> // usleep
 #endif
 
-// #define USE_TCP
+#define USE_TCP
 
 class TestCB : public RakNet::FileListTransferCBInterface
 {

@@ -30,7 +30,7 @@ DynDnsResult resultTable[13] =
 	{"Invalid hostname format", "notfqdn", RC_NOT_FQDN},
 	{"Serious error", "numhost", RC_NUM_HOST},
 	{"This host exists, but does not belong to you", "!yours", RC_NOT_YOURS},
-	{"911", "911", RC_911},
+	{"911", "911", RC_911}
 };
 DynDNS::DynDNS()
 {

@@ -24,7 +24,7 @@ enum OutOfBandIdentifiers
 	ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE,
 	ID_XBOX_360_VOICE,
 	ID_XBOX_360_GET_NETWORK_ROOM,
-	ID_XBOX_360_RETURN_NETWORK_ROOM,
+	ID_XBOX_360_RETURN_NETWORK_ROOM
 };
 
 /// You should not edit the file MessageIdentifiers.h as it is a part of RakNet static library
@@ -415,7 +415,7 @@ enum DefaultMessageIDTypes
 	ID_RESERVED_9,
 
 	// For the user to use.  Start your first enumeration at this value.
-	ID_USER_PACKET_ENUM,
+	ID_USER_PACKET_ENUM
 	//-------------------------------------------------------------------------------------------------------------
  
 };

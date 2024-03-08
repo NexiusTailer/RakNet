@@ -565,6 +565,22 @@ public:
 	// --------------------------------------------------------------------------------------------EVERYTHING AFTER THIS COMMENT IS FOR INTERNAL USE ONLY--------------------------------------------------------------------------------------------
 	
 	/// \internal
+	// Call manually if RAKPEER_USER_THREADED==1 at least every 30 milliseconds.
+	// updateBitStream should be:
+	// 	BitStream updateBitStream( MAXIMUM_MTU_SIZE
+	// #if LIBCAT_SECURITY==1
+	//	+ cat::AuthenticatedEncryption::OVERHEAD_BYTES
+	// #endif
+	// );
+	virtual bool RunUpdateCycle( BitStream &updateBitStream )=0;
+
+	/// \internal
+	// Call manually if RAKPEER_USER_THREADED==1 at least every 30 milliseconds.
+	// Call in a loop until returns false if the socket is non-blocking
+	// remotePortRakNetWasStartedOn_PS3 and extraSocketOptions are from SocketDescriptor when the socket was created
+	virtual bool RunRecvFromOnce( SOCKET s, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions )=0;
+
+	/// \internal
 	virtual bool SendOutOfBand(const char *host, unsigned short remotePort, const char *data, BitSize_t dataLength, unsigned connectionSocketIndex=0 )=0;
 
 }

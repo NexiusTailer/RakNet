@@ -1918,7 +1918,7 @@ namespace RakNet
 			//	x=((float)sx / 32767.5f - 1.0f) * magnitude;
 			//	y=((float)sy / 32767.5f - 1.0f) * magnitude;
 			//	z=((float)sz / 32767.5f - 1.0f) * magnitude;
-			float cx,cy,cz;
+			float cx=0.0f,cy=0.0f,cz=0.0f;
 			ReadCompressed(cx);
 			ReadCompressed(cy);
 			if (!ReadCompressed(cz))
@@ -2017,6 +2017,8 @@ namespace RakNet
 	BitStream& operator>>(BitStream& in, templateType& c)
 	{
 		bool success = in.Read(c);
+		(void)success;
+
 		RakAssert(success);
 		return in;
 	}

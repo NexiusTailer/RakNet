@@ -334,7 +334,7 @@ Send the FileList structure to another system, which must have previously called
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>priority</em>&nbsp;</td><td>Passed to <a class="el" href="classRakNet_1_1RakPeerInterface.html#543ec5be9cf5f73f5c8733d1829789f9">RakPeerInterface::Send()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>orderingChannel</em>&nbsp;</td><td>Passed to <a class="el" href="classRakNet_1_1RakPeerInterface.html#543ec5be9cf5f73f5c8733d1829789f9">RakPeerInterface::Send()</a> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_incrementalReadInterface</em>&nbsp;</td><td>If a file in <em>fileList</em> has no data, _incrementalReadInterface will be used to read the file in chunks of size <em>chunkSize</em> </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_chunkSize</em>&nbsp;</td><td>How large of a block of a file to send at once </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_chunkSize</em>&nbsp;</td><td>How large of a block of a file to read/send at once. Large values use more memory but transfer slightly faster. </td></tr>
   </table>
 </dl>
 
@@ -425,7 +425,7 @@ Optionally start worker threads when using _incrementalReadInterface for the <a 
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="FileListTransfer_8h.html">FileListTransfer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jul 31 07:31:22 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Oct 15 12:33:56 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

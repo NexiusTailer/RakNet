@@ -40,7 +40,11 @@ void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress)
 		SocketLayer::GetSystemAddress(sockets[0]->s, &sockAddr);
 		char str[64];
 		sockAddr.ToString(false,str);
-		c2=CreateNonblockingBoundSocket(str);
+		c2=CreateNonblockingBoundSocket(str
+#ifdef __native_client__
+			, sockets[0]->chromeInstance
+#endif
+			);
 		c2Port=SocketLayer::GetLocalPort(c2);
 	}
 

@@ -164,6 +164,11 @@
 #define INTERNAL_PACKET_PAGE_SIZE 8
 #endif
 
+// If defined to 1, the user is responsible for calling RakPeer::RunUpdateCycle and RakPeer::RunRecvfrom
+#ifndef RAKPEER_USER_THREADED
+#define RAKPEER_USER_THREADED 0
+#endif
+
 //#define USE_THREADED_SEND
 
 #endif // __RAKNET_DEFINES_H

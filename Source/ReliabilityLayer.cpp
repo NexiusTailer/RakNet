@@ -1909,19 +1909,10 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress &systemAddress, int MTUSi
 // 							printf("RESEND reliableMessageNumber %i with datagram %i\n", internalPacket->reliableMessageNumber.val, congestionManager.GetNextDatagramSequenceNumber().val);
 
 						PushPacket(time,internalPacket,true); // Affects GetNewTransmissionBandwidth()
-//						internalPacket->timesSent++;
-						internalPacket->nextActionTime = congestionManager.GetRTOForRetransmission()+time;
-#if CC_TIME_TYPE_BYTES==4
-						if (internalPacket->nextActionTime-time > 10000)
-#else
-						if (internalPacket->nextActionTime-time > 10000000)
-#endif
-						{
-							//							int a=5;
-							RakAssert(0);
-						}
-
-						congestionManager.OnResend(time);
+						internalPacket->timesSent++;
+						congestionManager.OnResend(time, internalPacket->nextActionTime);
+						internalPacket->retransmissionTime = congestionManager.GetRTOForRetransmission(internalPacket->timesSent);
+						internalPacket->nextActionTime = internalPacket->retransmissionTime+time;
 
 						pushedAnything=true;
 
@@ -2045,7 +2036,8 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress &systemAddress, int MTUSi
 					{
 						internalPacket->messageNumberAssigned=true;
 						internalPacket->reliableMessageNumber=sendReliableMessageNumberIndex;
-						internalPacket->nextActionTime = congestionManager.GetRTOForRetransmission()+time;
+						internalPacket->retransmissionTime = congestionManager.GetRTOForRetransmission(internalPacket->timesSent+1);
+						internalPacket->nextActionTime = internalPacket->retransmissionTime+time;
 #if CC_TIME_TYPE_BYTES==4
 						const CCTimeType threshhold = 10000;
 #else
@@ -2079,11 +2071,10 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress &systemAddress, int MTUSi
 						unreliableWithAckReceiptHistory.Push(UnreliableWithAckReceiptNode(
 							congestionManager.GetNextDatagramSequenceNumber() + packetsToSendThisUpdateDatagramBoundaries.Size(),
 							internalPacket->sendReceiptSerial,
-							congestionManager.GetRTOForRetransmission()+time
+							congestionManager.GetRTOForRetransmission(internalPacket->timesSent+1)+time
 							), _FILE_AND_LINE_);
 					}
 
-//					internalPacket->timesSent=1;
 					// If isReliable is false, the packet and its contents will be added to a list to be freed in ClearPacketsAndDatagrams
 					// However, the internalPacket structure will remain allocated and be in the resendBuffer list if it requires a receipt
 					bpsMetrics[(int) USER_MESSAGE_BYTES_SENT].Push1(time,BITS_TO_BYTES(internalPacket->dataBitLength));
@@ -2093,6 +2084,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress &systemAddress, int MTUSi
 // 						printf("SEND reliableMessageNumber %i in datagram %i\n", internalPacket->reliableMessageNumber.val, congestionManager.GetNextDatagramSequenceNumber().val);
 
 					PushPacket(time,internalPacket, isReliable);
+					internalPacket->timesSent++;
 
 					for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
 					{
@@ -3662,6 +3654,7 @@ InternalPacket* ReliabilityLayer::AllocateFromInternalPacketPool(void)
 	ip->splitPacketId = 0;
 	ip->allocationScheme=InternalPacket::NORMAL;
 	ip->data=0;
+	ip->timesSent=0;
 	return ip;
 }
 //-------------------------------------------------------------------------------------------------------

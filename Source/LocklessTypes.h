@@ -21,7 +21,7 @@ public:
 	uint32_t Increment(void);
 	// Returns variable value after changing it
 	uint32_t Decrement(void);
-	volatile uint32_t GetValue(void) const {return value;}
+	uint32_t GetValue(void) const {return value;}
 
 protected:
 #ifdef _WIN32
@@ -35,6 +35,6 @@ protected:
 #endif
 };
 
-};
+}
 
 #endif

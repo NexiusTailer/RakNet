@@ -686,10 +686,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\DS_StringKeyedHash.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\DS_Table.h"
 				>
 			</File>
@@ -994,10 +990,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\Replica.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\ReplicaEnums.h"
 				>
 			</File>
@@ -1006,19 +998,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\Router.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\Router2.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\Source\RPC4Plugin.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\RPCMap.h"
 				>
 			</File>
 			<File
@@ -1067,10 +1051,6 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\SuperFastHash.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\SystemAddressList.h"
 				>
 			</File>
 			<File

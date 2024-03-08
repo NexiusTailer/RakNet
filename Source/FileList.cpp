@@ -379,7 +379,7 @@ void FileList::Serialize(RakNet::BitStream *outBitStream)
 		outBitStream->WriteCompressed(fileList[i].context.fileId);
 		StringCompressor::Instance()->EncodeString(fileList[i].filename.C_String(), MAX_FILENAME_LENGTH, outBitStream);
 
-		bool writeFileData = fileList[i].dataLengthBytes>0==true;
+		bool writeFileData = (fileList[i].dataLengthBytes>0)==true;
 		outBitStream->Write(writeFileData);
 		if (writeFileData)
 		{

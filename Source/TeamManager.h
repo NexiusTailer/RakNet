@@ -249,6 +249,7 @@ public:
 	struct RequestedTeam
 	{
 		RakNet::Time whenRequested;
+		unsigned int requestIndex;
 		TM_Team *requested;
 		bool isTeamSwitch;
 		TM_Team *teamToLeave;
@@ -269,6 +270,7 @@ protected:
 	// Set by StoreLastTeams()
 	DataStructures::List<TM_Team*> lastTeams;
 	RakNet::Time whenJoinAnyRequested;
+	unsigned int joinAnyRequestIndex;
 	void *owner;
 
 	// Remove from all requested and current teams.
@@ -536,9 +538,10 @@ public:
 		RakNet::Time whenRequestMade;
 		unsigned int teamMemberIndex;
 		unsigned int indexIntoTeamsRequested;
+		unsigned int requestIndex;
 	};
 	/// \internal
-	static int JoinRequestHelperComp(const RakNet::Time &key, const JoinRequestHelper &data);
+	static int JoinRequestHelperComp(const TM_World::JoinRequestHelper &key, const TM_World::JoinRequestHelper &data);
 
 protected:
 	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
@@ -550,7 +553,7 @@ protected:
 	void FillRequestedSlots(void);
 	unsigned int GetAvailableTeamIndexWithFewestMembers(TeamMemberLimit secondaryLimit, JoinPermissions joinPermissions);
 
-	void GetSortedJoinRequests(DataStructures::OrderedList<RakNet::Time, JoinRequestHelper, JoinRequestHelperComp> &joinRequests);
+	void GetSortedJoinRequests(DataStructures::OrderedList<JoinRequestHelper, JoinRequestHelper, JoinRequestHelperComp> &joinRequests);
 
 
 	// Send a message to all participants
@@ -581,6 +584,7 @@ protected:
 	RakNetGUID hostGuid;
 	WorldId worldId;
 	bool autoAddParticipants;
+	int teamRequestIndex;
 
 	friend class TeamManager;
 	friend class TM_TeamMember;
