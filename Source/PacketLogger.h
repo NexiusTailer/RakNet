@@ -69,6 +69,7 @@ protected:
 	virtual void AddToLog(const char *str);
 	// Users should override this
 	virtual const char* UserIDTOString(unsigned char Id);
+	void GetLocalTime(char buffer[128]);
 
 	bool printId, printAcks;
 	char prefix[256];

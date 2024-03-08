@@ -54,7 +54,7 @@ struct SampleReplica : public Replica3
 		RakNetTime time = RakNet::GetTime();
 		unsigned int timeIn10Seconds = time/10000;
 		serializeParameters->outputBitstream.Write(GetName() + RakNet::RakString(" Serialize. Time = %i", timeIn10Seconds));
-		return RM3SR_SERIALIZED_IDENTICALLY;
+		return RM3SR_BROADCAST_IDENTICALLY;
 	}
 	virtual void Deserialize(RakNet::BitStream *serializationBitstream,	RakNetTime timeStamp, RakNet::Connection_RM3 *sourceConnection) {
 		PrintOutput(serializationBitstream);
@@ -79,11 +79,6 @@ struct ClientCreatible_ClientSerialized : public SampleReplica {
 	virtual RakNet::RakString GetName(void) const {return RakNet::RakString("ClientCreatible_ClientSerialized");}
 	virtual RM3SerializationResult Serialize(SerializeParameters *serializeParameters)
 	{
-		if (isServer==true)
-			return RM3SR_DO_NOT_SERIALIZE;
-		RakNetGUID myOwnGuid = replicaManager->GetRakPeerInterface()->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
-		if (creatingSystemGUID!= myOwnGuid)
-			return RM3SR_DO_NOT_SERIALIZE;
 		return SampleReplica::Serialize(serializeParameters);
 	}
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {
@@ -101,11 +96,6 @@ struct ServerCreated_ClientSerialized : public SampleReplica {
 	virtual RakNet::RakString GetName(void) const {return RakNet::RakString("ServerCreated_ClientSerialized");}
 	virtual RM3SerializationResult Serialize(SerializeParameters *serializeParameters)
 	{
-		if (isServer==true)
-			return RM3SR_DO_NOT_SERIALIZE;
-		RakNetGUID myOwnGuid = replicaManager->GetRakPeerInterface()->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
-		if (creatingSystemGUID!= myOwnGuid)
-			return RM3SR_DO_NOT_SERIALIZE;
 		return SampleReplica::Serialize(serializeParameters);
 	}
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {
@@ -145,7 +135,7 @@ struct ServerCreated_ServerSerialized : public SampleReplica {
 		RakNetTime time = RakNet::GetTime();
 		unsigned int timeIn10Seconds = time/10000;
 		serializeParameters->outputBitstream.Write(GetName() + RakNet::RakString(" Serialize. Target=%s. Time = %i", serializeParameters->destinationConnection->GetRakNetGUID().ToString(), timeIn10Seconds));
-		return RM3SR_SERIALIZED_UNIQUELY;
+		return RM3SR_BROADCAST_IDENTICALLY;
 	}
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {
 		return QueryConstruction_ServerConstruction(destinationConnection);
@@ -292,9 +282,9 @@ int main(void)
 			{
 				printf("Objects created.\n");
 				replicaManager.Reference(new ClientCreatible_ClientSerialized);
-				replicaManager.Reference(new ServerCreated_ClientSerialized);
-				replicaManager.Reference(new ClientCreatible_ServerSerialized);
-				replicaManager.Reference(new ServerCreated_ServerSerialized);
+			//	replicaManager.Reference(new ServerCreated_ClientSerialized);
+			//	replicaManager.Reference(new ClientCreatible_ServerSerialized);
+		//		replicaManager.Reference(new ServerCreated_ServerSerialized);
 			}
 			if (ch=='d' || ch=='D')
 			{

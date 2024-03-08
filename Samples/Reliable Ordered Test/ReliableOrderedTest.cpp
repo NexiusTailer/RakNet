@@ -189,7 +189,7 @@ int main(void)
 				{
 					RakNetStatistics *rssSender;
 					rssSender=sender->GetStatistics(sender->GetSystemAddressFromIndex(0));
-					printf("Snd: %i waiting. %i waiting on ack. Got %i acks. KBPS=%.1f. Ploss=%.1f. Full=%i.\n", rssSender->messageSendBuffer[HIGH_PRIORITY], rssSender->messagesOnResendQueue,rssSender->acknowlegementsReceived, rssSender->bitsPerSecond/1000, 100.0f * ( float ) rssSender->messagesTotalBitsResent / ( float ) rssSender->totalBitsSent, rssSender->bandwidthExceeded);
+					printf("Snd: %i waiting. %i waiting on ack. Got %i acks. KBPS=%.1f. Ploss=%.1f. Full=%i.\n", rssSender->messageSendBuffer[HIGH_PRIORITY], rssSender->messagesOnResendQueue,rssSender->acknowlegementsReceived, rssSender->bitsPerSecondSent/1000, 100.0f * ( float ) rssSender->messagesTotalBitsResent / ( float ) rssSender->totalBitsSent, rssSender->bandwidthExceeded);
 				}
 
 				nextSend+=sendInterval;

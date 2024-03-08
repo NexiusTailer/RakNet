@@ -21,6 +21,12 @@
 #include "Export.h"
 #include "RakString.h"
 #include "RakThread.h"
+#include "RakNetSocket.h"
+#include "RakNetSmartPtr.h"
+
+#ifndef _USE_RAKNET_FLOW_CONTROL // Use UDT
+#include "udt.h"
+#endif
 
 class HuffmanEncodingTree;
 class PluginInterface2;
@@ -50,7 +56,7 @@ public:
 	/// \note Set _RAKNET_THREADSAFE in RakNetDefines.h if you want to call RakNet functions from multiple threads (not recommended, as it is much slower and RakNet is already asynchronous).
 	/// \param[in] maxConnections The maximum number of connections between this instance of RakPeer and another instance of RakPeer. Required so the network can preallocate and for thread safety. A pure client would set this to 1.  A pure server would set it to the number of allowed clients.- A hybrid would set it to the sum of both types of connections
 	/// \param[in] localPort The port to listen for connections on.
-	/// \param[in] _threadSleepTimer How many ms to Sleep each internal update cycle (30 to give the game priority, 0 for regular (recommended)
+	/// \param[in] _threadSleepTimer How many ms to Sleep each internal update cycle (30 to give the game priority, 0 for regular (recommended). If using UDT for flow control by commenting out _USE_RAKNET_FLOW_CONTROL, 0 is always used. If using UDT for flow control by commenting out _USE_RAKNET_FLOW_CONTROL, 0 is always used
 	/// \param[in] socketDescriptors An array of SocketDescriptor structures to force RakNet to listen on a particular IP address or port (or both).  Each SocketDescriptor will represent one unique socket.  Do not pass redundant structures.  To listen on a specific port, you can pass SocketDescriptor(myPort,0); such as for a server.  For a client, it is usually OK to just pass SocketDescriptor();
 	/// \param[in] socketDescriptorCount The size of the \a socketDescriptors array.  Pass 1 if you are not sure what to pass.
 	/// \return False on failure (can't create socket or thread), true on success.
@@ -125,8 +131,21 @@ public:
 	/// \param[in] connectionSocketIndex Index into the array of socket descriptors passed to socketDescriptors in RakPeer::Startup() to send on.
 	/// \param[in] sendConnectionAttemptCount How many datagrams to send to the other system to try to connect.
 	/// \param[in] timeBetweenSendConnectionAttemptsMS How often to send datagrams to the other system to try to connect. After this many times, ID_CONNECTION_ATTEMPT_FAILED is returned
+	/// \param[in] timeoutTime How long to keep the connection alive before dropping it on unable to send a reliable message. 0 to use the default from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
 	/// \return True on successful initiation. False on incorrect parameters, internal error, or too many existing peers.  Returning true does not mean you connected!
-	bool Connect( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex=0, unsigned sendConnectionAttemptCount=7, unsigned timeBetweenSendConnectionAttemptsMS=500 );
+	bool Connect( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex=0, unsigned sendConnectionAttemptCount=7, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNetTime timeoutTime=0 );
+
+	/// \brief Connect to the specified host (ip or domain name) and server port.
+	/// \param[in] host Either a dotted IP address or a domain name
+	/// \param[in] remotePort Which port to connect to on the remote machine.
+	/// \param[in] passwordData A data block that must match the data block on the server passed to SetIncomingPassword.  This can be a string or can be a stream of data.  Use 0 for no password.
+	/// \param[in] passwordDataLength The length in bytes of passwordData
+	/// \param[in] socket A bound socket returned by another instance of RakPeerInterface
+	/// \param[in] sendConnectionAttemptCount How many datagrams to send to the other system to try to connect.
+	/// \param[in] timeBetweenSendConnectionAttemptsMS How often to send datagrams to the other system to try to connect. After this many times, ID_CONNECTION_ATTEMPT_FAILED is returned
+	/// \param[in] timeoutTime How long to keep the connection alive before dropping it on unable to send a reliable message. 0 to use the default from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
+	/// \return True on successful initiation. False on incorrect parameters, internal error, or too many existing peers.  Returning true does not mean you connected!
+	virtual bool ConnectWithSocket(const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, RakNetSmartPtr<RakNetSocket> socket, unsigned sendConnectionAttemptCount=7, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNetTime timeoutTime=0);
 
 	/// \brief Connect to the specified network ID (Platform specific console function)
 	/// Does built-in NAT traversal
@@ -138,8 +157,9 @@ public:
 	/// \brief Stops the network threads and closes all connections.
 	/// \param[in] blockDuration How long, in milliseconds, you should wait for all remaining messages to go out, including ID_DISCONNECTION_NOTIFICATION.  If 0, it doesn't wait at all.
 	/// \param[in] orderingChannel If blockDuration > 0, ID_DISCONNECTION_NOTIFICATION will be sent on this channel
+	/// \param[in] disconnectionNotificationPriority Priority to send ID_DISCONNECTION_NOTIFICATION on.
 	/// If you set it to 0 then the disconnection notification won't be sent
-	void Shutdown( unsigned int blockDuration, unsigned char orderingChannel=0 );
+	void Shutdown( unsigned int blockDuration, unsigned char orderingChannel=0, PacketPriority disconnectionNotificationPriority=LOW_PRIORITY );
 
 	/// Returns if the network thread is running
 	/// \return true if the network thread is running, false otherwise
@@ -292,7 +312,8 @@ public:
 	/// \param[in] target Which system to close the connection to.
 	/// \param[in] sendDisconnectionNotification True to send ID_DISCONNECTION_NOTIFICATION to the recipient.  False to close it silently.
 	/// \param[in] channel Which ordering channel to send the disconnection notification on, if any
-	void CloseConnection( const SystemAddress target, bool sendDisconnectionNotification, unsigned char orderingChannel=0 );
+	/// \param[in] disconnectionNotificationPriority Priority to send ID_DISCONNECTION_NOTIFICATION on.
+	void CloseConnection( const SystemAddress target, bool sendDisconnectionNotification, unsigned char orderingChannel=0, PacketPriority disconnectionNotificationPriority=LOW_PRIORITY );
 
 	/// Cancel a pending connection attempt
 	/// If we are already connected, the connection stays open
@@ -423,9 +444,14 @@ public:
 
 	/// Set the time, in MS, to use before considering ourselves disconnected after not being able to deliver a reliable message.
 	/// Default time is 10,000 or 10 seconds in release and 30,000 or 30 seconds in debug.
+	/// Not supported when using UDT (_USE_RAKNET_FLOW_CONTROL is commented out in RakNetDefines.h). UDT takes between 3 and 30 seconds to disconnect.
     /// \param[in] timeMS Time, in MS
 	/// \param[in] target Which system to do this for. Pass UNASSIGNED_SYSTEM_ADDRESS for all systems.
 	void SetTimeoutTime( RakNetTime timeMS, const SystemAddress target );
+
+	/// \param[in] target Which system to do this for. Pass UNASSIGNED_SYSTEM_ADDRESS to get the default value
+	/// \return timeoutTime for a given system.
+	RakNetTime GetTimeoutTime( const SystemAddress target );
 
 	/// Set the MTU per datagram.  It's important to set this correctly - otherwise packets will be needlessly split, decreasing performance and throughput.
 	/// Maximum allowed size is MAXIMUM_MTU_SIZE.
@@ -554,10 +580,12 @@ public:
 	void PushBackPacket( Packet *packet, bool pushAtHead );
 
 	/// \Internal
+	/// \depreciated
 	// \param[in] routerInterface The router to use to route messages to systems not directly connected to this system.
 	void SetRouterInterface( RouterInterface *routerInterface );
 
 	/// \Internal
+	/// \depreciated
 	// \param[in] routerInterface The router to use to route messages to systems not directly connected to this system.
 	void RemoveRouterInterface( RouterInterface *routerInterface );
 
@@ -566,6 +594,18 @@ public:
 	/// \param[in] dataSize How many bytes to allocate for the buffer
 	/// \return A packet you can write to
 	Packet* AllocatePacket(unsigned dataSize);
+
+	/// Get the socket used with a particular active connection
+	/// The smart pointer reference counts the RakNetSocket object, so the socket will remain active as long as the smart pointer does, even if RakNet were to shutdown or close the connection.
+	/// \note This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so.
+	/// \param[in] target Which system
+	/// \return A smart pointer object containing the socket information about the socket. Be sure to check IsNull() which is returned if the update thread is unresponsive, shutting down, or if this system is not connected
+	virtual RakNetSmartPtr<RakNetSocket> GetSocket( const SystemAddress target );
+
+	/// Get all sockets in use
+	/// \note This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so.
+	/// \param[out] sockets List of RakNetSocket structures in use. Sockets will not be closed until \a sockets goes out of scope
+	virtual void GetSockets( DataStructures::List<RakNetSmartPtr<RakNetSocket> > &sockets );
 
 	// --------------------------------------------------------------------------------------------Network Simulator Functions--------------------------------------------------------------------------------------------
 	/// Adds simulated ping and packet loss to the outgoing data flow.
@@ -587,21 +627,6 @@ public:
 	/// \return If you previously called ApplyNetworkSimulator
 	bool IsNetworkSimulatorActive( void );
 
-	// -------------------------------------------------------------------------------------------- Socket Functions--------------------------------------------------------------------------------------------
-	/// Have RakNet use a socket you created yourself
-	/// The socket should not be in use - it is up to you to either shutdown or close the connections using it. Otherwise existing connections on that socket will eventually disconnect
-	/// This socket will be forgotten after calling Shutdown(), so rebind again if you need to.
-	/// \param[in] s The socket to rebind.
-	/// \param[in] haveRakNetCloseSocket If true, RakNet will call closeSocket on shutdown for this socket.
-	/// \param[in] connectionSocketIndex Index into the array of socket descriptors passed to socketDescriptors in RakPeer::Startup() to send on.
-	void UseUserSocket( int socket, bool haveRakNetCloseSocket, unsigned connectionSocketIndex);
-	
-	/// Have RakNet recreate a socket using a different port.
-	/// The socket should not be in use - it is up to you to either shutdown or close the connections using it. Otherwise existing connections on that socket will eventually disconnect
-	/// \param[in] connectionSocketIndex Index into the array of socket descriptors passed to socketDescriptors in RakPeer::Startup() to send on.
-	/// \param[in] sd Address to bind on
-	void RebindSocketAddress(unsigned connectionSocketIndex, SocketDescriptor &sd);
-
 	// --------------------------------------------------------------------------------------------Statistical Functions - Functions dealing with API performance--------------------------------------------------------------------------------------------
 
 	/// Returns a structure containing a large set of network statistics for the specified system.
@@ -611,6 +636,9 @@ public:
 	/// \return 0 on can't find the specified system.  A pointer to a set of data otherwise.
 	/// \sa RakNetStatistics.h
 	RakNetStatistics * const GetStatistics( const SystemAddress systemAddress, RakNetStatistics *rns=0 );
+
+	/// \Returns how many messages are waiting when you call Receive()
+	virtual unsigned int GetReceiveBufferSize(void) const;
 
 	// --------------------------------------------------------------------------------------------EVERYTHING AFTER THIS COMMENT IS FOR INTERNAL USE ONLY--------------------------------------------------------------------------------------------
 	/// \internal
@@ -645,10 +673,15 @@ public:
 		RakNetTime connectionTime; /// connection time, if active.
 		unsigned char AESKey[ 16 ]; /// Security key.
 		bool setAESKey; /// true if security is enabled.
-		int connectionSocketIndex; // index into connectionSockets to send back on.
+//		int connectionSocketIndex; // index into connectionSockets to send back on.
 		RPCMap rpcMap; /// Mapping of RPC calls to single byte integers to save transmission bandwidth.
 		RakNetGUID guid;
 		int MTUSize;
+#ifndef _USE_RAKNET_FLOW_CONTROL // Use UDT
+		UDTSOCKET udtSocket;
+#endif
+		// Reference counted socket to send back on
+		RakNetSmartPtr<RakNetSocket> rakNetSocket;
 
 		enum ConnectMode {NO_ACTION, DISCONNECT_ASAP, DISCONNECT_ASAP_SILENTLY, DISCONNECT_ON_NO_ACK, REQUESTED_CONNECTION, HANDLING_CONNECTION_REQUEST, UNVERIFIED_SENDER, SET_ENCRYPTION_ON_MULTIPLE_16_BYTE_PACKET, CONNECTED} connectMode;
 	};
@@ -656,6 +689,7 @@ public:
 protected:
 
 	friend RAK_THREAD_DECLARATION(UpdateNetworkLoop);
+	friend RAK_THREAD_DECLARATION(UDTConnect);
 
 	/*
 #ifdef _WIN32
@@ -672,7 +706,8 @@ protected:
 	*/
 
 	friend void ProcessPortUnreachable( const unsigned int binaryAddress, const unsigned short port, RakPeer *rakPeer );
-	friend void ProcessNetworkPacket( const unsigned int binaryAddress, const unsigned short port, const char *data, const int length, RakPeer *rakPeer, unsigned connectionSocketIndex );
+	friend bool ProcessOfflineNetworkPacket( const unsigned int binaryAddress, const unsigned short port, const char *data, const int length, RakPeer *rakPeer, RakNetSmartPtr<RakNetSocket> rakNetSocket, bool *isOfflineMessage );
+	friend void ProcessNetworkPacket( const unsigned int binaryAddress, const unsigned short port, const char *data, const int length, RakPeer *rakPeer, RakNetSmartPtr<RakNetSocket> rakNetSocket );
 
 	// This is done to provide custom RPC handling when in a blocking RPC
 	Packet* ReceiveIgnoreRPC( void );
@@ -680,11 +715,12 @@ protected:
 	int GetIndexFromSystemAddress( const SystemAddress systemAddress, bool calledFromNetworkThread );
 
 	//void RemoveFromRequestedConnectionsList( const SystemAddress systemAddress );
-	bool SendConnectionRequest( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex, unsigned int extraData, unsigned sendConnectionAttemptCount, unsigned timeBetweenSendConnectionAttemptsMS );
+	bool SendConnectionRequest( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex, unsigned int extraData, unsigned sendConnectionAttemptCount, unsigned timeBetweenSendConnectionAttemptsMS, RakNetTime timeoutTime, RakNetSmartPtr<RakNetSocket> socket );
 	///Get the reliability layer associated with a systemAddress.  
 	/// \param[in] systemAddress The player identifier 
 	/// \return 0 if none
 	RemoteSystemStruct *GetRemoteSystemFromSystemAddress( const SystemAddress systemAddress, bool calledFromNetworkThread, bool onlyActive ) const;
+	void ValidateRemoteSystemLookup(void) const;
 	RemoteSystemStruct *GetRemoteSystemFromGUID( const RakNetGUID guid ) const;
 	///Parse out a connection request packet
 	void ParseConnectionRequestPacket( RakPeer::RemoteSystemStruct *remoteSystem, SystemAddress systemAddress, const char *data, int byteSize);
@@ -692,11 +728,11 @@ protected:
 	void OnConnectionRequest( RakPeer::RemoteSystemStruct *remoteSystem, unsigned char *AESKey, bool setAESKey );
 	void SendConnectionRequestAccepted(RakPeer::RemoteSystemStruct *remoteSystem);
 	///Send a reliable disconnect packet to this player and disconnect them when it is delivered
-	void NotifyAndFlagForShutdown( const SystemAddress systemAddress, bool performImmediate, unsigned char orderingChannel );
+	void NotifyAndFlagForShutdown( const SystemAddress systemAddress, bool performImmediate, unsigned char orderingChannel, PacketPriority disconnectionNotificationPriority );
 	///Returns how many remote systems initiated a connection to us
 	unsigned short GetNumberOfRemoteInitiatedConnections( void ) const;
 	///Get a free remote system from the list and assign our systemAddress to it.  Should only be called from the update thread - not the user thread
-	RemoteSystemStruct * AssignSystemAddressToRemoteSystemList( const SystemAddress systemAddress, RemoteSystemStruct::ConnectMode connectionMode, unsigned connectionSocketIndex, bool *thisIPConnectedRecently );
+	RemoteSystemStruct * AssignSystemAddressToRemoteSystemList( const SystemAddress systemAddress, RemoteSystemStruct::ConnectMode connectionMode, RakNetSmartPtr<RakNetSocket> rakNetSocket, bool *thisIPConnectedRecently, SystemAddress bindingAddress );
 	///An incoming packet has a timestamp, so adjust it to be relative to this system
 	void ShiftIncomingTimestamp( unsigned char *data, SystemAddress systemAddress ) const;
 	///Get the most probably accurate clock differential for a certain player
@@ -716,7 +752,7 @@ protected:
 	/// \param[in] systemAddress The sender of the packet 
 	void HandleRPCReplyPacket( const char *data, int length, SystemAddress systemAddress );
 
-	bool IsLoopbackAddress(SystemAddress sa) const;
+	bool IsLoopbackAddress(SystemAddress sa, bool matchPort) const;
 	SystemAddress GetLoopbackAddress(void) const;
 
 	///Set this to true to terminate the Peer thread execution 
@@ -765,6 +801,7 @@ protected:
 		transferToPacketQueue_Mutex,
 		packetPool_Mutex,
 		bufferedCommands_Mutex,
+		socketQueryOutput_Mutex,
 		requestedConnectionList_Mutex,
 #endif
 		offlinePingResponse_Mutex,
@@ -806,6 +843,8 @@ protected:
 		unsigned int extraData;
 		unsigned sendConnectionAttemptCount;
 		unsigned timeBetweenSendConnectionAttemptsMS;
+		RakNetTime timeoutTime;
+		RakNetSmartPtr<RakNetSocket> socket;
 		enum {CONNECT=1, /*PING=2, PING_OPEN_CONNECTIONS=4,*/ /*ADVERTISE_SYSTEM=2*/} actionToTake;
 	};
 
@@ -846,24 +885,33 @@ protected:
 		SocketDescriptor::SocketType socketType;
 		SOCKET socket;
 		unsigned short port;
-		enum {BCS_SEND, BCS_CLOSE_CONNECTION, BCS_USE_USER_SOCKET, BCS_REBIND_SOCKET_ADDRESS, /*BCS_RPC, BCS_RPC_SHIFT,*/ BCS_DO_NOTHING} command;
+		enum {BCS_SEND, BCS_CLOSE_CONNECTION, BCS_GET_SOCKET, /* BCS_USE_USER_SOCKET, BCS_REBIND_SOCKET_ADDRESS, BCS_RPC, BCS_RPC_SHIFT,*/ BCS_DO_NOTHING} command;
 	};
 
 	// Single producer single consumer queue using a linked list
 	//BufferedCommandStruct* bufferedCommandReadIndex, bufferedCommandWriteIndex;
 	DataStructures::SingleProducerConsumer<BufferedCommandStruct> bufferedCommands;
 
+	struct SocketQueryOutput
+	{
+		SocketQueryOutput() {}
+		~SocketQueryOutput() {}
+		DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
+	};
+	DataStructures::SingleProducerConsumer< SocketQueryOutput > socketQueryOutput;
+
 	bool AllowIncomingConnections(void) const;
 
 	void PingInternal( const SystemAddress target, bool performImmediate, PacketReliability reliability );
 	bool ValidSendTarget(SystemAddress systemAddress, bool broadcast);
 	// This stores the user send calls to be handled by the update thread.  This way we don't have thread contention over systemAddresss
-	void CloseConnectionInternal( const SystemAddress target, bool sendDisconnectionNotification, bool performImmediate, unsigned char orderingChannel );
+	void CloseConnectionInternal( const SystemAddress target, bool sendDisconnectionNotification, bool performImmediate, unsigned char orderingChannel, PacketPriority disconnectionNotificationPriority );
 	void SendBuffered( const char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RemoteSystemStruct::ConnectMode connectionMode );
 	void SendBufferedList( char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, RemoteSystemStruct::ConnectMode connectionMode );
 	bool SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, char orderingChannel, SystemAddress systemAddress, bool broadcast, bool useCallerDataAllocation, RakNetTimeUS currentTime );
 	//bool HandleBufferedRPC(BufferedCommandStruct *bcs, RakNetTime time);
 	void ClearBufferedCommands(void);
+	void ClearSocketQueryOutput(void);
 	void ClearRequestedConnectionList(void);
 	void AddPacketToProducer(Packet *p);
 	unsigned int GenerateSeedFromGuid(void);
@@ -875,21 +923,10 @@ protected:
 	bool trackFrequencyTable;
 	int threadSleepTimer;
 
-	struct RakNetSocket
-	{
-		SOCKET s;
-		bool haveRakNetCloseSocket;
-		SocketDescriptor::SocketType socketType;
-	} *connectionSockets;
-
-//	SOCKET *connectionSockets;
-//	bool *haveRakNetCloseSocket; // array of bools, to dealloc connectionSockets into the same index
-	unsigned connectionSocketsLength;
-
-#if defined (_WIN32) && defined(USE_WAIT_FOR_MULTIPLE_EVENTS)
-	WSAEVENT recvEvent;
-#endif
-
+	// Smart pointer so I can return the object to the user
+	DataStructures::List<RakNetSmartPtr<RakNetSocket> > socketList;
+	void DerefAllSockets(void);
+	unsigned int GetRakNetSocketFromUserConnectionSocketIndex(unsigned int userIndex) const;
 	// Used for RPC replies
 	RakNet::BitStream *replyFromTargetBS;
 	SystemAddress replyFromTargetPlayer;
@@ -960,6 +997,23 @@ protected:
 	NetworkIDManager *networkIDManager;
 	// Systems in this list will not go through the secure connection process, even when secure connections are turned on. Wildcards are accepted.
 	DataStructures::List<RakNet::RakString> securityExceptionList;
+
+	char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
+	unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
+
+	bool allowInternalRouting;
+
+#ifndef _USE_RAKNET_FLOW_CONTROL // Use UDT
+	static int udtRefCount;
+	// UDT won't start the thread until there is one active instance of CUDT
+	UDTSOCKET udtListenSocket;
+
+	struct UDTConnectStruct
+	{
+		UDTSOCKET udtSocket;
+		sockaddr_in sa;
+	};
+#endif
 
 };
 

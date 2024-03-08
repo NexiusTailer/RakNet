@@ -192,8 +192,10 @@ static Lobby2ResultCodeDescription resultCodeDescriptions[L2RC_COUNT] =
 	{L2RC_Clans_AcceptJoinRequest_TARGET_IS_BANNED, "L2RC_Clans_AcceptJoinRequest_TARGET_IS_BANNED"},
 	{L2RC_Clans_AcceptJoinRequest_REQUEST_NOT_PENDING,"L2RC_Clans_AcceptJoinRequest_REQUEST_NOT_PENDING"},
 	{L2RC_Clans_RejectJoinRequest_UNKNOWN_CLAN, "Clans_RejectJoinRequest_UNKNOWN_CLAN"},
-	{L2RC_Clans_RejectJoinRequest_NO_SUCH_INVITATION_EXISTS, "Clans_RejectJoinRequest_NO_SUCH_INVITATION_EXISTS"},
+	{L2RC_Clans_RejectJoinRequest_NOT_IN_CLAN, "Clans_RejectJoinRequest_NOT_IN_CLAN"},
+	{L2RC_Clans_RejectJoinRequest_MUST_BE_LEADER_OR_SUBLEADER, "Clans_RejectJoinRequest_MUST_BE_LEADER_OR_SUBLEADER"},
 	{L2RC_Clans_RejectJoinRequest_REQUESTING_USER_HANDLE_UNKNOWN, "Clans_RejectJoinRequest_REQUESTING_USER_HANDLE_UNKNOWN"},
+	{L2RC_Clans_RejectJoinRequest_NO_SUCH_INVITATION_EXISTS, "Clans_RejectJoinRequest_NO_SUCH_INVITATION_EXISTS"},
 	{L2RC_Clans_KickAndBlacklistUser_UNKNOWN_CLAN, "Clans_KickAndBlacklistUser_UNKNOWN_CLAN"},
 	{L2RC_Clans_KickAndBlacklistUser_NOT_IN_CLAN, "Clans_KickAndBlacklistUser_NOT_IN_CLAN"},
 	{L2RC_Clans_KickAndBlacklistUser_UNKNOWN_TARGET_HANDLE, "Clans_KickAndBlacklistUser_UNKNOWN_TARGET_HANDLE"},
@@ -249,6 +251,6 @@ void Lobby2ResultCodeDescription::Validate(void)
 	unsigned int i;
 	for (i=0; i < L2RC_COUNT; i++)
 	{
-		RakAssert(resultCodeDescriptions[i].resultCode==i);
+		RakAssert(resultCodeDescriptions[i].resultCode==(Lobby2ResultCode)i);
 	}
 }

@@ -63,7 +63,7 @@ int main(void)
 //	puts("Enter the server port to listen on");
 //	gets(portstring);
 //	if (portstring[0]==0)
-		strcpy(portstring, "10000");
+		strcpy(portstring, "1234");
 	
 	puts("Starting server.");
 	// Starting the server is very simple.  2 players allowed.
@@ -80,6 +80,14 @@ int main(void)
 		exit(1);
 	}
 	server->SetOccasionalPing(true);
+
+	DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
+	server->GetSockets(sockets);
+	printf("Ports used by RakNet:\n");
+	for (unsigned int i=0; i < sockets.Size(); i++)
+	{
+		printf("%i. %i\n", i+1, sockets[i]->boundAddress.port);
+	}
 
 	printf("My IP is %s\n", server->GetLocalIP(0));
 	printf("My GUID is %s\n", server->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
@@ -184,7 +192,7 @@ int main(void)
 		
 			case ID_NEW_INCOMING_CONNECTION:
 				 // Somebody connected.  We have their IP now
-				printf("ID_NEW_INCOMING_CONNECTION from %s with GUID %s\n", p->systemAddress.ToString(), p->guid.ToString());
+				printf("ID_NEW_INCOMING_CONNECTION from %s with GUID %s\n", p->systemAddress.ToString(true), p->guid.ToString());
 				clientID=p->systemAddress; // Record the player ID of the client
 				break;
 

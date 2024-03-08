@@ -29,10 +29,33 @@
 #include "UDPProxyCoordinator.h"
 #include "UDPProxyClient.h"
 
+// This file is in Samples/upnp
+#include "UPNPNAT.h"
+
 static const unsigned short NAT_PUNCHTHROUGH_FACILITATOR_PORT=60481;
 static const char *NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD="";
 static const char *DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP="216.224.123.180";
 static const char *COORDINATOR_PASSWORD="Dummy Coordinator Password";
+
+// UPNP can directly tell the router to open a port (if it works)
+void OpenWithUPNP(NatPunchthroughClient *npc)
+{
+	printf("Opening UPNP...\n");
+	UPNPNAT nat;
+	nat.init();
+	if(!nat.discovery()){
+		printf("discovery error is %s\n",nat.get_last_error());
+		return;
+	}
+	// I'm not sure what use the first parameter is
+	// The second parameter is the internal IP address for RakNet
+	// The third parameter is the port other systems will connect to. The way NATPunchthrough is implemented
+	// The fourth parameter is the internal port that RakNet is bound on
+	if(!nat.add_port_mapping("Description",npc->GetUPNPInternalAddress().C_String(), npc->GetUPNPExternalPort(), npc->GetUPNPInternalPort(),"UDP")){
+		printf("add_port_mapping error is %s\n",nat.get_last_error());
+		return;
+	}
+};
 
 
 struct NatPunchthroughDebugInterface_PacketFileLogger : public NatPunchthroughDebugInterface
@@ -131,7 +154,17 @@ void GUIClientTest()
 	rakPeer->Startup(1024,0,&SocketDescriptor(0,0), 1);
 	rakPeer->SetMaximumIncomingConnections(32);
 	rakPeer->Connect(DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP, NAT_PUNCHTHROUGH_FACILITATOR_PORT, NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD, (int) strlen(NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD));
-	
+
+	DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
+	rakPeer->GetSockets(sockets);
+	printf("Ports used by RakNet:\n");
+	for (unsigned int i=0; i < sockets.Size(); i++)
+	{
+		printf("%i. %i\n", i+1, sockets[i]->boundAddress.port);
+	}
+
+	printf("My IP is %s\n", rakPeer->GetLocalIP(0));
+
 	Packet *p;
 	while (1)
 	{
@@ -207,6 +240,11 @@ void GUIClientTest()
 						}
 					}
 					RakAssert(gotAny==true);
+				}
+				else
+				{
+					// Use UPNP to open the port connections will come in on, if possible
+					OpenWithUPNP(&natPunchthroughClient);
 				}
 			}
 			else if (
@@ -323,7 +361,8 @@ void VerboseTest()
 	int i;
 	DataStructures::List<RakNet::RakString> internalIds;
 	char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
-	SocketLayer::Instance()->GetMyIP( ipList );
+	unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
+	SocketLayer::Instance()->GetMyIP( ipList, binaryAddresses );
 
 	for (i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
 	{
@@ -352,7 +391,7 @@ void VerboseTest()
 		if (str[0])
 		{
 			int index = atoi(str);
-			strcpy(socketDescriptor.hostAddress, internalIds[i-1].C_String());
+			strcpy(socketDescriptor.hostAddress, internalIds[index-1].C_String());
 		}
 	}
 	if (socketDescriptor.hostAddress[0]==0)
@@ -433,6 +472,9 @@ void VerboseTest()
 		printf("Ready.\n");
 	}
 
+	
+	printf("My GUID is %s\n", rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
+
 	printf("'c'lear the screen.\n'q'uit.\n");
 	Packet *p;
 	while (1)
@@ -446,6 +488,8 @@ void VerboseTest()
 				SystemAddress remoteAddress;
 				RakNetGUID remoteGuid;
 				bsIn.IgnoreBytes(sizeof(MessageID));
+				unsigned int addressesCount;
+				bsIn.Read(addressesCount);
 				bsIn.Read(remoteAddress);
 				bsIn.Read(remoteGuid);
 
@@ -482,6 +526,12 @@ void VerboseTest()
 			}
 			else if (p->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
 			{
+				// Use UPNP to open the port connections will come in on, if possible
+				if (p->systemAddress==facilitatorSystemAddress)
+				{
+					printf("Connected to facilitator with GUID %s.\n", p->guid.ToString());
+					OpenWithUPNP(&natPunchthroughClient);
+				}
 				if (mode[0]=='s' || mode[0]=='S')
 				{
 					printf("ID_CONNECTION_REQUEST_ACCEPTED from %s.\nMy external IP is %s\n", p->systemAddress.ToString(), rakPeer->GetExternalID(p->systemAddress).ToString());

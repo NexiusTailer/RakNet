@@ -461,18 +461,6 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
-		<Unit filename="Source\FCMHost.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="debug"/>
-			<Option target="release"/>
-		</Unit>
-		<Unit filename="Source\FCMHost.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="debug"/>
-			<Option target="release"/>
-		</Unit>
 		<Unit filename="Source\FileList.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="debug"/>
@@ -736,13 +724,6 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
-		<Unit filename="Source\Makefile.am">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="debug"/>
-			<Option target="release"/>
-		</Unit>
 		<Unit filename="Source\MessageFilter.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="debug"/>
@@ -979,27 +960,6 @@
 			<Option target="debug"/>
 			<Option target="release"/>
 		</Unit>
-		<Unit filename="Source\RakNet.vcproj">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="debug"/>
-			<Option target="release"/>
-		</Unit>
-		<Unit filename="Source\RakNet3.0.vcproj">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="debug"/>
-			<Option target="release"/>
-		</Unit>
-		<Unit filename="Source\RakNet3.0.vcproj.user">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="debug"/>
-			<Option target="release"/>
-		</Unit>
 		<Unit filename="Source\RakNetCommandParser.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="debug"/>
@@ -1013,6 +973,25 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\RakNetDefines.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\RakNetSmartPtr.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\RakNetSocket.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\RakNetSocket.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -1075,13 +1054,6 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\RakNetVersion.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="debug"/>
-			<Option target="release"/>
-		</Unit>
-		<Unit filename="Source\RakNet_vc8.vcproj">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -1528,6 +1500,18 @@
 			<Option target="release"/>
 		</Unit>
 		<Unit filename="Source\_FindFirst.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\gettimeofday.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="debug"/>
+			<Option target="release"/>
+		</Unit>
+		<Unit filename="Source\gettimeofday.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions/openssl-0.9.8g"
+				AdditionalIncludeDirectories="./../../Source;&quot;./../../DependentExtensions/openssl-0.9.8g&quot;;./../../DependentExtensions/udt4/src"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_RAKNET_DLL;_CRT_NONSTDC_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -122,7 +122,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions/openssl-0.9.8g"
+				AdditionalIncludeDirectories="./../../Source;&quot;./../../DependentExtensions/openssl-0.9.8g&quot;;./../../DependentExtensions/udt4/src"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_RELEASE;_RAKNET_DLL;_CRT_NONSTDC_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
@@ -313,6 +313,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\gettimeofday.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\GridSectorizer.cpp"
 				>
 			</File>
@@ -402,6 +406,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\RakNetCommandParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\RakNetSocket.cpp"
 				>
 			</File>
 			<File
@@ -759,6 +767,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\gettimeofday.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\GridSectorizer.h"
 				>
 			</File>
@@ -892,6 +904,14 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\RakNetDefines.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\RakNetSmartPtr.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\RakNetSocket.h"
 				>
 			</File>
 			<File
@@ -1096,6 +1116,110 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\WSAStartupSingleton.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="UDT"
+			>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\api.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\api.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\buffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\buffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\ccc.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\ccc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\channel.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\channel.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\co-op.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\co-op.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\common.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\common.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\core.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\core.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\list.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\list.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\md5.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\md5.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\packet.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\packet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\queue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\queue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\udt.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\window.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\DependentExtensions\udt4\src\window.h"
 				>
 			</File>
 		</Filter>

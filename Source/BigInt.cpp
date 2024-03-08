@@ -38,17 +38,17 @@ namespace big
 	// eg, 0 0 0 0 1 0 1 1 ... => 28 out of 32 used
 	uint32_t Degree(uint32_t v)
 	{
-#if defined(_MSC_VER) && !defined(_DEBUG)
-		unsigned long index;
-		return _BitScanReverse(&index, v) ? (index + 1) : 0;
-#else
+//#if defined(_MSC_VER) && !defined(_DEBUG)
+//		unsigned long index;
+//		return _BitScanReverse(&index, v) ? (index + 1) : 0;
+//#else
 		uint32_t r, t = v >> 16;
 
 		if (t)	r = (r = t >> 8) ? 24 + Bits256[r] : 16 + Bits256[t];
 		else 	r = (r = v >> 8) ? 8 + Bits256[r] : Bits256[v];
 
 		return r;
-#endif
+//#endif
 	}
 
 	// returns the number of limbs that are actually used
@@ -90,7 +90,7 @@ namespace big
 		memset(&lhs[1], 0, (lhs_limbs - 1)*4);
 	}
 
-#if defined(BIG_ENDIAN)
+#if defined(__BIG_ENDIAN__)
 
 	// Flip the byte order as needed to make 'n' big-endian for sharing over a network
 	void ToLittleEndian(uint32_t *n, int limbs)
@@ -108,7 +108,7 @@ namespace big
 		ToLittleEndian(n, limbs);
 	}
 
-#endif // BIG_ENDIAN
+#endif // __BIG_ENDIAN__
 
 	bool Less(int limbs, const uint32_t *lhs, const uint32_t *rhs)
 	{

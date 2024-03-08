@@ -7,7 +7,7 @@
 #include "DS_OrderedList.h"
 #include "ThreadPool.h"
 
-class PostgreSQLInterface;
+//class PostgreSQLInterface;
 
 namespace RakNet
 {
@@ -170,7 +170,7 @@ protected:
 	DataStructures::Queue<ThreadAction> threadActionQueue;
 	SimpleMutex threadActionQueueMutex;
 
-	DataStructures::List<PostgreSQLInterface *> connectionPool;
+	//DataStructures::List<PostgreSQLInterface *> connectionPool;
 };
 	
 }

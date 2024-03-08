@@ -20,6 +20,7 @@ struct Packet;
 /// \ingroup PLUGINS_GROUP
 
 /// \brief The client interface to the simple database included with RakNet, useful for a server browser or a lobby server.
+/// \depreciated Use DependentExtensions/SQLite3Plugin
 /// \ingroup SIMPLE_DATABSE_GROUP
 class RAK_DLL_EXPORT LightweightDatabaseClient : public PluginInterface2
 {

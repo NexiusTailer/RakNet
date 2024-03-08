@@ -260,9 +260,10 @@ bool Lobby2Message::ValidateEmailAddress( RakString *text )
 	return true;
 }
 bool Lobby2Message::PrevalidateInput(void) {return true;}
-bool Lobby2Message::ClientImpl( Lobby2Client *client) {return true;}
-bool Lobby2Message::ServerMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) {return false;}
-bool Lobby2Message::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface ) {resultCode=L2RC_COUNT; return true;}
+bool Lobby2Message::ClientImpl( Lobby2Client *client) { (void)client; return true; }
+bool Lobby2Message::ServerMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; return false; }
+bool Lobby2Message::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface ) { (void)command; (void)databaseInterface; resultCode=L2RC_COUNT; return true; }
+
 void CreateAccountParameters::Serialize(bool writeToBitstream, BitStream *bitStream)
 {
 	bitStream->Serialize(writeToBitstream, firstName);
@@ -391,6 +392,7 @@ void ClanJoinRequest::Serialize(bool writeToBitstream, BitStream *bitStream)
 {
 	bitStream->Serialize(writeToBitstream, targetClan);
 	bitStream->Serialize(writeToBitstream, dateSent);
+	bitStream->Serialize(writeToBitstream, joinRequestSender);
 }
 void BookmarkedUser::Serialize(bool writeToBitstream, BitStream *bitStream)
 {
@@ -586,6 +588,7 @@ void Client_Login::Serialize( bool writeToBitstream, bool serializeOutput, BitSt
 	{
 		bitStream->Serialize(writeToBitstream,bannedReason);
 		bitStream->Serialize(writeToBitstream,whenBanned);
+		bitStream->Serialize(writeToBitstream,bannedExpiration);
 	}
 }
 
@@ -1419,11 +1422,11 @@ void Clans_Get::Serialize( bool writeToBitstream, bool serializeOutput, BitStrea
 			ClanInfo obj;
 			if (writeToBitstream)
 			{
-				bitStream->Serialize(writeToBitstream, clans[i]);
+				clans[i].Serialize(writeToBitstream, bitStream);
 			}
 			else
 			{
-				bitStream->Serialize(writeToBitstream, obj);
+				obj.Serialize(writeToBitstream, bitStream);
 				clans.Insert(obj);
 			}
 		}
@@ -1520,11 +1523,11 @@ void Clans_DownloadInvitationList::Serialize( bool writeToBitstream, bool serial
 			OpenInvite obj;
 			if (writeToBitstream)
 			{
-				bitStream->Serialize(writeToBitstream, invitations[i]);
+				invitations[i].Serialize(writeToBitstream, bitStream);
 			}
 			else
 			{
-				bitStream->Serialize(writeToBitstream, obj);
+				obj.Serialize(writeToBitstream, bitStream);
 				invitations.Insert(obj);
 			}
 		}
@@ -1623,11 +1626,11 @@ void Clans_DownloadRequestList::Serialize( bool writeToBitstream, bool serialize
 			ClanJoinRequest obj;
 			if (writeToBitstream)
 			{
-				bitStream->Serialize(writeToBitstream, joinRequestsToMyClan[i]);
+				joinRequestsToMyClan[i].Serialize(writeToBitstream, bitStream);
 			}
 			else
 			{
-				bitStream->Serialize(writeToBitstream, obj);
+				obj.Serialize(writeToBitstream, bitStream);
 				joinRequestsToMyClan.Insert(obj);
 			}
 		}
@@ -1639,11 +1642,11 @@ void Clans_DownloadRequestList::Serialize( bool writeToBitstream, bool serialize
 			ClanJoinRequest obj;
 			if (writeToBitstream)
 			{
-				bitStream->Serialize(writeToBitstream, joinRequestsFromMe[i]);
+				joinRequestsFromMe[i].Serialize(writeToBitstream, bitStream);
 			}
 			else
 			{
-				bitStream->Serialize(writeToBitstream, obj);
+				obj.Serialize(writeToBitstream, bitStream);
 				joinRequestsFromMe.Insert(obj);
 			}
 		}
@@ -2005,6 +2008,7 @@ void RakNet::Notification_Clans_KickAndBlacklistUser::Serialize( bool writeToBit
 	bitStream->Serialize(writeToBitstream, targetHandle);
 	bitStream->Serialize(writeToBitstream, blacklistingUserHandle);
 	bitStream->Serialize(writeToBitstream, targetHandleWasKicked);
+	bitStream->Serialize(writeToBitstream, reason);
 }
 
 void RakNet::Notification_Clans_UnblacklistUser::Serialize( bool writeToBitstream, bool serializeOutput, RakNet::BitStream *bitStream )
@@ -2025,6 +2029,7 @@ void RakNet::Notification_Clans_Destroyed::Serialize( bool writeToBitstream, boo
 
 bool RakNet::Client_StartIgnore::ClientImpl( Lobby2Client *client )
 {
+	(void)client;
 //	if (resultCode==L2RC_SUCCESS)
 //		client->AddToIgnoreList(targetHandle);
 	return true;
@@ -2032,6 +2037,7 @@ bool RakNet::Client_StartIgnore::ClientImpl( Lobby2Client *client )
 
 bool RakNet::Client_StopIgnore::ClientImpl( Lobby2Client *client )
 {
+	(void)client;
 //	if (resultCode==L2RC_SUCCESS)
 //		client->RemoveFromIgnoreList(targetHandle);
 	return true;
@@ -2039,6 +2045,7 @@ bool RakNet::Client_StopIgnore::ClientImpl( Lobby2Client *client )
 
 bool RakNet::Client_GetIgnoreList::ClientImpl( Lobby2Client *client )
 {
+	(void)client;
 //	if (resultCode==L2RC_SUCCESS)
 //		client->SetIgnoreList(ignoredHandles);
 	return true;

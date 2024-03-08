@@ -39,7 +39,7 @@ void main(void)
 		printf("Enter server IP: ");
 		gets(serverIP);
 		if (serverIP[0]==0)
-			strcpy(serverIP,"216.224.123.180");	
+			strcpy(serverIP,"127.0.0.1");	
 	}
 	char clientIP[64];
 	RakPeerInterface *rakPeer;

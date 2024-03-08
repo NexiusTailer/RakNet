@@ -11,6 +11,7 @@
 #include <netinet/in.h>
 #endif
 
+// If you get fatal error C1083: Cannot open include file: 'mysql.h' then you need to install MySQL. See readme.txt in this sample directory.
 #include "mysql.h"
 #include "CreatePatch.h"
 #include "AutopatcherPatchContext.h"

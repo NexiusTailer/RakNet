@@ -13,7 +13,7 @@
 #	define byteswap_ulong _byteswap_ulong
 #endif
 
-#if !defined(LITTLE_ENDIAN) && !defined(BIG_ENDIAN)
+#if !defined(LITTLE_ENDIAN) && !defined(__BIG_ENDIAN__)
 # if defined(__sparc) || defined(__sparc__) || defined(__powerpc__) || \
 	defined(__ppc__) || defined(__hppa) || defined(_MIPSEB) || defined(_POWER) || \
 	defined(_M_PPC) || defined(_M_MPPC) || defined(_M_MRX000) || \
@@ -23,7 +23,7 @@
 	defined(__convex__) || defined(DGUX) || defined(hppa) || defined(apollo) || \
 	defined(_CRAY) || defined(__hp9000) || defined(__hp9000s300) || defined(_AIX) || \
 	defined(__AIX) || defined(__pyr__) || defined(hp9000s700) || defined(_IBMR2)
-#  define BIG_ENDIAN
+#  define __BIG_ENDIAN__
 # elif defined(__i386__) || defined(i386) || defined(intel) || defined(_M_IX86) || \
 	  defined(__alpha__) || defined(__alpha) || defined(__ia64) || defined(__ia64__) || \
 	  defined(_M_ALPHA) || defined(ns32000) || defined(__ns32000__) || defined(sequent) || \

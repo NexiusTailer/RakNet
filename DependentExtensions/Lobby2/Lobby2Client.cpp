@@ -43,6 +43,9 @@ PluginReceiveResult Lobby2Client::OnReceive(Packet *packet)
 }
 void Lobby2Client::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
+	(void)systemAddress;
+	(void)rakNetGUID;
+	(void)lostConnectionReason;
 //	if (systemAddress==serverAddress)
 //		ClearIgnoreList();
 }

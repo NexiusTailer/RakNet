@@ -81,7 +81,7 @@ int main(void)
 	Packet *packet;
 	bool peer1GotMessage, peer2GotMessage;
 
-	seedMT(RakNet::GetTimeMS());
+	seedMT((unsigned int) RakNet::GetTimeMS());
 
 	keyLoaded=false;
 

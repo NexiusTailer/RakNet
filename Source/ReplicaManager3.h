@@ -15,6 +15,7 @@
 #include "PacketPriority.h"
 #include "PluginInterface2.h"
 #include "NetworkIDObject.h"
+#include "RakNetSmartPtr.h"
 
 namespace RakNet
 {
@@ -87,10 +88,8 @@ public:
 	/// \brief Stop tracking a connection, and optionally destroy all objects created by that system
 	/// If \a autoDestroy is false for SetAutoManageConnections(), then you need to manually have the system stop connections.
 	/// PopConnection() will do so, and return that connection instance to you.
-	/// If \a alsoDeleteCreatedReplicas is true, then the system will call GetReplicasCreatedByGuid() to get all objects that that system originally created, BroadcastDestructionList() to send destruction packets for them all, and Replica3::DeallocReplica() to destroy them
 	/// \param[in] guid of the connection to get. Passed to ReplicaManager3::AllocConnection() originally. 
-	/// \param[in] alsoDeleteCreatedReplicas If true, destroy all Replica3 instances passed to ReplicaManager3::Reference() that this system originally created.
-	RakNet::Connection_RM3 * PopConnection(RakNetGUID guid, bool alsoDeleteCreatedReplicas);
+	RakNet::Connection_RM3 * PopConnection(RakNetGUID guid);
 
 	/// \brief Adds a replicated object to the system.
 	/// Anytime you create a new object that derives from Replica3, and you want ReplicaManager3 to use it, pass it to Reference()
@@ -234,6 +233,7 @@ protected:
 	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 
+	void OnConstructionExisting(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 	void OnConstruction(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 	void OnSerialize(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, RakNetTime timestamp, unsigned char packetDataOffset);
 	void OnLocalConstructionRejected(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
@@ -261,12 +261,9 @@ struct LastSerializationResult
 
 	/// The replica instance we serialized
 	RakNet::Replica3 *replica;
-	/// The last data that was sent. Do not modify
-	RakNet::BitStream *lastSerializationSent;
-	/// Internal - do not send for this replica / connection pair
+	// Last data we sent
+	RakNet::BitStream bitStream;
 	bool neverSerialize;
-	/// \internal - Static means assume it always exists on the remote system. Skip for construction and destruction
-	bool isStatic;
 };
 
 /// Parameters passed to Replica3::Serialize()
@@ -277,7 +274,7 @@ struct SerializeParameters
 	RakNet::BitStream outputBitstream;
 
 	/// What we sent, the last time we sent data over the network
-	RakNet::BitStream *lastSerializationSent;
+	const RakNet::BitStream *lastSerializationSent;
 
 	/// Set to non-zero to transmit a timestamp with this message.
 	/// Defaults to 0
@@ -316,20 +313,12 @@ public:
 
 	/// \brief Get list of all replicas that are constructed for this connection
 	/// \param[out] objectsTheyDoHave Destination list. Returned in sorted ascending order, sorted on the value of the Replica3 pointer.
-	virtual void GetConstructedReplicas(DataStructures::Multilist<ML_ORDERED_LIST, LastSerializationResult*, Replica3*> &objectsTheyDoHave);
+	virtual void GetConstructedReplicas(DataStructures::Multilist<ML_STACK, Replica3*> &objectsTheyDoHave);
 
 	/// Returns true if we think this remote connection has this replica constructed
 	/// \param[in] replica3 Which replica we are querying
 	/// \return True if constructed, false othewise
 	bool HasReplicaConstructed(RakNet::Replica3 *replica);
-
-	/// Called periodically when the autoserialize interval set by ReplicaManager3::SetAutoSerializeInterval() elapses
-	/// Defaults to at least 30 milliseconds
-	/// Override to take more complex actions when serializing objects, or call ReplicaManager3::SetAutoSerializeInterval(0) to disable this feature and serialize objects in your own way
-	/// Default implementation is to call Connection_RM3::SendSerializeIfChanged() for each member of constructedReplicas
-	/// \param[in] defaultSendParameters Send parameters to use for serialization
-	/// \param[in] rm3 Calling plugin instance
-	virtual void OnAutoserializeInterval(PRO defaultSendParameters, ReplicaManager3 *rm3);
 
 	/// Sends over a serialization update for \a replica
 	/// NetworkID::GetNetworkID() is written automatically, serializationData is the object data
@@ -345,19 +334,18 @@ public:
 	/// \internal
 	/// Calls Connection_RM3::SendSerialize() if Replica3::Serialize() returns a different result than what is contained in \a lastSerializationResult
 	/// Used by autoserialization in Connection_RM3::OnAutoserializeInterval()
-	/// \param[in] lastSerializationResult What we sent the last time we sent anything
+	/// \param[in] constructedReplicasIndex Index into constructedReplicas for whichever replica this is
 	/// \param[in] sp Controlling parameters over the serialization
 	/// \param[in] rakPeer Instance of RakPeerInterface to send on
 	/// \param[in] worldId Which world, see ReplicaManager3::SetWorldID()
-	/// \param[in] forceForNewConnection Ignore any prior results - this is a new connection that was not processed in the normal loop
-	virtual void SendSerializeIfChanged(LastSerializationResult *lastSerializationResult, SerializeParameters *sp, RakPeerInterface *rakPeer, unsigned char worldId, bool forceForNewConnection);
+	/// \return true if anything was sent, false otherwise
+	virtual bool SendSerializeIfChanged(DataStructures::DefaultIndexType constructedReplicasIndex, SerializeParameters *sp, RakPeerInterface *rakPeer, unsigned char worldId);
 
 	/// \internal
 	/// Called for each connection when ReplicaManager3::Reference() is called
 	/// Adds a Replica3* from the constructedReplicas list
 	/// \param[in] replica Which replica to reference
-	/// \param[in] isStatic If true, the object is assumed to remotely exist without actually sending it.
-	LastSerializationResult * Reference(Replica3* replica, bool isStatic);
+	RakNetSmartPtr<LastSerializationResult> Reference(Replica3* replica);
 
 	/// \internal
 	/// Called for each connection when ReplicaManager3::Dereference() is called
@@ -391,9 +379,6 @@ public:
 	/// \param[in] worldId Which world, see ReplicaManager3::SetWorldID()
 	virtual void SendConstruction(DataStructures::Multilist<ML_STACK, Replica3*> &newObjects, DataStructures::Multilist<ML_STACK, Replica3*> &deletedObjects, PRO sendParameters, RakPeerInterface *rakPeer, unsigned char worldId);
 
-	/// Before the first call to SendConstruction(), returns true. After, returns false.
-	bool IsInitialDownload(void) const;
-
 	/// \internal
 	/// Remove from \a newObjectsIn objects that already exist and save to \a newObjectsOut
 	/// Remove from \a deletedObjectsIn objects that do not exist, and save to \a deletedObjectsOut
@@ -403,15 +388,18 @@ public:
 		DataStructures::Multilist<ML_STACK, Replica3*> &deletedObjectsOut);
 
 	/// \internal
-	void SetDownloadWasSent(bool b);
+	void SendValidation(RakPeerInterface *rakPeer, unsigned char worldId);
+
+
+	// Internal - does the other system have this connection too? Validated means we can now use it
+	bool isValidated;
 
 protected:
 
 	SystemAddress systemAddress;
 	RakNetGUID guid;
-	DataStructures::Multilist<ML_ORDERED_LIST, LastSerializationResult*, Replica3*> constructedReplicas;
-	bool downloadWasSent; // If true, SendConstruction was called at least once
-
+	DataStructures::Multilist<ML_ORDERED_LIST, RakNetSmartPtr<LastSerializationResult>, Replica3*> constructedReplicas;
+	friend class ReplicaManager3;
 private:
 	Connection_RM3() {};
 };
@@ -422,12 +410,15 @@ private:
 enum RM3ConstructionState
 {
 	/// This object should exist on the remote system. Send a construction message if necessary
+	/// If the NetworkID is already in use, it will not do anything
+	/// If it is not in use, it will create the object, and then call DeserializeConstruction
 	RM3CS_SEND_CONSTRUCTION,
 
 	/// This object should exist on the remote system.
 	/// The other system already has the object, and the object will never be deleted.
 	/// This is true of objects that are loaded with the level, for example.
 	/// Treat it as if it existed, without sending a construction message.
+	/// Will call SerializeConstructionExisting() to the object on the remote system
 	RM3CS_ALREADY_EXISTS_REMOTELY,
 
 	/// This object should not exist on the remote system. Send a destruction message if necessary.
@@ -441,14 +432,18 @@ enum RM3ConstructionState
 enum RM3SerializationResult
 {
 	/// This object serializes identically no matter who we send to
-	/// Efficient, because only one copy of Replica3's serialized data needs to be saved no matter how many systems we are connected to
-	/// If you don't know what to return, return this
-	RM3SR_SERIALIZED_IDENTICALLY,
+	/// We also send it to every connection (broadcast).
+	/// Efficient for memory, speed, and bandwidth but only if the object is always broadcast identically.
+	RM3SR_BROADCAST_IDENTICALLY,
 
-	/// This object serializes differently depending on who we send to
-	/// Not efficient, because a copy of Replica3's serialized data has to be saved for every connection.
-	/// Do not use unless needed
+	/// Either this object serializes differently depending on who we send to or we send it to some systems and not others.
+	/// Inefficient for memory and speed, but efficient for bandwidth
+	/// However, if you don't know what to return, return this
 	RM3SR_SERIALIZED_UNIQUELY,
+
+	/// Do not compare against last sent value. Just send no matter what
+	/// Efficient for memory and speed, but not necessarily bandwidth
+	RM3SR_SERIALIZED_ALWAYS,
 
 	/// Do not serialize this object this tick, for this connection. Will query again next autoserialize timer
 	RM3SR_DO_NOT_SERIALIZE,
@@ -457,6 +452,13 @@ enum RM3SerializationResult
 	/// Useful for objects that are downloaded, and never change again
 	/// Efficient
 	RM3SR_NEVER_SERIALIZE_FOR_THIS_CONNECTION,
+};
+
+enum RM3ActionOnPopConnection
+{
+	RM3AOPC_DO_NOTHING,
+	RM3AOPC_DELETE_REPLICA,
+	RM3AOPC_DELETE_REPLICA_AND_BROADCAST_DESTRUCTION,
 };
 
 
@@ -479,7 +481,7 @@ public:
 	/// \param[out] allocationIdBitstream Bitstream for the user to write to, to identify this class
 	virtual void WriteAllocationID(RakNet::BitStream *allocationIdBitstream) const=0;
 
-	/// \brief Query to see if this object should exist or be destroyed for a given remote system
+	/// \brief This object does not exist on this system. Queried every tick to see if it should be created
 	/// If ReplicaManager3::SetAutoManageConnections() is true, then this function is called by ReplicaManager3::Update() to determine if an object should exist on a given system. 
 	/// If an object previously existed, but no longer does, a network message will be automatically sent to destroy it
 	/// Likewise, if an object did not previously exist, but now does, a network message will be automatically sent to create it.
@@ -488,6 +490,12 @@ public:
 	/// \param[in] replicaManager3 Plugin instance for this Replica3
 	/// \return What action to take
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3)=0;
+
+	/// \brief This object already exists on this system. Queried every tick to see if it should still exist
+	/// \param[in] destinationConnection Which system we will send to
+	/// \param[in] replicaManager3 Plugin instance for this Replica3
+	/// \return What action to take. Only RM3CS_SEND_DESTRUCTION does anything at this time.
+	virtual RM3ConstructionState QueryDestruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {(void) destinationConnection; (void) replicaManager3; return RM3CS_NO_ACTION;}
 
 	/// \brief Should I allow this object to be created remotely, based solely on the sender?
 	/// \note Defaults are provided: QueryRemoteConstruction_PeerToPeer(), QueryRemoteConstruction_ServerConstruction(), QueryRemoteConstruction_ClientConstruction(). Return one of these functions for a working default for the relevant topology.
@@ -510,6 +518,14 @@ public:
 	/// \return true to accept construction of the object. false to reject, in which case the object will be deleted via Replica3::DeallocReplica()
 	virtual bool DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection)=0;
 
+	/// Same as SerializeConstruction(), but for an object that already exists on the remote system.
+	/// Used if you return RM3CS_ALREADY_EXISTS_REMOTELY from QueryConstruction
+	virtual void SerializeConstructionExisting(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {(void) constructionBitstream; (void) destinationConnection;};
+
+	/// Same as DeserializeConstruction(), but for an object that already exists on the remote system.
+	/// Used if you return RM3CS_ALREADY_EXISTS_REMOTELY from QueryConstruction
+	virtual void DeserializeConstructionExisting(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {(void) constructionBitstream; (void) sourceConnection;};
+
 	/// \brief Write extra data to send with the object deletion event, if desired
 	/// Replica3::SerializeDestruction() will be called to write any object destruction specific data you want to send with this event.
 	/// \a destructionBitstream can be read in DeserializeDestruction()
@@ -522,10 +538,12 @@ public:
 	/// Return false to not delete it. If you delete it at a later point, you are responsible for calling BroadcastDestruction() yourself.
 	virtual bool DeserializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *sourceConnection)=0;
 
+	/// \brief The system is asking what to do with this replica when the connection is dropped
+	virtual RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3 *droppedConnection) const {(void) droppedConnection; return RM3AOPC_DELETE_REPLICA_AND_BROADCAST_DESTRUCTION;}
+
 	/// \brief Override with {delete this;}
 	/// 1. Got a remote message to delete this object which passed DeserializeDestruction(), OR
 	/// 2. ReplicaManager3::SetAutoManageConnections() was called autoDestroy true (which is the default setting), and a remote system that owns this object disconnected) OR
-	/// 3. ReplicaManager3::PopConnection() was called with alsoDeleteCreatedReplicas as true
 	///
 	/// Override with {delete this;} to actually delete the object (and any other processing you wish).
 	/// If you don't want to delete the object, just do nothing, however, the system will not know this so you are responsible for deleting it yoruself later.
@@ -586,7 +604,6 @@ public:
 	virtual void PostDeserializeConstruction(RakNet::Connection_RM3 *sourceConnection) {(void) sourceConnection;}
 
 	/// Called after DeserializeDestruction completes for the object successfully, but obviously before the object is deleted
-	/// Also called in PopConnection() if alsoDeleteCreatedReplicas is true
 	/// Override to trigger some sort of event when you know the object has completed destruction.
 	/// \param[in] sourceConnection System that sent us this network message.
 	virtual void PreDestruction(RakNet::Connection_RM3 *sourceConnection) {(void) sourceConnection;}
@@ -627,22 +644,12 @@ public:
 	/// GUID of the system that caused the item to send a deletion command over the network
 	RakNetGUID deletingSystemGUID;
 
-	/// ------------- All internal after here ------------------
-	/// \internal
-	void SwapIdenticalSerializationPointers(void);
-	/// \internal
-	bool serializesIdenticallyThisTick, serializedNothingIdenticallyThisTick;	
-	/// \internal
-	RakNetTime identicalSerializationTimestamp;
-	/// \internal
-	PRO identicalSerializationPRO;
-	/// \internal
-	RakNet::BitStream *identicalSerializationThisTick,*identicalSerializationLastTick;
-	/// \internal
-	RakNet::BitStream identicalSerializationTick1,identicalSerializationTick2;
 	/// \internal
 	/// ReplicaManager3 plugin associated with this object
 	ReplicaManager3 *replicaManager;
+
+	RakNetSmartPtr<LastSerializationResult> lastSentSerialization;
+	bool forceSendUntilNextUpdate;
 };
 
 

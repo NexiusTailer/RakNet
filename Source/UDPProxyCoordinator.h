@@ -59,6 +59,7 @@ namespace RakNet
 		struct ForwardingRequest
 		{
 			RakNetTimeMS timeoutOnNoDataMS;
+			RakNetTimeMS timeoutAfterSuccess;
 			SenderAndTargetAddress sata;
 			SystemAddress requestingAddress; // Which system originally sent the network message to start forwarding
 			SystemAddress currentlyAttemptedServerAddress;

@@ -147,7 +147,7 @@ bool BaseIrrlichtReplica::DeserializeConstruction(RakNet::BitStream *constructio
 }
 RM3SerializationResult BaseIrrlichtReplica::Serialize(RakNet::SerializeParameters *serializeParameters)
 {
-	return RM3SR_SERIALIZED_IDENTICALLY;
+	return RM3SR_BROADCAST_IDENTICALLY;
 }
 void BaseIrrlichtReplica::Deserialize(RakNet::BitStream *serializationBitstream, RakNetTime timeStamp, RakNet::Connection_RM3 *sourceConnection)
 {
@@ -230,7 +230,7 @@ RM3SerializationResult PlayerReplica::Serialize(RakNet::SerializeParameters *ser
 	serializeParameters->outputBitstream.Write(rotationAroundYAxis);
 	serializeParameters->outputBitstream.Write(isMoving);
 	serializeParameters->outputBitstream.Write(IsDead());
-	return RM3SR_SERIALIZED_IDENTICALLY;
+	return RM3SR_BROADCAST_IDENTICALLY;
 }
 void PlayerReplica::Deserialize(RakNet::BitStream *serializationBitstream, RakNetTime timeStamp, RakNet::Connection_RM3 *sourceConnection)
 {
@@ -411,7 +411,7 @@ void BallReplica::PreDestruction(RakNet::Connection_RM3 *sourceConnection)
 RM3SerializationResult BallReplica::Serialize(RakNet::SerializeParameters *serializeParameters)
 {
 	BaseIrrlichtReplica::Serialize(serializeParameters);
-	return RM3SR_SERIALIZED_IDENTICALLY;
+	return RM3SR_BROADCAST_IDENTICALLY;
 }
 void BallReplica::Deserialize(RakNet::BitStream *serializationBitstream, RakNetTime timeStamp, RakNet::Connection_RM3 *sourceConnection)
 {

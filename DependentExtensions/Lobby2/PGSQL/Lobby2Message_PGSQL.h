@@ -51,14 +51,14 @@ int GetActiveClanCount(unsigned int userId, PostgreSQLInterface *pgsql);
 bool CreateAccountParametersFailed( CreateAccountParameters &createAccountParameters, RakNet::Lobby2ResultCode &resultCode, Lobby2ServerCommand *command, PostgreSQLInterface *pgsql);
 void UpdateAccountFromMissingCreationParameters(CreateAccountParameters &createAccountParameters, unsigned int userPrimaryKey, Lobby2ServerCommand *command, PostgreSQLInterface *pgsql);
 
-__L2_MSG_DB_HEADER(Platform_Startup, PGSQL) {virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface ) {return false;}};
-__L2_MSG_DB_HEADER(Platform_Shutdown, PGSQL) {virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface ) {return false;}};
-__L2_MSG_DB_HEADER(System_CreateDatabase, PGSQL) {virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(System_DestroyDatabase, PGSQL) {virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(System_CreateTitle, PGSQL) {virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Platform_Startup, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface ) { (void)command; (void)databaseInterface; return false; }};
+__L2_MSG_DB_HEADER(Platform_Shutdown, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface ) { (void)command; (void)databaseInterface; return false; }};
+__L2_MSG_DB_HEADER(System_CreateDatabase, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(System_DestroyDatabase, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(System_CreateTitle, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(System_DestroyTitle, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(System_GetTitleRequiredAge, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(System_GetTitleBinaryData, PGSQL) {virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(System_GetTitleBinaryData, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(System_RegisterProfanity, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(System_BanUser, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(System_UnbanUser, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
@@ -104,271 +104,38 @@ __L2_MSG_DB_HEADER(Ranking_PruneMatches, PGSQL){virtual bool ServerDBImpl( Lobby
 __L2_MSG_DB_HEADER(Ranking_UpdateRating, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Ranking_WipeRatings, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 __L2_MSG_DB_HEADER(Ranking_GetRating, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_Create, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_SetProperties, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_GetProperties, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_SetMyMemberProperties, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_GrantLeader, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_SetSubleaderStatus, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_SetMemberRank, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_GetMemberProperties, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_ChangeHandle, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_Leave, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_Get, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_SendJoinInvitation, PGSQL){ virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_WithdrawJoinInvitation, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_AcceptJoinInvitation, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_RejectJoinInvitation, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_DownloadInvitationList, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_SendJoinRequest, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-__L2_MSG_DB_HEADER(Clans_WithdrawJoinRequest, PGSQL){	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
-
-
-__L2_MSG_DB_HEADER(Clans_AcceptJoinRequest, PGSQL)
-{
-	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
-	{
-		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result;
-
-		unsigned int clanId = GetClanIdFromHandle(clanHandle, pgsql);
-		if (clanId==0)
-		{
-			resultCode=L2RC_Clans_AcceptJoinRequest_UNKNOWN_CLAN;
-			return true;
-		}
-
-		bool isSubleader;
-		RakNet::ClanMemberState clanMemberState = GetClanMemberState(clanId, command->callerUserId, &isSubleader, pgsql);
-		if (clanMemberState!=CMD_ACTIVE)
-		{
-			resultCode=L2RC_Clans_AcceptJoinRequest_NOT_IN_CLAN;
-			return true;
-		}
-
-		unsigned int clanLeaderId = GetClanLeaderId(clanId, pgsql);
-		if (isSubleader==false && clanLeaderId!=command->callerUserId)
-		{
-			resultCode=L2RC_Clans_AcceptJoinRequest_MUST_BE_LEADER_OR_SUBLEADER;
-			return true;
-		}
-
-		// Does target already have an entry?
-		unsigned int targetId = RakNet::GetUserRowFromHandle(requestingUserHandle, pgsql);
-		if (targetId==0)
-		{
-			resultCode=L2RC_Clans_AcceptJoinRequest_UNKNOWN_TARGET_HANDLE;
-			return true;
-		}
-
-		if (targetId==command->callerUserId)
-		{
-			resultCode=L2RC_Clans_AcceptJoinRequest_CANNOT_PERFORM_ON_SELF;
-			return true;
-		}
-
-		bool isTargetSubleader;
-		RakNet::ClanMemberState targetClanMemberState = GetClanMemberState(clanId, targetId, &isTargetSubleader, pgsql);
-		if (targetClanMemberState==CMD_ACTIVE)
-		{
-			// active member
-			resultCode=L2RC_Clans_AcceptJoinRequest_TARGET_ALREADY_IN_CLAN;
-			return true;
-		}
-
-		if (targetClanMemberState==CMD_BANNED)
-		{
-			resultCode=L2RC_Clans_AcceptJoinRequest_TARGET_IS_BANNED;
-			return true;
-		}
-
-		if (targetClanMemberState!=CMD_JOIN_REQUESTED)
-		{
-			resultCode=L2RC_Clans_AcceptJoinRequest_REQUEST_NOT_PENDING;
-			return true;
-		}
-
-		// Change status to clan member
-		result = pgsql->QueryVaridic("UPDATE lobby2.clanMembers SET memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active') WHERE userId_fk=%i AND clanId_fk=%i", targetId, clanId);
-		PQclear(result);
-
-		// Do AFTER the update in case another thread also added to a clan
-		if (failIfAlreadyInClan)
-		{
-			int count = GetActiveClanCount(targetId, pgsql);
-			if (count>1)
-			{
-				result = pgsql->QueryVaridic("DELETE FROM lobby2.clanMembers WHERE userId_fk=%i AND clanId_fk=%i;", targetId, clanId);
-				PQclear(result);
-				resultCode=L2RC_Clans_AcceptJoinRequest_TARGET_ALREADY_IN_DIFFERENT_CLAN;
-				return true;
-			}
-		}
-
-		// Notify all members about this new member
-		DataStructures::List<ClanMemberDescriptor> clanMembers;
-		GetClanMembers(clanId, clanMembers, pgsql);
-		for (unsigned int i=0; i < clanMembers.Size(); i++)
-		{
-			if (clanMembers[i].memberState!=CMD_ACTIVE)
-				continue;
-			if (clanMembers[i].userId==command->callerUserId )
-				continue;
-
-			Notification_Clans_NewClanMember *notification = (Notification_Clans_NewClanMember *) command->server->GetMessageFactory()->Alloc(L2MID_Notification_Clans_NewClanMember);
-			notification->clanHandle=clanHandle;
-			notification->targetHandle=requestingUserHandle;	
-			command->server->AddOutputFromThread(notification, clanMembers[i].userId, ""); // subleader
-
-		}
-
-		// Send email to member
-		SendEmail(targetId, command->callerUserId, requestingUserHandle, command->server, subject, body, &binaryData, emailStatus, "Clans_AcceptJoinRequest", pgsql);
-
-		resultCode=L2RC_SUCCESS;
-		return true;
-	}
-};
-
-__L2_MSG_DB_HEADER(Clans_RejectJoinRequest, PGSQL)
-{
-	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
-	{
-		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result;
-		Notification_Clans_PendingJoinStatus notification;
-		//notification.userName="Leader and subleaders of the clan, other than clanMemberHandle. Also the targetHandle.";
-		notification.clanHandle="The clan handle";
-		notification.targetHandle="The guy sent the original join request";
-		notification.clanMemberHandle="The guy that rejected the join request";
-		notification.majorOp=Notification_Clans_PendingJoinStatus::JOIN_CLAN_REQUEST;
-		notification.minorOp=Notification_Clans_PendingJoinStatus::JOIN_REJECTED;
-		notification.resultCode=L2RC_SUCCESS;
-		command->server->AddOutputFromThread(&notification, 0, "");
-
-		resultCode=L2RC_SUCCESS;
-		return true;
-	}
-};
-
-__L2_MSG_DB_HEADER(Clans_DownloadRequestList, PGSQL)
-{
-	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
-	{
-		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result;
-
-		/*
-
-		-- Get all clanMembers that are in state requested of all clans where I am the leader or subleader
-		SELECT userId_fk, clanId, creationDate, U.handle, C.clanHandle FROM lobby2.clanMembers INNER JOIN
-		(SELECT clanId_pk as clanId FROM lobby2.clans WHERE leaderUserId_fk=1
-		UNION ALL
-		SELECT clanId_fk as clanId FROM lobby2.clanMembers WHERE isSubleader=TRUE AND userId_fk=1) as clansWhereIAmLeaderOrSubleader
-		ON clansWhereIAmLeaderOrSubleader.clanId=lobby2.clanMembers.clanId_fk
-		INNER JOIN lobby2.users U ON U.userId_pk = userId_fk
-		INNER JOIN lobby2.clans C ON C.clanId_pk = clanId
-		WHERE lobby2.clanMembers.memberState_fk=(SELECT stateId_pk FROM lobby2.clanMemberStates WHERE description='ClanMember_Active');
-
-			*/
-
-		resultCode=L2RC_SUCCESS;
-		return true;
-	}
-};
-
-__L2_MSG_DB_HEADER(Clans_KickAndBlacklistUser, PGSQL)
-{
-	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
-	{
-		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result;
-		Notification_Clans_KickAndBlacklistUser notification;
-		//notification.userName="Leader and subleaders of the clan, other than blacklistingUserHandle.";
-		notification.clanHandle="The clan handle";
-		notification.targetHandle="The guy kicked out";
-		notification.blacklistingUserHandle="The leader or subleader that initiated this operation";
-		notification.targetHandleWasKicked=true;
-		notification.resultCode=L2RC_SUCCESS;
-		command->server->AddOutputFromThread(&notification, 0, "");
-
-		// If user was in the clan, send Notification_Clans_Leave to them.
-		if (notification.targetHandleWasKicked)
-		{
-			Notification_Clans_Leave notification;
-			//notification.userName="All clan members, other than leaders and subleaders";
-			notification.clanHandle=notification.clanHandle;
-			notification.targetHandle=notification.targetHandle;
-			notification.resultCode=L2RC_SUCCESS;
-			command->server->AddOutputFromThread(&notification, 0, "");
-		}
-
-		resultCode=L2RC_SUCCESS;
-		return true;
-	}
-};
-
-__L2_MSG_DB_HEADER(Clans_UnblacklistUser, PGSQL)
-{
-	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
-	{
-		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result;
-		Notification_Clans_UnblacklistUser notification;
-		//notification.userName="Leader and subleaders of the clan, other than unblacklistingUserHandle.";
-		notification.clanHandle="The clan handle";
-		notification.targetHandle="The guy no longer blacklisted";
-		notification.unblacklistingUserHandle="For now, always the clan leader";
-		notification.resultCode=L2RC_SUCCESS;
-		command->server->AddOutputFromThread(&notification, 0, "");
-
-		resultCode=L2RC_SUCCESS;
-		return true;
-	}
-};
-
-__L2_MSG_DB_HEADER(Clans_GetBlacklist, PGSQL)
-{
-	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
-	{
-		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result = pgsql->QueryVaridic("");
-		if (result!=0)
-		{
-			PQclear(result);
-			resultCode=L2RC_SUCCESS;
-		}
-		else
-		{
-			resultCode=L2RC_SUCCESS;
-		}
-		return true;
-	}
-};
-
-__L2_MSG_DB_HEADER(Clans_GetMembers, PGSQL)
-{
-	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
-	{
-		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-		PGresult *result = pgsql->QueryVaridic("");
-		if (result!=0)
-		{
-			PQclear(result);
-			resultCode=L2RC_SUCCESS;
-		}
-		else
-		{
-			resultCode=L2RC_SUCCESS;
-		}
-		return true;
-	}
-};
+__L2_MSG_DB_HEADER(Clans_Create, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_SetProperties, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_GetProperties, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_SetMyMemberProperties, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_GrantLeader, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_SetSubleaderStatus, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_SetMemberRank, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_GetMemberProperties, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_ChangeHandle, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_Leave, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_Get, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_SendJoinInvitation, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_WithdrawJoinInvitation, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_AcceptJoinInvitation, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_RejectJoinInvitation, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_DownloadInvitationList, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_SendJoinRequest, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_WithdrawJoinRequest, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_AcceptJoinRequest, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_RejectJoinRequest, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_DownloadRequestList, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_KickAndBlacklistUser, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_UnblacklistUser, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_GetBlacklist, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
+__L2_MSG_DB_HEADER(Clans_GetMembers, PGSQL){virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface );};
 
 __L2_MSG_DB_HEADER(Clans_CreateBoard, PGSQL)
 {
 	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 	{
+		(void)command;
+
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
 		PGresult *result = pgsql->QueryVaridic("");
 		if (result!=0)
@@ -388,6 +155,8 @@ __L2_MSG_DB_HEADER(Clans_DestroyBoard, PGSQL)
 {
 	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 	{
+		(void)command;
+
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
 		PGresult *result = pgsql->QueryVaridic("");
 		if (result!=0)
@@ -407,6 +176,8 @@ __L2_MSG_DB_HEADER(Clans_CreateNewTopic, PGSQL)
 {
 	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 	{
+		(void)command;
+
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
 		PGresult *result = pgsql->QueryVaridic("");
 		if (result!=0)
@@ -426,6 +197,8 @@ __L2_MSG_DB_HEADER(Clans_ReplyToTopic, PGSQL)
 {
 	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 	{
+		(void)command;
+
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
 		PGresult *result = pgsql->QueryVaridic("");
 		if (result!=0)
@@ -445,6 +218,8 @@ __L2_MSG_DB_HEADER(Clans_RemovePost, PGSQL)
 {
 	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 	{
+		(void)command;
+
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
 		PGresult *result = pgsql->QueryVaridic("");
 		if (result!=0)
@@ -464,6 +239,8 @@ __L2_MSG_DB_HEADER(Clans_GetBoards, PGSQL)
 {
 	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 	{
+		(void)command;
+
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
 		PGresult *result = pgsql->QueryVaridic("");
 		if (result!=0)
@@ -483,6 +260,8 @@ __L2_MSG_DB_HEADER(Clans_GetTopics, PGSQL)
 {
 	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 	{
+		(void)command;
+
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
 		PGresult *result = pgsql->QueryVaridic("");
 		if (result!=0)
@@ -502,6 +281,8 @@ __L2_MSG_DB_HEADER(Clans_GetPosts, PGSQL)
 {
 	virtual bool ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 	{
+		(void)command;
+
 		PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
 		PGresult *result = pgsql->QueryVaridic("");
 		if (result!=0)

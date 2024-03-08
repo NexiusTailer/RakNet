@@ -104,8 +104,9 @@ void DirectoryDeltaTransfer::AddUploadsFromSubdirectory(const char *subdir)
 }
 unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(const char *subdir, const char *outputSubdir, bool prependAppDirToOutputSubdir, SystemAddress host, FileListTransferCBInterface *onFileCallback, PacketPriority _priority, char _orderingChannel, FileListProgress *cb)
 {
-	if (rakPeerInterface->IsConnected(host)==false)
-		return (unsigned short) -1;
+//	if (rakPeerInterface->IsConnected(host)==false)
+//		return (unsigned short) -1;
+	RakAssert(host!=UNASSIGNED_SYSTEM_ADDRESS);
 
 	DDTCallback *transferCallback;
 	FileList localFiles;

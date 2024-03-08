@@ -158,6 +158,9 @@ void Lobby2Server::OnShutdown(void)
 }
 void Lobby2Server::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
+	(void)rakNetGUID;
+	(void)lostConnectionReason;
+
 	unsigned int index = GetUserIndexBySystemAddress(systemAddress);
 
 	// If systemAddress is a user, then notify his friends about him logging off
@@ -513,7 +516,7 @@ unsigned int Lobby2Server::GetUserIndexBySystemAddress(SystemAddress systemAddre
 	idx = users.GetIndexFromKey(systemAddress, &objectExists);
 	if (objectExists)
 		return idx;
-	return -1;
+	return (unsigned int)-1;
 }
 void Lobby2Server::StopThreads(void)
 {

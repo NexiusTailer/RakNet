@@ -175,6 +175,9 @@ void TCPInterface::Stop(void)
 }
 SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort, bool block)
 {
+	if (threadRunning==false)
+		return UNASSIGNED_SYSTEM_ADDRESS;
+
 	if (block)
 	{
 		SystemAddress systemAddress;

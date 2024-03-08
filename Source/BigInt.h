@@ -12,6 +12,7 @@
 #define BIG_INT_HPP
 
 #include "Platform.h"
+#include "NativeTypes.h"
 //#include <string>
 
 namespace big
@@ -36,7 +37,7 @@ namespace big
 	// lhs = rhs (32-bit extension)
 	void Set32(uint32_t *lhs, int lhs_limbs, const uint32_t rhs);
 
-#if defined(BIG_ENDIAN)
+#if defined(__BIG_ENDIAN__)
 	// Flip the byte order as needed to make 'n' big-endian for sharing over a network
 	void ToLittleEndian(uint32_t *n, int limbs);
 

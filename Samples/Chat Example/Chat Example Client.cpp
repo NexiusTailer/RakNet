@@ -73,7 +73,7 @@ int main(void)
 	puts("Enter the port to connect to");
 	gets(serverPort);
 	if (serverPort[0]==0)
-		strcpy(serverPort, "10000");
+		strcpy(serverPort, "1234");
 
 	// Connecting the client is very simple.  0 means we don't care about
 	// a connectionValidationInteger, and false for low priority threads
@@ -128,7 +128,6 @@ int main(void)
 				printf("%s", message);
 				printf("Ping=%i\n", client->GetAveragePing(client->GetSystemAddressFromIndex(0)));
 			
-
 				continue;
 			}
 

@@ -16,6 +16,7 @@
 #include "PacketPriority.h"
 #include "SocketIncludes.h"
 #include "DS_List.h"
+#include "RakString.h"
 
 // Trendnet TEW-632BRP sometimes starts at port 1024 and increments sequentially.
 // Zonnet zsr1134we. Replies go out on the net, but are always absorbed by the remote router??
@@ -40,7 +41,7 @@ struct RAK_DLL_EXPORT PunchthroughConfiguration
 		UDP_SENDS_PER_PORT_INTERNAL=2;
 		UDP_SENDS_PER_PORT_EXTERNAL=8;
 		INTERNAL_IP_WAIT_AFTER_ATTEMPTS=30;
-		MAXIMUM_NUMBER_OF_INTERNAL_IDS_TO_CHECK=5;
+		MAXIMUM_NUMBER_OF_INTERNAL_IDS_TO_CHECK=5; // set to 0 to not do lan connects
 		MAX_PREDICTIVE_PORT_RANGE=2;
 		EXTERNAL_IP_WAIT_BETWEEN_PORTS=100;
 		EXTERNAL_IP_WAIT_AFTER_ALL_ATTEMPTS=EXTERNAL_IP_WAIT_BETWEEN_PORTS;
@@ -119,6 +120,22 @@ public:
 	/// Sets a callback to be called with debug messages
 	/// \param[in] i Pointer to an interface. The pointer is stored, so don't delete it while in progress. Pass 0 to clear.
 	void SetDebugInterface(NatPunchthroughDebugInterface *i);
+
+	/// Returns the port on the router that incoming messages will be sent to
+	/// UPNP needs to know this (See UPNP project)
+	/// \pre Must have connected to the facilitator first
+	/// \return Port that incoming messages will be sent to, from other clients. This probably won't be the same port RakNet was started on.
+	unsigned short GetUPNPExternalPort(void) const;
+
+	/// Returns our internal port that RakNet was started on
+	/// Equivalent to calling rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port
+	/// \return Port that incoming messages will arrive on, on our actual system.
+	unsigned short GetUPNPInternalPort(void) const;
+
+	/// Returns our locally bound system address
+	/// Equivalent to calling rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).ToString(false);
+	/// \return Internal address that UPNP should forward messages to
+	RakNet::RakString GetUPNPInternalAddress(void) const;
 
 	/// \internal For plugin handling
 	virtual void Update(void);

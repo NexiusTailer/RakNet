@@ -121,7 +121,10 @@ public:
 	bool IsEmailAddress(void) const;
 
 	/// URL Encode the string. See http://www.codeguru.com/cpp/cpp/cpp_mfc/article.php/c4029/
-	void URLEncode(void);
+	RakNet::RakString& URLEncode(void);
+
+	/// Scan for quote, double quote, and backslash and prepend with backslash
+	RakNet::RakString& SQLEscape(void);
 
 	/// RakString uses a freeList of old no-longer used strings
 	/// Call this function to clear this memory on shutdown

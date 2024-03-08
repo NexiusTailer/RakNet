@@ -79,11 +79,16 @@ void main(void)
 	peer2->Connect("127.0.0.1", 1234, 0, 0);
 	Sleep(500);
 
-
 	printf("Tests multiple threads sharing the same instance of RakPeer\n");
 	printf("Difficulty: Beginner\n\n");
 
-	printf("Don't forget to define _RAKNET_THREADSAFE in RakNetDefines.h for this test!\n");
+	printf("Did you define _RAKNET_THREADSAFE in RakNetDefines.h? (y/n) ");
+	char response[256];
+	gets(response);
+	if (response[0]!='y' || response[0]!='Y')
+	{
+		return;
+	}
 
 
 	endThreads=false;

@@ -34,6 +34,13 @@ public:
 	/// \return System address of whichever system is host. Always returns something, even though it may be our own system.
 	RakNetGUID GetHostSystem(void) const;
 
+	/// \return If our system is host
+	bool IsHostSystem(void) const;
+
+	/// \return If our system is host
+	bool IsConnectedHost(void) const;
+
+
 	/// \internal
 	virtual void Update(void);
 	/// \internal
@@ -62,8 +69,11 @@ protected:
 	void Clear(void);
 	void PushNewHost(void);
 	DataStructures::DefaultIndexType CalculateHostSystemIndex(void) const;
-	RakNetTime lastReceivedElapsedRuntime;
+	void CalculateNewElapsedRuntime(void);
+	RakNetTime lastTimeCalculatedNewElapsedRuntime;
 	RakNetTimeUS startupTime;
+	RakNetTimeUS lastElapsedRuntime;
+	RakNetTimeUS newElapsedRuntime;
 	RakNetGUID lastRemoteHostGuid;
 	SystemAddress lastRemoteHostAddress;
 	DataStructures::Multilist<ML_ORDERED_LIST, RemoteSystemWithTime*, RakNetGUID> remoteSystemList;

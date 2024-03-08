@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="NATPunchthrough"
 	ProjectGUID="{468EBA01-34C6-4F75-8E05-606851624304}"
+	RootNamespace="NATPunchthrough"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -40,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./../../Source"
+				AdditionalIncludeDirectories="./../../Source;./../upnp"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -119,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./../../Source"
+				AdditionalIncludeDirectories="./../../Source;./../upnp"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -185,6 +186,26 @@
 				RelativePath=".\main.cpp"
 				>
 			</File>
+			<Filter
+				Name="UPNP"
+				>
+				<File
+					RelativePath="..\UPNP\upnpnat.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UPNP\upnpnat.h"
+					>
+				</File>
+				<File
+					RelativePath="..\UPNP\xmlParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UPNP\xmlParser.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"

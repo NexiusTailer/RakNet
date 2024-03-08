@@ -329,16 +329,16 @@ void RakNetGUID::ToString(char *dest) const
 	if (*this==UNASSIGNED_RAKNET_GUID)
 		strcpy(dest, "UNASSIGNED_RAKNET_GUID");
 
-	sprintf(dest, "%u.%u.%u.%u", g[0], g[1], g[2], g[3]);
+	sprintf(dest, "%u.%u.%u.%u.%u.%u", g[0], g[1], g[2], g[3], g[4], g[5]);
 }
 bool RakNetGUID::FromString(const char *source)
 {
 	if (source==0)
 		return false;
 
-	char intPart[64];
+	char intPart[128];
 	unsigned int destIndex, sourceIndex=0, partIndex;
-	for (partIndex=0; partIndex<4; partIndex++)
+	for (partIndex=0; partIndex<sizeof(RakNetGUID) / sizeof(RakNetGUID::g[0]); partIndex++)
 	{
 		for (destIndex=0; source[sourceIndex] && source[sourceIndex]!='.' && destIndex<sizeof(intPart)-1; destIndex++, sourceIndex++)
 		{

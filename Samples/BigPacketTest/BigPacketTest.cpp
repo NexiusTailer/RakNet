@@ -62,17 +62,15 @@ int main(void)
 	if (client)
 	{
 		SocketDescriptor socketDescriptor(0,0);
-		client->SetMTUSize(1492);
-		client->Startup(1, 30, &socketDescriptor, 1);
+		client->Startup(1, 0, &socketDescriptor, 1);
 		client->SetSplitMessageProgressInterval(100); // Get ID_DOWNLOAD_PROGRESS notifications
 		client->Connect(text, 60000, 0, 0);
 	}
 	if (server)
 	{
 		SocketDescriptor socketDescriptor(60000,0);
-		server->SetMTUSize(1492);
 		server->SetMaximumIncomingConnections(32);
-		server->Startup(32, 30, &socketDescriptor, 1);
+		server->Startup(32, 0, &socketDescriptor, 1);
 	}
 	RakSleep(500);
 
@@ -192,7 +190,7 @@ int main(void)
 					for (i=0; i < numSystems; i++)
 					{
 						rssSender=server->GetStatistics(server->GetSystemAddressFromIndex(i));
-						printf("%i:%.0f,%.1f ", i+1,rssSender->bitsPerSecond/1000, 100.0f * ( float ) rssSender->messagesTotalBitsResent / ( float ) rssSender->totalBitsSent);
+						printf("%i:%.0f,%.1f ", i+1,rssSender->bitsPerSecondSent/1000, 100.0f * ( float ) rssSender->messagesTotalBitsResent / ( float ) rssSender->totalBitsSent);
 					}
 					printf("\n");
 				}

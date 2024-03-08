@@ -43,7 +43,7 @@ void main(void)
 		SocketDescriptor socketDescriptor(0,0);
 		rakPeer->Startup(1, 0, &socketDescriptor, 1);
 		rakPeer->AttachPlugin(&databaseClient);
-		printf("Client started\n");
+		printf("Client started on port %i\n", rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port);
 
 		printf("Enter server IP: ");
 		gets(str);

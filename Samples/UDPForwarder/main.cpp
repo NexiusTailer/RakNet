@@ -40,7 +40,7 @@ void main(void)
 
 	unsigned short peer0To1FowardPort;
 	unsigned short peer1To0FowardPort;
-	if (!udpForwarder.StartForwarding(peer0Addr,peer1Addr, timeoutOnNoDataMS, &peer0To1FowardPort, &peer1To0FowardPort))
+	if (!udpForwarder.StartForwarding(peer0Addr,peer1Addr, timeoutOnNoDataMS, 0, &peer0To1FowardPort, &peer1To0FowardPort))
 	{
 		printf("Socket error\n");
 		return;

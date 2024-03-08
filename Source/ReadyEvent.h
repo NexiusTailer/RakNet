@@ -209,7 +209,7 @@ protected:
 	void OnReadyEventPacketUpdate(Packet *packet);
 	void UpdateReadyStatus(unsigned eventIndex);
 	bool IsEventCompletedByIndex(unsigned eventIndex) const;
-	unsigned CreateEvent(int eventId, bool isReady);
+	unsigned CreateNewEvent(int eventId, bool isReady);
 	bool SetEventByIndex(int eventIndex, bool isReady);
 
 	DataStructures::OrderedList<int, ReadyEventNode*, ReadyEvent::ReadyEventNodeComp> readyEventNodeList;

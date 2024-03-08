@@ -324,6 +324,11 @@ const char* PostgreSQLInterface::GetLastError(void) const
 }
 void PostgreSQLInterface::EncodeQueryInput(const char *colName, unsigned int value, RakNet::RakString &paramTypeStr, RakNet::RakString &valueStr, int &numParams, char **paramData, int *paramLength, int *paramFormat)
 {
+	(void)numParams;
+	(void)paramData;
+	(void)paramLength;
+	(void)paramFormat;
+
 	if (paramTypeStr.IsEmpty()==false)
 	{
 		paramTypeStr += ", ";
@@ -334,6 +339,11 @@ void PostgreSQLInterface::EncodeQueryInput(const char *colName, unsigned int val
 }
 void PostgreSQLInterface::EncodeQueryUpdate(const char *colName, unsigned int value, RakNet::RakString &valueStr, int &numParams, char **paramData, int *paramLength, int *paramFormat)
 {
+	(void)numParams;
+	(void)paramData;
+	(void)paramLength;
+	(void)paramFormat;
+
 	if (valueStr.IsEmpty()==false)
 	{
 		valueStr += ", ";
@@ -344,6 +354,11 @@ void PostgreSQLInterface::EncodeQueryUpdate(const char *colName, unsigned int va
 }
 void PostgreSQLInterface::EncodeQueryInput(const char *colName, int value, RakNet::RakString &paramTypeStr, RakNet::RakString &valueStr, int &numParams, char **paramData, int *paramLength, int *paramFormat)
 {
+	(void)numParams;
+	(void)paramData;
+	(void)paramLength;
+	(void)paramFormat;
+
 	if (paramTypeStr.IsEmpty()==false)
 	{
 		paramTypeStr += ", ";
@@ -354,6 +369,11 @@ void PostgreSQLInterface::EncodeQueryInput(const char *colName, int value, RakNe
 }
 void PostgreSQLInterface::EncodeQueryInput(const char *colName, bool value, RakNet::RakString &paramTypeStr, RakNet::RakString &valueStr, int &numParams, char **paramData, int *paramLength, int *paramFormat)
 {
+	(void)numParams;
+	(void)paramData;
+	(void)paramLength;
+	(void)paramFormat;
+
 	if (paramTypeStr.IsEmpty()==false)
 	{
 		paramTypeStr += ", ";
@@ -367,6 +387,11 @@ void PostgreSQLInterface::EncodeQueryInput(const char *colName, bool value, RakN
 }
 void PostgreSQLInterface::EncodeQueryUpdate(const char *colName, int value, RakNet::RakString &valueStr, int &numParams, char **paramData, int *paramLength, int *paramFormat)
 {
+	(void)numParams;
+	(void)paramData;
+	(void)paramLength;
+	(void)paramFormat;
+
 	if (valueStr.IsEmpty()==false)
 	{
 		valueStr += ", ";
@@ -377,6 +402,11 @@ void PostgreSQLInterface::EncodeQueryUpdate(const char *colName, int value, RakN
 }
 void PostgreSQLInterface::EncodeQueryInput(const char *colName, float value, RakNet::RakString &paramTypeStr, RakNet::RakString &valueStr, int &numParams, char **paramData, int *paramLength, int *paramFormat)
 {
+	(void)numParams;
+	(void)paramData;
+	(void)paramLength;
+	(void)paramFormat;
+
 	if (paramTypeStr.IsEmpty()==false)
 	{
 		paramTypeStr += ", ";
@@ -387,6 +417,11 @@ void PostgreSQLInterface::EncodeQueryInput(const char *colName, float value, Rak
 }
 void PostgreSQLInterface::EncodeQueryUpdate(const char *colName, float value, RakNet::RakString &valueStr, int &numParams, char **paramData, int *paramLength, int *paramFormat)
 {
+	(void)numParams;
+	(void)paramData;
+	(void)paramLength;
+	(void)paramFormat;
+
 	if (valueStr.IsEmpty()==false)
 	{
 		valueStr += ", ";
@@ -535,7 +570,7 @@ unsigned int GetTypeMappingIndex(char c)
 	for (i=0; i < NUM_TYPE_MAPPINGS; i++ )
 		if (typeMappings[i].inputType==c)
 			return i;
-	return -1;
+	return (unsigned int)-1;
 }
 void PostgreSQLInterface::GetTypeMappingIndices( const char *format, DataStructures::List<PostgreSQLInterface::IndexAndType> &indices )
 {
@@ -545,7 +580,6 @@ void PostgreSQLInterface::GetTypeMappingIndices( const char *format, DataStructu
 	indices.Clear();
 	unsigned int len = (unsigned int) strlen(format);
 	previousCharWasPercentSign=false;
-	bool wroteLeftParen=false;
 	for (i=0; i < len; i++)
 	{
 		if (previousCharWasPercentSign==true &&
@@ -660,7 +694,7 @@ PGresult * PostgreSQLInterface::QueryVaridic( const char * input, ... )
 		}
 		else if (typeMappings[indices[i].typeMappingIndex].inputType=='b')
 		{
-			bool val = (bool) va_arg( argptr, int );
+			bool val = (va_arg( argptr, int )!=0);
 			paramLength[i]=sizeof(val);
 			paramData[i]=(char*) rakMalloc_Ex(paramLength[i], __FILE__, __LINE__);
 			memcpy(paramData[i], &val, paramLength[i]);

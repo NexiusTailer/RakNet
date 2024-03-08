@@ -79,6 +79,8 @@ bool Lobby2Server_PGSQL::ConnectToDB(const char *conninfo, int numWorkerThreads)
 }
 void* Lobby2Server_PGSQL::PerThreadFactory(void *context)
 {
+	(void)context;
+
 	PostgreSQLInterface* p;
 	connectionPoolMutex.Lock();
 	p=connectionPool.Pop();
@@ -87,6 +89,8 @@ void* Lobby2Server_PGSQL::PerThreadFactory(void *context)
 }
 void Lobby2Server_PGSQL::PerThreadDestructor(void* factoryResult, void *context)
 {
+	(void)context;
+
 	PostgreSQLInterface* p = (PostgreSQLInterface*)factoryResult;
 	RakNet::OP_DELETE(p, __FILE__, __LINE__);
 }

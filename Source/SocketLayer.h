@@ -12,6 +12,9 @@
 
 #include "RakMemoryOverride.h"
 #include "SocketIncludes.h"
+#include "RakNetTypes.h"
+#include "RakNetSmartPtr.h"
+#include "RakNetSocket.h"
 
 //#include "ClientContextStruct.h"
 
@@ -76,13 +79,13 @@ public:
 	/// \param[in] errorCode An error code if an error occured .
 	/// \param[in] connectionSocketIndex Which of the sockets in RakPeer we are using
 	/// \return Returns true if you successfully read data, false on error.
-	int RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode, unsigned connectionSocketIndex, bool isPs3LobbySocket );
+	int RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode, RakNetSmartPtr<RakNetSocket> rakNetSocket, bool isPs3LobbySocket );
 	
 #if !defined(_XBOX) && !defined(_X360)
 	/// Retrieve all local IP address in a string format.
 	/// \param[in] s The socket whose port we are referring to
 	/// \param[in] ipList An array of ip address in dotted notation.
-	void GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ] );
+	void GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
 #endif
 	
 	/// Call sendto (UDP obviously)
@@ -114,11 +117,16 @@ public:
 	/// \param[in] port The port number to send to.
 	/// \return 0 on success, nonzero on failure.
 	int SendTo( SOCKET s, const char *data, int length, unsigned int binaryAddress, unsigned short port, bool isPs3LobbySocket );
+#ifndef _USE_RAKNET_FLOW_CONTROL // Use UDT
+	int SendToUDT( int s, const char *data, int length, bool isPs3LobbySocket, int ttl );
+#endif
 
 	/// Returns the local port, useful when passing 0 as the startup port.
 	/// \param[in] s The socket whose port we are referring to
 	/// \return The local port
 	static unsigned short GetLocalPort ( SOCKET s );
+
+	static SystemAddress GetSystemAddress ( SOCKET s );
 
 private:
 

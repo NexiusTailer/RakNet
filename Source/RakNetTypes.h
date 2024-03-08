@@ -61,7 +61,6 @@ struct RAK_DLL_EXPORT SocketDescriptor
 	{
 		UDP,
 		PS3_LOBBY_UDP,
-		NONE // Socket is not created, must be set with UseUserSocket to do anything
 	};
 
 	// Type of the socket. Defaults to UDP.
@@ -146,7 +145,7 @@ struct RPCParameters
 /// Use RakPeer::GetGuidFromSystemAddress(UNASSIGNED_SYSTSEM_ADDRESS) to get your own GUID
 struct RAK_DLL_EXPORT RakNetGUID
 {
-	uint32_t g[4];
+	uint32_t g[6];
 
 	// Return the GUID as a string
 	// Returns a static string
@@ -166,6 +165,8 @@ struct RAK_DLL_EXPORT RakNetGUID
 		g[1]=input.g[1];
 		g[2]=input.g[2];
 		g[3]=input.g[3];
+		g[4]=input.g[4];
+		g[5]=input.g[5];
 		return *this;
 	}
 

@@ -17,9 +17,10 @@ DEFINE_MULTILIST_PTR_TO_MEMBER_COMPARISONS(FullyConnectedMesh2::RemoteSystemWith
 FullyConnectedMesh2::FullyConnectedMesh2()
 {
 	startupTime=0;
-	lastReceivedElapsedRuntime=0;
+	lastTimeCalculatedNewElapsedRuntime=0;
 	lastRemoteHostGuid=UNASSIGNED_RAKNET_GUID;
 	lastRemoteHostAddress=UNASSIGNED_SYSTEM_ADDRESS;
+	lastElapsedRuntime=0;
 }
 FullyConnectedMesh2::~FullyConnectedMesh2()
 {
@@ -36,19 +37,31 @@ RakNetGUID FullyConnectedMesh2::GetHostSystem(void) const
 {
 	return lastRemoteHostGuid;
 }
+bool FullyConnectedMesh2::IsHostSystem(void) const
+{
+	return GetHostSystem()==rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
+}
+bool FullyConnectedMesh2::IsConnectedHost(void) const
+{
+	return GetConnectedHost()==rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
+}
 void FullyConnectedMesh2::Update(void)
 {
-	// If got lastReceivedElapsedRuntime and one second passed, move all newElapsedRuntime to elapsedRuntime
-	RakNetTime curTime=RakNet::GetTime();
-	if (lastReceivedElapsedRuntime && curTime > lastReceivedElapsedRuntime && lastReceivedElapsedRuntime > lastReceivedElapsedRuntime+1000)
+	// If got lastTimeCalculatedNewElapsedRuntime and one second passed, move all newElapsedRuntime to elapsedRuntime
+	RakNetTimeUS curTime=RakNet::GetTimeUS();
+	if (lastTimeCalculatedNewElapsedRuntime &&
+		curTime > lastTimeCalculatedNewElapsedRuntime &&
+		curTime > lastTimeCalculatedNewElapsedRuntime+1000)
 	{
 		DataStructures::DefaultIndexType lastHostIndex=CalculateHostSystemIndex();
-		lastReceivedElapsedRuntime=0;
+		lastTimeCalculatedNewElapsedRuntime=0;
+		
+		// Update all runtimes and calculate new host, if any
+		lastElapsedRuntime=newElapsedRuntime;
 		DataStructures::DefaultIndexType i;
-		for (i=1; i < remoteSystemList.GetSize(); i++)
-		{
+		for (i=0; i < remoteSystemList.GetSize(); i++)
 			remoteSystemList[i]->elapsedRuntime=remoteSystemList[i]->newElapsedRuntime;
-		}
+
 		DataStructures::DefaultIndexType newHostIndex=CalculateHostSystemIndex();
 		if (lastHostIndex!=newHostIndex)
 		{
@@ -96,11 +109,22 @@ PluginReceiveResult FullyConnectedMesh2::OnReceive(Packet *packet)
 			bsIn.IgnoreBytes(sizeof(MessageID));
 			RakNetTimeUS elapsedRuntime;
 			bsIn.Read(elapsedRuntime);
+
+			lastTimeCalculatedNewElapsedRuntime=RakNet::GetTimeUS();
+
 			DataStructures::DefaultIndexType i = remoteSystemList.GetIndexOf(packet->guid);
 			if (i!=(DataStructures::DefaultIndexType)-1)
 			{
 				remoteSystemList[i]->newElapsedRuntime=elapsedRuntime;
-				lastReceivedElapsedRuntime=RakNet::GetTime();
+			}
+			else
+			{
+				RemoteSystemWithTime *rswt = RakNet::OP_NEW<RemoteSystemWithTime>(__FILE__,__LINE__);
+				rswt->elapsedRuntime=0;
+				rswt->guid=packet->guid;
+				rswt->newElapsedRuntime=elapsedRuntime;
+				rswt->systemAddress=packet->systemAddress;
+				remoteSystemList.Push(rswt,packet->guid,__FILE__,__LINE__);
 			}
 		}
 		break;
@@ -118,12 +142,13 @@ void FullyConnectedMesh2::OnAttach(void)
 		startupTime=RakNet::GetTimeUS();
 	lastRemoteHostGuid=rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 	lastRemoteHostAddress=rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS);
+	lastElapsedRuntime=0;
 }
 void FullyConnectedMesh2::OnShutdown(void)
 {
 	Clear();
 	startupTime=0;
-	lastReceivedElapsedRuntime=0;
+	lastTimeCalculatedNewElapsedRuntime=0;
 }
 void FullyConnectedMesh2::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
@@ -136,6 +161,7 @@ void FullyConnectedMesh2::OnClosedConnection(SystemAddress systemAddress, RakNet
 
 	if (remoteSystemList[droppedSystemIndex]->guid==lastRemoteHostGuid)
 	{
+		remoteSystemList.RemoveAtIndex(droppedSystemIndex,__FILE__,__LINE__);
 		DataStructures::DefaultIndexType newHostIndex=CalculateHostSystemIndex();
 		// New host
 		if (newHostIndex==(DataStructures::DefaultIndexType)-1)
@@ -151,27 +177,37 @@ void FullyConnectedMesh2::OnClosedConnection(SystemAddress systemAddress, RakNet
 		PushNewHost();
 	}
 }
+void FullyConnectedMesh2::CalculateNewElapsedRuntime(void)
+{
+	RakNetTimeUS curTime=RakNet::GetTimeUS();
+	if (curTime>startupTime)
+		newElapsedRuntime=curTime-startupTime;
+	else
+		newElapsedRuntime=0;
+
+	if (lastElapsedRuntime==0)
+		lastElapsedRuntime=newElapsedRuntime;
+
+	lastTimeCalculatedNewElapsedRuntime=curTime;
+}
 void FullyConnectedMesh2::OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
 {
 	(void) isIncoming;
 	(void) rakNetGUID;
 	(void) systemAddress;
 
-	RakNetTimeUS curTime=RakNet::GetTimeUS();
-	RakNetTimeUS elapsedTime;
-	if (curTime>startupTime)
-		elapsedTime=curTime-startupTime;
-	else
-		elapsedTime=0;
+	CalculateNewElapsedRuntime();
+
 	RakNet::BitStream bsOut;
 	bsOut.Write((MessageID)ID_FCM2_ELAPSED_RUNTIME);
-	bsOut.Write(elapsedTime);
+	bsOut.Write(newElapsedRuntime);
 	// Intentional broadcast
 	DataStructures::DefaultIndexType i;
 	for (i=0; i < remoteSystemList.GetSize(); i++)
 	{
 		rakPeerInterface->Send(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,remoteSystemList[i]->systemAddress,false);
 	}
+	rakPeerInterface->Send(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,systemAddress,false);
 
 }
 void FullyConnectedMesh2::Clear(void)
@@ -193,17 +229,20 @@ DataStructures::DefaultIndexType FullyConnectedMesh2::CalculateHostSystemIndex(v
 	if (remoteSystemList.GetSize()==0)
 		return (DataStructures::DefaultIndexType)-1;
 
-	// Return system with lowest time. If none, return ourselves
-	DataStructures::DefaultIndexType i, lowestRuntimeIndex=0;
-	RakNetTimeUS lowestRuntime=remoteSystemList[0]->elapsedRuntime;
+	// Return system with highest time. If none, return ourselves
+	DataStructures::DefaultIndexType i, highestRuntimeIndex=0;
+	RakNetTimeUS highestRuntime=remoteSystemList[0]->elapsedRuntime;
 	for (i=1; i < remoteSystemList.GetSize(); i++)
 	{
-		if (remoteSystemList[i]->elapsedRuntime < lowestRuntime)
+		if (remoteSystemList[i]->elapsedRuntime > highestRuntime)
 		{
-			lowestRuntime=remoteSystemList[i]->elapsedRuntime;
-			lowestRuntimeIndex=i;
+			highestRuntime=remoteSystemList[i]->elapsedRuntime;
+			highestRuntimeIndex=i;
 		}
 	}
 
-	return lowestRuntimeIndex;
+	if (lastElapsedRuntime>highestRuntime)
+		return (DataStructures::DefaultIndexType)-1;
+
+	return highestRuntimeIndex;
 }

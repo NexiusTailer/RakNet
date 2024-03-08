@@ -1446,9 +1446,9 @@ RoomsErrorCode Room::SendInvite(RoomsParticipant* roomsParticipant, RoomsPartici
 			relevantPermission==NetworkedRoomCreationParameters::INVITE_MODE_MODERATOR_OR_PUBLIC_OR_RESERVED_SLOTS_CAN_INVITE)
 			&& memberMode==RMM_RESERVED)
 			canInvite=true;
-		else if (relevantPermission==NetworkedRoomCreationParameters::INVITE_MODE_SPECTATOR_SLOTS_CAN_INVITE && (memberMode==RMM_SPECTATOR_PUBLIC || RMM_SPECTATOR_RESERVED))
+		else if (relevantPermission==NetworkedRoomCreationParameters::INVITE_MODE_SPECTATOR_SLOTS_CAN_INVITE && (memberMode==RMM_SPECTATOR_PUBLIC || memberMode==RMM_SPECTATOR_RESERVED))
 			canInvite=true;
-		else if (relevantPermission==NetworkedRoomCreationParameters::INVITE_MODE_MODERATOR_OR_PUBLIC_SLOTS_CAN_INVITE && (memberMode==RMM_SPECTATOR_PUBLIC || RMM_SPECTATOR_RESERVED))
+		else if (relevantPermission==NetworkedRoomCreationParameters::INVITE_MODE_MODERATOR_OR_PUBLIC_SLOTS_CAN_INVITE && (memberMode==RMM_SPECTATOR_PUBLIC || memberMode==RMM_SPECTATOR_RESERVED))
 			canInvite=true;
 		else
 			return REC_SEND_INVITE_INVITOR_LACK_INVITE_PERMISSIONS;

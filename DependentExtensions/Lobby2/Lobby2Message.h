@@ -581,7 +581,7 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Notification_Console_Local_Users_Changed *message);
 	virtual void MessageResult(Notification_Console_Signaling_Result *message);
 
-	virtual void ExecuteDefaultResult(Lobby2Message *message) {}
+	virtual void ExecuteDefaultResult(Lobby2Message *message) { (void)message; }
 
 	unsigned char callbackId;
 	static unsigned char nextCallbackId;
@@ -751,7 +751,7 @@ struct Platform_Startup : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 	virtual bool PrevalidateInput(void) {return true;}
-	virtual bool ServerMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) {return true;}
+	virtual bool ServerMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; return true; }
 };
 
 // Platform specific startup. Unused on the PC
@@ -763,7 +763,7 @@ struct Platform_Shutdown : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 	virtual bool PrevalidateInput(void) {return true;}
-	virtual bool ServerMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) {return true;}
+	virtual bool ServerMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; return true; }
 };
 
 /// Create all tables and stored procedures on a system that does not already have them
@@ -2695,6 +2695,7 @@ struct Notification_Clans_KickAndBlacklistUser : public Lobby2Message
 	RakNet::RakString blacklistingUserHandle;
 	// If true, they were both kicked and blacklisted. If false, they were only blacklisted (not currently in the clan)
 	bool targetHandleWasKicked;
+	RakNet::RakString reason;
 };
 struct Notification_Clans_UnblacklistUser : public Lobby2Message
 {

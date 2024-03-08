@@ -230,7 +230,7 @@ Minor fixes in RoomsPlugin. Added RakNetGUID support to rooms and Lobby2.
 Allow updating automatic system address and GUID fields if onlyUpdateOwnRows is false for LightweightDatabaseServer.
 Improve flow control for poor quality connections.
 Fix denial of service exploit caused by sending many connection attempts to use up all connection slots. Now, only 10 connections can be made from an identical IP address per second.<BR>
-3.52 (4/30/09) Various fixes and protocol change for NATPunchthroughServer. Punchthrough recipient now gets ID_NAT_TARGET_UNRESPONSIVE and ID_NAT_CONNECTION_TO_TARGET_LOST at the same time it is sent to the sender.
+3.52 (04/30/09) Various fixes and protocol change for NATPunchthroughServer. Punchthrough recipient now gets ID_NAT_TARGET_UNRESPONSIVE and ID_NAT_CONNECTION_TO_TARGET_LOST at the same time it is sent to the sender.
 Added ConnectionGraph2 and FullyConnectedMesh2 plugins.
 RakNetTransport2 plugin added, which works as a plugin instead of creating its own instance of RakPeer. RakNetTransport, which did that, is now depreciated.
 Deleted FCMHost plugin (replaced by FullyConnectedMesh2).
@@ -244,6 +244,27 @@ Various fixes for DirectoryServer.php. PHPDirectoryServer::ProcessHTTPRead now r
 RakNetTime is now 64 bit by default. Comment __GET_TIME_64BIT in RakNetDefines.h to change to 32 bit.
 UDP proxy system now automatically chooses best server. If more than one server is available, and both source and target relay systems are running RakNet, then source and target will ping all available servers. The servers will be attempted in order of lowest ping sum to highest.
 Updated FAQ. Updated manual for NATPunchthrough.<BR>
+3.6 (05/26/09) Fixed define bug with BIG_ENDIAN to __BIG_ENDIAN__ in BigInt.
+Fixed FullyConnectedMesh2.
+Bind whichever address a message came in on, so we always reply on the same address. This fixes an issue where you have multiple IP addresses and reply on a different address than what the sender used. This also means RakNet no longer necessarily uses a single socket for all communications.
+Added RakNetSocket structure, with GetSockets accessor in RakPeerInterface. This can be used to find out which ports and IP addresses you have locally bound.
+Added ConnectWithSocket to RakPeerInterface. Removed RebindSocket.
+Added UPNP implementation from Codeproject to Samples, with fixes. Added to NATPunchthrough sample.
+NATPunchthrough now supports 0 for the MAXIMUM_NUMBER_OF_INTERNAL_IDS_TO_CHECK parameter.
+Fixed ReplicaManager3 serialization bugs with RM3SR_SERIALIZED_IDENTICALLY, and with serializing to more than 3 systems. Also validate connections before using them, so we know the other system has created the connection first.
+ReplicaManager3 QueryConstruction is now only called when the object does not already exist. If it does already exist, QueryDestruction is called instead.
+Added RakPeerInterface::GetTimeoutTime()
+Added time row was written to PacketLogger.
+UDPForwarder, and thus the proxy server, now runs in its own thread.
+UDPForwarder does not set the source or destination port until the first message arrives, to handle symmetric NATs changing ports.
+UDPForwarder now returns a result enumeration indicating success, bad parameters, in progress, or failed
+Flow control will now subtract average times between thread updates from pings. This fixes a problem where uneven times between thread context switches caused reported pings to fluctuate constantly, resulting in flow control dropping to the minimum level. This should fix an issue encountered by Stardock, with messages buffered and taking a long time to send.
+Fix issue with UDPProxyCoordinator, where two systems would simultaneously start forwarding to each other, but one system report success before the other knew about it, resulting in two forwarding entries.
+Add modified UDT source to RakNet distribution, under DependentExtensions\udt4. Comment out _USE_RAKNET_FLOW_CONTROL in RakNetDefines.h to use (Still has bugs, do not use for now).
+Fix TCPInterface with DeltaDirectoryTransfer
+Fixed bug introducted by checking RakNetGUID on new connections from 3.52, where connection replies were only sent once, rather than on each request.
+Added parameter to CloseConnection to select priority on which to send ID_DISCONNECTION_NOTIFICATION.
+Added SQLLite3Plugin to DependentExtensions\SQLite3Plugin. This allows you to do database calls over the internet with SQLLite3, which is normally only supported with networked file handles. This replaces LightweightDatabase, which is now depreciated.
 
 </TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">

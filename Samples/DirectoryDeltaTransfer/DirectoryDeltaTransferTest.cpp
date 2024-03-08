@@ -13,12 +13,15 @@
 #include "FileListTransferCBInterface.h"
 #include "RakSleep.h"
 #include "IncrementalReadInterface.h"
+#include "PacketizedTCP.h"
 
 #ifdef _WIN32
 #include "WindowsIncludes.h" // Sleep
 #else
 #include <unistd.h> // usleep
 #endif
+
+#define USE_TCP
 
 class TestCB : public FileListTransferCBInterface
 {
@@ -52,7 +55,12 @@ public:
 int main(void)
 {
 	char ch;
+
+#ifdef USE_TCP
+	PacketizedTCP tcp1;
+#else
 	RakPeerInterface *rakPeer;
+#endif
 
 	// directoryDeltaTransfer is the main plugin that does the work for this sample.
 	DirectoryDeltaTransfer directoryDeltaTransfer;
@@ -62,11 +70,16 @@ int main(void)
 	IncrementalReadInterface iri;
 	directoryDeltaTransfer.SetDownloadRequestIncrementalReadInterface(&iri, 1000000);
 
+#ifdef USE_TCP
+	tcp1.AttachPlugin(&directoryDeltaTransfer);
+	tcp1.AttachPlugin(&fileListTransfer);
+#else
 	rakPeer = RakNetworkFactory::GetRakPeerInterface();
 	rakPeer->AttachPlugin(&directoryDeltaTransfer);
 	rakPeer->AttachPlugin(&fileListTransfer);
 	// Get download progress notifications.  Handled by the plugin.
 	rakPeer->SetSplitMessageProgressInterval(100);
+#endif
 	directoryDeltaTransfer.SetFileListTransferPlugin(&fileListTransfer);
 
 	printf("This sample demonstrates the plugin to incrementally transfer compressed\n");
@@ -84,6 +97,10 @@ int main(void)
 	else
 		localPort=atoi(str);
 	SocketDescriptor socketDescriptor(localPort,0);
+#ifdef USE_TCP
+	bool b=tcp1.Start(localPort,1);
+	RakAssert(b);
+#else
 	if (rakPeer->Startup(8,30,&socketDescriptor, 1)==false)
 	{
 		RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
@@ -91,6 +108,7 @@ int main(void)
 		return 1;
 	}
 	rakPeer->SetMaximumIncomingConnections(8);
+#endif
 
 	printf("Commands:\n");
 	printf("(S)et application directory.\n");
@@ -100,6 +118,7 @@ int main(void)
 	printf("C(o)nnect to another system.\n");
 	printf("(Q)uit.\n");
 
+	SystemAddress sysAddrZero=UNASSIGNED_SYSTEM_ADDRESS;
 	RakNetTime nextStatTime = RakNet::GetTime() + 1000;
 
 	Packet *p;
@@ -124,20 +143,57 @@ int main(void)
 		*/
 
 		// Process packets
+#ifdef USE_TCP
+		p=tcp1.Receive();
+#else
 		p=rakPeer->Receive();
+#endif
+
+#ifdef USE_TCP
+		SystemAddress sa;
+		sa=tcp1.HasNewIncomingConnection();
+		if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
+		{
+			printf("ID_NEW_INCOMING_CONNECTION\n");
+			sysAddrZero=sa;
+		}
+		if (tcp1.HasLostConnection()!=UNASSIGNED_SYSTEM_ADDRESS)
+			printf("ID_DISCONNECTION_NOTIFICATION\n");
+		if (tcp1.HasFailedConnectionAttempt()!=UNASSIGNED_SYSTEM_ADDRESS)
+			printf("ID_CONNECTION_ATTEMPT_FAILED\n");
+		sa=tcp1.HasCompletedConnectionAttempt();
+		if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
+		{
+			printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
+			sysAddrZero=sa;
+		}
+#endif
+
 		while (p)
 		{
+
+#ifdef USE_TCP
+			tcp1.DeallocatePacket(p);
+			tcp1.Receive();
+#else
+
 			if (p->data[0]==ID_NEW_INCOMING_CONNECTION)
+			{
 				printf("ID_NEW_INCOMING_CONNECTION\n");
+				sysAddrZero=p->systemAddress;
+			}
 			else if (p->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
+			{
 				printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
+				sysAddrZero=p->systemAddress;
+			}
 			else if (p->data[0]==ID_DISCONNECTION_NOTIFICATION)
 				printf("ID_DISCONNECTION_NOTIFICATION\n");
 			else if (p->data[0]==ID_CONNECTION_LOST)
 				printf("ID_CONNECTION_LOST\n");
-
 			rakPeer->DeallocatePacket(p);
 			p=rakPeer->Receive();
+#endif
 		}
 
 		if (kbhit())
@@ -170,7 +226,8 @@ int main(void)
 				gets(outputSubdir);
                 
 				unsigned short setId;
-				setId=directoryDeltaTransfer.DownloadFromSubdirectory(subdir, outputSubdir, true, rakPeer->GetSystemAddressFromIndex(0), &transferCallback, HIGH_PRIORITY, 0, 0);
+
+				setId=directoryDeltaTransfer.DownloadFromSubdirectory(subdir, outputSubdir, true, sysAddrZero, &transferCallback, HIGH_PRIORITY, 0, 0);
 				if (setId==(unsigned short)-1)
 					printf("Download failed.  Host unreachable.\n");
 				else
@@ -195,13 +252,21 @@ int main(void)
 					remotePort=60000;
 				else
 					remotePort=atoi(str);
+#ifdef USE_TCP
+				tcp1.Connect(host,remotePort,false);
+#else
 				rakPeer->Connect(host, remotePort, 0, 0);
+#endif
 				printf("Connecting.\n");
 			}
 			else if (ch=='q')
 			{
 				printf("Bye!\n");
+#ifdef USE_TCP
+				tcp1.Stop();
+#else
 				rakPeer->Shutdown(1000,0);
+#endif
 				break;
 			}
 		}
@@ -210,7 +275,10 @@ int main(void)
 		RakSleep(0);
 	}
 
+#ifdef USE_TCP
+#else
 	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
+#endif
 
 	return 0;
 }

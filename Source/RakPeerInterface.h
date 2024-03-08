@@ -14,6 +14,8 @@
 #include "RakMemoryOverride.h"
 #include "Export.h"
 #include "DS_List.h"
+#include "RakNetSmartPtr.h"
+#include "RakNetSocket.h"
 
 // Forward declarations
 namespace RakNet
@@ -43,7 +45,7 @@ public:
 	/// \note Set _RAKNET_THREADSAFE in RakNetDefines.h if you want to call RakNet functions from multiple threads (not recommended, as it is much slower and RakNet is already asynchronous).
 	/// \param[in] maxConnections The maximum number of connections between this instance of RakPeer and another instance of RakPeer. Required so the network can preallocate and for thread safety. A pure client would set this to 1.  A pure server would set it to the number of allowed clients.- A hybrid would set it to the sum of both types of connections
 	/// \param[in] localPort The port to listen for connections on.
-	/// \param[in] _threadSleepTimer How many ms to Sleep each internal update cycle (30 to give the game priority, 0 for regular (recommended)
+	/// \param[in] _threadSleepTimer How many ms to Sleep each internal update cycle (30 to give the game priority, 0 for regular (recommended). If using UDT for flow control by commenting out _USE_RAKNET_FLOW_CONTROL, 0 is always used. If using UDT for flow control by commenting out _USE_RAKNET_FLOW_CONTROL, 0 is always used
 	/// \param[in] socketDescriptors An array of SocketDescriptor structures to force RakNet to listen on a particular IP address or port (or both).  Each SocketDescriptor will represent one unique socket.  Do not pass redundant structures.  To listen on a specific port, you can pass SocketDescriptor(myPort,0); such as for a server.  For a client, it is usually OK to just pass SocketDescriptor();
 	/// \param[in] socketDescriptorCount The size of the \a socketDescriptors array.  Pass 1 if you are not sure what to pass.
 	/// \return False on failure (can't create socket or thread), true on success.
@@ -117,8 +119,21 @@ public:
 	/// \param[in] connectionSocketIndex Index into the array of socket descriptors passed to socketDescriptors in RakPeer::Startup() to send on.
 	/// \param[in] sendConnectionAttemptCount How many datagrams to send to the other system to try to connect.
 	/// \param[in] timeBetweenSendConnectionAttemptsMS How often to send datagrams to the other system to try to connect. After this many times, ID_CONNECTION_ATTEMPT_FAILED is returned
+	/// \param[in] timeoutTime How long to keep the connection alive before dropping it on unable to send a reliable message. 0 to use the default from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
 	/// \return True on successful initiation. False on incorrect parameters, internal error, or too many existing peers.  Returning true does not mean you connected!
-	virtual bool Connect( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex=0, unsigned sendConnectionAttemptCount=7, unsigned timeBetweenSendConnectionAttemptsMS=500 )=0;
+	virtual bool Connect( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex=0, unsigned sendConnectionAttemptCount=7, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNetTime timeoutTime=0 )=0;
+
+	/// \brief Connect to the specified host (ip or domain name) and server port, using a shared socket from another instance of RakNet
+	/// \param[in] host Either a dotted IP address or a domain name
+	/// \param[in] remotePort Which port to connect to on the remote machine.
+	/// \param[in] passwordData A data block that must match the data block on the server passed to SetIncomingPassword.  This can be a string or can be a stream of data.  Use 0 for no password.
+	/// \param[in] passwordDataLength The length in bytes of passwordData
+	/// \param[in] socket A bound socket returned by another instance of RakPeerInterface
+	/// \param[in] sendConnectionAttemptCount How many datagrams to send to the other system to try to connect.
+	/// \param[in] timeBetweenSendConnectionAttemptsMS How often to send datagrams to the other system to try to connect. After this many times, ID_CONNECTION_ATTEMPT_FAILED is returned
+	/// \param[in] timeoutTime How long to keep the connection alive before dropping it on unable to send a reliable message. 0 to use the default from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
+	/// \return True on successful initiation. False on incorrect parameters, internal error, or too many existing peers.  Returning true does not mean you connected!
+	virtual bool ConnectWithSocket(const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, RakNetSmartPtr<RakNetSocket> socket, unsigned sendConnectionAttemptCount=7, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNetTime timeoutTime=0)=0;
 
 	/// \brief Connect to the specified network ID (Platform specific console function)
 	/// Does built-in NAt traversal
@@ -129,8 +144,9 @@ public:
 	/// \brief Stops the network threads and closes all connections.
 	/// \param[in] blockDuration How long, in milliseconds, you should wait for all remaining messages to go out, including ID_DISCONNECTION_NOTIFICATION.  If 0, it doesn't wait at all.
 	/// \param[in] orderingChannel If blockDuration > 0, ID_DISCONNECTION_NOTIFICATION will be sent on this channel
+	/// \param[in] disconnectionNotificationPriority Priority to send ID_DISCONNECTION_NOTIFICATION on.
 	/// If you set it to 0 then the disconnection notification won't be sent
-	virtual void Shutdown( unsigned int blockDuration, unsigned char orderingChannel=0 )=0;
+	virtual void Shutdown( unsigned int blockDuration, unsigned char orderingChannel=0, PacketPriority disconnectionNotificationPriority=LOW_PRIORITY )=0;
 
 	/// Returns if the network thread is running
 	/// \return true if the network thread is running, false otherwise
@@ -279,7 +295,8 @@ public:
 	/// \param[in] target Which system to close the connection to.
 	/// \param[in] sendDisconnectionNotification True to send ID_DISCONNECTION_NOTIFICATION to the recipient.  False to close it silently.
 	/// \param[in] channel Which ordering channel to send the disconnection notification on, if any
-	virtual void CloseConnection( const SystemAddress target, bool sendDisconnectionNotification, unsigned char orderingChannel=0 )=0;
+	/// \param[in] disconnectionNotificationPriority Priority to send ID_DISCONNECTION_NOTIFICATION on.
+	virtual void CloseConnection( const SystemAddress target, bool sendDisconnectionNotification, unsigned char orderingChannel=0, PacketPriority disconnectionNotificationPriority=LOW_PRIORITY )=0;
 
 	/// Cancel a pending connection attempt
 	/// If we are already connected, the connection stays open
@@ -409,9 +426,14 @@ public:
 
 	/// Set the time, in MS, to use before considering ourselves disconnected after not being able to deliver a reliable message.
 	/// Default time is 10,000 or 10 seconds in release and 30,000 or 30 seconds in debug.
+	/// Not supported when using UDT (_USE_RAKNET_FLOW_CONTROL is commented out in RakNetDefines.h). UDT takes between 3 and 30 seconds to disconnect.
 	/// \param[in] timeMS Time, in MS
 	/// \param[in] target Which system to do this for. Pass UNASSIGNED_SYSTEM_ADDRESS for all systems.
 	virtual void SetTimeoutTime( RakNetTime timeMS, const SystemAddress target )=0;
+
+	/// \param[in] target Which system to do this for. Pass UNASSIGNED_SYSTEM_ADDRESS to get the default value
+	/// \return timeoutTime for a given system.
+	virtual RakNetTime GetTimeoutTime( const SystemAddress target )=0;
 
 	/// Set the MTU per datagram.  It's important to set this correctly - otherwise packets will be needlessly split, decreasing performance and throughput.
 	/// Maximum allowed size is MAXIMUM_MTU_SIZE.
@@ -552,6 +574,18 @@ public:
 	/// \return A packet you can write to
 	virtual Packet* AllocatePacket(unsigned dataSize)=0;
 
+	/// Get the socket used with a particular active connection
+	/// The smart pointer reference counts the RakNetSocket object, so the socket will remain active as long as the smart pointer does, even if RakNet were to shutdown or close the connection.
+	/// \note This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so.
+	/// \param[in] target Which system
+	/// \return A smart pointer object containing the socket information about the socket. Be sure to check IsNull() which is returned if the update thread is unresponsive, shutting down, or if this system is not connected
+	virtual RakNetSmartPtr<RakNetSocket> GetSocket( const SystemAddress target )=0;
+
+	/// Get all sockets in use
+	/// \note This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so.
+	/// \param[out] sockets List of RakNetSocket structures in use. Sockets will not be closed until \a sockets goes out of scope
+	virtual void GetSockets( DataStructures::List<RakNetSmartPtr<RakNetSocket> > &sockets )=0;
+
 	// --------------------------------------------------------------------------------------------Network Simulator Functions--------------------------------------------------------------------------------------------
 	/// Adds simulated ping and packet loss to the outgoing data flow.
 	/// To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and maxSendBPS value on each.
@@ -572,21 +606,6 @@ public:
 	/// \return If you previously called ApplyNetworkSimulator
 	virtual bool IsNetworkSimulatorActive( void )=0;
 
-	// -------------------------------------------------------------------------------------------- Socket Functions--------------------------------------------------------------------------------------------
-	/// Have RakNet use a socket you created yourself
-	/// The socket should not be in use - it is up to you to either shutdown or close the connections using it. Otherwise existing connections on that socket will eventually disconnect
-	/// This socket will be forgotten after calling Shutdown(), so rebind again if you need to.
-	/// \param[in] s The socket to rebind.
-	/// \param[in] haveRakNetCloseSocket If true, RakNet will call closeSocket on shutdown for this socket.
-	/// \param[in] connectionSocketIndex Index into the array of socket descriptors passed to socketDescriptors in RakPeer::Startup() to send on.
-	virtual void UseUserSocket( int socket, bool haveRakNetCloseSocket, unsigned connectionSocketIndex)=0;
-
-	/// Have RakNet recreate a socket using a different port.
-	/// The socket should not be in use - it is up to you to either shutdown or close the connections using it. Otherwise existing connections on that socket will eventually disconnect
-	/// \param[in] connectionSocketIndex Index into the array of socket descriptors passed to socketDescriptors in RakPeer::Startup() to send on.
-	/// \param[in] sd Address to bind on
-	virtual void RebindSocketAddress(unsigned connectionSocketIndex, SocketDescriptor &sd)=0;
-
 	// --------------------------------------------------------------------------------------------Statistical Functions - Functions dealing with API performance--------------------------------------------------------------------------------------------
 
 	/// Returns a structure containing a large set of network statistics for the specified system.
@@ -596,6 +615,8 @@ public:
 	/// \return 0 on can't find the specified system.  A pointer to a set of data otherwise.
 	/// \sa RakNetStatistics.h
 	virtual RakNetStatistics * const GetStatistics( const SystemAddress systemAddress, RakNetStatistics *rns=0 )=0;
+
+	virtual unsigned int GetReceiveBufferSize(void) const=0;
 
 	// --------------------------------------------------------------------------------------------EVERYTHING AFTER THIS COMMENT IS FOR INTERNAL USE ONLY--------------------------------------------------------------------------------------------
 	/// \internal

@@ -485,7 +485,7 @@ bool RakString::IsEmailAddress(void) const
 	// There's more I could check, but this is good enough
 	return true;
 }
-void RakString::URLEncode(void)
+RakNet::RakString& RakString::URLEncode(void)
 {
 	RakString result;
 
@@ -511,6 +511,43 @@ void RakString::URLEncode(void)
 	}
 
 	*this = result;
+	return *this;
+}
+RakNet::RakString& RakString::SQLEscape(void)
+{
+	int strLen=(int)GetLength();
+	int escapedCharacterCount=0;
+	int index;
+	for (index=0; index < strLen; index++)
+	{
+		if (sharedString->c_str[index]=='\'' ||
+			sharedString->c_str[index]=='"' ||
+			sharedString->c_str[index]=='\\')
+			escapedCharacterCount++;
+	}
+	if (escapedCharacterCount==0)
+		return *this;
+
+	Clone();
+	Realloc(sharedString, strLen+escapedCharacterCount);
+	int writeIndex, readIndex;
+	writeIndex = strLen+escapedCharacterCount;
+	readIndex=strLen;
+	while (readIndex>=0)
+	{
+		if (sharedString->c_str[readIndex]=='\'' ||
+			sharedString->c_str[readIndex]=='"' ||
+			sharedString->c_str[readIndex]=='\\')
+		{
+			sharedString->c_str[writeIndex--]=sharedString->c_str[readIndex--];
+			sharedString->c_str[writeIndex--]='\\';
+		}
+		else
+		{
+			sharedString->c_str[writeIndex--]=sharedString->c_str[readIndex--];
+		}
+	}
+	return *this;
 }
 void RakString::FreeMemory(void)
 {

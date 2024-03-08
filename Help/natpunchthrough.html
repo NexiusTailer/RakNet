@@ -21,9 +21,25 @@
 	    <BR>
       NAT is short for network address translation. It is used by routers to map addresses behind the router to a single destination address, using different ports. For example, if you have two computers behind a router, but only one ISP, then both computers will use the same IP address, but with different source ports than what the application actually assigned. The router keeps a lookup table of what mappings it provides, so when a remote computer replies it is routed to the correct local computer behind the NAT.</p>
 	  <p>The problem with NAT is that remote computers cannot initiate sends to local computers because no mapping yet exists. Therefore, if two computers both behind NAT try to connect, neither will be able to do so. This is a problem with voice communication, peer to peer games, or games where your users host and the host is behind a NAT. In the old days your users would have to go to their router configuration screen and setup a mapping. However, in modern applications users are not usually required to do this, thanks to NatPunchthrough.</p>
-	  <p><span class="RakNetBlueHeader">NAT Punchthrough</span> </p>
-	  <p>	    The NatPunchthroughClient.cpp plugin requires a server, not behind NAT, running NatPunchthroughServer.cpp that both clients can connect to. The server will find the external IP address of each client, and tell both clients to connect to that address at the same time. If that fails, each client will attempt to estimate the ports used by the other. If that fails, the process repeats once again, in case later port estimation opened a prior port. If that also fails, the plugin returns ID_NAT_PUNCHTHROUGH_FAILED.      </p>
-	  <p><span class="RakNetBlueHeader">Client Implementation</span></p>
+	  <p><span class="RakNetBlueHeader">NAT Punchthrough Overview</span></p>
+<p>	    The NatPunchthroughClient.cpp plugin requires a server, not behind NAT, running NatPunchthroughServer.cpp that both clients can connect to. The server will find the external IP address of each client, and tell both clients to connect to that address at the same time. If that fails, each client will attempt to estimate the ports used by the other. If that fails, the process repeats once again, in case later port estimation opened a prior port. If that also fails, the plugin returns ID_NAT_PUNCHTHROUGH_FAILED.      </p>
+<p><span class="RakNetBlueHeader">NAT Punchthrough Algorithm</span></p>
+<ol>
+  <li> Peer P1 wants to connect to peer P2, both of whom are connected to a third Non-NAT system, F</li>
+  <li>Peer P1 calls SendPunchthrough() with the GUID (unique identifier) of P2 to F.</li>
+  <li>F returns failure if P2 is not connected, or already attempting punchthrough to P1.</li>
+  <li>F remembers busy state of P1 and P2. If either P1 or P2 is busy, the request is pushed to a queue. Otherwise F requests most recently used external port from P1 and P2. P1 and P2 are flagged as busy.</li>
+  <li>If either P1 or P2 do not respond punchthrough fails with ID_NAT_TARGET_UNRESPONSIVE and the busy flag is unset. Otherwise, F sends timestamped connection message to P1 and P2  simultaneously.</li>
+  <li>P1 and P2 act identically at this point. First, they send multiple UDP datagrams to each other's internal LAN addresses. They then try each other's external IP/port as seen by F. Ports are attempted sequentially, up to MAX_PREDICTIVE_PORT_RANGE.</li>
+  <li>If at any point a datagram arrives from the remote peer, we enter state PUNCHING_FIXED_PORT. Datagrams are only sent to that IP/port combination the remainder of the algorithm. If our reply arrives on the remote system, the NAT is considered bidirectional and ID_NAT_PUNCHTHROUGH_SUCCEEDED is returned to the user.</li>
+  <li>When NAT is open, or if we exhaust all ports, P1 and P2 send to F that they are ready for a new punchthrough attempt.</li>
+</ol>
+<p>Algorithm effectivness depends on the NAT types involved. It will work with whichever NAT is the most permissive.</p>
+<p><strong>Full cone NAT</strong>: Accepts any datagrams to a port that has been previously used. Will accept the first datagram from the remote peer.</p>
+<p><strong>Address-Restricted cone NAT</strong>: Accepts datagrams to a port as long as the datagram source IP address is a system we have already sent to. Will accept the first datagram if both systems send simultaneously. Otherwise, will accept the first datagram after we have sent one datagram.</p>
+<p><strong>Port-Restricted cone NAT</strong>: Same as restricted cone NAT, but we had to send to both the correct remote IP address and correct remote port. If the router maps the same external port to two different destination addresses, then the port will be correct and this works as well as address-restricted cone NAT.</p>
+<p><strong>Symmetric NAT</strong>: A different port is chosen for every remote destination. Since the port will be different, the first external punchthrough attempt will fai. For this to work it requires  port-prediction (MAX_PREDICTIVE_PORT_RANGE&gt;1) and that the router chooses ports sequentially.</p>
+<p><span class="RakNetBlueHeader">Client Implementation</span></p>
 	  <ol>
 	    <li>Create an instance of the plugin: <span class="RakNetCode">NatPunchthroughClient natPunchthroughClient;</span></li>
 	    <li>Attach the plugin to an instance of RakPeerInterface: <span class="RakNetCode">rakPeer-&gt;AttachPlugin(&amp;natPunchthroughClient);</span></li>
@@ -83,6 +99,7 @@
 <ol>
   <li>Create an instance of the plugin: <span class="RakNetCode">UDPProxyServer udpProxyServer;</span></li>
   <li>Attach the plugin to an instance of RakPeerInterface: <span class="RakNetCode">rakPeer-&gt;AttachPlugin(&amp;udpProxyServer);</span></li>
+  <li>Connect to the coordinator</li>
   <li>Login to the coordinator. This can be done at runtime, so you can dynamically add more forwarding servers as your game is more popular.<BR>
     <span class="RakNetCode">udpProxyServer.LoginToCoordinator(COORDINATOR_PASSWORD, coordinatorSystemAddress);</span><BR>
   If the coordinator plugin is on the same system as the server plugin, use:<BR>  

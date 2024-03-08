@@ -33,6 +33,7 @@ enum DefaultMessageIDTypes
 	//
 	/// These types are never returned to the user.
 	/// Ping from a connected system.  Update timestamps (internal use only)
+	/// 0 is reserved for UDT's connect message
 	ID_INTERNAL_PING,  
 	/// Ping from an unconnected system.  Reply but do not update timestamps. (internal use only)
 	ID_PING,
@@ -92,7 +93,7 @@ enum DefaultMessageIDTypes
 	ID_TIMESTAMP,
     /// RakPeer - Pong from an unconnected system.  First byte is ID_PONG, second sizeof(RakNetTime) bytes is the ping, following bytes is system specific enumeration data.
 	ID_PONG,
-	/// RakPeer - Inform a remote system of our IP/Port, plus some offline data
+	/// RakPeer - Inform a remote system of our IP/Port. On the recipient, all data past ID_ADVERTISE_SYSTEM is whatever was passed to the data parameter
 	ID_ADVERTISE_SYSTEM,
 	/// ConnectionGraph plugin - In a client/server environment, a client other than ourselves has disconnected gracefully.  Packet::systemAddress is modified to reflect the systemAddress of this client.
 	ID_REMOTE_DISCONNECTION_NOTIFICATION,
@@ -262,9 +263,21 @@ enum DefaultMessageIDTypes
 	/// Returned by FullyConnectedMesh2 to tell us of a new host. New host is contained in Packet::systemAddress and Packet::guid
 	ID_FCM2_NEW_HOST,
 
-
 	/// UDP proxy messages. Second byte indicates type.
 	ID_UDP_PROXY_GENERAL,
+
+	/// SQLite3Plugin - execute
+	ID_SQLLITE3_EXEC,
+	/// SQLite3Plugin - Remote database is unknown
+	ID_SQLLITE3_UNKNOWN_DB,
+
+	// Router2Plugin
+	ID_ROUTER2_PING_REQUEST,
+	ID_ROUTER2_PING_RESPONSE,
+	ID_ROUTER2_SETUP_FORWARDING,
+
+	/// Serialize construction for an object that already exists on the remote system
+	ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING,
 
 	// For the user to use.  Start your first enumeration at this value.
 	ID_USER_PACKET_ENUM,
