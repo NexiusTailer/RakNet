@@ -67,6 +67,27 @@ public class FileListNodeContext : IDisposable {
     } 
   }
 
+  public SWIGTYPE_p_void dataPtr {
+    set {
+      RakNetPINVOKE.FileListNodeContext_dataPtr_set(swigCPtr, SWIGTYPE_p_void.getCPtr(value));
+    } 
+    get {
+      IntPtr cPtr = RakNetPINVOKE.FileListNodeContext_dataPtr_get(swigCPtr);
+      SWIGTYPE_p_void ret = (cPtr == IntPtr.Zero) ? null : new SWIGTYPE_p_void(cPtr, false);
+      return ret;
+    } 
+  }
+
+  public uint dataLength {
+    set {
+      RakNetPINVOKE.FileListNodeContext_dataLength_set(swigCPtr, value);
+    } 
+    get {
+      uint ret = RakNetPINVOKE.FileListNodeContext_dataLength_get(swigCPtr);
+      return ret;
+    } 
+  }
+
 }
 
 }

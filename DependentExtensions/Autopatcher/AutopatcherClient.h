@@ -50,16 +50,16 @@ public:
 	/// Patches a certain directory associated with a named application to match the same named application on the patch server
 	/// \param[in] _applicationName The name of the application
 	/// \param[in] _applicationDirectory The directory to write the output to.
-	/// \param[in] lastUpdateDate A string representing the last time you updated from the patch server, so you only check newer files.  Should be 0 the first time, or if you want to do a full scan.  Returned in GetServerDate() after you call PatchApplication successfully.
+	/// \param[in] lastUpdateDate Returned by time() (seconds since EPOCH) on the server, as well as returned in GetServerDate() after you call PatchApplication successfully. When distributing your application, set to the server time() when the distribution was created. You can pass 0 as well, however this will do a full scan of the entire game so is very slow. See 'Optimizing for large games' in the manual under Help/autopatcher.html
 	/// \param[in] host The address of the remote system to send the message to.
 	/// \param[in] onFileCallback Callback to call per-file (optional).  When fileIndex+1==setCount in the callback then the download is done
 	/// \param[in] _restartOutputFilename If it is necessary to restart this application, where to write the restart data to.  You can include a path in this filename.
 	/// \param[in] pathToRestartExe What exe to launch from the AutopatcherClientRestarter .  argv[0] will work to relaunch this application.
 	/// \return true on success, false on failure.  On failure, ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR is returned, with the error message written using the stringCompressor class starting after the message id.
-	bool PatchApplication(const char *_applicationName, const char *_applicationDirectory, const char *lastUpdateDate, SystemAddress host, FileListTransferCBInterface *onFileCallback, const char *restartOutputFilename, const char *pathToRestartExe);
+	bool PatchApplication(const char *_applicationName, const char *_applicationDirectory, double lastUpdateDate, SystemAddress host, FileListTransferCBInterface *onFileCallback, const char *restartOutputFilename, const char *pathToRestartExe);
 
 	/// After getting ID_AUTOPATCHER_FINISHED or ID_AUTOPATCHER_RESTART_APPLICATION, the server date will be internally recorded.  You can send this to PatchApplication::lastUpdateDate to only check for files newer than that date.
-	char *GetServerDate(void) const;
+	double GetServerDate(void) const;
 
 	/// Stop processing the current download
 	/// \note The files in progress will continue to transfer. The only way to stop it is to call CloseConnection(true), then reconnect to the server once you get ID_DISCONNECTION_NOTIFICATION
@@ -90,7 +90,7 @@ protected:
 	char applicationName[512];
 	char copyOnRestartOut[512];
 	char restartExe[512];
-	char serverDate[128];
+	double serverDate;
 	FileListTransfer *fileListTransfer;
 	PacketPriority priority;
 	SystemAddress serverId;

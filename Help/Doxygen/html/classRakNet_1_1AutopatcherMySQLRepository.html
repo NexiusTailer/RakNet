@@ -55,9 +55,11 @@ Inheritance diagram for RakNet::AutopatcherMySQLRepository:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherMySQLRepository.html#625af61551960bdc91ba4b65f03bf329">UpdateApplicationFiles</a> (const char *applicationName, const char *applicationDirectory, const char *userName, <a class="el" href="classRakNet_1_1FileListProgress.html">FileListProgress</a> *cb)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherMySQLRepository.html#daac1705b77510e8de18fa5cfb5c8de7">GetChangelistSinceDate</a> (const char *applicationName, FileList *addedFiles, FileList *deletedFiles, const char *sinceDate, char currentDate[64])</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherMySQLRepository.html#6d6949b2db2ad281e2df55edc88f90bd">GetChangelistSinceDate</a> (const char *applicationName, FileList *addedFiles, FileList *deletedFiles, double sinceDate)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherMySQLRepository.html#ba8c6c0311c9c21b7632d44fb30bf8c7">GetPatches</a> (const char *applicationName, FileList *input, FileList *patchList, char currentDate[64])</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherMySQLRepository.html#e94bf96bb53b72351a6de25a06bca7ac">GetPatches</a> (const char *applicationName, FileList *input, FileList *patchList)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherMySQLRepository.html#2fa7f2dff5f5a091725f0bac15b71b6b">GetMostRecentChangelistWithPatches</a> (<a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> &amp;applicationName, FileList *patchedFiles, FileList *updatedFiles, FileList *updatedFileHashes, FileList *deletedFiles, double *priorRowPatchTime, double *mostRecentRowPatchTime)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="524d68471f5de9e0b498475726f132aa"></a><!-- doxytag: member="RakNet::AutopatcherMySQLRepository::GetLastError" ref="524d68471f5de9e0b498475726f132aa" args="(void) const " -->
 virtual const char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherMySQLRepository.html#524d68471f5de9e0b498475726f132aa">GetLastError</a> (void) const </td></tr>
@@ -148,7 +150,7 @@ Destroy the tables used by the autopatcher. Don't call this unless you don't wan
 
 </div>
 </div><p>
-<a class="anchor" name="daac1705b77510e8de18fa5cfb5c8de7"></a><!-- doxytag: member="RakNet::AutopatcherMySQLRepository::GetChangelistSinceDate" ref="daac1705b77510e8de18fa5cfb5c8de7" args="(const char *applicationName, FileList *addedFiles, FileList *deletedFiles, const char *sinceDate, char currentDate[64])" -->
+<a class="anchor" name="6d6949b2db2ad281e2df55edc88f90bd"></a><!-- doxytag: member="RakNet::AutopatcherMySQLRepository::GetChangelistSinceDate" ref="6d6949b2db2ad281e2df55edc88f90bd" args="(const char *applicationName, FileList *addedFiles, FileList *deletedFiles, double sinceDate)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -173,14 +175,8 @@ Destroy the tables used by the autopatcher. Don't call this unless you don't wan
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const char *&nbsp;</td>
-          <td class="paramname"> <em>sinceDate</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char&nbsp;</td>
-          <td class="paramname"> <em>currentDate</em>[64]</td><td>&nbsp;</td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>sinceDate</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -198,12 +194,11 @@ Get list of files added and deleted since a certain date. This is used by <a cla
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>addedFiles</em>&nbsp;</td><td>A list of the current versions of filenames with SHA1_LENGTH byte hashes as their data that were created after <em>sinceData</em> </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>deletedFiles</em>&nbsp;</td><td>A list of the current versions of filenames that were deleted after <em>sinceData</em> </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>An</em>&nbsp;</td><td>input date, in the string format of a timestamp. </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>currentDate</em>&nbsp;</td><td>The server date, in the string format of a timestamp. </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True on success, false on failure. </dd></dl>
 
-<p>Implements <a class="el" href="classRakNet_1_1AutopatcherRepositoryInterface.html#dd35e02991360d240acc0b8f57c0f836">RakNet::AutopatcherRepositoryInterface</a>.</p>
+<p>Implements <a class="el" href="classRakNet_1_1AutopatcherRepositoryInterface.html#c9d1e99fa5cbf266f0e96fcea1d233fd">RakNet::AutopatcherRepositoryInterface</a>.</p>
 
 </div>
 </div><p>
@@ -286,7 +281,80 @@ Read part of a file into <em>destination</em> Return the number of bytes written
 
 </div>
 </div><p>
-<a class="anchor" name="ba8c6c0311c9c21b7632d44fb30bf8c7"></a><!-- doxytag: member="RakNet::AutopatcherMySQLRepository::GetPatches" ref="ba8c6c0311c9c21b7632d44fb30bf8c7" args="(const char *applicationName, FileList *input, FileList *patchList, char currentDate[64])" -->
+<a class="anchor" name="2fa7f2dff5f5a091725f0bac15b71b6b"></a><!-- doxytag: member="RakNet::AutopatcherMySQLRepository::GetMostRecentChangelistWithPatches" ref="2fa7f2dff5f5a091725f0bac15b71b6b" args="(RakNet::RakString &amp;applicationName, FileList *patchedFiles, FileList *updatedFiles, FileList *updatedFileHashes, FileList *deletedFiles, double *priorRowPatchTime, double *mostRecentRowPatchTime)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool RakNet::AutopatcherMySQLRepository::GetMostRecentChangelistWithPatches           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>applicationName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FileList *&nbsp;</td>
+          <td class="paramname"> <em>patchedFiles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FileList *&nbsp;</td>
+          <td class="paramname"> <em>updatedFiles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FileList *&nbsp;</td>
+          <td class="paramname"> <em>updatedFileHashes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FileList *&nbsp;</td>
+          <td class="paramname"> <em>deletedFiles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&nbsp;</td>
+          <td class="paramname"> <em>priorRowPatchTime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double *&nbsp;</td>
+          <td class="paramname"> <em>mostRecentRowPatchTime</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+For the most recent update, return files that were patched, added, or deleted. For files that were patched, return both the patch in <em>patchedFiles</em> and the current version in <em>updatedFiles</em> The cache will be used if the client last patched between <em>priorRowPatchTime</em> and <em>mostRecentRowPatchTime</em> No files changed will be returned to the client if the client last patched after mostRecentRowPatchTime <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in,out]</tt>&nbsp;</td><td valign="top"><em>applicationName</em>&nbsp;</td><td>Name of the application to get patches for. If empty, uses the most recently updated application, and the string will be updated to reflect this name. </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>patchedFiles</em>&nbsp;</td><td>Given the most recent update, if a file was patched, add it to this list. The context data for each file will be PC_HASH_WITH_PATCH. The first 4 bytes of data should be a hash of the file being patched. The second 4 bytes should be the hash of the file after the patch. The remaining bytes should be the patch itself. </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>updatedFiles</em>&nbsp;</td><td>The current value of the file. List should have the same length and order as <em>patchedFiles</em> </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>updatedFileHashes</em>&nbsp;</td><td>The hash of the current value of the file. List should have the same length and order as <em>patchedFiles</em> </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>deletedFiles</em>&nbsp;</td><td>Files that were deleted in the last patch. </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>priorRowPatchTime</em>&nbsp;</td><td>When the patch before the most recent patch took place. 0 means never. </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>mostRecentRowPatchTime</em>&nbsp;</td><td>When the most recent patch took place. 0 means never. </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>true on success, false on failure </dd></dl>
+
+<p>Implements <a class="el" href="classRakNet_1_1AutopatcherRepositoryInterface.html#a3095ea320136e7b41dc664bf535fa1a">RakNet::AutopatcherRepositoryInterface</a>.</p>
+
+</div>
+</div><p>
+<a class="anchor" name="e94bf96bb53b72351a6de25a06bca7ac"></a><!-- doxytag: member="RakNet::AutopatcherMySQLRepository::GetPatches" ref="e94bf96bb53b72351a6de25a06bca7ac" args="(const char *applicationName, FileList *input, FileList *patchList)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -306,13 +374,7 @@ Read part of a file into <em>destination</em> Return the number of bytes written
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">FileList *&nbsp;</td>
-          <td class="paramname"> <em>patchList</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char&nbsp;</td>
-          <td class="paramname"> <em>currentDate</em>[64]</td><td>&nbsp;</td>
+          <td class="paramname"> <em>patchList</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -329,12 +391,11 @@ Get patches (or files) for every file in input, assuming that input has a hash f
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>applicationName</em>&nbsp;</td><td>A null terminated string previously passed to AddApplication </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>input</em>&nbsp;</td><td>A list of files with hashes to get from the database. If this hash exists, a patch to the current version is returned if this file is not the current version. Otherwise the current version is returned. </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>patchList</em>&nbsp;</td><td>A list of files with either the filedata or the patch. This is a subset of <em>input</em>. The context data for each file will be either PC_WRITE_FILE (to just write the file) or PC_HASH_WITH_PATCH (to patch). If PC_HASH_WITH_PATCH, then the file contains a SHA1_LENGTH byte patch followed by the hash. The datalength is patchlength + SHA1_LENGTH </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>currentDate</em>&nbsp;</td><td>The current server date, in whatever format your repository uses </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True on success, false on failure. </dd></dl>
 
-<p>Implements <a class="el" href="classRakNet_1_1AutopatcherRepositoryInterface.html#eef254e9049ad550462b8b521f0b49cd">RakNet::AutopatcherRepositoryInterface</a>.</p>
+<p>Implements <a class="el" href="classRakNet_1_1AutopatcherRepositoryInterface.html#2874948bc8e43476ffb65e56572df869">RakNet::AutopatcherRepositoryInterface</a>.</p>
 
 </div>
 </div><p>
@@ -417,7 +478,7 @@ Update all the files for an application to match what is at the specified direct
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet/DependentExtensions/Autopatcher/AutopatcherMySQLRepository/<a class="el" href="AutopatcherMySQLRepository_8h.html">AutopatcherMySQLRepository.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Feb 28 10:12:24 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Mar 6 10:25:15 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

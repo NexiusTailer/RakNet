@@ -3789,6 +3789,18 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_FileListNodeContext_fileId_get")]
   public static extern uint FileListNodeContext_fileId_get(HandleRef jarg1);
 
+  [DllImport("RakNet", EntryPoint="CSharp_FileListNodeContext_dataPtr_set")]
+  public static extern void FileListNodeContext_dataPtr_set(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_FileListNodeContext_dataPtr_get")]
+  public static extern IntPtr FileListNodeContext_dataPtr_get(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_FileListNodeContext_dataLength_set")]
+  public static extern void FileListNodeContext_dataLength_set(HandleRef jarg1, uint jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_FileListNodeContext_dataLength_get")]
+  public static extern uint FileListNodeContext_dataLength_get(HandleRef jarg1);
+
   [DllImport("RakNet", EntryPoint="CSharp_FileListNode_filename_set")]
   public static extern void FileListNode_filename_set(HandleRef jarg1, HandleRef jarg2);
 

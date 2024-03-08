@@ -74,7 +74,7 @@ Pass the interface to your repository with this function.  RakNet comes with Aut
     <br>
     Check the sample at <em>\Samples\AutoPatcherServer</em>. It uses an implementation of AutopatcherRepositoryInterface for PostgreSQL (AutopatcherPostgreRepository), to store all the files of an application in a PostgreSQL database.<br>
     <br>
-    <strong>Other notes</strong><br>
+    <strong>Directory structure</strong><br>
     <br>
     It's possible to use directory structures.
     For example, suppose you have the following directory structure for your application: <br> 
@@ -115,8 +115,23 @@ Pass the interface to your repository with this function.  RakNet comes with Aut
         <li>PacketizedTCP returns connection state changes with HasCompletedConnectionAttempt(), HasNewIncomingConnection(), and HasLostConnection(), rather than byte identifiers.</li>
         <li>Attach the plugin to your instance of PacketizedTCP instead of RakPeerInterface</li>
       </ol>
-      <p><strong>Note on memory usage:</strong></p>
-<p>Patches are created with code from Colin Percival <a href="http://www.daemonology.net/bsdiff/">http://www.daemonology.net/bsdiff/</a> . The patching algorithm uses   <a href="http://www.cs.lth.se/Research/Algorithms/Papers/jesper5.ps"> Larsson and Sadakane's qsufsort</a> and is quite memory intensive, and not recommended for files over several hundred megabytes.</p></TD>
+      <p><strong>Optimizing for large games:</strong></p>
+      <p>AutopatcherClient::PatchApplication has a parameter lastUpdateDate. If 0 is passed for this parameter, the server does not know what version the client is using. This generates a full-scan, where the server has to access the database for the hash of every file for the application, and is very slow, so should be avoided whenever possible.</p>
+      <p>When distributing your application, you should get the timestamp on the patching server using the time() function and store this with the distribution. You can then pass that value to AutopatcherClient::PatchApplication. As long as this value is greater than or equal to the time when AutopatcherRepositoryInterface::UpdateApplicationFiles was called, the server can use it to do an optimized lookup for which files changed from the version the client is using.</p>
+      <p>AutopatcherServer has an additional optimization through the function CacheMostRecentPatch(). This will store the most recent patch in memory if using AutopatcherPostgreRepository. If the time passed to PatchApplication() is greater than the most recent patch, the patch is skipped entirely. If it is less than the most recent patch, but still greater than the patch prior to that, the patch is served from memory instead of disk. For this to work, every time you get ID_AUTOPATCHER_FINISHED call AutopatcherClient::GetServerDate(), save it to disk, and use that date for the next call to PatchApplication().</p>
+      <p>Summary of performance tips:</p>
+      <OL>
+      <LI>The autopatcher was not performanced designed to serve the application, only to patch.
+ Your users should download from FTP or a webserver as much as possible before patching.     <LI>Use AutopatcherServer::CacheMostRecentPatch()      if using AutopatcherPostgreRepository
+      <LI>AutopatcherPostgreRepository is about 10x faster than AutopatcherMySQLRepository even without CacheMostRecentPatch()     
+      <LI>If 0 is passed to lastUpdateDate for AutopatcherClient::PatchApplication, this generates a full-scan of every file accessing the database for each file. Do not do it except on user request to repair corrupted installations.<br>
+        <LI>To distribute your application, call time() on the server immediately after  UpdateApplicationFiles(). Store that value with the client distribution, and use as the default to  lastUpdateParameter for the first call to
+        AutopatcherClient::PatchApplication.<br>
+      <LI>Whenever you get ID_AUTOPATCHER_FINISHED, save the value returned by AutopatcherClient::GetServerDate() to use for the lastUpdateDate parameter of next call to AutopatcherClient::PatchApplication<br>
+      <LI>With CacheMostRecentPatch(), only the most recent patch is stored in memory, so do not call UpdateApplicationFiles pointlessly.      
+      </OL>
+      <p><strong>Notes on memory usage:</strong></p>
+<p>Patches are created with code from Colin Percival <a href="http://www.daemonology.net/bsdiff/">http://www.daemonology.net/bsdiff/</a> . The patching algorithm uses   <a href="http://www.cs.lth.se/Research/Algorithms/Papers/jesper5.ps"> Larsson and Sadakane's qsufsort</a> and is quite memory intensive, and not recommended for files over several hundred megabytes. If you use CacheMostRecentPatch() whatever the size of your most recent patch is, is also kept in memory. Additionally, file transfer takes about 8 megabytes per user.</p></TD>
 </TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
 <img src="spacer.gif" width="8" height="1">See Also</td>

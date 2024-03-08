@@ -79,8 +79,8 @@ bool AutopatcherMySQLRepository::CreateAutopatcherTables(void)
 		"contentHash TINYBLOB,"
 		"patch LONGBLOB,"
 		"createFile TINYINT NOT NULL,"
-		"modificationDate TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP,"
-		"lastSentDate TIMESTAMP,"
+		"modificationDate double precision DEFAULT (EXTRACT(EPOCH FROM now())),"
+		"lastSentDate double precision,"
 		"timesSent INT NOT NULL DEFAULT 0,"
 		"changeSetID INT NOT NULL,"
 		"userName TEXT NOT NULL,"
@@ -153,13 +153,10 @@ bool AutopatcherMySQLRepository::RemoveApplication(const char *applicationName)
 	return b;
 }
 
-bool AutopatcherMySQLRepository::GetChangelistSinceDate(const char *applicationName, FileList *addedFiles, FileList *deletedFiles, const char *sinceDate, char currentDate[64])
+bool AutopatcherMySQLRepository::GetChangelistSinceDate(const char *applicationName, FileList *addedFiles, FileList *deletedFiles, double sinceDate)
 {
 	char query[512];
-	if (sinceDate != 0 && strlen(sinceDate)>63)
-		return false;
 	RakNet::RakString escapedApplicationName = GetEscapedString(applicationName);
-	RakNet::RakString escapedSinceDate = GetEscapedString(sinceDate);
 	sprintf(query, "SELECT applicationID FROM Applications WHERE applicationName='%s';", escapedApplicationName.C_String());
 
 	int applicationID;
@@ -173,12 +170,12 @@ bool AutopatcherMySQLRepository::GetChangelistSinceDate(const char *applicationN
 	}
 	//sqlCommandMutex.Unlock();
 
-	if (sinceDate && sinceDate[0])
+	if (sinceDate!=0)
 		sprintf(query,
 		"SELECT filename, fileLength, contentHash, createFile, fileId FROM FileVersionHistory "
-		"JOIN (SELECT max(fileId) maxId FROM FileVersionHistory WHERE applicationId=%i AND modificationDate > '%s' GROUP BY fileName) MaxId "
+		"JOIN (SELECT max(fileId) maxId FROM FileVersionHistory WHERE applicationId=%i AND modificationDate > %f GROUP BY fileName) MaxId "
 		"ON FileVersionHistory.fileId = MaxId.maxId "
-		"ORDER BY filename DESC;", applicationID,escapedSinceDate.C_String());
+		"ORDER BY filename DESC;", applicationID,sinceDate);
 	else
 		sprintf(query,
 		"SELECT filename, fileLength, contentHash, createFile, fileId FROM FileVersionHistory "
@@ -213,14 +210,10 @@ bool AutopatcherMySQLRepository::GetChangelistSinceDate(const char *applicationN
 	}
 	mysql_free_result (result);
 
-	char *localTimestamp =GetLocalTimestamp ();
-	if (localTimestamp)
-		strcpy(currentDate, localTimestamp);;
-
 	return true;
 }
 
-bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileList *input, FileList *patchList, char currentDate[64])
+bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileList *input, FileList *patchList)
 {
 	char query[512];
 	RakNet::RakString escapedApplicationName = GetEscapedString(applicationName);
@@ -364,7 +357,7 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 						memcpy(temp, contentHash, HASH_LENGTH);
 						memcpy(temp+HASH_LENGTH, patch, patchLength);
 
-						patchList->AddFile(userFilename,userFilename, temp, HASH_LENGTH+patchLength, fileLength, FileListNodeContext(PC_HASH_WITH_PATCH,0) );
+						patchList->AddFile(userFilename,userFilename, temp, HASH_LENGTH+patchLength, fileLength, FileListNodeContext(PC_HASH_1_WITH_PATCH,0) );
 						delete [] temp;
 					}
 
@@ -386,11 +379,13 @@ bool AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileLis
 		delete [] fn;
 	}
 
-	char *localTimestamp =GetLocalTimestamp ();
-	if (localTimestamp)
-		strcpy(currentDate, localTimestamp);;
-
 	return true;
+}
+
+bool AutopatcherMySQLRepository::GetMostRecentChangelistWithPatches(RakNet::RakString &applicationName, FileList *patchedFiles, FileList *updatedFiles, FileList *updatedFileHashes, FileList *deletedFiles, double *priorRowPatchTime, double *mostRecentRowPatchTime)
+{
+	// Not yet implemented
+	return false;
 }
 
 bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationName, const char *applicationDirectory, const char *userName, FileListProgress *cb)

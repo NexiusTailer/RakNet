@@ -413,6 +413,11 @@
  	Lobby (360): Numerous fixes.
  	Lobby (PS3): Expose thread priority for cellSysutilAvc2Load.
   Update Lobby2 for Steam so that steam_api.h is not included from any RakNet files, in order to take steam_types.h out of the global namespace due to type conflicts.<BR>
+  4.015 (3/6/2011)
+  Lobby (360): Added Console_GetRoomDetails_360
+	Lobby (360): Added RoomMemberInfo::roomMemberName
+	Lobby (PS3): Exposed supportHostMigration parameter when creating rooms.
+	Autopatcher: Add CacheMostRecentPatch() to AutopatcherServer. This keeps the most recent patch operation in memory, as well as the start and end date the most recent patch occurred. When the lastUpdateDate is passed to AutopatcherClient::PatchApplication() and the corresponding patch is the most recent, disk access is not needed on the server, greatly improving performance.
   <br>
   <br>
   <BR>

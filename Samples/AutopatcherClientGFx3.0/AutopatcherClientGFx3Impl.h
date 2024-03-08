@@ -30,7 +30,7 @@ public:
 	const char* Connect(const char *ip, unsigned short port);
 	void UpdateConnectResult(bool isConnected);
 	void SaveLastUpdateDate(void);
-	void LoadLastUpdateDate(char *out, const char *appDir);
+	void LoadLastUpdateDate(double *out, const char *appDir);
 	void GotoMainMenu(void);
 
 	AutopatcherClient *autopatcherClient;

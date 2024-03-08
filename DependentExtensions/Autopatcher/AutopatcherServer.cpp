@@ -17,6 +17,9 @@
 #include "MessageIdentifiers.h"
 #include "AutopatcherRepositoryInterface.h"
 #include "RakAssert.h"
+#include "AutopatcherPatchContext.h"
+#include <stdio.h>
+#include <time.h>
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -24,6 +27,7 @@
 
 using namespace RakNet;
 
+const static unsigned HASH_LENGTH=4;
 
 void AutopatcherServerLoadNotifier_Printf::OnQueueUpdate(SystemAddress remoteSystem, AutopatcherServerLoadNotifier::RequestType requestType, AutopatcherServerLoadNotifier::QueueOperation queueOperation, AutopatcherServerLoadNotifier::AutopatcherState *autopatcherState)
 {
@@ -95,6 +99,9 @@ AutopatcherServer::AutopatcherServer()
 	patchingUserCount=0;
 	maxConcurrentUsers=0;
 	loadNotifier=0;
+	cache_minTime=0;
+	cache_maxTime=0;
+	cacheLoaded=false;
 }
 AutopatcherServer::~AutopatcherServer()
 {
@@ -126,6 +133,24 @@ void AutopatcherServer::StartThreads(int numThreads, int numSQLConnections, Auto
 	threadPool.SetThreadDataInterface(this,0);
 	threadPool.StartThreads(numThreads, 0);
 }
+void AutopatcherServer::CacheMostRecentPatch(const char *applicationName)
+{
+	if (connectionPool.Size()>0)
+	{
+		if (applicationName)
+			cache_appName=applicationName;
+		else
+			cache_appName.Clear();
+		cache_patchedFiles.Clear();
+		cache_updatedFiles.Clear();
+		cache_deletedFiles.Clear();
+		cache_updatedFileHashes.Clear();
+		cache_minTime=0;
+		cache_maxTime=0;
+
+		cacheLoaded = connectionPool[0]->GetMostRecentChangelistWithPatches(cache_appName, &cache_patchedFiles, &cache_updatedFiles, &cache_updatedFileHashes, &cache_deletedFiles, &cache_minTime, &cache_maxTime);
+	}
+}
 void AutopatcherServer::OnAttach(void)
 {
 }
@@ -144,10 +169,10 @@ void AutopatcherServer::Update(void)
 		switch (packet->data[0]) 
 		{
 		case ID_AUTOPATCHER_GET_CHANGELIST_SINCE_DATE:
-			OnGetChangelistSinceDate(packet);
+			OnGetChangelistSinceDateInt(packet);
 			break;
 		case ID_AUTOPATCHER_GET_PATCH:
-			OnGetPatch(packet);
+			OnGetPatchInt(packet);
 			break;
 		}
 		DeallocPacketUnified(packet);
@@ -158,27 +183,9 @@ PluginReceiveResult AutopatcherServer::OnReceive(Packet *packet)
 	switch (packet->data[0]) 
 	{
 	case ID_AUTOPATCHER_GET_CHANGELIST_SINCE_DATE:
-		if (PatchingUserLimitReached())
-		{
-			AddToWaitingQueue(packet);
-			return RR_STOP_PROCESSING;
-		}
-		else
-		{
-			OnGetChangelistSinceDate(packet);
-			return RR_STOP_PROCESSING_AND_DEALLOCATE;
-		}
+		return OnGetChangelistSinceDate(packet);
 	case ID_AUTOPATCHER_GET_PATCH:
-		if (PatchingUserLimitReached())
-		{
-			AddToWaitingQueue(packet);
-			return RR_STOP_PROCESSING;
-		}
-		else
-		{
-			OnGetPatch(packet);
-			return RR_STOP_PROCESSING_AND_DEALLOCATE;
-		}
+		return OnGetPatch(packet);
 	}
 
 	return RR_CONTINUE_PROCESSING;
@@ -271,8 +278,6 @@ AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherS
 	AutopatcherRepositoryInterface *repository = (AutopatcherRepositoryInterface*)perThreadData;
 	
 	FileList addedFiles, deletedFiles;
-	char currentDate[64];
-	currentDate[0]=0;
 	AutopatcherServer *server = threadData.server;
 
 	//AutopatcherServer::ResultTypeAndBitstream *rtab = RakNet::OP_NEW<AutopatcherServer::ResultTypeAndBitstream>( _FILE_AND_LINE_ );
@@ -286,7 +291,7 @@ AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherS
 	// Query the database for a changelist since this date
 	RakAssert(server);
 	//if (server->repository->GetChangelistSinceDate(threadData.applicationName.C_String(), rtab.addedFiles, rtab.deletedFiles, threadData.lastUpdateDate.C_String(), currentDate))
-	if (repository->GetChangelistSinceDate(threadData.applicationName.C_String(), rtab.addedFiles, rtab.deletedFiles, threadData.lastUpdateDate.C_String(), currentDate))
+	if (repository->GetChangelistSinceDate(threadData.applicationName.C_String(), rtab.addedFiles, rtab.deletedFiles, threadData.lastUpdateDate))
 	{
 		rtab.fatalError=false;
 	}
@@ -296,7 +301,7 @@ AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherS
 	}
 
 	rtab.operation=AutopatcherServer::ResultTypeAndBitstream::GET_CHANGELIST_SINCE_DATE;
-	rtab.currentDate=currentDate;
+	rtab.currentDate=(double) time(NULL);
 	// *returnOutput=true;
 	// return rtab;
 
@@ -312,13 +317,15 @@ AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherS
 		{
 			rtab.bitStream2.Write((unsigned char) ID_AUTOPATCHER_CREATION_LIST);
 			rtab.addedFiles->Serialize(&rtab.bitStream2);
-			StringCompressor::Instance()->EncodeString(rtab.currentDate.C_String(),64,&rtab.bitStream2);
+			rtab.bitStream2.Write(rtab.currentDate);
+			rtab.bitStream2.WriteCasted<double>(0);
+
 			rtab.addedFiles->Clear();
 		}
 		else
 		{
 			rtab.bitStream2.Write((unsigned char) ID_AUTOPATCHER_FINISHED);
-			StringCompressor::Instance()->EncodeString(rtab.currentDate.C_String(),64,&rtab.bitStream2);
+			rtab.bitStream2.Write(rtab.currentDate);
 		}
 	}
 	else
@@ -362,13 +369,70 @@ AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherS
 	return 0;
 }
 }
-void AutopatcherServer::OnGetChangelistSinceDate(Packet *packet)
+PluginReceiveResult AutopatcherServer::OnGetChangelistSinceDate(Packet *packet)
 {
 	RakNet::BitStream inBitStream(packet->data, packet->length, false);
 	ThreadData threadData;
 	inBitStream.IgnoreBits(8);
 	inBitStream.ReadCompressed(threadData.applicationName);
-	inBitStream.ReadCompressed(threadData.lastUpdateDate);
+	inBitStream.Read(threadData.lastUpdateDate);
+
+	if (cacheLoaded && threadData.lastUpdateDate!=0 && threadData.applicationName==cache_appName)
+	{
+		RakNet::BitStream bitStream1;
+		RakNet::BitStream bitStream2;
+		double currentDate=(double) time(NULL);
+		if (cache_maxTime!=0 && threadData.lastUpdateDate>cache_maxTime)
+		{
+			bitStream2.Write((unsigned char) ID_AUTOPATCHER_FINISHED);
+			bitStream2.Write(currentDate);
+			SendUnified(&bitStream2, priority, RELIABLE_ORDERED,orderingChannel, packet->systemAddress, false);
+			return RR_STOP_PROCESSING_AND_DEALLOCATE;
+		}
+
+		// Check in-memory cache, use if possible rather than accessing database
+		if (cache_minTime!=0 && threadData.lastUpdateDate>cache_minTime)
+		{
+			if (cache_deletedFiles.fileList.Size())
+			{
+				bitStream1.Write((unsigned char) ID_AUTOPATCHER_DELETION_LIST);
+				cache_deletedFiles.Serialize(&bitStream1);
+				SendUnified(&bitStream1, priority, RELIABLE_ORDERED,orderingChannel, packet->systemAddress, false);
+			}
+			if (cache_updatedFileHashes.fileList.Size())
+			{
+				bitStream2.Write((unsigned char) ID_AUTOPATCHER_CREATION_LIST);
+				cache_updatedFileHashes.Serialize(&bitStream2);
+				bitStream2.Write(currentDate);
+				bitStream2.Write(threadData.lastUpdateDate);
+			}
+			else
+			{
+				bitStream2.Write((unsigned char) ID_AUTOPATCHER_FINISHED);
+				bitStream2.Write(currentDate);
+			}
+			SendUnified(&bitStream2, priority, RELIABLE_ORDERED,orderingChannel, packet->systemAddress, false);
+
+			return RR_STOP_PROCESSING_AND_DEALLOCATE;
+		}
+	}
+
+	if (PatchingUserLimitReached())
+	{
+		AddToWaitingQueue(packet);
+		return RR_STOP_PROCESSING;
+	}
+
+	OnGetChangelistSinceDateInt(packet);
+	return RR_STOP_PROCESSING_AND_DEALLOCATE;
+}
+void AutopatcherServer::OnGetChangelistSinceDateInt(Packet *packet)
+{
+	RakNet::BitStream inBitStream(packet->data, packet->length, false);
+	ThreadData threadData;
+	inBitStream.IgnoreBits(8);
+	inBitStream.ReadCompressed(threadData.applicationName);
+	inBitStream.Read(threadData.lastUpdateDate);
 
 	IncrementPatchingUserCount();
 	CallPacketCallback(packet, AutopatcherServerLoadNotifier::QO_POPPED_ONTO_TO_PROCESSING_THREAD);
@@ -391,16 +455,14 @@ AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadD
 	rtab.patchList=&fileList;
 	RakAssert(server);
 //	RakAssert(server->repository);
-	char currentDate[64];
-	currentDate[0]=0;
 //	if (server->repository->GetPatches(threadData.applicationName.C_String(), threadData.clientList, rtab.patchList, currentDate))
-	if (repository->GetPatches(threadData.applicationName.C_String(), threadData.clientList, rtab.patchList, currentDate))
+	if (repository->GetPatches(threadData.applicationName.C_String(), threadData.clientList, rtab.patchList))
 		rtab.fatalError=false;
 	else
 		rtab.fatalError=true;
 	rtab.operation=AutopatcherServer::ResultTypeAndBitstream::GET_PATCH;
 	rtab.setId=threadData.setId;
-	rtab.currentDate=currentDate;
+	rtab.currentDate=(double) time(NULL);
 
 	RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
 
@@ -418,7 +480,7 @@ AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadD
 		}
 
 		rtab.bitStream1.Write((unsigned char) ID_AUTOPATCHER_FINISHED_INTERNAL);
-		StringCompressor::Instance()->EncodeString(rtab.currentDate.C_String(),64,&rtab.bitStream1);
+		rtab.bitStream1.Write(rtab.currentDate);
 	}
 	else
 	{
@@ -456,13 +518,132 @@ AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadD
 	return 0;
 }
 }
-void AutopatcherServer::OnGetPatch(Packet *packet)
+PluginReceiveResult AutopatcherServer::OnGetPatch(Packet *packet)
 {
 	RakNet::BitStream inBitStream(packet->data, packet->length, false);
 	
 	ThreadData threadData;
 	inBitStream.IgnoreBits(8);
 	inBitStream.Read(threadData.setId);
+	double lastUpdateDate;
+	inBitStream.Read(lastUpdateDate);
+	inBitStream.ReadCompressed(threadData.applicationName);
+	threadData.clientList=0;
+
+	// Check in-memory cache, use if possible rather than accessing database
+	if (threadData.applicationName==cache_appName && lastUpdateDate!=0 && cacheLoaded && cache_minTime!=0 && lastUpdateDate>cache_minTime)
+	{
+		threadData.systemAddress=packet->systemAddress;
+		threadData.server=this;
+		threadData.clientList=RakNet::OP_NEW<FileList>( _FILE_AND_LINE_ );
+
+		if (threadData.clientList->Deserialize(&inBitStream)==false)
+		{
+			RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
+			return RR_STOP_PROCESSING_AND_DEALLOCATE;
+		}
+		if (threadData.clientList->fileList.Size()==0)
+		{
+			RakAssert(0);
+			RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
+			return RR_STOP_PROCESSING_AND_DEALLOCATE;
+		}
+
+		char *userHash;
+		RakNet::RakString userFilename;
+		FileList patchList;
+
+		unsigned int i,j;
+		for (i=0; i < threadData.clientList->fileList.Size(); i++)
+		{
+			userHash=threadData.clientList->fileList[i].data;
+			userFilename=threadData.clientList->fileList[i].filename;
+			bool sentAnything=false;
+
+			// If the user file has a hash, check this hash against the hash stored with the patch, for the file of the same name
+			if (userHash)
+			{
+				if (threadData.clientList->fileList[i].dataLengthBytes!=HASH_LENGTH)
+				{
+					RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
+					return RR_STOP_PROCESSING_AND_DEALLOCATE;
+				}
+
+				for (j=0; j < cache_patchedFiles.fileList.Size(); j++)
+				{
+					if (userFilename == cache_patchedFiles.fileList[j].filename)
+					{			
+						if (memcmp(cache_patchedFiles.fileList[j].data, userHash, HASH_LENGTH)!=0)
+						{
+							// Full file will be sent below							
+						}
+						else
+						{
+							// Send patch
+							RakAssert(cache_patchedFiles.fileList[j].context.op==PC_HASH_2_WITH_PATCH);
+							patchList.AddFile(userFilename,userFilename, 0, cache_patchedFiles.fileList[j].dataLengthBytes, cache_patchedFiles.fileList[j].fileLengthBytes, cache_patchedFiles.fileList[j].context, true, false);
+							sentAnything=true;
+						}
+
+						break;
+					}
+				}
+			}
+
+			if (sentAnything==false)
+			{
+				RakAssert(userFilename == cache_updatedFiles.fileList[j].filename);
+
+				patchList.AddFile(userFilename,userFilename, 0, cache_updatedFiles.fileList[j].dataLengthBytes, cache_updatedFiles.fileList[j].fileLengthBytes, cache_updatedFiles.fileList[j].context, true, false);
+				sentAnything=true;
+				break;
+			}
+
+			if (sentAnything==false)
+			{
+				// Failure to find file in cache
+				// Will fall to use database
+				patchList.Clear();
+				break;
+			}
+		}
+
+		if (patchList.fileList.Size()>0)
+		{
+			IncrementPatchingUserCount();
+
+			fileListTransfer->Send(&patchList, 0, packet->systemAddress, threadData.setId, priority, orderingChannel, this, 262144*4*4);
+			RakNet::BitStream bitStream1;
+			bitStream1.Write((unsigned char) ID_AUTOPATCHER_FINISHED_INTERNAL);
+			double t =(double) time(NULL);
+			bitStream1.Write(t);
+			SendUnified(&bitStream1, priority, RELIABLE_ORDERED, orderingChannel, packet->systemAddress, false);
+
+			RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
+			return RR_STOP_PROCESSING_AND_DEALLOCATE;
+		}
+	}
+
+	RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
+	
+	if (PatchingUserLimitReached())
+	{
+		AddToWaitingQueue(packet);
+		return RR_STOP_PROCESSING;
+	}
+
+	OnGetPatchInt(packet);
+	return RR_STOP_PROCESSING_AND_DEALLOCATE;
+}
+void AutopatcherServer::OnGetPatchInt(Packet *packet)
+{
+	RakNet::BitStream inBitStream(packet->data, packet->length, false);
+
+	ThreadData threadData;
+	inBitStream.IgnoreBits(8);
+	inBitStream.Read(threadData.setId);
+	double lastUpdateDate;
+	inBitStream.Read(lastUpdateDate);
 	inBitStream.ReadCompressed(threadData.applicationName);
 	threadData.systemAddress=packet->systemAddress;
 	threadData.server=this;
@@ -484,7 +665,6 @@ void AutopatcherServer::OnGetPatch(Packet *packet)
 	CallPacketCallback(packet, AutopatcherServerLoadNotifier::QO_POPPED_ONTO_TO_PROCESSING_THREAD);
 
 	threadPool.AddInput(GetPatchCB, threadData);
-	return;
 }
 void* AutopatcherServer::PerThreadFactory(void *context)
 {
@@ -576,6 +756,35 @@ Packet *AutopatcherServer::PopOffWaitingQueue(void)
 void AutopatcherServer::SetLoadManagementCallback(AutopatcherServerLoadNotifier *asumc)
 {
 	loadNotifier=asumc;
+}
+unsigned int AutopatcherServer::GetFilePart( const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)
+{
+	/*
+	int offset;
+	if (context.op==PC_HASH_1_WITH_PATCH)
+		offset=HASH_LENGTH;
+	else if (context.op==PC_HASH_2_WITH_PATCH)
+		offset=HASH_LENGTH*2;
+	else
+		offset=0;
+
+	int bytesToRead;
+	if (startReadBytes + numBytesToRead > context.dataLength-offset)
+		bytesToRead=(context.dataLength-offset)-startReadBytes;
+	else
+		bytesToRead=numBytesToRead;
+
+	memcpy(preallocatedDestination, ((char*)context.dataPtr)+offset, bytesToRead);
+	*/
+
+	int bytesToRead;
+	if (startReadBytes + numBytesToRead > context.dataLength)
+		bytesToRead=(context.dataLength)-startReadBytes;
+	else
+		bytesToRead=numBytesToRead;
+
+	memcpy(preallocatedDestination, context.dataPtr, bytesToRead);
+	return bytesToRead;
 }
 
 #ifdef _MSC_VER

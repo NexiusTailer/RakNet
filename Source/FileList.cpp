@@ -24,7 +24,7 @@
 #include "LinuxStrings.h"
 
 #define MAX_FILENAME_LENGTH 512
-static const unsigned HASH_LENGTH=sizeof(unsigned int);
+static const unsigned HASH_LENGTH=4;
 
 using namespace RakNet;
 
@@ -187,6 +187,10 @@ void FileList::AddFile(const char *filename, const char *fullPathToFile, const c
 	n.fileLengthBytes=fileLength;
 	n.isAReference=isAReference;
 	n.context=context;
+	if (n.context.dataPtr==0)
+		n.context.dataPtr=n.data;
+	if (n.context.dataLength==0)
+		n.context.dataLength=dataLength;
 	n.filename=filename;
 	n.fullPathToFile=fullPathToFile;
 		
@@ -356,8 +360,10 @@ void FileList::Serialize(RakNet::BitStream *outBitStream)
 		outBitStream->WriteCompressed(fileList[i].context.op);
 		outBitStream->WriteCompressed(fileList[i].context.fileId);
 		StringCompressor::Instance()->EncodeString(fileList[i].filename.C_String(), MAX_FILENAME_LENGTH, outBitStream);
-		outBitStream->Write((bool)(fileList[i].dataLengthBytes>0==true));
-		if (fileList[i].dataLengthBytes>0)
+
+		bool writeFileData = fileList[i].dataLengthBytes>0==true;
+		outBitStream->Write(writeFileData);
+		if (writeFileData)
 		{
 			outBitStream->WriteCompressed(fileList[i].dataLengthBytes);
 			outBitStream->Write(fileList[i].data, fileList[i].dataLengthBytes);

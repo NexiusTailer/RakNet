@@ -23,7 +23,7 @@ class TestCB : public RakNet::FileListTransferCBInterface
 public:
 	virtual bool OnFile(OnFileStruct *onFileStruct)
 	{
-		if (onFileStruct->context.op==PC_HASH_WITH_PATCH)
+		if (onFileStruct->context.op==PC_HASH_1_WITH_PATCH || onFileStruct->context.op==PC_HASH_2_WITH_PATCH)
 			printf("Patched: ");
 		else if (onFileStruct->context.op==PC_WRITE_FILE)
 			printf("Written: ");
@@ -107,8 +107,8 @@ int main(int argc, char **argv)
 		printf("Enter server IP: ");
 		Gets(buff,sizeof(buff));
 		if (buff[0]==0)
-			strcpy(buff, "94.198.81.195");
-			//strcpy(buff, "127.0.0.1");
+			//strcpy(buff, "94.198.81.195");
+			strcpy(buff, "127.0.0.1");
 	}
 	else
 		strcpy(buff, argv[1]);
@@ -127,7 +127,7 @@ int main(int argc, char **argv)
 		Gets(appDir,sizeof(appDir));
 		if (appDir[0]==0)
 		{
-			strcpy(appDir, "C:/temp2");
+			strcpy(appDir, "D:/temp2");
 		}
 	}
 	else
@@ -183,7 +183,13 @@ int main(int argc, char **argv)
 				printf("%s\n", buff);
 			}
 			else if (p->data[0]==ID_AUTOPATCHER_FINISHED)
-				printf("ID_AUTOPATCHER_FINISHED\n");
+			{
+				printf("ID_AUTOPATCHER_FINISHED with server time %f\n", autopatcherClient.GetServerDate());
+				double srvDate=autopatcherClient.GetServerDate();
+				FILE *fp = fopen("srvDate", "wb");
+				fwrite(&srvDate,sizeof(double),1,fp);
+				fclose(fp);
+			}
 			else if (p->data[0]==ID_AUTOPATCHER_RESTART_APPLICATION)
 				printf("Launch \"AutopatcherClientRestarter.exe autopatcherRestart.txt\"\nQuit this application immediately after to unlock files.\n");
 
@@ -217,7 +223,13 @@ int main(int argc, char **argv)
 				printf("%s\n", buff);
 			}
 			else if (p->data[0]==ID_AUTOPATCHER_FINISHED)
-				printf("ID_AUTOPATCHER_FINISHED\n");
+			{
+				printf("ID_AUTOPATCHER_FINISHED with server time %f\n", autopatcherClient.GetServerDate());
+				double srvDate=autopatcherClient.GetServerDate();
+				FILE *fp = fopen("srvDate", "wb");
+				fwrite(&srvDate,sizeof(double),1,fp);
+				fclose(fp);
+			}
 			else if (p->data[0]==ID_AUTOPATCHER_RESTART_APPLICATION)
 				printf("Launch \"AutopatcherClientRestarter.exe autopatcherRestart.txt\"\nQuit this application immediately after to unlock files.\n");
 
@@ -252,13 +264,19 @@ int main(int argc, char **argv)
 		else if (ch=='p' || (serverAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS && patchImmediately==true))
 		{
 			patchImmediately=false;
-			char lastUpdateDate[128];
 			char restartFile[512];
 			strcpy(restartFile, appDir);
 			strcat(restartFile, "/autopatcherRestart.txt");
-		//	printf("Enter last update date (only newer updates retrieved) or nothing to get all updates\n");
-			//	Gets(lastUpdateDate,sizeof(lastUpdateDate));
-			lastUpdateDate[0]=0;
+
+			double lastUpdateDate;
+			FILE *fp = fopen("srvDate", "rb");
+			if (fp)
+			{
+				fread(&lastUpdateDate, sizeof(lastUpdateDate), 1, fp);
+				fclose(fp);
+			}
+			else
+				lastUpdateDate=0;
 
 			if (autopatcherClient.PatchApplication(appName, appDir, lastUpdateDate, serverAddress, &transferCallback, restartFile, argv[0]))
 			{

@@ -19,7 +19,7 @@
 
 static const int INCREMENTAL_READ_BLOCK=65536;
 
-unsigned int SuperFastHash (const char * data, int length)
+uint32_t SuperFastHash (const char * data, int length)
 {
 	// All this is necessary or the hash does not match SuperFastHashIncremental
 	int bytesRemaining=length;
@@ -39,7 +39,7 @@ unsigned int SuperFastHash (const char * data, int length)
 
 //	return SuperFastHashIncremental(data,len,len);
 }
-unsigned int SuperFastHashIncremental (const char * data, int len, unsigned int lastHash )
+uint32_t SuperFastHashIncremental (const char * data, int len, unsigned int lastHash )
 {
 	uint32_t hash = (uint32_t) lastHash;
 	uint32_t tmp;
@@ -83,21 +83,21 @@ unsigned int SuperFastHashIncremental (const char * data, int len, unsigned int 
 	hash ^= hash << 25;
 	hash += hash >> 6;
 
-	return (unsigned int) hash;
+	return (uint32_t) hash;
 
 }
 
-unsigned int SuperFastHashFile (const char * filename)
+uint32_t SuperFastHashFile (const char * filename)
 {
 	FILE *fp = fopen(filename, "rb");
 	if (fp==0)
 		return 0;
-	unsigned int hash = SuperFastHashFilePtr(fp);
+	uint32_t hash = SuperFastHashFilePtr(fp);
 	fclose(fp);
 	return hash;
 }
 
-unsigned int SuperFastHashFilePtr (FILE *fp)
+uint32_t SuperFastHashFilePtr (FILE *fp)
 {
 	fseek(fp, 0, SEEK_END);
 	int length = ftell(fp);

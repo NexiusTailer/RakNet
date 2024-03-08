@@ -29,7 +29,7 @@
   </div>
 </div>
 <div class="contents">
-<h1>RakNet::AutopatcherServer Class Reference</h1><!-- doxytag: class="RakNet::AutopatcherServer" --><!-- doxytag: inherits="RakNet::PluginInterface2,ThreadDataInterface,RakNet::FileListProgress" -->The server plugin for the autopatcher. Must be running for the client to get patches.  
+<h1>RakNet::AutopatcherServer Class Reference</h1><!-- doxytag: class="RakNet::AutopatcherServer" --><!-- doxytag: inherits="RakNet::PluginInterface2,ThreadDataInterface,RakNet::FileListProgress,RakNet::IncrementalReadInterface" -->The server plugin for the autopatcher. Must be running for the client to get patches.  
 <a href="#_details">More...</a>
 <p>
 <code>#include &lt;AutopatcherServer.h&gt;</code>
@@ -50,6 +50,8 @@ Inheritance diagram for RakNet::AutopatcherServer:</div>
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherServer.html#075b43cf2cf1f4cbb7b693c2366ca920">StartThreads</a> (int numThreads, int numSQLConnections, <a class="el" href="classRakNet_1_1AutopatcherRepositoryInterface.html">AutopatcherRepositoryInterface</a> **sqlConnectionPtrArray)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherServer.html#ecfcbf7f0054b29890b5a3477c7874af">CacheMostRecentPatch</a> (const char *applicationName)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1AutopatcherServer.html#4a384c501c90377afd60e3424dd2633c">SetUploadSendParameters</a> (<a class="el" href="PacketPriority_8h.html#659378374e516180f93640c79f59705c">PacketPriority</a> _priority, char _orderingChannel)</td></tr>
 
@@ -91,6 +93,31 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 The server plugin for the autopatcher. Must be running for the client to get patches. <hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="ecfcbf7f0054b29890b5a3477c7874af"></a><!-- doxytag: member="RakNet::AutopatcherServer::CacheMostRecentPatch" ref="ecfcbf7f0054b29890b5a3477c7874af" args="(const char *applicationName)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::AutopatcherServer::CacheMostRecentPatch           </td>
+          <td>(</td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>applicationName</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Load the most recent patch in memory and keep it there This can take a lot of memory, but greatly speeds up serving patches, since disk access is not incurred <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>applicationName</em>&nbsp;</td><td>0 means all, otherwise the name of the application to cache </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <a class="anchor" name="76414a1d46ea3bd2d3401c4f64b70146"></a><!-- doxytag: member="RakNet::AutopatcherServer::OnClosedConnection" ref="76414a1d46ea3bd2d3401c4f64b70146" args="(const SystemAddress &amp;systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)" -->
 <div class="memitem">
 <div class="memproto">
@@ -318,7 +345,7 @@ DO THIS FIRST Implement to start the worker threads. Before this is called, no q
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet/DependentExtensions/Autopatcher/<a class="el" href="AutopatcherServer_8h.html">AutopatcherServer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Feb 28 10:12:22 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sun Mar 6 10:25:13 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

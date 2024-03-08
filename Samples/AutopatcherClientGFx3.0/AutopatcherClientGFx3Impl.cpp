@@ -31,7 +31,7 @@ public:
 	{
 		char buff[1024];
 
-		if (onFileStruct->context.op==PC_HASH_WITH_PATCH)
+		if (onFileStruct->context.op==PC_HASH_1_WITH_PATCH || onFileStruct->context.op==PC_HASH_2_WITH_PATCH)
 			strcpy(buff,"Patched: ");
 		else if (onFileStruct->context.op==PC_WRITE_FILE)
 			strcpy(buff,"Written: ");
@@ -223,11 +223,11 @@ void AutopatcherClientGFx3Impl::PressedPatch(const FxDelegateArgs& pparams)
 	strcpy(restartFile, appDir);
 	strcat(restartFile, "/");
 	strcat(restartFile, AUTOPATCHER_RESTART_FILE);
-	char lastUpdateDate[512];
+	double lastUpdateDate;
 	if (fullRescan==false)
-		prt->LoadLastUpdateDate(lastUpdateDate,appDir);
+		prt->LoadLastUpdateDate(&lastUpdateDate,appDir);
 	else
-		lastUpdateDate[0]=0;
+		lastUpdateDate=0;
 	
 	transferCallback.autopatcherClient=prt;
 	if (prt->autopatcherClient->PatchApplication(appName, appDir, lastUpdateDate, prt->serverAddress, &transferCallback, restartFile, prt->pathToThisExe))
@@ -289,30 +289,29 @@ void AutopatcherClientGFx3Impl::Accept(CallbackProcessor* cbreg)
 void AutopatcherClientGFx3Impl::SaveLastUpdateDate(void)
 {
 	char inPath[512];
-	char *serverDate=autopatcherClient->GetServerDate();
-	if (serverDate==0 || serverDate[0]==0)
-		return;
+	double serverDate=autopatcherClient->GetServerDate();
 	strcpy(inPath, appDirectory);
 	strcat(inPath, "/");
 	strcat(inPath, AUTOPATCHER_LAST_UPDATE_FILE);
 	FILE *fp = fopen(inPath,"wb");
 	if (fp!=0)
 	{
-		fwrite(serverDate,1,512,fp);
+		fwrite(&serverDate,sizeof(double),1,fp);
 		fclose(fp);
 	}
 }
 
-void AutopatcherClientGFx3Impl::LoadLastUpdateDate(char *out, const char *appDir)
+void AutopatcherClientGFx3Impl::LoadLastUpdateDate(double *out, const char *appDir)
 {
+	char inPath[512];
 	strcpy(appDirectory,appDir);
-	strcpy(out, appDirectory);
-	strcat(out, "/");
-	strcat(out, AUTOPATCHER_LAST_UPDATE_FILE);
-	FILE *fp = fopen(out,"rb");
+	strcpy(inPath, appDirectory);
+	strcat(inPath, "/");
+	strcat(inPath, AUTOPATCHER_LAST_UPDATE_FILE);
+	FILE *fp = fopen(inPath,"rb");
 	if (fp!=0)
 	{
-		fread(out,1,512,fp);
+		fread(out,sizeof(double),1,fp);
 		fclose(fp);
 	}
 	else

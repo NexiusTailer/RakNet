@@ -92,6 +92,7 @@ int main(int argc, char **argv)
 	// 4 Worker threads, which is CPU intensive
 	// A greater number of SQL connections, which read files incrementally for large downloads
 	autopatcherServer.StartThreads(workerThreadCount,sqlConnectionObjectCount, connectionObjectAddresses);
+	autopatcherServer.CacheMostRecentPatch(0);
 	printf("System ready for connections\n");
 
 	printf("(D)rop database\n(C)reate database.\n(A)dd application\n(U)pdate revision.\n(R)emove application\n(Q)uit\n");
@@ -187,7 +188,7 @@ int main(int argc, char **argv)
 				char appDir[512];
 				Gets(appDir,sizeof(appDir));
 				if (appDir[0]==0)
-					strcpy(appDir, "C:/temp");
+					strcpy(appDir, "D:/temp");
 
 				if (connectionObject[0].UpdateApplicationFiles(appName, appDir, username, 0)==false)
 				{
@@ -196,6 +197,7 @@ int main(int argc, char **argv)
 				else
 				{
 					printf("Update success.\n");
+					autopatcherServer.CacheMostRecentPatch(appName);
 				}
 			}
 		}

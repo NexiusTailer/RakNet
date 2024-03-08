@@ -17,6 +17,7 @@
 #include "BitStream.h"
 #include "RakString.h"
 #include "FileList.h"
+#include "IncrementalReadInterface.h"
 
 namespace RakNet
 {
@@ -118,7 +119,7 @@ public:
 };
 
 /// \brief The server plugin for the autopatcher.  Must be running for the client to get patches.
-class RAK_DLL_EXPORT AutopatcherServer : public PluginInterface2 , public ThreadDataInterface, FileListProgress
+class RAK_DLL_EXPORT AutopatcherServer : public PluginInterface2 , public ThreadDataInterface, FileListProgress, IncrementalReadInterface
 {
 public:
 	// Constructor
@@ -140,6 +141,11 @@ public:
 	/// \param[in] numSQLConnections Number of SQL connection objects passed to \a sqlConnectionPtrArray. Must be greater than or equal to numThreads
 	/// \param[in] sqlConnectionPtrArray List of pointers to AutopatcherRepositoryInterface. C++ note: Don't just cast a derived class array, you need to take the pointer address of each item
 	void StartThreads(int numThreads, int numSQLConnections, AutopatcherRepositoryInterface **sqlConnectionPtrArray);
+
+	/// Load the most recent patch in memory and keep it there
+	/// This can take a lot of memory, but greatly speeds up serving patches, since disk access is not incurred
+	/// \param[in] applicationName 0 means all, otherwise the name of the application to cache
+	void CacheMostRecentPatch(const char *applicationName);
 
 	/// What parameters to use for the RakPeerInterface::Send() call when uploading files.
 	/// \param[in] _priority See RakPeerInterface::Send()
@@ -184,7 +190,7 @@ public:
 	{
 		AutopatcherServer *server;
 		RakNet::RakString applicationName;
-		RakNet::RakString lastUpdateDate;
+		double lastUpdateDate;
 		SystemAddress systemAddress;
 		FileList *clientList;
 		unsigned short setId;
@@ -201,7 +207,7 @@ public:
 		FileList *deletedFiles, *addedFiles;
 		bool fatalError;
 		unsigned short setId;
-		RakNet::RakString currentDate;
+		double currentDate;
 		enum
 		{
 			GET_CHANGELIST_SINCE_DATE,
@@ -212,11 +218,14 @@ public:
 protected:
 	friend AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherServer::ThreadData pap, bool *returnOutput, void* perThreadData);
 	friend AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadData pap, bool *returnOutput, void* perThreadData);
-	void OnGetChangelistSinceDate(Packet *packet);
-	void OnGetPatch(Packet *packet);
+	PluginReceiveResult OnGetChangelistSinceDate(Packet *packet);
+	PluginReceiveResult OnGetPatch(Packet *packet);
+	void OnGetChangelistSinceDateInt(Packet *packet);
+	void OnGetPatchInt(Packet *packet);
 	void* PerThreadFactory(void *context);
 	void PerThreadDestructor(void* factoryResult, void *context);
 	void RemoveFromThreadPool(SystemAddress systemAddress);
+	virtual unsigned int GetFilePart( const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context);
 
 	//AutopatcherRepositoryInterface *repository;
 	FileListTransfer *fileListTransfer;
@@ -249,6 +258,13 @@ protected:
 	void CallPacketCallback(Packet *packet, AutopatcherServerLoadNotifier::QueueOperation queueOperation);
 	void CallPatchCompleteCallback(const SystemAddress &systemAddress, AutopatcherServerLoadNotifier::PatchResult patchResult);
 
+	RakNet::RakString cache_appName;
+	FileList cache_patchedFiles;
+	FileList cache_updatedFiles;
+	FileList cache_updatedFileHashes;
+	FileList cache_deletedFiles;
+	double cache_minTime, cache_maxTime;
+	bool cacheLoaded;
 };
 
 } // namespace RakNet

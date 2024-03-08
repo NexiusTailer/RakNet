@@ -23,7 +23,7 @@
 using namespace RakNet;
 
 #include "SuperFastHash.h"
-static const unsigned HASH_LENGTH=sizeof(unsigned int);
+static const unsigned HASH_LENGTH=4;
 
 #define COPY_ON_RESTART_EXTENSION ".patched.tmp"
 
@@ -66,7 +66,7 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 	}
 	else
 	{
-		RakAssert(input->onFileStruct.context.op==PC_HASH_WITH_PATCH);
+		RakAssert(input->onFileStruct.context.op==PC_HASH_1_WITH_PATCH || input->onFileStruct.context.op==PC_HASH_2_WITH_PATCH);
 
 //		CSHA1 sha1;
 		FILE *fp;
@@ -89,7 +89,12 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 		//				for (int i=0; i < byteLengthOfThisFile-SHA1_LENGTH; i++)
 		//					printf("%i ", fileData[SHA1_LENGTH+i]);
 		//				printf("\n");
-		if (ApplyPatch((char*)input->prePatchFile, input->prePatchLength, &input->postPatchFile, &input->postPatchLength, (char*)input->onFileStruct.fileData+HASH_LENGTH, input->onFileStruct.byteLengthOfThisFile-HASH_LENGTH)==false)
+		int hashMultiplier;
+		if (input->onFileStruct.context.op==PC_HASH_1_WITH_PATCH)
+			hashMultiplier=1;
+		else
+			hashMultiplier=2;
+		if (ApplyPatch((char*)input->prePatchFile, input->prePatchLength, &input->postPatchFile, &input->postPatchLength, (char*)input->onFileStruct.fileData+HASH_LENGTH*hashMultiplier, input->onFileStruct.byteLengthOfThisFile-HASH_LENGTH*hashMultiplier)==false)
 		{
 
 			input->result=PC_ERROR_PATCH_APPLICATION_FAILURE;
@@ -105,7 +110,8 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 			RakNet::BitStream::ReverseBytesInPlace((unsigned char*) &hash, sizeof(hash));
 
 		//if (memcmp(sha1.GetHash(), input->onFileStruct.fileData, HASH_LENGTH)!=0)
-		if (memcmp(&hash, input->onFileStruct.fileData, HASH_LENGTH)!=0)
+
+		if (memcmp(&hash, input->onFileStruct.fileData+HASH_LENGTH*(hashMultiplier-1), HASH_LENGTH)!=0)
 		{
 			input->result=PC_ERROR_PATCH_RESULT_CHECKSUM_FAILURE;
 		}
@@ -313,7 +319,7 @@ public:
 		inStruct->postPatchFile=0;
 		memcpy(&(inStruct->onFileStruct), onFileStruct, sizeof(OnFileStruct));
 		memcpy(inStruct->applicationDirectory,applicationDirectory,sizeof(applicationDirectory));
-		if (onFileStruct->context.op==PC_HASH_WITH_PATCH)
+		if (onFileStruct->context.op==PC_HASH_1_WITH_PATCH || onFileStruct->context.op==PC_HASH_2_WITH_PATCH)
 			onFileStruct->context.op=PC_NOTICE_FILE_DOWNLOADED_PATCH;
 		else
 			onFileStruct->context.op=PC_NOTICE_FILE_DOWNLOADED;
@@ -344,7 +350,7 @@ AutopatcherClient::AutopatcherClient()
 	fileListTransfer=0;
     priority=HIGH_PRIORITY;
 	orderingChannel=0;
-	serverDate[0]=0;
+	serverDate=0;
 	userCB=0;
 	processThreadCompletion=false;
 }
@@ -370,9 +376,9 @@ void AutopatcherClient::SetFileListTransferPlugin(FileListTransfer *flt)
 {
 	fileListTransfer=flt;
 }
-char* AutopatcherClient::GetServerDate(void) const
+double AutopatcherClient::GetServerDate(void) const
 {
-	return (char*)serverDate;
+	return serverDate;
 }
 void AutopatcherClient::CancelDownload(void)
 {
@@ -387,7 +393,7 @@ bool AutopatcherClient::IsPatching(void) const
 {
 	return fileListTransfer->IsHandlerActive(setId);
 }
-bool AutopatcherClient::PatchApplication(const char *_applicationName, const char *_applicationDirectory, const char *lastUpdateDate, SystemAddress host, FileListTransferCBInterface *onFileCallback, const char *restartOutputFilename, const char *pathToRestartExe)
+bool AutopatcherClient::PatchApplication(const char *_applicationName, const char *_applicationDirectory, double lastUpdateDate, SystemAddress host, FileListTransferCBInterface *onFileCallback, const char *restartOutputFilename, const char *pathToRestartExe)
 {
     RakAssert(applicationName);
 	RakAssert(applicationDirectory);
@@ -412,7 +418,7 @@ bool AutopatcherClient::PatchApplication(const char *_applicationName, const cha
 	RakNet::BitStream outBitStream;
 	outBitStream.Write((unsigned char)ID_AUTOPATCHER_GET_CHANGELIST_SINCE_DATE);
 	StringCompressor::Instance()->EncodeString(applicationName, 512, &outBitStream);
-	StringCompressor::Instance()->EncodeString(lastUpdateDate, 64, &outBitStream);
+	outBitStream.Write(lastUpdateDate);
     SendUnified(&outBitStream, priority, RELIABLE_ORDERED, orderingChannel, host, false);
 	return true;
 }
@@ -538,8 +544,9 @@ PluginReceiveResult AutopatcherClient::OnCreationList(Packet *packet)
 	if (remoteFileList.Deserialize(&inBitStream)==false)
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 
-	StringCompressor::Instance()->DecodeString(serverDate, 128, &inBitStream);
-	RakAssert(serverDate[0]);
+	inBitStream.Read(serverDate);
+	double patchApplicationLastUpdateDate;
+	inBitStream.Read(patchApplicationLastUpdateDate);
 
 	// Go through the list of hashes.  For each file we already have, remove it from the list.
 	remoteFileList.ListMissingOrChangedFiles(applicationDirectory, &missingOrChanged, true, false);
@@ -561,6 +568,7 @@ PluginReceiveResult AutopatcherClient::OnCreationList(Packet *packet)
 	// Ask for patches for the files in the list that are different from what we have.
 	outBitStream.Write((unsigned char)ID_AUTOPATCHER_GET_PATCH);
 	outBitStream.Write(setId);
+	outBitStream.Write(patchApplicationLastUpdateDate);
 	StringCompressor::Instance()->EncodeString(applicationName, 512, &outBitStream);
 	missingOrChanged.Serialize(&outBitStream);
 	SendUnified(&outBitStream, priority, RELIABLE_ORDERED, orderingChannel, packet->systemAddress, false);
@@ -586,8 +594,9 @@ PluginReceiveResult AutopatcherClient::OnDownloadFinished(Packet *packet)
 	inBitStream.IgnoreBits(8);
 	// This may have been created internally, with no serverDate written (line 469 or so)
 	if (inBitStream.GetNumberOfUnreadBits()>7)
-		StringCompressor::Instance()->DecodeString(serverDate, 128, &inBitStream);
-	RakAssert(serverDate[0]);
+	{
+		inBitStream.Read(serverDate);
+	}
 	serverId=packet->systemAddress;
 	serverIdIndex=packet->systemAddress.systemIndex;
 
@@ -599,8 +608,7 @@ PluginReceiveResult AutopatcherClient::OnDownloadFinishedInternal(Packet *packet
 	inBitStream.IgnoreBits(8);
 	serverId=packet->systemAddress;
 	serverIdIndex=packet->systemAddress.systemIndex;
-	StringCompressor::Instance()->DecodeString(serverDate, 128, &inBitStream);
-	RakAssert(serverDate[0]);
+	inBitStream.Read(serverDate);
 
 	return RR_STOP_PROCESSING_AND_DEALLOCATE;
 }
