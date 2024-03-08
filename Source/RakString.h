@@ -200,6 +200,21 @@ public:
 	/// Scan for quote, double quote, and backslash and prepend with backslash
 	RakNet::RakString& SQLEscape(void);
 
+	/// Format as a POST command that can be sent to a webserver
+	/// \param[in] uri For example, jenkinssoftware.com/raknet/DirectoryServer.php?query=download&downloadPassword=a
+	/// \param[in] contentType For example, application/x-www-form-urlencoded
+	/// \param[in] port Port you plan to send to. Use 80 if you don't know.
+	/// \param[in] body Body of the post
+	/// \return Formatted string
+	static RakNet::RakString FormatForPOST(RakString &uri, RakString &contentType, unsigned int port, RakString &body);
+
+	/// Format as a GET comand that can be sent to a webserver
+	/// \param[in] uri For example, jenkinssoftware.com/raknet/DirectoryServer.php?query=download&downloadPassword=a
+	/// \param[in] contentType For example, application/x-www-form-urlencoded
+	/// \param[in] port Port you plan to send to. Use 80 if you don't know.
+	/// \return Formatted string
+	static RakNet::RakString FormatForGET(RakString &uri, unsigned int port);
+
 	/// Fix to be a file path, ending with /
 	RakNet::RakString& MakeFilePath(void);
 

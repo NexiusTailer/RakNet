@@ -563,6 +563,19 @@ NatPunchthroughClient: Removed OpenNATGroup(). Use FullyConnectedMesh2::StartVer
 Added ComprehensivePCGame sample
 Fixed RakNetGUID::ToString not returning UNASSIGNED_RAKNET_GUID
 Fixed crash in PerGameRoomsContainer::DestroyRoomIfDead
+4.05 (7/12/2012)
+RakPeerInterface: Fixed ApplyNetworkSimulator only sending one datagram an update tick. Fixed bug where if the packetloss caused receipt of a duplicated RELIABLE_SEQUENCED or UNRELIABLE_SEQUENCED datagram, it could be returned to the user twice. Account for time variable overflow if a system had been running a very long time.
+FullyConnectedMesh2: Fixed StartVerifiedJoin when multiple systems join at the same time.
+ReplicaManager3: Fixed SerializeParameters::whenLastSerialized not being set. Assert if you reference the same thing twice.
+UDPForwarder: Rewritten to fix unknown thread-related problems causing forwarding to fail
+Rooms: Fixed NetworkedQuickJoinUser::Serialize. JoinedRoomResult now serializes joiningMemberGuid.
+FileListTransfer: Fixed RemoveReceiver if more than one set of files are transferred to the same system simultaneously.
+TeamManager: Can now be used in a limited sense in single player (when not attached to RakPeerInterface)
+UDPProxyClient: Now returns server ip and port when returning ID_UDP_PROXY_IN_PROGRESS so the user can take over an existing forwarding port.
+RakString: Added FormatForPOST() and FormatForGet() in order to reduce reliance on HTTPConnection class.
+PS3 / Vita: Console_SendDataMessageToUser_PS3 now asserts if message size exceeds max for the target platform
+New plugin: StatisticsHistory. Detailed tracking of connection statistics for use in bandwidth optimization by the user.
+New plugin: LivVoice, can cross compile to PS3 and Vita to support voice chat. Replaces AVC2 when turned on in NativeFeatureIncludes.h.
 </pre>
 <BR>
 </p></TD></TR></TABLE>

@@ -46,7 +46,7 @@
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1PluginInterface2.html#37c873a1879871722e06acfc45923883">OnRakPeerShutdown</a>(void)</td><td><a class="el" href="classRakNet_1_1PluginInterface2.html">RakNet::PluginInterface2</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1PluginInterface2.html#14825e69f0560996327e4dd351842c06">OnRakPeerStartup</a>(void)</td><td><a class="el" href="classRakNet_1_1PluginInterface2.html">RakNet::PluginInterface2</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RPC4.html#a2df727ed0ef203a017e198a94dc8841">OnReceive</a>(Packet *packet)</td><td><a class="el" href="classRakNet_1_1RPC4.html">RakNet::RPC4</a></td><td><code> [protected, virtual]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="classRakNet_1_1PluginInterface2.html#1ba66b118f6eb4d4263b24aae13fb14d">OnReliabilityLayerPacketError</a>(const char *errorMessage, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress)</td><td><a class="el" href="classRakNet_1_1PluginInterface2.html">RakNet::PluginInterface2</a></td><td><code> [inline, virtual]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakNet_1_1PluginInterface2.html#bf51e60546bd74d21c91dc0d6f9f3a4b">OnReliabilityLayerNotification</a>(const char *errorMessage, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress, bool isError)</td><td><a class="el" href="classRakNet_1_1PluginInterface2.html">RakNet::PluginInterface2</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RPC4.html#274362402c9476feb9575d06b75a5263">RegisterBlockingFunction</a>(const char *uniqueID, void(*functionPointer)(RakNet::BitStream *userData, RakNet::BitStream *returnData, Packet *packet))</td><td><a class="el" href="classRakNet_1_1RPC4.html">RakNet::RPC4</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RPC4.html#62122f90344dbfc064f9b14e0f565b23">RegisterFunction</a>(const char *uniqueID, void(*functionPointer)(RakNet::BitStream *userData, Packet *packet))</td><td><a class="el" href="classRakNet_1_1RPC4.html">RakNet::RPC4</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1RPC4.html#71f5f6d32e12adf3715d9c5faea25439">RegisterLocalCallback</a>(const char *uniqueID, MessageID messageId)</td><td><a class="el" href="classRakNet_1_1RPC4.html">RakNet::RPC4</a></td><td></td></tr>
@@ -59,7 +59,7 @@
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1PluginInterface2.html#9587824d39ac045173442dbbc32051da">Update</a>(void)</td><td><a class="el" href="classRakNet_1_1PluginInterface2.html">RakNet::PluginInterface2</a></td><td><code> [inline, virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakNet_1_1PluginInterface2.html#ccfca7d25262c48a87a30114383284aa">UsesReliabilityLayer</a>(void) const </td><td><a class="el" href="classRakNet_1_1PluginInterface2.html">RakNet::PluginInterface2</a></td><td><code> [inline, virtual]</code></td></tr>
 </table></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 10 16:25:03 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jul 12 10:50:30 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -349,6 +349,7 @@ struct LastSerializationResult
 	RakNet::Replica3 *replica;
 	//bool neverSerialize;
 //	bool isConstructed;
+	RakNet::Time whenLastSerialized;
 
 	void AllocBS(void);
 	LastSerializationResultBS* lastSerializationResultBS;
@@ -949,7 +950,7 @@ public:
 
 	/// \brief Called when the class is actually transmitted via Serialize()
 	/// \details Use to track how much bandwidth this class it taking
-	virtual void OnSerializeTransmission(RakNet::BitStream *bitStream, const SystemAddress &systemAddress) {(void) bitStream; (void) systemAddress; }
+	virtual void OnSerializeTransmission(RakNet::BitStream *bitStream, RakNet::Connection_RM3 *destinationConnection, BitSize_t bitsPerChannel[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS]) {(void) bitStream; (void) destinationConnection; (void) bitsPerChannel;}
 
 	/// \brief Read what was written in Serialize()
 	/// \details Reads the contents of the class from SerializationParamters::serializationBitstream.<BR>
@@ -1064,7 +1065,6 @@ public:
 	ReplicaManager3 *replicaManager;
 
 	LastSerializationResultBS lastSentSerialization;
-	RakNet::Time whenLastSerialized;
 	bool forceSendUntilNextUpdate;
 	LastSerializationResult *lsr;
 };
@@ -1098,7 +1098,7 @@ public:
 	virtual RakNet::RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3 *destinationConnection) {return r3CompositeOwner->QuerySerialization(destinationConnection);}
 	virtual void OnUserReplicaPreSerializeTick(void) {r3CompositeOwner->OnUserReplicaPreSerializeTick();}
 	virtual RM3SerializationResult Serialize(RakNet::SerializeParameters *serializeParameters) {return r3CompositeOwner->Serialize(serializeParameters);}
-	virtual void OnSerializeTransmission(RakNet::BitStream *bitStream, const SystemAddress &systemAddress) {r3CompositeOwner->OnSerializeTransmission(bitStream, systemAddress);}
+	virtual void OnSerializeTransmission(RakNet::BitStream *bitStream, RakNet::Connection_RM3 *destinationConnection, BitSize_t bitsPerChannel[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS]) {r3CompositeOwner->OnSerializeTransmission(bitStream, destinationConnection, bitsPerChannel);}
 	virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters) {r3CompositeOwner->Deserialize(deserializeParameters);}
 	virtual void PostSerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {r3CompositeOwner->PostSerializeConstruction(constructionBitstream, destinationConnection);}
 	virtual void PostDeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {r3CompositeOwner->PostDeserializeConstruction(constructionBitstream, sourceConnection);}

@@ -61,6 +61,11 @@ public class PacketLogger : PluginInterface2 {
   public PacketLogger() : this(RakNetPINVOKE.new_PacketLogger(), true) {
   }
 
+  public override void OnReliabilityLayerNotification(string errorMessage, uint bitsUsed, SystemAddress remoteSystemAddress, bool isError) {
+    RakNetPINVOKE.PacketLogger_OnReliabilityLayerNotification(swigCPtr, errorMessage, bitsUsed, SystemAddress.getCPtr(remoteSystemAddress), isError);
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public virtual void LogHeader() {
     RakNetPINVOKE.PacketLogger_LogHeader(swigCPtr);
   }

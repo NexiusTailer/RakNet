@@ -195,7 +195,8 @@ PluginReceiveResult FullyConnectedMesh2::OnReceive(Packet *packet)
 		OnVerifiedJoinFailed(packet->guid);
 		return RR_CONTINUE_PROCESSING;
 	case ID_FCM2_VERIFIED_JOIN_ACCEPTED:
-		OnVerifiedJoinAccepted(packet);
+		if (packet->wasGeneratedLocally==false)
+			OnVerifiedJoinAccepted(packet);
 		return RR_CONTINUE_PROCESSING;
 	case ID_FCM2_VERIFIED_JOIN_REJECTED:
 		OnVerifiedJoinRejected(packet);
@@ -664,6 +665,20 @@ void FullyConnectedMesh2::RespondOnVerifiedJoinCapable(Packet *packet, bool acce
 		clientMembersNotParticipatingSucceeded,
 		clientMembersNotParticipatingFailed);
 
+	if (participatingMembersNotOnClient.Size()>0)
+	{
+		BitStream bsOut;
+		bsOut.Write((MessageID) ID_FCM2_VERIFIED_JOIN_START);
+		bsOut.WriteCasted<unsigned short>(participatingMembersNotOnClient.Size());
+		unsigned int i;
+		for (i=0; i < participatingMembersNotOnClient.Size(); i++)
+		{
+			bsOut.Write(participatingMembersNotOnClient[i]);
+			bsOut.Write(rakPeerInterface->GetSystemAddressFromGuid(participatingMembersNotOnClient[i]));
+		}
+		SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->guid, false);
+		return;
+	}
 
 	RakAssert(participatingMembersOnClientFailed.Size()==0);
 	RakAssert(participatingMembersNotOnClient.Size()==0);
@@ -690,8 +705,17 @@ void FullyConnectedMesh2::RespondOnVerifiedJoinCapable(Packet *packet, bool acce
 		for (unsigned int i=0; i < fcm2ParticipantList.Size(); i++)
 			SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, fcm2ParticipantList[i].rakNetGuid, false);
 
-		// Send to myself too, so the user is notified
-		SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, rakPeerInterface->GetMyGUID(), false);
+		// Process immediately
+		// This is so if another ID_FCM2_VERIFIED_JOIN_CAPABLE is buffered, it responds with ID_FCM2_VERIFIED_JOIN_START
+		AddParticipant(packet->guid);
+
+		Packet *p = AllocatePacketUnified(bsOut.GetNumberOfBytesUsed());
+		memcpy(p->data, bsOut.GetData(), bsOut.GetNumberOfBytesUsed());
+		p->systemAddress=packet->systemAddress;
+		p->systemAddress.systemIndex=(SystemIndex)-1;
+		p->guid=packet->guid;
+		p->wasGeneratedLocally=true;
+		rakPeerInterface->PushBackPacket(p, true);
 	}
 	else
 	{
@@ -779,12 +803,12 @@ PluginReceiveResult FullyConnectedMesh2::OnVerifiedJoinStart(Packet *packet)
 		// Got update to existing list
 
 		VerifiedJoinInProgress *vjip = joinsInProgress[curIndex];
-		if (vjip->sentResults==false)
-		{
-			// Got ID_FCM2_VERIFIED_JOIN_START twice before sending ID_FCM2_VERIFIED_JOIN_CAPABLE
-			RakAssert(vjip->sentResults!=false);
-			return RR_STOP_PROCESSING_AND_DEALLOCATE;
-		}
+// 		if (vjip->sentResults==false)
+// 		{
+// 			// Got ID_FCM2_VERIFIED_JOIN_START twice before sending ID_FCM2_VERIFIED_JOIN_CAPABLE
+// 			RakAssert(vjip->sentResults!=false);
+// 			return RR_STOP_PROCESSING_AND_DEALLOCATE;
+// 		}
 
 		for (unsigned int i=0; i < vjip->members.Size(); i++)
 		{
@@ -808,6 +832,9 @@ PluginReceiveResult FullyConnectedMesh2::OnVerifiedJoinStart(Packet *packet)
 				vjipm.workingFlag=true;
 				vjipm.joinInProgressState=JIPS_PROCESSING;
 				vjip->members.Push(vjipm, _FILE_AND_LINE_);
+
+				// Allow resend of ID_FCM2_VERIFIED_JOIN_CAPABLE
+				//vjip->sentResults=false;
 			}
 			else
 			{
@@ -835,19 +862,19 @@ PluginReceiveResult FullyConnectedMesh2::OnVerifiedJoinStart(Packet *packet)
 	vjip->requester=packet->guid;
 	if (listSize==0)
 	{
-		vjip->sentResults=true;
+		//vjip->sentResults=true;
 
 		// Send back result
 		RakNet::BitStream bsOut;
 		bsOut.Write((MessageID)ID_FCM2_VERIFIED_JOIN_CAPABLE);
 		bsOut.WriteCasted<unsigned short>(0);
 		SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->guid, false);
-		vjip->sentResults=true;
+		//vjip->sentResults=true;
 		joinsInProgress.Push(vjip, _FILE_AND_LINE_);
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 	}
 
-	vjip->sentResults=false;
+	//vjip->sentResults=false;
 
 	for (unsigned short i=0; i < listSize; i++)
 	{
@@ -1010,8 +1037,8 @@ void FullyConnectedMesh2::UpdateVerifiedJoinInProgressMember(const AddressOrGUID
 	for (unsigned int i=0; i < joinsInProgress.Size(); i++)
 	{
 		VerifiedJoinInProgress *vjip = joinsInProgress[i];
-		if (vjip->sentResults==true)
-			continue;
+		//if (vjip->sentResults==true)
+		//	continue;
 		anythingChanged=false;
 
 		unsigned int j;
@@ -1036,8 +1063,8 @@ void FullyConnectedMesh2::UpdateVerifiedJoinInProgressMember(const AddressOrGUID
 }
 bool FullyConnectedMesh2::ProcessVerifiedJoinInProgressIfCompleted(VerifiedJoinInProgress *vjip)
 {
-	if (vjip->sentResults)
-		return true;
+	//if (vjip->sentResults)
+	//	return true;
 
 	// If no systems in processing state, send results to server
 	// Return true if this was done
@@ -1067,7 +1094,7 @@ bool FullyConnectedMesh2::ProcessVerifiedJoinInProgressIfCompleted(VerifiedJoinI
 	}
 	SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, vjip->requester, false);
 
-	vjip->sentResults=true;
+	//vjip->sentResults=true;
 	return true;
 }
 

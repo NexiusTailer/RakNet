@@ -47,6 +47,7 @@ public:
 	TCPInterface();
 	virtual ~TCPInterface();
 
+	// TODO - add socketdescriptor
 	/// Starts the TCP server on the indicated port
 	/// \param[in] port Which port to listen on.
 	/// \param[in] maxIncomingConnections Max incoming connections we will accept
@@ -79,7 +80,8 @@ public:
 	unsigned int GetOutgoingDataBufferSize(SystemAddress systemAddress) const;
 
 	/// Returns if Receive() will return data
-	bool ReceiveHasPackets( void );
+	/// Do not use on PacketizedTCP
+	virtual bool ReceiveHasPackets( void );
 
 	/// Returns data received
 	Packet* Receive( void );

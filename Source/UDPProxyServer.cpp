@@ -52,7 +52,6 @@ void UDPProxyServer::SetServerPublicIP(RakString ip)
 }
 void UDPProxyServer::Update(void)
 {
-	udpForwarder.Update();
 }
 PluginReceiveResult UDPProxyServer::OnReceive(Packet *packet)
 {
@@ -153,7 +152,7 @@ void UDPProxyServer::OnForwardingRequestFromCoordinatorToServer(Packet *packet)
 	incomingBs.Read(timeoutOnNoDataMS);
 	RakAssert(timeoutOnNoDataMS > 0 && timeoutOnNoDataMS <= UDP_FORWARDER_MAXIMUM_TIMEOUT);
 
-	unsigned short forwardingPort;
+	unsigned short forwardingPort=0;
 	UDPForwarderResult success = udpForwarder.StartForwarding(sourceAddress, targetAddress, timeoutOnNoDataMS, 0, socketFamily, &forwardingPort, 0);
 	RakNet::BitStream outgoingBs;
 	outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
@@ -162,10 +161,7 @@ void UDPProxyServer::OnForwardingRequestFromCoordinatorToServer(Packet *packet)
 	outgoingBs.Write(targetAddress);
 	outgoingBs.Write(serverPublicIp);
 	outgoingBs.Write((unsigned char) success);
-	if (success==UDPFORWARDER_SUCCESS)
-	{
-		outgoingBs.Write(forwardingPort);
-	}
+	outgoingBs.Write(forwardingPort);
 	rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 }
 

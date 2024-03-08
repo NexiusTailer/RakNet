@@ -2765,7 +2765,30 @@ RakNetStatistics * RakPeer::GetStatistics( const SystemAddress systemAddress, Ra
 
 	return 0;
 }
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void RakPeer::GetStatisticsList(DataStructures::List<SystemAddress> &addresses, DataStructures::List<RakNetGUID> &guids, DataStructures::List<RakNetStatistics> &statistics)
+{
+	addresses.Clear(false, _FILE_AND_LINE_);
+	guids.Clear(false, _FILE_AND_LINE_);
+	statistics.Clear(false, _FILE_AND_LINE_);
 
+	if ( remoteSystemList == 0 || endThreads == true )
+		return;
+
+	unsigned int i;
+	for (i=0; i < activeSystemListSize; i++)
+	{
+		if ((activeSystemList[i])->isActive &&
+			(activeSystemList[i])->connectMode==RakPeer::RemoteSystemStruct::CONNECTED)
+		{
+			addresses.Push((activeSystemList[i])->systemAddress, _FILE_AND_LINE_ );
+			guids.Push((activeSystemList[i])->guid, _FILE_AND_LINE_ );
+			RakNetStatistics rns;
+			(activeSystemList[i])->reliabilityLayer.GetStatistics(&rns);
+			statistics.Push(rns, _FILE_AND_LINE_);
+		}
+	}
+}
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 bool RakPeer::GetStatistics( const int index, RakNetStatistics *rns )
 {

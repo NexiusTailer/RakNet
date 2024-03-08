@@ -2397,6 +2397,9 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_PluginInterface2_UsesReliabilityLayer")]
   public static extern bool PluginInterface2_UsesReliabilityLayer(HandleRef jarg1);
 
+  [DllImport("RakNet", EntryPoint="CSharp_PluginInterface2_OnReliabilityLayerNotification")]
+  public static extern void PluginInterface2_OnReliabilityLayerNotification(HandleRef jarg1, string jarg2, uint jarg3, HandleRef jarg4, bool jarg5);
+
   [DllImport("RakNet", EntryPoint="CSharp_PluginInterface2_GetRakPeerInterface")]
   public static extern IntPtr PluginInterface2_GetRakPeerInterface(HandleRef jarg1);
 
@@ -3071,6 +3074,9 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp_delete_PacketLogger")]
   public static extern void delete_PacketLogger(HandleRef jarg1);
+
+  [DllImport("RakNet", EntryPoint="CSharp_PacketLogger_OnReliabilityLayerNotification")]
+  public static extern void PacketLogger_OnReliabilityLayerNotification(HandleRef jarg1, string jarg2, uint jarg3, HandleRef jarg4, bool jarg5);
 
   [DllImport("RakNet", EntryPoint="CSharp_PacketLogger_LogHeader")]
   public static extern void PacketLogger_LogHeader(HandleRef jarg1);
@@ -3878,9 +3884,6 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_Shutdown")]
   public static extern void UDPForwarder_Shutdown(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_Update")]
-  public static extern void UDPForwarder_Update(HandleRef jarg1);
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_SetMaxForwardEntries")]
   public static extern void UDPForwarder_SetMaxForwardEntries(HandleRef jarg1, ushort jarg2);

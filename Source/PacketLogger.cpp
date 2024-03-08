@@ -128,11 +128,17 @@ void PacketLogger::OnDirectSocketReceive(const char *data, const BitSize_t bitsU
 	FormatLine(str, "Rcv", "Raw", 0, 0, data[0], bitsUsed, RakNet::GetTime(), rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
 	AddToLog(str);
 }
-void PacketLogger::OnReliabilityLayerPacketError(const char *errorMessage, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress)
+void PacketLogger::OnReliabilityLayerNotification(const char *errorMessage, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress, bool isError)
 {
 	char str[1024];
-	FormatLine(str, "RcvErr", errorMessage, 0, 0, "", bitsUsed, RakNet::GetTime(), rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
+	char *type;
+	if (isError)
+		type="RcvErr";
+	else
+		type="RcvWrn";
+	FormatLine(str, type, errorMessage, 0, 0, "", bitsUsed, RakNet::GetTime(), rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
 	AddToLog(str);
+	RakAssert(isError==false);
 }
 void PacketLogger::OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, RakNet::TimeMS time)
 {
@@ -309,20 +315,15 @@ const char* PacketLogger::BaseIDTOString(unsigned char Id)
 		"ID_AUTOPATCHER_FINISHED",
 		"ID_AUTOPATCHER_RESTART_APPLICATION",
 		"ID_NAT_PUNCHTHROUGH_REQUEST",
-		//"ID_NAT_GROUP_PUNCHTHROUGH_REQUEST",
-		//"ID_NAT_GROUP_PUNCHTHROUGH_REPLY",
 		"ID_NAT_CONNECT_AT_TIME",
 		"ID_NAT_GET_MOST_RECENT_PORT",
 		"ID_NAT_CLIENT_READY",
-		//"ID_NAT_GROUP_PUNCHTHROUGH_FAILURE_NOTIFICATION",
 		"ID_NAT_TARGET_NOT_CONNECTED",
 		"ID_NAT_TARGET_UNRESPONSIVE",
 		"ID_NAT_CONNECTION_TO_TARGET_LOST",
 		"ID_NAT_ALREADY_IN_PROGRESS",
 		"ID_NAT_PUNCHTHROUGH_FAILED",
 		"ID_NAT_PUNCHTHROUGH_SUCCEEDED",
-		//"ID_NAT_GROUP_PUNCH_FAILED",
-		//"ID_NAT_GROUP_PUNCH_SUCCEEDED",
 		"ID_READY_EVENT_SET",
 		"ID_READY_EVENT_UNSET",
 		"ID_READY_EVENT_ALL_SET",

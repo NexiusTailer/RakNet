@@ -590,6 +590,12 @@ public:
 	/// \brief Returns the network statistics of the system at the given index in the remoteSystemList.
 	///	\return True if the index is less than the maximum number of peers allowed and the system is active. False otherwise.
 	bool GetStatistics( const int index, RakNetStatistics *rns );
+	/// \brief Returns the list of systems, and statistics for each of those systems
+	/// Each system has one entry in each of the lists, in the same order
+	/// \param[out] addresses SystemAddress for each connected system
+	/// \param[out] guids RakNetGUID for each connected system
+	/// \param[out] statistics Calculated RakNetStatistics for each connected system
+	virtual void GetStatisticsList(DataStructures::List<SystemAddress> &addresses, DataStructures::List<RakNetGUID> &guids, DataStructures::List<RakNetStatistics> &statistics);
 
 	/// \Returns how many messages are waiting when you call Receive()
 	virtual unsigned int GetReceiveBufferSize(void);

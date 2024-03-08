@@ -194,6 +194,19 @@ int main(void)
 	networkIDManager = NetworkIDManager::GetInstance();
 	replicaManager3=new SampleRM3;
 
+	// test offline mode
+	/*
+	TM_TeamMember tmTeamMember;
+	TM_Team tmTeam;
+	teamManager->AddWorld(0);
+	teamManager->GetWorldAtIndex(0)->ReferenceTeam(&tmTeam,1,false);
+	teamManager->GetWorldAtIndex(0)->ReferenceTeamMember(&tmTeamMember,0);
+	tmTeamMember.RequestTeam(TeamSelection::AnyAvailable());
+	RakAssert(tmTeam.GetTeamMembersCount()==1);
+	tmTeam.LeaveTeam(&tmTeamMember, 255);
+	RakAssert(tmTeam.GetTeamMembersCount()==0);
+	*/
+
 	rakPeer->AttachPlugin(fullyConnectedMesh2);
 	rakPeer->AttachPlugin(teamManager);
 	rakPeer->AttachPlugin(replicaManager3);

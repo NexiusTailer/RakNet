@@ -599,7 +599,8 @@ void FileListTransfer::RemoveReceiver(SystemAddress systemAddress)
 	}
 
 	fileToPushRecipientListMutex.Lock();
-	for (unsigned int i=0; i < fileToPushRecipientList.Size(); i++)
+	i=0;
+	while (i < fileToPushRecipientList.Size())
 	{
 		if (fileToPushRecipientList[i]->systemAddress==systemAddress)
 		{
@@ -612,7 +613,10 @@ void FileListTransfer::RemoveReceiver(SystemAddress systemAddress)
 			fileToPushRecipientList.RemoveAtIndex(i);
 			// Taken out of the list
 			ftpr->Deref();
-			break;
+		}
+		else
+		{
+			i++;
 		}
 	}
 	fileToPushRecipientListMutex.Unlock();

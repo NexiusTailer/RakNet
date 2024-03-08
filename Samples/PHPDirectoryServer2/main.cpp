@@ -395,9 +395,9 @@ void TestPHPDirectoryServer(int argc, char **argv)
 	printf("Set columns and one row for your game, and upload it to a\nviewable and downloadable webpage.\n");
 	printf("Difficulty: Intermediate\n\n");
 
-	tcp = RakNet::OP_NEW<TCPInterface>(_FILE_AND_LINE_);
-	httpConnection = RakNet::OP_NEW<HTTPConnection>(_FILE_AND_LINE_);
-	phpDirectoryServer2 = RakNet::OP_NEW<PHPDirectoryServer2>(_FILE_AND_LINE_);
+// 	tcp = RakNet::OP_NEW<TCPInterface>(_FILE_AND_LINE_);
+// 	httpConnection = RakNet::OP_NEW<HTTPConnection>(_FILE_AND_LINE_);
+// 	phpDirectoryServer2 = RakNet::OP_NEW<PHPDirectoryServer2>(_FILE_AND_LINE_);
 
 
 
@@ -460,9 +460,7 @@ void TestGet(void)
 {
 	printf("This is NOT a reliable way to download from a website. Use libcurl instead.\n");
 	httpConnection->Init(tcp, "jenkinssoftware.com");
-	httpConnection->Get("/trivia/ranking.php?t=single&places=50&score=30000");
-	httpConnection->Init(tcp, "www.google.com");
-	httpConnection->Get("index.html");
+	httpConnection->Get("/trivia/ranking.php?t=single&places=6&top");
 	while (1)
 	{
 		Packet *packet = tcp->Receive();

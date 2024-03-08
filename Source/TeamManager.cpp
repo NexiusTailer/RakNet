@@ -4,7 +4,6 @@
 #include "TeamManager.h"
 #include "BitStream.h"
 #include "MessageIdentifiers.h"
-#include "RakPeerInterface.h"
 #include "GetTime.h"
 
 using namespace RakNet;
@@ -128,7 +127,7 @@ bool TM_TeamMember::RequestTeam(TeamSelection teamSelection)
 		UpdateListsToNoTeam(teamSelection.teamParameter.noTeamSubcategory);
 
 		world->GetTeamManager()->PushTeamAssigned(this);
-		if (world->GetHost()==world->GetTeamManager()->GetRakPeerInterface()->GetMyGUID())
+		if (world->GetHost()==world->GetTeamManager()->GetMyGUIDUnified())
 		{
 			world->FillRequestedSlots();
 			world->EnforceTeamBalance(teamSelection.teamParameter.noTeamSubcategory);
@@ -344,7 +343,7 @@ bool TM_TeamMember::LeaveTeam(TM_Team* team, NoTeamId _noTeamSubcategory)
 	bsOut.Write(noTeamSubcategory);
 	world->BroadcastToParticipants(&bsOut, UNASSIGNED_RAKNET_GUID);
 
-	if (world->GetHost()==world->GetTeamManager()->GetRakPeerInterface()->GetMyGUID())
+	if (world->GetHost()==world->GetTeamManager()->GetMyGUIDUnified())
 	{
 		// Rebalance teams
 		world->FillRequestedSlots();
@@ -1072,7 +1071,7 @@ void TM_World::AddParticipant(RakNetGUID rakNetGUID)
 
 	// Send to remote system status of balanceTeamsIsActive
 
-	if (GetTeamManager()->rakPeerInterface->GetMyGUID()==GetHost())
+	if (GetTeamManager()->GetMyGUIDUnified()==GetHost())
 	{
 		// Actually just transmitting initial value of balanceTeamsIsActive
 		BitStream bsOut;
@@ -1306,7 +1305,7 @@ void TM_World::SetHost(RakNetGUID _hostGuid)
 
 	hostGuid=_hostGuid;
 
-	if (GetHost()==GetTeamManager()->GetRakPeerInterface()->GetMyGUID())
+	if (GetHost()==GetTeamManager()->GetMyGUIDUnified())
 		FillRequestedSlots();
 }
 
@@ -1367,7 +1366,7 @@ void TM_World::OnNewConnection(const SystemAddress &systemAddress, RakNetGUID ra
 void TM_World::EnforceTeamBalance(NoTeamId noTeamId)
 {
 	// Host only function
-	RakAssert(GetHost()==GetTeamManager()->GetRakPeerInterface()->GetMyGUID());
+	RakAssert(GetHost()==GetTeamManager()->GetMyGUIDUnified());
 
 	KickExcessMembers(noTeamId);
 }
@@ -1378,7 +1377,7 @@ void TM_World::EnforceTeamBalance(NoTeamId noTeamId)
 void TM_World::KickExcessMembers(NoTeamId noTeamId)
 {
 	// Host only function
-	RakAssert(GetHost()==GetTeamManager()->GetRakPeerInterface()->GetMyGUID());
+	RakAssert(GetHost()==GetTeamManager()->GetMyGUIDUnified());
 
 	// For each team that applies balancing, if the team is overfull, put on a team that is not overfull if the team has ALLOW_JOIN_REBALANCING set
 	// If cannot move the player to another team, just take the player off the team and set to noTeamId if they have no team at that point
@@ -1434,7 +1433,7 @@ void TM_World::KickExcessMembers(NoTeamId noTeamId)
 void TM_World::FillRequestedSlots(void)
 {
 	// Host only function
-	RakAssert(GetHost()==GetTeamManager()->GetRakPeerInterface()->GetMyGUID());
+	RakAssert(GetHost()==GetTeamManager()->GetMyGUIDUnified());
 
 
 	TeamMemberLimit balancedTeamLimit;
@@ -1806,7 +1805,7 @@ TM_World* TeamManager::AddWorld(WorldId worldId)
 	TM_World *newWorld = RakNet::OP_NEW<TM_World>(_FILE_AND_LINE_);
 	newWorld->worldId=worldId;
 	newWorld->teamManager=this;
-	newWorld->hostGuid=rakPeerInterface->GetMyGUID();
+	newWorld->hostGuid=GetMyGUIDUnified();
 	worldsArray[worldId]=newWorld;
 	worldsList.Push(newWorld,_FILE_AND_LINE_);
 	return newWorld;
@@ -2297,7 +2296,7 @@ void TeamManager::PushBitStream(RakNet::BitStream *bitStream)
 	p->systemAddress.systemIndex=(SystemIndex)-1;
 	p->guid=UNASSIGNED_RAKNET_GUID;
 	p->wasGeneratedLocally=true;
-	rakPeerInterface->PushBackPacket(p, true);
+	PushBackPacketUnified(p, true);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2317,7 +2316,7 @@ void TeamManager::OnUpdateListsToNoTeam(Packet *packet, TM_World *world)
 		teamMember->UpdateListsToNoTeam(noTeamId);
 		PushTeamAssigned(teamMember);
 
-		if (world->GetHost()==world->GetTeamManager()->GetRakPeerInterface()->GetMyGUID())
+		if (world->GetHost()==world->GetTeamManager()->GetMyGUIDUnified())
 		{
 			world->FillRequestedSlots();
 			world->EnforceTeamBalance(noTeamId);
@@ -2358,7 +2357,7 @@ void TeamManager::OnJoinAnyTeam(Packet *packet, TM_World *world)
 	if (teamMember)
 	{
 		// This is a host-only operation
-		RakAssert(world->GetHost()==world->GetTeamManager()->GetRakPeerInterface()->GetMyGUID());
+		RakAssert(world->GetHost()==world->GetTeamManager()->GetMyGUIDUnified());
 
 		teamMember->UpdateTeamsRequestedToAny();
 
@@ -2378,7 +2377,7 @@ void TeamManager::OnJoinAnyTeam(Packet *packet, TM_World *world)
 			world->BroadcastToParticipants(&bsOut, packet->guid);
 
 			// Send to sender ID_TEAM_BALANCER_TEAM_ASSIGNED
-			if (packet->guid!=rakPeerInterface->GetMyGUID())
+			if (packet->guid!=GetMyGUIDUnified())
 			{
 				RakNet::BitStream bitStream;
 				bitStream.WriteCasted<MessageID>(ID_TEAM_BALANCER_TEAM_ASSIGNED);
@@ -2407,7 +2406,7 @@ void TeamManager::OnJoinAnyTeam(Packet *packet, TM_World *world)
 			}
 			// SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->guid, false);
 			world->BroadcastToParticipants(&bsOut, UNASSIGNED_RAKNET_GUID);
-			if (packet->guid!=rakPeerInterface->GetMyGUID())
+			if (packet->guid!=GetMyGUIDUnified())
 				PushBitStream(&bsOut);
 		}
 	}
@@ -2445,14 +2444,14 @@ void TeamManager::OnJoinRequestedTeam(Packet *packet, TM_World *world)
 	{
 		if (isTeamSwitch)
 		{
-			if (teamMember->SwitchSpecificTeamCheck(teamToJoin, teamToLeave, packet->guid==rakPeerInterface->GetMyGUID())==false)
+			if (teamMember->SwitchSpecificTeamCheck(teamToJoin, teamToLeave, packet->guid==GetMyGUIDUnified())==false)
 				return;
 
 			teamMember->AddToRequestedTeams(teamToJoin, teamToLeave);
 		}
 		else
 		{
-			if (teamMember->JoinSpecificTeamCheck(teamToJoin, packet->guid==rakPeerInterface->GetMyGUID())==false)
+			if (teamMember->JoinSpecificTeamCheck(teamToJoin, packet->guid==GetMyGUIDUnified())==false)
 				return;
 
 			teamMember->AddToRequestedTeams(teamToJoin);
@@ -2497,7 +2496,7 @@ void TeamManager::OnJoinRequestedTeam(Packet *packet, TM_World *world)
 			world->BroadcastToParticipants(&bsOut, packet->guid);
 
 			// Send to sender ID_TEAM_BALANCER_TEAM_ASSIGNED
-			if (packet->guid!=rakPeerInterface->GetMyGUID())
+			if (packet->guid!=GetMyGUIDUnified())
 			{
 				RakNet::BitStream bitStream;
 				bitStream.WriteCasted<MessageID>(ID_TEAM_BALANCER_TEAM_ASSIGNED);
@@ -2535,7 +2534,7 @@ void TeamManager::OnJoinRequestedTeam(Packet *packet, TM_World *world)
 			// SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->guid, false);
 
 			world->BroadcastToParticipants(&bsOut, UNASSIGNED_RAKNET_GUID);
-			if (packet->guid!=rakPeerInterface->GetMyGUID())
+			if (packet->guid!=GetMyGUIDUnified())
 				PushBitStream(&bsOut);
 		}
 	}
@@ -2669,7 +2668,7 @@ bool TeamManager::OnRemoveFromRequestedTeams(Packet *packet, TM_World *world)
 		teamMember->RemoveFromRequestedTeams(team);
 
 		// Relay as host
-		if (world->GetHost()==world->GetTeamManager()->GetRakPeerInterface()->GetMyGUID() && topology==TM_CLIENT_SERVER)
+		if (world->GetHost()==world->GetTeamManager()->GetMyGUIDUnified() && topology==TM_CLIENT_SERVER)
 		{
 			world->BroadcastToParticipants(packet->data, packet->length, packet->guid);
 		}
@@ -2710,7 +2709,7 @@ void TeamManager::OnLeaveTeam(Packet *packet, TM_World *world)
 		}
 		PushTeamAssigned(teamMember);
 
-		if (world->GetHost()==world->GetTeamManager()->GetRakPeerInterface()->GetMyGUID())
+		if (world->GetHost()==world->GetTeamManager()->GetMyGUIDUnified())
 		{
 			// Rebalance teams
 			world->FillRequestedSlots();
@@ -2741,9 +2740,9 @@ void TeamManager::OnSetMemberLimit(Packet *packet, TM_World *world)
 	{
 		team->teamMemberLimit=teamMemberLimit;
 
-		if (world->GetHost()==world->GetTeamManager()->GetRakPeerInterface()->GetMyGUID())
+		if (world->GetHost()==world->GetTeamManager()->GetMyGUIDUnified())
 		{
-			if (packet->guid==rakPeerInterface->GetMyGUID())
+			if (packet->guid==GetMyGUIDUnified())
 				world->BroadcastToParticipants(packet->data, packet->length, packet->guid);
 			else
 				world->BroadcastToParticipants(packet->data, packet->length, UNASSIGNED_RAKNET_GUID);
@@ -2769,9 +2768,9 @@ void TeamManager::OnSetJoinPermissions(Packet *packet, TM_World *world)
 	{
 		team->joinPermissions=joinPermissions;
 
-		if (world->GetHost()==world->GetTeamManager()->GetRakPeerInterface()->GetMyGUID())
+		if (world->GetHost()==world->GetTeamManager()->GetMyGUIDUnified())
 		{
-			if (packet->guid==rakPeerInterface->GetMyGUID())
+			if (packet->guid==GetMyGUIDUnified())
 				world->BroadcastToParticipants(packet->data, packet->length, packet->guid);
 			else
 				world->BroadcastToParticipants(packet->data, packet->length, UNASSIGNED_RAKNET_GUID);
@@ -2792,9 +2791,9 @@ void TeamManager::OnSetBalanceTeams(Packet *packet, TM_World *world)
 	bsIn.Read(noTeamId);
 
 	world->balanceTeamsIsActive=balanceTeams;
-	if (world->GetHost()==world->GetTeamManager()->GetRakPeerInterface()->GetMyGUID())
+	if (world->GetHost()==world->GetTeamManager()->GetMyGUIDUnified())
 	{
-		if (packet->guid==rakPeerInterface->GetMyGUID())
+		if (packet->guid==GetMyGUIDUnified())
 			world->BroadcastToParticipants(packet->data, packet->length, packet->guid);
 		else
 			world->BroadcastToParticipants(packet->data, packet->length, UNASSIGNED_RAKNET_GUID);

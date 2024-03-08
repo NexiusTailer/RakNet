@@ -150,6 +150,12 @@
 #ifndef _RAKNET_SUPPORT_UDPForwarder
 #define _RAKNET_SUPPORT_UDPForwarder 1
 #endif
+#ifndef _RAKNET_SUPPORT_StatisticsHistory
+#define _RAKNET_SUPPORT_StatisticsHistory 1
+#endif
+#ifndef _RAKNET_SUPPORT_LibVoice
+#define _RAKNET_SUPPORT_LibVoice 0
+#endif
 
 // Take care of dependencies
 

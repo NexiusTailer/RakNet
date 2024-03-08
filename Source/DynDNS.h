@@ -9,13 +9,13 @@
 #include "NativeFeatureIncludes.h"
 #if _RAKNET_SUPPORT_DynDNS==1 && _RAKNET_SUPPORT_TCPInterface==1
 
-class TCPInterface;
-
 #ifndef __DYN_DNS_H
 #define __DYN_DNS_H
 
 namespace RakNet
 {
+
+class TCPInterface;
 
 enum DynDnsResultCode
 {

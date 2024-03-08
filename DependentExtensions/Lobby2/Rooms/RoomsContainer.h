@@ -211,6 +211,7 @@ struct JoinedRoomResult
 	RoomsParticipant* joiningMember;
 	RakNet::RakString joiningMemberName;
 	SystemAddress joiningMemberAddress;
+	RakNetGUID joiningMemberGuid;
 
 	// Needed to serialize
 	AllGamesRoomsContainer *agrc;

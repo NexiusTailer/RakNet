@@ -73,7 +73,6 @@ void NetworkedQuickJoinUser::Serialize(bool writeToBitstream, RakNet::BitStream 
 {
 	query.Serialize(writeToBitstream, bitStream);
 	bitStream->Serialize(writeToBitstream,timeout);
-	bitStream->Serialize(writeToBitstream,query);
 	bitStream->Serialize(writeToBitstream,minimumPlayers);
 }
 // ----------------------------  RoomMember  ----------------------------
@@ -193,16 +192,15 @@ void JoinedRoomResult::Serialize(bool writeToBitstream, RakNet::BitStream *bitSt
 	{
 		joiningMemberName=joiningMember->GetName();
 		joiningMemberAddress=joiningMember->GetSystemAddress();
+		joiningMemberGuid=joiningMember->GetGUID();
 	}
 	bitStream->Serialize(writeToBitstream, acceptedInvitorName);
 	bitStream->Serialize(writeToBitstream, joiningMemberName);
 	bitStream->Serialize(writeToBitstream, acceptedInvitorAddress);
 	bitStream->Serialize(writeToBitstream, joiningMemberAddress);
+	bitStream->Serialize(writeToBitstream, joiningMemberGuid);
 	roomDescriptor.FromRoom(roomOutput, agrc);
 	roomDescriptor.Serialize(writeToBitstream, bitStream);
-
-//	if (writeToBitstream)
-//		RakAssert(roomOutput->GetNumericProperty(DefaultRoomColumns::TC_USED_SLOTS)==roomOutput->roomMemberList.Size()-1);
 }
 // ----------------------------  RoomDescriptor  ----------------------------
 void RoomDescriptor::FromRoom(Room *room, AllGamesRoomsContainer *agrc)

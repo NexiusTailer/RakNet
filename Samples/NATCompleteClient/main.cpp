@@ -643,7 +643,7 @@ struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientRe
 		printf("Failure: No servers have available forwarding ports.\n");
 		sampleResult=FAILED;
 	}
-	virtual void OnForwardingInProgress(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)
+	virtual void OnForwardingInProgress(const char *proxyIPAddress, unsigned short proxyPort, SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)
 	{
 		printf("Notification: Forwarding already in progress.\n");
 	}

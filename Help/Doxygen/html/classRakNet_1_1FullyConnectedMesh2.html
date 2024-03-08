@@ -313,7 +313,11 @@ Get the participants added with <a class="el" href="classRakNet_1_1FullyConnecte
 <p>
 On ID_FCM2_VERIFIED_JOIN_ACCEPTED, read additional data passed to <a class="el" href="classRakNet_1_1FullyConnectedMesh2.html#919d1bf5c3b182781b4a9042593c658a" title="On ID_FCM2_VERIFIED_JOIN_CAPABLE , accept or reject the new connection.">RespondOnVerifiedJoinCapable()</a>. 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
+<div class="fragment"><pre class="fragment"> <span class="keywordtype">bool</span> thisSystemAccepted;
+ <a class="code" href="classDataStructures_1_1List.html" title="Array based implementation of a list.">DataStructures::List&lt;RakNetGUID&gt;</a> systemsAccepted;
+ <a class="code" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> additionalData;
+ fullyConnectedMesh-&gt;GetVerifiedJoinAcceptedAdditionalData(packet, &amp;thisSystemAccepted, systemsAccepted, &amp;additionalData);
+</pre></div> <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td><a class="el" href="structRakNet_1_1Packet.html" title="This represents a user message from another system.">Packet</a> containing the ID_FCM2_VERIFIED_JOIN_ACCEPTED message </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>thisSystemAccepted</em>&nbsp;</td><td>If true, it was this instance of <a class="el" href="classRakNet_1_1RakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a> that was accepted. If false, this is notification for another system </td></tr>
@@ -352,7 +356,8 @@ On ID_FCM2_VERIFIED_JOIN_ACCEPTED, read additional data passed to <a class="el" 
 <p>
 On ID_FCM2_VERIFIED_JOIN_REJECTED, read additional data passed to <a class="el" href="classRakNet_1_1FullyConnectedMesh2.html#919d1bf5c3b182781b4a9042593c658a" title="On ID_FCM2_VERIFIED_JOIN_CAPABLE , accept or reject the new connection.">RespondOnVerifiedJoinCapable()</a>. 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
+This does not automatically close the connection. The following code will do so: <div class="fragment"><pre class="fragment"> rakPeer[i]-&gt;CloseConnection(packet-&gt;guid, <span class="keyword">true</span>);
+</pre></div> <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td><a class="el" href="structRakNet_1_1Packet.html" title="This represents a user message from another system.">Packet</a> containing the ID_FCM2_VERIFIED_JOIN_REJECTED message </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>additionalData</em>&nbsp;</td><td><em>additionalData</em> parameter passed to <a class="el" href="classRakNet_1_1FullyConnectedMesh2.html#919d1bf5c3b182781b4a9042593c658a" title="On ID_FCM2_VERIFIED_JOIN_CAPABLE , accept or reject the new connection.">RespondOnVerifiedJoinCapable()</a>. </td></tr>
@@ -395,7 +400,12 @@ On ID_FCM2_VERIFIED_JOIN_REJECTED, read additional data passed to <a class="el" 
 <p>
 On ID_FCM2_VERIFIED_JOIN_START, read the <a class="el" href="structRakNet_1_1SystemAddress.html" title="Network address for a system.">SystemAddress</a> and <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> values of each system to connect to. 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
+<div class="fragment"><pre class="fragment"> <a class="code" href="classDataStructures_1_1List.html" title="Array based implementation of a list.">DataStructures::List&lt;SystemAddress&gt;</a> addresses;
+ <a class="code" href="classDataStructures_1_1List.html" title="Array based implementation of a list.">DataStructures::List&lt;RakNetGUID&gt;</a> guids;
+ fullyConnectedMesh-&gt;GetVerifiedJoinRequiredProcessingList(packet-&gt;guid, addresses, guids);
+ <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i=0; i &lt; addresses.<a class="code" href="classDataStructures_1_1List.html#6f13a4519693cbd16cd13b1fe284f330">Size</a>(); i++)
+                rakPeer[i]-&gt;Connect(addresses[i].ToString(<span class="keyword">false</span>), addresses[i].GetPort(), 0, 0);
+</pre></div> <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>host</em>&nbsp;</td><td>Which system sent ID_FCM2_VERIFIED_JOIN_START </td></tr>
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>addresses</em>&nbsp;</td><td><a class="el" href="structRakNet_1_1SystemAddress.html" title="Network address for a system.">SystemAddress</a> values of systems to connect to. List has the same number and order as <em>guids</em> </td></tr>
@@ -687,7 +697,8 @@ Clear our own host order, and recalculate as if we had just reconnected Call thi
 <p>
 On ID_FCM2_VERIFIED_JOIN_CAPABLE , accept or reject the new connection. 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
+<div class="fragment"><pre class="fragment"> fullyConnectedMesh-&gt;RespondOnVerifiedJoinCapable(packet, <span class="keyword">true</span>, 0);
+</pre></div> <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td>The system that sent ID_FCM2_VERIFIED_JOIN_CAPABLE. Based on , ID_FCM2_VERIFIED_JOIN_ACCEPTED or ID_FCM2_VERIFIED_JOIN_REJECTED will be sent in reply </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>accept</em>&nbsp;</td><td>True to accept, and thereby automatically call <a class="el" href="classRakNet_1_1FullyConnectedMesh2.html#7c6f86f06d97ad1fcc5300eea9b2f3ba" title="if SetAutoparticipateConnections() is called with false, then you need to use AddParticipant...">AddParticipant()</a> on all systems on the mesh. False to reject, and call CloseConnection() to all mesh systems on the target </td></tr>
@@ -794,7 +805,7 @@ Processing: 1. Send the <a class="el" href="structRakNet_1_1RakNetGUID.html">Rak
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="FullyConnectedMesh2_8h.html">FullyConnectedMesh2.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 10 16:25:02 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jul 12 10:50:28 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -49,6 +49,11 @@ public class PluginInterface2 : IDisposable {
     return ret;
   }
 
+  public virtual void OnReliabilityLayerNotification(string errorMessage, uint bitsUsed, SystemAddress remoteSystemAddress, bool isError) {
+    RakNetPINVOKE.PluginInterface2_OnReliabilityLayerNotification(swigCPtr, errorMessage, bitsUsed, SystemAddress.getCPtr(remoteSystemAddress), isError);
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public RakPeerInterface GetRakPeerInterface() {
     IntPtr cPtr = RakNetPINVOKE.PluginInterface2_GetRakPeerInterface(swigCPtr);
     RakPeerInterface ret = (cPtr == IntPtr.Zero) ? null : new RakPeerInterface(cPtr, false);

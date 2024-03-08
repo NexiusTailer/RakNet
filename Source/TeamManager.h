@@ -1,3 +1,5 @@
+// TODO: optimize the list of teams and team members to be O(1). Store in hashes, use linked lists to get ordered traversal
+
 /// \file TeamManager.h
 /// \brief Automates networking and list management for teams
 /// \details TeamManager provides support for teams. A team is a list of team members.

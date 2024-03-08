@@ -40,6 +40,7 @@ LastSerializationResult::LastSerializationResult()
 {
 	replica=0;
 	lastSerializationResultBS=0;
+	whenLastSerialized = RakNet::GetTime();
 }
 LastSerializationResult::~LastSerializationResult()
 {
@@ -862,6 +863,8 @@ void ReplicaManager3::Update(void)
 				replicasToSerialize.Clear(true, _FILE_AND_LINE_);
 				if (connection->QuerySerializationList(replicasToSerialize))
 				{
+					// Update replica->lsr so we can lookup in the next block
+					// lsr is per connection / per replica
 					while (index2 < connection->queryToSerializeReplicaList.Size())
 					{
 						connection->queryToSerializeReplicaList[index2]->replica->lsr=connection->queryToSerializeReplicaList[index2];
@@ -876,10 +879,10 @@ void ReplicaManager3::Update(void)
 						lsr=replicasToSerialize[index2]->lsr;
 						RakAssert(lsr->replica==replicasToSerialize[index2]);
 
-						sp.whenLastSerialized=lsr->replica->whenLastSerialized;
+						sp.whenLastSerialized=lsr->whenLastSerialized;
 						ssicr=connection->SendSerializeIfChanged(lsr, &sp, GetRakPeerInterface(), worldId, this);
 						if (ssicr==SSICR_SENT_DATA)
-							lsr->replica->whenLastSerialized=time;
+							lsr->whenLastSerialized=time;
 						index2++;
 					}
 				}
@@ -890,11 +893,11 @@ void ReplicaManager3::Update(void)
 						lsr=connection->queryToSerializeReplicaList[index2];
 
 						sp.destinationConnection=connection;
-						sp.whenLastSerialized=lsr->replica->whenLastSerialized;
+						sp.whenLastSerialized=lsr->whenLastSerialized;
 						ssicr=connection->SendSerializeIfChanged(lsr, &sp, GetRakPeerInterface(), worldId, this);
 						if (ssicr==SSICR_SENT_DATA)
 						{
-							lsr->replica->whenLastSerialized=time;
+							lsr->whenLastSerialized=time;
 							index2++;
 						}
 						else if (ssicr==SSICR_NEVER_SERIALIZE)
@@ -1467,6 +1470,7 @@ SendSerializeIfChangedResult Connection_RM3::SendSerialize(RakNet::Replica3 *rep
 
 	int channelIndex;
 	PRO lastPro=sendParameters[0];
+	BitSize_t bitsPerChannel[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS];
 
 	for (channelIndex=0; channelIndex < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; channelIndex++)
 	{
@@ -1478,10 +1482,13 @@ SendSerializeIfChangedResult Connection_RM3::SendSerialize(RakNet::Replica3 *rep
 		{
 			// Write out remainder
 			for (int channelIndex2=channelIndex; channelIndex2 < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; channelIndex2++)
+			{
+				bitsPerChannel[channelIndex2]=0;
 				out.Write(false);
+			}
 
 			// Send remainder
-			replica->OnSerializeTransmission(&out, systemAddress);
+			replica->OnSerializeTransmission(&out, this, bitsPerChannel);
 			rakPeer->Send(&out,lastPro.priority,lastPro.reliability,lastPro.orderingChannel,systemAddress,false,lastPro.sendReceipt);
 
 			// If no data left to send, quit out
@@ -1501,7 +1508,10 @@ SendSerializeIfChangedResult Connection_RM3::SendSerialize(RakNet::Replica3 *rep
 			SendSerializeHeader(replica, timestamp, &out, worldId);
 
 			for (int channelIndex2=0; channelIndex2 < channelIndex; channelIndex2++)
+			{
+				bitsPerChannel[channelIndex2]=0;
 				out.Write(false);
+			}
 			lastPro=sendParameters[channelIndex];
 		}
 
@@ -1510,14 +1520,19 @@ SendSerializeIfChangedResult Connection_RM3::SendSerialize(RakNet::Replica3 *rep
 		out.Write(channelHasData);
 		if (channelHasData)
 		{
+			bitsPerChannel[channelIndex] = bitsUsed;
 			out.WriteCompressed(bitsUsed);
 			out.AlignWriteToByteBoundary();
 			out.Write(serializationData[channelIndex]);
 			// Crap, forgot this line, was a huge bug in that I'd only send to the first 3 systems
 			serializationData[channelIndex].ResetReadPointer();
 		}
+		else
+		{
+			bitsPerChannel[channelIndex] = 0;
+		}
 	}
-	replica->OnSerializeTransmission(&out, systemAddress);
+	replica->OnSerializeTransmission(&out, this, bitsPerChannel);
 	rakPeer->Send(&out,lastPro.priority,lastPro.reliability,lastPro.orderingChannel,systemAddress,false,lastPro.sendReceipt);
 	return SSICR_SENT_DATA;
 }
@@ -1687,6 +1702,21 @@ void Connection_RM3::OnLocalReference(Replica3* replica3, ReplicaManager3 *repli
 	RakAssert(replica3);
 	(void) replicaManager;
 	(void) constructionMode;
+
+#ifdef _DEBUG
+	for (unsigned int i=0; i < queryToConstructReplicaList.Size(); i++)
+	{
+		if (queryToConstructReplicaList[i]->replica==replica3)
+		{
+			RakAssert("replica added twice to queryToConstructReplicaList" && 0);
+		}
+	}
+
+	if (constructedReplicaList.HasData(replica3)==true)
+	{
+		RakAssert("replica added to queryToConstructReplicaList when already in constructedReplicaList" && 0);
+	}
+#endif
 
 	LastSerializationResult* lsr=RakNet::OP_NEW<LastSerializationResult>(_FILE_AND_LINE_);
 	lsr->replica=replica3;
@@ -2217,7 +2247,7 @@ void Connection_RM3::SendConstruction(DataStructures::List<Replica3*> &newObject
 	}
 
 	sp.bitsWrittenSoFar=0;
-	RakNet::Time t = RakNet::GetTimeMS();
+//	RakNet::Time t = RakNet::GetTimeMS();
 	for (newListIndex=0; newListIndex < newObjects.Size(); newListIndex++)
 	{
 		sp.destinationConnection=this;
@@ -2241,7 +2271,7 @@ void Connection_RM3::SendConstruction(DataStructures::List<Replica3*> &newObject
 				allIndices[z]=true;
 			}
 			SendSerialize(replica, allIndices, sp.outputBitstream, sp.messageTimestamp, sp.pro, rakPeer, worldId);
-			newObjects[newListIndex]->whenLastSerialized=t;
+///			newObjects[newListIndex]->whenLastSerialized=t;
 
 		}
 		// else wait for construction request accepted before serializing
@@ -2279,7 +2309,7 @@ Replica3::Replica3()
 	deletingSystemGUID=UNASSIGNED_RAKNET_GUID;
 	replicaManager=0;
 	forceSendUntilNextUpdate=false;
-	whenLastSerialized=0;
+	lsr=0;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

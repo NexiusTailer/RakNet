@@ -123,7 +123,7 @@ public:
 	virtual void OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason) {(void) packet; (void) failedConnectionAttemptReason;}
 
 	/// Queried when attached to RakPeer
-	/// Return true to call OnDirectSocketSend(), OnDirectSocketReceive(), OnReliabilityLayerPacketError(), OnInternalPacket(), and OnAck()
+	/// Return true to call OnDirectSocketSend(), OnDirectSocketReceive(), OnReliabilityLayerNotification(), OnInternalPacket(), and OnAck()
 	/// If true, then you cannot call RakPeer::AttachPlugin() or RakPeer::DetachPlugin() for this plugin, while RakPeer is active
 	virtual bool UsesReliabilityLayer(void) const {return false;}
 
@@ -145,7 +145,7 @@ public:
 	/// \pre To be called, UsesReliabilityLayer() must return true
 	/// \param[in] bitsUsed How many bits long \a data is
 	/// \param[in] remoteSystemAddress Which system this message is being sent to
-	virtual void OnReliabilityLayerPacketError(const char *errorMessage, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress)  {(void) errorMessage; (void) bitsUsed; (void) remoteSystemAddress;}
+	virtual void OnReliabilityLayerNotification(const char *errorMessage, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress, bool isError)  {(void) errorMessage; (void) bitsUsed; (void) remoteSystemAddress; (void) isError;}
 	
 	/// Called on a send or receive of a message within the reliability layer
 	/// \pre To be called, UsesReliabilityLayer() must return true
@@ -170,6 +170,8 @@ public:
 	virtual void OnPushBackPacket(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress) {(void) data; (void) bitsUsed; (void) remoteSystemAddress;}
 
 	RakPeerInterface *GetRakPeerInterface(void) const {return rakPeerInterface;}
+
+	RakNetGUID GetMyGUIDUnified(void) const;
 
 	/// \internal
 	void SetRakPeerInterface( RakPeerInterface *ptr );

@@ -52,10 +52,6 @@ public class UDPForwarder : IDisposable {
     RakNetPINVOKE.UDPForwarder_Shutdown(swigCPtr);
   }
 
-  public void Update() {
-    RakNetPINVOKE.UDPForwarder_Update(swigCPtr);
-  }
-
   public void SetMaxForwardEntries(ushort maxEntries) {
     RakNetPINVOKE.UDPForwarder_SetMaxForwardEntries(swigCPtr, maxEntries);
   }

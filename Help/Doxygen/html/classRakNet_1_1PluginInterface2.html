@@ -63,12 +63,13 @@ Inheritance diagram for RakNet::PluginInterface2:</div>
 <area href="classRakNet_1_1RPC4.html" alt="RakNet::RPC4" shape="rect" coords="207,1176,404,1200">
 <area href="classRakNet_1_1SQLite3ClientPlugin.html" alt="RakNet::SQLite3ClientPlugin" shape="rect" coords="207,1232,404,1256">
 <area href="classRakNet_1_1SQLite3ServerPlugin.html" alt="RakNet::SQLite3ServerPlugin" shape="rect" coords="207,1288,404,1312">
-<area href="classRakNet_1_1TeamBalancer.html" alt="RakNet::TeamBalancer" shape="rect" coords="207,1344,404,1368">
-<area href="classRakNet_1_1TeamManager.html" alt="RakNet::TeamManager" shape="rect" coords="207,1400,404,1424">
-<area href="classRakNet_1_1TwoWayAuthentication.html" alt="RakNet::TwoWayAuthentication" shape="rect" coords="207,1456,404,1480">
-<area href="classRakNet_1_1UDPProxyClient.html" alt="RakNet::UDPProxyClient" shape="rect" coords="207,1512,404,1536">
-<area href="classRakNet_1_1UDPProxyCoordinator.html" alt="RakNet::UDPProxyCoordinator" shape="rect" coords="207,1568,404,1592">
-<area href="classRakNet_1_1UDPProxyServer.html" alt="RakNet::UDPProxyServer" shape="rect" coords="207,1624,404,1648">
+<area href="classRakNet_1_1StatisticsHistoryPlugin.html" alt="RakNet::StatisticsHistoryPlugin" shape="rect" coords="207,1344,404,1368">
+<area href="classRakNet_1_1TeamBalancer.html" alt="RakNet::TeamBalancer" shape="rect" coords="207,1400,404,1424">
+<area href="classRakNet_1_1TeamManager.html" alt="RakNet::TeamManager" shape="rect" coords="207,1456,404,1480">
+<area href="classRakNet_1_1TwoWayAuthentication.html" alt="RakNet::TwoWayAuthentication" shape="rect" coords="207,1512,404,1536">
+<area href="classRakNet_1_1UDPProxyClient.html" alt="RakNet::UDPProxyClient" shape="rect" coords="207,1568,404,1592">
+<area href="classRakNet_1_1UDPProxyCoordinator.html" alt="RakNet::UDPProxyCoordinator" shape="rect" coords="207,1624,404,1648">
+<area href="classRakNet_1_1UDPProxyServer.html" alt="RakNet::UDPProxyServer" shape="rect" coords="207,1680,404,1704">
 </map>
 </div>
 
@@ -110,7 +111,7 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1PluginInterface2.html#9aac1101ad58e8443516588e96e066ec">OnDirectSocketReceive</a> (const char *data, const BitSize_t bitsUsed, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> remoteSystemAddress)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1PluginInterface2.html#1ba66b118f6eb4d4263b24aae13fb14d">OnReliabilityLayerPacketError</a> (const char *errorMessage, const BitSize_t bitsUsed, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> remoteSystemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1PluginInterface2.html#bf51e60546bd74d21c91dc0d6f9f3a4b">OnReliabilityLayerNotification</a> (const char *errorMessage, const BitSize_t bitsUsed, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> remoteSystemAddress, bool isError)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1PluginInterface2.html#399b8c93daa0236599961e754742e2f7">OnInternalPacket</a> (<a class="el" href="structRakNet_1_1InternalPacket.html">InternalPacket</a> *internalPacket, unsigned frameNumber, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> remoteSystemAddress, RakNet::TimeMS time, int isSend)</td></tr>
 
@@ -206,7 +207,7 @@ Called when a connection is dropped because the user called <a class="el" href="
   </table>
 </dl>
 
-<p>Reimplemented in <a class="el" href="classRakNet_1_1CloudServer.html#9d94fce61a37b8f4b0db1ab01d816c3e">RakNet::CloudServer</a>, <a class="el" href="classRakNet_1_1ConnectionGraph2.html#33dcad1914b524d483d69f3b9633dd36">RakNet::ConnectionGraph2</a>, <a class="el" href="classRakNet_1_1FileListTransfer.html#8636e4e2e29274a755495a5cee238a85">RakNet::FileListTransfer</a>, <a class="el" href="classRakNet_1_1FullyConnectedMesh2.html#06bf8f379a5f0f87f5dbdeef3449f413">RakNet::FullyConnectedMesh2</a>, <a class="el" href="classRakNet_1_1MessageFilter.html#786df4d598682ab2ed1db4dc341a08b3">RakNet::MessageFilter</a>, <a class="el" href="classRakNet_1_1NatPunchthroughClient.html#67db8e781fea747763df43240a29a84f">RakNet::NatPunchthroughClient</a>, <a class="el" href="classRakNet_1_1NatPunchthroughServer.html#45deb0ea94031ed5ca18592fe9555609">RakNet::NatPunchthroughServer</a>, <a class="el" href="classRakNet_1_1NatTypeDetectionClient.html#917181261834f08e30d65758bd07443d">RakNet::NatTypeDetectionClient</a>, <a class="el" href="classRakNet_1_1NatTypeDetectionServer.html#98f60d8ef3b1542dff0c81464fb0cad8">RakNet::NatTypeDetectionServer</a>, <a class="el" href="classRakNet_1_1RakNetTransport2.html#43bdc270a02f5584c5190b902ac243d9">RakNet::RakNetTransport2</a>, <a class="el" href="classRakNet_1_1ReadyEvent.html#cf26f69ce62bcbfe5077c61aa2c40f45">RakNet::ReadyEvent</a>, <a class="el" href="classRakNet_1_1ReplicaManager3.html#bebbd0c277164e36dd342b1f83492427">RakNet::ReplicaManager3</a>, <a class="el" href="classRakNet_1_1Router2.html#428635762452b03a115043e4628837b9">RakNet::Router2</a>, <a class="el" href="classRakNet_1_1TeamBalancer.html#62bd3dd9ccf001df5627664b2c134cf5">RakNet::TeamBalancer</a>, <a class="el" href="classRakNet_1_1TeamManager.html#0d27bb1f13806b2413ec067f872b4410">RakNet::TeamManager</a>, <a class="el" href="classRakNet_1_1TwoWayAuthentication.html#d683e107f9c25a5d833b55d547374c02">RakNet::TwoWayAuthentication</a>, <a class="el" href="classRakNet_1_1UDPProxyCoordinator.html#c5998f29e20816a2e3f29d6a4d17a78d">RakNet::UDPProxyCoordinator</a>, <a class="el" href="classRakNet_1_1UDPProxyServer.html#39620eefb2fdb1a1811880d872ce87d0">RakNet::UDPProxyServer</a>, <a class="el" href="classRakNet_1_1RakVoice.html#12cacc202a637426e6a8c95586ce4be3">RakNet::RakVoice</a>, <a class="el" href="classRakNet_1_1AutopatcherServer.html#76414a1d46ea3bd2d3401c4f64b70146">RakNet::AutopatcherServer</a>, <a class="el" href="classRakNet_1_1Lobby2Client.html#abca35c74a490696405ba307ebef267a">RakNet::Lobby2Client</a>, <a class="el" href="classRakNet_1_1Lobby2Server.html#952a04e660977f17b0785586e720f885">RakNet::Lobby2Server</a>, <a class="el" href="classRakNet_1_1RoomsPlugin.html#613f3693d1709bfc8ec0195ff84eb429">RakNet::RoomsPlugin</a>, and <a class="el" href="classRakNet_1_1RPC3.html#38629f8313e294fba524f941fcb09e09">RakNet::RPC3</a>.</p>
+<p>Reimplemented in <a class="el" href="classRakNet_1_1CloudServer.html#9d94fce61a37b8f4b0db1ab01d816c3e">RakNet::CloudServer</a>, <a class="el" href="classRakNet_1_1ConnectionGraph2.html#33dcad1914b524d483d69f3b9633dd36">RakNet::ConnectionGraph2</a>, <a class="el" href="classRakNet_1_1FileListTransfer.html#8636e4e2e29274a755495a5cee238a85">RakNet::FileListTransfer</a>, <a class="el" href="classRakNet_1_1FullyConnectedMesh2.html#06bf8f379a5f0f87f5dbdeef3449f413">RakNet::FullyConnectedMesh2</a>, <a class="el" href="classRakNet_1_1MessageFilter.html#786df4d598682ab2ed1db4dc341a08b3">RakNet::MessageFilter</a>, <a class="el" href="classRakNet_1_1NatPunchthroughClient.html#67db8e781fea747763df43240a29a84f">RakNet::NatPunchthroughClient</a>, <a class="el" href="classRakNet_1_1NatPunchthroughServer.html#45deb0ea94031ed5ca18592fe9555609">RakNet::NatPunchthroughServer</a>, <a class="el" href="classRakNet_1_1NatTypeDetectionClient.html#917181261834f08e30d65758bd07443d">RakNet::NatTypeDetectionClient</a>, <a class="el" href="classRakNet_1_1NatTypeDetectionServer.html#98f60d8ef3b1542dff0c81464fb0cad8">RakNet::NatTypeDetectionServer</a>, <a class="el" href="classRakNet_1_1RakNetTransport2.html#43bdc270a02f5584c5190b902ac243d9">RakNet::RakNetTransport2</a>, <a class="el" href="classRakNet_1_1ReadyEvent.html#cf26f69ce62bcbfe5077c61aa2c40f45">RakNet::ReadyEvent</a>, <a class="el" href="classRakNet_1_1ReplicaManager3.html#bebbd0c277164e36dd342b1f83492427">RakNet::ReplicaManager3</a>, <a class="el" href="classRakNet_1_1Router2.html#428635762452b03a115043e4628837b9">RakNet::Router2</a>, <a class="el" href="classRakNet_1_1StatisticsHistoryPlugin.html#b5ebf87908bf551ef3158ef36cc45a3c">RakNet::StatisticsHistoryPlugin</a>, <a class="el" href="classRakNet_1_1TeamBalancer.html#62bd3dd9ccf001df5627664b2c134cf5">RakNet::TeamBalancer</a>, <a class="el" href="classRakNet_1_1TeamManager.html#0d27bb1f13806b2413ec067f872b4410">RakNet::TeamManager</a>, <a class="el" href="classRakNet_1_1TwoWayAuthentication.html#d683e107f9c25a5d833b55d547374c02">RakNet::TwoWayAuthentication</a>, <a class="el" href="classRakNet_1_1UDPProxyCoordinator.html#c5998f29e20816a2e3f29d6a4d17a78d">RakNet::UDPProxyCoordinator</a>, <a class="el" href="classRakNet_1_1UDPProxyServer.html#39620eefb2fdb1a1811880d872ce87d0">RakNet::UDPProxyServer</a>, <a class="el" href="classRakNet_1_1RakVoice.html#12cacc202a637426e6a8c95586ce4be3">RakNet::RakVoice</a>, <a class="el" href="classRakNet_1_1AutopatcherServer.html#76414a1d46ea3bd2d3401c4f64b70146">RakNet::AutopatcherServer</a>, <a class="el" href="classRakNet_1_1Lobby2Client.html#abca35c74a490696405ba307ebef267a">RakNet::Lobby2Client</a>, <a class="el" href="classRakNet_1_1Lobby2Server.html#952a04e660977f17b0785586e720f885">RakNet::Lobby2Server</a>, <a class="el" href="classRakNet_1_1RoomsPlugin.html#613f3693d1709bfc8ec0195ff84eb429">RakNet::RoomsPlugin</a>, and <a class="el" href="classRakNet_1_1RPC3.html#38629f8313e294fba524f941fcb09e09">RakNet::RPC3</a>.</p>
 
 </div>
 </div><p>
@@ -436,7 +437,7 @@ Called when we got a new connection <dl compact><dt><b>Parameters:</b></dt><dd>
   </table>
 </dl>
 
-<p>Reimplemented in <a class="el" href="classRakNet_1_1ConnectionGraph2.html#5fc7c446326e17cbccfba7f37ce2b42d">RakNet::ConnectionGraph2</a>, <a class="el" href="classRakNet_1_1FullyConnectedMesh2.html#8909d8f732274680a2e485555655ce08">RakNet::FullyConnectedMesh2</a>, <a class="el" href="classRakNet_1_1MessageFilter.html#a596e84f76f6ce1c8a20464de498b786">RakNet::MessageFilter</a>, <a class="el" href="classRakNet_1_1NatPunchthroughClient.html#9819ed681b72317c2c97fc1f2abfc947">RakNet::NatPunchthroughClient</a>, <a class="el" href="classRakNet_1_1NatPunchthroughServer.html#18194f2e4d4f75ae1cd7d0360339a0bb">RakNet::NatPunchthroughServer</a>, <a class="el" href="classRakNet_1_1RakNetTransport2.html#55d99bb7a6993f5e4d4ef564dea5e487">RakNet::RakNetTransport2</a>, <a class="el" href="classRakNet_1_1ReplicaManager3.html#c0c9ec75335ffe5f117a99ee24b55310">RakNet::ReplicaManager3</a>, and <a class="el" href="classRakNet_1_1TeamManager.html#87d0516651f2ee7e24867e528d854e0f">RakNet::TeamManager</a>.</p>
+<p>Reimplemented in <a class="el" href="classRakNet_1_1ConnectionGraph2.html#5fc7c446326e17cbccfba7f37ce2b42d">RakNet::ConnectionGraph2</a>, <a class="el" href="classRakNet_1_1FullyConnectedMesh2.html#8909d8f732274680a2e485555655ce08">RakNet::FullyConnectedMesh2</a>, <a class="el" href="classRakNet_1_1MessageFilter.html#a596e84f76f6ce1c8a20464de498b786">RakNet::MessageFilter</a>, <a class="el" href="classRakNet_1_1NatPunchthroughClient.html#9819ed681b72317c2c97fc1f2abfc947">RakNet::NatPunchthroughClient</a>, <a class="el" href="classRakNet_1_1NatPunchthroughServer.html#18194f2e4d4f75ae1cd7d0360339a0bb">RakNet::NatPunchthroughServer</a>, <a class="el" href="classRakNet_1_1RakNetTransport2.html#55d99bb7a6993f5e4d4ef564dea5e487">RakNet::RakNetTransport2</a>, <a class="el" href="classRakNet_1_1ReplicaManager3.html#c0c9ec75335ffe5f117a99ee24b55310">RakNet::ReplicaManager3</a>, <a class="el" href="classRakNet_1_1StatisticsHistoryPlugin.html#e2bb9b2a23fc692a3622c3783ca9ed8c">RakNet::StatisticsHistoryPlugin</a>, and <a class="el" href="classRakNet_1_1TeamManager.html#87d0516651f2ee7e24867e528d854e0f">RakNet::TeamManager</a>.</p>
 
 </div>
 </div><p>
@@ -512,12 +513,12 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 
 </div>
 </div><p>
-<a class="anchor" name="1ba66b118f6eb4d4263b24aae13fb14d"></a><!-- doxytag: member="RakNet::PluginInterface2::OnReliabilityLayerPacketError" ref="1ba66b118f6eb4d4263b24aae13fb14d" args="(const char *errorMessage, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress)" -->
+<a class="anchor" name="bf51e60546bd74d21c91dc0d6f9f3a4b"></a><!-- doxytag: member="RakNet::PluginInterface2::OnReliabilityLayerNotification" ref="bf51e60546bd74d21c91dc0d6f9f3a4b" args="(const char *errorMessage, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress, bool isError)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void RakNet::PluginInterface2::OnReliabilityLayerPacketError           </td>
+          <td class="memname">virtual void RakNet::PluginInterface2::OnReliabilityLayerNotification           </td>
           <td>(</td>
           <td class="paramtype">const char *&nbsp;</td>
           <td class="paramname"> <em>errorMessage</em>, </td>
@@ -532,7 +533,13 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>remoteSystemAddress</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>remoteSystemAddress</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>isError</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -552,7 +559,7 @@ Called when the reliability layer rejects a send or receive <dl class="pre" comp
   </table>
 </dl>
 
-<p>Reimplemented in <a class="el" href="classRakNet_1_1PacketLogger.html#1e49f9f4fc9dfe0838e8361a6767ac23">RakNet::PacketLogger</a>.</p>
+<p>Reimplemented in <a class="el" href="classRakNet_1_1PacketLogger.html#ba0d74f42ad8b50ed50e439d4d13fafb">RakNet::PacketLogger</a>.</p>
 
 </div>
 </div><p>
@@ -573,7 +580,7 @@ Called when the reliability layer rejects a send or receive <dl class="pre" comp
 <div class="memdoc">
 
 <p>
-Queried when attached to <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> Return true to call <a class="el" href="classRakNet_1_1PluginInterface2.html#7a6f69c6fc3a121e3676298a63a9ef78">OnDirectSocketSend()</a>, <a class="el" href="classRakNet_1_1PluginInterface2.html#9aac1101ad58e8443516588e96e066ec">OnDirectSocketReceive()</a>, <a class="el" href="classRakNet_1_1PluginInterface2.html#1ba66b118f6eb4d4263b24aae13fb14d">OnReliabilityLayerPacketError()</a>, <a class="el" href="classRakNet_1_1PluginInterface2.html#399b8c93daa0236599961e754742e2f7">OnInternalPacket()</a>, and <a class="el" href="classRakNet_1_1PluginInterface2.html#e0b0cad31cfc209c48197c77d6b46345">OnAck()</a> If true, then you cannot call <a class="el" href="classRakNet_1_1RakPeer.html#4ceacd63ae51089a2e36287c54f07ffe" title="Attaches a Plugin interface to an instance of the base class (RakPeer or PacketizedTCP)...">RakPeer::AttachPlugin()</a> or <a class="el" href="classRakNet_1_1RakPeer.html#9f29151642a0ad0abdddc6d9a8f25239" title="Detaches a Plugin interface from the instance of the base class (RakPeer or PacketizedTCP)...">RakPeer::DetachPlugin()</a> for this plugin, while <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> is active 
+Queried when attached to <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> Return true to call <a class="el" href="classRakNet_1_1PluginInterface2.html#7a6f69c6fc3a121e3676298a63a9ef78">OnDirectSocketSend()</a>, <a class="el" href="classRakNet_1_1PluginInterface2.html#9aac1101ad58e8443516588e96e066ec">OnDirectSocketReceive()</a>, <a class="el" href="classRakNet_1_1PluginInterface2.html#bf51e60546bd74d21c91dc0d6f9f3a4b">OnReliabilityLayerNotification()</a>, <a class="el" href="classRakNet_1_1PluginInterface2.html#399b8c93daa0236599961e754742e2f7">OnInternalPacket()</a>, and <a class="el" href="classRakNet_1_1PluginInterface2.html#e0b0cad31cfc209c48197c77d6b46345">OnAck()</a> If true, then you cannot call <a class="el" href="classRakNet_1_1RakPeer.html#4ceacd63ae51089a2e36287c54f07ffe" title="Attaches a Plugin interface to an instance of the base class (RakPeer or PacketizedTCP)...">RakPeer::AttachPlugin()</a> or <a class="el" href="classRakNet_1_1RakPeer.html#9f29151642a0ad0abdddc6d9a8f25239" title="Detaches a Plugin interface from the instance of the base class (RakPeer or PacketizedTCP)...">RakPeer::DetachPlugin()</a> for this plugin, while <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> is active 
 <p>Reimplemented in <a class="el" href="classRakNet_1_1PacketLogger.html#b486d35c408ffee7d1732678143d4a81">RakNet::PacketLogger</a>.</p>
 
 </div>
@@ -581,7 +588,7 @@ Queried when attached to <a class="el" href="classRakNet_1_1RakPeer.html" title=
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="PluginInterface2_8h.html">PluginInterface2.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 10 16:25:02 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jul 12 10:50:29 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

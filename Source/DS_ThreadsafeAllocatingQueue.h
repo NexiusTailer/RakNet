@@ -28,6 +28,9 @@ public:
 	structureType *Pop(void);
 	void SetPageSize(int size);
 	bool IsEmpty(void);
+	structureType * operator[] ( unsigned int position ) const;
+	void RemoveAtIndex( unsigned int position );
+	unsigned int Size( void ) const;
 
 	// Memory pool operations
 	structureType *Allocate(const char *file, unsigned int line);
@@ -130,6 +133,34 @@ bool ThreadsafeAllocatingQueue<structureType>::IsEmpty(void)
 	isEmpty=queue.IsEmpty();
 	queueMutex.Unlock();
 	return isEmpty;
+}
+
+template <class structureType>
+structureType * ThreadsafeAllocatingQueue<structureType>::operator[] ( unsigned int position ) const
+{
+	structureType *s;
+	queueMutex.Lock();
+	s=queue[position];
+	queueMutex.Unlock();
+	return s;
+}
+
+template <class structureType>
+void ThreadsafeAllocatingQueue<structureType>::RemoveAtIndex( unsigned int position )
+{
+	queueMutex.Lock();
+	queue.RemoveAtIndex(position);
+	queueMutex.Unlock();
+}
+
+template <class structureType>
+unsigned int ThreadsafeAllocatingQueue<structureType>::Size( void ) const
+{
+	unsigned int s;
+	queueMutex.Lock();
+	s=queue.Size();
+	queueMutex.Unlock();
+	return s;
 }
 
 };

@@ -88,12 +88,14 @@ struct UDPProxyClientResultHandler
 
 	/// Called when our forwarding request is already in progress on the \a proxyCoordinator.
 	/// This can be ignored, but indicates an unneeded second request
+	/// \param[out] proxyIPAddress IP Address of the proxy server, which is forwarding messages to targetAddress
+	/// \param[out] proxyPort Remote port to use on the proxy server, which is forwarding messages to targetAddress
 	/// \param[out] proxyCoordinator \a proxyCoordinator parameter originally passed to UDPProxyClient::RequestForwarding
 	/// \param[out] sourceAddress \a sourceAddress parameter passed to UDPProxyClient::RequestForwarding. If it was UNASSIGNED_SYSTEM_ADDRESS, it is now our external IP address.
 	/// \param[out] targetAddress \a targetAddress parameter originally passed to UDPProxyClient::RequestForwarding
 	/// \param[out] targetGuid \a targetGuid parameter originally passed to UDPProxyClient::RequestForwarding
 	/// \param[out] proxyClient The plugin that is calling this callback
-	virtual void OnForwardingInProgress(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)=0;
+	virtual void OnForwardingInProgress(const char *proxyIPAddress, unsigned short proxyPort, SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)=0;
 };
 
 

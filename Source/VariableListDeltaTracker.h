@@ -3,6 +3,9 @@
 #include "RakMemoryOverride.h"
 #include "BitStream.h"
 
+#ifndef __VARIABLE_LIST_DELTA_TRACKER
+#define __VARIABLE_LIST_DELTA_TRACKER
+
 namespace RakNet
 {
 /// Class to write a series of variables, copy the contents to memory, and return if the newly written value is different than what was last written
@@ -129,3 +132,5 @@ protected:
 
 
 }
+
+#endif

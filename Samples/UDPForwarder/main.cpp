@@ -9,6 +9,7 @@
 #include "BitStream.h"
 #include "RakSleep.h"
 #include "UDPForwarder.h"
+#include "SocketLayer.h"
 
 int main()
 {
@@ -16,8 +17,17 @@ int main()
 	rakPeer[0]=RakNet::RakPeerInterface::GetInstance();
 	rakPeer[1]=RakNet::RakPeerInterface::GetInstance();
 	RakNet::SocketDescriptor sd1(50000,0),sd2(50002,0);
-	rakPeer[0]->Startup(1,&sd1, 1);
-	rakPeer[1]->Startup(1,&sd2, 1);
+	RakNet::StartupResult sr;
+#if RAKNET_SUPPORT_IPV6==1
+	sd1.socketFamily=AF_INET6; // Test out IPV6
+#endif
+	sr = rakPeer[0]->Startup(1,&sd1, 1);
+	RakAssert(sr==RakNet::RAKNET_STARTED);
+#if RAKNET_SUPPORT_IPV6==1
+	sd2.socketFamily=AF_INET6; // Test out IPV6
+#endif
+	sr = rakPeer[1]->Startup(1,&sd2, 1);
+	RakAssert(sr==RakNet::RAKNET_STARTED);
 	rakPeer[1]->SetMaximumIncomingConnections(1);
 	RakNet::UDPForwarder udpForwarder;
 	
@@ -42,14 +52,20 @@ int main()
 // 	peer1Addr.FromString("127.0.0.1");
 
 	unsigned short fowardPort;
-	if (!udpForwarder.StartForwarding(peer0Addr,peer1Addr, timeoutOnNoDataMS, 0, AF_INET, &fowardPort,0))
+	SOCKET forwardingSocket;
+	if (!udpForwarder.StartForwarding(peer0Addr,peer1Addr, timeoutOnNoDataMS, "127.0.0.1", sd1.socketFamily, &fowardPort, &forwardingSocket))
 	{
 		printf("Socket error\n");
 		return 1;
 	}
 
+	RakNet::SystemAddress boundAddress;
+	RakNet::SocketLayer::GetSystemAddress( forwardingSocket, &boundAddress );
+	printf("UDPForwarder bound on %s\n", boundAddress.ToString(false));
+
 	// Send a connect message to the forwarder, on the port to forward to rakPeer[1]
-	rakPeer[0]->Connect(peer1Addr.ToString(false), fowardPort, 0, 0);
+	RakNet::ConnectionAttemptResult car = rakPeer[0]->Connect(boundAddress.ToString(false), fowardPort, 0, 0);
+	RakAssert(car==RakNet::CONNECTION_ATTEMPT_STARTED);
 	
 	printf("'q'uit.\n");
 	RakNet::Packet *p;
@@ -77,8 +93,6 @@ int main()
 				p=rakPeer[i]->Receive();
 			}
 		}
-
-		udpForwarder.Update();
 
 		if (kbhit())
 		{

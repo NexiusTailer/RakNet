@@ -651,7 +651,10 @@ bool SystemAddress::FromStringExplicitPort(const char *str, unsigned short port,
 {
 	bool b = FromString(str,(char) 0,ipVersion);
 	if (b==false)
+	{
+		*this=UNASSIGNED_SYSTEM_ADDRESS;
 		return false;
+	}
 	address.addr4.sin_port=htons(port);
 	debugPort=ntohs(address.addr4.sin_port);
 	return true;

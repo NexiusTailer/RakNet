@@ -31,7 +31,30 @@
 <p>option module_path=&quot;../../DependentExtensions/Marmalade&quot;<br>
   subproject RakNet</p>
 <p>The path under option module_path should modified to point to wherever you installed RakNet. There is an example of this under Samples\Marmalade . After doing so you will need to double click the .mkb file to regenerate your project solution.</p>
-<p>If, upon building RakNet, you get a build error &quot;unresolved external symbol _strtoull ...&quot; then you need to either update Marmalade to a newer version, or comment out the last strtoull in RakNetGUID::FromString in RakNetTypes.h, then build step 3 again.</p></TD>
+<p>If, upon building RakNet, you get a build error &quot;unresolved external symbol _strtoull ...&quot; then you need to either update Marmalade to a newer version, or comment out the last strtoull in RakNetGUID::FromString in RakNetTypes.h, then build step 3 again.</p>
+
+<p><strong>Step 5 - Fix allocator:</strong></p>
+The Marmalade bucket system is not threadsafe. Be sure you have this code in main()
+<pre>
+#include "RakMemoryOverride.h"
+
+void* MarmaladeMalloc(size_t size)
+{
+	return s3eMallocBase(size);
+}
+void* MarmaladeRealloc(void *p, size_t size)
+{
+	return s3eReallocBase(p, size);
+}
+void MarmaladeFree(void *p)
+{
+	s3eFreeBase(p);
+}
+SetMalloc(MarmaladeMalloc);
+SetRealloc(MarmaladeRealloc);
+SetFree(MarmaladeFree);
+</pre>
+</TD>
 </TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92">
 <img src="spacer.gif" width="8" height="1"><span class="RakNetWhiteHeader">See Also</span></td>

@@ -497,6 +497,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\StatisticsHistory.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\StringCompressor.cpp"
 				>
 			</File>
@@ -1072,6 +1076,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\SocketLayer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\StatisticsHistory.h"
 				>
 			</File>
 			<File

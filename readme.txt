@@ -1,4 +1,4 @@
-RakNet 4.04
+RakNet 4.05
 Copyright 2002-2005 Kevin Jenkins (rakkar@jenkinssoftware.com).
 This API and the code herein created by and wholly and privately owned by Kevin Jenkins except where specifically indicated otherwise.
 Licensed under the "RakNet" brand by Jenkins Software and subject to the terms of the relevant licensing agreement available at http://www.jenkinssoftware.com
@@ -66,8 +66,11 @@ Use cmake, or "g++ -lpthread -g *.cpp" in the /Source directory.
 64 bit use -m64 command line
 Sometimes you need -pthread instead of -lpthread
 
-Command to build 64 bit chat example server:
+Command to build 64 bit chat example server from the /Source directory:
 g++ -m64 -g -lpthread -I./ "../Samples/Chat Example/Chat Example Server.cpp" *.cpp
+
+Command to build NATCompleteServer from the Samples/NATCompleteServer directory:
+g++ -g -lpthread -I./ -I./../../Source main.cpp -I./../CloudServer ./../../Source/*.cpp ./../CloudServer/CloudServerHelper.cpp
 
 Command to build autopatcher server from /Source directory
 g++ -lpthread -lpq -lssl -lbz2 -lssl -lcrypto -L/opt/PostgreSQL/9.0/lib -L../DependentExtensions/bzip2-1.0.6 -I/opt/PostgreSQL/9.0/include -I../DependentExtensions/bzip2-1.0.6 -I./ -I../DependentExtensions/Autopatcher -I../DependentExtensions/Autopatcher/AutopatcherPostgreRepository -I../DependentExtensions/PostgreSQLInterface -g *.cpp ../DependentExtensions/Autopatcher/AutopatcherServer.cpp ../DependentExtensions/Autopatcher/CreatePatch.cpp ../DependentExtensions/Autopatcher/MemoryCompressor.cpp ../DependentExtensions/Autopatcher/AutopatcherPostgreRepository/AutopatcherPostgreRepository.cpp ../DependentExtensions/PostgreSQLInterface/PostgreSQLInterface.cpp ../Samples/AutopatcherServer/AutopatcherServerTest.cpp
@@ -89,7 +92,10 @@ http://linux.bytesex.org/gdb.html
 http://www.delorie.com/gnu/docs/gdb/gdb_29.html
 gdb ./a.out
 Set breakpoint:
-gdb b file:line
+b file:line
+disable to disable a breakpoint, delete to delete it
+info breakpoints to get a list of breakpoints
+ignore <breakpointNumber> <count> to set breakpoint to be ignored that number of times
 followed by run
 Useful:
 info stack
@@ -97,6 +103,8 @@ info locals
 delete (Clears all breakpoints)
 step (step into)
 next (step over)
+finish (step out)
+continue to keep going after step or next
 p <variableName>
 For example: p users.orderedList.listArray[0].guid
 

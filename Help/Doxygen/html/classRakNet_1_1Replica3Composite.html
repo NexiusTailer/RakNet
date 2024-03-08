@@ -103,9 +103,9 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g993da25eb23b67455e2438971c51429c">RM3SerializationResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3Composite.html#9cdd70fda45a5375a14d61e4c372463d">Serialize</a> (<a class="el" href="structRakNet_1_1SerializeParameters.html">RakNet::SerializeParameters</a> *serializeParameters)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Serialize our class to a bitstream.  <a href="#9cdd70fda45a5375a14d61e4c372463d"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3Composite.html#dae3efb4f7dee564dc5fbf1e656fdd90">OnSerializeTransmission</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3Composite.html#2f3dba47b2f5ea878bbc4dfa4662d684">OnSerializeTransmission</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, <a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection, BitSize_t bitsPerChannel[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS])</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the class is actually transmitted via <a class="el" href="classRakNet_1_1Replica3Composite.html#9cdd70fda45a5375a14d61e4c372463d" title="Serialize our class to a bitstream.">Serialize()</a>.  <a href="#dae3efb4f7dee564dc5fbf1e656fdd90"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the class is actually transmitted via <a class="el" href="classRakNet_1_1Replica3Composite.html#9cdd70fda45a5375a14d61e4c372463d" title="Serialize our class to a bitstream.">Serialize()</a>.  <a href="#2f3dba47b2f5ea878bbc4dfa4662d684"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3Composite.html#93bedef73e62c6893d47cd0482807f4c">Deserialize</a> (RakNet::DeserializeParameters *deserializeParameters)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Read what was written in <a class="el" href="classRakNet_1_1Replica3Composite.html#9cdd70fda45a5375a14d61e4c372463d" title="Serialize our class to a bitstream.">Serialize()</a>.  <a href="#93bedef73e62c6893d47cd0482807f4c"></a><br></td></tr>
@@ -315,7 +315,7 @@ Return true to delete the object. <a class="el" href="classRakNet_1_1Replica3.ht
 
 </div>
 </div><p>
-<a class="anchor" name="dae3efb4f7dee564dc5fbf1e656fdd90"></a><!-- doxytag: member="RakNet::Replica3Composite::OnSerializeTransmission" ref="dae3efb4f7dee564dc5fbf1e656fdd90" args="(RakNet::BitStream *bitStream, const SystemAddress &amp;systemAddress)" -->
+<a class="anchor" name="2f3dba47b2f5ea878bbc4dfa4662d684"></a><!-- doxytag: member="RakNet::Replica3Composite::OnSerializeTransmission" ref="2f3dba47b2f5ea878bbc4dfa4662d684" args="(RakNet::BitStream *bitStream, RakNet::Connection_RM3 *destinationConnection, BitSize_t bitsPerChannel[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS])" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -330,8 +330,14 @@ template&lt;class parent_type &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *&nbsp;</td>
+          <td class="paramname"> <em>destinationConnection</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">BitSize_t&nbsp;</td>
+          <td class="paramname"> <em>bitsPerChannel</em>[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS]</td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -346,7 +352,7 @@ template&lt;class parent_type &gt; </div>
 Called when the class is actually transmitted via <a class="el" href="classRakNet_1_1Replica3Composite.html#9cdd70fda45a5375a14d61e4c372463d" title="Serialize our class to a bitstream.">Serialize()</a>. 
 <p>
 Use to track how much bandwidth this class it taking 
-<p>Reimplemented from <a class="el" href="classRakNet_1_1Replica3.html#8592979715abe47348f23443d423f1fa">RakNet::Replica3</a>.</p>
+<p>Reimplemented from <a class="el" href="classRakNet_1_1Replica3.html#755cc71b95b7e2999de5f98b42a20d29">RakNet::Replica3</a>.</p>
 
 </div>
 </div><p>
@@ -801,7 +807,7 @@ The value written to <em>allocationIdBitstream</em> will be passed to <a class="
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 10 16:25:03 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jul 12 10:50:30 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

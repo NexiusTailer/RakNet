@@ -400,6 +400,9 @@ enum DefaultMessageIDTypes
 	ID_CLOUD_SERVER_TO_SERVER_COMMAND,
 	ID_CLOUD_SUBSCRIPTION_NOTIFICATION,
 
+	// LibVoice
+	ID_LIB_VOICE,
+
 	// So I can add more without changing user enumerations
 	ID_RESERVED_1,
 	ID_RESERVED_2,

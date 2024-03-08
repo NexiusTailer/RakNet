@@ -275,6 +275,9 @@ const <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;<
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#59f65a234929846d6213bb5e43797778">GetStatistics</a> (const int index, <a class="el" href="structRakNet_1_1RakNetStatistics.html">RakNetStatistics</a> *rns)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the network statistics of the system at the given index in the remoteSystemList.  <a href="#59f65a234929846d6213bb5e43797778"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#cffede0c021450b37b16e6946c694a7d">GetStatisticsList</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &gt; &amp;addresses, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &gt; &amp;guids, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetStatistics.html">RakNetStatistics</a> &gt; &amp;statistics)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the list of systems, and statistics for each of those systems Each system has one entry in each of the lists, in the same order.  <a href="#cffede0c021450b37b16e6946c694a7d"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="df51ef909abde91448a0a5d17e1da65c"></a><!-- doxytag: member="RakNet::RakPeer::GetReceiveBufferSize" ref="df51ef909abde91448a0a5d17e1da65c" args="(void)" -->
 virtual unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#df51ef909abde91448a0a5d17e1da65c">GetReceiveBufferSize</a> (void)</td></tr>
 
@@ -1806,7 +1809,7 @@ Returns the network statistics of the system at the given index in the remoteSys
 <p>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True if the index is less than the maximum number of peers allowed and the system is active. False otherwise. </dd></dl>
 
-<p>Implements <a class="el" href="classRakNet_1_1RakPeerInterface.html">RakNet::RakPeerInterface</a>.</p>
+<p>Implements <a class="el" href="classRakNet_1_1RakPeerInterface.html#b48acef9789f997fbb08d64abae75870">RakNet::RakPeerInterface</a>.</p>
 
 </div>
 </div><p>
@@ -1848,6 +1851,52 @@ Returns a structure containing a large set of network statistics for the specifi
 <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="RakNetStatistics_8h.html" title="A structure that holds all statistical data returned by RakNet.">RakNetStatistics.h</a> </dd></dl>
 
 <p>Implements <a class="el" href="classRakNet_1_1RakPeerInterface.html#87e528130f7f0f21597a338769fe7139">RakNet::RakPeerInterface</a>.</p>
+
+</div>
+</div><p>
+<a class="anchor" name="cffede0c021450b37b16e6946c694a7d"></a><!-- doxytag: member="RakNet::RakPeer::GetStatisticsList" ref="cffede0c021450b37b16e6946c694a7d" args="(DataStructures::List&lt; SystemAddress &gt; &amp;addresses, DataStructures::List&lt; RakNetGUID &gt; &amp;guids, DataStructures::List&lt; RakNetStatistics &gt; &amp;statistics)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void RakNet::RakPeer::GetStatisticsList           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>addresses</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>guids</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetStatistics.html">RakNetStatistics</a> &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>statistics</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns the list of systems, and statistics for each of those systems Each system has one entry in each of the lists, in the same order. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>addresses</em>&nbsp;</td><td><a class="el" href="structRakNet_1_1SystemAddress.html" title="Network address for a system.">SystemAddress</a> for each connected system </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>guids</em>&nbsp;</td><td><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> for each connected system </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>statistics</em>&nbsp;</td><td>Calculated <a class="el" href="structRakNet_1_1RakNetStatistics.html" title="Network Statisics Usage.">RakNetStatistics</a> for each connected system </td></tr>
+  </table>
+</dl>
+
+<p>Implements <a class="el" href="classRakNet_1_1RakPeerInterface.html#d474ee839667fb5e1b667ea5465dc021">RakNet::RakPeerInterface</a>.</p>
 
 </div>
 </div><p>
@@ -3317,7 +3366,7 @@ This is used to return a number to the user when they call Send identifying the 
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="RakPeer_8h.html">RakPeer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 10 16:25:03 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jul 12 10:50:29 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

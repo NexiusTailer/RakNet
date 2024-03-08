@@ -135,18 +135,34 @@ public:
 	virtual void StartVerifiedJoin(RakNetGUID client);
 	
 	/// \brief On ID_FCM2_VERIFIED_JOIN_CAPABLE , accept or reject the new connection
+	/// \code
+	/// fullyConnectedMesh->RespondOnVerifiedJoinCapable(packet, true, 0);
+	/// \endcode
 	/// \param[in] packet The system that sent ID_FCM2_VERIFIED_JOIN_CAPABLE. Based on \accept, ID_FCM2_VERIFIED_JOIN_ACCEPTED or ID_FCM2_VERIFIED_JOIN_REJECTED will be sent in reply
 	/// \param[in] accept True to accept, and thereby automatically call AddParticipant() on all systems on the mesh. False to reject, and call CloseConnection() to all mesh systems on the target
 	/// \param[in] additionalData Any additional data you want to add to the ID_FCM2_VERIFIED_JOIN_ACCEPTED or ID_FCM2_VERIFIED_JOIN_REJECTED messages
 	virtual void RespondOnVerifiedJoinCapable(Packet *packet, bool accept, BitStream *additionalData);
 
 	/// \brief On ID_FCM2_VERIFIED_JOIN_START, read the SystemAddress and RakNetGUID values of each system to connect to
+	/// \code
+	/// DataStructures::List<SystemAddress> addresses;
+	/// DataStructures::List<RakNetGUID> guids;
+	/// fullyConnectedMesh->GetVerifiedJoinRequiredProcessingList(packet->guid, addresses, guids);
+	/// for (unsigned int i=0; i < addresses.Size(); i++)
+	///		rakPeer[i]->Connect(addresses[i].ToString(false), addresses[i].GetPort(), 0, 0);
+	/// \endcode
 	/// \param[in] host Which system sent ID_FCM2_VERIFIED_JOIN_START
 	/// \param[out] addresses SystemAddress values of systems to connect to. List has the same number and order as \a guids
 	/// \param[out] guids RakNetGUID values of systems to connect to. List has the same number and order as \a guids
 	virtual void GetVerifiedJoinRequiredProcessingList(RakNetGUID host, DataStructures::List<SystemAddress> &addresses, DataStructures::List<RakNetGUID> &guids);
 
 	/// \brief On ID_FCM2_VERIFIED_JOIN_ACCEPTED, read additional data passed to RespondOnVerifiedJoinCapable()
+	/// \code
+	/// bool thisSystemAccepted;
+	/// DataStructures::List<RakNetGUID> systemsAccepted;
+	/// RakNet::BitStream additionalData;
+	/// fullyConnectedMesh->GetVerifiedJoinAcceptedAdditionalData(packet, &thisSystemAccepted, systemsAccepted, &additionalData);
+	/// \endcode
 	/// \param[in] packet Packet containing the ID_FCM2_VERIFIED_JOIN_ACCEPTED message
 	/// \param[out] thisSystemAccepted If true, it was this instance of RakPeerInterface that was accepted. If false, this is notification for another system
 	/// \param[out] systemsAccepted Which system(s) were added with AddParticipant(). If \a thisSystemAccepted is false, this list will only have length 1
@@ -154,6 +170,10 @@ public:
 	virtual void GetVerifiedJoinAcceptedAdditionalData(Packet *packet, bool *thisSystemAccepted, DataStructures::List<RakNetGUID> &systemsAccepted, BitStream *additionalData);
 
 	/// \brief On ID_FCM2_VERIFIED_JOIN_REJECTED, read additional data passed to RespondOnVerifiedJoinCapable()
+	/// \details This does not automatically close the connection. The following code will do so:
+	/// \code
+	/// rakPeer[i]->CloseConnection(packet->guid, true);
+	/// \endcode
 	/// \param[in] packet Packet containing the ID_FCM2_VERIFIED_JOIN_REJECTED message
 	/// \param[out] additionalData \a additionalData parameter passed to RespondOnVerifiedJoinCapable().
 	virtual void GetVerifiedJoinRejectedAdditionalData(Packet *packet, BitStream *additionalData);
@@ -210,7 +230,7 @@ public:
 	{
 		RakNetGUID requester;
 		DataStructures::List<VerifiedJoinInProgressMember> members;
-		bool sentResults;
+		//bool sentResults;
 	};
 
 	/// \internal for debugging

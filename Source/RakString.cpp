@@ -937,6 +937,52 @@ RakNet::RakString& RakString::SQLEscape(void)
 	}
 	return *this;
 }
+RakString RakString::FormatForPOST(RakString &uri, RakString &contentType, unsigned int port, RakString &body)
+{
+	RakString out;
+	RakString host;
+	RakString remotePath;
+	RakNet::RakString header;
+
+	uri.SplitURI(header, host, remotePath);
+	if (host.IsEmpty() || remotePath.IsEmpty())
+		return out;
+	
+	out.Set("POST %s HTTP/1.0\r\n"
+		"Host: %s:%i\r\n"
+		"Content-Type: %s\r\n"
+		"Content-Length: %u\r\n"
+		"\r\n"
+		"%s",
+		remotePath.C_String(),
+		host.C_String(),
+		port,
+		contentType.C_String(),
+		body.GetLength(),
+		body.C_String());
+
+	return out;
+}
+RakString RakString::FormatForGET(RakString &uri, unsigned int port)
+{
+	RakString out;
+	RakString host;
+	RakString remotePath;
+	RakNet::RakString header;
+
+	uri.SplitURI(header, host, remotePath);
+	if (host.IsEmpty() || remotePath.IsEmpty())
+		return out;
+
+	out.Set("GET %s HTTP/1.0\r\n"
+		"Host: %s:%i\r\n"
+		"\r\n",
+		remotePath.C_String(),
+		host.C_String(),
+		port);
+
+	return out;
+}
 RakNet::RakString& RakString::MakeFilePath(void)
 {
 	if (IsEmpty())

@@ -194,6 +194,10 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 static unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#79f546baedf74c64a820297b40590250">ToInteger</a> (const char *str)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Has the string into an unsigned int. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static <a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#1f1b381df19430f2b428b9b1a99172b1">FormatForPOST</a> (<a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;uri, <a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;contentType, unsigned int port, <a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;body)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static <a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#dce1be727bb70fe04b8030c01de9a975">FormatForGET</a> (<a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;uri, unsigned int port)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakString.html#f2d5179a4683c4c47181fc4d3998cc9f">FreeMemory</a> (void)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e7c203a84b2d03b70d97a7bb79c6a84e"></a><!-- doxytag: member="RakNet::RakString::Serialize" ref="e7c203a84b2d03b70d97a7bb79c6a84e" args="(const char *str, BitStream *bs)" -->
@@ -359,6 +363,93 @@ String class find replacement Searches the string for the content specified in s
 
 </div>
 </div><p>
+<a class="anchor" name="dce1be727bb70fe04b8030c01de9a975"></a><!-- doxytag: member="RakNet::RakString::FormatForGET" ref="dce1be727bb70fe04b8030c01de9a975" args="(RakString &amp;uri, unsigned int port)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> RakNet::RakString::FormatForGET           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>uri</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&nbsp;</td>
+          <td class="paramname"> <em>port</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Format as a GET comand that can be sent to a webserver <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>uri</em>&nbsp;</td><td>For example, jenkinssoftware.com/raknet/DirectoryServer.php?query=download&amp;downloadPassword=a </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>contentType</em>&nbsp;</td><td>For example, application/x-www-form-urlencoded </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>port</em>&nbsp;</td><td>Port you plan to send to. Use 80 if you don't know. </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>Formatted string </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="1f1b381df19430f2b428b9b1a99172b1"></a><!-- doxytag: member="RakNet::RakString::FormatForPOST" ref="1f1b381df19430f2b428b9b1a99172b1" args="(RakString &amp;uri, RakString &amp;contentType, unsigned int port, RakString &amp;body)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> RakNet::RakString::FormatForPOST           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>uri</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>contentType</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&nbsp;</td>
+          <td class="paramname"> <em>port</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1RakString.html">RakString</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>body</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Format as a POST command that can be sent to a webserver <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>uri</em>&nbsp;</td><td>For example, jenkinssoftware.com/raknet/DirectoryServer.php?query=download&amp;downloadPassword=a </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>contentType</em>&nbsp;</td><td>For example, application/x-www-form-urlencoded </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>port</em>&nbsp;</td><td>Port you plan to send to. Use 80 if you don't know. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>body</em>&nbsp;</td><td>Body of the post </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>Formatted string </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="f2d5179a4683c4c47181fc4d3998cc9f"></a><!-- doxytag: member="RakNet::RakString::FreeMemory" ref="f2d5179a4683c4c47181fc4d3998cc9f" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
@@ -470,7 +561,7 @@ Serialize to a bitstream, compressed (better bandwidth usage) <dl compact><dt><b
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/RakString.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 10 16:25:03 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jul 12 10:50:29 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>
