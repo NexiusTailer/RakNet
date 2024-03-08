@@ -110,6 +110,9 @@ public:
 	// Use a separate connection for file parts, because PGConn is not threadsafe
 	PGconn *filePartConnection;
 	SimpleMutex filePartConnectionMutex;
+
+protected:
+	virtual unsigned int GetPatchPart( const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context);
 };
 
 

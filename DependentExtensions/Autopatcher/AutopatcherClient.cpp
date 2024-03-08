@@ -118,7 +118,7 @@ AutopatcherClientThreadInfo* AutopatcherClientWorkerThread(AutopatcherClientThre
 		else
 			hashMultiplier=2; // else op==PC_HASH_2_WITH_PATCH
 
-		PatchContext result = input->cbInterface->ApplyPatchBase(fullPathToDir, &input->postPatchFile, &input->postPatchLength, (char*)input->onFileStruct.fileData+HASH_LENGTH*hashMultiplier, input->onFileStruct.byteLengthOfThisFile-HASH_LENGTH*hashMultiplier, input->onFileStruct.context.flnc_extraData);
+		PatchContext result = input->cbInterface->ApplyPatchBase(fullPathToDir, &input->postPatchFile, &input->postPatchLength, (char*)input->onFileStruct.fileData+HASH_LENGTH*hashMultiplier, input->onFileStruct.byteLengthOfThisFile-HASH_LENGTH*hashMultiplier, input->onFileStruct.context.flnc_extraData2);
 		if (result == PC_ERROR_PATCH_APPLICATION_FAILURE || input->result==PC_ERROR_PATCH_TARGET_MISSING)
 		{
 			input->result=result;
@@ -338,11 +338,12 @@ public:
 	virtual bool OnFile(OnFileStruct *onFileStruct)
 	{
 		AutopatcherClientThreadInfo *inStruct = RakNet::OP_NEW<AutopatcherClientThreadInfo>( _FILE_AND_LINE_ );
+		memset(inStruct,0,sizeof(AutopatcherClientThreadInfo));
 //		inStruct->prePatchFile=0;
 		inStruct->postPatchFile=0;
 		inStruct->cbInterface=onFileCallback;
 		memcpy(&(inStruct->onFileStruct), onFileStruct, sizeof(OnFileStruct));
-		memcpy(inStruct->applicationDirectory,applicationDirectory,sizeof(applicationDirectory));
+		strcpy(inStruct->applicationDirectory,applicationDirectory);
 		if (onFileStruct->context.op==PC_HASH_1_WITH_PATCH || onFileStruct->context.op==PC_HASH_2_WITH_PATCH)
 			onFileStruct->context.op=PC_NOTICE_FILE_DOWNLOADED_PATCH;
 		else
@@ -477,6 +478,8 @@ void AutopatcherClient::Update(void)
 			// Ask for patches for the files in the list that are different from what we have.
 			outBitStream.Write((unsigned char)ID_AUTOPATCHER_GET_PATCH);
 			outBitStream.Write(setId);
+			double lastUpdateData=0;
+			outBitStream.Write(lastUpdateData);
 			StringCompressor::Instance()->EncodeString(applicationName, 512, &outBitStream);
 			redownloadList.Serialize(&outBitStream);
 			SendUnified(&outBitStream, priority, RELIABLE_ORDERED, orderingChannel, serverId, false);
@@ -651,11 +654,11 @@ PluginReceiveResult AutopatcherClient::OnDownloadFinishedInternal(Packet *packet
 void AutopatcherClient::CopyAndRestart(const char *filePath)
 {
 	// We weren't able to write applicationDirectory + filePath so we wrote applicationDirectory + filePath + COPY_ON_RESTART_EXTENSION instead
-	copyAndRestartList.AddFile(filePath,filePath, 0, 0, 0, FileListNodeContext(0,0));
+	copyAndRestartList.AddFile(filePath,filePath, 0, 0, 0, FileListNodeContext(0,0,0,0));
 }
 void AutopatcherClient::Redownload(const char *filePath)
 {
-	redownloadList.AddFile(filePath,filePath, 0, 0, 0, FileListNodeContext(0,0));
+	redownloadList.AddFile(filePath,filePath, 0, 0, 0, FileListNodeContext(0,0,0,0));
 }
 
 #ifdef _MSC_VER

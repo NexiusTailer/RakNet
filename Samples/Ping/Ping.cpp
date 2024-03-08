@@ -130,23 +130,29 @@ int main(void)
 		switch (p->data[0])
 		{
 			case ID_UNCONNECTED_PONG:
-				unsigned int dataLength;
-				RakNet::TimeMS time;
-				RakNet::BitStream bsIn(p->data,p->length,false);
-				bsIn.IgnoreBytes(1);
-				bsIn.Read(time);
-				dataLength = p->length - sizeof(unsigned char) - sizeof(RakNet::TimeMS);
-				printf("ID_UNCONNECTED_PONG from SystemAddress %s.\n", p->systemAddress.ToString(true));
-				printf("Time is %i\n",time);
-				printf("Ping is %i\n", (unsigned int)(RakNet::GetTimeMS()-time));
-				printf("Data is %i bytes long.\n", dataLength);
-				if (dataLength > 0)
-					printf("Data is %s\n", p->data+sizeof(unsigned char)+sizeof(RakNet::TimeMS));
+				{
+					unsigned int dataLength;
+					RakNet::TimeMS time;
+					RakNet::BitStream bsIn(p->data,p->length,false);
+					bsIn.IgnoreBytes(1);
+					bsIn.Read(time);
+					dataLength = p->length - sizeof(unsigned char) - sizeof(RakNet::TimeMS);
+					printf("ID_UNCONNECTED_PONG from SystemAddress %s.\n", p->systemAddress.ToString(true));
+					printf("Time is %i\n",time);
+					printf("Ping is %i\n", (unsigned int)(RakNet::GetTimeMS()-time));
+					printf("Data is %i bytes long.\n", dataLength);
+					if (dataLength > 0)
+						printf("Data is %s\n", p->data+sizeof(unsigned char)+sizeof(RakNet::TimeMS));
+
+					// In this sample since the client is not running a game we can save CPU cycles by
+					// Stopping the network threads after receiving the pong.
+					client->Shutdown(100);
+				}
 				break;
-			
-			// In this sample since the client is not running a game we can save CPU cycles by
-			// Stopping the network threads after receiving the pong.
-			client->Shutdown(100);
+			case ID_UNCONNECTED_PING:
+				break;
+			case ID_UNCONNECTED_PING_OPEN_CONNECTIONS:
+				break;			
 		}
 
 		// We're done with the packet

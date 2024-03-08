@@ -271,11 +271,11 @@ bool AutopatcherPostgreRepository::GetChangelistSinceDate(const char *applicatio
 			fileLengthPtr = PQgetvalue(result, rowIndex, fileLengthColumnIndex);
 			memcpy(&fileLength, fileLengthPtr, sizeof(fileLength));
 			fileLength=ntohl(fileLength); // This is asinine...
-			addedOrModifiedFilesWithHashData->AddFile(hardDriveFilename, hardDriveFilename, hardDriveHash, HASH_LENGTH, fileLength, FileListNodeContext(0,0), false);
+			addedOrModifiedFilesWithHashData->AddFile(hardDriveFilename, hardDriveFilename, hardDriveHash, HASH_LENGTH, fileLength, FileListNodeContext(0,0,0,0), false);
 		}
 		else
 		{
-			deletedFiles->AddFile(hardDriveFilename,hardDriveFilename,0,0,0,FileListNodeContext(0,0), false);
+			deletedFiles->AddFile(hardDriveFilename,hardDriveFilename,0,0,0,FileListNodeContext(0,0,0,0), false);
 		}
 	}
 	
@@ -362,11 +362,12 @@ int AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileLi
 
 				if (allowDownloadOfOriginalUnmodifiedFiles==false && changeSetId==0)
 				{
+					printf("Failure: allowDownloadOfOriginalUnmodifiedFiles==false for %s length %i\n", userFilename.C_String(), fileLength);
 					PQclear(result);
 					return -1;
 				}
 
-				patchList->AddFile(userFilename,userFilename, 0, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId),true);
+				patchList->AddFile(userFilename,userFilename, 0, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId,0,0),true);
 			}
 			PQclear(result);
 		}
@@ -407,7 +408,7 @@ int AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileLi
 				if (memcmp(contentHash, userHash, HASH_LENGTH)!=0)
 				{
 					// Look up by user hash/filename/applicationID, returning the patch
-					sprintf(query, "SELECT patch, patchAlgorithm FROM FileVersionHistory WHERE applicationId=%i AND filename=$1::text AND contentHash=$2::bytea;", applicationID);
+					sprintf(query, "SELECT patch, patchAlgorithm, fileId FROM FileVersionHistory WHERE applicationId=%i AND filename=$1::text AND contentHash=$2::bytea;", applicationID);
 					outTemp[0]=userFilename.C_String();
 					outLengths[0]=(int)userFilename.GetLength();
 					formats[0]=PQEXECPARAM_FORMAT_TEXT;
@@ -468,7 +469,8 @@ int AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileLi
 						unsigned int hash2 = SuperFastHash(content, contentLength);
 						*/
 
-						patchList->AddFile(userFilename,userFilename, 0, fileLengthInt, fileLengthInt, FileListNodeContext(PC_WRITE_FILE,fileIdInt), true);
+						// No patch, add the file
+						patchList->AddFile(userFilename,userFilename, 0, fileLengthInt, fileLengthInt, FileListNodeContext(PC_WRITE_FILE,fileIdInt,0,0), true);
 //						patchList->AddFile(userFilename, file, fileLengthInt, contentLength, FileListNodeContext(PC_WRITE_FILE,0), true);
 //						RakNet::OP_DELETE_ARRAY file;
 					}
@@ -477,10 +479,9 @@ int AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileLi
 						int patchColumnIndex = PQfnumber(patchResult, "patch");
 						int patchAlgorithmColumnIndex = PQfnumber(patchResult, "patchAlgorithm");
 
+
 						// Otherwise, write the hash of the new version and then write the patch to get to that version.
 						// 
-						patch = PQgetvalue(patchResult, 0, patchColumnIndex);
-						patchLength=PQgetlength(patchResult, 0, patchColumnIndex);
 						// int patchAlgorithm = ntohl(*((int*)PQgetvalue(result, 0, patchAlgorithmColumnIndex)));
 
 						const char *tv = PQgetvalue(patchResult, 0, patchAlgorithmColumnIndex);
@@ -490,20 +491,40 @@ int AutopatcherPostgreRepository::GetPatches(const char *applicationName, FileLi
 						else
 							patchAlgorithm = 0;
 
-						// Bleh, get a stack overflow here
-						// char *temp = (char*) _alloca(patchLength+HASH_LENGTH);
-						char *temp = RakNet::OP_NEW_ARRAY<char>(patchLength + HASH_LENGTH, _FILE_AND_LINE_ );
-						memcpy(temp, contentHash, HASH_LENGTH);
-						memcpy(temp+HASH_LENGTH, patch, patchLength);
-//						int len;
-//						assert(PQfsize(result, fileLengthIndex)==sizeof(fileLength));
-//						memcpy(&len, fileLength, sizeof(len));
-//						len=ntohl(len);
-					//	printf("send patch %i bytes\n", patchLength);
-					//	for (int i=0; i < patchLength; i++)
-					//		printf("%i ", patch[i]);
-					//	printf("\n");
-						patchList->AddFile(userFilename,userFilename, temp, HASH_LENGTH+patchLength, fileLengthInt, FileListNodeContext(PC_HASH_1_WITH_PATCH,patchAlgorithm),false );
+						int patchFileIdColumnIndex = PQfnumber(patchResult, "fileId");
+						const char *tv2 = PQgetvalue(patchResult, 0, patchFileIdColumnIndex);
+						int patchIdInt = ntohl(*((int*)tv2));
+
+						patchLength=PQgetlength(patchResult, 0, patchColumnIndex);
+
+						bool useReference = patchLength > 1048576;
+						char *temp;
+
+						if (useReference==false)
+							temp = RakNet::OP_NEW_ARRAY<char>(patchLength + HASH_LENGTH, _FILE_AND_LINE_ );
+						else
+							temp = 0;
+
+						if (temp!=0)
+						{
+							patch = PQgetvalue(patchResult, 0, patchColumnIndex);
+							memcpy(temp, contentHash, HASH_LENGTH);
+							memcpy(temp+HASH_LENGTH, patch, patchLength);
+							//						int len;
+							//						assert(PQfsize(result, fileLengthIndex)==sizeof(fileLength));
+							//						memcpy(&len, fileLength, sizeof(len));
+							//						len=ntohl(len);
+							//	printf("send patch %i bytes\n", patchLength);
+							//	for (int i=0; i < patchLength; i++)
+							//		printf("%i ", patch[i]);
+							//	printf("\n");
+
+							patchList->AddFile(userFilename,userFilename, temp, HASH_LENGTH+patchLength, fileLengthInt, FileListNodeContext(PC_HASH_1_WITH_PATCH,0,patchAlgorithm,0),false );
+						}
+						else
+						{
+							patchList->AddFile(userFilename,userFilename, temp, HASH_LENGTH+patchLength, fileLengthInt, FileListNodeContext(PC_HASH_1_WITH_PATCH,fileIdInt,patchAlgorithm,patchIdInt),true );
+						}
 						PQclear(patchResult);
 						RakNet::OP_DELETE_ARRAY(temp, _FILE_AND_LINE_);
 					}
@@ -733,10 +754,10 @@ bool AutopatcherPostgreRepository::GetMostRecentChangelistWithPatches(RakNet::Ra
 				// New file that never before existed
 
 				// OK
-				addedOrModifiedFileHashes->AddFile(hardDriveFilename,hardDriveFilename, contentHash, HASH_LENGTH, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId),false,false);
+				addedOrModifiedFileHashes->AddFile(hardDriveFilename,hardDriveFilename, contentHash, HASH_LENGTH, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId,0,0),false,false);
 
 				fileData = PQgetvalue(result, rowIndex, contentColumnIndex);
-				addedFiles->AddFile(hardDriveFilename,hardDriveFilename, fileData, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId),false,false);
+				addedFiles->AddFile(hardDriveFilename,hardDriveFilename, fileData, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId,0,0),false,false);
 			}
 			else
 			{
@@ -752,14 +773,15 @@ bool AutopatcherPostgreRepository::GetMostRecentChangelistWithPatches(RakNet::Ra
 					patchAlgorithm = 0;
 
 				char *temp = (char *) rakMalloc_Ex(patchLength + HASH_LENGTH*2, _FILE_AND_LINE_ );
+				RakAssert(temp);
 				char *priorHash = PQgetvalue(result, rowIndex, priorHashColumnIndex);
 				memcpy(temp, priorHash, HASH_LENGTH);
 				memcpy(temp+HASH_LENGTH, contentHash, HASH_LENGTH);
 				memcpy(temp+HASH_LENGTH*2, patch, patchLength);
 
 				// OK
-				addedOrModifiedFileHashes->AddFile(hardDriveFilename,hardDriveFilename, contentHash, HASH_LENGTH, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId),false,false);
-				patchedFiles->AddFile(hardDriveFilename,hardDriveFilename, temp, HASH_LENGTH*2+patchLength, patchLength, FileListNodeContext(PC_HASH_2_WITH_PATCH,patchAlgorithm), false, true );
+				addedOrModifiedFileHashes->AddFile(hardDriveFilename,hardDriveFilename, contentHash, HASH_LENGTH, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId,0,0),false,false);
+				patchedFiles->AddFile(hardDriveFilename,hardDriveFilename, temp, HASH_LENGTH*2+patchLength, patchLength, FileListNodeContext(PC_HASH_2_WITH_PATCH,fileId,patchAlgorithm,0), false, true );
 
 				// fileData = PQgetvalue(result, rowIndex, contentColumnIndex);
 				// updatedFiles->AddFile(hardDriveFilename,hardDriveFilename, fileData, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId),false,false);
@@ -768,7 +790,7 @@ bool AutopatcherPostgreRepository::GetMostRecentChangelistWithPatches(RakNet::Ra
 		else
 		{
 			// Deleted file
-			deletedFiles->AddFile(hardDriveFilename,hardDriveFilename,0,0,0,FileListNodeContext(0,0), false);
+			deletedFiles->AddFile(hardDriveFilename,hardDriveFilename,0,0,0,FileListNodeContext(0,0,0,0), false);
 		}
 	}
 
@@ -995,17 +1017,18 @@ bool AutopatcherPostgreRepository2::GetMostRecentChangelistWithPatches(RakNet::R
 
 
 				char *fileData = (char*) rakMalloc_Ex(fileLength, _FILE_AND_LINE_);
+				RakAssert(fileData);
 				fread(fileData, fileLength, 1, fp);
 				fclose(fp);
 
 				// OK
-				addedOrModifiedFileHashes->AddFile(hardDriveFilename,hardDriveFilename, contentHash, HASH_LENGTH, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId),false,false);
+				addedOrModifiedFileHashes->AddFile(hardDriveFilename,hardDriveFilename, contentHash, HASH_LENGTH, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId,0,0),false,false);
 
 				// fileData = PQgetvalue(result, rowIndex, contentColumnIndex);
 				// const char *pathToContent = PQgetvalue(result, rowIndex, pathToContentColumnIndex);
 
 				// Last parameter is take the fileData pointer
-				addedFiles->AddFile(hardDriveFilename,hardDriveFilename, fileData, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId),false,true);
+				addedFiles->AddFile(hardDriveFilename,hardDriveFilename, fileData, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId,0,0),false,true);
 			}
 			else
 			{
@@ -1019,14 +1042,15 @@ bool AutopatcherPostgreRepository2::GetMostRecentChangelistWithPatches(RakNet::R
 					patchAlgorithm = 0;
 
 				char *temp = (char *) rakMalloc_Ex(patchLength + HASH_LENGTH*2, _FILE_AND_LINE_ );
+				RakAssert(temp);
 				char *priorHash = PQgetvalue(result, rowIndex, priorHashColumnIndex);
 				memcpy(temp, priorHash, HASH_LENGTH);
 				memcpy(temp+HASH_LENGTH, contentHash, HASH_LENGTH);
 				memcpy(temp+HASH_LENGTH*2, patch, patchLength);
 
 				// OK
-				addedOrModifiedFileHashes->AddFile(hardDriveFilename,hardDriveFilename, contentHash, HASH_LENGTH, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId),false,false);
-				patchedFiles->AddFile(hardDriveFilename,hardDriveFilename, temp, HASH_LENGTH*2+patchLength, patchLength, FileListNodeContext(PC_HASH_2_WITH_PATCH,patchAlgorithm), false, true );
+				addedOrModifiedFileHashes->AddFile(hardDriveFilename,hardDriveFilename, contentHash, HASH_LENGTH, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId,0,0),false,false);
+				patchedFiles->AddFile(hardDriveFilename,hardDriveFilename, temp, HASH_LENGTH*2+patchLength, patchLength, FileListNodeContext(PC_HASH_2_WITH_PATCH,fileId,patchAlgorithm,0), false, true );
 
 				// fileData = PQgetvalue(result, rowIndex, contentColumnIndex);
 				// updatedFiles->AddFile(hardDriveFilename,hardDriveFilename, fileData, fileLength, fileLength, FileListNodeContext(PC_WRITE_FILE,fileId),false,false);
@@ -1035,7 +1059,7 @@ bool AutopatcherPostgreRepository2::GetMostRecentChangelistWithPatches(RakNet::R
 		else
 		{
 			// Deleted file
-			deletedFiles->AddFile(hardDriveFilename,hardDriveFilename,0,0,0,FileListNodeContext(0,0), false);
+			deletedFiles->AddFile(hardDriveFilename,hardDriveFilename,0,0,0,FileListNodeContext(0,0,0,0), false);
 		}
 	}
 
@@ -1046,7 +1070,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 {
 	FileList filesOnHarddrive;
 	filesOnHarddrive.AddCallback(cb);
-	filesOnHarddrive.AddFilesFromDirectory(applicationDirectory,"", true, false, true, FileListNodeContext(0,0));
+	filesOnHarddrive.AddFilesFromDirectory(applicationDirectory,"", true, false, true, FileListNodeContext(0,0,0,0));
 	if (filesOnHarddrive.fileList.Size()==0)
 	{
 		sprintf(lastError,"ERROR: Can't find files at %s in UpdateApplicationFiles\n",applicationDirectory);
@@ -1178,7 +1202,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 		// Unless set to false, file does not exist in query result or is different.
 		if (addFile==true)
 		{
-			newFiles.AddFile(hardDriveFilename,hardDriveFilename, filesOnHarddrive.fileList[fileListIndex].data, filesOnHarddrive.fileList[fileListIndex].dataLengthBytes, filesOnHarddrive.fileList[fileListIndex].fileLengthBytes, FileListNodeContext(0,0), false);
+			newFiles.AddFile(hardDriveFilename,hardDriveFilename, filesOnHarddrive.fileList[fileListIndex].data, filesOnHarddrive.fileList[fileListIndex].dataLengthBytes, filesOnHarddrive.fileList[fileListIndex].fileLengthBytes, FileListNodeContext(0,0,0,0), false);
 		}
 	}
 	
@@ -1207,7 +1231,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 		}
 
 		if (fileOnHarddrive==false)
-			deletedFiles.AddFile(queryFilename,queryFilename,0,0,0,FileListNodeContext(0,0), false);
+			deletedFiles.AddFile(queryFilename,queryFilename,0,0,0,FileListNodeContext(0,0,0,0), false);
 	}
 
 	// Query memory and files on harddrive no longer needed.  Free this memory since generating all the patches is memory intensive.
@@ -1286,6 +1310,7 @@ bool AutopatcherPostgreRepository::UpdateApplicationFiles(const char *applicatio
 			return false;
 		}
 		hardDriveData =(char*) rakMalloc_Ex( hardDriveDataLength, _FILE_AND_LINE_ );
+		RakAssert(hardDriveData);
 		fread(hardDriveData,1,hardDriveDataLength,fp);
 		fclose(fp);
 
@@ -1472,7 +1497,7 @@ bool AutopatcherPostgreRepository2::UpdateApplicationFiles(const char *applicati
 {
 	FileList filesOnHarddrive;
 	filesOnHarddrive.AddCallback(cb);
-	filesOnHarddrive.AddFilesFromDirectory(applicationDirectory,"", true, false, true, FileListNodeContext(0,0));
+	filesOnHarddrive.AddFilesFromDirectory(applicationDirectory,"", true, false, true, FileListNodeContext(0,0,0,0));
 	if (filesOnHarddrive.fileList.Size()==0)
 	{
 		sprintf(lastError,"ERROR: Can't find files at %s in UpdateApplicationFiles\n",applicationDirectory);
@@ -1604,7 +1629,7 @@ bool AutopatcherPostgreRepository2::UpdateApplicationFiles(const char *applicati
 		// Unless set to false, file does not exist in query result or is different.
 		if (addFile==true)
 		{
-			newFiles.AddFile(hardDriveFilename,hardDriveFilename, filesOnHarddrive.fileList[fileListIndex].data, filesOnHarddrive.fileList[fileListIndex].dataLengthBytes, filesOnHarddrive.fileList[fileListIndex].fileLengthBytes, FileListNodeContext(0,0), false);
+			newFiles.AddFile(hardDriveFilename,hardDriveFilename, filesOnHarddrive.fileList[fileListIndex].data, filesOnHarddrive.fileList[fileListIndex].dataLengthBytes, filesOnHarddrive.fileList[fileListIndex].fileLengthBytes, FileListNodeContext(0,0,0,0), false);
 		}
 	}
 
@@ -1633,7 +1658,7 @@ bool AutopatcherPostgreRepository2::UpdateApplicationFiles(const char *applicati
 		}
 
 		if (fileOnHarddrive==false)
-			deletedFiles.AddFile(queryFilename,queryFilename,0,0,0,FileListNodeContext(0,0), false);
+			deletedFiles.AddFile(queryFilename,queryFilename,0,0,0,FileListNodeContext(0,0,0,0), false);
 	}
 
 	// Query memory and files on harddrive no longer needed.  Free this memory since generating all the patches is memory intensive.
@@ -1792,7 +1817,7 @@ bool AutopatcherPostgreRepository2::UpdateApplicationFiles(const char *applicati
 				return false;
 			}
 
-			printf("%i.%i DIFF from %s to %s ...", fileListIndex, rowIndex, pathToOldContent, pathToNewContent);
+			printf("%i/%i.%i/%i DIFF from %s to %s ...", fileListIndex+1, newFiles.fileList.Size(), rowIndex+1, numRows, pathToOldContent, pathToNewContent);
 			int patchAlgorithm;
 			if (MakePatch(pathToOldContent, pathToNewContent, &patch, &patchLength, &patchAlgorithm)==false)
 			{
@@ -1951,14 +1976,27 @@ bool AutopatcherPostgreRepository2::MakePatchBSDiff(FILE *fpOld, int contentLeng
 	char *newContent, *oldContent;
 
 	oldContent = (char*) rakMalloc_Ex(contentLengthOld, _FILE_AND_LINE_);
+	RakAssert(oldContent);
 	fseek(fpOld, 0, SEEK_SET);
 	fread(oldContent, contentLengthOld, 1, fpOld);
 
 	newContent = (char*) rakMalloc_Ex(contentLengthNew, _FILE_AND_LINE_);
+	RakAssert(newContent);
 	fseek(fpNew, 0, SEEK_SET);
 	fread(newContent, contentLengthNew, 1, fpNew);
 
 	bool b = CreatePatch(oldContent, contentLengthOld, newContent, contentLengthNew, patch, patchLength);
+
+	if (b==false)
+	{
+		printf(
+			"AutopatcherPostgreRepository2::MakePatchBSDiff failed.\n"
+			"contentLengthOld=%i\n"
+			"contentLengthNew=%i\n",
+			contentLengthOld, contentLengthNew
+			);
+	}
+
 	rakFree_Ex(oldContent, _FILE_AND_LINE_);
 	rakFree_Ex(newContent, _FILE_AND_LINE_);
 	return b;
@@ -1967,16 +2005,20 @@ const char *AutopatcherPostgreRepository::GetLastError(void) const
 {
 	return PostgreSQLInterface::GetLastError();
 }
-unsigned int AutopatcherPostgreRepository::GetFilePart( const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)
+unsigned int AutopatcherPostgreRepository::GetPatchPart( const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)
 {
 	PGresult *result;
 	char query[512];
-	char *content;
-	int contentLength;
+	char *patch, *contentHash;
+	int patchLength;
 
-	// Seems that substring is 1 based for its index, so add 1 to startReadBytes
-	sprintf(query, "SELECT substring(content from %i for %i) FROM FileVersionHistory WHERE fileId=%i;", startReadBytes+1,numBytesToRead,context.flnc_extraData);
-	
+	bool firstBlock=startReadBytes==0;
+	if (firstBlock)
+		sprintf(query, "SELECT substring(patch from %i for %i) FROM FileVersionHistory WHERE fileId=%i;", startReadBytes+1,numBytesToRead-HASH_LENGTH,context.flnc_extraData3);
+	else
+		sprintf(query, "SELECT substring(patch from %i for %i) FROM FileVersionHistory WHERE fileId=%i;", startReadBytes+1-HASH_LENGTH,numBytesToRead,context.flnc_extraData3);
+
+
 	// CREATE NEW CONNECTION JUST FOR THIS QUERY
 	// This is because the autopatcher is sharing this class, but this is called from multiple threads and mysql is not threadsafe
 	filePartConnectionMutex.Lock();
@@ -1985,44 +2027,114 @@ unsigned int AutopatcherPostgreRepository::GetFilePart( const char *filename, un
 
 	result = PQexecParams(filePartConnection, query,0,0,0,0,0,PQEXECPARAM_FORMAT_BINARY);
 
-	content = PQgetvalue(result, 0, 0);
-	contentLength=PQgetlength(result, 0, 0);
-	memcpy(preallocatedDestination,content,contentLength);
-	PQclear(result);
+	if (IsResultSuccessful(result, true)==false)
+	{
+		PQclear(result);
+		return -1;
+	}
 
-	filePartConnectionMutex.Unlock();
+	int patchColumnIndex = PQfnumber(result, "substring");
+
+	patch = PQgetvalue(result, 0, patchColumnIndex);
+	patchLength = PQgetlength(result, 0, patchColumnIndex);
+
+	if (firstBlock)
+	{
+		PGresult *result2;
+		char query2[512];
+		sprintf(query2, "SELECT contentHash FROM FileVersionHistory WHERE fileId=%i;", context.flnc_extraData1);
+
+		result2 = PQexecParams(filePartConnection, query2,0,0,0,0,0,PQEXECPARAM_FORMAT_BINARY);
+
+		int contentHashColumnIndex = PQfnumber(result2, "contentHash");
+		contentHash = PQgetvalue(result2, 0, contentHashColumnIndex);
+
+		memcpy(preallocatedDestination, contentHash, HASH_LENGTH);
+		memcpy((char*) preallocatedDestination+HASH_LENGTH, patch, patchLength);
+		PQclear(result);
+		PQclear(result2);
+		filePartConnectionMutex.Unlock();
+		return patchLength+HASH_LENGTH;
+	}
+	else
+	{
+		memcpy(preallocatedDestination,patch,patchLength);
+		PQclear(result);
+		filePartConnectionMutex.Unlock();
+		return patchLength;
+	}
+}
+unsigned int AutopatcherPostgreRepository::GetFilePart( const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)
+{
+	if (context.op==PC_HASH_1_WITH_PATCH)
+	{
+		return GetPatchPart(filename, startReadBytes, numBytesToRead, preallocatedDestination, context);
+	}
+	else
+	{
+		PGresult *result;
+		char query[512];
+		char *content;
+		int contentLength;
+
+		// Seems that substring is 1 based for its index, so add 1 to startReadBytes
+		sprintf(query, "SELECT substring(content from %i for %i) FROM FileVersionHistory WHERE fileId=%i;", startReadBytes+1,numBytesToRead,context.flnc_extraData1);
+
+		// CREATE NEW CONNECTION JUST FOR THIS QUERY
+		// This is because the autopatcher is sharing this class, but this is called from multiple threads and mysql is not threadsafe
+		filePartConnectionMutex.Lock();
+		if (filePartConnection==0)
+			filePartConnection=PQconnectdb(_conninfo);
+
+		result = PQexecParams(filePartConnection, query,0,0,0,0,0,PQEXECPARAM_FORMAT_BINARY);
+
+		content = PQgetvalue(result, 0, 0);
+		contentLength=PQgetlength(result, 0, 0);
+		memcpy(preallocatedDestination,content,contentLength);
+		PQclear(result);
+
+		filePartConnectionMutex.Unlock();
 
 
-	return contentLength;
+		return contentLength;
+
+	}
 }
 unsigned int AutopatcherPostgreRepository2::GetFilePart( const char *filename, unsigned int startReadBytes, unsigned int numBytesToRead, void *preallocatedDestination, FileListNodeContext context)
 {
-	PGresult *result;
-	char query[512];
-//	char *content;
-//	int contentLength;
-
-	sprintf(query, "SELECT pathToContent FROM FileVersionHistory WHERE fileId=%i;", context.flnc_extraData);
-	bool res = ExecuteBlockingCommand(query, &result, true);
-	char *path;
-	path = PQgetvalue(result,0,0);
-
-
-	FILE *fp = fopen(path, "rb");
-	fseek(fp, 0, SEEK_END);
-	unsigned int fileLength = ftell(fp);
-	fseek(fp, startReadBytes, SEEK_SET);
-	unsigned int bytesRead;
-	if (startReadBytes+numBytesToRead>fileLength)
-		bytesRead=fileLength-startReadBytes;
+	if (context.op==PC_HASH_1_WITH_PATCH)
+	{
+		return GetPatchPart(filename, startReadBytes, numBytesToRead, preallocatedDestination, context);
+	}
 	else
-		bytesRead=numBytesToRead;
+	{
+		PGresult *result;
+		char query[512];
+		unsigned int bytesRead;
 
-	bytesRead=(unsigned int) fread(preallocatedDestination,1,bytesRead,fp);
-	fclose(fp);
-	PQclear(result);
+		RakAssert(context.op==PC_WRITE_FILE)
 
-	return bytesRead;
+		sprintf(query, "SELECT pathToContent FROM FileVersionHistory WHERE fileId=%i;", context.flnc_extraData1);
+		bool res = ExecuteBlockingCommand(query, &result, true);
+		char *path;
+		path = PQgetvalue(result,0,0);
+
+		FILE *fp = fopen(path, "rb");
+		fseek(fp, 0, SEEK_END);
+		unsigned int fileLength = ftell(fp);
+		fseek(fp, startReadBytes, SEEK_SET);
+		if (startReadBytes+numBytesToRead>fileLength)
+			bytesRead=fileLength-startReadBytes;
+		else
+			bytesRead=numBytesToRead;
+
+		bytesRead=(unsigned int) fread(preallocatedDestination,1,bytesRead,fp);
+		fclose(fp);
+		PQclear(result);
+
+
+		return bytesRead;
+	}
 }
 const int AutopatcherPostgreRepository::GetIncrementalReadChunkSize(void) const
 {

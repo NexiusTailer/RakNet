@@ -2102,6 +2102,8 @@ bool RakPeer::Ping( const char* host, unsigned short remotePort, bool onlyReplyO
 
 	bitStream.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
 
+	bitStream.Write(GetMyGUID());
+
 	// No timestamp for 255.255.255.255
 	unsigned int realIndex = GetRakNetSocketFromUserConnectionSocketIndex(connectionSocketIndex);
 	/*
@@ -2120,6 +2122,8 @@ bool RakPeer::Ping( const char* host, unsigned short remotePort, bool onlyReplyO
 	bsp.data = (char*) bitStream.GetData() ;
 	bsp.length = bitStream.GetNumberOfBytesUsed();
 	bsp.systemAddress.FromStringExplicitPort(host,remotePort, socketList[realIndex]->GetBoundAddress().GetIPVersion());
+	if (bsp.systemAddress==UNASSIGNED_SYSTEM_ADDRESS)
+		return false;
 	bsp.systemAddress.FixForIPVersion(socketList[realIndex]->GetBoundAddress());
 	unsigned i;
 	for (i=0; i < pluginListNTS.Size(); i++)
@@ -2277,6 +2281,17 @@ SystemAddress RakPeer::GetInternalID( const SystemAddress systemAddress, const i
 
 
 	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+/// \brief Sets your internal IP address, for platforms that do not support reading it, or to override a value
+/// \param[in] systemAddress. The address to set. Use SystemAddress::FromString() if you want to use a dotted string
+/// \param[in] index When you have multiple internal IDs, which index to set?
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void RakPeer::SetInternalID(SystemAddress systemAddress, int index)
+{
+	RakAssert(index >=0 && index < MAXIMUM_NUMBER_OF_INTERNAL_IDS);
+	ipList[index]=systemAddress;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -4431,21 +4446,21 @@ uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
 
 
 
-#if   defined (__PS4__)
-	Buff6AndBuff8 b6b8;
-	b6b8.buff8=0;
 
-	SceNetCtlInfo i;
-	// int ret = sceNetCtlGetInfo(SCE_NET_CTL_INFO_DEVICE, &i);
-	int ret = sceNetCtlGetInfo(SCE_NET_CTL_INFO_ETHER_ADDR,&i);
-	if (ret < 0)
-		return 0;
 
-	//char tmp[SCE_NET_ETHER_ADDRSTRLEN];
-	//sceNetEtherNtostr(&i.ether_addr, tmp, sizeof(tmp));
-	memcpy(b6b8.buff6, i.ether_addr.data, 6);
-	return b6b8.buff8;
-#elif defined(_WIN32)
+
+
+
+
+
+
+
+
+
+
+
+
+#if   defined(_WIN32)
 	uint64_t g=RakNet::GetTimeUS();
 
 	RakNet::TimeUS lastTime, thisTime;
@@ -4537,7 +4552,7 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 	else if (
 		((unsigned char)data[0] == ID_UNCONNECTED_PING ||
 		(unsigned char)data[0] == ID_UNCONNECTED_PING_OPEN_CONNECTIONS) &&
-		length == sizeof(unsigned char) + sizeof(RakNet::Time) + sizeof(OFFLINE_MESSAGE_DATA_ID))
+		length >= sizeof(unsigned char) + sizeof(RakNet::Time) + sizeof(OFFLINE_MESSAGE_DATA_ID))
 	{
 		*isOfflineMessage=memcmp(data+sizeof(unsigned char) + sizeof(RakNet::Time), OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID))==0;
 	}
@@ -4583,7 +4598,7 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 
 		// These are all messages from unconnected systems.  Messages here can be any size, but are never processed from connected systems.
 		if ( ( (unsigned char) data[ 0 ] == ID_UNCONNECTED_PING_OPEN_CONNECTIONS
-			|| (unsigned char)(data)[0] == ID_UNCONNECTED_PING)	&& length == sizeof(unsigned char)+sizeof(RakNet::Time)+sizeof(OFFLINE_MESSAGE_DATA_ID) )
+			|| (unsigned char)(data)[0] == ID_UNCONNECTED_PING)	&& length >= sizeof(unsigned char)+sizeof(RakNet::Time)+sizeof(OFFLINE_MESSAGE_DATA_ID) )
 		{
 			if ( (unsigned char)(data)[0] == ID_UNCONNECTED_PING ||
 				rakPeer->AllowIncomingConnections() ) // Open connections with players
@@ -4592,6 +4607,9 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 				inBitStream.IgnoreBits(8);
 				RakNet::Time sendPingTime;
 				inBitStream.Read(sendPingTime);
+				inBitStream.IgnoreBytes(sizeof(OFFLINE_MESSAGE_DATA_ID));
+				RakNetGUID remoteGuid=UNASSIGNED_RAKNET_GUID;
+				inBitStream.Read(remoteGuid);
 
 				RakNet::BitStream outBitStream;
 				outBitStream.Write((MessageID)ID_UNCONNECTED_PONG); // Should be named ID_UNCONNECTED_PONG eventually
@@ -4619,7 +4637,7 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 				packet=rakPeer->AllocPacket(sizeof(MessageID), _FILE_AND_LINE_);
 				packet->data[0]=data[0];
 				packet->systemAddress = systemAddress;
-				packet->guid=UNASSIGNED_RAKNET_GUID;
+				packet->guid=remoteGuid;
 				packet->systemAddress.systemIndex = ( SystemIndex ) rakPeer->GetIndexFromSystemAddress( systemAddress, true );
 				packet->guid.systemIndex=packet->systemAddress.systemIndex;
 				rakPeer->AddPacketToProducer(packet);

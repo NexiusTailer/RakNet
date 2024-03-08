@@ -648,6 +648,13 @@ PS4: Support added
 Lib: Names of binaries under /lib changed to include $(SolutionName) because the VS2008 version is not compatible later versions of Visual Studio. See http://stackoverflow.com/questions/2896754/link-error-after-update-from-vs2008-to-vs2010
 SHA: Prior code didn't work, updated to current version. Also added SHA1HMAC
 APPLE: Fix crash on failing to create socket.
+4.07 (5/30/13)
+RakPeer: Enforce MAXIMUM_MTU_SIZE for incoming connections, even if the network allows a larger datagram. Add packet->guid to ID_UNCONNECTED_PING and ID_UNCONNECTED_PING_OPEN_CONNECTIONS. Added virtual void SetInternalID(SystemAddress systemAddress, int index=0)=0;
+Autopatcher: Send patches incrementally if they are larger than 1 megabyte.
+ReplicaManager3: Calling Reference twice on the same Replica3 will no longer assert, will just ignore the 2nd call. Added AutoCreateConnectionList.
+StatisticsHistory: Fix recent sum of squares
+HTTPConnection2: Fix IPV6
+ComprehensivePCGame: now uses asynch UPNP check
 </pre>
 <BR>
 </p></TD></TR></TABLE>

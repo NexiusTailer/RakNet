@@ -78,7 +78,7 @@ bool HTTPConnection2::TransmitRequest(const char* stringToTransmit, const char* 
 		else
 		{
 			#if RAKNET_SUPPORT_IPV6
-				tcpInterface->Connect(host.C_String(), port, false, AF_INET6);
+				tcpInterface->Connect(host, port, false, AF_INET6);
 			#else
 				RakAssert("HTTPConnection2::TransmitRequest needs define  RAKNET_SUPPORT_IPV6" && 0);
 			#endif

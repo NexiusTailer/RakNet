@@ -162,9 +162,9 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4( RNS2_BerkleyBindParameters *bindPar
 	// Fill in the rest of the address structure
 	boundAddress.address.addr4.sin_family = AF_INET;
 	
-#ifdef __PS4__
-	boundAddress.address.addr4.sin_len = sizeof(SceNetSockaddrIn);
-#endif
+
+
+
 
 	if (bindParameters->hostAddress && bindParameters->hostAddress[0])
 	{

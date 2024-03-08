@@ -88,6 +88,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a71cf90c3a8441becc6080a6dbff8965a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0684b19dc05fe5f8cf9ca588b47f8223"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#a0684b19dc05fe5f8cf9ca588b47f8223">GetAutoDestroyConnections</a> (void) const </td></tr>
 <tr class="separator:a0684b19dc05fe5f8cf9ca588b47f8223"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac9e84d2ea13026c6e05ec667897e692"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#aac9e84d2ea13026c6e05ec667897e692">AutoCreateConnectionList</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &gt; &amp;participantListIn, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a> * &gt; &amp;participantListOut, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#ga44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0)</td></tr>
+<tr class="memdesc:aac9e84d2ea13026c6e05ec667897e692"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call <a class="el" href="classRakNet_1_1ReplicaManager3.html#ade7df800d3dfd31bdd44de76172eb912" title="Implement to return a game specific derivation of Connection_RM3.">AllocConnection()</a> and <a class="el" href="classRakNet_1_1ReplicaManager3.html#a5497b1ce378391cd617cec81ce7d8b94" title="Track a new Connection_RM3 instance.">PushConnection()</a> for each connection in <em>participantList</em>.  <a href="#aac9e84d2ea13026c6e05ec667897e692"></a><br/></td></tr>
+<tr class="separator:aac9e84d2ea13026c6e05ec667897e692"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5497b1ce378391cd617cec81ce7d8b94"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#a5497b1ce378391cd617cec81ce7d8b94">PushConnection</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *newConnection, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#ga44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0)</td></tr>
 <tr class="memdesc:a5497b1ce378391cd617cec81ce7d8b94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Track a new <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and track which instan...">Connection_RM3</a> instance.  <a href="#a5497b1ce378391cd617cec81ce7d8b94"></a><br/></td></tr>
 <tr class="separator:a5497b1ce378391cd617cec81ce7d8b94"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -302,6 +305,48 @@ When a game object is destroyed on the local system, and you want other systems 
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The new connection instance. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aac9e84d2ea13026c6e05ec667897e692"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::ReplicaManager3::AutoCreateConnectionList </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>participantListIn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a> * &gt; &amp;&#160;</td>
+          <td class="paramname"><em>participantListOut</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#ga44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&#160;</td>
+          <td class="paramname"><em>worldId</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Call <a class="el" href="classRakNet_1_1ReplicaManager3.html#ade7df800d3dfd31bdd44de76172eb912" title="Implement to return a game specific derivation of Connection_RM3.">AllocConnection()</a> and <a class="el" href="classRakNet_1_1ReplicaManager3.html#a5497b1ce378391cd617cec81ce7d8b94" title="Track a new Connection_RM3 instance.">PushConnection()</a> for each connection in <em>participantList</em>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">participantListIn</td><td>The list of connections to allocate </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">participantListOut</td><td>The connections allocated, if any </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">worldId</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#aa0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager, list of connections, replicas, etc A world with id 0 is created automatically. If you want multiple worlds, use this function, and ReplicaManager3::SetNetworkIDManager() to have a different NetworkIDManager instance per world.">AddWorld()</a> </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1245,7 +1290,7 @@ When a game object is destroyed on the local system, and you want other systems 
  </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">autoCreate</td><td>Automatically call <a class="el" href="classRakNet_1_1ReplicaManager3.html#ade7df800d3dfd31bdd44de76172eb912" title="Implement to return a game specific derivation of Connection_RM3.">ReplicaManager3::AllocConnection()</a> for each new connection. Defaults to true. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">autoCreate</td><td>Automatically call <a class="el" href="classRakNet_1_1ReplicaManager3.html#ade7df800d3dfd31bdd44de76172eb912" title="Implement to return a game specific derivation of Connection_RM3.">ReplicaManager3::AllocConnection()</a> for each new connection. Defaults to true. Also see <a class="el" href="classRakNet_1_1ReplicaManager3.html#aac9e84d2ea13026c6e05ec667897e692" title="Call AllocConnection() and PushConnection() for each connection in participantList.">AutoCreateConnectionList()</a> </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">autoDestroy</td><td>Automatically call <a class="el" href="classRakNet_1_1ReplicaManager3.html#a78b449c8e3caa9a343a7d273f768687c" title="Implement to destroy a class instanced returned by AllocConnection()">ReplicaManager3::DeallocConnection()</a> for each dropped connection. Defaults to true. </td></tr>
   </table>
   </dd>
@@ -1388,7 +1433,7 @@ When a game object is destroyed on the local system, and you want other systems 
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Apr 7 2013 01:52:13 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu May 30 2013 11:46:15 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

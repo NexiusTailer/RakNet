@@ -84,7 +84,7 @@ int main(void)
 		// Connecting the client is very simple.  0 means we don't care about
 		// a connectionValidationInteger, and false for low priority threads
 		// All 255's mean broadcast
-		client->Ping("255.255.255.255", atoi(serverPort), true);
+		client->Ping("255.255.255.255", atoi(serverPort), false);
 
 		printf("Pinging\n");
 	}
@@ -123,6 +123,14 @@ int main(void)
 				bsIn.IgnoreBytes(1);
 				bsIn.Read(time);
 				printf("Got pong from %s with time %i\n", p->systemAddress.ToString(), RakNet::GetTimeMS() - time);
+			}
+			else if (p->data[0]==ID_UNCONNECTED_PING)
+			{
+				printf("ID_UNCONNECTED_PING from %s\n",p->guid.ToString());
+			}
+			else if (p->data[0]==ID_UNCONNECTED_PING_OPEN_CONNECTIONS)
+			{
+				printf("ID_UNCONNECTED_PING_OPEN_CONNECTIONS from %s\n",p->guid.ToString());
 			}
 			client->DeallocatePacket(p);
 		}

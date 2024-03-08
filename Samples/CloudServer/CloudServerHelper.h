@@ -63,7 +63,7 @@ struct CloudServerHelper
 
 	// Call when the number of client connections change
 	// Usually internal
-	void OnConnectionCountChange(RakPeerInterface *rakPeer, CloudClient *cloudClient);
+	virtual void OnConnectionCountChange(RakPeerInterface *rakPeer, CloudClient *cloudClient);
 protected:
 	// Call when you get ID_FCM2_NEW_HOST
 	virtual void OnFCMNewHost(Packet *packet, RakPeerInterface *rakPeer);

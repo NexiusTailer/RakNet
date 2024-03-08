@@ -311,19 +311,12 @@ RNS2BindResult RNS2_Berkley::BindShared( RNS2_BerkleyBindParameters *bindParamet
 
 	memcpy(&binding, bindParameters, sizeof(RNS2_BerkleyBindParameters));
 
+	/*
 #if defined(__APPLE__)
 	const CFSocketContext   context = { 0, this, NULL, NULL, NULL };
 	_cfSocket = CFSocketCreateWithNative(NULL, rns2Socket, kCFSocketReadCallBack, SocketReadCallback, &context);
-
-	/*
-	rls = CFSocketCreateRunLoopSource(NULL, self->_cfSocket, 0);
-	assert(rls != NULL);
-
-	CFRunLoopAddSource(CFRunLoopGetCurrent(), rls, kCFRunLoopDefaultMode);
-
-	CFRelease(rls);
-	*/
 #endif
+	*/
 
 	return br;
 }
@@ -379,9 +372,12 @@ RNS2_Berkley::~RNS2_Berkley()
 {
 	if (rns2Socket!=INVALID_SOCKET)
 	{
+		/*
 #if defined(__APPLE__)
 		CFSocketInvalidate(_cfSocket);
 #endif
+		*/
+
 		closesocket__(rns2Socket);
 	}
 

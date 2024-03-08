@@ -217,6 +217,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:acf82a248aa543c9ec04567c14004fea5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#acf82a248aa543c9ec04567c14004fea5">GetInternalID</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress=<a class="el" href="namespaceRakNet.html#a80c95b4ed53f42911a6fa92b85e929cf">UNASSIGNED_SYSTEM_ADDRESS</a>, const int index=0) const </td></tr>
 <tr class="memdesc:acf82a248aa543c9ec04567c14004fea5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the unique address identifier that represents you or another system on the the network.  <a href="#acf82a248aa543c9ec04567c14004fea5"></a><br/></td></tr>
 <tr class="separator:acf82a248aa543c9ec04567c14004fea5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad02c3a4e4c4063771fb47fe20d4b47af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#ad02c3a4e4c4063771fb47fe20d4b47af">SetInternalID</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, int index=0)</td></tr>
+<tr class="memdesc:ad02c3a4e4c4063771fb47fe20d4b47af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets your internal IP address, for platforms that do not support reading it, or to override a value.  <a href="#ad02c3a4e4c4063771fb47fe20d4b47af"></a><br/></td></tr>
+<tr class="separator:ad02c3a4e4c4063771fb47fe20d4b47af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a96f0e923c413fe2319d17862605d6622"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#a96f0e923c413fe2319d17862605d6622">GetExternalID</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> target) const </td></tr>
 <tr class="memdesc:a96f0e923c413fe2319d17862605d6622"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the unique address identifier that represents the target on the the network and is based on the target's external IP / port.  <a href="#a96f0e923c413fe2319d17862605d6622"></a><br/></td></tr>
 <tr class="separator:a96f0e923c413fe2319d17862605d6622"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -3264,6 +3267,51 @@ The first byte should be a message identifier starting at ID_USER_PACKET_ENUM. <
 
 </div>
 </div>
+<a class="anchor" id="ad02c3a4e4c4063771fb47fe20d4b47af"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::RakPeer::SetInternalID </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&#160;</td>
+          <td class="paramname"><em>systemAddress</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets your internal IP address, for platforms that do not support reading it, or to override a value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">systemAddress.</td><td>The address to set. Use <a class="el" href="structRakNet_1_1SystemAddress.html#ae1ad8bd3b4f24478980437476391d6ab">SystemAddress::FromString()</a> if you want to use a dotted string </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>When you have multiple internal IDs, which index to set? </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="classRakNet_1_1RakPeerInterface.html#ac9f163bc4b8b89db10c3f251793e0aca">RakNet::RakPeerInterface</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="ac5e80ab105ac8124d4ee5f94bd1b316a"></a>
 <div class="memitem">
 <div class="memproto">
@@ -3930,7 +3978,7 @@ Call SetMaximumIncomingConnections if you want to accept incoming connections. <
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Apr 7 2013 01:52:13 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu May 30 2013 11:46:14 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

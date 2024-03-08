@@ -271,6 +271,8 @@ int AutopatcherMySQLRepository::GetPatches(const char *applicationName, FileList
 				const int changeSetID = atoi (row [2]); 
 				if (allowDownloadOfOriginalUnmodifiedFiles==false && changeSetID==0)
 				{
+					printf("Failure: allowDownloadOfOriginalUnmodifiedFiles==false for %s length %i\n", userFilename.C_String(), fileLength);
+
 					mysql_free_result(result);
 					return false;
 				}

@@ -35,7 +35,7 @@
 // Public test server
 #define DEFAULT_SERVER_ADDRESS "natpunch.jenkinssoftware.com"
 #define NAT_TYPE_DETECTION_SERVER 0
-#define USE_UPNP 0
+#define USE_UPNP 1
 #define MASTER_SERVER_ADDRESS "masterserver2.raknet.com"
 //#define MASTER_SERVER_ADDRESS "localhost"
 #define MASTER_SERVER_PORT 80
@@ -595,21 +595,36 @@ void CreateRoom(void)
 	printf("(E)xit session\n");
 }
 
-void OpenUPNP(void)
-{
 #if USE_UPNP!=0
-	printf("Discovering UPNP...\n");
+struct UPNPOpenWorkerArgs
+{
+	char buff[256];
+	unsigned short portToOpen;
+	unsigned int timeout;
+	void *userData;
+	void (*resultCallback)(bool success, unsigned short portToOpen, void *userData);
+	void (*progressCallback)(const char *progressMsg, void *userData);
+};
+RAK_THREAD_DECLARATION(UPNPOpenWorker)
+{
+	UPNPOpenWorkerArgs *args = ( UPNPOpenWorkerArgs * ) arguments;
+	bool success=false;
 
 	// Behind a NAT. Try to open with UPNP to avoid doing NAT punchthrough
 	struct UPNPDev * devlist = 0;
-	devlist = upnpDiscover(2000, 0, 0, 0, 0, 0);
+	RakNet::Time t1 = GetTime();
+	devlist = upnpDiscover(args->timeout, 0, 0, 0, 0, 0);
+	RakNet::Time t2 = GetTime();
 	if (devlist)
 	{
-		printf("List of UPNP devices found on the network :\n");
+		if (args->progressCallback)
+			args->progressCallback("List of UPNP devices found on the network :\n", args->userData);
 		struct UPNPDev * device;
 		for(device = devlist; device; device = device->pNext)
 		{
-			printf(" desc: %s\n st: %s\n\n", device->descURL, device->st);
+			sprintf(args->buff, " desc: %s\n st: %s\n\n", device->descURL, device->st);
+			if (args->progressCallback)
+				args->progressCallback(args->buff, args->userData);
 		}
 
 		char lanaddr[64];	/* my ip address on the LAN */
@@ -617,11 +632,8 @@ void OpenUPNP(void)
 		struct IGDdatas data;
 		if (UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))==1)
 		{
-			// Use same external and internal ports
-			DataStructures::List<RakNetSocket2* > sockets;
-			rakPeer->GetSockets(sockets);
 			char iport[32];
-			Itoa(sockets[0]->GetBoundAddress().GetPort(),iport,10);
+			Itoa(args->portToOpen, iport,10);
 			char eport[32];
 			strcpy(eport, iport);
 
@@ -648,18 +660,65 @@ void OpenUPNP(void)
 
 			if(r!=UPNPCOMMAND_SUCCESS)
 			{
-				printf("GetSpecificPortMappingEntry() failed with code %d (%s)\n",
+				sprintf(args->buff, "GetSpecificPortMappingEntry() failed with code %d (%s)\n",
 					r, strupnperror(r));
+				if (args->progressCallback)
+					args->progressCallback(args->buff, args->userData);
 			}
 			else
 			{
-				printf("UPNP success.\n");
-				game->myNatType=NAT_TYPE_SUPPORTS_UPNP;
+				if (args->progressCallback)
+					args->progressCallback("UPNP success.\n", args->userData);
+				// game->myNatType=NAT_TYPE_SUPPORTS_UPNP;
+
+				success=true;
 			}
 		}
 	}
-#endif
+
+	if (args->resultCallback)
+		args->resultCallback(success, args->portToOpen, args->userData);
+	RakNet::OP_DELETE(args, _FILE_AND_LINE_);
+	return 1;
 }
+
+void UPNPOpenAsynch(unsigned short portToOpen,
+					unsigned int timeout,
+					void (*progressCallback)(const char *progressMsg, void *userData),
+					void (*resultCallback)(bool success, unsigned short portToOpen, void *userData),
+					void *userData
+					)
+{
+	UPNPOpenWorkerArgs *args = RakNet::OP_NEW<UPNPOpenWorkerArgs>(_FILE_AND_LINE_);
+	args->portToOpen = portToOpen;
+	args->timeout = timeout;
+	args->userData = userData;
+	args->progressCallback = progressCallback;
+	args->resultCallback = resultCallback;
+	RakThread::Create(UPNPOpenWorker, args);
+}
+
+void UPNPProgressCallback(const char *progressMsg, void *userData)
+{
+	printf(progressMsg);
+}
+void UPNPResultCallback(bool success, unsigned short portToOpen, void *userData)
+{
+	if (success)
+		game->myNatType=NAT_TYPE_SUPPORTS_UPNP;
+	game->EnterPhase(Game::SEARCH_FOR_GAMES);
+}
+
+void OpenUPNP(void)
+{
+	printf("Discovering UPNP...\n");
+
+	DataStructures::List<RakNetSocket2* > sockets;
+	rakPeer->GetSockets(sockets);
+	UPNPOpenAsynch(sockets[0]->GetBoundAddress().GetPort(), 2000, UPNPProgressCallback, UPNPResultCallback, 0);
+}
+
+#endif
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // main
@@ -791,7 +850,6 @@ int main(void)
 						else
 						{
 							OpenUPNP();
-							game->EnterPhase(Game::SEARCH_FOR_GAMES);
 						}
 					}
 					else if (game->phase==Game::CONNECTING_TO_GAME_HOST)

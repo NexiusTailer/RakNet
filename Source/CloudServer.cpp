@@ -332,6 +332,8 @@ void CloudServer::OnPostRequest(Packet *packet)
 		else
 		{
 			cloudData->serverSystemAddress=rakPeerInterface->GetExternalID(packet->systemAddress);
+			if (cloudData->serverSystemAddress.IsLoopback())
+				cloudData->serverSystemAddress.FromString(rakPeerInterface->GetLocalIP(0));
 		}
 		if (cloudData->serverSystemAddress.GetPort()==0)
 		{

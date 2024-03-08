@@ -101,6 +101,8 @@ bool TCPInterface::CreateListenSocket(unsigned short port, unsigned short maxInc
 
 
 
+
+
 		serverAddress.sin_addr.s_addr = inet_addr__(bindAddress );
 
 	}
@@ -803,6 +805,8 @@ __TCPSOCKET__ TCPInterface::SocketConnect(const char* host, unsigned short remot
 
 	if ( bindAddress && bindAddress[0] )
 	{
+
+
 
 
 

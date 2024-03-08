@@ -91,10 +91,20 @@ public:
 		{
 			char WORKING_DIRECTORY[MAX_PATH];
 			GetTempPath(MAX_PATH, WORKING_DIRECTORY);
+			if (WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='\\' || WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='/')
+				WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=0;
 
-			char pathToPatch[MAX_PATH];
-			sprintf(pathToPatch, "%s/patchClient.tmp", WORKING_DIRECTORY);
-			FILE *fpPatch = fopen(pathToPatch, "wb");
+			char buff[128];
+			RakNet::TimeUS time = RakNet::GetTimeUS();
+#if defined(_WIN32)
+			sprintf(buff, "%I64u", time);
+#else
+			sprintf(buff, "%llu", (long long unsigned int) time);
+#endif
+
+			char pathToPatch1[MAX_PATH], pathToPatch2[MAX_PATH];
+			sprintf(pathToPatch1, "%s/patchClient_%s.tmp", WORKING_DIRECTORY, buff);
+			FILE *fpPatch = fopen(pathToPatch1, "wb");
 			if (fpPatch==0)
 				return PC_ERROR_PATCH_TARGET_MISSING;
 			fwrite(patchContents, 1, patchSize, fpPatch);
@@ -103,14 +113,37 @@ public:
 			// Invoke xdelta
 			// See https://code.google.com/p/xdelta/wiki/CommandLineSyntax
 			char commandLine[512];
-			_snprintf(commandLine, sizeof(commandLine)-1, "-d -f -s %s patchClient.tmp newFile.tmp", oldFilePath);
+			_snprintf(commandLine, sizeof(commandLine)-1, "-d -f -s %s %s/patchClient_%s.tmp %s/newFile_%s.tmp", oldFilePath, WORKING_DIRECTORY, buff, WORKING_DIRECTORY, buff);
 			commandLine[511]=0;
-			ShellExecute(NULL, "open", "xdelta3-3.0.6-win32.exe", commandLine, WORKING_DIRECTORY, SW_SHOWNORMAL);
+			
+			SHELLEXECUTEINFO shellExecuteInfo;
+			shellExecuteInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+			shellExecuteInfo.fMask = SEE_MASK_NOASYNC | SEE_MASK_NO_CONSOLE;
+			shellExecuteInfo.hwnd = NULL;
+			shellExecuteInfo.lpVerb = "open";
+			shellExecuteInfo.lpFile = "xdelta3-3.0.6-win32.exe";
+			shellExecuteInfo.lpParameters = commandLine;
+			shellExecuteInfo.lpDirectory = NULL;
+			shellExecuteInfo.nShow = SW_SHOWNORMAL;
+			shellExecuteInfo.hInstApp = NULL;
+			ShellExecuteEx(&shellExecuteInfo);
 
-			sprintf(pathToPatch, "%s/newFile.tmp", WORKING_DIRECTORY);
-			fpPatch = fopen(pathToPatch, "rb");
+			// // ShellExecute is blocking, but if it writes a file to disk that file is not always immediately accessible after it returns. And this only happens in release, and only when not running in the debugger
+			// ShellExecute(NULL, "open", "xdelta3-3.0.6-win32.exe", commandLine, NULL, SW_SHOWNORMAL);
+
+			sprintf(pathToPatch2, "%s/newFile_%s.tmp", WORKING_DIRECTORY, buff);
+			fpPatch = fopen(pathToPatch2, "r+b");
+			RakNet::TimeUS stopWaiting = time + 60000000;
+			while (fpPatch==0 && RakNet::GetTimeUS() < stopWaiting)
+			{
+				RakSleep(1000);
+				fpPatch = fopen(pathToPatch2, "r+b");
+			}
 			if (fpPatch==0)
+			{
+				printf("\nERROR: Could not open %s.\nerr=%i (%s)\narguments=%s\n", pathToPatch2, errno, strerror(errno), commandLine);
 				return PC_ERROR_PATCH_TARGET_MISSING;
+			}
 
 			fseek(fpPatch, 0, SEEK_END);
 			*newFileSize = ftell(fpPatch);
@@ -118,6 +151,23 @@ public:
 			*newFileContents = (char*) rakMalloc_Ex(*newFileSize, _FILE_AND_LINE_);
 			fread(*newFileContents, 1, *newFileSize, fpPatch);
 			fclose(fpPatch);
+
+			int unlinkRes1 = _unlink(pathToPatch1);
+			int unlinkRes2 = _unlink(pathToPatch2);
+			while ((unlinkRes1!=0 || unlinkRes2!=0) && RakNet::GetTimeUS() < stopWaiting)
+			{
+				RakSleep(1000);
+				if (unlinkRes1!=0)
+					unlinkRes1 = _unlink(pathToPatch1);
+				if (unlinkRes2!=0)
+					unlinkRes2 = _unlink(pathToPatch2);
+			}
+
+			if (unlinkRes1!=0)
+				printf("\nWARNING: unlink %s failed.\nerr=%i (%s)\n", pathToPatch1, errno, strerror(errno));
+			if (unlinkRes2!=0)
+				printf("\nWARNING: unlink %s failed.\nerr=%i (%s)\n", pathToPatch2, errno, strerror(errno));
+
 			return PC_WRITE_FILE;
 		}
 	}

@@ -239,6 +239,8 @@ bool SystemAddress::IsLoopback(void) const
 		// unsigned long l = htonl(address.addr4.sin_addr.s_addr);
 		if (htonl(address.addr4.sin_addr.s_addr)==2130706433)
 			return true;
+		if (address.addr4.sin_addr.s_addr==0)
+			return true;
 	}
 #if RAKNET_SUPPORT_IPV6==1
 	else

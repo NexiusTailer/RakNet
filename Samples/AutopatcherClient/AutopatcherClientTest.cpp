@@ -76,9 +76,17 @@ public:
 		}
 		else
 		{
-			char pathToPatch[MAX_PATH];
-			sprintf(pathToPatch, "%s/patchClient.tmp", WORKING_DIRECTORY);
-			FILE *fpPatch = fopen(pathToPatch, "wb");
+			char buff[128];
+			RakNet::TimeUS time = RakNet::GetTimeUS();
+#if defined(_WIN32)
+			sprintf(buff, "%I64u", time);
+#else
+			sprintf(buff, "%llu", (long long unsigned int) time);
+#endif
+
+			char pathToPatch1[MAX_PATH], pathToPatch2[MAX_PATH];
+			sprintf(pathToPatch1, "%s/patchClient_%s.tmp", WORKING_DIRECTORY, buff);
+			FILE *fpPatch = fopen(pathToPatch1, "wb");
 			if (fpPatch==0)
 				return PC_ERROR_PATCH_TARGET_MISSING;
 			fwrite(patchContents, 1, patchSize, fpPatch);
@@ -87,21 +95,60 @@ public:
 			// Invoke xdelta
 			// See https://code.google.com/p/xdelta/wiki/CommandLineSyntax
 			char commandLine[512];
-			_snprintf(commandLine, sizeof(commandLine)-1, "-d -f -s %s patchClient.tmp newFile.tmp", oldFilePath);
+			_snprintf(commandLine, sizeof(commandLine)-1, "-d -f -s %s patchClient_%s.tmp newFile_%s.tmp", oldFilePath, buff, buff);
 			commandLine[511]=0;
-			ShellExecute(NULL, "open", PATH_TO_XDELTA_EXE, commandLine, WORKING_DIRECTORY, SW_SHOWNORMAL);
 
-			sprintf(pathToPatch, "%s/newFile.tmp", WORKING_DIRECTORY);
-			fpPatch = fopen(pathToPatch, "rb");
+			SHELLEXECUTEINFO shellExecuteInfo;
+			shellExecuteInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+			shellExecuteInfo.fMask = SEE_MASK_NOASYNC | SEE_MASK_NO_CONSOLE;
+			shellExecuteInfo.hwnd = NULL;
+			shellExecuteInfo.lpVerb = "open";
+			shellExecuteInfo.lpFile = PATH_TO_XDELTA_EXE;
+			shellExecuteInfo.lpParameters = commandLine;
+			shellExecuteInfo.lpDirectory = WORKING_DIRECTORY;
+			shellExecuteInfo.nShow = SW_SHOWNORMAL;
+			shellExecuteInfo.hInstApp = NULL;
+			ShellExecuteEx(&shellExecuteInfo);
+
+			// ShellExecute(NULL, "open", PATH_TO_XDELTA_EXE, commandLine, WORKING_DIRECTORY, SW_SHOWNORMAL);
+
+			sprintf(pathToPatch2, "%s/newFile_%s.tmp", WORKING_DIRECTORY, buff);
+			fpPatch = fopen(pathToPatch2, "r+b");
+			RakNet::TimeUS stopWaiting = time + 60000000;
+			while (fpPatch==0 && RakNet::GetTimeUS() < stopWaiting)
+			{
+				RakSleep(1000);
+				fpPatch = fopen(pathToPatch2, "r+b");
+			}
 			if (fpPatch==0)
+			{
+				printf("\nERROR: Could not open %s.\nerr=%i (%s)\narguments=%s\n", pathToPatch2, errno, strerror(errno), commandLine);
 				return PC_ERROR_PATCH_TARGET_MISSING;
-			
+			}
+		
 			fseek(fpPatch, 0, SEEK_END);
 			*newFileSize = ftell(fpPatch);
 			fseek(fpPatch, 0, SEEK_SET);
 			*newFileContents = (char*) rakMalloc_Ex(*newFileSize, _FILE_AND_LINE_);
 			fread(*newFileContents, 1, *newFileSize, fpPatch);
 			fclose(fpPatch);
+
+			int unlinkRes1 = _unlink(pathToPatch1);
+			int unlinkRes2 = _unlink(pathToPatch2);
+			while ((unlinkRes1!=0 || unlinkRes2!=0) && RakNet::GetTimeUS() < stopWaiting)
+			{
+				RakSleep(1000);
+				if (unlinkRes1!=0)
+					unlinkRes1 = _unlink(pathToPatch1);
+				if (unlinkRes2!=0)
+					unlinkRes2 = _unlink(pathToPatch2);
+			}
+
+			if (unlinkRes1!=0)
+				printf("\nWARNING: unlink %s failed.\nerr=%i (%s)\n", pathToPatch1, errno, strerror(errno));
+			if (unlinkRes2!=0)
+				printf("\nWARNING: unlink %s failed.\nerr=%i (%s)\n", pathToPatch2, errno, strerror(errno));
+
 			return PC_WRITE_FILE;
 		}
 	}
@@ -195,8 +242,8 @@ int main(int argc, char **argv)
 		printf("Optional: Enter path to xdelta exe: ");
 		Gets(PATH_TO_XDELTA_EXE, sizeof(PATH_TO_XDELTA_EXE));
 		// https://code.google.com/p/xdelta/downloads/list
-		//if (PATH_TO_XDELTA_EXE[0]==0)
-		//	strcpy(PATH_TO_XDELTA_EXE, "D:/temp/xdelta3-3.0.6-win32.exe");
+		if (PATH_TO_XDELTA_EXE[0]==0)
+			strcpy(PATH_TO_XDELTA_EXE, "c:/xdelta3-3.0.6-win32.exe");
 
 		if (PATH_TO_XDELTA_EXE[0])
 		{
@@ -204,9 +251,11 @@ int main(int argc, char **argv)
 			Gets(WORKING_DIRECTORY, sizeof(WORKING_DIRECTORY));
 			if (WORKING_DIRECTORY[0]==0)
 				GetTempPath(MAX_PATH, WORKING_DIRECTORY);
+			if (WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='\\' || WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='/')
+				WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=0;
 		}
 
-		printf("Hit 'q' to quit, 'p' to patch, 'c' to cancel the patch. 'r' to reconnect. 'd' to disconnect.\n");
+		printf("Hit 'q' to quit, 'p' to patch, 'f' to full scan. 'c' to cancel the patch. 'r' to reconnect. 'd' to disconnect.\n");
 	}
 	else
 		printf("Hit 'q' to quit, 'c' to cancel the patch.\n");
@@ -330,7 +379,7 @@ int main(int argc, char **argv)
 			rakPeer->CloseConnection(serverAddress, true);
 #endif
 		}
-		else if (ch=='p' || (serverAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS && patchImmediately==true))
+		else if (ch=='p' || (serverAddress!=RakNet::UNASSIGNED_SYSTEM_ADDRESS && patchImmediately==true) || ch=='f')
 		{
 			patchImmediately=false;
 			char restartFile[512];
@@ -338,14 +387,21 @@ int main(int argc, char **argv)
 			strcat(restartFile, "/autopatcherRestart.txt");
 
 			double lastUpdateDate;
-			FILE *fp = fopen("srvDate", "rb");
-			if (fp)
+			if (ch=='f')
 			{
-				fread(&lastUpdateDate, sizeof(lastUpdateDate), 1, fp);
-				fclose(fp);
+				lastUpdateDate=0;
 			}
 			else
-				lastUpdateDate=0;
+			{
+				FILE *fp = fopen("srvDate", "rb");
+				if (fp)
+				{
+					fread(&lastUpdateDate, sizeof(lastUpdateDate), 1, fp);
+					fclose(fp);
+				}
+				else
+					lastUpdateDate=0;
+			}
 
 			if (autopatcherClient.PatchApplication(appName, appDir, lastUpdateDate, serverAddress, &transferCallback, restartFile, argv[0]))
 			{

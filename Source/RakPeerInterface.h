@@ -366,6 +366,11 @@ public:
 	/// \return the identifier of your system internally, which may not be how other systems see if you if you are behind a NAT or proxy
 	virtual SystemAddress GetInternalID( const SystemAddress systemAddress=UNASSIGNED_SYSTEM_ADDRESS, const int index=0 ) const=0;
 
+	/// \brief Sets your internal IP address, for platforms that do not support reading it, or to override a value
+	/// \param[in] systemAddress. The address to set. Use SystemAddress::FromString() if you want to use a dotted string
+	/// \param[in] index When you have multiple internal IDs, which index to set?
+	virtual void SetInternalID(SystemAddress systemAddress, int index=0)=0;
+
 	/// Return the unique address identifier that represents you on the the network and is based on your externalIP / port
 	/// (the IP / port the specified player uses to communicate with you)
 	/// \param[in] target Which remote system you are referring to for your external ID.  Usually the same for all systems, unless you have two or more network cards.

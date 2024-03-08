@@ -60,6 +60,8 @@ int workerThreadCount;
 int sqlConnectionObjectCount;
 int allowDownloadingUnmodifiedFiles;
 
+unsigned short autopatcherLoad=0;
+
 RakNet::RakPeerInterface *rakPeer;
 RakNet::AutopatcherServer *autopatcherServer;
 
@@ -205,6 +207,9 @@ public:
 				printf("\n");
 			}
 
+			if (appState==AP_TERMINATING || appState==AP_TERMINATED ||
+				appState==AP_TERMINATE_WHEN_ZERO_USERS_REACHED || appState==AP_TERMINATE_IF_NOT_DNS_HOST)
+				Terminate();
 
 
 			json_decref(root);
@@ -382,9 +387,16 @@ public:
 		else
 		{
 			if (r2rc==R2RC_UNAUTHORIZED)
+			{
 				printf("Unauthorized\n");
+
+				// Try to reauthenticate
+				rackspace2->Authenticate(rackspaceAuthenticationURL, rackspaceCloudUsername, apiAccessKey);
+			}
 			else
+			{
 				printf("General response failure: %s\n", responseReceived.C_String());
+			}
 		}
 
 	}
@@ -399,7 +411,7 @@ public:
 		appState=AP_TERMINATING;
 
 		// http://docs.rackspace.com/servers/api/v2/cs-devguide/content/Delete_Server-d1e2883.html
-		RakString url("%s/servers", rackspaceServersURL);
+		RakString url("%s/servers/%s", rackspaceServersURL, thisServerDetail.id);
 		rackspace2->AddOperation(url,Rackspace2::OT_DELETE,0, true);
 	}
 	void GetCustomImages(void)
@@ -633,6 +645,15 @@ public:
 
 		return CloudServerHelper::OnJoinCloudResult(packet, rakPeer, cloudServer, cloudClient, fullyConnectedMesh2, twoWayAuthentication, connectionGraph2, rakPeerIpOrDomain, myPublicIP);
 	}
+
+	virtual void OnConnectionCountChange(RakPeerInterface *rakPeer, CloudClient *cloudClient)
+	{
+		RakNet::BitStream bs;
+		CloudKey cloudKey("CloudConnCount",0);
+		bs.Write(autopatcherLoad);
+		cloudClient->Post(&cloudKey, bs.GetData(), bs.GetNumberOfBytesUsed(), rakPeer->GetMyGUID());
+	}
+
 	char patcherHostSubdomainURL[128];
 	char patcherHostDomainURL[128];
 	char dnsHostIP[128];
@@ -664,7 +685,6 @@ protected:
 
 } *cloudServerHelper;
 
-
 class AutopatcherLoadNotifier : public RakNet::AutopatcherServerLoadNotifier_Printf
 {
 	void AutopatcherLoadNotifier::OnQueueUpdate(SystemAddress remoteSystem,
@@ -672,6 +692,8 @@ class AutopatcherLoadNotifier : public RakNet::AutopatcherServerLoadNotifier_Pri
 		AutopatcherServerLoadNotifier::QueueOperation queueOperation,
 		AutopatcherServerLoadNotifier::AutopatcherState *autopatcherState)
 	{
+		autopatcherLoad=autopatcherState->requestsQueued+autopatcherState->requestsWorking;
+
 		AutopatcherServerLoadNotifier_Printf::OnQueueUpdate(remoteSystem, requestType, queueOperation, autopatcherState);
 	}
 
@@ -680,6 +702,8 @@ class AutopatcherLoadNotifier : public RakNet::AutopatcherServerLoadNotifier_Pri
 		AutopatcherServerLoadNotifier::GetChangelistResult getChangelistResult,
 		AutopatcherServerLoadNotifier::AutopatcherState *autopatcherState)
 	{
+		autopatcherLoad=autopatcherState->requestsQueued+autopatcherState->requestsWorking;
+
 		AutopatcherServerLoadNotifier_Printf::OnGetChangelistCompleted(remoteSystem, getChangelistResult, autopatcherState);
 	}
 
@@ -687,22 +711,9 @@ class AutopatcherLoadNotifier : public RakNet::AutopatcherServerLoadNotifier_Pri
 		AutopatcherServerLoadNotifier::PatchResult patchResult,
 		AutopatcherServerLoadNotifier::AutopatcherState *autopatcherState)
 	{
+		autopatcherLoad=autopatcherState->requestsQueued+autopatcherState->requestsWorking;
+
 		AutopatcherServerLoadNotifier_Printf::OnGetPatchCompleted(remoteSystem, patchResult, autopatcherState);
-
-		if (autopatcherState->requestsWorking==0)
-		{
-			if (autopatcherState->requestsQueued==0)
-				timeSinceZeroUsers=RakNet::GetTime();
-
-			if (appState==AP_TERMINATE_WHEN_ZERO_USERS_REACHED)
-			{
-				cloudServerHelper->Terminate();
-			}
-		}
-		else
-		{
-			timeSinceZeroUsers=0;
-		}
 	}
 };
 
@@ -730,10 +741,19 @@ class AutopatcherPostgreRepository2_WithXDelta : public RakNet::AutopatcherPostg
 
 		char WORKING_DIRECTORY[MAX_PATH];
 		GetTempPath(MAX_PATH, WORKING_DIRECTORY);
+		if (WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='\\' || WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='/')
+			WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=0;
+
 		const char *PATH_TO_XDELTA_EXE = "c:/xdelta3-3.0.6-win32.exe";
 
-		if ((contentLengthOld < 33554432 && contentLengthNew < 33554432) || PATH_TO_XDELTA_EXE[0]==0)
+		bool shortContent = contentLengthOld < 33554432 && contentLengthNew < 33554432;
+		if (shortContent || PATH_TO_XDELTA_EXE[0]==0)
 		{
+			if (shortContent==false)
+			{
+				printf("Warning: PATH_TO_XDELTA_EXE needed but not set.\ncontentLengthOld=%i\ncontentLengthNew=%i\n", contentLengthOld, contentLengthNew );
+
+			}
 			// Use bsdiff, which does a good job but takes a lot of memory based on the size of the file
 			*patchAlgorithm=0;
 			bool b = MakePatchBSDiff(fpOld, contentLengthOld, fpNew, contentLengthNew, patch, patchLength);
@@ -747,27 +767,66 @@ class AutopatcherPostgreRepository2_WithXDelta : public RakNet::AutopatcherPostg
 			fclose(fpOld);
 			fclose(fpNew);
 
+			char buff[128];
+			RakNet::TimeUS time = RakNet::GetTimeUS();
+#if defined(_WIN32)
+			sprintf(buff, "%I64u", time);
+#else
+			sprintf(buff, "%llu", (long long unsigned int) time);
+#endif
+
 			// Invoke xdelta
 			// See https://code.google.com/p/xdelta/wiki/CommandLineSyntax
 			char commandLine[512];
-			_snprintf(commandLine, sizeof(commandLine)-1, "-f -s %s %s patchServer.tmp", oldFile, newFile);
+			_snprintf(commandLine, sizeof(commandLine)-1, "-f -s %s %s patchServer_%s.tmp", oldFile, newFile, buff);
 			commandLine[511]=0;
-			ShellExecute(NULL, "open", PATH_TO_XDELTA_EXE, commandLine, WORKING_DIRECTORY, SW_SHOWNORMAL);
+
+
+			SHELLEXECUTEINFO shellExecuteInfo;
+			shellExecuteInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+			shellExecuteInfo.fMask = SEE_MASK_NOASYNC | SEE_MASK_NO_CONSOLE;
+			shellExecuteInfo.hwnd = NULL;
+			shellExecuteInfo.lpVerb = "open";
+			shellExecuteInfo.lpFile = PATH_TO_XDELTA_EXE;
+			shellExecuteInfo.lpParameters = commandLine;
+			shellExecuteInfo.lpDirectory = WORKING_DIRECTORY;
+			shellExecuteInfo.nShow = SW_SHOWNORMAL;
+			shellExecuteInfo.hInstApp = NULL;
+			ShellExecuteEx(&shellExecuteInfo);
+
+			// ShellExecute is blocking, but if it writes a file to disk that file is not always immediately accessible after it returns. And this only happens in release, and only when not running in the debugger
+			//ShellExecute(NULL, "open", PATH_TO_XDELTA_EXE, commandLine, WORKING_DIRECTORY, SW_SHOWNORMAL);
 
 			char pathToPatch[MAX_PATH];
-			if (WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='/' || WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='\\')
-				sprintf(pathToPatch, "%spatchServer.tmp", WORKING_DIRECTORY);
-			else
-				sprintf(pathToPatch, "%s/patchServer.tmp", WORKING_DIRECTORY);
-			FILE *fpPatch = fopen(pathToPatch, "rb");
+			sprintf(pathToPatch, "%s/patchServer_%s.tmp", WORKING_DIRECTORY, buff);
+			FILE *fpPatch = fopen(pathToPatch, "r+b");
+			RakNet::TimeUS stopWaiting = time + 60000000 * 5;
+			while (fpPatch==0 && RakNet::GetTimeUS() < stopWaiting)
+			{
+				RakSleep(1000);
+				fpPatch = fopen(pathToPatch, "r+b");
+			}
 			if (fpPatch==0)
+			{
+				printf("\nERROR: Could not open %s.\nerr=%i (%s)\narguments=%s\n", pathToPatch, errno, strerror(errno), commandLine);
 				return false;
+			}
 			fseek(fpPatch, 0, SEEK_END);
 			*patchLength = ftell(fpPatch);
 			fseek(fpPatch, 0, SEEK_SET);
 			*patch = (char*) rakMalloc_Ex(*patchLength, _FILE_AND_LINE_);
 			fread(*patch, 1, *patchLength, fpPatch);
 			fclose(fpPatch);
+
+			int unlinkRes = _unlink(pathToPatch);
+			while (unlinkRes!=0 && RakNet::GetTimeUS() < stopWaiting)
+			{
+				RakSleep(1000);
+				unlinkRes = _unlink(pathToPatch);
+			}
+			if (unlinkRes!=0)
+				printf("\nWARNING: unlink %s failed.\nerr=%i (%s)\n", pathToPatch, errno, strerror(errno));
+
 			return true;
 		}
 	}
@@ -804,7 +863,7 @@ int main(int argc, char **argv)
 	}
 
 	appState=AP_RUNNING;
-	timeSinceZeroUsers=0;
+	timeSinceZeroUsers=RakNet::GetTime();
 	printf("Server starting... ");
 	autopatcherServer = RakNet::OP_NEW<AutopatcherServer>(_FILE_AND_LINE_);
 	// RakNet::FLP_Printf progressIndicator;
@@ -931,6 +990,21 @@ int main(int argc, char **argv)
 			p=packetizedTCP.Receive();
 		}
 
+
+		if (autopatcherLoad==0)
+		{
+			if (appState==AP_TERMINATE_WHEN_ZERO_USERS_REACHED)
+			{
+				cloudServerHelper->Terminate();
+			}
+			if (timeSinceZeroUsers==0)
+				timeSinceZeroUsers=RakNet::GetTime();
+		}
+		else
+		{
+			timeSinceZeroUsers=0;
+		}
+
 		p=rakPeer->Receive();
 		while (p)
 		{
@@ -1053,13 +1127,13 @@ int main(int argc, char **argv)
 		{
 			// No users currently connected
 			RakNet::Time curTime = RakNet::GetTime();
-			RakNet::Time diff = timeSinceZeroUsers - curTime;
+			RakNet::Time diff = curTime - timeSinceZeroUsers;
 			if (diff > 0)
 			{
 				if (fullyConnectedMesh2.IsHostSystem()==false)
 				{
-					// 2. Shutdown automatically if no users for 1 hour, except if we are the host
-					if (diff > 1000 * 60 * 60)
+					// 2. Shutdown automatically if no users for 12 hours, except if we are the host
+					if (diff > 1000 * 60 * 60 * 12)
 						cloudServerHelper->Terminate();
 				}
 				else
@@ -1135,7 +1209,7 @@ int main(int argc, char **argv)
 			}
 			else if (ch=='s')
 			{
-				printf("How many servers to spawn? (0-4)");
+				printf("How many servers to spawn? (0-4) ");
 				char str[32];
 				Gets(str, sizeof(str));
 				int num = atoi(str);
@@ -1170,7 +1244,6 @@ int main(int argc, char **argv)
 				printf("Disconnected from remote servers\n");
 				printf("Updating host DNS entry to this server\n");
 				cloudServerHelper->UpdateHostIPAsynch();
-				
 			}
 			else if (ch=='l')
 			{

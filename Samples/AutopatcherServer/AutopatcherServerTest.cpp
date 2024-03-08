@@ -59,19 +59,43 @@ class AutopatcherPostgreRepository2_WithXDelta : public RakNet::AutopatcherPostg
 			fclose(fpOld);
 			fclose(fpNew);
 
+			char buff[128];
+			RakNet::TimeUS time = RakNet::GetTimeUS();
+#if defined(_WIN32)
+			sprintf(buff, "%I64u", time);
+#else
+			sprintf(buff, "%llu", (long long unsigned int) time);
+#endif
+
 			// Invoke xdelta
 			// See https://code.google.com/p/xdelta/wiki/CommandLineSyntax
 			char commandLine[512];
-			_snprintf(commandLine, sizeof(commandLine)-1, "-f -s %s %s patchServer.tmp", oldFile, newFile);
+			_snprintf(commandLine, sizeof(commandLine)-1, "-f -s %s %s patchServer_%s.tmp", oldFile, newFile, buff);
 			commandLine[511]=0;
-			ShellExecute(NULL, "open", PATH_TO_XDELTA_EXE, commandLine, WORKING_DIRECTORY, SW_SHOWNORMAL);
+			
+			SHELLEXECUTEINFO shellExecuteInfo;
+			shellExecuteInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+			shellExecuteInfo.fMask = SEE_MASK_NOASYNC | SEE_MASK_NO_CONSOLE;
+			shellExecuteInfo.hwnd = NULL;
+			shellExecuteInfo.lpVerb = "open";
+			shellExecuteInfo.lpFile = PATH_TO_XDELTA_EXE;
+			shellExecuteInfo.lpParameters = commandLine;
+			shellExecuteInfo.lpDirectory = WORKING_DIRECTORY;
+			shellExecuteInfo.nShow = SW_SHOWNORMAL;
+			shellExecuteInfo.hInstApp = NULL;
+			ShellExecuteEx(&shellExecuteInfo);
+			//ShellExecute(NULL, "open", PATH_TO_XDELTA_EXE, commandLine, WORKING_DIRECTORY, SW_SHOWNORMAL);
 
 			char pathToPatch[MAX_PATH];
-			if (WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='/' || WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='\\')
-				sprintf(pathToPatch, "%spatchServer.tmp", WORKING_DIRECTORY);
-			else
-				sprintf(pathToPatch, "%s/patchServer.tmp", WORKING_DIRECTORY);
-			FILE *fpPatch = fopen(pathToPatch, "rb");
+			sprintf(pathToPatch, "%s/patchServer_%s.tmp", WORKING_DIRECTORY, buff);
+			// r+ instead of r, because I want exclusive access in case xdelta is still working
+			FILE *fpPatch = fopen(pathToPatch, "r+b");
+			RakNet::TimeUS stopWaiting = time + 60000000 * 5;
+			while (fpPatch==0 && RakNet::GetTimeUS() < stopWaiting)
+			{
+				RakSleep(1000);
+				fpPatch = fopen(pathToPatch, "r+b");
+			}
 			if (fpPatch==0)
 				return false;
 			fseek(fpPatch, 0, SEEK_END);
@@ -80,6 +104,16 @@ class AutopatcherPostgreRepository2_WithXDelta : public RakNet::AutopatcherPostg
 			*patch = (char*) rakMalloc_Ex(*patchLength, _FILE_AND_LINE_);
 			fread(*patch, 1, *patchLength, fpPatch);
 			fclose(fpPatch);
+
+			int unlinkRes = _unlink(pathToPatch);
+			while (unlinkRes!=0 && RakNet::GetTimeUS() < stopWaiting)
+			{
+				RakSleep(1000);
+				unlinkRes = _unlink(pathToPatch);
+			}
+			if (unlinkRes!=0)
+				printf("\nWARNING: unlink %s failed.\nerr=%i (%s)\n", pathToPatch, errno, strerror(errno));
+
 			return true;
 		}
 	}
@@ -156,8 +190,8 @@ int main(int argc, char **argv)
 	// https://code.google.com/p/xdelta/downloads/list
 	printf("Optional: Enter path to xdelta.exe: ");
 	Gets(PATH_TO_XDELTA_EXE, sizeof(PATH_TO_XDELTA_EXE));
-	//if (PATH_TO_XDELTA_EXE[0]==0)
-	//	strcpy(PATH_TO_XDELTA_EXE, "D:/temp/xdelta3-3.0.6-win32.exe");
+	if (PATH_TO_XDELTA_EXE[0]==0)
+		strcpy(PATH_TO_XDELTA_EXE, "c:/xdelta3-3.0.6-win32.exe");
 
 	if (PATH_TO_XDELTA_EXE[0])
 	{
@@ -165,7 +199,8 @@ int main(int argc, char **argv)
 		Gets(WORKING_DIRECTORY, sizeof(WORKING_DIRECTORY));
 		if (WORKING_DIRECTORY[0]==0)
 			GetTempPath(MAX_PATH, WORKING_DIRECTORY);
-
+		if (WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='\\' || WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=='/')
+			WORKING_DIRECTORY[strlen(WORKING_DIRECTORY)-1]=0;
 	}
 
 	printf("(D)rop database\n(C)reate database.\n(A)dd application\n(U)pdate revision.\n(R)emove application\n(Q)uit\n");
