@@ -216,7 +216,7 @@ void NatTypeDetectionServer::OnDetectionRequest(Packet *packet)
 
 	RakNet::BitStream bsIn(packet->data, packet->length, false);
 	bsIn.IgnoreBytes(1);
-	bool isRequest;
+	bool isRequest=false;
 	bsIn.Read(isRequest);
 	if (isRequest)
 	{

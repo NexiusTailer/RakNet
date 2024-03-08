@@ -149,7 +149,7 @@ public:
 	/// \retval false Modified packet
 	bool HandleSocketReceiveFromConnectedPlayer(
 		const char *buffer, unsigned int length, SystemAddress &systemAddress, DataStructures::List<PluginInterface2*> &messageHandlerList, int MTUSize,
-		SOCKET s, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, CCTimeType timeRead);
+		SOCKET s, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, CCTimeType timeRead, BitStream &updateBitStream);
 
 	/// This allocates bytes and writes a user-level message to those bytes.
 	/// \param[out] data The message
@@ -179,7 +179,7 @@ public:
 	void Update( SOCKET s, SystemAddress &systemAddress, int MTUSize, CCTimeType time,
 		unsigned bitsPerSecondLimit,
 		DataStructures::List<PluginInterface2*> &messageHandlerList,
-		RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions);
+		RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, BitStream &updateBitStream);
 	
 	/// Were you ever unable to deliver a packet despite retries?
 	/// \return true means the connection has been lost.  Otherwise not.
@@ -277,7 +277,7 @@ private:
 
 	/// Take all split chunks with the specified splitPacketId and try to reconstruct a packet. If we can, allocate and return it.  Otherwise return 0
 	InternalPacket * BuildPacketFromSplitPacketList( SplitPacketIdType splitPacketId, CCTimeType time,
-		SOCKET s, SystemAddress &systemAddress, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions);
+		SOCKET s, SystemAddress &systemAddress, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, BitStream &updateBitStream);
 	InternalPacket * BuildPacketFromSplitPacketList( SplitPacketChannel *splitPacketChannel, CCTimeType time );
 
 	/// Delete any unreliable split packets that have long since expired
@@ -402,7 +402,7 @@ private:
 	MessageNumberType sendReliableMessageNumberIndex;
 	MessageNumberType internalOrderIndex;
 	//unsigned int windowSize;
-	RakNet::BitStream updateBitStream;
+	//RakNet::BitStream updateBitStream;
 	bool deadConnection, cheater;
 	SplitPacketIdType splitPacketId;
 	RakNet::TimeMS timeoutTime; // How long to wait in MS before timing someone out
@@ -531,7 +531,7 @@ private:
 	void PopListHead(bool modifyUnacknowledgedBytes);
 	bool IsResendQueueEmpty(void) const;
 	void SortSplitPacketList(DataStructures::List<InternalPacket*> &data, unsigned int leftEdge, unsigned int rightEdge) const;
-	void SendACKs(SOCKET s, SystemAddress &systemAddress, CCTimeType time, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions);
+	void SendACKs(SOCKET s, SystemAddress &systemAddress, CCTimeType time, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, BitStream &updateBitStream);
 
 	DataStructures::List<InternalPacket*> packetsToSendThisUpdate;
 	DataStructures::List<bool> packetsToDeallocThisUpdate;

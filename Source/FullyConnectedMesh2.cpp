@@ -349,7 +349,7 @@ void FullyConnectedMesh2::OnRequestFCMGuid(Packet *packet)
 {
 	RakNet::BitStream bsIn(packet->data,packet->length,false);
 	bsIn.IgnoreBytes(sizeof(MessageID));
-	bool hasRemoteFCMGuid;
+	bool hasRemoteFCMGuid=false;
 	bsIn.Read(hasRemoteFCMGuid);
 	RakNet::TimeUS senderElapsedRuntime=0;
 	unsigned int remoteTotalConnectionCount=0;

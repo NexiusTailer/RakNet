@@ -264,9 +264,9 @@ PluginReceiveResult ConnectionGraph2::OnReceive(Packet *packet)
 			SystemAddressAndGuid saag;
 			bs.Read(saag.systemAddress);
 			bs.Read(saag.guid);
-			idx = remoteSystems[idx]->remoteConnections.GetIndexFromKey(saag, &objectExists);
+			unsigned long idx2 = remoteSystems[idx]->remoteConnections.GetIndexFromKey(saag, &objectExists);
 			if (objectExists)
-				remoteSystems[idx]->remoteConnections.RemoveAtIndex(idx);
+				remoteSystems[idx]->remoteConnections.RemoveAtIndex(idx2);
 		}
 	}
 	else if (packet->data[0]==ID_REMOTE_NEW_INCOMING_CONNECTION)

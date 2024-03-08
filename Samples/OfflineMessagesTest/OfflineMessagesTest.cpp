@@ -85,7 +85,10 @@ int main(void)
 				printf("Was sent from GUID %s\n", packet->guid.ToString());
 
 				if ( dataLength > 0 )
+				{
 					printf( "Data is %s\n", packet->data + sizeof( unsigned char ) + sizeof( RakNet::TimeMS ) );
+					RakAssert((int)strlen("Offline Ping Data")+1==packet->length-(sizeof( unsigned char ) + sizeof( RakNet::TimeMS )));
+				}
 
 				nextTest++;
 				// ProcessUnhandledPacket(packet, ID_UNCONNECTED_PONG,interfaceType);

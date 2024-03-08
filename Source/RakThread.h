@@ -57,9 +57,14 @@ public:
 	static int Create( unsigned __stdcall start_address( void* ), void *arglist, int priority=0);
 
 
+
 #else
 	static int Create( void* start_address( void* ), void *arglist, int priority=0);
 #endif
+
+
+
+
 
 
 

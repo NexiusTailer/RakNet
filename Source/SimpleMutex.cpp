@@ -41,6 +41,10 @@ using namespace RakNet;
 
 
 
+
+
+
+
 SimpleMutex::SimpleMutex() //: isInitialized(false)
 {
 
@@ -61,6 +65,8 @@ SimpleMutex::~SimpleMutex()
 #ifdef _WIN32
 	//	CloseHandle(hMutex);
 	DeleteCriticalSection(&criticalSection);
+
+
 
 
 
@@ -123,6 +129,8 @@ void SimpleMutex::Lock(void)
 
 
 
+
+
 #else
 	int error = pthread_mutex_lock(&hMutex);
 	(void) error;
@@ -141,6 +149,8 @@ void SimpleMutex::Unlock(void)
 
 
 
+
+
 #else
 	int error = pthread_mutex_unlock(&hMutex);
 	(void) error;
@@ -154,6 +164,10 @@ void SimpleMutex::Init(void)
 	//	hMutex = CreateMutex(NULL, FALSE, 0);
 	//	RakAssert(hMutex);
 	InitializeCriticalSection(&criticalSection);
+
+
+
+
 
 
 

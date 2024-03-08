@@ -289,12 +289,7 @@ return 1;
 // Constructor
 //-------------------------------------------------------------------------------------------------------
 // Add 21 to the default MTU so if we encrypt it can hold potentially 21 more bytes of extra data + padding.
-ReliabilityLayer::ReliabilityLayer() :
-updateBitStream( MAXIMUM_MTU_SIZE
-#if LIBCAT_SECURITY==1
-				+ cat::AuthenticatedEncryption::OVERHEAD_BYTES
-#endif			
-				)   // preallocate the update bitstream so we can avoid a lot of reallocs at runtime
+ReliabilityLayer::ReliabilityLayer()
 {
 
 #ifdef _DEBUG
@@ -320,8 +315,8 @@ updateBitStream( MAXIMUM_MTU_SIZE
 	InitializeVariables();
 //int i = sizeof(InternalPacket);
 	datagramHistoryMessagePool.SetPageSize(sizeof(MessageNumberNode)*128);
-	internalPacketPool.SetPageSize(sizeof(InternalPacket)*128);
-	refCountedDataPool.SetPageSize(sizeof(InternalPacket)*32);
+	internalPacketPool.SetPageSize(sizeof(InternalPacket)*INTERNAL_PACKET_PAGE_SIZE);
+	refCountedDataPool.SetPageSize(sizeof(InternalPacketRefCountedData)*32);
 }
 
 //-------------------------------------------------------------------------------------------------------
@@ -621,7 +616,8 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 //-------------------------------------------------------------------------------------------------------
 bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 	const char *buffer, unsigned int length, SystemAddress &systemAddress, DataStructures::List<PluginInterface2*> &messageHandlerList, int MTUSize,
-	SOCKET s, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, CCTimeType timeRead)
+	SOCKET s, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, CCTimeType timeRead,
+	BitStream &updateBitStream)
 {
 #ifdef _DEBUG
 	RakAssert( !( buffer == 0 ) );
@@ -1176,7 +1172,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 					InsertIntoSplitPacketList( internalPacket, timeRead );
 
 					internalPacket = BuildPacketFromSplitPacketList( internalPacket->splitPacketId, timeRead,
-						s, systemAddress, rnr, remotePortRakNetWasStartedOn_PS3, extraSocketOptions);
+						s, systemAddress, rnr, remotePortRakNetWasStartedOn_PS3, extraSocketOptions, updateBitStream);
 
 					if ( internalPacket == 0 )
 					{
@@ -1571,7 +1567,8 @@ bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPri
 void ReliabilityLayer::Update( SOCKET s, SystemAddress &systemAddress, int MTUSize, CCTimeType time,
 							  unsigned bitsPerSecondLimit,
 							  DataStructures::List<PluginInterface2*> &messageHandlerList,
-							  RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions)
+							  RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions,
+							  BitStream &updateBitStream)
 
 {
 	(void) MTUSize;
@@ -1678,7 +1675,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress &systemAddress, int MTUSi
 
 	if (congestionManager.ShouldSendACKs(time,timeSinceLastTick))
 	{
-		SendACKs(s, systemAddress, time, rnr, remotePortRakNetWasStartedOn_PS3, extraSocketOptions);
+		SendACKs(s, systemAddress, time, rnr, remotePortRakNetWasStartedOn_PS3, extraSocketOptions, updateBitStream);
 	}
 
 	if (NAKs.Size()>0)
@@ -3069,7 +3066,8 @@ InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketCh
 }
 //-------------------------------------------------------------------------------------------------------
 InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketIdType splitPacketId, CCTimeType time,
-																  SOCKET s, SystemAddress &systemAddress, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions)
+																  SOCKET s, SystemAddress &systemAddress, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions,
+																  BitStream &updateBitStream)
 {
 	unsigned int i;
 	bool objectExists;
@@ -3086,7 +3084,7 @@ InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketId
 #endif
 	{
 		// Ack immediately, because for large files this can take a long time
-		SendACKs(s, systemAddress, time, rnr, remotePortRakNetWasStartedOn_PS3, extraSocketOptions);
+		SendACKs(s, systemAddress, time, rnr, remotePortRakNetWasStartedOn_PS3, extraSocketOptions, updateBitStream);
 		internalPacket=BuildPacketFromSplitPacketList(splitPacketChannel,time);
 		splitPacketChannelList.RemoveAtIndex(i);
 		return internalPacket;
@@ -3457,7 +3455,7 @@ bool ReliabilityLayer::IsResendQueueEmpty(void) const
 	return resendLinkedListHead==0;
 }
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::SendACKs(SOCKET s, SystemAddress &systemAddress, CCTimeType time, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions)
+void ReliabilityLayer::SendACKs(SOCKET s, SystemAddress &systemAddress, CCTimeType time, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, BitStream &updateBitStream)
 {
 	BitSize_t maxDatagramPayload = GetMaxDatagramSizeExcludingMessageHeaderBits();
 

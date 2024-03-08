@@ -649,8 +649,8 @@ protected:
 	friend RAK_THREAD_DECLARATION(UDTConnect);
 
 	friend bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNetSmartPtr<RakNetSocket> rakNetSocket, bool *isOfflineMessage, RakNet::TimeUS timeRead );
-	friend void ProcessNetworkPacket( const SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNet::TimeUS timeRead );
-	friend void ProcessNetworkPacket( const SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNetSmartPtr<RakNetSocket> rakNetSocket, RakNet::TimeUS timeRead );
+	friend void ProcessNetworkPacket( const SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNet::TimeUS timeRead, BitStream &updateBitStream );
+	friend void ProcessNetworkPacket( const SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNetSmartPtr<RakNetSocket> rakNetSocket, RakNet::TimeUS timeRead, BitStream &updateBitStream );
 
 	int GetIndexFromSystemAddress( const SystemAddress systemAddress, bool calledFromNetworkThread ) const;
 	int GetIndexFromGuid( const RakNetGUID guid );
@@ -811,7 +811,7 @@ protected:
 	DataStructures::Queue<RequestedConnectionStruct*> requestedConnectionQueue;
 	SimpleMutex requestedConnectionQueueMutex;
 
-	bool RunUpdateCycle( RakNet::TimeUS timeNS, RakNet::Time timeMS );
+	bool RunUpdateCycle( RakNet::TimeUS timeNS, RakNet::Time timeMS, BitStream &updateBitStream );
 	// void RunMutexedUpdateCycle(void);
 
 	struct BufferedCommandStruct

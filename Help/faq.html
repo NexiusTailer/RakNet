@@ -19,10 +19,28 @@
   <p><B>How do I simulate lag?</B><BR> 
     In a hurry, use RakPeer::ApplyNetworkSimulator. But I recommend 
       <a href="http://www.netlimiter.com/" target="_blank">http://www.netlimiter.com/</a> instead.<BR>
-    There is also Network Emulator Toolkit (NEWT) from <A HREF="http://blog.mrpol.nl/2010/01/14/network-emulator-toolkit/">http://blog.mrpol.nl/2010/01/14/network-emulator-toolkit/</A> or <A HREF="http://blogs.msdn.com/b/lkruger/archive/2009/06/08/introducing-true-network-emulation-in-visual-studio-2010.aspx">http://blogs.msdn.com/b/lkruger/archive/2009/06/08/introducing-true-network-emulation-in-visual-studio-2010.aspx</A>
-    <BR>
-    <BR>
-    <B>My data that I write using bitstreams is messed up on the other side.</B><BR>
+    There is also Network Emulator Toolkit (NEWT) from <A HREF="http://blog.mrpol.nl/2010/01/14/network-emulator-toolkit/">http://blog.mrpol.nl/2010/01/14/network-emulator-toolkit/</A> or <A HREF="http://blogs.msdn.com/b/lkruger/archive/2009/06/08/introducing-true-network-emulation-in-visual-studio-2010.aspx">http://blogs.msdn.com/b/lkruger/archive/2009/06/08/introducing-true-network-emulation-in-visual-studio-2010.aspx</A>    </p>
+  <p><strong>How do I detect if I have exceeded the available bandwidth of the connection?</strong><br>
+    // Returns true if RakNet's output queue is increasing over time<br>
+    bool PushingPastCapacity(RakNet::RakPeerInterface *rakPeer, RakNet::Time currentTime, SystemAddress remoteSystem) {<br>
+static double bufferedBytesLastTick=0.0;<br>
+static RakNet::Time whenStartedPushingPastCapacity=currentTime;<br>
+RakNetStatistics rns;<br>
+rakPeer-&gt;GetStatistics(remoteSystem, &amp;rns);<br>
+double bufferedBytesThisTick=rns.bytesInSendBuffer[IMMEDIATE_PRIORITY]+rns.bytesInSendBuffer[HIGH_PRIORITY]+rns.bytesInSendBuffer[MEDIUM_PRIORITY]+rns.bytesInSendBuffer[LOW_PRIORITY];<br>
+if ( bufferedBytesThisTick &gt; bufferedBytesLastTick) {<br>
+if ( currentTime-whenStartedPushingPastCapacity&gt;500 ) {<br>
+bufferedBytesLastTick=bufferedBytesThisTick; return true;<br>
+}<br>
+}<br>
+else {<br>
+whenStartedPushingPastCapacity=currentTime;<br>
+}<br>
+bufferedBytesLastTick=bufferedBytesThisTick;<br>
+return false; <br>
+}<br>
+  </p>
+  <p><B>My data that I write using bitstreams is messed up on the other side.</B><BR>
     Make sure if you write one of the ID_* enumerations you cast it to an (unsigned char). Do not use types that may be different on 64 and 32 bit systems, such as int or long (See NativeTypes.h). Other than that, make sure your read and write calls match.<BR>
     <BR>
     <B>My data pointed to by a pointer isn't arriving.</B><BR>
@@ -33,14 +51,14 @@
     <BR>
     <B>I get errors from winsock.h such as follows</B><BR>
     C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\ws2def.h(91) : warning C4005: 'AF_IPX' : macro redefinition<BR>
-       C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\winsock.h(460) : see previous definition of 'AF_IPX'<BR>
-C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\ws2def.h(127) : warning C4005: 'AF_MAX' : macro redefinition<BR>
-        C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\winsock.h(479) : see previous definition of 'AF_MAX'<BR>
-C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\ws2def.h(163) : warning C4005: 'SO_DONTLINGER' : macro redefinition<BR>
-        C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\winsock.h(402) : see previous definition of 'SO_DONTLINGER'<BR>
-C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\ws2def.h(206) : error C2011: 'sockaddr' : 'struct' type redefinition<BR>
-        C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\winsock.h(485) : see declaration of 'sockaddr'<BR>
-    	This is a bug in winsock.h. You have to include winsock2.h before including winsock.h. You can fix this by including "WindowsIncludes.h" before including winsock.h.    
+    C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\winsock.h(460) : see previous definition of 'AF_IPX'<BR>
+    C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\ws2def.h(127) : warning C4005: 'AF_MAX' : macro redefinition<BR>
+    C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\winsock.h(479) : see previous definition of 'AF_MAX'<BR>
+    C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\ws2def.h(163) : warning C4005: 'SO_DONTLINGER' : macro redefinition<BR>
+    C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\winsock.h(402) : see previous definition of 'SO_DONTLINGER'<BR>
+    C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\ws2def.h(206) : error C2011: 'sockaddr' : 'struct' type redefinition<BR>
+    C:\Program Files\Microsoft SDKs\Windows\v6.0A\\include\winsock.h(485) : see declaration of 'sockaddr'<BR>
+    This is a bug in winsock.h. You have to include winsock2.h before including winsock.h. You can fix this by including "WindowsIncludes.h" before including winsock.h.    
     <BR>
     <BR>
     <B>I get conflicting lib errors such as follows</B><BR>

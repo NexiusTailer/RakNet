@@ -177,9 +177,9 @@ protected:
 
 	RakNet::SignaledEvent quitAndIncomingDataEvents;
 
-
-
-
+// #if defined(SN_TARGET_PSP2)
+// 	RakNet::RakThread::UltUlThreadRuntime *runtime;
+// #endif
 };
 
 #include "ThreadPool.h"
@@ -288,7 +288,11 @@ void* WorkerThread( void* arguments )
 	else if (threadPool->threadDataInterface)
 		threadPool->threadDataInterface->PerThreadDestructor(perThreadData, threadPool->tdiContext);
 
+
+
+
 	return 0;
+
 }
 template <class InputType, class OutputType>
 ThreadPool<InputType, OutputType>::ThreadPool()
@@ -311,9 +315,9 @@ bool ThreadPool<InputType, OutputType>::StartThreads(int numThreads, int stackSi
 {
 	(void) stackSize;
 
-
-
-
+// #if defined(SN_TARGET_PSP2)
+// 	runtime = RakNet::RakThread::AllocRuntime(numThreads);
+// #endif
 
 	runThreadsMutex.Lock();
 	if (runThreads==true)
@@ -340,6 +344,7 @@ bool ThreadPool<InputType, OutputType>::StartThreads(int numThreads, int stackSi
 	for (i=0; i < numThreads; i++)
 	{
 		int errorCode;
+
 
 
 
@@ -398,10 +403,10 @@ void ThreadPool<InputType, OutputType>::StopThreads(void)
 
 	quitAndIncomingDataEvents.CloseEvent();
 
-
-
-
-
+// #if defined(SN_TARGET_PSP2)
+// 	RakNet::RakThread::DeallocRuntime(runtime);
+// 	runtime=0;
+// #endif
 
 }
 template <class InputType, class OutputType>

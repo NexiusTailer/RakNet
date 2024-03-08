@@ -180,6 +180,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 
 
 
+
 	errorCode = RakNet::RakThread::Create(UpdateTCPInterfaceLoop, this, threadPriority);
 
 
@@ -330,6 +331,7 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 
 		// Start the connection thread
 		int errorCode;
+
 
 
 
@@ -765,7 +767,13 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, 
 
 RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
 {
+
+
+
 	TCPInterface::ThisPtrPlusSysAddr *s = (TCPInterface::ThisPtrPlusSysAddr *) arguments;
+
+
+
 	SystemAddress systemAddress = s->systemAddress;
 	TCPInterface *tcpInterface = s->tcpInterface;
 	int newRemoteClientIndex=systemAddress.systemIndex;
@@ -798,12 +806,21 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
 		tcpInterface->completedConnectionAttemptMutex.Unlock();
 	}	
 
+
+
+
 	return 0;
+
 }
 
 RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 {
+
+
+
 	TCPInterface * sts = ( TCPInterface * ) arguments;
+
+
 //	const int BUFF_SIZE=8096;
 	const unsigned int BUFF_SIZE=1048576;
 	//char data[ BUFF_SIZE ];
@@ -822,11 +839,13 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 
 	int len;
 	SOCKET newSock;
+	int selectResult;
+
 
 	timeval tv;
-	int selectResult;
 	tv.tv_sec=0;
 	tv.tv_usec=30000;
+
 
 	while (sts->isStarted)
 	{
@@ -863,8 +882,10 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 
 
 		// Linux' select__() implementation changes the timeout
+
 		tv.tv_sec=0;
 		tv.tv_usec=30000;
+
 
 		while (1)
 		{
@@ -902,7 +923,12 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 #ifdef _MSC_VER
 #pragma warning( disable : 4244 ) // warning C4127: conditional expression is constant
 #endif
+
+
 			selectResult=(int) select__(largestDescriptor+1, &readFD, &writeFD, &exceptionFD, &tv);		
+
+
+
 
 			if (selectResult<=0)
 				break;
@@ -1085,7 +1111,11 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 
 	rakFree_Ex(data,_FILE_AND_LINE_);
 
+
+
+
 	return 0;
+
 }
 
 void RemoteClient::SetActive(bool a)

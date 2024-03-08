@@ -36,6 +36,11 @@ void SignaledEvent::InitEvent(void)
 
 
 
+
+
+
+
+
 #else
 
 #if !defined(ANDROID)
@@ -61,6 +66,11 @@ void SignaledEvent::CloseEvent(void)
 
 
 
+
+
+
+
+
 #else
 	pthread_cond_destroy(&eventList);
 	pthread_mutex_destroy(&hMutex);
@@ -75,6 +85,9 @@ void SignaledEvent::SetEvent(void)
 {
 #ifdef _WIN32
 	::SetEvent(eventList);
+
+
+
 
 
 
@@ -103,6 +116,19 @@ void SignaledEvent::WaitOnEvent(int timeoutMs)
 //		false,
 //		timeoutMs);
 	WaitForSingleObject(eventList,timeoutMs);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

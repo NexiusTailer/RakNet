@@ -504,8 +504,15 @@ HTTPConnection: GET command fixed for some webservers.
 Misc project changes: Fix RakVoice FMOD sample. Link against PGSQL 9.0 by default. Fix SQLite3Plugin Matrices project.
 4.031 (8/18/2011)
 ReplicaManager3: Fix BroadcastDestructionList. Objects were not being deleted due to a change in 4.03.
-RakPeer: Fix memory leak with discarded sequenced messages that were split (larger than the MTU).
+RakPeer: Fix memory leak introduced in 4.03 with discarded sequenced messages that were split (larger than the MTU).
 SystemAddress: Fixed comparison between a value set from a string and an internal value with the same IP.
+4.033 (9/15/2011)
+ConnectionGraph2: Fix crash on connection lost
+RakPeer: Reduced default memory usage. Fixed ID_ADVERTISE_SYSTEM allocating 1 byte too long. UNRELIABLE_WITH_ACK_RECEIPT now works.
+PS3: Add hasInvitationInfo to Notification_Console_Accepted_Room_Invite_PS3
+Vita: Stopped using ultthread, which was causing threading errors.
+XBOX 360: Host migration caused by unplugging router is now asynch (TCR fix). Console_SearchRoom now has a minOpenSlots parameter.
+ReplicaManager3: Increased RM3_NUM_OUTPUT_BITSTREAM_CHANNELS to 16
 </pre>
 <BR>
 </p></TD></TR></TABLE>

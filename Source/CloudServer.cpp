@@ -1480,7 +1480,7 @@ void CloudServer::OnServerDataChanged( Packet *packet )
 		return;
 
 	// Find everyone that cares about this change and relay
-	bool wasUpdated;
+	bool wasUpdated=false;
 	bsIn.Read(wasUpdated);
 	CloudQueryRow row;
 	row.Serialize(false, &bsIn, this);

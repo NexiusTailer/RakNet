@@ -98,7 +98,7 @@ void StringTable::EncodeString( const char *input, int maxCharsToWrite, RakNet::
 
 bool StringTable::DecodeString( char *output, int maxCharsToWrite, RakNet::BitStream *input )
 {
-	bool hasIndex;
+	bool hasIndex=false;
 	RakAssert(maxCharsToWrite>0);
 
 	if (maxCharsToWrite==0)

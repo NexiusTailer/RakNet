@@ -10,6 +10,7 @@
 #include "DS_OrderedList.h"
 #include "LinuxStrings.h"
 #include "SocketDefines.h"
+#include "VitaIncludes.h"
 
 using namespace RakNet;
 static const unsigned short DEFAULT_MAX_FORWARD_ENTRIES=64;
@@ -78,6 +79,7 @@ void UDPForwarder::Startup(void)
 
 
 
+
 	errorCode = RakNet::RakThread::Create(UpdateUDPForwarder, this);
 
 	if ( errorCode != 0 )
@@ -126,10 +128,13 @@ void UDPForwarder::UpdateThreaded_Old(void)
 	//fd_set exceptionFD;
 	FD_ZERO(&readFD);
 	//	FD_ZERO(&exceptionFD);
-	timeval tv;
 	int selectResult;
+
+
+	timeval tv;
 	tv.tv_sec=0;
 	tv.tv_usec=0;
+
 
 	RakNet::TimeMS curTime = RakNet::GetTimeMS();
 
@@ -165,7 +170,11 @@ void UDPForwarder::UpdateThreaded_Old(void)
 			largestDescriptor = forwardList[i]->socket;
 	}
 
+
 	selectResult=(int) select__((int) largestDescriptor+1, &readFD, 0, 0, &tv);
+
+
+
 
 	char data[ MAXIMUM_MTU_SIZE ];
 	sockaddr_in sa;
@@ -534,7 +543,11 @@ UDPForwarderResult UDPForwarder::AddForwardingEntry(SrcAndDest srcAndDest, RakNe
 
 		if (forceHostAddress && forceHostAddress[0])
 		{
+
+
+
 			listenerSocketAddress.sin_addr.s_addr = inet_addr__( forceHostAddress );
+
 		}
 		else
 		{
@@ -704,7 +717,12 @@ void UDPForwarder::StopForwardingThreaded(SystemAddress source, SystemAddress de
 #ifdef UDP_FORWARDER_EXECUTE_THREADED
 RAK_THREAD_DECLARATION(UpdateUDPForwarder)
 {
+
+
+
 	UDPForwarder * udpForwarder = ( UDPForwarder * ) arguments;
+
+
 	udpForwarder->threadRunning=true;
 	UDPForwarder::ThreadOperation threadOperation;
 	while (udpForwarder->isRunning)
@@ -745,7 +763,13 @@ RAK_THREAD_DECLARATION(UpdateUDPForwarder)
 		RakSleep(0);
 	}
 	udpForwarder->threadRunning=false;
+	
+
+
+
 	return 0;
+
+
 }
 #endif
 

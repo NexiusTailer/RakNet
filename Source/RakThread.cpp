@@ -30,6 +30,7 @@ int RakThread::Create( LPTHREAD_START_ROUTINE start_address, void *arglist, int 
 int RakThread::Create( unsigned __stdcall start_address( void* ), void *arglist, int priority)
 
 
+
 #else
 int RakThread::Create( void* start_address( void* ), void *arglist, int priority)
 #endif
@@ -76,6 +77,25 @@ int RakThread::Create( void* start_address( void* ), void *arglist, int priority
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #else
 	pthread_t threadHandle;
 	// Create thread linux
@@ -97,6 +117,14 @@ int RakThread::Create( void* start_address( void* ), void *arglist, int priority
 	return res;
 #endif
 }
+
+
+
+
+
+
+
+
 
 
 

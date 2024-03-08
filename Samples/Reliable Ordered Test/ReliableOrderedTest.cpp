@@ -126,14 +126,14 @@ int main(int argc, char **argv)
 
 		printf("Connecting...\n");
 		RakNet::SocketDescriptor socketDescriptor(localPort,0);
-		sender->Startup(1, &socketDescriptor, 1);
-		sender->ApplyNetworkSimulator(.2, 0, 0);
+		sender->Startup(8, &socketDescriptor, 1);
+		// sender->ApplyNetworkSimulator(.2, 0, 0);
 		sender->Connect(ip, remotePort, 0, 0);
 	}
 	else
 	{
 		receiver = RakNet::RakPeerInterface::GetInstance();
-		receiver->ApplyNetworkSimulator(.2, 0, 0);
+		// receiver->ApplyNetworkSimulator(.2, 0, 0);
 		sender=0;
 
 		printf("Enter local port: ");
@@ -144,8 +144,8 @@ int main(int argc, char **argv)
 
 		printf("Waiting for connections...\n");
 		RakNet::SocketDescriptor socketDescriptor(localPort,0);
-		receiver->Startup(1, &socketDescriptor, 1);
-		receiver->SetMaximumIncomingConnections(32);
+		receiver->Startup(8, &socketDescriptor, 1);
+		receiver->SetMaximumIncomingConnections(8);
 	}
 
 	seedMT(1);

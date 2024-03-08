@@ -152,6 +152,17 @@
 #define XBOX_BYPASS_SECURITY 1
 #endif
 
+// Controls how many allocations occur at once for the memory pool of incoming datagrams waiting to be transferred between the recvfrom thread and the main update thread
+// Has large effect on memory usage, per instance of RakPeer. Approximately MAXIMUM_MTU_SIZE*BUFFERED_PACKETS_PAGE_SIZE bytes, once after calling RakPeer::Startup()
+#ifndef BUFFERED_PACKETS_PAGE_SIZE
+#define BUFFERED_PACKETS_PAGE_SIZE 8
+#endif
+
+// Controls how many allocations occur at once for the memory pool of incoming or outgoing datagrams.
+// Has small effect on memory usage per connection. Uses about 256 bytes*INTERNAL_PACKET_PAGE_SIZE per connection
+#ifndef INTERNAL_PACKET_PAGE_SIZE
+#define INTERNAL_PACKET_PAGE_SIZE 8
+#endif
 
 //#define USE_THREADED_SEND
 

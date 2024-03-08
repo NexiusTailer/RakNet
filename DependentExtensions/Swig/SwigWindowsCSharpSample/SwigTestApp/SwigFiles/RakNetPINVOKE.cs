@@ -588,6 +588,12 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_XBOX_BYPASS_SECURITY_get")]
   public static extern int XBOX_BYPASS_SECURITY_get();
 
+  [DllImport("RakNet", EntryPoint="CSharp_BUFFERED_PACKETS_PAGE_SIZE_get")]
+  public static extern int BUFFERED_PACKETS_PAGE_SIZE_get();
+
+  [DllImport("RakNet", EntryPoint="CSharp_INTERNAL_PACKET_PAGE_SIZE_get")]
+  public static extern int INTERNAL_PACKET_PAGE_SIZE_get();
+
   [DllImport("RakNet", EntryPoint="CSharp_LIBCAT_SECURITY_get")]
   public static extern int LIBCAT_SECURITY_get();
 

@@ -657,7 +657,7 @@ bool BitStream::ReadCompressed( unsigned char* inOutByteArray,
 	if ( readOffset + 1 > numberOfBitsUsed )
 		return false;
 
-	bool b;
+	bool b=false;
 
 	if ( Read( b ) == false )
 		return false;
@@ -707,6 +707,7 @@ void BitStream::AddBitsAndReallocate( const BitSize_t numberOfBitsToWrite )
 			if (amountToAllocate > BITSTREAM_STACK_ALLOCATION_SIZE)
 			{
 				data = ( unsigned char* ) rakMalloc_Ex( (size_t) amountToAllocate, _FILE_AND_LINE_ );
+				RakAssert(data);
 
 				// need to copy the stack data over to our new memory area too
 				memcpy ((void *)data, (void *)stackData, (size_t) BITS_TO_BYTES( numberOfBitsAllocated )); 
