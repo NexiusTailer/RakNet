@@ -394,7 +394,7 @@ void BallReplica::PostDeserializeConstruction(RakNet::BitStream *constructionBit
 	demo->shootFromOrigin(position, shotDirection);
 
 	// Find the owner of this ball, and make them play the attack animation
-	DataStructures::DefaultIndexType idx;
+	unsigned int idx;
 	for (idx=0; idx < PlayerReplica::playerList.GetSize(); idx++)
 	{
 		if (PlayerReplica::playerList[idx]->creatingSystemGUID==creatingSystemGUID)

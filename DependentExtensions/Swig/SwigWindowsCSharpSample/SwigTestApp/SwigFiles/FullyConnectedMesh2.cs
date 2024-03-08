@@ -119,8 +119,8 @@ public class FullyConnectedMesh2 : PluginInterface2 {
     return ret;
   }
 
-  public void GetParticipantCount(out uint participantListSize) {
-    RakNetPINVOKE.FullyConnectedMesh2_GetParticipantCount__SWIG_1(swigCPtr, out participantListSize);
+  public void GetParticipantCount(SWIGTYPE_p_unsigned_int participantListSize) {
+    RakNetPINVOKE.FullyConnectedMesh2_GetParticipantCount__SWIG_1(swigCPtr, SWIGTYPE_p_unsigned_int.getCPtr(participantListSize));
   }
 
   public uint GetTotalConnectionCount() {

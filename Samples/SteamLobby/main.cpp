@@ -305,7 +305,7 @@ int main(int argc, char **argv)
 				{
 					DataStructures::OrderedList<uint64_t, uint64_t> roomMembers;
 					lobby2Client->GetRoomMembers(roomMembers);
-					for (DataStructures::DefaultIndexType i=0; i < roomMembers.Size(); i++)
+					for (unsigned int i=0; i < roomMembers.Size(); i++)
 					{
 						printf("%i. %s ID=%"PRINTF_64_BIT_MODIFIER"u\n", i+1, lobby2Client->GetRoomMemberName(roomMembers[i]), roomMembers[i]);
 					}

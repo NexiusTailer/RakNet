@@ -103,7 +103,7 @@ int main()
 			ch=getch();
 			if (ch==' ')
 			{
-				DataStructures::DefaultIndexType participantList;
+				unsigned int participantList;
 				RakNetGUID hostGuid;
 				bool weAreHost;
 				for (int i=0; i < NUM_PEERS; i++)

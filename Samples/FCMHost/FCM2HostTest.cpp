@@ -123,7 +123,7 @@ int main()
 			ch=getch();
 			if (ch==' ')
 			{
-				DataStructures::DefaultIndexType participantList;
+				unsigned int participantList;
 				fcm2.GetParticipantCount(&participantList);
 				printf("participantList=%i\n",participantList);
 			}

@@ -7,19 +7,20 @@ SQLite3Table::SQLite3Table()
 }
 SQLite3Table::~SQLite3Table()
 {
-	rows.ClearPointers(true,_FILE_AND_LINE_);
+	for (unsigned int i=0; i < rows.Size(); i++)
+		RakNet::OP_DELETE(rows[i],_FILE_AND_LINE_);
 }
 
 void SQLite3Table::Serialize(RakNet::BitStream *bitStream)
 {
-	bitStream->Write(columnNames.GetSize());
-	DataStructures::DefaultIndexType idx1, idx2;
-	for (idx1=0; idx1 < columnNames.GetSize(); idx1++)
+	bitStream->Write(columnNames.Size());
+	unsigned int idx1, idx2;
+	for (idx1=0; idx1 < columnNames.Size(); idx1++)
 		bitStream->Write(columnNames[idx1]);
-	bitStream->Write(rows.GetSize());
-	for (idx1=0; idx1 < rows.GetSize(); idx1++)
+	bitStream->Write(rows.Size());
+	for (idx1=0; idx1 < rows.Size(); idx1++)
 	{
-		for (idx2=0; idx2 < rows[idx1]->entries.GetSize(); idx2++)
+		for (idx2=0; idx2 < rows[idx1]->entries.Size(); idx2++)
 		{
 			bitStream->Write(rows[idx1]->entries[idx2]);
 		}
@@ -27,12 +28,14 @@ void SQLite3Table::Serialize(RakNet::BitStream *bitStream)
 }
 void SQLite3Table::Deserialize(RakNet::BitStream *bitStream)
 {
-	rows.ClearPointers(true,_FILE_AND_LINE_);
+	for (unsigned int i=0; i < rows.Size(); i++)
+		RakNet::OP_DELETE(rows[i],_FILE_AND_LINE_);
+	rows.Clear(true,_FILE_AND_LINE_);
 	columnNames.Clear(true , _FILE_AND_LINE_ );
 
-	DataStructures::DefaultIndexType numColumns, numRows;
+	unsigned int numColumns, numRows;
 	bitStream->Read(numColumns);
-	DataStructures::DefaultIndexType idx1,idx2;
+	unsigned int idx1,idx2;
 	RakNet::RakString inputStr;
 	for (idx1=0; idx1 < numColumns; idx1++)
 	{

@@ -15,8 +15,30 @@
 using namespace RakNet;
 static const unsigned short DEFAULT_MAX_FORWARD_ENTRIES=64;
 
-RAK_THREAD_DECLARATION(UpdateUDPForwarder);
+#ifdef UDP_FORWARDER_EXECUTE_THREADED
+namespace RakNet
+{
+	RAK_THREAD_DECLARATION(UpdateUDPForwarder);
+}
+#endif
 
+int UDPForwarder::SrcAndDestForwardEntryComp( const UDPForwarder::SrcAndDest &inputKey, UDPForwarder::ForwardEntry * const &cls )
+{
+	if (inputKey.source < cls->srcAndDest.source)
+		return -1;
+
+	if (inputKey.source > cls->srcAndDest.source)
+		return 1;
+
+	if (inputKey.dest < cls->srcAndDest.dest)
+		return -1;
+
+	if (inputKey.dest > cls->srcAndDest.dest)
+		return 1;
+
+	return 0;
+}
+/*
 bool operator<( const DataStructures::MLKeyRef<UDPForwarder::SrcAndDest> &inputKey, const UDPForwarder::ForwardEntry *cls )
 {
 	return inputKey.Get().source < cls->srcAndDest.source ||
@@ -31,6 +53,7 @@ bool operator==( const DataStructures::MLKeyRef<UDPForwarder::SrcAndDest> &input
 {
 	return inputKey.Get().source == cls->srcAndDest.source && inputKey.Get().dest == cls->srcAndDest.dest;
 }
+*/
 
 
 UDPForwarder::ForwardEntry::ForwardEntry() {socket=INVALID_SOCKET; timeLastDatagramForwarded=RakNet::GetTimeMS(); updatedSourcePort=false; updatedDestPort=false;}
@@ -104,7 +127,10 @@ void UDPForwarder::Shutdown(void)
 		RakSleep(30);
 #endif
 
-	forwardList.ClearPointers(true,_FILE_AND_LINE_);
+	unsigned int j;
+	for (j=0; j < forwardList.Size(); j++)
+		RakNet::OP_DELETE(forwardList[j],_FILE_AND_LINE_);
+	forwardList.Clear(false, _FILE_AND_LINE_);
 
 
 
@@ -139,26 +165,26 @@ void UDPForwarder::UpdateThreaded_Old(void)
 	RakNet::TimeMS curTime = RakNet::GetTimeMS();
 
 	SOCKET largestDescriptor=0;
-	DataStructures::DefaultIndexType i;
+	unsigned int i;
 
 	// Remove unused entries
 	i=0;
-	while (i < forwardList.GetSize())
+	while (i < forwardList.Size())
 	{
 		if (curTime > forwardList[i]->timeLastDatagramForwarded && // Account for timestamp wrap
 			curTime > forwardList[i]->timeLastDatagramForwarded+forwardList[i]->timeoutOnNoDataMS)
 		{
 			RakNet::OP_DELETE(forwardList[i],_FILE_AND_LINE_);
-			forwardList.RemoveAtIndex(i,_FILE_AND_LINE_);
+			forwardList.RemoveAtIndex(i);
 		}
 		else
 			i++;
 	}
 
-	if (forwardList.GetSize()==0)
+	if (forwardList.Size()==0)
 		return;
 
-	for (i=0; i < forwardList.GetSize(); i++)
+	for (i=0; i < forwardList.Size(); i++)
 	{
 #ifdef _MSC_VER
 #pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
@@ -185,7 +211,7 @@ void UDPForwarder::UpdateThreaded_Old(void)
 		DataStructures::Queue<ForwardEntry*> entriesToRead;
 		ForwardEntry *forwardEntry;
 
-		for (i=0; i < forwardList.GetSize(); i++)
+		for (i=0; i < forwardList.Size(); i++)
 		{
 			forwardEntry = forwardList[i];
 			// I do this because I'm updating the forwardList, and don't want to lose FD_ISSET as the list is no longer in order
@@ -232,12 +258,16 @@ void UDPForwarder::UpdateThreaded_Old(void)
 
 				if (forwardEntry->srcAndDest.source.GetPort()!=portnum)
 				{
-					DataStructures::DefaultIndexType index;
+					unsigned int index;
 					SrcAndDest srcAndDest(forwardEntry->srcAndDest.dest, forwardEntry->srcAndDest.source);
-					index=forwardList.GetIndexOf(srcAndDest);
-					forwardList.RemoveAtIndex(index,_FILE_AND_LINE_);
+					bool objectExists;
+					index = forwardList.GetIndexFromKey(srcAndDest, &objectExists);
+					if (objectExists)
+					{
+						forwardList.RemoveAtIndex(index);
+					}
 					forwardEntry->srcAndDest.source.SetPort(portnum);
-					forwardList.Push(forwardEntry,forwardEntry->srcAndDest,_FILE_AND_LINE_);
+					forwardList.Insert(forwardEntry->srcAndDest,forwardEntry,true,_FILE_AND_LINE_);
 				}
 			}
 
@@ -266,12 +296,16 @@ void UDPForwarder::UpdateThreaded_Old(void)
 
 				if (forwardEntry->srcAndDest.dest.GetPort()!=portnum)
 				{
-					DataStructures::DefaultIndexType index;
+					unsigned int index;
 					SrcAndDest srcAndDest(forwardEntry->srcAndDest.source, forwardEntry->srcAndDest.dest);
-					index=forwardList.GetIndexOf(srcAndDest);
-					forwardList.RemoveAtIndex(index,_FILE_AND_LINE_);
+					bool objectExists;
+					index = forwardList.GetIndexFromKey(srcAndDest, &objectExists);
+					if (objectExists)
+					{
+						forwardList.RemoveAtIndex(index);
+					}
 					forwardEntry->srcAndDest.dest.SetPort(portnum);
-					forwardList.Push(forwardEntry,forwardEntry->srcAndDest,_FILE_AND_LINE_);
+					forwardList.Insert(forwardEntry->srcAndDest,forwardEntry,true,_FILE_AND_LINE_);
 				}
 			}
 
@@ -311,26 +345,26 @@ void UDPForwarder::UpdateThreaded(void)
 	RakNet::TimeMS curTime = RakNet::GetTimeMS();
 
 	SOCKET largestDescriptor=0;
-	DataStructures::DefaultIndexType i;
+	unsigned int i;
 
 	// Remove unused entries
 	i=0;
-	while (i < forwardList.GetSize())
+	while (i < forwardList.Size())
 	{
 		if (curTime > forwardList[i]->timeLastDatagramForwarded && // Account for timestamp wrap
 			curTime > forwardList[i]->timeLastDatagramForwarded+forwardList[i]->timeoutOnNoDataMS)
 		{
 			RakNet::OP_DELETE(forwardList[i],_FILE_AND_LINE_);
-			forwardList.RemoveAtIndex(i,_FILE_AND_LINE_);
+			forwardList.RemoveAtIndex(i);
 		}
 		else
 			i++;
 	}
 
-	if (forwardList.GetSize()==0)
+	if (forwardList.Size()==0)
 		return;
 
-	for (i=0; i < forwardList.GetSize(); i++)
+	for (i=0; i < forwardList.Size(); i++)
 	{
 #ifdef _MSC_VER
 #pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
@@ -360,7 +394,7 @@ void UDPForwarder::UpdateThreaded(void)
 		DataStructures::Queue<ForwardEntry*> entriesToRead;
 		ForwardEntry *forwardEntry;
 
-		for (i=0; i < forwardList.GetSize(); i++)
+		for (i=0; i < forwardList.Size(); i++)
 		{
 			forwardEntry = forwardList[i];
 			// I do this because I'm updating the forwardList, and don't want to lose FD_ISSET as the list is no longer in order
@@ -418,10 +452,11 @@ void UDPForwarder::UpdateThreaded(void)
 
 				if (forwardEntry->srcAndDest.source.GetPort()!=receivedAddr.GetPort())
 				{
-					DataStructures::DefaultIndexType index;
+					unsigned int index;
 					SrcAndDest srcAndDest(forwardEntry->srcAndDest.dest, forwardEntry->srcAndDest.source);
-					index=forwardList.GetIndexOf(srcAndDest);
-					forwardList.RemoveAtIndex(index,_FILE_AND_LINE_);
+					bool objectExists;
+					index=forwardList.GetIndexFromKey(srcAndDest, &objectExists);
+					forwardList.RemoveAtIndex(index);
 					forwardEntry->srcAndDest.source.SetPort(receivedAddr.GetPort());
 					forwardList.Push(forwardEntry,forwardEntry->srcAndDest,_FILE_AND_LINE_);
 				}
@@ -461,10 +496,10 @@ void UDPForwarder::UpdateThreaded(void)
 
 				if (forwardEntry->srcAndDest.dest.GetPort()!=receivedAddr.GetPort())
 				{
-					DataStructures::DefaultIndexType index;
+					unsigned int index;
 					SrcAndDest srcAndDest(forwardEntry->srcAndDest.source, forwardEntry->srcAndDest.dest);
 					index=forwardList.GetIndexOf(srcAndDest);
-					forwardList.RemoveAtIndex(index,_FILE_AND_LINE_);
+					forwardList.RemoveAtIndex(index);
 					forwardEntry->srcAndDest.dest.SetPort(receivedAddr.GetPort());
 					forwardList.Push(forwardEntry,forwardEntry->srcAndDest,_FILE_AND_LINE_);
 				}
@@ -510,15 +545,16 @@ int UDPForwarder::GetMaxForwardEntries(void) const
 }
 int UDPForwarder::GetUsedForwardEntries(void) const
 {
-	return (int) forwardList.GetSize();
+	return (int) forwardList.Size();
 }
 UDPForwarderResult UDPForwarder::AddForwardingEntry(SrcAndDest srcAndDest, RakNet::TimeMS timeoutOnNoDataMS, unsigned short *port, const char *forceHostAddress, short socketFamily)
 {
 	(void) socketFamily;
 
-	DataStructures::DefaultIndexType insertionIndex;
-	insertionIndex = forwardList.GetInsertionIndex(srcAndDest);
-	if (insertionIndex!=(DataStructures::DefaultIndexType)-1)
+	unsigned int insertionIndex;
+	bool objectExists;
+	insertionIndex = forwardList.GetIndexFromKey(srcAndDest, &objectExists);
+	if (objectExists==false)
 	{
 #if RAKNET_SUPPORT_IPV6!=1
 		int sock_opt;
@@ -619,9 +655,9 @@ UDPForwarderResult UDPForwarder::AddForwardingEntry(SrcAndDest srcAndDest, RakNe
 		setsockopt__(fe->socket, SOL_SOCKET, SO_LINGER, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 #endif // #if RAKNET_SUPPORT_IPV6!=1
 
-//		DataStructures::DefaultIndexType oldSize = forwardList.GetSize();
+//		unsigned int oldSize = forwardList.Size();
 		forwardList.InsertAtIndex(fe,insertionIndex,_FILE_AND_LINE_);
-		RakAssert(forwardList.GetIndexOf(fe->srcAndDest)!=(unsigned int) -1);
+		// RakAssert(forwardList.GetIndexOf(fe->srcAndDest)!=(unsigned int) -1);
 		*port = SocketLayer::GetLocalPort ( fe->socket );
 		return UDPFORWARDER_SUCCESS;
 	}
@@ -681,9 +717,10 @@ UDPForwarderResult UDPForwarder::StartForwardingThreaded(SystemAddress source, S
 
 	if (*forwardingSocket)
 	{
-		DataStructures::DefaultIndexType idx;
-		idx = forwardList.GetIndexOf(srcAndDest);
-
+		unsigned int idx;
+		bool objectExists;
+		idx = forwardList.GetIndexFromKey(srcAndDest, &objectExists);
+		RakAssert(objectExists);
 		*forwardingSocket=forwardList[idx]->socket;
 	}
 
@@ -707,13 +744,15 @@ void UDPForwarder::StopForwardingThreaded(SystemAddress source, SystemAddress de
 {
 	SrcAndDest srcAndDest(destination,source);
 
-	DataStructures::DefaultIndexType idx = forwardList.GetIndexOf(srcAndDest);
-	if (idx!=(DataStructures::DefaultIndexType)-1)
+	bool objectExists;
+	unsigned int idx = forwardList.GetIndexFromKey(srcAndDest, &objectExists);
+	if (objectExists)
 	{
 		RakNet::OP_DELETE(forwardList[idx],_FILE_AND_LINE_);
-		forwardList.RemoveAtIndex(idx,_FILE_AND_LINE_);
+		forwardList.RemoveAtIndex(idx);
 	}
 }
+namespace RakNet {
 #ifdef UDP_FORWARDER_EXECUTE_THREADED
 RAK_THREAD_DECLARATION(UpdateUDPForwarder)
 {
@@ -771,6 +810,7 @@ RAK_THREAD_DECLARATION(UpdateUDPForwarder)
 
 
 }
+} // namespace RakNet
 #endif
 
 #endif // #if _RAKNET_SUPPORT_FileOperations==1

@@ -249,7 +249,7 @@ int RakNet::SplitPacketChannelComp( SplitPacketIdType const &key, SplitPacketCha
 }
 
 // DEFINE_MULTILIST_PTR_TO_MEMBER_COMPARISONS( InternalPacket, SplitPacketIndexType, splitPacketIndex )
-
+/*
 bool operator<( const DataStructures::MLKeyRef<SplitPacketIndexType> &inputKey, const InternalPacket *cls )
 {
 	return inputKey.Get() < cls->splitPacketIndex;
@@ -275,6 +275,7 @@ bool operator==( const DataStructures::MLKeyRef<InternalPacket *> &inputKey, con
 {
 	return inputKey.Get()->splitPacketIndex == cls->splitPacketIndex;
 }
+*/
 
 int SplitPacketIndexComp( SplitPacketIndexType const &key, InternalPacket* const &data )
 {

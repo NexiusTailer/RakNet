@@ -19,20 +19,20 @@ void SQLite3PluginResultInterface_Printf::_sqlite3_exec(
 		return;
 	}
 
-	DataStructures::DefaultIndexType idx;
-	for (idx=0; idx < table.columnNames.GetSize(); idx++)
+	unsigned int idx;
+	for (idx=0; idx < table.columnNames.Size(); idx++)
 		printf("%s ", table.columnNames[idx].C_String());
 	printf("\n");
-	if (table.rows.GetSize()==0)
+	if (table.rows.Size()==0)
 	{
 		printf("<NO ROWS>\n");
 	}
 	else
 	{
-		for (idx=0; idx < table.rows.GetSize(); idx++)
+		for (idx=0; idx < table.rows.Size(); idx++)
 		{
-			DataStructures::DefaultIndexType idx2;
-			for (idx2=0; idx2 < table.rows[idx]->entries.GetSize(); idx2++)
+			unsigned int idx2;
+			for (idx2=0; idx2 < table.rows[idx]->entries.Size(); idx2++)
 				printf("%s ", table.rows[idx]->entries[idx2].C_String());
 			printf("\n");
 		}
@@ -58,9 +58,9 @@ void SQLite3ClientPlugin::AddResultHandler(SQLite3PluginResultInterface *res)
 }
 void SQLite3ClientPlugin::RemoveResultHandler(SQLite3PluginResultInterface *res)
 {
-	DataStructures::DefaultIndexType idx = resultHandlers.GetIndexOf(res);
+	unsigned int idx = resultHandlers.GetIndexOf(res);
 	if (idx!=-1)
-		resultHandlers.RemoveAtIndex(idx,_FILE_AND_LINE_);
+		resultHandlers.RemoveAtIndex(idx);
 }
 void SQLite3ClientPlugin::ClearResultHandlers(void)
 {
@@ -111,8 +111,8 @@ PluginReceiveResult SQLite3ClientPlugin::OnReceive(Packet *packet)
 				bsIn.Read(errorMsgStr);
 				inputTable.Deserialize(&bsIn);
 
-				DataStructures::DefaultIndexType idx;
-				for (idx=0; idx < resultHandlers.GetSize(); idx++)
+				unsigned int idx;
+				for (idx=0; idx < resultHandlers.Size(); idx++)
 					resultHandlers[idx]->_sqlite3_exec(inputStatement, queryId, dbIdentifier, inputTable,errorMsgStr);
 			}
 
@@ -129,8 +129,8 @@ PluginReceiveResult SQLite3ClientPlugin::OnReceive(Packet *packet)
 			bsIn.Read(queryId);
 			bsIn.Read(dbIdentifier);
 			bsIn.Read(inputStatement);
-			DataStructures::DefaultIndexType idx;
-			for (idx=0; idx < resultHandlers.GetSize(); idx++)
+			unsigned int idx;
+			for (idx=0; idx < resultHandlers.Size(); idx++)
 				resultHandlers[idx]->OnUnknownDBIdentifier(inputStatement, queryId, dbIdentifier);
 		}
 	}

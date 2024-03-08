@@ -247,6 +247,7 @@ enum Lobby2ResultCode
 	L2RC_Console_SignIntoRoom_NO_USERS,
 	L2RC_Console_SignIntoRoom_NO_SUCH_ROOM,
 	L2RC_Console_SignIntoRoom_JOIN_ILLEGAL,
+	L2RC_Console_SignIntoRoom_REMOTE_JOIN_FAILED,
 	L2RC_Console_JoinRoom_ROOM_FULL,
 	L2RC_Console_JoinRoom_WRONG_PASSWORD,
 	L2RC_Console_JoinRoom_NO_SUCH_ROOM,

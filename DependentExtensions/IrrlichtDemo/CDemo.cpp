@@ -1162,7 +1162,7 @@ void CDemo::UpdateRakNet(void)
 	// Call the Update function for networked game objects added to BaseIrrlichtReplica once the game is ready
 	if (currentScene>=1)
 	{
-		DataStructures::DefaultIndexType idx;
+		unsigned int idx;
 		for (idx=0; idx < replicaManager3->GetReplicaCount(); idx++)
 			((BaseIrrlichtReplica*)(replicaManager3->GetReplicaAtIndex(idx)))->Update(curTime);;
 	}	

@@ -444,10 +444,10 @@ int main(void)
 					uint32_t msgNumber;
 					memcpy(&msgNumber, packet->data+1, 4);
 
-					DataStructures::Multilist<ML_STACK, Replica3*> replicaListOut;
+					DataStructures::List<Replica3*> replicaListOut;
 					replicaManager.GetReplicasCreatedByMe(replicaListOut);
-					DataStructures::DefaultIndexType idx;
-					for (idx=0; idx < replicaListOut.GetSize(); idx++)
+					unsigned int idx;
+					for (idx=0; idx < replicaListOut.Size(); idx++)
 					{
 						((SampleReplica*)replicaListOut[idx])->NotifyReplicaOfMessageDeliveryStatus(packet->guid,msgNumber, packet->data[0]==ID_SND_RECEIPT_ACKED);
 					}
@@ -482,10 +482,10 @@ int main(void)
 			}
 			if (ch=='r' || ch=='R')
 			{
-				DataStructures::Multilist<ML_STACK, Replica3*> replicaListOut;
+				DataStructures::List<Replica3*> replicaListOut;
 				replicaManager.GetReplicasCreatedByMe(replicaListOut);
-				DataStructures::DefaultIndexType idx;
-				for (idx=0; idx < replicaListOut.GetSize(); idx++)
+				unsigned int idx;
+				for (idx=0; idx < replicaListOut.Size(); idx++)
 				{
 					((SampleReplica*)replicaListOut[idx])->RandomizeVariables();
 				}
@@ -493,13 +493,14 @@ int main(void)
 			if (ch=='d' || ch=='D')
 			{
 				printf("My objects destroyed.\n");
-				DataStructures::Multilist<ML_STACK, Replica3*> replicaListOut;
+				DataStructures::List<Replica3*> replicaListOut;
 				// The reason for ClearPointers is that in the sample, I don't track which objects have and have not been allocated at the application level. So ClearPointers will call delete on every object in the returned list, which is every object that the application has created. Another way to put it is
 				// 	A. Send a packet to tell other systems to delete these objects
 				// 	B. Delete these objects on my own system
 				replicaManager.GetReplicasCreatedByMe(replicaListOut);
 				replicaManager.BroadcastDestructionList(replicaListOut, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
-				replicaListOut.ClearPointers( true, _FILE_AND_LINE_ );
+				for (int i=0; i < replicaListOut.Size(); i++)
+					RakNet::OP_DELETE(replicaListOut[i], _FILE_AND_LINE_);
 			}
 
 		}

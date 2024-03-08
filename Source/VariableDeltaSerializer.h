@@ -126,9 +126,9 @@ public:
 	/// 
 	/// uint32_t msgNumber;
 	/// memcpy(&msgNumber, packet->data+1, 4);
-	/// DataStructures::Multilist<ML_STACK, Replica3*> replicaListOut;
+	/// DataStructures::List<Replica3*> replicaListOut;
 	/// replicaManager.GetReplicasCreatedByMe(replicaListOut);
-	/// DataStructures::DefaultIndexType idx;
+	/// unsigned int idx;
 	/// for (idx=0; idx < replicaListOut.GetSize(); idx++)
 	/// {
 	/// 	((SampleReplica*)replicaListOut[idx])->NotifyReplicaOfMessageDeliveryStatus(packet->guid,msgNumber, packet->data[0]==ID_SND_RECEIPT_ACKED);

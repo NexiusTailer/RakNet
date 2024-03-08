@@ -3319,7 +3319,7 @@ class RakNetPINVOKE {
   public static extern uint FullyConnectedMesh2_GetParticipantCount__SWIG_0(HandleRef jarg1);
 
   [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_GetParticipantCount__SWIG_1")]
-  public static extern void FullyConnectedMesh2_GetParticipantCount__SWIG_1(HandleRef jarg1, out uint jarg2);
+  public static extern void FullyConnectedMesh2_GetParticipantCount__SWIG_1(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_GetTotalConnectionCount")]
   public static extern uint FullyConnectedMesh2_GetTotalConnectionCount(HandleRef jarg1);
@@ -3423,8 +3423,8 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_GetMyTeam")]
   public static extern byte TeamBalancer_GetMyTeam(HandleRef jarg1, ulong jarg2);
 
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_SetAllowHostMigration")]
-  public static extern void TeamBalancer_SetAllowHostMigration(HandleRef jarg1, bool jarg2);
+  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_DeleteMember")]
+  public static extern void TeamBalancer_DeleteMember(HandleRef jarg1, ulong jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_delete_NatPunchthroughServerDebugInterface")]
   public static extern void delete_NatPunchthroughServerDebugInterface(HandleRef jarg1);
@@ -3512,48 +3512,6 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_StopForwarding")]
   public static extern void UDPForwarder_StopForwarding(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_threadOperationIncomingMutex_set")]
-  public static extern void UDPForwarder_threadOperationIncomingMutex_set(HandleRef jarg1, HandleRef jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_threadOperationIncomingMutex_get")]
-  public static extern IntPtr UDPForwarder_threadOperationIncomingMutex_get(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_threadOperationOutgoingMutex_set")]
-  public static extern void UDPForwarder_threadOperationOutgoingMutex_set(HandleRef jarg1, HandleRef jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_threadOperationOutgoingMutex_get")]
-  public static extern IntPtr UDPForwarder_threadOperationOutgoingMutex_get(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_UpdateThreaded_Old")]
-  public static extern void UDPForwarder_UpdateThreaded_Old(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_StartForwardingThreaded")]
-  public static extern int UDPForwarder_StartForwardingThreaded(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, uint jarg4, string jarg5, ushort jarg6, out ushort jarg7, out uint jarg8);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_StopForwardingThreaded")]
-  public static extern void UDPForwarder_StopForwardingThreaded(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_maxForwardEntries_set")]
-  public static extern void UDPForwarder_maxForwardEntries_set(HandleRef jarg1, ushort jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_maxForwardEntries_get")]
-  public static extern ushort UDPForwarder_maxForwardEntries_get(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_AddForwardingEntry")]
-  public static extern int UDPForwarder_AddForwardingEntry(HandleRef jarg1, HandleRef jarg2, uint jarg3, HandleRef jarg4, string jarg5, short jarg6);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_isRunning_set")]
-  public static extern void UDPForwarder_isRunning_set(HandleRef jarg1, bool jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_isRunning_get")]
-  public static extern bool UDPForwarder_isRunning_get(HandleRef jarg1);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_threadRunning_set")]
-  public static extern void UDPForwarder_threadRunning_set(HandleRef jarg1, bool jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_threadRunning_get")]
-  public static extern bool UDPForwarder_threadRunning_get(HandleRef jarg1);
 
   [DllImport("RakNet", EntryPoint="CSharp_new_UDPProxyServerResultHandler")]
   public static extern IntPtr new_UDPProxyServerResultHandler();

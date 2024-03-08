@@ -833,7 +833,7 @@ void SQLiteServerLoggerPlugin::Update(void)
 				}
 			}
 
-			DataStructures::DefaultIndexType idx;
+			unsigned int idx;
 			if (sessionManagementMode==USE_ANY_DB_HANDLE)
 			{
 				if (dbHandles.GetSize()>0)
@@ -952,7 +952,7 @@ PluginReceiveResult SQLiteServerLoggerPlugin::OnReceive(Packet *packet)
 				}
 			}
 
-			DataStructures::DefaultIndexType idx;
+			unsigned int idx;
 			if (sessionManagementMode==USE_ANY_DB_HANDLE)
 			{
 				if (dbHandles.GetSize()>0)

@@ -30,11 +30,13 @@ void UDPProxyServer::SetResultHandler(UDPProxyServerResultHandler *rh)
 }
 bool UDPProxyServer::LoginToCoordinator(RakNet::RakString password, SystemAddress coordinatorAddress)
 {
-	DataStructures::DefaultIndexType insertionIndex;
-	insertionIndex = loggingInCoordinators.GetInsertionIndex(coordinatorAddress);
-	if (insertionIndex==(DataStructures::DefaultIndexType)-1)
+	unsigned int insertionIndex;
+	bool objectExists;
+	insertionIndex=loggingInCoordinators.GetIndexFromKey(coordinatorAddress,&objectExists);
+	if (objectExists==true)
 		return false;
-	if (loggedInCoordinators.GetInsertionIndex(coordinatorAddress)==(DataStructures::DefaultIndexType)-1)
+	loggedInCoordinators.GetIndexFromKey(coordinatorAddress,&objectExists);
+	if (objectExists==true)
 		return false;
 	RakNet::BitStream outgoingBs;
 	outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
@@ -54,10 +56,12 @@ PluginReceiveResult UDPProxyServer::OnReceive(Packet *packet)
 
 	if (packet->data[0]==ID_UDP_PROXY_GENERAL && packet->length>1)
 	{
+		bool objectExists;
+
 		switch (packet->data[1])
 		{
 		case ID_UDP_PROXY_FORWARDING_REQUEST_FROM_COORDINATOR_TO_SERVER:
-			if (loggedInCoordinators.GetIndexOf(packet->systemAddress)!=(DataStructures::DefaultIndexType)-1)
+			if (loggedInCoordinators.GetIndexFromKey(packet->systemAddress, &objectExists)!=(unsigned int)-1)
 			{
 				OnForwardingRequestFromCoordinatorToServer(packet);
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -68,10 +72,10 @@ PluginReceiveResult UDPProxyServer::OnReceive(Packet *packet)
 		case ID_UDP_PROXY_ALREADY_LOGGED_IN_FROM_COORDINATOR_TO_SERVER:
 		case ID_UDP_PROXY_LOGIN_SUCCESS_FROM_COORDINATOR_TO_SERVER:
 			{
-				DataStructures::DefaultIndexType removalIndex = loggingInCoordinators.GetIndexOf(packet->systemAddress);
-				if (removalIndex!=(DataStructures::DefaultIndexType)-1)
+				unsigned int removalIndex = loggingInCoordinators.GetIndexFromKey(packet->systemAddress, &objectExists);
+				if (objectExists)
 				{
-					loggingInCoordinators.RemoveAtKey(packet->systemAddress, false, _FILE_AND_LINE_ );
+					loggingInCoordinators.RemoveAtIndex(removalIndex);
 
 					RakNet::BitStream incomingBs(packet->data, packet->length, false);
 					incomingBs.IgnoreBytes(2);
@@ -92,8 +96,8 @@ PluginReceiveResult UDPProxyServer::OnReceive(Packet *packet)
 							resultHandler->OnAlreadyLoggedIn(password, this);
 						break;
 					case ID_UDP_PROXY_LOGIN_SUCCESS_FROM_COORDINATOR_TO_SERVER:
-						RakAssert(loggedInCoordinators.GetIndexOf(packet->systemAddress)==(unsigned int)-1);
-						loggedInCoordinators.Push(packet->systemAddress, _FILE_AND_LINE_);
+						// RakAssert(loggedInCoordinators.GetIndexOf(packet->systemAddress)==(unsigned int)-1);
+						loggedInCoordinators.Insert(packet->systemAddress, packet->systemAddress, true, _FILE_AND_LINE_);
 						if (resultHandler)
 							resultHandler->OnLoginSuccess(password, this);
 						break;
@@ -112,8 +116,8 @@ void UDPProxyServer::OnClosedConnection(const SystemAddress &systemAddress, RakN
 	(void) lostConnectionReason;
 	(void) rakNetGUID;
 
-	loggingInCoordinators.RemoveAtKey(systemAddress,false, _FILE_AND_LINE_ );
-	loggedInCoordinators.RemoveAtKey(systemAddress,false, _FILE_AND_LINE_ );
+	loggingInCoordinators.RemoveIfExists(systemAddress);
+	loggedInCoordinators.RemoveIfExists(systemAddress);
 }
 void UDPProxyServer::OnRakPeerStartup(void)
 {

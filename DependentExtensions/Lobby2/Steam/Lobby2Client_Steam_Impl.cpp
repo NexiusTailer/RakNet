@@ -363,7 +363,7 @@ void Lobby2Client_Steam_Impl::CallRoomCallbacks()
 	DataStructures::OrderedList<uint64_t, RoomMember, SteamIDAndRoomMemberComp> updatedRoomMembers;
 	bool anyChanges=false;
 
-	DataStructures::DefaultIndexType currentMemberIndex=0, oldMemberIndex=0;
+	unsigned int currentMemberIndex=0, oldMemberIndex=0;
 	while (currentMemberIndex < currentMembers.Size() && oldMemberIndex < roomMembersById.Size())
 	{
 		if (currentMembers[currentMemberIndex]<roomMembersById[oldMemberIndex].steamIDRemote)
@@ -456,7 +456,7 @@ void Lobby2Client_Steam_Impl::NotifyDroppedMember(uint64_t memberId, SystemAddre
 	notification.remoteSystem=remoteSystem;
 	CallCBWithResultCode(&notification, L2RC_SUCCESS);
 
-	DataStructures::DefaultIndexType i;
+	unsigned int i;
 	bool objectExists;
 	i = roomMembersById.GetIndexFromKey(memberId, &objectExists);
 	if (objectExists)
@@ -471,7 +471,7 @@ void Lobby2Client_Steam_Impl::ClearRoom(void)
 	roomId=0;
 	if (SteamNetworking())
 	{
-		for (DataStructures::DefaultIndexType i=0; i < roomMembersById.Size(); i++)
+		for (unsigned int i=0; i < roomMembersById.Size(); i++)
 		{
 			SteamNetworking()->CloseP2PSessionWithUser( roomMembersById[i].steamIDRemote );
 		}
@@ -499,7 +499,7 @@ void Lobby2Client_Steam_Impl::NotifyLeaveRoom(void)
 int Lobby2Client_Steam_Impl::RakNetSendTo( SOCKET s, const char *data, int length, const SystemAddress &systemAddress )
 {
 	bool objectExists;
-	DataStructures::DefaultIndexType i = roomMembersByAddr.GetIndexFromKey(systemAddress, &objectExists);
+	unsigned int i = roomMembersByAddr.GetIndexFromKey(systemAddress, &objectExists);
 	if (objectExists)
 	{
 		if (SteamNetworking()->SendP2PPacket(roomMembersByAddr[i].steamIDRemote, data, length, k_EP2PSendUnreliable))
@@ -527,7 +527,7 @@ int Lobby2Client_Steam_Impl::RakNetRecvFrom( const SOCKET sIn, RakPeer *rakPeerI
 		if (SteamNetworking()->ReadP2PPacket(dataOut, MAXIMUM_MTU_SIZE, &pcubMsgSize, &psteamIDRemote))
 		{
 			uint64_t steamIDRemote64=psteamIDRemote.ConvertToUint64();
-			DataStructures::DefaultIndexType i;
+			unsigned int i;
 			bool objectExists;
 			i = roomMembersById.GetIndexFromKey(steamIDRemote64, &objectExists);
 			if (objectExists)
@@ -550,7 +550,7 @@ void Lobby2Client_Steam_Impl::OnClosedConnection(const SystemAddress &systemAddr
 	(void) rakNetGUID;
 
 	bool objectExists;
-	DataStructures::DefaultIndexType i = roomMembersByAddr.GetIndexFromKey(systemAddress, &objectExists);
+	unsigned int i = roomMembersByAddr.GetIndexFromKey(systemAddress, &objectExists);
 	if (objectExists)
 	{
 		uint64_t steamIDRemote = roomMembersByAddr[i].steamIDRemote;
@@ -568,7 +568,7 @@ void Lobby2Client_Steam_Impl::OnFailedConnectionAttempt(Packet *packet, PI2_Fail
 	(void) failedConnectionAttemptReason;
 
 	bool objectExists;
-	DataStructures::DefaultIndexType i = roomMembersByAddr.GetIndexFromKey(packet->systemAddress, &objectExists);
+	unsigned int i = roomMembersByAddr.GetIndexFromKey(packet->systemAddress, &objectExists);
 	if (objectExists)
 	{
 		uint64_t steamIDRemote = roomMembersByAddr[i].steamIDRemote;

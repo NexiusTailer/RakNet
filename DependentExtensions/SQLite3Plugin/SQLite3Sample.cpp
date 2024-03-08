@@ -28,8 +28,8 @@ public:
 	bool CreateConnectionStateTable(RakNet::RakString dbIdentifier)
 	{
 		// dbHandles is a member variable of SQLite3Plugin and contains the mappings of identifiers to sql database pointers
-		DataStructures::DefaultIndexType idx = dbHandles.GetIndexOf(dbIdentifier);
-		if (idx==(DataStructures::DefaultIndexType)-1)
+		unsigned int idx = dbHandles.GetIndexOf(dbIdentifier);
+		if (idx==(unsigned int)-1)
 			return false;
 
 		// Store the identifier for the connection state table for use in OnClosedConnection and OnNewConnection
@@ -57,8 +57,8 @@ public:
 		SQLite3ServerPlugin::OnClosedConnection(systemAddress, rakNetGUID, lostConnectionReason);
 
 		// Get the database index associated with the table used for this class
-		DataStructures::DefaultIndexType idx = dbHandles.GetIndexOf(connectionStateIdentifier);
-		if (idx==(DataStructures::DefaultIndexType)-1)
+		unsigned int idx = dbHandles.GetIndexOf(connectionStateIdentifier);
+		if (idx==(unsigned int)-1)
 			return;
 
 		// Remove dropped system by primary key system address
@@ -76,8 +76,8 @@ public:
 		SQLite3ServerPlugin::OnNewConnection(systemAddress, rakNetGUID, isIncoming);
 
 		// Get the database index associated with the table used for this class
-		DataStructures::DefaultIndexType idx = dbHandles.GetIndexOf(connectionStateIdentifier);
-		if (idx==(DataStructures::DefaultIndexType)-1)
+		unsigned int idx = dbHandles.GetIndexOf(connectionStateIdentifier);
+		if (idx==(unsigned int)-1)
 			return;
 
 		// Store new system's system address and guid. rowCreationTime column is created automatically
@@ -106,8 +106,8 @@ public:
 			lastTimeRemovedDeadRows = curTime;
 
 			// Get the database index associated with the table used for this class
-			DataStructures::DefaultIndexType idx = dbHandles.GetIndexOf(connectionStateIdentifier);
-			if (idx==(DataStructures::DefaultIndexType)-1)
+			unsigned int idx = dbHandles.GetIndexOf(connectionStateIdentifier);
+			if (idx==(unsigned int)-1)
 				return;
 
 			sqlite3_exec(dbHandles[idx].dbHandle,"DELETE FROM connectionState WHERE lastRowUpdateTime<dateTime('now','localtime','-30 seconds');",0,0,0);

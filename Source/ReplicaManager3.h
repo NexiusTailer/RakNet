@@ -11,13 +11,14 @@
 #ifndef __REPLICA_MANAGER_3
 #define __REPLICA_MANAGER_3
 
-#include "DS_Multilist.h"
 #include "RakNetTypes.h"
 #include "RakNetTime.h"
 #include "BitStream.h"
 #include "PacketPriority.h"
 #include "PluginInterface2.h"
 #include "NetworkIDObject.h"
+#include "DS_OrderedList.h"
+#include "DS_Queue.h"
 
 /// \defgroup REPLICA_MANAGER_GROUP3 ReplicaManager3
 /// \brief Third implementation of object replication
@@ -127,24 +128,24 @@ public:
 	/// \details Same as Dereference(), but for a list of objects.<BR>
 	/// Useful with the lists returned by GetReplicasCreatedByGuid(), GetReplicasCreatedByMe(), or GetReferencedReplicaList().<BR>
 	/// \param[in] replicaListIn List of objects
-	void DereferenceList(DataStructures::Multilist<ML_STACK, Replica3*> &replicaListIn);
+	void DereferenceList(DataStructures::List<Replica3*> &replicaListIn);
 
 	/// \brief Returns all objects originally created by a particular system
 	/// \details Originally created is defined as the value of Replica3::creatingSystemGUID, which is automatically assigned in ReplicaManager3::Reference().<BR>
 	/// You do not have to be directly connected to that system to get the objects originally created by that system.<BR>
 	/// \param[in] guid GUID of the system we are referring to. Originally passed as the \a guid parameter to ReplicaManager3::AllocConnection()
 	/// \param[out] List of Replica3 instances to be returned
-	void GetReplicasCreatedByGuid(RakNetGUID guid, DataStructures::Multilist<ML_STACK, Replica3*> &replicaListOut);
+	void GetReplicasCreatedByGuid(RakNetGUID guid, DataStructures::List<Replica3*> &replicaListOut);
 
 	/// \brief Returns all objects originally created by your system
 	/// \details Calls GetReplicasCreatedByGuid() for your own system guid.
 	/// \param[out] List of Replica3 instances to be returned
-	void GetReplicasCreatedByMe(DataStructures::Multilist<ML_STACK, Replica3*> &replicaListOut);
+	void GetReplicasCreatedByMe(DataStructures::List<Replica3*> &replicaListOut);
 
 	/// \brief Returns the entire list of Replicas that we know about.
 	/// \details This is all Replica3 instances passed to Reference, as well as instances we downloaded and created via Connection_RM3::AllocReference()
 	/// \param[out] List of Replica3 instances to be returned
-	void GetReferencedReplicaList(DataStructures::Multilist<ML_STACK, Replica3*> &replicaListOut);
+	void GetReferencedReplicaList(DataStructures::List<Replica3*> &replicaListOut);
 
 	/// \brief Returns the number of replicas known about
 	/// \details Returns the size of the list that would be returned by GetReferencedReplicaList()
@@ -160,7 +161,7 @@ public:
 	/// \brief Returns the number of connections
 	/// \details Returns the number of connections added with ReplicaManager3::PushConnection(), minus the number removed with ReplicaManager3::PopConnection()
 	/// \return The number of registered connections
-	DataStructures::DefaultIndexType GetConnectionCount(void) const;
+	unsigned int GetConnectionCount(void) const;
 
 	/// \brief Returns a connection pointer previously added with PushConnection()
 	/// \param[in] index An index, from 0 to GetConnectionCount()-1.
@@ -197,7 +198,7 @@ public:
 	/// \details This can be wrong, for example if that system locally deleted the outside the scope of ReplicaManager3, if QueryRemoteConstruction() returned false, or if DeserializeConstruction() returned false.
 	/// \param[in] replica The replica to check against.
 	/// \param[out] connectionsThatHaveConstructedThisReplica Populated with connection instances that we believe have \a replica allocated
-	void GetConnectionsThatHaveReplicaConstructed(Replica3 *replica, DataStructures::Multilist<ML_STACK, Connection_RM3*> &connectionsThatHaveConstructedThisReplica);
+	void GetConnectionsThatHaveReplicaConstructed(Replica3 *replica, DataStructures::List<Connection_RM3*> &connectionsThatHaveConstructedThisReplica);
 
 	/// \brief Defines the unique instance of ReplicaManager3 if multiple instances are on the same instance of RakPeerInterface
 	/// \details ReplicaManager3 supports multiple instances of itself attached to the same instance of rakPeer, in case your game has multiple worlds.<BR>
@@ -223,7 +224,7 @@ public:
 	/// The objects are unaffected locally
 	/// \param[in] replicaList List of Replica3 objects to tell other systems to destroy.
 	/// \param[in] exclusionAddress Which system to not send to. UNASSIGNED_SYSTEM_ADDRESS to send to all.
-	void BroadcastDestructionList(DataStructures::Multilist<ML_STACK, Replica3*> &replicaList, const SystemAddress &exclusionAddress);
+	void BroadcastDestructionList(DataStructures::List<Replica3*> &replicaList, const SystemAddress &exclusionAddress);
 
 	/// \internal
 	/// \details Tell other systems that have this replica to destroy this replica.<BR>
@@ -252,12 +253,12 @@ protected:
 	PluginReceiveResult OnDownloadStarted(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 	PluginReceiveResult OnDownloadComplete(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 
-	RakNet::Connection_RM3 * PopConnection(DataStructures::DefaultIndexType index);
+	RakNet::Connection_RM3 * PopConnection(unsigned int index);
 	Replica3* GetReplicaByNetworkID(NetworkID networkId);
-	DataStructures::DefaultIndexType ReferenceInternal(RakNet::Replica3 *replica3);
+	unsigned int ReferenceInternal(RakNet::Replica3 *replica3);
 
-	DataStructures::Multilist<ML_STACK, Connection_RM3*> connectionList;
-	DataStructures::Multilist<ML_STACK, Replica3*> userReplicaList;
+	DataStructures::List<Connection_RM3*> connectionList;
+	DataStructures::List<Replica3*> userReplicaList;
 
 	PRO defaultSendParameters;
 	RakNet::Time autoSerializeInterval;
@@ -375,7 +376,7 @@ public:
 
 	/// \brief Get list of all replicas that are constructed for this connection
 	/// \param[out] objectsTheyDoHave Destination list. Returned in sorted ascending order, sorted on the value of the Replica3 pointer.
-	virtual void GetConstructedReplicas(DataStructures::Multilist<ML_STACK, Replica3*> &objectsTheyDoHave);
+	virtual void GetConstructedReplicas(DataStructures::List<Replica3*> &objectsTheyDoHave);
 
 	/// Returns true if we think this remote connection has this replica constructed
 	/// \param[in] replica3 Which replica we are querying
@@ -447,8 +448,8 @@ public:
 	///<BR>
 	/// The following code uses a sorted merge sort to quickly find new and deleted objects, given a list of objects we know should exist.<BR>
 	///<BR>
-	/// DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> objectsTheyShouldHave; // You have to fill in this list<BR>
-	/// DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> objectsTheyCurrentlyHave,objectsTheyStillHave,existingReplicasToDestro,newReplicasToCreatey;<BR>
+	/// DataStructures::List<Replica3*> objectsTheyShouldHave; // You have to fill in this list<BR>
+	/// DataStructures::List<Replica3*> objectsTheyCurrentlyHave,objectsTheyStillHave,existingReplicasToDestro,newReplicasToCreatey;<BR>
 	/// GetConstructedReplicas(objectsTheyCurrentlyHave);<BR>
 	/// DataStructures::Multilist::FindIntersection(objectsTheyCurrentlyHave, objectsTheyShouldHave, objectsTheyStillHave, existingReplicasToDestroy, newReplicasToCreate);<BR>
 	///<BR>
@@ -457,8 +458,8 @@ public:
 	/// \param[out] newReplicasToCreate Anything in this list will be created on the remote system
 	/// \param[out] existingReplicasToDestroy Anything in this list will be destroyed on the remote system
 	virtual void QueryReplicaList(
-		DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> newReplicasToCreate,
-		DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> existingReplicasToDestroy) {}
+		DataStructures::List<Replica3*> newReplicasToCreate,
+		DataStructures::List<Replica3*> existingReplicasToDestroy) {}
 
 	/// \internal This is used internally - however, you can also call it manually to send a data update for a remote replica.<BR>
 	/// \brief Sends over a serialization update for \a replica.<BR>
@@ -478,7 +479,7 @@ public:
 	/// \param[in] sp Controlling parameters over the serialization
 	/// \param[in] rakPeer Instance of RakPeerInterface to send on
 	/// \param[in] worldId Which world, see ReplicaManager3::SetWorldID()
-	virtual SendSerializeIfChangedResult SendSerializeIfChanged(DataStructures::DefaultIndexType queryToSerializeIndex, SerializeParameters *sp, RakNet::RakPeerInterface *rakPeer, unsigned char worldId, ReplicaManager3 *replicaManager);
+	virtual SendSerializeIfChangedResult SendSerializeIfChanged(unsigned int queryToSerializeIndex, SerializeParameters *sp, RakNet::RakPeerInterface *rakPeer, unsigned char worldId, ReplicaManager3 *replicaManager);
 
 	/// \internal
 	/// \brief Given a list of objects that were created and destroyed, serialize and send them to another system.
@@ -488,15 +489,15 @@ public:
 	/// \param[in] rakPeer Instance of RakPeerInterface to send on
 	/// \param[in] worldId Which world, see ReplicaManager3::SetWorldID()
 	/// \param[in] replicaManager3 ReplicaManager3 instance
-	virtual void SendConstruction(DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> &newObjects, DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> &deletedObjects, PRO sendParameters, RakNet::RakPeerInterface *rakPeer, unsigned char worldId, ReplicaManager3 *replicaManager3);
+	virtual void SendConstruction(DataStructures::List<Replica3*> &newObjects, DataStructures::List<Replica3*> &deletedObjects, PRO sendParameters, RakNet::RakPeerInterface *rakPeer, unsigned char worldId, ReplicaManager3 *replicaManager3);
 
 	/// \internal
 	/// Remove from \a newObjectsIn objects that already exist and save to \a newObjectsOut
 	/// Remove from \a deletedObjectsIn objects that do not exist, and save to \a deletedObjectsOut
-	void CullUniqueNewAndDeletedObjects(DataStructures::Multilist<ML_STACK, Replica3*> &newObjectsIn,
-		DataStructures::Multilist<ML_STACK, Replica3*> &deletedObjectsIn,
-		DataStructures::Multilist<ML_STACK, Replica3*> &newObjectsOut,
-		DataStructures::Multilist<ML_STACK, Replica3*> &deletedObjectsOut);
+	void CullUniqueNewAndDeletedObjects(DataStructures::List<Replica3*> &newObjectsIn,
+		DataStructures::List<Replica3*> &deletedObjectsIn,
+		DataStructures::List<Replica3*> &newObjectsOut,
+		DataStructures::List<Replica3*> &deletedObjectsOut);
 
 	/// \internal
 	void SendValidation(RakNet::RakPeerInterface *rakPeer, unsigned char worldId);
@@ -509,6 +510,8 @@ public:
 	bool isValidated;
 	// Internal - Used to see if we should send download started
 	bool isFirstConstruction;
+
+	static int Replica3LSRComp( Replica3 * const &replica3, LastSerializationResult * const &data );
 
 protected:
 
@@ -564,41 +567,41 @@ protected:
 	void OnDereference(Replica3* replica3, ReplicaManager3 *replicaManager);
 	void OnDownloadFromThisSystem(Replica3* replica3, ReplicaManager3 *replicaManager);
 	void OnDownloadFromOtherSystem(Replica3* replica3, ReplicaManager3 *replicaManager);
-	void OnNeverConstruct(DataStructures::DefaultIndexType queryToConstructIdx, ReplicaManager3 *replicaManager);
-	void OnConstructToThisConnection(DataStructures::DefaultIndexType queryToConstructIdx, ReplicaManager3 *replicaManager);
+	void OnNeverConstruct(unsigned int queryToConstructIdx, ReplicaManager3 *replicaManager);
+	void OnConstructToThisConnection(unsigned int queryToConstructIdx, ReplicaManager3 *replicaManager);
 	void OnConstructToThisConnection(Replica3 *replica, ReplicaManager3 *replicaManager);
-	void OnNeverSerialize(DataStructures::DefaultIndexType queryToSerializeIndex, ReplicaManager3 *replicaManager);
-	void OnReplicaAlreadyExists(DataStructures::DefaultIndexType queryToConstructIdx, ReplicaManager3 *replicaManager);
+	void OnNeverSerialize(unsigned int queryToSerializeIndex, ReplicaManager3 *replicaManager);
+	void OnReplicaAlreadyExists(unsigned int queryToConstructIdx, ReplicaManager3 *replicaManager);
 	void OnDownloadExisting(Replica3* replica3, ReplicaManager3 *replicaManager);
-	void OnSendDestructionFromQuery(DataStructures::DefaultIndexType queryToDestructIdx, ReplicaManager3 *replicaManager);
-	void OnDoNotQueryDestruction(DataStructures::DefaultIndexType queryToDestructIdx, ReplicaManager3 *replicaManager);
+	void OnSendDestructionFromQuery(unsigned int queryToDestructIdx, ReplicaManager3 *replicaManager);
+	void OnDoNotQueryDestruction(unsigned int queryToDestructIdx, ReplicaManager3 *replicaManager);
 	void ValidateLists(ReplicaManager3 *replicaManager) const;
 	void SendSerializeHeader(RakNet::Replica3 *replica, RakNet::Time timestamp, RakNet::BitStream *bs, unsigned char worldId);
 	
 	// The list of objects that our local system and this remote system both have
 	// Either we sent this object to them, or they sent this object to us
 	// A given Replica can be either in queryToConstructReplicaList or constructedReplicaList but not both at the same time
-	DataStructures::Multilist<ML_ORDERED_LIST, LastSerializationResult*, Replica3*> constructedReplicaList;
+	DataStructures::OrderedList<Replica3*, LastSerializationResult*, Connection_RM3::Replica3LSRComp> constructedReplicaList;
 
 	// Objects that we have, but this system does not, and we will query each tick to see if it should be sent to them
 	// If we do send it to them, the replica is moved to constructedReplicaList
 	// A given Replica can be either in queryToConstructReplicaList or constructedReplicaList but not both at the same time
-	DataStructures::Multilist<ML_STACK, LastSerializationResult*, Replica3*> queryToConstructReplicaList;
+	DataStructures::List<LastSerializationResult*> queryToConstructReplicaList;
 
 	// Objects that this system has constructed are added at the same time to queryToSerializeReplicaList
 	// This list is used to serialize all objects that this system has to this connection
-	DataStructures::Multilist<ML_STACK, LastSerializationResult*, Replica3*> queryToSerializeReplicaList;
+	DataStructures::List<LastSerializationResult*> queryToSerializeReplicaList;
 
 	// Objects that are constructed on this system are also queried if they should be destroyed to this system
-	DataStructures::Multilist<ML_STACK, LastSerializationResult*, Replica3*> queryToDestructReplicaList;
+	DataStructures::List<LastSerializationResult*> queryToDestructReplicaList;
 
 	// Working lists
-	DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> constructedReplicasCulled, destroyedReplicasCulled;
+	DataStructures::List<Replica3*> constructedReplicasCulled, destroyedReplicasCulled;
 
 	// This is used if QueryGroupDownloadMessages() returns true when ID_REPLICA_MANAGER_DOWNLOAD_STARTED arrives
 	// Packets will be gathered and not returned until ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE arrives
 	bool groupConstructionAndSerialize;
-	DataStructures::Multilist<ML_QUEUE, Packet*, Packet*> downloadGroup;
+	DataStructures::Queue<Packet*> downloadGroup;
 	void ClearDownloadGroup(RakPeerInterface *rakPeerInterface);
 
 	friend class ReplicaManager3;

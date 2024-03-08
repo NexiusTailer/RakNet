@@ -114,12 +114,11 @@ public:
 	/// \return UNASSIGNED_TEAM_ID for no team. Otherwise, the index should range from 0 to one less than the size of the list passed to SetTeamSizeLimits() on the host
 	TeamId GetMyTeam(NetworkID memberId) const;
 
-	/// Allow systems to change the host
-	/// If true, this is a security hole, but needed for peer to peer
-	/// For client server, set to false
-	/// Defaults to true
-	/// param[in] allow True to allow host migration, false to not allow
-	void SetAllowHostMigration(bool allow);
+	/// If you called RequestSpecificTeam() or RequestAnyTeam() with a value for \a memberId that
+	/// Has since been deleted, call DeleteMember(). to notify this plugin of that event.
+	/// Not necessary with only one team member per system
+	/// \param[in] memberId If there is more than one player per computer, this number identifies that player. Use any consistent value, such as UNASSINGED_NETWORK_ID if there is only one player.
+	void DeleteMember(NetworkID memberId);
 
 	struct TeamMember
 	{

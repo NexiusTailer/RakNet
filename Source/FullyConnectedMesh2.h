@@ -14,7 +14,6 @@
 
 #include "PluginInterface2.h"
 #include "RakMemoryOverride.h"
-#include "DS_Multilist.h"
 #include "NativeTypes.h"
 #include "DS_List.h"
 #include "RakString.h"
@@ -101,7 +100,7 @@ public:
 	void Clear(void);
 
 	unsigned int GetParticipantCount(void) const;
-	void GetParticipantCount(DataStructures::DefaultIndexType *participantListSize) const;
+	void GetParticipantCount(unsigned int *participantListSize) const;
 	/// \internal
 	RakNet::TimeUS GetElapsedRuntime(void);
 

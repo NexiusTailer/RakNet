@@ -152,10 +152,7 @@ void TeamBalancer::CancelRequestSpecificTeam(NetworkID memberId)
 	{
 		if (myTeamMembers[i].memberId==memberId)
 		{
-			if (myTeamMembers[i].currentTeam==UNASSIGNED_TEAM_ID)
-				myTeamMembers.RemoveAtIndexFast(i);
-			else
-				myTeamMembers[i].requestedTeam=UNASSIGNED_TEAM_ID;
+			myTeamMembers[i].requestedTeam=UNASSIGNED_TEAM_ID;
 
 			// Send packet to the host to remove our request flag.
 			BitStream bsOut;
@@ -213,7 +210,26 @@ TeamId TeamBalancer::GetMyTeam(NetworkID memberId) const
 	}
 
 	return UNASSIGNED_TEAM_ID;
+}
+void TeamBalancer::DeleteMember(NetworkID memberId)
+{
+	for (unsigned int i=0; i < myTeamMembers.Size(); i++)
+	{
+		if (myTeamMembers[i].memberId==memberId)
+		{
+			myTeamMembers.RemoveAtIndexFast(i);
+			break;
+		}
+	}
 
+	for (unsigned int i=0; i < teamMembers.Size(); i++)
+	{
+		if (teamMembers[i].memberId==memberId)
+		{
+			RemoveTeamMember(i);
+			break;
+		}
+	}
 }
 PluginReceiveResult TeamBalancer::OnReceive(Packet *packet)
 {
@@ -368,6 +384,9 @@ void TeamBalancer::OnStatusUpdateToNewHost(Packet *packet)
 			RakAssert("Requested team out of range in TeamBalancer::OnStatusUpdateToNewHost" && 0);
 			return;
 		}
+
+		if (tm.currentTeam==UNASSIGNED_TEAM_ID && tm.requestedTeam==UNASSIGNED_TEAM_ID)
+			return;
 
 		unsigned int memberIndex = GetMemberIndex(tm.memberId, packet->guid);
 		if (memberIndex==(unsigned int) -1)
@@ -692,7 +711,7 @@ PluginReceiveResult TeamBalancer::OnTeamAssigned(Packet *packet)
 
 	if (foundMatch==false)
 	{
-		myTeamMembers.Push(mtm, _FILE_AND_LINE_);
+		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 	}
 
 	return RR_CONTINUE_PROCESSING;

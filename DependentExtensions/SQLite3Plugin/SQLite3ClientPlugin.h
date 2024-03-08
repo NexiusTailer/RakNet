@@ -110,7 +110,7 @@ public:
 	virtual PluginReceiveResult OnReceive(Packet *packet);
 
 	// List of result handlers added with AddResultHandler()
-	DataStructures::Multilist<ML_STACK, SQLite3PluginResultInterface *> resultHandlers;
+	DataStructures::List<SQLite3PluginResultInterface *> resultHandlers;
 	// Each query returns a numeric id if you want it. This tracks what id to assign next. Increments sequentially.
 	unsigned int nextQueryId;
 };

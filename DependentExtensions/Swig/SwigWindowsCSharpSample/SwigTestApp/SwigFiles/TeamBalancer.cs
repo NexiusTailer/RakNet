@@ -86,8 +86,8 @@ public class TeamBalancer : PluginInterface2 {
     return ret;
   }
 
-  public void SetAllowHostMigration(bool allow) {
-    RakNetPINVOKE.TeamBalancer_SetAllowHostMigration(swigCPtr, allow);
+  public void DeleteMember(ulong memberId) {
+    RakNetPINVOKE.TeamBalancer_DeleteMember(swigCPtr, memberId);
   }
 
   public enum DefaultAssigmentAlgorithm {

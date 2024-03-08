@@ -422,7 +422,7 @@ Call after <a class="el" href="classRakNet_1_1VariableDeltaSerializer.html#e755c
 
 <p>
 Call when getting ID_SND_RECEIPT_LOSS or ID_SND_RECEIPT_ACKED for a particular system Example:<p>
-uint32_t msgNumber; memcpy(&amp;msgNumber, packet-&gt;data+1, 4); DataStructures::Multilist&lt;ML_STACK, Replica3*&gt; replicaListOut; replicaManager.GetReplicasCreatedByMe(replicaListOut); DataStructures::DefaultIndexType idx; for (idx=0; idx &lt; replicaListOut.GetSize(); idx++) { ((SampleReplica*)replicaListOut[idx])-&gt;NotifyReplicaOfMessageDeliveryStatus(packet-&gt;guid,msgNumber, packet-&gt;data[0]==ID_SND_RECEIPT_ACKED); }<p>
+uint32_t msgNumber; memcpy(&amp;msgNumber, packet-&gt;data+1, 4); DataStructures::List&lt;Replica3*&gt; replicaListOut; replicaManager.GetReplicasCreatedByMe(replicaListOut); unsigned int idx; for (idx=0; idx &lt; replicaListOut.GetSize(); idx++) { ((SampleReplica*)replicaListOut[idx])-&gt;NotifyReplicaOfMessageDeliveryStatus(packet-&gt;guid,msgNumber, packet-&gt;data[0]==ID_SND_RECEIPT_ACKED); }<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>guid</em>&nbsp;</td><td>Which system we are sending to </td></tr>
@@ -537,7 +537,7 @@ A list of RemoteSystemVariableHistory indexed by guid, one per connection that w
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/VariableDeltaSerializer.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Nov 15 08:50:46 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 8 08:27:19 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

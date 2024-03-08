@@ -18,7 +18,6 @@
 #define __UDP_PROXY_SERVER_H
 
 #include "Export.h"
-#include "DS_Multilist.h"
 #include "RakNetTypes.h"
 #include "PluginInterface2.h"
 #include "UDPForwarder.h"
@@ -104,8 +103,8 @@ public:
 protected:
 	void OnForwardingRequestFromCoordinatorToServer(Packet *packet);
 
-	DataStructures::Multilist<ML_ORDERED_LIST, SystemAddress> loggingInCoordinators;
-	DataStructures::Multilist<ML_ORDERED_LIST, SystemAddress> loggedInCoordinators;
+	DataStructures::OrderedList<SystemAddress, SystemAddress> loggingInCoordinators;
+	DataStructures::OrderedList<SystemAddress, SystemAddress> loggedInCoordinators;
 
 	UDPProxyServerResultHandler *resultHandler;
 	unsigned short socketFamily;

@@ -14,7 +14,7 @@
 /// \ingroup SQL_LITE_3_PLUGIN
 struct SQLite3Row
 {
-	DataStructures::Multilist<ML_STACK, RakNet::RakString> entries;
+	DataStructures::List<RakNet::RakString> entries;
 };
 
 /// Contains a result table, which is an array of column name strings, followed by an array of SQLite3Row
@@ -26,8 +26,8 @@ struct SQLite3Table
 	void Serialize(RakNet::BitStream *bitStream);
 	void Deserialize(RakNet::BitStream *bitStream);
 
-	DataStructures::Multilist<ML_STACK, RakNet::RakString> columnNames;
-	DataStructures::Multilist<ML_STACK, SQLite3Row*> rows;
+	DataStructures::List<RakNet::RakString> columnNames;
+	DataStructures::List<SQLite3Row*> rows;
 };
 
 #endif

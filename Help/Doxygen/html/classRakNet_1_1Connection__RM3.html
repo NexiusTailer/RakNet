@@ -52,9 +52,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#b05d85100f726378f2ed73c6792a5b46">AllocReplica</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *allocationIdBitstream, <a class="el" href="classRakNet_1_1ReplicaManager3.html">ReplicaManager3</a> *replicaManager3)=0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Class factory to create a <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instance, given a user-defined identifier.  <a href="#b05d85100f726378f2ed73c6792a5b46"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#eae4816f4fc9c0e2ba5ab9f24e7a66e2">GetConstructedReplicas</a> (<a class="el" href="classDataStructures_1_1Multilist.html">DataStructures::Multilist</a>&lt; ML_STACK, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;objectsTheyDoHave)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#8c14767a72a11032176b8d5ef513a798">GetConstructedReplicas</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;objectsTheyDoHave)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get list of all replicas that are constructed for this connection.  <a href="#eae4816f4fc9c0e2ba5ab9f24e7a66e2"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get list of all replicas that are constructed for this connection.  <a href="#8c14767a72a11032176b8d5ef513a798"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#1b05a20c8a6ceabb86c08bc175c7906d">HasReplicaConstructed</a> (<a class="el" href="classRakNet_1_1Replica3.html">RakNet::Replica3</a> *replica)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#d3661c8e40c359fc54bdc2066acb8dba">SerializeOnDownloadStarted</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream)</td></tr>
@@ -75,9 +75,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="classRakNet_1_1Connection__RM3.html#1d176e2d5c47c15ca341d8efaecb637e">ConstructionMode</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#918f5c8d69e2ede6c9469fd9ade96d32">QueryConstructionMode</a> (void) const </td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Queries how to get the list of objects that exist on remote systems.  <a href="#918f5c8d69e2ede6c9469fd9ade96d32"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#b9692dc44dbe6dbfb5ee25fe0fad8b2f">QueryReplicaList</a> (<a class="el" href="classDataStructures_1_1Multilist.html">DataStructures::Multilist</a>&lt; ML_STACK, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> *, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; newReplicasToCreate, <a class="el" href="classDataStructures_1_1Multilist.html">DataStructures::Multilist</a>&lt; ML_STACK, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> *, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; existingReplicasToDestroy)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#0e56165106162a4579be3829fe86975c">QueryReplicaList</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; newReplicasToCreate, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; existingReplicasToDestroy)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Callback used when <a class="el" href="classRakNet_1_1Connection__RM3.html#918f5c8d69e2ede6c9469fd9ade96d32" title="Queries how to get the list of objects that exist on remote systems.">QueryConstructionMode()</a> returns QUERY_CONNECTION_FOR_REPLICA_LIST.  <a href="#b9692dc44dbe6dbfb5ee25fe0fad8b2f"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Callback used when <a class="el" href="classRakNet_1_1Connection__RM3.html#918f5c8d69e2ede6c9469fd9ade96d32" title="Queries how to get the list of objects that exist on remote systems.">QueryConstructionMode()</a> returns QUERY_CONNECTION_FOR_REPLICA_LIST.  <a href="#0e56165106162a4579be3829fe86975c"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Each remote system is represented by <a class="el" href="classRakNet_1_1Connection__RM3.html" title="Each remote system is represented by Connection_RM3. Used to allocate Replica3 and...">Connection_RM3</a>. Used to allocate <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> and track which instances have been allocated. 
@@ -100,11 +100,11 @@ List of enumerations for how to get the list of valid objects for other systems.
 <dl compact><dt><b>Enumerator: </b></dt><dd>
 <table border="0" cellspacing="2" cellpadding="0">
 <tr><td valign="top"><em><a class="anchor" name="1d176e2d5c47c15ca341d8efaecb637e5a5b467fa02165891a53b941b0e20516"></a><!-- doxytag: member="QUERY_REPLICA_FOR_CONSTRUCTION" ref="1d176e2d5c47c15ca341d8efaecb637e5a5b467fa02165891a53b941b0e20516" args="" -->QUERY_REPLICA_FOR_CONSTRUCTION</em>&nbsp;</td><td>
-For every object that does not exist on the remote system, call <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">Replica3::QueryConstruction()</a> every tick. Do not call <a class="el" href="classRakNet_1_1Replica3.html#b476629672d62c7c33c8b1d8aa606918" title="Ask if this object, which does exist on destinationConnection should be removed from...">Replica3::QueryDestruction()</a> Do not call <a class="el" href="classRakNet_1_1Connection__RM3.html#b9692dc44dbe6dbfb5ee25fe0fad8b2f" title="Callback used when QueryConstructionMode() returns QUERY_CONNECTION_FOR_REPLICA_LIST...">Connection_RM3::QueryReplicaList()</a> </td></tr>
+For every object that does not exist on the remote system, call <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">Replica3::QueryConstruction()</a> every tick. Do not call <a class="el" href="classRakNet_1_1Replica3.html#b476629672d62c7c33c8b1d8aa606918" title="Ask if this object, which does exist on destinationConnection should be removed from...">Replica3::QueryDestruction()</a> Do not call <a class="el" href="classRakNet_1_1Connection__RM3.html#0e56165106162a4579be3829fe86975c" title="Callback used when QueryConstructionMode() returns QUERY_CONNECTION_FOR_REPLICA_LIST...">Connection_RM3::QueryReplicaList()</a> </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="1d176e2d5c47c15ca341d8efaecb637e6798d0f74d05dc9577b6fa5917b7aea5"></a><!-- doxytag: member="QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION" ref="1d176e2d5c47c15ca341d8efaecb637e6798d0f74d05dc9577b6fa5917b7aea5" args="" -->QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION</em>&nbsp;</td><td>
-For every object that does not exist on the remote system, call <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">Replica3::QueryConstruction()</a> every tick. Based on the call, the object may be sent to the other system. For every object that does exist on the remote system, call <a class="el" href="classRakNet_1_1Replica3.html#b476629672d62c7c33c8b1d8aa606918" title="Ask if this object, which does exist on destinationConnection should be removed from...">Replica3::QueryDestruction()</a> every tick. Based on the call, the object may be deleted on the other system. Do not call <a class="el" href="classRakNet_1_1Connection__RM3.html#b9692dc44dbe6dbfb5ee25fe0fad8b2f" title="Callback used when QueryConstructionMode() returns QUERY_CONNECTION_FOR_REPLICA_LIST...">Connection_RM3::QueryReplicaList()</a> </td></tr>
+For every object that does not exist on the remote system, call <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">Replica3::QueryConstruction()</a> every tick. Based on the call, the object may be sent to the other system. For every object that does exist on the remote system, call <a class="el" href="classRakNet_1_1Replica3.html#b476629672d62c7c33c8b1d8aa606918" title="Ask if this object, which does exist on destinationConnection should be removed from...">Replica3::QueryDestruction()</a> every tick. Based on the call, the object may be deleted on the other system. Do not call <a class="el" href="classRakNet_1_1Connection__RM3.html#0e56165106162a4579be3829fe86975c" title="Callback used when QueryConstructionMode() returns QUERY_CONNECTION_FOR_REPLICA_LIST...">Connection_RM3::QueryReplicaList()</a> </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="1d176e2d5c47c15ca341d8efaecb637e55be3519ea316178e9a27300065e7544"></a><!-- doxytag: member="QUERY_CONNECTION_FOR_REPLICA_LIST" ref="1d176e2d5c47c15ca341d8efaecb637e55be3519ea316178e9a27300065e7544" args="" -->QUERY_CONNECTION_FOR_REPLICA_LIST</em>&nbsp;</td><td>
-Do not call <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">Replica3::QueryConstruction()</a> or <a class="el" href="classRakNet_1_1Replica3.html#b476629672d62c7c33c8b1d8aa606918" title="Ask if this object, which does exist on destinationConnection should be removed from...">Replica3::QueryDestruction()</a> Call <a class="el" href="classRakNet_1_1Connection__RM3.html#b9692dc44dbe6dbfb5ee25fe0fad8b2f" title="Callback used when QueryConstructionMode() returns QUERY_CONNECTION_FOR_REPLICA_LIST...">Connection_RM3::QueryReplicaList()</a> to determine which objects exist on remote systems This can be faster than QUERY_REPLICA_FOR_CONSTRUCTION and QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION for large worlds See GridSectorizer.h under /Source for code that can help with this </td></tr>
+Do not call <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">Replica3::QueryConstruction()</a> or <a class="el" href="classRakNet_1_1Replica3.html#b476629672d62c7c33c8b1d8aa606918" title="Ask if this object, which does exist on destinationConnection should be removed from...">Replica3::QueryDestruction()</a> Call <a class="el" href="classRakNet_1_1Connection__RM3.html#0e56165106162a4579be3829fe86975c" title="Callback used when QueryConstructionMode() returns QUERY_CONNECTION_FOR_REPLICA_LIST...">Connection_RM3::QueryReplicaList()</a> to determine which objects exist on remote systems This can be faster than QUERY_REPLICA_FOR_CONSTRUCTION and QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION for large worlds See GridSectorizer.h under /Source for code that can help with this </td></tr>
 </table>
 </dl>
 
@@ -206,14 +206,14 @@ Receives whatever was written in <a class="el" href="classRakNet_1_1Connection__
 
 </div>
 </div><p>
-<a class="anchor" name="eae4816f4fc9c0e2ba5ab9f24e7a66e2"></a><!-- doxytag: member="RakNet::Connection_RM3::GetConstructedReplicas" ref="eae4816f4fc9c0e2ba5ab9f24e7a66e2" args="(DataStructures::Multilist&lt; ML_STACK, Replica3 * &gt; &amp;objectsTheyDoHave)" -->
+<a class="anchor" name="8c14767a72a11032176b8d5ef513a798"></a><!-- doxytag: member="RakNet::Connection_RM3::GetConstructedReplicas" ref="8c14767a72a11032176b8d5ef513a798" args="(DataStructures::List&lt; Replica3 * &gt; &amp;objectsTheyDoHave)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">virtual void RakNet::Connection_RM3::GetConstructedReplicas           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classDataStructures_1_1Multilist.html">DataStructures::Multilist</a>&lt; ML_STACK, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;&nbsp;</td>
+          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;&nbsp;</td>
           <td class="paramname"> <em>objectsTheyDoHave</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td><code> [virtual]</code></td>
@@ -349,20 +349,20 @@ ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE calls the callback <a class="el" href="clas
 
 </div>
 </div><p>
-<a class="anchor" name="b9692dc44dbe6dbfb5ee25fe0fad8b2f"></a><!-- doxytag: member="RakNet::Connection_RM3::QueryReplicaList" ref="b9692dc44dbe6dbfb5ee25fe0fad8b2f" args="(DataStructures::Multilist&lt; ML_STACK, Replica3 *, Replica3 * &gt; newReplicasToCreate, DataStructures::Multilist&lt; ML_STACK, Replica3 *, Replica3 * &gt; existingReplicasToDestroy)" -->
+<a class="anchor" name="0e56165106162a4579be3829fe86975c"></a><!-- doxytag: member="RakNet::Connection_RM3::QueryReplicaList" ref="0e56165106162a4579be3829fe86975c" args="(DataStructures::List&lt; Replica3 * &gt; newReplicasToCreate, DataStructures::List&lt; Replica3 * &gt; existingReplicasToDestroy)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">virtual void RakNet::Connection_RM3::QueryReplicaList           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classDataStructures_1_1Multilist.html">DataStructures::Multilist</a>&lt; ML_STACK, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> *, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt;&nbsp;</td>
+          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt;&nbsp;</td>
           <td class="paramname"> <em>newReplicasToCreate</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classDataStructures_1_1Multilist.html">DataStructures::Multilist</a>&lt; ML_STACK, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> *, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt;&nbsp;</td>
+          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt;&nbsp;</td>
           <td class="paramname"> <em>existingReplicasToDestroy</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -379,8 +379,8 @@ Callback used when <a class="el" href="classRakNet_1_1Connection__RM3.html#918f5
 <p>
 This advantage of this callback is if that there are many objects that a particular connection does not have, then we do not have to iterate through those objects calling QueryConstruction() for each of them.<br>
  BR&gt; The following code uses a sorted merge sort to quickly find new and deleted objects, given a list of objects we know should exist.<br>
- BR&gt; DataStructures::Multilist&lt;ML_STACK, Replica3*, Replica3*&gt; objectsTheyShouldHave; // You have to fill in this list<br>
- DataStructures::Multilist&lt;ML_STACK, Replica3*, Replica3*&gt; objectsTheyCurrentlyHave,objectsTheyStillHave,existingReplicasToDestro,newReplicasToCreatey;<br>
+ BR&gt; DataStructures::List&lt;Replica3*&gt; objectsTheyShouldHave; // You have to fill in this list<br>
+ DataStructures::List&lt;Replica3*&gt; objectsTheyCurrentlyHave,objectsTheyStillHave,existingReplicasToDestro,newReplicasToCreatey;<br>
  GetConstructedReplicas(objectsTheyCurrentlyHave);<br>
  DataStructures::Multilist::FindIntersection(objectsTheyCurrentlyHave, objectsTheyShouldHave, objectsTheyStillHave, existingReplicasToDestroy, newReplicasToCreate);<br>
  BR&gt; See GridSectorizer in the Source directory as a method to find all objects within a certain radius in a fast way.<br>
@@ -446,7 +446,7 @@ When a new connection connects, before sending any objects, <a class="el" href="
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Nov 15 08:50:45 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 8 08:27:19 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

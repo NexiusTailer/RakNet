@@ -18,9 +18,9 @@
 #define __UDP_PROXY_CLIENT_H
 
 #include "Export.h"
-#include "DS_Multilist.h"
 #include "RakNetTypes.h"
 #include "PluginInterface2.h"
+#include "DS_List.h"
 
 /// \defgroup UDP_PROXY_GROUP UDPProxy
 /// \brief Forwards UDP datagrams from one system to another. Protocol independent
@@ -151,11 +151,13 @@ public:
 		SenderAndTargetAddress sata;
 		RakNet::TimeMS startPingTime;
 		SystemAddress coordinatorAddressForPings;
-		DataStructures::Multilist<ML_UNORDERED_LIST, ServerWithPing> serversToPing;
+		//DataStructures::Multilist<ML_UNORDERED_LIST, ServerWithPing> serversToPing;
+		DataStructures::List<ServerWithPing> serversToPing;
 		bool AreAllServersPinged(void) const;
 		void SendPingedServersToCoordinator(RakPeerInterface *rakPeerInterface);
 	};
-	DataStructures::Multilist<ML_UNORDERED_LIST, PingServerGroup*> pingServerGroups;
+	//DataStructures::Multilist<ML_UNORDERED_LIST, PingServerGroup*> pingServerGroups;
+	DataStructures::List<PingServerGroup*> pingServerGroups;
 protected:
 
 	void OnPingServers(Packet *packet);

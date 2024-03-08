@@ -13,7 +13,6 @@
 #define __UDP_FORWARDER_H
 
 #include "Export.h"
-#include "DS_Multilist.h"
 #include "RakNetTypes.h"
 #include "SocketIncludes.h"
 #include "UDPProxyCommon.h"
@@ -21,7 +20,7 @@
 #include "RakString.h"
 #include "RakThread.h"
 #include "DS_Queue.h"
-
+#include "DS_OrderedList.h"
 
 #define UDP_FORWARDER_EXECUTE_THREADED
 
@@ -124,6 +123,12 @@ public:
 	};
 
 
+protected:
+
+	static int SrcAndDestForwardEntryComp( const SrcAndDest &inputKey, ForwardEntry * const &cls );
+
+
+	friend RAK_THREAD_DECLARATION(UpdateUDPForwarder);
 	struct ThreadOperation
 	{
 		enum {
@@ -153,7 +158,7 @@ public:
 		unsigned short *forwardingPort, SOCKET *forwardingSocket);
 	void StopForwardingThreaded(SystemAddress source, SystemAddress destination);
 
-	DataStructures::Multilist<ML_ORDERED_LIST, ForwardEntry*, SrcAndDest> forwardList;
+	DataStructures::OrderedList<SrcAndDest, ForwardEntry*, SrcAndDestForwardEntryComp> forwardList;
 	unsigned short maxForwardEntries;
 
 	UDPForwarderResult AddForwardingEntry(SrcAndDest srcAndDest, RakNet::TimeMS timeoutOnNoDataMS, unsigned short *port, const char *forceHostAddress, short socketFamily);

@@ -332,7 +332,7 @@ void FullyConnectedMesh2::CalculateHost(RakNetGUID *rakNetGuid, FCM2Guid *fcm2Gu
 	//	SystemAddress associatedSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
 	RakNetGUID associatedRakNetGuid=rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 
-	DataStructures::DefaultIndexType idx;
+	unsigned int idx;
 	for (idx=0; idx < fcm2ParticipantList.Size(); idx++)
 	{
 		if (fcm2ParticipantList[idx].fcm2Guid!=0 && fcm2ParticipantList[idx].fcm2Guid<lowestFCMGuid)
@@ -388,7 +388,7 @@ void FullyConnectedMesh2::OnRequestFCMGuid(Packet *packet)
 			IncrementTotalConnectionCount(remoteTotalConnectionCount+1);
 
 			AssignOurFCMGuid();
-			DataStructures::DefaultIndexType idx;
+			unsigned int idx;
 			for (idx=0; idx < fcm2ParticipantList.Size(); idx++)
 				SendOurFCMGuid(rakPeerInterface->GetSystemAddressFromGuid(fcm2ParticipantList[idx].rakNetGuid));
 		}
@@ -431,7 +431,7 @@ void FullyConnectedMesh2::OnRespondConnectionCount(Packet *packet)
 
 	if (wasAssigned==true)
 	{
-		DataStructures::DefaultIndexType idx;
+		unsigned int idx;
 		for (idx=0; idx < fcm2ParticipantList.Size(); idx++)
 			SendOurFCMGuid(rakPeerInterface->GetSystemAddressFromGuid(fcm2ParticipantList[idx].rakNetGuid));
 		CalculateAndPushHost();
@@ -451,7 +451,7 @@ void FullyConnectedMesh2::OnInformFCMGuid(Packet *packet)
 	if (AddParticipantInternal(packet->guid,theirFCMGuid))
 	{
 		// 1/19/2010 - Relay increased total connection count in case new participant only connects to part of the mesh
-		DataStructures::DefaultIndexType idx;
+		unsigned int idx;
 		RakNet::BitStream bsOut;
 		bsOut.Write((MessageID)ID_FCM2_UPDATE_MIN_TOTAL_CONNECTION_COUNT);
 		bsOut.Write(totalConnectionCount);
@@ -465,7 +465,7 @@ void FullyConnectedMesh2::OnInformFCMGuid(Packet *packet)
 	if (ourFCMGuid==0)
 	{
 		AssignOurFCMGuid();
-		DataStructures::DefaultIndexType idx;
+		unsigned int idx;
 		for (idx=0; idx < fcm2ParticipantList.Size(); idx++)
 			SendOurFCMGuid(rakPeerInterface->GetSystemAddressFromGuid(fcm2ParticipantList[idx].rakNetGuid));
 	}
@@ -480,7 +480,7 @@ void FullyConnectedMesh2::OnUpdateMinTotalConnectionCount(Packet *packet)
 	bsIn.Read(newMin);
 	IncrementTotalConnectionCount(newMin);
 }
-void FullyConnectedMesh2::GetParticipantCount(DataStructures::DefaultIndexType *participantListSize) const
+void FullyConnectedMesh2::GetParticipantCount(unsigned int *participantListSize) const
 {
 	*participantListSize=fcm2ParticipantList.Size();
 }

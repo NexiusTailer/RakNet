@@ -13,15 +13,15 @@ bool operator==( const DataStructures::MLKeyRef<RakNet::RakString> &inputKey, co
 int PerRowCallback(void *userArgument, int argc, char **argv, char **azColName)
 {
 	SQLite3Table *outputTable = (SQLite3Table*)userArgument;
-	DataStructures::DefaultIndexType idx;
+	unsigned int idx;
 	if (outputTable->columnNames.GetSize()==0)
 	{
-		for (idx=0; idx < (DataStructures::DefaultIndexType) argc; idx++)
+		for (idx=0; idx < (unsigned int) argc; idx++)
 			outputTable->columnNames.Push(azColName[idx], _FILE_AND_LINE_ );
 	}
 	SQLite3Row *row = RakNet::OP_NEW<SQLite3Row>(_FILE_AND_LINE_);
 	outputTable->rows.Push(row,_FILE_AND_LINE_);
-	for (idx=0; idx < (DataStructures::DefaultIndexType) argc; idx++)
+	for (idx=0; idx < (unsigned int) argc; idx++)
 	{
 		if (argv[idx])
 			row->entries.Push(argv[idx], _FILE_AND_LINE_ );
@@ -41,8 +41,8 @@ bool SQLite3ServerPlugin::AddDBHandle(RakNet::RakString dbIdentifier, sqlite3 *d
 {
 	if (dbIdentifier.IsEmpty())
 		return false;
-	DataStructures::DefaultIndexType idx = dbHandles.GetInsertionIndex(dbIdentifier);
-	if (idx==(DataStructures::DefaultIndexType)-1)
+	unsigned int idx = dbHandles.GetInsertionIndex(dbIdentifier);
+	if (idx==(unsigned int)-1)
 		return false;
 	NamedDBHandle ndbh;
 	ndbh.dbHandle=dbHandle;
@@ -60,8 +60,8 @@ bool SQLite3ServerPlugin::AddDBHandle(RakNet::RakString dbIdentifier, sqlite3 *d
 }
 void SQLite3ServerPlugin::RemoveDBHandle(RakNet::RakString dbIdentifier, bool alsoCloseConnection)
 {
-	DataStructures::DefaultIndexType idx = dbHandles.GetIndexOf(dbIdentifier);
-	if (idx!=(DataStructures::DefaultIndexType)-1)
+	unsigned int idx = dbHandles.GetIndexOf(dbIdentifier);
+	if (idx!=(unsigned int)-1)
 	{
 		if (alsoCloseConnection)
 		{
@@ -77,7 +77,7 @@ void SQLite3ServerPlugin::RemoveDBHandle(RakNet::RakString dbIdentifier, bool al
 }
 void SQLite3ServerPlugin::RemoveDBHandle(sqlite3 *dbHandle, bool alsoCloseConnection)
 {
-	DataStructures::DefaultIndexType idx;
+	unsigned int idx;
 	for (idx=0; idx < dbHandles.GetSize(); idx++)
 	{
 		if (dbHandles[idx].dbHandle==dbHandle)
@@ -177,7 +177,7 @@ PluginReceiveResult SQLite3ServerPlugin::OnReceive(Packet *packet)
 			{
 				// Server code
 
-				DataStructures::DefaultIndexType idx = dbHandles.GetIndexOf(dbIdentifier);
+				unsigned int idx = dbHandles.GetIndexOf(dbIdentifier);
 				if (idx==-1)
 				{
 					RakNet::BitStream bsOut;

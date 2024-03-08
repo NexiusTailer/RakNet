@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwigTestApp", "SwigTestApp\SwigTestApp.csproj", "{4D1901AC-A543-4733-B0A6-7F22684894C1}"
 EndProject
 Global
