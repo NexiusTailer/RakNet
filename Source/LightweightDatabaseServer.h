@@ -5,6 +5,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_LightweightDatabaseServer==1
 
 #ifndef __LIGHTWEIGHT_DATABASE_SERVER_H
 #define __LIGHTWEIGHT_DATABASE_SERVER_H
@@ -135,3 +137,5 @@ class RAK_DLL_EXPORT LightweightDatabaseServer : public PluginInterface2
 	};
 
 #endif
+
+#endif // _RAKNET_SUPPORT_*

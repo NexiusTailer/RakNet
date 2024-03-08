@@ -1,9 +1,5 @@
-/// \file
-///
-/// This file is part of RakNet Copyright 2003 Jenkins Software LLC
-///
-/// Usage of RakNet is subject to the appropriate license agreement.
-
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_PacketLogger==1
 
 #include "PacketLogger.h"
 #include "BitStream.h"
@@ -441,3 +437,5 @@ void PacketLogger::SetLogDirectMessages(bool send)
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

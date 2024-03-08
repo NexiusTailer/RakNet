@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_LightweightDatabaseServer==1
+
 #include "LightweightDatabaseServer.h"
 #include "MessageIdentifiers.h"
 #include "BitStream.h"
@@ -690,3 +693,5 @@ void LightweightDatabaseServer::RemoveRowsFromIP(SystemAddress systemAddress)
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

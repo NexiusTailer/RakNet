@@ -226,6 +226,10 @@ Here is a list of all documented class members with links to the class documenta
 , <a class="el" href="structRakNet_1_1Clans__GetMembers.html#48fd5cc9362c15c40e6e5bee745cf8ce">RakNet::Clans_GetMembers</a>
 <li>SerializeBits()
 : <a class="el" href="classRakNet_1_1BitStream.html#25c0f31d16b211a2aa7cdb3ec594cbf9">RakNet::BitStream</a>
+<li>SerializeBitsFromIntegerRange()
+: <a class="el" href="classRakNet_1_1BitStream.html#45c0d8e0ef4896693a1b2f60655ca260">RakNet::BitStream</a>
+<li>SerializeCasted()
+: <a class="el" href="classRakNet_1_1BitStream.html#180c7177b56b1afaf58c671e2ac9cafc">RakNet::BitStream</a>
 <li>SerializeChangeHandle()
 : <a class="el" href="classRakNet_1_1RoomsPlugin.html#215ae5a91dc25d4309d889284d39d9af">RakNet::RoomsPlugin</a>
 <li>SerializeCompressed()
@@ -337,19 +341,20 @@ Here is a list of all documented class members with links to the class documenta
 <li>SetConstructionByReplicaQuery()
 : <a class="el" href="classRakNet_1_1Connection__RM2.html#ab9f315cf38531c28cf1e20fee3f89e1">RakNet::Connection_RM2</a>
 <li>SetDebugInterface()
-: <a class="el" href="classNatPunchthroughClient.html#5a296d6bc0e6ac334de310cda150be90">NatPunchthroughClient</a>
-, <a class="el" href="classNatPunchthroughServer.html#3d1acf17dbf3682445cf54c1711d508d">NatPunchthroughServer</a>
+: <a class="el" href="classNatPunchthroughServer.html#3d1acf17dbf3682445cf54c1711d508d">NatPunchthroughServer</a>
+, <a class="el" href="classNatPunchthroughClient.html#5a296d6bc0e6ac334de310cda150be90">NatPunchthroughClient</a>
+, <a class="el" href="classRakNet_1_1Router2.html#da3cd3f17fadd1466d0ad0ed693fbf69">RakNet::Router2</a>
 <li>SetDefaultAssignmentAlgorithm()
 : <a class="el" href="classRakNet_1_1TeamBalancer.html#862120c7ee7e7b3d7ad42789ed523312">RakNet::TeamBalancer</a>
 <li>SetDefaultOrderingChannel()
-: <a class="el" href="classRakNet_1_1ReplicaManager3.html#7e01d9098c06ad5c9eac71506fad6b13">RakNet::ReplicaManager3</a>
-, <a class="el" href="classRakNet_1_1ReplicaManager2.html#a69b943669d0be2f372a8b076228e836">RakNet::ReplicaManager2</a>
+: <a class="el" href="classRakNet_1_1ReplicaManager2.html#a69b943669d0be2f372a8b076228e836">RakNet::ReplicaManager2</a>
+, <a class="el" href="classRakNet_1_1ReplicaManager3.html#7e01d9098c06ad5c9eac71506fad6b13">RakNet::ReplicaManager3</a>
 <li>SetDefaultPacketPriority()
 : <a class="el" href="classRakNet_1_1ReplicaManager2.html#32f992de370e4fa291fe771422d1c828">RakNet::ReplicaManager2</a>
 , <a class="el" href="classRakNet_1_1ReplicaManager3.html#fcbcfde423edca9e386f59c2f054e753">RakNet::ReplicaManager3</a>
 <li>SetDefaultPacketReliability()
-: <a class="el" href="classRakNet_1_1ReplicaManager2.html#659bbde80d8425e3f55a6561907ab2e2">RakNet::ReplicaManager2</a>
-, <a class="el" href="classRakNet_1_1ReplicaManager3.html#3909030c3ad377e9b2ac1afc0e78889f">RakNet::ReplicaManager3</a>
+: <a class="el" href="classRakNet_1_1ReplicaManager3.html#3909030c3ad377e9b2ac1afc0e78889f">RakNet::ReplicaManager3</a>
+, <a class="el" href="classRakNet_1_1ReplicaManager2.html#659bbde80d8425e3f55a6561907ab2e2">RakNet::ReplicaManager2</a>
 <li>SetDefaultScope()
 : <a class="el" href="classReplicaManager.html#011ed89662e5aacbf30aeb6e7b4fdcd9">ReplicaManager</a>
 <li>SetDisallowedMessageCallback()
@@ -378,8 +383,8 @@ Here is a list of all documented class members with links to the class documenta
 <li>SetGroupId()
 : <a class="el" href="classConnectionGraph.html#0ae9f89fc82f7dc3060a7d3e56af44e4">ConnectionGraph</a>
 <li>SetGuid()
-: <a class="el" href="classNetworkIDManager.html#96afdc8b8c3a8382697f4cca11fce135">NetworkIDManager</a>
-, <a class="el" href="classRakNet_1_1Connection__RM2.html#273eb70cd1f1548e82d92aedf23e89c5">RakNet::Connection_RM2</a>
+: <a class="el" href="classRakNet_1_1Connection__RM2.html#273eb70cd1f1548e82d92aedf23e89c5">RakNet::Connection_RM2</a>
+, <a class="el" href="classNetworkIDManager.html#96afdc8b8c3a8382697f4cca11fce135">NetworkIDManager</a>
 <li>SetHostGuid()
 : <a class="el" href="classRakNet_1_1TeamBalancer.html#c3067d253bf414d0d98686562bcc2bbf">RakNet::TeamBalancer</a>
 <li>SetIncomingPassword()
@@ -415,11 +420,11 @@ Here is a list of all documented class members with links to the class documenta
 <li>SetNetworkID()
 : <a class="el" href="classNetworkIDObject.html#87058cf5f2ae5d3e7722b3c21cc4ee84">NetworkIDObject</a>
 <li>SetNetworkIDManager()
-: <a class="el" href="classRakNet_1_1AutoRPC.html#4db24152da31402708c5bc2865bdf71c">RakNet::AutoRPC</a>
-, <a class="el" href="classNetworkIDObject.html#9d961af54fed1645da8e9b3b216ccab9">NetworkIDObject</a>
+: <a class="el" href="classRakNet_1_1RPC3.html#95e591290dca6c7f218accdeb776481f">RakNet::RPC3</a>
+, <a class="el" href="classRakNet_1_1AutoRPC.html#4db24152da31402708c5bc2865bdf71c">RakNet::AutoRPC</a>
 , <a class="el" href="group__RAKNET__RPC.html#g3dd3a014e7e3ab37489fdc3d9c77d072">RakPeer</a>
 , <a class="el" href="group__RAKNET__RPC.html#g2213ab20dee5f864383e559e3d8cac7e">RakPeerInterface</a>
-, <a class="el" href="classRakNet_1_1RPC3.html#95e591290dca6c7f218accdeb776481f">RakNet::RPC3</a>
+, <a class="el" href="classNetworkIDObject.html#9d961af54fed1645da8e9b3b216ccab9">NetworkIDObject</a>
 , <a class="el" href="classRakNet_1_1ReplicaManager3.html#d5b83d8fccbf9cd4ff4fec40272aa67d">RakNet::ReplicaManager3</a>
 <li>SetNextSYNUpdate()
 : <a class="el" href="classRakNet_1_1CCRakNetUDT.html#ce0d603d0ea12c812e5a16f2911a2848">RakNet::CCRakNetUDT</a>
@@ -443,8 +448,8 @@ Here is a list of all documented class members with links to the class documenta
 <li>SetPassword()
 : <a class="el" href="classConnectionGraph.html#fc95b62acb5ef458525e1819ec29a6e1">ConnectionGraph</a>
 <li>SetPerConnectionOutgoingBandwidthLimit()
-: <a class="el" href="classRakPeer.html#43eacd3c80d27df603fe9be59174359b">RakPeer</a>
-, <a class="el" href="classRakPeerInterface.html#541a79a2e6ab96ee6e625c15b626a088">RakPeerInterface</a>
+: <a class="el" href="classRakPeerInterface.html#541a79a2e6ab96ee6e625c15b626a088">RakPeerInterface</a>
+, <a class="el" href="classRakPeer.html#43eacd3c80d27df603fe9be59174359b">RakPeer</a>
 <li>SetPostResultFunction()
 : <a class="el" href="classRakNet_1_1FunctionThread.html#6dbf87aa1bb2dfa670f21822c2ba5026">RakNet::FunctionThread</a>
 <li>SetPrefix()
@@ -493,21 +498,21 @@ Here is a list of all documented class members with links to the class documenta
 : <a class="el" href="classReplicaManager.html#1b21ec1b0f07c7bce29600db7cbada96">ReplicaManager</a>
 , <a class="el" href="classReadyEvent.html#248b2c6c3ee70b61f4c04fc0b930689b">ReadyEvent</a>
 <li>SetSendParams()
-: <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">RakNet::AutoRPC</a>
-, <a class="el" href="classRakNet_1_1RPC3.html#45965705d026ad3f694091dc87e9ec3a">RakNet::RPC3</a>
+: <a class="el" href="classRakNet_1_1RPC3.html#45965705d026ad3f694091dc87e9ec3a">RakNet::RPC3</a>
+, <a class="el" href="classRakNet_1_1AutoRPC.html#9b51cd696e04c4b18d109f3c169898f8">RakNet::AutoRPC</a>
 <li>SetSendPriority()
 : <a class="el" href="classRakNet_1_1RoomsPlugin.html#21bd54606b77dfb03b9b8ad6654e958c">RakNet::RoomsPlugin</a>
 , <a class="el" href="classRakNet_1_1Lobby2Plugin.html#d64f0357967307e763260d6d68a11769">RakNet::Lobby2Plugin</a>
 <li>SetServerAddress()
-: <a class="el" href="classRakNet_1_1RoomsPlugin.html#6bbf9f7511bfa2fad06154abee6da29d">RakNet::RoomsPlugin</a>
-, <a class="el" href="classRakNet_1_1Lobby2Client.html#6fcabb02010caf3076044a38b9bab820">RakNet::Lobby2Client</a>
+: <a class="el" href="classRakNet_1_1Lobby2Client.html#6fcabb02010caf3076044a38b9bab820">RakNet::Lobby2Client</a>
+, <a class="el" href="classRakNet_1_1RoomsPlugin.html#6bbf9f7511bfa2fad06154abee6da29d">RakNet::RoomsPlugin</a>
 <li>SetSharedNetworkID()
 : <a class="el" href="classNetworkIDManager.html#6f4d9c3fe2e36d394d02b0cc09d4d5a7">NetworkIDManager</a>
 <li>SetSortOrder()
 : <a class="el" href="classDataStructures_1_1Multilist.html#219bfa477ce7722e32462e97c6876634">DataStructures::Multilist&lt; _MultilistType, _DataType, _KeyType, _IndexType &gt;</a>
 <li>SetSplitMessageProgressInterval()
-: <a class="el" href="classRakPeerInterface.html#471f44e797e0cf73a8ae8ec1935ff767">RakPeerInterface</a>
-, <a class="el" href="classRakPeer.html#c1cb3f6aeaa842c721bbe4a3d74c3d5d">RakPeer</a>
+: <a class="el" href="classRakPeer.html#c1cb3f6aeaa842c721bbe4a3d74c3d5d">RakPeer</a>
+, <a class="el" href="classRakPeerInterface.html#471f44e797e0cf73a8ae8ec1935ff767">RakPeerInterface</a>
 <li>SetSuffix()
 : <a class="el" href="classPacketLogger.html#9b81c4cb34d3a71b7916166a7958db56">PacketLogger</a>
 <li>SetSystemAddress()
@@ -515,12 +520,12 @@ Here is a list of all documented class members with links to the class documenta
 <li>SetSystemFilterSet()
 : <a class="el" href="classMessageFilter.html#dbea4c479cd049b8847fda865e6465ab">MessageFilter</a>
 <li>SetTeamSizeLimits()
-: <a class="el" href="classRakNet_1_1TeamBalancer.html#e3a7c0c3da62b448bf862e2069bc66a9">RakNet::TeamBalancer</a>
+: <a class="el" href="classRakNet_1_1TeamBalancer.html#96a94ba62efe91aeb5514c84f9cec62c">RakNet::TeamBalancer</a>
 <li>SetTimeoutCallback()
 : <a class="el" href="classMessageFilter.html#3fedbb1f8ea198ad23f8f38cdb407282">MessageFilter</a>
 <li>SetTimeoutTime()
-: <a class="el" href="classRakPeer.html#e07b0a50700a8c79d9c04360acf9945e">RakPeer</a>
-, <a class="el" href="classRakPeerInterface.html#be44fc861e51716cf3499fafba7d66ac">RakPeerInterface</a>
+: <a class="el" href="classRakPeerInterface.html#be44fc861e51716cf3499fafba7d66ac">RakPeerInterface</a>
+, <a class="el" href="classRakPeer.html#e07b0a50700a8c79d9c04360acf9945e">RakPeer</a>
 , <a class="el" href="classReliabilityLayer.html#49f5a4e63806e65b56c3aca121852e47">ReliabilityLayer</a>
 <li>SetTimestamp()
 : <a class="el" href="classRakNet_1_1AutoRPC.html#ca1b56bc381f72476b741ce2627eb86a">RakNet::AutoRPC</a>
@@ -555,9 +560,9 @@ Here is a list of all documented class members with links to the class documenta
 <li>ShouldSendACKs()
 : <a class="el" href="classRakNet_1_1CCRakNetUDT.html#8bccdc59401e7c858a5ad6622c22b089">RakNet::CCRakNetUDT</a>
 <li>Shutdown()
-: <a class="el" href="classRakPeerInterface.html#e78ac80e7120531ee1a52eb7342278d0">RakPeerInterface</a>
-, <a class="el" href="classRakPeer.html#ab69808cd87c19f1800ac36d8c8e584c">RakPeer</a>
+: <a class="el" href="classRakPeer.html#ab69808cd87c19f1800ac36d8c8e584c">RakPeer</a>
 , <a class="el" href="classRakNet_1_1UDPForwarder.html#601f4783a6c32353a99c26d0996f0500">RakNet::UDPForwarder</a>
+, <a class="el" href="classRakPeerInterface.html#e78ac80e7120531ee1a52eb7342278d0">RakPeerInterface</a>
 <li>Signal()
 : <a class="el" href="classRakNet_1_1RPC3.html#b6e866b090b01c7189055b5fb3c98419">RakNet::RPC3</a>
 <li>SignalExplicit()
@@ -567,8 +572,8 @@ Here is a list of all documented class members with links to the class documenta
 <li>SignalSerializeNeeded()
 : <a class="el" href="classReplicaManager.html#1dba75dce05f3f559c97ffd1b21930d4">ReplicaManager</a>
 <li>Size()
-: <a class="el" href="classDataStructures_1_1List.html#6f13a4519693cbd16cd13b1fe284f330">DataStructures::List&lt; list_type &gt;</a>
-, <a class="el" href="classDataStructures_1_1SingleProducerConsumer.html#4109a63f86171ccd3461082108f6febf">DataStructures::SingleProducerConsumer&lt; SingleProducerConsumerType &gt;</a>
+: <a class="el" href="classDataStructures_1_1SingleProducerConsumer.html#4109a63f86171ccd3461082108f6febf">DataStructures::SingleProducerConsumer&lt; SingleProducerConsumerType &gt;</a>
+, <a class="el" href="classDataStructures_1_1List.html#6f13a4519693cbd16cd13b1fe284f330">DataStructures::List&lt; list_type &gt;</a>
 <li>slotIndex
 : <a class="el" href="structRakNet_1_1Client__PerTitleBinaryStorage.html#1941cb380e473db17c109d71dcaacc61">RakNet::Client_PerTitleBinaryStorage</a>
 <li>SMALLEST_TEAM
@@ -586,38 +591,38 @@ Here is a list of all documented class members with links to the class documenta
 <li>SQLEscape()
 : <a class="el" href="classRakNet_1_1RakString.html#6932a1a6069d3c017b3ed7389a8262bd">RakNet::RakString</a>
 <li>Start()
-: <a class="el" href="classRakNetTransport2.html#c198f1c9848307891e25079d5a5ebfce">RakNetTransport2</a>
-, <a class="el" href="classTelnetTransport.html#15faaa64d3cf73c373e834dfc5974c96">TelnetTransport</a>
+: <a class="el" href="classTransportInterface.html#ac3c28e45550bd35a66bcb8b1713a129">TransportInterface</a>
 , <a class="el" href="classRakNetTransport.html#b36cabe031d1ec7ec2eec5093cebc373">RakNetTransport</a>
-, <a class="el" href="classTransportInterface.html#ac3c28e45550bd35a66bcb8b1713a129">TransportInterface</a>
+, <a class="el" href="classRakNetTransport2.html#c198f1c9848307891e25079d5a5ebfce">RakNetTransport2</a>
+, <a class="el" href="classTelnetTransport.html#15faaa64d3cf73c373e834dfc5974c96">TelnetTransport</a>
 <li>StartForwarding()
 : <a class="el" href="classRakNet_1_1UDPForwarder.html#64dcdc9ed748c9b2ad67439be985cf74">RakNet::UDPForwarder</a>
 <li>StartThreads()
-: <a class="el" href="classAutopatcherServer.html#ea1fac5cc8da4b622d39c4b6bd6bf962">AutopatcherServer</a>
-, <a class="el" href="structThreadPool.html#09fde0ca678340723840fae1dcda51a2">ThreadPool&lt; InputType, OutputType &gt;</a>
-, <a class="el" href="classInlineFunctorProcessor.html#6783813daa980c37841700bd58d0de66">InlineFunctorProcessor</a>
+: <a class="el" href="structThreadPool.html#09fde0ca678340723840fae1dcda51a2">ThreadPool&lt; InputType, OutputType &gt;</a>
 , <a class="el" href="classRakNet_1_1FunctionThread.html#1ea046df14ef2c54417d237336d3fa15">RakNet::FunctionThread</a>
+, <a class="el" href="classInlineFunctorProcessor.html#6783813daa980c37841700bd58d0de66">InlineFunctorProcessor</a>
+, <a class="el" href="classAutopatcherServer.html#ea1fac5cc8da4b622d39c4b6bd6bf962">AutopatcherServer</a>
 <li>Startup()
-: <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85">RakPeer</a>
-, <a class="el" href="classFullyConnectedMesh.html#c4043c5134952669f24b845acd6ed939">FullyConnectedMesh</a>
-, <a class="el" href="classRakNet_1_1UDPForwarder.html#33db580779b6bc0c52e82c18c9f82e0e">RakNet::UDPForwarder</a>
+: <a class="el" href="classRakNet_1_1NatTypeDetectionServer.html#7f98c268bfa2c0762a577679e753f31a">RakNet::NatTypeDetectionServer</a>
 , <a class="el" href="classRakPeerInterface.html#5888ca97f61ec4147913ac9ec902688b">RakPeerInterface</a>
-, <a class="el" href="classRakNet_1_1NatTypeDetectionServer.html#7f98c268bfa2c0762a577679e753f31a">RakNet::NatTypeDetectionServer</a>
+, <a class="el" href="classRakNet_1_1UDPForwarder.html#33db580779b6bc0c52e82c18c9f82e0e">RakNet::UDPForwarder</a>
+, <a class="el" href="classFullyConnectedMesh.html#c4043c5134952669f24b845acd6ed939">FullyConnectedMesh</a>
+, <a class="el" href="classRakPeer.html#1fbd8608cf1ead14250b293cc6eb9a85">RakPeer</a>
 <li>Status
 : <a class="el" href="structRakNet_1_1Lobby2Presence.html#c02f863240768e80f5892ccbaef8d0ed">RakNet::Lobby2Presence</a>
 <li>statusString
 : <a class="el" href="structRakNet_1_1Lobby2Presence.html#0ef2a876325474a3fd6d705a0bdc5e9e">RakNet::Lobby2Presence</a>
 <li>Stop()
-: <a class="el" href="classRakNetTransport.html#5864ac8c017374913d1bafdc58d576ce">RakNetTransport</a>
-, <a class="el" href="classRakNetTransport2.html#d4a43211bf16fd36b3d05b281af69e77">RakNetTransport2</a>
+: <a class="el" href="classTransportInterface.html#f84db71a9671a8914f30f412efd3fb8a">TransportInterface</a>
 , <a class="el" href="classTelnetTransport.html#e783ef3cb57e722e7fc4d9046ccd0772">TelnetTransport</a>
-, <a class="el" href="classTransportInterface.html#f84db71a9671a8914f30f412efd3fb8a">TransportInterface</a>
+, <a class="el" href="classRakNetTransport.html#5864ac8c017374913d1bafdc58d576ce">RakNetTransport</a>
+, <a class="el" href="classRakNetTransport2.html#d4a43211bf16fd36b3d05b281af69e77">RakNetTransport2</a>
 <li>StopForwarding()
 : <a class="el" href="classRakNet_1_1UDPForwarder.html#4611e9e3408e73980c5978e972a2dbd8">RakNet::UDPForwarder</a>
 <li>StopThreads()
-: <a class="el" href="classInlineFunctorProcessor.html#bc0250724ce68e835c951c6a4031ad08">InlineFunctorProcessor</a>
+: <a class="el" href="structThreadPool.html#d93b8ba41d96c5f0f814ae0acabfcdfc">ThreadPool&lt; InputType, OutputType &gt;</a>
+, <a class="el" href="classInlineFunctorProcessor.html#bc0250724ce68e835c951c6a4031ad08">InlineFunctorProcessor</a>
 , <a class="el" href="classRakNet_1_1FunctionThread.html#07fa6a9c4a24fa94b7769d2188b01282">RakNet::FunctionThread</a>
-, <a class="el" href="structThreadPool.html#d93b8ba41d96c5f0f814ae0acabfcdfc">ThreadPool&lt; InputType, OutputType &gt;</a>
 <li>StrCmp()
 : <a class="el" href="classRakNet_1_1RakString.html#84e1217c6ce0ac078c4f8d915d6affd4">RakNet::RakString</a>
 <li>StrICmp()
@@ -635,11 +640,11 @@ Here is a list of all documented class members with links to the class documenta
 <li>SubscribeToGroup()
 : <a class="el" href="classConnectionGraph.html#844854487fa0ab8a2238fadb116fc616">ConnectionGraph</a>
 <li>systemAddress
-: <a class="el" href="structLogCommandParser_1_1SystemAddressAndChannel.html#645f3d8e3d6c9825d0b67c3bb972a67e">LogCommandParser::SystemAddressAndChannel</a>
-, <a class="el" href="structPacket.html#65b2e676ad49156ba29d4d58c7d28d41">Packet</a>
+: <a class="el" href="structPacket.html#65b2e676ad49156ba29d4d58c7d28d41">Packet</a>
+, <a class="el" href="structLogCommandParser_1_1SystemAddressAndChannel.html#645f3d8e3d6c9825d0b67c3bb972a67e">LogCommandParser::SystemAddressAndChannel</a>
 </ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 4 21:11:26 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 27 20:51:24 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

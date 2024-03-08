@@ -101,7 +101,7 @@
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#c1756b0cf7cd10253e65a23b126b5ba2">mySystemAddress</a></td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [protected]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#34ef012d4c7fdae387cff33ef3f8a82c">NotifyAndFlagForShutdown</a>(const SystemAddress systemAddress, bool performImmediate, unsigned char orderingChannel, PacketPriority disconnectionNotificationPriority)</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [protected]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#0155271445e2fe26b382080f228df46d">NumberOfConnections</a>(void) const </td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="classRakPeer.html#6abbfdfa442c73572f034475a170c5b8">OnConnectionRequest</a>(RakPeer::RemoteSystemStruct *remoteSystem, unsigned char *AESKey, bool setAESKey)</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [protected]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classRakPeer.html#2a6640b952f88f2a2568cfd0ef9e484a">OnConnectionRequest</a>(RakPeer::RemoteSystemStruct *remoteSystem, unsigned char *AESKey, bool setAESKey, RakNetTime incomingTimestamp)</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [protected]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#e29ffd34c6b9b3017a26096e72d5f29e">ParseConnectionRequestPacket</a>(RakPeer::RemoteSystemStruct *remoteSystem, SystemAddress systemAddress, const char *data, int byteSize)</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [protected]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#171a26ffc686c3666b169e8972d8e282">Ping</a>(const SystemAddress target)</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#3e1cda7f2e6b523902b6db6c88ca4e38">Ping</a>(const char *host, unsigned short remotePort, bool onlyReplyOnAcceptingConnections, unsigned connectionSocketIndex=0)</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
@@ -144,7 +144,7 @@
   <tr class="memlist"><td><a class="el" href="classRakPeer.html#db105b82e90bebddaa273ba7e6ba08ad">~RakPeer</a>()</td><td><a class="el" href="classRakPeer.html">RakPeer</a></td><td><code> [virtual]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classRakPeerInterface.html#a22a37ed504b982fe53ca570a2fc01ca">~RakPeerInterface</a>()</td><td><a class="el" href="classRakPeerInterface.html">RakPeerInterface</a></td><td><code> [inline, virtual]</code></td></tr>
 </table></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 4 21:11:27 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 27 20:51:25 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

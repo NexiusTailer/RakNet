@@ -5,6 +5,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_RakNetTransport==1
 
 #ifndef __RAKNET_TRANSPORT
 #define __RAKNET_TRANSPORT
@@ -120,3 +122,5 @@ protected:
 };
 
 #endif
+
+#endif // _RAKNET_SUPPORT_*

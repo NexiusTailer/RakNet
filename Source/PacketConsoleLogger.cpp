@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_LogCommandParser==1 && _RAKNET_SUPPORT_PacketLogger==1
+
 #include "PacketConsoleLogger.h"
 #include "LogCommandParser.h"
 #include <stdio.h>
@@ -18,3 +21,5 @@ void PacketConsoleLogger::WriteLog(const char *str)
 	if (logCommandParser)
 		logCommandParser->WriteLog("PacketConsoleLogger", str);
 }
+
+#endif // _RAKNET_SUPPORT_*

@@ -5,6 +5,9 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_RPC4Plugin==1
+
 
 #ifndef __RPC_4_PLUGIN_H
 #define __RPC_4_PLUGIN_H
@@ -99,3 +102,5 @@ namespace RakNet
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

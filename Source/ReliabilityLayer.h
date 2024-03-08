@@ -72,6 +72,7 @@ struct BPSTracker
 	void Push1(CCTimeType time, uint64_t value1);
 //	void Push2(RakNetTimeUS time, uint64_t value1, uint64_t value2);
 	uint64_t GetBPS1(CCTimeType time);
+	uint64_t GetBPS1Threadsafe(CCTimeType time);
 //	uint64_t GetBPS2(RakNetTimeUS time);
 //	void GetBPS1And2(RakNetTimeUS time, uint64_t &out1, uint64_t &out2);
 	uint64_t GetTotal1(void) const;

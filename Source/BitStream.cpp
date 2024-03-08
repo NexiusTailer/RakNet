@@ -737,6 +737,86 @@ void BitStream::PadWithZeroToByteLength( unsigned int bytes )
 	}
 }
 
+/* 
+// Julius Goryavsky's version of Harley's algorithm.
+// 17 elementary ops plus an indexed load, if the machine
+// has "and not."
+
+int nlz10b(unsigned x) {
+
+   static char table[64] =
+     {32,20,19, u, u,18, u, 7,  10,17, u, u,14, u, 6, u,
+       u, 9, u,16, u, u, 1,26,   u,13, u, u,24, 5, u, u,
+       u,21, u, 8,11, u,15, u,   u, u, u, 2,27, 0,25, u,
+      22, u,12, u, u, 3,28, u,  23, u, 4,29, u, u,30,31};
+
+   x = x | (x >> 1);    // Propagate leftmost
+   x = x | (x >> 2);    // 1-bit to the right.
+   x = x | (x >> 4);
+   x = x | (x >> 8);
+   x = x & ~(x >> 16);
+   x = x*0xFD7049FF;    // Activate this line or the following 3.
+// x = (x << 9) - x;    // Multiply by 511.
+// x = (x << 11) - x;   // Multiply by 2047.
+// x = (x << 14) - x;   // Multiply by 16383.
+   return table[x >> 26];
+}
+*/
+int BitStream::NumberOfLeadingZeroes( int8_t x ) {return NumberOfLeadingZeroes((uint8_t)x);}
+int BitStream::NumberOfLeadingZeroes( uint8_t x )
+{
+	uint8_t y;
+	int n;
+
+	n = 8;
+	y = x >> 4;  if (y != 0) {n = n - 4;  x = y;}
+	y = x >> 2;  if (y != 0) {n = n - 2;  x = y;}
+	y = x >> 1;  if (y != 0) return n - 2;
+	return (int)(n - x);
+}
+int BitStream::NumberOfLeadingZeroes( int16_t x ) {return NumberOfLeadingZeroes((uint16_t)x);}
+int BitStream::NumberOfLeadingZeroes( uint16_t x )
+{
+	uint16_t y;
+	int n;
+
+	n = 16;
+	y = x >> 8;  if (y != 0) {n = n - 8;  x = y;}
+	y = x >> 4;  if (y != 0) {n = n - 4;  x = y;}
+	y = x >> 2;  if (y != 0) {n = n - 2;  x = y;}
+	y = x >> 1;  if (y != 0) return n - 2;
+	return (int)(n - x);
+}
+int BitStream::NumberOfLeadingZeroes( int32_t x ) {return NumberOfLeadingZeroes((uint32_t)x);}
+int BitStream::NumberOfLeadingZeroes( uint32_t x )
+{
+	uint32_t y;
+	int n;
+
+	n = 32;
+	y = x >>16;  if (y != 0) {n = n -16;  x = y;}
+	y = x >> 8;  if (y != 0) {n = n - 8;  x = y;}
+	y = x >> 4;  if (y != 0) {n = n - 4;  x = y;}
+	y = x >> 2;  if (y != 0) {n = n - 2;  x = y;}
+	y = x >> 1;  if (y != 0) return n - 2;
+	return (int)(n - x);
+}
+int BitStream::NumberOfLeadingZeroes( int64_t x ) {return NumberOfLeadingZeroes((uint64_t)x);}
+int BitStream::NumberOfLeadingZeroes( uint64_t x )
+{
+	uint64_t y;
+	int n;
+
+	n = 64;
+	y = x >>32;  if (y != 0) {n = n -32;  x = y;}
+	y = x >>16;  if (y != 0) {n = n -16;  x = y;}
+	y = x >> 8;  if (y != 0) {n = n - 8;  x = y;}
+	y = x >> 4;  if (y != 0) {n = n - 4;  x = y;}
+	y = x >> 2;  if (y != 0) {n = n - 2;  x = y;}
+	y = x >> 1;  if (y != 0) return n - 2;
+	return (int)(n - x);
+}
+
 // Should hit if reads didn't match writes
 void BitStream::AssertStreamEmpty( void )
 {

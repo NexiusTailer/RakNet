@@ -1,3 +1,4 @@
+#include "NativeFeatureIncludes.h"
 #include "RakNetworkFactory.h"
 #include "RakPeerInterface.h"
 #include "Router.h"
@@ -27,14 +28,28 @@ void MyFree (void *p)
 int main()
 {
 	// Just test allocation and deallocation across the DLL.  If it crashes it failed, otherwise it worked.
-	ConsoleServer* a=RakNetworkFactory::GetConsoleServer( );
-	ReplicaManager* b=RakNetworkFactory::GetReplicaManager( );
-	LogCommandParser* c=RakNetworkFactory::GetLogCommandParser( );
-	PacketLogger* d=RakNetworkFactory::GetPacketLogger( );
-	RakNetCommandParser* e=RakNetworkFactory::GetRakNetCommandParser( );
+	#if _RAKNET_SUPPORT_ReplicaManager==1
+		ConsoleServer* a=RakNetworkFactory::GetConsoleServer( );
+	#endif
+	#if _RAKNET_SUPPORT_ReplicaManager==1
+		ReplicaManager* b=RakNetworkFactory::GetReplicaManager( );
+	#endif
+	#if _RAKNET_SUPPORT_LogCommandParser==1
+		LogCommandParser* c=RakNetworkFactory::GetLogCommandParser( );
+		#if _RAKNET_SUPPORT_PacketLogger==1
+			PacketLogger* d=RakNetworkFactory::GetPacketLogger( );
+		#endif
+	#endif
+	#if _RAKNET_SUPPORT_RakNetCommandParser==1
+		RakNetCommandParser* e=RakNetworkFactory::GetRakNetCommandParser( );
+	#endif
 	RakPeerInterface * f=RakNetworkFactory::GetRakPeerInterface( );
-	Router *g=RakNetworkFactory::GetRouter( );
-	ConnectionGraph *h=RakNetworkFactory::GetConnectionGraph( );
+	#if _RAKNET_SUPPORT_Router==1
+		Router *g=RakNetworkFactory::GetRouter( );
+	#endif
+	#if _RAKNET_SUPPORT_ConnectionGraph==1
+		ConnectionGraph *h=RakNetworkFactory::GetConnectionGraph( );
+	#endif
 
 	// See RakMemoryOverride.h
 	SetMalloc(MyMalloc);
@@ -52,15 +67,29 @@ int main()
 	SystemAddress p2;
 	p1=p2;
 	g->Update();
-
-	RakNetworkFactory::DestroyConsoleServer(a);
-	RakNetworkFactory::DestroyReplicaManager(b);
-	RakNetworkFactory::DestroyLogCommandParser(c);
-	RakNetworkFactory::DestroyPacketLogger(d);
-	RakNetworkFactory::DestroyRakNetCommandParser(e);
+	
+	#if _RAKNET_SUPPORT_ConsoleServer==1
+		RakNetworkFactory::DestroyConsoleServer(a);
+	#endif
+	#if _RAKNET_SUPPORT_ReplicaManager==1
+		RakNetworkFactory::DestroyReplicaManager(b);
+	#endif
+	#if _RAKNET_SUPPORT_LogCommandParser==1
+		RakNetworkFactory::DestroyLogCommandParser(c);
+		#if _RAKNET_SUPPORT_PacketLogger==1
+			RakNetworkFactory::DestroyPacketLogger(d);
+		#endif
+	#endif
+	#if _RAKNET_SUPPORT_RakNetCommandParser==1
+		RakNetworkFactory::DestroyRakNetCommandParser(e);
+	#endif
 	RakNetworkFactory::DestroyRakPeerInterface(f);
-	RakNetworkFactory::DestroyRouter(g);
-	RakNetworkFactory::DestroyConnectionGraph(h);
+	#if _RAKNET_SUPPORT_Router==1
+		RakNetworkFactory::DestroyRouter(g);
+	#endif
+	#if _RAKNET_SUPPORT_ConnectionGraph==1
+		RakNetworkFactory::DestroyConnectionGraph(h);
+	#endif
 	return 0;
 }
 

@@ -51,7 +51,7 @@ public:
 	/// Called when a connection attempt fails
 	/// \param[in] systemAddress Address of the connection
 	/// \param[in] failedConnectionReason Why the connection failed
-	void OnFailedConnectionAttempt(SystemAddress systemAddress, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason) {(void) systemAddress; (void) failedConnectionAttemptReason;}
+	void OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason) {(void) failedConnectionAttemptReason;}
 
 	/// Called on a send to the socket, per datagram, that does not go through the reliability layer
 	/// \param[in] data The data being sent

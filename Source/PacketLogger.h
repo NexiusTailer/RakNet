@@ -5,6 +5,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_PacketLogger==1
 
 #ifndef __PACKET_LOGGER_H
 #define __PACKET_LOGGER_H
@@ -84,3 +86,5 @@ protected:
 };
 
 #endif
+
+#endif // _RAKNET_SUPPORT_*

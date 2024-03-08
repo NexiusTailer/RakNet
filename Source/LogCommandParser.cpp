@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_LogCommandParser==1
+
 #include "LogCommandParser.h"
 #include "TransportInterface.h"
 #if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
@@ -268,3 +271,5 @@ void LogCommandParser::OnTransportChange(TransportInterface *transport)
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

@@ -4,6 +4,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_ConnectionGraph==1
 
 #include "ConnectionGraph.h"
 #include "RakPeerInterface.h"
@@ -615,3 +617,5 @@ void ConnectionGraph::NotifyUserOfRemoteConnection(const SystemAddressAndGroupId
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

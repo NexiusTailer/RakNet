@@ -1328,7 +1328,7 @@ void Lobby2ClientGFx3Impl::OnNewConnection(SystemAddress systemAddress, RakNetGU
 		FxDelegate::Invoke(movie, "c2f_NotifyConnectionResultSuccess", rargs);
 	}
 }
-void Lobby2ClientGFx3Impl::OnFailedConnectionAttempt(SystemAddress systemAddress, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason)
+void Lobby2ClientGFx3Impl::OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason)
 {
 	if (systemAddress==lobby2Client->GetServerAddress())
 	{

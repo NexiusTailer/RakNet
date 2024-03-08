@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_ReplicaManager==1
+
 #include "ReplicaManager.h"
 #include "RakPeerInterface.h"
 #include "GetTime.h"
@@ -1278,3 +1281,5 @@ unsigned ReplicaManager::GetCommandListReplicaIndex(const DataStructures::List<R
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

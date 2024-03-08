@@ -5,6 +5,7 @@
 #include "DS_List.h"
 #include "RakNetTypes.h" // int64_t
 #include <stdio.h>
+#include "stdarg.h"
 
 class SimpleMutex;
 
@@ -271,6 +272,7 @@ public:
 protected:
 	void Allocate(size_t len);
 	void Assign(const char *str);
+	void Assign(const char *str, va_list ap);
 	
 	void Clone(void);
 	void Free(void);

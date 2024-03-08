@@ -5,6 +5,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_Router2==1
 
 #ifndef __ROUTER_2_PLUGIN_H
 #define __ROUTER_2_PLUGIN_H
@@ -19,6 +21,12 @@ class RakPeerInterface;
 
 namespace RakNet
 {
+
+struct Router2DebugInterface
+{
+	virtual void ShowFailure(const char *message);
+	virtual void ShowDiagnostic(const char *message);
+};
 
 /// \defgroup ROUTER_2_GROUP Router2
 /// \brief Part of the NAT punchthrough solution, allowing you to connect to systems by routing through a shared connection.
@@ -58,13 +66,19 @@ public:
 	/// Defaults to 0
 	void SetMaximumForwardingRequests(int max);
 
+	/// For testing and debugging
+	void SetDebugInterface(Router2DebugInterface *_debugInterface);
+
+	/// Get the pointer passed to SetDebugInterface()
+	Router2DebugInterface *GetDebugInterface(void) const;
+
 	// --------------------------------------------------------------------------------------------
 	// Packet handling functions
 	// --------------------------------------------------------------------------------------------
 	virtual PluginReceiveResult OnReceive(Packet *packet);
 	virtual void Update(void);
 	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
-	virtual void OnFailedConnectionAttempt(SystemAddress systemAddress, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason);
+	virtual void OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason);
 	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 	virtual void OnRakPeerShutdown(void);
 
@@ -154,8 +168,12 @@ protected:
 	void SendOOBFromRakNetPort(OutOfBandIdentifiers oob, BitStream *extraData, SystemAddress sa);
 	void SendOOBFromSpecifiedSocket(OutOfBandIdentifiers oob, SystemAddress sa, SOCKET socket);
 	void SendOOBMessages(MiniPunchRequest *mpr);
+
+	Router2DebugInterface *debugInterface;
 };
 
 }
 
 #endif
+
+#endif // _RAKNET_SUPPORT_*

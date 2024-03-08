@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_PacketLogger==1
+
 #include "PacketOutputWindowLogger.h"
 #include "RakString.h"
 #if defined(_WIN32) && !defined(__X360__) && !defined(_XBOX)
@@ -18,3 +21,5 @@ void PacketOutputWindowLogger::WriteLog(const char *str)
 	OutputDebugStr(str2.C_String());
 #endif
 }
+
+#endif // _RAKNET_SUPPORT_*

@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_TelnetTransport==1
+
 #include "TelnetTransport.h"
 #include "TCPInterface.h"
 #include <stdio.h>
@@ -353,3 +356,5 @@ bool TelnetTransport::ReassembleLine(TelnetTransport::TelnetClient* remoteClient
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_PacketizedTCP==1
+
 #include "PacketizedTCP.h"
 #include "NativeTypes.h"
 #include "BitStream.h"
@@ -114,7 +117,14 @@ void PacketizedTCP::PushNotificationsToQueues(void)
 		_failedConnectionAttempts.Push(sa, __FILE__, __LINE__ );
 		unsigned int i;
 		for (i=0; i < messageHandlerList.Size(); i++)
-			messageHandlerList[i]->OnFailedConnectionAttempt(sa, FCAR_CONNECTION_ATTEMPT_FAILED);
+		{
+			Packet p;
+			p.systemAddress=sa;
+			p.data=0;
+			p.length=0;
+			p.bitSize=0;
+			messageHandlerList[i]->OnFailedConnectionAttempt(&p, FCAR_CONNECTION_ATTEMPT_FAILED);
+		}
 	}
 
 	sa = TCPInterface::HasLostConnection();
@@ -390,3 +400,5 @@ SystemAddress PacketizedTCP::HasLostConnection(void)
 		return _lostConnections.Pop();
 	return UNASSIGNED_SYSTEM_ADDRESS;
 }
+
+#endif // _RAKNET_SUPPORT_*

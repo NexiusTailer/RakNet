@@ -27,6 +27,7 @@ public:
 	structureType *PopInaccurate(void);
 	structureType *Pop(void);
 	void SetPageSize(int size);
+	bool IsEmpty(void);
 
 	// Memory pool operations
 	structureType *Allocate(const char *file, unsigned int line);
@@ -119,6 +120,16 @@ template <class structureType>
 void ThreadsafeAllocatingQueue<structureType>::SetPageSize(int size)
 {
 	memoryPool.SetPageSize(size);
+}
+
+template <class structureType>
+bool ThreadsafeAllocatingQueue<structureType>::IsEmpty(void)
+{
+	bool isEmpty;
+	queueMutex.Lock();
+	isEmpty=queue.IsEmpty();
+	queueMutex.Unlock();
+	return isEmpty;
 }
 
 };

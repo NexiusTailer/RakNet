@@ -15,6 +15,9 @@
 /// Software Foundation; either version 2 of the License, or (at your
 /// option) any later version.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_HTTPConnection==1
+
 #include "TCPInterface.h"
 #include "HTTPConnection.h"
 #include "RakSleep.h"
@@ -62,18 +65,7 @@ bool HTTPConnection::HasBadResponse(int *code, RakNet::RakString *data)
 }
 void HTTPConnection::CloseConnection()
 {
-	if (incomingData.IsEmpty()==false)
-	{
-//		printf("\n\n----------------------- PUSHING -------------\n\n");
-//		printf(incomingData.C_String());
-//		printf("\n------------------------------------\n\n");
-		//printf("Pushing result\n");
-		results.Push(incomingData, __FILE__, __LINE__ );
-	}
-	incomingData.Clear();
-	tcp->CloseConnection(server);
-	connectionState=CS_NONE;
-//	printf("Disconnecting\n");
+	connectionState=CS_DISCONNECTING;
 }
 void HTTPConnection::Update(void)
 {
@@ -116,6 +108,20 @@ void HTTPConnection::Update(void)
 			connectionState = CS_CONNECTING;
 		}
 		break;
+	case CS_DISCONNECTING:
+		{
+			if (tcp->ReceiveHasPackets()==false)
+			{
+				if (incomingData.IsEmpty()==false)
+				{
+					results.Push(incomingData, __FILE__, __LINE__ );
+				}
+				incomingData.Clear();
+				tcp->CloseConnection(server);
+				connectionState=CS_NONE;
+			}
+		}
+		break;
 	case CS_CONNECTING:
 		{
 		}
@@ -130,16 +136,21 @@ void HTTPConnection::Update(void)
 				return;
 			}
 
+#if defined(OPEN_SSL_CLIENT_SUPPORT)
+			tcp->StartSSLClient(server);
+#endif
+
 			//printf("Sending request\n");
 			currentProcessingRequest = outgoingPosts.Pop();
 			RakString request("POST %s HTTP/1.0\r\n"
-				"Host: %s\r\n"
+				"Host: %s:%i\r\n"
 				"Content-Type: %s\r\n"
 				"Content-Length: %u\r\n"
 				"\r\n"
 				"%s",
 				currentProcessingRequest.remotePath.C_String(),
 				host.C_String(),
+				port,
 				currentProcessingRequest.contentType.C_String(),
 				(unsigned) currentProcessingRequest.data.GetLength(),
 				currentProcessingRequest.data.C_String());
@@ -262,3 +273,4 @@ HTTPConnection::~HTTPConnection(void)
 }
 
 
+#endif // _RAKNET_SUPPORT_*

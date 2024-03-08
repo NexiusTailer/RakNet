@@ -5,6 +5,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_AutoRPC==1
 
 #ifndef __AUTO_RPC_H
 #define __AUTO_RPC_H
@@ -662,3 +664,5 @@ protected:
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

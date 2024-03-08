@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_NatPunchthroughClient==1
+
 #include "NatPunchthroughClient.h"
 #include "BitStream.h"
 #include "MessageIdentifiers.h"
@@ -9,6 +12,7 @@ void NatPunchthroughDebugInterface_Printf::OnClientMessage(const char *msg)
 {
 	printf("%s\n", msg);
 }
+#if _RAKNET_SUPPORT_PacketLogger==1
 void NatPunchthroughDebugInterface_PacketLogger::OnClientMessage(const char *msg)
 {
 	if (pl)
@@ -16,6 +20,7 @@ void NatPunchthroughDebugInterface_PacketLogger::OnClientMessage(const char *msg
 		pl->WriteMiscellaneous("Nat", msg);
 	}
 }
+#endif
 
 NatPunchthroughClient::NatPunchthroughClient()
 {
@@ -304,7 +309,7 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 		{
 			RakNet::BitStream bs(packet->data,packet->length,false);
 			bs.IgnoreBytes(2);
-			unsigned int sessionId;
+			uint16_t sessionId;
 			bs.Read(sessionId);
 //			RakAssert(sessionId<100);
 			if (sessionId!=sp.sessionId)
@@ -396,7 +401,7 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 			if (packet->data[0]==ID_NAT_CONNECTION_TO_TARGET_LOST ||
 				packet->data[0]==ID_NAT_TARGET_UNRESPONSIVE)
 			{
-				unsigned int sessionId;
+				uint16_t sessionId;
 				incomingBs.Read(sessionId);
 				if (sessionId!=sp.sessionId)
 					break;
@@ -550,7 +555,7 @@ void NatPunchthroughClient::SendOutOfBand(SystemAddress sa, MessageID oobId)
 		oob.Write(sa.port);
 	char ipAddressString[32];
 	sa.ToString(false, ipAddressString);
-	rakPeerInterface->SendOutOfBand((const char*) ipAddressString,sa.port,(MessageID) ID_OUT_OF_BAND_INTERNAL,(const char*) oob.GetData(),oob.GetNumberOfBytesUsed());
+	rakPeerInterface->SendOutOfBand((const char*) ipAddressString,sa.port,(const char*) oob.GetData(),oob.GetNumberOfBytesUsed());
 
 	if (natPunchthroughDebugInterface)
 	{
@@ -645,7 +650,7 @@ void NatPunchthroughClient::OnGetMostRecentPort(Packet *packet)
 {
 	RakNet::BitStream incomingBs(packet->data,packet->length,false);
 	incomingBs.IgnoreBytes(sizeof(MessageID));
-	unsigned int sessionId;
+	uint16_t sessionId;
 	incomingBs.Read(sessionId);
 
 	RakNet::BitStream outgoingBs;
@@ -747,3 +752,6 @@ bool NatPunchthroughClient::RemoveFromFailureQueue(void)
 	}
 	return false;
 }
+
+#endif // _RAKNET_SUPPORT_*
+

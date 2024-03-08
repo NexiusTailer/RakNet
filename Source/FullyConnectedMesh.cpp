@@ -4,6 +4,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_FullyConnectedMesh==1
 
 #include "FullyConnectedMesh.h"
 #include "RakPeerInterface.h"
@@ -85,3 +87,5 @@ PluginReceiveResult FullyConnectedMesh::OnReceive(Packet *packet)
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

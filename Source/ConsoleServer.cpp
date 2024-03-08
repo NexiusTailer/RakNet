@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_ConsoleServer==1
+
 #include "ConsoleServer.h"
 #include "TransportInterface.h"
 #include "CommandParserInterface.h"
@@ -300,3 +303,5 @@ void ConsoleServer::SetPrompt(const char *_prompt)
 	else
 		prompt=0;
 }
+
+#endif // _RAKNET_SUPPORT_*

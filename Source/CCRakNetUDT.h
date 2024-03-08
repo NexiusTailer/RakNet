@@ -401,6 +401,10 @@ class CCRakNetUDT
 // 	uint32_t rttSum, rttLow;
 	void TrackRTT(CCTimeType curTime, CCTimeType rtt);
 	bool gotPacketlossThisUpdate;
+	// If a spike occurs (such as due to debugging), we'd get many packetloss or nak events in a row
+	// It is not necessary to drop the send rate on each of those, only the first
+	// Without this check, the send rate would drop, but the ping would remain steady (besides the first message) so it would take a very long time to recover
+	bool gotNakOrResendWithoutAck;
 
 	int bytesCanSendThisTick;
 };

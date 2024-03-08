@@ -6,6 +6,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_FullyConnectedMesh2==1
 
 #ifndef __FULLY_CONNECTED_MESH_2_H
 #define __FULLY_CONNECTED_MESH_2_H
@@ -212,3 +214,4 @@ AssignTheirGuid()
 
 #endif
 
+#endif // _RAKNET_SUPPORT_*

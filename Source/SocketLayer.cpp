@@ -20,7 +20,7 @@
 #include <arpa/inet.h>
 #include <errno.h>  // error numbers
 #include <stdio.h> // RAKNET_DEBUG_PRINTF
-// #include <ifaddrs.h>
+#include <ifaddrs.h>
 #include <netinet/in.h>
 #include <net/if.h>
 #include <sys/types.h>
@@ -83,6 +83,7 @@ SOCKET SocketLayer::Connect( SOCKET writeSocket, unsigned int binaryAddress, uns
 {
 	RakAssert( writeSocket != (SOCKET) -1 );
 	sockaddr_in connectSocketAddress;
+	memset(&connectSocketAddress,0,sizeof(sockaddr_in));
 
 	connectSocketAddress.sin_family = AF_INET;
 	connectSocketAddress.sin_port = htons( port );
@@ -109,6 +110,7 @@ bool SocketLayer::IsPortInUse(unsigned short port, const char *hostAddress)
 {
 	SOCKET listenSocket;
 	sockaddr_in listenerSocketAddress;
+	memset(&listenerSocketAddress,0,sizeof(sockaddr_in));
 	// Listen on our designated Port#
 	listenerSocketAddress.sin_port = htons( port );
 	listenSocket = socket( AF_INET, SOCK_DGRAM, 0 );
@@ -259,6 +261,7 @@ SOCKET SocketLayer::CreateBoundSocket( unsigned short port, bool blockingSocket,
 	int ret;
 	SOCKET listenSocket;
 	sockaddr_in listenerSocketAddress;
+	memset(&listenerSocketAddress,0,sizeof(sockaddr_in));
 	// Listen on our designated Port#
 	listenerSocketAddress.sin_port = htons( port );
 #if (defined(_XBOX) || defined(_X360)) && defined(RAKNET_USE_VDP)
@@ -376,7 +379,7 @@ const char* SocketLayer::DomainNameToIP( const char *domainName )
 	return inet_ntoa( addr );
 #endif
 
-	return "";
+//	return "";
 }
 
 
@@ -422,6 +425,7 @@ int SocketLayer::RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode, Rak
 #endif
 
 	sockaddr_in sa;
+	memset(&sa,0,sizeof(sockaddr_in));
 	socklen_t len2;
 	unsigned short portnum=0;
 	if (remotePortRakNetWasStartedOn_PS3!=0)
@@ -559,6 +563,7 @@ void SocketLayer::RecvFromBlocking( const SOCKET s, RakPeer *rakPeer, unsigned s
 	socklen_t sockLen;
 	socklen_t* socketlenPtr=(socklen_t*) &sockLen;
 	sockaddr_in sa;
+	memset(&sa,0,sizeof(sockaddr_in));
 	char *dataOutModified;
 	int dataOutSize;
 	const int flag=0;
@@ -619,6 +624,7 @@ void SocketLayer::RawRecvFromNonBlocking( const SOCKET s, unsigned short remoteP
 	socklen_t sockLen;
 	socklen_t* socketlenPtr=(socklen_t*) &sockLen;
 	sockaddr_in sa;
+	memset(&sa,0,sizeof(sockaddr_in));
 	char *dataOutModified;
 	int dataOutSize;
 	const int flag=0;
@@ -706,6 +712,7 @@ int SocketLayer::SendTo_360( SOCKET s, const char *data, int length, const char 
 	DWORD size = buffers[0].len + buffers[1].len + buffers[2].len;
 
 	sockaddr_in sa;
+	memset(&sa,0,sizeof(sockaddr_in));
 	sa.sin_port = htons( port ); // User port
 	sa.sin_addr.s_addr = binaryAddress;
 	sa.sin_family = AF_INET;
@@ -724,6 +731,7 @@ int SocketLayer::SendTo_360( SOCKET s, const char *data, int length, const char 
 int SocketLayer::SendTo_PC( SOCKET s, const char *data, int length, unsigned int binaryAddress, unsigned short port )
 {
 	sockaddr_in sa;
+	memset(&sa,0,sizeof(sockaddr_in));
 	sa.sin_port = htons( port ); // User port
 	sa.sin_addr.s_addr = binaryAddress;
 	sa.sin_family = AF_INET;
@@ -982,18 +990,14 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(SOCKET inSock, RakNet::Ra
 #endif
 
 }
-
-
-#if !defined(_XBOX) && !defined(X360)
-void SocketLayer::GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
-{
 #if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                                                                                                                                 
-#else
+                                                                                                                                                                                                                                                                                                                                              
+#elif defined(_WIN32)
+void GetMyIP_Win32( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
+{
 	char ac[ 80 ];
 	if ( gethostname( ac, sizeof( ac ) ) == -1 )
 	{
-#if defined(_WIN32)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -1003,7 +1007,6 @@ void SocketLayer::GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], 
 		RAKNET_DEBUG_PRINTF( "gethostname failed:Error code - %d\n%s", dwIOError, messageBuffer );
 		//Free the buffer.
 		LocalFree( messageBuffer );
-#endif
 		return ;
 	}
 
@@ -1011,7 +1014,6 @@ void SocketLayer::GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], 
 
 	if ( phe == 0 )
 	{
-#if defined(_WIN32)
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -1022,7 +1024,6 @@ void SocketLayer::GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], 
 
 		//Free the buffer.
 		LocalFree( messageBuffer );
-#endif
 		return ;
 	}
 
@@ -1034,11 +1035,7 @@ void SocketLayer::GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], 
 			break;
 
 		memcpy( &addr[idx], phe->h_addr_list[ idx ], sizeof( struct in_addr ) );
-#if defined(_WIN32)
 		binaryAddresses[idx]=addr[idx].S_un.S_addr;
-#else
-		binaryAddresses[idx]=addr[idx].s_addr;
-#endif
 		strcpy( ipList[ idx ], inet_ntoa( addr[idx] ) );
 
 	}
@@ -1047,6 +1044,59 @@ void SocketLayer::GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], 
 	{
 		ipList[idx][0]=0;
 	}
+}
+#elif !defined(_XBOX) && !defined(X360)
+void GetMyIP_Linux( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
+{
+	struct ifaddrs *ifaddr, *ifa;
+	int family, s;
+	char host[NI_MAXHOST];
+	struct in_addr linux_in_addr;
+
+	if (getifaddrs(&ifaddr) == -1) {
+		printf( "Error getting interface list\n");
+	}
+
+	int idx = 0;
+	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+		if (!ifa->ifa_addr) continue;
+		family = ifa->ifa_addr->sa_family;
+
+		if (family == AF_INET) {
+			s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in), host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+			if (s != 0) {
+				printf ("getnameinfo() failed: %s\n", gai_strerror(s));
+			}
+			printf ("IP address: %s\n", host);
+			strcpy( ipList[ idx ], host );
+			if (inet_aton(host, &linux_in_addr) == 0) {
+				perror("inet_aton");
+			}
+			else {
+				binaryAddresses[idx]=linux_in_addr.s_addr;
+			}
+			idx++;
+		}
+	}
+
+	for ( ; idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ++idx )
+	{
+		ipList[idx][0]=0;
+	}
+
+	freeifaddrs(ifaddr);
+}
+#endif
+
+#if !defined(_XBOX) && !defined(X360)
+void SocketLayer::GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
+{
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                                      
+#elif defined(_WIN32)
+	GetMyIP_Win32(ipList, binaryAddresses);
+#else
+	GetMyIP_Linux(ipList, binaryAddresses);
 #endif
 }
 #endif
@@ -1054,6 +1104,7 @@ void SocketLayer::GetMyIP( char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ], 
 unsigned short SocketLayer::GetLocalPort ( SOCKET s )
 {
 	sockaddr_in sa;
+	memset(&sa,0,sizeof(sockaddr_in));
 	socklen_t len = sizeof(sa);
 	if (getsockname(s, (sockaddr*)&sa, &len)!=0)
 	{
@@ -1077,6 +1128,7 @@ unsigned short SocketLayer::GetLocalPort ( SOCKET s )
 SystemAddress SocketLayer::GetSystemAddress ( SOCKET s )
 {
 	sockaddr_in sa;
+	memset(&sa,0,sizeof(sockaddr_in));
 	socklen_t len = sizeof(sa);
 	if (getsockname(s, (sockaddr*)&sa, &len)!=0)
 	{

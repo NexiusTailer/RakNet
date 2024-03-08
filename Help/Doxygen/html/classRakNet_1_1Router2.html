@@ -56,6 +56,14 @@ Inheritance diagram for RakNet::Router2:</div>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Query all connected systems to connect through them to a third system. System will return ID_ROUTER_2_FORWARDING_NO_PATH if unable to connect. Else you will get ID_ROUTER_2_FORWARDING_ESTABLISHED.  <a href="#8d86939663f286f21a8aefeea615565b"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Router2.html#60d0f2bffeed81aabcde1daa6d0cd79d">SetMaximumForwardingRequests</a> (int max)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="da3cd3f17fadd1466d0ad0ed693fbf69"></a><!-- doxytag: member="RakNet::Router2::SetDebugInterface" ref="da3cd3f17fadd1466d0ad0ed693fbf69" args="(Router2DebugInterface *_debugInterface)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Router2.html#da3cd3f17fadd1466d0ad0ed693fbf69">SetDebugInterface</a> (Router2DebugInterface *_debugInterface)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">For testing and debugging. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3f096833e216ffb5c3c79a45fa26fc3b"></a><!-- doxytag: member="RakNet::Router2::GetDebugInterface" ref="3f096833e216ffb5c3c79a45fa26fc3b" args="(void) const " -->
+Router2DebugInterface *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Router2.html#3f096833e216ffb5c3c79a45fa26fc3b">GetDebugInterface</a> (void) const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the pointer passed to <a class="el" href="classRakNet_1_1Router2.html#da3cd3f17fadd1466d0ad0ed693fbf69" title="For testing and debugging.">SetDebugInterface()</a>. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g5ac73e41e819ce2fab41a083a2066ed6">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Router2.html#825d62c2f01def72c58815b609cf4bbf">OnReceive</a> (<a class="el" href="structPacket.html">Packet</a> *packet)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6d06f99cdd31fabd9e0dc1f0e19d0f39"></a><!-- doxytag: member="RakNet::Router2::Update" ref="6d06f99cdd31fabd9e0dc1f0e19d0f39" args="(void)" -->
@@ -64,7 +72,7 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update is called every time a packet is checked for . <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Router2.html#fe09792c59965d9a506bf45ae9d17f4f">OnClosedConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#gab440a9aec9ec5c84d009b2e1db9da24">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Router2.html#f6cfe78de236f1cae7cd509afbff94e4">OnFailedConnectionAttempt</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g4e43ad7508cbef7619975aaef0aec794">PI2_FailedConnectionAttemptReason</a> failedConnectionAttemptReason)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Router2.html#c3be692d08e4ccce030c201038346f1d">OnFailedConnectionAttempt</a> (<a class="el" href="structPacket.html">Packet</a> *packet, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g4e43ad7508cbef7619975aaef0aec794">PI2_FailedConnectionAttemptReason</a> failedConnectionAttemptReason)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Router2.html#4c57e01dcb9651a7d6c1a14fbca704bf">OnNewConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, bool isIncoming)</td></tr>
 
@@ -144,15 +152,15 @@ Called when a connection is dropped because the user called <a class="el" href="
 
 </div>
 </div><p>
-<a class="anchor" name="f6cfe78de236f1cae7cd509afbff94e4"></a><!-- doxytag: member="RakNet::Router2::OnFailedConnectionAttempt" ref="f6cfe78de236f1cae7cd509afbff94e4" args="(SystemAddress systemAddress, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason)" -->
+<a class="anchor" name="c3be692d08e4ccce030c201038346f1d"></a><!-- doxytag: member="RakNet::Router2::OnFailedConnectionAttempt" ref="c3be692d08e4ccce030c201038346f1d" args="(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">virtual void RakNet::Router2::OnFailedConnectionAttempt           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
+          <td class="paramname"> <em>packet</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -172,12 +180,12 @@ Called when a connection is dropped because the user called <a class="el" href="
 <p>
 Called when a connection attempt fails <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Address of the connection </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td><a class="el" href="structPacket.html" title="This represents a user message from another system.">Packet</a> to be returned to the user </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>failedConnectionReason</em>&nbsp;</td><td>Why the connection failed </td></tr>
   </table>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classPluginInterface2.html#da775368b94394305712ca46a77660a2">PluginInterface2</a>.</p>
+<p>Reimplemented from <a class="el" href="classPluginInterface2.html#a50b6a80aa3930990852d4872226bbea">PluginInterface2</a>.</p>
 
 </div>
 </div><p>
@@ -274,9 +282,9 @@ Set the maximum number of bidirectional connections this system will support Def
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>c:/RakNet/Source/<a class="el" href="Router2_8h.html">Router2.h</a></ul>
+<li>d:/RakNet/Source/<a class="el" href="Router2_8h.html">Router2.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 4 21:11:28 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 27 20:51:26 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

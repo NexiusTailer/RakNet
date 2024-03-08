@@ -131,10 +131,33 @@ namespace RakNet
 		bool Serialize(bool writeToBitstream,  char* inOutByteArray, const unsigned int numberOfBytes );
 
 		/// \brief Serialize a float into 2 bytes, spanning the range between \a floatMin and \a floatMax
+		/// \param[in] writeToBitstream true to write from your data to this bitstream.  False to read from this bitstream and write to your data
 		/// \param[in] inOutFloat The float to write
 		/// \param[in] floatMin Predetermined minimum value of f
 		/// \param[in] floatMax Predetermined maximum value of f
 		bool SerializeFloat16(bool writeToBitstream, float &inOutFloat, float floatMin, float floatMax);
+
+		/// Serialize one type casted to another (smaller) type, to save bandwidth
+		/// serializationType should be uint8_t, uint16_t, uint24_t, or uint32_t
+		/// Example: int num=53; SerializeCasted<uint8_t>(true, num); would use 1 byte to write what would otherwise be an integer (4 or 8 bytes)
+		/// \param[in] writeToBitstream true to write from your data to this bitstream.  False to read from this bitstream and write to your data
+		/// \param[in] value The value to serialize
+		template <class serializationType, class sourceType >
+		bool SerializeCasted( bool writeToBitstream, sourceType &value );
+
+		/// Given the minimum and maximum values for an integer type, figure out the minimum number of bits to represent the range
+		/// Then serialize only those bits
+		/// \note A static is used so that the required number of bits for (maximum-minimum) is only calculated once. This does require that \a minimum and \maximum are fixed values for a given line of code for the life of the program
+		/// \param[in] writeToBitstream true to write from your data to this bitstream.  False to read from this bitstream and write to your data
+		/// \param[in] value Integer value to write, which should be between \a minimum and \a maximum
+		/// \param[in] minimum Minimum value of \a value
+		/// \param[in] maximum Maximum value of \a value
+		/// \param[in] allowOutsideRange If true, all sends will take an extra bit, however value can deviate from outside \a minimum and \a maximum. If false, will assert if the value deviates
+		template <class templateType, class rangeType>
+		bool SerializeBitsFromIntegerRange( bool writeToBitstream, templateType &value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange=false );
+		/// \param[in] requiredBits Primarily for internal use, called from above function() after calculating number of bits needed to represent maximum-minimum
+		template <class templateType, class rangeType>
+		bool SerializeBitsFromIntegerRange( bool writeToBitstream, templateType &value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange=false );
 
 		/// \brief Bidirectional serialize/deserialize a normalized 3D vector, using (at most) 4 bytes + 3 bits instead of 12-24 bytes.  
 		/// \details Will further compress y or z axis aligned vectors.
@@ -317,6 +340,26 @@ namespace RakNet
 		/// \param[in] floatMax Predetermined maximum value of f
 		void WriteFloat16( float x, float floatMin, float floatMax );
 
+		/// Write one type serialized as another (smaller) type, to save bandwidth
+		/// serializationType should be uint8_t, uint16_t, uint24_t, or uint32_t
+		/// Example: int num=53; WriteCasted<uint8_t>(num); would use 1 byte to write what would otherwise be an integer (4 or 8 bytes)
+		/// \param[in] value The value to write
+		template <class serializationType, class sourceType >
+		void WriteCasted( const sourceType &value );
+
+		/// Given the minimum and maximum values for an integer type, figure out the minimum number of bits to represent the range
+		/// Then write only those bits
+		/// \note A static is used so that the required number of bits for (maximum-minimum) is only calculated once. This does require that \a minimum and \maximum are fixed values for a given line of code for the life of the program
+		/// \param[in] value Integer value to write, which should be between \a minimum and \a maximum
+		/// \param[in] minimum Minimum value of \a value
+		/// \param[in] maximum Maximum value of \a value
+		/// \param[in] allowOutsideRange If true, all sends will take an extra bit, however value can deviate from outside \a minimum and \a maximum. If false, will assert if the value deviates. This should match the corresponding value passed to Read().
+		template <class templateType, class rangeType>
+		void WriteBitsFromIntegerRange( const templateType value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange=false );
+		/// \param[in] requiredBits Primarily for internal use, called from above function() after calculating number of bits needed to represent maximum-minimum
+		template <class templateType, class rangeType>
+		void WriteBitsFromIntegerRange( const templateType value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange=false );
+
 		/// \brief Write a normalized 3D vector, using (at most) 4 bytes + 3 bits instead of 12-24 bytes.  
 		/// \details Will further compress y or z axis aligned vectors.
 		/// Accurate to 1/32767.5.
@@ -364,6 +407,26 @@ namespace RakNet
 		/// \param[in] floatMin Predetermined minimum value of f
 		/// \param[in] floatMax Predetermined maximum value of f
 		bool ReadFloat16( float &outFloat, float floatMin, float floatMax );
+
+		/// Read one type serialized to another (smaller) type, to save bandwidth
+		/// serializationType should be uint8_t, uint16_t, uint24_t, or uint32_t
+		/// Example: int num; ReadCasted<uint8_t>(num); would read 1 bytefrom the stream, and put the value in an integer
+		/// \param[in] value The value to write
+		template <class serializationType, class sourceType >
+		bool ReadCasted( sourceType &value );
+
+		/// Given the minimum and maximum values for an integer type, figure out the minimum number of bits to represent the range
+		/// Then read only those bits
+		/// \note A static is used so that the required number of bits for (maximum-minimum) is only calculated once. This does require that \a minimum and \maximum are fixed values for a given line of code for the life of the program
+		/// \param[in] value Integer value to read, which should be between \a minimum and \a maximum
+		/// \param[in] minimum Minimum value of \a value
+		/// \param[in] maximum Maximum value of \a value
+		/// \param[in] allowOutsideRange If true, all sends will take an extra bit, however value can deviate from outside \a minimum and \a maximum. If false, will assert if the value deviates. This should match the corresponding value passed to Write().
+		template <class templateType, class rangeType>
+		bool ReadBitsFromIntegerRange( templateType &value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange=false );
+		/// \param[in] requiredBits Primarily for internal use, called from above function() after calculating number of bits needed to represent maximum-minimum
+		template <class templateType, class rangeType>
+		bool ReadBitsFromIntegerRange( templateType &value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange=false );
 
 		/// \brief Read a normalized 3D vector, using (at most) 4 bytes + 3 bits instead of 12-24 bytes.  
 		/// \details Will further compress y or z axis aligned vectors.
@@ -572,6 +635,17 @@ namespace RakNet
 
 		/// Write zeros until the bitstream is filled up to \a bytes
 		void PadWithZeroToByteLength( unsigned int bytes );
+
+		/// Get the number of leading zeros for a number
+		/// \param[in] x Number to test
+		static int NumberOfLeadingZeroes( uint8_t x );
+		static int NumberOfLeadingZeroes( uint16_t x );
+		static int NumberOfLeadingZeroes( uint32_t x );
+		static int NumberOfLeadingZeroes( uint64_t x );
+		static int NumberOfLeadingZeroes( int8_t x );
+		static int NumberOfLeadingZeroes( int16_t x );
+		static int NumberOfLeadingZeroes( int32_t x );
+		static int NumberOfLeadingZeroes( int64_t x );
 
 		/// \internal Unrolled inner loop, for when performance is critical
 		void WriteAlignedVar8(const char *inByteArray);
@@ -892,6 +966,28 @@ namespace RakNet
 				Write(inOutByteArray, numberOfBytes);
 			else
 				return Read(inOutByteArray, numberOfBytes);
+			return true;
+		}
+		
+		template <class serializationType, class sourceType >
+		bool BitStream::SerializeCasted( bool writeToBitstream, sourceType &value )
+		{
+			if (writeToBitstream) WriteCasted<serializationType>(value);
+			else return ReadCasted<serializationType>(value);
+			return true;
+		}
+
+		template <class templateType, class rangeType>
+		bool BitStream::SerializeBitsFromIntegerRange( bool writeToBitstream, templateType &value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange )
+		{
+			static int requiredBits=BYTES_TO_BITS(sizeof(templateType))-NumberOfLeadingZeroes(templateType(maximum-minimum));
+			return SerializeBitsFromIntegerRange(writeToBitstream,value,minimum,maximum,requiredBits,allowOutsideRange);
+		}
+		template <class templateType, class rangeType>
+		bool BitStream::SerializeBitsFromIntegerRange( bool writeToBitstream, templateType &value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange )
+		{
+			if (writeToBitstream) WriteBitsFromIntegerRange(value,minimum,maximum,requiredBits,allowOutsideRange);
+			else return ReadBitsFromIntegerRange(value,minimum,maximum,requiredBits,allowOutsideRange);
 			return true;
 		}
 
@@ -1705,6 +1801,47 @@ namespace RakNet
 		return Read(outTemplateVar);
 	}
 
+	template <class destinationType, class sourceType >
+	void BitStream::WriteCasted( const sourceType &value )
+	{
+		destinationType val = (destinationType) value;
+		Write(val);
+	}
+
+	template <class templateType, class rangeType>
+	void BitStream::WriteBitsFromIntegerRange( const templateType value, const rangeType minimum,const rangeType maximum, bool allowOutsideRange )
+	{
+		static int requiredBits=BYTES_TO_BITS(sizeof(templateType))-NumberOfLeadingZeroes(templateType(maximum-minimum));
+		WriteBitsFromIntegerRange(value,minimum,maximum,requiredBits,allowOutsideRange);
+	}
+	template <class templateType, class rangeType>
+	void BitStream::WriteBitsFromIntegerRange( const templateType value, const rangeType minimum,const rangeType maximum, const int requiredBits, bool allowOutsideRange )
+	{
+		RakAssert(maximum>=minimum);
+		RakAssert(allowOutsideRange==true || (value>=minimum && value<=maximum));
+		if (allowOutsideRange)
+		{
+			if (value<minimum || value>maximum)
+			{
+				Write(true);
+				Write(value);
+				return;
+			}
+			Write(false);
+		}
+		templateType valueOffMin=value-minimum;
+		if (IsBigEndian()==true)
+		{
+			unsigned char output[sizeof(templateType)];
+			ReverseBytes((unsigned char*)&valueOffMin, output, sizeof(templateType));
+			WriteBits(output,requiredBits);
+		}
+		else
+		{
+			WriteBits((unsigned char*) &valueOffMin,requiredBits);
+		}
+	}
+
 	template <class templateType> // templateType for this function must be a float or double
 		void BitStream::WriteNormVector( templateType x, templateType y, templateType z )
 	{
@@ -1782,6 +1919,47 @@ namespace RakNet
 		qz = _copysign( (double) qz, (double) (m10 - m01) );
 
 		WriteNormQuat(qw,qx,qy,qz);
+	}
+
+	template <class serializationType, class sourceType >
+	bool BitStream::ReadCasted( sourceType &value )
+	{
+		serializationType val;
+		bool success = Read(val);
+		value=(sourceType) val;
+		return success;
+	}
+
+	template <class templateType, class rangeType>
+	bool BitStream::ReadBitsFromIntegerRange( templateType &value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange )
+	{
+		static int requiredBits=BYTES_TO_BITS(sizeof(templateType))-NumberOfLeadingZeroes(templateType(maximum-minimum));
+		return ReadBitsFromIntegerRange(value,minimum,maximum,requiredBits,allowOutsideRange);
+	}
+	template <class templateType, class rangeType>
+	bool BitStream::ReadBitsFromIntegerRange( templateType &value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange )
+	{
+		RakAssert(maximum>=minimum);
+		if (allowOutsideRange)
+		{
+			bool isOutsideRange;
+			Read(isOutsideRange);
+			if (isOutsideRange)
+				return Read(value);
+		}
+		unsigned char output[sizeof(templateType)];
+		memset(output,0,sizeof(output));
+		bool success = ReadBits(output,requiredBits);
+		if (success)
+		{
+			if (IsBigEndian()==true)
+				ReverseBytesInPlace(output,sizeof(output));
+			memcpy(&value,output,sizeof(output));
+
+			value+=minimum;
+		}
+
+		return success;
 	}
 
 	template <class templateType> // templateType for this function must be a float or double

@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_UDPProxyCoordinator==1
+
 #include "UDPProxyCoordinator.h"
 #include "BitStream.h"
 #include "UDPProxyCommon.h"
@@ -478,3 +481,5 @@ void UDPProxyCoordinator::ForwardingRequest::OrderRemainingServersToTry(void)
 		remainingServersToTry.Push(swpList[idx].serverAddress, __FILE__, __LINE__ );
 	}
 }
+
+#endif // _RAKNET_SUPPORT_*

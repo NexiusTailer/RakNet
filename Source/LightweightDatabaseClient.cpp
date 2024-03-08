@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_LightweightDatabaseClient==1
+
 #include "LightweightDatabaseClient.h"
 #include "StringCompressor.h"
 #include "MessageIdentifiers.h"
@@ -118,3 +121,5 @@ void LightweightDatabaseClient::UpdateRow(const char *tableName, const char *upd
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

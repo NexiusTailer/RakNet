@@ -316,8 +316,10 @@ bool RakNetGUID::FromString(const char *source)
                    
 #elif defined(WIN32)
 	g=_atoi64(source);
+#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                         
 #else
-	g=atoll(source);
+	g=strtoull(source,0,10);
 #endif
 	return true;
 

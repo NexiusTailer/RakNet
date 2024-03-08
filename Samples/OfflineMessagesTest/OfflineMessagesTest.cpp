@@ -62,6 +62,7 @@ int main(void)
 				else
 					printf("Got Advertise system with no data\n");
 				printf("Was sent from GUID %s\n", packet->guid.ToString());
+				RakAssert(packet->length==(int)strlen("hello world")+2);
 
 				printf("Sending ping from %s\n", peer2->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
 				peer2->Ping("127.0.0.1", 60001, false);

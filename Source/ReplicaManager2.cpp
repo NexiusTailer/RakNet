@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_ReplicaManager2==1
+
 #include "ReplicaManager2.h"
 #include "MessageIdentifiers.h"
 #include "RakAssert.h"
@@ -2068,3 +2071,5 @@ void Connection_RM2::Deref(Replica2* replica)
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

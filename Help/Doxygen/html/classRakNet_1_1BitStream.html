@@ -80,6 +80,15 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#1aebab1c543acd21742f380c95255365">SerializeFloat16</a> (bool writeToBitstream, float &amp;inOutFloat, float floatMin, float floatMax)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Serialize a float into 2 bytes, spanning the range between <em>floatMin</em> and <em>floatMax</em>.  <a href="#1aebab1c543acd21742f380c95255365"></a><br></td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;class serializationType , class sourceType &gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#180c7177b56b1afaf58c671e2ac9cafc">SerializeCasted</a> (bool writeToBitstream, sourceType &amp;value)</td></tr>
+
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;class templateType , class rangeType &gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#45c0d8e0ef4896693a1b2f60655ca260">SerializeBitsFromIntegerRange</a> (bool writeToBitstream, templateType &amp;value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange=false)</td></tr>
+
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;class templateType , class rangeType &gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#ab6a06610472db04f80b63013535f9db">SerializeBitsFromIntegerRange</a> (bool writeToBitstream, templateType &amp;value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange=false)</td></tr>
+
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class templateType &gt; </td></tr>
 <tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#d4fec447540af6e5959c0335bd2b0f18">SerializeNormVector</a> (bool writeToBitstream, templateType &amp;x, templateType &amp;y, templateType &amp;z)</td></tr>
 
@@ -159,6 +168,15 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#8b37ff9ba34ce6f98c8521710ba51366">WriteFloat16</a> (float x, float floatMin, float floatMax)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write a float into 2 bytes, spanning the range between <em>floatMin</em> and <em>floatMax</em>.  <a href="#8b37ff9ba34ce6f98c8521710ba51366"></a><br></td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;class serializationType , class sourceType &gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#9f99f5796c7124daebc5d71776dd641d">WriteCasted</a> (const sourceType &amp;value)</td></tr>
+
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;class templateType , class rangeType &gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#4773758e2d7e525449cd1170a73876e5">WriteBitsFromIntegerRange</a> (const templateType value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange=false)</td></tr>
+
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;class templateType , class rangeType &gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#a9e58eb04287434967cc3e54008b31c6">WriteBitsFromIntegerRange</a> (const templateType value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange=false)</td></tr>
+
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class templateType &gt; </td></tr>
 <tr><td class="memTemplItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#95cfc5e892e308e6cda4738d6001ee61">WriteNormVector</a> (templateType x, templateType y, templateType z)</td></tr>
 
@@ -181,6 +199,15 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#f8275d390e2114d55449bb4ae2d01d62">ReadFloat16</a> (float &amp;outFloat, float floatMin, float floatMax)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Read a float into 2 bytes, spanning the range between <em>floatMin</em> and <em>floatMax</em>.  <a href="#f8275d390e2114d55449bb4ae2d01d62"></a><br></td></tr>
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;class serializationType , class sourceType &gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#fd466ad5445d355be0c6c9435eb602bd">ReadCasted</a> (sourceType &amp;value)</td></tr>
+
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;class templateType , class rangeType &gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#7a57d5775968b9835cc5d917d6ef8154">ReadBitsFromIntegerRange</a> (templateType &amp;value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange=false)</td></tr>
+
+<tr><td class="memTemplParams" nowrap colspan="2">template&lt;class templateType , class rangeType &gt; </td></tr>
+<tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#bf1aaff7a5e6e789b34a6b112b7e7a49">ReadBitsFromIntegerRange</a> (templateType &amp;value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange=false)</td></tr>
+
 <tr><td class="memTemplParams" nowrap colspan="2">template&lt;class templateType &gt; </td></tr>
 <tr><td class="memTemplItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#3fe2307474325b610e2571d741c3ff5b">ReadNormVector</a> (templateType &amp;x, templateType &amp;y, templateType &amp;z)</td></tr>
 
@@ -390,6 +417,8 @@ template&lt;&gt; </td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Read a bool from a bitstream.  <a href="#668b798433bce3bf8b3600b5083ba503"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#fc678e70ac2082d65c1b103436ca6b6f">NumberOfLeadingZeroes</a> (uint8_t x)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1ce179acbb0ca867dacd482013831a30"></a><!-- doxytag: member="RakNet::BitStream::DoEndianSwap" ref="1ce179acbb0ca867dacd482013831a30" args="(void)" -->
 static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1BitStream.html#1ce179acbb0ca867dacd482013831a30">DoEndianSwap</a> (void)</td></tr>
 
@@ -613,6 +642,31 @@ Ignore data we don't intend to read.
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>numberOfBits</em>&nbsp;</td><td>The number of bytes to ignore </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="fc678e70ac2082d65c1b103436ca6b6f"></a><!-- doxytag: member="RakNet::BitStream::NumberOfLeadingZeroes" ref="fc678e70ac2082d65c1b103436ca6b6f" args="(uint8_t x)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int RakNet::BitStream::NumberOfLeadingZeroes           </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t&nbsp;</td>
+          <td class="paramname"> <em>x</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get the number of leading zeros for a number <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>x</em>&nbsp;</td><td>Number to test </td></tr>
   </table>
 </dl>
 
@@ -1013,6 +1067,139 @@ alignBitsToRight should be set to true to convert internal bitstream data to use
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true if there is enough bits to read </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="bf1aaff7a5e6e789b34a6b112b7e7a49"></a><!-- doxytag: member="RakNet::BitStream::ReadBitsFromIntegerRange" ref="bf1aaff7a5e6e789b34a6b112b7e7a49" args="(templateType &amp;value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange=false)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class templateType , class rangeType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakNet::BitStream::ReadBitsFromIntegerRange           </td>
+          <td>(</td>
+          <td class="paramtype">templateType &amp;&nbsp;</td>
+          <td class="paramname"> <em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const rangeType&nbsp;</td>
+          <td class="paramname"> <em>minimum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const rangeType&nbsp;</td>
+          <td class="paramname"> <em>maximum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&nbsp;</td>
+          <td class="paramname"> <em>requiredBits</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>allowOutsideRange</em> = <code>false</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>requiredBits</em>&nbsp;</td><td>Primarily for internal use, called from above function() after calculating number of bits needed to represent maximum-minimum </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="7a57d5775968b9835cc5d917d6ef8154"></a><!-- doxytag: member="RakNet::BitStream::ReadBitsFromIntegerRange" ref="7a57d5775968b9835cc5d917d6ef8154" args="(templateType &amp;value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange=false)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class templateType , class rangeType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakNet::BitStream::ReadBitsFromIntegerRange           </td>
+          <td>(</td>
+          <td class="paramtype">templateType &amp;&nbsp;</td>
+          <td class="paramname"> <em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const rangeType&nbsp;</td>
+          <td class="paramname"> <em>minimum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const rangeType&nbsp;</td>
+          <td class="paramname"> <em>maximum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>allowOutsideRange</em> = <code>false</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Given the minimum and maximum values for an integer type, figure out the minimum number of bits to represent the range Then read only those bits <dl class="note" compact><dt><b>Note:</b></dt><dd>A static is used so that the required number of bits for (maximum-minimum) is only calculated once. This does require that <em>minimum</em> and  are fixed values for a given line of code for the life of the program </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>value</em>&nbsp;</td><td>Integer value to read, which should be between <em>minimum</em> and <em>maximum</em> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>minimum</em>&nbsp;</td><td>Minimum value of <em>value</em> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>maximum</em>&nbsp;</td><td>Maximum value of <em>value</em> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>allowOutsideRange</em>&nbsp;</td><td>If true, all sends will take an extra bit, however value can deviate from outside <em>minimum</em> and <em>maximum</em>. If false, will assert if the value deviates. This should match the corresponding value passed to <a class="el" href="classRakNet_1_1BitStream.html#0b88c3ae4a4a9bc35f2e0ff201b10227" title="Write any integral type to a bitstream.">Write()</a>. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="fd466ad5445d355be0c6c9435eb602bd"></a><!-- doxytag: member="RakNet::BitStream::ReadCasted" ref="fd466ad5445d355be0c6c9435eb602bd" args="(sourceType &amp;value)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class serializationType , class sourceType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakNet::BitStream::ReadCasted           </td>
+          <td>(</td>
+          <td class="paramtype">sourceType &amp;&nbsp;</td>
+          <td class="paramname"> <em>value</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Read one type serialized to another (smaller) type, to save bandwidth serializationType should be uint8_t, uint16_t, uint24_t, or uint32_t Example: int num; ReadCasted&lt;uint8_t&gt;(num); would read 1 bytefrom the stream, and put the value in an integer <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>value</em>&nbsp;</td><td>The value to write </td></tr>
+  </table>
+</dl>
 
 </div>
 </div><p>
@@ -1614,6 +1801,162 @@ Right aligned data means in the case of a partial byte, the bits are aligned fro
 
 </div>
 </div><p>
+<a class="anchor" name="ab6a06610472db04f80b63013535f9db"></a><!-- doxytag: member="RakNet::BitStream::SerializeBitsFromIntegerRange" ref="ab6a06610472db04f80b63013535f9db" args="(bool writeToBitstream, templateType &amp;value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange=false)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class templateType , class rangeType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakNet::BitStream::SerializeBitsFromIntegerRange           </td>
+          <td>(</td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>writeToBitstream</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">templateType &amp;&nbsp;</td>
+          <td class="paramname"> <em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const rangeType&nbsp;</td>
+          <td class="paramname"> <em>minimum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const rangeType&nbsp;</td>
+          <td class="paramname"> <em>maximum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&nbsp;</td>
+          <td class="paramname"> <em>requiredBits</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>allowOutsideRange</em> = <code>false</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>requiredBits</em>&nbsp;</td><td>Primarily for internal use, called from above function() after calculating number of bits needed to represent maximum-minimum </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="45c0d8e0ef4896693a1b2f60655ca260"></a><!-- doxytag: member="RakNet::BitStream::SerializeBitsFromIntegerRange" ref="45c0d8e0ef4896693a1b2f60655ca260" args="(bool writeToBitstream, templateType &amp;value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange=false)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class templateType , class rangeType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakNet::BitStream::SerializeBitsFromIntegerRange           </td>
+          <td>(</td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>writeToBitstream</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">templateType &amp;&nbsp;</td>
+          <td class="paramname"> <em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const rangeType&nbsp;</td>
+          <td class="paramname"> <em>minimum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const rangeType&nbsp;</td>
+          <td class="paramname"> <em>maximum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>allowOutsideRange</em> = <code>false</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Given the minimum and maximum values for an integer type, figure out the minimum number of bits to represent the range Then serialize only those bits <dl class="note" compact><dt><b>Note:</b></dt><dd>A static is used so that the required number of bits for (maximum-minimum) is only calculated once. This does require that <em>minimum</em> and  are fixed values for a given line of code for the life of the program </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>writeToBitstream</em>&nbsp;</td><td>true to write from your data to this bitstream. False to read from this bitstream and write to your data </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>value</em>&nbsp;</td><td>Integer value to write, which should be between <em>minimum</em> and <em>maximum</em> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>minimum</em>&nbsp;</td><td>Minimum value of <em>value</em> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>maximum</em>&nbsp;</td><td>Maximum value of <em>value</em> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>allowOutsideRange</em>&nbsp;</td><td>If true, all sends will take an extra bit, however value can deviate from outside <em>minimum</em> and <em>maximum</em>. If false, will assert if the value deviates </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="180c7177b56b1afaf58c671e2ac9cafc"></a><!-- doxytag: member="RakNet::BitStream::SerializeCasted" ref="180c7177b56b1afaf58c671e2ac9cafc" args="(bool writeToBitstream, sourceType &amp;value)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class serializationType , class sourceType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakNet::BitStream::SerializeCasted           </td>
+          <td>(</td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>writeToBitstream</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">sourceType &amp;&nbsp;</td>
+          <td class="paramname"> <em>value</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Serialize one type casted to another (smaller) type, to save bandwidth serializationType should be uint8_t, uint16_t, uint24_t, or uint32_t Example: int num=53; SerializeCasted&lt;uint8_t&gt;(true, num); would use 1 byte to write what would otherwise be an integer (4 or 8 bytes) <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>writeToBitstream</em>&nbsp;</td><td>true to write from your data to this bitstream. False to read from this bitstream and write to your data </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>value</em>&nbsp;</td><td>The value to serialize </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <a class="anchor" name="f961981b0774a90109a765b08eecd019"></a><!-- doxytag: member="RakNet::BitStream::SerializeCompressed" ref="f961981b0774a90109a765b08eecd019" args="(bool writeToBitstream, templateType &amp;inOutTemplateVar)" -->
 <div class="memitem">
 <div class="memproto">
@@ -1864,6 +2207,7 @@ Serialize a float into 2 bytes, spanning the range between <em>floatMin</em> and
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>writeToBitstream</em>&nbsp;</td><td>true to write from your data to this bitstream. False to read from this bitstream and write to your data </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>inOutFloat</em>&nbsp;</td><td>The float to write </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>floatMin</em>&nbsp;</td><td>Predetermined minimum value of f </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>floatMax</em>&nbsp;</td><td>Predetermined maximum value of f </td></tr>
@@ -2374,6 +2718,139 @@ Right aligned data means in the case of a partial byte, the bits are aligned fro
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>inByteArray</em>&nbsp;</td><td>The data </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>numberOfBitsToWrite</em>&nbsp;</td><td>The number of bits to write </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>rightAlignedBits</em>&nbsp;</td><td>if true data will be right aligned </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="a9e58eb04287434967cc3e54008b31c6"></a><!-- doxytag: member="RakNet::BitStream::WriteBitsFromIntegerRange" ref="a9e58eb04287434967cc3e54008b31c6" args="(const templateType value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange=false)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class templateType , class rangeType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::BitStream::WriteBitsFromIntegerRange           </td>
+          <td>(</td>
+          <td class="paramtype">const templateType&nbsp;</td>
+          <td class="paramname"> <em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const rangeType&nbsp;</td>
+          <td class="paramname"> <em>minimum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const rangeType&nbsp;</td>
+          <td class="paramname"> <em>maximum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&nbsp;</td>
+          <td class="paramname"> <em>requiredBits</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>allowOutsideRange</em> = <code>false</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>requiredBits</em>&nbsp;</td><td>Primarily for internal use, called from above function() after calculating number of bits needed to represent maximum-minimum </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="4773758e2d7e525449cd1170a73876e5"></a><!-- doxytag: member="RakNet::BitStream::WriteBitsFromIntegerRange" ref="4773758e2d7e525449cd1170a73876e5" args="(const templateType value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange=false)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class templateType , class rangeType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::BitStream::WriteBitsFromIntegerRange           </td>
+          <td>(</td>
+          <td class="paramtype">const templateType&nbsp;</td>
+          <td class="paramname"> <em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const rangeType&nbsp;</td>
+          <td class="paramname"> <em>minimum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const rangeType&nbsp;</td>
+          <td class="paramname"> <em>maximum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>allowOutsideRange</em> = <code>false</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Given the minimum and maximum values for an integer type, figure out the minimum number of bits to represent the range Then write only those bits <dl class="note" compact><dt><b>Note:</b></dt><dd>A static is used so that the required number of bits for (maximum-minimum) is only calculated once. This does require that <em>minimum</em> and  are fixed values for a given line of code for the life of the program </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>value</em>&nbsp;</td><td>Integer value to write, which should be between <em>minimum</em> and <em>maximum</em> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>minimum</em>&nbsp;</td><td>Minimum value of <em>value</em> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>maximum</em>&nbsp;</td><td>Maximum value of <em>value</em> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>allowOutsideRange</em>&nbsp;</td><td>If true, all sends will take an extra bit, however value can deviate from outside <em>minimum</em> and <em>maximum</em>. If false, will assert if the value deviates. This should match the corresponding value passed to <a class="el" href="classRakNet_1_1BitStream.html#45c9d2484823bb62430ded4d7eeda201" title="Read any integral type from a bitstream.">Read()</a>. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="9f99f5796c7124daebc5d71776dd641d"></a><!-- doxytag: member="RakNet::BitStream::WriteCasted" ref="9f99f5796c7124daebc5d71776dd641d" args="(const sourceType &amp;value)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class destinationType , class sourceType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::BitStream::WriteCasted           </td>
+          <td>(</td>
+          <td class="paramtype">const sourceType &amp;&nbsp;</td>
+          <td class="paramname"> <em>value</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Write one type serialized as another (smaller) type, to save bandwidth serializationType should be uint8_t, uint16_t, uint24_t, or uint32_t Example: int num=53; WriteCasted&lt;uint8_t&gt;(num); would use 1 byte to write what would otherwise be an integer (4 or 8 bytes) <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>value</em>&nbsp;</td><td>The value to write </td></tr>
   </table>
 </dl>
 
@@ -3044,9 +3521,9 @@ Loses accuracy to about 3/10ths and only saves 2 bytes, so only use if accuracy 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>c:/RakNet/Source/<a class="el" href="BitStream_8h.html">BitStream.h</a></ul>
+<li>d:/RakNet/Source/<a class="el" href="BitStream_8h.html">BitStream.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 4 21:11:27 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 27 20:51:26 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

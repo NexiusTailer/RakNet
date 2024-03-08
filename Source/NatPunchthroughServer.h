@@ -5,6 +5,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_NatPunchthroughServer==1
 
 #ifndef __NAT_PUNCHTHROUGH_SERVER_H
 #define __NAT_PUNCHTHROUGH_SERVER_H
@@ -19,7 +21,9 @@
 
 class RakPeerInterface;
 struct Packet;
+#if _RAKNET_SUPPORT_PacketLogger==1
 class PacketLogger;
+#endif
 
 /// \defgroup NAT_PUNCHTHROUGH_GROUP NatPunchthrough
 /// \brief Connect systems despite both systems being behind a router
@@ -40,6 +44,7 @@ struct NatPunchthroughServerDebugInterface_Printf : public NatPunchthroughServer
 	virtual void OnServerMessage(const char *msg);
 };
 
+#if _RAKNET_SUPPORT_PacketLogger==1
 /// \ingroup NAT_PUNCHTHROUGH_GROUP
 struct NatPunchthroughServerDebugInterface_PacketLogger : public NatPunchthroughServerDebugInterface
 {
@@ -50,6 +55,7 @@ struct NatPunchthroughServerDebugInterface_PacketLogger : public NatPunchthrough
 	~NatPunchthroughServerDebugInterface_PacketLogger() {}
 	virtual void OnServerMessage(const char *msg);
 };
+#endif
 
 /// \brief Server code for NATPunchthrough
 /// \details Maintain connection to NatPunchthroughServer to process incoming connection attempts through NatPunchthroughClient<BR>
@@ -87,7 +93,7 @@ public:
 	{
 		ConnectionAttempt() {sender=0; recipient=0; startTime=0; attemptPhase=NAT_ATTEMPT_PHASE_NOT_STARTED;}
 		User *sender, *recipient;
-		unsigned int sessionId;
+		uint16_t sessionId;
 		RakNetTime startTime;
 		enum
 		{
@@ -120,9 +126,11 @@ protected:
 	void SendTimestamps(void);
 	void StartPendingPunchthrough(void);
 	void StartPunchthroughForUser(User*user);
-	unsigned int sessionId;
+	uint16_t sessionId;
 	NatPunchthroughServerDebugInterface *natPunchthroughServerDebugInterface;
 
 };
 
 #endif
+
+#endif // _RAKNET_SUPPORT_*

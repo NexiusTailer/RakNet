@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_ConnectionGraph2==1
+
 #include "ConnectionGraph2.h"
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
@@ -91,7 +94,7 @@ void ConnectionGraph2::OnNewConnection(SystemAddress systemAddress, RakNetGUID r
 	// Send all existing systems to new connection
 	RakNet::BitStream bs;
 	bs.Write((MessageID)ID_REMOTE_NEW_INCOMING_CONNECTION);
-	bs.Write((unsigned int)1);
+	bs.Write((uint32_t)1);
 	bs.Write(systemAddress);
 	bs.Write(rakNetGUID);
 	SendUnified(&bs,HIGH_PRIORITY,RELIABLE_ORDERED,0,systemAddress,true);
@@ -103,15 +106,15 @@ void ConnectionGraph2::OnNewConnection(SystemAddress systemAddress, RakNetGUID r
 	bs.Reset();
 	bs.Write((MessageID)ID_REMOTE_NEW_INCOMING_CONNECTION);
 	BitSize_t writeOffset = bs.GetWriteOffset();
-	bs.Write((unsigned int) addresses.Size());
+	bs.Write((uint32_t) addresses.Size());
 
 	unsigned int i;
-	unsigned int count=0;
+	uint32_t count=0;
 	for (i=0; i < addresses.Size(); i++)
 	{
 		if (addresses[i]==systemAddress)
 			continue;
-		
+
 		bs.Write(addresses[i]);
 		bs.Write(guids[i]);
 		count++;
@@ -126,9 +129,14 @@ void ConnectionGraph2::OnNewConnection(SystemAddress systemAddress, RakNetGUID r
 		SendUnified(&bs,HIGH_PRIORITY,RELIABLE_ORDERED,0,systemAddress,false);
 	}
 
-	RemoteSystem* remoteSystem = RakNet::OP_NEW<RemoteSystem>(__FILE__,__LINE__);
-	remoteSystem->guid=rakNetGUID;
-	remoteSystems.Insert(rakNetGUID,remoteSystem,true,__FILE__,__LINE__);
+	bool objectExists;
+	unsigned int ii = remoteSystems.GetIndexFromKey(rakNetGUID, &objectExists);
+	if (objectExists==false)
+	{
+		RemoteSystem* remoteSystem = RakNet::OP_NEW<RemoteSystem>(__FILE__,__LINE__);
+		remoteSystem->guid=rakNetGUID;
+		remoteSystems.InsertAtIndex(remoteSystem,ii,__FILE__,__LINE__);
+	}
 }
 PluginReceiveResult ConnectionGraph2::OnReceive(Packet *packet)
 {
@@ -139,6 +147,7 @@ PluginReceiveResult ConnectionGraph2::OnReceive(Packet *packet)
 		if (objectExists)
 		{
 			RakNet::BitStream bs(packet->data,packet->length,false);
+			bs.IgnoreBytes(1);
 			SystemAddressAndGuid saag;
 			bs.Read(saag.systemAddress);
 			bs.Read(saag.guid);
@@ -151,18 +160,24 @@ PluginReceiveResult ConnectionGraph2::OnReceive(Packet *packet)
 		unsigned idx = remoteSystems.GetIndexFromKey(packet->guid, &objectExists);
 		if (objectExists)
 		{
-			unsigned int numAddresses;
+			uint32_t numAddresses;
 			RakNet::BitStream bs(packet->data,packet->length,false);
+			bs.IgnoreBytes(1);
 			bs.Read(numAddresses);
 			for (unsigned int idx2=0; idx2 < numAddresses; idx2++)
 			{
 				SystemAddressAndGuid saag;
 				bs.Read(saag.systemAddress);
 				bs.Read(saag.guid);
-				remoteSystems[idx]->remoteConnections.Insert(saag,saag,true,__FILE__,__LINE__);
+				bool objectExists;
+				unsigned int ii = remoteSystems[idx]->remoteConnections.GetIndexFromKey(saag, &objectExists);
+				if (objectExists==false)
+					remoteSystems[idx]->remoteConnections.InsertAtIndex(saag,ii,__FILE__,__LINE__);
 			}
 		}		
 	}
 	
 	return RR_CONTINUE_PROCESSING;
 }
+
+#endif // _RAKNET_SUPPORT_*

@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_UDPProxyClient==1
+
 #include "UDPProxyClient.h"
 #include "BitStream.h"
 #include "UDPProxyCommon.h"
@@ -287,4 +290,7 @@ void UDPProxyClient::Clear(void)
 {
 	pingServerGroups.ClearPointers(false,__FILE__,__LINE__);
 }
+
+
+#endif // _RAKNET_SUPPORT_*
 

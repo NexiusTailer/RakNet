@@ -4,6 +4,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_FullyConnectedMesh2==1
 
 #include "FullyConnectedMesh2.h"
 #include "RakPeerInterface.h"
@@ -453,3 +455,5 @@ void FullyConnectedMesh2::SetConnectOnNewRemoteConnection(bool attemptConnection
 	connectOnNewRemoteConnections=attemptConnection;
 	connectionPassword=pw;
 }
+
+#endif // _RAKNET_SUPPORT_*

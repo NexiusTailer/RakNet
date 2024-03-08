@@ -564,6 +564,14 @@ void RPC3::Clear(void)
 	{
 		RakNet::OP_DELETE(outputList[j],__FILE__,__LINE__);
 	}
+	localSlots.Clear(__FILE__,__LINE__);
+
+	DataStructures::List<LocalRPCFunction*> outputList2;
+	localFunctions.GetItemList(outputList2,__FILE__, __LINE__);
+	for (j=0; j < outputList2.Size(); j++)
+	{
+		RakNet::OP_DELETE(outputList2[j],__FILE__,__LINE__);
+	}
 	localFunctions.Clear(__FILE__, __LINE__);
 //	remoteFunctions.Clear();
 //	remoteSlots.Clear();

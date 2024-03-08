@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_AutoRPC==1
+
 #include "AutoRPC.h"
 #include "RakMemoryOverride.h"
 #include "RakAssert.h"
@@ -698,3 +701,4 @@ bool AutoRPC::GetRemoteFunctionIndex(SystemAddress systemAddress, AutoRPC::RPCId
 #pragma warning( pop )
 #endif
 
+#endif // _RAKNET_SUPPORT_*

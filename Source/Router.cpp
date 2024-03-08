@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_Router==1
+
 #include "Router.h"
 #include "BitStream.h"
 #include "RakPeerInterface.h"
@@ -310,3 +313,5 @@ void Router::SerializePreorder(DataStructures::Tree<ConnectionGraph::SystemAddre
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

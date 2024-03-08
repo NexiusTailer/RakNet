@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_NatTypeDetectionServer==1
+
 #include "NatTypeDetectionServer.h"
 #include "SocketLayer.h"
 #include "RakNetSocket.h"
@@ -139,7 +142,7 @@ void NatTypeDetectionServer::Update(void)
 			case STATE_TESTING_FULL_CONE_1:
 			case STATE_TESTING_FULL_CONE_2:
 				printf("Testing NAT_TYPE_FULL_CONE\n");
-				rakPeerInterface->WriteOutOfBandHeader(&bs, ID_OUT_OF_BAND_INTERNAL);
+				rakPeerInterface->WriteOutOfBandHeader(&bs);
 				bs.Write((unsigned char) ID_NAT_TYPE_DETECT);
 				bs.Write((unsigned char) NAT_TYPE_FULL_CONE);
 				// S2P3 sends to C1 (Different address, different port, to previously used port on client). If received, Full-cone nat. Done.  (Else S2P3 potentially banned, do not use again).
@@ -148,7 +151,7 @@ void NatTypeDetectionServer::Update(void)
 			case STATE_TESTING_ADDRESS_RESTRICTED_1:
 			case STATE_TESTING_ADDRESS_RESTRICTED_2:
 				printf("Testing NAT_TYPE_ADDRESS_RESTRICTED\n");
-				rakPeerInterface->WriteOutOfBandHeader(&bs, ID_OUT_OF_BAND_INTERNAL);
+				rakPeerInterface->WriteOutOfBandHeader(&bs);
 				bs.Write((unsigned char) ID_NAT_TYPE_DETECT);
 				bs.Write((unsigned char) NAT_TYPE_ADDRESS_RESTRICTED);
 				// S1P2 sends to C1 (Same address, different port, to previously used port on client). If received, address-restricted cone nat. Done.
@@ -246,3 +249,5 @@ unsigned int NatTypeDetectionServer::GetDetectionAttemptIndex(RakNetGUID guid)
 	}
 	return (unsigned int) -1;
 }
+
+#endif // _RAKNET_SUPPORT_*

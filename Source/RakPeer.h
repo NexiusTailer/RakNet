@@ -683,7 +683,7 @@ public:
 	virtual void GetSockets( DataStructures::List<RakNetSmartPtr<RakNetSocket> > &sockets );
 
 	/// \internal
-	virtual void WriteOutOfBandHeader(RakNet::BitStream *bitStream, MessageID header);
+	virtual void WriteOutOfBandHeader(RakNet::BitStream *bitStream);
 
 	/// If you need code to run in the same thread as RakNet's update thread, this function can be used for that
 	/// \param[in] _userUpdateThreadPtr C callback function
@@ -732,7 +732,7 @@ public:
 	char *GetRPCString( const char *data, const BitSize_t bitSize, const SystemAddress systemAddress);
 
 	/// \internal
-	bool SendOutOfBand(const char *host, unsigned short remotePort, MessageID header, const char *data, BitSize_t dataLength, unsigned connectionSocketIndex=0 );
+	bool SendOutOfBand(const char *host, unsigned short remotePort, const char *data, BitSize_t dataLength, unsigned connectionSocketIndex=0 );
 
 	// static Packet *AllocPacket(unsigned dataSize, const char *file, unsigned int line);
 
@@ -817,8 +817,8 @@ protected:
 	///Parse out a connection request packet
 	void ParseConnectionRequestPacket( RakPeer::RemoteSystemStruct *remoteSystem, SystemAddress systemAddress, const char *data, int byteSize);
 	///When we get a connection request from an ip / port, accept it unless full
-	void OnConnectionRequest( RakPeer::RemoteSystemStruct *remoteSystem, unsigned char *AESKey, bool setAESKey );
-	void SendConnectionRequestAccepted(RakPeer::RemoteSystemStruct *remoteSystem);
+	void OnConnectionRequest( RakPeer::RemoteSystemStruct *remoteSystem, unsigned char *AESKey, bool setAESKey, RakNetTime incomingTimestamp );
+	void SendConnectionRequestAccepted(RakPeer::RemoteSystemStruct *remoteSystem, RakNetTime incomingTimestamp);
 	///Send a reliable disconnect packet to this player and disconnect them when it is delivered
 	void NotifyAndFlagForShutdown( const SystemAddress systemAddress, bool performImmediate, unsigned char orderingChannel, PacketPriority disconnectionNotificationPriority );
 	///Returns how many remote systems initiated a connection to us
@@ -1146,6 +1146,8 @@ protected:
 	SimpleMutex sendReceiptSerialMutex;
 	uint32_t sendReceiptSerial;
 	void ResetSendReceipt(void);
+
+	void OnConnectedPong(RakNetTime sendPingTime, RakNetTime sendPongTime, RemoteSystemStruct *remoteSystem);
 };
 
 #endif

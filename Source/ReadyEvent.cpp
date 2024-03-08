@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_ReadyEvent==1
+
 #include "ReadyEvent.h"
 #include "RakPeerInterface.h"
 #include "BitStream.h"
@@ -554,3 +557,5 @@ void ReadyEvent::PushCompletionPacket(unsigned eventId)
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

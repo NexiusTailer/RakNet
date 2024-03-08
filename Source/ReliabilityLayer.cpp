@@ -59,6 +59,7 @@ void BPSTracker::Push1(RakNetTimeUS time, uint64_t value1) {
 }
 //void BPSTracker::Push2(RakNetTimeUS time, uint64_t value1, uint64_t value2) {dataQueue.Push(TimeAndValue2(time,value1,value2),__FILE__,__LINE__); total1+=value1; lastSec1+=value1;  total2+=value2; lastSec2+=value2;}
 uint64_t BPSTracker::GetBPS1(RakNetTimeUS time) {ClearExpired1(time); return lastSec1;}
+uint64_t BPSTracker::GetBPS1Threadsafe(RakNetTimeUS time) {(void) time; return lastSec1;}
 //uint64_t BPSTracker::GetBPS2(RakNetTimeUS time) {ClearExpired2(time); return lastSec2;}
 //void BPSTracker::GetBPS1And2(RakNetTimeUS time, uint64_t &out1, uint64_t &out2) {ClearExpired2(time); out1=lastSec1; out2=lastSec2;}
 uint64_t BPSTracker::GetTotal1(void) const {return total1;}
@@ -2149,9 +2150,14 @@ BitSize_t ReliabilityLayer::WriteToBitStreamFromInternalPacket( RakNet::BitStrea
 
 	// (Incoming data may be all zeros due to padding)
 	bitStream->AlignWriteToByteBoundary(); // Potentially unaligned
-	tempChar=(unsigned char)internalPacket->reliability;
-	if (tempChar>=(unsigned char) UNRELIABLE_WITH_ACK_RECEIPT)
-		tempChar-=5;
+	if (internalPacket->reliability==UNRELIABLE_WITH_ACK_RECEIPT)
+		tempChar=UNRELIABLE;
+	else if (internalPacket->reliability==RELIABLE_WITH_ACK_RECEIPT)
+		tempChar=RELIABLE_WITH_ACK_RECEIPT;
+	else if (internalPacket->reliability==RELIABLE_ORDERED_WITH_ACK_RECEIPT)
+		tempChar=RELIABLE_ORDERED;
+	else
+		tempChar=(unsigned char)internalPacket->reliability; 
 	bitStream->WriteBits( (const unsigned char *)&tempChar, 3, true ); // 3 bits to write reliability.
 
 	bool hasSplitPacket = internalPacket->splitPacketCount>0; bitStream->Write(hasSplitPacket); // Write 1 bit to indicate if splitPacketCount>0
@@ -2810,7 +2816,7 @@ RakNetStatistics * const ReliabilityLayer::GetStatistics( RakNetStatistics *rns 
 
 	for (i=0; i < RNS_PER_SECOND_METRICS_COUNT; i++)
 	{
-		statistics.valueOverLastSecond[i]=bpsMetrics[i].GetBPS1(time);
+		statistics.valueOverLastSecond[i]=bpsMetrics[i].GetBPS1Threadsafe(time);
 		statistics.runningTotal[i]=bpsMetrics[i].GetTotal1();
 	}
 

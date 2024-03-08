@@ -6,6 +6,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_NatPunchthroughClient==1
 
 #ifndef __NAT_PUNCHTHROUGH_CLIENT_H
 #define __NAT_PUNCHTHROUGH_CLIENT_H
@@ -28,7 +30,9 @@
 
 class RakPeerInterface;
 struct Packet;
+#if _RAKNET_SUPPORT_PacketLogger==1
 class PacketLogger;
+#endif
 
 /// \ingroup NAT_PUNCHTHROUGH_GROUP
 struct RAK_DLL_EXPORT PunchthroughConfiguration
@@ -93,6 +97,7 @@ struct NatPunchthroughDebugInterface_Printf : public NatPunchthroughDebugInterfa
 	virtual void OnClientMessage(const char *msg);
 };
 
+#if _RAKNET_SUPPORT_PacketLogger==1
 /// \ingroup NAT_PUNCHTHROUGH_GROUP
 struct NatPunchthroughDebugInterface_PacketLogger : public NatPunchthroughDebugInterface
 {
@@ -103,6 +108,7 @@ struct NatPunchthroughDebugInterface_PacketLogger : public NatPunchthroughDebugI
 	~NatPunchthroughDebugInterface_PacketLogger() {}
 	virtual void OnClientMessage(const char *msg);
 };
+#endif
 
 /// \brief Client code for NATPunchthrough
 /// \details Maintain connection to NatPunchthroughServer to process incoming connection attempts through NatPunchthroughClient<BR>
@@ -196,7 +202,7 @@ protected:
 		int attemptCount;
 		int retryCount;
 		int punchingFixedPortAttempts; // only used for TestMode::PUNCHING_FIXED_PORT
-		unsigned int sessionId;
+		uint16_t sessionId;
 		// Give priority to internal IP addresses because if we are on a LAN, we don't want to try to connect through the internet
 		enum TestMode
 		{
@@ -228,3 +234,5 @@ protected:
 };
 
 #endif
+
+#endif // _RAKNET_SUPPORT_*

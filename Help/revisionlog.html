@@ -329,6 +329,21 @@ Update ConnectionGraph2 to also store the remote system connection list in memor
 PacketLogger will now log internal message receive errors.
 Consolodate NAT traversal plugins into NATCompleteServer and NATCompleteClient samples. Remove old NAT samples.<BR>
 3.731 (05/01/2010) Document TeamBalancer and Steam lobby plugins. Fix crash with calling RakPeer::DetachPlugin(). Fix bug to return ID_SND_RECEIPT_ACKED only once for messages over the MTU. Rewrite RakNetStatistics to return more relevant and up to date information, including metrics per second. Add VariableDeltaSerializer, an optional helper class with ReplicaManager3 that can serialize changes per-variable, rather than relying on the default of serializing the entire object.<BR>
+3.80 (05/27/2010) Disabled UNRELIABLE_SEQUENCED_WITH_ACK_RECEIPT, RELIABLE_SEQUENCED_WITH_ACK_RECEIPT.
+Fixed GetMyIP, Modify HTTPConnection to use SSL if defined, and to specify the port.
+Support WorldID with ReplicaManager3.
+Add NativeFeatureIncludes.h and NativeFeatureIncludesOverrides.h, so the user can exclude code they do not want more easily.
+Improve/fix Router2 and UDPForwarder.
+Add to BitStream functions SerializeCasted (Same as just casting the type you read/write, but uses a template), SerializeBitsFromIntegerRange, WriteBitsFromIntegerRange, and ReadBitsFromIntegerRange.
+Fix not threadsafe call to BPS tracker, caused crash when calling GetStatistics with version 3.731 or later.
+Increased tolerance for ping spikes with congestion control, speeds will increase more quickly on average now.
+Fixed RakPeer::SendOutOfBand, hould always return as the first byte ID_OUT_OF_BAND_INTERNAL.
+Allow Set() and constructor functions in RakString to take any size input.
+Fixed ConnectionGraph2 basically not working at all.
+Fixed http://www.jenkinssoftware.com/forum/index.php?topic=3216.0 where HTTPConnection would fail because TCP packets were still waiting while CloseConnection was called.
+Encode ping/pong in handshaking so a ping is always available when ID_CONNECTION_REQUEST_ACCEPTED or ID_NEW_INCOMING_CONNECTION arrives. This changes the protocol, so connections to prior versions are not possible.
+Fixed cross connections so both systems return ID_CONNECTION_REQUEST_ACCEPTED, and neither system returns ID_NEW_INCOMING_CONNECTION.
+<BR>
 
  </TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">

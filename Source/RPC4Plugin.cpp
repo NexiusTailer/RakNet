@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_RPC4Plugin==1
+
 #include "RPC4Plugin.h"
 #include "MessageIdentifiers.h"
 #include "RakPeerInterface.h"
@@ -29,7 +32,7 @@ bool RPC4Plugin::UnregisterFunction(const char* uniqueID)
 }
 void RPC4Plugin::CallLoopback( const char* uniqueID, RakNet::BitStream * bitStream )
 {
-	Packet *p;
+	Packet *p=0;
 
 	DataStructures::StringKeyedHashIndex skhi = registeredFunctions.GetIndexOf(uniqueID);
 
@@ -37,13 +40,17 @@ void RPC4Plugin::CallLoopback( const char* uniqueID, RakNet::BitStream * bitStre
 	{
 		if (rakPeerInterface) 
 			p=rakPeerInterface->AllocatePacket(sizeof(MessageID)+sizeof(unsigned char)+strlen(uniqueID)+1);
+#if _RAKNET_SUPPORT_PacketizedTCP==1
 		else
 			p=packetizedTCP->AllocatePacket(sizeof(MessageID)+sizeof(unsigned char)+strlen(uniqueID)+1);
+#endif
 
 		if (rakPeerInterface)
 			p->guid=rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
+#if _RAKNET_SUPPORT_PacketizedTCP==1
 		else
 			p->guid=UNASSIGNED_RAKNET_GUID;
+#endif
 
 		p->systemAddress=UNASSIGNED_SYSTEM_ADDRESS;
 		p->systemAddress.systemIndex=(SystemIndex)-1;
@@ -66,13 +73,17 @@ void RPC4Plugin::CallLoopback( const char* uniqueID, RakNet::BitStream * bitStre
 	}
 	if (rakPeerInterface) 
 		p=rakPeerInterface->AllocatePacket(out.GetNumberOfBytesUsed());
+#if _RAKNET_SUPPORT_PacketizedTCP==1
 	else
 		p=packetizedTCP->AllocatePacket(out.GetNumberOfBytesUsed());
+#endif
 
 	if (rakPeerInterface)
 		p->guid=rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
+#if _RAKNET_SUPPORT_PacketizedTCP==1
 	else
 		p->guid=UNASSIGNED_RAKNET_GUID;
+#endif
 	p->systemAddress=UNASSIGNED_SYSTEM_ADDRESS;
 	p->systemAddress.systemIndex=(SystemIndex)-1;
 	memcpy(p->data,out.GetData(),out.GetNumberOfBytesUsed());
@@ -118,3 +129,5 @@ PluginReceiveResult RPC4Plugin::OnReceive(Packet *packet)
 
 	return RR_CONTINUE_PROCESSING;
 }
+
+#endif // _RAKNET_SUPPORT_*

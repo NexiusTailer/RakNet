@@ -15,6 +15,9 @@
 /// Software Foundation; either version 2 of the License, or (at your
 /// option) any later version.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_HTTPConnection==1
+
 #ifndef __HTTP_CONNECTION
 #define __HTTP_CONNECTION
 
@@ -126,6 +129,7 @@ private:
 	enum ConnectionState
 	{
 		CS_NONE,
+		CS_DISCONNECTING,
 		CS_CONNECTING,
 		CS_CONNECTED,
 		CS_PROCESSING,
@@ -156,3 +160,4 @@ private:
 
 #endif
 
+#endif // _RAKNET_SUPPORT_*

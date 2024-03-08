@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_ReplicaManager3==1
+
 #include "ReplicaManager3.h"
 #include "GetTime.h"
 #include "MessageIdentifiers.h"
@@ -413,7 +416,7 @@ PluginReceiveResult ReplicaManager3::OnReceive(Packet *packet)
 	if (packet->length<2)
 		return RR_CONTINUE_PROCESSING;
 
-	// TODO - not handling incomingWorldId
+	unsigned char incomingWorldId;
 
 	RakNetTime timestamp=0;
 	unsigned char packetIdentifier, packetDataOffset;
@@ -425,7 +428,7 @@ PluginReceiveResult ReplicaManager3::OnReceive(Packet *packet)
 			// Required for proper endian swapping
 			RakNet::BitStream tsBs(packet->data+sizeof(MessageID),packet->length-1,false);
 			tsBs.Read(timestamp);
-//			incomingWorldId=packet->data[sizeof( unsigned char )*2 + sizeof( RakNetTime )];
+			incomingWorldId=packet->data[sizeof( unsigned char )*2 + sizeof( RakNetTime )];
 			packetDataOffset=sizeof( unsigned char )*3 + sizeof( RakNetTime );
 		}
 		else
@@ -434,35 +437,52 @@ PluginReceiveResult ReplicaManager3::OnReceive(Packet *packet)
 	else
 	{
 		packetIdentifier = ( unsigned char ) packet->data[ 0 ];
-//		incomingWorldId=packet->data[sizeof( unsigned char )];
+		incomingWorldId=packet->data[sizeof( unsigned char )];
 		packetDataOffset=sizeof( unsigned char )*2;
 	}
 
 	switch (packetIdentifier)
 	{
 	case ID_REPLICA_MANAGER_CONSTRUCTION:
+		if (incomingWorldId!=worldId)
+			return RR_CONTINUE_PROCESSING;
 		OnConstruction(packet->data, packet->length, packet->guid, packetDataOffset);
 		break;
 	case ID_REPLICA_MANAGER_SERIALIZE:
+		if (incomingWorldId!=worldId)
+			return RR_CONTINUE_PROCESSING;
 		OnSerialize(packet->data, packet->length, packet->guid, timestamp, packetDataOffset);
 		break;
 	case ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_REJECTED:
+		if (incomingWorldId!=worldId)
+			return RR_CONTINUE_PROCESSING;
 		OnLocalConstructionRejected(packet->data, packet->length, packet->guid, packetDataOffset);
 		break;
 	case ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_ACCEPTED:
+		if (incomingWorldId!=worldId)
+			return RR_CONTINUE_PROCESSING;
 		OnLocalConstructionAccepted(packet->data, packet->length, packet->guid, packetDataOffset);
 		break;
 	case ID_REPLICA_MANAGER_DOWNLOAD_STARTED:
+		if (incomingWorldId!=worldId)
+			return RR_CONTINUE_PROCESSING;
 		OnDownloadStarted(packet->data, packet->length, packet->guid, packetDataOffset);
 		break;
 	case ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE:
+		if (incomingWorldId!=worldId)
+			return RR_CONTINUE_PROCESSING;
 		OnDownloadComplete(packet->data, packet->length, packet->guid, packetDataOffset);
 		break;
 	case ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING:
+		if (incomingWorldId!=worldId)
+			return RR_CONTINUE_PROCESSING;
 		OnConstructionExisting(packet->data, packet->length, packet->guid, packetDataOffset);
 		break;
 	case ID_REPLICA_MANAGER_SCOPE_CHANGE:
 		{
+			if (incomingWorldId!=worldId)
+				return RR_CONTINUE_PROCESSING;
+
 			Connection_RM3 *connection = GetConnectionByGUID(packet->guid);
 			if (connection && connection->isValidated==false)
 			{
@@ -2070,3 +2090,4 @@ RM3ActionOnPopConnection Replica3::QueryActionOnPopConnection_PeerToPeer(RakNet:
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+#endif // _RAKNET_SUPPORT_*

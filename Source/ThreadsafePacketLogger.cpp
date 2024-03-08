@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_PacketLogger==1
+
 #include "ThreadsafePacketLogger.h"
 #include <string.h>
 
@@ -29,3 +32,5 @@ void ThreadsafePacketLogger::AddToLog(const char *str)
 	strcpy(*msg, str);
 	logMessages.WriteUnlock();
 }
+
+#endif // _RAKNET_SUPPORT_*

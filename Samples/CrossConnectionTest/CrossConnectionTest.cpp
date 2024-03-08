@@ -21,140 +21,110 @@ int main()
 {
 	printf("An internal test to test two peers connecting to each other\n");
 	printf("at the same time.  This causes bugs so I fix them here\n");
-	printf("Difficulty: Beginner\n\n");
-	printf("(S)erver or (c)lient?: ");
-	static const unsigned short SERVER_PORT=1234;
-	char serverMode[32];
-	bool isServer;
-	char serverIP[64];
-	gets(serverMode);
-	if (serverMode[0]=='s' || serverMode[0]=='S')
-	{
-		isServer=true;
-	}
-	else
-	{
-		isServer=false;
 
-		printf("Enter server IP: ");
-		gets(serverIP);
-		if (serverIP[0]==0)
-			strcpy(serverIP,"127.0.0.1");	
-	}
-	char clientIP[64];
-	RakPeerInterface *rakPeer;
-	unsigned short clientPort;
-	bool gotNotification;
-	rakPeer=RakNetworkFactory::GetRakPeerInterface();
-	if (isServer)
-	{
-		SocketDescriptor socketDescriptor(SERVER_PORT,0);
-		rakPeer->Startup(1,0,&socketDescriptor, 1);
-		rakPeer->SetMaximumIncomingConnections(1);
-	}
-	else
-	{
-		SocketDescriptor socketDescriptor(0,0);
-		rakPeer->Startup(1,0,&socketDescriptor, 1);
-	}
+	RakPeerInterface *rakPeer1, *rakPeer2;
+	rakPeer1=RakNetworkFactory::GetRakPeerInterface();
+	rakPeer2=RakNetworkFactory::GetRakPeerInterface();
+	rakPeer1->SetMaximumIncomingConnections(8);
+	rakPeer2->SetMaximumIncomingConnections(8);
+	
+	bool gotConnectionRequestAccepted[2];
+	bool gotNewIncomingConnection[2];
+	Packet *packet;
+	SocketDescriptor sd1(1000,0);
+	SocketDescriptor sd2(2000,0);
+	unsigned short numSystems[2];
 
-	printf("RakPeer started\n");
-	if (isServer==false)
-		rakPeer->Ping(serverIP,SERVER_PORT,false);
-
-	//	PacketLogger pl;
-	//	pl.LogHeader();
-	//	rakPeer->AttachPlugin(&pl);
-
-	RakNetTime connectionAttemptTime=0,connectionResultDeterminationTime=0,nextTestStartTime=0;
-	while(1)
+	while (1)
 	{
-		Packet *p;
-		for (p=rakPeer->Receive(); p; rakPeer->DeallocatePacket(p), p=rakPeer->Receive())
+		gotConnectionRequestAccepted[0]=false;
+		gotConnectionRequestAccepted[1]=false;
+		gotNewIncomingConnection[0]=false;
+		gotNewIncomingConnection[1]=false;
+		numSystems[0]=0;
+		numSystems[1]=0;
+
+		rakPeer1->Startup(1,0,&sd1, 1);
+		rakPeer2->Startup(1,0,&sd2, 1);
+		RakSleep(100);
+		rakPeer1->Connect("127.0.0.1", 2000, 0, 0);
+		rakPeer2->Connect("127.0.0.1", 1000, 0, 0);
+		RakSleep(100);
+		for (packet=rakPeer1->Receive(); packet; rakPeer1->DeallocatePacket(packet), packet=rakPeer1->Receive())
 		{
-			if (p->data[0]==ID_NEW_INCOMING_CONNECTION)
-			{
-				printf("ID_NEW_INCOMING_CONNECTION\n");
-				gotNotification=true;
-			}
-			else if (p->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
-			{
-				printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
-				gotNotification=true;
-			}
-			else if (p->data[0]==ID_PING)
-			{
-				printf("ID_PING\n");
-				connectionAttemptTime=RakNet::GetTime()+1000;
-				p->systemAddress.ToString(false,clientIP);
-				clientPort=p->systemAddress.port;
-				gotNotification=false;
-			}
-			else if (p->data[0]==ID_PONG)
-			{
-				printf("ID_PONG\n");
-				RakNetTime sendPingTime;
-				RakNet::BitStream bs(p->data,p->length,false);
-				bs.IgnoreBytes(1);
-				bs.Read(sendPingTime);
-				RakNetTime rtt = RakNet::GetTime() - sendPingTime;
-				if (rtt/2<=500)
-					connectionAttemptTime=RakNet::GetTime()+1000-rtt/2;
-				else
-					connectionAttemptTime=RakNet::GetTime();
-				gotNotification=false;
-			}
+			if (packet->data[0]==ID_NEW_INCOMING_CONNECTION)
+				gotNewIncomingConnection[0]=true;
+			else if (packet->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
+				gotConnectionRequestAccepted[0]=true;
+			else if (packet->data[0]==ID_CONNECTION_ATTEMPT_FAILED)
+				printf("Error on rakPeer1, got ID_CONNECTION_ATTEMPT_FAILED\n");
 		}
-		if (connectionAttemptTime!=0 && RakNet::GetTime()>=connectionAttemptTime)
+		for (packet=rakPeer2->Receive(); packet; rakPeer2->DeallocatePacket(packet), packet=rakPeer2->Receive())
 		{
-			printf("Attemping connection\n");
-			connectionAttemptTime=0;
-			if (isServer)
-				rakPeer->Connect(clientIP,clientPort,0,0);
-			else
-				rakPeer->Connect(serverIP,SERVER_PORT,0,0);
-			connectionResultDeterminationTime=RakNet::GetTime()+2000;
+			if (packet->data[0]==ID_NEW_INCOMING_CONNECTION)
+				gotNewIncomingConnection[1]=true;
+			else if (packet->data[0]==ID_CONNECTION_REQUEST_ACCEPTED)
+				gotConnectionRequestAccepted[1]=true;
+			else if (packet->data[0]==ID_CONNECTION_ATTEMPT_FAILED)
+				printf("Error on rakPeer2, got ID_CONNECTION_ATTEMPT_FAILED\n");
 		}
-		if (connectionResultDeterminationTime!=0 && RakNet::GetTime()>=connectionResultDeterminationTime)
-		{
-			connectionResultDeterminationTime=0;
-			if (gotNotification==false)
-			{
-				printf("Test failed.\n");
-			}
-			else
-			{
-				printf("Test succeeded.\n");
-			}
-			if (isServer==false)
-			{
-				SystemAddress sa;
-				sa.SetBinaryAddress(serverIP);
-				sa.port=SERVER_PORT;
-				rakPeer->CancelConnectionAttempt(sa);
-			}
-			else
-			{
-				SystemAddress sa;
-				sa.SetBinaryAddress(clientIP);
-				sa.port=clientPort;
-				rakPeer->CancelConnectionAttempt(sa);
-			}
-			rakPeer->CloseConnection(rakPeer->GetSystemAddressFromIndex(0),true,0);
-			if (isServer==false)
-				nextTestStartTime=RakNet::GetTime()+1000;
+		rakPeer1->GetConnectionList(0,&numSystems[0]);
+		rakPeer2->GetConnectionList(0,&numSystems[1]);
 
-		}
-		if (nextTestStartTime!=0 && RakNet::GetTime()>=nextTestStartTime)
+		if (gotConnectionRequestAccepted[0]==true && gotConnectionRequestAccepted[1]==true)
 		{
-			rakPeer->Ping(serverIP,SERVER_PORT,false);
-			nextTestStartTime=0;
+			printf("Test passed\n");
 		}
-		RakSleep(0);
+		else if (numSystems[0]!=1 || numSystems[1]!=1)
+		{
+			printf("Test failed, system 1 has %i connections and system 2 has %i connections.\n", numSystems[0], numSystems[1]);
+		}
+		else if (gotConnectionRequestAccepted[0]==false && gotConnectionRequestAccepted[1]==false)
+		{
+			printf("Test failed, ID_CONNECTION_REQUEST_ACCEPTED is false for both instances\n");
+		}
+		else if (gotNewIncomingConnection[0]==true && gotNewIncomingConnection[1]==true)
+		{
+			printf("Test failed, ID_NEW_INCOMING_CONNECTION is true for both instances\n");
+		}
+		else if (gotConnectionRequestAccepted[0]==false && gotConnectionRequestAccepted[1]==false)
+		{
+			printf("Test failed, ID_NEW_INCOMING_CONNECTION is false for both instances\n");
+		}
+		else if (gotConnectionRequestAccepted[0]==true && gotNewIncomingConnection[1]==false)
+		{
+			printf("Test failed, ID_CONNECTION_REQUEST_ACCEPTED for first instance, but not ID_NEW_INCOMING_CONNECTION for second\n");
+		}
+		else if (gotConnectionRequestAccepted[1]==true && gotNewIncomingConnection[0]==false)
+		{
+			printf("Test failed, ID_CONNECTION_REQUEST_ACCEPTED for second instance, but not ID_NEW_INCOMING_CONNECTION for first\n");
+		}
+		else if ((int)gotConnectionRequestAccepted[0]+
+			(int)gotConnectionRequestAccepted[1]!=1)
+		{
+			printf("Test failed, does not have exactly one instance of ID_CONNECTION_REQUEST_ACCEPTED\n");
+		}
+		else if ((int)gotNewIncomingConnection[0]+
+			(int)gotNewIncomingConnection[1]!=1)
+		{
+			printf("Test failed, does not have exactly one instance of ID_NEW_INCOMING_CONNECTION\n");
+		}
+		else if ((int)gotConnectionRequestAccepted[0]+
+			(int)gotConnectionRequestAccepted[1]+
+			(int)gotNewIncomingConnection[0]+
+			(int)gotNewIncomingConnection[1]!=2)
+		{
+			printf("Test failed, does not have exactly one instance of ID_CONNECTION_REQUEST_ACCEPTED and one instance of ID_NEW_INCOMING_CONNECTION\n");
+		}
+		else
+			printf("Test passed\n");
 
+
+		rakPeer1->Shutdown(0);
+		rakPeer2->Shutdown(0);
+		RakSleep(100);
 	}
 
-	RakNetworkFactory::DestroyRakPeerInterface(rakPeer);
 
 	return 0;
 }

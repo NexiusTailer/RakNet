@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_NatTypeDetectionClient==1
+
 #include "NatTypeDetectionClient.h"
 #include "RakNetSocket.h"
 #include "RakNetSmartPtr.h"
@@ -152,3 +155,5 @@ void NatTypeDetectionClient::Shutdown(void)
 	}
 
 }
+
+#endif // _RAKNET_SUPPORT_*

@@ -101,7 +101,7 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPluginInterface2.html#7a4f68d0bae0dd4539f6b9e14a59f7fa">OnNewConnection</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="structRakNetGUID.html">RakNetGUID</a> rakNetGUID, bool isIncoming)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPluginInterface2.html#da775368b94394305712ca46a77660a2">OnFailedConnectionAttempt</a> (<a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g4e43ad7508cbef7619975aaef0aec794">PI2_FailedConnectionAttemptReason</a> failedConnectionAttemptReason)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPluginInterface2.html#a50b6a80aa3930990852d4872226bbea">OnFailedConnectionAttempt</a> (<a class="el" href="structPacket.html">Packet</a> *packet, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g4e43ad7508cbef7619975aaef0aec794">PI2_FailedConnectionAttemptReason</a> failedConnectionAttemptReason)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPluginInterface2.html#66dba20421e1ccd14b2da066efce98ff">OnDirectSocketSend</a> (const char *data, const BitSize_t bitsUsed, <a class="el" href="structSystemAddress.html">SystemAddress</a> remoteSystemAddress)</td></tr>
 
@@ -348,15 +348,15 @@ Called on a send to the socket, per datagram, that does not go through the relia
 
 </div>
 </div><p>
-<a class="anchor" name="da775368b94394305712ca46a77660a2"></a><!-- doxytag: member="PluginInterface2::OnFailedConnectionAttempt" ref="da775368b94394305712ca46a77660a2" args="(SystemAddress systemAddress, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason)" -->
+<a class="anchor" name="a50b6a80aa3930990852d4872226bbea"></a><!-- doxytag: member="PluginInterface2::OnFailedConnectionAttempt" ref="a50b6a80aa3930990852d4872226bbea" args="(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">virtual void PluginInterface2::OnFailedConnectionAttempt           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structSystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>systemAddress</em>, </td>
+          <td class="paramtype"><a class="el" href="structPacket.html">Packet</a> *&nbsp;</td>
+          <td class="paramname"> <em>packet</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -376,12 +376,12 @@ Called on a send to the socket, per datagram, that does not go through the relia
 <p>
 Called when a connection attempt fails <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>systemAddress</em>&nbsp;</td><td>Address of the connection </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>packet</em>&nbsp;</td><td><a class="el" href="structPacket.html" title="This represents a user message from another system.">Packet</a> to be returned to the user </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>failedConnectionReason</em>&nbsp;</td><td>Why the connection failed </td></tr>
   </table>
 </dl>
 
-<p>Reimplemented in <a class="el" href="classRakNet_1_1Router2.html#f6cfe78de236f1cae7cd509afbff94e4">RakNet::Router2</a>.</p>
+<p>Reimplemented in <a class="el" href="classRakNet_1_1Router2.html#c3be692d08e4ccce030c201038346f1d">RakNet::Router2</a>.</p>
 
 </div>
 </div><p>
@@ -603,9 +603,9 @@ Called when the reliability layer rejects a send or receive <dl compact><dt><b>P
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>c:/RakNet/Source/<a class="el" href="PluginInterface2_8h.html">PluginInterface2.h</a></ul>
+<li>d:/RakNet/Source/<a class="el" href="PluginInterface2_8h.html">PluginInterface2.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 4 21:11:26 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 27 20:51:25 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

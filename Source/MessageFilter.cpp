@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_MessageFilter==1
+
 #include "MessageFilter.h"
 #include "RakAssert.h"
 #include "GetTime.h"
@@ -340,7 +343,7 @@ void MessageFilter::OnClosedConnection(SystemAddress systemAddress, RakNetGUID r
 		if (messageId==ID_RPC)
 		{
 			const char *uniqueIdentifier = rakPeerInterface->GetRPCString((const char*) packet->data, packet->bitSize, packet->systemAddress);
-			if (systemList[index].filter->allowedRPCs.HasData((char *const)uniqueIdentifier)==false)
+			if (systemList[index].filter->allowedRPCs.HasData((char *)uniqueIdentifier)==false)
 			{
 				OnInvalidMessage(systemList[index].filter, packet->systemAddress, packet->data[0]);
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -364,3 +367,5 @@ void MessageFilter::OnClosedConnection(SystemAddress systemAddress, RakNetGUID r
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

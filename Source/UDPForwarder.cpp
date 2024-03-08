@@ -4,6 +4,7 @@
 #include "SocketLayer.h"
 #include "WSAStartupSingleton.h"
 #include "RakSleep.h"
+#include "DS_OrderedList.h"
 
 using namespace RakNet;
 static const unsigned short DEFAULT_MAX_FORWARD_ENTRIES=64;
@@ -26,7 +27,7 @@ bool operator==( const DataStructures::MLKeyRef<UDPForwarder::SrcAndDest> &input
 }
 
 
-UDPForwarder::ForwardEntry::ForwardEntry() {readSocket=INVALID_SOCKET; timeLastDatagramForwarded=RakNet::GetTime();}
+UDPForwarder::ForwardEntry::ForwardEntry() {readSocket=INVALID_SOCKET; timeLastDatagramForwarded=RakNet::GetTimeMS();}
 UDPForwarder::ForwardEntry::~ForwardEntry() {
 	if (readSocket!=INVALID_SOCKET)
 		closesocket(readSocket);
@@ -102,7 +103,7 @@ void UDPForwarder::UpdateThreaded(void)
 	tv.tv_sec=0;
 	tv.tv_usec=0;
 
-	RakNetTime curTime = RakNet::GetTime();
+	RakNetTimeMS curTime = RakNet::GetTimeMS();
 
 	SOCKET largestDescriptor=0;
 	DataStructures::DefaultIndexType i;
@@ -148,6 +149,9 @@ void UDPForwarder::UpdateThreaded(void)
 
 	if (selectResult > 0)
 	{
+		DataStructures::OrderedList<unsigned int,unsigned int> removalIndices;
+		DataStructures::Queue<ForwardEntry*> entriesToReinsert;
+
 		for (i=0; i < forwardList.GetSize(); i++)
 		{
 			ForwardEntry *feSource = forwardList[i];
@@ -170,23 +174,30 @@ void UDPForwarder::UpdateThreaded(void)
 						if (feSource->srcAndDest.source.port!=portnum)
 						{
 							// Remove both source and dest from list, update addresses, and reinsert in order
-							forwardList.RemoveAtIndex(i,__FILE__,__LINE__);
 							DataStructures::DefaultIndexType destIndex;
 							SrcAndDest srcAndDest;
 							srcAndDest.source=feSource->srcAndDest.destination;
 							srcAndDest.destination=feSource->srcAndDest.source;
 							destIndex=forwardList.GetIndexOf(srcAndDest);
+
 							ForwardEntry *feDest = forwardList[destIndex];
-							forwardList.RemoveAtIndex(destIndex,__FILE__,__LINE__);
 							feSource->srcAndDest.source.port=portnum;
 							feDest->srcAndDest.destination.port=portnum;
 
-							// Reinsert to preserve list order
-							forwardList.Push(feSource,feSource->srcAndDest,__FILE__,__LINE__);
-							forwardList.Push(feDest,feDest->srcAndDest,__FILE__,__LINE__);
-
 							feSource->timeLastDatagramForwarded=curTime;
 							feDest->timeLastDatagramForwarded=curTime;
+
+							removalIndices.Insert(i,i,true,__FILE__,__LINE__);
+							removalIndices.Insert(destIndex,destIndex,true,__FILE__,__LINE__);
+							entriesToReinsert.Push(feSource,__FILE__,__LINE__);
+							entriesToReinsert.Push(feDest,__FILE__,__LINE__);
+
+// 							forwardList.RemoveAtIndex(i,__FILE__,__LINE__);
+// 							forwardList.RemoveAtIndex(destIndex,__FILE__,__LINE__);
+// 
+// 							// Reinsert to preserve list order
+// 							forwardList.Push(feSource,feSource->srcAndDest,__FILE__,__LINE__);
+// 							forwardList.Push(feDest,feDest->srcAndDest,__FILE__,__LINE__);
 						}
 					}
 
@@ -208,6 +219,18 @@ void UDPForwarder::UpdateThreaded(void)
 					}
 				}
 			}
+		}
+
+		while (removalIndices.Size()>0)
+		{
+			// Removing from back to front, so indices remain valid
+			forwardList.RemoveAtIndex(removalIndices[removalIndices.Size()-1],__FILE__,__LINE__);
+			removalIndices.RemoveFromEnd();
+		}
+		while (entriesToReinsert.Size())
+		{
+			ForwardEntry *fe = entriesToReinsert.Pop();
+			forwardList.Push(fe,fe->srcAndDest,__FILE__,__LINE__);
 		}
 	}
 }
@@ -284,7 +307,7 @@ unsigned short UDPForwarder::AddForwardingEntry(SrcAndDest srcAndDest, RakNetTim
 		existingSrcIndex = forwardList.GetIndexOf(srcAndDest);
 		feSrc=forwardList[existingSrcIndex];
 		existingDstIndex = forwardList.GetIndexOf(dest);
-		feSrc->timeLastDatagramForwarded=RakNet::GetTime();
+		feSrc->timeLastDatagramForwarded=RakNet::GetTimeMS();
 		if (existingDstIndex==(DataStructures::DefaultIndexType)-1)
 		{
 			feDst=0;

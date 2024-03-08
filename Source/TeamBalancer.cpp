@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_TeamBalancer==1
+
 #include "TeamBalancer.h"
 #include "BitStream.h"
 #include "MessageIdentifiers.h"
@@ -757,3 +760,5 @@ void TeamBalancer::SetAllowHostMigration(bool allow)
 {
 	allowHostMigration=allow;
 }
+
+#endif // _RAKNET_SUPPORT_*

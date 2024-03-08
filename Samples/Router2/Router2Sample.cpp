@@ -242,6 +242,8 @@ int main(void)
 
 	rakPeer->SetTimeoutTime(3000,UNASSIGNED_SYSTEM_ADDRESS);
 	router2Plugin = new Router2;
+	Router2DebugInterface r2di;
+	router2Plugin->SetDebugInterface(&r2di);
 	rakPeer->AttachPlugin(router2Plugin);
 	router2Plugin->SetMaximumForwardingRequests(1);
 

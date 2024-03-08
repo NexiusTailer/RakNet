@@ -11,6 +11,9 @@
 /// http://www.jenkinssoftware.com/SingleApplicationLicense.html
 /// Custom license users are subject to the terms therein.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_UDPProxyClient==1
+
 #ifndef __UDP_PROXY_CLIENT_H
 #define __UDP_PROXY_CLIENT_H
 
@@ -163,3 +166,5 @@ protected:
 } // End namespace
 
 #endif
+
+#endif // _RAKNET_SUPPORT_*

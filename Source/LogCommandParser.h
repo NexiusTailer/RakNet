@@ -5,6 +5,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_LogCommandParser==1
 
 #ifndef __LOG_COMMAND_PARSER
 #define __LOG_COMMAND_PARSER
@@ -106,3 +108,5 @@ protected:
 };
 
 #endif
+
+#endif // _RAKNET_SUPPORT_*

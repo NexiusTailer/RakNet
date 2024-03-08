@@ -62,22 +62,14 @@ RakString::RakString(unsigned char input)
 	Assign(str);
 }
 RakString::RakString(const unsigned char *format, ...){
-	char text[8096];
 	va_list ap;
 	va_start(ap, format);
-	_vsnprintf(text, 8096, (const char*) format, ap);
-	va_end(ap);
-	text[8096-1]=0;
-	Assign(text);
+	Assign((const char*) format,ap);
 }
 RakString::RakString(const char *format, ...){
-	char text[8096];
 	va_list ap;
 	va_start(ap, format);
-	_vsnprintf(text, 8096, format, ap);
-	va_end(ap);
-	text[8096-1]=0;
-	Assign(text);
+	Assign(format,ap);
 }
 RakString::RakString( const RakString & rhs)
 {
@@ -353,14 +345,10 @@ const char * RakString::ToUpper(void)
 }
 void RakString::Set(const char *format, ...)
 {
-	char text[8096];
 	va_list ap;
 	va_start(ap, format);
-	_vsnprintf(text, 8096, format, ap);
-	va_end(ap);
-	text[8096-1]=0;
 	Clear();
-	Assign(text);
+	Assign(format,ap);
 }
 bool RakString::IsEmpty(void) const
 {
@@ -944,10 +932,45 @@ void RakString::Assign(const char *str)
 	Allocate(len);
 	memcpy(sharedString->c_str, str, len);
 }
-
+void RakString::Assign(const char *str, va_list ap)
+{
+	char stackBuff[512];
+	if (_vsnprintf(stackBuff, 512, str, ap)!=-1)
+	{
+		Assign(stackBuff);
+		return;
+	}
+	char *buff=0, *newBuff;
+	size_t buffSize=8096;
+	while (1)
+	{
+		newBuff = (char*) rakRealloc_Ex(buff, buffSize,__FILE__,__LINE__);
+		if (newBuff==0)
+		{
+			notifyOutOfMemory(__FILE__, __LINE__);
+			if (buff!=0)
+			{
+				Assign(buff);
+				rakFree_Ex(buff,__FILE__,__LINE__);
+			}
+			else
+			{
+				Assign(stackBuff);
+			}
+			return;
+		}
+		buff=newBuff;
+		if (_vsnprintf(buff, buffSize, str, ap)!=-1)
+		{
+			Assign(buff);
+			rakFree_Ex(buff,__FILE__,__LINE__);
+			return;
+		}
+		buffSize*=2;
+	}
+}
 RakNet::RakString RakString::Assign(const char *str,size_t pos, size_t n )
 {
-
 	size_t incomingLen=strlen(str);
 
 	Clone();

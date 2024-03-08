@@ -2,6 +2,7 @@
 #define __RAKNET_DEFINES_H
 
 // If you want to change these defines, put them in RakNetDefinesOverrides so your changes are not lost when updating RakNet
+// The user should not edit this file
 #include "RakNetDefinesOverrides.h"
 
 /// Define __GET_TIME_64BIT to have RakNetTime use a 64, rather than 32 bit value.  A 32 bit value will overflow after about 5 weeks.

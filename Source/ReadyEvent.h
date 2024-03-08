@@ -5,6 +5,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_ReadyEvent==1
 
 #ifndef __READY_EVENT_H
 #define __READY_EVENT_H
@@ -220,3 +222,5 @@ protected:
 };
 
 #endif
+
+#endif // _RAKNET_SUPPORT_*

@@ -86,6 +86,7 @@ void CCRakNetUDT::Init(CCTimeType curTime, uint32_t maxDatagramPayload)
 	packetArrivalHistoryContinuousGapsIndex=0;
 	//packetPairRecipetHistoryGapsIndex=0;
 	hasWrittenToPacketPairReceiptHistory=false;
+	gotNakOrResendWithoutAck=false;
 	InitPacketArrivalHistory();
 
 
@@ -317,54 +318,7 @@ BytesPerMicrosecond CCRakNetUDT::CalculateListMedianRecursive(const BytesPerMicr
 		return CalculateListMedianRecursive(lessThanMedian, lessThanMedianListLength, lessThanSum, greaterThanMedianListLength+greaterThanSum);		
 	}
 }
-/*
-uint32_t CCRakNetUDT::CalculateListMedianRecursive(const uint32_t inputList[RTT_HISTORY_LENGTH], int inputListLength, int lessThanSum, int greaterThanSum)
-{
-uint32_t *lessThanMedian, *greaterThanMedian;
 
-#if !defined(_XBOX) && !defined(X360)
-lessThanMedian = ( uint32_t* ) alloca( (size_t) inputListLength * sizeof(uint32_t) ) ;
-greaterThanMedian = ( uint32_t* ) alloca( (size_t) inputListLength * sizeof(uint32_t) ) ;
-#else
-lessThanMedian = (uint32_t*) rakMalloc_Ex((size_t) inputListLength * sizeof(uint32_t), __FILE__, __LINE__);
-greaterThanMedian = (uint32_t*) rakMalloc_Ex((size_t) inputListLength * sizeof(uint32_t), __FILE__, __LINE__);
-#endif
-
-int lessThanMedianListLength=0, greaterThanMedianListLength=0;
-uint32_t median=inputList[0];
-int i;
-for (i=1; i < inputListLength; i++)
-{
-// If same value, spread among lists evenly
-if (inputList[i]<median || ((i&1)==0 && inputList[i]==median))
-lessThanMedian[lessThanMedianListLength++]=inputList[i];
-else
-greaterThanMedian[greaterThanMedianListLength++]=inputList[i];
-}
-RakAssert(RTT_HISTORY_LENGTH%2==0);
-if (lessThanMedianListLength+lessThanSum==greaterThanMedianListLength+greaterThanSum+1 ||
-lessThanMedianListLength+lessThanSum==greaterThanMedianListLength+greaterThanSum-1)
-return median;
-
-if (lessThanMedianListLength+lessThanSum < greaterThanMedianListLength+greaterThanSum)
-{
-lessThanMedian[lessThanMedianListLength++]=median;
-return CalculateListMedianRecursive(greaterThanMedian, greaterThanMedianListLength, lessThanMedianListLength+lessThanSum, greaterThanSum);
-}
-else
-{
-greaterThanMedian[greaterThanMedianListLength++]=median;
-return CalculateListMedianRecursive(lessThanMedian, lessThanMedianListLength, lessThanSum, greaterThanMedianListLength+greaterThanSum);		
-}
-
-
-#if !defined(_XBOX) && !defined(X360)
-#else
-rakFree_Ex(lessThanMedian, __FILE__, __LINE__);
-rakFree_Ex(greaterThanMedian, __FILE__, __LINE__);
-#endif
-}
-*/
 // ----------------------------------------------------------------------------------------------------------------------------
 bool CCRakNetUDT::GreaterThan(DatagramSequenceNumberType a, DatagramSequenceNumberType b)
 {
@@ -422,11 +376,12 @@ void CCRakNetUDT::OnResend(CCTimeType curTime)
 		return;
 	}
 
-	if (gotPacketlossThisUpdate==false)
+	if (gotPacketlossThisUpdate==false && gotNakOrResendWithoutAck==false)
 	{
 //		printf("- rtt=%.0f Resend first\n", RTT/1000);
-		IncreaseTimeBetweenSends();
+			IncreaseTimeBetweenSends();
 		gotPacketlossThisUpdate=true;
+		gotNakOrResendWithoutAck=true;
 	}
 	// 	else if (randomMT()%congestionPeriodLength==0)
 	// 	{
@@ -447,11 +402,12 @@ void CCRakNetUDT::OnNAK(CCTimeType curTime, DatagramSequenceNumberType nakSequen
 		return;
 	}
 
-	if (gotPacketlossThisUpdate==false)
+	if (gotPacketlossThisUpdate==false && gotNakOrResendWithoutAck==false)
 	{
 //		printf("- rtt=%.0f NAK\n", RTT/1000);
 		IncreaseTimeBetweenSends();
 		gotPacketlossThisUpdate=true;
+		gotNakOrResendWithoutAck=true;
 	}
 	// 	else if (randomMT()%congestionPeriodLength==0)
 	// 	{
@@ -567,6 +523,8 @@ void CCRakNetUDT::OnAck(CCTimeType curTime, CCTimeType rtt, bool hasBAndAS, Byte
 	RakAssert(rtt < 10000000);
 #endif
 	(void) _B;
+
+	gotNakOrResendWithoutAck=false;
 
 	if (hasBAndAS)
 	{
@@ -813,7 +771,7 @@ void CCRakNetUDT::StartNewRttHistory(void)
 	rttDelta=0;
 	rttLow=(uint32_t)-1;
 	rttHigh=0;
-	historyEndDatagramNumber=nextDatagramSequenceNumber+(DatagramSequenceNumberType)16;
+	historyEndDatagramNumber=nextDatagramSequenceNumber+(DatagramSequenceNumberType)32;
 }
 CCRakNetUDT::RttAnalysis CCRakNetUDT::PushToRttHistory(uint32_t rtt, DatagramSequenceNumberType ackSequenceNumber)
 {

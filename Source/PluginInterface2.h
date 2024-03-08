@@ -9,6 +9,8 @@
 #ifndef __PLUGIN_INTERFACE_2_H
 #define __PLUGIN_INTERFACE_2_H
 
+#include "NativeFeatureIncludes.h"
+
 class RakPeerInterface;
 class PacketizedTCP;
 struct Packet;
@@ -113,9 +115,9 @@ public:
 	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming) {(void) systemAddress; (void) rakNetGUID; (void) isIncoming;}
 
 	/// Called when a connection attempt fails
-	/// \param[in] systemAddress Address of the connection
+	/// \param[in] packet Packet to be returned to the user
 	/// \param[in] failedConnectionReason Why the connection failed
-	virtual void OnFailedConnectionAttempt(SystemAddress systemAddress, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason) {(void) systemAddress; (void) failedConnectionAttemptReason;}
+	virtual void OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason) {(void) packet; (void) failedConnectionAttemptReason;}
 
 	/// Called on a send to the socket, per datagram, that does not go through the reliability layer
 	/// \param[in] data The data being sent
@@ -158,8 +160,11 @@ public:
 
 	/// \internal
 	void SetRakPeerInterface( RakPeerInterface *ptr );
+
+#if _RAKNET_SUPPORT_PacketizedTCP==1
 	/// \internal
 	void SetPacketizedTCP( PacketizedTCP *ptr );
+#endif
 protected:
 	// Send through either rakPeerInterface or packetizedTCP, whichever is available
 	void SendUnified( const RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast );
@@ -171,7 +176,9 @@ protected:
 
 	// Filled automatically in when attached
 	RakPeerInterface *rakPeerInterface;
+#if _RAKNET_SUPPORT_PacketizedTCP==1
 	PacketizedTCP *packetizedTCP;
+#endif
 };
 
 #endif

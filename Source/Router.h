@@ -6,6 +6,10 @@
 /// Usage of RakNet is subject to the appropriate license agreement.
 
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_Router==1
+
+
 #ifndef __ROUTER_PLUGIN_H
 #define __ROUTER_PLUGIN_H
 
@@ -86,3 +90,5 @@ protected:
 };
 
 #endif
+
+#endif // _RAKNET_SUPPORT_*

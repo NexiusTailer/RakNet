@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_DirectoryDeltaTransfer==1
+
 #include "DirectoryDeltaTransfer.h"
 #include "FileList.h"
 #include "StringCompressor.h"
@@ -211,3 +214,5 @@ void DirectoryDeltaTransfer::SetDownloadRequestIncrementalReadInterface(Incremen
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

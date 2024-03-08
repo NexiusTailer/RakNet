@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_RakNetCommandParser==1
+
 #include "RakNetCommandParser.h"
 #include "TransportInterface.h"
 #include "RakPeerInterface.h"
@@ -302,3 +305,5 @@ void RakNetCommandParser::SendHelp(TransportInterface *transport, SystemAddress 
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*

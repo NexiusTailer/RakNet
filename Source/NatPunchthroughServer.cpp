@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_NatPunchthroughServer==1
+
 #include "NatPunchthroughServer.h"
 #include "SocketLayer.h"
 #include "BitStream.h"
@@ -11,6 +14,7 @@ void NatPunchthroughServerDebugInterface_Printf::OnServerMessage(const char *msg
 {
 	printf("%s\n", msg);
 }
+#if _RAKNET_SUPPORT_PacketLogger==1
 void NatPunchthroughServerDebugInterface_PacketLogger::OnServerMessage(const char *msg)
 {
 	if (pl)
@@ -18,7 +22,7 @@ void NatPunchthroughServerDebugInterface_PacketLogger::OnServerMessage(const cha
 		pl->WriteMiscellaneous("Nat", msg);
 	}
 }
-
+#endif
 
 void NatPunchthroughServer::User::DeleteConnectionAttempt(NatPunchthroughServer::ConnectionAttempt *ca)
 {
@@ -341,32 +345,32 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 {
 	RakNet::BitStream bsIn(packet->data, packet->length, false);
 	bsIn.IgnoreBytes(sizeof(MessageID));
-	unsigned int sessionId;
+	uint16_t sessionId;
 	unsigned short mostRecentPort;
 	bsIn.Read(sessionId);
 	bsIn.Read(mostRecentPort);
+
 	unsigned int i,j;
 	User *user;
 	ConnectionAttempt *connectionAttempt;
 	bool objectExists;
 	i = users.GetIndexFromKey(packet->guid, &objectExists);
 
-	
+	if (natPunchthroughServerDebugInterface)
+	{
+		RakNet::RakString log;
+		char addr1[128], addr2[128];
+		packet->systemAddress.ToString(true,addr1);
+		packet->guid.ToString(addr2);
+		log=RakNet::RakString("Got ID_NAT_GET_MOST_RECENT_PORT from systemAddress %s guid %s. port=%i. sessionId=%i. userFound=%i.", addr1, addr2, mostRecentPort, sessionId, objectExists);
+		natPunchthroughServerDebugInterface->OnServerMessage(log.C_String());
+	}
+
 	if (objectExists)
 	{
 		user=users[i];
 		user->mostRecentPort=mostRecentPort;
 		RakNetTime time = RakNet::GetTime();
-
-		if (natPunchthroughServerDebugInterface)
-		{
-			RakNet::RakString log;
-			char addr1[128], addr2[128];
-			packet->systemAddress.ToString(true,addr1);
-			packet->guid.ToString(addr2);
-			log=RakNet::RakString("Got ID_NAT_GET_MOST_RECENT_PORT from systemAddress %s guid %s", addr1, addr2);
-			natPunchthroughServerDebugInterface->OnServerMessage(log.C_String());
-		}
 
 		for (j=0; j < user->connectionAttempts.Size(); j++)
 		{
@@ -527,3 +531,5 @@ void NatPunchthroughServer::StartPunchthroughForUser(User *user)
 		}
 	}
 }
+
+#endif // _RAKNET_SUPPORT_*

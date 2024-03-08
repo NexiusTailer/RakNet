@@ -5,6 +5,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_LightweightDatabaseClient==1
 
 #ifndef __LIGHTWEIGHT_DATABASE_CLIENT_H
 #define __LIGHTWEIGHT_DATABASE_CLIENT_H
@@ -75,3 +77,5 @@ protected:
 };
 
 #endif
+
+#endif // _RAKNET_SUPPORT_*

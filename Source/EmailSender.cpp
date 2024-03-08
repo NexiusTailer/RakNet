@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_EmailSender==1
+
 // Useful sites
 // http://www.faqs.org\rfcs\rfc2821.html
 // http://en.wikipedia.org/wiki/Base64
@@ -423,3 +426,5 @@ int EmailSender::Base64Encoding(const char *inputData, int dataLength, char *out
 
 	return outputOffset;
 }
+
+#endif // _RAKNET_SUPPORT_*

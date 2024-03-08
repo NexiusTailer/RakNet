@@ -5,6 +5,8 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_NatTypeDetectionClient==1
 
 #ifndef __NAT_TYPE_DETECTION_CLIENT_H
 #define __NAT_TYPE_DETECTION_CLIENT_H
@@ -70,3 +72,5 @@ namespace RakNet
 
 
 #endif
+
+#endif // _RAKNET_SUPPORT_*

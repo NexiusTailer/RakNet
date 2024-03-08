@@ -163,7 +163,7 @@ void RoomsBrowserGFx3_RakNet::OnNewConnection(SystemAddress systemAddress, RakNe
 		FxDelegate::Invoke(movie, "c2f_NotifyNewConnection", rargs);
 	}
 }
-void RoomsBrowserGFx3_RakNet::OnFailedConnectionAttempt(SystemAddress systemAddress, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason)
+void RoomsBrowserGFx3_RakNet::OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason)
 {
 	// isn't connected
 	FxResponseArgs<2> rargs;

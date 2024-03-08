@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_UDPProxyServer==1
+
 #include "UDPProxyServer.h"
 #include "BitStream.h"
 #include "UDPProxyCommon.h"
@@ -151,3 +154,5 @@ void UDPProxyServer::OnForwardingRequestFromCoordinatorToServer(Packet *packet)
 	}
 	rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 }
+
+#endif // _RAKNET_SUPPORT_*

@@ -77,7 +77,7 @@ struct RAK_DLL_EXPORT SystemAddress
 	unsigned short port;
 	// Used internally for fast lookup. Optional (use -1 to do regular lookup). Don't transmit this.
 	SystemIndex systemIndex;
-	static const int size() {return (int) sizeof(uint32_t)+sizeof(unsigned short);}
+	static int size() {return (int) sizeof(uint32_t)+sizeof(unsigned short);}
 
 	// Return the systemAddress as a string in the format <IP>:<Port>
 	// Returns a static string

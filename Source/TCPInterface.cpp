@@ -1,3 +1,6 @@
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_TCPInterface==1
+
 /// \file
 /// \brief A simple TCP based server allowing sends and receives.  Can be connected to by a telnet client.
 ///
@@ -341,6 +344,10 @@ bool TCPInterface::SendList( const char **data, const unsigned int *lengths, con
 
 
 	return true;
+}
+bool TCPInterface::ReceiveHasPackets( void )
+{
+	return headPush.IsEmpty()==false || incomingMessages.IsEmpty()==false || tailPush.IsEmpty()==false;
 }
 Packet* TCPInterface::Receive( void )
 {
@@ -975,3 +982,5 @@ int RemoteClient::Recv(char *data, const int dataSize)
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+
+#endif // _RAKNET_SUPPORT_*
