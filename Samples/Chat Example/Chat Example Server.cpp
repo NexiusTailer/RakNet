@@ -119,7 +119,7 @@ int main(void)
 	}
 
 	printf("\nMy IP addresses:\n");
-	for (i=0; i < server->GetNumberOfAddresses(); i++)
+	for (unsigned int i=0; i < server->GetNumberOfAddresses(); i++)
 	{
 		printf("%i. %s\n", i+1, server->GetLocalIP(i));
 	}

@@ -147,7 +147,7 @@ enum DefaultMessageIDTypes
 	/// ConnectionGraph2 plugin - In a client/server environment, a client other than ourselves has been forcefully dropped.
 	///  Packet::systemAddress is modified to reflect the systemAddress of this client.
 	ID_REMOTE_CONNECTION_LOST,
-	/// ConnectionGraph2 plugin: Bytes 1-4 = count. for (count items) contains {SystemAddress, RakNetGUID}
+	/// ConnectionGraph2 plugin: Bytes 1-4 = count. for (count items) contains {SystemAddress, RakNetGUID, 2 byte ping}
 	ID_REMOTE_NEW_INCOMING_CONNECTION,
 
 	/// FileListTransfer plugin - Setup data

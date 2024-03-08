@@ -49,7 +49,8 @@ public:
 	/// \brief The connected host is whichever system we are connected to that has been running the longest.
 	/// \details Will return UNASSIGNED_RAKNET_GUID if we are not connected to anyone, or if we are connected and are calculating the host
 	/// If includeCalculating is true, will return the estimated calculated host as long as the calculation is nearly complete
-	/// includeCalculating should be true if you are taking action based on another system becoming host, because not all host calculations may compelte at the exact same time
+	/// includeCalculating should be true if you are taking action based on another system becoming host, because not all host calculations may complete at the exact same time
+	/// \sa ConnectionGraph2::GetLowestAveragePingSystem() . If you need one system in the peer to peer group to relay data, have the host call this function after host migration, and use that system
 	/// \return System address of whichever system is host. 
 	RakNetGUID GetConnectedHost(void) const;
 	SystemAddress GetConnectedHostAddr(void) const;

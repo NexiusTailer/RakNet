@@ -183,7 +183,6 @@ enum Lobby2MessageID
 	L2MID_Notification_Console_RoomOwnerChanged,
 	L2MID_Notification_Console_RoomChatMessage,
 	L2MID_Notification_Console_RoomMessage,
-//	L2MID_Notification_Console_RoomMemberConnectivityUpdate,
 	L2MID_Notification_Console_ChatEvent,
 	L2MID_Notification_Console_MuteListChanged,
 	L2MID_Notification_Console_Local_Users_Changed,
@@ -192,6 +191,8 @@ enum Lobby2MessageID
 	L2MID_Notification_Console_MemberLeftParty,
 	L2MID_Notification_Console_Game_Started, // XBOX only
 	L2MID_Notification_Console_Game_Ended, // XBOX only
+	L2MID_Notification_Console_Got_Room_Invite,
+
 
 
 	L2MID_COUNT,
@@ -503,6 +504,7 @@ struct Notification_Console_MemberJoinedParty;
 struct Notification_Console_MemberLeftParty;
 struct Notification_Console_Game_Started;
 struct Notification_Console_Game_Ended;
+struct Notification_Console_Got_Room_Invite;
 
 // --------------------------------------------- Callback interface for all messages, notifies the user --------------------------------------------
 
@@ -670,6 +672,7 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Notification_Console_MemberLeftParty *message);
 	virtual void MessageResult(Notification_Console_Game_Started *message);
 	virtual void MessageResult(Notification_Console_Game_Ended *message);
+	virtual void MessageResult(Notification_Console_Got_Room_Invite *message);
 
 	virtual void ExecuteDefaultResult(Lobby2Message *message) { (void)message; }
 
@@ -3674,6 +3677,16 @@ struct Notification_Console_Game_Ended : public Lobby2Message
 	virtual bool RequiresLogin(void) const {return false;}
 	virtual bool IsNotification(void) const {return true;}
 };
+/// \ingroup LOBBY_2_NOTIFICATIONS
+struct Notification_Console_Got_Room_Invite : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Notification_Console_Got_Room_Invite)
+	virtual bool RequiresAdmin(void) const {return true;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return false;}
+	virtual bool RequiresLogin(void) const {return false;}
+	virtual bool IsNotification(void) const {return true;}
+};
 // --------------------------------------------- Base interface of factory class for all messages --------------------------------------------
 #define __L2_ALLOCATE_AND_DEFINE(FACTORY, __TYPE__,VAR_NAME) RakNet::__TYPE__ *VAR_NAME = (RakNet::__TYPE__ *) FACTORY->Alloc(L2MID_##__TYPE__); RakAssert(VAR_NAME);
 #define __L2_MSG_FACTORY_BASE(__NAME__) {case L2MID_##__NAME__ : Lobby2Message *m = RakNet::OP_NEW< __NAME__ >( _FILE_AND_LINE_ ) ; RakAssert(m->GetID()==L2MID_##__NAME__ ); m->requestId=nextRequestId++; return m;}
@@ -3842,6 +3855,7 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Notification_Console_MemberLeftParty);
 			__L2_MSG_FACTORY_BASE(Notification_Console_Game_Started); // Currently XBOX only
 			__L2_MSG_FACTORY_BASE(Notification_Console_Game_Ended); // Currently XBOX only
+			__L2_MSG_FACTORY_BASE(Notification_Console_Got_Room_Invite);
 
 		default:
 			return 0;

@@ -78,6 +78,87 @@ bool ConnectionGraph2::ConnectionExists(RakNetGUID g1, RakNetGUID g2)
 	sag.guid=g2;
 	return remoteSystems[idx]->remoteConnections.HasData(sag);
 }
+uint16_t ConnectionGraph2::GetPingBetweenSystems(RakNetGUID g1, RakNetGUID g2) const
+{
+	if (g1==g2)
+		return 0;
+
+	if (g1==rakPeerInterface->GetMyGUID())
+		return (uint16_t) rakPeerInterface->GetAveragePing(g2);
+	if (g2==rakPeerInterface->GetMyGUID())
+		return (uint16_t) rakPeerInterface->GetAveragePing(g1);
+
+	bool objectExists;
+	unsigned int idx = remoteSystems.GetIndexFromKey(g1, &objectExists);
+	if (objectExists==false)
+	{
+		return (uint16_t) -1;
+	}
+
+	SystemAddressAndGuid sag;
+	sag.guid=g2;
+	unsigned int idx2 = remoteSystems[idx]->remoteConnections.GetIndexFromKey(sag, &objectExists);
+	if (objectExists==false)
+	{
+		return (uint16_t) -1;
+	}
+	return remoteSystems[idx]->remoteConnections[idx2].sendersPingToThatSystem;
+}
+
+/// Returns the system with the lowest total ping among all its connections. This can be used as the 'best host' for a peer to peer session
+RakNetGUID ConnectionGraph2::GetLowestAveragePingSystem(void) const
+{
+	float lowestPing=-1.0;
+	unsigned int lowestPingIdx=(unsigned int) -1;
+	float thisAvePing=0.0f;
+	unsigned int idx, idx2;
+	int ap, count=0;
+
+	for (idx=0; idx<remoteSystems.Size(); idx++)
+	{
+		thisAvePing=0.0f;
+
+		ap = rakPeerInterface->GetAveragePing(remoteSystems[idx]->guid);
+		if (ap!=-1)
+		{
+			thisAvePing+=(float) ap;
+			count++;
+		}
+	}
+
+	if (count>0)
+	{
+		lowestPing=thisAvePing/count;
+	}
+
+	for (idx=0; idx<remoteSystems.Size(); idx++)
+	{
+		thisAvePing=0.0f;
+		count=0;
+
+		RemoteSystem *remoteSystem = remoteSystems[idx];
+		for (idx2=0; idx2 < remoteSystem->remoteConnections.Size(); idx2++)
+		{
+			ap=remoteSystem->remoteConnections[idx2].sendersPingToThatSystem;
+			if (ap!=-1)
+			{
+				thisAvePing+=(float) ap;
+				count++;
+			}
+		}
+
+		if (count>0 && (lowestPing==-1.0f || thisAvePing/count < lowestPing))
+		{
+			lowestPing=thisAvePing/count;
+			lowestPingIdx=idx;
+		}
+	}
+
+	if (lowestPingIdx==(unsigned int) -1)
+		return rakPeerInterface->GetMyGUID();
+	return remoteSystems[lowestPingIdx]->guid;
+}
+
 void ConnectionGraph2::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	// Send notice to all existing connections
@@ -114,6 +195,7 @@ void ConnectionGraph2::AddParticipant(const SystemAddress &systemAddress, RakNet
 	bs.Write((uint32_t)1);
 	bs.Write(systemAddress);
 	bs.Write(rakNetGUID);
+	bs.WriteCasted<uint16_t>(rakPeerInterface->GetAveragePing(rakNetGUID));
 	SendUnified(&bs,HIGH_PRIORITY,RELIABLE_ORDERED,0,systemAddress,true);
 
 	// Send everyone to the new guy
@@ -134,6 +216,7 @@ void ConnectionGraph2::AddParticipant(const SystemAddress &systemAddress, RakNet
 
 		bs.Write(addresses[i]);
 		bs.Write(guids[i]);
+		bs.WriteCasted<uint16_t>(rakPeerInterface->GetAveragePing(guids[i]));
 		count++;
 	}
 
@@ -201,6 +284,7 @@ PluginReceiveResult ConnectionGraph2::OnReceive(Packet *packet)
 				SystemAddressAndGuid saag;
 				bs.Read(saag.systemAddress);
 				bs.Read(saag.guid);
+				bs.Read(saag.sendersPingToThatSystem);
 				bool objectExists;
 				unsigned int ii = remoteSystems[idx]->remoteConnections.GetIndexFromKey(saag, &objectExists);
 				if (objectExists==false)

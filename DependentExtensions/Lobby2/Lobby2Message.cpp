@@ -163,6 +163,7 @@ void Lobby2Callbacks::MessageResult(Notification_Console_MemberJoinedParty *mess
 void Lobby2Callbacks::MessageResult(Notification_Console_MemberLeftParty *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_Game_Started *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_Game_Ended *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Notification_Console_Got_Room_Invite *message) {ExecuteDefaultResult(message);}
 
 Lobby2Message::Lobby2Message() {refCount=1; requestId=(unsigned int)-1; callbackId=(uint32_t)-1;
 #if defined(_XBOX) || defined(X360)

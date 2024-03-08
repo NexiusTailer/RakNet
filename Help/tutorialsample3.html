@@ -34,10 +34,10 @@ New code over sample 2 is in bold.
 #define MAX_CLIENTS 10
 #define SERVER_PORT 60000
 
-enum GameMessages
+<strong>enum GameMessages
 {
 	ID_GAME_MESSAGE_1=ID_USER_PACKET_ENUM+1
-};
+};</strong>
 
 int main(void)
 {
@@ -131,6 +131,7 @@ int main(void)
 					bsIn.Read(rs);
 					printf("%s\n", rs.C_String());
 				}
+				break;
 			</strong>
 			default:
 				printf("Message with identifier %i has arrived.\n", packet-&gt;data[0]);

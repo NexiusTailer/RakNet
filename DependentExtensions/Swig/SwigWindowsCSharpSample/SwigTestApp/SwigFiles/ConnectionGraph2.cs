@@ -101,6 +101,17 @@ public class ConnectionGraph2 : PluginInterface2 {
     return ret;
   }
 
+  public ushort GetPingBetweenSystems(RakNetGUID g1, RakNetGUID g2) {
+    ushort ret = RakNetPINVOKE.ConnectionGraph2_GetPingBetweenSystems(swigCPtr, RakNetGUID.getCPtr(g1), RakNetGUID.getCPtr(g2));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public RakNetGUID GetLowestAveragePingSystem() {
+    RakNetGUID ret = new RakNetGUID(RakNetPINVOKE.ConnectionGraph2_GetLowestAveragePingSystem(swigCPtr), true);
+    return ret;
+  }
+
   public void SetAutoProcessNewConnections(bool b) {
     RakNetPINVOKE.ConnectionGraph2_SetAutoProcessNewConnections(swigCPtr, b);
   }

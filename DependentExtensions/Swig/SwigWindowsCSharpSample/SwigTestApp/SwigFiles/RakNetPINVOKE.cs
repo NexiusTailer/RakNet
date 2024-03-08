@@ -4257,6 +4257,12 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_ConnectionGraph2_ConnectionExists")]
   public static extern bool ConnectionGraph2_ConnectionExists(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
 
+  [DllImport("RakNet", EntryPoint="CSharp_ConnectionGraph2_GetPingBetweenSystems")]
+  public static extern ushort ConnectionGraph2_GetPingBetweenSystems(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_ConnectionGraph2_GetLowestAveragePingSystem")]
+  public static extern IntPtr ConnectionGraph2_GetLowestAveragePingSystem(HandleRef jarg1);
+
   [DllImport("RakNet", EntryPoint="CSharp_ConnectionGraph2_SetAutoProcessNewConnections")]
   public static extern void ConnectionGraph2_SetAutoProcessNewConnections(HandleRef jarg1, bool jarg2);
 
