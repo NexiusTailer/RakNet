@@ -22,7 +22,8 @@ RakNet::RakPeerInterface *rakPeer[NUM_PEERS];
 
 class FullyConnectedMesh2_UserData : public FullyConnectedMesh2
 {
-	virtual void WriteVJCUserData(RakNet::BitStream *bsOut) {bsOut->Write(RakString("test"));}
+	virtual void WriteVJCUserData(RakNet::BitStream *bsOut) {bsOut->Write(RakString("WriteVJCUserData test"));}
+	virtual void WriteVJSUserData(RakNet::BitStream *bsOut, RakNetGUID userGuid) {bsOut->Write(RakString("WriteVJSUserData test, userGuid=%s", userGuid.ToString()));}
 };
 
 int main()
@@ -76,7 +77,8 @@ int main()
 						printf("%s: Got ID_FCM2_VERIFIED_JOIN_START from %s. address=", rakPeer[peerIndex]->GetMyGUID().ToString(), packet->guid.ToString());
 						DataStructures::List<SystemAddress> addresses;
 						DataStructures::List<RakNetGUID> guids;
-						fcm2[peerIndex].GetVerifiedJoinRequiredProcessingList(packet->guid, addresses, guids);
+						DataStructures::List<BitStream*> userData;
+						fcm2[peerIndex].GetVerifiedJoinRequiredProcessingList(packet->guid, addresses, guids, userData);
 						for (unsigned int i=0; i < guids.Size(); i++)
 						{
 							printf("%s:", guids[i].ToString());
@@ -96,6 +98,10 @@ int main()
 								printf("Other");
 							}
 							printf(" ");
+
+							RakString userDataAsStr;
+							userData[i]->Read(userDataAsStr);
+							printf(userDataAsStr.C_String());
 						}
 						printf("\n");
 					}

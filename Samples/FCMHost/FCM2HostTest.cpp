@@ -37,6 +37,9 @@ int main()
 	rakPeer->SetTimeoutTime(1000,RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 	printf("Our guid is %s\n", rakPeer->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
 	printf("Started on %s\n", rakPeer->GetMyBoundAddress().ToString(true));
+	BitStream contextBs;
+	contextBs.Write(RakString("Our guid is %s\n", rakPeer->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString()));
+	fcm2.SetMyContext(&contextBs);
 
 //	PacketLogger packetLogger;
 //	rakPeer->AttachPlugin(&packetLogger);
@@ -123,9 +126,18 @@ int main()
 			ch=getch();
 			if (ch==' ')
 			{
-				unsigned int participantList;
-				fcm2.GetParticipantCount(&participantList);
-				printf("participantList=%i\n",participantList);
+
+				DataStructures::List<RakNetGUID> participantList;
+				fcm2.GetParticipantList(participantList);
+				printf("%i participants\n", participantList.Size());
+				for (int i=0; i < participantList.Size(); i++)
+				{
+					BitStream userContext;
+					fcm2.GetParticipantContext(participantList[i], &userContext);
+					RakString str;
+					userContext.Read(str);
+					printf("%i. %s: %s", i+1, participantList[i].ToString(), str.C_String());
+				}
 			}
 			if (ch=='q' || ch=='Q')
 			{

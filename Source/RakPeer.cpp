@@ -4484,6 +4484,9 @@ uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
 
 
 
+
+
+
 #if   defined(_WIN32)
 	uint64_t g=RakNet::GetTimeUS();
 

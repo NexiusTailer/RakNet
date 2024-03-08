@@ -47,7 +47,10 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 		if (packet)
 		{
 			if (doPrintf)
+			{
 				RAKNET_DEBUG_PRINTF("%s", packet->data);
+				tcpInterface.DeallocatePacket(packet);
+			}
 			break;
 		}
 		RakSleep(250);
@@ -183,7 +186,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 	int bodyLength;
 	bodyLength=(int)strlen(body);
 	newBody = (char*) rakMalloc_Ex( bodyLength*3, _FILE_AND_LINE_ );
-	if (bodyLength>0)
+	if (bodyLength>=0)
 		newBody[0]=body[0];
 	for (i=1, j=1; i < bodyLength; i++)
 	{
@@ -297,6 +300,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 		while (packet)
 		{
 			RAKNET_DEBUG_PRINTF("%s", packet->data);
+			tcpInterface.DeallocatePacket(packet);
 			packet = tcpInterface.Receive();
 		}
 	}

@@ -243,10 +243,10 @@ int main(void)
 	}
 
 	unsigned i;
-	randomData1[0]=ID_USER_PACKET_ENUM;
+	randomData1[0]=(char) ID_USER_PACKET_ENUM;
 	for (i=0; i < RANDOM_DATA_SIZE_1-1; i++)
 		randomData1[i+1]=i;
-	randomData2[0]=ID_USER_PACKET_ENUM;
+	randomData2[0]=(char) ID_USER_PACKET_ENUM;
 	for (i=0; i < RANDOM_DATA_SIZE_2-1; i++)
 		randomData2[i+1]=i;
 

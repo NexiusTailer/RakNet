@@ -132,7 +132,7 @@ public:
 	/// \param[out] patch Pointer you should allocate, to hold the patch
 	/// \param[out] patchLength Write the length of the resultant patch here
 	/// \param[out] patchAlgorithm Stored in the database. Use if you want to represent what algorithm was used. Transmitted to the client for decompression
-	virtual bool MakePatch(const char *oldFile, const char *newFile, char **patch, unsigned int *patchLength, int *patchAlgorithm);
+	virtual int MakePatch(const char *oldFile, const char *newFile, char **patch, unsigned int *patchLength, int *patchAlgorithm);
 protected:
 	// Implements MakePatch using bsDiff. Uses a lot of memory, should not use for files above about 100 megabytes.
 	virtual bool MakePatchBSDiff(FILE *fpOld, int contentLengthOld, FILE *fpNew, int contentLengthNew, char **patch, unsigned int *patchLength);

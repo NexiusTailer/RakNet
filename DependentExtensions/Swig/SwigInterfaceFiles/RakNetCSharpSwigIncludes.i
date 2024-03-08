@@ -12,6 +12,7 @@
 %include "SocketIncludes.h"
 %include "RakNetTypes.h"
 %include "RakString.h"
+%include "RakWString.h"
 %include "BitStream.h"
 %include "DS_List.h"
 %include "DS_ByteQueue.h"

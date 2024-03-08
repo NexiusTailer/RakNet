@@ -13,11 +13,11 @@
 #include "RakMemoryOverride.h"
 #include <stdio.h>
 #include "Gets.h"
+#include "Kbhit.h"
 
 using namespace RakNet;
 
 #ifdef _WIN32
-#include "Kbhit.h"
 #include "WindowsIncludes.h" // Sleep
 #else
 #include <unistd.h> // usleep

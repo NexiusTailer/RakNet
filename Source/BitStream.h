@@ -885,7 +885,7 @@ namespace RakNet
 		{
 			return IsNetworkOrder();
 		}
-		inline static bool IsNetworkOrder(void) {static const bool r = IsNetworkOrderInternal(); return r;}
+		inline static bool IsNetworkOrder(void) {bool r = IsNetworkOrderInternal(); return r;}
 		// Not inline, won't compile on PC due to winsock include errors
 		static bool IsNetworkOrderInternal(void);
 		static void ReverseBytes(unsigned char *inByteArray, unsigned char *inOutByteArray, const unsigned int length);

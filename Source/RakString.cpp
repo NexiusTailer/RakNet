@@ -642,6 +642,22 @@ void RakString::TerminateAtLastCharacter(char c)
 		}
 	}
 }
+void RakString::StartAfterLastCharacter(char c)
+{
+	int i, len=(int) GetLength();
+	for (i=len-1; i >= 0; i--)
+	{
+		if (sharedString->c_str[i]==c)
+		{
+			++i;
+			if (i < len)
+			{
+				*this = SubStr(i,GetLength()-i);
+			}
+			return;
+		}
+	}
+}
 void RakString::TerminateAtFirstCharacter(char c)
 {
 	unsigned int i, len=(unsigned int) GetLength();
@@ -649,8 +665,26 @@ void RakString::TerminateAtFirstCharacter(char c)
 	{
 		if (sharedString->c_str[i]==c)
 		{
-			Clone();
-			sharedString->c_str[i]=0;
+			if (i > 0)
+			{
+				Clone();
+				sharedString->c_str[i]=0;
+			}
+		}
+	}
+}
+void RakString::StartAfterFirstCharacter(char c)
+{
+	unsigned int i, len=(unsigned int) GetLength();
+	for (i=0; i < len; i++)
+	{
+		if (sharedString->c_str[i]==c)
+		{
+			++i;
+			if (i < len)
+			{
+				*this = SubStr(i,GetLength()-i);
+			}
 			return;
 		}
 	}

@@ -359,6 +359,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\DR_SHA1.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\DS_BytePool.cpp"
 				>
 			</File>
@@ -511,6 +515,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\PS4Includes.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\Rackspace.cpp"
 				>
 			</File>
@@ -539,11 +547,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\RakNetSocket2_Berkley_NativeClient.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\RakNetSocket2_NativeClient.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\Source\RakNetSocket2_PS3_PS4.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\RakNetSocket2_PS4.cpp"
 				>
 			</File>
 			<File
@@ -556,6 +572,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\RakNetSocket2_Windows_Linux_360.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\RakNetSocket2_WindowsStore8.cpp"
 				>
 			</File>
 			<File
@@ -595,6 +615,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\RandSync.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\ReadyEvent.cpp"
 				>
 			</File>
@@ -624,10 +648,6 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\SendToThread.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\DR_SHA1.cpp"
 				>
 			</File>
 			<File
@@ -790,6 +810,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\DirectoryDeltaTransfer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\DR_SHA1.h"
 				>
 			</File>
 			<File
@@ -1198,10 +1222,6 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\SendToThread.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\DR_SHA1.h"
 				>
 			</File>
 			<File

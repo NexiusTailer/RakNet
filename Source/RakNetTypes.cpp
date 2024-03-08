@@ -186,7 +186,7 @@ int SystemAddress::size(void)
 #if RAKNET_SUPPORT_IPV6==1
 	return sizeof(sockaddr_in6) + sizeof(char);
 #else
-	return sizeof(unsigned long) + sizeof(unsigned short) + sizeof(char);
+	return sizeof(uint32_t) + sizeof(unsigned short) + sizeof(char);
 #endif
 }
 unsigned long SystemAddress::ToInteger( const SystemAddress &sa )

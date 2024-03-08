@@ -1,6 +1,7 @@
 #include "RandSync.h"
 #include "BitStream.h"
 #include <limits>
+#include <limits.h>
 
 namespace RakNet
 {

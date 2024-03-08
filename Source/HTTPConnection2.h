@@ -56,8 +56,9 @@ public:
 	/// \param[in] useSSL If to use SSL to connect. OPEN_SSL_CLIENT_SUPPORT must be defined to 1 in RakNetDefines.h or RakNetDefinesOverrides.h
 	/// \param[in] ipVersion 4 for IPV4, 6 for IPV6
 	/// \param[in] useAddress Assume we are connected to this address and send to it, rather than do a lookup
+	/// \param[in] userData
 	/// \return false if host is not a valid IP address or domain name
-	bool TransmitRequest(const char* stringToTransmit, const char* host, unsigned short port=80, bool useSSL=false, int ipVersion=4, SystemAddress useAddress=UNASSIGNED_SYSTEM_ADDRESS);
+	bool TransmitRequest(const char* stringToTransmit, const char* host, unsigned short port=80, bool useSSL=false, int ipVersion=4, SystemAddress useAddress=UNASSIGNED_SYSTEM_ADDRESS, void *userData=0);
 
 	/// \brief Check for and return a response from a prior call to TransmitRequest()
 	/// As TCP is stream based, you may get a webserver reply over several calls to TCPInterface::Receive()
@@ -68,7 +69,9 @@ public:
 	/// \param[out] responseReceived The response, if any
 	/// \param[out] hostReceived The SystemAddress from ProcessTCPPacket() or OnLostConnection()
 	/// \param[out] contentOffset The offset from the start of responseReceived to the data body. Equivalent to searching for \r\n\r\n in responseReceived.
+	/// \param[out] userData Whatever you passed to TransmitRequest
 	/// \return true if there was a response. false if not.
+	bool GetResponse( RakString &stringTransmitted, RakString &hostTransmitted, RakString &responseReceived, SystemAddress &hostReceived, int &contentOffset, void **userData );
 	bool GetResponse( RakString &stringTransmitted, RakString &hostTransmitted, RakString &responseReceived, SystemAddress &hostReceived, int &contentOffset );
 
 	/// \brief Return if any requests are pending
@@ -89,6 +92,7 @@ public:
 		int contentOffset;
 		int contentLength;
 		int ipVersion;
+		void *userData;
 		bool chunked;
 		size_t thisChunkSize;
 		size_t bytesReadForThisChunk;

@@ -15,7 +15,7 @@ HTTPConnection2::~HTTPConnection2()
 {
 
 }
-bool HTTPConnection2::TransmitRequest(const char* stringToTransmit, const char* host, unsigned short port, bool useSSL, int ipVersion, SystemAddress useAddress)
+bool HTTPConnection2::TransmitRequest(const char* stringToTransmit, const char* host, unsigned short port, bool useSSL, int ipVersion, SystemAddress useAddress, void *userData)
 {
 	Request *request = RakNet::OP_NEW<Request>(_FILE_AND_LINE_);
 	request->host=host;
@@ -44,6 +44,7 @@ bool HTTPConnection2::TransmitRequest(const char* stringToTransmit, const char* 
 	request->contentOffset=0;
 	request->useSSL=useSSL;
 	request->ipVersion=ipVersion;
+	request->userData=userData;
 
 	if (IsConnected(request->hostEstimatedAddress))
 	{
@@ -89,6 +90,12 @@ bool HTTPConnection2::TransmitRequest(const char* stringToTransmit, const char* 
 }
 bool HTTPConnection2::GetResponse( RakString &stringTransmitted, RakString &hostTransmitted, RakString &responseReceived, SystemAddress &hostReceived, int &contentOffset )
 {
+	void *userData;
+	return GetResponse(stringTransmitted, hostTransmitted, responseReceived, hostReceived, contentOffset, &userData);
+
+}
+bool HTTPConnection2::GetResponse( RakString &stringTransmitted, RakString &hostTransmitted, RakString &responseReceived, SystemAddress &hostReceived, int &contentOffset, void **userData )
+{
 	completedRequestsMutex.Lock();
 	if (completedRequests.Size()>0)
 	{
@@ -101,6 +108,7 @@ bool HTTPConnection2::GetResponse( RakString &stringTransmitted, RakString &host
 		stringTransmitted = completedRequest->stringToTransmit;
 		hostTransmitted = completedRequest->host;
 		contentOffset = completedRequest->contentOffset;
+		*userData = completedRequest->userData;
 
 		RakNet::OP_DELETE(completedRequest, _FILE_AND_LINE_);
 		return true;

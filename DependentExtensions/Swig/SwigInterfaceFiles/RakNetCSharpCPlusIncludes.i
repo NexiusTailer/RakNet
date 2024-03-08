@@ -25,6 +25,7 @@ typedef unsigned int SOCKET;
 #include "Export.h"
 #include "SimpleMutex.h"
 #include "RakString.h"
+#include "RakWString.h"
 #include "BitStream.h"
 #include "DS_List.h"	
 #include "DS_ByteQueue.h"

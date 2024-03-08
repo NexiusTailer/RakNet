@@ -1819,7 +1819,8 @@ bool AutopatcherPostgreRepository2::UpdateApplicationFiles(const char *applicati
 
 			printf("%i/%i.%i/%i DIFF from %s to %s ...", fileListIndex+1, newFiles.fileList.Size(), rowIndex+1, numRows, pathToOldContent, pathToNewContent);
 			int patchAlgorithm;
-			if (MakePatch(pathToOldContent, pathToNewContent, &patch, &patchLength, &patchAlgorithm)==false)
+			int makePatchResult=MakePatch(pathToOldContent, pathToNewContent, &patch, &patchLength, &patchAlgorithm);
+			if (makePatchResult < 0 || makePatchResult == 2)
 			{
 				strcpy(lastError,"MakePatch failed.\n");
 				Rollback();
@@ -1829,58 +1830,66 @@ bool AutopatcherPostgreRepository2::UpdateApplicationFiles(const char *applicati
 				PQclear(fileRows);
 				return false;
 			}
-			printf(" Done.\n");
-
-			/*
-			if (CreatePatch(oldContent, contentLength, newContent, hardDriveDataLength, &patch, &patchLength)==false)
+			if (makePatchResult ==1)
 			{
-				rakFree_Ex(oldContent, _FILE_AND_LINE_);
-				rakFree_Ex(newContent, _FILE_AND_LINE_);
-
-				strcpy(lastError,"CreatePatch failed.\n");
-				Rollback();
-
-				newFiles.Clear();
 				PQclear(result);
-				PQclear(fileRows);
-				return false;
+				strcpy(lastError,"MakePatch skipped - No old version on disk.\n");
 			}
-			*/
-
-//			rakFree_Ex(oldContent, _FILE_AND_LINE_);
-	//		oldContent=0;
-
-// 			outTemp[0]=fileID;
-// 			outLengths[0]=fileIDLength;
-// 			outTemp[1]=patch;
-// 			outLengths[1]=patchLength;
-
-			outTemp[0]=patch;
-			outLengths[0]=patchLength;
-
-			//sqlCommandMutex.Lock();
-			formats[0]=PQEXECPARAM_FORMAT_BINARY;
-			char buff[256];
-			sprintf(buff, "UPDATE FileVersionHistory SET patch=$1::bytea, patchAlgorithm=%i where fileID=%s;", patchAlgorithm, fileID);
-			uploadResult = PQexecParams(pgConn, buff, 1,0,outTemp,outLengths,formats,PQEXECPARAM_FORMAT_BINARY);
-
-			// Done with this patch data
-			delete [] patch;
-
-			//sqlCommandMutex.Unlock();
-			if (IsResultSuccessful(uploadResult, true)==false)
+			else
 			{
-//				rakFree_Ex(newContent, _FILE_AND_LINE_);
-				Rollback();
-				newFiles.Clear();
+				
+				/*
+				if (CreatePatch(oldContent, contentLength, newContent, hardDriveDataLength, &patch, &patchLength)==false)
+				{
+					rakFree_Ex(oldContent, _FILE_AND_LINE_);
+					rakFree_Ex(newContent, _FILE_AND_LINE_);
+
+					strcpy(lastError,"CreatePatch failed.\n");
+					Rollback();
+
+					newFiles.Clear();
+					PQclear(result);
+					PQclear(fileRows);
+					return false;
+				}
+				*/
+
+	//			rakFree_Ex(oldContent, _FILE_AND_LINE_);
+		//		oldContent=0;
+
+	// 			outTemp[0]=fileID;
+	// 			outLengths[0]=fileIDLength;
+	// 			outTemp[1]=patch;
+	// 			outLengths[1]=patchLength;
+
+				outTemp[0]=patch;
+				outLengths[0]=patchLength;
+
+				//sqlCommandMutex.Lock();
+				formats[0]=PQEXECPARAM_FORMAT_BINARY;
+				char buff[256];
+				sprintf(buff, "UPDATE FileVersionHistory SET patch=$1::bytea, patchAlgorithm=%i where fileID=%s;", patchAlgorithm, fileID);
+				uploadResult = PQexecParams(pgConn, buff, 1,0,outTemp,outLengths,formats,PQEXECPARAM_FORMAT_BINARY);
+
+				// Done with this patch data
+				delete [] patch;
+
+				//sqlCommandMutex.Unlock();
+				if (IsResultSuccessful(uploadResult, true)==false)
+				{
+	//				rakFree_Ex(newContent, _FILE_AND_LINE_);
+					Rollback();
+					newFiles.Clear();
+					PQclear(result);
+					return false;
+				}
+
 				PQclear(result);
-				return false;
+				PQclear(uploadResult);
+
+				printf(" Done.\n");
 			}
 
-
-
-			PQclear(result);
-			PQclear(uploadResult);
 		}
 		PQclear(fileRows);
 
@@ -1955,21 +1964,30 @@ bool AutopatcherPostgreRepository2::UpdateApplicationFiles(const char *applicati
 
 	return true;
 }
-bool AutopatcherPostgreRepository2::MakePatch(const char *oldFile, const char *newFile, char **patch, unsigned int *patchLength, int *patchAlgorithm)
+int AutopatcherPostgreRepository2::MakePatch(const char *oldFile, const char *newFile, char **patch, unsigned int *patchLength, int *patchAlgorithm)
 {
 	*patchAlgorithm=0;
 
 	FILE *fpOld = fopen(oldFile, "rb");
+	if (fpOld==0)
+		return 1;
 	fseek(fpOld, 0, SEEK_END);
 	int contentLengthOld = ftell(fpOld);
 	FILE *fpNew = fopen(newFile, "rb");
+	if (fpNew==0)
+	{
+		fclose(fpOld);
+		return 2;
+	}
 	fseek(fpNew, 0, SEEK_END);
 	int contentLengthNew = ftell(fpNew);
 
 	bool b = MakePatchBSDiff(fpOld, contentLengthOld, fpNew, contentLengthNew, patch, patchLength);
 	fclose(fpOld);
 	fclose(fpNew);
-	return b;
+	if (b==false)
+		return -1;
+	return 0;
 }
 bool AutopatcherPostgreRepository2::MakePatchBSDiff(FILE *fpOld, int contentLengthOld, FILE *fpNew, int contentLengthNew, char **patch, unsigned int *patchLength)
 {

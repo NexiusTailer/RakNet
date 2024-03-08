@@ -505,7 +505,10 @@ void AutopatcherClient::Update(void)
 				{
 #ifdef _WIN32
 					fprintf(fp, "del /q \"%s%s\"\n", applicationDirectory, copyAndRestartList.fileList[i].filename.C_String());
-					fprintf(fp, "rename \"%s%s%s\" \"%s\"\n", applicationDirectory, copyAndRestartList.fileList[i].filename.C_String(), COPY_ON_RESTART_EXTENSION, copyAndRestartList.fileList[i].filename.C_String());
+					RakString sourceFn = copyAndRestartList.fileList[i].filename;
+					RakString bareFilename = sourceFn;
+					bareFilename.StartAfterLastCharacter('/');
+					fprintf(fp, "rename \"%s%s%s\" \"%s\"\n", applicationDirectory, bareFilename.C_String(), COPY_ON_RESTART_EXTENSION, copyAndRestartList.fileList[i].filename.C_String());
 #else
 					fprintf(fp, "rm -f \"%s%s\"\n", applicationDirectory, copyAndRestartList.fileList[i].filename.C_String());
 					fprintf(fp, "mv \"%s%s%s\" \"%s\"\n", applicationDirectory, copyAndRestartList.fileList[i].filename.C_String(), COPY_ON_RESTART_EXTENSION, copyAndRestartList.fileList[i].filename.C_String());

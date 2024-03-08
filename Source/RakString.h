@@ -150,6 +150,9 @@ public:
 	/// Set the last instance of c with a NULL terminator
 	void TerminateAtLastCharacter(char c);
 
+	void StartAfterFirstCharacter(char c);
+	void StartAfterLastCharacter(char c);
+
 	/// Returns how many occurances there are of \a c in the string
 	int GetCharacterCount(char c);
 	
