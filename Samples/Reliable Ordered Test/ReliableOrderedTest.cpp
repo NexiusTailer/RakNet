@@ -269,7 +269,7 @@ int main(int argc, char **argv)
 //					RakNetStatistics *rssSender;
 					//rssSender=sender->GetStatistics(sender->GetSystemAddressFromIndex(0));
 					
-					printf("Snd: %i, %s, time %"PRINTF_64_BIT_MODIFIER"u, length %i\n", packetNumber[streamNumber]-1, type, currentTime, bitStream.GetNumberOfBytesUsed());
+					printf("Snd: %i, %s, time %" PRINTF_64_BIT_MODIFIER "u, length %i\n", packetNumber[streamNumber]-1, type, currentTime, bitStream.GetNumberOfBytesUsed());
 				}
 
 				nextSend+=sendInterval;
@@ -318,7 +318,7 @@ int main(int argc, char **argv)
 					else
 						printf("Got %i.%s.CH:%i.Len:%i.\n", packetNumber[streamNumber], type, streamNumber, packet->length);
 
-//					printf("Sent=%"PRINTF_64_BIT_MODIFIER"u Received=%"PRINTF_64_BIT_MODIFIER"u Diff=%i.\n", receivedTime, currentTime, (int)(currentTime - receivedTime));
+//					printf("Sent=%" PRINTF_64_BIT_MODIFIER "u Received=%" PRINTF_64_BIT_MODIFIER "u Diff=%i.\n", receivedTime, currentTime, (int)(currentTime - receivedTime));
 
 					packetNumber[streamNumber]=receivedPacketNumber+1;
 					break;

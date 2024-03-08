@@ -34,10 +34,6 @@
 
 void function1(int a)
 {
-	// Cause a global to be compiled in so I can test the watch value.  SocketLayer::I
-	RakNet::SocketLayer::GetLocalPort(-1);
-
-
 	int *crashPtr=0;
 	// Keep crashPtr from getting compiled out
 	printf("Now crashing!!!! %p\n", crashPtr);

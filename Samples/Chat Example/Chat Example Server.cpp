@@ -108,12 +108,12 @@ int main(void)
 	server->SetOccasionalPing(true);
 	server->SetUnreliableTimeout(1000);
 
-	DataStructures::List<RakNet::RakNetSmartPtr < RakNet::RakNetSocket> > sockets;
+	DataStructures::List< RakNet::RakNetSocket* > sockets;
 	server->GetSockets(sockets);
 	printf("Socket addresses used by RakNet:\n");
 	for (unsigned int i=0; i < sockets.Size(); i++)
 	{
-		printf("%i. %s\n", i+1, sockets[i]->boundAddress.ToString(true));
+		printf("%i. %s\n", i+1, sockets[i]->GetBoundAddress().ToString(true));
 	}
 
 	printf("\nMy IP addresses:\n");

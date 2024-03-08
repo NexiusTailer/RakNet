@@ -514,7 +514,7 @@ void RegisterGameParticipant(RakNetGUID guid)
 	if (replicaManager3->PushConnection(connection)==false)
 		replicaManager3->DeallocConnection(connection);
 	teamManager->GetWorldAtIndex(0)->AddParticipant(guid);
-	readyEvent->AddToWaitList(0, rakPeer->GetSystemAddressFromGuid(guid));
+	readyEvent->AddToWaitList(0, guid);
 }
 
 // Upload details about the current game state to the cloud
@@ -599,10 +599,10 @@ void OpenUPNP(void)
 		if (UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))==1)
 		{
 			// Use same external and internal ports
-			DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
+			DataStructures::List<RakNetSocket* > sockets;
 			rakPeer->GetSockets(sockets);
 			char iport[32];
-			Itoa(sockets[0]->boundAddress.GetPort(),iport,10);
+			Itoa(sockets[0]->GetBoundAddress().GetPort(),iport,10);
 			char eport[32];
 			strcpy(eport, iport);
 
@@ -805,7 +805,7 @@ int main(void)
 				break;
 
 			case ID_ALREADY_CONNECTED:
-				printf("ID_ALREADY_CONNECTED with guid %"PRINTF_64_BIT_MODIFIER"u\n", packet->guid);
+				printf("ID_ALREADY_CONNECTED with guid %" PRINTF_64_BIT_MODIFIER "u\n", packet->guid);
 				break;
 
 			case ID_INVALID_PASSWORD:

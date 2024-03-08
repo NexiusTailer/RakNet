@@ -904,7 +904,7 @@ void Router2::SendOOBFromRakNetPort(OutOfBandIdentifiers oob, BitStream *extraDa
 	sa.ToString(false, ipAddressString);
 	rakPeerInterface->SendOutOfBand((const char*) ipAddressString,sa.GetPort(),(const char*) oobBs.GetData(),oobBs.GetNumberOfBytesUsed());
 }
-void Router2::SendOOBFromSpecifiedSocket(OutOfBandIdentifiers oob, SystemAddress sa, SOCKET socket)
+void Router2::SendOOBFromSpecifiedSocket(OutOfBandIdentifiers oob, SystemAddress sa, RakNetSocket* socket)
 {
 	RakNet::BitStream bs;
 	rakPeerInterface->WriteOutOfBandHeader(&bs);
@@ -964,7 +964,7 @@ void Router2::OnRequestForwarding(Packet *packet)
 	}
 
 	unsigned short forwardingPort=0;
-	SOCKET forwardingSocket=INVALID_SOCKET;
+	RakNetSocket* forwardingSocket=0;
 	SystemAddress endpointSystemAddress = rakPeerInterface->GetSystemAddressFromGuid(endpointGuid);
 	UDPForwarderResult result = udpForwarder->StartForwarding(
 		packet->systemAddress, endpointSystemAddress, 30000, 0, socketFamily,

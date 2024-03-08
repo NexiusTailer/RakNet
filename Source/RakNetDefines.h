@@ -169,6 +169,15 @@
 #define RAKPEER_USER_THREADED 0
 #endif
 
+#ifndef USE_ALLOCA
+#define USE_ALLOCA 1
+#endif
+
+
+
+
+
+
 //#define USE_THREADED_SEND
 
 #endif // __RAKNET_DEFINES_H

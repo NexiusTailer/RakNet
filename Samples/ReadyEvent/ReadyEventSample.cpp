@@ -134,12 +134,12 @@ int main(void)
 			else
 				printf("Completed=False\n");
 
-			SystemAddress remoteSystems[8];
-			unsigned short numberOfSystems;
-			rakPeer->GetConnectionList(remoteSystems, &numberOfSystems);
-			for (unsigned short i=0; i < numberOfSystems; i++)
+			DataStructures::List<SystemAddress> addresses;
+			DataStructures::List<RakNetGUID> guids;
+			rakPeer->GetSystemList(addresses, guids);
+			for (unsigned short i=0; i < guids.Size(); i++)
 			{
-				ReadyEventSystemStatus ress = readyEventPlugin.GetReadyStatus(0, remoteSystems[i]);
+				ReadyEventSystemStatus ress = readyEventPlugin.GetReadyStatus(0, guids[i]);
 				printf("  Remote system %i, status = ", i);
 
 				switch (ress)
@@ -174,22 +174,22 @@ int main(void)
 			{
 			case ID_NEW_INCOMING_CONNECTION:
 				printf("ID_NEW_INCOMING_CONNECTION\n");
-				readyEventPlugin.AddToWaitList(0, p->systemAddress);
+				readyEventPlugin.AddToWaitList(0, p->guid);
 				break;
 			case ID_CONNECTION_REQUEST_ACCEPTED:
 				printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
-				readyEventPlugin.AddToWaitList(0, p->systemAddress);
+				readyEventPlugin.AddToWaitList(0, p->guid);
 				break;
 			case ID_READY_EVENT_ALL_SET:
-				printf("Got ID_READY_EVENT_ALL_SET from %s\n", p->systemAddress.ToString(true));
+				printf("Got ID_READY_EVENT_ALL_SET from %s\n", p->guid.ToString());
 				break;
 
 			case ID_READY_EVENT_SET:
-				printf("Got ID_READY_EVENT_SET from %s\n", p->systemAddress.ToString(true));
+				printf("Got ID_READY_EVENT_SET from %s\n", p->guid.ToString());
 				break;
 
 			case ID_READY_EVENT_UNSET:
-				printf("Got ID_READY_EVENT_UNSET from %s\n", p->systemAddress.ToString(true));
+				printf("Got ID_READY_EVENT_UNSET from %s\n", p->guid.ToString());
 				break;
 
 			case ID_DISCONNECTION_NOTIFICATION:
@@ -198,7 +198,7 @@ int main(void)
 				break;
 			case ID_ALREADY_CONNECTED:
 				// Connection lost normally
-				printf("ID_ALREADY_CONNECTED with guid %"PRINTF_64_BIT_MODIFIER"u\n", p->guid);
+				printf("ID_ALREADY_CONNECTED with guid %" PRINTF_64_BIT_MODIFIER "u\n", p->guid);
 				break;
 			case ID_INCOMPATIBLE_PROTOCOL_VERSION:
 				printf("ID_INCOMPATIBLE_PROTOCOL_VERSION\n");

@@ -61,8 +61,8 @@ SocketLayerOverride *SocketLayer::slo=0;
 
 #if   defined(_WIN32)
 #include "WSAStartupSingleton.h"
-#include <ws2tcpip.h> // 'IP_DONTFRAGMENT' 'IP_TTL'
-#elif defined SN_TARGET_PSP2
+#include "WindowsIncludes.h"
+
 #else
 #include <unistd.h>
 #endif
@@ -78,7 +78,7 @@ SocketLayerOverride *SocketLayer::slo=0;
 namespace RakNet
 {
 	extern void ProcessNetworkPacket( const SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNet::TimeUS timeRead );
-	extern void ProcessNetworkPacket( const SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNetSmartPtr<RakNetSocket> rakNetSocket, RakNet::TimeUS timeRead );
+	extern void ProcessNetworkPacket( const SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNetSocket* rakNetSocket, RakNet::TimeUS timeRead );
 }
 
 #ifdef _DEBUG
@@ -90,6 +90,7 @@ namespace RakNet
 namespace RakNet
 {
 
+	/*
 // Native Client only allows one SendTo call to be in-flight at once, so if a
 // send is still in progress and we haven't gotten a callback yet, we queue up
 // up to one packet in the socket implementation to be sent immediately as soon
@@ -128,10 +129,11 @@ SocketImpl::~SocketImpl()
 		((PPB_UDPSocket_Private_0_3*) pp::Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))->Close(s);
 }
 
-void CloseSocket(SOCKET s)
+void CloseSocket(RakNetSocket *s)
 {
 	RakNet::OP_DELETE(s, _FILE_AND_LINE_);
-}
+	}
+	*/
 
 }  // namespace RakNet
 
@@ -159,7 +161,7 @@ bool SocketLayer::IsPortInUse_Old(unsigned short port, const char *hostAddress)
 #ifdef __native_client__
 	return false;
 #else
-	SOCKET listenSocket;
+	__UDPSOCKET__ listenSocket;
 	sockaddr_in listenerSocketAddress;
 	memset(&listenerSocketAddress,0,sizeof(sockaddr_in));
 	// Listen on our designated Port#
@@ -167,10 +169,15 @@ bool SocketLayer::IsPortInUse_Old(unsigned short port, const char *hostAddress)
 
 
 
+
 	listenSocket = socket__( AF_INET, SOCK_DGRAM, 0 );
 
-	if ( listenSocket == (SOCKET) -1 )
+
+#if !defined(WINDOWS_STORE_RT)
+	if ( listenSocket == 0 )
 		return true;
+#endif
+
 	// bind our name to the socket
 	// Fill in the rest of the address structure
 	listenerSocketAddress.sin_family = AF_INET;
@@ -254,7 +261,7 @@ bool SocketLayer::IsPortInUse(unsigned short port, const char *hostAddress, unsi
 	(void) socketFamily;
 	return IsPortInUse_Old(port, hostAddress);
 #else
-	SOCKET listenSocket;
+	__UDPSOCKET__ listenSocket;
 	struct addrinfo hints;
 	struct addrinfo *servinfo=0, *aip;  // will point to the results
 	PrepareAddrInfoHints(&hints);
@@ -279,7 +286,9 @@ bool SocketLayer::IsPortInUse(unsigned short port, const char *hostAddress, unsi
 		// Open socket. The address type depends on what
 		// getaddrinfo() gave us.
 		listenSocket = socket__(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
-		if (listenSocket != -1)
+		#if !defined(WINDOWS_STORE_RT)
+		if (listenSocket != 0)
+		#endif
 		{
 			int ret = bind__( listenSocket, aip->ai_addr, (int) aip->ai_addrlen );
 			closesocket__(listenSocket);
@@ -299,18 +308,20 @@ bool SocketLayer::IsPortInUse(unsigned short port, const char *hostAddress, unsi
 	return true;
 #endif // #if RAKNET_SUPPORT_IPV6!=1
 }
-void SocketLayer::SetDoNotFragment( SOCKET listenSocket, int opt, int IPPROTO )
+void SocketLayer::SetDoNotFragment( RakNetSocket* listenSocket, int opt )
 {
 #if defined(IP_DONTFRAGMENT )
 
-#if defined(_WIN32) &&  defined(_DEBUG) 
+#if defined(_WIN32) &&  !defined(_DEBUG) 
 	// If this assert hit you improperly linked against WSock32.h
 	RakAssert(IP_DONTFRAGMENT==14);
 #endif
 
-	if ( setsockopt__( listenSocket, IPPROTO, IP_DONTFRAGMENT, ( char * ) & opt, sizeof ( opt ) ) == -1 )
+	//if ( setsockopt__( listenSocket, IPPROTO, IP_DONTFRAGMENT, ( char * ) & opt, sizeof ( opt ) ) == -1 )
+
+	if ( listenSocket->SetSockOpt( listenSocket->GetBoundAddress().GetIPPROTO(), IP_DONTFRAGMENT, ( char * ) & opt, sizeof ( opt ) ) == -1 )
 	{
-#if defined(_WIN32) && defined(_DEBUG)
+#if defined(_WIN32) && defined(_DEBUG) && !defined(WINDOWS_PHONE_8) 
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -324,22 +335,22 @@ void SocketLayer::SetDoNotFragment( SOCKET listenSocket, int opt, int IPPROTO )
 #endif
 }
 
-void SocketLayer::SetNonBlocking( SOCKET listenSocket)
+void SocketLayer::SetNonBlocking( RakNetSocket* listenSocket)
 {
 #ifdef __native_client__
 #elif defined(_WIN32)
 	unsigned long nonBlocking = 1;
-	ioctlsocket__( listenSocket, FIONBIO, &nonBlocking );
+	listenSocket->IOCTLSocket( FIONBIO, &nonBlocking );
 
 
 
 #else
-	int flags = fcntl(listenSocket, F_GETFL, 0);
-	fcntl(listenSocket, F_SETFL, flags | O_NONBLOCK);
+	int flags = listenSocket->Fcntl( F_GETFL, 0);
+	listenSocket->Fcntl( F_SETFL, flags | O_NONBLOCK);
 #endif
 }
 
-void SocketLayer::SetSocketOptions( SOCKET listenSocket, bool blockingSocket)
+void SocketLayer::SetSocketOptions( RakNetSocket* listenSocket, bool blockingSocket)
 {
 #ifdef __native_client__
 	(void) listenSocket;
@@ -349,7 +360,7 @@ void SocketLayer::SetSocketOptions( SOCKET listenSocket, bool blockingSocket)
 	/*
 	if ( setsockopt__( listenSocket, SOL_SOCKET, SO_REUSEADDR, ( char * ) & sock_opt, sizeof ( sock_opt ) ) == -1 )
 	{
-	#if defined(_WIN32) && !defined(_XBOX) && defined(_DEBUG) && !defined(X360)
+	#if defined(_WIN32)
 	DWORD dwIOError = GetLastError();
 	LPVOID messageBuffer;
 	FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -365,32 +376,32 @@ void SocketLayer::SetSocketOptions( SOCKET listenSocket, bool blockingSocket)
 
 	// This doubles the max throughput rate
 	sock_opt=1024*256;
-	setsockopt__(listenSocket, SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
+	listenSocket->SetSockOpt( SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 
 	// Immediate hard close. Don't linger the socket, or recreating the socket quickly on Vista fails.
 	// Fail with voice and xbox
 
 	sock_opt=0;
-	setsockopt__(listenSocket, SOL_SOCKET, SO_LINGER, ( char * ) & sock_opt, sizeof ( sock_opt ) );
+	listenSocket->SetSockOpt( SOL_SOCKET, SO_LINGER, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 
 
 
 	// This doesn't make much difference: 10% maybe
 	// Not supported on console 2
 	sock_opt=1024*16;
-	setsockopt__(listenSocket, SOL_SOCKET, SO_SNDBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
+	listenSocket->SetSockOpt( SOL_SOCKET, SO_SNDBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 
 
 	if (blockingSocket==false)
 	{
 #ifdef _WIN32
 		unsigned long nonblocking = 1;
-		ioctlsocket__( listenSocket, FIONBIO, &nonblocking );
+		listenSocket->IOCTLSocket( FIONBIO, &nonblocking );
 
 
 
 #else
-		fcntl( listenSocket, F_SETFL, O_NONBLOCK );
+		listenSocket->Fcntl( F_SETFL, O_NONBLOCK );
 #endif
 	}
 
@@ -399,10 +410,10 @@ void SocketLayer::SetSocketOptions( SOCKET listenSocket, bool blockingSocket)
 	// Note: Fails with VDP but not xbox
 	// Set broadcast capable
 	sock_opt=1;
-	if ( setsockopt__( listenSocket, SOL_SOCKET, SO_BROADCAST, ( char * ) & sock_opt, sizeof( sock_opt ) ) == -1 )
+	if ( listenSocket->SetSockOpt( SOL_SOCKET, SO_BROADCAST, ( char * ) & sock_opt, sizeof( sock_opt ) ) == -1 )
 	{
 #if defined(_WIN32) && defined(_DEBUG)
-
+#if   !defined(WINDOWS_PHONE_8)
 	DWORD dwIOError = GetLastError();
 	// On Vista, can get WSAEACCESS (10013)
 	// See http://support.microsoft.com/kb/819124
@@ -416,14 +427,14 @@ void SocketLayer::SetSocketOptions( SOCKET listenSocket, bool blockingSocket)
 	RAKNET_DEBUG_PRINTF( "setsockopt__(SO_BROADCAST) failed:Error code - %d\n%s", dwIOError, messageBuffer );
 	//Free the buffer.
 	LocalFree( messageBuffer );
-
+#endif
 #endif
 
 	}
 
 #endif
 }
-SOCKET SocketLayer::CreateBoundSocket_PS3Lobby( unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned short socketFamily )
+RakNetSocket *SocketLayer::CreateBoundSocket_PS3Lobby( unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned short socketFamily )
 {
 	(void) port;
 	(void) blockingSocket;
@@ -490,29 +501,10 @@ SOCKET SocketLayer::CreateBoundSocket_PS3Lobby( unsigned short port, bool blocki
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	return INVALID_SOCKET;
+	return 0;
 
 }
-SOCKET SocketLayer::CreateBoundSocket_PSP2( unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned short socketFamily )
+RakNetSocket *SocketLayer::CreateBoundSocket_PSP2( unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned short socketFamily )
 {
 	(void) port;
 	(void) blockingSocket;
@@ -604,7 +596,7 @@ SOCKET SocketLayer::CreateBoundSocket_PSP2( unsigned short port, bool blockingSo
 struct SocketAndBuffer
 {
 	RakPeer *peer;
-	SOCKET chromeSocket;
+	RakNetSocket* chromeSocket;
 	char buffer[MAXIMUM_MTU_SIZE];
 	int32_t dataSize;
 	SystemAddress recvFromAddress;
@@ -629,7 +621,7 @@ void onSendTo(void* pData, int32_t dataSize)
 		return;
 
 	// If another send was queued up, send it now for minimum latency
-	SocketImpl *s = (SocketImpl *)pData;
+	RakNetSocket *s = (RakNetSocket *)pData;
 	if (s->nextSendSize > 0)
 	{
 		int bufSize = s->nextSendSize;
@@ -715,7 +707,7 @@ void onRecvFrom(void* pData, int32_t dataSize)
 struct ChromeSocketContainer
 {
 	RakPeer *peer;
-	SOCKET s;
+	RakNetSocket *s;
 };
 void onSocketBound(void* pData, int32_t dataSize)
 {
@@ -737,12 +729,13 @@ void onSocketBound(void* pData, int32_t dataSize)
 	ChromeRecvFrom(sab);
 	RakNet::OP_DELETE(csc, _FILE_AND_LINE_);
 }
-SOCKET CreateChromeSocket(RakPeer *peer, unsigned short port, const char *forceHostAddress, _PP_Instance_ chromeInstance, bool is_ipv6)
+RakNetSocket* CreateChromeSocket(RakPeer *peer, unsigned short port, const char *forceHostAddress, _PP_Instance_ chromeInstance, bool is_ipv6)
 {
 	if(Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))
 	{
-		SOCKET s = RakNet::OP_NEW<SocketImpl>(_FILE_AND_LINE_);
-		s->s = ((PPB_UDPSocket_Private_0_3*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))->Create(chromeInstance);
+		RakNetSocket *s = RakNetSocket::Create(chromeInstance);
+		// RakNet::OP_NEW<SocketImpl>(_FILE_AND_LINE_);
+		//s->s = ((PPB_UDPSocket_Private_0_3*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))->Create(chromeInstance);
 		RAKNET_DEBUG_PRINTF("CreateChromeSocket(%d,%s,0x%08x,%d) ==> 0x%08x\n", port, forceHostAddress?forceHostAddress:"(null)",chromeInstance,is_ipv6, s->s);
 		PP_NetAddress_Private client_addr;
 		uint8_t ipv6[16], ipv4[4];
@@ -783,21 +776,22 @@ SOCKET CreateChromeSocket(RakPeer *peer, unsigned short port, const char *forceH
 		((PPB_UDPSocket_Private_0_3*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_3))->Bind(s->s, &client_addr, cc);
 		return s;
 	}
-	return INVALID_SOCKET;
+	return 0;
 }
 #endif
 
 // void onSocketBound(void* pData, int32_t dataSize)
-SOCKET SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned int sleepOn10048, unsigned int extraSocketOptions, _PP_Instance_ chromeInstance )
+RakNetSocket *SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned int sleepOn10048, unsigned int extraSocketOptions, _PP_Instance_ chromeInstance )
 {
 #ifdef __native_client__
 	return CreateChromeSocket(peer,port,forceHostAddress,chromeInstance,false);
 #else
 	(void) peer;
 	(void) chromeInstance;
+	(void) sleepOn10048;
 
 	int ret;
-	SOCKET listenSocket;
+	RakNetSocket* listenSocket;
 	sockaddr_in listenerSocketAddress;
 	memset(&listenerSocketAddress,0,sizeof(sockaddr_in));
 	// Listen on our designated Port#
@@ -806,12 +800,12 @@ SOCKET SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short port, b
 //#if defined(SN_TARGET_PSP2)
 //	listenSocket = socket__( AF_INET, SCE_NET_SOCK_DGRAM_P2P, extraSocketOptions );
 //#else
-	listenSocket = socket__( AF_INET, SOCK_DGRAM, extraSocketOptions );
+	listenSocket = RakNetSocket::Create( AF_INET, SOCK_DGRAM, extraSocketOptions );
 //#endif
 
-	if ( listenSocket == (SOCKET) -1 )
+	if ( listenSocket == 0 )
 	{
-#if defined(_WIN32) &&  defined(_DEBUG)
+#if defined(_WIN32) &&  defined(_DEBUG) && !defined(WINDOWS_PHONE_8) 
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -825,8 +819,12 @@ SOCKET SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short port, b
 		LocalFree( messageBuffer );
 #endif
 
-		return (SOCKET) -1;
+		return 0;
 	}
+
+	listenSocket->SetBlockingSocket(blockingSocket);
+	listenSocket->SetExtraSocketOptions(extraSocketOptions);
+	listenSocket->SetChromeInstance(chromeInstance);
 
 	SetSocketOptions(listenSocket, blockingSocket);
 
@@ -856,7 +854,7 @@ SOCKET SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short port, b
 
 
 	// bind our name to the socket
-	ret = bind__( listenSocket, ( struct sockaddr * ) & listenerSocketAddress, sizeof( listenerSocketAddress ) );
+	ret = listenSocket->Bind( ( struct sockaddr * ) & listenerSocketAddress, sizeof( listenerSocketAddress ) );
 
 	if ( ret <= -1 )
 	{
@@ -867,21 +865,27 @@ SOCKET SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short port, b
 
 
 
+		RakNet::OP_DELETE(listenSocket,_FILE_AND_LINE_);
+
 #if defined(_WIN32) 
 		DWORD dwIOError = GetLastError();
 		if (dwIOError==10048)
 		{
 			if (sleepOn10048==0)
-				return (SOCKET) -1;
+				return 0;
 			// Vista has a bug where it returns WSAEADDRINUSE (10048) if you create, shutdown, then rebind the socket port unless you wait a while first.
 			// Wait, then rebind
 			RakSleep(100);
 
-			closesocket__(listenSocket);
 			listenerSocketAddress.sin_port = htons( port );
-			listenSocket = socket__( AF_INET, SOCK_DGRAM, 0 );
-			if ( listenSocket == (SOCKET) -1 )
+			listenSocket = RakNetSocket::Create( AF_INET, SOCK_DGRAM, 0 );
+			if ( listenSocket == 0 )
 				return false;
+
+			listenSocket->SetBlockingSocket(blockingSocket);
+			listenSocket->SetExtraSocketOptions(extraSocketOptions);
+			listenSocket->SetChromeInstance(chromeInstance);
+
 			SetSocketOptions(listenSocket, blockingSocket);
 
 			// Fill in the rest of the address structure
@@ -898,11 +902,13 @@ SOCKET SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short port, b
 				listenerSocketAddress.sin_addr.s_addr = INADDR_ANY;
 
 			// bind our name to the socket
-			ret = bind__( listenSocket, ( struct sockaddr * ) & listenerSocketAddress, sizeof( listenerSocketAddress ) );
+			ret = listenSocket->Bind( ( struct sockaddr * ) & listenerSocketAddress, sizeof( listenerSocketAddress ) );
 
 			if ( ret >= 0 )
 				return listenSocket;
 		}
+
+  #if !defined(WINDOWS_PHONE_8) 
 		dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -912,6 +918,7 @@ SOCKET SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short port, b
 		RAKNET_DEBUG_PRINTF( "bind__(...) failed:Error code - %d\n%s", (unsigned int) dwIOError, (char*) messageBuffer );
 		//Free the buffer.
 		LocalFree( messageBuffer );
+		#endif
 #elif (defined(__GNUC__) || defined(__GCCXML__)  ) && !defined(_WIN32)
 		switch (ret)
 		{
@@ -946,7 +953,7 @@ SOCKET SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short port, b
 		}
 #endif
 
-		return (SOCKET) -1;
+		return 0;
 	}
 
 	return listenSocket;
@@ -954,7 +961,7 @@ SOCKET SocketLayer::CreateBoundSocket_Old( RakPeer *peer, unsigned short port, b
 
 #endif
 }
-SOCKET SocketLayer::CreateBoundSocket( RakPeer *peer, unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned int sleepOn10048, unsigned int extraSocketOptions, unsigned short socketFamily, _PP_Instance_ chromeInstance )
+RakNetSocket *SocketLayer::CreateBoundSocket( RakPeer *peer, unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned int sleepOn10048, unsigned int extraSocketOptions, unsigned short socketFamily, _PP_Instance_ chromeInstance )
 {
 	(void) peer;
 	(void) blockingSocket;
@@ -980,7 +987,7 @@ SOCKET SocketLayer::CreateBoundSocket( RakPeer *peer, unsigned short port, bool 
 #endif
 
 	int ret=0;
-	SOCKET listenSocket;
+	RakNetSocket* listenSocket;
 	struct addrinfo hints;
 	struct addrinfo *servinfo=0, *aip;  // will point to the results
 	PrepareAddrInfoHints(&hints);
@@ -1004,10 +1011,10 @@ SOCKET SocketLayer::CreateBoundSocket( RakPeer *peer, unsigned short port, bool 
 	{
 		// Open socket. The address type depends on what
 		// getaddrinfo() gave us.
-		listenSocket = socket__(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
-		if (listenSocket != -1)
+		listenSocket = RakNetSocket::Create(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
+		if (listenSocket )
 		{
-			ret = bind__( listenSocket, aip->ai_addr, (int) aip->ai_addrlen );
+			ret = listenSocket->Bind( aip->ai_addr, (int) aip->ai_addrlen );
 			if (ret>=0)
 			{
 				// Is this valid?
@@ -1018,6 +1025,10 @@ SOCKET SocketLayer::CreateBoundSocket( RakPeer *peer, unsigned short port, bool 
 				
 				SetSocketOptions(listenSocket, blockingSocket);
 				return listenSocket;
+			}
+			else
+			{
+				RakNet::OP_DELETE(listenSocket,_FILE_AND_LINE_);
 			}
 		}
 	}
@@ -1070,7 +1081,7 @@ SOCKET SocketLayer::CreateBoundSocket( RakPeer *peer, unsigned short port, bool 
 
 #endif
 
-	return INVALID_SOCKET;
+	return 0;
 }
 const char* SocketLayer::DomainNameToIP_Old( const char *domainName )
 {
@@ -1107,10 +1118,14 @@ const char* SocketLayer::DomainNameToIP_Old( const char *domainName )
 
 
 
+#if   defined(WINDOWS_STORE_RT)
+	// Do I use http://msdn.microsoft.com/en-US/library/windows/apps/windows.networking.sockets.datagramsocketinformation for this?
+	// Perhaps DatagramSocket., followed by GetEndpointParisAsync
+	RakAssert("Not yet supported" && 0);
 
 
 
-
+#else
 	// Use inet_addr instead? What is the difference?
 	struct hostent * phe = gethostbyname( domainName );
 
@@ -1125,7 +1140,7 @@ const char* SocketLayer::DomainNameToIP_Old( const char *domainName )
 
 	memcpy( &addr, phe->h_addr_list[ 0 ], sizeof( struct in_addr ) );
 	return inet_ntoa( addr );
-
+#endif
 
 	return "";
 }
@@ -1213,23 +1228,21 @@ const char* SocketLayer::DomainNameToIP( const char *domainName )
 }
 
 
-void SocketLayer::Write( const SOCKET writeSocket, const char* data, const int length )
+void SocketLayer::Write( RakNetSocket*writeSocket, const char* data, const int length )
 {
 #ifdef __native_client__
 #else
 
 #ifdef _DEBUG
-	RakAssert( writeSocket != (SOCKET) -1 );
+	RakAssert( writeSocket != 0 );
 #endif
 
-	send__( writeSocket, data, length, 0 );
+	writeSocket->Send( data, length, 0 );
 #endif
 }
-void SocketLayer::RecvFromBlocking_Old( const SOCKET s, RakPeer *rakPeer, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, char *dataOut, int *bytesReadOut, SystemAddress *systemAddressOut, RakNet::TimeUS *timeRead )
+void SocketLayer::RecvFromBlocking_Old( RakNetSocket *s, RakPeer *rakPeer, char *dataOut, int *bytesReadOut, SystemAddress *systemAddressOut, RakNet::TimeUS *timeRead )
 {
 	(void) rakPeer;
-	(void) remotePortRakNetWasStartedOn_PS3;
-	(void) extraSocketOptions;
 
 #ifndef __native_client__
 
@@ -1273,7 +1286,7 @@ void SocketLayer::RecvFromBlocking_Old( const SOCKET s, RakPeer *rakPeer, unsign
 	dataOutSize=MAXIMUM_MTU_SIZE;
 
 
-	*bytesReadOut = recvfrom__( s, dataOut, dataOutSize, flag, sockAddrPtr, socketlenPtr );
+	*bytesReadOut = s->RecvFrom( dataOut, dataOutSize, flag, sockAddrPtr, socketlenPtr );
 
 
 
@@ -1303,7 +1316,7 @@ void SocketLayer::RecvFromBlocking_Old( const SOCKET s, RakPeer *rakPeer, unsign
 #endif // __native_client__
 }
 
-void SocketLayer::RecvFromBlocking( const SOCKET s, RakPeer *rakPeer, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, char *dataOut, int *bytesReadOut, SystemAddress *systemAddressOut, RakNet::TimeUS *timeRead )
+void SocketLayer::RecvFromBlocking( RakNetSocket *s, RakPeer *rakPeer, char *dataOut, int *bytesReadOut, SystemAddress *systemAddressOut, RakNet::TimeUS *timeRead )
 {
 #ifdef __native_client__
 	if (sabHead)
@@ -1325,7 +1338,7 @@ void SocketLayer::RecvFromBlocking( const SOCKET s, RakPeer *rakPeer, unsigned s
 #endif
 
 #if RAKNET_SUPPORT_IPV6!=1
-	RecvFromBlocking_Old(s,rakPeer,remotePortRakNetWasStartedOn_PS3,extraSocketOptions,dataOut,bytesReadOut,systemAddressOut,timeRead);
+	RecvFromBlocking_Old(s,rakPeer,dataOut,bytesReadOut,systemAddressOut,timeRead);
 #else
 	(void) rakPeer;
 	sockaddr_storage their_addr;
@@ -1335,9 +1348,6 @@ void SocketLayer::RecvFromBlocking( const SOCKET s, RakPeer *rakPeer, unsigned s
 	memset(&their_addr,0,sizeof(their_addr));
 	int dataOutSize;
 	const int flag=0;
-
-	(void) remotePortRakNetWasStartedOn_PS3;
-	(void) extraSocketOptions;
 
 
 
@@ -1360,7 +1370,7 @@ void SocketLayer::RecvFromBlocking( const SOCKET s, RakPeer *rakPeer, unsigned s
 	dataOutSize=MAXIMUM_MTU_SIZE;
 
 
-	*bytesReadOut = recvfrom__( s, dataOut, dataOutSize, flag, sockAddrPtr, socketlenPtr );
+	*bytesReadOut = s->RecvFrom( dataOut, dataOutSize, flag, sockAddrPtr, socketlenPtr );
 
 
 
@@ -1400,12 +1410,11 @@ void SocketLayer::RecvFromBlocking( const SOCKET s, RakPeer *rakPeer, unsigned s
 #endif // defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
 }
 
-int SocketLayer::SendTo_PS3Lobby( SOCKET s, const char *data, int length, const SystemAddress &systemAddress, unsigned short remotePortRakNetWasStartedOn_PS3 )
+int SocketLayer::SendTo_PS3Lobby( RakNetSocket *s, const char *data, int length, const SystemAddress &systemAddress )
 {
 	(void) s;
 	(void) data;
 	(void) length;
-	(void) remotePortRakNetWasStartedOn_PS3;
 	(void) systemAddress;
 
 	int len=0;
@@ -1425,12 +1434,11 @@ int SocketLayer::SendTo_PS3Lobby( SOCKET s, const char *data, int length, const 
 
 	return len;
 }
-int SocketLayer::SendTo_PSP2( SOCKET s, const char *data, int length, const SystemAddress &systemAddress, unsigned short remotePortRakNetWasStartedOn_PS3 )
+int SocketLayer::SendTo_PSP2( RakNetSocket *s, const char *data, int length, const SystemAddress &systemAddress )
 {
 	(void) s;
 	(void) data;
 	(void) length;
-	(void) remotePortRakNetWasStartedOn_PS3;
 	(void) systemAddress;
 
 	int len=0;
@@ -1449,14 +1457,13 @@ int SocketLayer::SendTo_PSP2( SOCKET s, const char *data, int length, const Syst
 
 	return len;
 }
-int SocketLayer::SendTo_360( SOCKET s, const char *data, int length, const char *voiceData, int voiceLength, const SystemAddress &systemAddress, unsigned int extraSocketOptions )
+int SocketLayer::SendTo_360( RakNetSocket *s, const char *data, int length, const char *voiceData, int voiceLength, const SystemAddress &systemAddress )
 {
 	(void) s;
 	(void) data;
 	(void) length;
 	(void) voiceData;
 	(void) voiceLength;
-	(void) extraSocketOptions;
 	(void) systemAddress;
 
 	int len=0;
@@ -1504,7 +1511,7 @@ int SocketLayer::SendTo_360( SOCKET s, const char *data, int length, const char 
 
 	return len;
 }
-int SocketLayer::SendTo_PC( SOCKET s, const char *data, int length, const SystemAddress &systemAddress, const char *file, const long line )
+int SocketLayer::SendTo_PC( RakNetSocket *s, const char *data, int length, const SystemAddress &systemAddress, const char *file, const long line )
 {
 #ifdef __native_client__
 	// Assuming data does not have to remain valid until callback called
@@ -1568,14 +1575,14 @@ int SocketLayer::SendTo_PC( SOCKET s, const char *data, int length, const System
 		if (systemAddress.address.addr4.sin_family==AF_INET)
 		{
 			//systemAddress.address.addr4.sin_port=htons(systemAddress.address.addr4.sin_port);
-			len = sendto__( s, data, length, 0, ( const sockaddr* ) & systemAddress.address.addr4, sizeof( sockaddr_in ) );
+			len = s->SendTo( data, length, 0, ( const sockaddr* ) & systemAddress.address.addr4, sizeof( sockaddr_in ) );
 			//systemAddress.address.addr4.sin_port=ntohs(systemAddress.address.addr4.sin_port);
 		}
 		else
 		{
 #if RAKNET_SUPPORT_IPV6==1
 		//	systemAddress.address.addr6.sin6_port=htons(systemAddress.address.addr6.sin6_port);
-			len = sendto__( s, data, length, 0, ( const sockaddr* ) & systemAddress.address.addr6, sizeof( sockaddr_in6 ) );
+			len = s->SendTo( data, length, 0, ( const sockaddr* ) & systemAddress.address.addr6, sizeof( sockaddr_in6 ) );
 			//systemAddress.address.addr6.sin6_port=ntohs(systemAddress.address.addr6.sin6_port);
 #endif
 		}
@@ -1583,7 +1590,7 @@ int SocketLayer::SendTo_PC( SOCKET s, const char *data, int length, const System
 #ifdef DEBUG_SENDTO_SPIKES
 		RakNetTime end = RakNet::GetTime();
 		static unsigned int callCount=1;
-		RAKNET_DEBUG_PRINTF("%i. SendTo_PC, time=%"PRINTF_64_BIT_MODIFIER"u, elapsed=%"PRINTF_64_BIT_MODIFIER"u, length=%i, returned=%i, binaryAddress=%i, port=%i, file=%s, line=%i\n", callCount++, end, end-start, length, len, binaryAddress, port, file, line);
+		RAKNET_DEBUG_PRINTF("%i. SendTo_PC, time=%" PRINTF_64_BIT_MODIFIER "u, elapsed=%" PRINTF_64_BIT_MODIFIER "u, length=%i, returned=%i, binaryAddress=%i, port=%i, file=%s, line=%i\n", callCount++, end, end-start, length, len, binaryAddress, port, file, line);
 #endif
 		if (len<0)
 		{
@@ -1598,10 +1605,8 @@ int SocketLayer::SendTo_PC( SOCKET s, const char *data, int length, const System
 #ifdef _MSC_VER
 #pragma warning( disable : 4702 ) // warning C4702: unreachable code
 #endif
-int SocketLayer::SendTo( SOCKET s, const char *data, int length, SystemAddress &systemAddress, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, const char *file, const long line )
+int SocketLayer::SendTo( RakNetSocket *s, const char *data, int length, SystemAddress systemAddress, const char *file, const long line )
 {
-	(void) extraSocketOptions;
-
 	int len=0;
 	RakAssert(length<=MAXIMUM_MTU_SIZE-UDP_HEADER_SIZE);
 #if   !defined(__S3E__)
@@ -1616,13 +1621,13 @@ int SocketLayer::SendTo( SOCKET s, const char *data, int length, SystemAddress &
 		return 1;
 	}
 
-	if ( s == INVALID_SOCKET )
+	if ( s == 0 )
 	{
 		return -1;
 	}
 
 
-	if (remotePortRakNetWasStartedOn_PS3!=0)
+	if (s->GetRemotePortRakNetWasStartedOn()!=0)
 	{
 
 
@@ -1645,7 +1650,7 @@ int SocketLayer::SendTo( SOCKET s, const char *data, int length, SystemAddress &
 	if ( len != -1 )
 		return 0;
 
-#if defined(_WIN32) && !defined(_WIN32_WCE)
+#if defined(_WIN32) && !defined(_WIN32_WCE) && !defined(WINDOWS_STORE_RT)
 
 	DWORD dwIOError = WSAGetLastError();
 
@@ -1658,7 +1663,7 @@ int SocketLayer::SendTo( SOCKET s, const char *data, int length, SystemAddress &
 	}
 	else if ( dwIOError != WSAEWOULDBLOCK && dwIOError != WSAEADDRNOTAVAIL)
 	{
-#if defined(_WIN32) &&  defined(_DEBUG)
+#if defined(_WIN32) &&  defined(_DEBUG) 
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 			NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
@@ -1678,13 +1683,13 @@ int SocketLayer::SendTo( SOCKET s, const char *data, int length, SystemAddress &
 	return 1; // error
 }
 // Not enough info for IPV6
-// int SocketLayer::SendTo( SOCKET s, const char *data, int length, const char ip[ 16 ], unsigned short port, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, const char *file, const long line )
+// int SocketLayer::SendTo( UDPSOCKET s, const char *data, int length, const char ip[ 16 ], unsigned short port, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, const char *file, const long line )
 // {
 // 	SystemAddress systemAddress;
 // 	systemAddress.FromStringAndPort(ip,port);
 // 	return SendTo( s, data, length, systemAddress,remotePortRakNetWasStartedOn_PS3, extraSocketOptions, file, line );
 // }
-int SocketLayer::SendToTTL( SOCKET s, const char *data, int length, SystemAddress &systemAddress, int ttl )
+int SocketLayer::SendToTTL( RakNetSocket *s, const char *data, int length, SystemAddress &systemAddress, int ttl )
 {
 	if (slo)
 		return slo->RakNetSendTo(s,data,length,systemAddress);
@@ -1693,9 +1698,9 @@ int SocketLayer::SendToTTL( SOCKET s, const char *data, int length, SystemAddres
 	int oldTTL;
 	socklen_t opLen=sizeof(oldTTL);
 	// Get the current TTL
-	if (getsockopt__(s, systemAddress.GetIPPROTO(), IP_TTL, ( char * ) & oldTTL, &opLen ) == -1)
+	if (s->GetSockOpt(systemAddress.GetIPPROTO(), IP_TTL, ( char * ) & oldTTL, &opLen ) == -1)
 	{
-#if defined(_WIN32) && defined(_DEBUG)
+#if defined(_WIN32) && defined(_DEBUG) && !defined(WINDOWS_PHONE_8) 
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -1710,10 +1715,10 @@ int SocketLayer::SendToTTL( SOCKET s, const char *data, int length, SystemAddres
 
 	// Set to TTL
 	int newTTL=ttl;
-	if (setsockopt__(s, systemAddress.GetIPPROTO(), IP_TTL, ( char * ) & newTTL, sizeof ( newTTL ) ) == -1)
+	if (s->SetSockOpt(systemAddress.GetIPPROTO(), IP_TTL, ( char * ) & newTTL, sizeof ( newTTL ) ) == -1)
 	{
 
-#if defined(_WIN32) && defined(_DEBUG)
+#if defined(_WIN32) && defined(_DEBUG) && !defined(WINDOWS_PHONE_8) 
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -1727,10 +1732,10 @@ int SocketLayer::SendToTTL( SOCKET s, const char *data, int length, SystemAddres
 	}
 
 	// Send
-	int res = SendTo(s,data,length,systemAddress,0,0, __FILE__, __LINE__ );
+	int res = SendTo(s,data,length,systemAddress, __FILE__, __LINE__ );
 
 	// Restore the old TTL
-	setsockopt__(s, systemAddress.GetIPPROTO(), IP_TTL, ( char * ) & oldTTL, opLen );
+	s->SetSockOpt(systemAddress.GetIPPROTO(), IP_TTL, ( char * ) & oldTTL, opLen );
 
 	return res;
 #else
@@ -1739,7 +1744,7 @@ int SocketLayer::SendToTTL( SOCKET s, const char *data, int length, SystemAddres
 }
 
 
-RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(SOCKET inSock, RakNet::RakString inIpString)
+RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, RakNet::RakString inIpString)
 {
 	RakNet::RakString netMaskString;
 	RakNet::RakString ipString;
@@ -1748,7 +1753,10 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(SOCKET inSock, RakNet::Ra
 
 
 
-#if   defined(_WIN32)
+#if   defined(WINDOWS_STORE_RT)
+	RakAssert("Not yet supported" && 0);
+	return "";
+#elif defined(_WIN32)
 	INTERFACE_INFO InterfaceList[20];
 	unsigned long nBytesReturned;
 	if (WSAIoctl(inSock, SIO_GET_INTERFACE_LIST, 0, 0, &InterfaceList,
@@ -1902,7 +1910,13 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(SOCKET inSock, RakNet::Ra
 
 
 
-
+#if   defined(WINDOWS_STORE_RT)
+void GetMyIP_WinRT( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
+{
+	// Perhaps DatagramSocket.BindEndpointAsynch, use localHostName as an empty string, then query what it bound to?
+	RakAssert("Not yet supported" && 0);
+}
+#else
 void GetMyIP_Win32( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 {
 	int idx=0;
@@ -1910,7 +1924,7 @@ void GetMyIP_Win32( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 	char ac[ 80 ];
 	if ( gethostname( ac, sizeof( ac ) ) == -1 )
 	{
-		#if defined(_WIN32)
+  #if defined(_WIN32) && !defined(WINDOWS_PHONE_8) 
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -1952,7 +1966,7 @@ void GetMyIP_Win32( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 
 	if ( phe == 0 )
 	{
-	#ifdef _WIN32
+ #if defined(_WIN32) && !defined(WINDOWS_PHONE_8) 
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -1983,7 +1997,7 @@ void GetMyIP_Win32( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 	}
 }
 
-
+#endif
 
 
 void SocketLayer::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
@@ -1992,7 +2006,9 @@ void SocketLayer::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_ID
 
 
 
-#if   defined(_WIN32)
+#if   defined(WINDOWS_STORE_RT)
+	GetMyIP_WinRT(addresses);
+#elif defined(_WIN32)
 	GetMyIP_Win32(addresses);
 #else
 //	GetMyIP_Linux(addresses);
@@ -2001,13 +2017,13 @@ void SocketLayer::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_ID
 }
 
 
-unsigned short SocketLayer::GetLocalPort(SOCKET s)
+unsigned short SocketLayer::GetLocalPort(RakNetSocket *s)
 {
 	SystemAddress sa;
 	GetSystemAddress(s,&sa);
 	return sa.GetPort();
 }
-void SocketLayer::GetSystemAddress_Old ( SOCKET s, SystemAddress *systemAddressOut )
+void SocketLayer::GetSystemAddress_Old ( RakNetSocket *s, SystemAddress *systemAddressOut )
 {
 #if defined(__native_client__)
 	*systemAddressOut = UNASSIGNED_SYSTEM_ADDRESS;
@@ -2015,9 +2031,9 @@ void SocketLayer::GetSystemAddress_Old ( SOCKET s, SystemAddress *systemAddressO
 	sockaddr_in sa;
 	memset(&sa,0,sizeof(sockaddr_in));
 	socklen_t len = sizeof(sa);
-	if (getsockname__(s, (sockaddr*)&sa, &len)!=0)
+	if (s->GetSockName((sockaddr*)&sa, &len)!=0)
 	{
-#if defined(_WIN32) &&  defined(_DEBUG)
+#if defined(_WIN32) &&  defined(_DEBUG) && !defined(WINDOWS_PHONE_8) 
 		DWORD dwIOError = GetLastError();
 		LPVOID messageBuffer;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -2037,16 +2053,16 @@ void SocketLayer::GetSystemAddress_Old ( SOCKET s, SystemAddress *systemAddressO
 	systemAddressOut->address.addr4.sin_addr.s_addr=sa.sin_addr.s_addr;
 #endif
 }
-void SocketLayer::GetSystemAddress ( SOCKET s, SystemAddress *systemAddressOut )
+void SocketLayer::GetSystemAddress ( RakNetSocket *s, SystemAddress *systemAddressOut )
 {
 #if RAKNET_SUPPORT_IPV6!=1
-	GetSystemAddress_Old(s,systemAddressOut);
+	GetSystemAddress_Old(s, systemAddressOut);
 #else
 	socklen_t slen;
 	sockaddr_storage ss;
 	slen = sizeof(ss);
 
-	if (getsockname__(s, (struct sockaddr *)&ss, &slen)!=0)
+	if (s->GetSockName( (struct sockaddr *)&ss, &slen)!=0)
 	{
  #if defined(_WIN32) &&  defined(_DEBUG)
 		DWORD dwIOError = GetLastError();

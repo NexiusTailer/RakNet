@@ -132,7 +132,7 @@ public:
 protected:
 
 	RakNet::LocklessUint32_t isStarted, threadRunning;
-	SOCKET listenSocket;
+	__TCPSOCKET__ listenSocket;
 
 	DataStructures::Queue<Packet*> headPush, tailPush;
 	RemoteClient* remoteClients;
@@ -166,7 +166,7 @@ protected:
 
 	int threadPriority;
 
-	DataStructures::List<SOCKET> blockingSocketList;
+	DataStructures::List<__TCPSOCKET__> blockingSocketList;
 	SimpleMutex blockingSocketListMutex;
 
 
@@ -178,7 +178,7 @@ protected:
 
 //	void DeleteRemoteClient(RemoteClient *remoteClient, fd_set *exceptionFD);
 //	void InsertRemoteClient(RemoteClient* remoteClient);
-	SOCKET SocketConnect(const char* host, unsigned short remotePort, unsigned short socketFamily);
+	__TCPSOCKET__ SocketConnect(const char* host, unsigned short remotePort, unsigned short socketFamily);
 
 	struct ThisPtrPlusSysAddr
 	{
@@ -205,9 +205,11 @@ struct RemoteClient
 		ssl=0;
 #endif
 		isActive=false;
-		socket=INVALID_SOCKET;
+#if !defined(WINDOWS_STORE_RT)
+		socket=0;
+#endif
 	}
-	SOCKET socket;
+	__TCPSOCKET__ socket;
 	SystemAddress systemAddress;
 	DataStructures::ByteQueue outgoingData;
 	bool isActive;

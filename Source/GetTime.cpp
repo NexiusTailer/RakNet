@@ -7,9 +7,13 @@
 
 #if defined(_WIN32) 
 #include "WindowsIncludes.h"
-// To call timeGetTime
-// on Code::Blocks, this needs to be libwinmm.a instead
-#pragma comment(lib, "Winmm.lib")
+
+ #if !defined(WINDOWS_PHONE_8) 
+		// To call timeGetTime
+		// on Code::Blocks, this needs to be libwinmm.a instead
+		#pragma comment(lib, "Winmm.lib")
+	#endif
+
 #endif
 
 #include "GetTime.h"
@@ -18,9 +22,9 @@
 
 
 #if defined(_WIN32)
-DWORD mProcMask;
-DWORD mSysMask;
-HANDLE mThread;
+//DWORD mProcMask;
+//DWORD mSysMask;
+//HANDLE mThread;
 
 
 
@@ -134,15 +138,15 @@ RakNet::TimeUS GetTimeUS_Windows( void )
 
 		// Save the current process
 #if !defined(_WIN32_WCE)
-		HANDLE mProc = GetCurrentProcess();
+//		HANDLE mProc = GetCurrentProcess();
 
 		// Get the current Affinity
 #if _MSC_VER >= 1400 && defined (_M_X64)
-		GetProcessAffinityMask(mProc, (PDWORD_PTR)&mProcMask, (PDWORD_PTR)&mSysMask);
+//		GetProcessAffinityMask(mProc, (PDWORD_PTR)&mProcMask, (PDWORD_PTR)&mSysMask);
 #else
-		GetProcessAffinityMask(mProc, &mProcMask, &mSysMask);
+//		GetProcessAffinityMask(mProc, &mProcMask, &mSysMask);
 #endif
-		mThread = GetCurrentThread();
+//		mThread = GetCurrentThread();
 
 #endif // _WIN32_WCE
 	}	

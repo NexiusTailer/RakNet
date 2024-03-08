@@ -23,14 +23,14 @@ namespace RakNet
 
 UDPForwarder::ForwardEntry::ForwardEntry()
 {
-	socket=INVALID_SOCKET;
+	socket=0;
 	timeLastDatagramForwarded=RakNet::GetTimeMS();
 	addr1Confirmed=UNASSIGNED_SYSTEM_ADDRESS;
 	addr2Confirmed=UNASSIGNED_SYSTEM_ADDRESS;
 }
 UDPForwarder::ForwardEntry::~ForwardEntry() {
-	if (socket!=INVALID_SOCKET)
-		closesocket__(socket);
+	if (socket!=0)
+		delete socket;
 }
 
 UDPForwarder::UDPForwarder()
@@ -102,7 +102,7 @@ int UDPForwarder::GetUsedForwardEntries(void) const
 	return (int) forwardListNotUpdated.Size();
 }
 UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source, SystemAddress destination, RakNet::TimeMS timeoutOnNoDataMS, const char *forceHostAddress, unsigned short socketFamily,
-								  unsigned short *forwardingPort, SOCKET *forwardingSocket)
+								  unsigned short *forwardingPort, RakNetSocket **forwardingSocket)
 {
 	// Invalid parameters?
 	if (timeoutOnNoDataMS == 0 || timeoutOnNoDataMS > UDP_FORWARDER_MAXIMUM_TIMEOUT || source==UNASSIGNED_SYSTEM_ADDRESS || destination==UNASSIGNED_SYSTEM_ADDRESS)
@@ -198,14 +198,14 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
 	//unsigned short portnum=0;
 
 #if RAKNET_SUPPORT_IPV6==1
-	receivedDataLen = recvfrom__( forwardEntry->socket, data, MAXIMUM_MTU_SIZE, flag, sockAddrPtr, socketlenPtr );
+	receivedDataLen = forwardEntry->socket->RecvFrom( data, MAXIMUM_MTU_SIZE, flag, sockAddrPtr, socketlenPtr );
 #else
-	receivedDataLen = recvfrom__( forwardEntry->socket, data, MAXIMUM_MTU_SIZE, flag, ( sockaddr* ) & sockAddrIn, ( socklen_t* ) & len2 );
+	receivedDataLen = forwardEntry->socket->RecvFrom( data, MAXIMUM_MTU_SIZE, flag, ( sockaddr* ) & sockAddrIn, ( socklen_t* ) & len2 );
 #endif
 
 	if (receivedDataLen<0)
 	{
-#if defined(_WIN32) && defined(_DEBUG) 
+#if defined(_WIN32) && defined(_DEBUG) &&  !defined(WINDOWS_PHONE_8) && !defined(WINDOWS_STORE_RT)
 		DWORD dwIOError = WSAGetLastError();
 
 		if (dwIOError!=WSAECONNRESET && dwIOError!=WSAEINTR && dwIOError!=WSAETIMEDOUT && dwIOError!=WSAEWOULDBLOCK)
@@ -220,9 +220,9 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
 			//Free the buffer.
 			LocalFree( messageBuffer );
 		}
-#endif
-
+#else
 		if (errno!=EAGAIN
+			&& errno!=0
 #if defined(__GNUC__) 
 			&& errno!=EWOULDBLOCK
 #endif
@@ -230,6 +230,9 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
 		{
 			printf("errno=%i\n", errno);
 		}
+#endif
+
+		
 	}
 
 	if (receivedDataLen<=0)
@@ -309,7 +312,7 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
 		{
 			do
 			{
-				len = sendto__( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & forwardTarget.address.addr4, sizeof( sockaddr_in ) );
+				len = forwardEntry->socket->SendTo( data, receivedDataLen, 0, ( const sockaddr* ) & forwardTarget.address.addr4, sizeof( sockaddr_in ) );
 			}
 			while ( len == 0 );
 		}
@@ -317,14 +320,14 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
 		{
 			do
 			{
-				len = sendto__( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & forwardTarget.address.addr6, sizeof( sockaddr_in6 ) );
+				len = forwardEntry->socket->SendTo( data, receivedDataLen, 0, ( const sockaddr* ) & forwardTarget.address.addr6, sizeof( sockaddr_in6 ) );
 			}
 			while ( len == 0 );
 		}
 #else
 		do
 		{
-			len = sendto__( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & forwardTarget.address.addr4, sizeof( sockaddr_in ) );
+			len = forwardEntry->socket->SendTo( data, receivedDataLen, 0, ( const sockaddr* ) & forwardTarget.address.addr4, sizeof( sockaddr_in ) );
 		}
 		while ( len == 0 );
 #endif
@@ -337,17 +340,19 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
 }
 void UDPForwarder::UpdateUDPForwarder(void)
 {
-
+	/*
+#if !defined(SN_TARGET_PSP2)
 	timeval tv;
 	tv.tv_sec=0;
 	tv.tv_usec=0;
-
+#endif
+	*/
 
 	RakNet::TimeMS curTime = RakNet::GetTimeMS();
 
 	StartForwardingInputStruct *sfis;
 	StartForwardingOutputStruct sfos;
-	sfos.forwardingSocket=INVALID_SOCKET;
+	sfos.forwardingSocket=0;
 	sfos.forwardingPort=0;
 	sfos.inputId=0;
 	sfos.result=UDPFORWARDER_RESULT_COUNT;
@@ -394,7 +399,7 @@ void UDPForwarder::UpdateUDPForwarder(void)
 				fe->timeoutOnNoDataMS=sfis->timeoutOnNoDataMS;
 
 #if RAKNET_SUPPORT_IPV6!=1
-				fe->socket = socket__( AF_INET, SOCK_DGRAM, 0 );
+				fe->socket = RakNetSocket::Create( AF_INET, SOCK_DGRAM, 0 );
 				listenerSocketAddress.sin_family = AF_INET;
 				if (sfis->forceHostAddress.IsEmpty()==false)
 				{
@@ -408,9 +413,10 @@ void UDPForwarder::UpdateUDPForwarder(void)
 				{
 					listenerSocketAddress.sin_addr.s_addr = INADDR_ANY;
 				}
-				int ret = bind__( fe->socket, ( struct sockaddr * ) & listenerSocketAddress, sizeof( listenerSocketAddress ) );
+				int ret = fe->socket->Bind( ( struct sockaddr * ) & listenerSocketAddress, sizeof( listenerSocketAddress ) );
 				if (ret==-1)
 				{
+					RakNet::OP_DELETE(fe->socket,_FILE_AND_LINE_);
 					RakNet::OP_DELETE(fe,_FILE_AND_LINE_);
 					sfos.result=UDPFORWARDER_BIND_FAILED;
 				}
@@ -436,23 +442,23 @@ void UDPForwarder::UpdateUDPForwarder(void)
 				{
 					// Open socket. The address type depends on what
 					// getaddrinfo() gave us.
-					fe->socket = socket__(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
-					if (fe->socket != INVALID_SOCKET)
+					fe->socket = RakNetSocket::Create(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
+					if (fe->socket != 0)
 					{
-						int ret = bind__( fe->socket, aip->ai_addr, (int) aip->ai_addrlen );
+						int ret = fe->socket->Bind( aip->ai_addr, (int) aip->ai_addrlen );
 						if (ret>=0)
 						{
 							break;
 						}
 						else
 						{
-							closesocket__(fe->socket);
-							fe->socket=INVALID_SOCKET;
+							RakNet::OP_DELETE(fe->socket,_FILE_AND_LINE_);
+							fe->socket=0;
 						}
 					}
 				}
 
-				if (fe->socket==INVALID_SOCKET)
+				if (fe->socket==0)
 					sfos.result=UDPFORWARDER_BIND_FAILED;
 				else
 					sfos.result=UDPFORWARDER_SUCCESS;
@@ -464,17 +470,17 @@ void UDPForwarder::UpdateUDPForwarder(void)
 					sfos.forwardingSocket=fe->socket;
 
 					sock_opt=1024*256;
-					setsockopt__(fe->socket, SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
+					fe->socket->SetSockOpt( SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 					sock_opt=0;
-					setsockopt__(fe->socket, SOL_SOCKET, SO_LINGER, ( char * ) & sock_opt, sizeof ( sock_opt ) );
+					fe->socket->SetSockOpt( SOL_SOCKET, SO_LINGER, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 #ifdef _WIN32
 					unsigned long nonblocking = 1;
-					ioctlsocket__( fe->socket, FIONBIO, &nonblocking );
+					fe->socket->IOCTLSocket( FIONBIO, &nonblocking );
 
 
 
 #else
-					fcntl( fe->socket, F_SETFL, O_NONBLOCK );
+					fe->socket->Fcntl( F_SETFL, O_NONBLOCK );
 #endif
 
 					forwardListNotUpdated.Insert(fe,_FILE_AND_LINE_);

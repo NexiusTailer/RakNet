@@ -51,7 +51,7 @@ void Console_SearchRooms_Steam::DebugMsg(RakNet::RakString &out) const
 	out.Set("%i rooms found", roomNames.GetSize());
 	for (DataStructures::DefaultIndexType i=0; i < roomNames.GetSize(); i++)
 	{
-		out += RakNet::RakString("\n%i. %s. ID=%"PRINTF_64_BIT_MODIFIER"u", i+1, roomNames[i].C_String(), roomIds[i]);
+		out += RakNet::RakString("\n%i. %s. ID=%" PRINTF_64_BIT_MODIFIER "u", i+1, roomNames[i].C_String(), roomIds[i]);
 	}
 }
 bool Console_GetRoomDetails_Steam::ClientImpl( RakNet::Lobby2Plugin *client)

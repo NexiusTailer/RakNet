@@ -27,7 +27,7 @@ public:
 
 	DDTCallback() {}
 	virtual ~DDTCallback() {}
-
+	
 	virtual bool OnFile(OnFileStruct *onFileStruct)
 	{
 		char fullPathToDir[1024];

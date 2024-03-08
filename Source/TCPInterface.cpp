@@ -11,7 +11,9 @@
 
 #include "TCPInterface.h"
 #ifdef _WIN32
-typedef int socklen_t;
+	#if !defined (WINDOWS_STORE_RT)
+		typedef int socklen_t;
+	#endif
 
 
 #else
@@ -51,7 +53,9 @@ STATIC_FACTORY_DEFINITIONS(TCPInterface,TCPInterface);
 
 TCPInterface::TCPInterface()
 {
-	listenSocket=INVALID_SOCKET;
+#if !defined(WINDOWS_STORE_RT)
+	listenSocket=0;
+#endif
 	remoteClients=0;
 	remoteClientsLength=0;
 
@@ -116,10 +120,13 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 #if RAKNET_SUPPORT_IPV6!=1
 	if (maxIncomingConnections>0)
 	{
+#if defined(WINDOWS_STORE_RT)
+		listenSocket = WinRTCreateStreamSocket(AF_INET, SOCK_STREAM, 0);
+#else
 		listenSocket = socket__(AF_INET, SOCK_STREAM, 0);
 		if ((int)listenSocket ==-1)
 			return false;
-
+#endif
 		struct sockaddr_in serverAddress;
 		memset(&serverAddress,0,sizeof(sockaddr_in));
 		serverAddress.sin_family = AF_INET;
@@ -134,7 +141,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 		listen__(listenSocket, maxIncomingConnections);
 	}
 #else
-	listenSocket=INVALID_SOCKET;
+	listenSocket=0;
 	if (maxIncomingConnections>0)
 	{
 		struct addrinfo hints;
@@ -152,7 +159,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 			// Open socket. The address type depends on what
 			// getaddrinfo() gave us.
 			listenSocket = socket__(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
-			if (listenSocket != INVALID_SOCKET)
+			if (listenSocket != 0)
 			{
 				int ret = bind__( listenSocket, aip->ai_addr, (int) aip->ai_addrlen );
 				if (ret>=0)
@@ -162,12 +169,12 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 				else
 				{
 					closesocket__(listenSocket);
-					listenSocket=INVALID_SOCKET;
+					listenSocket=0;
 				}
 			}
 		}
 
-		if (listenSocket==INVALID_SOCKET)
+		if (listenSocket==0)
 			return false;
 
 		listen__(listenSocket, maxIncomingConnections);
@@ -208,7 +215,9 @@ void TCPInterface::Stop(void)
 
 	isStarted.Decrement();
 
-	if (listenSocket!=INVALID_SOCKET)
+#if !defined(WINDOWS_STORE_RT)
+	if (listenSocket!=0)
+#endif
 	{
 #ifdef _WIN32
 		shutdown__(listenSocket, SD_BOTH);
@@ -232,7 +241,10 @@ void TCPInterface::Stop(void)
 		RakSleep(15);
 
 	RakSleep(100);
-	listenSocket=INVALID_SOCKET;
+
+	#if !defined(WINDOWS_STORE_RT)
+		listenSocket=0;
+	#endif
 
 	// Stuff from here on to the end of the function is not threadsafe
 	for (i=0; i < (unsigned int) remoteClientsLength; i++)
@@ -302,8 +314,11 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 		char buffout[128];
 		systemAddress.ToString(false,buffout);
 
-		SOCKET sockfd = SocketConnect(buffout, remotePort, socketFamily);
-		if (sockfd==INVALID_SOCKET)
+		__TCPSOCKET__ sockfd = SocketConnect(buffout, remotePort, socketFamily);
+		// Windows RT TODO
+#if !defined(WINDOWS_STORE_RT)
+		if (sockfd==0)
+#endif
 		{
 			remoteClients[newRemoteClientIndex].isActiveMutex.Lock();
 			remoteClients[newRemoteClientIndex].SetActive(false);
@@ -692,10 +707,10 @@ unsigned int TCPInterface::GetOutgoingDataBufferSize(SystemAddress systemAddress
 	}
 	return bytesWritten;
 }
-SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, unsigned short socketFamily)
+__TCPSOCKET__ TCPInterface::SocketConnect(const char* host, unsigned short remotePort, unsigned short socketFamily)
 {
 #ifdef __native_client__
-	return INVALID_SOCKET;
+	return 0;
 #else
 	int connectResult;
 	(void) socketFamily;
@@ -707,12 +722,16 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, 
 	struct hostent * server;
 	server = gethostbyname(host);
 	if (server == NULL)
-		return INVALID_SOCKET;
+		return 0;
 
 
-	SOCKET sockfd = socket__(AF_INET, SOCK_STREAM, 0);
-	if (sockfd < 0) 
-		return INVALID_SOCKET;
+	#if defined(WINDOWS_STORE_RT)
+		__TCPSOCKET__ sockfd = WinRTCreateStreamSocket(AF_INET, SOCK_STREAM, 0);
+	#else
+		__TCPSOCKET__ sockfd = socket__(AF_INET, SOCK_STREAM, 0);
+		if (sockfd < 0) 
+			return 0;
+	#endif
 
 	memset(&serverAddress, 0, sizeof(serverAddress));
 	serverAddress.sin_family = AF_INET;
@@ -766,7 +785,7 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, 
 		blockingSocketListMutex.Unlock();
 
 		closesocket__(sockfd);
-		return INVALID_SOCKET;
+		return 0;
 	}
 
 	return sockfd;
@@ -790,8 +809,8 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
 
 	char str1[64];
 	systemAddress.ToString(false, str1);
-	SOCKET sockfd = tcpInterface->SocketConnect(str1, systemAddress.GetPort(), socketFamily);
-	if (sockfd==INVALID_SOCKET)
+	__TCPSOCKET__ sockfd = tcpInterface->SocketConnect(str1, systemAddress.GetPort(), socketFamily);
+	if (sockfd==0)
 	{
 		tcpInterface->remoteClients[newRemoteClientIndex].isActiveMutex.Lock();
 		tcpInterface->remoteClients[newRemoteClientIndex].SetActive(false);
@@ -846,7 +865,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 #endif
 
 	int len;
-	SOCKET newSock;
+	__TCPSOCKET__ newSock;
 	int selectResult;
 
 
@@ -886,7 +905,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 #endif
 
 
-		SOCKET largestDescriptor=0; // see select__()'s first parameter's documentation under linux
+		__TCPSOCKET__ largestDescriptor=0; // see select__()'s first parameter's documentation under linux
 
 
 		// Linux' select__() implementation changes the timeout
@@ -905,7 +924,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 #pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
 #endif
 			largestDescriptor=0;
-			if (sts->listenSocket!=INVALID_SOCKET)
+			if (sts->listenSocket!=0)
 			{
 				FD_SET(sts->listenSocket, &readFD);
 				FD_SET(sts->listenSocket, &exceptionFD);
@@ -918,9 +937,9 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 				sts->remoteClients[i].isActiveMutex.Lock();
 				if (sts->remoteClients[i].isActive)
 				{
-					// calling FD_ISSET with -1 as socket (that’s what INVALID_SOCKET is set to) produces a bus error under Linux 64-Bit
-					SOCKET socketCopy = sts->remoteClients[i].socket;
-					if (socketCopy != INVALID_SOCKET)
+					// calling FD_ISSET with -1 as socket (that’s what 0 is set to) produces a bus error under Linux 64-Bit
+					__TCPSOCKET__ socketCopy = sts->remoteClients[i].socket;
+					if (socketCopy != 0)
 					{
 						FD_SET(socketCopy, &readFD);
 						FD_SET(socketCopy, &exceptionFD);
@@ -946,11 +965,11 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 			if (selectResult<=0)
 				break;
 
-			if (sts->listenSocket!=INVALID_SOCKET && FD_ISSET(sts->listenSocket, &readFD))
+			if (sts->listenSocket!=0 && FD_ISSET(sts->listenSocket, &readFD))
 			{
 				newSock = accept__(sts->listenSocket, (sockaddr*)&sockAddr, (socklen_t*)&sockAddrSize);
 
-				if (newSock != INVALID_SOCKET)
+				if (newSock != 0)
 				{
 					int newRemoteClientIndex=-1;
 					for (newRemoteClientIndex=0; newRemoteClientIndex < sts->remoteClientsLength; newRemoteClientIndex++)
@@ -1001,7 +1020,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 #endif
 				}
 			}
-			else if (sts->listenSocket!=INVALID_SOCKET && FD_ISSET(sts->listenSocket, &exceptionFD))
+			else if (sts->listenSocket!=0 && FD_ISSET(sts->listenSocket, &exceptionFD))
 			{
 #ifdef _DO_PRINTF
 				int err;
@@ -1020,9 +1039,9 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 						i++;
 						continue;
 					}
-					// calling FD_ISSET with -1 as socket (that’s what INVALID_SOCKET is set to) produces a bus error under Linux 64-Bit
-					SOCKET socketCopy = sts->remoteClients[i].socket;
-					if (socketCopy == INVALID_SOCKET)
+					// calling FD_ISSET with -1 as socket (that’s what 0 is set to) produces a bus error under Linux 64-Bit
+					__TCPSOCKET__ socketCopy = sts->remoteClients[i].socket;
+					if (socketCopy == 0)
 					{
 						i++;
 						continue;
@@ -1144,10 +1163,10 @@ void RemoteClient::SetActive(bool a)
 	{
 		isActive=a;
 		Reset();
-		if (isActive==false && socket!=INVALID_SOCKET)
+		if (isActive==false && socket!=0)
 		{
 			closesocket__(socket);
-			socket=INVALID_SOCKET;
+			socket=0;
 		}
 	}
 }

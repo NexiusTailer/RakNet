@@ -129,21 +129,21 @@ public:
 	/// As these systems disconnect (directly or indirectly through the router) they are removed.
 	/// \note If the event completion process has already started, you cannot add more systems, as this would cause the completion process to fail
 	/// \param[in] eventId A user-defined number previously passed to SetEvent that has not yet completed
-	/// \param[in] addressArray An address to wait for event replies from.  Pass UNASSIGNED_SYSTEM_ADDRESS for all currently connected systems. Until all systems in this list have called SetEvent with this ID and true, and have this system in the list, we won't get ID_READY_EVENT_COMPLETE
+	/// \param[in] guid An address to wait for event replies from.  Pass UNASSIGNED_SYSTEM_ADDRESS for all currently connected systems. Until all systems in this list have called SetEvent with this ID and true, and have this system in the list, we won't get ID_READY_EVENT_COMPLETE
 	/// \return True on success, false on unknown eventId (this should be considered an error)
-	bool AddToWaitList(int eventId, SystemAddress address);
+	bool AddToWaitList(int eventId, RakNetGUID guid);
 	
 	/// Removes systems from the wait list, which should have been previously added with AddToWaitList
 	/// \note Systems that directly or indirectly disconnect from us are automatically removed from the wait list
-	/// \param[in] address The system to remove from the wait list. Pass UNASSIGNED_SYSTEM_ADDRESS for all currently connected systems.
+	/// \param[in] guid The system to remove from the wait list. Pass UNASSIGNED_RAKNET_GUID for all currently connected systems.
 	/// \return True on success, false on unknown eventId (this should be considered an error)
-	bool RemoveFromWaitList(int eventId, SystemAddress address);
+	bool RemoveFromWaitList(int eventId, RakNetGUID guid);
 
 	/// Returns if a particular system is waiting on a particular event.
 	/// \param[in] eventId A user-defined identifier
-	/// \param[in] The address of the system we are checking up on
+	/// \param[in] guid The system we are checking up on
 	/// \return True if this system is waiting on this event, false otherwise.
-	bool IsInWaitList(int eventId, SystemAddress address);
+	bool IsInWaitList(int eventId, RakNetGUID guid);
 	
 	/// Returns the total number of systems we are waiting on for this event.
 	/// Does not include yourself
@@ -155,13 +155,13 @@ public:
 	/// \param[in] eventId A user-defined identifier
 	/// \param[in] index Index into the array, from 0 to GetWaitListSize()
 	/// \return The system address of a system at a particular index, for this event.
-	SystemAddress GetFromWaitListAtIndex(int eventId, unsigned index) const;
+	RakNetGUID GetFromWaitListAtIndex(int eventId, unsigned index) const;
 		
 	/// For a remote system, find out what their ready status is (waiting, signaled, complete).
 	/// \param[in] eventId A user-defined identifier
-	/// \param[in] address Which system we are checking up on
+	/// \param[in] guid Which system we are checking up on
 	/// \return The status of this system, for this particular event. \sa ReadyEventSystemStatus
-	ReadyEventSystemStatus GetReadyStatus(int eventId, SystemAddress address);
+	ReadyEventSystemStatus GetReadyStatus(int eventId, RakNetGUID guid);
 
 	/// This channel will be used for all RakPeer::Send calls
 	/// \param[in] newChannel The channel to use for internal RakPeer::Send calls from this system.  Defaults to 0.
@@ -173,16 +173,16 @@ public:
 	struct RemoteSystem
 	{
 		MessageID lastSentStatus, lastReceivedStatus;
-		SystemAddress systemAddress;
+		RakNetGUID rakNetGuid;
 	};
-	static int RemoteSystemCompBySystemAddress( const SystemAddress &key, const RemoteSystem &data );
+	static int RemoteSystemCompByGuid( const RakNetGUID &key, const RemoteSystem &data );
 	/// \internal
 	/// An event, with a set of systems we are waiting for, a set of systems that are signaled, and a set of systems with completed events
 	struct ReadyEventNode
 	{
 		int eventId; // Sorted on this
 		MessageID eventStatus;
-		DataStructures::OrderedList<SystemAddress,RemoteSystem,ReadyEvent::RemoteSystemCompBySystemAddress> systemList;
+		DataStructures::OrderedList<RakNetGUID,RemoteSystem,ReadyEvent::RemoteSystemCompByGuid> systemList;
 	};
 	static int ReadyEventNodeComp( const int &key, ReadyEvent::ReadyEventNode * const &data );
 
@@ -200,22 +200,22 @@ protected:
 	bool AnyWaitersCompleted(unsigned eventIndex) const;
 	bool AllWaitersCompleted(unsigned eventIndex) const;
 	bool AllWaitersReady(unsigned eventIndex) const;
-	void SendAllReady(unsigned eventId, SystemAddress address);
+	void SendAllReady(unsigned eventId, RakNetGUID guid);
 	void BroadcastAllReady(unsigned eventIndex);
-	void SendReadyStateQuery(unsigned eventId, SystemAddress address);
+	void SendReadyStateQuery(unsigned eventId, RakNetGUID guid);
 	void BroadcastReadyUpdate(unsigned eventIndex);
-	bool AddToWaitListInternal(unsigned eventIndex, SystemAddress address);
+	bool AddToWaitListInternal(unsigned eventIndex, RakNetGUID guid);
 	bool IsLocked(unsigned eventIndex) const;
 	bool IsAllReadyByIndex(unsigned eventIndex) const;
 	*/
 
-	void SendReadyStateQuery(unsigned eventId, SystemAddress address);
+	void SendReadyStateQuery(unsigned eventId, RakNetGUID guid);
 	void SendReadyUpdate(unsigned eventIndex, unsigned systemIndex, bool forceIfNotDefault);
 	void BroadcastReadyUpdate(unsigned eventIndex, bool forceIfNotDefault);
-	void RemoveFromAllLists(SystemAddress address);
+	void RemoveFromAllLists(RakNetGUID guid);
 	void OnReadyEventQuery(Packet *packet);
 	void PushCompletionPacket(unsigned eventId);
-	bool AddToWaitListInternal(unsigned eventIndex, SystemAddress address);
+	bool AddToWaitListInternal(unsigned eventIndex, RakNetGUID guid);
 	void OnReadyEventForceAllSet(Packet *packet);
 	void OnReadyEventPacketUpdate(Packet *packet);
 	void UpdateReadyStatus(unsigned eventIndex);

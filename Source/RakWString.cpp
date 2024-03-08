@@ -252,7 +252,7 @@ int RakWString::StrCmp(const RakWString &right) const
 int RakWString::StrICmp(const RakWString &right) const
 {
 #ifdef _WIN32
-	return wcsicmp(C_String(), right.C_String());
+	return _wcsicmp(C_String(), right.C_String());
 #else
 	// Not supported
 	return wcscmp(C_String(), right.C_String());

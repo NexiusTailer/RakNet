@@ -18,7 +18,7 @@ STATIC_FACTORY_DEFINITIONS(NatTypeDetectionServer,NatTypeDetectionServer);
 
 NatTypeDetectionServer::NatTypeDetectionServer()
 {
-	s1p2=s2p3=s3p4=s4p5=INVALID_SOCKET;
+	s1p2=s2p3=s3p4=s4p5=0;
 }
 NatTypeDetectionServer::~NatTypeDetectionServer()
 {
@@ -33,10 +33,10 @@ void NatTypeDetectionServer::Startup(
 #endif
 									 )
 {
-	DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
+	DataStructures::List<RakNetSocket* > sockets;
 	rakPeerInterface->GetSockets(sockets);
 	char str[64];
-	sockets[0]->boundAddress.ToString(false,str);
+	sockets[0]->GetBoundAddress().ToString(false,str);
 #ifdef __native_client__
 	s1p2=CreateNonblockingBoundSocket(str, chromeInstance);
 #else
@@ -65,25 +65,25 @@ void NatTypeDetectionServer::Startup(
 }
 void NatTypeDetectionServer::Shutdown()
 {
-	if (s1p2!=INVALID_SOCKET)
+	if (s1p2!=0)
 	{
-		closesocket__(s1p2);
-		s1p2=INVALID_SOCKET;
+		RakNet::OP_DELETE(s1p2,_FILE_AND_LINE_);
+		s1p2=0;
 	}
-	if (s2p3!=INVALID_SOCKET)
+	if (s2p3!=0)
 	{
-		closesocket__(s2p3);
-		s2p3=INVALID_SOCKET;
+		RakNet::OP_DELETE(s2p3,_FILE_AND_LINE_);
+		s2p3=0;
 	}
-	if (s3p4!=INVALID_SOCKET)
+	if (s3p4!=0)
 	{
-		closesocket__(s3p4);
-		s3p4=INVALID_SOCKET;
+		RakNet::OP_DELETE(s3p4,_FILE_AND_LINE_);
+		s3p4=0;
 	}
-	if (s4p5!=INVALID_SOCKET)
+	if (s4p5!=0)
 	{
-		closesocket__(s4p5);
-		s4p5=INVALID_SOCKET;
+		RakNet::OP_DELETE(s4p5,_FILE_AND_LINE_);
+		s4p5=0;
 	}
 }
 void NatTypeDetectionServer::Update(void)

@@ -336,7 +336,7 @@ void CloudServer::OnPostRequest(Packet *packet)
 		if (cloudData->serverSystemAddress.GetPort()==0)
 		{
 			// Fix localhost port
-			cloudData->serverSystemAddress.SetPort(rakPeerInterface->GetSocket(UNASSIGNED_SYSTEM_ADDRESS)->boundAddress.GetPort());
+			cloudData->serverSystemAddress.SetPort(rakPeerInterface->GetSocket(UNASSIGNED_SYSTEM_ADDRESS)->GetBoundAddress().GetPort());
 		}
 		cloudData->clientSystemAddress=packet->systemAddress;
 		cloudData->serverGUID=rakPeerInterface->GetMyGUID();
@@ -361,7 +361,7 @@ void CloudServer::OnPostRequest(Packet *packet)
 			if (cloudData->serverSystemAddress.GetPort()==0)
 			{
 				// Fix localhost port
-				cloudData->serverSystemAddress.SetPort(rakPeerInterface->GetSocket(UNASSIGNED_SYSTEM_ADDRESS)->boundAddress.GetPort());
+				cloudData->serverSystemAddress.SetPort(rakPeerInterface->GetSocket(UNASSIGNED_SYSTEM_ADDRESS)->GetBoundAddress().GetPort());
 			}
 
 			cloudData->clientSystemAddress=packet->systemAddress;

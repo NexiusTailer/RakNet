@@ -27,6 +27,7 @@ struct RakNetStatistics;
 struct RakNetBandwidth;
 class RouterInterface;
 class NetworkIDManager;
+struct RakNetSocket;
 
 /// The primary interface for RakNet, RakPeer contains all major functions for the library.
 /// See the individual functions for what the class can do.
@@ -115,7 +116,7 @@ public:
 	/// Calling both acts as a true peer. This is a non-blocking connection.
 	/// You know the connection is successful when GetConnectionState() returns IS_CONNECTED or Receive() gets a message with the type identifier ID_CONNECTION_REQUEST_ACCEPTED.
 	/// If the connection is not successful, such as a rejected connection or no response then neither of these things will happen.
-	/// \pre Requires that you first call Initialize
+	/// \pre Requires that you first call Startup()
 	/// \param[in] host Either a dotted IP address or a domain name
 	/// \param[in] remotePort Which port to connect to on the remote machine.
 	/// \param[in] passwordData A data block that must match the data block on the server passed to SetIncomingPassword.  This can be a string or can be a stream of data.  Use 0 for no password.
@@ -141,7 +142,7 @@ public:
 	/// \param[in] timeoutTime How long to keep the connection alive before dropping it on unable to send a reliable message. 0 to use the default from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
 	/// \return CONNECTION_ATTEMPT_STARTED on successful initiation. Otherwise, an appropriate enumeration indicating failure.
 	/// \note CONNECTION_ATTEMPT_STARTED does not mean you are already connected!
-	virtual ConnectionAttemptResult ConnectWithSocket(const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, RakNetSmartPtr<RakNetSocket> socket, PublicKey *publicKey=0, unsigned sendConnectionAttemptCount=12, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNet::TimeMS timeoutTime=0)=0;
+	virtual ConnectionAttemptResult ConnectWithSocket(const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, RakNetSocket* socket, PublicKey *publicKey=0, unsigned sendConnectionAttemptCount=12, unsigned timeBetweenSendConnectionAttemptsMS=500, RakNet::TimeMS timeoutTime=0)=0;
 
 	/// \brief Connect to the specified network ID (Platform specific console function)
 	/// \details Does built-in NAt traversal
@@ -504,13 +505,13 @@ public:
 	/// \note This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so.
 	/// \param[in] target Which system
 	/// \return A smart pointer object containing the socket information about the socket. Be sure to check IsNull() which is returned if the update thread is unresponsive, shutting down, or if this system is not connected
-	virtual RakNetSmartPtr<RakNetSocket> GetSocket( const SystemAddress target )=0;
+	virtual RakNetSocket* GetSocket( const SystemAddress target )=0;
 
 	/// Get all sockets in use
 	/// \note This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so.
 	/// \param[out] sockets List of RakNetSocket structures in use. Sockets will not be closed until \a sockets goes out of scope
-	virtual void GetSockets( DataStructures::List<RakNetSmartPtr<RakNetSocket> > &sockets )=0;
-	virtual void ReleaseSockets( DataStructures::List<RakNetSmartPtr<RakNetSocket> > &sockets )=0;
+	virtual void GetSockets( DataStructures::List<RakNetSocket* > &sockets )=0;
+	virtual void ReleaseSockets( DataStructures::List<RakNetSocket* > &sockets )=0;
 
 	virtual void WriteOutOfBandHeader(RakNet::BitStream *bitStream)=0;
 
@@ -578,7 +579,7 @@ public:
 	// Call manually if RAKPEER_USER_THREADED==1 at least every 30 milliseconds.
 	// Call in a loop until returns false if the socket is non-blocking
 	// remotePortRakNetWasStartedOn_PS3 and extraSocketOptions are from SocketDescriptor when the socket was created
-	virtual bool RunRecvFromOnce( SOCKET s, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions )=0;
+	virtual bool RunRecvFromOnce( RakNetSocket *s )=0;
 
 	/// \internal
 	virtual bool SendOutOfBand(const char *host, unsigned short remotePort, const char *data, BitSize_t dataLength, unsigned connectionSocketIndex=0 )=0;

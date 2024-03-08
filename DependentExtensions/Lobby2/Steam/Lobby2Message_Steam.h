@@ -72,7 +72,7 @@ namespace RakNet
 				Console_GetRoomDetails::DebugMsg(out);
 				return;
 			}
-			out.Set("GetRoomDetails: roomName=%s for id %"PRINTF_64_BIT_MODIFIER"u", roomName.C_String(), roomId);
+			out.Set("GetRoomDetails: roomName=%s for id %" PRINTF_64_BIT_MODIFIER "u", roomName.C_String(), roomId);
 		}
 
 		/// Input
@@ -96,7 +96,7 @@ namespace RakNet
 				Console_CreateRoom::DebugMsg(out);
 				return;
 			}
-			out.Set("Console_CreateRoom: roomName %s created for id %"PRINTF_64_BIT_MODIFIER"u", roomName.C_String(), roomId);
+			out.Set("Console_CreateRoom: roomName %s created for id %" PRINTF_64_BIT_MODIFIER "u", roomName.C_String(), roomId);
 		}
 
 		/// Input
@@ -126,7 +126,7 @@ namespace RakNet
 				Console_JoinRoom::DebugMsg(out);
 				return;
 			}
-			out.Set("Console_JoinRoom: Joined id %"PRINTF_64_BIT_MODIFIER"u", roomId);
+			out.Set("Console_JoinRoom: Joined id %" PRINTF_64_BIT_MODIFIER "u", roomId);
 		}
 
 		/// Input
@@ -148,7 +148,7 @@ namespace RakNet
 				Console_LeaveRoom::DebugMsg(out);
 				return;
 			}
-			out.Set("Left room %"PRINTF_64_BIT_MODIFIER"u", roomId);
+			out.Set("Left room %" PRINTF_64_BIT_MODIFIER "u", roomId);
 		}
 
 		/// Input
@@ -166,7 +166,7 @@ namespace RakNet
 				Console_SendRoomChatMessage::DebugMsg(out);
 				return;
 			}
-			out.Set("Sent %s to room %"PRINTF_64_BIT_MODIFIER"u", message.C_String(), roomId);
+			out.Set("Sent %s to room %" PRINTF_64_BIT_MODIFIER "u", message.C_String(), roomId);
 		}
 
 		/// Input
@@ -187,7 +187,7 @@ namespace RakNet
 				Notification_Friends_StatusChange::DebugMsg(out);
 				return;
 			}
-			out.Set("Friend renamed to %s with ID %"PRINTF_64_BIT_MODIFIER"u", friendNewName.C_String(), friendId);
+			out.Set("Friend renamed to %s with ID %" PRINTF_64_BIT_MODIFIER "u", friendNewName.C_String(), friendId);
 		}
 	};
 
@@ -203,7 +203,7 @@ namespace RakNet
 				Notification_Console_UpdateRoomParameters::DebugMsg(out);
 				return;
 			}
-			out.Set("RoomStateChanged: Room named %s with ID %"PRINTF_64_BIT_MODIFIER"u", roomNewName.C_String(), roomId);
+			out.Set("RoomStateChanged: Room named %s with ID %" PRINTF_64_BIT_MODIFIER "u", roomNewName.C_String(), roomId);
 		}
 	};
 
@@ -221,7 +221,7 @@ namespace RakNet
 				Notification_Console_MemberJoinedRoom::DebugMsg(out);
 				return;
 			}
-			out.Set("MemberJoinedRoom: Member named %s and ID %"PRINTF_64_BIT_MODIFIER"u joined room with ID %"PRINTF_64_BIT_MODIFIER"u", memberName.C_String(), srcMemberId, roomId);
+			out.Set("MemberJoinedRoom: Member named %s and ID %" PRINTF_64_BIT_MODIFIER "u joined room with ID %" PRINTF_64_BIT_MODIFIER "u", memberName.C_String(), srcMemberId, roomId);
 		}
 	};
 
@@ -239,7 +239,7 @@ namespace RakNet
 				Notification_Console_MemberLeftRoom::DebugMsg(out);
 				return;
 			}
-			out.Set("MemberLeftRoom: Member named %s and ID %"PRINTF_64_BIT_MODIFIER"u left room with ID %"PRINTF_64_BIT_MODIFIER"u", memberName.C_String(), srcMemberId, roomId);
+			out.Set("MemberLeftRoom: Member named %s and ID %" PRINTF_64_BIT_MODIFIER "u left room with ID %" PRINTF_64_BIT_MODIFIER "u", memberName.C_String(), srcMemberId, roomId);
 		}
 	};
 

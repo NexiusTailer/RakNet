@@ -13,9 +13,9 @@
 #include "NativeTypes.h"
 #include "RakNetTime.h"
 #include "Export.h"
-#include "SocketIncludes.h"
 #include "WindowsIncludes.h"
 #include "XBox360Includes.h"
+#include "SocketIncludes.h"
 
 
 

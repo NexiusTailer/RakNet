@@ -754,8 +754,7 @@ enum RM3SerializationResult
 	/// Efficient for memory and speed, but not necessarily bandwidth
 	RM3SR_SERIALIZED_ALWAYS,
 
-	/// Even faster than RM3SR_SERIALIZED_ALWAYS
-	/// Serialize() will only be called for the first system. The remaining systems will get the same data as the first system.
+	/// \deprecated, use RM3SR_BROADCAST_IDENTICALLY_FORCE_SERIALIZATION
 	RM3SR_SERIALIZED_ALWAYS_IDENTICALLY,
 
 	/// Do not serialize this object this tick, for this connection. Will query again next autoserialize timer
@@ -1040,7 +1039,7 @@ public:
 	
 	/// Default: If we are a client, and the connection is lost, delete the server's objects
 	virtual RM3ActionOnPopConnection QueryActionOnPopConnection_Client(RakNet::Connection_RM3 *droppedConnection) const;
-	/// Default: If we are a client, and the connection is lost, delete the client's objects and broadcast the destruction
+	/// Default: If we are a server, and the connection is lost, delete the client's objects and broadcast the destruction
 	virtual RM3ActionOnPopConnection QueryActionOnPopConnection_Server(RakNet::Connection_RM3 *droppedConnection) const;
 	/// Default: If we are a peer, and the connection is lost, delete the peer's objects
 	virtual RM3ActionOnPopConnection QueryActionOnPopConnection_PeerToPeer(RakNet::Connection_RM3 *droppedConnection) const;

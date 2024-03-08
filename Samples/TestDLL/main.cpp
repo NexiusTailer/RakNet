@@ -47,7 +47,7 @@ int main()
 		}
 	f->SetMaximumIncomingConnections(32);
 	
-	DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
+	DataStructures::List<RakNetSocket* > sockets;
 	f->GetSockets(sockets);
 	f->ReleaseSockets(sockets);
 

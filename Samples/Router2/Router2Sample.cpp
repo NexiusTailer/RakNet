@@ -111,7 +111,7 @@ int main(void)
 
 	rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString(str);
 	printf("My GUID is %s\n", str);
-	printf("Started on port %i\n", rakPeer->GetSocket(UNASSIGNED_SYSTEM_ADDRESS)->boundAddress.GetPort());
+	printf("Started on port %i\n", rakPeer->GetSocket(UNASSIGNED_SYSTEM_ADDRESS)->GetBoundAddress().GetPort());
 
 	rakPeer->SetTimeoutTime(3000,UNASSIGNED_SYSTEM_ADDRESS);
 	router2Plugin = new Router2;

@@ -84,33 +84,33 @@ const char *RakNet::NATTypeDetectionResultToStringFriendly(NATTypeDetectionResul
 }
 
 
-SOCKET RakNet::CreateNonblockingBoundSocket(const char *bindAddr
+RakNetSocket* RakNet::CreateNonblockingBoundSocket(const char *bindAddr
 #ifdef __native_client__
 											,_PP_Instance_ chromeInstance
 #endif											
 	)
 {
 	#ifdef __native_client__
-	SOCKET s = SocketLayer::CreateBoundSocket( 0, 0, false, bindAddr, true, 0, AF_INET, chromeInstance );
+	RakNetSocket *s = SocketLayer::CreateBoundSocket( 0, 0, false, bindAddr, true, 0, AF_INET, chromeInstance );
 	#else
-	SOCKET s = SocketLayer::CreateBoundSocket( 0, 0, false, bindAddr, true, 0, AF_INET, 0 );
+	RakNetSocket *s = SocketLayer::CreateBoundSocket( 0, 0, false, bindAddr, true, 0, AF_INET, 0 );
 	#endif
 
 	#ifdef _WIN32
 		unsigned long nonblocking = 1;
-		ioctlsocket__( s, FIONBIO, &nonblocking );
+		s->IOCTLSocket( FIONBIO, &nonblocking );
 
 
 
 	#elif defined(__native_client__)
 		// Nop
 	#else
-		fcntl( s, F_SETFL, O_NONBLOCK );
+		s->Fcntl( F_SETFL, O_NONBLOCK );
 	#endif
 	return s;
 }
 
-int RakNet::NatTypeRecvFrom(char *data, SOCKET socket, SystemAddress &sender)
+int RakNet::NatTypeRecvFrom(char *data, RakNetSocket* socket, SystemAddress &sender)
 {
 #ifdef __native_client__
 	return 0;
@@ -121,7 +121,7 @@ int RakNet::NatTypeRecvFrom(char *data, SOCKET socket, SystemAddress &sender)
 	len2 = sizeof( sa );
 	sa.sin_family = AF_INET;
 	sa.sin_port=0;
-	int len = recvfrom__( socket, data, MAXIMUM_MTU_SIZE, flag, ( sockaddr* ) & sa, ( socklen_t* ) & len2 );
+	int len = socket->RecvFrom( data, MAXIMUM_MTU_SIZE, flag, ( sockaddr* ) & sa, ( socklen_t* ) & len2 );
 	if (len>0)
 	{
 		sender.address.addr4.sin_family=AF_INET;

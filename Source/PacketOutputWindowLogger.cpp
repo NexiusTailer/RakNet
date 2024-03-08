@@ -7,7 +7,7 @@
 
 #include "PacketOutputWindowLogger.h"
 #include "RakString.h"
-#if defined(_WIN32) && !defined(X360__) 
+#if defined(_WIN32) 
 #include "WindowsIncludes.h"
 #endif
 
@@ -21,7 +21,7 @@ PacketOutputWindowLogger::~PacketOutputWindowLogger()
 }
 void PacketOutputWindowLogger::WriteLog(const char *str)
 {
-#if defined(_WIN32) && !defined(X360__) 
+#if defined(_WIN32) 
 
 	#if defined(UNICODE)
 		RakNet::RakWString str2 = str;

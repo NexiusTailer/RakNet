@@ -62,7 +62,7 @@ struct Packet;
 		virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 
 	protected:
-		SOCKET c2;
+		RakNetSocket* c2;
 		unsigned short c2Port;
 		void Shutdown(void);
 		void OnCompletion(NATTypeDetectionResult result);

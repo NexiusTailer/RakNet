@@ -481,7 +481,7 @@ bool TM_TeamMember::DeserializeConstruction(TeamManager *teamManager, BitStream 
 	{
 		RequestedTeam rt;
 		rt.isTeamSwitch=false;
-		rt.requested=false;
+		rt.requested=0;
 		rt.whenRequested=0;
 		constructionBitstream->Read(rt.isTeamSwitch);
 		bool hasTeamToLeave=false;

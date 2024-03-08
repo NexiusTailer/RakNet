@@ -1051,7 +1051,7 @@ improvement at the expense of carrying around more memory.
 #include "rdlmalloc-options.h"
 
 #ifndef WIN32
-#if defined(_XBOX) || defined(X360)
+#if defined(_XBOX) || defined(_DURANGO_COMPILE_AS_WINDOWS) || defined(X360)
 #else
 #if defined(_WIN32)
 #define DL_PLATFORM_WIN32 1
@@ -1065,7 +1065,7 @@ improvement at the expense of carrying around more memory.
 #define DL_PLATFORM_WIN32 1
 #endif  /* DL_PLATFORM_WIN32 */
 
-#if defined(_XBOX) || defined(X360)
+#if defined(_XBOX) || defined(_DURANGO_COMPILE_AS_WINDOWS) || defined(X360)
 #define HAVE_MMAP 1
 #define HAVE_MORECORE 0
 #define LACKS_UNISTD_H
@@ -1939,7 +1939,7 @@ extern void*     sbrk(ptrdiff_t);
 
 /* Declarations for locking */
 #if USE_LOCKS
-#if defined(_XBOX) || defined(X360)
+#if defined(_XBOX) || defined(_DURANGO_COMPILE_AS_WINDOWS) || defined(X360)
 #pragma intrinsic (_InterlockedCompareExchange)
 #pragma intrinsic (_InterlockedExchange)
 #define interlockedcompareexchange _InterlockedCompareExchange
@@ -2079,7 +2079,7 @@ using so many "#if"s.
 
 #if HAVE_MMAP
 
-#if defined(_XBOX) || defined(X360)
+#if defined(_XBOX) || defined(_DURANGO_COMPILE_AS_WINDOWS) || defined(X360)
 	/* Win32 MMAP via VirtualAlloc */
 	static void* win32mmap(size_t size) {
 		void* ptr = VirtualAlloc(0, size, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);

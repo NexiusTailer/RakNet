@@ -45,9 +45,9 @@ using namespace RakNet;
 
 
 #else
-#if !defined ( __FreeBSD__ )
-#include <alloca.h>
-#endif
+	#if !defined ( __FreeBSD__ )
+	#include <alloca.h>
+	#endif
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -126,7 +126,7 @@ void FileList::AddFile(const char *filepath, const char *filename, FileListNodeC
 	}
 
 
-
+#if USE_ALLOCA==1
 	bool usedAlloca=false;
 	if (length < MAX_ALLOCA_STACK_ALLOCATION)
 	{
@@ -134,7 +134,7 @@ void FileList::AddFile(const char *filepath, const char *filename, FileListNodeC
 		usedAlloca=true;
 	}
 	else
-
+#endif
 	{
 		data = (char*) rakMalloc_Ex( length, _FILE_AND_LINE_ );
 	}
@@ -143,9 +143,9 @@ void FileList::AddFile(const char *filepath, const char *filename, FileListNodeC
 	AddFile(filename, filepath, data, length, length, context);
 	fclose(fp);
 
-
+#if USE_ALLOCA==1
 	if (usedAlloca==false)
-
+#endif
 		rakFree_Ex(data, _FILE_AND_LINE_ );
 
 }
@@ -731,11 +731,13 @@ void FileList::DeleteFiles(const char *applicationDirectory)
 		strcpy(fullPath, applicationDirectory);
 		FixEndingSlash(fullPath);
 		strcat(fullPath, fileList[i].filename.C_String());
-
-#ifdef _MSC_VER
-#pragma warning( disable : 4966 ) // unlink declared deprecated by Microsoft in order to make it harder to be cross platform.  I don't agree it's deprecated.
-#endif
+	
+		// Do not rename to _unlink as linux uses unlink
+#if defined(WINDOWS_PHONE_8) || defined(WINDOWS_STORE_RT)
+		int result = _unlink(fullPath);
+#else
         int result = unlink(fullPath);
+#endif
 		if (result!=0)
 		{
 			RAKNET_DEBUG_PRINTF("FileList::DeleteFiles: unlink (%s) failed.\n", fullPath);

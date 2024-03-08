@@ -18,13 +18,13 @@ STATIC_FACTORY_DEFINITIONS(NatTypeDetectionClient,NatTypeDetectionClient);
 
 NatTypeDetectionClient::NatTypeDetectionClient()
 {
-	c2=INVALID_SOCKET;
+	c2=0;
 }
 NatTypeDetectionClient::~NatTypeDetectionClient()
 {
-	if (c2!=INVALID_SOCKET)
+	if (c2!=0)
 	{
-		closesocket__(c2);
+		RakNet::OP_DELETE(c2,_FILE_AND_LINE_);
 	}
 }
 void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress)
@@ -32,12 +32,12 @@ void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress)
 	if (IsInProgress())
 		return;
 
-	if (c2==INVALID_SOCKET)
+	if (c2==0)
 	{
-		DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
+		DataStructures::List<RakNetSocket* > sockets;
 		rakPeerInterface->GetSockets(sockets);
 		SystemAddress sockAddr;
-		SocketLayer::GetSystemAddress(sockets[0]->s, &sockAddr);
+		SocketLayer::GetSystemAddress(sockets[0], &sockAddr);
 		char str[64];
 		sockAddr.ToString(false,str);
 		c2=CreateNonblockingBoundSocket(str
@@ -148,9 +148,9 @@ void NatTypeDetectionClient::OnTestPortRestricted(Packet *packet)
 	unsigned short s3p4Port;
 	bsIn.Read(s3p4Port);
 
-	DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
+	DataStructures::List<RakNetSocket* > sockets;
 	rakPeerInterface->GetSockets(sockets);
-	SystemAddress s3p4Addr = sockets[0]->boundAddress;
+	SystemAddress s3p4Addr = sockets[0]->GetBoundAddress();
 	s3p4Addr.FromStringExplicitPort(s3p4StrAddress.C_String(), s3p4Port);
 
 	// Send off the RakNet socket to the specified address, message is unformatted
@@ -158,15 +158,15 @@ void NatTypeDetectionClient::OnTestPortRestricted(Packet *packet)
 	RakNet::BitStream bsOut;
 	bsOut.Write((MessageID) NAT_TYPE_PORT_RESTRICTED);
 	bsOut.Write(rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
-	SocketLayer::SendTo_PC( sockets[0]->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), s3p4Addr, __FILE__, __LINE__ );
+	SocketLayer::SendTo_PC( sockets[0], (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), s3p4Addr, __FILE__, __LINE__ );
 }
 void NatTypeDetectionClient::Shutdown(void)
 {
 	serverAddress=UNASSIGNED_SYSTEM_ADDRESS;
-	if (c2!=INVALID_SOCKET)
+	if (c2!=0)
 	{
-		closesocket__(c2);
-		c2=INVALID_SOCKET;
+		RakNet::OP_DELETE(c2, _FILE_AND_LINE_);
+		c2=0;
 	}
 
 }

@@ -295,7 +295,11 @@ CCTimeType CCRakNetSlidingWindow::GetRTOForRetransmission(unsigned char timesSen
  	//double u=1.0f;
 	double u=2.0f;
  	double q=4.0f;
- 	return (CCTimeType) (u * estimatedRTT + q * deviationRtt) + additionalVariance;
+
+	CCTimeType threshhold = (CCTimeType) (u * estimatedRTT + q * deviationRtt) + additionalVariance;
+	if (threshhold > maxThreshold)
+		return maxThreshold;
+	return threshhold;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::SetMTU(uint32_t bytes)
