@@ -110,8 +110,9 @@ void main(void)
 	RakNet::RoomsPlugin roomsPluginClient, roomsPluginServer;
 	client = RakNetworkFactory::GetRakPeerInterface();
 	server = RakNetworkFactory::GetRakPeerInterface();
-	client->Startup(1,0,&SocketDescriptor(0,0), 1);
-	server->Startup(1,0,&SocketDescriptor(1234,0), 1);
+	SocketDescriptor sd1(0,0),sd2(1234,0);
+	client->Startup(1,0,&sd1, 1);
+	server->Startup(1,0,&sd2, 1);
 	server->SetMaximumIncomingConnections(1);
 	client->AttachPlugin(&roomsPluginClient);
 	server->AttachPlugin(&roomsPluginServer);

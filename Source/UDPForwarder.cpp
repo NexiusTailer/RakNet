@@ -299,7 +299,7 @@ unsigned short UDPForwarder::AddForwardingEntry(SrcAndDest srcAndDest, RakNetTim
 	}
 }
 UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source, SystemAddress destination, RakNetTimeMS timeoutOnNoDataMS, const char *forceHostAddress,
-								   unsigned short *srcToDestPort, unsigned short *destToSourcePort)
+								   unsigned short *srcToDestPort, unsigned short *destToSourcePort, SOCKET *srcToDestSocket, SOCKET *destToSourceSocket)
 {
 	// Invalid parameters?
 	if (timeoutOnNoDataMS == 0 || timeoutOnNoDataMS > UDP_FORWARDER_MAXIMUM_TIMEOUT || source==UNASSIGNED_SYSTEM_ADDRESS || destination==UNASSIGNED_SYSTEM_ADDRESS)
@@ -326,18 +326,20 @@ UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source, SystemAdd
 			threadOperationOutgoingMutex.Unlock();
 			*srcToDestPort=threadOperation.srcToDestPort;
 			*destToSourcePort=threadOperation.destToSourcePort;
+			*srcToDestSocket=threadOperation.srcToDestSocket;
+			*destToSourceSocket=threadOperation.destToSourceSocket;
 			return threadOperation.result;
 		}
 		threadOperationOutgoingMutex.Unlock();
 
 	}
 #else
-	return StartForwardingThreaded(source, destination, timeoutOnNoDataMS, forceHostAddress, srcToDestPort, destToSourcePort);
+	return StartForwardingThreaded(source, destination, timeoutOnNoDataMS, forceHostAddress, srcToDestPort, destToSourcePort, srcToDestSocket, destToSourceSocket);
 #endif
 
 }
 UDPForwarderResult UDPForwarder::StartForwardingThreaded(SystemAddress source, SystemAddress destination, RakNetTimeMS timeoutOnNoDataMS, const char *forceHostAddress,
-								   unsigned short *srcToDestPort, unsigned short *destToSourcePort)
+								   unsigned short *srcToDestPort, unsigned short *destToSourcePort, SOCKET *srcToDestSocket, SOCKET *destToSourceSocket)
 {
 	SrcAndDest srcAndDest;
 	srcAndDest.destination=destination;
@@ -365,6 +367,10 @@ UDPForwarderResult UDPForwarder::StartForwardingThreaded(SystemAddress source, S
 	idxDestAndSrc = forwardList.GetIndexOf(destAndSrc);
 	forwardList[idxSrcAndDest]->writeSocket=forwardList[idxDestAndSrc]->readSocket;
 	forwardList[idxDestAndSrc]->writeSocket=forwardList[idxSrcAndDest]->readSocket;
+	if (*srcToDestSocket)
+		*srcToDestSocket=forwardList[idxSrcAndDest]->writeSocket;
+	if (*destToSourceSocket)
+		*destToSourceSocket=forwardList[idxSrcAndDest]->readSocket;
 
 	return UDPFORWARDER_SUCCESS;
 }
@@ -421,7 +427,7 @@ RAK_THREAD_DECLARATION(UpdateUDPForwarder)
 			if (threadOperation.operation==UDPForwarder::ThreadOperation::TO_START_FORWARDING)
 			{
 				threadOperation.result=udpForwarder->StartForwardingThreaded(threadOperation.source, threadOperation.destination, threadOperation.timeoutOnNoDataMS,
-					threadOperation.forceHostAddress, &threadOperation.srcToDestPort, &threadOperation.destToSourcePort);
+					threadOperation.forceHostAddress, &threadOperation.srcToDestPort, &threadOperation.destToSourcePort, &threadOperation.srcToDestSocket, &threadOperation.destToSourceSocket);
 				udpForwarder->threadOperationOutgoingMutex.Lock();
 				udpForwarder->threadOperationOutgoingQueue.Push(threadOperation, __FILE__, __LINE__ );
 				udpForwarder->threadOperationOutgoingMutex.Unlock();

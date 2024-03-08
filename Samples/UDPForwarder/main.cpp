@@ -15,8 +15,9 @@ void main(void)
 	RakPeerInterface *rakPeer[2];
 	rakPeer[0]=RakNetworkFactory::GetRakPeerInterface();
 	rakPeer[1]=RakNetworkFactory::GetRakPeerInterface();
-	rakPeer[0]->Startup(1,0,&SocketDescriptor(50000,0), 1);
-	rakPeer[1]->Startup(1,0,&SocketDescriptor(50002,0), 1);
+	SocketDescriptor sd1(50000,0),sd2(50002,0);
+	rakPeer[0]->Startup(1,0,&sd1, 1);
+	rakPeer[1]->Startup(1,0,&sd2, 1);
 	rakPeer[1]->SetMaximumIncomingConnections(1);
 	RakNet::UDPForwarder udpForwarder;
 	
@@ -40,7 +41,7 @@ void main(void)
 
 	unsigned short peer0To1FowardPort;
 	unsigned short peer1To0FowardPort;
-	if (!udpForwarder.StartForwarding(peer0Addr,peer1Addr, timeoutOnNoDataMS, 0, &peer0To1FowardPort, &peer1To0FowardPort))
+	if (!udpForwarder.StartForwarding(peer0Addr,peer1Addr, timeoutOnNoDataMS, 0, &peer0To1FowardPort, &peer1To0FowardPort,0,0))
 	{
 		printf("Socket error\n");
 		return;

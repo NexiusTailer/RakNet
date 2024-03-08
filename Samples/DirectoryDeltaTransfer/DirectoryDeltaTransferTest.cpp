@@ -37,10 +37,16 @@ public:
 		return true;
 	}
 
-	virtual void OnFileProgress(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int dataChunkLength, char *firstDataChunk)
+	virtual void OnFileProgress(FileProgressStruct *fps)
 	{
-		assert(onFileStruct->byteLengthOfThisFile >= onFileStruct->bytesDownloadedForThisFile);
-		printf("%i (%i%%) %i/%i %s %ib / %ib\n", onFileStruct->setID, (int) (100.0*(double)partCount/(double)partTotal), onFileStruct->fileIndex+1, onFileStruct->numberOfFilesInThisSet, onFileStruct->fileName, onFileStruct->byteLengthOfThisFile, onFileStruct->byteLengthOfThisSet, firstDataChunk);
+		assert(fps->onFileStruct->byteLengthOfThisFile >= fps->onFileStruct->bytesDownloadedForThisFile);
+		printf("%i (%i%%) %i/%i %s %ib / %ib\n", fps->onFileStruct->setID, (int) (100.0*(double)fps->partCount/(double)fps->partTotal),
+			fps->onFileStruct->fileIndex+1,
+			fps->onFileStruct->numberOfFilesInThisSet,
+			fps->onFileStruct->fileName,
+			fps->onFileStruct->byteLengthOfThisFile,
+			fps->onFileStruct->byteLengthOfThisSet,
+			fps->firstDataChunk);
 	}
 
 	virtual bool OnDownloadComplete(void)
@@ -193,6 +199,8 @@ int main(void)
 				printf("ID_DISCONNECTION_NOTIFICATION\n");
 			else if (p->data[0]==ID_CONNECTION_LOST)
 				printf("ID_CONNECTION_LOST\n");
+			else if (p->data[0]==ID_CONNECTION_ATTEMPT_FAILED)
+				printf("ID_CONNECTION_ATTEMPT_FAILED\n");
 			rakPeer->DeallocatePacket(p);
 			p=rakPeer->Receive();
 #endif

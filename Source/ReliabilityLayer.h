@@ -169,6 +169,7 @@ public:
 	CCTimeType GetNextSendTime(void) const;
 	CCTimeType GetTimeBetweenPackets(void) const;
 	CCTimeType GetAckPing(void) const;
+	RakNetTimeMS GetTimeLastDatagramArrived(void) const {return timeLastDatagramArrived;}
 
 	// If true, will update time between packets quickly based on ping calculations
 	//void SetDoFastThroughputReactions(bool fast);
@@ -269,6 +270,7 @@ private:
 
 	// Make it so we don't do resends within a minimum threshold of time
 	void UpdateNextActionTime(void);
+
 
 	/// Does this packet number represent a packet that was skipped (out of order?)
 	//unsigned int IsReceivedPacketHole(unsigned int input, RakNetTime currentTime) const;
@@ -418,7 +420,7 @@ private:
 		char data[ MAXIMUM_MTU_SIZE ];
 		unsigned int length;
 		RakNetTimeMS sendTime;
-		SystemAddress systemAddress;
+	//	SystemAddress systemAddress;
 		unsigned short remotePortRakNetWasStartedOn_PS3;
 	};
 	DataStructures::Queue<DataAndTime*> delayList;
@@ -475,6 +477,7 @@ private:
 
 	DataStructures::RangeList<DatagramSequenceNumberType> acknowlegements;
 	DataStructures::RangeList<DatagramSequenceNumberType> NAKs;
+	bool remoteSystemNeedsBAndAS;
 
 	unsigned int GetMaxDatagramSizeExcludingMessageHeaderBytes(void);
 	BitSize_t GetMaxDatagramSizeExcludingMessageHeaderBits(void);

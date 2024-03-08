@@ -111,6 +111,49 @@ ACTIONSCRIPT_CALLABLE_FUNCTION(Lobby2ClientGFx3Impl, f2c_CheckCDKey)
 	m1->cdKey=pparams[0].GetString();
 	lobby2Client->SendMsgAndDealloc(m1);
 }
+void ReadAccountBinaryData(FxResponseArgsList &rargs,
+						   RakNet::BitStream *serializedBinaryData)
+{
+
+	RakNet::RakString aboutMe;
+	RakNet::RakString activities;
+	RakNet::RakString interests;
+	RakNet::RakString favoriteGames;
+	RakNet::RakString favoriteMovies;
+	RakNet::RakString favoriteBooks;
+	RakNet::RakString favoriteQuotations;
+	serializedBinaryData->Read(aboutMe);
+	serializedBinaryData->Read(activities);
+	serializedBinaryData->Read(interests);
+	serializedBinaryData->Read(favoriteGames);
+	serializedBinaryData->Read(favoriteMovies);
+	serializedBinaryData->Read(favoriteBooks);
+	serializedBinaryData->Read(favoriteQuotations);
+	rargs.Add(aboutMe.C_String());
+	rargs.Add(activities.C_String());
+	rargs.Add(interests.C_String());
+	rargs.Add(favoriteGames.C_String());
+	rargs.Add(favoriteMovies.C_String());
+	rargs.Add(favoriteBooks.C_String());
+	rargs.Add(favoriteQuotations.C_String());
+}
+void WriteAccountBinaryData(RakNet::BitStream *serializedBinaryData, const FxDelegateArgs& pparams, int &index)
+{
+	RakNet::RakString aboutMe = pparams[index++].GetString();
+	RakNet::RakString activities = pparams[index++].GetString();
+	RakNet::RakString interests = pparams[index++].GetString();
+	RakNet::RakString favoriteGames = pparams[index++].GetString();
+	RakNet::RakString favoriteMovies = pparams[index++].GetString();
+	RakNet::RakString favoriteBooks = pparams[index++].GetString();
+	RakNet::RakString favoriteQuotations = pparams[index++].GetString();
+	serializedBinaryData->Write(aboutMe);
+	serializedBinaryData->Write(activities);
+	serializedBinaryData->Write(interests);
+	serializedBinaryData->Write(favoriteGames);
+	serializedBinaryData->Write(favoriteMovies);
+	serializedBinaryData->Write(favoriteBooks);
+	serializedBinaryData->Write(favoriteQuotations);
+}
 ACTIONSCRIPT_CALLABLE_FUNCTION(Lobby2ClientGFx3Impl, f2c_RegisterAccount)
 {
 	__L2_ALLOCATE_AND_DEFINE(messageFactory, Client_RegisterAccount, m1);
@@ -142,6 +185,12 @@ ACTIONSCRIPT_CALLABLE_FUNCTION(Lobby2ClientGFx3Impl, f2c_RegisterAccount)
 	m1->titleName="Test Title Name";
 	m1->cdKey="Test CD Key";
 	m1->userName=pparams[index++].GetString();
+
+	RakNet::BitStream serializedBinaryData;
+	WriteAccountBinaryData(&serializedBinaryData, pparams, index);
+	m1->createAccountParameters.binaryData = RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);
+	m1->createAccountParameters.binaryData->binaryData=(char*) serializedBinaryData.GetData();
+	m1->createAccountParameters.binaryData->binaryDataLength=serializedBinaryData.GetNumberOfBytesUsed();
 	lobby2Client->SendMsgAndDealloc(m1);
 }
 ACTIONSCRIPT_CALLABLE_FUNCTION(Lobby2ClientGFx3Impl, f2c_ValidateHandle)
@@ -191,6 +240,12 @@ ACTIONSCRIPT_CALLABLE_FUNCTION(Lobby2ClientGFx3Impl, f2c_UpdateAccount)
 	m1->createAccountParameters.caption1=pparams[index++].GetString();
 	m1->createAccountParameters.caption2=pparams[index++].GetString();
 	m1->createAccountParameters.ageInDays=atoi(pparams[index++].GetString());
+
+	RakNet::BitStream serializedBinaryData;
+	WriteAccountBinaryData(&serializedBinaryData, pparams,index);
+	m1->createAccountParameters.binaryData = RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);
+	m1->createAccountParameters.binaryData->binaryData=(char*) serializedBinaryData.GetData();
+	m1->createAccountParameters.binaryData->binaryDataLength=serializedBinaryData.GetNumberOfBytesUsed();
 	lobby2Client->SendMsgAndDealloc(m1);
 }
 ACTIONSCRIPT_CALLABLE_FUNCTION(Lobby2ClientGFx3Impl, f2c_StartIgnore)
@@ -597,7 +652,7 @@ void Lobby2ClientGFx3Impl::MessageResult(Client_ChangeHandle *message)
 }
 void Lobby2ClientGFx3Impl::MessageResult(Client_GetAccountDetails *message)
 {
-	FxResponseArgs<25> rargs;
+	FxResponseArgsList rargs;
 	rargs.Add(Lobby2ResultCodeDescription::ToEnglish(message->resultCode));
 	rargs.Add(message->createAccountParameters.firstName.C_String());
 	rargs.Add(message->createAccountParameters.middleName.C_String());
@@ -624,6 +679,8 @@ void Lobby2ClientGFx3Impl::MessageResult(Client_GetAccountDetails *message)
 	rargs.Add(message->createAccountParameters.caption2.C_String());
 	rargs.Add((Double)message->createAccountParameters.ageInDays);
 
+	RakNet::BitStream serializedBinaryData((unsigned char*) message->createAccountParameters.binaryData->binaryData, message->createAccountParameters.binaryData->binaryDataLength,false);
+	ReadAccountBinaryData(rargs,&serializedBinaryData);
 	FxDelegate::Invoke(movie, "c2f_GetAccountDetailsResult", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(RakNet::Client_StartIgnore *message)
@@ -685,16 +742,16 @@ void Lobby2ClientGFx3Impl::MessageResult(Friends_GetInvites *message)
 	rargs.Add((Double)message->invitesSent.Size());
 	rargs.Add((Double)message->invitesReceived.Size());
 	for (unsigned int i=0; i < message->invitesSent.Size(); i++)
-		rargs.Add(message->invitesSent[i].C_String());
+		rargs.Add(message->invitesSent[i].usernameAndStatus.handle.C_String());
 	for (unsigned int i=0; i < message->invitesReceived.Size(); i++)
-		rargs.Add(message->invitesReceived[i].C_String());
+		rargs.Add(message->invitesReceived[i].usernameAndStatus.handle.C_String());
 	FxDelegate::Invoke(movie, "c2f_GetFriendInvites", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Friends_GetFriends *message)
 {
 	FxResponseArgsList rargs;
 	for (unsigned int i=0; i < message->myFriends.Size(); i++)
-		rargs.Add(message->myFriends[i].C_String());
+		rargs.Add(message->myFriends[i].usernameAndStatus.handle.C_String());
 	FxDelegate::Invoke(movie, "c2f_GetFriends", rargs);
 }
 void Lobby2ClientGFx3Impl::MessageResult(Emails_Send *message)

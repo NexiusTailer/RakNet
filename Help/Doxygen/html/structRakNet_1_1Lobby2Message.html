@@ -161,8 +161,12 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Message.html#7d2c66bbb0ffbcda05e83e936976c41a">CallCallback</a> (<a class="el" href="structRakNet_1_1Lobby2Callbacks.html">Lobby2Callbacks</a> *cb)=0</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Message.html#728402fc0682cd48121a1502cfd2c370">ServerMemoryImpl</a> (<a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a> *server, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Message.html#09a07dc920666fc0d195253bbaf98b2c">ServerPreDBMemoryImpl</a> (<a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a> *server, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="510133c6c9db3b05b0494bcd028b99e3"></a><!-- doxytag: member="RakNet::Lobby2Message::ServerPostDBMemoryImpl" ref="510133c6c9db3b05b0494bcd028b99e3" args="(Lobby2Server *server, SystemAddress systemAddress)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Message.html#510133c6c9db3b05b0494bcd028b99e3">ServerPostDBMemoryImpl</a> (<a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a> *server, <a class="el" href="structSystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Do any <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base class for the lobby server, without database specific functionality.">Lobby2Server</a> functionality after the message has been processed by the database, in the server thread. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Message.html#39a885f1a8d8b636e5c7bbeb13d4f822">ServerDBImpl</a> (<a class="el" href="structRakNet_1_1Lobby2ServerCommand.html">Lobby2ServerCommand</a> *command, void *databaseInterface)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1Lobby2Message.html#6a85caa9e47c7d9fec7f156c5e7c723a">ValidateHandle</a> (<a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> *handle)</td></tr>
@@ -400,12 +404,12 @@ Is this message something that should only be run by a system with ranking uploa
 Do any <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base class for the lobby server, without database specific functionality.">Lobby2Server</a> functionality when the message is processed in a database thread on the server. It is safe to do slow database calls in this function. If it returns true, the message has been handled, and the result is sent to the client If it returns false, that means ignore the message 
 </div>
 </div><p>
-<a class="anchor" name="728402fc0682cd48121a1502cfd2c370"></a><!-- doxytag: member="RakNet::Lobby2Message::ServerMemoryImpl" ref="728402fc0682cd48121a1502cfd2c370" args="(Lobby2Server *server, SystemAddress systemAddress)" -->
+<a class="anchor" name="09a07dc920666fc0d195253bbaf98b2c"></a><!-- doxytag: member="RakNet::Lobby2Message::ServerPreDBMemoryImpl" ref="09a07dc920666fc0d195253bbaf98b2c" args="(Lobby2Server *server, SystemAddress systemAddress)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual bool RakNet::Lobby2Message::ServerMemoryImpl           </td>
+          <td class="memname">virtual bool RakNet::Lobby2Message::ServerPreDBMemoryImpl           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classRakNet_1_1Lobby2Server.html">Lobby2Server</a> *&nbsp;</td>
           <td class="paramname"> <em>server</em>, </td>
@@ -427,7 +431,7 @@ Do any <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base cla
 
 <p>
 Do any <a class="el" href="classRakNet_1_1Lobby2Server.html" title="The base class for the lobby server, without database specific functionality.">Lobby2Server</a> functionality when the message first arrives on the server, and after it has returned true from <a class="el" href="structRakNet_1_1Lobby2Message.html#419b02230facc25fe97e364ee914e996">PrevalidateInput()</a> If it returns true, the message has been handled, and the result is sent to the client If it returns false, the message continues to ServerDBImpl 
-<p>Reimplemented in <a class="el" href="structRakNet_1_1Platform__Startup.html#7026e7bc65cb9aab3a7156c60dc9312d">RakNet::Platform_Startup</a>, and <a class="el" href="structRakNet_1_1Platform__Shutdown.html#fefa6df276a0b9139bb68d76bac00018">RakNet::Platform_Shutdown</a>.</p>
+<p>Reimplemented in <a class="el" href="structRakNet_1_1Platform__Startup.html#1d0cbd6cad379a13d02b7147ded8a47c">RakNet::Platform_Startup</a>, and <a class="el" href="structRakNet_1_1Platform__Shutdown.html#d468df2e5f6029ebe5a407caba1c0d14">RakNet::Platform_Shutdown</a>.</p>
 
 </div>
 </div><p>
@@ -485,7 +489,7 @@ Just a number, uniquely identifying each allocation of <a class="el" href="struc
 <hr>The documentation for this struct was generated from the following file:<ul>
 <li>c:/RakNet/DependentExtensions/Lobby2/Lobby2Message.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 11 12:22:56 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Dec 29 11:22:37 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

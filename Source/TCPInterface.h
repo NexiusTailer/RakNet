@@ -159,7 +159,7 @@ protected:
 #if defined(OPEN_SSL_CLIENT_SUPPORT)
 	SSL_CTX* ctx;
 	SSL_METHOD *meth;
-	DataStructures::SingleProducerConsumer<SystemAddress> startSSL;
+	DataStructures::ThreadsafeAllocatingQueue<SystemAddress> startSSL;
 	DataStructures::List<SystemAddress> activeSSLConnections;
 #endif
 };

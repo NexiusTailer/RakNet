@@ -7,6 +7,8 @@
 
 #if defined(_WIN32) && !defined(_XBOX) && !defined(X360)
 #include "WindowsIncludes.h"
+// To call timeGetTime
+#pragma comment(lib, "Winmm.lib")
 #endif
 
 #include "GetTime.h"
@@ -123,30 +125,14 @@ RakNetTimeUS RakNet::GetTimeNS( void )
 	// Just make sure the time doesn't go backwards
 	if (curTime < lastQueryVal)
 		return lastQueryVal;
-	lastQueryVal=curTime;
-
-	/*
-#if !defined(_WIN32_WCE)
-	if (lastQueryVal==0)
+	DWORD tgt = timeGetTime();
+	RakNetTimeMS timeInMS = curTime/1000;
+	if (timeInMS>tgt+1000)
 	{
-		// First call
-		lastQueryVal=curTime;
-		return curTime;
+		// To workaround http://support.microsoft.com/kb/274323 where the timer can sometimes jump forward by hours or days
+		curTime=(RakNetTimeUS) tgt * (RakNetTimeUS) 1000;
 	}
-
-	// To workaround http://support.microsoft.com/kb/274323 where the timer can sometimes jump forward by hours or days
-	unsigned long curTickCount = GetTickCount();
-	unsigned long elapsedTickCount = curTickCount - lastTickCountVal;
-	RakNetTimeUS elapsedQueryVal = curTime - lastQueryVal;
-	if (elapsedQueryVal/1000 > elapsedTickCount+100)
-	{
-		curTime=(RakNetTimeUS)lastQueryVal+(RakNetTimeUS)elapsedTickCount*(RakNetTimeUS)1000;
-	}
-
-	lastTickCountVal=curTickCount;
 	lastQueryVal=curTime;
-#endif
-	*/
 
 	return curTime;
 

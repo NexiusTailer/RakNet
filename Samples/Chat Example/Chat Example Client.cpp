@@ -142,7 +142,7 @@ int main(void)
 				if (str[0]==0)
 					strcpy(str,"0");
 				int index = atoi(str);
-				client->CloseConnection(client->GetSystemAddressFromIndex(index),true);
+				client->CloseConnection(client->GetSystemAddressFromIndex(index),false);
 				printf("Disconnecting.\n");
 				continue;
 			}

@@ -4,6 +4,7 @@
 #include "NativeTypes.h"
 #include "RakNetTime.h"
 #include "RakNetTypes.h"
+#include "DS_Queue.h"
 
 /// Set to 4 if you are using the iPod Touch TG. See http://www.jenkinssoftware.com/forum/index.php?topic=2717.0
 #define CC_TIME_TYPE_BYTES 8
@@ -21,7 +22,7 @@ typedef double MicrosecondsPerByte;
 
 /// CC_RAKNET_UDT_PACKET_HISTORY_LENGTH should be a power of 2 for the writeIndex variables to wrap properly
 #define CC_RAKNET_UDT_PACKET_HISTORY_LENGTH 64
-#define RTT_HISTORY_LENGTH 256
+#define RTT_HISTORY_LENGTH 64
 
 /// Sizeof an UDP header in byte
 #define UDP_HEADER_SIZE 28
@@ -81,15 +82,7 @@ class CCRakNetUDT
 	/// Update over time
 	void Update(CCTimeType curTime, bool hasDataToSendOrResend);
 
-	/// How many bytes can we send, pursuant to congestion control
-	/// Retransmissions do not take into account reducing the window due to packets in flight, since you don't know if the message actually arrived or not
-	uint32_t GetRetransmissionBandwidth(CCTimeType curTime, CCTimeType estimatedTimeToNextTick);
-
-	/// How many bytes can we send, pursuant to congestion control
-	/// New transmissions take into account the number of packets in flight, and stays under this level
-	/// You can send more than this amount to fill out a datagram, or to send two messages as a packet pair
-	/// Retransmissions affect the bandwidth for new transmissions, so call OnSendBytes() from retransmissions before calling GetNewTransmissionBandwidth
-	uint32_t GetNewTransmissionBandwidth(CCTimeType curTime, CCTimeType estimatedTimeToNextTick, CCTimeType timeSinceLastContinualSend, uint32_t unacknowledgedBytes);
+	int GetTransmissionBandwidth(CCTimeType curTime, CCTimeType timeSinceLastTick, uint32_t unacknowledgedBytes, bool isContinuousSend);
 
 	/// Acks do not have to be sent immediately. Instead, they can be buffered up such that groups of acks are sent at a time
 	/// This reduces overall bandwidth usage
@@ -118,6 +111,7 @@ class CCRakNetUDT
 
 	/// Call when you get a NAK, with the sequence number of the lost message
 	/// Affects the congestion control
+	void OnResend(CCTimeType curTime);
 	void OnNAK(CCTimeType curTime, DatagramSequenceNumberType nakSequenceNumber);
 
 	/// Call this when an ACK arrives.
@@ -168,7 +162,6 @@ class CCRakNetUDT
 
 	bool GetIsInSlowStart(void) const {return isInSlowStart;}
 	uint32_t GetCWNDLimit(void) const {return (uint32_t) (CWND*MAXIMUM_MTU_INCLUDING_UDP_HEADER);}
-	CCTimeType GetNextAllowedSend(void) const {return nextAllowedSend;}
 
 
 	/// Is a > b, accounting for variable overflow?
@@ -256,11 +249,6 @@ class CCRakNetUDT
 	/// SND is initialized to the inverse of the receiver's packet arrival rate when slow start ends
 	bool isInSlowStart;
 	
-	/// Largest sequence number sent so far when a NAK arrives
-	/// Initialized to 0
-	/// If a NAK arrives with a sequence number larger than nextDatagramSYNUpdate, then this is defined as a new congestion period, in which case we do various things to slow our send rate.
-	DatagramSequenceNumberType nextDatagramSYNUpdate;
-	
 	/// How many NAKs arrived this congestion period
 	/// Initialized to 1 when the congestion period starts
 	uint32_t NAKCount;
@@ -293,23 +281,10 @@ class CCRakNetUDT
 	/// This is to prevent speeding up faster than congestion control can compensate for
 	CCTimeType lastUpdateWindowSizeAndAck;
 
-	/// If you send, and get no data at all from that time to RTO, then halve send rate
-	/// Used to backoff for low-bandwidth networks (as in UDT 4.5)
-	/// Set to:
-	/// 0 initially
-	/// curTime+RTO when elapsed during per-update tick, and data is waiting to be sent, or resent. (And halves send rate at that point)
-	/// curTime+RTO when data is sent if already elapsed
-	CCTimeType halveSNDOnNoDataTime;
-
 	/// Every time SND is halved due to timeout, the RTO is increased
 	/// This is to prevent massive retransmissions to an unresponsive system
 	/// Reset on any data arriving
 	double ExpCount;
-
-	/// Every time we send, nextAllowedSend is set to curTime + the number of bytes sent * SND
-	/// We can then not send again until that time elapses
-	/// The best amount of time to wait before sending again is exactly up until that time
-	CCTimeType nextAllowedSend;
 
 	/// Total number of user data bytes sent
 	/// Used to adjust the window size, on ACK, during slow start
@@ -339,11 +314,10 @@ class CCRakNetUDT
 
 	bool hasWrittenToPacketPairReceiptHistory;
 
-	uint32_t rttHistory[RTT_HISTORY_LENGTH];
-	uint32_t rttHistoryIndex;
-	uint32_t rttHistoryWriteCount;
-	bool gotPacketlossThisUpdate;
-	uint32_t rttSum, rttLow;
+//	uint32_t rttHistory[RTT_HISTORY_LENGTH];
+//	uint32_t rttHistoryIndex;
+//	uint32_t rttHistoryWriteCount;
+//	uint32_t rttSum, rttLow;
 //	CCTimeType lastSndUpdateTime;
 	double estimatedLinkCapacityBytesPerSecond;
 
@@ -379,18 +353,10 @@ class CCRakNetUDT
 	/// Update the corresponding variables post-slow start
 	void UpdateWindowSizeAndAckOnAckPerSyn(CCTimeType curTime, CCTimeType rtt, bool isContinuousSend, DatagramSequenceNumberType sequenceNumber);
 
-	/// Returns true on elapsed, false otherwise
-	bool HasHalveSNDOnNoDataTimeElapsed(CCTimeType curTime);
-
-	/// Sets halveSNDOnNoDataTime to the future, unless we don't know the RTO (ping*2) yet
-	void UpdateHalveSNDOnNoDataTime(CCTimeType curTime);
 
 	/// Sets halveSNDOnNoDataTime to the future, and also resets ExpCount, which is used to multiple the RTO on no data arriving at all
 	void ResetOnDataArrivalHalveSNDOnNoDataTime(CCTimeType curTime);
 	
-	// Update SND when data is sent
-	void UpdateNextAllowedSend(CCTimeType curTime, uint32_t numBytes);
-
 	// Init array
 	void InitPacketArrivalHistory(void);
 
@@ -400,6 +366,40 @@ class CCRakNetUDT
 	// Bug: SND can sometimes get super high - have seen 11693
 	void CapMinSnd(const char *file, int line);
 
+	void DecreaseTimeBetweenSends(void);
+	void IncreaseTimeBetweenSends(void);
+
+	// Algorithm to track ping trends more accurately than a fixed length buffer
+	// Every congestion block
+	// Check last RTT * 2 messages for slope.
+	// If slope is steady, increase rate
+	// If slope is downward, do nothing
+	// If any point is ever higher than 9/8 * max, decrease rate, start new congestion block
+	//
+	// Steady: Take average of slope between each point pair. Absolute value of Slope * numPoints should not exceed 25% of max-min
+	// Downward: Take average of slope between each point pair. Slope * numPoints should be negative and exceed 25% of max-min
+	DataStructures::Queue<uint32_t> rttDeltaHistory;
+	uint32_t rttLow, rttHigh,lastRttHigh, lastRttLow;
+	int rttDelta;
+	DatagramSequenceNumberType historyEndDatagramNumber;
+	void StartNewRttHistory(void);
+	enum RttAnalysis
+	{
+		RTTA_STEADY,
+		RTTA_DOWNWARD,
+		RTTA_SPIKE,
+		RTTA_NEITHER
+	};
+	RttAnalysis PushToRttHistory(uint32_t rtt, DatagramSequenceNumberType ackSequenceNumber);
+	RttAnalysis GetRTTAnalysis(uint32_t rtt);
+
+// 	uint32_t rttHistory[RTT_HISTORY_LENGTH];
+// 	uint32_t rttHistoryIndex;
+// 	uint32_t rttSum, rttLow;
+	void TrackRTT(CCTimeType curTime, CCTimeType rtt);
+	bool gotPacketlossThisUpdate;
+
+	int bytesCanSendThisTick;
 };
 
 }

@@ -319,15 +319,15 @@ public:
 		// Return false means don't delete OnFileStruct::data
 		return false;
 	}
-	virtual void OnFileProgress(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int dataChunkLength, char *firstDataChunk)
+	virtual void OnFileProgress(FileProgressStruct *fps)
 	{
 		char fullPathToDir[1024];
 
-		if (onFileStruct->fileName)
+		if (fps->onFileStruct->fileName)
 		{
 			strcpy(fullPathToDir, applicationDirectory);
-			strcat(fullPathToDir, onFileStruct->fileName);
-			onFileCallback->OnFileProgress(onFileStruct, partCount, partTotal, dataChunkLength, firstDataChunk);
+			strcat(fullPathToDir, fps->onFileStruct->fileName);
+			onFileCallback->OnFileProgress(fps);
 		}
 	}
 };

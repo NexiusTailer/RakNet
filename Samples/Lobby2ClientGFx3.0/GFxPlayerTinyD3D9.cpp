@@ -254,7 +254,8 @@ int FxPlayerTiny::Run()
 	RakNet::Lobby2Client lobby2Client;
 	RakNet::Lobby2MessageFactory messageFactory;
 	RakPeerInterface *rakPeer = RakNetworkFactory::GetRakPeerInterface();
-	rakPeer->Startup(1,30,&SocketDescriptor(), 1);
+	SocketDescriptor sd;
+	rakPeer->Startup(1,30,&sd, 1);
 	rakPeer->AttachPlugin(&lobby2Client);
 	rakPeer->AttachPlugin(&sampleImpl);
 	lobby2Client.SetMessageFactory(&messageFactory);

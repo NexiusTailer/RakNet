@@ -18,6 +18,9 @@ enum OutOfBandIdentifiers
 	ID_NAT_ESTABLISH_UNIDIRECTIONAL,
 	ID_NAT_ESTABLISH_BIDIRECTIONAL,
 	ID_NAT_TYPE_DETECT,
+	ID_ROUTER_2_REPLY_TO_SENDER_PORT,
+	ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT,
+	ID_ROUTER_2_MINI_PUNCH_REPLY,
 };
 
 /// You should not edit the file MessageIdentifiers.h as it is a part of RakNet static library
@@ -297,6 +300,13 @@ enum DefaultMessageIDTypes
 
 	/// Events happening with SQLiteClientLoggerPlugin
 	ID_SQLLITE_LOGGER,
+
+	/// Used by the router2 plugin
+	ID_ROUTER_2_INTERNAL,
+	/// No path is available or can be established to the remote system
+	ID_ROUTER_2_FORWARDING_NO_PATH,
+	/// The IP address for a forwarded connection has changed
+	ID_ROUTER_2_REROUTED,
 
 	// So I can add more without changing user enumerations
 	ID_RESERVED_1,

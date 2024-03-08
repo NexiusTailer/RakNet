@@ -147,6 +147,8 @@ public:
 	};
 
 	const DataStructures::OrderedList<SystemAddress, User*, Lobby2Server::UserCompBySysAddr>& GetUsers(void) const {return users;}
+	void GetUserOnlineStatus(UsernameAndOnlineStatus &userInfo) const;
+	
 
 protected:
 
@@ -157,9 +159,9 @@ protected:
 	void OnMessage(Packet *packet);
 	void Clear(void);
 	void ClearUsers(void);
-	unsigned int GetUserIndexBySystemAddress(SystemAddress systemAddress);
-	unsigned int GetUserIndexByGUID(RakNetGUID guid);
-	unsigned int GetUserIndexByUsername(RakNet::RakString userName);
+	unsigned int GetUserIndexBySystemAddress(SystemAddress systemAddress) const;
+	unsigned int GetUserIndexByGUID(RakNetGUID guid) const;
+	unsigned int GetUserIndexByUsername(RakNet::RakString userName) const;
 	void StopThreads(void);
 	void SendRemoteLoginNotification(RakNet::RakString handle, SystemAddress recipient);
 

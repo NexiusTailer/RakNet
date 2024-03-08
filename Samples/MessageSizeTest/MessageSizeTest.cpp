@@ -19,9 +19,10 @@ int main(int argc, char **argv)
 	printf("This project tests sending messages of various sizes.\n");
 	sender = RakNetworkFactory::GetRakPeerInterface();
 	receiver = RakNetworkFactory::GetRakPeerInterface();
-	receiver->Startup(32, 30, &SocketDescriptor(1234,0), 1);
+	SocketDescriptor sd1(1234,0),sd2(1235,0);
+	receiver->Startup(32, 30, &sd1, 1);
 	receiver->SetMaximumIncomingConnections(32);
-	sender->Startup(1, 30, &SocketDescriptor(1235,0), 1);
+	sender->Startup(1, 30, &sd2, 1);
 	sender->Connect("127.0.0.1", 1234, 0, 0);
 	RakSleep(100);
 

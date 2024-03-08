@@ -168,6 +168,7 @@ enum Lobby2MessageID
 	L2MID_Notification_Console_MemberLeftRoom,
 	L2MID_Notification_Console_KickedOutOfRoom,
 	L2MID_Notification_Console_RoomWasDestroyed,
+	L2MID_Notification_Console_UpdateRoomParameters,
 	L2MID_Notification_Console_RoomOwnerChanged,
 	L2MID_Notification_Console_RoomChatMessage,
 	L2MID_Notification_Console_RoomMessage,
@@ -247,7 +248,10 @@ struct Lobby2Message
 	/// Do any Lobby2Server	functionality when the message first arrives on the server, and after it has returned true from PrevalidateInput()
 	/// If it returns true, the message has been handled, and the result is sent to the client
 	/// If it returns false, the message continues to ServerDBImpl
-	virtual bool ServerMemoryImpl( Lobby2Server *server, SystemAddress systemAddress );
+	virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress );
+
+	/// Do any Lobby2Server	functionality after the message has been processed by the database, in the server thread.
+	virtual void ServerPostDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress );
 	
 	/// Do any Lobby2Server	functionality when the message is processed in a database thread on the server.
 	/// It is safe to do slow database calls in this function.
@@ -450,6 +454,7 @@ struct Notification_Console_MemberJoinedRoom;
 struct Notification_Console_MemberLeftRoom;
 struct Notification_Console_KickedOutOfRoom;
 struct Notification_Console_RoomWasDestroyed;
+struct Notification_Console_UpdateRoomParameters;
 struct Notification_Console_RoomOwnerChanged;
 struct Notification_Console_RoomChatMessage;
 struct Notification_Console_RoomMessage;
@@ -604,6 +609,7 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Notification_Console_MemberLeftRoom *message);
 	virtual void MessageResult(Notification_Console_KickedOutOfRoom *message);
 	virtual void MessageResult(Notification_Console_RoomWasDestroyed *message);
+	virtual void MessageResult(Notification_Console_UpdateRoomParameters *message);
 	virtual void MessageResult(Notification_Console_RoomOwnerChanged *message);
 	virtual void MessageResult(Notification_Console_RoomChatMessage *message);
 	virtual void MessageResult(Notification_Console_RoomMessage *message);
@@ -708,6 +714,20 @@ struct PendingInvite
 
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
 };
+struct UsernameAndOnlineStatus
+{
+	UsernameAndOnlineStatus() {isOnline=false;}
+	~UsernameAndOnlineStatus() {}
+	RakNet::RakString handle;
+	bool isOnline;
+
+	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
+};
+struct FriendInfo
+{
+	UsernameAndOnlineStatus usernameAndStatus;
+	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream) {usernameAndStatus.Serialize(writeToBitstream,bitStream);}
+};
 struct EmailResult
 {
 	EmailResult() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(__FILE__,__LINE__);}
@@ -799,7 +819,7 @@ struct Platform_Startup : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 	virtual bool PrevalidateInput(void) {return true;}
-	virtual bool ServerMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; return true; }
+	virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; return true; }
 };
 
 /// \brief Platform specific startup. Unused on the PC
@@ -812,7 +832,7 @@ struct Platform_Shutdown : public Lobby2Message
 	virtual bool CancelOnDisconnect(void) const {return false;}
 	virtual bool RequiresLogin(void) const {return false;}
 	virtual bool PrevalidateInput(void) {return true;}
-	virtual bool ServerMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; return true; }
+	virtual bool ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; return true; }
 };
 
 /// \brief Create all tables and stored procedures on a system that does not already have them
@@ -1553,8 +1573,8 @@ struct Friends_GetInvites : public Lobby2Message
 
 	// Output parameters
 	/// Up to caller to deallocate binaryData if needed
-	DataStructures::List<RakNet::RakString> invitesSent;
-	DataStructures::List<RakNet::RakString> invitesReceived;
+	DataStructures::List<FriendInfo> invitesSent;
+	DataStructures::List<FriendInfo> invitesReceived;
 };
 /// \brief Gets all friends to this user
 /// \ingroup LOBBY_2_COMMANDS
@@ -1569,7 +1589,7 @@ struct Friends_GetFriends : public Lobby2Message
 	// Input parameters
 
 	// Output parameters
-	DataStructures::List<RakNet::RakString> myFriends;
+	DataStructures::List<FriendInfo> myFriends;
 };
 /// \brief Ends a friendship between two users. Remove from the database the friend entry between my handle and their handle. As with accept add friend invite, this is bidirectional. Either user can terminate the friendship. Store in the emails table from my handle to their handle the subject, body, and binary data, and procedure type flag.
 /// \ingroup LOBBY_2_COMMANDS
@@ -3261,6 +3281,15 @@ struct Notification_Console_RoomWasDestroyed : public Lobby2Message
 	virtual bool RequiresLogin(void) const {return false;}
 };
 /// \ingroup LOBBY_2_NOTIFICATIONS
+struct Notification_Console_UpdateRoomParameters : public Lobby2Message
+{
+	__L2_MSG_BASE_IMPL(Notification_Console_UpdateRoomParameters)
+		virtual bool RequiresAdmin(void) const {return true;}
+	virtual bool RequiresRankingPermission(void) const {return false;}
+	virtual bool CancelOnDisconnect(void) const {return false;}
+	virtual bool RequiresLogin(void) const {return false;}
+};
+/// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_RoomOwnerChanged : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Notification_Console_RoomOwnerChanged)
@@ -3490,6 +3519,7 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Notification_Console_MemberLeftRoom);
 			__L2_MSG_FACTORY_BASE(Notification_Console_KickedOutOfRoom);
 			__L2_MSG_FACTORY_BASE(Notification_Console_RoomWasDestroyed);
+			__L2_MSG_FACTORY_BASE(Notification_Console_UpdateRoomParameters);
 			__L2_MSG_FACTORY_BASE(Notification_Console_RoomOwnerChanged);
 			__L2_MSG_FACTORY_BASE(Notification_Console_RoomChatMessage);
 			__L2_MSG_FACTORY_BASE(Notification_Console_RoomMessage);

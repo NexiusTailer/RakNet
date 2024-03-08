@@ -223,15 +223,15 @@ void BandwidthToString( RakNetBandwidth *s, char *buffer )
 		double percentageUsed;
 		percentageUsed=100.0 * s->bytesPerSecondOutgoing/s->bytesPerSecondLimit;
 		sprintf( buffer,
-			"Sending %.2f / %.2f MBPS. %.0f%% of capacity. %.0f bytes buffered.\n",
-			s->bytesPerSecondOutgoing/1000000.0, s->bytesPerSecondLimit/1000000.0, percentageUsed, s->bytesBuffered
+			"Sending %.2f / %.2f MBPS. %.0f%% of capacity. Packetloss: %.2f%%. %.0f bytes buffered.\n",
+			s->bytesPerSecondOutgoing/1000000.0, s->bytesPerSecondLimit/1000000.0, percentageUsed, s->packetloss, s->bytesBuffered
 			);
 	}
 	else
 	{
 		sprintf( buffer,
-			"Sending %.2f MBPS. Unknown capacity. %.0f bytes buffered.\n",
-			s->bytesPerSecondOutgoing/1000000.0, s->bytesPerSecondLimit/1000000.0, s->bytesBuffered
+			"Sending %.2f MBPS. Unknown capacity. Packetloss: %.2f%%. %.0f bytes buffered.\n",
+			s->bytesPerSecondOutgoing/1000000.0, s->packetloss, s->bytesBuffered
 			);
 	}
 }

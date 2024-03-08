@@ -31,7 +31,8 @@ void RunAsServer(void)
 	gets(port);
 	if (port[0]==0) strcpy(port, "60000");
 
-	rakServer->Startup(SERVER_MAXCLIENTS, 30, &SocketDescriptor(atoi(port), 0), 1);
+	SocketDescriptor sd(atoi(port), 0);
+	rakServer->Startup(SERVER_MAXCLIENTS, 30, &sd, 0), 1);
 	rakServer->SetMaximumIncomingConnections(SERVER_MAXCLIENTS);
 	printf("Running Server...\n");
 

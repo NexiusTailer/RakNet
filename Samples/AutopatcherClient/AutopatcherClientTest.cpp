@@ -53,7 +53,7 @@ public:
 		return false;
 	}
 
-	virtual void OnFileProgress(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int dataChunkLength, char *firstDataChunk)
+	virtual void OnFileProgress(FileProgressStruct *fps)
 	{
 		printf("Downloading: %i. (%i%%) %i/%i %s %ib / %ib\n", onFileStruct->setID, (int) (100.0*(double)partCount/(double)partTotal),
 			onFileStruct->fileIndex+1, onFileStruct->numberOfFilesInThisSet, onFileStruct->fileName,

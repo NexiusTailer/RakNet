@@ -47,10 +47,6 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#55338d840de0ab779fce0adbad13035f">Update</a> (CCTimeType curTime, bool hasDataToSendOrResend)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update over time. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">uint32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#4925d48d7864cf3b5cee399c87078dcc">GetRetransmissionBandwidth</a> (CCTimeType curTime, CCTimeType estimatedTimeToNextTick)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">uint32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#03ae23d12ddd98209a6653836e4b8eff">GetNewTransmissionBandwidth</a> (CCTimeType curTime, CCTimeType estimatedTimeToNextTick, CCTimeType timeSinceLastContinualSend, uint32_t unacknowledgedBytes)</td></tr>
-
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#8bccdc59401e7c858a5ad6622c22b089">ShouldSendACKs</a> (CCTimeType curTime, CCTimeType estimatedTimeToNextTick)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">DatagramSequenceNumberType&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#92a60d33f309abb79e7dfed88bb008da">GetNextDatagramSequenceNumber</a> (void)</td></tr>
@@ -63,7 +59,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Call this when you get a packet pair. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#9745aff0eecb30ac375f96d7ed900ec4">OnGotPacket</a> (DatagramSequenceNumberType datagramSequenceNumber, bool isContinuousSend, CCTimeType curTime, uint32_t sizeInBytes, uint32_t *skippedMessageCount)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#e2974c3b902a61d06c4d33cf9426cda2">OnNAK</a> (CCTimeType curTime, DatagramSequenceNumberType nakSequenceNumber)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#b62bfd98e871b8d23688c568db191c4f">OnResend</a> (CCTimeType curTime)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#68aa7981397893a0c872a983bbb7e2e7">OnAck</a> (CCTimeType curTime, CCTimeType rtt, bool hasBAndAS, BytesPerMicrosecond _B, BytesPerMicrosecond _AS, double totalUserDataBytesAcked, bool isContinuousSend, DatagramSequenceNumberType sequenceNumber)</td></tr>
 
@@ -128,14 +124,6 @@ double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#61ab6246afa94f10534d00eb72b72e48">UpdateWindowSizeAndAckOnAckPerSyn</a> (CCTimeType curTime, CCTimeType rtt, bool isContinuousSend, DatagramSequenceNumberType sequenceNumber)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update the corresponding variables post-slow start. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4e1e06cd9b3712b886fe7794dd68394a"></a><!-- doxytag: member="RakNet::CCRakNetUDT::HasHalveSNDOnNoDataTimeElapsed" ref="4e1e06cd9b3712b886fe7794dd68394a" args="(CCTimeType curTime)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#4e1e06cd9b3712b886fe7794dd68394a">HasHalveSNDOnNoDataTimeElapsed</a> (CCTimeType curTime)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns true on elapsed, false otherwise. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1c4f23881ce59a12d5f21b72c5652485"></a><!-- doxytag: member="RakNet::CCRakNetUDT::UpdateHalveSNDOnNoDataTime" ref="1c4f23881ce59a12d5f21b72c5652485" args="(CCTimeType curTime)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#1c4f23881ce59a12d5f21b72c5652485">UpdateHalveSNDOnNoDataTime</a> (CCTimeType curTime)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets halveSNDOnNoDataTime to the future, unless we don't know the RTO (ping*2) yet. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2e4579352bde32c43e7237aa1ad54cf8"></a><!-- doxytag: member="RakNet::CCRakNetUDT::ResetOnDataArrivalHalveSNDOnNoDataTime" ref="2e4579352bde32c43e7237aa1ad54cf8" args="(CCTimeType curTime)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#2e4579352bde32c43e7237aa1ad54cf8">ResetOnDataArrivalHalveSNDOnNoDataTime</a> (CCTimeType curTime)</td></tr>
 
@@ -173,8 +161,6 @@ CCTimeType&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#75b10ff828e2ac84b4c9a790d3bf8806">isInSlowStart</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">DatagramSequenceNumberType&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#40babaee131618d32488b2f24fc90a3a">nextDatagramSYNUpdate</a></td></tr>
-
 <tr><td class="memItemLeft" nowrap align="right" valign="top">uint32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#cc5c90cb7f27ab3f3ed68fbe5be2ec18">NAKCount</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">uint32_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#b9257d79ab34bf808bb57908a9db75ce">AvgNAKNum</a></td></tr>
@@ -197,11 +183,7 @@ DatagramSequenceNumberType&nbsp;</td><td class="memItemRight" valign="bottom"><a
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">CCTimeType&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#6442b7a2f098ca9becd8050a7ff86510">lastUpdateWindowSizeAndAck</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">CCTimeType&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#e5725d983b0c5f7e975f362ee57397d3">halveSNDOnNoDataTime</a></td></tr>
-
 <tr><td class="memItemLeft" nowrap align="right" valign="top">double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#f23a34584b9f20080db4a31bcfc5b202">ExpCount</a></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">CCTimeType&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#e451a78f66bab764d64f0ae04dba824f">nextAllowedSend</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">uint64_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1CCRakNetUDT.html#8eccf390d74986f75ecb6752a513d485">totalUserDataBytesSent</a></td></tr>
 
@@ -249,54 +231,13 @@ Every 16 packets that you send, send two of them back to back (a packet pair) as
 <li>
 When you get a packet, call <a class="el" href="classRakNet_1_1CCRakNetUDT.html#9745aff0eecb30ac375f96d7ed900ec4">OnGotPacket()</a>. If the packet is also either of a packet pair, call <a class="el" href="classRakNet_1_1CCRakNetUDT.html#bf5ff81bd53090d67a8f9551449cda3b" title="Call this when you get a packet pair.">OnGotPacketPair()</a> </li>
 <li>
-If you get a packet, and the sequence number is not 1 + the last sequence number, send a NAK. On the remote system, call <a class="el" href="classRakNet_1_1CCRakNetUDT.html#e2974c3b902a61d06c4d33cf9426cda2">OnNAK()</a> and resend that message. </li>
+If you get a packet, and the sequence number is not 1 + the last sequence number, send a NAK. On the remote system, call OnNAK() and resend that message. </li>
 <li>
 If you get an ACK, remove that message from retransmission. Call OnNonDuplicateAck(). </li>
 <li>
 If a message is not ACKed for <a class="el" href="classRakNet_1_1CCRakNetUDT.html#d911b0c0adcc71a279a426878e9788bd">GetRTOForRetransmission()</a>, resend it. </li>
 </ol>
 <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="03ae23d12ddd98209a6653836e4b8eff"></a><!-- doxytag: member="RakNet::CCRakNetUDT::GetNewTransmissionBandwidth" ref="03ae23d12ddd98209a6653836e4b8eff" args="(CCTimeType curTime, CCTimeType estimatedTimeToNextTick, CCTimeType timeSinceLastContinualSend, uint32_t unacknowledgedBytes)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint32_t RakNet::CCRakNetUDT::GetNewTransmissionBandwidth           </td>
-          <td>(</td>
-          <td class="paramtype">CCTimeType&nbsp;</td>
-          <td class="paramname"> <em>curTime</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">CCTimeType&nbsp;</td>
-          <td class="paramname"> <em>estimatedTimeToNextTick</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">CCTimeType&nbsp;</td>
-          <td class="paramname"> <em>timeSinceLastContinualSend</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&nbsp;</td>
-          <td class="paramname"> <em>unacknowledgedBytes</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-How many bytes can we send, pursuant to congestion control New transmissions take into account the number of packets in flight, and stays under this level You can send more than this amount to fill out a datagram, or to send two messages as a packet pair Retransmissions affect the bandwidth for new transmissions, so call <a class="el" href="classRakNet_1_1CCRakNetUDT.html#098c980d9b2e26a06242431d81104c33">OnSendBytes()</a> from retransmissions before calling GetNewTransmissionBandwidth 
-</div>
-</div><p>
 <a class="anchor" name="92a60d33f309abb79e7dfed88bb008da"></a><!-- doxytag: member="RakNet::CCRakNetUDT::GetNextDatagramSequenceNumber" ref="92a60d33f309abb79e7dfed88bb008da" args="(void)" -->
 <div class="memitem">
 <div class="memproto">
@@ -315,35 +256,6 @@ How many bytes can we send, pursuant to congestion control New transmissions tak
 
 <p>
 Every data packet sent must contain a sequence number Call this function to get it. The sequence number is passed into <a class="el" href="classRakNet_1_1CCRakNetUDT.html#bf5ff81bd53090d67a8f9551449cda3b" title="Call this when you get a packet pair.">OnGotPacketPair()</a> 
-</div>
-</div><p>
-<a class="anchor" name="4925d48d7864cf3b5cee399c87078dcc"></a><!-- doxytag: member="RakNet::CCRakNetUDT::GetRetransmissionBandwidth" ref="4925d48d7864cf3b5cee399c87078dcc" args="(CCTimeType curTime, CCTimeType estimatedTimeToNextTick)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint32_t RakNet::CCRakNetUDT::GetRetransmissionBandwidth           </td>
-          <td>(</td>
-          <td class="paramtype">CCTimeType&nbsp;</td>
-          <td class="paramname"> <em>curTime</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">CCTimeType&nbsp;</td>
-          <td class="paramname"> <em>estimatedTimeToNextTick</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-How many bytes can we send, pursuant to congestion control Retransmissions do not take into account reducing the window due to packets in flight, since you don't know if the message actually arrived or not 
 </div>
 </div><p>
 <a class="anchor" name="d911b0c0adcc71a279a426878e9788bd"></a><!-- doxytag: member="RakNet::CCRakNetUDT::GetRTOForRetransmission" ref="d911b0c0adcc71a279a426878e9788bd" args="(void) const " -->
@@ -498,26 +410,17 @@ Call this when an ACK arrives. hasBAndAS are possibly written with the ack, see 
 Call this when you get a packet (including packet pairs) If the DatagramSequenceNumberType is out of order, skippedMessageCount will be non-zero In that case, send a NAK for every sequence number up to that count 
 </div>
 </div><p>
-<a class="anchor" name="e2974c3b902a61d06c4d33cf9426cda2"></a><!-- doxytag: member="RakNet::CCRakNetUDT::OnNAK" ref="e2974c3b902a61d06c4d33cf9426cda2" args="(CCTimeType curTime, DatagramSequenceNumberType nakSequenceNumber)" -->
+<a class="anchor" name="b62bfd98e871b8d23688c568db191c4f"></a><!-- doxytag: member="RakNet::CCRakNetUDT::OnResend" ref="b62bfd98e871b8d23688c568db191c4f" args="(CCTimeType curTime)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void RakNet::CCRakNetUDT::OnNAK           </td>
+          <td class="memname">void RakNet::CCRakNetUDT::OnResend           </td>
           <td>(</td>
           <td class="paramtype">CCTimeType&nbsp;</td>
-          <td class="paramname"> <em>curTime</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"> <em>curTime</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
           <td></td>
-          <td class="paramtype">DatagramSequenceNumberType&nbsp;</td>
-          <td class="paramname"> <em>nakSequenceNumber</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td></td>
         </tr>
       </table>
 </div>
@@ -802,21 +705,6 @@ Every time SND is halved due to timeout, the RTO is increased This is to prevent
 Track which datagram sequence numbers have arrived. If a sequence number is skipped, send a NAK for all skipped messages 
 </div>
 </div><p>
-<a class="anchor" name="e5725d983b0c5f7e975f362ee57397d3"></a><!-- doxytag: member="RakNet::CCRakNetUDT::halveSNDOnNoDataTime" ref="e5725d983b0c5f7e975f362ee57397d3" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">CCTimeType <a class="el" href="classRakNet_1_1CCRakNetUDT.html#e5725d983b0c5f7e975f362ee57397d3">RakNet::CCRakNetUDT::halveSNDOnNoDataTime</a><code> [protected]</code>          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-If you send, and get no data at all from that time to RTO, then halve send rate Used to backoff for low-bandwidth networks (as in UDT 4.5) Set to: 0 initially curTime+RTO when elapsed during per-update tick, and data is waiting to be sent, or resent. (And halves send rate at that point) curTime+RTO when data is sent if already elapsed 
-</div>
-</div><p>
 <a class="anchor" name="75b10ff828e2ac84b4c9a790d3bf8806"></a><!-- doxytag: member="RakNet::CCRakNetUDT::isInSlowStart" ref="75b10ff828e2ac84b4c9a790d3bf8806" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -937,36 +825,6 @@ Most recent values read into the corresponding lists Used during the beginning o
 
 <p>
 How many NAKs arrived this congestion period Initialized to 1 when the congestion period starts 
-</div>
-</div><p>
-<a class="anchor" name="e451a78f66bab764d64f0ae04dba824f"></a><!-- doxytag: member="RakNet::CCRakNetUDT::nextAllowedSend" ref="e451a78f66bab764d64f0ae04dba824f" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">CCTimeType <a class="el" href="classRakNet_1_1CCRakNetUDT.html#e451a78f66bab764d64f0ae04dba824f">RakNet::CCRakNetUDT::nextAllowedSend</a><code> [protected]</code>          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Every time we send, nextAllowedSend is set to curTime + the number of bytes sent * SND We can then not send again until that time elapses The best amount of time to wait before sending again is exactly up until that time 
-</div>
-</div><p>
-<a class="anchor" name="40babaee131618d32488b2f24fc90a3a"></a><!-- doxytag: member="RakNet::CCRakNetUDT::nextDatagramSYNUpdate" ref="40babaee131618d32488b2f24fc90a3a" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">DatagramSequenceNumberType <a class="el" href="classRakNet_1_1CCRakNetUDT.html#40babaee131618d32488b2f24fc90a3a">RakNet::CCRakNetUDT::nextDatagramSYNUpdate</a><code> [protected]</code>          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Largest sequence number sent so far when a NAK arrives Initialized to 0 If a NAK arrives with a sequence number larger than nextDatagramSYNUpdate, then this is defined as a new congestion period, in which case we do various things to slow our send rate. 
 </div>
 </div><p>
 <a class="anchor" name="eb20ef9ac41fa2db0a5275384bfc93af"></a><!-- doxytag: member="RakNet::CCRakNetUDT::nextSYNUpdate" ref="eb20ef9ac41fa2db0a5275384bfc93af" args="" -->
@@ -1092,7 +950,7 @@ Total number of user data bytes sent Used to adjust the window size, on ACK, dur
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/CCRakNetUDT.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 11 12:22:56 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Dec 29 11:22:36 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

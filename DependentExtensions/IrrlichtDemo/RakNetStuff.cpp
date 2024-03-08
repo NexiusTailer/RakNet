@@ -79,7 +79,8 @@ void InstantiateRakNetClasses(void)
 	// Basis of all UDP communications
 	rakPeer=RakNetworkFactory::GetRakPeerInterface();
 	// +1 is for the connection to the NAT punchthrough server
-	rakPeer->Startup(MAX_PLAYERS+1,UDP_SLEEP_TIMER,&SocketDescriptor(0,0),1);
+	SocketDescriptor sd(0,0);
+	rakPeer->Startup(MAX_PLAYERS+1,UDP_SLEEP_TIMER,&sd,1);
 	rakPeer->SetMaximumIncomingConnections(MAX_PLAYERS);
 	// ReplicaManager3 replies on NetworkIDManager. It assigns numbers to objects so they can be looked up over the network
 	// It's a class in case you wanted to have multiple worlds, then you could have multiple instances of NetworkIDManager

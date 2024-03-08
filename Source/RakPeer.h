@@ -29,13 +29,13 @@
 class HuffmanEncodingTree;
 class PluginInterface2;
 
-// Sucks but this struct has to be outside the class.  Inside and DevCPP won't let you refer to the struct as RakPeer::SystemAddressAndIndex while GCC
-// forces you to do RakPeer::SystemAddressAndIndex
-struct SystemAddressAndIndex{SystemAddress systemAddress;unsigned index;};
-int RAK_DLL_EXPORT SystemAddressAndIndexComp( const SystemAddress &key, const SystemAddressAndIndex &data ); // GCC requires RakPeer::SystemAddressAndIndex or it won't compile
+// Sucks but this struct has to be outside the class.  Inside and DevCPP won't let you refer to the struct as RakPeer::RemoteSystemIndex while GCC
+// forces you to do RakPeer::RemoteSystemIndex
+struct RemoteSystemIndex{unsigned index; RemoteSystemIndex *next;};
+//int RAK_DLL_EXPORT SystemAddressAndIndexComp( const SystemAddress &key, const RemoteSystemIndex &data ); // GCC requires RakPeer::RemoteSystemIndex or it won't compile
 
-///\brief The RakPeer class provides the main interface for network communications.
-/// \details It is the main class used for data transmission and most of RakNet's functionality. It is the primary interface for RakNet.
+///\brief Main interface for network communications.
+/// \details It implements most of RakNet's functionality and is the primary interface for RakNet.
 ///
 /// Inherits RakPeerInterface.
 ///
@@ -258,28 +258,28 @@ public:
 
 	// --------------------------------------------------------------------------------------------Remote Procedure Call Functions - Functions to initialize and perform RPC--------------------------------------------------------------------------------------------
 	/// \ingroup RAKNET_RPC
-	/// Register a C or static member function as available for calling as a remote procedure call
+	/// \brief Register a C or static member function as available for calling a remote procedure call.
 	/// \param[in] uniqueID A null-terminated unique string to identify this procedure.  See RegisterClassMemberRPC() for class member functions.
 	/// \param[in] functionPointer(...) The name of the function to be used as a function pointer. This can be called whether active or not, and registered functions stay registered unless unregistered
 	/// \deprecated Use RakNet::RPC3
 	void RegisterAsRemoteProcedureCall( const char* uniqueID, void ( *functionPointer ) ( RPCParameters *rpcParms ) );
 
 	/// \ingroup RAKNET_RPC
-	/// Register a C++ member function as available for calling as a remote procedure call.
-	/// \param[in] uniqueID A null terminated string to identify this procedure. Recommended you use the macro REGISTER_CLASS_MEMBER_RPC to create the string.  Use RegisterAsRemoteProcedureCall() for static functions.
-	/// \param[in] functionPointer The name of the function to be used as a function pointer. This can be called whether active or not, and registered functions stay registered unless unregistered with UnregisterAsRemoteProcedureCall
+	/// \brief Register a C++ member function as available for calling as a remote procedure call.
+	/// \param[in] uniqueID A null terminated string to identify this procedure. It is recommended to use the macro REGISTER_CLASS_MEMBER_RPC to create the string.  Use RegisterAsRemoteProcedureCall() for static functions.
+	/// \param[in] functionPointer The name of the function to be used as a function pointer. This can be called whether active or not, and registered functions stay registered unless unregistered with UnregisterAsRemoteProcedureCall.
 	/// \sa The sample ObjectMemberRPC.cpp
 	/// \deprecated Use RakNet::RPC3
 	void RegisterClassMemberRPC( const char* uniqueID, void *functionPointer );
 
 	/// \ingroup RAKNET_RPC
-	/// Unregisters a C function as available for calling as a remote procedure call that was formerly registered with RegisterAsRemoteProcedureCall. Only call offline.
+	/// \brief Unregisters a C function as available for calling as a remote procedure call that was formerly registered with RegisterAsRemoteProcedureCall. Only call offline.
 	/// \param[in] uniqueID A string of only letters to identify this procedure.  Recommended you use the macro CLASS_MEMBER_ID for class member functions.
 		/// \deprecated Use RakNet::RPC3
 	void UnregisterAsRemoteProcedureCall( const char* uniqueID );
 
 	/// \ingroup RAKNET_RPC
-	/// Used by Object member RPC to lookup objects given that object's ID
+	/// \brief Used by Object member RPC to lookup objects given that object's ID.
 	/// Also used by the ReplicaManager plugin
 	/// \param[in] An instance of NetworkIDManager to use for the loookup.
 	void SetNetworkIDManager( NetworkIDManager *manager );
@@ -309,15 +309,16 @@ public:
 
 	/// ------------------------------------------- Deprecated -------------------------
 	/// \ingroup RAKNET_RPC
-	/// Calls a C function on the remote system that was already registered using RegisterAsRemoteProcedureCall.
-	/// If you want that function to return data you should call RPC from that system in the same wayReturns true on a successful packet
-	/// send (this does not indicate the recipient performed the call), false on failure
-	/// \pre To use object member RPC (networkID!=UNASSIGNED_OBJECT_ID), The recipient must have called SetNetworkIDManager so the system can handle the object lookups
+	/// \brief Calls a C function on the remote system that was already registered using RegisterAsRemoteProcedureCall.
+	/// \details If you want that function to return data you should call RPC from that system in the same way.Returns true on a successful packet
+	/// send (this does not indicate the recipient performed the call), false on failure.
+	/// \pre To use object member RPC (networkID!=UNASSIGNED_OBJECT_ID), the recipient must have called SetNetworkIDManager so the system can handle the object lookups.
 	/// \param[in] uniqueID A NULL terminated string identifying the function to call.  Recommended you use the macro CLASS_MEMBER_ID for class member functions.
-	/// \param[in] data The data to send
-	/// \param[in] bitLength The number of bits of \a data
+	/*/// \param[in] data The data to send
+	/// \param[in] bitLength The number of bits of \a data*/
+	///	\param[in] bitStream The bit stream to send.
 	/// \param[in] priority What priority level to send on. See PacketPriority.h.
-	/// \param[in] reliability How reliability to send this data. See PacketPriority.h.
+	/// \param[in] reliability How reliably to send this data. See PacketPriority.h.
 	/// \param[in] orderingChannel When using ordered or sequenced message, what channel to order these on.
 	/// \param[in] systemAddress Who to send this message to, or in the case of broadcasting who not to send it to.  Pass either a SystemAddress structure or a RakNetGUID structure. Use UNASSIGNED_SYSTEM_ADDRESS or to specify none
 	/// \param[in] broadcast True to send this packet to all connected systems. If true, then systemAddress specifies who not to send the packet to.
@@ -343,33 +344,36 @@ public:
 	/// \param[in] target Target system to cancel.
 	void CancelConnectionAttempt( const SystemAddress target );
 
-	/// Returns if a particular systemAddress is connected to us (this also returns true if we are in the process of connecting)
+	/// \brief Returns if a particular systemAddress is connected to us.
+	///	\note This can also be made to return true if we are in the process of connecting.
 	/// \param[in] systemAddress The SystemAddress we are referring to
 	/// \param[in] includeInProgress If true, also return true for connections that are in progress but haven't completed
 	/// \param[in] includeDisconnecting If true, also return true for connections that are in the process of disconnecting
 	/// \return True if this system is connected and active, false otherwise.
-	bool IsConnected(const SystemAddress systemAddress, bool includeInProgress=false, bool includeDisconnecting=false);
+	bool IsConnected(const AddressOrGUID systemIdentifier, bool includeInProgress=false, bool includeDisconnecting=false);
 
-	/// Given a systemAddress, returns an index from 0 to the maximum number of players allowed - 1.
-	/// This includes systems which were formerly connected, but are not now connected
+	/// \brief Given \a systemAddress, returns its index into remoteSystemList.
+	/// \details Values range from 0 to the maximum number of players allowed - 1.
+	/// This includes systems which were formerly connected, but are now not connected.
 	/// \param[in] systemAddress The SystemAddress we are referring to
 	/// \return The index of this SystemAddress or -1 on system not found.
 	int GetIndexFromSystemAddress( const SystemAddress systemAddress );
 
-	/// This function is only useful for looping through all systems
-	/// Given an index, will return a SystemAddress.
+	/// \brief Given \a index into remoteSystemList, will return a SystemAddress.
+	/// This function is only useful for looping through all systems.
+	/// 
 	/// \param[in] index Index should range between 0 and the maximum number of players allowed - 1.
-	/// \return The SystemAddress
+	/// \return The SystemAddress structure corresponding to \a index in remoteSystemList.
 	SystemAddress GetSystemAddressFromIndex( int index );
 
-	/// Same as GetSystemAddressFromIndex but returns RakNetGUID
+	/// \brief Same as GetSystemAddressFromIndex but returns RakNetGUID
 	/// \param[in] index Index should range between 0 and the maximum number of players allowed - 1.
 	/// \return The RakNetGUID
 	RakNetGUID GetGUIDFromIndex( int index );
 
-	/// Same as calling GetSystemAddressFromIndex and GetGUIDFromIndex for all systems, but more efficient
+	/// \brief Same as calling GetSystemAddressFromIndex and GetGUIDFromIndex for all systems, but more efficient
 	/// Indices match each other, so \a addresses[0] and \a guids[0] refer to the same system
-	/// \param[out] addresses All system addresses. Size of the list is the number of connections. Size of the list will match the size of the \a guids list.
+	/// \param[out] addresses All system addresses. Size of the list is the number of connections. Size of the \a addresses list will match the size of the \a guids list.
 	/// \param[out] guids All guids. Size of the list is the number of connections. Size of the list will match the size of the \a addresses list.
 	void GetSystemList(DataStructures::List<SystemAddress> &addresses, DataStructures::List<RakNetGUID> &guids);
 
@@ -380,19 +384,19 @@ public:
 	void AddToBanList( const char *IP, RakNetTime milliseconds=0 );
 
 	/// \brief Allows a previously banned IP to connect. 
-	/// param[in] Dotted IP address. You can use * as a wildcard, such as 128.0.0.* will ban all IP addresses starting with 128.0.0.
+	/// param[in] Dotted IP address. You can use * as a wildcard. An IP such as 128.0.0.* will ban all IP addresses starting with 128.0.0.
 	void RemoveFromBanList( const char *IP );
 
-	/// Allows all previously banned IPs to connect.
+	/// \brief Allows all previously banned IPs to connect.
 	void ClearBanList( void );
 
-	/// Returns true or false indicating if a particular IP is banned.
-	/// \param[in] IP - Dotted IP address.
-	/// \return true if IP matches any IPs in the ban list, accounting for any wildcards. False otherwise.
+	/// \brief Returns true or false indicating if a particular IP is banned.
+	/// \param[in] IP Dotted IP address.
+	/// \return True if IP matches any IPs in the ban list, accounting for any wildcards. False otherwise.
 	bool IsBanned( const char *IP );
 
-	/// Enable or disable allowing frequent connections from the same IP adderss
-	/// This is a security measure which is disabled by default, but can be set to true to prevent attackers from using up all connection slots
+	/// \brief Enable or disable allowing frequent connections from the same IP adderss
+	/// \details This is a security measure which is disabled by default, but can be set to true to prevent attackers from using up all connection slots.
 	/// \param[in] b True to limit connections from the same ip to at most 1 per 100 milliseconds.
 	void SetLimitIPConnectionFrequency(bool b);
 	
@@ -402,7 +406,8 @@ public:
 	/// \param[in] target Which system to ping
 	void Ping( const SystemAddress target );
 
-	/// Send a ping to the specified unconnected system. The remote system, if it is Initialized, will respond with ID_PONG followed by sizeof(RakNetTime) containing the system time the ping was sent.(Default is 4 bytes - See __GET_TIME_64BIT in RakNetTypes.h
+	/// \brief Send a ping to the specified unconnected system. 
+	/// \details The remote system, if it is Initialized, will respond with ID_PONG followed by sizeof(RakNetTime) containing the system time the ping was sent. Default is 4 bytes - See __GET_TIME_64BIT in RakNetTypes.h
 	/// System should reply with ID_PONG if it is active
 	/// \param[in] host Either a dotted IP address or a domain name.  Can be 255.255.255.255 for LAN broadcast.
 	/// \param[in] remotePort Which port to connect to on the remote machine.
@@ -411,78 +416,80 @@ public:
 	/// \return true on success, false on failure (unknown hostname)
 	bool Ping( const char* host, unsigned short remotePort, bool onlyReplyOnAcceptingConnections, unsigned connectionSocketIndex=0 );
 
-	/// Returns the average of all ping times read for the specific system or -1 if none read yet
+	/// \brief Returns the average of all ping times read for the specific system or -1 if none read yet
 	/// \param[in] systemAddress Which system we are referring to
 	/// \return The ping time for this system, or -1
-	int GetAveragePing( const SystemAddress systemAddress );
+	int GetAveragePing( const AddressOrGUID systemIdentifier );
 
-	/// Returns the last ping time read for the specific system or -1 if none read yet
+	/// \brief Returns the last ping time read for the specific system or -1 if none read yet.
 	/// \param[in] systemAddress Which system we are referring to
-	/// \return The last ping time for this system, or -1
-	int GetLastPing( const SystemAddress systemAddress ) const;
+	/// \return The last ping time for this system, or -1.
+	int GetLastPing( const AddressOrGUID systemIdentifier ) const;
 
-	/// Returns the lowest ping time read or -1 if none read yet
+	/// \brief Returns the lowest ping time read or -1 if none read yet.
 	/// \param[in] systemAddress Which system we are referring to
-	/// \return The lowest ping time for this system, or -1
-	int GetLowestPing( const SystemAddress systemAddress ) const;
+	/// \return The lowest ping time for this system, or -1.
+	int GetLowestPing( const AddressOrGUID systemIdentifier ) const;
 
-	/// Ping the remote systems every so often, or not. This is off by default.  Can be called anytime.
+	/// \brief Ping the remote systems every so often, or not. 
+	/// \details This is off by default.  Can be called anytime.
 	/// \param[in] doPing True to start occasional pings.  False to stop them.
 	void SetOccasionalPing( bool doPing );
 	
 	// --------------------------------------------------------------------------------------------Static Data Functions - Functions dealing with API defined synchronized memory--------------------------------------------------------------------------------------------
-	/// Sets the data to send along with a LAN server discovery or offline ping reply.
-	/// \a length should be under 400 bytes, as a security measure against flood attacks
-	/// \param[in] data a block of data to store, or 0 for none
-	/// \param[in] length The length of data in bytes, or 0 for none
+	/// \brief Sets the data to send along with a LAN server discovery or offline ping reply.
+	/// \param[in] data Block of data to send, or 0 for none
+	/// \param[in] length Length of the data in bytes, or 0 for none
+	/// \note \a length should be under 400 bytes, as a security measure against flood attacks
 	/// \sa Ping.cpp
 	void SetOfflinePingResponse( const char *data, const unsigned int length );
 
-	/// Returns pointers to a copy of the data passed to SetOfflinePingResponse
-	/// \param[out] data A pointer to a copy of the data passed to \a SetOfflinePingResponse()
+	/// \brief Returns pointers to a copy of the \a data passed to SetOfflinePingResponse.
+	/// \param[out] data A pointer to a copy of the data passed to SetOfflinePingResponse()
 	/// \param[out] length A pointer filled in with the length parameter passed to SetOfflinePingResponse()
 	/// \sa SetOfflinePingResponse
 	void GetOfflinePingResponse( char **data, unsigned int *length );
 	
 	//--------------------------------------------------------------------------------------------Network Functions - Functions dealing with the network in general--------------------------------------------------------------------------------------------
-	/// Return the unique address identifier that represents you or another system on the the network and is based on your local IP / port.
+	/// \brief Returns the unique address identifier that represents you or another system on the the network and is based on your local IP / port.
 	/// \param[in] systemAddress Use UNASSIGNED_SYSTEM_ADDRESS to get your behind-LAN address. Use a connected system to get their behind-LAN address
 	/// \param[in] index When you have multiple internal IDs, which index to return? Currently limited to MAXIMUM_NUMBER_OF_INTERNAL_IDS (so the maximum value of this variable is MAXIMUM_NUMBER_OF_INTERNAL_IDS-1)
-	/// \return the identifier of your system internally, which may not be how other systems see if you if you are behind a NAT or proxy
+	/// \return Identifier of your system internally, which may not be how other systems see if you if you are behind a NAT or proxy
 	SystemAddress GetInternalID( const SystemAddress systemAddress=UNASSIGNED_SYSTEM_ADDRESS, const int index=0 ) const;
 
-	/// Return the unique address identifier that represents you on the the network and is based on your externalIP / port
-	/// (the IP / port the specified player uses to communicate with you)
-	/// \param[in] target Which remote system you are referring to for your external ID.  Usually the same for all systems, unless you have two or more network cards.
+	/// \brief Returns the unique address identifier that represents the target on the the network and is based on the target's external IP / port.
+	/// \param[in] target The SystemAddress of the remote system. Usually the same for all systems, unless you have two or more network cards.
 	SystemAddress GetExternalID( const SystemAddress target ) const;
 
-	/// Given a connected system, give us the unique GUID representing that instance of RakPeer.
-	/// This will be the same on all systems connected to that instance of RakPeer, even if the external system addresses are different
-	/// O(log2(n))
+	/// \brief  Given a connected system address, this method gives the unique GUID representing that instance of RakPeer.
+	/// This will be the same on all systems connected to that instance of RakPeer, even if the external system addresses are different.
+	/// Complexity is O(log2(n)).
 	/// If \a input is UNASSIGNED_SYSTEM_ADDRESS, will return your own GUID
 	/// \pre Call Startup() first, or the function will return UNASSIGNED_RAKNET_GUID
-	/// \param[in] input The system address of the system we are connected to
+	/// \param[in] input The system address of the target system we are connected to.
 	const RakNetGUID& GetGuidFromSystemAddress( const SystemAddress input ) const;
 
-	/// Given the GUID of a connected system, give us the system address of that system.
-	/// The GUID will be the same on all systems connected to that instance of RakPeer, even if the external system addresses are different
+	/// \brief Gives the system address of a connected system, given its GUID.
+	/// The GUID will be the same on all systems connected to that instance of RakPeer, even if the external system addresses are different.
 	/// Currently O(log(n)), but this may be improved in the future
-	/// If \a input is UNASSIGNED_RAKNET_GUID, will return UNASSIGNED_SYSTEM_ADDRESS
-	/// \param[in] input The RakNetGUID of the system we are checking to see if we are connected to
+	/// If \a input is UNASSIGNED_RAKNET_GUID, UNASSIGNED_SYSTEM_ADDRESS is returned.
+	/// \param[in] input The RakNetGUID of the target system.
 	SystemAddress GetSystemAddressFromGuid( const RakNetGUID input ) const;
 
-	/// Set the time, in MS, to use before considering ourselves disconnected after not being able to deliver a reliable message.
-	/// Default time is 10,000 or 10 seconds in release and 30,000 or 30 seconds in debug.
+	/// \brief Set the time, in MS, to use before considering ourselves disconnected after not being able to deliver a reliable message.
+	/// \details Default time is 10,000 or 10 seconds in release and 30,000 or 30 seconds in debug.
     /// \param[in] timeMS Time, in MS
-	/// \param[in] target Which system to do this for. Pass UNASSIGNED_SYSTEM_ADDRESS for all systems.
+	/// \param[in] target SystemAddress structure of the target system. Pass UNASSIGNED_SYSTEM_ADDRESS for all systems.
 	void SetTimeoutTime( RakNetTime timeMS, const SystemAddress target );
-
-	/// \param[in] target Which system to do this for. Pass UNASSIGNED_SYSTEM_ADDRESS to get the default value
-	/// \return timeoutTime for a given system.
+	
+	/// \brief Returns the Timeout time for the given system.
+	/// \param[in] target Target system to get the TimeoutTime for. Pass UNASSIGNED_SYSTEM_ADDRESS to get the default value.
+	/// \return Timeout time for a given system.
 	RakNetTime GetTimeoutTime( const SystemAddress target );
 
-	/// \Deprecated 8/12/09 MTU automatically calculated during connection process 
-	/// Set the MTU per datagram.  It's important to set this correctly - otherwise packets will be needlessly split, decreasing performance and throughput.
+	/*/// \deprecated 8/12/09 
+	/// \brief MTU automatically calculated during connection process 
+	/// \details Set the MTU per datagram.  It's important to set this correctly - otherwise packets will be needlessly split, decreasing performance and throughput.
 	/// Maximum allowed size is MAXIMUM_MTU_SIZE.
 	/// Too high of a value will cause packets not to arrive at worst and be fragmented at best.
 	/// Too low of a value will split packets unnecessarily.
@@ -491,23 +498,25 @@ public:
 	/// \param[in] target Which system to set this for.  UNASSIGNED_SYSTEM_ADDRESS to set the default, for new systems
 	/// \pre Can only be called when not connected.
 	/// \return false on failure (we are connected), else true
-	/// bool SetMTUSize( int size, const SystemAddress target );
+	/// bool SetMTUSize( int size, const SystemAddress target );*/
 
-	/// Returns the current MTU size
-	/// \param[in] target Which system to get this for.  UNASSIGNED_SYSTEM_ADDRESS to get the default
-	/// \return The current MTU size
+	/// \brief Returns the current MTU size
+	/// \param[in] target Which system to get MTU for.  UNASSIGNED_SYSTEM_ADDRESS to get the default
+	/// \return The current MTU size of the target system.
 	int GetMTUSize( const SystemAddress target ) const;
 
-	/// Returns the number of IP addresses this system has internally. Get the actual addresses from GetLocalIP()
+	/// \brief Returns the number of IP addresses this system has internally.
+	/// \details Get the actual addresses from GetLocalIP()
 	unsigned GetNumberOfAddresses( void );
 
-	/// Returns an IP address at index 0 to GetNumberOfAddresses-1
+	/// Returns an IP address at index 0 to GetNumberOfAddresses-1 in ipList array.
 	/// \param[in] index index into the list of IP addresses
 	/// \return The local IP address at this index
 	const char* GetLocalIP( unsigned int index );
 
 	/// Is this a local IP?
-	/// \param[in] An IP address to check, excluding the port
+	/// Checks if this ip is in the ipList array.
+	/// \param[in] An IP address to check, excluding the port.
 	/// \return True if this is one of the IP addresses returned by GetLocalIP
 	bool IsLocalIP( const char *ip );
 
@@ -516,8 +525,8 @@ public:
 	/// \param[in] allow - True to allow this behavior, false to not allow. Defaults to false. Value persists between connections.
 	void AllowConnectionResponseIPMigration( bool allow );
 
-	/// Sends a one byte message ID_ADVERTISE_SYSTEM to the remote unconnected system.
-	/// \brief This will tell the remote system our external IP outside the LAN along with some user data.
+	/// \brief Sends a one byte message ID_ADVERTISE_SYSTEM to the remote unconnected system.
+	/// This will send our external IP outside the LAN along with some user data to the remote system.
 	/// \pre The sender and recipient must already be started via a successful call to Initialize
 	/// \param[in] host Either a dotted IP address or a domain name
 	/// \param[in] remotePort Which port to connect to on the remote machine.
@@ -527,37 +536,41 @@ public:
 	/// \return False if IsActive()==false or the host is unresolvable. True otherwise.
 	bool AdvertiseSystem( const char *host, unsigned short remotePort, const char *data, int dataLength, unsigned connectionSocketIndex=0 );
 
-	/// Controls how often to return ID_DOWNLOAD_PROGRESS for large message downloads.
-	/// ID_DOWNLOAD_PROGRESS is returned to indicate a new partial message chunk, roughly the MTU size, has arrived
+	/// \brief Controls how often to return ID_DOWNLOAD_PROGRESS for large message downloads.
+	/// \details ID_DOWNLOAD_PROGRESS is returned to indicate a new partial message chunk, roughly the MTU size, has arrived.
 	/// As it can be slow or cumbersome to get this notification for every chunk, you can set the interval at which it is returned.
-	/// Defaults to 0 (never return this notification)
-	/// \param[in] interval How many messages to use as an interval
+	/// Defaults to 0 (never return this notification).
+	/// \param[in] interval How many messages to use as an interval before a download progress notification is returned.
 	void SetSplitMessageProgressInterval(int interval);
 
-	/// Returns what was passed to SetSplitMessageProgressInterval()
-	/// \return What was passed to SetSplitMessageProgressInterval(). Default to 0.
+	/// \brief Returns what was passed to SetSplitMessageProgressInterval().
+	/// \return Number of messages to be recieved before a download progress notification is returned. Default to 0.
 	int GetSplitMessageProgressInterval(void) const;
 
-	/// Set how long to wait before giving up on sending an unreliable message
+	/// \brief Set how long to wait before giving up on sending an unreliable message.
 	/// Useful if the network is clogged up.
 	/// Set to 0 or less to never timeout.  Defaults to 0.
 	/// \param[in] timeoutMS How many ms to wait before simply not sending an unreliable message.
 	void SetUnreliableTimeout(RakNetTime timeoutMS);
 
-	/// Send a message to host, with the IP socket option TTL set to 3
-	/// This message will not reach the host, but will open the router.
-	/// \param[in] ttl Max hops of datagram
-	/// Used for NAT-Punchthrough
+	/// \brief Send a message to a host, with the IP socket option TTL set to 3.
+	/// \details This message will not reach the host, but will open the router.
+	/// \param[in] host The address of the remote host in dotted notation.
+	/// \param[in] remotePort The port number to send to.
+	/// \param[in] ttl Max hops of datagram, set to 3
+	/// \param[in] connectionSocketIndex userConnectionSocketIndex.
+	/// \remarks Used for NAT-Punchthrough
 	void SendTTL( const char* host, unsigned short remotePort, int ttl, unsigned connectionSocketIndex=0 );
 
 	// --------------------------------------------------------------------------------------------Compression Functions - Functions related to the compression layer--------------------------------------------------------------------------------------------
-	/// Enables or disables frequency table tracking.  This is required to get a frequency table, which is used in GenerateCompressionLayer()
-	/// This value persists between connect calls and defaults to false (no frequency tracking)
+	/// \brief Enables or disables frequency table tracking.
+	/// \details This is required to get a frequency table, which is used in GenerateCompressionLayer(). 
+	/// This value persists between connect calls and defaults to false (no frequency tracking).
 	/// \pre You can call this at any time - however you SHOULD only call it when disconnected.  Otherwise you will only trackpart of the values sent over the network.
 	/// \param[in] doCompile True to enable tracking 
 	void SetCompileFrequencyTable( bool doCompile );
 
-	/// Returns the frequency of outgoing bytes into output frequency table
+	/// \brief Returns the frequency of outgoing bytes into outputFrequencyTable
 	/// The purpose is to save to file as either a master frequency table from a sample game session for passing to
 	/// GenerateCompressionLayer() 
 	/// \pre You should only call this when disconnected. Requires that you first enable data frequency tracking by calling SetCompileFrequencyTable(true)
@@ -565,48 +578,52 @@ public:
 	/// \return False (failure) if connected or if frequency table tracking is not enabled. Otherwise true (success)
 	bool GetOutgoingFrequencyTable( unsigned int outputFrequencyTable[ 256 ] );
 
-	/// This is an optional function to generate the compression layer based on the input frequency table.
-	/// If you want to use it you should call this twice - once with inputLayer as true and once as false.
+	/// \brief This is an optional function to generate the compression layer based on the input frequency table.
+	/// \details If you want to use it you should call this twice - once with inputLayer as true and once as false.
 	/// The frequency table passed here with inputLayer=true should match the frequency table on the recipient with inputLayer=false.
 	/// Likewise, the frequency table passed here with inputLayer=false should match the frequency table on the recipient with inputLayer=true.
 	/// Calling this function when there is an existing layer will overwrite the old layer.
-	/// \pre You should only call this when disconnected
-	/// \param[in] inputFrequencyTable A frequency table for your data
-	/// \param[in] inputLayer Is this the input layer?
+	/// \pre You should only call this when disconnected.
+	/// \param[in] inputFrequencyTable A frequency table for your data returned from GetOutgoingFrequencyTable()
+	/// \param[in] inputLayer Whether inputFrequencyTable represents incoming data from other systems (true) or outgoing data from this system (false).
 	/// \return false (failure) if connected.  Otherwise true (success)
 	/// \sa Compression.cpp
 	bool GenerateCompressionLayer( unsigned int inputFrequencyTable[ 256 ], bool inputLayer );
 
 	/// \brief Delete the output or input layer as specified.
 	/// 
-	/// This is not necessary to call and is only valuable for freeing memory.
+	/// This is not necessary to call and is only useful for freeing memory.
 	/// \pre You should only call this when disconnected.
 	/// \param[in] inputLayer True to mean the inputLayer, false to mean the output layer.
-	/// \return False (failure) if connected.  Otherwise True (success)
+	/// \return False (failure) if connected.  Otherwise True (success).
 	bool DeleteCompressionLayer( bool inputLayer );
 
-	/// Returns the compression ratio. A low compression ratio is good.  Compression is for outgoing data
+	/// \brief Returns the compression ratio. 
+	/// \details A low compression ratio is good. Compression is defined for outgoing data.
 	/// \return The compression ratio
 	float GetCompressionRatio( void ) const;
 
-	///Returns the decompression ratio.  A high decompression ratio is good.  Decompression is for incoming data
+	/// \brief Returns the decompression ratio.
+	/// \details A high decompression ratio is good. Decompression ratio is defined for incoming data.
 	/// \return The decompression ratio
 	float GetDecompressionRatio( void ) const;
 
 	// -------------------------------------------------------------------------------------------- Plugin Functions--------------------------------------------------------------------------------------------
-	/// \brief Attatches a Plugin interface to run code automatically on message receipt in the Receive call.
+	/// \brief Attatches a Plugin interface to an instance of the base class (RakPeer or PacketizedTCP) to run code automatically on message receipt in the Receive call.
 	/// \note If plugins have dependencies on each other then the order does matter - for example the router plugin should go first because it might route messages for other plugins.
-	/// \param[in] messageHandler Pointer to a plugin to attach.
+	/// \param[in] messageHandler Pointer to the plugin to attach.
 	void AttachPlugin( PluginInterface2 *plugin );
 
-	/// Detaches a Plugin interface to run code automatically on message receipt
-	/// \param[in] messageHandler Pointer to a plugin to detach
+	/// \brief Detaches a Plugin interface from the instance of the base class (RakPeer or PacketizedTCP) it is attached to.
+	///	\details This method disables the plugin code from running automatically on base class's updates or message receipt.
+	/// \param[in] messageHandler Pointer to a plugin to detach.
 	void DetachPlugin( PluginInterface2 *messageHandler );
 
 	// --------------------------------------------------------------------------------------------Miscellaneous Functions--------------------------------------------------------------------------------------------
-	/// Put a message back at the end of the receive queue in case you don't want to deal with it immediately
-	/// \param[in] packet The packet you want to push back.
-	/// \param[in] pushAtHead True to push the packet so that the next receive call returns it.  False to push it at the end of the queue (obviously pushing it at the end makes the packets out of order)
+	/// \brief Puts a message back in the receive queue in case you don't want to deal with it immediately.
+	/// \param[in] packet The pointer to the packet you want to push back.
+	/// \param[in] pushAtHead True to push the packet at the start of the queue so that the next receive call returns it.  False to push it at the end of the queue.
+	/// \note Setting pushAtHead to false end makes the packets out of order.
 	void PushBackPacket( Packet *packet, bool pushAtHead );
 
 	/// ------------------------------------------- Deprecated -------------------------
@@ -621,20 +638,26 @@ public:
 	// \param[in] routerInterface The router to use to route messages to systems not directly connected to this system.
 	void RemoveRouterInterface( RouterInterface *routerInterface );
 
+	/// \internal
+	/// \brief For a given system identified by \a guid, change the SystemAddress to send to.
+	/// \param[in] guid The connection we are referring to
+	/// \param[in] systemAddress The new address to send to
+	void ChangeSystemAddress(RakNetGUID guid, SystemAddress systemAddress);
+
 	/// \brief Returns a packet for you to write to if you want to create a Packet for some reason.
 	/// You can add it to the receive buffer with PushBackPacket
 	/// \param[in] dataSize How many bytes to allocate for the buffer
 	/// \return A packet.
 	Packet* AllocatePacket(unsigned dataSize);
 
-	/// Get the socket used with a particular active connection
+	/// \brief Get the socket used with a particular active connection.
 	/// The smart pointer reference counts the RakNetSocket object, so the socket will remain active as long as the smart pointer does, even if RakNet were to shutdown or close the connection.
 	/// \note This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so.
-	/// \param[in] target Which system
-	/// \return A smart pointer object containing the socket information about the socket. Be sure to check IsNull() which is returned if the update thread is unresponsive, shutting down, or if this system is not connected
+	/// \param[in] target Which system.
+	/// \return A smart pointer object containing the socket information about the target. Be sure to check IsNull() which is returned if the update thread is unresponsive, shutting down, or if this system is not connected.
 	virtual RakNetSmartPtr<RakNetSocket> GetSocket( const SystemAddress target );
 
-	/// Get all sockets in use
+	/// \brief Gets all sockets in use.
 	/// \note This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so.
 	/// \param[out] sockets List of RakNetSocket structures in use. Sockets will not be closed until \a sockets goes out of scope
 	virtual void GetSockets( DataStructures::List<RakNetSmartPtr<RakNetSocket> > &sockets );
@@ -651,32 +674,34 @@ public:
 	/// \brief Adds simulated ping and packet loss to the outgoing data flow.
 	/// \details To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and maxSendBPS values on each.
 	/// \deprecated Use http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0 instead.
-	/// \note You can exclude network simulator code with the _RELEASE #define to decrease code size.
+	/// \note You can exclude network simulator code with the  #define _RELEASE to decrease code size.
 	/// \note Doesn't work past version 3.6201
 	/// \param[in] packetloss Chance to lose a packet. Ranges from 0 to 1.
 	/// \param[in] minExtraPing The minimum time to delay sends.
 	/// \param[in] extraPingVariance The additional random time to delay sends.
     void ApplyNetworkSimulator( float packetloss, unsigned short minExtraPing, unsigned short extraPingVariance);
 
-	/// Limits how much outgoing bandwidth can be sent per-connection.
+	/// \brief Limits how much outgoing bandwidth can be used per-connection.
 	/// This limit does not apply to the sum of all connections!
-	/// Exceeding the limit queues up outgoing traffic
+	/// Exceeding the limit queues up outgoing traffic.
 	/// \param[in] maxBitsPerSecond Maximum bits per second to send.  Use 0 for unlimited (default). Once set, it takes effect immedately and persists until called again.
 	void SetPerConnectionOutgoingBandwidthLimit( unsigned maxBitsPerSecond );
 
-	/// Returns if you previously called ApplyNetworkSimulator
-	/// \return If you previously called ApplyNetworkSimulator
+	/// Returns true if you previously called ApplyNetworkSimulator.
+	/// \return Ture if you previously called ApplyNetworkSimulator. False otherwise.
 	bool IsNetworkSimulatorActive( void );
 
 	// --------------------------------------------------------------------------------------------Statistical Functions - Functions dealing with API performance--------------------------------------------------------------------------------------------
 
-	/// Returns a structure containing a large set of network statistics for the specified system.
+	/// \brief Returns a structure containing a large set of network statistics for the specified system.
 	/// You can map this data to a string using the C style StatisticsToString() function
-	/// \param[in] systemAddress: Which connected system to get statistics for
-	/// \param[in] rns If you supply this structure, it will be written to it. Otherwise it will use a static struct, which is not threadsafe
-	/// \return 0 on can't find the specified system.  A pointer to a set of data otherwise.
+	/// \param[in] systemAddress Which connected system to get statistics for.
+	/// \param[in] rns If you supply this structure,the network statistics will be written to it. Otherwise the method uses a static struct to write the data, which is not threadsafe.
+	/// \return 0 if the specified system can't be found. Otherwise a pointer to the struct containing the specified system's network statistics.
 	/// \sa RakNetStatistics.h
 	RakNetStatistics * const GetStatistics( const SystemAddress systemAddress, RakNetStatistics *rns=0 );
+	/// \brief Returns the network statistics of the system at the given index in the remoteSystemList.
+	///	\return True if the index is less than the maximum number of peers allowed and the system is active. False otherwise.
 	bool GetStatistics( const int index, RakNetStatistics *rns );
 
 	/// Returns a simpler version of GetStatistics, used to check bandwidth utilization for a given connection
@@ -762,6 +787,7 @@ protected:
 	Packet* ReceiveIgnoreRPC( void );
 
 	int GetIndexFromSystemAddress( const SystemAddress systemAddress, bool calledFromNetworkThread );
+	int GetIndexFromGuid( const RakNetGUID guid );
 
 	//void RemoveFromRequestedConnectionsList( const SystemAddress systemAddress );
 	// Two versions needed because some buggy compilers strip the last parameter if unused, and crashes
@@ -773,7 +799,7 @@ protected:
 	RemoteSystemStruct *GetRemoteSystemFromSystemAddress( const SystemAddress systemAddress, bool calledFromNetworkThread, bool onlyActive ) const;
 	RakPeer::RemoteSystemStruct *GetRemoteSystem( const AddressOrGUID systemIdentifier, bool calledFromNetworkThread, bool onlyActive ) const;
 	void ValidateRemoteSystemLookup(void) const;
-	RemoteSystemStruct *GetRemoteSystemFromGUID( const RakNetGUID guid ) const;
+	RemoteSystemStruct *GetRemoteSystemFromGUID( const RakNetGUID guid, bool onlyActive ) const;
 	///Parse out a connection request packet
 	void ParseConnectionRequestPacket( RakPeer::RemoteSystemStruct *remoteSystem, SystemAddress systemAddress, const char *data, int byteSize);
 	///When we get a connection request from an ip / port, accept it unless full
@@ -783,22 +809,33 @@ protected:
 	void NotifyAndFlagForShutdown( const SystemAddress systemAddress, bool performImmediate, unsigned char orderingChannel, PacketPriority disconnectionNotificationPriority );
 	///Returns how many remote systems initiated a connection to us
 	unsigned short GetNumberOfRemoteInitiatedConnections( void ) const;
-	///Get a free remote system from the list and assign our systemAddress to it.  Should only be called from the update thread - not the user thread
-	RemoteSystemStruct * AssignSystemAddressToRemoteSystemList( const SystemAddress systemAddress, RemoteSystemStruct::ConnectMode connectionMode, RakNetSmartPtr<RakNetSocket> rakNetSocket, bool *thisIPConnectedRecently, SystemAddress bindingAddress, int incomingMTU );
-	///An incoming packet has a timestamp, so adjust it to be relative to this system
+	///	\brief Get a free remote system from the list and assign our systemAddress to it.
+	/// \note Should only be called from the update thread - not the user thread.
+	/// \param[in] systemAddress	systemAddress to be assigned
+	/// \param[in] connectionMode	connection mode of the RemoteSystem.
+	/// \param[in] rakNetSocket 
+	/// \param[in] thisIPConnectedRecently	Is this IP connected recently? set to False;
+	/// \param[in] bindingAddress	Address to be binded with the remote system
+	/// \param[in] incomingMTU	MTU for the remote system
+	RemoteSystemStruct * AssignSystemAddressToRemoteSystemList( const SystemAddress systemAddress, RemoteSystemStruct::ConnectMode connectionMode, RakNetSmartPtr<RakNetSocket> incomingRakNetSocket, bool *thisIPConnectedRecently, SystemAddress bindingAddress, int incomingMTU, RakNetGUID guid );
+	///	\brief Adjust the timestamp of the incoming packet to be relative to this system.
+	/// \param[in] data	Data in the incoming packet.
+	/// \param[in] systemAddress Sender of the incoming packet.
 	void ShiftIncomingTimestamp( unsigned char *data, SystemAddress systemAddress ) const;
-	///Get the most probably accurate clock differential for a certain player
+	/// Get the most accurate clock differential for a certain player.
+	/// \param[in] systemAddress The player with whose clock the time difference is calculated.
+	/// \returns The clock differential for a certain player.
 	RakNetTime GetBestClockDifferential( const SystemAddress systemAddress ) const;
 
 	//void PushPortRefused( const SystemAddress target );
-	///Handles an RPC packet.  This is sending an RPC request
+	///  \brief Handles an RPC packet.  This packet has an RPC request
 	/// \param[in] data A packet returned from Receive with the ID ID_RPC
 	/// \param[in] length The size of the packet data 
 	/// \param[in] systemAddress The sender of the packet 
-	/// \return true on success, false on a bad packet or an unregistered function
+	/// \return True on success, false on a bad packet or an unregistered function
 	bool HandleRPCPacket( const char *data, int length, SystemAddress systemAddress );
 
-	///Handles an RPC reply packet.  This is data returned from an RPC call
+	///	\brief Handles an RPC reply packet.  The reply packet has data returned from an RPC call
 	/// \param[in] data A packet returned from Receive with the ID ID_RPC
 	/// \param[in] length The size of the packet data 
 	/// \param[in] systemAddress The sender of the packet 
@@ -832,12 +869,18 @@ protected:
 	RemoteSystemStruct* remoteSystemList;
 
 	// Use a hash, with binaryAddress plus port mod length as the index
-	// Hash size is max connections times 4.
-	SystemAddressAndIndex *remoteSystemLookup;
+	RemoteSystemIndex **remoteSystemLookup;
 	unsigned int RemoteSystemLookupHashIndex(SystemAddress sa) const;
-	unsigned int LookupIndexUsingHashIndex(SystemAddress sa) const;
-	unsigned int RemoteSystemListIndexUsingHashIndex(SystemAddress sa) const;
-	unsigned int FirstFreeRemoteSystemLookupIndex(SystemAddress sa) const;
+	void ReferenceRemoteSystem(SystemAddress sa, unsigned int remoteSystemListIndex);
+	void DereferenceRemoteSystem(SystemAddress sa);
+	RemoteSystemStruct* GetRemoteSystem(SystemAddress sa) const;
+	unsigned int GetRemoteSystemIndex(SystemAddress sa) const;
+	void ClearRemoteSystemLookup(void);
+	DataStructures::MemoryPool<RemoteSystemIndex> remoteSystemIndexPool;
+
+//	unsigned int LookupIndexUsingHashIndex(SystemAddress sa) const;
+//	unsigned int RemoteSystemListIndexUsingHashIndex(SystemAddress sa) const;
+//	unsigned int FirstFreeRemoteSystemLookupIndex(SystemAddress sa) const;
 	
 	enum
 	{
@@ -925,7 +968,7 @@ protected:
 		unsigned short remotePortRakNetWasStartedOn_PS3;
 		SOCKET socket;
 		unsigned short port;
-		enum {BCS_SEND, BCS_CLOSE_CONNECTION, BCS_GET_SOCKET, /* BCS_USE_USER_SOCKET, BCS_REBIND_SOCKET_ADDRESS, BCS_RPC, BCS_RPC_SHIFT,*/ BCS_DO_NOTHING} command;
+		enum {BCS_SEND, BCS_CLOSE_CONNECTION, BCS_GET_SOCKET, BCS_CHANGE_SYSTEM_ADDRESS,/* BCS_USE_USER_SOCKET, BCS_REBIND_SOCKET_ADDRESS, BCS_RPC, BCS_RPC_SHIFT,*/ BCS_DO_NOTHING} command;
 	};
 
 	// Single producer single consumer queue using a linked list

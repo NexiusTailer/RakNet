@@ -191,7 +191,7 @@ void TCPInterface::Stop(void)
 #if defined(OPEN_SSL_CLIENT_SUPPORT)
 	SSL_CTX_free (ctx);
 	startSSL.Clear(__FILE__, __LINE__);
-	activeSSLConnections.Clear(__FILE__, __LINE__);
+	activeSSLConnections.Clear(false, __FILE__, __LINE__);
 #endif
 }
 SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort, bool block)
@@ -279,7 +279,7 @@ void TCPInterface::StartSSLClient(SystemAddress systemAddress)
 	startSSL.Push(id);
 	unsigned index = activeSSLConnections.GetIndexOf(systemAddress);
 	if (index==(unsigned)-1)
-		activeSSLConnections.Insert(systemAddress);
+		activeSSLConnections.Insert(systemAddress,__FILE__,__LINE__);
 }
 bool TCPInterface::IsSSLActive(SystemAddress systemAddress)
 {
@@ -634,7 +634,6 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 	sockaddr_in sockAddr;
 	int sockAddrSize = sizeof(sockAddr);
 
-	unsigned i;
 	int len;
 	SOCKET newSock;
 	timeval tv;
@@ -649,15 +648,15 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 		sslSystemAddress = sts->startSSL.PopInaccurate();
 		if (sslSystemAddress)
 		{
-			if (sslsystemAddress.systemIndex>=0 &&
-				sslsystemAddress.systemIndex<sts->remoteClientsLength &&
-				sts->remoteClients[sslsystemAddress.systemIndex]->systemAddress==*sslSystemAddress)
+			if (sslSystemAddress->systemIndex>=0 &&
+				sslSystemAddress->systemIndex<sts->remoteClientsLength &&
+				sts->remoteClients[sslSystemAddress->systemIndex].systemAddress==*sslSystemAddress)
 			{
-				sts->remoteClients[sslsystemAddress.systemIndex]->InitSSL(sts->ctx,sts->meth);
+				sts->remoteClients[sslSystemAddress->systemIndex].InitSSL(sts->ctx,sts->meth);
 			}
 			else
 			{
-				for (i=0; i < sts->remoteClientsLength; i++)
+				for (int i=0; i < sts->remoteClientsLength; i++)
 				{
 					sts->remoteClients[i].isActiveMutex.Lock();
 					if (sts->remoteClients[i].isActive && sts->remoteClients[i].systemAddress==*sslSystemAddress)
@@ -668,7 +667,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 					sts->remoteClients[i].isActiveMutex.Unlock();
 				}
 			}
-			sts->startSSL.Deallocate(sslSystemAddress);
+			sts->startSSL.Deallocate(sslSystemAddress,__FILE__,__LINE__);
 		}
 #endif
 
@@ -689,6 +688,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 #ifdef _MSC_VER
 #pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
 #endif
+			largestDescriptor=0;
 			if (sts->listenSocket!=(SOCKET) -1)
 			{
 				FD_SET(sts->listenSocket, &readFD);
@@ -696,6 +696,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 				largestDescriptor = sts->listenSocket; // @see largestDescriptor def
 			}
 
+			unsigned i;
 			for (i=0; i < (unsigned int) sts->remoteClientsLength; i++)
 			{
 				sts->remoteClients[i].isActiveMutex.Lock();
@@ -732,7 +733,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 					int newRemoteClientIndex=-1;
 					for (newRemoteClientIndex=0; newRemoteClientIndex < sts->remoteClientsLength; newRemoteClientIndex++)
 					{
-						sts->remoteClients[i].isActiveMutex.Lock();
+						sts->remoteClients[newRemoteClientIndex].isActiveMutex.Lock();
 						if (sts->remoteClients[newRemoteClientIndex].isActive==false)
 						{
 							sts->remoteClients[newRemoteClientIndex].socket=newSock;
@@ -741,7 +742,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 							sts->remoteClients[newRemoteClientIndex].systemAddress.systemIndex=newRemoteClientIndex;
 
 							sts->remoteClients[newRemoteClientIndex].SetActive(true);
-							sts->remoteClients[i].isActiveMutex.Unlock();
+							sts->remoteClients[newRemoteClientIndex].isActiveMutex.Unlock();
 
 
 							SystemAddress *newConnectionSystemAddress=sts->newIncomingConnections.Allocate( __FILE__, __LINE__ );
@@ -750,7 +751,7 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 
 							break;
 						}
-						sts->remoteClients[i].isActiveMutex.Unlock();
+						sts->remoteClients[newRemoteClientIndex].isActiveMutex.Unlock();
 					}
 					if (newRemoteClientIndex==-1)
 					{
@@ -821,7 +822,6 @@ RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop)
 								incomingMessage->deleteData=true; // actually means came from SPSC, rather than AllocatePacket
 								incomingMessage->systemAddress=sts->remoteClients[i].systemAddress;
 								sts->incomingMessages.Push(incomingMessage);
-
 							}
 							else
 							{
@@ -957,9 +957,7 @@ int RemoteClient::Send(const char *data, unsigned int length)
 int RemoteClient::Recv(char *data, const int dataSize)
 {
 	if (ssl)
-	{
 		return SSL_read (ssl, data, dataSize);
-	}
 	else
 		return recv(socket, data, dataSize, 0);
 }

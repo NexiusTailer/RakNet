@@ -25,15 +25,15 @@ void main(void)
 	printf("Enter email account username: ");
 	gets(senderUsername);
 	if (senderUsername[0]==0)
-		strcpy(senderUsername, "mygmailaccount@gmail.com");
+		strcpy(senderUsername, "subspacegod@gmail.com");
 	printf("Enter receiver email address: ");
 	gets(receiver);
 	if (receiver[0]==0)
-		strcpy(receiver, "destination@host.com");
+		strcpy(receiver, "rakkar@rakkar.org");
 	printf("Enter password needed to send: ");
 	gets(password);
 	if (password[0]==0)
-		strcpy(password, "mygmailpassword");
+		strcpy(password, "jenny120");
 
 	// http://mail.google.com/support/bin/answer.py?hl=en&answer=13287
 	unsigned short hostPort;

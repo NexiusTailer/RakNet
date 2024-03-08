@@ -1061,8 +1061,14 @@ bool BitStream::SerializeFloat16(bool writeToBitstream, float &f, float floatMin
 void BitStream::WriteFloat16( float f, float floatMin, float floatMax )
 {
 	RakAssert(floatMax>floatMin);
-	RakAssert(f>=floatMin-.0001);
-	RakAssert(f<=floatMax+.0001);
+	if (f>floatMax+.001)
+	{
+		RakAssert(f<=floatMax+.001);
+	}
+	if (f<floatMin-.001)
+	{
+		RakAssert(f>=floatMin-.001);
+	}
 	float percentile=65535.0f * (f-floatMin)/(floatMax-floatMin);
 	if (percentile<0.0)
 		percentile=0.0;

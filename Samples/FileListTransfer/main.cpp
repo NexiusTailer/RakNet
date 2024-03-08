@@ -53,17 +53,17 @@ public:
 		return true;
 	}
 
-	virtual void OnFileProgress(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int dataChunkLength, char *firstDataChunk)
+	virtual void OnFileProgress(FileProgressStruct *fps)
 	{
 		printf("%i partCount=%i partTotal=%i (%i%%) %i/%i %s %ib / %ib\n",
-			onFileStruct->setID,
-			partCount, partTotal, (int) (100.0*(double)partCount/(double)partTotal),
-			onFileStruct->fileIndex+1,
-			onFileStruct->numberOfFilesInThisSet,
-			onFileStruct->fileName,
-			onFileStruct->byteLengthOfThisFile,
-			onFileStruct->byteLengthOfThisSet,
-			firstDataChunk);
+			fps->onFileStruct->setID,
+			fps->partCount, fps->partTotal, (int) (100.0*(double)fps->partCount/(double)fps->partTotal),
+			fps->onFileStruct->fileIndex+1,
+			fps->onFileStruct->numberOfFilesInThisSet,
+			fps->onFileStruct->fileName,
+			fps->onFileStruct->byteLengthOfThisFile,
+			fps->onFileStruct->byteLengthOfThisSet,
+			fps->firstDataChunk);
 	}
 
 	virtual bool OnDownloadComplete(void)
@@ -105,8 +105,9 @@ void main(void)
 #else
 	RakPeerInterface *peer1 = RakNetworkFactory::GetRakPeerInterface();
 	RakPeerInterface *peer2 = RakNetworkFactory::GetRakPeerInterface();
-	peer1->Startup(1,0,&SocketDescriptor(60000,0),1);
-	peer2->Startup(1,0,&SocketDescriptor(60001,0),1);
+	SocketDescriptor sd1(60000,0),sd2(60001,0);
+	peer1->Startup(1,0,&sd1,1);
+	peer2->Startup(1,0,&sd2,1);
 	peer1->SetMaximumIncomingConnections(1);
 	peer2->Connect("127.0.0.1",60000,0,0,0);
 	peer1->AttachPlugin(&flt1);

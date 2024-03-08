@@ -144,7 +144,7 @@ Add a string to the string table. <dl compact><dt><b>Parameters:</b></dt><dd>
 <div class="memdoc">
 
 <p>
-Writes input to output, uncompressed. Takes care of the null terminator for you. Relies on the <a class="el" href="classStringCompressor.html" title="Writes and reads strings to and from bitstreams.">StringCompressor</a> class, which is automatically reference counted in the constructor and destructor in <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a>. You can call the reference counting functions yourself if you wish too. <dl compact><dt><b>Parameters:</b></dt><dd>
+Writes input to output, uncompressed. Takes care of the null terminator for you. Relies on the <a class="el" href="classStringCompressor.html" title="Writes and reads strings to and from bitstreams.">StringCompressor</a> class, which is automatically reference counted in the constructor and destructor in <a class="el" href="classRakPeer.html" title="Main interface for network communications.">RakPeer</a>. You can call the reference counting functions yourself if you wish too. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>output</em>&nbsp;</td><td>A block of bytes to receive the output </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>maxCharsToWrite</em>&nbsp;</td><td>Size, in bytes, of <em>output</em> . A NULL terminator will always be appended to the output string. If the maxCharsToWrite is not large enough, the string will be truncated. </td></tr>
@@ -186,7 +186,7 @@ Writes input to output, uncompressed. Takes care of the null terminator for you.
 <div class="memdoc">
 
 <p>
-Writes input to output, compressed. Takes care of the null terminator for you. Relies on the <a class="el" href="classStringCompressor.html" title="Writes and reads strings to and from bitstreams.">StringCompressor</a> class, which is automatically reference counted in the constructor and destructor in <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a>. You can call the reference counting functions yourself if you wish too. <dl compact><dt><b>Parameters:</b></dt><dd>
+Writes input to output, compressed. Takes care of the null terminator for you. Relies on the <a class="el" href="classStringCompressor.html" title="Writes and reads strings to and from bitstreams.">StringCompressor</a> class, which is automatically reference counted in the constructor and destructor in <a class="el" href="classRakPeer.html" title="Main interface for network communications.">RakPeer</a>. You can call the reference counting functions yourself if you wish too. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>input</em>&nbsp;</td><td>Pointer to an ASCII string </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>maxCharsToWrite</em>&nbsp;</td><td>The size of <em>input</em> </td></tr>
@@ -213,7 +213,7 @@ Writes input to output, compressed. Takes care of the null terminator for you. R
 <div class="memdoc">
 
 <p>
-static function because only static functions can access static members The <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a> constructor adds a reference to this class, so don't call this until an instance of <a class="el" href="classRakPeer.html" title="The RakPeer class provides the main interface for network communications.">RakPeer</a> exists, or unless you call AddReference yourself. <dl class="return" compact><dt><b>Returns:</b></dt><dd>the unique instance of the <a class="el" href="classRakNet_1_1StringTable.html" title="Writes a string index, instead of the whole string.">StringTable</a> </dd></dl>
+static function because only static functions can access static members The <a class="el" href="classRakPeer.html" title="Main interface for network communications.">RakPeer</a> constructor adds a reference to this class, so don't call this until an instance of <a class="el" href="classRakPeer.html" title="Main interface for network communications.">RakPeer</a> exists, or unless you call AddReference yourself. <dl class="return" compact><dt><b>Returns:</b></dt><dd>the unique instance of the <a class="el" href="classRakNet_1_1StringTable.html" title="Writes a string index, instead of the whole string.">StringTable</a> </dd></dl>
 
 </div>
 </div><p>
@@ -245,7 +245,7 @@ Called when you mess up and send a string using this class that was not register
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>c:/RakNet/Source/<a class="el" href="StringTable_8h.html">StringTable.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 11 12:22:56 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Dec 29 11:22:37 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

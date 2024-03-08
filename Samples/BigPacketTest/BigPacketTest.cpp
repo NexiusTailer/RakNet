@@ -30,7 +30,6 @@ int main(void)
 
 	text= new char [BIG_PACKET_SIZE];
 	quit=false;
-	RakNetTime nextStatTime = RakNet::GetTime() + 1000;
 	char ch;
 
 	printf("This is a test I use to test the packet splitting capabilities of RakNet\n");
@@ -89,6 +88,7 @@ int main(void)
 
 	RakNetTime start,stop;
 
+	RakNetTime nextStatTime = RakNet::GetTime() + 1000;
 	Packet *packet;
 	start=RakNet::GetTimeMS();
 	while (!quit)

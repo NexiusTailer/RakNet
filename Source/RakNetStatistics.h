@@ -194,12 +194,15 @@ struct RAK_DLL_EXPORT RakNetBandwidth
 	/// If this number is greater than 0, you are sending faster than the connection can support
 	double bytesBuffered;
 
+	float packetloss;
+
 	RakNetBandwidth& operator +=(const RakNetBandwidth& other)
 	{
 		bytesPerSecondOutgoing+=other.bytesPerSecondOutgoing;
 		// Limit doesn't apply when taking averages
 	//	bytesPerSecondLimit+=other.bytesPerSecondLimit;
 		bytesBuffered+=other.bytesBuffered;
+		packetloss+=other.packetloss;
 		return *this;
 	}
 	RakNetBandwidth& operator /=(int count)
@@ -210,6 +213,7 @@ struct RAK_DLL_EXPORT RakNetBandwidth
 			// Limit doesn't apply when taking averages
 			//bytesPerSecondLimit/=count;
 			bytesBuffered/=count;
+			packetloss/=count;
 		}
 		return *this;
 	}

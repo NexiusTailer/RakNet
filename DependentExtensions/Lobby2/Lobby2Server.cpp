@@ -69,6 +69,7 @@ void Lobby2Server::Update(void)
 	if (threadPool.HasOutputFast() && threadPool.HasOutput())
 	{
 		Lobby2ServerCommand c = threadPool.GetOutput();
+		c.lobby2Message->ServerPostDBMemoryImpl(this, c.callerSystemAddress);
 		if (c.returnToSender)
 		{
 			RakNet::BitStream bs;
@@ -325,7 +326,7 @@ void Lobby2Server::ExecuteCommand(Lobby2ServerCommand *command)
 		return;
 	}
 
-	if (command->lobby2Message->ServerMemoryImpl(this, command->callerSystemAddress)==true)
+	if (command->lobby2Message->ServerPreDBMemoryImpl(this, command->callerSystemAddress)==true)
 	{
 		SendMessage(command->lobby2Message, command->callerSystemAddress);
 		if (command->deallocMsgWhenDone)
@@ -561,7 +562,7 @@ void Lobby2Server::RemoveUser(unsigned int index)
 	users.RemoveAtIndex(index);
 
 }
-unsigned int Lobby2Server::GetUserIndexBySystemAddress(SystemAddress systemAddress)
+unsigned int Lobby2Server::GetUserIndexBySystemAddress(SystemAddress systemAddress) const
 {
 	bool objectExists;
 	unsigned int idx;
@@ -570,7 +571,7 @@ unsigned int Lobby2Server::GetUserIndexBySystemAddress(SystemAddress systemAddre
 		return idx;
 	return (unsigned int)-1;
 }
-unsigned int Lobby2Server::GetUserIndexByGUID(RakNetGUID guid)
+unsigned int Lobby2Server::GetUserIndexByGUID(RakNetGUID guid) const
 {
 	unsigned int idx;
 	for (idx=0; idx < users.Size(); idx++)
@@ -578,7 +579,7 @@ unsigned int Lobby2Server::GetUserIndexByGUID(RakNetGUID guid)
 			return idx;
 	return (unsigned int) -1;
 }
-unsigned int Lobby2Server::GetUserIndexByUsername(RakNet::RakString userName)
+unsigned int Lobby2Server::GetUserIndexByUsername(RakNet::RakString userName) const
 {
 	unsigned int idx;
 	for (idx=0; idx < users.Size(); idx++)
@@ -597,4 +598,15 @@ void Lobby2Server::SetConfigurationProperties(ConfigurationProperties c)
 const Lobby2Server::ConfigurationProperties *Lobby2Server::GetConfigurationProperties(void) const
 {
 	return &configurationProperties;
+}
+void Lobby2Server::GetUserOnlineStatus(UsernameAndOnlineStatus &userInfo) const
+{
+	if (GetUserIndexByUsername(userInfo.handle)!=-1)
+	{
+		userInfo.isOnline=true;
+	}
+	else
+	{
+		userInfo.isOnline=false;
+	}
 }

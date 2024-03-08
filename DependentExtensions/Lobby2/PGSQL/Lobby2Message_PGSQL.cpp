@@ -246,7 +246,7 @@ void RakNet::OutputFriendsNotification(RakNet::Notification_Friends_StatusChange
 }
 
 
-void RakNet::GetFriendHandlesByStatus(unsigned int callerUserId, RakNet::RakString status, PostgreSQLInterface *pgsql, DataStructures::List<RakNet::RakString> &output, bool callerIsUserOne)
+void RakNet::GetFriendInfosByStatus(unsigned int callerUserId, RakNet::RakString status, Lobby2Server *server, PostgreSQLInterface *pgsql, DataStructures::List<FriendInfo> &output, bool callerIsUserOne)
 {
 	RakNet::RakString query;
 	/*
@@ -286,9 +286,10 @@ void RakNet::GetFriendHandlesByStatus(unsigned int callerUserId, RakNet::RakStri
 	int i;
 	for (i=0; i < numRowsReturned; i++)
 	{
-		RakNet::RakString handle;
-		PostgreSQLInterface::PQGetValueFromBinary(&handle, result, i, "handle");
-		output.Insert(handle, __FILE__, __LINE__ );
+		FriendInfo fi;
+		PostgreSQLInterface::PQGetValueFromBinary(&fi.usernameAndStatus.handle, result, i, "handle");
+		fi.usernameAndStatus.isOnline=false;
+		output.Insert(fi, __FILE__, __LINE__ );
 	}
 
 	PQclear(result);
@@ -2091,20 +2092,31 @@ bool RakNet::Friends_RejectInvite_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 bool RakNet::Friends_GetInvites_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 {
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-	GetFriendHandlesByStatus(command->callerUserId, "sentInvite", pgsql, invitesSent, true);
-	GetFriendHandlesByStatus(command->callerUserId, "sentInvite", pgsql, invitesReceived, false);
+	GetFriendInfosByStatus(command->callerUserId, "sentInvite", command->server, pgsql, invitesSent, true);
+	GetFriendInfosByStatus(command->callerUserId, "sentInvite", command->server, pgsql, invitesReceived, false);
 	resultCode=L2RC_SUCCESS;
 	return true;
+}
+void RakNet::Friends_GetInvites_PGSQL::ServerPostDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress )
+{
+	for (unsigned int i=0; i < invitesSent.Size(); i++)
+		server->GetUserOnlineStatus(invitesSent[i].usernameAndStatus);
+	for (unsigned int i=0; i < invitesReceived.Size(); i++)
+		server->GetUserOnlineStatus(invitesReceived[i].usernameAndStatus);
 }
 
 bool RakNet::Friends_GetFriends_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 {
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;
-	GetFriendHandlesByStatus(command->callerUserId, "isFriends", pgsql, myFriends, true);
+	GetFriendInfosByStatus(command->callerUserId, "isFriends", command->server, pgsql, myFriends, true);
 	resultCode=L2RC_SUCCESS;
 	return true;
 }
-
+void RakNet::Friends_GetFriends_PGSQL::ServerPostDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress )
+{
+	for (unsigned int i=0; i < myFriends.Size(); i++)
+		server->GetUserOnlineStatus(myFriends[i].usernameAndStatus);
+}
 bool RakNet::Friends_Remove_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface )
 {
 	PostgreSQLInterface *pgsql = (PostgreSQLInterface *)databaseInterface;

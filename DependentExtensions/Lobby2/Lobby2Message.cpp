@@ -142,6 +142,7 @@ void Lobby2Callbacks::MessageResult(Notification_Console_MemberJoinedRoom *messa
 void Lobby2Callbacks::MessageResult(Notification_Console_MemberLeftRoom *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_KickedOutOfRoom *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_RoomWasDestroyed *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Notification_Console_UpdateRoomParameters *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_RoomOwnerChanged *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_RoomChatMessage *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_RoomMessage *message) {ExecuteDefaultResult(message);}
@@ -267,7 +268,8 @@ bool Lobby2Message::ValidateEmailAddress( RakString *text )
 }
 bool Lobby2Message::PrevalidateInput(void) {return true;}
 bool Lobby2Message::ClientImpl( Lobby2Client *client) { (void)client; return true; }
-bool Lobby2Message::ServerMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; return false; }
+bool Lobby2Message::ServerPreDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; return false; }
+void Lobby2Message::ServerPostDBMemoryImpl( Lobby2Server *server, SystemAddress systemAddress ) { (void)server; (void)systemAddress; }
 bool Lobby2Message::ServerDBImpl( Lobby2ServerCommand *command, void *databaseInterface ) { (void)command; (void)databaseInterface; resultCode=L2RC_COUNT; return true; }
 
 void CreateAccountParameters::Serialize(bool writeToBitstream, BitStream *bitStream)
@@ -326,6 +328,11 @@ void PendingInvite::Serialize(bool writeToBitstream, BitStream *bitStream)
 	bitStream->Serialize(writeToBitstream, subject);
 	bitStream->Serialize(writeToBitstream, body);
 	binaryData->Serialize(writeToBitstream, bitStream);		
+}
+void UsernameAndOnlineStatus::Serialize(bool writeToBitstream, BitStream *bitStream)
+{
+	bitStream->Serialize(writeToBitstream, handle);
+	bitStream->Serialize(writeToBitstream, isOnline);
 }
 void EmailResult::Serialize(bool writeToBitstream, BitStream *bitStream)
 {
@@ -817,10 +824,10 @@ void Client_PerTitleIntegerStorage::Serialize( bool writeToBitstream, bool seria
 	bitStream->Serialize(writeToBitstream,titleName);
 	bitStream->Serialize(writeToBitstream,slotIndex);
 	unsigned char c;
-	c = addConditionForOperation;
+	c = (unsigned char)addConditionForOperation;
 	bitStream->Serialize(writeToBitstream,c);
 	addConditionForOperation = (PTIS_Condition) c;
-	c = operationToPerform;
+	c = (unsigned char)operationToPerform;
 	bitStream->Serialize(writeToBitstream,c);
 	operationToPerform = (PTIS_Operation) c;
 	if (operationToPerform!=PTISC_NOT_EQUAL)
@@ -916,14 +923,14 @@ void Friends_GetInvites::Serialize( bool writeToBitstream, bool serializeOutput,
 		bitStream->SerializeCompressed(writeToBitstream, listSize);
 		for (unsigned int i=0; i < listSize; i++)
 		{
-			RakNet::RakString obj;
+			FriendInfo obj;
 			if (writeToBitstream)
 			{
-				bitStream->Serialize(writeToBitstream, invitesSent[i]);
+				invitesSent[i].Serialize(writeToBitstream, bitStream);
 			}
 			else
 			{
-				bitStream->Serialize(writeToBitstream, obj);
+				obj.Serialize(writeToBitstream, bitStream);
 				invitesSent.Insert(obj, __FILE__, __LINE__);
 			}
 		}
@@ -931,14 +938,14 @@ void Friends_GetInvites::Serialize( bool writeToBitstream, bool serializeOutput,
 		bitStream->SerializeCompressed(writeToBitstream, listSize);
 		for (unsigned int i=0; i < listSize; i++)
 		{
-			RakNet::RakString obj;
+			FriendInfo obj;
 			if (writeToBitstream)
 			{
-				bitStream->Serialize(writeToBitstream, invitesReceived[i]);
+				invitesReceived[i].Serialize(writeToBitstream, bitStream);
 			}
 			else
 			{
-				bitStream->Serialize(writeToBitstream, obj);
+				obj.Serialize(writeToBitstream, bitStream);
 				invitesReceived.Insert(obj, __FILE__, __LINE__);
 			}
 		}
@@ -954,14 +961,14 @@ void Friends_GetFriends::Serialize( bool writeToBitstream, bool serializeOutput,
 		bitStream->SerializeCompressed(writeToBitstream, listSize);
 		for (unsigned int i=0; i < listSize; i++)
 		{
-			RakNet::RakString obj;
+			FriendInfo obj;
 			if (writeToBitstream)
 			{
-				bitStream->Serialize(writeToBitstream, myFriends[i]);
+				myFriends[i].Serialize(writeToBitstream, bitStream);
 			}
 			else
 			{
-				bitStream->Serialize(writeToBitstream, obj);
+				obj.Serialize(writeToBitstream, bitStream);
 				myFriends.Insert(obj, __FILE__, __LINE__);
 			}
 		}

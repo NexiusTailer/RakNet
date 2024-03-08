@@ -65,7 +65,7 @@ bool PacketizedTCP::SendList( const char **data, const int *lengths, const int n
 		return false;
 	if (systemAddress==UNASSIGNED_SYSTEM_ADDRESS && broadcast==false)
 		return false;
-	unsigned int totalLengthOfUserData=0;
+	PTCPHeader totalLengthOfUserData=0;
 	int i;
 	for (i=0; i < numParameters; i++)
 	{
@@ -191,7 +191,7 @@ Packet* PacketizedTCP::Receive( void )
 						bq->IncrementReadOffset(sizeof(PTCPHeader));
 						outgoingPacket = RakNet::OP_NEW<Packet>(__FILE__, __LINE__);
 						outgoingPacket->length=dataLength;
-						outgoingPacket->bitSize=BYTES_TO_BITS(incomingPacket->length);
+						outgoingPacket->bitSize=BYTES_TO_BITS(dataLength);
 						outgoingPacket->guid=UNASSIGNED_RAKNET_GUID;
 						outgoingPacket->systemAddress=systemAddressFromPacket;
 						outgoingPacket->deleteData=false; // Did not come from the network
@@ -207,9 +207,13 @@ Packet* PacketizedTCP::Receive( void )
 						waitingPackets.Push(outgoingPacket, __FILE__, __LINE__ );
 
 						// Peek the header to see if a full message is waiting
-						bq->ReadBytes((char*) &dataLength,sizeof(PTCPHeader),true);
-						if (RakNet::BitStream::DoEndianSwap())
-							RakNet::BitStream::ReverseBytesInPlace((unsigned char*) &dataLength,sizeof(dataLength));
+						if (bq->ReadBytes((char*) &dataLength,sizeof(PTCPHeader),true))
+						{
+							if (RakNet::BitStream::DoEndianSwap())
+								RakNet::BitStream::ReverseBytesInPlace((unsigned char*) &dataLength,sizeof(dataLength));
+						}
+						else
+							break;
 					} while (bq->GetBytesWritten()>=dataLength+sizeof(PTCPHeader));
 				}
 				else

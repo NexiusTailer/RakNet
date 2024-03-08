@@ -30,118 +30,118 @@
 </dl>
 <p>
 <a class="anchor" name="_deprecated000003"></a> <dl>
+<dt>Class <a class="el" href="classFileListTransferCBInterface.html">FileListTransferCBInterface</a>  </dt>
+<dd>. Use FileListTransferCBInterface2 </dd>
+</dl>
+<p>
+<a class="anchor" name="_deprecated000004"></a> <dl>
 <dt>Class <a class="el" href="classFullyConnectedMesh.html">FullyConnectedMesh</a>  </dt>
 <dd>Use <a class="el" href="classFullyConnectedMesh2.html" title="Fully connected mesh plugin, revision 2.">FullyConnectedMesh2</a> </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000004"></a> <dl>
+<a class="anchor" name="_deprecated000005"></a> <dl>
 <dt>Class <a class="el" href="classLightweightDatabaseClient.html">LightweightDatabaseClient</a>  </dt>
 <dd>Use <a class="el" href="classRakNet_1_1SQLite3ClientPlugin.html">RakNet::SQLite3ClientPlugin</a> found at <a class="el" href="SQLite3ClientPlugin_8h.html" title="Contains code to call sqlite3_exec over a network that does not support shared file...">DependentExtensions/SQLite3Plugin/SQLite3ClientPlugin.h</a> </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000005"></a> <dl>
+<a class="anchor" name="_deprecated000006"></a> <dl>
 <dt>Class <a class="el" href="classLightweightDatabaseServer.html">LightweightDatabaseServer</a>  </dt>
 <dd>Use <a class="el" href="classRakNet_1_1SQLite3ServerPlugin.html" title="Exec SQLLite commands over the network.">RakNet::SQLite3ServerPlugin</a> found at <a class="el" href="SQLite3ServerPlugin_8h.html" title="Contains code to call sqlite3_exec over a network that does not support shared file...">DependentExtensions/SQLite3Plugin/SQLite3ServerPlugin.h</a> </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000007"></a> <dl>
+<a class="anchor" name="_deprecated000008"></a> <dl>
 <dt>Member <a class="el" href="classNetworkIDManager.html#ed2d170eff2ed0fd06c75688063b8fbb">NetworkIDManager::GET_OBJECT_FROM_ID</a> (NetworkID x) </dt>
 <dd>, use the template form. This form requires that <a class="el" href="classNetworkIDObject.html" title="Unique shared ids for each object instance.">NetworkIDObject</a> is the basemost derived class </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000006"></a> <dl>
+<a class="anchor" name="_deprecated000007"></a> <dl>
 <dt>Member <a class="el" href="classNetworkIDManager.html#7d3b5d40f50265b073b9a20c30fb564e">NetworkIDManager::SetExternalSystemAddress</a> (<a class="el" href="structSystemAddress.html" title="Network address for a system.">SystemAddress</a> systemAddress) </dt>
 <dd>Use <a class="el" href="classNetworkIDManager.html#96afdc8b8c3a8382697f4cca11fce135">NetworkIDManager::SetGuid()</a> and NetworkIDManager::GetGuid() instead Necessary for peer to peer, as NetworkIDs are then composed of your external player Id (doesn't matter which, as long as unique) plus the usual object ID number. Get this from RakPeer::GetExternalSystemAddress) one time, the first time you make a connection. </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000008"></a> <dl>
+<a class="anchor" name="_deprecated000009"></a> <dl>
 <dt>Class <a class="el" href="classRakNetTransport.html">RakNetTransport</a>  </dt>
 <dd>Use <a class="el" href="classRakNetTransport2.html" title="Use RakNetTransport if you need a secure connection between the client and the console...">RakNetTransport2</a> </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000024"></a> <dl>
+<a class="anchor" name="_deprecated000025"></a> <dl>
 <dt>Member <a class="el" href="classRakPeer.html#02407ae593277c551cea1524816c3a56">RakPeer::ApplyNetworkSimulator</a> (float packetloss, unsigned short minExtraPing, unsigned short extraPingVariance) </dt>
 <dd>Use <a href="http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0">http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0</a> instead. </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000023"></a> <dl>
+<a class="anchor" name="_deprecated000024"></a> <dl>
 <dt>Member <a class="el" href="classRakPeer.html#c5c75a11b9732b1061155b730509cb6a">RakPeer::RemoveRouterInterface</a> (<a class="el" href="classRouterInterface.html" title="On failed directed sends, RakNet can call an alternative send function to use.">RouterInterface</a> *routerInterface) </dt>
 <dd>This was added without considering proper architecture </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000022"></a> <dl>
+<a class="anchor" name="_deprecated000023"></a> <dl>
 <dt>Member <a class="el" href="classRakPeer.html#3a007c320065e2e390bdfe91a54bdfb3">RakPeer::SetRouterInterface</a> (<a class="el" href="classRouterInterface.html" title="On failed directed sends, RakNet can call an alternative send function to use.">RouterInterface</a> *routerInterface) </dt>
 <dd>This was added without considering proper architecture </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000028"></a> <dl>
+<a class="anchor" name="_deprecated000029"></a> <dl>
 <dt>Member <a class="el" href="classRakPeerInterface.html#ed1fd1a31d740525d14ac855c0ff2997">RakPeerInterface::ApplyNetworkSimulator</a> (float packetloss, unsigned short minExtraPing, unsigned short extraPingVariance)=0 </dt>
 <dd>Use <a href="http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0">http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0</a> instead. </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000029"></a> <dl>
+<a class="anchor" name="_deprecated000030"></a> <dl>
 <dt>Class <a class="el" href="classReplicaManager.html">ReplicaManager</a>  </dt>
 <dd>See <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">RakNet::ReplicaManager3</a> </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000030"></a> <dl>
+<a class="anchor" name="_deprecated000031"></a> <dl>
 <dt>Class <a class="el" href="classRakNet_1_1ReplicaManager2.html">RakNet::ReplicaManager2</a>  </dt>
 <dd>See <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">RakNet::ReplicaManager3</a> </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000031"></a> <dl>
+<a class="anchor" name="_deprecated000032"></a> <dl>
 <dt>Class <a class="el" href="classRouter.html">Router</a>  </dt>
 <dd></dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000009"></a> <dl>
+<a class="anchor" name="_deprecated000010"></a> <dl>
 <dt>Class <a class="el" href="structRPCParameters.html">RPCParameters</a>  </dt>
 <dd>use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a> instead </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000025"></a> <dl>
+<a class="anchor" name="_deprecated000026"></a> <dl>
 <dt>Member <a class="el" href="group__RAKNET__RPC.html#g99333f28b2b884f6e8be6477e4567732">RakPeerInterface::RegisterAsRemoteProcedureCall</a> (const char *uniqueID, void(*functionPointer)(<a class="el" href="structRPCParameters.html">RPCParameters</a> *rpcParms))=0 </dt>
 <dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a> instead </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000017"></a> <dl>
+<a class="anchor" name="_deprecated000018"></a> <dl>
 <dt>Member <a class="el" href="group__RAKNET__RPC.html#gc253d708a039e60aa0aaafca3f9a1d41">RakPeer::RegisterAsRemoteProcedureCall</a> (const char *uniqueID, void(*functionPointer)(<a class="el" href="structRPCParameters.html">RPCParameters</a> *rpcParms)) </dt>
 <dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a> </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000026"></a> <dl>
+<a class="anchor" name="_deprecated000027"></a> <dl>
 <dt>Member <a class="el" href="group__RAKNET__RPC.html#gfe56a369e1b4396eaa4c771bf172d889">RakPeerInterface::RegisterClassMemberRPC</a> (const char *uniqueID, void *functionPointer)=0 </dt>
 <dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a> instead </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000018"></a> <dl>
+<a class="anchor" name="_deprecated000019"></a> <dl>
 <dt>Member <a class="el" href="group__RAKNET__RPC.html#gbd4e89c774e58f88754dfd6108b9c7d0">RakPeer::RegisterClassMemberRPC</a> (const char *uniqueID, void *functionPointer) </dt>
 <dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a> </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000021"></a> <dl>
+<a class="anchor" name="_deprecated000022"></a> <dl>
 <dt>Member <a class="el" href="group__RAKNET__RPC.html#gbbe0b3eb71fcb07079cd3f1837663550">RakPeer::RPC</a> (const char *uniqueID, const <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *replyFromTarget) </dt>
 <dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a>. This only correctly works for C functions. For C++, it only works for Windows. It is less flexible than RPC3 ------------------------------------------- Deprecated ------------------------- </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000020"></a> <dl>
+<a class="anchor" name="_deprecated000021"></a> <dl>
 <dt>Member <a class="el" href="group__RAKNET__RPC.html#gb26a0210cfe59ce179245b37d452c7ce">RakPeer::RPC</a> (const char *uniqueID, const char *data, BitSize_t bitLength, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RakNetTime *includedTimestamp, NetworkID networkID, <a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *replyFromTarget) </dt>
 <dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a>. This only correctly works for C functions. For C++, it only works for Windows. It is less flexible than RPC3 ------------------------------------------- Deprecated ------------------------- </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000027"></a> <dl>
+<a class="anchor" name="_deprecated000028"></a> <dl>
 <dt>Member <a class="el" href="group__RAKNET__RPC.html#ge8f46abeff087cfa765beef89facef85">RakPeerInterface::UnregisterAsRemoteProcedureCall</a> (const char *uniqueID)=0 </dt>
 <dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a> instead </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000019"></a> <dl>
+<a class="anchor" name="_deprecated000020"></a> <dl>
 <dt>Member <a class="el" href="group__RAKNET__RPC.html#g8d3118ee980a05022b9dd53a54b1f139">RakPeer::UnregisterAsRemoteProcedureCall</a> (const char *uniqueID) </dt>
 <dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a> </dd>
-</dl>
-<p>
-<a class="anchor" name="_deprecated000011"></a> <dl>
-<dt>Member <a class="el" href="group__RAKNET__RPC.html#g70705f68c378bfaf9d854de1fe55431d">REGISTER_CLASS_MEMBER_RPC</a>  </dt>
-<dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a> instead </dd>
 </dl>
 <p>
 <a class="anchor" name="_deprecated000012"></a> <dl>
@@ -149,17 +149,22 @@
 <dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a> instead </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000010"></a> <dl>
+<a class="anchor" name="_deprecated000013"></a> <dl>
+<dt>Member <a class="el" href="group__RAKNET__RPC.html#g70705f68c378bfaf9d854de1fe55431d">REGISTER_CLASS_MEMBER_RPC</a>  </dt>
+<dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a> instead </dd>
+</dl>
+<p>
+<a class="anchor" name="_deprecated000011"></a> <dl>
 <dt>Member <a class="el" href="group__RAKNET__RPC.html#ge8725bfeccab05a3422cde0923f176b3">REGISTER_STATIC_RPC</a>  </dt>
 <dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a> instead </dd>
 </dl>
 <p>
-<a class="anchor" name="_deprecated000013"></a> <dl>
+<a class="anchor" name="_deprecated000014"></a> <dl>
 <dt>Member <a class="el" href="group__RAKNET__RPC.html#gdf209f7aefd451d95a1f322bd80295ed">UNREGISTER_STATIC_RPC</a>  </dt>
 <dd>Use <a class="el" href="classRakNet_1_1RPC3.html" title="The RPC3 plugin allows you to call remote functions as if they were local functions...">RakNet::RPC3</a> instead </dd>
 </dl>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 11 12:22:54 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Dec 29 11:22:34 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

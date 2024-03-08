@@ -39,7 +39,8 @@ int main(void)
 
 	RakNetTransport2 rt2;
 	RakPeerInterface *rakPeer = RakNetworkFactory::GetRakPeerInterface();
-	rakPeer->Startup(128,30,&SocketDescriptor(60000,0),1);
+	SocketDescriptor sd(60000,0);
+	rakPeer->Startup(128,30,&sd,1);
 	rakPeer->SetMaximumIncomingConnections(128);
 	rakPeer->AttachPlugin(&rt2);
 	TestCommandServer(&rt2, 60000,rakPeer); // Uncomment to use RakNet as a client

@@ -38,7 +38,8 @@ void RunAsClient(void)
 	gets(serverport);
 	if (serverport[0]==0) strcpy(serverport, "60000");
 
-	rakClient->Startup(1, 30, &SocketDescriptor(), 1);
+	SocketDescriptor sd;
+	rakClient->Startup(1, 30, &sd, 1);
 	rakClient->Connect(serverip, atoi(serverport), 0,0);
 
 	// In a client/server architecture, only the server can create NetworkIDs

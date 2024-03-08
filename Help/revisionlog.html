@@ -307,6 +307,7 @@ Improve randomness of random number for FullyConnectedMesh2<BR>
 3.713 Use hash lookup instead of sorted list lookup for packets from remote systems, since speed is so important for that. Ping based congestion control.<BR>
 3.714 (12/06/2009) Fix random crash in ReliabilityLayer. Possible fix for ID_ALREADY_CONNECTED, and increased randomization of GUID.<BR>
 3.715 (12/11/2009) Fix bug returning ID_ALREADY_CONNECTED. You can now also pass a RakNetGuid to most places in RakPeer you previously passed a SystemAddress. Change disconnect timeout method.<BR>
+3.716 (12/29/2009) Fix bug introduced in 3.714 causing players to get disconnected. FileListTransfer now supports incremental writes in addition to incremental reads. Reduce per-datagram overhead by 4 bytes once the bandwidth capacitity has been determined.<BR>
  </TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
 <img src="spacer.gif" width="8" height="1">See Also</td>

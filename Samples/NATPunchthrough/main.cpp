@@ -162,7 +162,8 @@ void GUIClientTest()
 	ConnectionGraph2 connectionGraph;
 	rakPeer->AttachPlugin(&connectionGraph);
 	rakPeer->AttachPlugin(&natPunchthroughClient);
-	rakPeer->Startup(8,0,&SocketDescriptor(0,0), 1);
+	SocketDescriptor sd(0,0);
+	rakPeer->Startup(8,0,&sd, 1);
 	rakPeer->SetMaximumIncomingConnections(32);
 	rakPeer->Connect(DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP, NAT_PUNCHTHROUGH_FACILITATOR_PORT, NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD, (int) strlen(NAT_PUNCHTHROUGH_FACILITATOR_PASSWORD));
 

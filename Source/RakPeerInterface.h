@@ -310,7 +310,7 @@ public:
 	/// \param[in] includeInProgress If true, also return true for connections that are in progress but haven't completed
 	/// \param[in] includeDisconnecting If true, also return true for connections that are in the process of disconnecting
 	/// \return True if this system is connected and active, false otherwise.
-	virtual bool IsConnected(const SystemAddress systemAddress, bool includeInProgress=false, bool includeDisconnecting=false)=0;
+	virtual bool IsConnected(const AddressOrGUID systemIdentifier, bool includeInProgress=false, bool includeDisconnecting=false)=0;
 
 	/// Given a systemAddress, returns an index from 0 to the maximum number of players allowed - 1.
 	/// \param[in] systemAddress The SystemAddress we are referring to
@@ -374,17 +374,17 @@ public:
 	/// Returns the average of all ping times read for the specific system or -1 if none read yet
 	/// \param[in] systemAddress Which system we are referring to
 	/// \return The ping time for this system, or -1
-	virtual int GetAveragePing( const SystemAddress systemAddress )=0;
+	virtual int GetAveragePing( const AddressOrGUID systemIdentifier )=0;
 
 	/// Returns the last ping time read for the specific system or -1 if none read yet
 	/// \param[in] systemAddress Which system we are referring to
 	/// \return The last ping time for this system, or -1
-	virtual int GetLastPing( const SystemAddress systemAddress ) const=0;
+	virtual int GetLastPing( const AddressOrGUID systemIdentifier ) const=0;
 
 	/// Returns the lowest ping time read or -1 if none read yet
 	/// \param[in] systemAddress Which system we are referring to
 	/// \return The lowest ping time for this system, or -1
-	virtual int GetLowestPing( const SystemAddress systemAddress ) const=0;
+	virtual int GetLowestPing( const AddressOrGUID systemIdentifier ) const=0;
 
 	/// Ping the remote systems every so often, or not. This is off by default.  Can be called anytime.
 	/// \param[in] doPing True to start occasional pings.  False to stop them.
@@ -573,6 +573,12 @@ public:
 	/// \Internal
 	// \param[in] routerInterface The router to use to route messages to systems not directly connected to this system.
 	virtual void RemoveRouterInterface( RouterInterface *routerInterface )=0;
+
+	/// \internal
+	/// \brief For a given system identified by \a guid, change the SystemAddress to send to.
+	/// \param[in] guid The connection we are referring to
+	/// \param[in] systemAddress The new address to send to
+	virtual void ChangeSystemAddress(RakNetGUID guid, SystemAddress systemAddress)=0;
 
 	/// \returns a packet for you to write to if you want to create a Packet for some reason.
 	/// You can add it to the receive buffer with PushBackPacket

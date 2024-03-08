@@ -24,7 +24,6 @@ void RunServer()
 	RakPeerInterface *rakPeer=RakNetworkFactory::GetRakPeerInterface();
 	RakNet::NatTypeDetectionServer natTypeDetectionServer;
 	rakPeer->AttachPlugin(&natTypeDetectionServer);
-	SocketDescriptor sd;
 	char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
 	unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
 	SocketLayer::Instance()->GetMyIP( ipList, binaryAddresses );
@@ -40,7 +39,9 @@ void RunServer()
 		printf("%i. Using %s\n", i+1, ipList[i]);
 	}
 
-	rakPeer->Startup(128,0,&SocketDescriptor(NAT_TYPE_DETECTION_SERVER_PORT, ipList[0]), 1);
+
+	SocketDescriptor sd(NAT_TYPE_DETECTION_SERVER_PORT, ipList[0]);
+	rakPeer->Startup(128,0,&sd, 1);
 	rakPeer->SetMaximumIncomingConnections(128);
 	natTypeDetectionServer.Startup(ipList[1], ipList[2], ipList[3]);
 
@@ -87,7 +88,8 @@ void RunClient()
 	RakPeerInterface *rakPeer=RakNetworkFactory::GetRakPeerInterface();
 	RakNet::NatTypeDetectionClient natTypeDetectionClient;
 	rakPeer->AttachPlugin(&natTypeDetectionClient);
-	rakPeer->Startup(1,0,&SocketDescriptor(0,0),1);
+	SocketDescriptor sd(0,0);
+	rakPeer->Startup(1,0,&sd,1);
 	printf("Enter first server IP: ");
 	char str[256];
 	gets(str);

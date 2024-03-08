@@ -75,7 +75,8 @@ struct UDPProxyClientResultHandler_Test : public RakNet::UDPProxyClientResultHan
 	{
 		rakPeer = RakNetworkFactory::GetRakPeerInterface();
 		rakPeer->AttachPlugin(&proxyClient);
-		rakPeer->Startup(32,0,&SocketDescriptor(0,0), 1);
+		SocketDescriptor sd(0,0);
+		rakPeer->Startup(32,0,&sd, 1);
 		rakPeer->SetMaximumIncomingConnections(32);
 		// Set this class to get the event callbacks
 		proxyClient.SetResultHandler(this);
@@ -198,7 +199,8 @@ struct UDPProxyServerResultHandler_Test : public RakNet::UDPProxyServerResultHan
 	{
 		rakPeer = RakNetworkFactory::GetRakPeerInterface();
 		rakPeer->AttachPlugin(&proxyServer);
-		rakPeer->Startup(1,0,&SocketDescriptor(0,0), 1);
+		SocketDescriptor sd(0,0);
+		rakPeer->Startup(1,0,&sd, 1);
 		// Set this class to get the event callbacks
 		proxyServer.SetResultHandler(this);
 		char str[256];
@@ -246,7 +248,8 @@ void RunCoordinator(void)
 	RakPeerInterface *rakPeer = RakNetworkFactory::GetRakPeerInterface();
 	RakNet::UDPProxyCoordinator coordinator;
 	rakPeer->AttachPlugin(&coordinator);
-	rakPeer->Startup(64,0,&SocketDescriptor(COORDINATOR_PORT,0), 1);
+	SocketDescriptor sd(COORDINATOR_PORT,0);
+	rakPeer->Startup(64,0,&sd, 1);
 	rakPeer->SetMaximumIncomingConnections(64);
 	printf("Coordinator started.\nYou can now start the server(s), and connect to %s.\n", rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).ToString(true));
 

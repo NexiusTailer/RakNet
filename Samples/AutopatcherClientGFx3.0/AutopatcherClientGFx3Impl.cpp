@@ -72,21 +72,21 @@ public:
 		return false;
 	}
 
-	virtual void OnFileProgress(OnFileStruct *onFileStruct,unsigned int partCount,unsigned int partTotal,unsigned int dataChunkLength, char *firstDataChunk)
+	virtual void OnFileProgress(FileProgressStruct *fps)
 	{
 		char buff[1024];
-		sprintf(buff, "%s %ib / %ib\n", onFileStruct->fileName,
-			onFileStruct->bytesDownloadedForThisFile, onFileStruct->byteLengthOfThisFile);
+		sprintf(buff, "%s %ib / %ib\n", fps->onFileStruct->fileName,
+			fps->onFileStruct->bytesDownloadedForThisFile, fps->onFileStruct->byteLengthOfThisFile);
 
 		FxResponseArgs<5> args2;
 		float thisFileProgress,totalProgress;
-		thisFileProgress=(float)partCount/(float)partTotal;
-		totalProgress=(float)(onFileStruct->fileIndex+1)/(float)onFileStruct->numberOfFilesInThisSet;
+		thisFileProgress=(float)fps->partCount/(float)fps->partTotal;
+		totalProgress=(float)(fps->onFileStruct->fileIndex+1)/(float)fps->onFileStruct->numberOfFilesInThisSet;
 		args2.Add(GFxValue(buff));
-		args2.Add(GFxValue((double)onFileStruct->bytesDownloadedForThisFile));
-		args2.Add(GFxValue((double)onFileStruct->byteLengthOfThisFile));
-		args2.Add(GFxValue((double)onFileStruct->bytesDownloadedForThisSet));
-		args2.Add(GFxValue((double)onFileStruct->byteLengthOfThisSet));
+		args2.Add(GFxValue((double)fps->onFileStruct->bytesDownloadedForThisFile));
+		args2.Add(GFxValue((double)fps->onFileStruct->byteLengthOfThisFile));
+		args2.Add(GFxValue((double)fps->onFileStruct->bytesDownloadedForThisSet));
+		args2.Add(GFxValue((double)fps->onFileStruct->byteLengthOfThisSet));
 		FxDelegate::Invoke(autopatcherClient->movie, "updateProgressBars", args2);
 	}
 
