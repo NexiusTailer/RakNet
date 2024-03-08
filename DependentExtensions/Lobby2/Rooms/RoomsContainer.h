@@ -478,7 +478,7 @@ public:
 	Room * GetRoomByLobbyRoomID(RoomID lobbyRoomID);
 	Room * GetRoomByName(RakNet::RakString roomName);
 	RoomsErrorCode GetInvitesToParticipant(RoomsParticipant* roomsParticipant, DataStructures::List<InvitedUser*> &invites);
-	void DestroyRoomIfDead(Room *room);
+	bool DestroyRoomIfDead(Room *room);
 	void ChangeHandle(RakNet::RakString oldHandle, RakNet::RakString newHandle);
 
 	unsigned ProcessQuickJoins( DataStructures::List<QuickJoinUser*> &timeoutExpired,

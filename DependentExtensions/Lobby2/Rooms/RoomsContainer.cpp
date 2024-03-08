@@ -74,6 +74,7 @@ void NetworkedQuickJoinUser::Serialize(bool writeToBitstream, RakNet::BitStream 
 	query.Serialize(writeToBitstream, bitStream);
 	bitStream->Serialize(writeToBitstream,timeout);
 	bitStream->Serialize(writeToBitstream,query);
+	bitStream->Serialize(writeToBitstream,minimumPlayers);
 }
 // ----------------------------  RoomMember  ----------------------------
 
@@ -562,7 +563,10 @@ void AllGamesRoomsContainer::DestroyRoomIfDead(Room *room)
 		return;
 	unsigned int i;
 	for (i=0; i < perGamesRoomsContainers.Size(); i++)
-		perGamesRoomsContainers[i]->DestroyRoomIfDead(room);
+	{
+		if (perGamesRoomsContainers[i]->DestroyRoomIfDead(room))
+			break;
+	}
 }
 void AllGamesRoomsContainer::ChangeHandle(RakNet::RakString oldHandle, RakNet::RakString newHandle)
 {
@@ -1176,10 +1180,15 @@ RoomsErrorCode PerGameRoomsContainer::GetInvitesToParticipant(RoomsParticipant* 
 		rooms[i]->GetInvitesToParticipant(roomsParticipant, invites);
 	return REC_SUCCESS;
 }
-void PerGameRoomsContainer::DestroyRoomIfDead(Room *room)
+bool PerGameRoomsContainer::DestroyRoomIfDead(Room *room)
 {
-	roomsTable.RemoveRow(room->GetID());
-	delete room;
+	if (roomsTable.GetRowByID(room->GetID())==room->tableRow)
+	{
+		roomsTable.RemoveRow(room->GetID());
+		delete room;
+		return true;
+	}
+	return false;
 }
 void PerGameRoomsContainer::ChangeHandle(RakNet::RakString oldHandle, RakNet::RakString newHandle)
 {

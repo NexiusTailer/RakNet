@@ -24,6 +24,6 @@ This is not necessary for most uses but is here for completeness.
 
 Dependencies: None
 
-Related projects: None
+Related projects: ComprehensivePCGame demonstrates CloudClient used to upload game servers.
 
 For help and support, please visit http://www.jenkinssoftware.com

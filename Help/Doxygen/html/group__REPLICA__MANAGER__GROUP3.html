@@ -19,7 +19,10 @@
   </div>
 </div>
 <div class="contents">
-<h1>ReplicaManager3</h1>Third implementation of object replication.  
+<h1>ReplicaManager3<br>
+<small>
+[<a class="el" href="group__PLUGINS__GROUP.html">Plugins</a>]</small>
+</h1>Third implementation of object replication.  
 <a href="#_details">More...</a>
 <p>
 <table border="0" cellpadding="0" cellspacing="0">
@@ -79,9 +82,14 @@
 <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg9a29b413d7f2b9cb21c16457631d3aef2cd620253580e8d24a1b7957799c3d7a">RakNet::RM3QSR_MAX</a>
  }</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g91a588da9d58bc86b8fb7e4f27ddcf7e">RakNet::Replica3P2PMode</a> { <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg91a588da9d58bc86b8fb7e4f27ddcf7ee6bb229afa26313b6aa4c11320e630d5">RakNet::R3P2PM_SINGLE_OWNER</a>, 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g91a588da9d58bc86b8fb7e4f27ddcf7e">RakNet::Replica3P2PMode</a> { <br>
+&nbsp;&nbsp;<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg91a588da9d58bc86b8fb7e4f27ddcf7ee6bb229afa26313b6aa4c11320e630d5">RakNet::R3P2PM_SINGLE_OWNER</a>, 
 <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg91a588da9d58bc86b8fb7e4f27ddcf7e47ff84aa5cdf83b800d551ab607b1d1f">RakNet::R3P2PM_MULTI_OWNER_CURRENTLY_AUTHORITATIVE</a>, 
-<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg91a588da9d58bc86b8fb7e4f27ddcf7ec0b780c5f936449de42e6032e6bca4e6">RakNet::R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE</a>
+<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg91a588da9d58bc86b8fb7e4f27ddcf7ec0b780c5f936449de42e6032e6bca4e6">RakNet::R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE</a>, 
+<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg91a588da9d58bc86b8fb7e4f27ddcf7ed8f368971bbf8939507a5f0550e1af04">RakNet::R3P2PM_STATIC_OBJECT_CURRENTLY_AUTHORITATIVE</a>, 
+<br>
+&nbsp;&nbsp;<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#gg91a588da9d58bc86b8fb7e4f27ddcf7e3b8743fa18228e729bcad3e2a89c7752">RakNet::R3P2PM_STATIC_OBJECT_NOT_CURRENTLY_AUTHORITATIVE</a>
+<br>
  }</td></tr>
 
 </table>
@@ -124,6 +132,10 @@ The <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your
 The <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instance is constructed and/or serialized by different systems This system is currently in charge of construction and/or serialization Example: A pickup. When an avatar holds it, that avatar controls it. When it is on the ground, the host controls it. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="gg91a588da9d58bc86b8fb7e4f27ddcf7ec0b780c5f936449de42e6032e6bca4e6"></a><!-- doxytag: member="R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE" ref="gg91a588da9d58bc86b8fb7e4f27ddcf7ec0b780c5f936449de42e6032e6bca4e6" args="" -->R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE</em>&nbsp;</td><td>
 The <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instance is constructed and/or serialized by different systems Another system is in charge of construction and/or serialization, but this system may be in charge at a later time Example: A pickup held by another player. That player sends creation of that object to new connections, and serializes it until it is dropped. </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="gg91a588da9d58bc86b8fb7e4f27ddcf7ed8f368971bbf8939507a5f0550e1af04"></a><!-- doxytag: member="R3P2PM_STATIC_OBJECT_CURRENTLY_AUTHORITATIVE" ref="gg91a588da9d58bc86b8fb7e4f27ddcf7ed8f368971bbf8939507a5f0550e1af04" args="" -->R3P2PM_STATIC_OBJECT_CURRENTLY_AUTHORITATIVE</em>&nbsp;</td><td>
+The <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instance is a static object (already exists on the remote system). This system is currently in charge of construction and/or serialization </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="gg91a588da9d58bc86b8fb7e4f27ddcf7e3b8743fa18228e729bcad3e2a89c7752"></a><!-- doxytag: member="R3P2PM_STATIC_OBJECT_NOT_CURRENTLY_AUTHORITATIVE" ref="gg91a588da9d58bc86b8fb7e4f27ddcf7e3b8743fa18228e729bcad3e2a89c7752" args="" -->R3P2PM_STATIC_OBJECT_NOT_CURRENTLY_AUTHORITATIVE</em>&nbsp;</td><td>
+The <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instance is a static object (already exists on the remote system). Another system is in charge of construction and/or serialization, but this system may be in charge at a later time </td></tr>
 </table>
 </dl>
 
@@ -252,7 +264,7 @@ Max enum. </td></tr>
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 4 21:34:39 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 10 16:25:01 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

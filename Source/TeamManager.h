@@ -115,7 +115,7 @@ struct TeamSelection
 /// \brief A member of one or more teams.
 /// \details Contains data and operations on data to manage which team your game's team members are on.
 /// Best used as a composite member of your "User" or "Player" class(es).
-/// When using with ReplicaManager3, call SerializeConstruction() and DeserializeConstruction() in the methods of the same name to serialize initial state of this object to a remote system.
+/// When using with ReplicaManager3, call TM_TeamMember::ReferenceTeamMember() in Replica3::DeserializeConstruction() and TM_TeamMember::DeserializeConstruction() in Replica3::PostDeserializeConstruction()
 /// There is otherwise no need to manually serialize the class, as operations are networked internally.
 /// \ingroup TEAM_MANAGER_GROUP
 class RAK_DLL_EXPORT TM_TeamMember
@@ -125,7 +125,7 @@ public:
 	STATIC_FACTORY_DECLARATIONS(TM_TeamMember)
 
 	TM_TeamMember();
-	~TM_TeamMember();
+	virtual ~TM_TeamMember();
 	
 	/// \brief Request to join any team, a specific team, or to leave all teams
 	/// \details Function will return false on invalid operations, such as joining a team you are already on.
@@ -217,7 +217,7 @@ public:
 	/// \details To replicate a TM_TeamMember on another system, first instantiate the object using your own code, or a system such as ReplicaManager3.
 	/// Next, call SerializeConstruction() from whichever system owns the team member
 	/// Last, call DeserializeConstruction() on the newly created TM_TeamMember
-	/// \note You must instantiate and deserialize all TM_Team instances that the team member refers to before calling DesrializeConstruction()
+	/// \note You must instantiate and deserialize all TM_Team instances that the team member refers to before calling DesrializeConstruction(). ReplicaManager3::PostSerializeConstruction() and ReplicaManager3::PostDeserializeConstruction() will ensure this.
 	/// \param[out] constructionBitstream This object serialized to a BitStream
 	void SerializeConstruction(BitStream *constructionBitstream);
 	
@@ -293,7 +293,7 @@ protected:
 /// \brief A team, containing a list of TM_TeamMember instances
 /// \details Contains lists of TM_TeamMember instances
 /// Best used as a composite member of your "Team" or "PlayerList" class(es).
-/// When using with ReplicaManager3, call SerializeConstruction() and DeserializeConstruction() in the methods of the same name to serialize initial state of this object to a remote system.
+/// When using with ReplicaManager3, call TM_Team::ReferenceTeam() in Replica3::DeserializeConstruction() and TM_Team::DeserializeConstruction() in Replica3::PostDeserializeConstruction()
 /// There is otherwise no need to manually serialize the class, as operations are networked internally.
 /// \ingroup TEAM_MANAGER_GROUP
 class RAK_DLL_EXPORT TM_Team
@@ -303,7 +303,7 @@ public:
 	STATIC_FACTORY_DECLARATIONS(TM_Team)
 
 	TM_Team();
-	~TM_Team();
+	virtual ~TM_Team();
 	
 	/// \brief Set the maximum number of members that can join this team.
 	/// Defaults to 65535
@@ -411,7 +411,7 @@ class TM_World
 {
 public:
 	TM_World();
-	~TM_World();
+	virtual ~TM_World();
 
 	/// \return Returns the plugin that created this TM_World instance
 	TeamManager *GetTeamManager(void) const;

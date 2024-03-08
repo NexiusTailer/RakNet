@@ -84,7 +84,7 @@ ReplicaManager3::~ReplicaManager3()
 			RakAssert(worldsList[i]->connectionList.Size()==0);
 		}
 	}
-	Clear();
+	Clear(true);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -117,6 +117,8 @@ bool ReplicaManager3::PushConnection(RakNet::Connection_RM3 *newConnection, Worl
 		return false;
 	if (GetConnectionByGUID(newConnection->GetRakNetGUID(), worldId))
 		return false;
+	// Was this intended?
+	RakAssert(newConnection->GetRakNetGUID()!=rakPeerInterface->GetMyGUID());
 	
 	RakAssert(worldsArray[worldId]!=0 && "World not in use");
 	RM3World *world = worldsArray[worldId];
@@ -154,7 +156,7 @@ void ReplicaManager3::DeallocReplicaNoBroadcastDestruction(RakNet::Connection_RM
 RakNet::Connection_RM3 * ReplicaManager3::PopConnection(unsigned int index, WorldId worldId)
 {
 	DataStructures::List<Replica3*> replicaList;
-	DataStructures::List<Replica3*> destructionList;
+	DataStructures::List<NetworkID> destructionList;
 	DataStructures::List<Replica3*> broadcastList;
 	RakNet::Connection_RM3 *connection;
 	unsigned int index2;
@@ -181,11 +183,11 @@ RakNet::Connection_RM3 * ReplicaManager3::PopConnection(unsigned int index, Worl
 		replicaList[index2]->OnPoppedConnection(connection);
 		if (action==RM3AOPC_DELETE_REPLICA)
 		{
-			destructionList.Push( replicaList[index2], _FILE_AND_LINE_  );
+			destructionList.Push( replicaList[index2]->GetNetworkID(), _FILE_AND_LINE_  );
 		}
 		else if (action==RM3AOPC_DELETE_REPLICA_AND_BROADCAST_DESTRUCTION)
 		{
-			destructionList.Push( replicaList[index2], _FILE_AND_LINE_  );
+			destructionList.Push( replicaList[index2]->GetNetworkID(), _FILE_AND_LINE_  );
 
 			broadcastList.Push( replicaList[index2], _FILE_AND_LINE_  );
 		}
@@ -194,8 +196,13 @@ RakNet::Connection_RM3 * ReplicaManager3::PopConnection(unsigned int index, Worl
 	BroadcastDestructionList(broadcastList, connection->GetSystemAddress());
 	for (index2=0; index2 < destructionList.Size(); index2++)
 	{
-		destructionList[index2]->PreDestruction(connection);
-		destructionList[index2]->DeallocReplica(connection);
+		// Do lookup in case DeallocReplica destroyed one of of the later Replica3 instances in the list
+		Replica3* replicaToDestroy = world->networkIDManager->GET_OBJECT_FROM_ID<Replica3*>(destructionList[index2]);
+		if (replicaToDestroy)
+		{
+			replicaToDestroy->PreDestruction(connection);
+			replicaToDestroy->DeallocReplica(connection);
+		}
 	}
 
 	world->connectionList.RemoveAtIndex(index);
@@ -457,15 +464,35 @@ void ReplicaManager3::GetConnectionsThatHaveReplicaConstructed(Replica3 *replica
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void ReplicaManager3::Clear(void)
+bool ReplicaManager3::GetAllConnectionDownloadsCompleted(WorldId worldId) const
+{
+	RakAssert(worldsArray[worldId]!=0 && "World not in use");
+	RM3World *world = worldsArray[worldId];
+
+	unsigned int index;
+	for (index=0; index < world->connectionList.Size(); index++)
+	{
+		if (world->connectionList[index]->GetDownloadWasCompleted()==false)
+			return false;
+	}
+	return true;
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void ReplicaManager3::Clear(bool deleteWorlds)
 {
 	for (unsigned int i=0; i < worldsList.Size(); i++)
 	{
-		worldsArray[worldsList[i]->worldId]=0;
 		worldsList[i]->Clear(this);
-		delete worldsList[i];
-	}
-	worldsList.Clear(false, _FILE_AND_LINE_);
+		if (deleteWorlds)
+		{
+			worldsArray[worldsList[i]->worldId]=0;
+			delete worldsList[i];
+		}
+	} 
+	if (deleteWorlds)
+		worldsList.Clear(false, _FILE_AND_LINE_);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -494,6 +521,7 @@ void ReplicaManager3::RM3World::Clear(ReplicaManager3 *replicaManager3)
 	for (unsigned int i=0; i < userReplicaList.Size(); i++)
 	{
 		userReplicaList[i]->replicaManager=0;
+		userReplicaList[i]->SetNetworkIDManager(0);
 	}
 	connectionList.Clear(true,_FILE_AND_LINE_);
 	userReplicaList.Clear(true,_FILE_AND_LINE_);
@@ -710,6 +738,7 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3, Worl
 			else if (constructionState==RM3CS_SEND_CONSTRUCTION)
 			{
 				OnConstructToThisConnection(index, replicaManager3);
+				RakAssert(lsr->replica);
 				constructedReplicasCulled.Push(lsr->replica,_FILE_AND_LINE_);
 			}
 			else if (constructionState==RM3CS_NEVER_CONSTRUCT)
@@ -931,7 +960,8 @@ void ReplicaManager3::OnRakPeerShutdown(void)
 		}
 	}
 
-	Clear();
+
+	Clear(false);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1079,7 +1109,12 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 		else
 		{
 			if (constructionTickStack[index]!=0)
-				constructionTickStack[index]->PostDeserializeConstruction(&empty, connection);
+			{
+				if (actuallyCreateObjectList[index])
+					constructionTickStack[index]->PostDeserializeConstruction(&empty, connection);
+				else
+					constructionTickStack[index]->PostDeserializeConstructionExisting(&empty, connection);
+			}
 		}
 	}
 
@@ -1238,6 +1273,7 @@ PluginReceiveResult ReplicaManager3::OnDownloadComplete(Packet *packet, unsigned
 
 	RakNet::BitStream bsIn(packetData,packetDataLength,false);
 	bsIn.IgnoreBytes(packetDataOffset);
+	connection->gotDownloadComplete=true;
 	connection->DeserializeOnDownloadComplete(&bsIn);
 	return RR_CONTINUE_PROCESSING;
 }
@@ -1355,6 +1391,7 @@ Connection_RM3::Connection_RM3(const SystemAddress &_systemAddress, RakNetGUID _
 	isValidated=false;
 	isFirstConstruction=true;
 	groupConstructionAndSerialize=false;
+	gotDownloadComplete=false;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1647,6 +1684,7 @@ void Connection_RM3::OnLocalReference(Replica3* replica3, ReplicaManager3 *repli
 {
 	ConstructionMode constructionMode = QueryConstructionMode();
 	RakAssert(constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION || constructionMode==QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION);
+	RakAssert(replica3);
 	(void) replicaManager;
 	(void) constructionMode;
 
@@ -1714,6 +1752,8 @@ void Connection_RM3::OnDereference(Replica3* replica3, ReplicaManager3 *replicaM
 
 void Connection_RM3::OnDownloadFromThisSystem(Replica3* replica3, ReplicaManager3 *replicaManager)
 {
+	RakAssert(replica3);
+
 	ValidateLists(replicaManager);
 	LastSerializationResult* lsr=RakNet::OP_NEW<LastSerializationResult>(_FILE_AND_LINE_);
 	lsr->replica=replica3;
@@ -1800,6 +1840,7 @@ void Connection_RM3::OnConstructToThisConnection(unsigned int queryToConstructId
 
 void Connection_RM3::OnConstructToThisConnection(Replica3 *replica, ReplicaManager3 *replicaManager)
 {
+	RakAssert(replica);
 	RakAssert(QueryConstructionMode()==QUERY_CONNECTION_FOR_REPLICA_LIST);
 	(void) replicaManager;
 
@@ -2329,6 +2370,14 @@ RM3ConstructionState Replica3::QueryConstruction_PeerToPeer(RakNet::Connection_R
 	{
 		return RM3CS_SEND_CONSTRUCTION;
 	}
+	else if (p2pMode==R3P2PM_STATIC_OBJECT_CURRENTLY_AUTHORITATIVE)
+	{
+		return RM3CS_ALREADY_EXISTS_REMOTELY;
+	}
+	else if (p2pMode==R3P2PM_STATIC_OBJECT_NOT_CURRENTLY_AUTHORITATIVE)
+	{
+		return RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT;
+	}
 	else
 	{
 		RakAssert(p2pMode==R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE);
@@ -2392,6 +2441,14 @@ RM3QuerySerializationResult Replica3::QuerySerialization_PeerToPeer(RakNet::Conn
 	else if (p2pMode==R3P2PM_MULTI_OWNER_CURRENTLY_AUTHORITATIVE)
 	{
 		return RM3QSR_CALL_SERIALIZE;
+	}
+	else if (p2pMode==R3P2PM_STATIC_OBJECT_CURRENTLY_AUTHORITATIVE)
+	{
+		return RM3QSR_CALL_SERIALIZE;
+	}
+	else if (p2pMode==R3P2PM_STATIC_OBJECT_NOT_CURRENTLY_AUTHORITATIVE)
+	{
+		return RM3QSR_DO_NOT_CALL_SERIALIZE;
 	}
 	else
 	{

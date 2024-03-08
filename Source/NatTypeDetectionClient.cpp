@@ -56,7 +56,7 @@ void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress)
 void NatTypeDetectionClient::OnCompletion(NATTypeDetectionResult result)
 {
 	Packet *p = AllocatePacketUnified(sizeof(MessageID)+sizeof(unsigned char)*2);
-	printf("Returning nat detection result to the user\n");
+	//printf("Returning nat detection result to the user\n");
 	p->data[0]=ID_NAT_TYPE_DETECTION_RESULT;
 	p->systemAddress=serverAddress;
 	p->systemAddress.systemIndex=(SystemIndex)-1;

@@ -46,6 +46,10 @@ bool UDPProxyServer::LoginToCoordinator(RakNet::RakString password, SystemAddres
 	loggingInCoordinators.InsertAtIndex(coordinatorAddress, insertionIndex, _FILE_AND_LINE_ );
 	return true;
 }
+void UDPProxyServer::SetServerPublicIP(RakString ip)
+{
+	serverPublicIp = ip;
+}
 void UDPProxyServer::Update(void)
 {
 	udpForwarder.Update();
@@ -156,6 +160,7 @@ void UDPProxyServer::OnForwardingRequestFromCoordinatorToServer(Packet *packet)
 	outgoingBs.Write((MessageID)ID_UDP_PROXY_FORWARDING_REPLY_FROM_SERVER_TO_COORDINATOR);
 	outgoingBs.Write(sourceAddress);
 	outgoingBs.Write(targetAddress);
+	outgoingBs.Write(serverPublicIp);
 	outgoingBs.Write((unsigned char) success);
 	if (success==UDPFORWARDER_SUCCESS)
 	{

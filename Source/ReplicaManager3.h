@@ -23,7 +23,7 @@
 /// \defgroup REPLICA_MANAGER_GROUP3 ReplicaManager3
 /// \brief Third implementation of object replication
 /// \details
-/// \ingroup REPLICA_MANAGER_GROUP
+/// \ingroup PLUGINS_GROUP
 
 namespace RakNet
 {
@@ -225,12 +225,19 @@ public:
 	/// \param[out] connectionsThatHaveConstructedThisReplica Populated with connection instances that we believe have \a replica allocated
 	void GetConnectionsThatHaveReplicaConstructed(Replica3 *replica, DataStructures::List<Connection_RM3*> &connectionsThatHaveConstructedThisReplica, WorldId worldId=0);
 
+	/// \brief Returns if GetDownloadWasCompleted() returns true for all connections
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
+	/// \return True when all downloads have been completed
+	bool GetAllConnectionDownloadsCompleted(WorldId worldId=0) const;
+
 	/// \brief ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager, list of connections, replicas, etc
 	/// A world with id 0 is created automatically. If you want multiple worlds, use this function, and ReplicaManager3::SetNetworkIDManager() to have a different NetworkIDManager instance per world
+	/// \param[in] worldId A unique identifier for this world. User-defined
 	void AddWorld(WorldId worldId);
 
 	/// \brief Deallocate a world added with AddWorld, or the default world with id 0
 	/// Deallocating a world will also stop tracking and updating all connections and replicas associated with that world.
+	/// \param[in] worldId A \a worldId value previously added with AddWorld()
 	void RemoveWorld(WorldId worldId);
 
 	/// \brief Get one of the WorldId values added with AddWorld()
@@ -267,10 +274,11 @@ public:
 	/// You shouldn't need to call this, as it happens in the Replica3 destructor
 	void BroadcastDestruction(Replica3 *replica, const SystemAddress &exclusionAddress);
 
-	/// \internal	
+	/// \internal
 	/// \details Frees internal lists.<BR>
+	/// \param[in] deleteWorlds True to also delete the worlds added with AddWorld()
 	/// Externally allocated pointers are not deallocated
-	void Clear(void);
+	void Clear(bool deleteWorlds=false);
 
 	/// \internal
 	PRO GetDefaultSendParameters(void) const;
@@ -456,6 +464,9 @@ public:
 	/// \return Returns the RakNetGUID passed to the constructor of this object
 	RakNetGUID GetRakNetGUID(void) const {return guid;}
 
+	/// \return True if ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE arrived for this connection
+	bool GetDownloadWasCompleted(void) const {return gotDownloadComplete;}
+
 	/// List of enumerations for how to get the list of valid objects for other systems
 	enum ConstructionMode
 	{
@@ -496,13 +507,6 @@ public:
 	/// \brief Callback used when QueryConstructionMode() returns QUERY_CONNECTION_FOR_REPLICA_LIST
 	/// \details This advantage of this callback is if that there are many objects that a particular connection does not have, then we do not have to iterate through those
 	/// objects calling QueryConstruction() for each of them.<BR>
-	///<BR>
-	/// The following code uses a sorted merge sort to quickly find new and deleted objects, given a list of objects we know should exist.<BR>
-	///<BR>
-	/// DataStructures::List<Replica3*> objectsTheyShouldHave; // You have to fill in this list<BR>
-	/// DataStructures::List<Replica3*> objectsTheyCurrentlyHave,objectsTheyStillHave,existingReplicasToDestro,newReplicasToCreatey;<BR>
-	/// GetConstructedReplicas(objectsTheyCurrentlyHave);<BR>
-	/// DataStructures::Multilist::FindIntersection(objectsTheyCurrentlyHave, objectsTheyShouldHave, objectsTheyStillHave, existingReplicasToDestroy, newReplicasToCreate);<BR>
 	///<BR>
 	/// See GridSectorizer in the Source directory as a method to find all objects within a certain radius in a fast way.<BR>
 	///<BR>
@@ -662,6 +666,9 @@ protected:
 	bool groupConstructionAndSerialize;
 	DataStructures::Queue<Packet*> downloadGroup;
 
+	// Stores if we got download complete for this connection
+	bool gotDownloadComplete;
+
 	friend class ReplicaManager3;
 private:
 	Connection_RM3() {};
@@ -798,6 +805,13 @@ enum Replica3P2PMode
 	/// Another system is in charge of construction and/or serialization, but this system may be in charge at a later time
 	/// Example: A pickup held by another player. That player sends creation of that object to new connections, and serializes it until it is dropped.
 	R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE,
+	/// The Replica3 instance is a static object (already exists on the remote system).
+	/// This system is currently in charge of construction and/or serialization
+	R3P2PM_STATIC_OBJECT_CURRENTLY_AUTHORITATIVE,
+	/// The Replica3 instance is a static object (already exists on the remote system).
+	/// Another system is in charge of construction and/or serialization, but this system may be in charge at a later time
+	R3P2PM_STATIC_OBJECT_NOT_CURRENTLY_AUTHORITATIVE,
+
 };
 
 /// \brief Base class for your replicated objects for the ReplicaManager3 system.

@@ -842,7 +842,7 @@ bool TM_Team::SetMemberLimit(TeamMemberLimit _teamMemberLimit, NoTeamId noTeamId
 
 TeamMemberLimit TM_Team::GetMemberLimit(void) const
 {
-	if (world->GetBalanceTeams()==FALSE)
+	if (world->GetBalanceTeams()==false)
 	{
 		return teamMemberLimit;
 	}
@@ -2081,8 +2081,10 @@ void TeamManager::DecodeTeamAssigned(BitStream *bsIn, TM_World **world, TM_TeamM
 		{
 			bsIn->Read(teamId);
 			TM_Team * team = (*world)->GetTeamByNetworkID(teamId);
+			RakAssert(team);
 			if (team)
 				newTeam.Push(team, _FILE_AND_LINE_);
+			// else probably didn't reference team first
 		}
 
 		if (*teamMember)

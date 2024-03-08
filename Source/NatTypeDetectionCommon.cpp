@@ -12,14 +12,14 @@ bool RakNet::CanConnect(NATTypeDetectionResult type1, NATTypeDetectionResult typ
 	bool connectionGraph[NAT_TYPE_COUNT][NAT_TYPE_COUNT] =
 	{
 		// None,	Full Cone,	Address Restricted,		Port Restricted,	Symmetric,	Unknown,	InProgress,	Supports_UPNP
-		{true, 		true, 		true, 					true, 				true,		false,		false,		false},		// None
-		{true, 		true, 		true, 					true, 				true,		false,		false,		false},		// Full Cone
-		{true, 		true, 		true, 					true, 				true,		false,		false,		false},		// Address restricted
-		{true, 		true, 		true, 					true, 				false,		false,		false,		false},		// Port restricted
-		{true, 		true, 		true, 					false, 				false,		false,		false,		false},		// Symmetric
+		{true, 		true, 		true, 					true, 				true,		false,		false,		true},		// None
+		{true, 		true, 		true, 					true, 				true,		false,		false,		true},		// Full Cone
+		{true, 		true, 		true, 					true, 				true,		false,		false,		true},		// Address restricted
+		{true, 		true, 		true, 					true, 				false,		false,		false,		true},		// Port restricted
+		{true, 		true, 		true, 					false, 				false,		false,		false,		true},		// Symmetric
 		{false,		false,		false,					false,				false,		false,		false,		false},		// Unknown
 		{false,		false,		false,					false,				false,		false,		false,		false},		// InProgress
-		{false,		false,		false,					false,				false,		false,		false,		false}		// Supports_UPNP
+		{true,		true,		true,					true,				true,		false,		false,		true}		// Supports_UPNP
 	};
 
 	return connectionGraph[(int) type1][(int) type2];

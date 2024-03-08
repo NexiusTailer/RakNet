@@ -626,6 +626,19 @@ void RakString::TerminateAtFirstCharacter(char c)
 		}
 	}
 }
+int RakString::GetCharacterCount(char c)
+{
+	int count=0;
+	unsigned int i, len=(unsigned int) GetLength();
+	for (i=0; i < len; i++)
+	{
+		if (sharedString->c_str[i]==c)
+		{
+			++count;
+		}
+	}
+	return count;
+}
 void RakString::RemoveCharacter(char c)
 {
 	if (c==0)

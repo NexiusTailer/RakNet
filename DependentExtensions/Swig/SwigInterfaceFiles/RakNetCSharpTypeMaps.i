@@ -48,6 +48,7 @@ CSHARP_ARRAYS(char *,string)
 //For the read functions, out vars
 %apply long long &OUTPUT {long long &outTemplateVar};
 %apply long &OUTPUT {long &outTemplateVar};
+%apply short &OUTPUT {short &outTemplateVar};
 %apply bool &OUTPUT {bool &outTemplateVar};
 %apply float &OUTPUT {float &outTemplateVar};
 %apply float &OUTPUT {float &outFloat};
@@ -68,6 +69,8 @@ CSHARP_ARRAYS(char *,string)
 //Inouts for serialize and such
 %apply long long &INOUT {long long &inOutTemplateVar};
 %apply long &INOUT {long &inOutTemplateVar};
+%apply short &INOUT {short &inOutTemplateVar};
+%apply unsigned short &INOUT {unsigned short &inOutTemplateVar};
 %apply bool &INOUT {bool &inOutTemplateVar};
 %apply float &INOUT {float &inOutTemplateVar};
 %apply float &INOUT {float &inOutFloat};
@@ -75,6 +78,8 @@ CSHARP_ARRAYS(char *,string)
 
 %apply long long &INOUT {long long &inOutCurrentValue};
 %apply long &INOUT {long &inOutCurrentValue};
+%apply short &INOUT {short &inOutCurrentValue};
+%apply unsigned short &INOUT {unsigned short &inOutCurrentValue};
 %apply bool &INOUT {bool &inOutCurrentValue};
 %apply float &INOUT {float &inOutCurrentValue};
 %apply float &INOUT {float &inOutCurrentValue};

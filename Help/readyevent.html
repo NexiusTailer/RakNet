@@ -16,16 +16,22 @@
 <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
   <TR>
     <TD><p><span class="RakNetBlueHeader">Signal that an event is ready to proceed</span> <BR>
-        <BR>
-    In a peer-to-peer enviroment, it is non-trivial to determine when all peers are ready to take some shared event, such as starting a game from a lobby, or taking the next turn in a turn based game. The problem is that while your system may be ready, and all systems you are connected to may be ready as far as you know, those systems may not know they are ready relative to each other. This is because latency or packetloss may break or degrade the connection between two other systems, so as far as those two systems are concerned not everyone is ready yet.</p>
-      <p>The ReadyEvent plugin handles this situation automatically. Given a user-defined numerical event identifier, each system can call ReadyEvent::SetEvent(eventId, isReady). When all systems are ready relative to both you and each other, ReadyEvent::IsEventCompleted(eventId) will return true, and you can proceed with the shared event. This value will be stored until the event is deleted with DeleteEvent(eventId);</p>
-      <p><strong>Common uses:</strong></p>
-      <ul>
-        <li>In a peer to peer lobby, this can be used to store when users toggle between ready and unready. When all users are ready, the game can start.</li>
-        <li>In a peer to peer turn based game, this can be used to signal that everyone is ready for the next turn.</li>
-        <li>In any peer to peer game, it can be used to proceed on generic events that everyone has to wait for, such as all players done loading the level.</li>
-      </ul>
-      
+		<P>ReadyEventlets you toggle ready or unready on a numbered event for a peer to peer system. It handles the networking telling you which system(s) are ready, and if all systems are ready. The non-trivial problem that it solves is to validate that all systems know that all other systems are ready, not just that all systems you know about are ready. To clarify, if A is connected to B and C, and B and C broadcast that they are ready, A knows that B and C are ready. However, A would not normally know that the packet from B to C has arrived, which it may not have due to latency or packetloss. The problem with this is that A may start sending some kind of start gameplay packets to B and C, yet B and C each thought the other was not ready yet.</P>
+		
+	<P>ReadyEvent solves this in two stages. In the first stage, it waits for all systems we know about to be ready. In the second stage, a message is sent querying if all systems we are connected to are also in that state. ReadyEvent::IsEventCompletionProcessing() will return true during the second stage. After the second stage, ID_READY_EVENT_ALL_SET is returned to the user.</P>
+		
+		Example usage:<BR>
+		<OL>
+		<LI>Add all systems participating or joining the session using AddToWaitList()
+		<LI>Optionally broadcast information corresponding to the event. Then call SetReady() to toggle ready or unready as long as IsEventCompletionProcessing() return false.
+		<LI>When ID_READY_EVENT_ALL_SET is returned, or IsEventCompleted() returns true, and you want to consider this event done, call ForceCompletion() on one or more of the systems. This will make it so remote systems can no longer call SetReady(false)
+		<LI>Proceed with gameplay that assumes the event with the specified eventId is ready.
+		<LI>When you no longer need a partcular eventId, or want to reuse that ID (such as with an enumeration), use DeleteEvent() to free the memory.
+	</OL>
+		
+		ReadyEvent is primarily useful when game has stages, and a stage cannot proceed until peer to peer communication has occured between all systems. For example, suppose you have a peer to peer turn based game where every system needs one action from every other system before going to the next turn. Without ReadyEvent, the session host may signal "next turn" yet one of the remote systems did not yet get all actions from all other systems.
+
+
   </TR>
 </TABLE>
 <table width="100%" border="0">

@@ -108,13 +108,15 @@ void InstantiateRakNetClasses(void)
 	rakPeer->AttachPlugin(cloudClient);
 	fullyConnectedMesh2=new FullyConnectedMesh2;
 	fullyConnectedMesh2->SetAutoparticipateConnections(false);
+	fullyConnectedMesh2->SetConnectOnNewRemoteConnection(false, "");
 	rakPeer->AttachPlugin(fullyConnectedMesh2);
 	// Connect to the NAT punchthrough server
 	ConnectionAttemptResult car = rakPeer->Connect(DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP, DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_PORT,0,0);
 	RakAssert(car==CONNECTION_ATTEMPT_STARTED);
+
 	// Advertise ourselves on the lAN if the NAT punchthrough server is not available
- 	for (int i=0; i < 8; i++)
- 		rakPeer->AdvertiseSystem("255.255.255.255", 1234+i, 0,0,0);
+ 	//for (int i=0; i < 8; i++)
+ 	//	rakPeer->AdvertiseSystem("255.255.255.255", 1234+i, 0,0,0);
 }
 void DeinitializeRakNetClasses(void)
 {

@@ -59,12 +59,6 @@ public class NatPunchthroughClient : PluginInterface2 {
     return ret;
   }
 
-  public bool OpenNATGroup(RakNetListRakNetGUID destinationSystems, SystemAddress facilitator) {
-    bool ret = RakNetPINVOKE.NatPunchthroughClient_OpenNATGroup(swigCPtr, RakNetListRakNetGUID.getCPtr(destinationSystems), SystemAddress.getCPtr(facilitator));
-    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
-    return ret;
-  }
-
   public PunchthroughConfiguration GetPunchthroughConfiguration() {
     IntPtr cPtr = RakNetPINVOKE.NatPunchthroughClient_GetPunchthroughConfiguration(swigCPtr);
     PunchthroughConfiguration ret = (cPtr == IntPtr.Zero) ? null : new PunchthroughConfiguration(cPtr, false);

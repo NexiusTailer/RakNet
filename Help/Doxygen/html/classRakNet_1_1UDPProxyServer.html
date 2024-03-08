@@ -57,6 +57,9 @@ Inheritance diagram for RakNet::UDPProxyServer:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyServer.html#32edaff2aec11cce6a138897b0e2a158">LoginToCoordinator</a> (<a class="el" href="classRakNet_1_1RakString.html">RakNet::RakString</a> password, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> coordinatorAddress)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyServer.html#eb6440f4e5f44f75a940c45538340e15">SetServerPublicIP</a> (<a class="el" href="classRakNet_1_1RakString.html">RakString</a> ip)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The server IP reported to the client is the IP address from the server to the coordinator. If the server and coordinator are on the same LAN, you need to call <a class="el" href="classRakNet_1_1UDPProxyServer.html#eb6440f4e5f44f75a940c45538340e15" title="The server IP reported to the client is the IP address from the server to the coordinator...">SetServerPublicIP()</a> to tell the client what address to connect to.  <a href="#eb6440f4e5f44f75a940c45538340e15"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="47ebde04af6efb122dbcf3994b9faa3f"></a><!-- doxytag: member="RakNet::UDPProxyServer::OnAttach" ref="47ebde04af6efb122dbcf3994b9faa3f" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1UDPProxyServer.html#47ebde04af6efb122dbcf3994b9faa3f">OnAttach</a> (void)</td></tr>
 
@@ -220,6 +223,33 @@ Receives the results of calling <a class="el" href="classRakNet_1_1UDPProxyServe
 
 </div>
 </div><p>
+<a class="anchor" name="eb6440f4e5f44f75a940c45538340e15"></a><!-- doxytag: member="RakNet::UDPProxyServer::SetServerPublicIP" ref="eb6440f4e5f44f75a940c45538340e15" args="(RakString ip)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::UDPProxyServer::SetServerPublicIP           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classRakNet_1_1RakString.html">RakString</a>&nbsp;</td>
+          <td class="paramname"> <em>ip</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+The server IP reported to the client is the IP address from the server to the coordinator. If the server and coordinator are on the same LAN, you need to call <a class="el" href="classRakNet_1_1UDPProxyServer.html#eb6440f4e5f44f75a940c45538340e15" title="The server IP reported to the client is the IP address from the server to the coordinator...">SetServerPublicIP()</a> to tell the client what address to connect to. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>ip</em>&nbsp;</td><td>IP address to report in <a class="el" href="structRakNet_1_1UDPProxyClientResultHandler.html#8052a8af926b913784b3e000416fa128">UDPProxyClientResultHandler::OnForwardingSuccess()</a> and <a class="el" href="structRakNet_1_1UDPProxyClientResultHandler.html#7e6850016de9235b6d3657a76075522c">UDPProxyClientResultHandler::OnForwardingNotification()</a> as proxyIPAddress </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <a class="anchor" name="8199854134e7999703f64c2cb0f31506"></a><!-- doxytag: member="RakNet::UDPProxyServer::SetSocketFamily" ref="8199854134e7999703f64c2cb0f31506" args="(unsigned short _socketFamily)" -->
 <div class="memitem">
 <div class="memproto">
@@ -264,7 +294,7 @@ Operative class that performs the forwarding Exposed so you can call <a class="e
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="UDPProxyServer_8h.html">UDPProxyServer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 4 21:34:41 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 10 16:25:04 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

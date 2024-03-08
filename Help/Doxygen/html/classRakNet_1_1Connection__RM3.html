@@ -69,6 +69,8 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#d3f7cec74bfac88a3ae095664e6a29c0">GetRakNetGUID</a> (void) const </td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#8a5f0389054064ee9d51852ad6ebca05">GetDownloadWasCompleted</a> (void) const </td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Connection__RM3.html#adc711493e2022956fe51ea8592b57d2">QueryGroupDownloadMessages</a> (void) const </td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return whether or not downloads to our system should all be processed the same tick (call to <a class="el" href="classRakNet_1_1RakPeer.html#46d90fb903e747f76d63eb3a96543740" title="Gets a message from the incoming message queue.">RakPeer::Receive()</a> ).  <a href="#adc711493e2022956fe51ea8592b57d2"></a><br></td></tr>
@@ -236,6 +238,27 @@ Get list of all replicas that are constructed for this connection.
 
 </div>
 </div><p>
+<a class="anchor" name="8a5f0389054064ee9d51852ad6ebca05"></a><!-- doxytag: member="RakNet::Connection_RM3::GetDownloadWasCompleted" ref="8a5f0389054064ee9d51852ad6ebca05" args="(void) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakNet::Connection_RM3::GetDownloadWasCompleted           </td>
+          <td>(</td>
+          <td class="paramtype">void&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True if ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE arrived for this connection </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="d3f7cec74bfac88a3ae095664e6a29c0"></a><!-- doxytag: member="RakNet::Connection_RM3::GetRakNetGUID" ref="d3f7cec74bfac88a3ae095664e6a29c0" args="(void) const " -->
 <div class="memitem">
 <div class="memproto">
@@ -381,11 +404,6 @@ ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE calls the callback <a class="el" href="clas
 Callback used when <a class="el" href="classRakNet_1_1Connection__RM3.html#918f5c8d69e2ede6c9469fd9ade96d32" title="Queries how to get the list of objects that exist on remote systems.">QueryConstructionMode()</a> returns QUERY_CONNECTION_FOR_REPLICA_LIST. 
 <p>
 This advantage of this callback is if that there are many objects that a particular connection does not have, then we do not have to iterate through those objects calling QueryConstruction() for each of them.<br>
- BR&gt; The following code uses a sorted merge sort to quickly find new and deleted objects, given a list of objects we know should exist.<br>
- BR&gt; DataStructures::List&lt;Replica3*&gt; objectsTheyShouldHave; // You have to fill in this list<br>
- DataStructures::List&lt;Replica3*&gt; objectsTheyCurrentlyHave,objectsTheyStillHave,existingReplicasToDestro,newReplicasToCreatey;<br>
- GetConstructedReplicas(objectsTheyCurrentlyHave);<br>
- DataStructures::Multilist::FindIntersection(objectsTheyCurrentlyHave, objectsTheyShouldHave, objectsTheyStillHave, existingReplicasToDestroy, newReplicasToCreate);<br>
  BR&gt; See GridSectorizer in the Source directory as a method to find all objects within a certain radius in a fast way.<br>
  BR&gt; <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -479,7 +497,7 @@ When a new connection connects, before sending any objects, <a class="el" href="
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 4 21:34:41 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 10 16:25:03 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

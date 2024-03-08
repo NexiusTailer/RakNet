@@ -81,20 +81,7 @@ If allowLoginWithoutEmailAddressValidation==false for this user (See <a class="e
 <li>
 If this user was banned with a ban still in effect via <a class="el" href="structRakNet_1_1System__BanUser.html" title="Bans a specific user (will be most likely called by a moderator). Adds the user&#39;s...">System_BanUser</a> </li>
 </ol>
-If all checks pass, store in a logging table that the user has logged in at this time. No status flag needs be set, this will be done in C++. <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>userHandle</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>userPassword</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>titleName</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>titleSecretKey</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>checkCDKey</em>&nbsp;</td><td></td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>userPrimaryKey</em>&nbsp;</td><td>Only returned on success </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>bannedReason</em>&nbsp;</td><td>Only returned on banned </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>whenBanned</em>&nbsp;</td><td>Only returned on banned </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>banningModeratorID</em>&nbsp;</td><td>Only returned on banned </td></tr>
-  </table>
-</dl>
-<hr><h2>Member Function Documentation</h2>
+If all checks pass, store in a logging table that the user has logged in at this time. No status flag needs be set, this will be done in C++. <hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="87d210cc712f20a31712b0ca5a533a69"></a><!-- doxytag: member="RakNet::Client_Login::CancelOnDisconnect" ref="87d210cc712f20a31712b0ca5a533a69" args="(void) const " -->
 <div class="memitem">
 <div class="memproto">
@@ -209,7 +196,7 @@ Is this message something that should only be run by a system with ranking uploa
 <hr>The documentation for this struct was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/DependentExtensions/Lobby2/Lobby2Message.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 4 21:34:42 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 10 16:25:04 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

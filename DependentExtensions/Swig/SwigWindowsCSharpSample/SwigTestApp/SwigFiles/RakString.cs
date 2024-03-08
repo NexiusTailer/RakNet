@@ -361,6 +361,11 @@ public class RakString : IDisposable {
     RakNetPINVOKE.RakString_TerminateAtLastCharacter(swigCPtr, c);
   }
 
+  public int GetCharacterCount(char c) {
+    int ret = RakNetPINVOKE.RakString_GetCharacterCount(swigCPtr, c);
+    return ret;
+  }
+
   public void RemoveCharacter(char c) {
     RakNetPINVOKE.RakString_RemoveCharacter(swigCPtr, c);
   }

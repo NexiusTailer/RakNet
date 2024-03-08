@@ -204,9 +204,9 @@ enum DefaultMessageIDTypes
 	/// NATPunchthrough plugin: internal
 	ID_NAT_PUNCHTHROUGH_REQUEST,
 	/// NATPunchthrough plugin: internal
-	ID_NAT_GROUP_PUNCHTHROUGH_REQUEST,
+	//ID_NAT_GROUP_PUNCHTHROUGH_REQUEST,
 	/// NATPunchthrough plugin: internal
-	ID_NAT_GROUP_PUNCHTHROUGH_REPLY,
+	//ID_NAT_GROUP_PUNCHTHROUGH_REPLY,
 	/// NATPunchthrough plugin: internal
 	ID_NAT_CONNECT_AT_TIME,
 	/// NATPunchthrough plugin: internal
@@ -214,7 +214,7 @@ enum DefaultMessageIDTypes
 	/// NATPunchthrough plugin: internal
 	ID_NAT_CLIENT_READY,
 	/// NATPunchthrough plugin: internal
-	ID_NAT_GROUP_PUNCHTHROUGH_FAILURE_NOTIFICATION,
+	//ID_NAT_GROUP_PUNCHTHROUGH_FAILURE_NOTIFICATION,
 
 	/// NATPunchthrough plugin: Destination system is not connected to the server. Bytes starting at offset 1 contains the
 	///  RakNetGUID destination field of NatPunchthroughClient::OpenNAT().
@@ -235,20 +235,6 @@ enum DefaultMessageIDTypes
 	/// NATPunchthrough plugin: Punchthrough succeeded. See packet::systemAddress and packet::guid. Byte 1 contains 1 if you are the sender,
 	///  0 if not. You can now use RakPeer::Connect() or other calls to communicate with this system.
 	ID_NAT_PUNCHTHROUGH_SUCCEEDED,
-	/// NATPunchthrough plugin: OpenNATGroup failed.
-	/// packet::guid contains the facilitator field of NatPunchthroughClient::OpenNAT()
-	/// Data format starts at byte 1:<BR>
-	/// (char) passedSystemsCount,<BR>
-	/// (RakNetGuid, SystemAddress) (for passedSystemsCount),<BR>
-	/// (char) ignoredSystemsCount (caused by ID_NAT_TARGET_NOT_CONNECTED, ID_NAT_CONNECTION_TO_TARGET_LOST, ID_NAT_TARGET_UNRESPONSIVE),<BR>
-	/// RakNetGuid (for ignoredSystemsCount),<BR>
-	/// (char) failedSystemsCount,<BR>
-	/// RakNetGuid (for failedSystemsCount)<BR>
-	ID_NAT_GROUP_PUNCH_FAILED,
-	/// NATPunchthrough plugin: OpenNATGroup succeeded.
-	/// packet::guid contains the facilitator field of NatPunchthroughClient::OpenNAT()
-	/// See ID_NAT_GROUP_PUNCH_FAILED for data format
-	ID_NAT_GROUP_PUNCH_SUCCEEDED,
 
 	/// ReadyEvent plugin - Set the ready state for a particular system
 	/// First 4 bytes after the message contains the id
@@ -297,6 +283,36 @@ enum DefaultMessageIDTypes
 	ID_FCM2_INFORM_FCMGUID,
 	/// \internal For FullyConnectedMesh2 plugin
 	ID_FCM2_UPDATE_MIN_TOTAL_CONNECTION_COUNT,
+	/// A remote system (not necessarily the host) called FullyConnectedMesh2::StartVerifiedJoin() with our system as the client
+	/// Use FullyConnectedMesh2::GetVerifiedJoinRequiredProcessingList() to read systems
+	/// For each system, attempt NatPunchthroughClient::OpenNAT() and/or RakPeerInterface::Connect()
+	/// When this has been done for all systems, the remote system will automatically be informed of the results
+	/// \note Only the designated client gets this message
+	/// \note You won't get this message if you are already connected to all target systems
+	/// \note If you fail to connect to a system, this does not automatically mean you will get ID_FCM2_VERIFIED_JOIN_FAILED as that system may have been shutting down from the host too
+	/// \sa FullyConnectedMesh2::StartVerifiedJoin()
+	ID_FCM2_VERIFIED_JOIN_START,
+	/// \internal The client has completed processing for all systems designated in ID_FCM2_VERIFIED_JOIN_START
+	ID_FCM2_VERIFIED_JOIN_CAPABLE,
+	/// Client failed to connect to a required systems notified via FullyConnectedMesh2::StartVerifiedJoin()
+	/// RakPeerInterface::CloseConnection() was automatically called for all systems connected due to ID_FCM2_VERIFIED_JOIN_START 
+	/// Programmer should inform the player via the UI that they cannot join this session, and to choose a different session
+	/// \note Server normally sends us this message, however if connection to the server was lost, message will be returned locally
+	/// \note Only the designated client gets this message
+	ID_FCM2_VERIFIED_JOIN_FAILED,
+	/// The system that called StartVerifiedJoin() got ID_FCM2_VERIFIED_JOIN_CAPABLE from the client and then called RespondOnVerifiedJoinCapable() with true
+	/// AddParticipant() has automatically been called for this system
+	/// Use GetVerifiedJoinAcceptedAdditionalData() to read any additional data passed to RespondOnVerifiedJoinCapable()
+	/// \note All systems in the mesh get this message
+	/// \sa RespondOnVerifiedJoinCapable()
+	ID_FCM2_VERIFIED_JOIN_ACCEPTED,
+	/// The system that called StartVerifiedJoin() got ID_FCM2_VERIFIED_JOIN_CAPABLE from the client and then called RespondOnVerifiedJoinCapable() with false
+	/// CloseConnection() has been automatically called for each system connected to since ID_FCM2_VERIFIED_JOIN_START.
+	/// The connection is NOT automatically closed to the original host that sent StartVerifiedJoin()
+	/// Use GetVerifiedJoinRejectedAdditionalData() to read any additional data passed to RespondOnVerifiedJoinCapable()
+	/// \note Only the designated client gets this message
+	/// \sa RespondOnVerifiedJoinCapable()
+	ID_FCM2_VERIFIED_JOIN_REJECTED,
 
 	/// UDP proxy messages. Second byte indicates type.
 	ID_UDP_PROXY_GENERAL,

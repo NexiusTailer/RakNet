@@ -87,6 +87,7 @@ FIXLINKOPTIONS()
 FIXCOMPILEOPTIONS()
 
 add_subdirectory(Source)
+add_subdirectory(DependentExtensions)
 add_subdirectory(Lib)
 
 IF (WIN32 AND NOT UNIX)

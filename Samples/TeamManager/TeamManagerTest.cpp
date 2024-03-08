@@ -33,15 +33,15 @@ NetworkIDManager *networkIDManager;
 class Team : public Replica3
 {
 public:
-	Team() {team.SetOwner(this);}
+	Team() {tmTeam.SetOwner(this);}
 	virtual ~Team() {}
 	virtual void WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const {}
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {if (fullyConnectedMesh2->IsConnectedHost()) return RM3CS_ALREADY_EXISTS_REMOTELY; return RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT;}
 	virtual bool QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection) {return false;}
 	virtual void SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {}
 	virtual bool DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {return true;}
-	virtual void SerializeConstructionExisting(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {team.SerializeConstruction(constructionBitstream);};
-	virtual void DeserializeConstructionExisting(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {team.DeserializeConstruction(teamManager, constructionBitstream);};
+	virtual void SerializeConstructionExisting(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {tmTeam.SerializeConstruction(constructionBitstream);};
+	virtual void DeserializeConstructionExisting(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {tmTeam.DeserializeConstruction(teamManager, constructionBitstream);};
 	virtual void SerializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *destinationConnection) {}
 	virtual bool DeserializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *sourceConnection) {return true;}
 	virtual RakNet::RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3 *droppedConnection) const {return RM3AOPC_DO_NOTHING;}
@@ -51,7 +51,7 @@ public:
 	virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters) {deserializeParameters->serializationBitstream[0].ReadCompressed(teamName);}
 
 	// The actual team data
-	TM_Team team;
+	TM_Team tmTeam;
 
 	// Example of user data not managed by TeamManager
 	RakString teamName;
@@ -62,17 +62,17 @@ public:
 class User : public Replica3
 {
 public:
-	User() {teamMember.SetOwner(this);}
+	User() {tmTeamMember.SetOwner(this);}
 	virtual ~User() {}
 	virtual void WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const {allocationIdBitstream->Write("User");}
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {return QueryConstruction_PeerToPeer(destinationConnection);}
 	virtual bool QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection) {return true;}
 	virtual void SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {
 		// teamMember must be serialized later than teams. This is accomplished by registering teams first with ReplicaManager3
-		teamMember.SerializeConstruction(constructionBitstream);
+		tmTeamMember.SerializeConstruction(constructionBitstream);
 	}
 	virtual bool DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {
-		return teamMember.DeserializeConstruction(teamManager, constructionBitstream);
+		return tmTeamMember.DeserializeConstruction(teamManager, constructionBitstream);
 	}
 	virtual void SerializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *destinationConnection) {}
 	virtual bool DeserializeDestruction(RakNet::BitStream *destructionBitstream, RakNet::Connection_RM3 *sourceConnection) {return true;}
@@ -84,20 +84,20 @@ public:
 
 	void PrintTeamStatus(void)
 	{
-		if (teamMember.GetCurrentTeamCount()==0)
+		if (tmTeamMember.GetCurrentTeamCount()==0)
 		{
-			printf("On 0 teams. noTeamId=%i ", teamMember.GetNoTeamId());
+			printf("On 0 teams. noTeamId=%i ", tmTeamMember.GetNoTeamId());
 		}
 		else
 		{
-			printf("On %i teams: ", teamMember.GetCurrentTeamCount());
-			for (unsigned int i=0; i < teamMember.GetCurrentTeamCount(); i++)
+			printf("On %i teams: ", tmTeamMember.GetCurrentTeamCount());
+			for (unsigned int i=0; i < tmTeamMember.GetCurrentTeamCount(); i++)
 			{
-				Team *t = (Team *) teamMember.GetCurrentTeamByIndex(i)->GetOwner();
+				Team *t = (Team *) tmTeamMember.GetCurrentTeamByIndex(i)->GetOwner();
 				printf("%s ", t->teamName.C_String());
 			}
 		}
-		TeamSelection requestedTeam = teamMember.GetRequestedTeam();
+		TeamSelection requestedTeam = tmTeamMember.GetRequestedTeam();
 		if (requestedTeam.joinTeamType==JOIN_ANY_AVAILABLE_TEAM)
 		{
 			printf("Requested any available");
@@ -114,7 +114,7 @@ public:
 		}
 	}
 	// Team data managed by the TeamManager plugin
-	TM_TeamMember teamMember;
+	TM_TeamMember tmTeamMember;
 
 	// Example of user data not managed by TeamManager
 	RakString userName;
@@ -145,7 +145,7 @@ SampleRM3 *replicaManager3;
 // Helper function
 // ReplicaManager3 does not add connections until we know who the host is via FullyConnectedMesh2
 // This function takes all FullyConnectedMesh2 connections and registers them with ReplicaManager3 once the host is determined.
-void RegisterFullyConnectedMesh2Participants(void)
+void RegisterFCM2Participants(void)
 {
 	if (fullyConnectedMesh2->GetConnectedHost()!=UNASSIGNED_RAKNET_GUID)
 	{
@@ -226,15 +226,15 @@ int main(void)
 		// Register the team with the teamManager plugin
 		// Do not apply team balancing to the referee team
 		bool balancingAppliesToThisTeam = i!=REFEREE_TEAM;
-		teamManager->GetWorldAtIndex(0)->ReferenceTeam(&teams[i].team,teams[i].GetNetworkID(),balancingAppliesToThisTeam);
+		teamManager->GetWorldAtIndex(0)->ReferenceTeam(&teams[i].tmTeam,teams[i].GetNetworkID(),balancingAppliesToThisTeam);
 		if (i==REFEREE_TEAM)
-			teams[i].team.SetMemberLimit(1,0);
+			teams[i].tmTeam.SetMemberLimit(1,0);
 		else
-			teams[i].team.SetMemberLimit(2,0);
+			teams[i].tmTeam.SetMemberLimit(2,0);
 	}
 
 	// Only join the referee team on specific request
-	teams[REFEREE_TEAM].team.SetJoinPermissions(ALLOW_JOIN_SPECIFIC_TEAM);
+	teams[REFEREE_TEAM].tmTeam.SetJoinPermissions(ALLOW_JOIN_SPECIFIC_TEAM);
 
 	// Setup my own
 	User *user = new User;
@@ -243,7 +243,7 @@ int main(void)
 	// Inform ReplicaManager3 of my user
 	replicaManager3->Reference(user);
 	// Inform TeamManager of my user's team member info
-	teamManager->GetWorldAtIndex(0)->ReferenceTeamMember(&user->teamMember,user->GetNetworkID());
+	teamManager->GetWorldAtIndex(0)->ReferenceTeamMember(&user->tmTeamMember,user->GetNetworkID());
 	
 	// Startup RakNet
 	RakNet::SocketDescriptor sd;
@@ -329,7 +329,7 @@ int main(void)
 					if (oldHost==UNASSIGNED_RAKNET_GUID)
 					{
 						// First time calculated host. Add existing connections to ReplicaManager3
-						RegisterFullyConnectedMesh2Participants();
+						RegisterFCM2Participants();
 					}
 				}
 				break;
@@ -367,7 +367,7 @@ int main(void)
 			if (ch=='A' || ch=='a')
 			{
 				printf("Request any team\n");
-				success = user->teamMember.RequestTeam(TeamSelection::AnyAvailable());
+				success = user->tmTeamMember.RequestTeam(TeamSelection::AnyAvailable());
 				printf("Success=%i\n", success);
 			}
 			if (ch=='B' || ch=='b')
@@ -378,7 +378,7 @@ int main(void)
 				gets(buff1);
 				if (buff1[0]!=0 && buff1[0]>='0' && buff1[0]<='2')
 				{
-					success = user->teamMember.RequestTeam(TeamSelection::SpecificTeam(&(teams[buff1[0]-'0'].team)));
+					success = user->tmTeamMember.RequestTeam(TeamSelection::SpecificTeam(&(teams[buff1[0]-'0'].tmTeam)));
 					printf("Success=%i\n", success);
 				}
 				else
@@ -399,9 +399,9 @@ int main(void)
 					(buff2[0]==0 || (buff2[0]>='0' && buff2[0]<='2')))
 				{
 					if (buff2[0])
-						success = user->teamMember.RequestTeamSwitch(&(teams[buff1[0]-'0'].team), &teams[buff2[0]-'0'].team);
+						success = user->tmTeamMember.RequestTeamSwitch(&(teams[buff1[0]-'0'].tmTeam), &teams[buff2[0]-'0'].tmTeam);
 					else
-						success = user->teamMember.RequestTeamSwitch(&(teams[buff1[0]-'0'].team), 0);
+						success = user->tmTeamMember.RequestTeamSwitch(&(teams[buff1[0]-'0'].tmTeam), 0);
 					printf("Success=%i\n", success);
 				}
 				else
@@ -418,9 +418,9 @@ int main(void)
 				if ((buff1[0]!=0 && buff1[0]>='0' && buff1[0]<='2') || buff1[0]==0)
 				{
 					if (buff1[0])
-						success = user->teamMember.CancelTeamRequest(&(teams[buff1[0]-'0'].team));
+						success = user->tmTeamMember.CancelTeamRequest(&(teams[buff1[0]-'0'].tmTeam));
 					else
-						success = user->teamMember.CancelTeamRequest(0);
+						success = user->tmTeamMember.CancelTeamRequest(0);
 					printf("Success=%i\n", success);
 				}
 				else
@@ -436,7 +436,7 @@ int main(void)
 				gets(buff1);
 				if (buff1[0]!=0 && buff1[0]>='0' && buff1[0]<='2')
 				{
-					success = user->teamMember.LeaveTeam(&(teams[buff1[0]-'0'].team),0);
+					success = user->tmTeamMember.LeaveTeam(&(teams[buff1[0]-'0'].tmTeam),0);
 					printf("Success=%i\n", success);
 				}
 				else
@@ -448,7 +448,7 @@ int main(void)
 			if (ch=='F' || ch=='f')
 			{
 				printf("Leave all teams\n");
-				success = user->teamMember.LeaveAllTeams(0);
+				success = user->tmTeamMember.LeaveAllTeams(0);
 				printf("Success=%i\n", success);
 
 			}
@@ -464,7 +464,7 @@ int main(void)
 				if (buff1[0]!=0 && buff1[0]>='0' && buff1[0]<='2' &&
 					buff2[0]!=0 && buff2[0]>='0' && buff2[0]<='9')
 				{
-					success = teams[buff1[0]-'0'].team.SetMemberLimit(buff2[0]-'0',0);
+					success = teams[buff1[0]-'0'].tmTeam.SetMemberLimit(buff2[0]-'0',0);
 					printf("Success=%i\n", success);
 				}
 				else
@@ -494,10 +494,10 @@ int main(void)
 
 				for (unsigned int i=0; i < TEAM_TYPES_COUNT; i++)
 				{
-					printf("Team %i. %s %i/%i members ", i+1, teams[i].teamName.C_String(), teams[i].team.GetTeamMembersCount(), teams[i].team.GetMemberLimit());
-					for (unsigned int j=0; j < teams[i].team.GetTeamMembersCount(); j++)
+					printf("Team %i. %s %i/%i members ", i+1, teams[i].teamName.C_String(), teams[i].tmTeam.GetTeamMembersCount(), teams[i].tmTeam.GetMemberLimit());
+					for (unsigned int j=0; j < teams[i].tmTeam.GetTeamMembersCount(); j++)
 					{
-						User *u = (User *) teams[i].team.GetTeamMemberByIndex(j)->GetOwner();
+						User *u = (User *) teams[i].tmTeam.GetTeamMemberByIndex(j)->GetOwner();
 						printf("%s ", u->userName.C_String());
 					}
 					printf("\n");

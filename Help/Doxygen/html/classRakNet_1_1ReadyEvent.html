@@ -53,7 +53,7 @@ Inheritance diagram for RakNet::ReadyEvent:</div>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReadyEvent.html#f7caed0bdee19e21bdd91ff34ff73b31">SetEvent</a> (int eventId, bool isReady)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReadyEvent.html#11a98d53b0559c3d9db8910238fd5c6d">ForceCompletion</a> (int eventId)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReadyEvent.html#bc3c01527d0faf6b47e43ce0e3a0159c">ForceCompletion</a> (int eventId)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReadyEvent.html#b8b4e32689f5c54d0ce7c6deed2eb7e6">DeleteEvent</a> (int eventId)</td></tr>
 
@@ -137,7 +137,7 @@ Adds a system to wait for to signal an event before considering the event comple
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>addressArray</em>&nbsp;</td><td>An address to wait for event replies from. Pass UNASSIGNED_SYSTEM_ADDRESS for all currently connected systems. Until all systems in this list have called SetEvent with this ID and true, and have this system in the list, we won't get ID_READY_EVENT_COMPLETE </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True on success, false on unknown eventId (this should be considered an error), or if the completion process has already started. </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True on success, false on unknown eventId (this should be considered an error) </dd></dl>
 
 </div>
 </div><p>
@@ -167,12 +167,12 @@ Deletes an event. We will no longer wait for this event, and any systems that we
 
 </div>
 </div><p>
-<a class="anchor" name="11a98d53b0559c3d9db8910238fd5c6d"></a><!-- doxytag: member="RakNet::ReadyEvent::ForceCompletion" ref="11a98d53b0559c3d9db8910238fd5c6d" args="(int eventId)" -->
+<a class="anchor" name="bc3c01527d0faf6b47e43ce0e3a0159c"></a><!-- doxytag: member="RakNet::ReadyEvent::ForceCompletion" ref="bc3c01527d0faf6b47e43ce0e3a0159c" args="(int eventId)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool RakNet::ReadyEvent::ForceCompletion           </td>
+          <td class="memname">void RakNet::ReadyEvent::ForceCompletion           </td>
           <td>(</td>
           <td class="paramtype">int&nbsp;</td>
           <td class="paramname"> <em>eventId</em>          </td>
@@ -184,7 +184,7 @@ Deletes an event. We will no longer wait for this event, and any systems that we
 <div class="memdoc">
 
 <p>
-When systems can call <a class="el" href="classRakNet_1_1ReadyEvent.html#f7caed0bdee19e21bdd91ff34ff73b31">SetEvent()</a> with isReady==false, it is possible for one system to return true from <a class="el" href="classRakNet_1_1ReadyEvent.html#8c4600be8271b798ea0158cef9261462">IsEventCompleted()</a> while the other systems return false This can occur if a system <a class="el" href="classRakNet_1_1ReadyEvent.html#f7caed0bdee19e21bdd91ff34ff73b31">SetEvent()</a> with isReady==false while the completion message is still being transmitted. If your game has the situation where some action should be taken on all systems when <a class="el" href="classRakNet_1_1ReadyEvent.html#8c4600be8271b798ea0158cef9261462">IsEventCompleted()</a> is true for any system, then call <a class="el" href="classRakNet_1_1ReadyEvent.html#11a98d53b0559c3d9db8910238fd5c6d">ForceCompletion()</a> when the action begins. This will force all systems to return true from <a class="el" href="classRakNet_1_1ReadyEvent.html#8c4600be8271b798ea0158cef9261462">IsEventCompleted()</a>. <dl compact><dt><b>Parameters:</b></dt><dd>
+When systems can call <a class="el" href="classRakNet_1_1ReadyEvent.html#f7caed0bdee19e21bdd91ff34ff73b31">SetEvent()</a> with isReady==false, it is possible for one system to return true from <a class="el" href="classRakNet_1_1ReadyEvent.html#8c4600be8271b798ea0158cef9261462">IsEventCompleted()</a> while the other systems return false This can occur if a system <a class="el" href="classRakNet_1_1ReadyEvent.html#f7caed0bdee19e21bdd91ff34ff73b31">SetEvent()</a> with isReady==false while the completion message is still being transmitted. If your game has the situation where some action should be taken on all systems when <a class="el" href="classRakNet_1_1ReadyEvent.html#8c4600be8271b798ea0158cef9261462">IsEventCompleted()</a> is true for any system, then call <a class="el" href="classRakNet_1_1ReadyEvent.html#bc3c01527d0faf6b47e43ce0e3a0159c">ForceCompletion()</a> when the action begins. This will force all systems to return true from <a class="el" href="classRakNet_1_1ReadyEvent.html#8c4600be8271b798ea0158cef9261462">IsEventCompleted()</a>. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>eventId</em>&nbsp;</td><td>A user-defined identifier to immediately set as completed </td></tr>
   </table>
@@ -613,7 +613,7 @@ Sets or updates the initial ready state for our local system. If eventId is an u
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>isReady</em>&nbsp;</td><td>True to signal we are ready to proceed with this event, false to unsignal </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True on success. False (failure) on unknown eventId </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>False if event status is ID_READY_EVENT_FORCE_ALL_SET, or if we are setting to a status we are already in (no change). Otherwise true </dd></dl>
 
 </div>
 </div><p>
@@ -645,7 +645,7 @@ This channel will be used for all <a class="el" href="classRakNet_1_1RakPeer.htm
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="ReadyEvent_8h.html">ReadyEvent.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 4 21:34:41 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 10 16:25:03 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

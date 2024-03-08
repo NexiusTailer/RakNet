@@ -269,7 +269,7 @@ struct UDPProxyServerFramework : public SampleFramework, public UDPProxyServerRe
 				printf("\n");
 				if (ch=='1' || ch==13) // 13 is just pressing return
 				{
-					coordinatorAddress=rakPeer->GetMyBoundAddress().ToString(true);
+					coordinatorAddress=rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS,0);
 				}
 				else if (ch=='2')
 				{

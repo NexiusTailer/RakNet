@@ -106,6 +106,12 @@ public class FullyConnectedMesh2 : PluginInterface2 {
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
+  public bool HasParticipant(RakNetGUID participantGuid) {
+    bool ret = RakNetPINVOKE.FullyConnectedMesh2_HasParticipant(swigCPtr, RakNetGUID.getCPtr(participantGuid));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
   public void ConnectToRemoteNewIncomingConnections(Packet packet) {
     RakNetPINVOKE.FullyConnectedMesh2_ConnectToRemoteNewIncomingConnections(swigCPtr, Packet.getCPtr(packet));
   }
@@ -123,9 +129,39 @@ public class FullyConnectedMesh2 : PluginInterface2 {
     RakNetPINVOKE.FullyConnectedMesh2_GetParticipantCount__SWIG_1(swigCPtr, SWIGTYPE_p_unsigned_int.getCPtr(participantListSize));
   }
 
+  public virtual void StartVerifiedJoin(RakNetGUID client) {
+    RakNetPINVOKE.FullyConnectedMesh2_StartVerifiedJoin(swigCPtr, RakNetGUID.getCPtr(client));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public virtual void RespondOnVerifiedJoinCapable(Packet packet, bool accept, BitStream additionalData) {
+    RakNetPINVOKE.FullyConnectedMesh2_RespondOnVerifiedJoinCapable(swigCPtr, Packet.getCPtr(packet), accept, BitStream.getCPtr(additionalData));
+  }
+
+  public virtual void GetVerifiedJoinRequiredProcessingList(RakNetGUID host, RakNetListSystemAddress addresses, RakNetListRakNetGUID guids) {
+    RakNetPINVOKE.FullyConnectedMesh2_GetVerifiedJoinRequiredProcessingList(swigCPtr, RakNetGUID.getCPtr(host), RakNetListSystemAddress.getCPtr(addresses), RakNetListRakNetGUID.getCPtr(guids));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public virtual void GetVerifiedJoinAcceptedAdditionalData(Packet packet, SWIGTYPE_p_bool thisSystemAccepted, RakNetListRakNetGUID systemsAccepted, BitStream additionalData) {
+    RakNetPINVOKE.FullyConnectedMesh2_GetVerifiedJoinAcceptedAdditionalData(swigCPtr, Packet.getCPtr(packet), SWIGTYPE_p_bool.getCPtr(thisSystemAccepted), RakNetListRakNetGUID.getCPtr(systemsAccepted), BitStream.getCPtr(additionalData));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public virtual void GetVerifiedJoinRejectedAdditionalData(Packet packet, BitStream additionalData) {
+    RakNetPINVOKE.FullyConnectedMesh2_GetVerifiedJoinRejectedAdditionalData(swigCPtr, Packet.getCPtr(packet), BitStream.getCPtr(additionalData));
+  }
+
   public uint GetTotalConnectionCount() {
     uint ret = RakNetPINVOKE.FullyConnectedMesh2_GetTotalConnectionCount(swigCPtr);
     return ret;
+  }
+
+  public enum JoinInProgressState {
+    JIPS_PROCESSING,
+    JIPS_FAILED,
+    JIPS_CONNECTED,
+    JIPS_UNNECESSARY
   }
 
 }

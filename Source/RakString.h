@@ -74,9 +74,9 @@ public:
 	void DeallocWideChar(WCHAR * w);
 #endif
 	
-	///String class find replacement
-	///Searches the string for the content specified in stringToFind and returns the position of the first occurrence in the string.
-	///Search only includes characters on or after position pos, ignoring any possible occurrences in previous locations.
+	/// String class find replacement
+	/// Searches the string for the content specified in stringToFind and returns the position of the first occurrence in the string.
+	/// Search only includes characters on or after position pos, ignoring any possible occurrences in previous locations.
 	/// \param[in] stringToFind The string to find inside of this object's string
 	/// \param[in] pos The position in the string to start the search
 	/// \return Returns the position of the first occurrence in the string.
@@ -146,6 +146,9 @@ public:
 	void TerminateAtFirstCharacter(char c);
 	/// Set the last instance of c with a NULL terminator
 	void TerminateAtLastCharacter(char c);
+
+	/// Returns how many occurances there are of \a c in the string
+	int GetCharacterCount(char c);
 	
 	/// Remove all instances of c
 	void RemoveCharacter(char c);

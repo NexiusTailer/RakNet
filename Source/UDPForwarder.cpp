@@ -252,6 +252,7 @@ void UDPForwarder::UpdateThreaded_Old(void)
 			}
 
 			portnum = ntohs( sa.sin_port );
+			// Reason for updatedSourcePort in case router changes the sender's external port
 			if (forwardEntry->srcAndDest.source.address.addr4.sin_addr.s_addr==sa.sin_addr.s_addr && forwardEntry->updatedSourcePort==false && forwardEntry->srcAndDest.dest.GetPort()!=portnum)
 			{
 				forwardEntry->updatedSourcePort=true;
@@ -263,11 +264,12 @@ void UDPForwarder::UpdateThreaded_Old(void)
 					bool objectExists;
 					index = forwardList.GetIndexFromKey(srcAndDest, &objectExists);
 					if (objectExists)
-					{
 						forwardList.RemoveAtIndex(index);
-					}
 					forwardEntry->srcAndDest.source.SetPort(portnum);
-					forwardList.Insert(forwardEntry->srcAndDest,forwardEntry,true,_FILE_AND_LINE_);
+					srcAndDest.source.SetPort(portnum);
+					index = forwardList.GetIndexFromKey(srcAndDest, &objectExists);
+					if (objectExists==false)
+						forwardList.Insert(forwardEntry->srcAndDest,forwardEntry,true,_FILE_AND_LINE_);
 				}
 			}
 
@@ -301,11 +303,12 @@ void UDPForwarder::UpdateThreaded_Old(void)
 					bool objectExists;
 					index = forwardList.GetIndexFromKey(srcAndDest, &objectExists);
 					if (objectExists)
-					{
 						forwardList.RemoveAtIndex(index);
-					}
 					forwardEntry->srcAndDest.dest.SetPort(portnum);
-					forwardList.Insert(forwardEntry->srcAndDest,forwardEntry,true,_FILE_AND_LINE_);
+					srcAndDest.dest.SetPort(portnum);
+					index = forwardList.GetIndexFromKey(srcAndDest, &objectExists);
+					if (objectExists==false)
+						forwardList.Insert(forwardEntry->srcAndDest,forwardEntry,true,_FILE_AND_LINE_);
 				}
 			}
 

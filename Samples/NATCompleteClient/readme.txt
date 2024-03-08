@@ -6,10 +6,10 @@ Dependencies: NATPunchthroughClient, NatTypeDetectionClient, UDPProxyClient, Min
 MiniUPnP project is licensed under the BSD license. See DependentExtensions\miniupnpc-1.5\LICENSE or http://miniupnp.free.fr
 
 To build MiniUPNP
-1. Include DependentExtensions\miniupnpc-1.5 in the include paths
+1. Include DependentExtensions\miniupnpc-1.6.20120410 in the include paths
 2. Define STATICLIB in the preprocessor if necessary (See DependentExtensions\miniupnpc-1.5\declspec.h)
 3. Link ws2_32.lib IPHlpApi.Lib
 
-Related projects: None
+Related projects: ComprehensivePCGame demonstrates NATPunchthroughClient and NatTypeDetectionClient in a robust way.
 
 For help and support, please visit http://www.jenkinssoftware.com

@@ -46,17 +46,19 @@
 		<LI>Derive your object from Replica3
 		<LI>BEFORE calling replicaManager3->Reference() on the object, call replica3Object->SetNetworkIDManager(replicaManager3->GetNetworkIDManager());
 		<LI>BEFORE calling replicaManager3->Reference() on the object, call replica3Object->SetNetworkID(unique64BitIDLoadedWithLevel);
-		<LI>return RM3CS_ALREADY_EXISTS_REMOTELY from QueryConstruction() from the host/server. Otherwise return RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT.
+		<LI>return RM3CS_ALREADY_EXISTS_REMOTELY from QueryConstruction() from the host/server. Otherwise return RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT. Alternatively, use QueryConstruction_PeerToPeer() with R3P2PM_STATIC_OBJECT_CURRENTLY_AUTHORITATIVE or R3P2PM_STATIC_OBJECT_NOT_CURRENTLY_AUTHORITATIVE.
 		<LI>WriteAllocationID(), SerializeConstruction(), DeserializeConstruction() are not used for static objects, and can have empty implementations.
 		<LI>If the object should also never be destroyed over the network, Implement QueryActionOnPopConnection(), to return RM3AOPC_DO_NOTHING. SerializeDestruction(), DeserializeDestruction(), DeallocReplica() can have empty implementations.
 		<LI>Return whatever you want from QueryRemoteConstruction(), as it will not be called
-		<LI>Implement QuerySerialization() to return RM3QSR_CALL_SERIALIZE from the system that serializes the object, typically the peer to peer host or the server. If a system is not currently but can later become a host, such as for peer to peer with host migration, return RM3QSR_DO_NOT_CALL_SERIALIZE. Otherwise return RM3QSR_NEVER_CALL_SERIALIZE.
+		<LI>Implement QuerySerialization() to return RM3QSR_CALL_SERIALIZE from the system that serializes the object, typically the peer to peer host or the server. If a system is not currently but can later become a host, such as for peer to peer with host migration, return RM3QSR_DO_NOT_CALL_SERIALIZE. Otherwise return RM3QSR_NEVER_CALL_SERIALIZE. Alternatively, use QuerySerialization_PeerToPeer() with R3P2PM_STATIC_OBJECT_CURRENTLY_AUTHORITATIVE or R3P2PM_STATIC_OBJECT_NOT_CURRENTLY_AUTHORITATIVE.
         <LI>Write to the BitStream in SerializeConstructionExisting() your one-time initialization data, and read it in DeserializeConstructionExisting(). This function is called if and only if QueryConstruction returns RM3CS_ALREADY_EXISTS_REMOTELY.
 		<LI>Write per-tick serialization data in Serialize(), and read it in Deserialize().
       </OL>
     <p>RM3CS_ALREADY_EXISTS_REMOTELY causes ReplicaManager3 to consider the door to exist on the other system, so when Serialize() is called updates will still be sent to that system. But the SerializeConstruction() call and object creation is skpped. </p>
-    <p><strong>Combining with FullyConnectedMesh2:</strong></p>
-    <p>If you are using <a href="fullyconnectedmesh2.html">FullyConnectedMesh2</a> for host determination and ReplicaManager3 relies on this, then you have to delay adding participants until a host has been determined. Here is how to do so:</p>
+    
+	<p><span class="RakNetBlueHeader">Combining with FullyConnectedMesh2</span><BR></p>
+	
+    <p>If you are using <a href="fullyconnectedmesh2.html">FullyConnectedMesh2</a> for host determination and ReplicaManager3 relies on a host, then you have to delay calling AddParticipant() until a host has been determined. Here is how to do so:</p>
 	<OL>
     	<LI><span class="RakNetCode">replicaManager3-&gt;SetAutoManageConnections(false, [false or true, depends on your preference]);</span></LI>
     	<LI><span class="RakNetCode">fullyConnectedMesh2-&gt;SetAutoparticipateConnections(false);</span> (optional)</LI>
@@ -106,6 +108,79 @@ void AddFullyConnectedMesh2ParticipantsToReplicaManager3(void)<br>
       <p>Line 4: Until a host has been determined, fullyConnectedMesh2-&gt;GetConnectedHost() will return UNASSIGNED_RAKNET_GUID. In that case, we delay replicaManager3-&gt;PushConnection() until ID_FCM2_NEW_HOST is returned. However, if a host is already known (for example, the game is already in progress), then the remote system is added immediately.</p>
       <p>Line 5: Once the host is known for the first time, all connected systems can be added to ReplicaManager3. oldHost==UNASSIGNED_RAKNET_GUID means there was no prior host.</p>
       <p>Line 6: A function to uniquely add connections to ReplicaManager3 given a list of remote RakNetGUIDs.</p>
+
+<p><span class="RakNetBlueHeader">Integration with component based systems</span><BR></p>
+
+<p>By component-based system I mean one where a game actor has a list of classes attached, each of which contain an attribute of the actor itself. For example, a player may have position, health, animation, physics components for example.</p>
+
+1. Instances of the same actor either have the same type, order, and and number of components or else when you serialize you will have to provide a way to identify components. To Serialize(), first Serialize() your actor. Then Serialize() your components in order.<BR><BR>
+2. Here is an example of QuerySerialization() in a peer to peer game where the host controls objects loaded with the level (static objects). Otherwise, the peer that created the object serializes it. However, a component can override this and allow the host to serialize the object regardless. For example, if a player puts a weapon on the ground, the weapon could return RM3QSR_CALL_SERIALIZE if our own system is the host system, and RM3QSR_DO_NOT_CALL_SERIALIZE otherwise.<BR>
+
+<pre>
+if (IsAStaticObject())
+{
+	// Objects loaded with the level are serialized by the host
+	if (fullyConnectedMesh2->IsHostSystem())
+		return RM3QSR_CALL_SERIALIZE;
+	else
+		return RM3QSR_DO_NOT_CALL_SERIALIZE;
+}
+else
+{
+	// Allow components opportunity to overwrite method of serialization
+	for (int i=0; i < components.Size(); i++)
+	{
+		RM3QuerySerializationResult res = components[i]->QuerySerialization(destinationconnection);
+		if(res != RM3QSR_MAX)
+			return res;
+	}
+	return QuerySerialization_PeerToPeer(destinationconnection);
+}
+</pre>
+
+3. This variation, for QueryConstruction(), has components return Replica3P2PMode instead. Using the gun example, a gun may controlled by the host when on the ground, or by another player when picked up. If R3P2PM_MULTI_OWNER_CURRENTLY_AUTHORITATIVE or R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE is returned by a component, then QueryConstruction_PeerToPeer() will use that value to return an appropriate value for RM3ConstructionState. Internally, QueryConstruction_PeerToPeer() will return RM3CS_SEND_CONSTRUCTION if we control the object, RM3CS_NEVER_CONSTRUCT if we do not control the object and nobody else ever can, and RM3CS_ALREADY_EXISTS_REMOTELY if someone else controls the object but the owner can change.<BR>
+
+<pre>
+if (destinationConnection->HasLoadedLevel() == false)
+	return RM3CS_NO_ACTION;
+if (IsAStaticObject())
+{
+	if(fullyConnectedMesh2->IsHostSystem())
+            return RM3CS_ALREADY_EXISTS_REMOTELY;
+	else
+            return RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT;
+}
+else
+{
+	Replica3P2PMode p2pMode = R3P2PM_SINGLE_OWNER;
+	for (int i=0; i < components.Size(); i++)
+	{
+		p2pMode = components[i]->QueryP2PMode();
+		if(p2pMode != R3P2PM_SINGLE_OWNER)
+			break;
+	}
+	return QueryConstruction_PeerToPeer(destinationconnection, p2pMode);
+}
+
+virtual Replica3P2PMode BaseClassComponent::QueryP2PMode() {return R3P2PM_SINGLE_OWNER;}
+
+virtual Replica3P2PMode GunComponent::QueryP2PMode()
+{
+	if (IsOnTheGround())
+		if(fullyConnectedMesh2->IsHostSystem())
+			return R3P2PM_MULTI_OWNER_CURRENTLY_AUTHORITATIVE;
+		else
+			return R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE;
+	else
+		if (WeOwnTheGun())
+			return R3P2PM_MULTI_OWNER_CURRENTLY_AUTHORITATIVE;
+		else
+			return R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE;		
+}
+</pre>
+
+4. If you need to use composition instead of derivation see Replica3Composite in ReplicaManager3.h. It is a templated class with only one member, r3CompositeOwner. All Replica3 interfaces are queried on r3CompositeOwner.
+
 <p><strong>Methods of object serialization:</strong></p>
     <p><strong>Manual sends on dirty flags</strong><br>
       <em>Description</em>: When a variable changes, it's up to you to set some flag that the  variable has changed. The next Serialize() tick, you send all variables  with dirty flags set<br>

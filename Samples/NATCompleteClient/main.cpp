@@ -164,7 +164,7 @@ struct UPNPFramework : public SampleFramework
 		if (sampleResult==FAILED) return;
 
 		struct UPNPDev * devlist = 0;
-		devlist = upnpDiscover(2000, 0, 0, 0);
+		devlist = upnpDiscover(2000, 0, 0, 0, 0, 0);
 		if (devlist)
 		{
 			printf("List of UPNP devices found on the network :\n");
@@ -180,6 +180,8 @@ struct UPNPFramework : public SampleFramework
 			struct IGDdatas data;
 			if (UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))==1)
 			{
+				// 4/16/2012 Why was I doing this? Just to read my external port? That shouldn't be necessary
+				/*
 				SystemAddress serverAddress=SelectAmongConnectedSystems(rakPeer, "NatTypeDetectionServer");
 				if (serverAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 				{
@@ -192,16 +194,29 @@ struct UPNPFramework : public SampleFramework
 					}
 				}
 
-				DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
-				rakPeer->GetSockets(sockets);
 
 				char iport[32];
 				Itoa(sockets[0]->boundAddress.GetPort(),iport,10);
 				char eport[32];
 				Itoa(rakPeer->GetExternalID(serverAddress).GetPort(),eport,10);
+				*/
 
+				// Use same external and internal ports
+				DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
+				rakPeer->GetSockets(sockets);
+				char iport[32];
+				Itoa(sockets[0]->boundAddress.GetPort(),iport,10);
+				char eport[32];
+				strcpy(eport, iport);
+
+
+				// Version 1.5
+// 				int r = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
+// 					 eport, iport, lanaddr, 0, "UDP", 0);
+
+				// Version miniupnpc-1.6.20120410
 				int r = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
-					 eport, iport, lanaddr, 0, "UDP", 0);
+					 					    eport, iport, lanaddr, 0, "UDP", 0, "0");
 
 				if(r!=UPNPCOMMAND_SUCCESS)
 					printf("AddPortMapping(%s, %s, %s) failed with code %d (%s)\n",
@@ -209,10 +224,22 @@ struct UPNPFramework : public SampleFramework
 
 				char intPort[6];
 				char intClient[16];
+
+				// Version 1.5
+// 				r = UPNP_GetSpecificPortMappingEntry(urls.controlURL,
+// 					data.first.servicetype,
+// 					eport, "UDP",
+// 					intClient, intPort);
+
+				// Version miniupnpc-1.6.20120410
+				char desc[128];
+				char enabled[128];
+				char leaseDuration[128];
 				r = UPNP_GetSpecificPortMappingEntry(urls.controlURL,
 					data.first.servicetype,
 					eport, "UDP",
-					intClient, intPort);
+					intClient, intPort,
+					desc, enabled, leaseDuration);
 
 				if(r!=UPNPCOMMAND_SUCCESS)
 				{
@@ -293,7 +320,7 @@ struct NatTypeDetectionFramework : public SampleFramework
 			{
 				// For UPNP, see Samples\UDPProxy
 				printf("Note: Your router must support UPNP or have the user manually forward ports.\n");
-				printf("Otherwise not all connections may complete.\n");
+				printf("Otherwise NATPunchthrough may not always succeed.\n");
 			}
 
 			sampleResult=SUCCEEDED;

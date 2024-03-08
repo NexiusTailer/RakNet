@@ -1278,6 +1278,9 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_RakString_TerminateAtLastCharacter")]
   public static extern void RakString_TerminateAtLastCharacter(HandleRef jarg1, char jarg2);
 
+  [DllImport("RakNet", EntryPoint="CSharp_RakString_GetCharacterCount")]
+  public static extern int RakString_GetCharacterCount(HandleRef jarg1, char jarg2);
+
   [DllImport("RakNet", EntryPoint="CSharp_RakString_RemoveCharacter")]
   public static extern void RakString_RemoveCharacter(HandleRef jarg1, char jarg2);
 
@@ -1660,22 +1663,28 @@ class RakNetPINVOKE {
   public static extern bool BitStream_Serialize__SWIG_3(HandleRef jarg1, bool jarg2, ref byte jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Serialize__SWIG_4")]
-  public static extern bool BitStream_Serialize__SWIG_4(HandleRef jarg1, bool jarg2, ref int jarg3);
+  public static extern bool BitStream_Serialize__SWIG_4(HandleRef jarg1, bool jarg2, ref short jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Serialize__SWIG_5")]
-  public static extern bool BitStream_Serialize__SWIG_5(HandleRef jarg1, bool jarg2, ref long jarg3);
+  public static extern bool BitStream_Serialize__SWIG_5(HandleRef jarg1, bool jarg2, ref ushort jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Serialize__SWIG_6")]
-  public static extern bool BitStream_Serialize__SWIG_6(HandleRef jarg1, bool jarg2, ref float jarg3);
+  public static extern bool BitStream_Serialize__SWIG_6(HandleRef jarg1, bool jarg2, ref int jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Serialize__SWIG_7")]
-  public static extern bool BitStream_Serialize__SWIG_7(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+  public static extern bool BitStream_Serialize__SWIG_7(HandleRef jarg1, bool jarg2, ref long jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Serialize__SWIG_8")]
-  public static extern bool BitStream_Serialize__SWIG_8(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+  public static extern bool BitStream_Serialize__SWIG_8(HandleRef jarg1, bool jarg2, ref float jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Serialize__SWIG_9")]
   public static extern bool BitStream_Serialize__SWIG_9(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_Serialize__SWIG_10")]
+  public static extern bool BitStream_Serialize__SWIG_10(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_Serialize__SWIG_11")]
+  public static extern bool BitStream_Serialize__SWIG_11(HandleRef jarg1, bool jarg2, HandleRef jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_2")]
   public static extern bool BitStream_SerializeDelta__SWIG_2(HandleRef jarg1, bool jarg2, ref bool jarg3, bool jarg4);
@@ -1690,40 +1699,52 @@ class RakNetPINVOKE {
   public static extern bool BitStream_SerializeDelta__SWIG_5(HandleRef jarg1, bool jarg2, ref byte jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_6")]
-  public static extern bool BitStream_SerializeDelta__SWIG_6(HandleRef jarg1, bool jarg2, ref int jarg3, int jarg4);
+  public static extern bool BitStream_SerializeDelta__SWIG_6(HandleRef jarg1, bool jarg2, ref short jarg3, short jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_7")]
-  public static extern bool BitStream_SerializeDelta__SWIG_7(HandleRef jarg1, bool jarg2, ref int jarg3);
+  public static extern bool BitStream_SerializeDelta__SWIG_7(HandleRef jarg1, bool jarg2, ref short jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_8")]
-  public static extern bool BitStream_SerializeDelta__SWIG_8(HandleRef jarg1, bool jarg2, ref long jarg3, long jarg4);
+  public static extern bool BitStream_SerializeDelta__SWIG_8(HandleRef jarg1, bool jarg2, ref ushort jarg3, ushort jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_9")]
-  public static extern bool BitStream_SerializeDelta__SWIG_9(HandleRef jarg1, bool jarg2, ref long jarg3);
+  public static extern bool BitStream_SerializeDelta__SWIG_9(HandleRef jarg1, bool jarg2, ref ushort jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_10")]
-  public static extern bool BitStream_SerializeDelta__SWIG_10(HandleRef jarg1, bool jarg2, ref float jarg3, float jarg4);
+  public static extern bool BitStream_SerializeDelta__SWIG_10(HandleRef jarg1, bool jarg2, ref int jarg3, int jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_11")]
-  public static extern bool BitStream_SerializeDelta__SWIG_11(HandleRef jarg1, bool jarg2, ref float jarg3);
+  public static extern bool BitStream_SerializeDelta__SWIG_11(HandleRef jarg1, bool jarg2, ref int jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_12")]
-  public static extern bool BitStream_SerializeDelta__SWIG_12(HandleRef jarg1, bool jarg2, HandleRef jarg3, HandleRef jarg4);
+  public static extern bool BitStream_SerializeDelta__SWIG_12(HandleRef jarg1, bool jarg2, ref long jarg3, long jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_13")]
-  public static extern bool BitStream_SerializeDelta__SWIG_13(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+  public static extern bool BitStream_SerializeDelta__SWIG_13(HandleRef jarg1, bool jarg2, ref long jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_14")]
-  public static extern bool BitStream_SerializeDelta__SWIG_14(HandleRef jarg1, bool jarg2, HandleRef jarg3, HandleRef jarg4);
+  public static extern bool BitStream_SerializeDelta__SWIG_14(HandleRef jarg1, bool jarg2, ref float jarg3, float jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_15")]
-  public static extern bool BitStream_SerializeDelta__SWIG_15(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+  public static extern bool BitStream_SerializeDelta__SWIG_15(HandleRef jarg1, bool jarg2, ref float jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_16")]
   public static extern bool BitStream_SerializeDelta__SWIG_16(HandleRef jarg1, bool jarg2, HandleRef jarg3, HandleRef jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_17")]
   public static extern bool BitStream_SerializeDelta__SWIG_17(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_18")]
+  public static extern bool BitStream_SerializeDelta__SWIG_18(HandleRef jarg1, bool jarg2, HandleRef jarg3, HandleRef jarg4);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_19")]
+  public static extern bool BitStream_SerializeDelta__SWIG_19(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_20")]
+  public static extern bool BitStream_SerializeDelta__SWIG_20(HandleRef jarg1, bool jarg2, HandleRef jarg3, HandleRef jarg4);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeDelta__SWIG_21")]
+  public static extern bool BitStream_SerializeDelta__SWIG_21(HandleRef jarg1, bool jarg2, HandleRef jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressed__SWIG_1")]
   public static extern bool BitStream_SerializeCompressed__SWIG_1(HandleRef jarg1, bool jarg2, ref bool jarg3);
@@ -1732,22 +1753,28 @@ class RakNetPINVOKE {
   public static extern bool BitStream_SerializeCompressed__SWIG_2(HandleRef jarg1, bool jarg2, ref byte jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressed__SWIG_3")]
-  public static extern bool BitStream_SerializeCompressed__SWIG_3(HandleRef jarg1, bool jarg2, ref int jarg3);
+  public static extern bool BitStream_SerializeCompressed__SWIG_3(HandleRef jarg1, bool jarg2, ref short jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressed__SWIG_4")]
-  public static extern bool BitStream_SerializeCompressed__SWIG_4(HandleRef jarg1, bool jarg2, ref long jarg3);
+  public static extern bool BitStream_SerializeCompressed__SWIG_4(HandleRef jarg1, bool jarg2, ref ushort jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressed__SWIG_5")]
-  public static extern bool BitStream_SerializeCompressed__SWIG_5(HandleRef jarg1, bool jarg2, ref float jarg3);
+  public static extern bool BitStream_SerializeCompressed__SWIG_5(HandleRef jarg1, bool jarg2, ref int jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressed__SWIG_6")]
-  public static extern bool BitStream_SerializeCompressed__SWIG_6(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+  public static extern bool BitStream_SerializeCompressed__SWIG_6(HandleRef jarg1, bool jarg2, ref long jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressed__SWIG_7")]
-  public static extern bool BitStream_SerializeCompressed__SWIG_7(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+  public static extern bool BitStream_SerializeCompressed__SWIG_7(HandleRef jarg1, bool jarg2, ref float jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressed__SWIG_8")]
   public static extern bool BitStream_SerializeCompressed__SWIG_8(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressed__SWIG_9")]
+  public static extern bool BitStream_SerializeCompressed__SWIG_9(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressed__SWIG_10")]
+  public static extern bool BitStream_SerializeCompressed__SWIG_10(HandleRef jarg1, bool jarg2, HandleRef jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_2")]
   public static extern bool BitStream_SerializeCompressedDelta__SWIG_2(HandleRef jarg1, bool jarg2, ref bool jarg3, bool jarg4);
@@ -1762,40 +1789,52 @@ class RakNetPINVOKE {
   public static extern bool BitStream_SerializeCompressedDelta__SWIG_5(HandleRef jarg1, bool jarg2, ref byte jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_6")]
-  public static extern bool BitStream_SerializeCompressedDelta__SWIG_6(HandleRef jarg1, bool jarg2, ref int jarg3, int jarg4);
+  public static extern bool BitStream_SerializeCompressedDelta__SWIG_6(HandleRef jarg1, bool jarg2, ref short jarg3, short jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_7")]
-  public static extern bool BitStream_SerializeCompressedDelta__SWIG_7(HandleRef jarg1, bool jarg2, ref int jarg3);
+  public static extern bool BitStream_SerializeCompressedDelta__SWIG_7(HandleRef jarg1, bool jarg2, ref short jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_8")]
-  public static extern bool BitStream_SerializeCompressedDelta__SWIG_8(HandleRef jarg1, bool jarg2, ref long jarg3, long jarg4);
+  public static extern bool BitStream_SerializeCompressedDelta__SWIG_8(HandleRef jarg1, bool jarg2, ref ushort jarg3, ushort jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_9")]
-  public static extern bool BitStream_SerializeCompressedDelta__SWIG_9(HandleRef jarg1, bool jarg2, ref long jarg3);
+  public static extern bool BitStream_SerializeCompressedDelta__SWIG_9(HandleRef jarg1, bool jarg2, ref ushort jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_10")]
-  public static extern bool BitStream_SerializeCompressedDelta__SWIG_10(HandleRef jarg1, bool jarg2, ref float jarg3, float jarg4);
+  public static extern bool BitStream_SerializeCompressedDelta__SWIG_10(HandleRef jarg1, bool jarg2, ref int jarg3, int jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_11")]
-  public static extern bool BitStream_SerializeCompressedDelta__SWIG_11(HandleRef jarg1, bool jarg2, ref float jarg3);
+  public static extern bool BitStream_SerializeCompressedDelta__SWIG_11(HandleRef jarg1, bool jarg2, ref int jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_12")]
-  public static extern bool BitStream_SerializeCompressedDelta__SWIG_12(HandleRef jarg1, bool jarg2, HandleRef jarg3, HandleRef jarg4);
+  public static extern bool BitStream_SerializeCompressedDelta__SWIG_12(HandleRef jarg1, bool jarg2, ref long jarg3, long jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_13")]
-  public static extern bool BitStream_SerializeCompressedDelta__SWIG_13(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+  public static extern bool BitStream_SerializeCompressedDelta__SWIG_13(HandleRef jarg1, bool jarg2, ref long jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_14")]
-  public static extern bool BitStream_SerializeCompressedDelta__SWIG_14(HandleRef jarg1, bool jarg2, HandleRef jarg3, HandleRef jarg4);
+  public static extern bool BitStream_SerializeCompressedDelta__SWIG_14(HandleRef jarg1, bool jarg2, ref float jarg3, float jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_15")]
-  public static extern bool BitStream_SerializeCompressedDelta__SWIG_15(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+  public static extern bool BitStream_SerializeCompressedDelta__SWIG_15(HandleRef jarg1, bool jarg2, ref float jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_16")]
   public static extern bool BitStream_SerializeCompressedDelta__SWIG_16(HandleRef jarg1, bool jarg2, HandleRef jarg3, HandleRef jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_17")]
   public static extern bool BitStream_SerializeCompressedDelta__SWIG_17(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_18")]
+  public static extern bool BitStream_SerializeCompressedDelta__SWIG_18(HandleRef jarg1, bool jarg2, HandleRef jarg3, HandleRef jarg4);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_19")]
+  public static extern bool BitStream_SerializeCompressedDelta__SWIG_19(HandleRef jarg1, bool jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_20")]
+  public static extern bool BitStream_SerializeCompressedDelta__SWIG_20(HandleRef jarg1, bool jarg2, HandleRef jarg3, HandleRef jarg4);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_SerializeCompressedDelta__SWIG_21")]
+  public static extern bool BitStream_SerializeCompressedDelta__SWIG_21(HandleRef jarg1, bool jarg2, HandleRef jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Write__SWIG_8")]
   public static extern void BitStream_Write__SWIG_8(HandleRef jarg1, bool jarg2);
@@ -1807,22 +1846,28 @@ class RakNetPINVOKE {
   public static extern void BitStream_Write__SWIG_10(HandleRef jarg1, char jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Write__SWIG_11")]
-  public static extern void BitStream_Write__SWIG_11(HandleRef jarg1, int jarg2);
+  public static extern void BitStream_Write__SWIG_11(HandleRef jarg1, short jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Write__SWIG_12")]
-  public static extern void BitStream_Write__SWIG_12(HandleRef jarg1, long jarg2);
+  public static extern void BitStream_Write__SWIG_12(HandleRef jarg1, ushort jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Write__SWIG_13")]
-  public static extern void BitStream_Write__SWIG_13(HandleRef jarg1, float jarg2);
+  public static extern void BitStream_Write__SWIG_13(HandleRef jarg1, int jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Write__SWIG_14")]
-  public static extern void BitStream_Write__SWIG_14(HandleRef jarg1, HandleRef jarg2);
+  public static extern void BitStream_Write__SWIG_14(HandleRef jarg1, long jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Write__SWIG_15")]
-  public static extern void BitStream_Write__SWIG_15(HandleRef jarg1, HandleRef jarg2);
+  public static extern void BitStream_Write__SWIG_15(HandleRef jarg1, float jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Write__SWIG_16")]
   public static extern void BitStream_Write__SWIG_16(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_Write__SWIG_17")]
+  public static extern void BitStream_Write__SWIG_17(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_Write__SWIG_18")]
+  public static extern void BitStream_Write__SWIG_18(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_2")]
   public static extern void BitStream_WriteDelta__SWIG_2(HandleRef jarg1, string jarg2, string jarg3);
@@ -1849,40 +1894,52 @@ class RakNetPINVOKE {
   public static extern void BitStream_WriteDelta__SWIG_9(HandleRef jarg1, char jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_10")]
-  public static extern void BitStream_WriteDelta__SWIG_10(HandleRef jarg1, int jarg2, int jarg3);
+  public static extern void BitStream_WriteDelta__SWIG_10(HandleRef jarg1, short jarg2, short jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_11")]
-  public static extern void BitStream_WriteDelta__SWIG_11(HandleRef jarg1, int jarg2);
+  public static extern void BitStream_WriteDelta__SWIG_11(HandleRef jarg1, short jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_12")]
-  public static extern void BitStream_WriteDelta__SWIG_12(HandleRef jarg1, long jarg2, long jarg3);
+  public static extern void BitStream_WriteDelta__SWIG_12(HandleRef jarg1, ushort jarg2, ushort jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_13")]
-  public static extern void BitStream_WriteDelta__SWIG_13(HandleRef jarg1, long jarg2);
+  public static extern void BitStream_WriteDelta__SWIG_13(HandleRef jarg1, ushort jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_14")]
-  public static extern void BitStream_WriteDelta__SWIG_14(HandleRef jarg1, float jarg2, float jarg3);
+  public static extern void BitStream_WriteDelta__SWIG_14(HandleRef jarg1, int jarg2, int jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_15")]
-  public static extern void BitStream_WriteDelta__SWIG_15(HandleRef jarg1, float jarg2);
+  public static extern void BitStream_WriteDelta__SWIG_15(HandleRef jarg1, int jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_16")]
-  public static extern void BitStream_WriteDelta__SWIG_16(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
+  public static extern void BitStream_WriteDelta__SWIG_16(HandleRef jarg1, long jarg2, long jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_17")]
-  public static extern void BitStream_WriteDelta__SWIG_17(HandleRef jarg1, HandleRef jarg2);
+  public static extern void BitStream_WriteDelta__SWIG_17(HandleRef jarg1, long jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_18")]
-  public static extern void BitStream_WriteDelta__SWIG_18(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
+  public static extern void BitStream_WriteDelta__SWIG_18(HandleRef jarg1, float jarg2, float jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_19")]
-  public static extern void BitStream_WriteDelta__SWIG_19(HandleRef jarg1, HandleRef jarg2);
+  public static extern void BitStream_WriteDelta__SWIG_19(HandleRef jarg1, float jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_20")]
   public static extern void BitStream_WriteDelta__SWIG_20(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_21")]
   public static extern void BitStream_WriteDelta__SWIG_21(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_22")]
+  public static extern void BitStream_WriteDelta__SWIG_22(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_23")]
+  public static extern void BitStream_WriteDelta__SWIG_23(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_24")]
+  public static extern void BitStream_WriteDelta__SWIG_24(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteDelta__SWIG_25")]
+  public static extern void BitStream_WriteDelta__SWIG_25(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressed__SWIG_5")]
   public static extern void BitStream_WriteCompressed__SWIG_5(HandleRef jarg1, bool jarg2);
@@ -1894,22 +1951,28 @@ class RakNetPINVOKE {
   public static extern void BitStream_WriteCompressed__SWIG_7(HandleRef jarg1, char jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressed__SWIG_8")]
-  public static extern void BitStream_WriteCompressed__SWIG_8(HandleRef jarg1, int jarg2);
+  public static extern void BitStream_WriteCompressed__SWIG_8(HandleRef jarg1, short jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressed__SWIG_9")]
-  public static extern void BitStream_WriteCompressed__SWIG_9(HandleRef jarg1, long jarg2);
+  public static extern void BitStream_WriteCompressed__SWIG_9(HandleRef jarg1, ushort jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressed__SWIG_10")]
-  public static extern void BitStream_WriteCompressed__SWIG_10(HandleRef jarg1, float jarg2);
+  public static extern void BitStream_WriteCompressed__SWIG_10(HandleRef jarg1, int jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressed__SWIG_11")]
-  public static extern void BitStream_WriteCompressed__SWIG_11(HandleRef jarg1, HandleRef jarg2);
+  public static extern void BitStream_WriteCompressed__SWIG_11(HandleRef jarg1, long jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressed__SWIG_12")]
-  public static extern void BitStream_WriteCompressed__SWIG_12(HandleRef jarg1, HandleRef jarg2);
+  public static extern void BitStream_WriteCompressed__SWIG_12(HandleRef jarg1, float jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressed__SWIG_13")]
   public static extern void BitStream_WriteCompressed__SWIG_13(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressed__SWIG_14")]
+  public static extern void BitStream_WriteCompressed__SWIG_14(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressed__SWIG_15")]
+  public static extern void BitStream_WriteCompressed__SWIG_15(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_2")]
   public static extern void BitStream_WriteCompressedDelta__SWIG_2(HandleRef jarg1, string jarg2, string jarg3);
@@ -1936,40 +1999,52 @@ class RakNetPINVOKE {
   public static extern void BitStream_WriteCompressedDelta__SWIG_9(HandleRef jarg1, char jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_10")]
-  public static extern void BitStream_WriteCompressedDelta__SWIG_10(HandleRef jarg1, int jarg2, int jarg3);
+  public static extern void BitStream_WriteCompressedDelta__SWIG_10(HandleRef jarg1, short jarg2, short jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_11")]
-  public static extern void BitStream_WriteCompressedDelta__SWIG_11(HandleRef jarg1, int jarg2);
+  public static extern void BitStream_WriteCompressedDelta__SWIG_11(HandleRef jarg1, short jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_12")]
-  public static extern void BitStream_WriteCompressedDelta__SWIG_12(HandleRef jarg1, long jarg2, long jarg3);
+  public static extern void BitStream_WriteCompressedDelta__SWIG_12(HandleRef jarg1, ushort jarg2, ushort jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_13")]
-  public static extern void BitStream_WriteCompressedDelta__SWIG_13(HandleRef jarg1, long jarg2);
+  public static extern void BitStream_WriteCompressedDelta__SWIG_13(HandleRef jarg1, ushort jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_14")]
-  public static extern void BitStream_WriteCompressedDelta__SWIG_14(HandleRef jarg1, float jarg2, float jarg3);
+  public static extern void BitStream_WriteCompressedDelta__SWIG_14(HandleRef jarg1, int jarg2, int jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_15")]
-  public static extern void BitStream_WriteCompressedDelta__SWIG_15(HandleRef jarg1, float jarg2);
+  public static extern void BitStream_WriteCompressedDelta__SWIG_15(HandleRef jarg1, int jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_16")]
-  public static extern void BitStream_WriteCompressedDelta__SWIG_16(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
+  public static extern void BitStream_WriteCompressedDelta__SWIG_16(HandleRef jarg1, long jarg2, long jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_17")]
-  public static extern void BitStream_WriteCompressedDelta__SWIG_17(HandleRef jarg1, HandleRef jarg2);
+  public static extern void BitStream_WriteCompressedDelta__SWIG_17(HandleRef jarg1, long jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_18")]
-  public static extern void BitStream_WriteCompressedDelta__SWIG_18(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
+  public static extern void BitStream_WriteCompressedDelta__SWIG_18(HandleRef jarg1, float jarg2, float jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_19")]
-  public static extern void BitStream_WriteCompressedDelta__SWIG_19(HandleRef jarg1, HandleRef jarg2);
+  public static extern void BitStream_WriteCompressedDelta__SWIG_19(HandleRef jarg1, float jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_20")]
   public static extern void BitStream_WriteCompressedDelta__SWIG_20(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_21")]
   public static extern void BitStream_WriteCompressedDelta__SWIG_21(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_22")]
+  public static extern void BitStream_WriteCompressedDelta__SWIG_22(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_23")]
+  public static extern void BitStream_WriteCompressedDelta__SWIG_23(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_24")]
+  public static extern void BitStream_WriteCompressedDelta__SWIG_24(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_WriteCompressedDelta__SWIG_25")]
+  public static extern void BitStream_WriteCompressedDelta__SWIG_25(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Read__SWIG_3")]
   public static extern bool BitStream_Read__SWIG_3(HandleRef jarg1, out bool jarg2);
@@ -1978,22 +2053,28 @@ class RakNetPINVOKE {
   public static extern bool BitStream_Read__SWIG_4(HandleRef jarg1, out byte jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Read__SWIG_5")]
-  public static extern bool BitStream_Read__SWIG_5(HandleRef jarg1, out int jarg2);
+  public static extern bool BitStream_Read__SWIG_5(HandleRef jarg1, out short jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Read__SWIG_6")]
-  public static extern bool BitStream_Read__SWIG_6(HandleRef jarg1, out long jarg2);
+  public static extern bool BitStream_Read__SWIG_6(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Read__SWIG_7")]
-  public static extern bool BitStream_Read__SWIG_7(HandleRef jarg1, out float jarg2);
+  public static extern bool BitStream_Read__SWIG_7(HandleRef jarg1, out int jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Read__SWIG_8")]
-  public static extern bool BitStream_Read__SWIG_8(HandleRef jarg1, HandleRef jarg2);
+  public static extern bool BitStream_Read__SWIG_8(HandleRef jarg1, out long jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Read__SWIG_9")]
-  public static extern bool BitStream_Read__SWIG_9(HandleRef jarg1, HandleRef jarg2);
+  public static extern bool BitStream_Read__SWIG_9(HandleRef jarg1, out float jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_Read__SWIG_10")]
   public static extern bool BitStream_Read__SWIG_10(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_Read__SWIG_11")]
+  public static extern bool BitStream_Read__SWIG_11(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_Read__SWIG_12")]
+  public static extern bool BitStream_Read__SWIG_12(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadDelta__SWIG_1")]
   public static extern bool BitStream_ReadDelta__SWIG_1(HandleRef jarg1, out bool jarg2);
@@ -2002,22 +2083,28 @@ class RakNetPINVOKE {
   public static extern bool BitStream_ReadDelta__SWIG_2(HandleRef jarg1, out byte jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadDelta__SWIG_3")]
-  public static extern bool BitStream_ReadDelta__SWIG_3(HandleRef jarg1, out int jarg2);
+  public static extern bool BitStream_ReadDelta__SWIG_3(HandleRef jarg1, out short jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadDelta__SWIG_4")]
-  public static extern bool BitStream_ReadDelta__SWIG_4(HandleRef jarg1, out long jarg2);
+  public static extern bool BitStream_ReadDelta__SWIG_4(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadDelta__SWIG_5")]
-  public static extern bool BitStream_ReadDelta__SWIG_5(HandleRef jarg1, out float jarg2);
+  public static extern bool BitStream_ReadDelta__SWIG_5(HandleRef jarg1, out int jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadDelta__SWIG_6")]
-  public static extern bool BitStream_ReadDelta__SWIG_6(HandleRef jarg1, HandleRef jarg2);
+  public static extern bool BitStream_ReadDelta__SWIG_6(HandleRef jarg1, out long jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadDelta__SWIG_7")]
-  public static extern bool BitStream_ReadDelta__SWIG_7(HandleRef jarg1, HandleRef jarg2);
+  public static extern bool BitStream_ReadDelta__SWIG_7(HandleRef jarg1, out float jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadDelta__SWIG_8")]
   public static extern bool BitStream_ReadDelta__SWIG_8(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadDelta__SWIG_9")]
+  public static extern bool BitStream_ReadDelta__SWIG_9(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadDelta__SWIG_10")]
+  public static extern bool BitStream_ReadDelta__SWIG_10(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressed__SWIG_1")]
   public static extern bool BitStream_ReadCompressed__SWIG_1(HandleRef jarg1, out bool jarg2);
@@ -2026,22 +2113,28 @@ class RakNetPINVOKE {
   public static extern bool BitStream_ReadCompressed__SWIG_2(HandleRef jarg1, out byte jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressed__SWIG_3")]
-  public static extern bool BitStream_ReadCompressed__SWIG_3(HandleRef jarg1, out int jarg2);
+  public static extern bool BitStream_ReadCompressed__SWIG_3(HandleRef jarg1, out short jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressed__SWIG_4")]
-  public static extern bool BitStream_ReadCompressed__SWIG_4(HandleRef jarg1, out long jarg2);
+  public static extern bool BitStream_ReadCompressed__SWIG_4(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressed__SWIG_5")]
-  public static extern bool BitStream_ReadCompressed__SWIG_5(HandleRef jarg1, out float jarg2);
+  public static extern bool BitStream_ReadCompressed__SWIG_5(HandleRef jarg1, out int jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressed__SWIG_6")]
-  public static extern bool BitStream_ReadCompressed__SWIG_6(HandleRef jarg1, HandleRef jarg2);
+  public static extern bool BitStream_ReadCompressed__SWIG_6(HandleRef jarg1, out long jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressed__SWIG_7")]
-  public static extern bool BitStream_ReadCompressed__SWIG_7(HandleRef jarg1, HandleRef jarg2);
+  public static extern bool BitStream_ReadCompressed__SWIG_7(HandleRef jarg1, out float jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressed__SWIG_8")]
   public static extern bool BitStream_ReadCompressed__SWIG_8(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressed__SWIG_9")]
+  public static extern bool BitStream_ReadCompressed__SWIG_9(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressed__SWIG_10")]
+  public static extern bool BitStream_ReadCompressed__SWIG_10(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressedDelta__SWIG_1")]
   public static extern bool BitStream_ReadCompressedDelta__SWIG_1(HandleRef jarg1, out bool jarg2);
@@ -2050,22 +2143,28 @@ class RakNetPINVOKE {
   public static extern bool BitStream_ReadCompressedDelta__SWIG_2(HandleRef jarg1, out byte jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressedDelta__SWIG_3")]
-  public static extern bool BitStream_ReadCompressedDelta__SWIG_3(HandleRef jarg1, out int jarg2);
+  public static extern bool BitStream_ReadCompressedDelta__SWIG_3(HandleRef jarg1, out short jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressedDelta__SWIG_4")]
-  public static extern bool BitStream_ReadCompressedDelta__SWIG_4(HandleRef jarg1, out long jarg2);
+  public static extern bool BitStream_ReadCompressedDelta__SWIG_4(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressedDelta__SWIG_5")]
-  public static extern bool BitStream_ReadCompressedDelta__SWIG_5(HandleRef jarg1, out float jarg2);
+  public static extern bool BitStream_ReadCompressedDelta__SWIG_5(HandleRef jarg1, out int jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressedDelta__SWIG_6")]
-  public static extern bool BitStream_ReadCompressedDelta__SWIG_6(HandleRef jarg1, HandleRef jarg2);
+  public static extern bool BitStream_ReadCompressedDelta__SWIG_6(HandleRef jarg1, out long jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressedDelta__SWIG_7")]
-  public static extern bool BitStream_ReadCompressedDelta__SWIG_7(HandleRef jarg1, HandleRef jarg2);
+  public static extern bool BitStream_ReadCompressedDelta__SWIG_7(HandleRef jarg1, out float jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressedDelta__SWIG_8")]
   public static extern bool BitStream_ReadCompressedDelta__SWIG_8(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressedDelta__SWIG_9")]
+  public static extern bool BitStream_ReadCompressedDelta__SWIG_9(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_BitStream_ReadCompressedDelta__SWIG_10")]
+  public static extern bool BitStream_ReadCompressedDelta__SWIG_10(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_MAX_UNSIGNED_LONG_get")]
   public static extern uint MAX_UNSIGNED_LONG_get();
@@ -3150,9 +3249,6 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_OpenNAT")]
   public static extern bool NatPunchthroughClient_OpenNAT(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
 
-  [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_OpenNATGroup")]
-  public static extern bool NatPunchthroughClient_OpenNATGroup(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
-
   [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_GetPunchthroughConfiguration")]
   public static extern IntPtr NatPunchthroughClient_GetPunchthroughConfiguration(HandleRef jarg1);
 
@@ -3306,6 +3402,9 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_GetParticipantList")]
   public static extern void FullyConnectedMesh2_GetParticipantList(HandleRef jarg1, HandleRef jarg2);
 
+  [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_HasParticipant")]
+  public static extern bool FullyConnectedMesh2_HasParticipant(HandleRef jarg1, HandleRef jarg2);
+
   [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_ConnectToRemoteNewIncomingConnections")]
   public static extern void FullyConnectedMesh2_ConnectToRemoteNewIncomingConnections(HandleRef jarg1, HandleRef jarg2);
 
@@ -3317,6 +3416,21 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_GetParticipantCount__SWIG_1")]
   public static extern void FullyConnectedMesh2_GetParticipantCount__SWIG_1(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_StartVerifiedJoin")]
+  public static extern void FullyConnectedMesh2_StartVerifiedJoin(HandleRef jarg1, HandleRef jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_RespondOnVerifiedJoinCapable")]
+  public static extern void FullyConnectedMesh2_RespondOnVerifiedJoinCapable(HandleRef jarg1, HandleRef jarg2, bool jarg3, HandleRef jarg4);
+
+  [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_GetVerifiedJoinRequiredProcessingList")]
+  public static extern void FullyConnectedMesh2_GetVerifiedJoinRequiredProcessingList(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, HandleRef jarg4);
+
+  [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_GetVerifiedJoinAcceptedAdditionalData")]
+  public static extern void FullyConnectedMesh2_GetVerifiedJoinAcceptedAdditionalData(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, HandleRef jarg4, HandleRef jarg5);
+
+  [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_GetVerifiedJoinRejectedAdditionalData")]
+  public static extern void FullyConnectedMesh2_GetVerifiedJoinRejectedAdditionalData(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_FullyConnectedMesh2_GetTotalConnectionCount")]
   public static extern uint FullyConnectedMesh2_GetTotalConnectionCount(HandleRef jarg1);
@@ -3337,7 +3451,7 @@ class RakNetPINVOKE {
   public static extern bool ReadyEvent_SetEvent(HandleRef jarg1, int jarg2, bool jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_ReadyEvent_ForceCompletion")]
-  public static extern bool ReadyEvent_ForceCompletion(HandleRef jarg1, int jarg2);
+  public static extern void ReadyEvent_ForceCompletion(HandleRef jarg1, int jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_ReadyEvent_DeleteEvent")]
   public static extern bool ReadyEvent_DeleteEvent(HandleRef jarg1, int jarg2);
@@ -3777,12 +3891,6 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_GetUsedForwardEntries")]
   public static extern int UDPForwarder_GetUsedForwardEntries(HandleRef jarg1);
 
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_socketFamily_set")]
-  public static extern void UDPForwarder_socketFamily_set(HandleRef jarg1, short jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_socketFamily_get")]
-  public static extern short UDPForwarder_socketFamily_get(HandleRef jarg1);
-
   [DllImport("RakNet", EntryPoint="CSharp_UDPForwarder_StartForwarding")]
   public static extern int UDPForwarder_StartForwarding(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, uint jarg4, string jarg5, ushort jarg6, out ushort jarg7, out uint jarg8);
 
@@ -3830,6 +3938,9 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPProxyServer_LoginToCoordinator")]
   public static extern bool UDPProxyServer_LoginToCoordinator(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
+
+  [DllImport("RakNet", EntryPoint="CSharp_UDPProxyServer_SetServerPublicIP")]
+  public static extern void UDPProxyServer_SetServerPublicIP(HandleRef jarg1, HandleRef jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPProxyServer_udpForwarder_set")]
   public static extern void UDPProxyServer_udpForwarder_set(HandleRef jarg1, HandleRef jarg2);

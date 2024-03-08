@@ -346,6 +346,9 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 	sata.senderClientGuid = fw->sata.senderClientGuid;
 	sata.targetClientGuid = fw->sata.targetClientGuid;
 
+	RakString serverPublicIp;
+	incomingBs.Read(serverPublicIp);
+
 	UDPForwarderResult success;
 	unsigned char c;
 	incomingBs.Read(c);
@@ -354,8 +357,13 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 	RakNet::BitStream outgoingBs;
 	if (success==UDPFORWARDER_SUCCESS)
 	{
-		char serverIP[64];
-		packet->systemAddress.ToString(false,serverIP);
+		if (serverPublicIp.IsEmpty())
+		{
+			char serverIP[64];
+			packet->systemAddress.ToString(false,serverIP);
+			serverPublicIp=serverIP;
+		}
+
 		unsigned short forwardingPort;
 		incomingBs.Read(forwardingPort);
 
@@ -364,7 +372,7 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 		outgoingBs.Write(sata.senderClientAddress);
 		outgoingBs.Write(sata.targetClientAddress);
 		outgoingBs.Write(sata.targetClientGuid);
-		outgoingBs.Write(RakNet::RakString(serverIP));
+		outgoingBs.Write(serverPublicIp);
 		outgoingBs.Write(forwardingPort);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, fw->requestingAddress, false);
 
@@ -374,7 +382,7 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 		outgoingBs.Write(sata.senderClientAddress);
 		outgoingBs.Write(sata.targetClientAddress);
 		outgoingBs.Write(sata.targetClientGuid);
-		outgoingBs.Write(RakNet::RakString(serverIP));
+		outgoingBs.Write(serverPublicIp);
 		outgoingBs.Write(forwardingPort);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, sata.targetClientAddress, false);
 

@@ -39,7 +39,7 @@ The following server-based plugins do not perform interactions between clients, 
 The following server-based plugins require that interacting clients be on the same server. I recommend connecting to all servers in advance,
 and sending the request to the server that is connected to the client you are interacting with
 1. NATPunchthroughServer
-2. TeamBalancer (entire team must be on the same server)
+2. TeamManager (entire team must be on the same server)
 3. RoomsPlugin (all users that interact with each other must be on the same server)
 
 The following server-based plugins are already distributed

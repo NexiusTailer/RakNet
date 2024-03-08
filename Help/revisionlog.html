@@ -555,6 +555,14 @@ FullyConnectedMesh2: Changed to return UNASSIGNED_RAKNET_GUID as last host on fi
 Encryption: Fixed sample when using two-way authentication
 CloudServer: Fixed bad check of OnReleaseRequest
 Lobby2Client_Steam: Fixed steam integration to cancel an operation when the callback object had already been destroyed.
+4.04 (5/10/2012)
+ReplicaManager3: Fix incorrectly calling PostDeserializeConstruction when PostDeserializeConstructionExisting should be called.
+UDPForwarder: Fix unnecessary assert
+FullyConnectedMesh2: Added StartVerifiedJoin()
+NatPunchthroughClient: Removed OpenNATGroup(). Use FullyConnectedMesh2::StartVerifiedJoin() instead.
+Added ComprehensivePCGame sample
+Fixed RakNetGUID::ToString not returning UNASSIGNED_RAKNET_GUID
+Fixed crash in PerGameRoomsContainer::DestroyRoomIfDead
 </pre>
 <BR>
 </p></TD></TR></TABLE>

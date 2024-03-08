@@ -89,11 +89,11 @@ int main()
 					bs.IgnoreBytes(1);
 					RakNetGUID oldHost;
 					bs.Read(oldHost);
-					// If the old host is different, then this message was due to losing connection to the host.
-					if (oldHost!=packet->guid)
+					// If oldHost is different then the current host, then we lost connection to the host
+					if (oldHost!=UNASSIGNED_RAKNET_GUID)
 						printf(". Oldhost Guid=%s\n", oldHost.ToString());
 					else
-						printf("\n");
+						printf(". (First reported host)\n");
 				}
 				break;
 

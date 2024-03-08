@@ -70,16 +70,6 @@ public class UDPForwarder : IDisposable {
     return ret;
   }
 
-  public short socketFamily {
-    set {
-      RakNetPINVOKE.UDPForwarder_socketFamily_set(swigCPtr, value);
-    } 
-    get {
-      short ret = RakNetPINVOKE.UDPForwarder_socketFamily_get(swigCPtr);
-      return ret;
-    } 
-  }
-
   public UDPForwarderResult StartForwarding(SystemAddress source, SystemAddress destination, uint timeoutOnNoDataMS, string forceHostAddress, ushort socketFamily, out ushort forwardingPort, out uint forwardingSocket) {
     UDPForwarderResult ret = (UDPForwarderResult)RakNetPINVOKE.UDPForwarder_StartForwarding(swigCPtr, SystemAddress.getCPtr(source), SystemAddress.getCPtr(destination), timeoutOnNoDataMS, forceHostAddress, socketFamily, out forwardingPort, out forwardingSocket);
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();

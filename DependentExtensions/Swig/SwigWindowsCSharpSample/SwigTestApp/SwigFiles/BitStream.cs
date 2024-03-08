@@ -566,35 +566,45 @@ public class BitStream : IDisposable {
     return ret;
   }
 
-  public bool Serialize(bool writeToBitstream, ref int inOutTemplateVar) {
+  public bool Serialize(bool writeToBitstream, ref short inOutTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_Serialize__SWIG_4(swigCPtr, writeToBitstream, ref inOutTemplateVar);
     return ret;
   }
 
-  public bool Serialize(bool writeToBitstream, ref long inOutTemplateVar) {
+  public bool Serialize(bool writeToBitstream, ref ushort inOutTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_Serialize__SWIG_5(swigCPtr, writeToBitstream, ref inOutTemplateVar);
     return ret;
   }
 
-  public bool Serialize(bool writeToBitstream, ref float inOutTemplateVar) {
+  public bool Serialize(bool writeToBitstream, ref int inOutTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_Serialize__SWIG_6(swigCPtr, writeToBitstream, ref inOutTemplateVar);
     return ret;
   }
 
+  public bool Serialize(bool writeToBitstream, ref long inOutTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_Serialize__SWIG_7(swigCPtr, writeToBitstream, ref inOutTemplateVar);
+    return ret;
+  }
+
+  public bool Serialize(bool writeToBitstream, ref float inOutTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_Serialize__SWIG_8(swigCPtr, writeToBitstream, ref inOutTemplateVar);
+    return ret;
+  }
+
   public bool Serialize(bool writeToBitstream, RakString inOutTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_Serialize__SWIG_7(swigCPtr, writeToBitstream, RakString.getCPtr(inOutTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_Serialize__SWIG_9(swigCPtr, writeToBitstream, RakString.getCPtr(inOutTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool Serialize(bool writeToBitstream, RakNetGUID inOutTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_Serialize__SWIG_8(swigCPtr, writeToBitstream, RakNetGUID.getCPtr(inOutTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_Serialize__SWIG_10(swigCPtr, writeToBitstream, RakNetGUID.getCPtr(inOutTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool Serialize(bool writeToBitstream, uint24_t inOutTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_Serialize__SWIG_9(swigCPtr, writeToBitstream, uint24_t.getCPtr(inOutTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_Serialize__SWIG_11(swigCPtr, writeToBitstream, uint24_t.getCPtr(inOutTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
@@ -619,68 +629,88 @@ public class BitStream : IDisposable {
     return ret;
   }
 
-  public bool SerializeDelta(bool writeToBitstream, ref int inOutCurrentValue, int lastValue) {
+  public bool SerializeDelta(bool writeToBitstream, ref short inOutCurrentValue, short lastValue) {
     bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_6(swigCPtr, writeToBitstream, ref inOutCurrentValue, lastValue);
     return ret;
   }
 
-  public bool SerializeDelta(bool writeToBitstream, ref int inOutCurrentValue) {
+  public bool SerializeDelta(bool writeToBitstream, ref short inOutCurrentValue) {
     bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_7(swigCPtr, writeToBitstream, ref inOutCurrentValue);
     return ret;
   }
 
-  public bool SerializeDelta(bool writeToBitstream, ref long inOutCurrentValue, long lastValue) {
+  public bool SerializeDelta(bool writeToBitstream, ref ushort inOutCurrentValue, ushort lastValue) {
     bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_8(swigCPtr, writeToBitstream, ref inOutCurrentValue, lastValue);
     return ret;
   }
 
-  public bool SerializeDelta(bool writeToBitstream, ref long inOutCurrentValue) {
+  public bool SerializeDelta(bool writeToBitstream, ref ushort inOutCurrentValue) {
     bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_9(swigCPtr, writeToBitstream, ref inOutCurrentValue);
     return ret;
   }
 
-  public bool SerializeDelta(bool writeToBitstream, ref float inOutCurrentValue, float lastValue) {
+  public bool SerializeDelta(bool writeToBitstream, ref int inOutCurrentValue, int lastValue) {
     bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_10(swigCPtr, writeToBitstream, ref inOutCurrentValue, lastValue);
     return ret;
   }
 
-  public bool SerializeDelta(bool writeToBitstream, ref float inOutCurrentValue) {
+  public bool SerializeDelta(bool writeToBitstream, ref int inOutCurrentValue) {
     bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_11(swigCPtr, writeToBitstream, ref inOutCurrentValue);
     return ret;
   }
 
+  public bool SerializeDelta(bool writeToBitstream, ref long inOutCurrentValue, long lastValue) {
+    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_12(swigCPtr, writeToBitstream, ref inOutCurrentValue, lastValue);
+    return ret;
+  }
+
+  public bool SerializeDelta(bool writeToBitstream, ref long inOutCurrentValue) {
+    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_13(swigCPtr, writeToBitstream, ref inOutCurrentValue);
+    return ret;
+  }
+
+  public bool SerializeDelta(bool writeToBitstream, ref float inOutCurrentValue, float lastValue) {
+    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_14(swigCPtr, writeToBitstream, ref inOutCurrentValue, lastValue);
+    return ret;
+  }
+
+  public bool SerializeDelta(bool writeToBitstream, ref float inOutCurrentValue) {
+    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_15(swigCPtr, writeToBitstream, ref inOutCurrentValue);
+    return ret;
+  }
+
   public bool SerializeDelta(bool writeToBitstream, RakString inOutCurrentValue, RakString lastValue) {
-    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_12(swigCPtr, writeToBitstream, RakString.getCPtr(inOutCurrentValue), RakString.getCPtr(lastValue));
+    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_16(swigCPtr, writeToBitstream, RakString.getCPtr(inOutCurrentValue), RakString.getCPtr(lastValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool SerializeDelta(bool writeToBitstream, RakString inOutCurrentValue) {
-    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_13(swigCPtr, writeToBitstream, RakString.getCPtr(inOutCurrentValue));
+    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_17(swigCPtr, writeToBitstream, RakString.getCPtr(inOutCurrentValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool SerializeDelta(bool writeToBitstream, RakNetGUID inOutCurrentValue, RakNetGUID lastValue) {
-    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_14(swigCPtr, writeToBitstream, RakNetGUID.getCPtr(inOutCurrentValue), RakNetGUID.getCPtr(lastValue));
+    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_18(swigCPtr, writeToBitstream, RakNetGUID.getCPtr(inOutCurrentValue), RakNetGUID.getCPtr(lastValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool SerializeDelta(bool writeToBitstream, RakNetGUID inOutCurrentValue) {
-    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_15(swigCPtr, writeToBitstream, RakNetGUID.getCPtr(inOutCurrentValue));
+    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_19(swigCPtr, writeToBitstream, RakNetGUID.getCPtr(inOutCurrentValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool SerializeDelta(bool writeToBitstream, uint24_t inOutCurrentValue, uint24_t lastValue) {
-    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_16(swigCPtr, writeToBitstream, uint24_t.getCPtr(inOutCurrentValue), uint24_t.getCPtr(lastValue));
+    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_20(swigCPtr, writeToBitstream, uint24_t.getCPtr(inOutCurrentValue), uint24_t.getCPtr(lastValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool SerializeDelta(bool writeToBitstream, uint24_t inOutCurrentValue) {
-    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_17(swigCPtr, writeToBitstream, uint24_t.getCPtr(inOutCurrentValue));
+    bool ret = RakNetPINVOKE.BitStream_SerializeDelta__SWIG_21(swigCPtr, writeToBitstream, uint24_t.getCPtr(inOutCurrentValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
@@ -695,35 +725,45 @@ public class BitStream : IDisposable {
     return ret;
   }
 
-  public bool SerializeCompressed(bool writeToBitstream, ref int inOutTemplateVar) {
+  public bool SerializeCompressed(bool writeToBitstream, ref short inOutTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_SerializeCompressed__SWIG_3(swigCPtr, writeToBitstream, ref inOutTemplateVar);
     return ret;
   }
 
-  public bool SerializeCompressed(bool writeToBitstream, ref long inOutTemplateVar) {
+  public bool SerializeCompressed(bool writeToBitstream, ref ushort inOutTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_SerializeCompressed__SWIG_4(swigCPtr, writeToBitstream, ref inOutTemplateVar);
     return ret;
   }
 
-  public bool SerializeCompressed(bool writeToBitstream, ref float inOutTemplateVar) {
+  public bool SerializeCompressed(bool writeToBitstream, ref int inOutTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_SerializeCompressed__SWIG_5(swigCPtr, writeToBitstream, ref inOutTemplateVar);
     return ret;
   }
 
+  public bool SerializeCompressed(bool writeToBitstream, ref long inOutTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_SerializeCompressed__SWIG_6(swigCPtr, writeToBitstream, ref inOutTemplateVar);
+    return ret;
+  }
+
+  public bool SerializeCompressed(bool writeToBitstream, ref float inOutTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_SerializeCompressed__SWIG_7(swigCPtr, writeToBitstream, ref inOutTemplateVar);
+    return ret;
+  }
+
   public bool SerializeCompressed(bool writeToBitstream, RakString inOutTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_SerializeCompressed__SWIG_6(swigCPtr, writeToBitstream, RakString.getCPtr(inOutTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_SerializeCompressed__SWIG_8(swigCPtr, writeToBitstream, RakString.getCPtr(inOutTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool SerializeCompressed(bool writeToBitstream, RakNetGUID inOutTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_SerializeCompressed__SWIG_7(swigCPtr, writeToBitstream, RakNetGUID.getCPtr(inOutTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_SerializeCompressed__SWIG_9(swigCPtr, writeToBitstream, RakNetGUID.getCPtr(inOutTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool SerializeCompressed(bool writeToBitstream, uint24_t inOutTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_SerializeCompressed__SWIG_8(swigCPtr, writeToBitstream, uint24_t.getCPtr(inOutTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_SerializeCompressed__SWIG_10(swigCPtr, writeToBitstream, uint24_t.getCPtr(inOutTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
@@ -748,68 +788,88 @@ public class BitStream : IDisposable {
     return ret;
   }
 
-  public bool SerializeCompressedDelta(bool writeToBitstream, ref int inOutCurrentValue, int lastValue) {
+  public bool SerializeCompressedDelta(bool writeToBitstream, ref short inOutCurrentValue, short lastValue) {
     bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_6(swigCPtr, writeToBitstream, ref inOutCurrentValue, lastValue);
     return ret;
   }
 
-  public bool SerializeCompressedDelta(bool writeToBitstream, ref int inOutTemplateVar) {
+  public bool SerializeCompressedDelta(bool writeToBitstream, ref short inOutTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_7(swigCPtr, writeToBitstream, ref inOutTemplateVar);
     return ret;
   }
 
-  public bool SerializeCompressedDelta(bool writeToBitstream, ref long inOutCurrentValue, long lastValue) {
+  public bool SerializeCompressedDelta(bool writeToBitstream, ref ushort inOutCurrentValue, ushort lastValue) {
     bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_8(swigCPtr, writeToBitstream, ref inOutCurrentValue, lastValue);
     return ret;
   }
 
-  public bool SerializeCompressedDelta(bool writeToBitstream, ref long inOutTemplateVar) {
+  public bool SerializeCompressedDelta(bool writeToBitstream, ref ushort inOutTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_9(swigCPtr, writeToBitstream, ref inOutTemplateVar);
     return ret;
   }
 
-  public bool SerializeCompressedDelta(bool writeToBitstream, ref float inOutCurrentValue, float lastValue) {
+  public bool SerializeCompressedDelta(bool writeToBitstream, ref int inOutCurrentValue, int lastValue) {
     bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_10(swigCPtr, writeToBitstream, ref inOutCurrentValue, lastValue);
     return ret;
   }
 
-  public bool SerializeCompressedDelta(bool writeToBitstream, ref float inOutTemplateVar) {
+  public bool SerializeCompressedDelta(bool writeToBitstream, ref int inOutTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_11(swigCPtr, writeToBitstream, ref inOutTemplateVar);
     return ret;
   }
 
+  public bool SerializeCompressedDelta(bool writeToBitstream, ref long inOutCurrentValue, long lastValue) {
+    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_12(swigCPtr, writeToBitstream, ref inOutCurrentValue, lastValue);
+    return ret;
+  }
+
+  public bool SerializeCompressedDelta(bool writeToBitstream, ref long inOutTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_13(swigCPtr, writeToBitstream, ref inOutTemplateVar);
+    return ret;
+  }
+
+  public bool SerializeCompressedDelta(bool writeToBitstream, ref float inOutCurrentValue, float lastValue) {
+    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_14(swigCPtr, writeToBitstream, ref inOutCurrentValue, lastValue);
+    return ret;
+  }
+
+  public bool SerializeCompressedDelta(bool writeToBitstream, ref float inOutTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_15(swigCPtr, writeToBitstream, ref inOutTemplateVar);
+    return ret;
+  }
+
   public bool SerializeCompressedDelta(bool writeToBitstream, RakString inOutCurrentValue, RakString lastValue) {
-    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_12(swigCPtr, writeToBitstream, RakString.getCPtr(inOutCurrentValue), RakString.getCPtr(lastValue));
+    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_16(swigCPtr, writeToBitstream, RakString.getCPtr(inOutCurrentValue), RakString.getCPtr(lastValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool SerializeCompressedDelta(bool writeToBitstream, RakString inOutTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_13(swigCPtr, writeToBitstream, RakString.getCPtr(inOutTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_17(swigCPtr, writeToBitstream, RakString.getCPtr(inOutTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool SerializeCompressedDelta(bool writeToBitstream, RakNetGUID inOutCurrentValue, RakNetGUID lastValue) {
-    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_14(swigCPtr, writeToBitstream, RakNetGUID.getCPtr(inOutCurrentValue), RakNetGUID.getCPtr(lastValue));
+    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_18(swigCPtr, writeToBitstream, RakNetGUID.getCPtr(inOutCurrentValue), RakNetGUID.getCPtr(lastValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool SerializeCompressedDelta(bool writeToBitstream, RakNetGUID inOutTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_15(swigCPtr, writeToBitstream, RakNetGUID.getCPtr(inOutTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_19(swigCPtr, writeToBitstream, RakNetGUID.getCPtr(inOutTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool SerializeCompressedDelta(bool writeToBitstream, uint24_t inOutCurrentValue, uint24_t lastValue) {
-    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_16(swigCPtr, writeToBitstream, uint24_t.getCPtr(inOutCurrentValue), uint24_t.getCPtr(lastValue));
+    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_20(swigCPtr, writeToBitstream, uint24_t.getCPtr(inOutCurrentValue), uint24_t.getCPtr(lastValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool SerializeCompressedDelta(bool writeToBitstream, uint24_t inOutTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_17(swigCPtr, writeToBitstream, uint24_t.getCPtr(inOutTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_SerializeCompressedDelta__SWIG_21(swigCPtr, writeToBitstream, uint24_t.getCPtr(inOutTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
@@ -826,30 +886,38 @@ public class BitStream : IDisposable {
     RakNetPINVOKE.BitStream_Write__SWIG_10(swigCPtr, inTemplateVar);
   }
 
-  public void Write(int inTemplateVar) {
+  public void Write(short inTemplateVar) {
     RakNetPINVOKE.BitStream_Write__SWIG_11(swigCPtr, inTemplateVar);
   }
 
-  public void Write(long inTemplateVar) {
+  public void Write(ushort inTemplateVar) {
     RakNetPINVOKE.BitStream_Write__SWIG_12(swigCPtr, inTemplateVar);
   }
 
-  public void Write(float inTemplateVar) {
+  public void Write(int inTemplateVar) {
     RakNetPINVOKE.BitStream_Write__SWIG_13(swigCPtr, inTemplateVar);
   }
 
+  public void Write(long inTemplateVar) {
+    RakNetPINVOKE.BitStream_Write__SWIG_14(swigCPtr, inTemplateVar);
+  }
+
+  public void Write(float inTemplateVar) {
+    RakNetPINVOKE.BitStream_Write__SWIG_15(swigCPtr, inTemplateVar);
+  }
+
   public void Write(RakString inTemplateVar) {
-    RakNetPINVOKE.BitStream_Write__SWIG_14(swigCPtr, RakString.getCPtr(inTemplateVar));
+    RakNetPINVOKE.BitStream_Write__SWIG_16(swigCPtr, RakString.getCPtr(inTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void Write(RakNetGUID inTemplateVar) {
-    RakNetPINVOKE.BitStream_Write__SWIG_15(swigCPtr, RakNetGUID.getCPtr(inTemplateVar));
+    RakNetPINVOKE.BitStream_Write__SWIG_17(swigCPtr, RakNetGUID.getCPtr(inTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void Write(uint24_t inTemplateVar) {
-    RakNetPINVOKE.BitStream_Write__SWIG_16(swigCPtr, uint24_t.getCPtr(inTemplateVar));
+    RakNetPINVOKE.BitStream_Write__SWIG_18(swigCPtr, uint24_t.getCPtr(inTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
@@ -885,57 +953,73 @@ public class BitStream : IDisposable {
     RakNetPINVOKE.BitStream_WriteDelta__SWIG_9(swigCPtr, currentValue);
   }
 
-  public void WriteDelta(int currentValue, int lastValue) {
+  public void WriteDelta(short currentValue, short lastValue) {
     RakNetPINVOKE.BitStream_WriteDelta__SWIG_10(swigCPtr, currentValue, lastValue);
   }
 
-  public void WriteDelta(int currentValue) {
+  public void WriteDelta(short currentValue) {
     RakNetPINVOKE.BitStream_WriteDelta__SWIG_11(swigCPtr, currentValue);
   }
 
-  public void WriteDelta(long currentValue, long lastValue) {
+  public void WriteDelta(ushort currentValue, ushort lastValue) {
     RakNetPINVOKE.BitStream_WriteDelta__SWIG_12(swigCPtr, currentValue, lastValue);
   }
 
-  public void WriteDelta(long currentValue) {
+  public void WriteDelta(ushort currentValue) {
     RakNetPINVOKE.BitStream_WriteDelta__SWIG_13(swigCPtr, currentValue);
   }
 
-  public void WriteDelta(float currentValue, float lastValue) {
+  public void WriteDelta(int currentValue, int lastValue) {
     RakNetPINVOKE.BitStream_WriteDelta__SWIG_14(swigCPtr, currentValue, lastValue);
   }
 
-  public void WriteDelta(float currentValue) {
+  public void WriteDelta(int currentValue) {
     RakNetPINVOKE.BitStream_WriteDelta__SWIG_15(swigCPtr, currentValue);
   }
 
+  public void WriteDelta(long currentValue, long lastValue) {
+    RakNetPINVOKE.BitStream_WriteDelta__SWIG_16(swigCPtr, currentValue, lastValue);
+  }
+
+  public void WriteDelta(long currentValue) {
+    RakNetPINVOKE.BitStream_WriteDelta__SWIG_17(swigCPtr, currentValue);
+  }
+
+  public void WriteDelta(float currentValue, float lastValue) {
+    RakNetPINVOKE.BitStream_WriteDelta__SWIG_18(swigCPtr, currentValue, lastValue);
+  }
+
+  public void WriteDelta(float currentValue) {
+    RakNetPINVOKE.BitStream_WriteDelta__SWIG_19(swigCPtr, currentValue);
+  }
+
   public void WriteDelta(RakString currentValue, RakString lastValue) {
-    RakNetPINVOKE.BitStream_WriteDelta__SWIG_16(swigCPtr, RakString.getCPtr(currentValue), RakString.getCPtr(lastValue));
+    RakNetPINVOKE.BitStream_WriteDelta__SWIG_20(swigCPtr, RakString.getCPtr(currentValue), RakString.getCPtr(lastValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void WriteDelta(RakString currentValue) {
-    RakNetPINVOKE.BitStream_WriteDelta__SWIG_17(swigCPtr, RakString.getCPtr(currentValue));
+    RakNetPINVOKE.BitStream_WriteDelta__SWIG_21(swigCPtr, RakString.getCPtr(currentValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void WriteDelta(RakNetGUID currentValue, RakNetGUID lastValue) {
-    RakNetPINVOKE.BitStream_WriteDelta__SWIG_18(swigCPtr, RakNetGUID.getCPtr(currentValue), RakNetGUID.getCPtr(lastValue));
+    RakNetPINVOKE.BitStream_WriteDelta__SWIG_22(swigCPtr, RakNetGUID.getCPtr(currentValue), RakNetGUID.getCPtr(lastValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void WriteDelta(RakNetGUID currentValue) {
-    RakNetPINVOKE.BitStream_WriteDelta__SWIG_19(swigCPtr, RakNetGUID.getCPtr(currentValue));
+    RakNetPINVOKE.BitStream_WriteDelta__SWIG_23(swigCPtr, RakNetGUID.getCPtr(currentValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void WriteDelta(uint24_t currentValue, uint24_t lastValue) {
-    RakNetPINVOKE.BitStream_WriteDelta__SWIG_20(swigCPtr, uint24_t.getCPtr(currentValue), uint24_t.getCPtr(lastValue));
+    RakNetPINVOKE.BitStream_WriteDelta__SWIG_24(swigCPtr, uint24_t.getCPtr(currentValue), uint24_t.getCPtr(lastValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void WriteDelta(uint24_t currentValue) {
-    RakNetPINVOKE.BitStream_WriteDelta__SWIG_21(swigCPtr, uint24_t.getCPtr(currentValue));
+    RakNetPINVOKE.BitStream_WriteDelta__SWIG_25(swigCPtr, uint24_t.getCPtr(currentValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
@@ -951,30 +1035,38 @@ public class BitStream : IDisposable {
     RakNetPINVOKE.BitStream_WriteCompressed__SWIG_7(swigCPtr, inTemplateVar);
   }
 
-  public void WriteCompressed(int inTemplateVar) {
+  public void WriteCompressed(short inTemplateVar) {
     RakNetPINVOKE.BitStream_WriteCompressed__SWIG_8(swigCPtr, inTemplateVar);
   }
 
-  public void WriteCompressed(long inTemplateVar) {
+  public void WriteCompressed(ushort inTemplateVar) {
     RakNetPINVOKE.BitStream_WriteCompressed__SWIG_9(swigCPtr, inTemplateVar);
   }
 
-  public void WriteCompressed(float inTemplateVar) {
+  public void WriteCompressed(int inTemplateVar) {
     RakNetPINVOKE.BitStream_WriteCompressed__SWIG_10(swigCPtr, inTemplateVar);
   }
 
+  public void WriteCompressed(long inTemplateVar) {
+    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_11(swigCPtr, inTemplateVar);
+  }
+
+  public void WriteCompressed(float inTemplateVar) {
+    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_12(swigCPtr, inTemplateVar);
+  }
+
   public void WriteCompressed(RakString inTemplateVar) {
-    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_11(swigCPtr, RakString.getCPtr(inTemplateVar));
+    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_13(swigCPtr, RakString.getCPtr(inTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void WriteCompressed(RakNetGUID inTemplateVar) {
-    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_12(swigCPtr, RakNetGUID.getCPtr(inTemplateVar));
+    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_14(swigCPtr, RakNetGUID.getCPtr(inTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void WriteCompressed(uint24_t inTemplateVar) {
-    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_13(swigCPtr, uint24_t.getCPtr(inTemplateVar));
+    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_15(swigCPtr, uint24_t.getCPtr(inTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
@@ -1010,57 +1102,73 @@ public class BitStream : IDisposable {
     RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_9(swigCPtr, currentValue);
   }
 
-  public void WriteCompressedDelta(int currentValue, int lastValue) {
+  public void WriteCompressedDelta(short currentValue, short lastValue) {
     RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_10(swigCPtr, currentValue, lastValue);
   }
 
-  public void WriteCompressedDelta(int currentValue) {
+  public void WriteCompressedDelta(short currentValue) {
     RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_11(swigCPtr, currentValue);
   }
 
-  public void WriteCompressedDelta(long currentValue, long lastValue) {
+  public void WriteCompressedDelta(ushort currentValue, ushort lastValue) {
     RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_12(swigCPtr, currentValue, lastValue);
   }
 
-  public void WriteCompressedDelta(long currentValue) {
+  public void WriteCompressedDelta(ushort currentValue) {
     RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_13(swigCPtr, currentValue);
   }
 
-  public void WriteCompressedDelta(float currentValue, float lastValue) {
+  public void WriteCompressedDelta(int currentValue, int lastValue) {
     RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_14(swigCPtr, currentValue, lastValue);
   }
 
-  public void WriteCompressedDelta(float currentValue) {
+  public void WriteCompressedDelta(int currentValue) {
     RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_15(swigCPtr, currentValue);
   }
 
+  public void WriteCompressedDelta(long currentValue, long lastValue) {
+    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_16(swigCPtr, currentValue, lastValue);
+  }
+
+  public void WriteCompressedDelta(long currentValue) {
+    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_17(swigCPtr, currentValue);
+  }
+
+  public void WriteCompressedDelta(float currentValue, float lastValue) {
+    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_18(swigCPtr, currentValue, lastValue);
+  }
+
+  public void WriteCompressedDelta(float currentValue) {
+    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_19(swigCPtr, currentValue);
+  }
+
   public void WriteCompressedDelta(RakString currentValue, RakString lastValue) {
-    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_16(swigCPtr, RakString.getCPtr(currentValue), RakString.getCPtr(lastValue));
+    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_20(swigCPtr, RakString.getCPtr(currentValue), RakString.getCPtr(lastValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void WriteCompressedDelta(RakString currentValue) {
-    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_17(swigCPtr, RakString.getCPtr(currentValue));
+    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_21(swigCPtr, RakString.getCPtr(currentValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void WriteCompressedDelta(RakNetGUID currentValue, RakNetGUID lastValue) {
-    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_18(swigCPtr, RakNetGUID.getCPtr(currentValue), RakNetGUID.getCPtr(lastValue));
+    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_22(swigCPtr, RakNetGUID.getCPtr(currentValue), RakNetGUID.getCPtr(lastValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void WriteCompressedDelta(RakNetGUID currentValue) {
-    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_19(swigCPtr, RakNetGUID.getCPtr(currentValue));
+    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_23(swigCPtr, RakNetGUID.getCPtr(currentValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void WriteCompressedDelta(uint24_t currentValue, uint24_t lastValue) {
-    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_20(swigCPtr, uint24_t.getCPtr(currentValue), uint24_t.getCPtr(lastValue));
+    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_24(swigCPtr, uint24_t.getCPtr(currentValue), uint24_t.getCPtr(lastValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void WriteCompressedDelta(uint24_t currentValue) {
-    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_21(swigCPtr, uint24_t.getCPtr(currentValue));
+    RakNetPINVOKE.BitStream_WriteCompressedDelta__SWIG_25(swigCPtr, uint24_t.getCPtr(currentValue));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
@@ -1074,35 +1182,46 @@ public class BitStream : IDisposable {
     return ret;
   }
 
-  public bool Read(out int outTemplateVar) {
+  public bool Read(out short outTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_Read__SWIG_5(swigCPtr, out outTemplateVar);
     return ret;
   }
 
-  public bool Read(out long outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_Read__SWIG_6(swigCPtr, out outTemplateVar);
+  public bool Read(SWIGTYPE_p_unsigned_short outTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_Read__SWIG_6(swigCPtr, SWIGTYPE_p_unsigned_short.getCPtr(outTemplateVar));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
-  public bool Read(out float outTemplateVar) {
+  public bool Read(out int outTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_Read__SWIG_7(swigCPtr, out outTemplateVar);
     return ret;
   }
 
+  public bool Read(out long outTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_Read__SWIG_8(swigCPtr, out outTemplateVar);
+    return ret;
+  }
+
+  public bool Read(out float outTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_Read__SWIG_9(swigCPtr, out outTemplateVar);
+    return ret;
+  }
+
   public bool Read(RakString outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_Read__SWIG_8(swigCPtr, RakString.getCPtr(outTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_Read__SWIG_10(swigCPtr, RakString.getCPtr(outTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool Read(RakNetGUID outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_Read__SWIG_9(swigCPtr, RakNetGUID.getCPtr(outTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_Read__SWIG_11(swigCPtr, RakNetGUID.getCPtr(outTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool Read(uint24_t outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_Read__SWIG_10(swigCPtr, uint24_t.getCPtr(outTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_Read__SWIG_12(swigCPtr, uint24_t.getCPtr(outTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
@@ -1117,35 +1236,46 @@ public class BitStream : IDisposable {
     return ret;
   }
 
-  public bool ReadDelta(out int outTemplateVar) {
+  public bool ReadDelta(out short outTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_ReadDelta__SWIG_3(swigCPtr, out outTemplateVar);
     return ret;
   }
 
-  public bool ReadDelta(out long outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_ReadDelta__SWIG_4(swigCPtr, out outTemplateVar);
+  public bool ReadDelta(SWIGTYPE_p_unsigned_short outTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_ReadDelta__SWIG_4(swigCPtr, SWIGTYPE_p_unsigned_short.getCPtr(outTemplateVar));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
-  public bool ReadDelta(out float outTemplateVar) {
+  public bool ReadDelta(out int outTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_ReadDelta__SWIG_5(swigCPtr, out outTemplateVar);
     return ret;
   }
 
+  public bool ReadDelta(out long outTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_ReadDelta__SWIG_6(swigCPtr, out outTemplateVar);
+    return ret;
+  }
+
+  public bool ReadDelta(out float outTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_ReadDelta__SWIG_7(swigCPtr, out outTemplateVar);
+    return ret;
+  }
+
   public bool ReadDelta(RakString outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_ReadDelta__SWIG_6(swigCPtr, RakString.getCPtr(outTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_ReadDelta__SWIG_8(swigCPtr, RakString.getCPtr(outTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool ReadDelta(RakNetGUID outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_ReadDelta__SWIG_7(swigCPtr, RakNetGUID.getCPtr(outTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_ReadDelta__SWIG_9(swigCPtr, RakNetGUID.getCPtr(outTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool ReadDelta(uint24_t outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_ReadDelta__SWIG_8(swigCPtr, uint24_t.getCPtr(outTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_ReadDelta__SWIG_10(swigCPtr, uint24_t.getCPtr(outTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
@@ -1160,35 +1290,46 @@ public class BitStream : IDisposable {
     return ret;
   }
 
-  public bool ReadCompressed(out int outTemplateVar) {
+  public bool ReadCompressed(out short outTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_ReadCompressed__SWIG_3(swigCPtr, out outTemplateVar);
     return ret;
   }
 
-  public bool ReadCompressed(out long outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_ReadCompressed__SWIG_4(swigCPtr, out outTemplateVar);
+  public bool ReadCompressed(SWIGTYPE_p_unsigned_short outTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_ReadCompressed__SWIG_4(swigCPtr, SWIGTYPE_p_unsigned_short.getCPtr(outTemplateVar));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
-  public bool ReadCompressed(out float outTemplateVar) {
+  public bool ReadCompressed(out int outTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_ReadCompressed__SWIG_5(swigCPtr, out outTemplateVar);
     return ret;
   }
 
+  public bool ReadCompressed(out long outTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_ReadCompressed__SWIG_6(swigCPtr, out outTemplateVar);
+    return ret;
+  }
+
+  public bool ReadCompressed(out float outTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_ReadCompressed__SWIG_7(swigCPtr, out outTemplateVar);
+    return ret;
+  }
+
   public bool ReadCompressed(RakString outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_ReadCompressed__SWIG_6(swigCPtr, RakString.getCPtr(outTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_ReadCompressed__SWIG_8(swigCPtr, RakString.getCPtr(outTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool ReadCompressed(RakNetGUID outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_ReadCompressed__SWIG_7(swigCPtr, RakNetGUID.getCPtr(outTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_ReadCompressed__SWIG_9(swigCPtr, RakNetGUID.getCPtr(outTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool ReadCompressed(uint24_t outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_ReadCompressed__SWIG_8(swigCPtr, uint24_t.getCPtr(outTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_ReadCompressed__SWIG_10(swigCPtr, uint24_t.getCPtr(outTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
@@ -1203,35 +1344,46 @@ public class BitStream : IDisposable {
     return ret;
   }
 
-  public bool ReadCompressedDelta(out int outTemplateVar) {
+  public bool ReadCompressedDelta(out short outTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_ReadCompressedDelta__SWIG_3(swigCPtr, out outTemplateVar);
     return ret;
   }
 
-  public bool ReadCompressedDelta(out long outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_ReadCompressedDelta__SWIG_4(swigCPtr, out outTemplateVar);
+  public bool ReadCompressedDelta(SWIGTYPE_p_unsigned_short outTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_ReadCompressedDelta__SWIG_4(swigCPtr, SWIGTYPE_p_unsigned_short.getCPtr(outTemplateVar));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
-  public bool ReadCompressedDelta(out float outTemplateVar) {
+  public bool ReadCompressedDelta(out int outTemplateVar) {
     bool ret = RakNetPINVOKE.BitStream_ReadCompressedDelta__SWIG_5(swigCPtr, out outTemplateVar);
     return ret;
   }
 
+  public bool ReadCompressedDelta(out long outTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_ReadCompressedDelta__SWIG_6(swigCPtr, out outTemplateVar);
+    return ret;
+  }
+
+  public bool ReadCompressedDelta(out float outTemplateVar) {
+    bool ret = RakNetPINVOKE.BitStream_ReadCompressedDelta__SWIG_7(swigCPtr, out outTemplateVar);
+    return ret;
+  }
+
   public bool ReadCompressedDelta(RakString outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_ReadCompressedDelta__SWIG_6(swigCPtr, RakString.getCPtr(outTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_ReadCompressedDelta__SWIG_8(swigCPtr, RakString.getCPtr(outTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool ReadCompressedDelta(RakNetGUID outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_ReadCompressedDelta__SWIG_7(swigCPtr, RakNetGUID.getCPtr(outTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_ReadCompressedDelta__SWIG_9(swigCPtr, RakNetGUID.getCPtr(outTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool ReadCompressedDelta(uint24_t outTemplateVar) {
-    bool ret = RakNetPINVOKE.BitStream_ReadCompressedDelta__SWIG_8(swigCPtr, uint24_t.getCPtr(outTemplateVar));
+    bool ret = RakNetPINVOKE.BitStream_ReadCompressedDelta__SWIG_10(swigCPtr, uint24_t.getCPtr(outTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }

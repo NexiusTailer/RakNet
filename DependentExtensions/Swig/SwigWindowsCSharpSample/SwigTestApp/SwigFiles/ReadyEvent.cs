@@ -58,9 +58,8 @@ public class ReadyEvent : PluginInterface2 {
     return ret;
   }
 
-  public bool ForceCompletion(int eventId) {
-    bool ret = RakNetPINVOKE.ReadyEvent_ForceCompletion(swigCPtr, eventId);
-    return ret;
+  public void ForceCompletion(int eventId) {
+    RakNetPINVOKE.ReadyEvent_ForceCompletion(swigCPtr, eventId);
   }
 
   public bool DeleteEvent(int eventId) {

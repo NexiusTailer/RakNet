@@ -245,6 +245,17 @@ int main(void)
 				// Somebody connected.  We have their IP now
 				printf("ID_NEW_INCOMING_CONNECTION from %s with GUID %s\n", p->systemAddress.ToString(true), p->guid.ToString());
 				clientID=p->systemAddress; // Record the player ID of the client
+
+				printf("Remote internal IDs:\n");
+				for (int index=0; index < MAXIMUM_NUMBER_OF_INTERNAL_IDS; index++)
+				{
+					RakNet::SystemAddress internalId = server->GetInternalID(p->systemAddress, index);
+					if (internalId!=RakNet::UNASSIGNED_SYSTEM_ADDRESS)
+					{
+						printf("%i. %s\n", index+1, internalId.ToString(true));
+					}
+				}
+
 				break;
 
 			case ID_INCOMPATIBLE_PROTOCOL_VERSION:

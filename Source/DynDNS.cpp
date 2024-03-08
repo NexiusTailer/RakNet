@@ -139,7 +139,7 @@ void DynDNS::Update(void)
 			if (result!=0)
 			{
 				result+=strlen("Connection: close");
-				while (*result && (*result=='\r') || (*result=='\n') || (*result==' ') )
+				while (*result && ((*result=='\r') || (*result=='\n') || (*result==' ')) )
 					result++;
 				for (i=0; i < 13; i++)
 				{

@@ -78,7 +78,6 @@ public:
 	/// \param[in] timeoutOnNoDataMS If no messages are forwarded for this many MS, then automatically remove this entry. Currently hardcoded to UDP_FORWARDER_MAXIMUM_TIMEOUT (else the call fails)
 	/// \param[in] forceHostAddress Force binding on a particular address. 0 to use any.
 	/// \param[in] socketFamily IP version: For IPV4, use AF_INET (default). For IPV6, use AF_INET6. To autoselect, use AF_UNSPEC.
-	short socketFamily;
 	/// \param[out] forwardingPort New opened port for forwarding
 	/// \param[out] forwardingSocket New opened socket for forwarding
 	/// \return UDPForwarderResult
@@ -163,6 +162,7 @@ protected:
 
 	UDPForwarderResult AddForwardingEntry(SrcAndDest srcAndDest, RakNet::TimeMS timeoutOnNoDataMS, unsigned short *port, const char *forceHostAddress, short socketFamily);
 
+	short socketFamily;
 
 	bool isRunning, threadRunning;
 

@@ -87,7 +87,7 @@ unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 A team, containing a list of <a class="el" href="classRakNet_1_1TM__TeamMember.html" title="A member of one or more teams.">TM_TeamMember</a> instances. 
 <p>
-Contains lists of <a class="el" href="classRakNet_1_1TM__TeamMember.html" title="A member of one or more teams.">TM_TeamMember</a> instances Best used as a composite member of your "Team" or "PlayerList" class(es). When using with <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a>, call <a class="el" href="classRakNet_1_1TM__Team.html#b48e4f2b8324b0de9024788b987b079c" title="Used by the host to serialize the initial state of this object to a new system.">SerializeConstruction()</a> and <a class="el" href="classRakNet_1_1TM__Team.html#67edfd216d56e072201e455061403d2a" title="Used by non-host systems to read the bitStream written by SerializeConstruction()...">DeserializeConstruction()</a> in the methods of the same name to serialize initial state of this object to a remote system. There is otherwise no need to manually serialize the class, as operations are networked internally. <hr><h2>Member Function Documentation</h2>
+Contains lists of <a class="el" href="classRakNet_1_1TM__TeamMember.html" title="A member of one or more teams.">TM_TeamMember</a> instances Best used as a composite member of your "Team" or "PlayerList" class(es). When using with <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a>, call TM_Team::ReferenceTeam() in <a class="el" href="classRakNet_1_1Replica3.html#8e18c95612054b601ce0149f91a5a34d" title="Read data written by Replica3::SerializeConstruction().">Replica3::DeserializeConstruction()</a> and <a class="el" href="classRakNet_1_1TM__Team.html#67edfd216d56e072201e455061403d2a" title="Used by non-host systems to read the bitStream written by SerializeConstruction()...">TM_Team::DeserializeConstruction()</a> in <a class="el" href="classRakNet_1_1Replica3.html#7d612c095fa5d81c1c6fabaa1a0f2501">Replica3::PostDeserializeConstruction()</a> There is otherwise no need to manually serialize the class, as operations are networked internally. <hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="67edfd216d56e072201e455061403d2a"></a><!-- doxytag: member="RakNet::TM_Team::DeserializeConstruction" ref="67edfd216d56e072201e455061403d2a" args="(TeamManager *teamManager, BitStream *constructionBitstream)" -->
 <div class="memitem">
 <div class="memproto">
@@ -491,7 +491,7 @@ Set the maximum number of members that can join this team. Defaults to 65535 Set
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="TeamManager_8h.html">TeamManager.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 4 21:34:41 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 10 16:25:03 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

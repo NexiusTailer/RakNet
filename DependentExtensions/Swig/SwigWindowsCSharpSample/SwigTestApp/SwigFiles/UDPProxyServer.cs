@@ -67,6 +67,11 @@ public class UDPProxyServer : PluginInterface2 {
     return ret;
   }
 
+  public void SetServerPublicIP(RakString ip) {
+    RakNetPINVOKE.UDPProxyServer_SetServerPublicIP(swigCPtr, RakString.getCPtr(ip));
+    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public UDPForwarder udpForwarder {
     set {
       RakNetPINVOKE.UDPProxyServer_udpForwarder_set(swigCPtr, UDPForwarder.getCPtr(value));

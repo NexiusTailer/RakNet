@@ -361,15 +361,6 @@ StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor 
 	unsigned int i;
 
 	SocketLayer::GetMyIP( ipList );
-// 	for (i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
-// 	{
-// 		if (ipList[i]!=UNASSIGNED_SYSTEM_ADDRESS)
-// 		{
-// 			char str[128];
-// 			ipList[i].ToString(false,str);
-// 			printf("%s\n",str);
-// 		}
-// 	}
 
 
 	if (myGuid==UNASSIGNED_RAKNET_GUID)
@@ -465,6 +456,15 @@ StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor 
 		socketList.Push(rns, _FILE_AND_LINE_ );
 
 	}
+
+
+	for (i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
+	{
+		if (ipList[i]==UNASSIGNED_SYSTEM_ADDRESS)
+			break;
+		ipList[i].SetPort(socketList[0]->boundAddress.GetPort());
+	}
+
 
 
 	if ( maximumNumberOfPeers == 0 )

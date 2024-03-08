@@ -117,14 +117,15 @@ Inheritance diagram for RakNet::ReplicaManager3:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#9b87ac17416a6f00452a13f8279523e3">GetConnectionsThatHaveReplicaConstructed</a> (<a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> *replica, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a> * &gt; &amp;connectionsThatHaveConstructedThisReplica, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return the connections that we think have an instance of the specified <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a> instance.  <a href="#9b87ac17416a6f00452a13f8279523e3"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a0c70560e7dd9bda8b50ff3909f78248"></a><!-- doxytag: member="RakNet::ReplicaManager3::AddWorld" ref="a0c70560e7dd9bda8b50ff3909f78248" args="(WorldId worldId)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248">AddWorld</a> (<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#dc5f625a0e279e68062527526b8db2db">GetAllConnectionDownloadsCompleted</a> (<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId=0) const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> can support multiple worlds, where each world has a separate <a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a>, list of connections, replicas, etc A world with id 0 is created automatically. If you want multiple worlds, use this function, and <a class="el" href="classRakNet_1_1ReplicaManager3.html#916816210240e1f1d38478cea311999e">ReplicaManager3::SetNetworkIDManager()</a> to have a different <a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a> instance per world. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="18b55ef2c0606b05896e2b4a5103ab21"></a><!-- doxytag: member="RakNet::ReplicaManager3::RemoveWorld" ref="18b55ef2c0606b05896e2b4a5103ab21" args="(WorldId worldId)" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#18b55ef2c0606b05896e2b4a5103ab21">RemoveWorld</a> (<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns if GetDownloadWasCompleted() returns true for all connections.  <a href="#dc5f625a0e279e68062527526b8db2db"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248">AddWorld</a> (<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Deallocate a world added with AddWorld, or the default world with id 0 Deallocating a world will also stop tracking and updating all connections and replicas associated with that world. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> can support multiple worlds, where each world has a separate <a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a>, list of connections, replicas, etc A world with id 0 is created automatically. If you want multiple worlds, use this function, and <a class="el" href="classRakNet_1_1ReplicaManager3.html#916816210240e1f1d38478cea311999e">ReplicaManager3::SetNetworkIDManager()</a> to have a different <a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a> instance per world.  <a href="#a0c70560e7dd9bda8b50ff3909f78248"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#18b55ef2c0606b05896e2b4a5103ab21">RemoveWorld</a> (<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a> worldId)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Deallocate a world added with AddWorld, or the default world with id 0 Deallocating a world will also stop tracking and updating all connections and replicas associated with that world.  <a href="#18b55ef2c0606b05896e2b4a5103ab21"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#d1db1ccc77de2ca4fc324405ddac63a6">GetWorldIdAtIndex</a> (unsigned int index)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get one of the WorldId values added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a>.  <a href="#d1db1ccc77de2ca4fc324405ddac63a6"></a><br></td></tr>
@@ -177,6 +178,33 @@ When a game object is destroyed on the local system, and you want other systems 
 </ol>
 <br>
  At this point, all new connections will automatically download, get construction messages, get destruction messages, and update serialization automatically. <hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="a0c70560e7dd9bda8b50ff3909f78248"></a><!-- doxytag: member="RakNet::ReplicaManager3::AddWorld" ref="a0c70560e7dd9bda8b50ff3909f78248" args="(WorldId worldId)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::ReplicaManager3::AddWorld           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> can support multiple worlds, where each world has a separate <a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a>, list of connections, replicas, etc A world with id 0 is created automatically. If you want multiple worlds, use this function, and <a class="el" href="classRakNet_1_1ReplicaManager3.html#916816210240e1f1d38478cea311999e">ReplicaManager3::SetNetworkIDManager()</a> to have a different <a class="el" href="classRakNet_1_1NetworkIDManager.html">NetworkIDManager</a> instance per world. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>A unique identifier for this world. User-defined </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <a class="anchor" name="de7df800d3dfd31bdd44de76172eb912"></a><!-- doxytag: member="RakNet::ReplicaManager3::AllocConnection" ref="de7df800d3dfd31bdd44de76172eb912" args="(const SystemAddress &amp;systemAddress, RakNetGUID rakNetGUID) const =0" -->
 <div class="memitem">
 <div class="memproto">
@@ -365,6 +393,34 @@ Same as <a class="el" href="classRakNet_1_1ReplicaManager3.html#4bd439b6f0479a20
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
   </table>
 </dl>
+
+</div>
+</div><p>
+<a class="anchor" name="dc5f625a0e279e68062527526b8db2db"></a><!-- doxytag: member="RakNet::ReplicaManager3::GetAllConnectionDownloadsCompleted" ref="dc5f625a0e279e68062527526b8db2db" args="(WorldId worldId=0) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RakNet::ReplicaManager3::GetAllConnectionDownloadsCompleted           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em> = <code>0</code>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns if GetDownloadWasCompleted() returns true for all connections. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>Used for multiple worlds. World 0 is created automatically by default. See <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True when all downloads have been completed </dd></dl>
 
 </div>
 </div><p>
@@ -1091,6 +1147,33 @@ Anytime you create a new object that derives from <a class="el" href="classRakNe
 
 </div>
 </div><p>
+<a class="anchor" name="18b55ef2c0606b05896e2b4a5103ab21"></a><!-- doxytag: member="RakNet::ReplicaManager3::RemoveWorld" ref="18b55ef2c0606b05896e2b4a5103ab21" args="(WorldId worldId)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::ReplicaManager3::RemoveWorld           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g44b59af8e882248f61aa41d8ace38bf7">WorldId</a>&nbsp;</td>
+          <td class="paramname"> <em>worldId</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Deallocate a world added with AddWorld, or the default world with id 0 Deallocating a world will also stop tracking and updating all connections and replicas associated with that world. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>worldId</em>&nbsp;</td><td>A <em>worldId</em> value previously added with <a class="el" href="classRakNet_1_1ReplicaManager3.html#a0c70560e7dd9bda8b50ff3909f78248" title="ReplicaManager3 can support multiple worlds, where each world has a separate NetworkIDManager...">AddWorld()</a> </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <a class="anchor" name="f7e33dfb956e311cde40a97c9f89dc8e"></a><!-- doxytag: member="RakNet::ReplicaManager3::SetAutoManageConnections" ref="f7e33dfb956e311cde40a97c9f89dc8e" args="(bool autoCreate, bool autoDestroy)" -->
 <div class="memitem">
 <div class="memproto">
@@ -1276,7 +1359,7 @@ Sets the networkIDManager instance that this plugin relys upon.<br>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Apr 4 21:34:41 2012 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 10 16:25:03 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>
