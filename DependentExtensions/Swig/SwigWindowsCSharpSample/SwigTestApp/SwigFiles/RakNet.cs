@@ -95,6 +95,9 @@ public class RakNet {
   public static readonly int PREALLOCATE_LARGE_MESSAGES = RakNetPINVOKE.PREALLOCATE_LARGE_MESSAGES_get();
   public static readonly int RAKNET_SUPPORT_IPV6 = RakNetPINVOKE.RAKNET_SUPPORT_IPV6_get();
   public static readonly int RAKSTRING_TYPE_IS_UNICODE = RakNetPINVOKE.RAKSTRING_TYPE_IS_UNICODE_get();
+  public static readonly int RPC4_GLOBAL_REGISTRATION_MAX_FUNCTIONS = RakNetPINVOKE.RPC4_GLOBAL_REGISTRATION_MAX_FUNCTIONS_get();
+  public static readonly int RPC4_GLOBAL_REGISTRATION_MAX_FUNCTION_NAME_LENGTH = RakNetPINVOKE.RPC4_GLOBAL_REGISTRATION_MAX_FUNCTION_NAME_LENGTH_get();
+  public static readonly int XBOX_BYPASS_SECURITY = RakNetPINVOKE.XBOX_BYPASS_SECURITY_get();
   public static readonly int LIBCAT_SECURITY = RakNetPINVOKE.LIBCAT_SECURITY_get();
   public static readonly int _RAKNET_SUPPORT_ConnectionGraph2 = RakNetPINVOKE._RAKNET_SUPPORT_ConnectionGraph2_get();
   public static readonly int _RAKNET_SUPPORT_DirectoryDeltaTransfer = RakNetPINVOKE._RAKNET_SUPPORT_DirectoryDeltaTransfer_get();

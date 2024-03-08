@@ -91,38 +91,95 @@ Multiplayer enabled games require additional systems and/or design consideration
 <table border="0" width="100%">
 <tbody>
 <tr>
-<td bgcolor="#2c5d92"><font color="#ffffff" face="Arial, Helvetica, sans-serif" size="3"><strong><span class="RakNetWhiteHeader">&nbsp;Replicating game sessions</span></td>
+<td bgcolor="#2c5d92"><font color="#ffffff" face="Arial, Helvetica, sans-serif" size="3"><strong><span class="RakNetWhiteHeader">&nbsp;Game and game design changes for networking</span></td>
 </tr>
 </tbody>
 </table>
 <table border="0" cellpadding="10" cellspacing="0" width="100%">
 <tbody>
 <tr>
-<td><p><span class="RakNetBlueHeader">Other connected systems
-  </span><br>
-  <br>
-  It is usually necessary for players in a game to know about other players. Not just IP address, but things such as score, name, team, and the events when those players connect and disconnect to the game sessions.
-  </p>
-  <p><span class="RakNetBlueHeader">Other game objects </span><br>
-    <br>
-  There are 5 cases where a game object state needs to be sent to a remote system</p>
-  <ol>
-    <li>When creating a game object, it needs to be sent to all relevant remote systems</li>
-    <li>When a remote system connects to us, they need to get all relevant game objects already in the world</li>
-    <li>When a remote system disconnects from us, we need to remove game objects that should not exist when a player is not connected</li>
-    <li>When we delete an object, that object should be deleted from all systems that have a copy of that object</li>
-    <li>When the state of an object changes, the updated state should be sent to all systems that have a copy of that object. The state may be different depending on who the recipient is.</li>
-    </ol>
-  <p>In order to transmit and refer to a game object, one cannot just send a pointer to that object. The object needs to be serialized into a stream format, similar to loading and saving. Some kind of identifier needs to be assigned to the object so the same object on two systems can be referred to.  </p>
-  <p>If using client/server topology, all of the above 5 events will also need to be relayed through the server, if the client had initiated the event. If using a peer to peer topology, conflicts may need to be resolved concerning object state in a way that is also fair to the other peers.</p>
-  <p>RakNet provides an architectural solution to  these problems through the <a href="replicamanager3.html">ReplicaManager3</a> plugin.</p>
-  <p><span class="RakNetBlueHeader">Events</span><br>
-    <br>
-  Game events not related to an object will also need to be relayed. For example, game start and game end, with corresponding serialized data. Game events sometimes refer to objects themselves. This can be written by hand although RakNet provides the <a href="RPC3Video.htm">RPC3</a> and RPC4 plugins to make it easier. RPC3 relies on Boost and has greater functionality, while RPC4 does not.</p>
-  <p><span class="RakNetBlueHeader">Interpolation</span><br>
-    <br>
-  Because of bandwidth requirements, game updates are usually sent periodically rather than every game frame. Latency changes over the course of a gaming session causing remote user inputs to be behind the actual positions on the remote systems. Games have to deal with interpolation through <a href="http://www.gamasutra.com/view/feature/3230/dead_reckoning_latency_hiding_for_.php">dead reckoning</a>. RakNet does not provide solutions for this automatically, although it provides helper and utility classes, such as DependentExtensions\Ogre3DInterpDemo\TransformationHistory.cpp used in the Ogre3DInterpDemo.<br>
-  </p></td>
+<td>
+<p><span class="RakNetBlueHeader">Level loading</span><br><BR>
+Rather than loading all objects in the level as done in single player, objects now need to be categorized according to how they influence networking<BR>
+<ol>
+<LI>Objects that still load normally are those that always exist in the level and are not referenced by network code.
+<LI>Objects may still load normally with the level, but need to be referred to by network code. For example, triggers. These objects can either be loaded with a NetworkID (64 bit GUID), or the code at load time can gather these types of objects and assign them ids.
+<LI>Objects may or may not exist on level load need to be dynamically loaded. For example, such as players, spawned weapons, and bullets. Some of these objects should be preloaded during level load, on the assumption that they will eventually be spawned, to avoid runtime harddrive access.
+</OL>
+Many games have a group of players start at the same time. In this case, the level should not start immediately upon load completion. Before considering level load complete:<BR>
+<OL>
+<LI>Transmit selections from other users that affect our load state. For example, what character models the other users picked
+<LI>Load the level as well as whatever models / textures, etc. are needed based on the other player's choices
+<LI>Stay on an intermission screen until all other players are also done loading. <a href="readyevent.html">ReadyEvent</a> can be used for this
+</OL>
+Midgame joins are the same, except that you skip the intermission screen. However, if the game session ends while you are still loading, you should be able to cancel the load and enter whatever intermission state is shown at game end.
+<BR>
+<p><span class="RakNetBlueHeader">Game Objects</span><br>
+<BR>
+Objects that are networkable need to implement an interface to support <A HREF="replicamanager3.html">ReplicaManager3</A>:
+<OL>
+<LI>Objects must be able to return an identifier for what type of class the object is, for example ENUM_BULLET or "CBullet" for a bullet.
+<LI>Object must be instantiable given that identifier and initialization data. Sometimes this is done through a class factory.
+<LI>Objects should implement an interface allowing them to serialize data for construction, destruction, and per-tick serialization
+<LI>Objects that are deleted when the owning user leaves the game session should support deletion. For example, if a remote user's avatar is deleted, this should not end the game session locally.
+</OL>
+Game objects owned by the host or other users may need to support a partial-interactive ghost state where the object is rendered and animated but has typically has physics disabled and does not start triggers. However:<BR>
+<OL>
+<LI>Partial-interactive ghost objects may still cause sounds, such as footsteps on glass
+<LI>Partial-interactive ghost objects may still cause visual effect triggers
+</OL>
+Whether an object is in an fully interactive state depends on whether a unique host is needed to resolve conflicts. Objects in the game world need to be categorized correspondingly based on bandwidth and gameplay considerations:<BR>
+<OL>
+<LI>Object is only fully interactive on the host, for example triggers that affect gameplay in some way.
+<LI>Object is fully interactive on all systems, for example a trigger that plays a particle effect
+<LI>Object is only fully interactive on the system that owns it, for example your own avatar.
+</OL>
+<p><span class="RakNetBlueHeader">Host Migration</span><br>
+<BR>
+If all systems have full state information for all systems, then host migration is not necessary. On the host change message from <A HREF="fullyconnectedmesh2.html">FullyConnectedMesh2</A>, simply defer to that system. Otherwise, a host migration UI needs to be implemented.
+<OL>
+<LI>Pause the game.
+<LI>Transmit host migration data.
+<LI>Use <a href="readyevent.html">ReadyEvent</a> to continue game when all users are ready
+</OL>
+<p><span class="RakNetBlueHeader">Users</span><br>
+<BR>
+A user class needs to be implemented, containing information such as score, name, user id, achievements, etc. Some games may support multiple users on the same system, for example split-screen play<BR>
+<p><span class="RakNetBlueHeader">Remote Systems</span><br>
+<BR>
+A Remote system class may need to be implemented, containing information such as level load state or a trust metric for cheat detection. If the game only supports one user per system, this is sometimes rolled into the User class.
+<BR>
+<p><span class="RakNetBlueHeader">Teams</span><br>
+<BR>
+If the game supports teams, this needs to be serialized including players, team score, etc. Team balancing can be done with the <A HREF="teambalancer.html">TeamBalancer</A> plugin<BR>
+<BR><span class="RakNetBlueHeader">World / Game State</span><br>
+<BR>
+Not all game information is necessarily held by game objects, for example the match countdown. It can be represented using Replica3 as usual, or can be updated directly through network messages.
+<BR>
+<p><span class="RakNetBlueHeader">Level End</span><br>
+<BR>
+When the host determines level end, the game needs to support the ability to pause gameplay, despawn all players, and show some kind of end-game score screen. During this phase score updates should be paused and other game events should halt. If sesssion statistics are transmitted to a server, it can be done at this time.<BR>
+<p><span class="RakNetBlueHeader">Spectating / Replay</span><br>
+<BR>
+Some games allow you to watch gameplay from the point of view of fixed cameras, other players, or a replay cam after death.
+<BR>
+<p><span class="RakNetBlueHeader">Post-Game statistics and UI</span><br>
+<BR>
+After a game session, sometimes a series of UI screens are shown after the level has unloaded. After that, the game state may either go back to the game browser screen, or stay in a room with the users you just played with.
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </td>
 </tr>
 </tbody>
 </table>

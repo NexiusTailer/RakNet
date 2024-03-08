@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="AutopatcherMySQLRepository"
 	ProjectGUID="{9092C339-3CCA-41B4-8B80-FAED313D4168}"
 	RootNamespace="AutopatcherMySQLRepository"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

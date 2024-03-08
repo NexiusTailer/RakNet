@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="Lobby2ClientGFx3"
 	ProjectGUID="{3F538D51-F9F2-41AD-B7F3-B9A22FE9FDA6}"
 	RootNamespace="Lobby2Client"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -66,6 +67,8 @@
 				AdditionalLibraryDirectories="&quot;$(DXSDK_DIR)\Lib\x86&quot;;&quot;$(GFXSDK)\3rdParty\expat-2.0.1\lib&quot;;&quot;$(GFXSDK)\Lib\$(PlatformName)\Msvc80\Debug\&quot;;&quot;$(GFXSDK)\3rdParty\zlib-1.2.3\Lib\$(PlatformName)\Msvc80\Debug&quot;;&quot;$(GFXSDK)\3rdParty\jpeg-6b\Lib\$(PlatformName)\Msvc80\Debug&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -85,9 +88,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -144,6 +144,8 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -163,9 +165,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"

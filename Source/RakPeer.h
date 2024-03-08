@@ -841,11 +841,11 @@ protected:
 	// Constructor not called!
 	struct RecvFromStruct
 	{
-
-
-
+#if   defined(GFWL)
+		char data[MAXIMUM_MTU_SIZE*2];
+#else
 		char data[MAXIMUM_MTU_SIZE];
-
+#endif
 		int bytesRead;
 		SystemAddress systemAddress;
 		RakNet::TimeUS timeRead;

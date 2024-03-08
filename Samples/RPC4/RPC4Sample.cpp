@@ -1,6 +1,5 @@
 #include "RPC4Plugin.h"
 #include "RakPeerInterface.h"
-
 #include <stdio.h>
 #include "Kbhit.h"
 #include <string.h>
@@ -16,13 +15,18 @@ void CFunc( RakNet::BitStream *bitStream, Packet *packet )
 	if (packet->systemAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
 		printf("Localhost call: ");
 	else
-		printf("Remote call: \n");
+		printf("Remote call: ");
 	RakNet::RakString data;
 	int offset=bitStream->GetReadOffset();
 	bool read = bitStream->ReadCompressed(data);
 	RakAssert(read);
 	printf("%s\n", data.C_String());
-}
+};
+
+
+// Every instance of RPC4 that is attached will have RegisterFunction called.
+RPC4GlobalRegistration g("CFunc",CFunc);
+
 int main(void)
 {
 	printf("Demonstration of the RPC4 plugin.\n");
@@ -41,7 +45,6 @@ int main(void)
 	RPC4 rpc1, rpc2;
 	rakPeer1->AttachPlugin(&rpc1);
 	rakPeer2->AttachPlugin(&rpc2);
-	rpc1.RegisterFunction("CFunc", CFunc);
 	rpc1.CallLoopback("blah1", 0);
 	RakNet::BitStream testBs;
 	testBs.WriteCompressed("testData");

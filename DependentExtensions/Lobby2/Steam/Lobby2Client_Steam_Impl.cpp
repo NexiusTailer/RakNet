@@ -545,6 +545,7 @@ void Lobby2Client_Steam_Impl::OnFailedConnectionAttempt(Packet *packet, PI2_Fail
 }
 void Lobby2Client_Steam_Impl::OnAttach(void)
 {
+	nextFreeSystemAddress=(uint32_t) rakPeerInterface->GetMyGUID().g;
 	SocketLayer::SetSocketLayerOverride(this);
 }
 void Lobby2Client_Steam_Impl::OnDetach(void)

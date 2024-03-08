@@ -8,6 +8,7 @@
 #include "RakAssert.h"
 #include "RakPeerInterface.h"
 #include "PacketizedTCP.h"
+#include "BitStream.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -50,6 +51,31 @@ void MessageFilter::SetAllowMessageID(bool allow, int messageIDStart, int messag
 	int i;
 	for (i=messageIDStart; i <= messageIDEnd; ++i)
 		filterSet->allowedIDs[i]=allow;
+}
+void MessageFilter::SetAllowRPC4(bool allow, const char* uniqueID, int filterSetID)
+{
+	FilterSet *filterSet = GetFilterSetByID(filterSetID);
+	bool objectExists;
+	unsigned int idx = filterSet->allowedRPC4.GetIndexFromKey(uniqueID, &objectExists);
+	if (allow)
+	{
+		if (objectExists==false)
+		{
+			filterSet->allowedRPC4.InsertAtIndex(uniqueID, idx, _FILE_AND_LINE_);
+			filterSet->allowedIDs[ID_RPC_PLUGIN]=true;
+		}
+	}
+	else
+	{
+		if (objectExists==true)
+		{
+			filterSet->allowedRPC4.RemoveAtIndex(idx);
+			if (filterSet->allowedRPC4.Size()==0)
+			{
+				filterSet->allowedIDs[ID_RPC_PLUGIN]=false;
+			}
+		}
+	}
 }
 void MessageFilter::SetActionOnDisallowedMessage(bool kickOnDisallowed, bool banOnDisallowed, RakNet::TimeMS banTimeMS, int filterSetID)
 {
@@ -355,6 +381,18 @@ void MessageFilter::OnClosedConnection(const SystemAddress &systemAddress, RakNe
 		{
 			OnInvalidMessage(systemList.ItemAtIndex(index).filter, packet, packet->data[0]);
 			return RR_STOP_PROCESSING_AND_DEALLOCATE;
+		}
+		if (packet->data[0]==ID_RPC_PLUGIN)
+		{
+			RakNet::BitStream bsIn(packet->data,packet->length,false);
+			bsIn.IgnoreBytes(2);
+			RakNet::RakString functionName;
+			bsIn.ReadCompressed(functionName);
+			if (systemList.ItemAtIndex(index).filter->allowedRPC4.HasData(functionName)==false)
+			{
+				OnInvalidMessage(systemList.ItemAtIndex(index).filter, packet, packet->data[0]);
+				return RR_STOP_PROCESSING_AND_DEALLOCATE;
+			}
 		}
 		
 		break;

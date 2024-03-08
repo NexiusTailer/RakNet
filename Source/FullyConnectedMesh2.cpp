@@ -25,12 +25,12 @@ FullyConnectedMesh2::FullyConnectedMesh2()
 	totalConnectionCount=0;
 	ourFCMGuid=0;
 	autoParticipateConnections=true;
-
-
-
-
+#if   defined(GFWL)
+	// Do not use on the XBOX. See RoomMemberInfo::remoteIPAddress
+	connectOnNewRemoteConnections=false;
+#else
 	connectOnNewRemoteConnections=true;
-
+#endif
 }
 FullyConnectedMesh2::~FullyConnectedMesh2()
 {
@@ -254,7 +254,7 @@ void FullyConnectedMesh2::SendFCMGuidRequest(RakNetGUID rakNetGuid)
 		bsOut.Write(totalConnectionCount);
 		bsOut.Write(ourFCMGuid);
 	}
- 	rakPeerInterface->Send(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,rakNetGuid,false);
+	rakPeerInterface->Send(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,rakNetGuid,false);
 }
 void FullyConnectedMesh2::SendOurFCMGuid(SystemAddress addr)
 {
@@ -293,7 +293,7 @@ void FullyConnectedMesh2::CalculateHost(RakNetGUID *rakNetGuid, FCM2Guid *fcm2Gu
 
 	// Return the lowest value of all FCM2Guid
 	FCM2Guid lowestFCMGuid=ourFCMGuid;
-//	SystemAddress associatedSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
+	//	SystemAddress associatedSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
 	RakNetGUID associatedRakNetGuid=rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 
 	DataStructures::DefaultIndexType idx;
@@ -474,7 +474,7 @@ void FullyConnectedMesh2::IncrementTotalConnectionCount(unsigned int i)
 	if (i>totalConnectionCount)
 	{
 		totalConnectionCount=i;
-	//	printf("totalConnectionCount=%i\n",i);
+		//	printf("totalConnectionCount=%i\n",i);
 	}
 }
 void FullyConnectedMesh2::SetConnectOnNewRemoteConnection(bool attemptConnection, RakNet::RakString pw)

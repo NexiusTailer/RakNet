@@ -152,7 +152,9 @@ bool SocketLayer::IsSocketFamilySupported(const char *hostAddress, unsigned shor
 	return socketFamily==AF_INET;
 #else
 	struct addrinfo hints;
+#if RAKNET_SUPPORT_IPV6==1
 	PrepareAddrInfoHints(&hints);
+#endif
 	hints.ai_family = socketFamily;
 	struct addrinfo *servinfo=0;
 	int error;
@@ -980,22 +982,22 @@ void SocketLayer::RecvFromBlocking_Old( const SOCKET s, RakPeer *rakPeer, unsign
 		sockAddrPtr=(sockaddr*) &sa;
 	}
 
-
-
-
+#if   defined(GFWL)
+	dataOutSize=MAXIMUM_MTU_SIZE*2;
+#else
 	dataOutSize=MAXIMUM_MTU_SIZE;
-
+#endif
 
 	*bytesReadOut = recvfrom( s, dataOut, dataOutSize, flag, sockAddrPtr, socketlenPtr );
-
-
-
-
-
-
-
-
-
+#if   defined(GFWL)
+	if (extraSocketOptions==IPPROTO_VDP)
+	{
+		if (*bytesReadOut<2)
+			return;
+		*bytesReadOut=*bytesReadOut-2;
+		memmove(dataOut,dataOut+2,*bytesReadOut);
+	}
+#endif
 	if (*bytesReadOut<=0)
 		return;
 	*timeRead=RakNet::GetTimeUS();
@@ -1046,22 +1048,22 @@ void SocketLayer::RecvFromBlocking( const SOCKET s, RakPeer *rakPeer, unsigned s
 		sockAddrPtr=(sockaddr*) &their_addr;
 	}
 
-
-
-
+#if   defined(GFWL)
+	dataOutSize=MAXIMUM_MTU_SIZE*2;
+#else
 	dataOutSize=MAXIMUM_MTU_SIZE;
-
+#endif
 
 	*bytesReadOut = recvfrom( s, dataOut, dataOutSize, flag, sockAddrPtr, socketlenPtr );
-
-
-
-
-
-
-
-
-
+#if   defined(GFWL)
+	if (extraSocketOptions==IPPROTO_VDP)
+	{
+		if (*bytesReadOut<2)
+			return;
+		*bytesReadOut=*bytesReadOut-2;
+		memmove(dataOut,dataOut+2,*bytesReadOut);
+	}
+#endif
 	if (*bytesReadOut<=0)
 		return;
 	*timeRead=RakNet::GetTimeUS();
@@ -1152,37 +1154,37 @@ int SocketLayer::SendTo_360( SOCKET s, const char *data, int length, const char 
 	(void) systemAddress;
 
 	int len=0;
+#if   defined(GFWL)
+	if (extraSocketOptions!=IPPROTO_VDP)
+	{
+		return SendTo_PC(s,data,length,systemAddress,_FILE_AND_LINE_);
+	}
 
+	unsigned short payloadLength=length;
+	WSABUF buffers[3];
+	buffers[0].buf=(char*) &payloadLength;
+	buffers[0].len=sizeof(payloadLength);
+	buffers[1].buf=(char*) data;
+	buffers[1].len=length;
+	buffers[2].buf=(char*) voiceData;
+	buffers[2].len=voiceLength;
+	DWORD size = buffers[0].len + buffers[1].len + buffers[2].len;
 
+	sockaddr_in sa;
+	memset(&sa,0,sizeof(sockaddr_in));
+	sa.sin_port = systemAddress.GetPortNetworkOrder();
+	sa.sin_addr.s_addr = systemAddress.address.addr4.sin_addr.s_addr;
+	sa.sin_family = AF_INET;
 
+	int result = WSASendTo(s, (LPWSABUF)buffers, 3, &size, 0, ( const sockaddr* ) & sa, sizeof( sa ), NULL, NULL);
+	if (result==-1)
+	{
+		DWORD dwIOError = GetLastError();
+		int a=5;
+	}
+	len=size;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#endif
 	return len;
 }
 int SocketLayer::SendTo_PC( SOCKET s, const char *data, int length, const SystemAddress &systemAddress, const char *file, const long line )
@@ -1281,11 +1283,11 @@ int SocketLayer::SendTo( SOCKET s, const char *data, int length, SystemAddress &
 	else
 	{
 
-
-
-
-
-
+#if   defined(GFWL)
+		if (extraSocketOptions==IPPROTO_VDP)
+			len = SendTo_360(s,data,length,0,0,systemAddress,extraSocketOptions);
+		else
+#endif
 		len = SendTo_PC(s,data,length,systemAddress,file,line);
 
 	}

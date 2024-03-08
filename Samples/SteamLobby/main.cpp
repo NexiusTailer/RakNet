@@ -11,6 +11,7 @@
 #include <windows.h>
 #include <Kbhit.h>
 #include "Gets.h"
+#include "FullyConnectedMesh2.h"
 #include "steam_api.h"
 
 using namespace RakNet;
@@ -18,6 +19,7 @@ using namespace RakNet;
 Lobby2MessageFactory_Steam *messageFactory;
 Lobby2Client_Steam *lobby2Client;
 RakNet::RakPeerInterface *rakPeer;
+RakNet::FullyConnectedMesh2 *fcm2;
 uint64_t lastRoom;
 
 void PrintCommands(void)
@@ -86,6 +88,7 @@ int main(int argc, char **argv)
 
 	SteamResults steamResults;
 	rakPeer = RakNet::RakPeerInterface::GetInstance();
+	fcm2 = RakNet::FullyConnectedMesh2::GetInstance();
 	messageFactory = new Lobby2MessageFactory_Steam;
 	lobby2Client = Lobby2Client_Steam::GetInstance();
 	lobby2Client->AddCallbackInterface(&steamResults);
@@ -94,6 +97,9 @@ int main(int argc, char **argv)
 	SocketDescriptor sd(1234,0);
 	rakPeer->Startup(32,&sd,1);
 	rakPeer->SetMaximumIncomingConnections(32);
+	rakPeer->AttachPlugin(fcm2);
+	// Connect manually in Notification_Console_MemberJoinedRoom
+	fcm2->SetConnectOnNewRemoteConnection(false, "");
 	RakNet::Lobby2Message* msg = messageFactory->Alloc(RakNet::L2MID_Client_Login);
 	lobby2Client->SendMsg(msg);
 	if (msg->resultCode!=L2RC_PROCESSING && msg->resultCode!=L2RC_SUCCESS)
@@ -111,10 +117,10 @@ int main(int argc, char **argv)
 	char ch;
 	while(!quit)
 	{
-		RakNet::Packet *p;
-		for (p=rakPeer->Receive(); p; rakPeer->DeallocatePacket(p), p=rakPeer->Receive())
+		RakNet::Packet *packet;
+		for (packet=rakPeer->Receive(); packet; rakPeer->DeallocatePacket(packet), packet=rakPeer->Receive())
 		{
-			switch (p->data[0])
+			switch (packet->data[0])
 			{
 			case ID_DISCONNECTION_NOTIFICATION:
 				// Connection lost normally
@@ -156,16 +162,34 @@ int main(int argc, char **argv)
 
 			case ID_CONNECTION_REQUEST_ACCEPTED:
 				// This tells the client they have connected
-				printf("ID_CONNECTION_REQUEST_ACCEPTED to %s with GUID %s\n", p->systemAddress.ToString(), p->guid.ToString());
+				printf("ID_CONNECTION_REQUEST_ACCEPTED to %s with GUID %s\n", packet->systemAddress.ToString(), packet->guid.ToString());
 				break;
 
 			case ID_NEW_INCOMING_CONNECTION:
 				printf("ID_NEW_INCOMING_CONNECTION\n");
 				break;
 
+			case ID_FCM2_NEW_HOST:
+				{
+					if (packet->systemAddress==RakNet::UNASSIGNED_SYSTEM_ADDRESS)
+						printf("Got new host (ourselves)");
+					else
+						printf("Got new host %s, GUID=%s", packet->systemAddress.ToString(true), packet->guid.ToString());
+					RakNet::BitStream bs(packet->data,packet->length,false);
+					bs.IgnoreBytes(1);
+					RakNetGUID oldHost;
+					bs.Read(oldHost);
+					// If the old host is different, then this message was due to losing connection to the host.
+					if (oldHost!=packet->guid)
+						printf(". Oldhost Guid=%s\n", oldHost.ToString());
+					else
+						printf("\n");
+				}
+				break;
+
 			default:
 				// It's a client, so just show the message
-				printf("Unknown Message ID %i\n", p->data[0]);
+				printf("Unknown Message ID %i\n", packet->data[0]);
 				break;
 			}
 
@@ -213,6 +237,7 @@ int main(int argc, char **argv)
 					msg->roomIsPublic=true;
 					_snprintf( rgchLobbyName, sizeof( rgchLobbyName ), "%s's lobby", SteamFriends()->GetPersonaName() );
 					msg->roomName=rgchLobbyName;
+					msg->publicSlots=8;
 					lobby2Client->SendMsg(msg);
 					messageFactory->Dealloc(msg);
 
@@ -310,8 +335,10 @@ int main(int argc, char **argv)
 	lobby2Client->SendMsg(logoffMsg);
 	messageFactory->Dealloc(logoffMsg);
 	rakPeer->DetachPlugin(lobby2Client);
+	rakPeer->DetachPlugin(fcm2);
 	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 	Lobby2Client_Steam::DestroyInstance(lobby2Client);
+	RakNet::FullyConnectedMesh2::DestroyInstance(fcm2);
 
 	return 1;
 }

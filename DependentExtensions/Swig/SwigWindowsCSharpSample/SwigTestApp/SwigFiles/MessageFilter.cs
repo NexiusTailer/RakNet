@@ -61,6 +61,10 @@ public class MessageFilter : PluginInterface2 {
     RakNetPINVOKE.MessageFilter_SetAllowMessageID(swigCPtr, allow, messageIDStart, messageIDEnd, filterSetID);
   }
 
+  public void SetAllowRPC4(bool allow, string uniqueID, int filterSetID) {
+    RakNetPINVOKE.MessageFilter_SetAllowRPC4(swigCPtr, allow, uniqueID, filterSetID);
+  }
+
   public void SetActionOnDisallowedMessage(bool kickOnDisallowed, bool banOnDisallowed, uint banTimeMS, int filterSetID) {
     RakNetPINVOKE.MessageFilter_SetActionOnDisallowedMessage(swigCPtr, kickOnDisallowed, banOnDisallowed, banTimeMS, filterSetID);
   }

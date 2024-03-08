@@ -97,6 +97,8 @@ void Lobby2Callbacks::MessageResult(Clans_RemovePost *message) {ExecuteDefaultRe
 void Lobby2Callbacks::MessageResult(Clans_GetBoards *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Clans_GetTopics *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Clans_GetPosts *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Console_GameBootCheck *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Console_GetGameBootInviteDetails *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_GetServerStatus *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_GetWorldListFromServer *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Console_GetLobbyListFromWorld *message) {ExecuteDefaultResult(message);}
@@ -163,14 +165,15 @@ void Lobby2Callbacks::MessageResult(Notification_ReceivedDataMessageFromUser *me
 void Lobby2Callbacks::MessageResult(Notification_Console_MemberJoinedParty *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_MemberLeftParty *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_Game_Started *message) {ExecuteDefaultResult(message);}
+void Lobby2Callbacks::MessageResult(Notification_Console_Game_Ending *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_Game_Ended *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_Got_Room_Invite *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_Accepted_Room_Invite *message) {ExecuteDefaultResult(message);}
 
 Lobby2Message::Lobby2Message() {refCount=1; requestId=(unsigned int)-1; callbackId=(uint32_t)-1;
-
-
-
+#if   defined(GFWL)
+ZeroMemory( &m_Overlapped, sizeof( XOVERLAPPED ) );
+#endif
 }
 void Lobby2Message::SerializeBase(bool writeToBitstream, bool serializeOutput, BitStream *bitStream)
 {

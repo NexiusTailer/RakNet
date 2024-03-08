@@ -579,6 +579,15 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_RAKSTRING_TYPE_IS_UNICODE_get")]
   public static extern int RAKSTRING_TYPE_IS_UNICODE_get();
 
+  [DllImport("RakNet", EntryPoint="CSharp_RPC4_GLOBAL_REGISTRATION_MAX_FUNCTIONS_get")]
+  public static extern int RPC4_GLOBAL_REGISTRATION_MAX_FUNCTIONS_get();
+
+  [DllImport("RakNet", EntryPoint="CSharp_RPC4_GLOBAL_REGISTRATION_MAX_FUNCTION_NAME_LENGTH_get")]
+  public static extern int RPC4_GLOBAL_REGISTRATION_MAX_FUNCTION_NAME_LENGTH_get();
+
+  [DllImport("RakNet", EntryPoint="CSharp_XBOX_BYPASS_SECURITY_get")]
+  public static extern int XBOX_BYPASS_SECURITY_get();
+
   [DllImport("RakNet", EntryPoint="CSharp_LIBCAT_SECURITY_get")]
   public static extern int LIBCAT_SECURITY_get();
 
@@ -4121,6 +4130,9 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp_MessageFilter_SetAllowMessageID")]
   public static extern void MessageFilter_SetAllowMessageID(HandleRef jarg1, bool jarg2, int jarg3, int jarg4, int jarg5);
+
+  [DllImport("RakNet", EntryPoint="CSharp_MessageFilter_SetAllowRPC4")]
+  public static extern void MessageFilter_SetAllowRPC4(HandleRef jarg1, bool jarg2, string jarg3, int jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_MessageFilter_SetActionOnDisallowedMessage")]
   public static extern void MessageFilter_SetActionOnDisallowedMessage(HandleRef jarg1, bool jarg2, bool jarg3, uint jarg4, int jarg5);

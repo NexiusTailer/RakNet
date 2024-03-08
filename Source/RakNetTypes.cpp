@@ -230,17 +230,17 @@ void SystemAddress::ToString_Old(bool writePort, char *dest, char portDelineator
 	portStr[0]=portDelineator;
 	portStr[1]=0;
 
+#if   defined(GFWL)
+	// Don't want negative
+	// Itoa(address.addr4.sin_addr.s_addr, dest, 10);
+	sprintf(dest,"%u",address.addr4.sin_addr.s_addr);
+	if (writePort)
+	{
+		strcat(dest, portStr);
+		sprintf(dest+strlen(dest), "%u", GetPort());
+	}
 
-
-
-
-
-
-
-
-
-
-
+#else
 	in_addr in;
 	in.s_addr = address.addr4.sin_addr.s_addr;
 	const char *ntoaStr = inet_ntoa( in );
@@ -250,7 +250,7 @@ void SystemAddress::ToString_Old(bool writePort, char *dest, char portDelineator
 		strcat(dest, portStr);
 		Itoa(GetPort(), dest+strlen(dest), 10);
 	}
-
+#endif
 }
 const char *SystemAddress::ToString(bool writePort, char portDelineator) const
 {
@@ -278,20 +278,20 @@ void SystemAddress::ToString_New(bool writePort, char *dest, char portDelineator
 		return;
 	}
 
+#if   defined(GFWL)
+	// Don't want negative
+	// Itoa(binaryAddress, dest, 10);
+	sprintf(dest,"%u",binaryAddress);
+	if (writePort)
+	{
+		unsigned char ch;
+		ch[0]=portDelineator;
+		ch[1]=0;
+		strcat(dest, ch);
+		sprintf(dest+strlen(dest), "%u", port);
+	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+#else
 
 	if (address.addr4.sin_family==AF_INET)
 	{
@@ -314,7 +314,7 @@ void SystemAddress::ToString_New(bool writePort, char *dest, char portDelineator
 		strcat(dest, (const char*) ch);
 		Itoa(ntohs(address.addr4.sin_port), dest+strlen(dest), 10);
 	}
-
+#endif
 }
 #endif // #if RAKNET_SUPPORT_IPV6!=1
 void SystemAddress::ToString(bool writePort, char *dest, char portDelineator) const
@@ -344,26 +344,26 @@ SystemAddress::SystemAddress(const char *str, unsigned short port)
 	FromStringExplicitPort(str,port);
 	systemIndex=(SystemIndex)-1;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#if   defined(GFWL)
+SystemAddress::SystemAddress(XSESSION_INFO *addr, unsigned short _port)
+{
+	SetFromXSessionInfo(addr,_port);
+}
+void SystemAddress::SetFromXSessionInfo(XSESSION_INFO *addr, unsigned short _port)
+{
+	IN_ADDR inaddr;
+	XNetXnAddrToInAddr( &addr->hostAddress, &addr->sessionID, &inaddr );
+	address.addr4.sin_addr.s_addr=inaddr.s_addr;
+	SetPort(_port);
+}
+void SystemAddress::SetFromXNADDRAndXNKID(XNADDR *xnaddr, XNKID *xnkid, unsigned short _port)
+{
+	IN_ADDR inaddr;
+	XNetXnAddrToInAddr( xnaddr, xnkid, &inaddr );
+	address.addr4.sin_addr.s_addr=inaddr.s_addr;
+	SetPort(_port);
+}
+#endif
 
 #ifdef _MSC_VER
 #pragma warning( disable : 4996 )  // The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strnicmp. See online help for details.
@@ -462,18 +462,18 @@ void SystemAddress::SetBinaryAddress(const char *str, char portDelineator)
 			portPart[portIndex]=0;
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
+#if   defined(GFWL)
+		int dotCount=0;
+		for (index=0; str[index] && str[index]!=portDelineator && index<22; index++)
+		{
+			if (str[index]=='.')
+				dotCount++;
+		}
+		if (IPPart[0] && dotCount==3)
+			address.addr4.sin_addr.s_addr=inet_addr(IPPart);
+		else
+			address.addr4.sin_addr.s_addr=strtoul(IPPart,NULL,0);
+#else
 		if (IPPart[0])
 		{
 
@@ -482,7 +482,7 @@ void SystemAddress::SetBinaryAddress(const char *str, char portDelineator)
 			address.addr4.sin_addr.s_addr=inet_addr(IPPart);
 
 		}
-
+#endif
 
 		if (portPart[0])
 		{
@@ -551,14 +551,14 @@ bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersi
 	}
 	portPart[j]=0;
 
-
-
-
-
-
-
-
-
+#if   defined(GFWL)
+	if (strstr(ipPart,".")==NULL && strstr(ipPart,":")==NULL)
+	{
+		// Just a straight number, not a domain
+		binaryAddress=strtoul(ipPart,NULL,0);
+		return;
+	}
+#endif
 
 	// needed for getaddrinfo
 	WSAStartupSingleton::AddRef();
@@ -679,9 +679,9 @@ bool RakNetGUID::FromString(const char *source)
 	if (source==0)
 		return false;
 
-
-
-#if   defined(WIN32)
+#if   defined(GFWL)
+	g=_strtoui64(source,0,10);
+#elif defined(WIN32)
 	g=_strtoui64(source, NULL, 10);
 
 

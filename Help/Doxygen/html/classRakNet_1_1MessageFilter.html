@@ -55,6 +55,8 @@ Inheritance diagram for RakNet::MessageFilter:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1MessageFilter.html#480178a464758a5c61dffb631a4d37e7">SetAllowMessageID</a> (bool allow, int messageIDStart, int messageIDEnd, int filterSetID)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1MessageFilter.html#9358562591bdafa115abd66c05bfce9b">SetAllowRPC4</a> (bool allow, const char *uniqueID, int filterSetID)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1MessageFilter.html#30227e441526fedf5ae3cc0f5c98f070">SetActionOnDisallowedMessage</a> (bool kickOnDisallowed, bool banOnDisallowed, RakNet::TimeMS banTimeMS, int filterSetID)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1MessageFilter.html#f7b8fecc161af465177dd3ba34c20d05">SetDisallowedMessageCallback</a> (int filterSetID, void *userData, void(*invalidMessageCallback)(<a class="el" href="classRakNet_1_1RakPeerInterface.html">RakPeerInterface</a> *peer, AddressOrGUID addressOrGUID, int filterSetID, void *userData, unsigned char messageID))</td></tr>
@@ -431,6 +433,48 @@ Allow a range of message IDs Always allowed by default: ID_CONNECTION_REQUEST_AC
 
 </div>
 </div><p>
+<a class="anchor" name="9358562591bdafa115abd66c05bfce9b"></a><!-- doxytag: member="RakNet::MessageFilter::SetAllowRPC4" ref="9358562591bdafa115abd66c05bfce9b" args="(bool allow, const char *uniqueID, int filterSetID)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::MessageFilter::SetAllowRPC4           </td>
+          <td>(</td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>allow</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>uniqueID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>filterSetID</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Allow a specific <a class="el" href="classRakNet_1_1RPC4.html" title="The RPC4 plugin is just an association between a C function pointer and a string...">RPC4</a> call <dl class="pre" compact><dt><b>Precondition:</b></dt><dd><a class="el" href="classRakNet_1_1MessageFilter.html" title="Assigns systems to FilterSets. Each FilterSet limits what kinds of messages are allowed...">MessageFilter</a> must be attached before <a class="el" href="classRakNet_1_1RPC4.html" title="The RPC4 plugin is just an association between a C function pointer and a string...">RPC4</a> </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>uniqueID</em>&nbsp;</td><td>Identifier passed to RegisterFunction() </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>filterSetID</em>&nbsp;</td><td>A user defined ID to represent a filter set. If no filter with this ID exists, one will be created with default settings. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <a class="anchor" name="d207896513cde1caabbe15dec09905ed"></a><!-- doxytag: member="RakNet::MessageFilter::SetAutoAddNewConnectionsToFilter" ref="d207896513cde1caabbe15dec09905ed" args="(int filterSetID)" -->
 <div class="memitem">
 <div class="memproto">
@@ -627,7 +671,7 @@ Set a user callback to be called when a user is disconnected due to SetFilterMax
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="MessageFilter_8h.html">MessageFilter.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Apr 21 18:27:11 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri May 20 11:21:16 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

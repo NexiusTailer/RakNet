@@ -454,6 +454,13 @@
 	PS3: Added Console_ShowGUIInvitationsToRooms.
 	PS3: Renamed Notification_Console_Got_Room_Invite_PS3 to Notification_Console_Accepted_Room_Invite_PS3
 	PS3: Added working implementation of  Notification_Console_Got_Room_Invite_PS3<BR>
+	4.021 (5/20/2011)
+	XBOX: Added CallLocalized_IncorrectProfilesSignedIn to override language for sign-in. Fixed updating room parameters. Fixed Console_EndGame_360 never returning. Added Notification_Console_Game_Ending_360 for writing sessions stats. Fixed process flow so that host arbitrates last. Fixed double pointer deletion crash from ending the game. Added workaround for sign-in API bug that would disconnect one user if another user signed in.
+	IPV6: Fixed compile error
+	SteamLobby: Fix bug causing some plugins to not work, including FullyConnectedMesh2.
+	RPC4: Support blocking calls with return values. Support global registration of methods. User data is now aligned.
+	PS3: Added support for checking for reboots due to game invites.
+	Documentation: Expand multiplayergamecomponents.html to describe common tasks to add multiplayer to a single player game. Added technical documentation about bluetooth.	
   <br>
   <BR>
 </p></TD></TR></TABLE>
