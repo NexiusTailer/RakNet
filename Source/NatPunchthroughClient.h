@@ -188,7 +188,7 @@ public:
 	virtual void OnDetach(void);
 	virtual void OnRakPeerShutdown(void);
 	void Clear(void);
-
+#ifndef SWIG
 	struct SendPing
 	{
 		RakNet::Time nextActionTime;
@@ -221,7 +221,7 @@ public:
 			// try port 1024-1028
 		} testMode;
 	} sp;
-
+#endif
 protected:
 	unsigned short mostRecentExternalPort;
 	//void OnNatGroupPunchthroughRequest(Packet *packet);

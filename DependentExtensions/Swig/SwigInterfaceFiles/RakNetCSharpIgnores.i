@@ -180,6 +180,7 @@ IGNORERAKPEERANDINTERFACE(SetIncomingDatagramEventHandler( bool (*_incomingDatag
 //FullyConnectedMesh2
 %ignore RakNet::FullyConnectedMesh2::GetElapsedRuntime;
 %ignore RakNet::FullyConnectedMesh2::OnReceive;
+%ignore RakNet::FullyConnectedMesh2::GetVerifiedJoinRequiredProcessingList;
 
 //Structs
 %ignore RakNet::PI2_FailedConnectionAttemptReason;
