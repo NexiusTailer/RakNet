@@ -106,8 +106,8 @@ public:
 	unsigned int GetObjectCount(void) const;
 	StatisticsHistory::TrackedObjectData * GetObjectAtIndex(unsigned int index) const;
 	unsigned int GetObjectIndex(uint64_t objectId) const;
-	bool AddValueByObjectID(uint64_t objectId, RakString key, SHValueType val, Time curTime);
-	void AddValueByIndex(unsigned int index, RakString key, SHValueType val, Time curTime);
+	bool AddValueByObjectID(uint64_t objectId, RakString key, SHValueType val, Time curTime, bool combineEqualTimes);
+	void AddValueByIndex(unsigned int index, RakString key, SHValueType val, Time curTime, bool combineEqualTimes);
 	SHErrorCode GetHistoryForKey(uint64_t objectId, RakString key, TimeAndValueQueue **values, Time curTime) const;
 	bool GetHistorySorted(uint64_t objectId, SHSortOperation sortType, DataStructures::List<TimeAndValueQueue *> &values) const;
 	void MergeAllObjectsOnKey(RakString key, TimeAndValueQueue *tavqOutput, SHDataCategory dataCategory) const;
@@ -148,6 +148,7 @@ public:
 		SHValueType GetLongTermAverage(void) const;
 		SHValueType GetLongTermLowest(void) const;
 		SHValueType GetLongTermHighest(void) const;
+		SHValueType GetSumSinceTime(Time t) const;
 		Time GetTimeRange(void) const;
 
 		// Merge two sets to output

@@ -54,11 +54,11 @@ struct VoiceChannel
 int VoiceChannelComp( const RakNetGUID &key, VoiceChannel * const &data );
 
 /// Voice compression and transmission interface
-class RakVoice : public PluginInterface2
+class RAK_DLL_EXPORT RakVoice : public PluginInterface2
 {
 public:
 	RakVoice();
-	~RakVoice();
+	virtual ~RakVoice();
 
 	// --------------------------------------------------------------------------------------------
 	// User functions

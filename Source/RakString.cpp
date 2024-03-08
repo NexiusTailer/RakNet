@@ -656,11 +656,15 @@ void RakString::RemoveCharacter(char c)
 }
 int RakString::StrCmp(const RakString &rhs) const
 {
-	return strcmp(sharedString->c_str, rhs);
+	return strcmp(sharedString->c_str, rhs.C_String());
+}
+int RakString::StrNCmp(const RakString &rhs, size_t num) const
+{
+	return strncmp(sharedString->c_str, rhs.C_String(), num);
 }
 int RakString::StrICmp(const RakString &rhs) const
 {
-	return _stricmp(sharedString->c_str, rhs);
+	return _stricmp(sharedString->c_str, rhs.C_String());
 }
 void RakString::Printf(void)
 {

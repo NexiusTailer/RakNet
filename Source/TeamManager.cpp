@@ -1111,8 +1111,12 @@ void TM_World::GetParticipantList(DataStructures::List<RakNetGUID> &participantL
 
 void TM_World::ReferenceTeam(TM_Team *team, NetworkID networkId, bool applyBalancing)
 {
-	if (GetTeamByNetworkID(networkId))
-		return;
+	unsigned int i;
+	for (i=0; i < teams.Size(); i++)
+	{
+		if (teams[i]==team)
+			return;
+	}
 
 	team->ID=networkId;
 	team->balancingApplies=applyBalancing;
@@ -1194,8 +1198,12 @@ unsigned int TM_World::GetTeamIndex(const TM_Team *team) const
 
 void TM_World::ReferenceTeamMember(TM_TeamMember *teamMember, NetworkID networkId)
 {
-	if (GetTeamMemberByNetworkID(networkId))
-		return;
+	unsigned int i;
+	for (i=0; i < teamMembers.Size(); i++)
+	{
+		if (teamMembers[i]==teamMember)
+			return;
+	}
 
 	teamMember->world=this;
 	teamMember->networkId=networkId;

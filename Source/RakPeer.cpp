@@ -322,6 +322,11 @@ RakPeer::~RakPeer()
 
 
 
+
+// 	for (unsigned int i=0; i < pluginListTS.Size(); i++)
+// 		pluginListTS[i]->SetRakPeerInterface(0);
+// 	for (unsigned int i=0; i < pluginListNTS.Size(); i++)
+// 		pluginListNTS[i]->SetRakPeerInterface(0);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -368,8 +373,8 @@ StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor 
 		rnr.SeedMT( GenerateSeedFromGuid() );
 	}
 
-	RakPeerAndIndex rpai[32];
-	RakAssert(socketDescriptorCount<32);
+	//RakPeerAndIndex rpai[32];
+	//RakAssert(socketDescriptorCount<32);
 
 	RakAssert(socketDescriptors && socketDescriptorCount>=1);
 
@@ -548,16 +553,17 @@ StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor 
 			RakAssert(isRecvFromLoopThreadActive.GetValue()==0);
 			for (i=0; i<socketDescriptorCount; i++)
 			{
-				rpai[i].remotePortRakNetWasStartedOn_PS3=socketDescriptors[i].remotePortRakNetWasStartedOn_PS3_PSP2;
-				rpai[i].extraSocketOptions=socketDescriptors[i].extraSocketOptions;
-				rpai[i].s=socketList[i]->s;
-				rpai[i].rakPeer=this;
+				RakPeerAndIndex *rpai = RakNet::OP_NEW<RakPeerAndIndex>(_FILE_AND_LINE_);
+				rpai->remotePortRakNetWasStartedOn_PS3=socketDescriptors[i].remotePortRakNetWasStartedOn_PS3_PSP2;
+				rpai->extraSocketOptions=socketDescriptors[i].extraSocketOptions;
+				rpai->s=socketList[i]->s;
+				rpai->rakPeer=this;
 
 
 
 
 
-				errorCode = RakNet::RakThread::Create(RecvFromLoop, &rpai[i], threadPriority);
+				errorCode = RakNet::RakThread::Create(RecvFromLoop, rpai, threadPriority);
 
 
 				if ( errorCode != 0 )
@@ -3387,11 +3393,11 @@ RakPeer::RemoteSystemStruct * RakPeer::AssignSystemAddressToRemoteSystemList( co
 							socketList.Push(rns, _FILE_AND_LINE_ );
 							remoteSystem->rakNetSocket=rns;
 
-							RakPeerAndIndex rpai;
-							rpai.remotePortRakNetWasStartedOn_PS3=rns->remotePortRakNetWasStartedOn_PS3_PSP2;
-							rpai.extraSocketOptions=rns->extraSocketOptions;
-							rpai.s=rns->s;
-							rpai.rakPeer=this;
+							RakPeerAndIndex *rpai = RakNet::OP_NEW<RakPeerAndIndex>(_FILE_AND_LINE_);
+							rpai->remotePortRakNetWasStartedOn_PS3=rns->remotePortRakNetWasStartedOn_PS3_PSP2;
+							rpai->extraSocketOptions=rns->extraSocketOptions;
+							rpai->s=rns->s;
+							rpai->rakPeer=this;
 #ifdef _WIN32
 							int highPriority=THREAD_PRIORITY_ABOVE_NORMAL;
 #else
@@ -3408,9 +3414,7 @@ RakPeer::RemoteSystemStruct * RakPeer::AssignSystemAddressToRemoteSystemList( co
 
 
 
-							RakNet::RakThread::Create(RecvFromLoop, &rpai, highPriority);
-
-							RakSleep(10);
+							RakNet::RakThread::Create(RecvFromLoop, rpai, highPriority);
 
 
 							/*
@@ -5788,6 +5792,7 @@ RAK_THREAD_DECLARATION(RakNet::RecvFromLoop)
 	SOCKET s = rpai->s;
 	unsigned short remotePortRakNetWasStartedOn_PS3 = rpai->remotePortRakNetWasStartedOn_PS3;
 	unsigned int extraSocketOptions = rpai->extraSocketOptions;
+	RakNet::OP_DELETE(rpai,_FILE_AND_LINE_);
 
 	rakPeer->isRecvFromLoopThreadActive.Increment();
 

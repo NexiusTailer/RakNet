@@ -19,7 +19,7 @@ if errorlevel 1 GOTO :SWIGERROR
 echo Swig build complete
 GOTO END
 :NOVARS
-echo Invalid number of parameters, Usage: MakeSwig.bat directory
+echo Invalid number of parameters, Usage: MakeSwig.bat PATH_TO_RAKNETSOURCE PATH_TO_SWIG
 PAUSE
 GOTO END
 :SWIGERROR

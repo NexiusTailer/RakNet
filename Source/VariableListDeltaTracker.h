@@ -95,7 +95,7 @@ public:
 
 	/// Paired with a call to WriteVarToBitstream(), will read a variable if it had changed. Otherwise the values remains the same.
 	template <class VarType>
-	static bool ReadVarFromBitstream(const VarType &varData, RakNet::BitStream *bitStream)
+	static bool ReadVarFromBitstream(VarType &varData, RakNet::BitStream *bitStream)
 	{
 		bool wasWritten;
 		if (bitStream->Read(wasWritten)==false)

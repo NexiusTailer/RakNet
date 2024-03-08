@@ -83,7 +83,7 @@ Multiplayer enabled games require additional systems and/or design consideration
     <li>Have to deal with host migration</li>
     <li>Have to deal with contention. If two peers do the same mutually exclusive operation at the same time, how to resolve?</li>
   </ol>
-  <p>RakNet provides plugins to make peer to peer programming easier: <a href="natpunchthrough.html">NATPunchthrough</a>, <a href="readyevent.html">ReadyEvent</a>, <a href="connectiongraph.html">ConnectionGraph2</a>, <a href="fullyconnectedmesh2.html">FullyConnectedMesh2</a>, and <a href="teambalancer.html">TeamBalancer</a><br>
+  <p>RakNet provides plugins to make peer to peer programming easier: <a href="natpunchthrough.html">NATPunchthrough</a>, <a href="readyevent.html">ReadyEvent</a>, <a href="connectiongraph.html">ConnectionGraph2</a>, <a href="fullyconnectedmesh2.html">FullyConnectedMesh2</a>, and <a href="teambalancer.html">TeamBalancer</a>. See the project ComprehensivePCGame in the RakNet solution for an example where all these plugins are combined together.<br>
   </p></td>
 </tr>
 </tbody>
@@ -103,10 +103,10 @@ Multiplayer enabled games require additional systems and/or design consideration
 Rather than loading all objects in the level as done in single player, objects now need to be categorized according to how they influence networking<BR>
 <ol>
 <LI>Objects that still load normally are those that always exist in the level and are not referenced by network code.
-<LI>Objects may still load normally with the level, but need to be referred to by network code. For example, triggers. These objects can either be loaded with a NetworkID (64 bit GUID), or the code at load time can gather these types of objects and assign them ids.
+<LI>Objects may still load normally with the level, but need to be referred to by network code. For example, event triggers. These objects can either be loaded with a NetworkID (64 bit GUID), or the code at load time can gather these types of objects and assign them ids.
 <LI>Objects may or may not exist on level load need to be dynamically loaded. For example, such as players, spawned weapons, and bullets. Some of these objects should be preloaded during level load, on the assumption that they will eventually be spawned, to avoid runtime harddrive access.
 </OL>
-Many games have a group of players start at the same time. In this case, the level should not start immediately upon load completion. Before considering level load complete:<BR>
+Generally, after level load the game does not start until all players have finished loading. Even on consoles, the disk may be scratched so systems may take a different amount of time to load a level. Before considering level load complete:<BR>
 <OL>
 <LI>Transmit selections from other users that affect our load state. For example, what character models the other users picked
 <LI>Load the level as well as whatever models / textures, etc. are needed based on the other player's choices

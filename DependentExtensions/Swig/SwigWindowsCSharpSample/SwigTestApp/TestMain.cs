@@ -27,7 +27,7 @@ namespace SwigTestApp
             }
             catch (Exception e)
             {
-                Console.WriteLine("DLL issue\nMake sure RakNetWrap.cxx is included in the DLL project.\nPress enter to quit.");
+                Console.WriteLine("DLL issue\nAdd SwigOutput/CplusDLLIncludes/RakNetWrap.cxx to the project\nDLL_Swig/RakNet.sln and rebuild.\nPress enter to quit.");
                 Console.Read();
                 return;
             }

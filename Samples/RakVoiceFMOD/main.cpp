@@ -250,7 +250,7 @@ int main(void)
 		fmodSystem->update();
 		// Update or connection with FMOD
 		RakNet::FMODVoiceAdapter::Instance()->Update();
-		LogStats();
+	//	LogStats();
 		RakSleep(20);
 
 	}
@@ -260,6 +260,7 @@ int main(void)
 	fmodSystem->release();
 
 	rakPeer->Shutdown(300);
+	rakPeer->DetachPlugin(&rakVoice);
 	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 
 	return 0;

@@ -184,10 +184,15 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
 #endif
 
 #if defined(__GNUC__)
-	const int flag=MSG_DONTWAIT;
+	#if defined(MSG_DONTWAIT)
+		const int flag=MSG_DONTWAIT;
+	#else
+		const int flag=0x40;
+	#endif
 #else
 	const int flag=0;
 #endif
+
 	int receivedDataLen, len=0;
 	//unsigned short portnum=0;
 

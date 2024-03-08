@@ -82,12 +82,14 @@ files
 	SignaledEvent.cpp
 	SimpleMutex.cpp
 	SocketLayer.cpp
+	StatisticsHistory.cpp
 	StringCompressor.cpp
 	StringTable.cpp
 	SuperFastHash.cpp
 	TableSerializer.cpp
 	TCPInterface.cpp
 	TeamBalancer.cpp
+	TeamManager.cpp
 	TelnetTransport.cpp
 	ThreadsafePacketLogger.cpp
 	TwoWayAuthentication.cpp

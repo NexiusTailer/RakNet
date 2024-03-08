@@ -575,7 +575,18 @@ UDPProxyClient: Now returns server ip and port when returning ID_UDP_PROXY_IN_PR
 RakString: Added FormatForPOST() and FormatForGet() in order to reduce reliance on HTTPConnection class.
 PS3 / Vita: Console_SendDataMessageToUser_PS3 now asserts if message size exceeds max for the target platform
 New plugin: StatisticsHistory. Detailed tracking of connection statistics for use in bandwidth optimization by the user.
-New plugin: LivVoice, can cross compile to PS3 and Vita to support voice chat. Replaces AVC2 when turned on in NativeFeatureIncludes.h.
+New plugin: LibVoice, can cross compile to PS3 and Vita to support voice chat. Replaces AVC2 when turned on in NativeFeatureIncludes.h.
+4.051 (7/29/2012)
+Fix SWIG build broken in 4.05
+Remove unnecessary call to SendUnifiedToMultiple in Lobby2Server::ExecuteCommand
+ThreadPool will sleep on non-windows platforms to reduce CPU usage
+Fix bus error when calling CloseConnection in TCPInterface on 64 bit Linux.
+Lobby2Server will now call callbacks added with Lobby2Plugin::AddCallbackInterface
+Crash fix when binding additional sockets at runtime in RakPeer
+Fixed RakWString when serialzing between systems that have different sizes for wchar_t
+TeamManager: Now ignores duplicate team member insertions
+StatisticsHistory: Fix sorting values, add ability to merge entries with the same timestamp
+ReplicaManager3: Change signature for OnSerializeTransmission
 </pre>
 <BR>
 </p></TD></TR></TABLE>

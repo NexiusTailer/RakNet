@@ -20,22 +20,30 @@ int StatisticsHistory::TrackedObjectComp( const uint64_t &key, StatisticsHistory
 	return 1;
 }
 
-int TimeAndValueQueueCompAsc( const SHValueType &key, StatisticsHistory::TimeAndValueQueue* const &data )
+int TimeAndValueQueueCompAsc( StatisticsHistory::TimeAndValueQueue* const &key, StatisticsHistory::TimeAndValueQueue* const &data )
 {
-	if (key < data->sortValue)
+	if (key->sortValue < data->sortValue)
 		return -1;
-	if (key == data->sortValue)
-		return 0;
-	return 1;
+	if (key->sortValue > data->sortValue)
+		return 1;
+	if (key->key < data->key)
+		return -1;
+	if (key->key > data->key)
+		return 1;
+	return 0;
 }
 
-int TimeAndValueQueueCompDesc( const SHValueType &key, StatisticsHistory::TimeAndValueQueue* const &data )
+int TimeAndValueQueueCompDesc( StatisticsHistory::TimeAndValueQueue* const &key, StatisticsHistory::TimeAndValueQueue* const &data )
 {
-	if (key < data->sortValue)
+	if (key->sortValue > data->sortValue)
+		return -1;
+	if (key->sortValue < data->sortValue)
 		return 1;
-	if (key == data->sortValue)
-		return 0;
-	return -1;
+	if (key->key > data->key)
+		return -1;
+	if (key->key < data->key)
+		return 1;
+	return 0;
 }
 StatisticsHistory::TrackedObjectData::TrackedObjectData() {}
 StatisticsHistory::TrackedObjectData::TrackedObjectData(uint64_t _objectId, int _objectType, void *_userData)
@@ -88,15 +96,15 @@ void StatisticsHistory::Clear(void)
 }
 unsigned int StatisticsHistory::GetObjectCount(void) const {return objects.Size();}
 StatisticsHistory::TrackedObjectData * StatisticsHistory::GetObjectAtIndex(unsigned int index) const {return &objects[index]->trackedObjectData;}
-bool StatisticsHistory::AddValueByObjectID(uint64_t objectId, RakString key, SHValueType val, Time curTime)
+bool StatisticsHistory::AddValueByObjectID(uint64_t objectId, RakString key, SHValueType val, Time curTime, bool combineEqualTimes)
 {
 	unsigned int idx = GetObjectIndex(objectId);
 	if (idx == (unsigned int) -1)
 		return false;
-	AddValueByIndex(idx, key, val, curTime);
+	AddValueByIndex(idx, key, val, curTime, combineEqualTimes);
 	return true;
 }
-void StatisticsHistory::AddValueByIndex(unsigned int index, RakString key, SHValueType val, Time curTime)
+void StatisticsHistory::AddValueByIndex(unsigned int index, RakString key, SHValueType val, Time curTime, bool combineEqualTimes)
 {
 	TimeAndValueQueue *queue;
 	TrackedObject *to = objects[index];
@@ -114,18 +122,32 @@ void StatisticsHistory::AddValueByIndex(unsigned int index, RakString key, SHVal
 	}
 
 	TimeAndValue tav;
-	tav.time=curTime;
-	tav.val=val;
+	if (combineEqualTimes==true && queue->values.Size()>0 && queue->values.PeekTail().time==curTime)
+	{
+		tav = queue->values.PopTail();
+
+		queue->recentSum -= tav.val;
+		queue->recentSumOfSquares -= tav.val * tav.val;
+		queue->longTermSum -= tav.val;
+		queue->longTermCount = queue->longTermCount - 1;
+	}
+	else
+	{
+		tav.val=0.0;
+		tav.time=curTime;
+	}
+
+	tav.val+=val;
 	queue->values.Push(tav, _FILE_AND_LINE_);
 
-	queue->recentSum += val;
-	queue->recentSumOfSquares += val * val;
-	queue->longTermSum += val;
+	queue->recentSum += tav.val;
+	queue->recentSumOfSquares += tav.val * tav.val;
+	queue->longTermSum += tav.val;
 	queue->longTermCount = queue->longTermCount + 1;
-	if (queue->longTermLowest > val)
-		queue->longTermLowest = val;
-	if (queue->longTermHighest < val)
-		queue->longTermHighest = val;
+	if (queue->longTermLowest > tav.val)
+		queue->longTermLowest = tav.val;
+	if (queue->longTermHighest < tav.val)
+		queue->longTermHighest = tav.val;
 }
 StatisticsHistory::SHErrorCode StatisticsHistory::GetHistoryForKey(uint64_t objectId, RakString key, StatisticsHistory::TimeAndValueQueue **values, Time curTime) const
 {
@@ -154,7 +176,7 @@ bool StatisticsHistory::GetHistorySorted(uint64_t objectId, SHSortOperation sort
 	to->dataQueues.GetAsList(itemList,keyList,_FILE_AND_LINE_);
 	Time curTime = GetTime();
 
-	DataStructures::OrderedList<SHValueType, TimeAndValueQueue*,TimeAndValueQueueCompAsc> sortedQueues;
+	DataStructures::OrderedList<TimeAndValueQueue*, TimeAndValueQueue*,TimeAndValueQueueCompAsc> sortedQueues;
 	for (unsigned int i=0; i < itemList.Size(); i++)
 	{
 		TimeAndValueQueue *tavq = itemList[i];
@@ -189,9 +211,9 @@ bool StatisticsHistory::GetHistorySorted(uint64_t objectId, SHSortOperation sort
 			sortType == SH_SORT_BY_RECENT_LOWEST_ASCENDING ||
 			sortType == SH_SORT_BY_LONG_TERM_HIGHEST_ASCENDING ||
 			sortType == SH_SORT_BY_LONG_TERM_LOWEST_ASCENDING)
-			sortedQueues.Insert(tavq->sortValue, tavq, false, _FILE_AND_LINE_, TimeAndValueQueueCompAsc);
+			sortedQueues.Insert(tavq, tavq, false, _FILE_AND_LINE_, TimeAndValueQueueCompAsc);
 		else
-			sortedQueues.Insert(tavq->sortValue, tavq, false, _FILE_AND_LINE_, TimeAndValueQueueCompDesc);
+			sortedQueues.Insert(tavq, tavq, false, _FILE_AND_LINE_, TimeAndValueQueueCompDesc);
 	}
 
 	for (unsigned int i=0; i < sortedQueues.Size(); i++)
@@ -307,6 +329,16 @@ Time StatisticsHistory::TimeAndValueQueue::GetTimeRange(void) const
 	if (values.Size()<2)
 		return 0;
 	return values[values.Size()-1].time - values[0].time;
+}
+SHValueType StatisticsHistory::TimeAndValueQueue::GetSumSinceTime(Time t) const
+{
+	SHValueType sum = 0;
+	for (int i=values.Size(); i > 0; --i)
+	{
+		if (values[i-1].time>=t)
+			sum+=values[i-1].val;
+	}
+	return sum;
 }
 void StatisticsHistory::TimeAndValueQueue::MergeSets( const TimeAndValueQueue *lhs, SHDataCategory lhsDataCategory, const TimeAndValueQueue *rhs, SHDataCategory rhsDataCategory, TimeAndValueQueue *output )
 {
@@ -693,44 +725,44 @@ void StatisticsHistoryPlugin::Update(void)
 		if (objectIndex!=(unsigned int)-1)
 		{
 			statistics.AddValueByIndex(objectIndex,
-				"ACTUAL_BYTES_SENT",
+				"RN_ACTUAL_BYTES_SENT",
 				(SHValueType) stats[idx].valueOverLastSecond[ACTUAL_BYTES_SENT],
-				curTime);
+				curTime, false);
 
 			statistics.AddValueByIndex(objectIndex,
-				"USER_MESSAGE_BYTES_RESENT",
+				"RN_USER_MESSAGE_BYTES_RESENT",
 				(SHValueType) stats[idx].valueOverLastSecond[USER_MESSAGE_BYTES_RESENT],
-				curTime);
+				curTime, false);
 
 			statistics.AddValueByIndex(objectIndex,
-				"ACTUAL_BYTES_RECEIVED",
+				"RN_ACTUAL_BYTES_RECEIVED",
 				(SHValueType) stats[idx].valueOverLastSecond[ACTUAL_BYTES_RECEIVED],
-				curTime);
+				curTime, false);
 
 			statistics.AddValueByIndex(objectIndex,
-				"USER_MESSAGE_BYTES_PUSHED",
+				"RN_USER_MESSAGE_BYTES_PUSHED",
 				(SHValueType) stats[idx].valueOverLastSecond[USER_MESSAGE_BYTES_PUSHED],
-				curTime);
+				curTime, false);
 
 			statistics.AddValueByIndex(objectIndex,
-				"USER_MESSAGE_BYTES_RECEIVED_PROCESSED",
+				"RN_USER_MESSAGE_BYTES_RECEIVED_PROCESSED",
 				(SHValueType) stats[idx].valueOverLastSecond[USER_MESSAGE_BYTES_RECEIVED_PROCESSED],
-				curTime);
+				curTime, false);
 
 			statistics.AddValueByIndex(objectIndex,
-				"lastPing",
+				"RN_lastPing",
 				(SHValueType) rakPeerInterface->GetLastPing(guids[idx]),
-				curTime);
+				curTime, false);
 
 			statistics.AddValueByIndex(objectIndex,
-				"bytesInResendBuffer",
+				"RN_bytesInResendBuffer",
 				(SHValueType) stats[idx].bytesInResendBuffer,
-				curTime);
+				curTime, false);
 			
 			statistics.AddValueByIndex(objectIndex,
-				"packetlossLastSecond",
+				"RN_packetlossLastSecond",
 				(SHValueType) stats[idx].packetlossLastSecond,
-				curTime);
+				curTime, false);
 		}
 
 	}

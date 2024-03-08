@@ -15,7 +15,7 @@
 namespace RakNet {
 
 /// \brief Connects FMOD with RakVoice.
-class FMODVoiceAdapter {
+class RAK_DLL_EXPORT FMODVoiceAdapter {
 
 public:
 

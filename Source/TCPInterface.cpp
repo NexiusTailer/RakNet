@@ -51,8 +51,6 @@ STATIC_FACTORY_DEFINITIONS(TCPInterface,TCPInterface);
 
 TCPInterface::TCPInterface()
 {
-	isStarted=false;
-	threadRunning=false;
 	listenSocket=(SOCKET) -1;
 	remoteClients=0;
 	remoteClientsLength=0;
@@ -85,7 +83,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 {
 	(void) socketFamily;
 
-	if (isStarted)
+	if (isStarted.GetValue()>0)
 		return false;
 
 	threadPriority=_threadPriority;
@@ -103,7 +101,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 #endif
 	}
 
-	isStarted=true;
+	isStarted.Increment();
 	if (maxConnections==0)
 		maxConnections=maxIncomingConnections;
 	if (maxConnections==0)
@@ -187,14 +185,14 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 	if (errorCode!=0)
 		return false;
 
-	while (threadRunning==false)
+	while (threadRunning.GetValue()==0)
 		RakSleep(0);
 
 	return true;
 }
 void TCPInterface::Stop(void)
 {
-	if (isStarted==false)
+	if (isStarted.GetValue()==0)
 		return;
 
 	unsigned i;
@@ -203,7 +201,7 @@ void TCPInterface::Stop(void)
 		remoteClients[i].DisconnectSSL();
 #endif
 
-	isStarted=false;
+	isStarted.Decrement();
 
 	if (listenSocket!=(SOCKET) -1)
 	{
@@ -214,7 +212,6 @@ void TCPInterface::Stop(void)
 		shutdown__(listenSocket, SHUT_RDWR);
 #endif
 		closesocket__(listenSocket);
-		listenSocket=(SOCKET) -1;
 	}
 
 	// Abort waiting connect calls
@@ -226,10 +223,11 @@ void TCPInterface::Stop(void)
 	blockingSocketListMutex.Unlock();
 
 	// Wait for the thread to stop
-	while ( threadRunning )
+	while ( threadRunning.GetValue()>0 )
 		RakSleep(15);
 
 	RakSleep(100);
+	listenSocket=(SOCKET) -1;
 
 	// Stuff from here on to the end of the function is not threadsafe
 	for (i=0; i < (unsigned int) remoteClientsLength; i++)
@@ -271,7 +269,7 @@ void TCPInterface::Stop(void)
 }
 SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort, bool block, unsigned short socketFamily)
 {
-	if (threadRunning==false)
+	if (threadRunning.GetValue()==0)
 		return UNASSIGNED_SYSTEM_ADDRESS;
 
 	int newRemoteClientIndex=-1;
@@ -377,7 +375,7 @@ void TCPInterface::Send( const char *data, unsigned length, const SystemAddress 
 }
 bool TCPInterface::SendList( const char **data, const unsigned int *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast )
 {
-	if (isStarted==false)
+	if (isStarted.GetValue()==0)
 		return false;
 	if (data==0)
 		return false;
@@ -433,7 +431,7 @@ bool TCPInterface::ReceiveHasPackets( void )
 }
 Packet* TCPInterface::Receive( void )
 {
-	if (isStarted==false)
+	if (isStarted.GetValue()==0)
 		return 0;
 	if (headPush.IsEmpty()==false)
 		return headPush.Pop();
@@ -446,7 +444,7 @@ Packet* TCPInterface::Receive( void )
 }
 void TCPInterface::CloseConnection( SystemAddress systemAddress )
 {
-	if (isStarted==false)
+	if (isStarted.GetValue()==0)
 		return;
 	if (systemAddress==UNASSIGNED_SYSTEM_ADDRESS)
 		return;
@@ -516,7 +514,7 @@ void TCPInterface::PushBackPacket( Packet *packet, bool pushAtHead )
 }
 bool TCPInterface::WasStarted(void) const
 {
-	return threadRunning==true;
+	return threadRunning.GetValue()>0;
 }
 int TCPInterface::Base64Encoding(const char *inputData, int dataLength, char *outputData)
 {
@@ -799,7 +797,7 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
 	tcpInterface->remoteClients[newRemoteClientIndex].systemAddress=systemAddress;
 
 	// Notify user that the connection attempt has completed.
-	if (tcpInterface->threadRunning)
+	if (tcpInterface->threadRunning.GetValue()>0)
 	{
 		tcpInterface->completedConnectionAttemptMutex.Lock();
 		tcpInterface->completedConnectionAttempts.Push(systemAddress, _FILE_AND_LINE_ );
@@ -827,7 +825,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 	char * data = (char*) rakMalloc_Ex(BUFF_SIZE,_FILE_AND_LINE_);
 	Packet *incomingMessage;
 	fd_set readFD, exceptionFD, writeFD;
-	sts->threadRunning=true;
+	sts->threadRunning.Increment();
 
 #if RAKNET_SUPPORT_IPV6!=1
 	sockaddr_in sockAddr;
@@ -847,7 +845,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 	tv.tv_usec=30000;
 
 
-	while (sts->isStarted)
+	while (sts->isStarted.GetValue()>0)
 	{
 #if OPEN_SSL_CLIENT_SUPPORT==1
 		SystemAddress *sslSystemAddress;
@@ -908,14 +906,19 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 			for (i=0; i < (unsigned int) sts->remoteClientsLength; i++)
 			{
 				sts->remoteClients[i].isActiveMutex.Lock();
-				if (sts->remoteClients[i].isActive && sts->remoteClients[i].socket!=INVALID_SOCKET)
+				if (sts->remoteClients[i].isActive)
 				{
-					FD_SET(sts->remoteClients[i].socket, &readFD);
-					FD_SET(sts->remoteClients[i].socket, &exceptionFD);
-					if (sts->remoteClients[i].outgoingData.GetBytesWritten()>0)
-						FD_SET(sts->remoteClients[i].socket, &writeFD);
-					if(sts->remoteClients[i].socket > largestDescriptor) // @see largestDescriptorDef
-						largestDescriptor = sts->remoteClients[i].socket;
+					// calling FD_ISSET with -1 as socket (that’s what INVALID_SOCKET is set to) produces a bus error under Linux 64-Bit
+					SOCKET socketCopy = sts->remoteClients[i].socket;
+					if (socketCopy != INVALID_SOCKET)
+					{
+						FD_SET(socketCopy, &readFD);
+						FD_SET(socketCopy, &exceptionFD);
+						if (sts->remoteClients[i].outgoingData.GetBytesWritten()>0)
+							FD_SET(socketCopy, &writeFD);
+						if(socketCopy > largestDescriptor) // @see largestDescriptorDef
+							largestDescriptor = socketCopy;
+					}
 				}
 				sts->remoteClients[i].isActiveMutex.Unlock();
 			}
@@ -1007,8 +1010,15 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 						i++;
 						continue;
 					}
+					// calling FD_ISSET with -1 as socket (that’s what INVALID_SOCKET is set to) produces a bus error under Linux 64-Bit
+					SOCKET socketCopy = sts->remoteClients[i].socket;
+					if (socketCopy == (SOCKET)-1)
+					{
+						i++;
+						continue;
+					}
 
-					if (FD_ISSET(sts->remoteClients[i].socket, &exceptionFD))
+					if (FD_ISSET(socketCopy, &exceptionFD))
 					{
 // #ifdef _DO_PRINTF
 // 						if (sts->listenSocket!=-1)
@@ -1032,7 +1042,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 					}
 					else
 					{
-						if (FD_ISSET(sts->remoteClients[i].socket, &readFD))
+						if (FD_ISSET(socketCopy, &readFD))
 						{
 							// if recv returns 0 this was a graceful close
 							len = sts->remoteClients[i].Recv(data,BUFF_SIZE);
@@ -1066,7 +1076,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 								continue;
 							}
 						}
-						if (FD_ISSET(sts->remoteClients[i].socket, &writeFD))
+						if (FD_ISSET(socketCopy, &writeFD))
 						{
 							RemoteClient *rc = &sts->remoteClients[i];
 							unsigned int bytesInBuffer;
@@ -1107,7 +1117,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 		// Sleep 0 on Linux monopolizes the CPU
 		RakSleep(30);
 	}
-	sts->threadRunning=false;
+	sts->threadRunning.Decrement();
 
 	rakFree_Ex(data,_FILE_AND_LINE_);
 

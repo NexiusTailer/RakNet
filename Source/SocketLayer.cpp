@@ -102,7 +102,11 @@ bool SocketLayer::IsPortInUse_Old(unsigned short port, const char *hostAddress)
 	memset(&listenerSocketAddress,0,sizeof(sockaddr_in));
 	// Listen on our designated Port#
 	listenerSocketAddress.sin_port = htons( port );
+
+
+
 	listenSocket = socket__( AF_INET, SOCK_DGRAM, 0 );
+
 	if ( listenSocket == (SOCKET) -1 )
 		return true;
 	// bind our name to the socket
@@ -537,7 +541,11 @@ SOCKET SocketLayer::CreateBoundSocket_Old( unsigned short port, bool blockingSoc
 	// Listen on our designated Port#
 	listenerSocketAddress.sin_port = htons( port );
 
+
+
+
 	listenSocket = socket__( AF_INET, SOCK_DGRAM, extraSocketOptions );
+
 
 	if ( listenSocket == (SOCKET) -1 )
 	{

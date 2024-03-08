@@ -22,6 +22,7 @@
 #include "SocketIncludes.h"
 #include "DS_ByteQueue.h"
 #include "DS_ThreadsafeAllocatingQueue.h"
+#include "LocklessTypes.h"
 
 #if OPEN_SSL_CLIENT_SUPPORT==1
 #include <openssl/crypto.h>
@@ -130,7 +131,7 @@ public:
 
 protected:
 
-	bool isStarted, threadRunning;
+	RakNet::LocklessUint32_t isStarted, threadRunning;
 	SOCKET listenSocket;
 
 	DataStructures::Queue<Packet*> headPush, tailPush;

@@ -1,4 +1,4 @@
-RakNet 4.05
+RakNet 4.051
 Copyright 2002-2005 Kevin Jenkins (rakkar@jenkinssoftware.com).
 This API and the code herein created by and wholly and privately owned by Kevin Jenkins except where specifically indicated otherwise.
 Licensed under the "RakNet" brand by Jenkins Software and subject to the terms of the relevant licensing agreement available at http://www.jenkinssoftware.com
@@ -62,6 +62,7 @@ You might have to copy *.dll from cygwin\bin as well.
 Linux users
 -----------------------------------------
 Use cmake, or "g++ -lpthread -g *.cpp" in the /Source directory.
+With libcat, use "g++ -pthread -g -I./../DependentExtensions *.cpp" in the /Source directory.
 
 64 bit use -m64 command line
 Sometimes you need -pthread instead of -lpthread

@@ -167,6 +167,9 @@ public:
 	/// Compare strings (case sensitive)
 	int StrCmp(const RakString &rhs) const;
 
+	/// Compare strings (case sensitive), up to num characters
+	int StrNCmp(const RakString &rhs, size_t num) const;
+
 	/// Compare strings (not case sensitive)
 	int StrICmp(const RakString &rhs) const;
 

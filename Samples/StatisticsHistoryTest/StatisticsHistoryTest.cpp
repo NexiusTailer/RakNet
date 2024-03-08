@@ -80,8 +80,8 @@ int main(void)
 	while (1)
 	{
 		f = (double) ((double)GetTime() / (double)1000);
-		statisticsHistory.AddValueByObjectID(HO_SIN_WAVE,"Waveform",sin(f),GetTime());
-		statisticsHistory.AddValueByObjectID(HO_COS_WAVE,"Waveform",cos(f),GetTime());
+		statisticsHistory.AddValueByObjectID(HO_SIN_WAVE,"Waveform",sin(f),GetTime(), false);
+		statisticsHistory.AddValueByObjectID(HO_COS_WAVE,"Waveform",cos(f),GetTime(), false);
 
 		// Show sin wave
 		if (GetTime()>nextPrint)

@@ -725,6 +725,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Source\PS3Includes.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Source\Rackspace.cpp"
 			>
 		</File>
@@ -746,6 +750,10 @@
 		</File>
 		<File
 			RelativePath="..\..\..\Source\RakMemoryOverride.h"
+			>
+		</File>
+		<File
+			RelativePath="..\SwigOutput\CplusDLLIncludes\RakNet_wrap.cxx"
 			>
 		</File>
 		<File
@@ -985,6 +993,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Source\StatisticsHistory.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\StatisticsHistory.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Source\StringCompressor.cpp"
 			>
 		</File>
@@ -1133,6 +1149,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Source\VitaIncludes.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\VitaIncludes.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Source\WindowsIncludes.h"
 			>
 		</File>
@@ -1142,6 +1166,10 @@
 		</File>
 		<File
 			RelativePath="..\..\..\Source\WSAStartupSingleton.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\XBox360Includes.h"
 			>
 		</File>
 	</Files>

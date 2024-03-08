@@ -73,6 +73,13 @@ void Lobby2Server::Update(void)
 		c.lobby2Message->ServerPostDBMemoryImpl(this, c.callingUserName);
 		if (c.returnToSender)
 		{
+			for (unsigned long i=0; i < callbacks.Size(); i++)
+			{
+				if (c.lobby2Message->callbackId==(uint32_t)-1 || c.lobby2Message->callbackId==callbacks[i]->callbackId)
+					c.lobby2Message->CallCallback(callbacks[i]);
+			}
+
+
 			RakNet::BitStream bs;
 			bs.Write((MessageID)ID_LOBBY2_SEND_MESSAGE);
 			bs.Write((MessageID)c.lobby2Message->GetID());
@@ -331,7 +338,7 @@ void Lobby2Server::ClearRankingAddresses(void)
 }
 void Lobby2Server::ExecuteCommand(Lobby2ServerCommand *command)
 {
-	RakNet::BitStream out;
+	//RakNet::BitStream out;
 	if (command->lobby2Message->PrevalidateInput()==false)
 	{
 		SendMsg(command->lobby2Message, command->callerSystemAddresses);
@@ -344,7 +351,7 @@ void Lobby2Server::ExecuteCommand(Lobby2ServerCommand *command)
 	{
 		command->lobby2Message->resultCode=L2RC_REQUIRES_ADMIN;
 		SendMsg(command->lobby2Message, command->callerSystemAddresses);
-		SendUnifiedToMultiple(&out,packetPriority, RELIABLE_ORDERED, orderingChannel, command->callerSystemAddresses);
+		//SendUnifiedToMultiple(&out,packetPriority, RELIABLE_ORDERED, orderingChannel, command->callerSystemAddresses);
 		if (command->deallocMsgWhenDone)
 			msgFactory->Dealloc(command->lobby2Message);
 		return;
@@ -354,7 +361,7 @@ void Lobby2Server::ExecuteCommand(Lobby2ServerCommand *command)
 	{
 		command->lobby2Message->resultCode=L2RC_REQUIRES_ADMIN;
 		SendMsg(command->lobby2Message, command->callerSystemAddresses);
-		SendUnifiedToMultiple(&out,packetPriority, RELIABLE_ORDERED, orderingChannel, command->callerSystemAddresses);
+		//SendUnifiedToMultiple(&out,packetPriority, RELIABLE_ORDERED, orderingChannel, command->callerSystemAddresses);
 		if (command->deallocMsgWhenDone)
 			msgFactory->Dealloc(command->lobby2Message);
 		return;

@@ -89,7 +89,6 @@ typedef unsigned int SOCKET;
 //Most of these are nested structs/classes that swig needs to understand as global
 //They will reference the nested struct/class while appearing global
 typedef RakNet::RakString::SharedString SharedString;
-typedef RakNet::UDPForwarder::SrcAndDest SrcAndDest;
 typedef DataStructures::Table::Row Row;
 typedef DataStructures::Table::Cell Cell; 
 typedef DataStructures::Table::FilterQuery FilterQuery;

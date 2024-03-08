@@ -75,6 +75,8 @@ IGNORERAKPEERANDINTERFACE(GetConnectionList( SystemAddress *remoteSystems, unsig
 //They must be explicitly ignored
 //This Specific case is somehow placed in the RakNet namespace rather than RakNet::RakPeer
 //Ignore both to be safe
+%ignore RakNet::RakPeerInterface::GetStatisticsList;
+%ignore RakNet::RakPeer::GetStatisticsList;
 %ignore RakNet::RakPeer::ProcessOfflineNetworkPacket;
 %ignore RakNet::RakPeer::ProcessNetworkPacket;
 %ignore RakNet::ProcessOfflineNetworkPacket;
