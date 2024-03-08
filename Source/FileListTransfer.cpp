@@ -125,6 +125,7 @@ unsigned short FileListTransfer::SetupReceive(FileListTransferCBInterface *handl
 	receiver->allowedSender=allowedSender;
 	receiver->gotSetHeader=false;
 	receiver->deleteDownloadHandler=deleteHandler;
+	receiver->setID=setId;
 	fileListReceivers.Set(setId, receiver);
 	oldId=setId;
 	if (++setId==(unsigned short)-1)
@@ -245,13 +246,13 @@ void FileListTransfer::Send(FileList *fileList, RakNet::RakPeerInterface *rakPee
 		else
 		{
 			for (unsigned int flpcIndex=0; flpcIndex < fileListProgressCallbacks.Size(); flpcIndex++)
-				fileListProgressCallbacks[flpcIndex]->OnFilePushesComplete(recipient);
+				fileListProgressCallbacks[flpcIndex]->OnFilePushesComplete(recipient, setID);
 		}
 	}
 	else
 	{
 		for (unsigned int flpcIndex=0; flpcIndex < fileListProgressCallbacks.Size(); flpcIndex++)
-			fileListProgressCallbacks[flpcIndex]->OnFilePushesComplete(recipient);
+			fileListProgressCallbacks[flpcIndex]->OnFilePushesComplete(recipient, setID);
 
 		if (rakPeer)
 			rakPeer->Send(&outBitstream, priority, RELIABLE_ORDERED, orderingChannel, recipient, false);
@@ -980,7 +981,7 @@ int SendIRIToAddressCB(FileListTransfer::ThreadData threadData, bool *returnOutp
 			outBitstream.Write(done);
 
 			for (unsigned int flpcIndex=0; flpcIndex < fileListTransfer->fileListProgressCallbacks.Size(); flpcIndex++)
-				fileListTransfer->fileListProgressCallbacks[flpcIndex]->OnFilePush(ftp->fileListNode.filename, ftp->fileListNode.fileLengthBytes, ftp->currentOffset-bytesRead, bytesRead, done, systemAddress);
+				fileListTransfer->fileListProgressCallbacks[flpcIndex]->OnFilePush(ftp->fileListNode.filename, ftp->fileListNode.fileLengthBytes, ftp->currentOffset-bytesRead, bytesRead, done, systemAddress, ftp->setID);
 
 			dataBlocks[0]=(char*) outBitstream.GetData();
 			lengths[0]=outBitstream.GetNumberOfBytesUsed();
@@ -993,13 +994,14 @@ int SendIRIToAddressCB(FileListTransfer::ThreadData threadData, bool *returnOutp
 			if (done)
 			{
 				// Done
+				unsigned short setId = ftp->setID;
 				RakNet::OP_DELETE(ftp,_FILE_AND_LINE_);
 				ftpr->filesToPush.Pop();
 
 				if (ftpr->filesToPush.Size()==0)
 				{
 					for (unsigned int flpcIndex=0; flpcIndex < fileListTransfer->fileListProgressCallbacks.Size(); flpcIndex++)
-						fileListTransfer->fileListProgressCallbacks[flpcIndex]->OnFilePushesComplete(systemAddress);
+						fileListTransfer->fileListProgressCallbacks[flpcIndex]->OnFilePushesComplete(systemAddress, setId);
 
 					// Remove ftpr from fileToPushRecipientList
 					fileListTransfer->RemoveFromList(ftpr);

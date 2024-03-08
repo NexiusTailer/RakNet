@@ -457,7 +457,7 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 	unsigned i,j;
 	InternalPacket *internalPacket;
 
-	ClearPacketsAndDatagrams(false);
+	ClearPacketsAndDatagrams();
 
 	for (i=0; i < splitPacketChannelList.Size(); i++)
 	{
@@ -564,6 +564,7 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 	delayList.Clear(__FILE__, __LINE__);
 #endif
 
+    unreliableWithAckReceiptHistory.Clear(false, _FILE_AND_LINE_);
 
 	packetsToSendThisUpdate.Clear(false, _FILE_AND_LINE_);
 	packetsToSendThisUpdate.Preallocate(512, _FILE_AND_LINE_);
@@ -728,6 +729,29 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 			for (datagramNumber=incomingAcks.ranges[i].minIndex; datagramNumber >= incomingAcks.ranges[i].minIndex && datagramNumber <= incomingAcks.ranges[i].maxIndex; datagramNumber++)
 			{
 				CCTimeType whenSent;
+				
+				if (unreliableWithAckReceiptHistory.Size()>0)
+				{
+					unsigned int k=0;
+					while (k < unreliableWithAckReceiptHistory.Size())
+					{
+						if (unreliableWithAckReceiptHistory[k].datagramNumber == datagramNumber)
+						{
+							InternalPacket *ackReceipt = AllocateFromInternalPacketPool();
+							AllocInternalPacketData(ackReceipt, 5,  false, _FILE_AND_LINE_ );
+							ackReceipt->dataBitLength=BYTES_TO_BITS(5);
+							ackReceipt->data[0]=(MessageID)ID_SND_RECEIPT_ACKED;
+							memcpy(ackReceipt->data+sizeof(MessageID), &unreliableWithAckReceiptHistory[k].sendReceiptSerial, sizeof(uint32_t));
+							outputQueue.Push(ackReceipt, _FILE_AND_LINE_ );
+
+							// Remove, swap with last
+							unreliableWithAckReceiptHistory.RemoveAtIndex(k);
+						}
+						else
+							k++;
+					}
+				}
+
 				MessageNumberNode *messageNumberNode = GetMessageNumberNodeByDatagramIndex(datagramNumber, &whenSent);
 				if (messageNumberNode)
 				{
@@ -1723,6 +1747,27 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress &systemAddress, int MTUSi
 		lastBpsClear=time;
 	}
 
+	if (unreliableWithAckReceiptHistory.Size()>0)
+	{
+		i=0;
+		while (i < unreliableWithAckReceiptHistory.Size())
+		{
+			if (unreliableWithAckReceiptHistory[i].nextActionTime < time)
+			{
+				InternalPacket *ackReceipt = AllocateFromInternalPacketPool();
+				AllocInternalPacketData(ackReceipt, 5,  false, _FILE_AND_LINE_ );
+				ackReceipt->dataBitLength=BYTES_TO_BITS(5);
+				ackReceipt->data[0]=(MessageID)ID_SND_RECEIPT_LOSS;
+				memcpy(ackReceipt->data+sizeof(MessageID), &unreliableWithAckReceiptHistory[i].sendReceiptSerial, sizeof(uint32_t));
+				outputQueue.Push(ackReceipt, _FILE_AND_LINE_ );
+
+				// Remove, swap with last
+				unreliableWithAckReceiptHistory.RemoveAtIndex(i);
+			}
+			else
+				i++;
+		}
+	}
 
 	if (hasDataToSendOrResend==true)
 	{
@@ -1756,31 +1801,6 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress &systemAddress, int MTUSi
 
 					if ( internalPacket->nextActionTime < time )
 					{
-						// If this is unreliable, then it was just in this list for a receipt. Don't actually resend, and remove from the list
-						if (internalPacket->reliability==UNRELIABLE_WITH_ACK_RECEIPT
-						//	|| internalPacket->reliability==UNRELIABLE_SEQUENCED_WITH_ACK_RECEIPT
-							)
-						{
-							PopListHead(false);
-
-							InternalPacket *ackReceipt = AllocateFromInternalPacketPool();
-							AllocInternalPacketData(ackReceipt, 5,  false, _FILE_AND_LINE_ );
-							ackReceipt->dataBitLength=BYTES_TO_BITS(5);
-							ackReceipt->data[0]=(MessageID)ID_SND_RECEIPT_LOSS;
-							memcpy(ackReceipt->data+sizeof(MessageID), &internalPacket->sendReceiptSerial, sizeof(internalPacket->sendReceiptSerial));
-							outputQueue.Push(ackReceipt, _FILE_AND_LINE_ );
-
-							statistics.messagesInResendBuffer--;
-							statistics.bytesInResendBuffer-=BITS_TO_BYTES(internalPacket->dataBitLength);
-
-							ReleaseToInternalPacketPool( internalPacket );
-
-							resendBuffer[internalPacket->reliableMessageNumber & (uint32_t) RESEND_BUFFER_ARRAY_MASK] = 0;
-							
-
-							continue;
-						}
-
 						nextPacketBitLength = internalPacket->headerLength + internalPacket->dataBitLength;
 						if ( datagramSizeSoFar + nextPacketBitLength > GetMaxDatagramSizeExcludingMessageHeaderBits() )
 						{
@@ -1965,6 +1985,15 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress &systemAddress, int MTUSi
 						//		printf("post:%i ", unacknowledgedBytes);
 						sendReliableMessageNumberIndex++;
 					}
+					else if (internalPacket->reliability == UNRELIABLE_WITH_ACK_RECEIPT)
+					{
+						unreliableWithAckReceiptHistory.Push(UnreliableWithAckReceiptNode(
+							congestionManager.GetNextDatagramSequenceNumber() + packetsToSendThisUpdateDatagramBoundaries.Size(),
+							internalPacket->sendReceiptSerial,
+							congestionManager.GetRTOForRetransmission()+time
+							), _FILE_AND_LINE_);
+					}
+
 //					internalPacket->timesSent=1;
 					// If isReliable is false, the packet and its contents will be added to a list to be freed in ClearPacketsAndDatagrams
 					// However, the internalPacket structure will remain allocated and be in the resendBuffer list if it requires a receipt
@@ -2093,7 +2122,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress &systemAddress, int MTUSi
 				timeOfLastContinualSend=0;
 		}
 
-		ClearPacketsAndDatagrams(true);
+		ClearPacketsAndDatagrams();
 
 		// Any data waiting to send after attempting to send, then bandwidth is exceeded
 		bandwidthExceededStatistic=outgoingPacketBuffer.Size()>0;
@@ -2334,7 +2363,7 @@ unsigned ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSeque
 		totalUserDataBytesAcked+=(double) BITS_TO_BYTES(internalPacket->headerLength+internalPacket->dataBitLength);
 
 		// Return receipt if asked for
-		if (internalPacket->reliability>=UNRELIABLE_WITH_ACK_RECEIPT && 
+		if (internalPacket->reliability>=RELIABLE_WITH_ACK_RECEIPT && 
 			(internalPacket->splitPacketCount==0 || internalPacket->splitPacketIndex+1==internalPacket->splitPacketCount)
 			)
 		{
@@ -3358,7 +3387,7 @@ bool ReliabilityLayer::TagMostRecentPushAsSecondOfPacketPair(void)
 	return false;
 }
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::ClearPacketsAndDatagrams(bool keepInternalPacketIfNeedsAck)
+void ReliabilityLayer::ClearPacketsAndDatagrams(void)
 {
 	unsigned int i;
 	for (i=0; i < packetsToDeallocThisUpdate.Size(); i++)
@@ -3368,8 +3397,8 @@ void ReliabilityLayer::ClearPacketsAndDatagrams(bool keepInternalPacketIfNeedsAc
 		{
 			RemoveFromUnreliableLinkedList(packetsToSendThisUpdate[i]);
 			FreeInternalPacketData(packetsToSendThisUpdate[i], _FILE_AND_LINE_ );
-			if (keepInternalPacketIfNeedsAck==false || packetsToSendThisUpdate[i]->reliability<UNRELIABLE_WITH_ACK_RECEIPT)
-				ReleaseToInternalPacketPool( packetsToSendThisUpdate[i] );
+			// if (keepInternalPacketIfNeedsAck==false || packetsToSendThisUpdate[i]->reliability<RELIABLE_WITH_ACK_RECEIPT)
+			ReleaseToInternalPacketPool( packetsToSendThisUpdate[i] );
 		}
 	}
 	packetsToDeallocThisUpdate.Clear(true, _FILE_AND_LINE_);

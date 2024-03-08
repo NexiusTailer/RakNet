@@ -614,7 +614,7 @@ bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersi
 // 		}
 // 		else
 // 		{
-			address.addr4.sin_family=AF_INET4;
+			address.addr4.sin_family=AF_INET;
 			memcpy(&address.addr4, (struct sockaddr_in *)servinfo->ai_addr,sizeof(struct sockaddr_in));
 //		}
 	}

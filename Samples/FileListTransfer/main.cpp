@@ -81,12 +81,12 @@ public:
 // Sender progress notification
 class TestFileListProgress : public RakNet::FileListProgress
 {
-	virtual void OnFilePush(const char *fileName, unsigned int fileLengthBytes, unsigned int offset, unsigned int bytesBeingSent, bool done, RakNet::SystemAddress targetSystem)
+    virtual void OnFilePush(const char *fileName, unsigned int fileLengthBytes, unsigned int offset, unsigned int bytesBeingSent, bool done, RakNet::SystemAddress targetSystem, unsigned short setID)
 	{
 		printf("Sending %s bytes=%i offset=%i\n", fileName, bytesBeingSent, offset);
 	}
 
-	virtual void OnFilePushesComplete( RakNet::SystemAddress systemAddress )
+    virtual void OnFilePushesComplete( RakNet::SystemAddress systemAddress, unsigned short setID )
 	{
 		char str[32];
 		systemAddress.ToString(true, (char*) str);

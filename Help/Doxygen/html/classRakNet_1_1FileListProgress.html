@@ -61,11 +61,11 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1FileListProgress.html#f8ee3a3b95dc9eb4851af6055fb4f82b">OnFile</a> (FileList *fileList, char *dir, char *fileName, unsigned int fileSize)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called for each file, when that file begins processing. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1FileListProgress.html#30bf103971eaf0d0a8277bba43ec99b1">OnFilePush</a> (const char *fileName, unsigned int fileLengthBytes, unsigned int offset, unsigned int bytesBeingSent, bool done, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> targetSystem)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1FileListProgress.html#095e3b79e163c22c0b1ccc7e1e71c8b9">OnFilePush</a> (const char *fileName, unsigned int fileLengthBytes, unsigned int offset, unsigned int bytesBeingSent, bool done, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> targetSystem, unsigned short setId)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function is called when we are sending a file to a remote system.  <a href="#30bf103971eaf0d0a8277bba43ec99b1"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="22ab4334bca7dc4afb51c9ee0fcf9639"></a><!-- doxytag: member="RakNet::FileListProgress::OnFilePushesComplete" ref="22ab4334bca7dc4afb51c9ee0fcf9639" args="(SystemAddress systemAddress)" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1FileListProgress.html#22ab4334bca7dc4afb51c9ee0fcf9639">OnFilePushesComplete</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function is called when we are sending a file to a remote system.  <a href="#095e3b79e163c22c0b1ccc7e1e71c8b9"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c4856959e3d72933a287e5736935afc4"></a><!-- doxytag: member="RakNet::FileListProgress::OnFilePushesComplete" ref="c4856959e3d72933a287e5736935afc4" args="(SystemAddress systemAddress, unsigned short setId)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1FileListProgress.html#c4856959e3d72933a287e5736935afc4">OnFilePushesComplete</a> (<a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> systemAddress, unsigned short setId)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function is called when all files have been read and are being transferred to a remote system. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="496ab33afd5f48473d42b8095095a908"></a><!-- doxytag: member="RakNet::FileListProgress::OnSendAborted" ref="496ab33afd5f48473d42b8095095a908" args="(SystemAddress systemAddress)" -->
@@ -75,7 +75,7 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Callback interface set with FileList::SetCallback() in case you want progress notifications when FileList::AddFilesFromDirectory() is called. <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="30bf103971eaf0d0a8277bba43ec99b1"></a><!-- doxytag: member="RakNet::FileListProgress::OnFilePush" ref="30bf103971eaf0d0a8277bba43ec99b1" args="(const char *fileName, unsigned int fileLengthBytes, unsigned int offset, unsigned int bytesBeingSent, bool done, SystemAddress targetSystem)" -->
+<a class="anchor" name="095e3b79e163c22c0b1ccc7e1e71c8b9"></a><!-- doxytag: member="RakNet::FileListProgress::OnFilePush" ref="095e3b79e163c22c0b1ccc7e1e71c8b9" args="(const char *fileName, unsigned int fileLengthBytes, unsigned int offset, unsigned int bytesBeingSent, bool done, SystemAddress targetSystem, unsigned short setId)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -113,7 +113,13 @@ Callback interface set with FileList::SetCallback() in case you want progress no
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td>
-          <td class="paramname"> <em>targetSystem</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>targetSystem</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned short&nbsp;</td>
+          <td class="paramname"> <em>setId</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -143,7 +149,7 @@ This function is called when we are sending a file to a remote system.
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="FileList_8h.html">FileList.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Sep 15 10:19:50 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Nov 15 08:50:44 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -269,7 +269,7 @@ protected:
 	friend class Connection_RM3;
 };
 
-static const int RM3_NUM_OUTPUT_BITSTREAM_CHANNELS=8;
+static const int RM3_NUM_OUTPUT_BITSTREAM_CHANNELS=16;
 
 /// \ingroup REPLICA_MANAGER_GROUP3
 struct LastSerializationResultBS
@@ -633,6 +633,9 @@ enum RM3ConstructionState
 	
 	/// Don't do anything this tick. Will query again next tick
 	RM3CS_NO_ACTION,
+
+	/// Max enum
+	RM3CS_MAX,
 };
 
 /// If this object already exists for this system, should it be removed?
@@ -647,6 +650,9 @@ enum RM3DestructionState
 
 	/// Don't do anything this tick. Will query again next tick
 	RM3DS_NO_ACTION,
+
+	/// Max enum
+	RM3DS_MAX,
 };
 
 /// Return codes when constructing an object
@@ -687,6 +693,9 @@ enum RM3SerializationResult
 	/// Useful for objects that are downloaded, and never change again
 	/// Efficient
 	RM3SR_NEVER_SERIALIZE_FOR_THIS_CONNECTION,
+
+	/// Max enum
+	RM3SR_MAX,
 };
 
 /// First pass at topology to see if an object should be serialized
@@ -699,6 +708,8 @@ enum RM3QuerySerializationResult
 	RM3QSR_DO_NOT_CALL_SERIALIZE,
 	/// Never call Serialize() for this object and connection. This system will not serialize this object for this topology
 	RM3QSR_NEVER_CALL_SERIALIZE,
+	/// Max enum
+	RM3QSR_MAX,
 };
 
 /// \ingroup REPLICA_MANAGER_GROUP3
@@ -707,6 +718,7 @@ enum RM3ActionOnPopConnection
 	RM3AOPC_DO_NOTHING,
 	RM3AOPC_DELETE_REPLICA,
 	RM3AOPC_DELETE_REPLICA_AND_BROADCAST_DESTRUCTION,
+	RM3AOPC_MAX,
 };
 
 /// \brief Base class for your replicated objects for the ReplicaManager3 system.

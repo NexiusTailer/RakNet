@@ -53,18 +53,8 @@ public class TeamBalancer : PluginInterface2 {
   public TeamBalancer() : this(RakNetPINVOKE.new_TeamBalancer(), true) {
   }
 
-  public void SetHostGuid(RakNetGUID _hostGuid) {
-    RakNetPINVOKE.TeamBalancer_SetHostGuid(swigCPtr, RakNetGUID.getCPtr(_hostGuid));
-    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
-  }
-
-  public void SetTeamSizeLimits(RakNetListUnsignedShort _teamLimits) {
-    RakNetPINVOKE.TeamBalancer_SetTeamSizeLimits__SWIG_0(swigCPtr, RakNetListUnsignedShort.getCPtr(_teamLimits));
-    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
-  }
-
-  public void SetTeamSizeLimits(ushort[] values, int valuesLength) {
-    RakNetPINVOKE.TeamBalancer_SetTeamSizeLimits__SWIG_1(swigCPtr, values, valuesLength);
+  public void SetTeamSizeLimit(byte team, ushort limit) {
+    RakNetPINVOKE.TeamBalancer_SetTeamSizeLimit(swigCPtr, team, limit);
   }
 
   public void SetDefaultAssignmentAlgorithm(TeamBalancer.DefaultAssigmentAlgorithm daa) {
@@ -79,21 +69,20 @@ public class TeamBalancer : PluginInterface2 {
     RakNetPINVOKE.TeamBalancer_SetLockTeams(swigCPtr, arg0);
   }
 
-  public bool RequestSpecificTeam(byte desiredTeam) {
-    bool ret = RakNetPINVOKE.TeamBalancer_RequestSpecificTeam(swigCPtr, desiredTeam);
-    return ret;
+  public void RequestSpecificTeam(ulong memberId, byte desiredTeam) {
+    RakNetPINVOKE.TeamBalancer_RequestSpecificTeam(swigCPtr, memberId, desiredTeam);
   }
 
-  public void CancelRequestSpecificTeam() {
-    RakNetPINVOKE.TeamBalancer_CancelRequestSpecificTeam(swigCPtr);
+  public void CancelRequestSpecificTeam(ulong memberId) {
+    RakNetPINVOKE.TeamBalancer_CancelRequestSpecificTeam(swigCPtr, memberId);
   }
 
-  public void RequestAnyTeam() {
-    RakNetPINVOKE.TeamBalancer_RequestAnyTeam(swigCPtr);
+  public void RequestAnyTeam(ulong memberId) {
+    RakNetPINVOKE.TeamBalancer_RequestAnyTeam(swigCPtr, memberId);
   }
 
-  public byte GetMyTeam() {
-    byte ret = RakNetPINVOKE.TeamBalancer_GetMyTeam(swigCPtr);
+  public byte GetMyTeam(ulong memberId) {
+    byte ret = RakNetPINVOKE.TeamBalancer_GetMyTeam(swigCPtr, memberId);
     return ret;
   }
 

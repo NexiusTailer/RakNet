@@ -354,6 +354,17 @@ private:
 	DataStructures::Queue<DatagramHistoryNode> datagramHistory;
 	DataStructures::MemoryPool<MessageNumberNode> datagramHistoryMessagePool;
 
+	struct UnreliableWithAckReceiptNode
+	{
+		UnreliableWithAckReceiptNode() {}
+		UnreliableWithAckReceiptNode(DatagramSequenceNumberType _datagramNumber, uint32_t _sendReceiptSerial, RakNet::TimeUS _nextActionTime) :
+			datagramNumber(_datagramNumber), sendReceiptSerial(_sendReceiptSerial), nextActionTime(_nextActionTime)
+		{}
+		DatagramSequenceNumberType datagramNumber;
+		uint32_t sendReceiptSerial;
+		RakNet::TimeUS nextActionTime;
+	};
+	DataStructures::List<UnreliableWithAckReceiptNode> unreliableWithAckReceiptHistory;
 
 	void RemoveFromDatagramHistory(DatagramSequenceNumberType index);
 	MessageNumberNode* GetMessageNumberNodeByDatagramIndex(DatagramSequenceNumberType index, CCTimeType *timeSent);
@@ -524,7 +535,7 @@ private:
 	void PushPacket(CCTimeType time, InternalPacket *internalPacket, bool isReliable);
 	void PushDatagram(void);
 	bool TagMostRecentPushAsSecondOfPacketPair(void);
-	void ClearPacketsAndDatagrams(bool releaseToInternalPacketPoolIfNeedsAck);
+	void ClearPacketsAndDatagrams(void);
 	void MoveToListHead(InternalPacket *internalPacket);
 	void RemoveFromList(InternalPacket *internalPacket, bool modifyUnacknowledgedBytes);
 	void AddToListTail(InternalPacket *internalPacket, bool modifyUnacknowledgedBytes);

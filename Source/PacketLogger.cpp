@@ -314,6 +314,7 @@ const char* PacketLogger::BaseIDTOString(unsigned char Id)
 		"ID_NAT_CONNECT_AT_TIME",
 		"ID_NAT_GET_MOST_RECENT_PORT",
 		"ID_NAT_CLIENT_READY",
+		"ID_NAT_GROUP_PUNCHTHROUGH_FAILURE_NOTIFICATION",
 		"ID_NAT_TARGET_NOT_CONNECTED",
 		"ID_NAT_TARGET_UNRESPONSIVE",
 		"ID_NAT_CONNECTION_TO_TARGET_LOST",
@@ -379,7 +380,7 @@ const char* PacketLogger::BaseIDTOString(unsigned char Id)
 		"ID_RESERVED_7",
 		"ID_RESERVED_8",
 		"ID_RESERVED_9",
-		"ID_USER_PACKET_ENUM",	 
+		"ID_USER_PACKET_ENUM",
 	};
 
 	return (char*)IDTable[Id];

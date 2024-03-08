@@ -12,6 +12,7 @@
 #include "TeamBalancer.h"
 #include "Kbhit.h"
 #include "RakSleep.h"
+#include "RakNetTypes.h"
 
 static const int NUM_PEERS=4;
 RakNet::RakPeerInterface *rakPeer[NUM_PEERS];
@@ -20,6 +21,8 @@ RakNet::ConnectionGraph2 connectionGraphPlugin[NUM_PEERS];
 RakNet::TeamBalancer teamBalancerPlugin[NUM_PEERS];
 void GetTeams(int &team0, int &team1);
 void Wait(void);
+
+using namespace RakNet;
 
 int main(void)
 {
@@ -70,45 +73,40 @@ int main(void)
 	RakNet::RakNetGUID hostGuid = fullyConnectedMeshPlugin[0].GetHostSystem();
 	printf("Host is %s\n", hostGuid.ToString());
 
-	// Two teams of the same size
-	DataStructures::List<unsigned short> teamLimits;
-	teamLimits.Push(NUM_PEERS/2,_FILE_AND_LINE_);
-	teamLimits.Push(NUM_PEERS/2,_FILE_AND_LINE_);
-
 	unsigned int hostIndex;
 	for (peerIndex=0; peerIndex < NUM_PEERS; peerIndex++)
 	{
 		if (hostGuid==rakPeer[peerIndex]->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS))
 			hostIndex=peerIndex;
-		teamBalancerPlugin[peerIndex].SetHostGuid(hostGuid);
-		teamBalancerPlugin[peerIndex].SetTeamSizeLimits(teamLimits);
-		RakAssert(teamBalancerPlugin[peerIndex].GetMyTeam()==UNASSIGNED_TEAM_ID);
+		teamBalancerPlugin[peerIndex].SetTeamSizeLimit(0, NUM_PEERS/2);
+		teamBalancerPlugin[peerIndex].SetTeamSizeLimit(1, NUM_PEERS/2);
+		RakAssert(teamBalancerPlugin[peerIndex].GetMyTeam(UNASSIGNED_NETWORK_ID)==UNASSIGNED_TEAM_ID);
 	}
 
 	int team0,team1;
 	// system 0 requests team 0
-	teamBalancerPlugin[0].RequestSpecificTeam(0);
+	teamBalancerPlugin[0].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 0);
 	Wait();
 	GetTeams(team0,team1);
 	RakAssert(team0==1);
 	RakAssert(team1==0);
 
 	// system 1 requests team 0 - check both on team 0
-	teamBalancerPlugin[1].RequestSpecificTeam(0);
+	teamBalancerPlugin[1].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 0);
 	Wait();
 	GetTeams(team0,team1);
 	RakAssert(team0==2);
 	RakAssert(team1==0);
 
 	// system 1 requests team 1 - check evenly balanced
-	teamBalancerPlugin[1].RequestSpecificTeam(1);
+	teamBalancerPlugin[1].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 1);
 	Wait();
 	GetTeams(team0,team1);
 	RakAssert(team0==1);
 	RakAssert(team1==1);
 
 	// system 0 requests team 1 - check both on team 1
-	teamBalancerPlugin[0].RequestSpecificTeam(1);
+	teamBalancerPlugin[0].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 1);
 	Wait();
 	GetTeams(team0,team1);
 	RakAssert(team0==0);
@@ -122,30 +120,30 @@ int main(void)
 	RakAssert(team1==1);
 
 	// system 1 requests opposite team - check evenly balanced
-	teamBalancerPlugin[1].RequestSpecificTeam(! teamBalancerPlugin[1].GetMyTeam());
+	teamBalancerPlugin[1].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, ! teamBalancerPlugin[1].GetMyTeam(UNASSIGNED_NETWORK_ID));
 	Wait();
 	GetTeams(team0,team1);
 	RakAssert(team0==1);
 	RakAssert(team1==1);
-	RakNet::TeamId team1OldTeam = teamBalancerPlugin[1].GetMyTeam();
+	RakNet::TeamId team1OldTeam = teamBalancerPlugin[1].GetMyTeam(UNASSIGNED_NETWORK_ID);
 
 	// system 0 requests opposite team - check evenly balanced and swapped
-	teamBalancerPlugin[0].RequestSpecificTeam(! teamBalancerPlugin[0].GetMyTeam());
+	teamBalancerPlugin[0].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, ! teamBalancerPlugin[0].GetMyTeam(UNASSIGNED_NETWORK_ID));
 	Wait();
 	GetTeams(team0,team1);
 	RakAssert(team0==1);
 	RakAssert(team1==1);
-	RakAssert(teamBalancerPlugin[1].GetMyTeam()!=team1OldTeam);
+	RakAssert(teamBalancerPlugin[1].GetMyTeam(UNASSIGNED_NETWORK_ID)!=team1OldTeam);
 
 	// system 2 requests team 0 - check that two systems on team 0, one system on team 1
-	teamBalancerPlugin[2].RequestSpecificTeam(0);
+	teamBalancerPlugin[2].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 0);
 	Wait();
 	GetTeams(team0,team1);
 	RakAssert(team0==2);
 	RakAssert(team1==1);
 
 	// system 3 requests team 0 - check that two systems on team 0, two systems on team 1
-	teamBalancerPlugin[3].RequestSpecificTeam(0);
+	teamBalancerPlugin[3].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 0);
 	Wait();
 	GetTeams(team0,team1);
 	RakAssert(team0==2);
@@ -155,38 +153,26 @@ int main(void)
 	teamBalancerPlugin[hostIndex].SetForceEvenTeams(false);
 
 	// All systems set team 0, check same as before.
-	RakNet::TeamId t0=teamBalancerPlugin[0].GetMyTeam();
-	RakNet::TeamId t1=teamBalancerPlugin[1].GetMyTeam();
-	RakNet::TeamId t2=teamBalancerPlugin[2].GetMyTeam();
-	RakNet::TeamId t3=teamBalancerPlugin[3].GetMyTeam();
-	teamBalancerPlugin[0].RequestSpecificTeam(0);
-	teamBalancerPlugin[1].RequestSpecificTeam(0);
-	teamBalancerPlugin[2].RequestSpecificTeam(0);
-	teamBalancerPlugin[3].RequestSpecificTeam(0);
+	RakNet::TeamId t0=teamBalancerPlugin[0].GetMyTeam(UNASSIGNED_NETWORK_ID);
+	RakNet::TeamId t1=teamBalancerPlugin[1].GetMyTeam(UNASSIGNED_NETWORK_ID);
+	RakNet::TeamId t2=teamBalancerPlugin[2].GetMyTeam(UNASSIGNED_NETWORK_ID);
+	RakNet::TeamId t3=teamBalancerPlugin[3].GetMyTeam(UNASSIGNED_NETWORK_ID);
+	teamBalancerPlugin[0].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 0);
+	teamBalancerPlugin[1].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 0);
+	teamBalancerPlugin[2].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 0);
+	teamBalancerPlugin[3].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 0);
 	Wait();
-	RakAssert(t0==teamBalancerPlugin[0].GetMyTeam());
-	RakAssert(t1==teamBalancerPlugin[1].GetMyTeam());
-	RakAssert(t2==teamBalancerPlugin[2].GetMyTeam());
-	RakAssert(t3==teamBalancerPlugin[3].GetMyTeam());
+	RakAssert(t0==teamBalancerPlugin[0].GetMyTeam(UNASSIGNED_NETWORK_ID));
+	RakAssert(t1==teamBalancerPlugin[1].GetMyTeam(UNASSIGNED_NETWORK_ID));
+	RakAssert(t2==teamBalancerPlugin[2].GetMyTeam(UNASSIGNED_NETWORK_ID));
+	RakAssert(t3==teamBalancerPlugin[3].GetMyTeam(UNASSIGNED_NETWORK_ID));
 
-	// Test host migration
-	hostIndex=(hostIndex+1)%4;
-	hostGuid=rakPeer[hostIndex]->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS);
-	teamBalancerPlugin[0].SetHostGuid(hostGuid);
-	teamBalancerPlugin[1].SetHostGuid(hostGuid);
-	teamBalancerPlugin[2].SetHostGuid(hostGuid);
-	teamBalancerPlugin[3].SetHostGuid(hostGuid);
-	Wait();
-	RakAssert(t0==teamBalancerPlugin[0].GetMyTeam());
-	RakAssert(t1==teamBalancerPlugin[1].GetMyTeam());
-	RakAssert(t2==teamBalancerPlugin[2].GetMyTeam());
-	RakAssert(t3==teamBalancerPlugin[3].GetMyTeam());
 
 	// All systems unset their teams
-	teamBalancerPlugin[0].RequestSpecificTeam(UNASSIGNED_TEAM_ID);
-	teamBalancerPlugin[1].RequestSpecificTeam(UNASSIGNED_TEAM_ID);
-	teamBalancerPlugin[2].RequestSpecificTeam(UNASSIGNED_TEAM_ID);
-	teamBalancerPlugin[3].RequestSpecificTeam(UNASSIGNED_TEAM_ID);
+	teamBalancerPlugin[0].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, UNASSIGNED_TEAM_ID);
+	teamBalancerPlugin[1].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, UNASSIGNED_TEAM_ID);
+	teamBalancerPlugin[2].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, UNASSIGNED_TEAM_ID);
+	teamBalancerPlugin[3].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, UNASSIGNED_TEAM_ID);
 	Wait();
 	GetTeams(team0,team1);
 	RakAssert(team0==0);
@@ -194,21 +180,21 @@ int main(void)
 
 
 	// system 0 requests team 0 - check
-	teamBalancerPlugin[0].RequestSpecificTeam(0);
+	teamBalancerPlugin[0].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 0);
 	Wait();
 	GetTeams(team0,team1);
 	RakAssert(team0==1);
 	RakAssert(team1==0);
 
 	// system 0 requests team 1 - check
-	teamBalancerPlugin[0].RequestSpecificTeam(1);
+	teamBalancerPlugin[0].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 1);
 	Wait();
 	GetTeams(team0,team1);
 	RakAssert(team0==0);
 	RakAssert(team1==1);
 
 	// system 0 requests team 0 - check
-	teamBalancerPlugin[0].RequestSpecificTeam(0);
+	teamBalancerPlugin[0].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 0);
 	Wait();
 	GetTeams(team0,team1);
 	RakAssert(team0==1);
@@ -222,7 +208,7 @@ int main(void)
 	RakAssert(team1==0);
 
 	// system 1 requests team 0 - check evenly balanced
-	teamBalancerPlugin[1].RequestSpecificTeam(0);
+	teamBalancerPlugin[1].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 0);
 	Wait();
 	GetTeams(team0,team1);
 	RakAssert(team0==1);
@@ -232,7 +218,7 @@ int main(void)
 	teamBalancerPlugin[hostIndex].SetLockTeams(true);
 
 	// System 1 requests team 1 - would normally swap, but teams are locked
-	teamBalancerPlugin[0].RequestSpecificTeam(1);
+	teamBalancerPlugin[0].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 1);
 	Wait();
 
 	// Unset autobalance teams - check evenly balanced
@@ -242,8 +228,8 @@ int main(void)
 	RakAssert(team0==1);
 	RakAssert(team1==1);
 
-	t0=teamBalancerPlugin[0].GetMyTeam();
-	t1=teamBalancerPlugin[1].GetMyTeam();
+	t0=teamBalancerPlugin[0].GetMyTeam(UNASSIGNED_NETWORK_ID);
+	t1=teamBalancerPlugin[1].GetMyTeam(UNASSIGNED_NETWORK_ID);
 
 	// Unlock teams - check swapped
 	teamBalancerPlugin[hostIndex].SetLockTeams(false);
@@ -251,14 +237,14 @@ int main(void)
 	GetTeams(team0,team1);
 	RakAssert(team0==1);
 	RakAssert(team1==1);
-	RakAssert(t0!=teamBalancerPlugin[0].GetMyTeam());
-	RakAssert(t1!=teamBalancerPlugin[1].GetMyTeam());
+	RakAssert(t0!=teamBalancerPlugin[0].GetMyTeam(UNASSIGNED_NETWORK_ID));
+	RakAssert(t1!=teamBalancerPlugin[1].GetMyTeam(UNASSIGNED_NETWORK_ID));
 
 	// Lock teams
 	teamBalancerPlugin[hostIndex].SetLockTeams(true);
 
 	// system 0 requests team 0 - check evenly balanced
-	teamBalancerPlugin[0].RequestSpecificTeam(0);
+	teamBalancerPlugin[0].RequestSpecificTeam(UNASSIGNED_NETWORK_ID, 0);
 	Wait();
 	GetTeams(team0,team1);
 	RakAssert(team0==1);
@@ -285,9 +271,9 @@ void GetTeams(int &team0, int &team1)
 	int peerIndex;
 	for (peerIndex=0; peerIndex < NUM_PEERS; peerIndex++)
 	{
-		if (teamBalancerPlugin[peerIndex].GetMyTeam()==0)
+		if (teamBalancerPlugin[peerIndex].GetMyTeam(UNASSIGNED_NETWORK_ID)==0)
 			team0++;
-		else if (teamBalancerPlugin[peerIndex].GetMyTeam()==1)
+		else if (teamBalancerPlugin[peerIndex].GetMyTeam(UNASSIGNED_NETWORK_ID)==1)
 			team1++;
 	}
 }

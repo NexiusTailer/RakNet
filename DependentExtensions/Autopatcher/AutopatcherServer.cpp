@@ -681,7 +681,7 @@ void AutopatcherServer::PerThreadDestructor(void* factoryResult, void *context)
 	(void)context;
 	(void)factoryResult;
 }
-void AutopatcherServer::OnFilePushesComplete( SystemAddress systemAddress )
+void AutopatcherServer::OnFilePushesComplete( SystemAddress systemAddress, unsigned short setID )
 {
 	DecrementPatchingUserCount();
 	CallPatchCompleteCallback(systemAddress, AutopatcherServerLoadNotifier::PR_PATCHES_WERE_SENT);

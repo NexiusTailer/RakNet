@@ -403,7 +403,7 @@ public:
 	SystemAddress GetExternalID( const SystemAddress target ) const;
 
 	/// Return my own GUID
-	const RakNetGUID GetMyGUID(void);
+	const RakNetGUID GetMyGUID(void) const;
 
 	/// Return the address bound to a socket at the specified index
 	SystemAddress GetMyBoundAddress(const int socketIndex=0);

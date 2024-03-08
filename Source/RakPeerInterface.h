@@ -44,6 +44,7 @@ public:
 	/// \brief Starts the network threads, opens the listen port.
 	/// \details You must call this before calling Connect().
 	/// \pre On the PS3, call Startup() after Client_Login()
+	/// \pre On Android, add the necessary permission to your application's androidmanifest.xml: <uses-permission android:name="android.permission.INTERNET" />
 	/// Multiple calls while already active are ignored.  To call this function again with different settings, you must first call Shutdown().
 	/// \note Call SetMaximumIncomingConnections if you want to accept incoming connections
 	/// \param[in] maxConnections The maximum number of connections between this instance of RakPeer and another instance of RakPeer. Required so the network can preallocate and for thread safety. A pure client would set this to 1.  A pure server would set it to the number of allowed clients.- A hybrid would set it to the sum of both types of connections
@@ -371,7 +372,7 @@ public:
 	virtual SystemAddress GetExternalID( const SystemAddress target ) const=0;
 
 	/// Return my own GUID
-	virtual const RakNetGUID GetMyGUID(void)=0;
+	virtual const RakNetGUID GetMyGUID(void) const=0;
 
 	/// Return the address bound to a socket at the specified index
 	virtual SystemAddress GetMyBoundAddress(const int socketIndex=0)=0;

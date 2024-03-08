@@ -154,8 +154,8 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#94602ad7356b4a99f862f9793327c325">GetExternalID</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> target) const =0</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a3d096a442aae7d97f33a7c3223d4594"></a><!-- doxytag: member="RakNet::RakPeerInterface::GetMyGUID" ref="a3d096a442aae7d97f33a7c3223d4594" args="(void)=0" -->
-virtual const <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#a3d096a442aae7d97f33a7c3223d4594">GetMyGUID</a> (void)=0</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b89d6d78297265c282c22c029a285fa2"></a><!-- doxytag: member="RakNet::RakPeerInterface::GetMyGUID" ref="b89d6d78297265c282c22c029a285fa2" args="(void) const =0" -->
+virtual const <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#b89d6d78297265c282c22c029a285fa2">GetMyGUID</a> (void) const =0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Return my own GUID. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a6abdf47bc3e2e016ccd0171a05e125b"></a><!-- doxytag: member="RakNet::RakPeerInterface::GetMyBoundAddress" ref="a6abdf47bc3e2e016ccd0171a05e125b" args="(const int socketIndex=0)=0" -->
@@ -2709,7 +2709,8 @@ Does built-in NAt traversal <dl compact><dt><b>Parameters:</b></dt><dd>
 <p>
 Starts the network threads, opens the listen port. 
 <p>
-You must call this before calling <a class="el" href="classRakNet_1_1RakPeerInterface.html#451dd5d225277fe5806d3d700551fb76" title="Connect to the specified host (ip or domain name) and server port. Calling Connect...">Connect()</a>. <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>On the PS3, call <a class="el" href="classRakNet_1_1RakPeerInterface.html#3c8c414844a87707c28cdf35f41a5f00" title="Starts the network threads, opens the listen port.">Startup()</a> after Client_Login() Multiple calls while already active are ignored. To call this function again with different settings, you must first call <a class="el" href="classRakNet_1_1RakPeerInterface.html#4f4acefdc022555862fd386e31f9a22b" title="Connect to the specified network ID (Platform specific console function).">Shutdown()</a>. </dd></dl>
+You must call this before calling <a class="el" href="classRakNet_1_1RakPeerInterface.html#451dd5d225277fe5806d3d700551fb76" title="Connect to the specified host (ip or domain name) and server port. Calling Connect...">Connect()</a>. <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>On the PS3, call <a class="el" href="classRakNet_1_1RakPeerInterface.html#3c8c414844a87707c28cdf35f41a5f00" title="Starts the network threads, opens the listen port.">Startup()</a> after Client_Login() <p>
+On Android, add the necessary permission to your application's androidmanifest.xml: &lt;uses-permission android:name="android.permission.INTERNET" /&gt; Multiple calls while already active are ignored. To call this function again with different settings, you must first call <a class="el" href="classRakNet_1_1RakPeerInterface.html#4f4acefdc022555862fd386e31f9a22b" title="Connect to the specified network ID (Platform specific console function).">Shutdown()</a>. </dd></dl>
 <dl class="note" compact><dt><b>Note:</b></dt><dd>Call SetMaximumIncomingConnections if you want to accept incoming connections </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -2729,7 +2730,7 @@ You must call this before calling <a class="el" href="classRakNet_1_1RakPeerInte
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="RakPeerInterface_8h.html">RakPeerInterface.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Sep 15 10:19:50 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Nov 15 08:50:45 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

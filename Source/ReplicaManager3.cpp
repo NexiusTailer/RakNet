@@ -124,6 +124,10 @@ RakNet::Connection_RM3 * ReplicaManager3::PopConnection(DataStructures::DefaultI
 	connection->ClearDownloadGroup(rakPeerInterface);
 
 	RakNetGUID guid = connection->GetRakNetGUID();
+	// This might be wrong, I am relying on the variable creatingSystemGuid which is transmitted
+	// automatically from the first system to reference the object. However, if an object changes
+	// owners then it is not going to be returned here, and therefore QueryActionOnPopConnection()
+	// will not be called for the new owner.
 	GetReplicasCreatedByGuid(guid, replicaList);
 
 	for (index2=0; index2 < replicaList.GetSize(); index2++)
@@ -665,54 +669,51 @@ void ReplicaManager3::Update(void)
 		connectionList[index]->AutoConstructByQuery(this);
 	}
 
-	if (autoSerializeInterval>=0)
+	RakNet::Time time = RakNet::GetTimeMS();
+
+	if (time - lastAutoSerializeOccurance >= autoSerializeInterval)
 	{
-		RakNet::Time time = RakNet::GetTimeMS();
-
-		if (time - lastAutoSerializeOccurance >= autoSerializeInterval)
+		for (index=0; index < userReplicaList.GetSize(); index++)
 		{
-			for (index=0; index < userReplicaList.GetSize(); index++)
-			{
-				userReplicaList[index]->forceSendUntilNextUpdate=false;
-				userReplicaList[index]->OnUserReplicaPreSerializeTick();
-			}
-
-
-			DataStructures::DefaultIndexType index;
-			SerializeParameters sp;
-			sp.curTime=time;
-			Connection_RM3 *connection;
-			SendSerializeIfChangedResult ssicr;
-			sp.messageTimestamp=0;
-			for (int i=0; i < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; i++)
-				sp.pro[i]=defaultSendParameters;
-			index2=0;
-			for (index=0; index < connectionList.GetSize(); index++)
-			{
-				connection = connectionList[index];
-				sp.bitsWrittenSoFar=0;
-				index2=0;
-				while (index2 < connection->queryToSerializeReplicaList.GetSize())
-				{
-					sp.destinationConnection=connection;
-					sp.whenLastSerialized=connection->queryToSerializeReplicaList[index2]->replica->whenLastSerialized;
-					ssicr=connection->SendSerializeIfChanged(index2, &sp, GetRakPeerInterface(), GetWorldID(), this);
-					if (ssicr==SSICR_SENT_DATA)
-					{
-						connection->queryToSerializeReplicaList[index2]->replica->whenLastSerialized=time;
-						index2++;
-					}
-					else if (ssicr==SSICR_NEVER_SERIALIZE)
-					{
-						// Removed from the middle of the list
-					}
-					else
-						index2++;
-				}
-			}
-
-			lastAutoSerializeOccurance=time;
+			userReplicaList[index]->forceSendUntilNextUpdate=false;
+			userReplicaList[index]->OnUserReplicaPreSerializeTick();
 		}
+
+
+		DataStructures::DefaultIndexType index;
+		SerializeParameters sp;
+		sp.curTime=time;
+		Connection_RM3 *connection;
+		SendSerializeIfChangedResult ssicr;
+		sp.messageTimestamp=0;
+		for (int i=0; i < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; i++)
+			sp.pro[i]=defaultSendParameters;
+		index2=0;
+		for (index=0; index < connectionList.GetSize(); index++)
+		{
+			connection = connectionList[index];
+			sp.bitsWrittenSoFar=0;
+			index2=0;
+			while (index2 < connection->queryToSerializeReplicaList.GetSize())
+			{
+				sp.destinationConnection=connection;
+				sp.whenLastSerialized=connection->queryToSerializeReplicaList[index2]->replica->whenLastSerialized;
+				ssicr=connection->SendSerializeIfChanged(index2, &sp, GetRakPeerInterface(), GetWorldID(), this);
+				if (ssicr==SSICR_SENT_DATA)
+				{
+					connection->queryToSerializeReplicaList[index2]->replica->whenLastSerialized=time;
+					index2++;
+				}
+				else if (ssicr==SSICR_NEVER_SERIALIZE)
+				{
+					// Removed from the middle of the list
+				}
+				else
+					index2++;
+			}
+		}
+
+		lastAutoSerializeOccurance=time;
 	}
 }
 
@@ -821,7 +822,7 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 				// Network ID already in use
 				connection->OnDownloadExisting(existingReplica, this);
 
-                constructionTickStack.Push(0, _FILE_AND_LINE_);
+				constructionTickStack.Push(0, _FILE_AND_LINE_);
 				bsIn.SetReadOffset(streamEnd);
 				continue;
 			}
@@ -830,7 +831,7 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 			replica = connection->AllocReplica(&bsIn, this);
 			if (replica==0)
 			{
-                constructionTickStack.Push(0, _FILE_AND_LINE_);
+				constructionTickStack.Push(0, _FILE_AND_LINE_);
 				bsIn.SetReadOffset(streamEnd);
 				continue;
 			}

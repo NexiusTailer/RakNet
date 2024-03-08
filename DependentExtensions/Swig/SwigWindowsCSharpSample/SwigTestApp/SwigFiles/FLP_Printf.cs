@@ -61,8 +61,8 @@ public class FLP_Printf : FileListProgress {
     RakNetPINVOKE.FLP_Printf_OnDirectory(swigCPtr, FileList.getCPtr(fileList), dir, directoriesRemaining);
   }
 
-  public override void OnFilePushesComplete(SystemAddress systemAddress) {
-    RakNetPINVOKE.FLP_Printf_OnFilePushesComplete(swigCPtr, SystemAddress.getCPtr(systemAddress));
+  public override void OnFilePushesComplete(SystemAddress systemAddress, ushort setID) {
+    RakNetPINVOKE.FLP_Printf_OnFilePushesComplete(swigCPtr, SystemAddress.getCPtr(systemAddress), setID);
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 

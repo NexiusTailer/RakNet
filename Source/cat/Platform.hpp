@@ -30,6 +30,7 @@
 #define CAT_PLATFORM_HPP
 
 #include <cat/Config.hpp>
+#include <string.h>
 
 namespace cat {
 

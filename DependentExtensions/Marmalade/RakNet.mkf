@@ -43,7 +43,6 @@ files
 	DS_RangeList.h
 	DS_Table.h
 	DS_ThreadsafeAllocatingQueue.h
-	DS_ThreadsafePrimitives.h
 	DS_Tree.h
 	DS_WeightedGraph.h
 	DynDNS.h

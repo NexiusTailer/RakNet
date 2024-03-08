@@ -53,8 +53,54 @@
         <LI>Write to the BitStream in SerializeConstructionExisting() your one-time initialization data, and read it in DeserializeConstructionExisting(). This function is called if and only if QueryConstruction returns RM3CS_ALREADY_EXISTS_REMOTELY.
 		<LI>Write per-tick serialization data in Serialize(), and read it in Deserialize().
       </OL>
-    RM3CS_ALREADY_EXISTS_REMOTELY causes ReplicaManager3 to consider the door to exist on the other system, so when Serialize() is called updates will still be sent to that system. But the SerializeConstruction() call and object creation is skpped.
-    <p><strong>Methods of object serialization:</strong></p>
+    <p>RM3CS_ALREADY_EXISTS_REMOTELY causes ReplicaManager3 to consider the door to exist on the other system, so when Serialize() is called updates will still be sent to that system. But the SerializeConstruction() call and object creation is skpped. </p>
+    <p><strong>Combining with FullyConnectedMesh2:</strong></p>
+    <p>If you are using <a href="fullyconnectedmesh2.html">FullyConnectedMesh2</a> for host determination and ReplicaManager3 relies on this, then you have to delay adding participants until a host has been determined. Here is how to do so:</p>
+	<OL>
+    	<LI><span class="RakNetCode">replicaManager3-&gt;SetAutoManageConnections(false, [false or true, depends on your preference]);</span></LI>
+    	<LI><span class="RakNetCode">fullyConnectedMesh2-&gt;SetAutoparticipateConnections(false);</span> (optional)</LI>
+    	<LI>Start connections to all remote systems</LI>
+      	<LI>On ID_CONNECTION_REQUEST_ACCEPTED or ID_NEW_INCOMING_CONNECTION, execute:<br>
+          <span class="RakNetCode">fullyConnectedMesh2-&gt;AddParticipant(packet-&gt;guid);<br>
+      if (fullyConnectedMesh2-&gt;GetConnectedHost()!=UNASSIGNED_RAKNET_GUID)<br>
+      {
+      <br>
+      DataStructures::List&lt;RakNetGUID&gt; participantList;<br>
+      fullyConnectedMesh2-&gt;GetParticipantList(participantList);<br>
+      RM3AllocConnections(participantList);<br>
+}</span></LI>
+      	<LI>On ID_FCM2_NEW_HOST execute:<br>
+      	  <span class="RakNetCode">BitStream bsIn(packet-&gt;data, packet-&gt;length, false);<br>
+      	  bsIn.IgnoreBytes(sizeof(MessageID));<br>
+      	  RakNetGUID oldHost;<br>
+      	  bsIn.Read(oldHost);<br>
+      	  if (oldHost==UNASSIGNED_RAKNET_GUID)<br>
+      	  { <br>
+DataStructures::List&lt;RakNetGUID&gt; participantList;<br>
+fullyConnectedMesh2-&gt;GetParticipantList(participantList);<br>
+RM3AllocConnections(participantList); <br>
+}</span></LI>
+      	<LI><span class="RakNetCode">void RM3AllocConnections(DataStructures::List&lt;RakNetGUID&gt; &amp;participantList)<br>
+      	  {<br>
+      	  for (unsigned int i=0; i &lt; 
+      	  participantList.Size(); i++)<br>
+      	  {<br>
+      	  Connection_RM3 *connection =    	  replicaManager3-&gt;AllocConnection(rakPeer-&gt;GetSystemAddressFromGuid(participantList[i]), participantList[i]);<br>
+      	  if (replicaManager3-&gt;PushConnection(connection)==false)<br>
+      	  replicaManager3-&gt;DeallocConnection(connection);
+      	  <br>
+      	  }
+      	  <br>
+      	  }   	    </span></LI>
+     </OL>
+      <p><em>Explanation:</em></p>
+      <p>Line 1, the first parameter to Replicamanager3::SetAutoManageConnections() is set to false in order to disable ReplicaManager3 from automatically calling PushConnection(), because you want to delay systems from participating in Replicamanager3 until a host has been determined. The second parameter is up to you.</p>
+      <p>Line 2: If every system that connects to you is another game instance, you can leave SetAutoparticipantConnections() as the default to true, and do not need to call fullyConnectedMesh2-&gt;AddParticipant(packet-&gt;guid); later either. The reason this is here is in case you want to connect to a profiling tool or other non-game program.</p>
+      <p>Line 3: FullyConnectedMesh2 requires a fully connected mesh topology, so you need to connect to everyone else in the game instance. This can be done with a simple rakPeer-&gt;Connect() call, or you could have other systems such as <a href="natpunchthrough.html">NAT punchthrough</a> involved depending on your needs. The code here works with both everyone starting at the same time from a lobby, and with mid-game joins. See the manual page on <a href="connecting.html">connecting</a> for more information about this.</p>
+      <p>Line 4: Until a host has been determined, fullyConnectedMesh2-&gt;GetConnectedHost() will return UNASSIGNED_RAKNET_GUID. In that case, we delay replicaManager3-&gt;PushConnection() until ID_FCM2_NEW_HOST is returned. However, if a host is already known (for example, the game is already in progress), then the remote system is added immediately.</p>
+      <p>Line 5: Once the host is known for the first time, all connected systems can be added to ReplicaManager3. oldHost==UNASSIGNED_RAKNET_GUID means there was no prior host.</p>
+      <p>Line 6: A function to uniquely add connections to ReplicaManager3 given a list of remote RakNetGUIDs.</p>
+<p><strong>Methods of object serialization:</strong></p>
     <p><strong>Manual sends on dirty flags</strong><br>
       <em>Description</em>: When a variable changes, it's up to you to set some flag that the  variable has changed. The next Serialize() tick, you send all variables  with dirty flags set<br>
 <em>Pros</em>: fast, memory efficient<br>
@@ -201,6 +247,8 @@ VariableDeltaSerializer::SerializationContext serializationContext;<br>
 <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
 
   <p><A HREF="index.html">Index</A><BR>
+      <A HREF="connecting.html">Connecting</A><BR>
+      <A HREF="natpunchthrough.html">NAT punchthrough</A><BR>
       <A HREF="plugininterface.html">PluginInterface</A><BR>
       <A HREF="http://www.jenkinssoftware.com/raknet/manual/ReplicaManager3Video.htm">ReplicaManager3 Video</A><BR>
         <BR>

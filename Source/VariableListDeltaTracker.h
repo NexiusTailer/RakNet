@@ -116,7 +116,7 @@ public:
 		VariableLastValueNode(const unsigned char *data, int _byteLength);
 		~VariableLastValueNode();
 		char *lastData;
-		int byteLength;
+		unsigned int byteLength;
 		bool isDirty;
 	};
 

@@ -17,9 +17,7 @@
 #include <cstdio>
 #include <cstring>
 #include <stdlib.h>
-#ifdef _WIN32
 #include "Kbhit.h"
-#endif
 #include <stdio.h>
 #include <string.h>
 #include "Gets.h"

@@ -3399,14 +3399,8 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_delete_TeamBalancer")]
   public static extern void delete_TeamBalancer(HandleRef jarg1);
 
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_SetHostGuid")]
-  public static extern void TeamBalancer_SetHostGuid(HandleRef jarg1, HandleRef jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_SetTeamSizeLimits__SWIG_0")]
-  public static extern void TeamBalancer_SetTeamSizeLimits__SWIG_0(HandleRef jarg1, HandleRef jarg2);
-
-  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_SetTeamSizeLimits__SWIG_1")]
-  public static extern void TeamBalancer_SetTeamSizeLimits__SWIG_1(HandleRef jarg1, [In, Out, MarshalAs(UnmanagedType.LPArray)]ushort[] jarg2, int jarg3);
+  [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_SetTeamSizeLimit")]
+  public static extern void TeamBalancer_SetTeamSizeLimit(HandleRef jarg1, byte jarg2, ushort jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_SetDefaultAssignmentAlgorithm")]
   public static extern void TeamBalancer_SetDefaultAssignmentAlgorithm(HandleRef jarg1, int jarg2);
@@ -3418,16 +3412,16 @@ class RakNetPINVOKE {
   public static extern void TeamBalancer_SetLockTeams(HandleRef jarg1, bool jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_RequestSpecificTeam")]
-  public static extern bool TeamBalancer_RequestSpecificTeam(HandleRef jarg1, byte jarg2);
+  public static extern void TeamBalancer_RequestSpecificTeam(HandleRef jarg1, ulong jarg2, byte jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_CancelRequestSpecificTeam")]
-  public static extern void TeamBalancer_CancelRequestSpecificTeam(HandleRef jarg1);
+  public static extern void TeamBalancer_CancelRequestSpecificTeam(HandleRef jarg1, ulong jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_RequestAnyTeam")]
-  public static extern void TeamBalancer_RequestAnyTeam(HandleRef jarg1);
+  public static extern void TeamBalancer_RequestAnyTeam(HandleRef jarg1, ulong jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_GetMyTeam")]
-  public static extern byte TeamBalancer_GetMyTeam(HandleRef jarg1);
+  public static extern byte TeamBalancer_GetMyTeam(HandleRef jarg1, ulong jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_TeamBalancer_SetAllowHostMigration")]
   public static extern void TeamBalancer_SetAllowHostMigration(HandleRef jarg1, bool jarg2);
@@ -3904,10 +3898,10 @@ class RakNetPINVOKE {
   public static extern void FileListProgress_OnFile(HandleRef jarg1, HandleRef jarg2, string jarg3, string jarg4, uint jarg5);
 
   [DllImport("RakNet", EntryPoint="CSharp_FileListProgress_OnFilePush")]
-  public static extern void FileListProgress_OnFilePush(HandleRef jarg1, string jarg2, uint jarg3, uint jarg4, uint jarg5, bool jarg6, HandleRef jarg7);
+  public static extern void FileListProgress_OnFilePush(HandleRef jarg1, string jarg2, uint jarg3, uint jarg4, uint jarg5, bool jarg6, HandleRef jarg7, ushort jarg8);
 
   [DllImport("RakNet", EntryPoint="CSharp_FileListProgress_OnFilePushesComplete")]
-  public static extern void FileListProgress_OnFilePushesComplete(HandleRef jarg1, HandleRef jarg2);
+  public static extern void FileListProgress_OnFilePushesComplete(HandleRef jarg1, HandleRef jarg2, ushort jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_FileListProgress_OnSendAborted")]
   public static extern void FileListProgress_OnSendAborted(HandleRef jarg1, HandleRef jarg2);
@@ -3931,7 +3925,7 @@ class RakNetPINVOKE {
   public static extern void FLP_Printf_OnDirectory(HandleRef jarg1, HandleRef jarg2, string jarg3, uint jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_FLP_Printf_OnFilePushesComplete")]
-  public static extern void FLP_Printf_OnFilePushesComplete(HandleRef jarg1, HandleRef jarg2);
+  public static extern void FLP_Printf_OnFilePushesComplete(HandleRef jarg1, HandleRef jarg2, ushort jarg3);
 
   [DllImport("RakNet", EntryPoint="CSharp_FLP_Printf_OnSendAborted")]
   public static extern void FLP_Printf_OnSendAborted(HandleRef jarg1, HandleRef jarg2);
@@ -4191,8 +4185,14 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_DirectoryDeltaTransfer_AddUploadsFromSubdirectory")]
   public static extern void DirectoryDeltaTransfer_AddUploadsFromSubdirectory(HandleRef jarg1, string jarg2);
 
-  [DllImport("RakNet", EntryPoint="CSharp_DirectoryDeltaTransfer_DownloadFromSubdirectory")]
-  public static extern ushort DirectoryDeltaTransfer_DownloadFromSubdirectory(HandleRef jarg1, string jarg2, string jarg3, bool jarg4, HandleRef jarg5, HandleRef jarg6, int jarg7, char jarg8, HandleRef jarg9);
+  [DllImport("RakNet", EntryPoint="CSharp_DirectoryDeltaTransfer_DownloadFromSubdirectory__SWIG_0")]
+  public static extern ushort DirectoryDeltaTransfer_DownloadFromSubdirectory__SWIG_0(HandleRef jarg1, string jarg2, string jarg3, bool jarg4, HandleRef jarg5, HandleRef jarg6, int jarg7, char jarg8, HandleRef jarg9);
+
+  [DllImport("RakNet", EntryPoint="CSharp_DirectoryDeltaTransfer_DownloadFromSubdirectory__SWIG_1")]
+  public static extern ushort DirectoryDeltaTransfer_DownloadFromSubdirectory__SWIG_1(HandleRef jarg1, HandleRef jarg2, string jarg3, string jarg4, bool jarg5, HandleRef jarg6, HandleRef jarg7, int jarg8, char jarg9, HandleRef jarg10);
+
+  [DllImport("RakNet", EntryPoint="CSharp_DirectoryDeltaTransfer_GenerateHashes")]
+  public static extern void DirectoryDeltaTransfer_GenerateHashes(HandleRef jarg1, HandleRef jarg2, string jarg3, bool jarg4);
 
   [DllImport("RakNet", EntryPoint="CSharp_DirectoryDeltaTransfer_ClearUploads")]
   public static extern void DirectoryDeltaTransfer_ClearUploads(HandleRef jarg1);

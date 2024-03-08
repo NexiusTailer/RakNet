@@ -56,31 +56,25 @@ Inheritance diagram for RakNet::TeamBalancer:</div>
  }</td></tr>
 
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#c3067d253bf414d0d98686562bcc2bbf">SetHostGuid</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> _hostGuid)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#17f14e22f2d5c6ebd93c21ea59302b5c">SetTeamSizeLimit</a> (<a class="el" href="group__TEAM__BALANCER__GROUP.html#g79c7825649955f28135498fb3d9f6894">TeamId</a> team, unsigned short limit)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Define which system processes team communication and maintains the list of teams.  <a href="#c3067d253bf414d0d98686562bcc2bbf"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#e3a7c0c3da62b448bf862e2069bc66a9">SetTeamSizeLimits</a> (const <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; unsigned short &gt; &amp;_teamLimits)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the limit to the number of players on each team.  <a href="#e3a7c0c3da62b448bf862e2069bc66a9"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#96a94ba62efe91aeb5514c84f9cec62c">SetTeamSizeLimits</a> (unsigned short *values, int valuesLength)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the limit to the number of players on each team.  <a href="#96a94ba62efe91aeb5514c84f9cec62c"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the limit to the number of players on the specified team.  <a href="#17f14e22f2d5c6ebd93c21ea59302b5c"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#862120c7ee7e7b3d7ad42789ed523312">SetDefaultAssignmentAlgorithm</a> (<a class="el" href="classRakNet_1_1TeamBalancer.html#615ce461958441f9a0a559ba14610172">DefaultAssigmentAlgorithm</a> daa)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Determine how players' teams will be set when they call <a class="el" href="classRakNet_1_1TeamBalancer.html#fc3aa27708b6feee0e3e9d0da42cac5b">RequestAnyTeam()</a>.  <a href="#862120c7ee7e7b3d7ad42789ed523312"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Determine how players' teams will be set when they call <a class="el" href="classRakNet_1_1TeamBalancer.html#1b2f42019a0d7fd31598c9e043f818ed">RequestAnyTeam()</a>.  <a href="#862120c7ee7e7b3d7ad42789ed523312"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#add393c23c6ad1f596b79a8b2572e626">SetForceEvenTeams</a> (bool force)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">By default, teams can be unbalanced up to the team size limit defined by <a class="el" href="classRakNet_1_1TeamBalancer.html#e3a7c0c3da62b448bf862e2069bc66a9" title="Set the limit to the number of players on each team.">SetTeamSizeLimits()</a>.  <a href="#add393c23c6ad1f596b79a8b2572e626"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">By default, teams can be unbalanced up to the team size limit defined by SetTeamSizeLimits().  <a href="#add393c23c6ad1f596b79a8b2572e626"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#156c96e497944274568aeca81e892f51">SetLockTeams</a> (bool lock)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">If set, calls to <a class="el" href="classRakNet_1_1TeamBalancer.html#bc8d38a32dafb6b6b3b7889a08956042">RequestSpecificTeam()</a> and <a class="el" href="classRakNet_1_1TeamBalancer.html#fc3aa27708b6feee0e3e9d0da42cac5b">RequestAnyTeam()</a> will return the team you are currently on.  <a href="#156c96e497944274568aeca81e892f51"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#bc8d38a32dafb6b6b3b7889a08956042">RequestSpecificTeam</a> (<a class="el" href="group__TEAM__BALANCER__GROUP.html#g79c7825649955f28135498fb3d9f6894">TeamId</a> desiredTeam)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">If set, calls to <a class="el" href="classRakNet_1_1TeamBalancer.html#7f8b6ff520c365a18903c7e66b7146a8">RequestSpecificTeam()</a> and <a class="el" href="classRakNet_1_1TeamBalancer.html#1b2f42019a0d7fd31598c9e043f818ed">RequestAnyTeam()</a> will return the team you are currently on.  <a href="#156c96e497944274568aeca81e892f51"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#7f8b6ff520c365a18903c7e66b7146a8">RequestSpecificTeam</a> (NetworkID memberId, <a class="el" href="group__TEAM__BALANCER__GROUP.html#g79c7825649955f28135498fb3d9f6894">TeamId</a> desiredTeam)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#f1b6ea4317c48bcb936be1c113bd2fa5">CancelRequestSpecificTeam</a> (void)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#03f15610ca6e59eacd83037908480e2b">CancelRequestSpecificTeam</a> (NetworkID memberId)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#fc3aa27708b6feee0e3e9d0da42cac5b">RequestAnyTeam</a> (void)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#1b2f42019a0d7fd31598c9e043f818ed">RequestAnyTeam</a> (NetworkID memberId)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="group__TEAM__BALANCER__GROUP.html#g79c7825649955f28135498fb3d9f6894">TeamId</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#754786e3f5f946a7bb54dbc63bd59519">GetMyTeam</a> (void) const </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="group__TEAM__BALANCER__GROUP.html#g79c7825649955f28135498fb3d9f6894">TeamId</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#fd1a578737b825716c648f791859676d">GetMyTeam</a> (NetworkID memberId) const </td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#b3432bc2613e4a6cf54a77b5ae09ef80">SetAllowHostMigration</a> (bool allow)</td></tr>
 
@@ -89,6 +83,10 @@ Inheritance diagram for RakNet::TeamBalancer:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#62bd3dd9ccf001df5627664b2c134cf5">OnClosedConnection</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="95eadc29d0574cd4cf35de9d072fed23"></a><!-- doxytag: member="RakNet::TeamBalancer::OnAttach" ref="95eadc29d0574cd4cf35de9d072fed23" args="(void)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1TeamBalancer.html#95eadc29d0574cd4cf35de9d072fed23">OnAttach</a> (void)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the interface is attached. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Set and network team selection (supports peer to peer or client/server). 
@@ -119,15 +117,15 @@ Join the team with the lowest index that has open slots. </td></tr>
 </div>
 </div><p>
 <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="f1b6ea4317c48bcb936be1c113bd2fa5"></a><!-- doxytag: member="RakNet::TeamBalancer::CancelRequestSpecificTeam" ref="f1b6ea4317c48bcb936be1c113bd2fa5" args="(void)" -->
+<a class="anchor" name="03f15610ca6e59eacd83037908480e2b"></a><!-- doxytag: member="RakNet::TeamBalancer::CancelRequestSpecificTeam" ref="03f15610ca6e59eacd83037908480e2b" args="(NetworkID memberId)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void RakNet::TeamBalancer::CancelRequestSpecificTeam           </td>
           <td>(</td>
-          <td class="paramtype">void&nbsp;</td>
-          <td class="paramname">          </td>
+          <td class="paramtype">NetworkID&nbsp;</td>
+          <td class="paramname"> <em>memberId</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td></td>
         </tr>
@@ -136,19 +134,24 @@ Join the team with the lowest index that has open slots. </td></tr>
 <div class="memdoc">
 
 <p>
-If ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING is returned after a call to <a class="el" href="classRakNet_1_1TeamBalancer.html#bc8d38a32dafb6b6b3b7889a08956042">RequestSpecificTeam()</a>, the request will stay in memory on the host and execute when available, or until the teams become locked. You can cancel the request by calling <a class="el" href="classRakNet_1_1TeamBalancer.html#f1b6ea4317c48bcb936be1c113bd2fa5">CancelRequestSpecificTeam()</a>, in which case you will stay on your existing team. <dl class="note" compact><dt><b>Note:</b></dt><dd>Due to latency, even after calling <a class="el" href="classRakNet_1_1TeamBalancer.html#f1b6ea4317c48bcb936be1c113bd2fa5">CancelRequestSpecificTeam()</a> you may still get ID_TEAM_BALANCER_SET_TEAM if the packet was already in transmission. </dd></dl>
+If ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING is returned after a call to <a class="el" href="classRakNet_1_1TeamBalancer.html#7f8b6ff520c365a18903c7e66b7146a8">RequestSpecificTeam()</a>, the request will stay in memory on the host and execute when available, or until the teams become locked. You can cancel the request by calling <a class="el" href="classRakNet_1_1TeamBalancer.html#03f15610ca6e59eacd83037908480e2b">CancelRequestSpecificTeam()</a>, in which case you will stay on your existing team. <dl class="note" compact><dt><b>Note:</b></dt><dd>Due to latency, even after calling <a class="el" href="classRakNet_1_1TeamBalancer.html#03f15610ca6e59eacd83037908480e2b">CancelRequestSpecificTeam()</a> you may still get ID_TEAM_BALANCER_SET_TEAM if the packet was already in transmission. </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>memberId</em>&nbsp;</td><td>If there is more than one player per computer, this number identifies that player. Use any consistent value, such as UNASSINGED_NETWORK_ID if there is only one player. </td></tr>
+  </table>
+</dl>
 
 </div>
 </div><p>
-<a class="anchor" name="754786e3f5f946a7bb54dbc63bd59519"></a><!-- doxytag: member="RakNet::TeamBalancer::GetMyTeam" ref="754786e3f5f946a7bb54dbc63bd59519" args="(void) const " -->
+<a class="anchor" name="fd1a578737b825716c648f791859676d"></a><!-- doxytag: member="RakNet::TeamBalancer::GetMyTeam" ref="fd1a578737b825716c648f791859676d" args="(NetworkID memberId) const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="group__TEAM__BALANCER__GROUP.html#g79c7825649955f28135498fb3d9f6894">TeamId</a> RakNet::TeamBalancer::GetMyTeam           </td>
           <td>(</td>
-          <td class="paramtype">void&nbsp;</td>
-          <td class="paramname">          </td>
+          <td class="paramtype">NetworkID&nbsp;</td>
+          <td class="paramname"> <em>memberId</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td> const</td>
         </tr>
@@ -157,8 +160,13 @@ If ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING is returned after a call to <a
 <div class="memdoc">
 
 <p>
-Returns your team. As your team changes, you are notified through the ID_TEAM_BALANCER_TEAM_ASSIGNED packet in byte 1. Returns UNASSIGNED_TEAM_ID initially <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>For this to return anything other than UNASSIGNED_TEAM_ID, connect to a properly initialized host and <a class="el" href="classRakNet_1_1TeamBalancer.html#bc8d38a32dafb6b6b3b7889a08956042">RequestSpecificTeam()</a> or <a class="el" href="classRakNet_1_1TeamBalancer.html#fc3aa27708b6feee0e3e9d0da42cac5b">RequestAnyTeam()</a> first </dd></dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>UNASSIGNED_TEAM_ID for no team. Otherwise, the index should range from 0 to one less than the size of the list passed to <a class="el" href="classRakNet_1_1TeamBalancer.html#e3a7c0c3da62b448bf862e2069bc66a9" title="Set the limit to the number of players on each team.">SetTeamSizeLimits()</a> on the host </dd></dl>
+Returns your team. As your team changes, you are notified through the ID_TEAM_BALANCER_TEAM_ASSIGNED packet in byte 1. Returns UNASSIGNED_TEAM_ID initially <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>For this to return anything other than UNASSIGNED_TEAM_ID, connect to a properly initialized host and <a class="el" href="classRakNet_1_1TeamBalancer.html#7f8b6ff520c365a18903c7e66b7146a8">RequestSpecificTeam()</a> or <a class="el" href="classRakNet_1_1TeamBalancer.html#1b2f42019a0d7fd31598c9e043f818ed">RequestAnyTeam()</a> first </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>memberId</em>&nbsp;</td><td>If there is more than one player per computer, this number identifies that player. Use any consistent value, such as UNASSINGED_NETWORK_ID if there is only one player. </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>UNASSIGNED_TEAM_ID for no team. Otherwise, the index should range from 0 to one less than the size of the list passed to SetTeamSizeLimits() on the host </dd></dl>
 
 </div>
 </div><p>
@@ -234,15 +242,15 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 
 </div>
 </div><p>
-<a class="anchor" name="fc3aa27708b6feee0e3e9d0da42cac5b"></a><!-- doxytag: member="RakNet::TeamBalancer::RequestAnyTeam" ref="fc3aa27708b6feee0e3e9d0da42cac5b" args="(void)" -->
+<a class="anchor" name="1b2f42019a0d7fd31598c9e043f818ed"></a><!-- doxytag: member="RakNet::TeamBalancer::RequestAnyTeam" ref="1b2f42019a0d7fd31598c9e043f818ed" args="(NetworkID memberId)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void RakNet::TeamBalancer::RequestAnyTeam           </td>
           <td>(</td>
-          <td class="paramtype">void&nbsp;</td>
-          <td class="paramname">          </td>
+          <td class="paramtype">NetworkID&nbsp;</td>
+          <td class="paramname"> <em>memberId</em>          </td>
           <td>&nbsp;)&nbsp;</td>
           <td></td>
         </tr>
@@ -251,34 +259,48 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Allow host to pick your team, based on whatever algorithm it uses for default team assignments. This only has an effect if you are not currently on a team (<a class="el" href="classRakNet_1_1TeamBalancer.html#754786e3f5f946a7bb54dbc63bd59519">GetMyTeam()</a> returns UNASSIGNED_TEAM_ID) <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Call <a class="el" href="classRakNet_1_1TeamBalancer.html#e3a7c0c3da62b448bf862e2069bc66a9" title="Set the limit to the number of players on each team.">SetTeamSizeLimits()</a> on the host and call <a class="el" href="classRakNet_1_1TeamBalancer.html#c3067d253bf414d0d98686562bcc2bbf" title="Define which system processes team communication and maintains the list of teams...">SetHostGuid()</a> on this system </dd></dl>
+Allow host to pick your team, based on whatever algorithm it uses for default team assignments. This only has an effect if you are not currently on a team (<a class="el" href="classRakNet_1_1TeamBalancer.html#fd1a578737b825716c648f791859676d">GetMyTeam()</a> returns UNASSIGNED_TEAM_ID) <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Call SetTeamSizeLimits() on the host and call SetHostGuid() on this system </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>memberId</em>&nbsp;</td><td>If there is more than one player per computer, this number identifies that player. Use any consistent value, such as UNASSINGED_NETWORK_ID if there is only one player. </td></tr>
+  </table>
+</dl>
 
 </div>
 </div><p>
-<a class="anchor" name="bc8d38a32dafb6b6b3b7889a08956042"></a><!-- doxytag: member="RakNet::TeamBalancer::RequestSpecificTeam" ref="bc8d38a32dafb6b6b3b7889a08956042" args="(TeamId desiredTeam)" -->
+<a class="anchor" name="7f8b6ff520c365a18903c7e66b7146a8"></a><!-- doxytag: member="RakNet::TeamBalancer::RequestSpecificTeam" ref="7f8b6ff520c365a18903c7e66b7146a8" args="(NetworkID memberId, TeamId desiredTeam)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool RakNet::TeamBalancer::RequestSpecificTeam           </td>
+          <td class="memname">void RakNet::TeamBalancer::RequestSpecificTeam           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="group__TEAM__BALANCER__GROUP.html#g79c7825649955f28135498fb3d9f6894">TeamId</a>&nbsp;</td>
-          <td class="paramname"> <em>desiredTeam</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
+          <td class="paramtype">NetworkID&nbsp;</td>
+          <td class="paramname"> <em>memberId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="group__TEAM__BALANCER__GROUP.html#g79c7825649955f28135498fb3d9f6894">TeamId</a>&nbsp;</td>
+          <td class="paramname"> <em>desiredTeam</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-Set your requested team. UNASSIGNED_TEAM_ID means no team. After enough time for network communication, ID_TEAM_BALANCER_SET_TEAM will be returned with your current team, or If team switch is not possible, ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING or ID_TEAM_BALANCER_TEAMS_LOCKED will be returned. In the case of ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING the request will stay in memory. ID_TEAM_BALANCER_SET_TEAM will be returned when someone on the desired team leaves or wants to switch to your team. If SetLockTeams(true) is called while you have a request pending, you will get ID_TEAM_BALANCER_TEAMS_LOCKED <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Call <a class="el" href="classRakNet_1_1TeamBalancer.html#e3a7c0c3da62b448bf862e2069bc66a9" title="Set the limit to the number of players on each team.">SetTeamSizeLimits()</a> on the host and call <a class="el" href="classRakNet_1_1TeamBalancer.html#c3067d253bf414d0d98686562bcc2bbf" title="Define which system processes team communication and maintains the list of teams...">SetHostGuid()</a> on this system. If the host is not running the <a class="el" href="classRakNet_1_1TeamBalancer.html" title="Set and network team selection (supports peer to peer or client/server).">TeamBalancer</a> plugin or did not have <a class="el" href="classRakNet_1_1TeamBalancer.html#e3a7c0c3da62b448bf862e2069bc66a9" title="Set the limit to the number of players on each team.">SetTeamSizeLimits()</a> called, then you will not get any response. </dd></dl>
+Set your requested team. UNASSIGNED_TEAM_ID means no team. After enough time for network communication, ID_TEAM_BALANCER_SET_TEAM will be returned with your current team, or If team switch is not possible, ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING or ID_TEAM_BALANCER_TEAMS_LOCKED will be returned. In the case of ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING the request will stay in memory. ID_TEAM_BALANCER_SET_TEAM will be returned when someone on the desired team leaves or wants to switch to your team. If SetLockTeams(true) is called while you have a request pending, you will get ID_TEAM_BALANCER_TEAMS_LOCKED <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>Call SetTeamSizeLimits() on the host and call SetHostGuid() on this system. If the host is not running the <a class="el" href="classRakNet_1_1TeamBalancer.html" title="Set and network team selection (supports peer to peer or client/server).">TeamBalancer</a> plugin or did not have SetTeamSizeLimits() called, then you will not get any response. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>desiredTeam</em>&nbsp;</td><td>An index representing your team number. The index should range from 0 to one less than the size of the list passed to <a class="el" href="classRakNet_1_1TeamBalancer.html#e3a7c0c3da62b448bf862e2069bc66a9" title="Set the limit to the number of players on each team.">SetTeamSizeLimits()</a> on the host. You can also pass UNASSIGNED_TEAM_ID to not be on any team (such as if spectating) </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>memberId</em>&nbsp;</td><td>If there is more than one player per computer, this number identifies that player. Use any consistent value, such as UNASSINGED_NETWORK_ID if there is only one player. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>desiredTeam</em>&nbsp;</td><td>An index representing your team number. The index should range from 0 to one less than the size of the list passed to SetTeamSizeLimits() on the host. You can also pass UNASSIGNED_TEAM_ID to not be on any team (such as if spectating) </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>True on request sent, false on <a class="el" href="classRakNet_1_1TeamBalancer.html#c3067d253bf414d0d98686562bcc2bbf" title="Define which system processes team communication and maintains the list of teams...">SetHostGuid()</a> was not called. </dd></dl>
 
 </div>
 </div><p>
@@ -319,7 +341,7 @@ Allow systems to change the host If true, this is a security hole, but needed fo
 <div class="memdoc">
 
 <p>
-Determine how players' teams will be set when they call <a class="el" href="classRakNet_1_1TeamBalancer.html#fc3aa27708b6feee0e3e9d0da42cac5b">RequestAnyTeam()</a>. 
+Determine how players' teams will be set when they call <a class="el" href="classRakNet_1_1TeamBalancer.html#1b2f42019a0d7fd31598c9e043f818ed">RequestAnyTeam()</a>. 
 <p>
 Based on the specified enumeration, a player will join a team automatically Defaults to SMALLEST_TEAM This function is only used by the host <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -346,40 +368,12 @@ Based on the specified enumeration, a player will join a team automatically Defa
 <div class="memdoc">
 
 <p>
-By default, teams can be unbalanced up to the team size limit defined by <a class="el" href="classRakNet_1_1TeamBalancer.html#e3a7c0c3da62b448bf862e2069bc66a9" title="Set the limit to the number of players on each team.">SetTeamSizeLimits()</a>. 
+By default, teams can be unbalanced up to the team size limit defined by SetTeamSizeLimits(). 
 <p>
 If SetForceEvenTeams(true) is called on the host, then teams cannot be unbalanced by more than 1 player If teams are uneven at the time that SetForceEvenTeams(true) is called, players at randomly will be switched, and will be notified of ID_TEAM_BALANCER_TEAM_ASSIGNED If players disconnect from the host such that teams would not be even, and teams are not locked, then a player from the largest team is randomly moved to even the teams. Defaults to false <dl class="note" compact><dt><b>Note:</b></dt><dd>SetLockTeams(true) takes priority over <a class="el" href="classRakNet_1_1TeamBalancer.html#add393c23c6ad1f596b79a8b2572e626" title="By default, teams can be unbalanced up to the team size limit defined by SetTeamSizeLimits()...">SetForceEvenTeams()</a>, so if teams are currently locked, this function will have no effect until teams become unlocked. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>force</em>&nbsp;</td><td>True to force even teams. False to allow teams to not be evenly matched </td></tr>
-  </table>
-</dl>
-
-</div>
-</div><p>
-<a class="anchor" name="c3067d253bf414d0d98686562bcc2bbf"></a><!-- doxytag: member="RakNet::TeamBalancer::SetHostGuid" ref="c3067d253bf414d0d98686562bcc2bbf" args="(RakNetGUID _hostGuid)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void RakNet::TeamBalancer::SetHostGuid           </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td>
-          <td class="paramname"> <em>_hostGuid</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Define which system processes team communication and maintains the list of teams. 
-<p>
-One system is responsible for maintaining the team list and determining which system is on which team. For a client/server system, this would be the server. For a peer to peer system, this would be one of the peers. If using <a class="el" href="classRakNet_1_1FullyConnectedMesh2.html" title="Fully connected mesh plugin, revision 2.">FullyConnectedMesh2</a>, this would be called with the value returned by <a class="el" href="classRakNet_1_1FullyConnectedMesh2.html#b45a7bcb5f76db83b3289bda7bdd082a">FullyConnectedMesh2::GetHostSystem()</a>. Update when you get ID_FCM2_INFORM_FCMGUID <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="classRakNet_1_1TeamBalancer.html#b3432bc2613e4a6cf54a77b5ae09ef80">SetAllowHostMigration()</a> </dd></dl>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>_hostGuid</em>&nbsp;</td><td>One system we are connected to that will resolve team assignments. </td></tr>
   </table>
 </dl>
 
@@ -402,7 +396,7 @@ One system is responsible for maintaining the team list and determining which sy
 <div class="memdoc">
 
 <p>
-If set, calls to <a class="el" href="classRakNet_1_1TeamBalancer.html#bc8d38a32dafb6b6b3b7889a08956042">RequestSpecificTeam()</a> and <a class="el" href="classRakNet_1_1TeamBalancer.html#fc3aa27708b6feee0e3e9d0da42cac5b">RequestAnyTeam()</a> will return the team you are currently on. 
+If set, calls to <a class="el" href="classRakNet_1_1TeamBalancer.html#7f8b6ff520c365a18903c7e66b7146a8">RequestSpecificTeam()</a> and <a class="el" href="classRakNet_1_1TeamBalancer.html#1b2f42019a0d7fd31598c9e043f818ed">RequestAnyTeam()</a> will return the team you are currently on. 
 <p>
 However, if those functions are called and you do not have a team, then you will be assigned to a default team according to <a class="el" href="classRakNet_1_1TeamBalancer.html#862120c7ee7e7b3d7ad42789ed523312" title="Determine how players&#39; teams will be set when they call RequestAnyTeam().">SetDefaultAssignmentAlgorithm()</a> and possibly SetForceEvenTeams(true) If <em>lock</em> is false, and <a class="el" href="classRakNet_1_1TeamBalancer.html#add393c23c6ad1f596b79a8b2572e626" title="By default, teams can be unbalanced up to the team size limit defined by SetTeamSizeLimits()...">SetForceEvenTeams()</a> was called with <em>force</em> as true, and teams are currently uneven, they will be made even, and those players randomly moved will get ID_TEAM_BALANCER_TEAM_ASSIGNED Defaults to false <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -412,21 +406,21 @@ However, if those functions are called and you do not have a team, then you will
 
 </div>
 </div><p>
-<a class="anchor" name="96a94ba62efe91aeb5514c84f9cec62c"></a><!-- doxytag: member="RakNet::TeamBalancer::SetTeamSizeLimits" ref="96a94ba62efe91aeb5514c84f9cec62c" args="(unsigned short *values, int valuesLength)" -->
+<a class="anchor" name="17f14e22f2d5c6ebd93c21ea59302b5c"></a><!-- doxytag: member="RakNet::TeamBalancer::SetTeamSizeLimit" ref="17f14e22f2d5c6ebd93c21ea59302b5c" args="(TeamId team, unsigned short limit)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void RakNet::TeamBalancer::SetTeamSizeLimits           </td>
+          <td class="memname">void RakNet::TeamBalancer::SetTeamSizeLimit           </td>
           <td>(</td>
-          <td class="paramtype">unsigned short *&nbsp;</td>
-          <td class="paramname"> <em>values</em>, </td>
+          <td class="paramtype"><a class="el" href="group__TEAM__BALANCER__GROUP.html#g79c7825649955f28135498fb3d9f6894">TeamId</a>&nbsp;</td>
+          <td class="paramname"> <em>team</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&nbsp;</td>
-          <td class="paramname"> <em>valuesLength</em></td><td>&nbsp;</td>
+          <td class="paramtype">unsigned short&nbsp;</td>
+          <td class="paramname"> <em>limit</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -438,39 +432,12 @@ However, if those functions are called and you do not have a team, then you will
 <div class="memdoc">
 
 <p>
-Set the limit to the number of players on each team. 
+Set the limit to the number of players on the specified team. 
 <p>
-<a class="el" href="classRakNet_1_1TeamBalancer.html#e3a7c0c3da62b448bf862e2069bc66a9" title="Set the limit to the number of players on each team.">SetTeamSizeLimits()</a> must be called on the host, so the host can enforce the maximum number of players on each team. <a class="el" href="classRakNet_1_1TeamBalancer.html#e3a7c0c3da62b448bf862e2069bc66a9" title="Set the limit to the number of players on each team.">SetTeamSizeLimits()</a> can be called on all systems if desired - for example, in a P2P environment you may wish to call it on all systems in advanced in case you become host. Calling this function when teams have already been created does not affect existing teams. <dl compact><dt><b>Parameters:</b></dt><dd>
+<a class="el" href="classRakNet_1_1TeamBalancer.html#17f14e22f2d5c6ebd93c21ea59302b5c" title="Set the limit to the number of players on the specified team.">SetTeamSizeLimit()</a> must be called on the host, so the host can enforce the maximum number of players on each team. <a class="el" href="classRakNet_1_1TeamBalancer.html#17f14e22f2d5c6ebd93c21ea59302b5c" title="Set the limit to the number of players on the specified team.">SetTeamSizeLimit()</a> can be called on all systems if desired - for example, in a P2P environment you may wish to call it on all systems in advanced in case you become host. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>values</em>&nbsp;</td><td>The maximum number of people per team, by index. For example, a list of size 3 with values 1,2,3 would allow 1 person on team 0, 2 people on team 1, adn 3 people on team 2. </td></tr>
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>valuesLength</em>&nbsp;</td><td>Length of the values array </td></tr>
-  </table>
-</dl>
-
-</div>
-</div><p>
-<a class="anchor" name="e3a7c0c3da62b448bf862e2069bc66a9"></a><!-- doxytag: member="RakNet::TeamBalancer::SetTeamSizeLimits" ref="e3a7c0c3da62b448bf862e2069bc66a9" args="(const DataStructures::List&lt; unsigned short &gt; &amp;_teamLimits)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void RakNet::TeamBalancer::SetTeamSizeLimits           </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; unsigned short &gt; &amp;&nbsp;</td>
-          <td class="paramname"> <em>_teamLimits</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Set the limit to the number of players on each team. 
-<p>
-<a class="el" href="classRakNet_1_1TeamBalancer.html#e3a7c0c3da62b448bf862e2069bc66a9" title="Set the limit to the number of players on each team.">SetTeamSizeLimits()</a> must be called on the host, so the host can enforce the maximum number of players on each team. <a class="el" href="classRakNet_1_1TeamBalancer.html#e3a7c0c3da62b448bf862e2069bc66a9" title="Set the limit to the number of players on each team.">SetTeamSizeLimits()</a> can be called on all systems if desired - for example, in a P2P environment you may wish to call it on all systems in advanced in case you become host. Calling this function when teams have already been created does not affect existing teams. <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>teamLimits</em>&nbsp;</td><td>The maximum number of people per team, by index. For example, a list of size 3 with values 1,2,3 would allow 1 person on team 0, 2 people on team 1, adn 3 people on team 2. </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>team</em>&nbsp;</td><td>Which team to set the limit for </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>limit</em>&nbsp;</td><td>The maximum number of people on this team </td></tr>
   </table>
 </dl>
 
@@ -479,7 +446,7 @@ Set the limit to the number of players on each team.
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="TeamBalancer_8h.html">TeamBalancer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Sep 15 10:19:51 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Nov 15 08:50:46 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

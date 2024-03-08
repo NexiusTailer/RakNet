@@ -507,12 +507,22 @@ ReplicaManager3: Fix BroadcastDestructionList. Objects were not being deleted du
 RakPeer: Fix memory leak introduced in 4.03 with discarded sequenced messages that were split (larger than the MTU).
 SystemAddress: Fixed comparison between a value set from a string and an internal value with the same IP.
 4.033 (9/15/2011)
-ConnectionGraph2: Fix crash on connection lost
 RakPeer: Reduced default memory usage. Fixed ID_ADVERTISE_SYSTEM allocating 1 byte too long. UNRELIABLE_WITH_ACK_RECEIPT now works.
-PS3: Add hasInvitationInfo to Notification_Console_Accepted_Room_Invite_PS3
-Vita: Stopped using ultthread, which was causing threading errors.
 XBOX 360: Host migration caused by unplugging router is now asynch (TCR fix). Console_SearchRoom now has a minOpenSlots parameter.
 ReplicaManager3: Increased RM3_NUM_OUTPUT_BITSTREAM_CHANNELS to 16
+ConnectionGraph2: Fix crash on connection lost
+PS3: Add hasInvitationInfo to Notification_Console_Accepted_Room_Invite_PS3
+Vita: Stopped using ultthread, which was causing threading errors.
+4.034 (11/15/2011)
+BitStream: Read/Write BitsFromIntegerRange fixed.
+RakPeer: GetConnectionList() now sets number of systems to 0 when RakPeer is not started.
+FullyConnectedMesh2: Fix potential assert caused by receiving ID_FCM2_INFORM_FCMGUID before ID_FCM2_REQUEST_FCMGUID or ID_FCM2_RESPOND_CONNECTION_COUNT.
+SteamLobby: Fixed bug where only one message was read per execution of RunUpdateCycle()
+DirectoryDeltaTransfer: Refactor so user can scan files in a thread if they wish.
+ReplicaManager3: Added to manual page instructions on how to combine it with FullyConnectedMesh2
+XBOX: Fix logic error with XBOXAynchOps where it would lockup on a failed operation. Fix deleting rooms on cable disconnect.
+TeamBalancer: Fixed setting team size limits. Now supports multiple players per computer.
+Other: VariadicSQLParser::ExtractArguments make %f act like %d.
 </pre>
 <BR>
 </p></TD></TR></TABLE>

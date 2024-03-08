@@ -462,6 +462,14 @@ void FullyConnectedMesh2::OnInformFCMGuid(Packet *packet)
 		}
 	}
 
+	if (ourFCMGuid==0)
+	{
+		AssignOurFCMGuid();
+		DataStructures::DefaultIndexType idx;
+		for (idx=0; idx < fcm2ParticipantList.Size(); idx++)
+			SendOurFCMGuid(rakPeerInterface->GetSystemAddressFromGuid(fcm2ParticipantList[idx].rakNetGuid));
+	}
+
 	CalculateAndPushHost();
 }
 void FullyConnectedMesh2::OnUpdateMinTotalConnectionCount(Packet *packet)

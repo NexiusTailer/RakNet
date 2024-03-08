@@ -287,6 +287,7 @@ enum DefaultMessageIDTypes
 
 	/// Informs user of a new host GUID. Packet::Guid contains this new host RakNetGuid. The old host can be read out using BitStream->Read(RakNetGuid) starting on byte 1
 	/// This is not returned until connected to a remote system
+	/// If the oldHost is UNASSIGNED_RAKNET_GUID, then this is the first time the host has been determined
 	ID_FCM2_NEW_HOST,
 	/// \internal For FullyConnectedMesh2 plugin
 	ID_FCM2_REQUEST_FCMGUID,
@@ -338,12 +339,12 @@ enum DefaultMessageIDTypes
 	/// \internal Used by the team balancer plugin
 	ID_TEAM_BALANCER_INTERNAL,
 	/// Cannot switch to the desired team because it is full. However, if someone on that team leaves, you will
-	///  get ID_TEAM_BALANCER_SET_TEAM later. Byte 1 contains the team you requested to join.
+	///  get ID_TEAM_BALANCER_SET_TEAM later. Byte 1 contains the team you requested to join. Following bytes contain NetworkID of which member.
 	ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING,
 	/// Cannot switch to the desired team because all teams are locked. However, if someone on that team leaves,
 	///  you will get ID_TEAM_BALANCER_SET_TEAM later. Byte 1 contains the team you requested to join.
 	ID_TEAM_BALANCER_TEAMS_LOCKED,
-	/// Team balancer plugin informing you of your team. Byte 1 contains the team you requested to join.
+	/// Team balancer plugin informing you of your team. Byte 1 contains the team you requested to join. Following bytes contain NetworkID of which member.
 	ID_TEAM_BALANCER_TEAM_ASSIGNED,
 
 	/// Gamebryo Lightspeed integration

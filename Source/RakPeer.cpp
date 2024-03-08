@@ -1051,7 +1051,11 @@ bool RakPeer::GetConnectionList( SystemAddress *remoteSystems, unsigned short *n
 		return false;
 
 	if ( remoteSystemList == 0 || endThreads == true )
+	{
+		if (numberOfSystems)
+			*numberOfSystems=0;
 		return false;
+	}
 
 	DataStructures::List<SystemAddress> addresses;
 	DataStructures::List<RakNetGUID> guids;
@@ -2094,7 +2098,7 @@ SystemAddress RakPeer::GetExternalID( const SystemAddress target ) const
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-const RakNetGUID RakPeer::GetMyGUID(void)
+const RakNetGUID RakPeer::GetMyGUID(void) const
 {
 	return myGuid;
 }
@@ -5040,14 +5044,14 @@ bool RakPeer::RunUpdateCycle( RakNet::TimeUS timeNS, RakNet::Time timeMS, BitStr
 	// This is here so RecvFromBlocking actually gets data from the same thread
 	if (SocketLayer::GetSocketLayerOverride())
 	{
+		int len;
 		SystemAddress sender;
 		char dataOut[ MAXIMUM_MTU_SIZE ];
-		int len = SocketLayer::GetSocketLayerOverride()->RakNetRecvFrom(socketList[0]->s,this,dataOut,&sender,true);
-		if (len>0)
-		{
-			ProcessNetworkPacket( sender, dataOut, len, this, socketList[0], RakNet::GetTimeUS(), updateBitStream );
-			return 1;
-		}
+		do {
+			len = SocketLayer::GetSocketLayerOverride()->RakNetRecvFrom(socketList[0]->s,this,dataOut,&sender,true);
+			if (len>0)
+				ProcessNetworkPacket( sender, dataOut, len, this, socketList[0], RakNet::GetTimeUS(), updateBitStream );
+		} while (len>0);
 	}
 
 	unsigned int socketListIndex;

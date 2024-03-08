@@ -244,7 +244,7 @@ protected:
 	void IncrementPatchingUserCount(void);
 	void DecrementPatchingUserCount(void);
 	bool PatchingUserLimitReached(void) const;
-	virtual void OnFilePushesComplete( SystemAddress systemAddress );
+    virtual void OnFilePushesComplete( SystemAddress systemAddress, unsigned short setID );
 	virtual void OnSendAborted( SystemAddress systemAddress );
 
 	unsigned int maxConcurrentUsers;

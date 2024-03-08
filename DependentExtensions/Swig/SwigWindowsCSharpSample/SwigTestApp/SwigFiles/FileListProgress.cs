@@ -66,13 +66,13 @@ public class FileListProgress : IDisposable {
     RakNetPINVOKE.FileListProgress_OnFile(swigCPtr, FileList.getCPtr(fileList), dir, fileName, fileSize);
   }
 
-  public virtual void OnFilePush(string fileName, uint fileLengthBytes, uint offset, uint bytesBeingSent, bool done, SystemAddress targetSystem) {
-    RakNetPINVOKE.FileListProgress_OnFilePush(swigCPtr, fileName, fileLengthBytes, offset, bytesBeingSent, done, SystemAddress.getCPtr(targetSystem));
+  public virtual void OnFilePush(string fileName, uint fileLengthBytes, uint offset, uint bytesBeingSent, bool done, SystemAddress targetSystem, ushort setId) {
+    RakNetPINVOKE.FileListProgress_OnFilePush(swigCPtr, fileName, fileLengthBytes, offset, bytesBeingSent, done, SystemAddress.getCPtr(targetSystem), setId);
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public virtual void OnFilePushesComplete(SystemAddress systemAddress) {
-    RakNetPINVOKE.FileListProgress_OnFilePushesComplete(swigCPtr, SystemAddress.getCPtr(systemAddress));
+  public virtual void OnFilePushesComplete(SystemAddress systemAddress, ushort setId) {
+    RakNetPINVOKE.FileListProgress_OnFilePushesComplete(swigCPtr, SystemAddress.getCPtr(systemAddress), setId);
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 

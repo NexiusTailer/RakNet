@@ -87,7 +87,7 @@ enum RPC3TagFlag
 struct RPC3Tag
 {
 	RPC3Tag() {}
-	RPC3Tag(void *_v, unsigned int _count, RPC3TagFlag _flag) : v(_v), count(_count), flag(_flag) {}
+	RPC3Tag(void *_v, unsigned int _count, RPC3TagFlag _flag) : v(_v), count(_count), flag((unsigned char)_flag) {}
 	void* v;
 	unsigned int count;
 	unsigned char flag;
@@ -188,6 +188,12 @@ struct ReadPtr
 		RakNet::RakString rs;
 		bitStream >> rs;
 		size_t len = rs.GetLength()+1;
+		
+		// The caller should have already allocated memory, so we need to free
+		// it and allocate a new buffer.
+		RakAssert("Expected allocated array, got NULL" && (NULL != t));
+		delete [] t;
+
 		t = new char [len];
 		memcpy(t,rs.C_String(),len);
 	}
@@ -283,7 +289,7 @@ struct ReadWithoutNetworkIDPtr
 	{
 //		printf("ReadWithoutNetworkIDPtr\n");
 		
-		bool isNull;
+		bool isNull=false;
 		args.bitStream->Read(isNull);
 		if (isNull)
 		{
@@ -293,7 +299,7 @@ struct ReadWithoutNetworkIDPtr
 
 		typedef typename boost::remove_pointer< T >::type ActualObjectType;
 
-		bool isArray;
+		bool isArray=false;
 		unsigned int count;
 		args.bitStream->Read(isArray);
 		if (isArray)
