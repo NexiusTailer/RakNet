@@ -3105,6 +3105,7 @@ void ReliabilityLayer::FreeInternalPacketData(InternalPacket *internalPacket, co
 		if (internalPacket->refCountedData->refCount==0)
 		{
 			rakFree_Ex(internalPacket->refCountedData->sharedDataBlock, file, line );
+			internalPacket->refCountedData->sharedDataBlock=0;
 			// RakNet::OP_DELETE(internalPacket->refCountedData,file, line);
 			refCountedDataPool.Release(internalPacket->refCountedData,file, line);
 		}

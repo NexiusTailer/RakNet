@@ -1,9 +1,9 @@
-#define RAKNET_VERSION "3.71"
-#define RAKNET_VERSION_NUMBER 3.71
+#define RAKNET_VERSION "3.712"
+#define RAKNET_VERSION_NUMBER 3.712
 
 #define RAKNET_REVISION "$Revision$"
 
-#define RAKNET_DATE "11/16/2009"
+#define RAKNET_DATE "11/24/2009"
 
 // What compatible protocol version RakNet is using. When this value changes, it indicates this version of RakNet cannot connection to an older version.
 // ID_INCOMPATIBLE_PROTOCOL_VERSION will be returned on connection attempt in this case

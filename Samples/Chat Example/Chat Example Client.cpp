@@ -147,10 +147,30 @@ int main(void)
 				continue;
 			}
 
+			if (strcmp(message, "shutdown")==0)
+			{
+				client->Shutdown(100);
+				printf("Shutdown.\n");
+				continue;
+			}
+
+			if (strcmp(message, "startup")==0)
+			{
+				bool b = client->Startup(8,30,&socketDescriptor, 1);
+				if (b)
+					printf("Started.\n");
+				else
+					printf("Startup failed.\n");
+				continue;
+			}
+
+
 			if (strcmp(message, "connect")==0)
 			{
 				printf("Enter server port: ");
 				gets(serverPort);
+				if (serverPort[0]==0)
+					strcpy(serverPort, "1234");
 				bool b = client->Connect(ip, atoi(serverPort), "Rumpelstiltskin", (int) strlen("Rumpelstiltskin"));	
 
 				if (b)

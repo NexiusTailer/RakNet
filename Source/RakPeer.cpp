@@ -177,7 +177,11 @@ Packet *RakPeer::AllocPacket(unsigned dataSize, const char *file, unsigned int l
 Packet *RakPeer::AllocPacket(unsigned dataSize, unsigned char *data, const char *file, unsigned int line)
 {
 	// Packet *p = (Packet *)rakMalloc_Ex(sizeof(Packet), file, line);
-	Packet *p = packetAllocationPool.PopOrAllocate(file,line);
+	Packet *p;
+	packetAllocationPoolMutex.Lock();
+	p = packetAllocationPool.Allocate(file,line);
+	packetAllocationPoolMutex.Unlock();
+	p = new ((void*)p) Packet;
 	p->data=data;
 	p->length=dataSize;
 	p->bitSize=BYTES_TO_BITS(dataSize);
@@ -250,7 +254,9 @@ RakPeer::RakPeer()
 	bufferedPackets.SetPageSize(sizeof(RecvFromStruct)*32);
 #endif
 
+	packetAllocationPoolMutex.Lock();
 	packetAllocationPool.SetPageSize(sizeof(Packet)*32);
+	packetAllocationPoolMutex.Unlock();
 
 	GenerateGUID();
 
@@ -979,7 +985,9 @@ void RakPeer::Shutdown( unsigned int blockDuration, unsigned char orderingChanne
 		DeallocatePacket(packetReturnQueue[i]);
 	packetReturnQueue.Clear(__FILE__,__LINE__);
 	packetReturnMutex.Unlock();
+	packetAllocationPoolMutex.Lock();
 	packetAllocationPool.Clear(__FILE__,__LINE__);
+	packetAllocationPoolMutex.Unlock();
 
 	blockOnRPCReply=false;
 
@@ -1385,7 +1393,10 @@ void RakPeer::DeallocatePacket( Packet *packet )
 	if (packet->deleteData)
 	{
 		rakFree_Ex(packet->data, __FILE__, __LINE__ );
-		packetAllocationPool.Deallocate(packet,__FILE__,__LINE__);
+		packet->~Packet();
+		packetAllocationPoolMutex.Lock();
+		packetAllocationPool.Release(packet,__FILE__,__LINE__);
+		packetAllocationPoolMutex.Unlock();
 	}
 	else
 	{
@@ -3405,6 +3416,7 @@ int RakPeer::GetIndexFromSystemAddress( const SystemAddress systemAddress, bool 
 bool RakPeer::SendConnectionRequest( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, unsigned connectionSocketIndex, unsigned int extraData, unsigned sendConnectionAttemptCount, unsigned timeBetweenSendConnectionAttemptsMS, RakNetTime timeoutTime )
 {
 	RakAssert(passwordDataLength <= 256);
+	RakAssert(remotePort!=0);
 	SystemAddress systemAddress;
 	systemAddress.SetBinaryAddress(host);
 	systemAddress.port=remotePort;
@@ -5360,10 +5372,7 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 			}
 
 			RakNet::BitStream bsOut;
-			if (rss &&
-				(rss->connectMode==RakPeer::RemoteSystemStruct::CONNECTED ||
-				rss->connectMode==RakPeer::RemoteSystemStruct::DISCONNECT_ASAP ||
-				rss->connectMode==RakPeer::RemoteSystemStruct::DISCONNECT_ASAP_SILENTLY))
+			if (rss)
 			{
 				bsOut.Write((MessageID)ID_ALREADY_CONNECTED);
 				bsOut.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
@@ -5373,6 +5382,7 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 				for (i=0; i < rakPeer->messageHandlerList.Size(); i++)
 					rakPeer->messageHandlerList[i]->OnDirectSocketSend((const char*) bsOut.GetData(), bsOut.GetNumberOfBitsUsed(), systemAddress);
 				SocketLayer::Instance()->SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3 );
+
 
 				return true;
 			}
@@ -5388,23 +5398,19 @@ bool ProcessOfflineNetworkPacket( const SystemAddress systemAddress, const char 
 				return true;
 			}
 
-			if (rss==0)
+			bool thisIPConnectedRecently=false;
+			rss=rakPeer->AssignSystemAddressToRemoteSystemList(systemAddress, RakPeer::RemoteSystemStruct::UNVERIFIED_SENDER, rakNetSocket, &thisIPConnectedRecently, bindingAddress, length+UDP_HEADER_SIZE);
+
+			if (thisIPConnectedRecently==true)
 			{
-				bool thisIPConnectedRecently=false;
-				if (rss==0)
-					rss=rakPeer->AssignSystemAddressToRemoteSystemList(systemAddress, RakPeer::RemoteSystemStruct::UNVERIFIED_SENDER, rakNetSocket, &thisIPConnectedRecently, bindingAddress, length+UDP_HEADER_SIZE);
+				bsOut.Write((MessageID)ID_IP_RECENTLY_CONNECTED);
+				bsOut.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
+				bsOut.Write(guid);
+				for (i=0; i < rakPeer->messageHandlerList.Size(); i++)
+					rakPeer->messageHandlerList[i]->OnDirectSocketSend((const char*) bsOut.GetData(), bsOut.GetNumberOfBitsUsed(), systemAddress);
+				SocketLayer::Instance()->SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3 );
 
-				if (thisIPConnectedRecently==true)
-				{
-					bsOut.Write((MessageID)ID_IP_RECENTLY_CONNECTED);
-					bsOut.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
-					bsOut.Write(guid);
-					for (i=0; i < rakPeer->messageHandlerList.Size(); i++)
-						rakPeer->messageHandlerList[i]->OnDirectSocketSend((const char*) bsOut.GetData(), bsOut.GetNumberOfBitsUsed(), systemAddress);
-					SocketLayer::Instance()->SendTo( rakNetSocket->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress.binaryAddress, systemAddress.port, rakNetSocket->remotePortRakNetWasStartedOn_PS3 );
-
-					return true;
-				}
+				return true;
 			}
 
 			bsOut.Write((MessageID)ID_OPEN_CONNECTION_REPLY);

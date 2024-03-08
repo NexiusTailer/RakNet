@@ -1044,8 +1044,9 @@ protected:
 	SignaledEvent quitAndIncomingDataEvents;
 	bool limitConnectionFrequencyFromTheSameIP;
 
+	SimpleMutex packetAllocationPoolMutex;
+	DataStructures::MemoryPool<Packet> packetAllocationPool;
 
-	DataStructures::ThreadsafeAllocatingQueue<Packet> packetAllocationPool;
 	SimpleMutex packetReturnMutex;
 	DataStructures::Queue<Packet*> packetReturnQueue;
 	Packet *AllocPacket(unsigned dataSize, unsigned char *data, const char *file, unsigned int line);

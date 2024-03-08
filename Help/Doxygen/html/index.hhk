@@ -1161,10 +1161,19 @@
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classLightweightDatabaseServer.html#021dccea4680979dc0740763c21e83a3"><param name="Name" value="GetTable"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classLightweightDatabaseServer.html#909df7080975ed69cf3404ca9a52604a"><param name="Name" value="GetTableRows"></OBJECT>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="GetTime_8h.html"><param name="Name" value="GetTime.h"></OBJECT>
+  <UL>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="GetTime_8h.html#aa2d77435e0bf2c56c77f6f41739d4b4"><param name="Name" value="GetTime"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="GetTime_8h.html#e83fee0c0efb646482d2901b2f6cc017"><param name="Name" value="GetTimeNS"></OBJECT>
+  </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#aa2d77435e0bf2c56c77f6f41739d4b4"><param name="Name" value="GetTime"></OBJECT>
   <UL>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#aa2d77435e0bf2c56c77f6f41739d4b4"><param name="Name" value="GetTime.h"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#aa2d77435e0bf2c56c77f6f41739d4b4"><param name="Name" value="RakNet"></OBJECT>
+  </UL>
+  <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#e83fee0c0efb646482d2901b2f6cc017"><param name="Name" value="GetTimeNS"></OBJECT>
+  <UL>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#e83fee0c0efb646482d2901b2f6cc017"><param name="Name" value="GetTime.h"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#e83fee0c0efb646482d2901b2f6cc017"><param name="Name" value="RakNet"></OBJECT>
   </UL>
   <LI><OBJECT type="text/sitemap"><param name="Local" value="classRakPeer.html#f6bcc65b6a7c937d1e87e9660252a3be"><param name="Name" value="GetTimeoutTime"></OBJECT>
   <UL>
@@ -3712,6 +3721,7 @@
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#7e4acf3fe2eb879a8ae3f5b79a8fbe8ff50707c52c4385446b4a3044a4098961"><param name="Name" value="BROADCAST_VISIBILITY_TRUE_TO_SYSTEM"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#9e8ea1fae25cf585c91a2821b6a5589a"><param name="Name" value="CanConnect"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#aa2d77435e0bf2c56c77f6f41739d4b4"><param name="Name" value="GetTime"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#e83fee0c0efb646482d2901b2f6cc017"><param name="Name" value="GetTimeNS"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#81848fd95488939c0b3e217209f3113985b9244642c4226779a1702153310147"><param name="Name" value="NAT_TYPE_ADDRESS_RESTRICTED"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#81848fd95488939c0b3e217209f31139d5b124b608265130efdfddb038b2be82"><param name="Name" value="NAT_TYPE_FULL_CONE"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Local" value="namespaceRakNet.html#81848fd95488939c0b3e217209f31139d3683fb3b27ee4cb86db0f993fa9602b"><param name="Name" value="NAT_TYPE_NONE"></OBJECT>

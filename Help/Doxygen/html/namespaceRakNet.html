@@ -699,10 +699,13 @@ typedef int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Error codes returned by a remote system as to why an RPC function call cannot execute.  <a href="group__RPC__3__GROUP.html#gc20c52e6dc585406689d52db29925bba">More...</a><br></td></tr>
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="aa2d77435e0bf2c56c77f6f41739d4b4"></a><!-- doxytag: member="RakNet::GetTime" ref="aa2d77435e0bf2c56c77f6f41739d4b4" args="(void)" -->
-RakNetTime RAK_DLL_EXPORT&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#aa2d77435e0bf2c56c77f6f41739d4b4">GetTime</a> (void)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">RakNetTime RAK_DLL_EXPORT&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#aa2d77435e0bf2c56c77f6f41739d4b4">GetTime</a> (void)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the value from QueryPerformanceCounter. This is the function <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> uses to represent time. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the value from QueryPerformanceCounter. This is the function <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> uses to represent time. Should be renamed GetTimeMS.  <a href="#aa2d77435e0bf2c56c77f6f41739d4b4"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e83fee0c0efb646482d2901b2f6cc017"></a><!-- doxytag: member="RakNet::GetTimeNS" ref="e83fee0c0efb646482d2901b2f6cc017" args="(void)" -->
+RakNetTimeUS RAK_DLL_EXPORT&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#e83fee0c0efb646482d2901b2f6cc017">GetTimeNS</a> (void)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Should be renamed GetTimeUS. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRakNet.html#9e8ea1fae25cf585c91a2821b6a5589a">CanConnect</a> (<a class="el" href="namespaceRakNet.html#81848fd95488939c0b3e217209f31139">NATTypeDetectionResult</a> type1, <a class="el" href="namespaceRakNet.html#81848fd95488939c0b3e217209f31139">NATTypeDetectionResult</a> type2)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1233cd583b9586486afa8f39d23b4f13"></a><!-- doxytag: member="RakNet::NATTypeDetectionResultToString" ref="1233cd583b9586486afa8f39d23b4f13" args="(NATTypeDetectionResult type)" -->
@@ -917,6 +920,29 @@ SetRecipientObject() was called before Call(), but RegisterFunction() was called
 
 </div>
 </div><p>
+<a class="anchor" name="aa2d77435e0bf2c56c77f6f41739d4b4"></a><!-- doxytag: member="RakNet::GetTime" ref="aa2d77435e0bf2c56c77f6f41739d4b4" args="(void)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">RakNetTime RAK_DLL_EXPORT RakNet::GetTime           </td>
+          <td>(</td>
+          <td class="paramtype">void&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns the value from QueryPerformanceCounter. This is the function <a class="el" href="namespaceRakNet.html" title="Forward declaration.">RakNet</a> uses to represent time. Should be renamed GetTimeMS. 
+<p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>This time won't match the time returned by GetTimeCount(). See <a href="http://www.jenkinssoftware.com/forum/index.php?topic=2798.0">http://www.jenkinssoftware.com/forum/index.php?topic=2798.0</a> </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="c8ba12f06cb89d6c5099190c87efeb4b"></a><!-- doxytag: member="RakNet::NATTypeDetectionResultToStringFriendly" ref="c8ba12f06cb89d6c5099190c87efeb4b" args="(NATTypeDetectionResult type)" -->
 <div class="memitem">
 <div class="memproto">
@@ -938,7 +964,7 @@ Return a friendly string representing the enumeration None and relaxed can conne
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 20 11:34:13 2009 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Nov 24 10:28:59 2009 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

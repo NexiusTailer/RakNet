@@ -660,6 +660,7 @@ int SocketLayer::SendTo_PC( SOCKET s, const char *data, int length, unsigned int
 int SocketLayer::SendTo( SOCKET s, const char *data, int length, unsigned int binaryAddress, unsigned short port, unsigned short remotePortRakNetWasStartedOn_PS3 )
 {
 	RakAssert(length<=MAXIMUM_MTU_SIZE-UDP_HEADER_SIZE);
+	RakAssert(port!=0);
 	if (slo)
 	{
 		SystemAddress sa(binaryAddress,port);

@@ -36,6 +36,8 @@ UDPForwarder::UDPForwarder()
 #endif
 
 	maxForwardEntries=DEFAULT_MAX_FORWARD_ENTRIES;
+	isRunning=false;
+	threadRunning=false;
 }
 UDPForwarder::~UDPForwarder()
 {

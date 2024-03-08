@@ -1,6 +1,6 @@
 /// \file DS_ThreadsafeAllocatingQueue.h
 /// \internal
-/// Returns pointers to objects of the desired type, in a queue
+/// A threadsafe queue, that also uses a memory pool for allocation
 
 #ifndef __THREADSAFE_ALLOCATING_QUEUE
 #define __THREADSAFE_ALLOCATING_QUEUE
@@ -22,16 +22,18 @@ template <class structureType>
 class RAK_DLL_EXPORT ThreadsafeAllocatingQueue
 {
 public:
+	// Queue operations
 	void Push(structureType *s);
 	structureType *PopInaccurate(void);
 	structureType *Pop(void);
+	void SetPageSize(int size);
+
+	// Memory pool operations
 	structureType *Allocate(const char *file, unsigned int line);
-	structureType *PopOrAllocate(const char *file, unsigned int line);
 	void Deallocate(structureType *s, const char *file, unsigned int line);
 	void Clear(const char *file, unsigned int line);
-	void SetPageSize(int size);
-	
 protected:
+
 	MemoryPool<structureType> memoryPool;
 	SimpleMutex memoryPoolMutex;
 	Queue<structureType*> queue;
@@ -86,13 +88,6 @@ structureType *ThreadsafeAllocatingQueue<structureType>::Allocate(const char *fi
 	// Call new operator, memoryPool doesn't do this
 	s = new ((void*)s) structureType;
 	return s;
-}
-template <class structureType>
-structureType *ThreadsafeAllocatingQueue<structureType>::PopOrAllocate(const char *file, unsigned int line)
-{
-	structureType *s = Pop();
-	if (s) return s;
-	return Allocate(file,line);
 }
 template <class structureType>
 void ThreadsafeAllocatingQueue<structureType>::Deallocate(structureType *s, const char *file, unsigned int line)

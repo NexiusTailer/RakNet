@@ -520,7 +520,7 @@ bool RakNet::System_CreateDatabase_PGSQL::ServerDBImpl( Lobby2ServerCommand *com
 	pgsql->ExecuteBlockingCommand("DROP LANGUAGE plpgsql;", &result, false);
 	PQclear(result);
 	FILE *fp = fopen("Lobby2Schema.txt", "rb");
-	RakAssert("Can't find Lobby2Schema.txt" && 0);
+	RakAssert(fp && "Can't find Lobby2Schema.txt");
 	fseek( fp, 0, SEEK_END );
 	unsigned int fileSize = ftell( fp );
 	fseek( fp, 0, SEEK_SET );

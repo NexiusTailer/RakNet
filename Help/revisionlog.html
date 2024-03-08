@@ -299,6 +299,11 @@ Bug fixes: Fix MySQL autopatcher not working (bug from 3.704). Fix bug in RakPee
 Congestion control: Change tolerance algorithm for ping variations. The old algorithm was designed for a LAN, and was causing excess packetloss over long-distance internet connections.
 Performance: Remove all but 1 memory allocation per send and per receive, in order to reduce memory fragmentation. With messages larger than the MTU, reference the original data block rather than allocating and copying fragments. Expose the thread priority in RakPeer::Startup() and TCPInterface::Startup(), for Linux based systems that do not define a default normal thread priority.
 New features: Add connection failure enumeration ID_IP_ALREADY_CONNECTED. ID_IP_ALREADY_CONNECTED is returned if RakPeer::SetLimitIPConnectionFrequency() was set. Packet priorities now schedule sends, where each lower priority level is sent half as frequently as the priority level above. Updated Irrlicht 3D demo to Irrlicht 1.6.<BR>
+3.711 Fix messages of certain size combinations causing further sends to never go out.
+Add ability to pass GUID to UDPProxyClient::RequestForwarding, and use this by default in the samples.
+Reduce memory usage.
+Improve randomness of random number for FullyConnectedMesh2<BR>
+3.712 Improve security for client-specified RakNetGUID. UDPForwarder: Fix uninitialized variables.<BR>
  </TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
 <img src="spacer.gif" width="8" height="1">See Also</td>

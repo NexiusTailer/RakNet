@@ -57,7 +57,10 @@ unsigned __stdcall ConsumerThread( LPVOID arguments )
 		{
 			if (p->data[0]==ID_USER_PACKET_ENUM)
 				printf("Got data from thread %i\n", p->data[1]);
-			peer1->DeallocatePacket(p);
+			if (i&1)
+				peer1->DeallocatePacket(p);
+			else
+				peer2->DeallocatePacket(p);
 		}
 
         Sleep(0);		
