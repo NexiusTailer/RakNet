@@ -264,9 +264,29 @@ Add modified UDT source to RakNet distribution, under DependentExtensions\udt4. 
 Fix TCPInterface with DeltaDirectoryTransfer
 Fixed bug introducted by checking RakNetGUID on new connections from 3.52, where connection replies were only sent once, rather than on each request.
 Added parameter to CloseConnection to select priority on which to send ID_DISCONNECTION_NOTIFICATION.
-Added SQLLite3Plugin to DependentExtensions\SQLite3Plugin. This allows you to do database calls over the internet with SQLLite3, which is normally only supported with networked file handles. This replaces LightweightDatabase, which is now depreciated.
-
-</TD></TR></TABLE>
+Added SQLLite3Plugin to DependentExtensions\SQLite3Plugin. This allows you to do database calls over the internet with SQLLite3, which is normally only supported with networked file handles. This replaces LightweightDatabase, which is now depreciated.<BR>
+3.61 (07/21/2009) Fix memory leak in single producer single consumer.
+ Fix RakNetGUID initilization where only the first 4 ints were initialized.
+ Fix RakNet::OP_NEW mistmatch in DS_Table, causing a crash.
+ Fix crash in Lobby code from destroying binary data with some functors. Add ability to query clan list. Lobby will now log you off if you log in while already logged in (preventing multiple logins from the same user). Added per-user per-title storage.
+ Update Doxygen comment syntax to produce better Doxygen output.
+ Fix misspelling of Variadic.
+ Depreciate PHPDirectoryServer due to unreliable replies. Now supplanted with PHPDirectoryServer2
+ Rooms plugin can now send arbitrary bitstreams through the server.
+ Near rewrite of ReplicaManager3. Optimized from O(n^3) to O(n). Now supports multiple serialization channels.
+ Autopatcher source files moved from /DependentExtensions to DependentExtensions\Autopatcher . Also the samples use TCP by default now.
+ Fix endian swapping with OFFLINE_MESSAGE_DATA_ID
+ FullyConnectedMesh2 host determination rewritten for better consistency and reliability from unresponsive hosts.
+ Updated samples with new IP address of free server.
+ Disabled forced port bindings. This apparently causes the Vista to reject the reply messages, which is a more serious bug than getting a reply on a different port.
+ FileListTransferCBInterface::OnFileStruct renamed members: finalDataLength to byteLengthOfThisFile, totalDownloadedLength to bytesDownloadedForThisFile, setCount to numberOfFilesInThisSet, setTotalFinalLength to byteLengthOfThisSet, setTotalDownloadedLength to bytesDownloadedForThisSet.
+ Fix NatPunchthroughServer not working on linux due to time subtraction, and hence underflow. Also made static string buffers larger to support 6 integer RakNetGUID.
+ Change gmail port for email sender sample.
+ Added critical section locks to the referenced counted pointers in RakString, to support multithreaded use.
+ BitStream will now use memcpy if possible when writing other bitstreams.
+ Fix crash in AutopatcherServer due to mismatch of calls to malloc and OP_DELETE.<BR>
+3.611 (07/23/2009) Fix bug with serialization not sent to reconnecting system with ReplicaManager3. Release Scaleform GFx autopatcher integration.
+ </TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
 <img src="spacer.gif" width="8" height="1">See Also</td>
 </tr></table>

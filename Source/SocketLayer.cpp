@@ -496,10 +496,11 @@ int SocketLayer::RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode, Rak
 	if (slo)
 	{
 		SystemAddress sender;
-		int bytesRead = slo->RakNetRecvFrom(s,rakPeer,data,&sender);
-		if (bytesRead>0)
+		len = slo->RakNetRecvFrom(s,rakPeer,data,&sender);
+		if (len>0)
 		{
 			ProcessNetworkPacket( sender.binaryAddress, sender.port, data, len, rakPeer, rakNetSocket );
+			return 1;
 		}
 	}
 

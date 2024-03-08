@@ -418,7 +418,7 @@ public:
 	/// \param[in] sendParameters Controlling parameters over the serialization
 	/// \param[in] rakPeer Instance of RakPeerInterface to send on
 	/// \param[in] worldId Which world, see ReplicaManager3::SetWorldID()
-	virtual void SendConstruction(DataStructures::Multilist<ML_STACK, LastSerializationResult*, Replica3*> &newObjects, DataStructures::Multilist<ML_STACK, LastSerializationResult*, Replica3*> &deletedObjects, PRO sendParameters, RakPeerInterface *rakPeer, unsigned char worldId, bool isFirstConnection);
+	virtual void SendConstruction(DataStructures::Multilist<ML_STACK, LastSerializationResult*, Replica3*> &newObjects, DataStructures::Multilist<ML_STACK, LastSerializationResult*, Replica3*> &deletedObjects, PRO sendParameters, RakPeerInterface *rakPeer, unsigned char worldId);
 
 	/// \internal
 	/// Remove from \a newObjectsIn objects that already exist and save to \a newObjectsOut

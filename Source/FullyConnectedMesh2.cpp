@@ -62,8 +62,11 @@ void FullyConnectedMesh2::AddParticipant(SystemAddress participant)
 
 	if (ourFCMGuid==0)
 	{
-		SendFCMGuidRequest(participant);
-		guidRequestRetryList.Push(participant,__FILE__,__LINE__);
+		if (guidRequestRetryList.GetIndexOf(participant)==(DataStructures::DefaultIndexType)-1)
+		{
+			SendFCMGuidRequest(participant);
+			guidRequestRetryList.Push(participant,__FILE__,__LINE__);
+		}
 	}
 	else
 	{
@@ -326,6 +329,17 @@ void FullyConnectedMesh2::OnInformFCMGuid(Packet *packet)
 {
 	RakNet::BitStream bsIn(packet->data,packet->length,false);
 	bsIn.IgnoreBytes(sizeof(MessageID));
+
+	DataStructures::DefaultIndexType idx;
+	for (idx=0; idx < participantList.Size(); idx++)
+	{
+		if (participantList[idx].systemAddress==packet->systemAddress)
+		{
+			// Duplicate message, just ignore since they are already in the participantList
+			return;
+		}
+	}
+
 
 	FCM2Guid theirFCMGuid;
 	unsigned int theirTotalConnectionCount;

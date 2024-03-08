@@ -521,7 +521,7 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3, bool
 	}
 
 
-	SendConstruction(constructedReplicasCulled,destroyedReplicasCulled,replicaManager3->defaultSendParameters,replicaManager3->rakPeerInterface,replicaManager3->worldId, isFirstConnection);
+	SendConstruction(constructedReplicasCulled,destroyedReplicasCulled,replicaManager3->defaultSendParameters,replicaManager3->rakPeerInterface,replicaManager3->worldId);
 
 }
 void ReplicaManager3::Update(void)
@@ -1672,7 +1672,7 @@ deletedObjectsOut.Push(deletedObjectsIn[index]);
 */
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, LastSerializationResult*, Replica3*> &newObjects, DataStructures::Multilist<ML_STACK, LastSerializationResult*, Replica3*> &deletedObjects, PRO sendParameters, RakPeerInterface *rakPeer, unsigned char worldId, bool isFirstConnection)
+void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, LastSerializationResult*, Replica3*> &newObjects, DataStructures::Multilist<ML_STACK, LastSerializationResult*, Replica3*> &deletedObjects, PRO sendParameters, RakPeerInterface *rakPeer, unsigned char worldId)
 {
 	if (newObjects.GetSize()==0 && deletedObjects.GetSize()==0)
 		return;
@@ -1729,37 +1729,34 @@ void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, LastSe
 	}
 	rakPeer->Send(&bsOut,sendParameters.priority,sendParameters.reliability,sendParameters.orderingChannel,systemAddress,false);
 
-	if (isFirstConnection==false)
+	// Immediately send serialize after construction if the replica object already has saved data
+	// If the object was serialized identically, and does not change later on, then the new connection never gets the data
+	SerializeParameters sp;
+	sp.bitsWrittenSoFar=0;
+	RakNetTime t = RakNet::GetTime();
+	for (newListIndex=0; newListIndex < newObjects.GetSize(); newListIndex++)
 	{
-		// Immediately send serialize after construction if the replica object already has saved data
-		// If the object was serialized identically, and does not change later on, then the new connection never gets the data
-		SerializeParameters sp;
-		sp.bitsWrittenSoFar=0;
-		RakNetTime t = RakNet::GetTime();
-		for (newListIndex=0; newListIndex < newObjects.GetSize(); newListIndex++)
+		sp.destinationConnection=this;
+		sp.messageTimestamp=0;
+		sp.pro=sendParameters;
+		RakAssert( !( sp.pro.reliability > RELIABLE_SEQUENCED || sp.pro.reliability < 0 ) );
+		RakAssert( !( sp.pro.priority > NUMBER_OF_PRIORITIES || sp.pro.priority < 0 ) );
+
+		RakNet::Replica3 *replica = newObjects[newListIndex]->replica;
+		RM3SerializationResult res = replica->Serialize(&sp);
+		if (res!=RM3SR_NEVER_SERIALIZE_FOR_THIS_CONNECTION &&
+			res!=RM3SR_DO_NOT_SERIALIZE &&
+			res!=RM3SR_SERIALIZED_UNIQUELY)
 		{
-			sp.destinationConnection=this;
-			sp.messageTimestamp=0;
-			sp.pro=sendParameters;
-			RakAssert( !( sp.pro.reliability > RELIABLE_SEQUENCED || sp.pro.reliability < 0 ) );
-			RakAssert( !( sp.pro.priority > NUMBER_OF_PRIORITIES || sp.pro.priority < 0 ) );
-
-			RakNet::Replica3 *replica = newObjects[newListIndex]->replica;
-			RM3SerializationResult res = replica->Serialize(&sp);
-			if (res!=RM3SR_NEVER_SERIALIZE_FOR_THIS_CONNECTION &&
-				res!=RM3SR_DO_NOT_SERIALIZE &&
-				res!=RM3SR_SERIALIZED_UNIQUELY)
+			bool allIndices[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS];
+			for (int z=0; z < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; z++)
 			{
-				bool allIndices[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS];
-				for (int z=0; z < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; z++)
-				{
-					sp.bitsWrittenSoFar+=sp.outputBitstream[z].GetNumberOfBitsUsed();
-					allIndices[z]=true;
-				}
-				SendSerialize(replica, allIndices, sp.outputBitstream, sp.messageTimestamp, sp.pro, rakPeer, worldId);
-				newObjects[newListIndex]->whenLastSerialized=t;
-
+				sp.bitsWrittenSoFar+=sp.outputBitstream[z].GetNumberOfBitsUsed();
+				allIndices[z]=true;
 			}
+			SendSerialize(replica, allIndices, sp.outputBitstream, sp.messageTimestamp, sp.pro, rakPeer, worldId);
+			newObjects[newListIndex]->whenLastSerialized=t;
+
 		}
 	}
 }

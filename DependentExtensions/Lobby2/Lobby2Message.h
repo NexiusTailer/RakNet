@@ -677,7 +677,7 @@ struct CreateAccountParameters
 	/// [in] Self-apparent
 	unsigned int ageInDays;
 	/// [in] binary data
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 	
 
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
@@ -689,7 +689,7 @@ struct PendingInvite
 	RakNet::RakString sender;
 	RakNet::RakString subject;
 	RakNet::RakString body;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
 };
@@ -705,7 +705,7 @@ struct EmailResult
 	bool wasSendByMe;
 	bool wasReadByMe;
 	unsigned int emailID; // Unique ID for this email, used in Emails_Delete, etc.
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 	RakNet::RakString creationDate;
 
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
@@ -725,7 +725,7 @@ struct SubmittedMatch
 	~SubmittedMatch() {/*RakNet::OP_DELETE(binaryData,__FILE__,__LINE__);*/}
 	DataStructures::List<MatchParticipant> matchParticipants;
 	RakNet::RakString matchNote;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 	// Use EpochTimeToString to convert to a date
 	double whenSubmittedDate;
 	unsigned int matchID; // Unique key, Output parameter to Ranking_GetMatches
@@ -739,7 +739,7 @@ struct ClanInfo
 	RakNet::RakString clanName;
 	RakNet::RakString description;
 	RakNet::RakString clanLeader;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 	DataStructures::List<RakNet::RakString> clanMembersOtherThanLeader;
 
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
@@ -835,7 +835,7 @@ struct System_CreateTitle : public Lobby2Message
 	RakNet::RakString titleName;
 	RakNet::RakString titleSecretKey;
 	int requiredAge;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
 struct System_DestroyTitle : public Lobby2Message
 {
@@ -883,7 +883,7 @@ struct System_GetTitleBinaryData : public Lobby2Message
 	RakNet::RakString titleName;
 
 	// Output parameters
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
 /// Adds the input strings to a table of profanity. non-unique or empty strings can be ignored. This table will be used internally to ensure that handles and clan names do not contain profanity. Multiple calls add to the table. This table will be used for functions that take a user-defined string that is highly visible, such as clan and user names. It does not need to be checked for emails or message boards.
 struct System_RegisterProfanity : public Lobby2Message
@@ -1309,7 +1309,6 @@ struct Client_GetIgnoreList : public Lobby2Message
 	// Output parameters
 	DataStructures::List<RakNet::RakString> ignoredHandles;
 };
-// TODO - only implemented for PS3. Also implement for PC
 struct Client_PerTitleIntegerStorage : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_PerTitleIntegerStorage)
@@ -1359,7 +1358,6 @@ struct Client_PerTitleIntegerStorage : public Lobby2Message
 };
 
 /// For each combination of user and title, structures can be stored
-// TODO - only implemented for PS3. Also implement for PC
 struct Client_PerTitleBinaryStorage : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_PerTitleBinaryStorage)
@@ -1378,7 +1376,7 @@ struct Client_PerTitleBinaryStorage : public Lobby2Message
 	unsigned int slotIndex;
 	/// [in/out] Binary data. On Write, will be written to the row. On Read, will be filled in with the value of the row. Unused for delete
 	/// Max length of binaryData is 256K
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 	/// [in] What to do. Write will overwrite the existing value with binaryData
 	/// Read will return the existing value in binaryData
 	enum PTIS_Operation
@@ -1408,7 +1406,7 @@ struct Friends_SendInvite : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 
 	// Output parameters
 };
@@ -1433,7 +1431,7 @@ struct Friends_AcceptInvite : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 
 	// Output parameters
 };
@@ -1457,7 +1455,7 @@ struct Friends_RejectInvite : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 
 	// Output parameters
 };
@@ -1478,7 +1476,7 @@ struct Friends_GetInvites : public Lobby2Message
 	DataStructures::List<RakNet::RakString> invitesSent;
 	DataStructures::List<RakNet::RakString> invitesReceived;
 };
-/// Getse all friends to this user
+/// Gets all friends to this user
 struct Friends_GetFriends : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Friends_GetFriends)
@@ -1589,7 +1587,7 @@ struct Emails_Send : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int status;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 
 	// Output parameters
 };
@@ -1701,7 +1699,7 @@ struct Ranking_GetMatchBinaryData : public Lobby2Message
 	unsigned int matchID;
 
 	// Output parameters
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
 /// When a match is submitted with Ranking_SubmitMatch, the total running score and number of matches played for each player for each game title and game mode combination should be recorded. Because matches can be pruned wth PruneMatches(), the total score sum and number of scores submitted should be stored, rather than summed up from prior submitted matches.
 struct Ranking_GetTotalScore : public Lobby2Message
@@ -1858,7 +1856,7 @@ struct Clans_Create : public Lobby2Message
 	bool requiresInvitationsToJoin;
 	RakNet::RakString description;
 	int emailStatus;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 
 	// Output parameters
 };
@@ -1881,7 +1879,7 @@ struct Clans_SetProperties : public Lobby2Message
 	// Input parameters
 	RakNet::RakString clanHandle;
 	RakNet::RakString description;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
 /// Returns clanDescription and clanBinaryData for the given clan.
 struct Clans_GetProperties : public Lobby2Message
@@ -1903,7 +1901,7 @@ struct Clans_GetProperties : public Lobby2Message
 
 	// Output parameters
 	RakNet::RakString description;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
 
 /// Each member of each clan has the the properties clanMemberDescription and clanMemberBinaryData which default to empty. These properties can be set here, and retrieved via GetClanMemberProperties
@@ -1925,7 +1923,7 @@ struct Clans_SetMyMemberProperties : public Lobby2Message
 	// Input parameters
 	RakNet::RakString clanHandle;
 	RakNet::RakString description;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 
 	// Output parameters
 };
@@ -2001,7 +1999,7 @@ struct Clans_GetMemberProperties : public Lobby2Message
 
 	// Output parameters
 	RakNet::RakString description;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 	unsigned int rank;
 	bool isSubleader;
 	ClanMemberState clanMemberState;
@@ -2047,7 +2045,7 @@ struct Clans_Leave : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 
 	// Output parameters
 	bool wasDissolved;
@@ -2091,7 +2089,7 @@ struct Clans_SendJoinInvitation : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 
 	// Output parameters
 };
@@ -2116,7 +2114,7 @@ struct Clans_WithdrawJoinInvitation : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
 /// If myPrimaryKey has an invitation to the specified clan, add him to the clan. Fail on specified output parameters. Use Emails_Send() to send an email from myPrimaryKey to all clan members with the specified subject and body.
 struct Clans_AcceptJoinInvitation : public Lobby2Message
@@ -2138,7 +2136,7 @@ struct Clans_AcceptJoinInvitation : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 	bool failIfAlreadyInClan;
 
 	// Output parameters
@@ -2163,7 +2161,7 @@ struct Clans_RejectJoinInvitation : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 
 	// Output parameters
 };
@@ -2181,7 +2179,7 @@ struct Clans_DownloadInvitationList : public Lobby2Message
 	DataStructures::List<OpenInvite> invitations;
 };
 /// Function has two forms:
-/// If requiresInvitationsToJoin==true when CreateClan() was called, will join the specifeid clan immediately. Sends subject and body to all other members in the clan.
+/// If requiresInvitationsToJoin==true when CreateClan() was called, will join the specified clan immediately. Sends subject and body to all other members in the clan.
 /// If requiresInvitationsToJoin==false when CreateClan() was called, send a join request to the specified clan, if we don't have one already. Join request expires after expiration time in seconds. Also, use Emails_Send() to send an email from myPrimaryKey to the clan leader and all subleaders with the specified subject and body.
 struct Clans_SendJoinRequest : public Lobby2Message
 {
@@ -2202,7 +2200,7 @@ struct Clans_SendJoinRequest : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 
 	// Output parameters
 	bool clanJoined;
@@ -2227,7 +2225,7 @@ struct Clans_WithdrawJoinRequest : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 
 	// Output parameters
 
@@ -2252,7 +2250,7 @@ struct Clans_AcceptJoinRequest : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 	RakNet::RakString requestingUserHandle;
 	bool failIfAlreadyInClan;	
 
@@ -2278,7 +2276,7 @@ struct Clans_RejectJoinRequest : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 	RakNet::RakString requestingUserHandle;
 
 	// Output parameters
@@ -2320,7 +2318,7 @@ struct Clans_KickAndBlacklistUser : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 	RakNet::RakString targetHandle;
 	bool kick;
 	bool blacklist;
@@ -2347,7 +2345,7 @@ struct Clans_UnblacklistUser : public Lobby2Message
 	RakNet::RakString subject;
 	RakNet::RakString body;
 	int emailStatus;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
 /// Returns a list of all members  blacklisted from this clan. Each element in the list contains the handle of the user that did the ban, who was banned, when the user was banned, and the reason passed to ClanKickAndBlacklistUser
 struct Clans_GetBlacklist : public Lobby2Message
@@ -2422,7 +2420,7 @@ struct Clans_CreateBoard : public Lobby2Message
 	bool allowPublicReads;
 	bool allowPublicWrites;
 	RakNet::RakString description;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 
 	// Output parameters
 };
@@ -2464,7 +2462,7 @@ struct Clans_CreateNewTopic : public Lobby2Message
 	RakNet::RakString clanBoardName;
 	RakNet::RakString body;
 	RakNet::RakString subject;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 
 	// Output parameters
 	unsigned int postId; // (unique for clanHandle)
@@ -2488,7 +2486,7 @@ struct Clans_ReplyToTopic : public Lobby2Message
 	unsigned int postId; // returned from Clans_CreateTopic()
 	RakNet::RakString subject;
 	RakNet::RakString body;
-	RakNetSmartPtr<BinaryDataBlock>binaryData;
+	RakNetSmartPtr<BinaryDataBlock> binaryData;
 };
 /// The clan leader or subleaders may remove posts or topics from a clan board.
 struct Clans_RemovePost : public Lobby2Message

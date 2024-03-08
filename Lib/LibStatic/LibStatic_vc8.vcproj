@@ -214,10 +214,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Source\DLMalloc-2.8.4.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Source\DS_BytePool.cpp"
 				>
 			</File>
@@ -601,10 +597,6 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\DirectoryDeltaTransfer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Source\DLMalloc-2.8.4.h"
 				>
 			</File>
 			<File
