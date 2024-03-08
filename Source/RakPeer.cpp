@@ -240,7 +240,11 @@ RakPeer::RakPeer()
 	isMainLoopThreadActive = false;
 	isRecvFromLoopThreadActive = false;
 	// isRecvfromThreadActive=false;
+#if defined(GET_TIME_SPIKE_LIMIT) && GET_TIME_SPIKE_LIMIT>0
+	occasionalPing = true;
+#else
 	occasionalPing = false;
+#endif
 	allowInternalRouting=false;
 	for (unsigned int i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
 		mySystemAddress[i]=UNASSIGNED_SYSTEM_ADDRESS;
@@ -1392,12 +1396,17 @@ Packet* RakPeer::ReceiveIgnoreRPC( void )
 		if (packet==0)
 			return 0;
 
+		unsigned char msgId;
 		if ( ( packet->length >= sizeof(unsigned char) + sizeof( RakNetTime ) ) &&
 			( (unsigned char) packet->data[ 0 ] == ID_TIMESTAMP ) )
 		{
 			offset = sizeof(unsigned char);
 			ShiftIncomingTimestamp( packet->data + offset, packet->systemAddress );
+			msgId=packet->data[sizeof(unsigned char) + sizeof( RakNetTime )];
 		}
+		else
+			msgId=packet->data[0];
+
 		if ( (unsigned char) packet->data[ 0 ] == ID_RPC_REPLY )
 		{
 			HandleRPCReplyPacket( ( char* ) packet->data, packet->length, packet->systemAddress );
@@ -1408,7 +1417,7 @@ Packet* RakPeer::ReceiveIgnoreRPC( void )
 		{
 			for (i=0; i < messageHandlerList.Size(); i++)
 			{
-				switch (packet->data[0])
+				switch (msgId)
 				{
 					case ID_DISCONNECTION_NOTIFICATION:
 						messageHandlerList[i]->OnClosedConnection(packet->systemAddress, packet->guid, LCR_DISCONNECTION_NOTIFICATION);

@@ -306,6 +306,7 @@ enum DefaultMessageIDTypes
 	/// Used by the router2 plugin
 	ID_ROUTER_2_INTERNAL,
 	/// No path is available or can be established to the remote system
+	/// Packet::guid contains the endpoint guid that we were trying to reach
 	ID_ROUTER_2_FORWARDING_NO_PATH,
 	/// \brief You can now call connect, ping, or other operations to the destination system.
 	///

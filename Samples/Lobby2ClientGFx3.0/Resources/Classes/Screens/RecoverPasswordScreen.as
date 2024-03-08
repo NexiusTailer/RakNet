@@ -42,6 +42,7 @@ class Screens.RecoverPasswordScreen extends Screen
 				
 		//Add callbacks for C++
 		GameDelegate.addCallBack("c2f_RecoverPasswordByUsername", this, "c2f_RecoverPasswordByUsername");
+		GameDelegate.addCallBack("c2f_GetPasswordByPasswordRecoveryAnswer", this, "c2f_GetPasswordByPasswordRecoveryAnswer");
 		
 		super.VOnFinishedLoading();
 	}
@@ -82,7 +83,7 @@ class Screens.RecoverPasswordScreen extends Screen
 	//try to get password by answering the secret question
 	public function f2c_GetPasswordByPasswordRecoveryAnswer():Void
 	{
-		//ConsoleWindow.Trace("f2c_GetPasswordByPasswordRecoveryAnswer.. answer = " + this["tiAnswer"].text);
+		ConsoleWindow.Trace("calling f2c_GetPasswordByPasswordRecoveryAnswer.. answer = " + this["tiAnswer"].text);
 		GameDelegate.call("f2c_GetPasswordByPasswordRecoveryAnswer", [mTempUsername, this["tiAnswer"].text], _root);
 	}
 

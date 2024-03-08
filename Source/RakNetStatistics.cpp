@@ -61,7 +61,7 @@ void RAK_DLL_EXPORT StatisticsToString( RakNetStatistics *s, char *buffer, int v
 		{
 			char buff2[128];
 			sprintf(buff2,
-				"Send capacity                    %"PRINTF_64_BIT_MODIFIER"u (%.0f%%)\n",
+				"Send capacity                    %"PRINTF_64_BIT_MODIFIER"u bytes per second (%.0f%%)\n",
 				s->BPSLimitByCongestionControl,
 				100.0f * s->valueOverLastSecond[ACTUAL_BYTES_SENT] / s->BPSLimitByCongestionControl
 				);
@@ -129,7 +129,7 @@ void RAK_DLL_EXPORT StatisticsToString( RakNetStatistics *s, char *buffer, int v
 		{
 			char buff2[128];
 			sprintf(buff2,
-				"Send capacity                    %"PRINTF_64_BIT_MODIFIER"u (%.0f%%)\n",
+				"Send capacity                    %"PRINTF_64_BIT_MODIFIER"u bytes per second (%.0f%%)\n",
 				s->BPSLimitByCongestionControl,
 				100.0f * s->valueOverLastSecond[ACTUAL_BYTES_SENT] / s->BPSLimitByCongestionControl
 				);

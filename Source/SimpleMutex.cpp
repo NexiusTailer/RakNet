@@ -8,14 +8,16 @@
 #include "SimpleMutex.h"
 #include "RakAssert.h"
 
-SimpleMutex::SimpleMutex() : isInitialized(false)
+SimpleMutex::SimpleMutex() //: isInitialized(false)
 {
+	// Prior implementation of Initializing in Lock() was not threadsafe
+	Init();
 }
 
 SimpleMutex::~SimpleMutex()
 {
-	if (isInitialized==false)
-		return;
+// 	if (isInitialized==false)
+// 		return;
 #ifdef _WIN32
 	//	CloseHandle(hMutex);
 	DeleteCriticalSection(&criticalSection);
@@ -32,9 +34,8 @@ SimpleMutex::~SimpleMutex()
 
 void SimpleMutex::Lock(void)
 {
-	// Initialize in the Lock() call in case this object was created globally during initialization
-	if (isInitialized==false)
-		Init();
+// 	if (isInitialized==false)
+// 		Init();
 
 #ifdef _WIN32
 	/*
@@ -77,8 +78,8 @@ void SimpleMutex::Lock(void)
 
 void SimpleMutex::Unlock(void)
 {
-	if (isInitialized==false)
-		return;
+// 	if (isInitialized==false)
+// 		return;
 #ifdef _WIN32
 	//	ReleaseMutex(hMutex);
 	LeaveCriticalSection(&criticalSection);
@@ -100,5 +101,5 @@ void SimpleMutex::Init(void)
 	(void) error;
 	RakAssert(error==0);
 #endif
-	isInitialized=true;
+//	isInitialized=true;
 }

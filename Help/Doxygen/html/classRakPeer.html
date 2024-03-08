@@ -202,7 +202,6 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns the lowest ping time read or -1 if none read yet.  <a href="#cd7b8388fccf81c93fa96a48aac9283a"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#8324e15260b26b92abb204ed9f04ff57">SetOccasionalPing</a> (bool doPing)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Ping the remote systems every so often, or not.  <a href="#8324e15260b26b92abb204ed9f04ff57"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakPeer.html#7d7601d2d7114c454829c655dc9e79c7">SetOfflinePingResponse</a> (const char *data, const unsigned int length)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets the data to send along with a LAN server discovery or offline ping reply.  <a href="#7d7601d2d7114c454829c655dc9e79c7"></a><br></td></tr>
@@ -3225,9 +3224,7 @@ Defaults to 0, meaning by default, nobody can connect to you <dl compact><dt><b>
 <div class="memdoc">
 
 <p>
-Ping the remote systems every so often, or not. 
-<p>
-This is off by default. Can be called anytime. <dl compact><dt><b>Parameters:</b></dt><dd>
+Ping the remote systems every so often, or not. Can be called anytime. By default this is true if GET_TIME_SPIKE_LIMIT is non-zero from RakNetDefines, false otherwise It would be true by default to prevent timestamp drift, since in the event of a clock spike, the timestamp deltas would no longer be accurate <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>doPing</em>&nbsp;</td><td>True to start occasional pings. False to stop them. </td></tr>
   </table>
@@ -3716,7 +3713,7 @@ This is used to return a number to the user when they call Send identifying the 
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/RakNet/Source/<a class="el" href="RakPeer_8h.html">RakPeer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 27 20:51:25 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jul 1 07:46:40 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -40,11 +40,11 @@ class Screens.EmailScreen extends ScreenWithPageNavigator
 	{
 		ConsoleWindow.Trace("Constructing EmailScreen");					
 		
-		mScreenId = ScreenID.EMAIL;		
+		mScreenId = ScreenID.EMAIL;
 		mScreenTabId = ScreenTab.ID_EMAIL;
 		
 		mEntriesPerPage = 10;
-		mFirstEntryX = 512;
+		mFirstEntryX = 482;
 		mFirstEntryY = -265;
 		mDeltaY = 10;
 	}

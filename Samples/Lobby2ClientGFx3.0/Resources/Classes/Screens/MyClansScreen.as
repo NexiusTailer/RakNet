@@ -13,14 +13,14 @@ class Screens.MyClansScreen extends ScreenWithPageNavigator
 		
 	public function MyClansScreen() 
 	{
-		ConsoleWindow.Trace("Constructing MyClansScreen");						
+		ConsoleWindow.Trace("Constructing MyClansScreen");
 		
-		mScreenId = ScreenID.CLAN_MY_CLANS;	
+		mScreenId = ScreenID.CLAN_MY_CLANS;
 		mScreenTabId = ScreenTab.ID_CLANS;
 		
-		mEntriesPerPage = 10;
+		mEntriesPerPage = 12;
 		mFirstEntryX = 435;
-		mFirstEntryY = -280;
+		mFirstEntryY = -380;
 		mDeltaY = 10;
 		
 		mInstance = this;
@@ -42,6 +42,8 @@ class Screens.MyClansScreen extends ScreenWithPageNavigator
 	
 	public function OnShow():Void
 	{
+		super.OnShow();
+		
 		if ( mMovieClipList.length > 0 )
 		{
 			CleanUpMoveClipList( mMovieClipList );

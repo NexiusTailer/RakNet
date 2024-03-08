@@ -405,7 +405,9 @@ public:
 	/// \return The lowest ping time for this system, or -1
 	virtual int GetLowestPing( const AddressOrGUID systemIdentifier ) const=0;
 
-	/// Ping the remote systems every so often, or not. This is off by default.  Can be called anytime.
+	/// Ping the remote systems every so often, or not. Can be called anytime.
+	/// By default this is true if GET_TIME_SPIKE_LIMIT is non-zero from RakNetDefines, false otherwise
+	/// It would be true by default to prevent timestamp drift, since in the event of a clock spike, the timestamp deltas would no longer be accurate
 	/// \param[in] doPing True to start occasional pings.  False to stop them.
 	virtual void SetOccasionalPing( bool doPing )=0;
 

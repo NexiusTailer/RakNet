@@ -178,7 +178,7 @@ void PacketLogger::OnInternalPacket(InternalPacket *internalPacket, unsigned fra
 
 	if (internalPacket->data[0]==ID_TIMESTAMP && internalPacket->data[sizeof(unsigned char)+sizeof(RakNetTime)]!=ID_RPC)
 	{
-		FormatLine(str, sendType, "Tms", internalPacket->reliableMessageNumber, frameNumber, internalPacket->data[1+sizeof(int)], internalPacket->dataBitLength, (unsigned long long)time, localSystemAddress, remoteSystemAddress, internalPacket->splitPacketId, internalPacket->splitPacketIndex, internalPacket->splitPacketCount, internalPacket->orderingIndex);
+		FormatLine(str, sendType, "Tms", internalPacket->reliableMessageNumber, frameNumber, internalPacket->data[1+sizeof(RakNetTime)], internalPacket->dataBitLength, (unsigned long long)time, localSystemAddress, remoteSystemAddress, internalPacket->splitPacketId, internalPacket->splitPacketIndex, internalPacket->splitPacketCount, internalPacket->orderingIndex);
 	}
 	else if (internalPacket->data[0]==ID_RPC || (internalPacket->dataBitLength>(sizeof(unsigned char)+sizeof(RakNetTime))*8 && internalPacket->data[0]==ID_TIMESTAMP && internalPacket->data[sizeof(unsigned char)+sizeof(RakNetTime)]==ID_RPC))
 	{

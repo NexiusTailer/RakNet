@@ -309,6 +309,7 @@ struct SerializeParameters
 
 	/// Set to non-zero to transmit a timestamp with this message.
 	/// Defaults to 0
+	/// Use RakNet::GetTime() for this
 	RakNetTime messageTimestamp;
 
 	/// Passed to RakPeerInterface::Send(). Defaults to ReplicaManager3::SetDefaultPacketPriority().

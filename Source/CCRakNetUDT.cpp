@@ -25,9 +25,12 @@ static const CCTimeType SYN=10000;
 
 #if CC_TIME_TYPE_BYTES==4
 #define MAX_RTT 1000
+#define RTT_TOLERANCE 30
 #else
 #define MAX_RTT 1000000
+#define RTT_TOLERANCE 30000
 #endif
+
 
 double RTTVarMultiple=4.0;
 
@@ -70,12 +73,20 @@ void CCRakNetUDT::Init(CCTimeType curTime, uint32_t maxDatagramPayload)
 	totalUserDataBytesSent=0;
 	oldestUnsentAck=0;
 	MAXIMUM_MTU_INCLUDING_UDP_HEADER=maxDatagramPayload;
-	CWND_MAX_THRESHOLD=25600;
+	CWND_MAX_THRESHOLD=RESEND_BUFFER_ARRAY_LENGTH;
 #if CC_TIME_TYPE_BYTES==4
 	const BytesPerMicrosecond DEFAULT_TRANSFER_RATE=(BytesPerMicrosecond) 3.6;
 #else
 	const BytesPerMicrosecond DEFAULT_TRANSFER_RATE=(BytesPerMicrosecond) .0036;
 #endif
+
+#if CC_TIME_TYPE_BYTES==4
+	lastRttOnIncreaseSendRate=1000;
+#else
+	lastRttOnIncreaseSendRate=1000000;
+#endif
+	nextCongestionControlBlock=0;
+	lastRtt=0;
 
 	//	B=DEFAULT_TRANSFER_RATE;
 	AS=UNDEFINED_TRANSFER_RATE;
@@ -86,27 +97,17 @@ void CCRakNetUDT::Init(CCTimeType curTime, uint32_t maxDatagramPayload)
 	packetArrivalHistoryContinuousGapsIndex=0;
 	//packetPairRecipetHistoryGapsIndex=0;
 	hasWrittenToPacketPairReceiptHistory=false;
-	gotNakOrResendWithoutAck=false;
 	InitPacketArrivalHistory();
 
-
 	estimatedLinkCapacityBytesPerSecond=0;
-	gotPacketlossThisUpdate=false;
-#if CC_TIME_TYPE_BYTES==4
-	lastRttHigh=1000;
-	lastRttLow=100;
-#else
-	lastRttHigh=1000000;
-	lastRttLow=100000;
-#endif
-
 	bytesCanSendThisTick=0;
+	hadPacketlossThisBlock=false;
+	pingsLastInterval.Clear(__FILE__,__LINE__);
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetUDT::SetMTU(uint32_t bytes)
 {
 	MAXIMUM_MTU_INCLUDING_UDP_HEADER=bytes;
-	CWND_MAX_THRESHOLD=(1024*256)/MAXIMUM_MTU_INCLUDING_UDP_HEADER;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 uint32_t CCRakNetUDT::GetMTU(void) const
@@ -174,8 +175,15 @@ int CCRakNetUDT::GetTransmissionBandwidth(CCTimeType curTime, CCTimeType timeSin
 	}
 	if (bytesCanSendThisTick>0)
 		bytesCanSendThisTick=0;
-	if (isContinuousSend==false && timeSinceLastTick>SND*3)
-		timeSinceLastTick=(int) (SND*3.0);
+
+#if CC_TIME_TYPE_BYTES==4
+	if (isContinuousSend==false && timeSinceLastTick>100)
+		timeSinceLastTick=100;
+#else
+	if (isContinuousSend==false && timeSinceLastTick>100000)
+		timeSinceLastTick=100000;
+#endif
+
 	bytesCanSendThisTick=(int)((double)timeSinceLastTick*((double)1.0/SND)+(double)bytesCanSendThisTick);
 	if (bytesCanSendThisTick>0)
 		return bytesCanSendThisTick;
@@ -357,7 +365,8 @@ CCTimeType CCRakNetUDT::GetRTOForRetransmission(void) const
 		return (CCTimeType) maxThreshold;
 	}
 
-	CCTimeType ret = lastRttHigh*2;
+	CCTimeType ret = lastRttOnIncreaseSendRate*2;
+
 	if (ret<minThreshold)
 		return minThreshold;
 	if (ret>maxThreshold)
@@ -376,18 +385,14 @@ void CCRakNetUDT::OnResend(CCTimeType curTime)
 		return;
 	}
 
-	if (gotPacketlossThisUpdate==false && gotNakOrResendWithoutAck==false)
+	if (hadPacketlossThisBlock==false)
 	{
-//		printf("- rtt=%.0f Resend first\n", RTT/1000);
-			IncreaseTimeBetweenSends();
-		gotPacketlossThisUpdate=true;
-		gotNakOrResendWithoutAck=true;
+		// Logging
+//		 printf("Sending SLOWER due to Resend, Rate=%f MBPS. Rtt=%i\n", GetLocalSendRate(),  lastRtt );
+
+		IncreaseTimeBetweenSends();
+		hadPacketlossThisBlock=true;
 	}
-	// 	else if (randomMT()%congestionPeriodLength==0)
-	// 	{
-	// 		printf("- rtt=%.0f Resend subsequent\n", RTT/1000);
-	// 		IncreaseTimeBetweenSends();
-	// 	}
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetUDT::OnNAK(CCTimeType curTime, DatagramSequenceNumberType nakSequenceNumber)
@@ -402,18 +407,20 @@ void CCRakNetUDT::OnNAK(CCTimeType curTime, DatagramSequenceNumberType nakSequen
 		return;
 	}
 
-	if (gotPacketlossThisUpdate==false && gotNakOrResendWithoutAck==false)
+	if (hadPacketlossThisBlock==false)
 	{
-//		printf("- rtt=%.0f NAK\n", RTT/1000);
+		// Logging
+// 		printf("Sending SLOWER due to NAK, Rate=%f MBPS. Rtt=%i\n", GetLocalSendRate(),  lastRtt );
+// 		if (pingsLastInterval.Size()>10)
+// 		{
+// 			for (int i=0; i < 10; i++)
+// 				printf("%i, ", pingsLastInterval[pingsLastInterval.Size()-1-i]/1000);
+// 		}
+// 		printf("\n");
 		IncreaseTimeBetweenSends();
-		gotPacketlossThisUpdate=true;
-		gotNakOrResendWithoutAck=true;
+
+		hadPacketlossThisBlock=true;
 	}
-	// 	else if (randomMT()%congestionPeriodLength==0)
-	// 	{
-	// 		printf("- rtt=%.0f Resend subsequent\n", RTT/1000);
-	// 		IncreaseTimeBetweenSends();
-	// 	}
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetUDT::EndSlowStart(void)
@@ -436,8 +443,6 @@ void CCRakNetUDT::EndSlowStart(void)
 #endif
 	if (SND > .1)
 		PrintLowBandwidthWarning();
-
-	StartNewRttHistory();
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetUDT::OnGotPacketPair(DatagramSequenceNumberType datagramSequenceNumber, uint32_t sizeInBytes, CCTimeType curTime)
@@ -524,8 +529,6 @@ void CCRakNetUDT::OnAck(CCTimeType curTime, CCTimeType rtt, bool hasBAndAS, Byte
 #endif
 	(void) _B;
 
-	gotNakOrResendWithoutAck=false;
-
 	if (hasBAndAS)
 	{
 		///	RakAssert(_B!=UNDEFINED_TRANSFER_RATE && _AS!=UNDEFINED_TRANSFER_RATE);
@@ -536,28 +539,21 @@ void CCRakNetUDT::OnAck(CCTimeType curTime, CCTimeType rtt, bool hasBAndAS, Byte
 		CC_DEBUG_PRINTF_4("ArrivalRate=%f linkCap=%f incomingLinkCap=%f\n", _AS,B,_B);
 	}
 
-	TrackRTT(curTime, rtt);
-
 	if (oldestUnsentAck==0)
 		oldestUnsentAck=curTime;
 
 	if (isInSlowStart==true)
 	{
+		nextCongestionControlBlock=nextDatagramSequenceNumber;
+		lastRttOnIncreaseSendRate=rtt;
 		UpdateWindowSizeAndAckOnAckPreSlowStart(totalUserDataBytesAcked);
 	}
-	else if (isContinuousSend)
+	else
 	{
 		UpdateWindowSizeAndAckOnAckPerSyn(curTime, rtt, isContinuousSend, sequenceNumber);
 	}
 
 	lastUpdateWindowSizeAndAck=curTime;
-}
-// ----------------------------------------------------------------------------------------------------------------------------
-void CCRakNetUDT::TrackRTT(CCTimeType curTime, CCTimeType rtt)
-{
-	(void) curTime;
-
-	RTT=(double)rtt;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetUDT::OnSendAckGetBAndAS(CCTimeType curTime, bool *hasBAndAS, BytesPerMicrosecond *_B, BytesPerMicrosecond *_AS)
@@ -624,37 +620,60 @@ void CCRakNetUDT::UpdateWindowSizeAndAckOnAckPerSyn(CCTimeType curTime, CCTimeTy
 	(void) curTime;
 	(void) sequenceNumber;
 	if (isContinuousSend==false)
-		return;
-
-	uint32_t rtt32 = (uint32_t) rtt;
-	RttAnalysis rtta = PushToRttHistory(rtt32, sequenceNumber);
-
-	if (rtta==RTTA_STEADY)
 	{
-		if (gotPacketlossThisUpdate==false)
+		nextCongestionControlBlock=nextDatagramSequenceNumber;
+		pingsLastInterval.Clear(__FILE__,__LINE__);
+		return;
+	}
+
+	pingsLastInterval.Push(rtt,__FILE__,__LINE__);
+	static const int intervalSize=33; // Should be odd
+	if (pingsLastInterval.Size()>intervalSize)
+		pingsLastInterval.Pop();
+	if (GreaterThan(sequenceNumber, nextCongestionControlBlock) &&
+		sequenceNumber-nextCongestionControlBlock>=intervalSize &&
+		pingsLastInterval.Size()==intervalSize)
+	{
+		double slopeSum=0.0;
+		double average=(double) pingsLastInterval[0];
+		int sampleSize=pingsLastInterval.Size();
+		for (int i=1; i < sampleSize; i++)
 		{
-			// Speed up
-//			printf("+ rtt=%i\n", rtt32/1000);
+			slopeSum+=(double)pingsLastInterval[i]-(double)pingsLastInterval[i-1];
+			average+=pingsLastInterval[i];
+		}
+		average/=sampleSize;
+		
+		if (hadPacketlossThisBlock==true)
+		{
+		}
+		else if (slopeSum < -.10*average)
+		{
+			// Logging
+//			printf("Ping dropping. slope=%f%%. Rate=%f MBPS. Rtt=%i\n", 100.0*slopeSum/average, GetLocalSendRate(),  rtt );
+		}
+		else if (slopeSum > .10*average)
+		{
+			// Logging
+//			printf("Ping rising. slope=%f%%. Rate=%f MBPS. Rtt=%i\n", 100.0*slopeSum/average, GetLocalSendRate(),  rtt );
+			IncreaseTimeBetweenSends();
+		}
+		else
+		{
+			// Logging
+//			printf("Ping stable. slope=%f%%. Rate=%f MBPS. Rtt=%i\n", 100.0*slopeSum/average, GetLocalSendRate(),  rtt );
+
+			// No packetloss over time threshhold, and rtt decreased, so send faster
+			lastRttOnIncreaseSendRate=rtt;
 			DecreaseTimeBetweenSends();
 		}
 
-		lastRttHigh=rttHigh;
-		lastRttLow=rttLow;
-		StartNewRttHistory();
-		gotPacketlossThisUpdate=false;
+		pingsLastInterval.Clear(__FILE__,__LINE__);
+		hadPacketlossThisBlock=false;
+		nextCongestionControlBlock=nextDatagramSequenceNumber;
 	}
-	else if (rtta==RTTA_SPIKE)
-	{
-		// Slow down
-//		printf("- rtt=%i\n", rtt32/1000);
-		IncreaseTimeBetweenSends();
-		estimatedLinkCapacityBytesPerSecond=(1.0/SND) * 1000000.0;
 
-		lastRttHigh=rttHigh;
-		lastRttLow=rttLow;
-		StartNewRttHistory();
-		gotPacketlossThisUpdate=false;
-	}
+	lastRtt=rtt;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------
@@ -739,6 +758,7 @@ void CCRakNetUDT::IncreaseTimeBetweenSends(void)
 
 	// SND=0 then fast increase, slow decrease
 	// SND=500 then slow increase, fast decrease
+	CapMinSnd(__FILE__,__LINE__);
 }
 void CCRakNetUDT::DecreaseTimeBetweenSends(void)
 {
@@ -748,6 +768,7 @@ void CCRakNetUDT::DecreaseTimeBetweenSends(void)
 	// SND=0 then increment=near 0
 	SND*=(.99 - increment);
 }
+/*
 void CCRakNetUDT::SetTimeBetweenSendsLimit(unsigned int bitsPerSecond)
 {
 // 	bitsPerSecond / 1000000 = bitsPerMicrosecond
@@ -765,47 +786,4 @@ void CCRakNetUDT::SetTimeBetweenSendsLimit(unsigned int bitsPerSecond)
 	if (limit > SND)
 		SND=limit;
 }
-void CCRakNetUDT::StartNewRttHistory(void)
-{
-	rttDeltaHistory.Clear(__FILE__,__LINE__);
-	rttDelta=0;
-	rttLow=(uint32_t)-1;
-	rttHigh=0;
-	historyEndDatagramNumber=nextDatagramSequenceNumber+(DatagramSequenceNumberType)32;
-}
-CCRakNetUDT::RttAnalysis CCRakNetUDT::PushToRttHistory(uint32_t rtt, DatagramSequenceNumberType ackSequenceNumber)
-{
-	if (rtt < rttLow)
-		rttLow=rtt;
-	if (rtt > rttHigh)
-		rttHigh=rtt;
-	rttDeltaHistory.Push(rtt,__FILE__,__LINE__);
-	if (rttDeltaHistory.Size()>1)
-	{
-		if (rttDeltaHistory.Size()>32 && rtt > lastRttHigh + ((lastRttHigh-lastRttLow)>>3) )
-			return RTTA_SPIKE;
-		rttDelta+=rtt-rttDeltaHistory[rttDeltaHistory.Size()-1];
-		if (rttDeltaHistory.Size()>32)
-		{
-			rttDelta-=rttDeltaHistory[1]-rttDeltaHistory[0];
-			rttDeltaHistory.Pop();
-		}
-	}
-	if (GreaterThan(ackSequenceNumber, historyEndDatagramNumber))
-	{
-		return GetRTTAnalysis(rtt);
-	}
-	return RTTA_NEITHER;
-}
-CCRakNetUDT::RttAnalysis CCRakNetUDT::GetRTTAnalysis(uint32_t rtt)
-{
-	(void) rtt;
-
-	if (fabs((float)rttDelta)<(.25 * (rttHigh-rttLow)))
-		return RTTA_STEADY;
-	if (rttDelta < -(.25 * (rttHigh-rttLow)))
-		return RTTA_DOWNWARD;
-	if (rttDelta > .5 * (rttHigh-rttLow))
-		return RTTA_SPIKE;
-	return RTTA_NEITHER;
-}
+*/

@@ -149,88 +149,80 @@ void UDPForwarder::UpdateThreaded(void)
 
 	if (selectResult > 0)
 	{
-		DataStructures::OrderedList<unsigned int,unsigned int> removalIndices;
-		DataStructures::Queue<ForwardEntry*> entriesToReinsert;
+		DataStructures::Queue<ForwardEntry*> entriesToRead;
+		ForwardEntry *feSource;
 
 		for (i=0; i < forwardList.GetSize(); i++)
 		{
-			ForwardEntry *feSource = forwardList[i];
+			feSource = forwardList[i];
+			// I do this because I'm updating the forwardList, and don't want to lose FD_ISSET as the list is no longer in order
 			if (FD_ISSET(feSource->readSocket, &readFD))
+				entriesToRead.Push(feSource,__FILE__,__LINE__);
+		}
+
+		while (entriesToRead.IsEmpty()==false)
+		{
+			feSource=entriesToRead.Pop();
+
+			const int flag=0;
+			int receivedDataLen, len=0;
+			unsigned short portnum=0;
+			len2 = sizeof( sa );
+			sa.sin_family = AF_INET;
+			receivedDataLen = recvfrom( feSource->readSocket, data, MAXIMUM_MTU_SIZE, flag, ( sockaddr* ) & sa, ( socklen_t* ) & len2 );
+			portnum = ntohs( sa.sin_port );
+
+			if (feSource->srcAndDest.source.binaryAddress==sa.sin_addr.s_addr)
 			{
-				const int flag=0;
-				int receivedDataLen, len=0;
-				unsigned short portnum=0;
-				len2 = sizeof( sa );
-				sa.sin_family = AF_INET;
-				receivedDataLen = recvfrom( feSource->readSocket, data, MAXIMUM_MTU_SIZE, flag, ( sockaddr* ) & sa, ( socklen_t* ) & len2 );
-				portnum = ntohs( sa.sin_port );
-
-				if (feSource->srcAndDest.source.binaryAddress==sa.sin_addr.s_addr)
+				if (feSource->updatedSourceAddress==false)
 				{
-					if (feSource->updatedSourceAddress==false)
+					feSource->updatedSourceAddress=true;
+
+					if (feSource->srcAndDest.source.port!=portnum)
 					{
-						feSource->updatedSourceAddress=true;
+						// Remove both source and dest from list, update addresses, and reinsert in order
+						DataStructures::DefaultIndexType sourceIndex, destIndex;
+						SrcAndDest srcAndDest;
+						srcAndDest.source=feSource->srcAndDest.destination;
+						srcAndDest.destination=feSource->srcAndDest.source;
+						destIndex=forwardList.GetIndexOf(srcAndDest);
+						ForwardEntry *feDest = forwardList[destIndex];
 
-						if (feSource->srcAndDest.source.port!=portnum)
-						{
-							// Remove both source and dest from list, update addresses, and reinsert in order
-							DataStructures::DefaultIndexType destIndex;
-							SrcAndDest srcAndDest;
-							srcAndDest.source=feSource->srcAndDest.destination;
-							srcAndDest.destination=feSource->srcAndDest.source;
-							destIndex=forwardList.GetIndexOf(srcAndDest);
+						forwardList.RemoveAtIndex(destIndex,__FILE__,__LINE__);
+						srcAndDest.source=feSource->srcAndDest.source;
+						srcAndDest.destination=feSource->srcAndDest.destination;
+						sourceIndex=forwardList.GetIndexOf(srcAndDest);
+						forwardList.RemoveAtIndex(sourceIndex,__FILE__,__LINE__);
 
-							ForwardEntry *feDest = forwardList[destIndex];
-							feSource->srcAndDest.source.port=portnum;
-							feDest->srcAndDest.destination.port=portnum;
-
-							feSource->timeLastDatagramForwarded=curTime;
-							feDest->timeLastDatagramForwarded=curTime;
-
-							removalIndices.Insert(i,i,true,__FILE__,__LINE__);
-							removalIndices.Insert(destIndex,destIndex,true,__FILE__,__LINE__);
-							entriesToReinsert.Push(feSource,__FILE__,__LINE__);
-							entriesToReinsert.Push(feDest,__FILE__,__LINE__);
-
-// 							forwardList.RemoveAtIndex(i,__FILE__,__LINE__);
-// 							forwardList.RemoveAtIndex(destIndex,__FILE__,__LINE__);
-// 
-// 							// Reinsert to preserve list order
-// 							forwardList.Push(feSource,feSource->srcAndDest,__FILE__,__LINE__);
-// 							forwardList.Push(feDest,feDest->srcAndDest,__FILE__,__LINE__);
-						}
-					}
-
-					if (feSource->srcAndDest.source.port==portnum)
-					{
-						// Forward to destination
-						len=0;
-						sockaddr_in saOut;
-						saOut.sin_port = htons( feSource->srcAndDest.destination.port ); // User port
-						saOut.sin_addr.s_addr = feSource->srcAndDest.destination.binaryAddress;
-						saOut.sin_family = AF_INET;
-						do
-						{
-							len = sendto( feSource->writeSocket, data, receivedDataLen, 0, ( const sockaddr* ) & saOut, sizeof( saOut ) );
-						}
-						while ( len == 0 );
+						feSource->srcAndDest.source.port=portnum;
+						feDest->srcAndDest.destination.port=portnum;
 
 						feSource->timeLastDatagramForwarded=curTime;
+						feDest->timeLastDatagramForwarded=curTime;
+						
+						forwardList.Push(feSource,feSource->srcAndDest,__FILE__,__LINE__);
+						forwardList.Push(feDest,feDest->srcAndDest,__FILE__,__LINE__);
+
 					}
 				}
-			}
-		}
 
-		while (removalIndices.Size()>0)
-		{
-			// Removing from back to front, so indices remain valid
-			forwardList.RemoveAtIndex(removalIndices[removalIndices.Size()-1],__FILE__,__LINE__);
-			removalIndices.RemoveFromEnd();
-		}
-		while (entriesToReinsert.Size())
-		{
-			ForwardEntry *fe = entriesToReinsert.Pop();
-			forwardList.Push(fe,fe->srcAndDest,__FILE__,__LINE__);
+				if (feSource->srcAndDest.source.port==portnum)
+				{
+					// Forward to destination
+					len=0;
+					sockaddr_in saOut;
+					saOut.sin_port = htons( feSource->srcAndDest.destination.port ); // User port
+					saOut.sin_addr.s_addr = feSource->srcAndDest.destination.binaryAddress;
+					saOut.sin_family = AF_INET;
+					do
+					{
+						len = sendto( feSource->writeSocket, data, receivedDataLen, 0, ( const sockaddr* ) & saOut, sizeof( saOut ) );
+					}
+					while ( len == 0 );
+
+					feSource->timeLastDatagramForwarded=curTime;
+				}
+			}
 		}
 	}
 }

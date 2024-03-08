@@ -101,7 +101,6 @@ int main()
 
 
 	endThreads=false;
-	unsigned threadId;
 	unsigned i;
 	char count[20];
 	printf("Starting threads\n");

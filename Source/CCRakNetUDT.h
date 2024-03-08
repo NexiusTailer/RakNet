@@ -169,13 +169,13 @@ class CCRakNetUDT
 	static bool GreaterThan(DatagramSequenceNumberType a, DatagramSequenceNumberType b);
 	/// Is a < b, accounting for variable overflow?
 	static bool LessThan(DatagramSequenceNumberType a, DatagramSequenceNumberType b);
-	void SetTimeBetweenSendsLimit(unsigned int bitsPerSecond);
+//	void SetTimeBetweenSendsLimit(unsigned int bitsPerSecond);
 	uint64_t GetBytesPerSecondLimitByCongestionControl(void) const;
 
 
 	protected:
 	// --------------------------- PROTECTED VARIABLES ---------------------------
-	/// time interval between outgoing packets, in milliseconds
+	/// time interval between outgoing packets, in microseconds
 	/// Only used when slowStart==false
 	/// Increased over time as we continually get messages
 	/// Decreased on NAK and timeout
@@ -372,41 +372,14 @@ class CCRakNetUDT
 	void DecreaseTimeBetweenSends(void);
 	void IncreaseTimeBetweenSends(void);
 
-	// Algorithm to track ping trends more accurately than a fixed length buffer
-	// Every congestion block
-	// Check last RTT * 2 messages for slope.
-	// If slope is steady, increase rate
-	// If slope is downward, do nothing
-	// If any point is ever higher than 9/8 * max, decrease rate, start new congestion block
-	//
-	// Steady: Take average of slope between each point pair. Absolute value of Slope * numPoints should not exceed 25% of max-min
-	// Downward: Take average of slope between each point pair. Slope * numPoints should be negative and exceed 25% of max-min
-	DataStructures::Queue<uint32_t> rttDeltaHistory;
-	uint32_t rttLow, rttHigh,lastRttHigh, lastRttLow;
-	int rttDelta;
-	DatagramSequenceNumberType historyEndDatagramNumber;
-	void StartNewRttHistory(void);
-	enum RttAnalysis
-	{
-		RTTA_STEADY,
-		RTTA_DOWNWARD,
-		RTTA_SPIKE,
-		RTTA_NEITHER
-	};
-	RttAnalysis PushToRttHistory(uint32_t rtt, DatagramSequenceNumberType ackSequenceNumber);
-	RttAnalysis GetRTTAnalysis(uint32_t rtt);
-
-// 	uint32_t rttHistory[RTT_HISTORY_LENGTH];
-// 	uint32_t rttHistoryIndex;
-// 	uint32_t rttSum, rttLow;
-	void TrackRTT(CCTimeType curTime, CCTimeType rtt);
-	bool gotPacketlossThisUpdate;
-	// If a spike occurs (such as due to debugging), we'd get many packetloss or nak events in a row
-	// It is not necessary to drop the send rate on each of those, only the first
-	// Without this check, the send rate would drop, but the ping would remain steady (besides the first message) so it would take a very long time to recover
-	bool gotNakOrResendWithoutAck;
-
 	int bytesCanSendThisTick;
+
+	CCTimeType lastRttOnIncreaseSendRate;
+	CCTimeType lastRtt;
+
+	DatagramSequenceNumberType nextCongestionControlBlock;
+	bool hadPacketlossThisBlock;
+	DataStructures::Queue<CCTimeType> pingsLastInterval;
 };
 
 }

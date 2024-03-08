@@ -92,17 +92,21 @@
 #define DATAGRAM_MESSAGE_ID_ARRAY_LENGTH 512
 #endif
 
-/// This is the maximum number of reliable user messages the system will track to unresponsive systems
-/// A good value is the maximum number of reliable messages you will send over 10 seconds
+/// This is the maximum number of reliable user messages that can be on the wire at a time
 #ifndef RESEND_BUFFER_ARRAY_LENGTH
 #define RESEND_BUFFER_ARRAY_LENGTH 512
-#define RESEND_BUFFER_ARRAY_MASK 0x1FF
+#define RESEND_BUFFER_ARRAY_MASK 511
 #endif
 
 /// Uncomment if you want to link in the DLMalloc library to use with RakMemoryOverride
 // #define _LINK_DL_MALLOC
 
-/// DO NOT USE, doesn't work
-// #define USE_THREADED_SEND
+#ifndef GET_TIME_SPIKE_LIMIT
+/// Workaround for http://support.microsoft.com/kb/274323 , only does anything on Windows and Linux
+/// If two calls between RakNet::GetTime() happen farther apart than this time in microseconds, this delta will be returned instead
+/// \note RakNet itself calls RakNet::GetTime() constantly while active, so you won't see this limit unless you infrequently call RakNet::GetTime() while RakNet is not active
+/// Define in RakNetDefinesOverrides.h to enable (non-zero) or disable (0)
+#define GET_TIME_SPIKE_LIMIT 0
+#endif
 
 #endif // __RAKNET_DEFINES_H

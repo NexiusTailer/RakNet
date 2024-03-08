@@ -29,23 +29,24 @@ public:
 
 	// Constructor
 	SimpleMutex();
-	
+
 	// Destructor
 	~SimpleMutex();
-	
+
 	// Locks the mutex.  Slow!
 	void Lock(void);
-	
+
 	// Unlocks the mutex.
 	void Unlock(void);
 private:
 	void Init(void);
-	#ifdef _WIN32
+#ifdef _WIN32
 	CRITICAL_SECTION criticalSection; /// Docs say this is faster than a mutex for single process access
-	#else
+#else
 	pthread_mutex_t hMutex;
-	#endif
-	bool isInitialized;
+#endif
+	// Not threadsafe
+	//	bool isInitialized;
 };
 
 #endif

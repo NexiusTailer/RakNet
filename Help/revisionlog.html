@@ -136,216 +136,226 @@
 2.451 Fixed bug where dropped connections were not detected as long as you kept sending to the dropped system.  WriteVector, etc. in the BitStream class can now take doubles as well as floats.  Fixed an invalid assert when passing 0 to the fully connected mesh as the password.<BR>
 2.452 Fixed not detecting dropped connections when only one packet was being resent.<BR>
 2.453 Improve template compatibility.<BR>
-2.454 Master server / Master client now uses Plugin interface. Fixed bug that appeared on Linux where out of older order packets were incorrectly treated as duplicate and dropped.  Same fix reduces memory usage by about 400 bytes per player. Reorganized packet resend loop to hopefully fix a reported infinite loop. Added define _COMPATIBILITY_1 to exclude compilation of code that uses alloca, FormatMessage, the security layer, gethostbyname, #include <windows.h>, and inet_ntoa.  This define also changes the default MTU to 1492. Updated documentation for memory synchronization of DataReplicator. Updated FAQ. Added OnDetatch to the PluginInterface.<BR>
-2.455 Fixed many gcc warnings.  Fixed error where alloca wouldn't compile under Code::Blocks<BR>
-2.456 Add channel parameter to functions RakPeer::Disconnect and RakPeer::CloseConnection. Added RakPeer::SetTimeoutTime and removed constant TIMEOUT_TIME. Optimized network thread playerID lookup from O(n) to O(log2(n)), which will improve directed send speeds when a server or peer has many connected systems. Added SetNetworkSimulator procedure so the network simulator can be activated, deactivated, and be adjusted by users at runtime.  Added checking for _FINAL define, to exclude code that would never be used in release builds.  Currently only applies to the NetworkSimulator<BR>
-2.457 Fixed harmless assert on startup in ReliabilityLayer::SetPing. Fixed uninitialized variable read when sending ID_ADVERTISE_SYSTEM with no user data. Fixed search indexing bug in OrderedList causing performance loss. Increased DataReplicator memory registration limit from 255 to 65535.<BR>
-2.46 Added IsObjectListPushComplete to the DataReplicator system.  The DataReplicator class factory now has access to the creation send and request data.  Added CommandConsoleServer and CommandConsoleClient. Padded single byte packets to 2 bytes to fix some router issues.<BR>
-2.461 Exported most of the user classes, so if you are using a DLL you don't have to include the source. Added more functions to RakNetworkFactory to new and delete those classes. Fixed an assert in DataReplicator. Added const to StringCompressor::EncodeString and AdvertiseSystem. Fixed projects so they all build.<BR>
-2.47 Released first iteration of ReplicaManager, which replaces DataReplicator, which I will no longer include in distributions.  Added ReplicaManagerCS and ReplicaManagerP2P samples.  Added missing *identifierFound=true in GetServerListRuleAsInt.  Added OnCloseConnection to PluginInterface. The NetworkID generator system now supports peer to peer. Added StringTable class.<BR>
-2.48 Fixed critical bug where if an unreliable packet was lost all further data would be considered duplicate. In the ReplicaManager you can now use objects without calling construct first.  The BitStream class for VC6 reverts to the old BitStream that didn't use templates.  Renamed ObjectID NetworkID and renamed UNASSIGNED_OBJECT_ID UNASSIGNED_NETWORK_ID.<BR>
-2.481 All changes to the ReplicaManager: Added ReferencePointer. Using a default scope of true will no longer trigger SendScopeChange and ReceiveScopeChange calls for that true default value. Functions now use the return type ReplicaReturnResult.  All 3 callbacks now include a ReplicaManager * to the manager. Fixed bug setting bitwise enumerations for commands for the ReplicaManager.<BR>
-2.482 Removed mutex locks for incoming and outgoing password. Bug fixes for ReplicaManager. Added 64 bit time support.<BR>
-2.483 (04/19/06) Replaced %8 with &7 in BitStream.cpp.  Thanks to Oliver Smith for pointing this out. Changed offline pings to be totally offline, rather than connecting and then disconnecting.  This might fix the reported bug with pinging and not being able to reconnect. Reordered packet enumerations so that the most commonly used ones are first.  Updated readme.txt.<BR>
-2.484 (04/21/06) Fixed stack overflow problem when sending RPC packets with more data than the stack can hold (via define MAX_ALLOCA_STACK_ALLOCATION).  Added PlayerID::ToString(). Converted Bitstream constructor char *'s to unsigned char *'s so you can pass Packet::data to it without casting. Fixed memory leak if you disconnected with unread packets waiting (Thanks to "riley" and "Greg" in the forums).  Removed various warnings.  Updated Linux ChatExample (thanks to Oliver Stone for sending me the files).<BR>
-2.485 (04/27/06) Fixed bug with not being able to do cross-connections.  Renamed all data structures with DS_ and changed namespace to DataStructure.<BR>
-2.486 (05/03/06) Improved support for cross connections.  Added ID_* strings to packet logger.  Fixed devCPP compatibility.  Made certain functions inline for improved performance.  Added RakNetDefines.h as a global control panel.  Bugs in tutorial html files fixed (Thanks to Laurens Simonis).<BR>
-2.487 (05/05/06) You can now call DeallocatePacket in any order you want.  Added PerformanceAnalysis and ThreadTest projects.  Fixed memory leak if sending an RPC to a system that disconnected between the user call and the network thread doing the send. Removed maximum message size limit of (formerly) 91 megabytes, improved CPU efficiency of message reassembly, and decreased per-split bandwidth usage by 2 bytes. Fixed bug where you could get recursive RPC calls with blocking RPCs. Added _RAKNET_THREADSAFE to support multiple writer and reader threads using the same instance of RakPeer. BitStream.h should now compile on Visual Studio 2005.<BR>
-2.49 (05/22/06) Added help text to all samples. Added ConnectionGraph and Router plugins. Rewrote RakVoice and made it a plugin. The bitstream write function that takes another bitstream now also takes the number of bits to write.<BR>
-2.5 (06/23/06) Fixed order channel heap deletion.  Added Rewritten Autopatcher.  Added DirectoryDeltaTransfer.  Added CrashReporter and CrashRelauncher.  Moved samples up one directory.  Fix bug with plugins only processing one message.<BR>
-2.51 (06/24/06) Improved crash reporter.  Finished EmailSender.  Banned ID now sent to banned players. Replaced flow control method in reliability layer (experimental!).<BR>
-2.511 (06/26/06) Increased time resolution to nanoseconds, greatly improving the granularity of the send speeds.<BR>
-2.512 (06/26/06) Fixed bug with nanoseconds overflowing after a few hours.<BR>
-2.513 (06/26/06) Fixed GetTime bug on a machines with a certain clock hertz that caused all new connections to be considered timed out immediately.  Added NAT Punchthrough plugin.<BR>
-2.514 (07/02/06) Fixed DevCPP compatibility.  Slight throughput increase.  Still working on BPlusTree to improve it further.<BR>
-2.515 (07/06/06) Fixed bug with overflowing the buffer when resending reliable messages.  Added BPlus tree data structure and used it for resends. Fixed bug where timestamped messages were not sent to plugins.<BR>
-2.516 (07/12/06) Fixed Linux compatibility due to a bug in GetTime.cpp.  Working on table data structure (incomplete).<BR>
-2.517 (08/24/06) Commented out unused macros in Types.h. Added DS_Table class and LightweightDatabaseServer/LightweightDatabaseClient plugins. Improved flow control algorithm to detect connection speed more quickly and increased maximum throughput by about 4 times. Fixed Linux compatibility problems. Added _RAKNET_LIB and _RAKNET_DLL to Exports.h and changed projects accordingly. Fixed memory leak in the memory pool class. Fixed DLL compile problems. Commented RakVoice.<BR>
-2.518 (09/01/06) Changed return value of OnReceive for plugins. Further fixes for Linux and Mac compatibility. Optimize Bitstream writes of other Bitstreams. Added ThreadPool class and made the autopatcher use it so that queries run in a thread rather than blocking the main thread.<BR>
-2.519 (09/05/06) Fixed 1 byte memory leak on ID_DISCONNECTION_NOTIFICATION.  Thanks knox!<BR>
-2.52 (09/22/06) Fixed a bug where a system that disconnected couldn't always reconnect. Fixed a bug where a system couldn't connect rapidly with secure connections. Changed file path backslash to forward slash. Fixed Linux usage of findfirst. Fixed problem where packet format error detection code was incorrectly #ifdefed out in Release.<BR>
-2.521 (10/14/06) Added ID_DOWNLOAD_PROGRESS and had all the plugins which transfer files use it. Added SetUnreliableTimeout to drop unreliable messages that took to long to send.  Fixed bugs sending the wrong MS vs NS unit of time to SendImmediate.<BR>
-3.0 (11/15/07) Too many changes to list, see 2.x to 3.x upgrade.txt<BR>
-3.001 (11/16/07) Fixed router plugin problems when using ID_TIMESTAMP, not determining throughput when using unreliable messages, and increasing throughput detection speed.<BR>
-3.002 (12/11/07) Fixes bad flow control with Reliability Layer.<BR>
-3.004 (12/14/07) Last version was bad due to source control problems.  Rereleasing, again with reliability layer fixed.<BR>
-3.006 (12/19/07) Refixed the bug with Router.cpp. Made a new Linux makefile and added a Netbeans project directory. Also added a CMake file.<BR>
-3.007 (12/21/07) Fixed a flow control problem where it normalized on high pings, thus increasing throughput when it should not and causing packetloss. Changed transmitted ping time to use nanoseconds to fix an overflow bug when converting to milliseconds on Linux.<BR>
-3.008 (01/06/08) Changed Linux calls to GetTime to be offset by the first call. This alllows proper division by 1000 to convert to RakNetTime from RakNetTimeNS<BR>
-3.009 (01/12/08) Change GetTime to only check the processor affinity once on Windows. This might fix leap-ahead and disconnect issues people are having. Added RankingServer project. Refactored parts of the autopatcher. Added FunctionThread/Functor system.<BR>
-3.01 (1/30/08) Improved flow control. Faster send times during low bandwidth. Added first revision of the lobby server for the PC.<BR>
-3.02 (2/17/08) Finished out missing feature prototypes on the lobby server. Improved compatibility. Improved NAT punchthrough. Lightweight database server can now update a single row by using the system address, rather than requiring a row ID.<BR>
-3.03 (2/28/08) Added Replicamanager2. Fixed a minor bug with the autopatcher.<BR>
-3.04 (3/02/08) Added interpolation demo "Ogre3DInterpDemo" for Ogre3D. Fixed Linux crash in SocketLayer.cpp for looking up host names.<BR>
-3.05 (3/06/08) Updated documentation. Fix crash that could occur if receiving offline messages with data at the same time you are connected to the system sending it.<BR>
-3.06 (3/10/08) Fix bug causing flow control to overcompensate by 8X. Resulted in taking 8X longer to find bandwidth, and 8X greater minimum latency.<BR>
-3.07 (3/16/08) Added RakMemoryOverride class for memory tracking for consoles. Fixed Packetlogger crash. Verified that all samples run.<BR>
-3.08 (3/23/08) Added AutoRPC plugin. Fixed some crashes and memory problems with TCPInterface<BR>
-3.1 (3/31/08) Added SetSendPrefix and SetSendSuffix to TelnetTransport. Fixed memory allocation crashes in TelnetTransport and the logger plugin. Added depreciated tag to old RPC system. Readded BitStream_NoTemplate. Support for GCC assembly code in AutoRPC. Added RakString class, and changed lobby system to use this instead of std::string. Added DemoBinaries.zip to DependentExtensions\Ogre3DInterpDemo so users can run without having Ogre installed. AutoRPC is now in the namespace RakNet. Code::Blocks fails to build AutoRPC due to what appears to be a compiler bug.<BR>
-3.11 (4/10/08) AutoRPC may now work on 64 bit systems and the Power PC. AutoRPC will automatically dereference pointers. Rename UserIdOrHandle to RowIdOrHandle. Add clan support to lobby database (in progress). Fix RakString (was broken for lobby). Fix include paths for VC8 for speex. Many warnings removed for non-windows users. ReadyEvent system now supports going back to unready. Disabled sample PerformanceTest.<BR>
-3.2 (4/15/08) NAT Punch through now uses duplex symmetric port prediction, resulting in a vastly higher success rate. Fixed a bug in SingleProducerConsumer resulting in a 12 byte memory leak per message sent or received in release. Thanks to cmusch in the forums for finding this.<BR>
-3.21 (4/20/08) Reverted to speex-1.1.12 to fix broken voice activity detection. Turned on voice activity detection by default to fix a bug where the voice latency increases over time. Add "SuperFastHash" to speed up DirectoryDeltaTransfer and Autopatcher file scans by 30%. Add file RakThread for easier cross-platform thread creation.<BR>
-3.22 (05/04/08) Fixed TTL send not working for NAT punch through. TCPInterface now has a nonblocking option for connections. Lobby system now takes the handle of a friend, not just ID, for friend operations, and returns the handle and ID used in the callbacks. BitStream class can now hold up to rangeof(unsigned int)/8 bytes. Fixed bug with connection sequence so FullyConnectedMesh should always complete connections. Fixed Packetlogger output. Added RakPeerInterface::SendLists(), used by FileListTransfer for better efficiency. Increase connection attempt failure time to 4 seconds so users with software firewalls have a chance to click accept. Fixed RakString::Replace. Fixed Table::GetAvailableRowId. Added PHPDirectoryServer project.<BR>
-3.23 (05/11/08) Fix subtraction underflow caused by bad GetTime() values for ReliabilityLayer. This could cause reliable packets that were lost due to packetloss to never be resent. Added RakPeerInterface::IsLocalIP(). Fixed PostgreSQL implementation of autopatcher. Added MySQL implementation of autopatcher. Fixed SQL injection security holes with autopatcher server. Add TLS support to TCPInterface, allowing the EmailSender class to send through Gmail. Fixed infinite recursive call under DevCPP and MinGW caused by #define with stricmp.<BR>
-3.24 (06/16/08) Autopatcher: optimized MySQL queries, fixed file list transfer callback, improved Linux compatibility. ReplicaManager2: Added SEND_SERIALIZATION_CONSTRUCTION_TO_SYSTEM, fixed bug with sending scope changes. AutoRPC: Fixed passing a boolean as the last parameter. Fixed encoding error when doing directed sends. Fixed race condition in ThreadPool.h. NAT punchthrough will now try the local IP sooner. Return ID_DISCONNECTION_NOTIFICATION when CloseConnection is called with sendDisconnectionNotification==false. Fixed parsing error when passing domain names to RakPeer::Connect(). PHPDirectoryServer will now update the correct row based on the system address key.<BR>
-3.25 (07/27/08) Added RPC3 plugin and video. The second and later resends of reliable messages now occur one second apart (fixes flooding/disconnects at low pings). Added templated GET_OBJECT_FROM_ID to NetworkIDManager.h which will work with multiple inheritance when NetworkIDObject is not the firstmost derived class. Added char *firstDataChunk parameter to FileListTransferCBInterface::OnFileProgress callback. Fix FileListTransfer when doing endian swapping. Fixes for Linux FileOperations.cpp and FindFirst (fixes autopatcher). ReplicaManager2: Added GetTimeToNextAutoSerialize, fix timestamp endian swapping, multiple instances now supported on the same instance of RakPeerInterface (must use AutoAddConnections(false)). Added static SocketLayer::IsPortInUse(). Virtual function and multiple inheritance fixes for AutoRPC.  Various fixes and updates for PHPDirectoryServer. Change GetExternalID(UNASSIGNED_SYSTEM_ADDRESS) so that it returns a consistent external address. Add boolean parameter includeDisconnecting to RakPeerInterface::IsConnected(). RakPeerInterface::CloseConnection() now cancels connection attempts in progress immediately and reliably. Ready event fixes. Add operator << and operator >> to Bitstream. BitStream now supports Read functions for other bitstreams.<BR>
-3.26 (08/28/08) Add IsSendingVoiceData to RakVoice. Remove GetTickCount() call in GetTime.cpp. On Vista it was found to frequently return a past result off by rangeof(unsigned int), causing all connections to be dropped. Workaround Vista bug returning WSAEADDRINUSE when binding a socket after previously closing one on the same port. Add OnConstructionComplete to Replica2. Add ExecVaridic to PostgreSQLInterafce. Fix for sending offline messages using an unknown hostname. Add WSAStartupSingleton.h for SocketLayer.cpp and TCPInterface.cpp. Support incremental sends for FileListTransfer, reducing memory use for large file sends. Add Connection_RM2::SortInitialDownload so users can control the order objects are sent to new connections. Tweak reliable message resend timers.<BR>
-3.261 (09/07/08) Rewrite of lobby system, Lobby2, is now in beta. Ranking and Clans not yet implemented. Changed printf to RAKNET_DEBUG_PRINTF and added #define to RakNetDefines.h. RPC3 should now compile on Linux. Fixed internet simulator treating extraPingVarious as microseconds rather than milliseconds. Endian support fixed for FileListTransfer when using SuperFastHash. Speed up AutopatcherMySQLRepository with indices. Thanks for varmint from the forums for the last two tips.<BR>
-3.3 (10/24/08) ID_CONNECTION_REQUEST_ACCEPTED is now RELIABLE_ORDERED on channel 0. 
-Added a threadsafe version of SystemAddress::ToString().
-Secure connections code has been rewritten for better speed (Thanks Catid). 
-RakVoice will now check for initialization before accepting remote chat requests. 
-Added RakNetGUID to uniquely identify instances of RakPeer. Use RakPeer::GetGuidFromSystemAddress() and RakPeer::GetSystemAddressFromGuid. GUIDs are contained in the Packet structure and within offline messages. 
-Fixed bug with BitStream::WriteVector(). 
-NATPunchthrough now supports cross connections. Reciever will now properly open all attempted connection addresses, rather than only the first one.
-Added RAKNET_PROTOCOL_VERSION and ID_INCOMPATIBLE_PROTOCOL_VERSION, returned for incompatible RakNet versions on Connect() calls.
-Fixed EmailSender failing 1/3 of the time with base 64 encoding. 
-Fixed crash with deleting TCPInterface before calling TCPInterface::Stop(). 
-_USE_RAK_MEMORY_OVERRIDE will now work for all allocations, via placement new. 
-Throughput will now backoff globally on unresponsive remote systems, rather than for specific messages. 
-AutopatcherServer will no longer crash when sending to multiple connections (fixed bug introduced in 3.26). 
-SimpleMutex and RakString can now be instantiated globally.<BR>
-3.4 (02/17/09) Add RakPeer::CancelConnectionAttempt.
- Fix NatPunchthrough to use CancelConnectionAttempt.
+2.454 Master server / Master client now uses Plugin interface. Fixed bug that appeared on Linux where out of older order packets were incorrectly treated as duplicate and dropped.  Same fix reduces memory usage by about 400 bytes per player. Reorganized packet resend loop to hopefully fix a reported infinite loop. Added define _COMPATIBILITY_1 to exclude compilation of code that uses alloca, FormatMessage, the security layer, gethostbyname, #include <windows.h>
+<p>, and inet_ntoa.  This define also changes the default MTU to 1492. Updated documentation for memory synchronization of DataReplicator. Updated FAQ. Added OnDetatch to the PluginInterface.<BR>
+  2.455 Fixed many gcc warnings.  Fixed error where alloca wouldn't compile under Code::Blocks<BR>
+  2.456 Add channel parameter to functions RakPeer::Disconnect and RakPeer::CloseConnection. Added RakPeer::SetTimeoutTime and removed constant TIMEOUT_TIME. Optimized network thread playerID lookup from O(n) to O(log2(n)), which will improve directed send speeds when a server or peer has many connected systems. Added SetNetworkSimulator procedure so the network simulator can be activated, deactivated, and be adjusted by users at runtime.  Added checking for _FINAL define, to exclude code that would never be used in release builds.  Currently only applies to the NetworkSimulator<BR>
+  2.457 Fixed harmless assert on startup in ReliabilityLayer::SetPing. Fixed uninitialized variable read when sending ID_ADVERTISE_SYSTEM with no user data. Fixed search indexing bug in OrderedList causing performance loss. Increased DataReplicator memory registration limit from 255 to 65535.<BR>
+  2.46 Added IsObjectListPushComplete to the DataReplicator system.  The DataReplicator class factory now has access to the creation send and request data.  Added CommandConsoleServer and CommandConsoleClient. Padded single byte packets to 2 bytes to fix some router issues.<BR>
+  2.461 Exported most of the user classes, so if you are using a DLL you don't have to include the source. Added more functions to RakNetworkFactory to new and delete those classes. Fixed an assert in DataReplicator. Added const to StringCompressor::EncodeString and AdvertiseSystem. Fixed projects so they all build.<BR>
+  2.47 Released first iteration of ReplicaManager, which replaces DataReplicator, which I will no longer include in distributions.  Added ReplicaManagerCS and ReplicaManagerP2P samples.  Added missing *identifierFound=true in GetServerListRuleAsInt.  Added OnCloseConnection to PluginInterface. The NetworkID generator system now supports peer to peer. Added StringTable class.<BR>
+  2.48 Fixed critical bug where if an unreliable packet was lost all further data would be considered duplicate. In the ReplicaManager you can now use objects without calling construct first.  The BitStream class for VC6 reverts to the old BitStream that didn't use templates.  Renamed ObjectID NetworkID and renamed UNASSIGNED_OBJECT_ID UNASSIGNED_NETWORK_ID.<BR>
+  2.481 All changes to the ReplicaManager: Added ReferencePointer. Using a default scope of true will no longer trigger SendScopeChange and ReceiveScopeChange calls for that true default value. Functions now use the return type ReplicaReturnResult.  All 3 callbacks now include a ReplicaManager * to the manager. Fixed bug setting bitwise enumerations for commands for the ReplicaManager.<BR>
+  2.482 Removed mutex locks for incoming and outgoing password. Bug fixes for ReplicaManager. Added 64 bit time support.<BR>
+  2.483 (04/19/06) Replaced %8 with &7 in BitStream.cpp.  Thanks to Oliver Smith for pointing this out. Changed offline pings to be totally offline, rather than connecting and then disconnecting.  This might fix the reported bug with pinging and not being able to reconnect. Reordered packet enumerations so that the most commonly used ones are first.  Updated readme.txt.<BR>
+  2.484 (04/21/06) Fixed stack overflow problem when sending RPC packets with more data than the stack can hold (via define MAX_ALLOCA_STACK_ALLOCATION).  Added PlayerID::ToString(). Converted Bitstream constructor char *'s to unsigned char *'s so you can pass Packet::data to it without casting. Fixed memory leak if you disconnected with unread packets waiting (Thanks to "riley" and "Greg" in the forums).  Removed various warnings.  Updated Linux ChatExample (thanks to Oliver Stone for sending me the files).<BR>
+  2.485 (04/27/06) Fixed bug with not being able to do cross-connections.  Renamed all data structures with DS_ and changed namespace to DataStructure.<BR>
+  2.486 (05/03/06) Improved support for cross connections.  Added ID_* strings to packet logger.  Fixed devCPP compatibility.  Made certain functions inline for improved performance.  Added RakNetDefines.h as a global control panel.  Bugs in tutorial html files fixed (Thanks to Laurens Simonis).<BR>
+  2.487 (05/05/06) You can now call DeallocatePacket in any order you want.  Added PerformanceAnalysis and ThreadTest projects.  Fixed memory leak if sending an RPC to a system that disconnected between the user call and the network thread doing the send. Removed maximum message size limit of (formerly) 91 megabytes, improved CPU efficiency of message reassembly, and decreased per-split bandwidth usage by 2 bytes. Fixed bug where you could get recursive RPC calls with blocking RPCs. Added _RAKNET_THREADSAFE to support multiple writer and reader threads using the same instance of RakPeer. BitStream.h should now compile on Visual Studio 2005.<BR>
+  2.49 (05/22/06) Added help text to all samples. Added ConnectionGraph and Router plugins. Rewrote RakVoice and made it a plugin. The bitstream write function that takes another bitstream now also takes the number of bits to write.<BR>
+  2.5 (06/23/06) Fixed order channel heap deletion.  Added Rewritten Autopatcher.  Added DirectoryDeltaTransfer.  Added CrashReporter and CrashRelauncher.  Moved samples up one directory.  Fix bug with plugins only processing one message.<BR>
+  2.51 (06/24/06) Improved crash reporter.  Finished EmailSender.  Banned ID now sent to banned players. Replaced flow control method in reliability layer (experimental!).<BR>
+  2.511 (06/26/06) Increased time resolution to nanoseconds, greatly improving the granularity of the send speeds.<BR>
+  2.512 (06/26/06) Fixed bug with nanoseconds overflowing after a few hours.<BR>
+  2.513 (06/26/06) Fixed GetTime bug on a machines with a certain clock hertz that caused all new connections to be considered timed out immediately.  Added NAT Punchthrough plugin.<BR>
+  2.514 (07/02/06) Fixed DevCPP compatibility.  Slight throughput increase.  Still working on BPlusTree to improve it further.<BR>
+  2.515 (07/06/06) Fixed bug with overflowing the buffer when resending reliable messages.  Added BPlus tree data structure and used it for resends. Fixed bug where timestamped messages were not sent to plugins.<BR>
+  2.516 (07/12/06) Fixed Linux compatibility due to a bug in GetTime.cpp.  Working on table data structure (incomplete).<BR>
+  2.517 (08/24/06) Commented out unused macros in Types.h. Added DS_Table class and LightweightDatabaseServer/LightweightDatabaseClient plugins. Improved flow control algorithm to detect connection speed more quickly and increased maximum throughput by about 4 times. Fixed Linux compatibility problems. Added _RAKNET_LIB and _RAKNET_DLL to Exports.h and changed projects accordingly. Fixed memory leak in the memory pool class. Fixed DLL compile problems. Commented RakVoice.<BR>
+  2.518 (09/01/06) Changed return value of OnReceive for plugins. Further fixes for Linux and Mac compatibility. Optimize Bitstream writes of other Bitstreams. Added ThreadPool class and made the autopatcher use it so that queries run in a thread rather than blocking the main thread.<BR>
+  2.519 (09/05/06) Fixed 1 byte memory leak on ID_DISCONNECTION_NOTIFICATION.  Thanks knox!<BR>
+  2.52 (09/22/06) Fixed a bug where a system that disconnected couldn't always reconnect. Fixed a bug where a system couldn't connect rapidly with secure connections. Changed file path backslash to forward slash. Fixed Linux usage of findfirst. Fixed problem where packet format error detection code was incorrectly #ifdefed out in Release.<BR>
+  2.521 (10/14/06) Added ID_DOWNLOAD_PROGRESS and had all the plugins which transfer files use it. Added SetUnreliableTimeout to drop unreliable messages that took to long to send.  Fixed bugs sending the wrong MS vs NS unit of time to SendImmediate.<BR>
+  3.0 (11/15/07) Too many changes to list, see 2.x to 3.x upgrade.txt<BR>
+  3.001 (11/16/07) Fixed router plugin problems when using ID_TIMESTAMP, not determining throughput when using unreliable messages, and increasing throughput detection speed.<BR>
+  3.002 (12/11/07) Fixes bad flow control with Reliability Layer.<BR>
+  3.004 (12/14/07) Last version was bad due to source control problems.  Rereleasing, again with reliability layer fixed.<BR>
+  3.006 (12/19/07) Refixed the bug with Router.cpp. Made a new Linux makefile and added a Netbeans project directory. Also added a CMake file.<BR>
+  3.007 (12/21/07) Fixed a flow control problem where it normalized on high pings, thus increasing throughput when it should not and causing packetloss. Changed transmitted ping time to use nanoseconds to fix an overflow bug when converting to milliseconds on Linux.<BR>
+  3.008 (01/06/08) Changed Linux calls to GetTime to be offset by the first call. This alllows proper division by 1000 to convert to RakNetTime from RakNetTimeNS<BR>
+  3.009 (01/12/08) Change GetTime to only check the processor affinity once on Windows. This might fix leap-ahead and disconnect issues people are having. Added RankingServer project. Refactored parts of the autopatcher. Added FunctionThread/Functor system.<BR>
+  3.01 (1/30/08) Improved flow control. Faster send times during low bandwidth. Added first revision of the lobby server for the PC.<BR>
+  3.02 (2/17/08) Finished out missing feature prototypes on the lobby server. Improved compatibility. Improved NAT punchthrough. Lightweight database server can now update a single row by using the system address, rather than requiring a row ID.<BR>
+  3.03 (2/28/08) Added Replicamanager2. Fixed a minor bug with the autopatcher.<BR>
+  3.04 (3/02/08) Added interpolation demo "Ogre3DInterpDemo" for Ogre3D. Fixed Linux crash in SocketLayer.cpp for looking up host names.<BR>
+  3.05 (3/06/08) Updated documentation. Fix crash that could occur if receiving offline messages with data at the same time you are connected to the system sending it.<BR>
+  3.06 (3/10/08) Fix bug causing flow control to overcompensate by 8X. Resulted in taking 8X longer to find bandwidth, and 8X greater minimum latency.<BR>
+  3.07 (3/16/08) Added RakMemoryOverride class for memory tracking for consoles. Fixed Packetlogger crash. Verified that all samples run.<BR>
+  3.08 (3/23/08) Added AutoRPC plugin. Fixed some crashes and memory problems with TCPInterface<BR>
+  3.1 (3/31/08) Added SetSendPrefix and SetSendSuffix to TelnetTransport. Fixed memory allocation crashes in TelnetTransport and the logger plugin. Added depreciated tag to old RPC system. Readded BitStream_NoTemplate. Support for GCC assembly code in AutoRPC. Added RakString class, and changed lobby system to use this instead of std::string. Added DemoBinaries.zip to DependentExtensions\Ogre3DInterpDemo so users can run without having Ogre installed. AutoRPC is now in the namespace RakNet. Code::Blocks fails to build AutoRPC due to what appears to be a compiler bug.<BR>
+  3.11 (4/10/08) AutoRPC may now work on 64 bit systems and the Power PC. AutoRPC will automatically dereference pointers. Rename UserIdOrHandle to RowIdOrHandle. Add clan support to lobby database (in progress). Fix RakString (was broken for lobby). Fix include paths for VC8 for speex. Many warnings removed for non-windows users. ReadyEvent system now supports going back to unready. Disabled sample PerformanceTest.<BR>
+  3.2 (4/15/08) NAT Punch through now uses duplex symmetric port prediction, resulting in a vastly higher success rate. Fixed a bug in SingleProducerConsumer resulting in a 12 byte memory leak per message sent or received in release. Thanks to cmusch in the forums for finding this.<BR>
+  3.21 (4/20/08) Reverted to speex-1.1.12 to fix broken voice activity detection. Turned on voice activity detection by default to fix a bug where the voice latency increases over time. Add "SuperFastHash" to speed up DirectoryDeltaTransfer and Autopatcher file scans by 30%. Add file RakThread for easier cross-platform thread creation.<BR>
+  3.22 (05/04/08) Fixed TTL send not working for NAT punch through. TCPInterface now has a nonblocking option for connections. Lobby system now takes the handle of a friend, not just ID, for friend operations, and returns the handle and ID used in the callbacks. BitStream class can now hold up to rangeof(unsigned int)/8 bytes. Fixed bug with connection sequence so FullyConnectedMesh should always complete connections. Fixed Packetlogger output. Added RakPeerInterface::SendLists(), used by FileListTransfer for better efficiency. Increase connection attempt failure time to 4 seconds so users with software firewalls have a chance to click accept. Fixed RakString::Replace. Fixed Table::GetAvailableRowId. Added PHPDirectoryServer project.<BR>
+  3.23 (05/11/08) Fix subtraction underflow caused by bad GetTime() values for ReliabilityLayer. This could cause reliable packets that were lost due to packetloss to never be resent. Added RakPeerInterface::IsLocalIP(). Fixed PostgreSQL implementation of autopatcher. Added MySQL implementation of autopatcher. Fixed SQL injection security holes with autopatcher server. Add TLS support to TCPInterface, allowing the EmailSender class to send through Gmail. Fixed infinite recursive call under DevCPP and MinGW caused by #define with stricmp.<BR>
+  3.24 (06/16/08) Autopatcher: optimized MySQL queries, fixed file list transfer callback, improved Linux compatibility. ReplicaManager2: Added SEND_SERIALIZATION_CONSTRUCTION_TO_SYSTEM, fixed bug with sending scope changes. AutoRPC: Fixed passing a boolean as the last parameter. Fixed encoding error when doing directed sends. Fixed race condition in ThreadPool.h. NAT punchthrough will now try the local IP sooner. Return ID_DISCONNECTION_NOTIFICATION when CloseConnection is called with sendDisconnectionNotification==false. Fixed parsing error when passing domain names to RakPeer::Connect(). PHPDirectoryServer will now update the correct row based on the system address key.<BR>
+  3.25 (07/27/08) Added RPC3 plugin and video. The second and later resends of reliable messages now occur one second apart (fixes flooding/disconnects at low pings). Added templated GET_OBJECT_FROM_ID to NetworkIDManager.h which will work with multiple inheritance when NetworkIDObject is not the firstmost derived class. Added char *firstDataChunk parameter to FileListTransferCBInterface::OnFileProgress callback. Fix FileListTransfer when doing endian swapping. Fixes for Linux FileOperations.cpp and FindFirst (fixes autopatcher). ReplicaManager2: Added GetTimeToNextAutoSerialize, fix timestamp endian swapping, multiple instances now supported on the same instance of RakPeerInterface (must use AutoAddConnections(false)). Added static SocketLayer::IsPortInUse(). Virtual function and multiple inheritance fixes for AutoRPC.  Various fixes and updates for PHPDirectoryServer. Change GetExternalID(UNASSIGNED_SYSTEM_ADDRESS) so that it returns a consistent external address. Add boolean parameter includeDisconnecting to RakPeerInterface::IsConnected(). RakPeerInterface::CloseConnection() now cancels connection attempts in progress immediately and reliably. Ready event fixes. Add operator << and operator >> to Bitstream. BitStream now supports Read functions for other bitstreams.<BR>
+  3.26 (08/28/08) Add IsSendingVoiceData to RakVoice. Remove GetTickCount() call in GetTime.cpp. On Vista it was found to frequently return a past result off by rangeof(unsigned int), causing all connections to be dropped. Workaround Vista bug returning WSAEADDRINUSE when binding a socket after previously closing one on the same port. Add OnConstructionComplete to Replica2. Add ExecVaridic to PostgreSQLInterafce. Fix for sending offline messages using an unknown hostname. Add WSAStartupSingleton.h for SocketLayer.cpp and TCPInterface.cpp. Support incremental sends for FileListTransfer, reducing memory use for large file sends. Add Connection_RM2::SortInitialDownload so users can control the order objects are sent to new connections. Tweak reliable message resend timers.<BR>
+  3.261 (09/07/08) Rewrite of lobby system, Lobby2, is now in beta. Ranking and Clans not yet implemented. Changed printf to RAKNET_DEBUG_PRINTF and added #define to RakNetDefines.h. RPC3 should now compile on Linux. Fixed internet simulator treating extraPingVarious as microseconds rather than milliseconds. Endian support fixed for FileListTransfer when using SuperFastHash. Speed up AutopatcherMySQLRepository with indices. Thanks for varmint from the forums for the last two tips.<BR>
+  3.3 (10/24/08) ID_CONNECTION_REQUEST_ACCEPTED is now RELIABLE_ORDERED on channel 0. 
+  Added a threadsafe version of SystemAddress::ToString().
+  Secure connections code has been rewritten for better speed (Thanks Catid). 
+  RakVoice will now check for initialization before accepting remote chat requests. 
+  Added RakNetGUID to uniquely identify instances of RakPeer. Use RakPeer::GetGuidFromSystemAddress() and RakPeer::GetSystemAddressFromGuid. GUIDs are contained in the Packet structure and within offline messages. 
+  Fixed bug with BitStream::WriteVector(). 
+  NATPunchthrough now supports cross connections. Reciever will now properly open all attempted connection addresses, rather than only the first one.
+  Added RAKNET_PROTOCOL_VERSION and ID_INCOMPATIBLE_PROTOCOL_VERSION, returned for incompatible RakNet versions on Connect() calls.
+  Fixed EmailSender failing 1/3 of the time with base 64 encoding. 
+  Fixed crash with deleting TCPInterface before calling TCPInterface::Stop(). 
+  _USE_RAK_MEMORY_OVERRIDE will now work for all allocations, via placement new. 
+  Throughput will now backoff globally on unresponsive remote systems, rather than for specific messages. 
+  AutopatcherServer will no longer crash when sending to multiple connections (fixed bug introduced in 3.26). 
+  SimpleMutex and RakString can now be instantiated globally.<BR>
+  3.4 (02/17/09) Add RakPeer::CancelConnectionAttempt.
+  Fix NatPunchthrough to use CancelConnectionAttempt.
   If available bandwidth drops, but later has no packetloss for 5 seconds, bandwidth utilization increases much faster.
   DeltaDirectoryTransfer plugin now supports IncrementalReadInterface, to reduce concurrent memory utilization for large files if desired.
   Fix missing RakNet::OP_New in DS_WeightedGraph.
   Add extern "C" to RakMemoryOverride.<BR>
-3.5 (04/01/09) Fix delta directory transfer not able to read file contents on incremental reads because only the relative path was stored on the sender
-    NAT punchthrough rewritten, tested with nearly every manufacturer.
-    LightweightDatabaseServer will no longer incorrectly remove a row if you do not call RakPeer::Update() for a long time.
-    Various ReplicaManager2 fixes for non-authoritative client created objects.
-    Packet logger now shows acks and RakPeer::PushBackPacket commands. Also, now shows the correct messageID for regular sends.
-    Add DS_Multilist for use in future data structures, to replace DS_List, DS_Queue, DS_OrderedList.
-    Fixed Bitstream type mismatch in RakVoice, causing plugin to not work at all.
-    The RakVoice sample with Portaudio now supports NAT Punchthrough.
-    ReliabilityLayer now uses fast backoff on real or anticipated packetloss, reducing packetloss from about 16% to 2% for large data transfers.
-    Fixed returning the wrong emailId with Lobby2 GetEmail function for PostgreSQL
-    Switch plugins to use PluginInterface2, replacing PluginInterface, in order to support TCP.
-    Add PacketizedTCP class, sending discrete messages through TCP.
-    Support PacketizedTCP with the Autopatcher and FileListTransfer. Using TCP, the autopatcher can self-update even when RakNet's protocol changes.<BR>
-3.51 (04/17/09) Added UDPProxy feature, to forward datagrams in case of NATPunchthrough failure.
-Added ReplicaManager3 plugin. ReplicaManager2 is now depreciated.
-Minor fixes in RoomsPlugin. Added RakNetGUID support to rooms and Lobby2.
-Allow updating automatic system address and GUID fields if onlyUpdateOwnRows is false for LightweightDatabaseServer.
-Improve flow control for poor quality connections.
-Fix denial of service exploit caused by sending many connection attempts to use up all connection slots. Now, only 10 connections can be made from an identical IP address per second.<BR>
-3.52 (04/30/09) Various fixes and protocol change for NATPunchthroughServer. Punchthrough recipient now gets ID_NAT_TARGET_UNRESPONSIVE and ID_NAT_CONNECTION_TO_TARGET_LOST at the same time it is sent to the sender.
-Added ConnectionGraph2 and FullyConnectedMesh2 plugins.
-RakNetTransport2 plugin added, which works as a plugin instead of creating its own instance of RakPeer. RakNetTransport, which did that, is now depreciated.
-Deleted FCMHost plugin (replaced by FullyConnectedMesh2).
-ReplicaManager3 fix for not sending serialization to new connections when using identical serialization.
-Various fixes for Lobby2 system.
-Fix crash in LightweightDatabaseServer if not automatically storing system address.
-Added DependentExtensions\IrrlichtDemo 
-Disallow reconnecting when the remote system thinks you are still connected, if using a different IP but the same RakNetGUID.
-Added RakPeerInterface::GetSystemList to return connected SystemAddress and RakNetGUID in a list.
-Various fixes for DirectoryServer.php. PHPDirectoryServer::ProcessHTTPRead now returns an enumeration, rather than a string, to indicate results.
-RakNetTime is now 64 bit by default. Comment __GET_TIME_64BIT in RakNetDefines.h to change to 32 bit.
-UDP proxy system now automatically chooses best server. If more than one server is available, and both source and target relay systems are running RakNet, then source and target will ping all available servers. The servers will be attempted in order of lowest ping sum to highest.
-Updated FAQ. Updated manual for NATPunchthrough.<BR>
-3.6 (05/26/09) Fixed define bug with BIG_ENDIAN to __BIG_ENDIAN__ in BigInt.
-Fixed FullyConnectedMesh2.
-Bind whichever address a message came in on, so we always reply on the same address. This fixes an issue where you have multiple IP addresses and reply on a different address than what the sender used. This also means RakNet no longer necessarily uses a single socket for all communications.
-Added RakNetSocket structure, with GetSockets accessor in RakPeerInterface. This can be used to find out which ports and IP addresses you have locally bound.
-Added ConnectWithSocket to RakPeerInterface. Removed RebindSocket.
-Added UPNP implementation from Codeproject to Samples, with fixes. Added to NATPunchthrough sample.
-NATPunchthrough now supports 0 for the MAXIMUM_NUMBER_OF_INTERNAL_IDS_TO_CHECK parameter.
-Fixed ReplicaManager3 serialization bugs with RM3SR_SERIALIZED_IDENTICALLY, and with serializing to more than 3 systems. Also validate connections before using them, so we know the other system has created the connection first.
-ReplicaManager3 QueryConstruction is now only called when the object does not already exist. If it does already exist, QueryDestruction is called instead.
-Added RakPeerInterface::GetTimeoutTime()
-Added time row was written to PacketLogger.
-UDPForwarder, and thus the proxy server, now runs in its own thread.
-UDPForwarder does not set the source or destination port until the first message arrives, to handle symmetric NATs changing ports.
-UDPForwarder now returns a result enumeration indicating success, bad parameters, in progress, or failed
-Flow control will now subtract average times between thread updates from pings. This fixes a problem where uneven times between thread context switches caused reported pings to fluctuate constantly, resulting in flow control dropping to the minimum level. This should fix an issue encountered by Stardock, with messages buffered and taking a long time to send.
-Fix issue with UDPProxyCoordinator, where two systems would simultaneously start forwarding to each other, but one system report success before the other knew about it, resulting in two forwarding entries.
-Add modified UDT source to RakNet distribution, under DependentExtensions\udt4. Comment out _USE_RAKNET_FLOW_CONTROL in RakNetDefines.h to use (Still has bugs, do not use for now).
-Fix TCPInterface with DeltaDirectoryTransfer
-Fixed bug introducted by checking RakNetGUID on new connections from 3.52, where connection replies were only sent once, rather than on each request.
-Added parameter to CloseConnection to select priority on which to send ID_DISCONNECTION_NOTIFICATION.
-Added SQLLite3Plugin to DependentExtensions\SQLite3Plugin. This allows you to do database calls over the internet with SQLLite3, which is normally only supported with networked file handles. This replaces LightweightDatabase, which is now depreciated.<BR>
-3.61 (07/21/2009) Fix memory leak in single producer single consumer.
- Fix RakNetGUID initilization where only the first 4 ints were initialized.
- Fix RakNet::OP_NEW mistmatch in DS_Table, causing a crash.
- Fix crash in Lobby code from destroying binary data with some functors. Add ability to query clan list. Lobby will now log you off if you log in while already logged in (preventing multiple logins from the same user). Added per-user per-title storage.
- Update Doxygen comment syntax to produce better Doxygen output.
- Fix misspelling of Variadic.
- Depreciate PHPDirectoryServer due to unreliable replies. Now supplanted with PHPDirectoryServer2
- Rooms plugin can now send arbitrary bitstreams through the server.
- Near rewrite of ReplicaManager3. Optimized from O(n^3) to O(n). Now supports multiple serialization channels.
- Autopatcher source files moved from /DependentExtensions to DependentExtensions\Autopatcher . Also the samples use TCP by default now.
- Fix endian swapping with OFFLINE_MESSAGE_DATA_ID
- FullyConnectedMesh2 host determination rewritten for better consistency and reliability from unresponsive hosts.
- Updated samples with new IP address of free server.
- Disabled forced port bindings. This apparently causes the Vista to reject the reply messages, which is a more serious bug than getting a reply on a different port.
- FileListTransferCBInterface::OnFileStruct renamed members: finalDataLength to byteLengthOfThisFile, totalDownloadedLength to bytesDownloadedForThisFile, setCount to numberOfFilesInThisSet, setTotalFinalLength to byteLengthOfThisSet, setTotalDownloadedLength to bytesDownloadedForThisSet.
- Fix NatPunchthroughServer not working on linux due to time subtraction, and hence underflow. Also made static string buffers larger to support 6 integer RakNetGUID.
- Change gmail port for email sender sample.
- Added critical section locks to the referenced counted pointers in RakString, to support multithreaded use.
- BitStream will now use memcpy if possible when writing other bitstreams.
- Fix crash in AutopatcherServer due to mismatch of calls to malloc and OP_DELETE.<BR>
-3.611 (07/23/2009) Fix bug with serialization not sent to reconnecting system with ReplicaManager3. Release Scaleform GFx autopatcher integration.<BR>
-3.62 (08/05/2009) RakNet is now threadsafe by default in RakNetDefines.h, and more optimized for the threadsafe case. Reduce size of RakNetGuid to int64_t to save bandwidth. Update OgreInterpSample to use ReplicaManager3. Add parameter to ReplicaManager3::AllocReplica. Add OnDownloadStarted and OnDownloadComplete callbacks to Connection_RM3. Add NatTypeDetection sample and code.<BR>
-3.7 RC1 (08/27/2009) Fixed memory leak in RSACrypt. Fix RoomQuery::Serialize when doing more than one query at a time. Reduce CPU by 20%. Switch congestion control to UDT based algorithm. Fix NatPunchthroughClient::OpenNAT, so you can connect to a system more than once. Fix Lobby2 GetAccountDetails. Add SQLImageBuffer test, and jpeg-7 to DependentExtensions. Forgot ResetWritePointer in Connection_RM3::SendConstruction. Fix Lobby2 bugs with PerTitleIntegerStorage. Fix RM3 not serializing preexisting objects that don't change to new connections.<BR>
-3.7 RC2 (09/10/2009) Fixed 32 to 64 bit connection problem for all versions. Fix endian swapping connection problem from RC1. There is now one thread per receive socket to increase timestamp accuracy for congestion control. Fix crash on shutdown when using ban lists. Improve bandwidth estimation. Linux now pthread_cond_timedwait rather than sleep, for better performance.<BR>
-3.7 (9/23/2009) Send() function player lookup is now O(1) in most cases, rather than O(log2(n)); Added SQLiteServerLogger, SQLiteClientLogger, SQLiteClientLogger_RakNetStatistics, and SQLiteClientLogger_PacketLogger. Fixed TCPInterface low transfer speed. Fixed PacketizedTCP not updating plugins correctly. Fixed SignaledEvent usage on Linux (bug from 3.7 RC2)<BR>
-3.702 (10/15/2009) Speed up lookup on RakPeer::Send() from O(log2n) to O(1) by using systemIndex automatically when available. Reduce number of RakStrings allocated at once to 128 from 1024. Sped up TCPInterface. Return ID_CONNECTION_LOST if calling CloseConnection with sendDisconnectionNotification false.<BR>
-3.704 (10/22/2009) Autopatcher: Workaround for design flaw in PostgreSQL and possibly MySQL, where calls on a connection are not threadsafe across different threads. Instead of calling SetAutopatcherRepositoryInterface, you must now call StartThreads(), with an array of AutopatcherRepositoryInterface, 1 per thread. StartThreads() must also be called now before AutopatcherServer will process any messages. This was previously causing crashes/corrupted data if a transfer was in progress through FileListTransfer at the same time that the old autopatcher thread was querying the database for a different connection. Additionally, the autopatcher now supports multiple simultaneous threads. Previously it only ran one thread at a time. Also sped up FileListTransfer for incremental reads in the case when there are many files and more than one connection. ReplicaManager3: Add lastSentBitstream pointer to SerializeParameters. Fix UDPForwarder not setting timeout parameter. <BR>
-3.705 (10/29/2009) Added ResetHostCalculation to FullyConnectedMesh2. Increased default memory usage to avoid datagram index overflowing on a LAN. Made this value customizable in RakNetDefines.h, and added RakNetDefinesOverrides.h to make overriding easier. Update IsPortInUse to account for multiple IP addresses. Added default implementation of dlmalloc. Use by defining _RAKNET_SUPPORT_DL_MALLOC and _USE_RAK_MEMORY_OVERRIDE. Added Demo_BspCollision from Ogre3D to for SQLiteClientLogger sample.
-3.7051 (11/07/2009) Reduce memory usage. Fix FileListTransfer bytesDownloadedForThisFile.<BR>
-3.71 (11/16/2009) Note: This version is not network compatible with 3.7051 or earlier due to reordering of packet enumerations.
-Bug fixes: Fix MySQL autopatcher not working (bug from 3.704). Fix bug in RakPeer::Shutdown() where used sockets were never freed. Fixed a bug where the MTU size was always set at the lowest value, causing needless fragmentation.
-Congestion control: Change tolerance algorithm for ping variations. The old algorithm was designed for a LAN, and was causing excess packetloss over long-distance internet connections.
-Performance: Remove all but 1 memory allocation per send and per receive, in order to reduce memory fragmentation. With messages larger than the MTU, reference the original data block rather than allocating and copying fragments. Expose the thread priority in RakPeer::Startup() and TCPInterface::Startup(), for Linux based systems that do not define a default normal thread priority.
-New features: Add connection failure enumeration ID_IP_ALREADY_CONNECTED. ID_IP_ALREADY_CONNECTED is returned if RakPeer::SetLimitIPConnectionFrequency() was set. Packet priorities now schedule sends, where each lower priority level is sent half as frequently as the priority level above. Updated Irrlicht 3D demo to Irrlicht 1.6.<BR>
-3.711 Fix messages of certain size combinations causing further sends to never go out.
-Add ability to pass GUID to UDPProxyClient::RequestForwarding, and use this by default in the samples.
-Reduce memory usage.
-Improve randomness of random number for FullyConnectedMesh2<BR>
-3.712 Improve security for client-specified RakNetGUID. UDPForwarder: Fix uninitialized variables.<BR>
-3.713 Use hash lookup instead of sorted list lookup for packets from remote systems, since speed is so important for that. Ping based congestion control.<BR>
-3.714 (12/06/2009) Fix random crash in ReliabilityLayer. Possible fix for ID_ALREADY_CONNECTED, and increased randomization of GUID.<BR>
-3.715 (12/11/2009) Fix bug returning ID_ALREADY_CONNECTED. You can now also pass a RakNetGuid to most places in RakPeer you previously passed a SystemAddress. Change disconnect timeout method.<BR>
-3.716 (12/29/2009) Fix bug introduced in 3.714 causing players to get disconnected. FileListTransfer now supports incremental writes in addition to incremental reads. Reduce per-datagram overhead by 4 bytes once the bandwidth capacity has been determined.<BR>
-3.717 (1/05/2010) Fix a hashing bug affecting players reconnecting. Add RakPeerInterface::IsConnectionAttemptPending<BR>
-3.718 (02/04/2010) 64 bit to 32 bit network communication fixes. Lower second attempt MTU detection to 1200. Skip MTU sends that will fail anyway. Add TeamBalancer plugin. Add signals and slots support for RPC3. Fixed autopatcher. Add Router2 plugin, to route messages in a fully connected mesh, when two peers cannot directly connect. Add IMMEDIATE_PRIORITY, above HIGH_PRIORITY. With IMMEDIATE_PRIORITY, messages will be sent immediately, rather than joined with other messages for more efficient bandwidth usage. RakVoice now refers to other systems by RakNetGUID, rather than SystemAddress, in order to work properly with NAT punchthrough. Fixed various warnings for Linux. Fixed pure virtual function call in Lobby2Server when shutting down. Fixed Client_GetAccountDetails for lobby2. Changed implementation of BitStream::WriteNormVector to handle small numbers. Added UPNPPortForwarder as a replacement nonblocking interface to the old UPNP system.<BR>
-3.72 (02/27/2010)
-PS3: Added dice sample
-FileListTransfer: Fixed divide by 0 crash when using incremental reads.
-Cmake: Fixed, all other projects and makefiles removed for Linux.
-UPNP: Fixed
-BitStream: Added WriteRef, and use with the shift left operator, so that RPC3 does not do a pass-by-value on object writes. This fixes a problem where the pass-by-value caused the destructor to be called on the copied object.
-ReplicaManager3: Replace AutoConstructByQuery with QueryConstructionMode, and added QueryReplicaList, for better performance for massively multiplayer games.
-TelnetTransport: You can now press the up arrow key to repeat the last command.
-RakPeer: Fix IMMEDIATE_PRIORITY to send right away when called by the user.
-Router2: Various bugs fixed.<BR>
-3.73 (04/09/2010)
-Fix bug where packetloss during slow start could cause retransmissions to stop.<BR>
-Add Lobby2Client_Steam plugin and corresponding sample, to support Steam published games using the Steamworks SDK.
-Fix RPC3 with writing bitstream pointers.
-ReplicaManager3 now supports different send modes per bitstream channel. Also now stores store lastSerializationResult when using RM3SR_SERIALIZED_ALWAYS.
-Update ConnectionGraph2 to also store the remote system connection list in memory, and allow access by the user.
-PacketLogger will now log internal message receive errors.
-Consolodate NAT traversal plugins into NATCompleteServer and NATCompleteClient samples. Remove old NAT samples.<BR>
-3.731 (05/01/2010) Document TeamBalancer and Steam lobby plugins. Fix crash with calling RakPeer::DetachPlugin(). Fix bug to return ID_SND_RECEIPT_ACKED only once for messages over the MTU. Rewrite RakNetStatistics to return more relevant and up to date information, including metrics per second. Add VariableDeltaSerializer, an optional helper class with ReplicaManager3 that can serialize changes per-variable, rather than relying on the default of serializing the entire object.<BR>
-3.80 (05/27/2010) Disabled UNRELIABLE_SEQUENCED_WITH_ACK_RECEIPT, RELIABLE_SEQUENCED_WITH_ACK_RECEIPT.
-Fixed GetMyIP, Modify HTTPConnection to use SSL if defined, and to specify the port.
-Support WorldID with ReplicaManager3.
-Add NativeFeatureIncludes.h and NativeFeatureIncludesOverrides.h, so the user can exclude code they do not want more easily.
-Improve/fix Router2 and UDPForwarder.
-Add to BitStream functions SerializeCasted (Same as just casting the type you read/write, but uses a template), SerializeBitsFromIntegerRange, WriteBitsFromIntegerRange, and ReadBitsFromIntegerRange.
-Fix not threadsafe call to BPS tracker, caused crash when calling GetStatistics with version 3.731 or later.
-Increased tolerance for ping spikes with congestion control, speeds will increase more quickly on average now.
-Fixed RakPeer::SendOutOfBand, hould always return as the first byte ID_OUT_OF_BAND_INTERNAL.
-Allow Set() and constructor functions in RakString to take any size input.
-Fixed ConnectionGraph2 basically not working at all.
-Fixed http://www.jenkinssoftware.com/forum/index.php?topic=3216.0 where HTTPConnection would fail because TCP packets were still waiting while CloseConnection was called.
-Encode ping/pong in handshaking so a ping is always available when ID_CONNECTION_REQUEST_ACCEPTED or ID_NEW_INCOMING_CONNECTION arrives. This changes the protocol, so connections to prior versions are not possible.
-Fixed cross connections so both systems return ID_CONNECTION_REQUEST_ACCEPTED, and neither system returns ID_NEW_INCOMING_CONNECTION.
-<BR>
-
- </TD></TR></TABLE>
+  3.5 (04/01/09) Fix delta directory transfer not able to read file contents on incremental reads because only the relative path was stored on the sender
+  NAT punchthrough rewritten, tested with nearly every manufacturer.
+  LightweightDatabaseServer will no longer incorrectly remove a row if you do not call RakPeer::Update() for a long time.
+  Various ReplicaManager2 fixes for non-authoritative client created objects.
+  Packet logger now shows acks and RakPeer::PushBackPacket commands. Also, now shows the correct messageID for regular sends.
+  Add DS_Multilist for use in future data structures, to replace DS_List, DS_Queue, DS_OrderedList.
+  Fixed Bitstream type mismatch in RakVoice, causing plugin to not work at all.
+  The RakVoice sample with Portaudio now supports NAT Punchthrough.
+  ReliabilityLayer now uses fast backoff on real or anticipated packetloss, reducing packetloss from about 16% to 2% for large data transfers.
+  Fixed returning the wrong emailId with Lobby2 GetEmail function for PostgreSQL
+  Switch plugins to use PluginInterface2, replacing PluginInterface, in order to support TCP.
+  Add PacketizedTCP class, sending discrete messages through TCP.
+  Support PacketizedTCP with the Autopatcher and FileListTransfer. Using TCP, the autopatcher can self-update even when RakNet's protocol changes.<BR>
+  3.51 (04/17/09) Added UDPProxy feature, to forward datagrams in case of NATPunchthrough failure.
+  Added ReplicaManager3 plugin. ReplicaManager2 is now depreciated.
+  Minor fixes in RoomsPlugin. Added RakNetGUID support to rooms and Lobby2.
+  Allow updating automatic system address and GUID fields if onlyUpdateOwnRows is false for LightweightDatabaseServer.
+  Improve flow control for poor quality connections.
+  Fix denial of service exploit caused by sending many connection attempts to use up all connection slots. Now, only 10 connections can be made from an identical IP address per second.<BR>
+  3.52 (04/30/09) Various fixes and protocol change for NATPunchthroughServer. Punchthrough recipient now gets ID_NAT_TARGET_UNRESPONSIVE and ID_NAT_CONNECTION_TO_TARGET_LOST at the same time it is sent to the sender.
+  Added ConnectionGraph2 and FullyConnectedMesh2 plugins.
+  RakNetTransport2 plugin added, which works as a plugin instead of creating its own instance of RakPeer. RakNetTransport, which did that, is now depreciated.
+  Deleted FCMHost plugin (replaced by FullyConnectedMesh2).
+  ReplicaManager3 fix for not sending serialization to new connections when using identical serialization.
+  Various fixes for Lobby2 system.
+  Fix crash in LightweightDatabaseServer if not automatically storing system address.
+  Added DependentExtensions\IrrlichtDemo 
+  Disallow reconnecting when the remote system thinks you are still connected, if using a different IP but the same RakNetGUID.
+  Added RakPeerInterface::GetSystemList to return connected SystemAddress and RakNetGUID in a list.
+  Various fixes for DirectoryServer.php. PHPDirectoryServer::ProcessHTTPRead now returns an enumeration, rather than a string, to indicate results.
+  RakNetTime is now 64 bit by default. Comment __GET_TIME_64BIT in RakNetDefines.h to change to 32 bit.
+  UDP proxy system now automatically chooses best server. If more than one server is available, and both source and target relay systems are running RakNet, then source and target will ping all available servers. The servers will be attempted in order of lowest ping sum to highest.
+  Updated FAQ. Updated manual for NATPunchthrough.<BR>
+  3.6 (05/26/09) Fixed define bug with BIG_ENDIAN to __BIG_ENDIAN__ in BigInt.
+  Fixed FullyConnectedMesh2.
+  Bind whichever address a message came in on, so we always reply on the same address. This fixes an issue where you have multiple IP addresses and reply on a different address than what the sender used. This also means RakNet no longer necessarily uses a single socket for all communications.
+  Added RakNetSocket structure, with GetSockets accessor in RakPeerInterface. This can be used to find out which ports and IP addresses you have locally bound.
+  Added ConnectWithSocket to RakPeerInterface. Removed RebindSocket.
+  Added UPNP implementation from Codeproject to Samples, with fixes. Added to NATPunchthrough sample.
+  NATPunchthrough now supports 0 for the MAXIMUM_NUMBER_OF_INTERNAL_IDS_TO_CHECK parameter.
+  Fixed ReplicaManager3 serialization bugs with RM3SR_SERIALIZED_IDENTICALLY, and with serializing to more than 3 systems. Also validate connections before using them, so we know the other system has created the connection first.
+  ReplicaManager3 QueryConstruction is now only called when the object does not already exist. If it does already exist, QueryDestruction is called instead.
+  Added RakPeerInterface::GetTimeoutTime()
+  Added time row was written to PacketLogger.
+  UDPForwarder, and thus the proxy server, now runs in its own thread.
+  UDPForwarder does not set the source or destination port until the first message arrives, to handle symmetric NATs changing ports.
+  UDPForwarder now returns a result enumeration indicating success, bad parameters, in progress, or failed
+  Flow control will now subtract average times between thread updates from pings. This fixes a problem where uneven times between thread context switches caused reported pings to fluctuate constantly, resulting in flow control dropping to the minimum level. This should fix an issue encountered by Stardock, with messages buffered and taking a long time to send.
+  Fix issue with UDPProxyCoordinator, where two systems would simultaneously start forwarding to each other, but one system report success before the other knew about it, resulting in two forwarding entries.
+  Add modified UDT source to RakNet distribution, under DependentExtensions\udt4. Comment out _USE_RAKNET_FLOW_CONTROL in RakNetDefines.h to use (Still has bugs, do not use for now).
+  Fix TCPInterface with DeltaDirectoryTransfer
+  Fixed bug introducted by checking RakNetGUID on new connections from 3.52, where connection replies were only sent once, rather than on each request.
+  Added parameter to CloseConnection to select priority on which to send ID_DISCONNECTION_NOTIFICATION.
+  Added SQLLite3Plugin to DependentExtensions\SQLite3Plugin. This allows you to do database calls over the internet with SQLLite3, which is normally only supported with networked file handles. This replaces LightweightDatabase, which is now depreciated.<BR>
+  3.61 (07/21/2009) Fix memory leak in single producer single consumer.
+  Fix RakNetGUID initilization where only the first 4 ints were initialized.
+  Fix RakNet::OP_NEW mistmatch in DS_Table, causing a crash.
+  Fix crash in Lobby code from destroying binary data with some functors. Add ability to query clan list. Lobby will now log you off if you log in while already logged in (preventing multiple logins from the same user). Added per-user per-title storage.
+  Update Doxygen comment syntax to produce better Doxygen output.
+  Fix misspelling of Variadic.
+  Depreciate PHPDirectoryServer due to unreliable replies. Now supplanted with PHPDirectoryServer2
+  Rooms plugin can now send arbitrary bitstreams through the server.
+  Near rewrite of ReplicaManager3. Optimized from O(n^3) to O(n). Now supports multiple serialization channels.
+  Autopatcher source files moved from /DependentExtensions to DependentExtensions\Autopatcher . Also the samples use TCP by default now.
+  Fix endian swapping with OFFLINE_MESSAGE_DATA_ID
+  FullyConnectedMesh2 host determination rewritten for better consistency and reliability from unresponsive hosts.
+  Updated samples with new IP address of free server.
+  Disabled forced port bindings. This apparently causes the Vista to reject the reply messages, which is a more serious bug than getting a reply on a different port.
+  FileListTransferCBInterface::OnFileStruct renamed members: finalDataLength to byteLengthOfThisFile, totalDownloadedLength to bytesDownloadedForThisFile, setCount to numberOfFilesInThisSet, setTotalFinalLength to byteLengthOfThisSet, setTotalDownloadedLength to bytesDownloadedForThisSet.
+  Fix NatPunchthroughServer not working on linux due to time subtraction, and hence underflow. Also made static string buffers larger to support 6 integer RakNetGUID.
+  Change gmail port for email sender sample.
+  Added critical section locks to the referenced counted pointers in RakString, to support multithreaded use.
+  BitStream will now use memcpy if possible when writing other bitstreams.
+  Fix crash in AutopatcherServer due to mismatch of calls to malloc and OP_DELETE.<BR>
+  3.611 (07/23/2009) Fix bug with serialization not sent to reconnecting system with ReplicaManager3. Release Scaleform GFx autopatcher integration.<BR>
+  3.62 (08/05/2009) RakNet is now threadsafe by default in RakNetDefines.h, and more optimized for the threadsafe case. Reduce size of RakNetGuid to int64_t to save bandwidth. Update OgreInterpSample to use ReplicaManager3. Add parameter to ReplicaManager3::AllocReplica. Add OnDownloadStarted and OnDownloadComplete callbacks to Connection_RM3. Add NatTypeDetection sample and code.<BR>
+  3.7 RC1 (08/27/2009) Fixed memory leak in RSACrypt. Fix RoomQuery::Serialize when doing more than one query at a time. Reduce CPU by 20%. Switch congestion control to UDT based algorithm. Fix NatPunchthroughClient::OpenNAT, so you can connect to a system more than once. Fix Lobby2 GetAccountDetails. Add SQLImageBuffer test, and jpeg-7 to DependentExtensions. Forgot ResetWritePointer in Connection_RM3::SendConstruction. Fix Lobby2 bugs with PerTitleIntegerStorage. Fix RM3 not serializing preexisting objects that don't change to new connections.<BR>
+  3.7 RC2 (09/10/2009) Fixed 32 to 64 bit connection problem for all versions. Fix endian swapping connection problem from RC1. There is now one thread per receive socket to increase timestamp accuracy for congestion control. Fix crash on shutdown when using ban lists. Improve bandwidth estimation. Linux now pthread_cond_timedwait rather than sleep, for better performance.<BR>
+  3.7 (9/23/2009) Send() function player lookup is now O(1) in most cases, rather than O(log2(n)); Added SQLiteServerLogger, SQLiteClientLogger, SQLiteClientLogger_RakNetStatistics, and SQLiteClientLogger_PacketLogger. Fixed TCPInterface low transfer speed. Fixed PacketizedTCP not updating plugins correctly. Fixed SignaledEvent usage on Linux (bug from 3.7 RC2)<BR>
+  3.702 (10/15/2009) Speed up lookup on RakPeer::Send() from O(log2n) to O(1) by using systemIndex automatically when available. Reduce number of RakStrings allocated at once to 128 from 1024. Sped up TCPInterface. Return ID_CONNECTION_LOST if calling CloseConnection with sendDisconnectionNotification false.<BR>
+  3.704 (10/22/2009) Autopatcher: Workaround for design flaw in PostgreSQL and possibly MySQL, where calls on a connection are not threadsafe across different threads. Instead of calling SetAutopatcherRepositoryInterface, you must now call StartThreads(), with an array of AutopatcherRepositoryInterface, 1 per thread. StartThreads() must also be called now before AutopatcherServer will process any messages. This was previously causing crashes/corrupted data if a transfer was in progress through FileListTransfer at the same time that the old autopatcher thread was querying the database for a different connection. Additionally, the autopatcher now supports multiple simultaneous threads. Previously it only ran one thread at a time. Also sped up FileListTransfer for incremental reads in the case when there are many files and more than one connection. ReplicaManager3: Add lastSentBitstream pointer to SerializeParameters. Fix UDPForwarder not setting timeout parameter. <BR>
+  3.705 (10/29/2009) Added ResetHostCalculation to FullyConnectedMesh2. Increased default memory usage to avoid datagram index overflowing on a LAN. Made this value customizable in RakNetDefines.h, and added RakNetDefinesOverrides.h to make overriding easier. Update IsPortInUse to account for multiple IP addresses. Added default implementation of dlmalloc. Use by defining _RAKNET_SUPPORT_DL_MALLOC and _USE_RAK_MEMORY_OVERRIDE. Added Demo_BspCollision from Ogre3D to for SQLiteClientLogger sample.
+  3.7051 (11/07/2009) Reduce memory usage. Fix FileListTransfer bytesDownloadedForThisFile.<BR>
+  3.71 (11/16/2009) Note: This version is not network compatible with 3.7051 or earlier due to reordering of packet enumerations.
+  Bug fixes: Fix MySQL autopatcher not working (bug from 3.704). Fix bug in RakPeer::Shutdown() where used sockets were never freed. Fixed a bug where the MTU size was always set at the lowest value, causing needless fragmentation.
+  Congestion control: Change tolerance algorithm for ping variations. The old algorithm was designed for a LAN, and was causing excess packetloss over long-distance internet connections.
+  Performance: Remove all but 1 memory allocation per send and per receive, in order to reduce memory fragmentation. With messages larger than the MTU, reference the original data block rather than allocating and copying fragments. Expose the thread priority in RakPeer::Startup() and TCPInterface::Startup(), for Linux based systems that do not define a default normal thread priority.
+  New features: Add connection failure enumeration ID_IP_ALREADY_CONNECTED. ID_IP_ALREADY_CONNECTED is returned if RakPeer::SetLimitIPConnectionFrequency() was set. Packet priorities now schedule sends, where each lower priority level is sent half as frequently as the priority level above. Updated Irrlicht 3D demo to Irrlicht 1.6.<BR>
+  3.711 Fix messages of certain size combinations causing further sends to never go out.
+  Add ability to pass GUID to UDPProxyClient::RequestForwarding, and use this by default in the samples.
+  Reduce memory usage.
+  Improve randomness of random number for FullyConnectedMesh2<BR>
+  3.712 Improve security for client-specified RakNetGUID. UDPForwarder: Fix uninitialized variables.<BR>
+  3.713 Use hash lookup instead of sorted list lookup for packets from remote systems, since speed is so important for that. Ping based congestion control.<BR>
+  3.714 (12/06/2009) Fix random crash in ReliabilityLayer. Possible fix for ID_ALREADY_CONNECTED, and increased randomization of GUID.<BR>
+  3.715 (12/11/2009) Fix bug returning ID_ALREADY_CONNECTED. You can now also pass a RakNetGuid to most places in RakPeer you previously passed a SystemAddress. Change disconnect timeout method.<BR>
+  3.716 (12/29/2009) Fix bug introduced in 3.714 causing players to get disconnected. FileListTransfer now supports incremental writes in addition to incremental reads. Reduce per-datagram overhead by 4 bytes once the bandwidth capacity has been determined.<BR>
+  3.717 (1/05/2010) Fix a hashing bug affecting players reconnecting. Add RakPeerInterface::IsConnectionAttemptPending<BR>
+  3.718 (02/04/2010) 64 bit to 32 bit network communication fixes. Lower second attempt MTU detection to 1200. Skip MTU sends that will fail anyway. Add TeamBalancer plugin. Add signals and slots support for RPC3. Fixed autopatcher. Add Router2 plugin, to route messages in a fully connected mesh, when two peers cannot directly connect. Add IMMEDIATE_PRIORITY, above HIGH_PRIORITY. With IMMEDIATE_PRIORITY, messages will be sent immediately, rather than joined with other messages for more efficient bandwidth usage. RakVoice now refers to other systems by RakNetGUID, rather than SystemAddress, in order to work properly with NAT punchthrough. Fixed various warnings for Linux. Fixed pure virtual function call in Lobby2Server when shutting down. Fixed Client_GetAccountDetails for lobby2. Changed implementation of BitStream::WriteNormVector to handle small numbers. Added UPNPPortForwarder as a replacement nonblocking interface to the old UPNP system.<BR>
+  3.72 (02/27/2010)
+  PS3: Added dice sample
+  FileListTransfer: Fixed divide by 0 crash when using incremental reads.
+  Cmake: Fixed, all other projects and makefiles removed for Linux.
+  UPNP: Fixed
+  BitStream: Added WriteRef, and use with the shift left operator, so that RPC3 does not do a pass-by-value on object writes. This fixes a problem where the pass-by-value caused the destructor to be called on the copied object.
+  ReplicaManager3: Replace AutoConstructByQuery with QueryConstructionMode, and added QueryReplicaList, for better performance for massively multiplayer games.
+  TelnetTransport: You can now press the up arrow key to repeat the last command.
+  RakPeer: Fix IMMEDIATE_PRIORITY to send right away when called by the user.
+  Router2: Various bugs fixed.<BR>
+  3.73 (04/09/2010)
+  Fix bug where packetloss during slow start could cause retransmissions to stop.<BR>
+  Add Lobby2Client_Steam plugin and corresponding sample, to support Steam published games using the Steamworks SDK.
+  Fix RPC3 with writing bitstream pointers.
+  ReplicaManager3 now supports different send modes per bitstream channel. Also now stores store lastSerializationResult when using RM3SR_SERIALIZED_ALWAYS.
+  Update ConnectionGraph2 to also store the remote system connection list in memory, and allow access by the user.
+  PacketLogger will now log internal message receive errors.
+  Consolodate NAT traversal plugins into NATCompleteServer and NATCompleteClient samples. Remove old NAT samples.<BR>
+  3.731 (05/01/2010) Document TeamBalancer and Steam lobby plugins. Fix crash with calling RakPeer::DetachPlugin(). Fix bug to return ID_SND_RECEIPT_ACKED only once for messages over the MTU. Rewrite RakNetStatistics to return more relevant and up to date information, including metrics per second. Add VariableDeltaSerializer, an optional helper class with ReplicaManager3 that can serialize changes per-variable, rather than relying on the default of serializing the entire object.<BR>
+  3.80 (05/27/2010) Disabled UNRELIABLE_SEQUENCED_WITH_ACK_RECEIPT, RELIABLE_SEQUENCED_WITH_ACK_RECEIPT.
+  Fixed GetMyIP, Modify HTTPConnection to use SSL if defined, and to specify the port.
+  Support WorldID with ReplicaManager3.
+  Add NativeFeatureIncludes.h and NativeFeatureIncludesOverrides.h, so the user can exclude code they do not want more easily.
+  Improve/fix Router2 and UDPForwarder.
+  Add to BitStream functions SerializeCasted (Same as just casting the type you read/write, but uses a template), SerializeBitsFromIntegerRange, WriteBitsFromIntegerRange, and ReadBitsFromIntegerRange.
+  Fix not threadsafe call to BPS tracker, caused crash when calling GetStatistics with version 3.731 or later.
+  Increased tolerance for ping spikes with congestion control, speeds will increase more quickly on average now.
+  Fixed RakPeer::SendOutOfBand, hould always return as the first byte ID_OUT_OF_BAND_INTERNAL.
+  Allow Set() and constructor functions in RakString to take any size input.
+  Fixed ConnectionGraph2 basically not working at all.
+  Fixed http://www.jenkinssoftware.com/forum/index.php?topic=3216.0 where HTTPConnection would fail because TCP packets were still waiting while CloseConnection was called.
+  Encode ping/pong in handshaking so a ping is always available when ID_CONNECTION_REQUEST_ACCEPTED or ID_NEW_INCOMING_CONNECTION arrives. This changes the protocol, so connections to prior versions are not possible.
+  Fixed cross connections so both systems return ID_CONNECTION_REQUEST_ACCEPTED, and neither system returns ID_NEW_INCOMING_CONNECTION.<br>
+  3.81 (07/01/2010)
+  Fix congestion control bug that caused all data transmission to stop, although the connection was not dropped. 
+  Fix UDPForwarder crash.
+  Improve congestion control for LAN settings.
+  Add GET_TIME_SPIKE_LIMIT to RakNetDefines, as an option, disabled by default, to prevent http://support.microsoft.com/kb/274323.
+  Fix SimpleMutex failure caused by initializing the same instance from multiple threads at the same time.
+  Fix packetlogger logging error when using tiemstamps.
+  Fix assert in RoomsPlugin.
+  Update tutorial in manual.
+  <br>
+  <BR>
+</p></TD></TR></TABLE>
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
 <img src="spacer.gif" width="8" height="1">See Also</td>
 </tr></table>

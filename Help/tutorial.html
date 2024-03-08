@@ -14,37 +14,33 @@
 <img src="spacer.gif" width="8" height="1">Tutorial Project setup</td>
 </tr></table>
 
-<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD>
 
-In this tutorial all images and interface references are for Visual Studio .Net, copyrighted by Microsoft.  Use the equivalents for your own compiler.<BR>
+In this tutorial all images and interface references are for Visual Studio 2005, copyrighted by Microsoft.  Use the equivalents for your own compiler.<BR>
 
 <OL>
 <LI>Create a new Win32 Console Project and name it ChatServer<BR>
-  <A HREF="newproject.jpg"><IMG SRC="newprojectsmall.jpg"></A>
-<LI>Make it an empty console application<BR><IMG SRC="consoleapplication.jpg">
-<LI>In your ChatServer directory, create a RakNet directory where we will copy RakNet files to.
-<LI>From the /lib directory of where you installed RakNet, copy RakNetLibStatic.lib and RakNetLibStaticDebug.lib to your ChatServer project in the RakNet directory (for example, C:\ChatServer\RakNet)
-<LI>These are the core source files for RakNet.  Copy these from the /source directory of where you installed RakNet to the RakNet directory of your chat server project.
-<UL>
-<LI>RakPeerInterface.h
-<LI>RakNetworkFactory.h (Creates instances of the peer)
-<LI>RakNetTypes.h (Defines <A HREF="systemaddresses.html">SystemAddress</A> and Packet).
-<LI>PacketPriority.h. (Defines the PacketPriority and PacketReliability enumerations).
-<LI><A HREF="networkmessages.html">MessageIdentifiers.h</A>
-<LI>RakNetDefines.h
-<LI>Export.h
-</UL>
-<LI>Since we put files in a directory other than the project, we need to include that directory in the include search path so we don't have to type out the entire path every time we #include something.  Do this by right clicking the "Chat Server" project name in the project tab.  Select properties.  In the top pane, change the drop down menu to "All Configurations."  Select C/C++ / General / Additional Include Directories.  To that item, add ".\RakNet" .  Hit OK.
-<LI>Go back to your project. Create and add a new blank source file "ChatServer.cpp".  In MSVC you would right click on "Source Files" in the project display, and then select add / Add New Item.<BR><A HREF="addchatserverfile.jpg"><IMG SRC="addchatserverfilesmall.jpg"></A>
-<LI>Set your project to use multi-threaded runtime libraries. Right click on the project, select configuration properties / C/C++ / Code Generation / Runtime Library and change it to Multi-threaded (/MT).  (This step isn't necessary if you use the DLL instead of the static library)<BR><TABLE><TR><TD>
-<A HREF="multithreadeddebug.jpg"><IMG SRC="multithreadeddebugsmall.jpg"></A><BR>
-</TD>
-<TR ALIGN="CENTER"><TD>
-<B>Setting Multithreaded debug in .net 2003</B></TD></TR></TABLE>
-<LI>Set your project to import RakNetLibStatic.lib .  Right click on the project and reopen the project settings if you have closed them.  On the left pane click Linker / Input.  On the top pane there is a drop down menu that should read Active(Debug).  If it does not, change it to Active(Debug) or Debug.  On the right pane, under Additional Dependencies, add .\RakNet\RakNetLibStaticDebug.lib, and ws2_32.lib .  Change the drop down menu on the top pane to "Release".  Go back to Additional Dependencies and now add .\RakNet\RakNetLibStatic.lib and ws2_32.lib .<br>
-<LI>Add the RakNet header files you copied over to the project.  Right click on the "Chat Server" project name in the project tab.  Select Add / Add Existing item.  Double click the RakNet directory, and select everything except the .lib (which may not show up anyway).  Then hit open.  Your final result should look as follows:<BR><IMG SRC="completeproject.jpg">
-</OL>
+  <img src="tutorial1.jpg" width="804" height="542"><BR><BR>
+<LI>Make it a console application, and an empty project. Windows application is also acceptable.<BR>
+<img src="tutorial2.jpg" width="625" height="443"><BR><BR>
+<LI>Add the RakNet source files to your project. You can do this by right clicking on the project name, selecting Add, and then Existing Item from the rollout. Navigate to where you downloaded RakNet, navigate to the Source directory, hold down left shift, select the first file in the list, then click the last file in the list. Then press OK.<br>
+  <img src="tutorial3.jpg" width="494" height="262"><BR><br>
+<LI>Add a main file to your project. Do this by 
+right clicking on the project name, selecting Add, and then
+new item. Under Visual C++ select code, then c++ file. Name the file main.cpp.<BR><img src="tutorial4.jpg" width="480" height="194"><BR><BR>
+<LI>Since we put files in a directory other than the project, we need to include that directory in the include search path so we don't have to type out the entire path every time we #include something.  Do this by right clicking the "Chat Server" project name in the project tab.  Select properties.  In the top pane, change the drop down menu to "All Configurations."  Select C/C++ / General / Additional Include Directories.  To that item, add the path to the Source directory of your RakNet download, and hit OK.
+  <br>
+  <img src="tutorial5.jpg" width="759" height="531"><br>
+  <br>
+<LI>Next, link in ws2_32.lib, from the same dialog box.<br>
+  <img src="tutorial6.jpg" width="759" height="531"><br>
+  <br>
+<LI>Also change the character set to not set. This is so regular array based strings are used, as opposed to unicode or wide character.
+<img src="tutorial7.jpg" width="759" height="531"><BR><BR>
+<LI>You are ready to begin adding code to main.cpp</OL>
 </TD></TR></TABLE>
+
 <table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
 <img src="spacer.gif" width="8" height="1">Tutorial Code implementation</td>
 </tr></table>

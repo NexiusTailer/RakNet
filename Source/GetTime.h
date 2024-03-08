@@ -22,6 +22,7 @@ namespace RakNet
 	RakNetTime RAK_DLL_EXPORT GetTime( void );
 
 	/// Should be renamed GetTimeUS
+	/// \note The maximum delta between returned calls is 1 second - however, RakNet calls this constantly anyway. See NormalizeTime() in the cpp.
 	RakNetTimeUS RAK_DLL_EXPORT GetTimeNS( void );
 
 	// Renames, for RakNet 4

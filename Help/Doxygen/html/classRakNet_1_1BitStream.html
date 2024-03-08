@@ -1224,13 +1224,13 @@ template&lt;class templateType &gt; </div>
 <p>
 Read any integral type from a bitstream. 
 <p>
-Undefine __BITSTREAM_NATIVE_END if you need endian swapping. For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte <dl compact><dt><b>Parameters:</b></dt><dd>
+Undefine __BITSTREAM_NATIVE_END if you need endian swapping. For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>outTemplateVar</em>&nbsp;</td><td>The value to read </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true on success, false on failure.</dd></dl>
-Undefine __BITSTREAM_NATIVE_END if you need endian swapping. For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte <dl compact><dt><b>Parameters:</b></dt><dd>
+Undefine __BITSTREAM_NATIVE_END if you need endian swapping. For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>outTemplateVar</em>&nbsp;</td><td>The value to read </td></tr>
   </table>
@@ -1288,13 +1288,13 @@ template&lt;class templateType &gt; </div>
 <p>
 Read any integral type from a bitstream. 
 <p>
-If the written value differed from the value compared against in the write function, var will be updated. Otherwise it will retain the current value. the current value will be updated. For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte ReadCompressedDelta is only valid from a previous call to WriteDelta <dl compact><dt><b>Parameters:</b></dt><dd>
+If the written value differed from the value compared against in the write function, var will be updated. Otherwise it will retain the current value. the current value will be updated. For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte ReadCompressedDelta is only valid from a previous call to WriteDelta <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>outTemplateVar</em>&nbsp;</td><td>The value to read </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true on success, false on failure.</dd></dl>
-If the written value differed from the value compared against in the write function, var will be updated. Otherwise it will retain the current value. the current value will be updated. For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte ReadCompressedDelta is only valid from a previous call to WriteDelta <dl compact><dt><b>Parameters:</b></dt><dd>
+If the written value differed from the value compared against in the write function, var will be updated. Otherwise it will retain the current value. the current value will be updated. For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte ReadCompressedDelta is only valid from a previous call to WriteDelta <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>outTemplateVar</em>&nbsp;</td><td>The value to read </td></tr>
   </table>
@@ -1987,7 +1987,7 @@ template&lt;class templateType &gt; </div>
 <p>
 Bidirectional serialize/deserialize any integral type to/from a bitstream. 
 <p>
-Undefine __BITSTREAM_NATIVE_END if you need endian swapping. If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type <dl compact><dt><b>Parameters:</b></dt><dd>
+Undefine __BITSTREAM_NATIVE_END if you need endian swapping. If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>writeToBitstream</em>&nbsp;</td><td>true to write from your data to this bitstream. False to read from this bitstream and write to your data </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>inOutTemplateVar</em>&nbsp;</td><td>The value to write </td></tr>
@@ -2067,7 +2067,7 @@ template&lt;class templateType &gt; </div>
 <p>
 Bidirectional serialize/deserialize any integral type to/from a bitstream. 
 <p>
-If the current value is different from the last value the current value will be written. Otherwise, a single bit will be written For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte <dl compact><dt><b>Parameters:</b></dt><dd>
+If the current value is different from the last value the current value will be written. Otherwise, a single bit will be written For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>writeToBitstream</em>&nbsp;</td><td>true to write from your data to this bitstream. False to read from this bitstream and write to your data </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>inOutCurrentValue</em>&nbsp;</td><td>The current value to write </td></tr>
@@ -2877,12 +2877,12 @@ template&lt;class templateType &gt; </div>
 <p>
 Write any integral type to a bitstream. 
 <p>
-Undefine __BITSTREAM_NATIVE_END if you need endian swapping. If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type <dl compact><dt><b>Parameters:</b></dt><dd>
+Undefine __BITSTREAM_NATIVE_END if you need endian swapping. If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>inTemplateVar</em>&nbsp;</td><td>The value to write</td></tr>
   </table>
 </dl>
-Undefine __BITSTREAM_NATIVE_END if you need endian swapping. For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte <dl compact><dt><b>Parameters:</b></dt><dd>
+Undefine __BITSTREAM_NATIVE_END if you need endian swapping. For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>inTemplateVar</em>&nbsp;</td><td>The value to write </td></tr>
   </table>
@@ -2983,13 +2983,13 @@ template&lt;class templateType &gt; </div>
 <p>
 Write any integral type to a bitstream. 
 <p>
-If the current value is different from the last value the current value will be written. Otherwise, a single bit will be written For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte <dl compact><dt><b>Parameters:</b></dt><dd>
+If the current value is different from the last value the current value will be written. Otherwise, a single bit will be written For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>currentValue</em>&nbsp;</td><td>The current value to write </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lastValue</em>&nbsp;</td><td>The last value to compare against</td></tr>
   </table>
 </dl>
-If the current value is different from the last value the current value will be written. Otherwise, a single bit will be written For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte <dl compact><dt><b>Parameters:</b></dt><dd>
+If the current value is different from the last value the current value will be written. Otherwise, a single bit will be written For floating point, this is lossy, using 2 bytes for a float and 4 for a double. The range must be between -1 and +1. For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>currentValue</em>&nbsp;</td><td>The current value to write </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>lastValue</em>&nbsp;</td><td>The last value to compare against </td></tr>
@@ -3523,7 +3523,7 @@ Loses accuracy to about 3/10ths and only saves 2 bytes, so only use if accuracy 
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/RakNet/Source/<a class="el" href="BitStream_8h.html">BitStream.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 27 20:51:26 2010 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Jul 1 07:46:41 2010 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

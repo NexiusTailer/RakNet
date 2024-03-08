@@ -28,6 +28,8 @@ int main(int argc, char **argv)
 
 	char data[4000];
 	data[0]=ID_USER_PACKET_ENUM;
+	for (unsigned int i=1; i < 4000; i++)
+		data[i]=i%256;
 	int stride, sum;
 	int sendCount, receiveCount;
 	for (stride=1; stride < 2000; stride++)
@@ -44,11 +46,15 @@ int main(int argc, char **argv)
 
 		Packet *p;
 		for (p=sender->Receive(); p; sender->DeallocatePacket(p), p=sender->Receive())
-			;
+			;    
 		for (p=receiver->Receive(); p; receiver->DeallocatePacket(p), p=receiver->Receive())
 		{
 			if (p->data[0]==ID_USER_PACKET_ENUM)
 				receiveCount++;
+			for (unsigned int i=1; i < p->length; i++)
+			{
+				RakAssert(data[i]==i%256);
+			}
 		}
 
 		if (sendCount==receiveCount)

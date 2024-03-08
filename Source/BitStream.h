@@ -98,7 +98,7 @@ namespace RakNet
 		/// \details Undefine __BITSTREAM_NATIVE_END if you need endian swapping.
 		/// If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte
 		/// For floating point, this is lossy, using 2 bytes for a float and 4 for a double.  The range must be between -1 and +1.
-		/// For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type
+		/// For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type
 		/// \param[in] writeToBitstream true to write from your data to this bitstream.  False to read from this bitstream and write to your data
 		/// \param[in] inOutTemplateVar The value to write
 		/// \return true if \a writeToBitstream is true.  true if \a writeToBitstream is false and the read was successful.  false if \a writeToBitstream is false and the read was not successful.
@@ -109,7 +109,7 @@ namespace RakNet
 		/// \details If the current value is different from the last value
 		/// the current value will be written.  Otherwise, a single bit will be written
 		/// For floating point, this is lossy, using 2 bytes for a float and 4 for a double.  The range must be between -1 and +1.
-		/// For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type
+		/// For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type
 		/// If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte
 		/// \param[in] writeToBitstream true to write from your data to this bitstream.  False to read from this bitstream and write to your data
 		/// \param[in] inOutCurrentValue The current value to write
@@ -246,7 +246,7 @@ namespace RakNet
 		/// \details Undefine __BITSTREAM_NATIVE_END if you need endian swapping.
 		/// If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte
 		/// For floating point, this is lossy, using 2 bytes for a float and 4 for a double.  The range must be between -1 and +1.
-		/// For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type
+		/// For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type
 		/// \param[in] inTemplateVar The value to write
 		template <class templateType>
 			void WriteCompressed(templateType inTemplateVar);
@@ -255,7 +255,7 @@ namespace RakNet
 		/// \details If the current value is different from the last value
 		/// the current value will be written.  Otherwise, a single bit will be written
 		/// For floating point, this is lossy, using 2 bytes for a float and 4 for a double.  The range must be between -1 and +1.
-		/// For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type
+		/// For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type
 		/// If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte
 		/// \param[in] currentValue The current value to write
 		/// \param[in] lastValue The last value to compare against
@@ -292,7 +292,7 @@ namespace RakNet
 		/// \brief Read any integral type from a bitstream.  
 		/// \details Undefine __BITSTREAM_NATIVE_END if you need endian swapping.
 		/// For floating point, this is lossy, using 2 bytes for a float and 4 for a double.  The range must be between -1 and +1.
-		/// For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type
+		/// For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type
 		/// If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte
 		/// \param[in] outTemplateVar The value to read
 		/// \return true on success, false on failure.
@@ -304,7 +304,7 @@ namespace RakNet
 		/// var will be updated.  Otherwise it will retain the current value.
 		/// the current value will be updated.
 		/// For floating point, this is lossy, using 2 bytes for a float and 4 for a double.  The range must be between -1 and +1.
-		/// For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type
+		/// For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type
 		/// If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte
 		/// ReadCompressedDelta is only valid from a previous call to WriteDelta
 		/// \param[in] outTemplateVar The value to read
@@ -1305,7 +1305,7 @@ namespace RakNet
 	/// \brief Write any integral type to a bitstream.  
 	/// \details Undefine __BITSTREAM_NATIVE_END if you need endian swapping.
 	/// For floating point, this is lossy, using 2 bytes for a float and 4 for a double.  The range must be between -1 and +1.
-	/// For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type
+	/// For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type
 	/// If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte
 	/// \param[in] inTemplateVar The value to write
 	template <class templateType>
@@ -1423,7 +1423,7 @@ namespace RakNet
 	/// \details If the current value is different from the last value
 	/// the current value will be written.  Otherwise, a single bit will be written
 	/// For floating point, this is lossy, using 2 bytes for a float and 4 for a double.  The range must be between -1 and +1.
-	/// For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type
+	/// For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type
 	/// If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte
 	/// \param[in] currentValue The current value to write
 	/// \param[in] lastValue The last value to compare against
@@ -1670,7 +1670,7 @@ namespace RakNet
 	/// \brief Read any integral type from a bitstream.  
 	/// \details Undefine __BITSTREAM_NATIVE_END if you need endian swapping.
 	/// For floating point, this is lossy, using 2 bytes for a float and 4 for a double.  The range must be between -1 and +1.
-	/// For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type
+	/// For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type
 	/// If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte
 	/// \param[in] outTemplateVar The value to read
 	template <class templateType>
@@ -1778,7 +1778,7 @@ namespace RakNet
 	/// var will be updated.  Otherwise it will retain the current value.
 	/// the current value will be updated.
 	/// For floating point, this is lossy, using 2 bytes for a float and 4 for a double.  The range must be between -1 and +1.
-	/// For non-floating point, this is lossless, but only has benefit if you use less than half the range of the type
+	/// For non-floating point, this is lossless, but only has benefit if you use less than half the bits of the type
 	/// If you are not using __BITSTREAM_NATIVE_END the opposite is true for types larger than 1 byte
 	/// ReadCompressedDelta is only valid from a previous call to WriteDelta
 	/// \param[in] outTemplateVar The value to read

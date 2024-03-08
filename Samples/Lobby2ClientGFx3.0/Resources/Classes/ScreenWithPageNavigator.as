@@ -30,6 +30,7 @@ class ScreenWithPageNavigator extends Screen
 	
 	public function OnShow():Void
 	{		
+		mcPageNavigator._x = 611;
 		mcPageNavigator.AddCallbacks( Delegate.create( this, NextPage ), Delegate.create( this, PreviousPage ) );
 	}
 	
@@ -59,7 +60,7 @@ class ScreenWithPageNavigator extends Screen
 		{
 			if ( mCurrentPage > 0 )
 			{
-				HidePage( mCurrentPage );				
+				HidePage( mCurrentPage );
 				mCurrentPage = _page;		
 			}
 			else
@@ -156,7 +157,7 @@ class ScreenWithPageNavigator extends Screen
 				//ConsoleWindow.Trace("Showing entry: " + mcEntry);
 				mcEntry._x = mFirstEntryX;// + 500;
 				mcEntry._y = mFirstEntryY + (mCurEntryIndex) * (mcEntry._height + mDeltaY);	
-				new Tween( mcEntry, "_x", None.easeNone, mFirstEntryX-200, mFirstEntryX, .3, true );
+				//new Tween( mcEntry, "_x", None.easeNone, mFirstEntryX-200, mFirstEntryX, .3, true );
 				new Tween( mcEntry, "_alpha", None.easeNone, 0, 100, .3, true );
 				OnShowMovieClipEntry( mcEntry );
 			}
@@ -164,7 +165,7 @@ class ScreenWithPageNavigator extends Screen
 			{				
 				var tween_handler:Tween = new Tween( mcEntry, "_alpha", None.easeNone, 100, 0, .3, true );	
 				//ConsoleWindow.Trace("Hiding entry: " + mcEntry);	
-				ConsoleWindow.Trace("Hiding tween_handler: " + tween_handler);	
+				//ConsoleWindow.Trace("Hiding tween_handler: " + tween_handler);	
 				tween_handler.onMotionFinished = function() 
 				{
 					this.obj._visible = false;

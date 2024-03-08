@@ -270,14 +270,12 @@ updateBitStream( MAXIMUM_MTU_SIZE + 21 )   // preallocate the update bitstream s
 {
 	freeThreadedMemoryOnNextUpdate = false;
 
-#if CC_TIME_TYPE_BYTES==4
-#else
+
 #ifdef _DEBUG
 	// Wait longer to disconnect in debug so I don't get disconnected while tracing
 	timeoutTime=30000;
 #else
 	timeoutTime=10000;
-#endif
 #endif
 
 #ifdef _DEBUG
@@ -1830,13 +1828,12 @@ void ReliabilityLayer::SendBitStream( SOCKET s, SystemAddress systemAddress, Rak
 {
 	(void) systemAddress;
 
-	unsigned int oldLength, length;
+	unsigned int length;
 
 
 	if ( encryptor.IsKeySet() )
 	{
 		length = (unsigned int) bitStream->GetNumberOfBytesUsed();
-		oldLength = length;
 
 		encryptor.Encrypt( ( unsigned char* ) bitStream->GetData(), length, ( unsigned char* ) bitStream->GetData(), &length, rnr );
 

@@ -34,9 +34,9 @@ class ScreenTab extends MovieClip
 		
 		mcLabel.tfTabName.text = GetTabName( tabID );
 		
-		//var timerformat:TextFormat = new TextFormat();
-		//timerformat.letterSpacing = 4;	
-		//mcLabel.tfTabName.setTextFormat(timerformat);
+		var timerformat:TextFormat = new TextFormat();
+		timerformat.letterSpacing = 4;	
+		mcLabel.tfTabName.setTextFormat(timerformat);
 		//ConsoleWindow.Trace("mcLabel.tfTabName = " + mcLabel.tfTabName);
 		//ConsoleWindow.Trace("letter spacing = " + mcLabel.tfTabName.getTextFormat().letterSpacing);
 		

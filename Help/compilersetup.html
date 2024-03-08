@@ -83,9 +83,7 @@ For more detail, refer to <A HREF="detailedimplementation.html">Detailed Impleme
 <BR>
 
 <OL>
-<LI>Add the source files under the /Source directory to the project.  While not all of these are strictly necessary, the ones you don't use won't hurt you.  However, if you don't plan to use RakVoice, you should not include anything with RakVoice in the filename or otherwise you will have to include all the speex files.
-<LI>If you plan to use RakVoice, add the source files under the DependentExtensions\speex-x.x.xx\libspeex directory.
-<LI>If you plan to use RakVoice, add to "Additional Include Directories" the ..\..\..\Source;..\..\..\speex-1.1.4\libspeex
+<LI>Add the files under the /Source directory to the project.  While not all of these are strictly necessary, the ones you don't use won't hurt you.
 <LI>Import ws2_32.lib, or wsock32.lib if you don't have Winsock 2 installed.  In MSVC 7 you can right click on the project, select configuration properties / linker / input / additional dependencies and type "ws2_32.lib" in there.
 <LI>Set your project to use multi-threaded runtime libraries.  In MSVC 7 you can right click on the project, select configuration properties / C/C++ / Code Generation / Runtime Library and change it to Multi-threaded (/MT).
 <LI>Set an additional include path to include the RakNet source (if you copied the source files to a different directory).

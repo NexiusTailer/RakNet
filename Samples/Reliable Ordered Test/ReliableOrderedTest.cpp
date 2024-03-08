@@ -56,7 +56,8 @@ void* LoggedRealloc(void *p, size_t size, const char *file, unsigned int line)
 int main(int argc, char **argv)
 {
 	RakPeerInterface *sender, *receiver;
-	unsigned int packetNumber[32], receivedPacketNumber, receivedTime;
+	unsigned int packetNumber[32], receivedPacketNumber;
+	RakNetTime receivedTime;
 	char str[256];
 	char ip[32];
 	RakNetTime sendInterval, nextSend, currentTime, quitTime;
@@ -223,10 +224,11 @@ int main(int argc, char **argv)
 			//	streamNumber = randomMT() % 32;
 				// Do the send
 				bitStream.Reset();
+				bitStream.Write((unsigned char) (ID_TIMESTAMP));
+				bitStream.Write(RakNet::GetTime());
 				bitStream.Write((unsigned char) (ID_USER_PACKET_ENUM+1));
 				bitStream.Write(packetNumber[streamNumber]++);
 				bitStream.Write(streamNumber);
-				bitStream.Write(currentTime);
 				char *pad;
 				int padLength = (randomMT() % 5000) + 1;
 				//int padLength = (randomMT() % 128) + 1;
@@ -248,7 +250,7 @@ int main(int argc, char **argv)
 					rssSender=sender->GetStatistics(sender->GetSystemAddressFromIndex(0));
 					//printf("Snd: %i. %i waiting on ack. KBPS=%.1f. Ploss=%.1f. Bandwidth=%f.\n", packetNumber[streamNumber], rssSender->messagesOnResendQueue,rssSender->bitsPerSecondSent/1000, 100.0f * ( float ) rssSender->messagesTotalBitsResent / ( float ) rssSender->totalBitsSent, rssSender->estimatedLinkCapacityMBPS);
 
-					printf("Snd: %i.\n", packetNumber[streamNumber]);
+					printf("Snd: %i at time %"PRINTF_64_BIT_MODIFIER"u\n", packetNumber[streamNumber], currentTime);
 				}
 
 				nextSend+=sendInterval;
@@ -274,20 +276,21 @@ int main(int argc, char **argv)
 				case ID_CONNECTION_LOST:
 					printf("ID_CONNECTION_LOST\n");
 					break;
-				case ID_USER_PACKET_ENUM+1:
+				case ID_TIMESTAMP:
 					bitStream.Reset();
 					bitStream.Write((char*)packet->data, packet->length);
-					bitStream.IgnoreBits(8); // Ignore ID_USER_PACKET_ENUM+1
+					bitStream.IgnoreBits(8); // Ignore ID_TIMESTAMP
+					bitStream.Read(receivedTime);
+					bitStream.IgnoreBits(8); // Ignore ID_USER_ENUM+1
 					bitStream.Read(receivedPacketNumber);
 					bitStream.Read(streamNumber);
-					bitStream.Read(receivedTime);
 
 					if (receivedPacketNumber!=packetNumber[streamNumber])
 						printf("ERROR! Expecting %i got %i (channel %i).",packetNumber[streamNumber], receivedPacketNumber, streamNumber);
 					else
 						printf("Got %i.Channel %i.Len %i.", packetNumber[streamNumber], streamNumber, packet->length);
 
-					printf("Sent=%u Received=%u Diff=%i.\n", receivedTime, currentTime, (int)currentTime - (int) receivedTime);
+					printf("Sent=%"PRINTF_64_BIT_MODIFIER"u Received=%"PRINTF_64_BIT_MODIFIER"u Diff=%i.\n", receivedTime, currentTime, (int)(currentTime - receivedTime));
 
 					packetNumber[streamNumber]++;
 					break;

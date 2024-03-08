@@ -89,6 +89,7 @@ struct SampleReplica : public Replica3
 		serializeParameters->pro[0].reliability=UNRELIABLE_WITH_ACK_RECEIPT;
 		// Sending unreliably with an ack receipt requires the receipt number, and that you inform the system of ID_SND_RECEIPT_ACKED and ID_SND_RECEIPT_LOSS
 		serializeParameters->pro[0].sendReceipt=replicaManager->GetRakPeerInterface()->IncrementNextSendReceipt();
+		serializeParameters->messageTimestamp=RakNet::GetTime();
 
 		// Begin writing all variables to be sent UNRELIABLE_WITH_ACK_RECEIPT 
 		variableDeltaSerializer.BeginUnreliableAckedSerialize(

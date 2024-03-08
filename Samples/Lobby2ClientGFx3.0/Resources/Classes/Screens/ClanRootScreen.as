@@ -49,6 +49,8 @@ class Screens.ClanRootScreen extends ScreenWithPageNavigator
 	
 	public function OnShow():Void
 	{
+		super.OnShow();
+		
 		if ( mMovieClipList.length > 0 )
 		{
 			CleanUpMoveClipList( mMovieClipList );

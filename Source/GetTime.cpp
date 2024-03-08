@@ -31,24 +31,53 @@ RakNetTimeUS initialTime;
 #endif
 
 static bool initialized=false;
-int queryCount=0;
 
+#if defined(GET_TIME_SPIKE_LIMIT) && GET_TIME_SPIKE_LIMIT>0
+#include "SimpleMutex.h"
+RakNetTimeUS lastNormalizedReturnedValue=0;
+RakNetTimeUS lastNormalizedInputValue=0;
+/// This constraints timer forward jumps to 1 second, and does not let it jump backwards
+/// See http://support.microsoft.com/kb/274323 where the timer can sometimes jump forward by hours or days
+/// This also has the effect where debugging a sending system won't treat the time spent halted past 1 second as elapsed network time
+RakNetTimeUS NormalizeTime(RakNetTimeUS timeIn)
+{
+	RakNetTimeUS diff, lastNormalizedReturnedValueCopy;
+	static SimpleMutex mutex;
+	
+	mutex.Lock();
+	if (timeIn>lastNormalizedInputValue)
+	{
+		diff = timeIn-lastNormalizedInputValue;
+		if (diff > GET_TIME_SPIKE_LIMIT)
+			lastNormalizedReturnedValue+=GET_TIME_SPIKE_LIMIT;
+		else
+			lastNormalizedReturnedValue+=diff;
+	}
+
+	lastNormalizedInputValue=timeIn;
+	lastNormalizedReturnedValueCopy=lastNormalizedReturnedValue;
+	mutex.Unlock();
+
+	return lastNormalizedReturnedValueCopy;
+}
+#endif // #if defined(GET_TIME_SPIKE_LIMIT) && GET_TIME_SPIKE_LIMIT>0
 RakNetTime RakNet::GetTime( void )
 {
 	return (RakNetTime)(GetTimeNS()/1000);
 }
-RakNetTimeUS RakNet::GetTimeNS( void )
-{
 #if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-#elif defined(_WIN32)
-	// Win32
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+#elif defined(_XBOX) || defined(X360)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+#elif defined(_WIN32) && !defined(_XBOX) && !defined(X360)
+RakNetTimeUS GetTimeUS_Windows( void )
+{
 	if ( initialized == false)
 	{
 		initialized = true;
 
-#if !defined(_WIN32_WCE) && !defined(_XBOX) && !defined(X360)
 		// Save the current process
+#if !defined(_WIN32_WCE)
 		HANDLE mProc = GetCurrentProcess();
 
 		// Get the current Affinity
@@ -57,30 +86,29 @@ RakNetTimeUS RakNet::GetTimeNS( void )
 #else
 		GetProcessAffinityMask(mProc, &mProcMask, &mSysMask);
 #endif
-
 		mThread = GetCurrentThread();
 
-#endif // !defined(_WIN32_WCE)
-
+#endif // _WIN32_WCE
 		QueryPerformanceFrequency( &yo );
-	}
-	// 01/12/08 - According to the docs "The frequency cannot change while the system is running." so this shouldn't be necessary
-	/*
-	if (++queryCount==200)
-	{
-		// Set affinity to the first core
-		SetThreadAffinityMask(mThread, 1);
+	}	
 
-		QueryPerformanceFrequency( &yo );
+	RakNetTimeUS curTime;
+	LARGE_INTEGER PerfVal;
+	QueryPerformanceCounter( &PerfVal );
+	__int64 quotient, remainder;
+	quotient=((PerfVal.QuadPart) / yo.QuadPart);
+	remainder=((PerfVal.QuadPart) % yo.QuadPart);
+	curTime = (RakNetTimeUS) quotient*(RakNetTimeUS)1000000 + (remainder*(RakNetTimeUS)1000000 / yo.QuadPart);
 
-		// Reset affinity
-		SetThreadAffinityMask(mThread, mProcMask);
-
-		queryCount=0;
-	}
-	*/
-
+#if defined(GET_TIME_SPIKE_LIMIT) && GET_TIME_SPIKE_LIMIT>0
+	return NormalizeTime(curTime);
+#else
+	return curTime;
+#endif // #if defined(GET_TIME_SPIKE_LIMIT) && GET_TIME_SPIKE_LIMIT>0
+}
 #elif (defined(__GNUC__)  || defined(__GCCXML__))
+RakNetTimeUS GetTimeUS_Linux( void )
+{
 	if ( initialized == false)
 	{
 		gettimeofday( &tp, 0 );
@@ -88,67 +116,30 @@ RakNetTimeUS RakNet::GetTimeNS( void )
 		// I do this because otherwise RakNetTime in milliseconds won't work as it will underflow when dividing by 1000 to do the conversion
 		initialTime = ( tp.tv_sec ) * (RakNetTimeUS) 1000000 + ( tp.tv_usec );
 	}
-#endif
 
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                                                                                                                                                                                                                                                                                                                                                                           
-#elif defined(_WIN32)
-
-	RakNetTimeUS curTime;
-	static RakNetTimeUS lastQueryVal=(RakNetTimeUS)0;
-//	static unsigned long lastTickCountVal = GetTickCount();
-
-	LARGE_INTEGER PerfVal;
-
-#if !defined(_WIN32_WCE) && !defined(_XBOX) && !defined(X360)
-	// Set affinity to the first core
-	// 8/9/09 This freaking destroys performance, 90% of the time in this function is due to SetThreadAffinityMask().
-	//SetThreadAffinityMask(mThread, 1);
-#endif // !defined(_WIN32_WCE)
-
-	// Docs: On a multiprocessor computer, it should not matter which processor is called.
-	// However, you can get different results on different processors due to bugs in the basic input/output system (BIOS) or the hardware abstraction layer (HAL). To specify processor affinity for a thread, use the SetThreadAffinityMask function.
-	// Query the timer
-	QueryPerformanceCounter( &PerfVal );
-
-#if !defined(_WIN32_WCE) && !defined(_XBOX) && !defined(X360)
-	// Reset affinity
-	// 8/9/09 This freaking destroys performance, 90% of the time in this function is due to SetThreadAffinityMask().
-//	SetThreadAffinityMask(mThread, mProcMask);
-#endif // !defined(_WIN32_WCE)
-
-	__int64 quotient, remainder;
-	quotient=((PerfVal.QuadPart) / yo.QuadPart);
-	remainder=((PerfVal.QuadPart) % yo.QuadPart);
-	curTime = (RakNetTimeUS) quotient*(RakNetTimeUS)1000000 + (remainder*(RakNetTimeUS)1000000 / yo.QuadPart);
-
-	// 08/26/08 - With the below workaround, the time seems to jump forward regardless.
-	// Just make sure the time doesn't go backwards
-	if (curTime < lastQueryVal)
-		return lastQueryVal;
-
-#if !defined(_XBOX) && !defined(X360)
-    // To call timeGetTime
-    // on Code::Blocks, at the top of the file you need to import libwinmm.a instead of Winmm.lib
-	DWORD tgt = timeGetTime();
-	RakNetTimeMS timeInMS = curTime/1000;
-	if (timeInMS>tgt+1000)
-	{
-		// To workaround http://support.microsoft.com/kb/274323 where the timer can sometimes jump forward by hours or days
-		curTime=(RakNetTimeUS) tgt * (RakNetTimeUS) 1000;
-	}
-#endif
-	lastQueryVal=curTime;
-
-	return curTime;
-
-#elif (defined(__GNUC__)  || defined(__GCCXML__))
 	// GCC
 	RakNetTimeUS curTime;
 	gettimeofday( &tp, 0 );
 
 	curTime = ( tp.tv_sec ) * (RakNetTimeUS) 1000000 + ( tp.tv_usec );
-	// Subtract from initialTime so the millisecond conversion does not underflow
+
+#if defined(GET_TIME_SPIKE_LIMIT) && GET_TIME_SPIKE_LIMIT>0
+	return NormalizeTime(curTime - initialTime);
+#else
 	return curTime - initialTime;
+#endif // #if defined(GET_TIME_SPIKE_LIMIT) && GET_TIME_SPIKE_LIMIT>0
+}
+#endif
+
+RakNetTimeUS RakNet::GetTimeNS( void )
+{
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+                        
+#elif defined(_XBOX) || defined(X360)
+                        
+#elif defined(_WIN32)
+	return GetTimeUS_Windows();
+#else
+	return GetTimeUS_Linux();
 #endif
 }

@@ -137,9 +137,9 @@ Packets with structs</td>
   // Your data here<br>
   };<br>
   #pragma pack(pop)</p>
-<p><font class="G10" color="#666666" size="2">
-    Fill out your packet. For our timed mine, we want the form that uses
-    timestamping. So the end result should look like the following...</p>
+<p>Note that when sending structures, RakNet assumes the timeStamp is in network order. You would have to use the function BitStream::EndianSwapBytes() on the timeStamp field to make this happen. To then read the timestamp on the receiving system, use if (bitStream-&gt;DoEndianSwap()) bitStream-&gt;ReverseBytes(timeStamp, sizeof(timeStamp). This step is not necessary if using BitStreams.</p>
+<p> Fill out your packet. For our timed mine, we want the form that uses
+  timestamping. So the end result should look like the following...</p>
 <span class="RakNetCode">  #pragma pack(push, 1)<br>
   struct structName<br>
   {<br>

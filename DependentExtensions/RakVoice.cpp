@@ -13,7 +13,6 @@
 #include <stdio.h>
 #endif
 
-/// To test sending to myself. Also uncomment in main.cpp
 //#define PRINT_DEBUG_INFO
 
 #define SAMPLESIZE 2

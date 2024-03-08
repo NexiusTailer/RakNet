@@ -251,7 +251,7 @@ struct GetRoomProperties_Func : public RoomsPluginFunc {
 //			char out[8096];
 			printf("room %s has %i columns and %i used slots\n", roomName.C_String(),
 				roomDescriptor.roomProperties.GetColumnCount(), roomDescriptor.roomMemberList.Size());
-			RakAssert(roomDescriptor.GetProperty(DefaultRoomColumns::TC_USED_SLOTS)->i==roomDescriptor.roomMemberList.Size());
+			RakAssert(roomDescriptor.GetProperty(DefaultRoomColumns::TC_USED_SLOTS)->i==roomDescriptor.roomMemberList.Size()-1);
 	//		roomDescriptor.roomProperties.PrintColumnHeaders(out,8096,',');
 	//		printf(out);
 	//		roomDescriptor.roomProperties.PrintRow(out,8096,',',false,roomDescriptor.roomProperties.GetRowByIndex(0,0));
