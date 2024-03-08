@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;./../../DependentExtensions/Autopatcher/AutopatcherPostgreRepository;./../../DependentExtensions/Autopatcher/PostgreSQLInterface"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.6&quot;;./../../DependentExtensions/Autopatcher/AutopatcherPostgreRepository;./../../DependentExtensions/Autopatcher/PostgreSQLInterface"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -71,7 +71,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;./../../DependentExtensions/Autopatcher/AutopatcherPostgreRepository;./../../DependentExtensions/Autopatcher/PostgreSQLInterface"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.6&quot;;./../../DependentExtensions/Autopatcher/AutopatcherPostgreRepository;./../../DependentExtensions/Autopatcher/PostgreSQLInterface"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -149,34 +149,34 @@
 			Name="BZip"
 			Filter="">
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\blocksort.c">
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\blocksort.c">
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\bzip2.c">
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\bzip2.c">
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\bzlib.c">
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\bzlib.c">
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\bzlib.h">
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\bzlib.h">
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\bzlib_private.h">
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\bzlib_private.h">
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\compress.c">
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\compress.c">
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\crctable.c">
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\crctable.c">
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\decompress.c">
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\decompress.c">
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\huffman.c">
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\huffman.c">
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\randtable.c">
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\randtable.c">
 			</File>
 		</Filter>
 		<Filter

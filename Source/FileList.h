@@ -4,6 +4,9 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_FileOperations==1
+
 #ifndef __FILE_LIST
 #define __FILE_LIST
 
@@ -249,3 +252,5 @@ protected:
 #endif
 
 #endif
+
+#endif // _RAKNET_SUPPORT_FileOperations

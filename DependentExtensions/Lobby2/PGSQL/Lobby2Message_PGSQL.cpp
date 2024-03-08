@@ -2289,9 +2289,9 @@ bool RakNet::BookmarkedUsers_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 	}
 	int numRowsReturned = PQntuples(result);
 	int i;
-	BookmarkedUser bm;
 	for (i=0; i < numRowsReturned; i++)
 	{
+		BookmarkedUser bm;
 		PostgreSQLInterface::PQGetValueFromBinary(&bm.targetHandle, result, i, "handle");
 		PostgreSQLInterface::PQGetValueFromBinary(&bm.type, result, i, "type");
 		PostgreSQLInterface::PQGetValueFromBinary(&bm.description, result, i, "description");
@@ -2321,11 +2321,11 @@ bool RakNet::Emails_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void 
 		if (emailIdsOnly)
 		{
 			result = pgsql->QueryVariadic(
-			"SELECT tbl2.emailid_fk from lobby2.users, ("
-			"SELECT tbl1.*, lobby2.emails.creationDate FROM"
-			"(SELECT emailId_fk, userMe_fk, userOther_fk, isDeleted FROM lobby2.emailTargets) as tbl1, lobby2.emails"
-			"WHERE tbl1.emailId_fk=lobby2.emails.emailId_pk AND tbl1.userMe_fk=%i AND tbl1.isDeleted=FALSE AND tbl1.wasRead=FALSE"
-			") as tbl2"
+			"SELECT tbl2.emailid_fk from lobby2.users, ( "
+			"SELECT tbl1.*, lobby2.emails.creationDate FROM "
+			"(SELECT emailId_fk, userMe_fk, userOther_fk, isDeleted, wasRead FROM lobby2.emailTargets) as tbl1, lobby2.emails "
+			"WHERE tbl1.emailId_fk=lobby2.emails.emailId_pk AND tbl1.userMe_fk=%i AND tbl1.isDeleted=FALSE AND tbl1.wasRead=FALSE "
+			") as tbl2 "
 			"WHERE userId_pk=tbl2.userother_fk ORDER BY creationDate ASC;"
 			, command->callerUserId);
 		}
@@ -2346,11 +2346,11 @@ bool RakNet::Emails_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void 
 		if (emailIdsOnly)
 		{
 			result = pgsql->QueryVariadic(
-				"SELECT tbl2.emailid_fk from lobby2.users, ("
-				"SELECT tbl1.*, lobby2.emails.creationDate FROM"
-				"(SELECT emailId_fk, userMe_fk, userOther_fk, isDeleted FROM lobby2.emailTargets) as tbl1, lobby2.emails"
-				"WHERE tbl1.emailId_fk=lobby2.emails.emailId_pk AND tbl1.userMe_fk=%i AND tbl1.isDeleted=FALSE"
-				") as tbl2"
+				"SELECT tbl2.emailid_fk from lobby2.users, ( "
+				"SELECT tbl1.*, lobby2.emails.creationDate FROM "
+				"(SELECT emailId_fk, userMe_fk, userOther_fk, isDeleted FROM lobby2.emailTargets) as tbl1, lobby2.emails "
+				"WHERE tbl1.emailId_fk=lobby2.emails.emailId_pk AND tbl1.userMe_fk=%i AND tbl1.isDeleted=FALSE "
+				") as tbl2 "
 				"WHERE userId_pk=tbl2.userother_fk ORDER BY creationDate ASC;"
 				, command->callerUserId);
 		}
@@ -2375,14 +2375,15 @@ bool RakNet::Emails_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void 
 	}
 	int numRowsReturned = PQntuples(result);
 	int i;
-	EmailResult emailResult;
 	for (i=0; i < numRowsReturned; i++)
 	{
+		EmailResult emailResult;
 		RakNet::RakString otherHandle;
 		RakNet::RakString myHandle = command->callingUserName;
+		// 4/6/2011 emailTarget_pk is correct, this is used by Emails_Delete and Emails_SetStatus
 		// 11/4/2010 - I think this was a copy/paste error
-		// PostgreSQLInterface::PQGetValueFromBinary(&emailResult.emailID, result, i, "emailTarget_pk");
-		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.emailID, result, i, "emailId_fk");
+		PostgreSQLInterface::PQGetValueFromBinary(&emailResult.emailID, result, i, "emailTarget_pk");
+		// PostgreSQLInterface::PQGetValueFromBinary(&emailResult.emailID, result, i, "emailId_fk");
 		bool getThisEmail;
 		if (emailsToRetrieve.Size()>0)
 		{
@@ -2504,8 +2505,8 @@ bool RakNet::Emails_SetStatus_PGSQL::ServerDBImpl( Lobby2ServerCommand *command,
 			resultCode=L2RC_DATABASE_CONSTRAINT_FAILURE;
 			return true;
 		}
+		PQclear(result);
 	}
-	PQclear(result);
 	if (updateMarkedRead)
 	{
 		result = pgsql->QueryVariadic("UPDATE lobby2.emailTargets SET wasRead=%b WHERE emailTarget_pk = %i", isNowMarkedRead, emailId);
@@ -2592,10 +2593,10 @@ bool RakNet::Ranking_GetMatches_PGSQL::ServerDBImpl( Lobby2ServerCommand *comman
 	}
 	int numMatchesReturned = PQntuples(result1);
 	int i;
-	SubmittedMatch submittedMatch;
-	MatchParticipant matchParticipant;
 	for (i=0; i < numMatchesReturned; i++)
 	{
+		SubmittedMatch submittedMatch;
+		MatchParticipant matchParticipant;
 		PostgreSQLInterface::PQGetValueFromBinary(&submittedMatch.matchID, result1, i, "matchId_pk");
 		PostgreSQLInterface::PQGetValueFromBinary(&submittedMatch.matchNote, result1, i, "matchNote");
 		//	PostgreSQLInterface::PQGetValueFromBinary(&submittedMatch.binaryData->binaryData, &submittedMatch.binaryData->binaryDataLength, result1, i, "binaryData");
@@ -3062,9 +3063,9 @@ bool RakNet::Clans_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *
 		return true;
 	}
 
-	ClanInfo ci;
 	for (int i=0; i < numRowsReturned; i++)
 	{
+		ClanInfo ci;
 		unsigned int clanId;
 		int leaderId;
 		PostgreSQLInterface::PQGetValueFromBinary(&ci.clanName, result, i, "clanHandle");

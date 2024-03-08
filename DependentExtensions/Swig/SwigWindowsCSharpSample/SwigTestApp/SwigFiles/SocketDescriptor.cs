@@ -77,12 +77,12 @@ public class SocketDescriptor : IDisposable {
     } 
   }
 
-  public ushort remotePortRakNetWasStartedOn_PS3 {
+  public ushort remotePortRakNetWasStartedOn_PS3_PSP2 {
     set {
-      RakNetPINVOKE.SocketDescriptor_remotePortRakNetWasStartedOn_PS3_set(swigCPtr, value);
+      RakNetPINVOKE.SocketDescriptor_remotePortRakNetWasStartedOn_PS3_PSP2_set(swigCPtr, value);
     } 
     get {
-      ushort ret = RakNetPINVOKE.SocketDescriptor_remotePortRakNetWasStartedOn_PS3_get(swigCPtr);
+      ushort ret = RakNetPINVOKE.SocketDescriptor_remotePortRakNetWasStartedOn_PS3_PSP2_get(swigCPtr);
       return ret;
     } 
   }

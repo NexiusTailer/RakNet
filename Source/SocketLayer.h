@@ -60,6 +60,7 @@ public:
 	static SOCKET CreateBoundSocket( unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned int sleepOn10048, unsigned int extraSocketOptions, unsigned short socketFamily );
 	static SOCKET CreateBoundSocket_Old( unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned int sleepOn10048, unsigned int extraSocketOptions );
 	static SOCKET CreateBoundSocket_PS3Lobby( unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned short socketFamily );
+	static SOCKET CreateBoundSocket_PSP2( unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned short socketFamily );
 
 	/// Returns if this specified port is in use, for UDP
 	/// \param[in] port the port number 
@@ -97,12 +98,12 @@ public:
 	/// \param[in] listenSocket the socket to set
 	static void SetNonBlocking( SOCKET listenSocket);
 
-#if !defined(_XBOX) && !defined(_X360)
+
 	/// Retrieve all local IP address in a string format.
 	/// \param[in] s The socket whose port we are referring to
 	/// \param[in] ipList An array of ip address in dotted notation.
 	static void GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
-#endif
+
 	
 	/// Call sendto (UDP obviously)
 	/// \param[in] s the socket
@@ -142,15 +143,16 @@ public:
 	static SocketLayerOverride* GetSocketLayerOverride(void) {return slo;}
 
 	static int SendTo_PS3Lobby( SOCKET s, const char *data, int length, const SystemAddress &systemAddress, unsigned short remotePortRakNetWasStartedOn_PS3 );
+	static int SendTo_PSP2( SOCKET s, const char *data, int length, const SystemAddress &systemAddress, unsigned short remotePortRakNetWasStartedOn_PS3 );
 	static int SendTo_360( SOCKET s, const char *data, int length, const char *voiceData, int voiceLength, const SystemAddress &systemAddress, unsigned int extraSocketOptions );
 	static int SendTo_PC( SOCKET s, const char *data, int length, const SystemAddress &systemAddress, const char *file, const long line );
 
 	static void SetDoNotFragment( SOCKET listenSocket, int opt, int IPPROTO );
 
-#if !defined(_XBOX) && !defined(_X360)
+
 	// AF_INET (default). For IPV6, use AF_INET6. To autoselect, use AF_UNSPEC.
 	static bool GetFirstBindableIP(char firstBindable[128], int ipProto);
-#endif
+
 private:
 
 	static void SetSocketOptions( SOCKET listenSocket);

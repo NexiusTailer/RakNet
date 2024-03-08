@@ -85,12 +85,12 @@ public class RakNetSocket : IDisposable {
     } 
   }
 
-  public ushort remotePortRakNetWasStartedOn_PS3 {
+  public ushort remotePortRakNetWasStartedOn_PS3_PSP2 {
     set {
-      RakNetPINVOKE.RakNetSocket_remotePortRakNetWasStartedOn_PS3_set(swigCPtr, value);
+      RakNetPINVOKE.RakNetSocket_remotePortRakNetWasStartedOn_PS3_PSP2_set(swigCPtr, value);
     } 
     get {
-      ushort ret = RakNetPINVOKE.RakNetSocket_remotePortRakNetWasStartedOn_PS3_get(swigCPtr);
+      ushort ret = RakNetPINVOKE.RakNetSocket_remotePortRakNetWasStartedOn_PS3_PSP2_get(swigCPtr);
       return ret;
     } 
   }

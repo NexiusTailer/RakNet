@@ -9,8 +9,8 @@
 #include "SimpleMutex.h"
 #include "Lobby2Presence.h"
 
-#if defined(_XBOX) || defined(X360)
-                            
+#if   defined(X360)
+#include "XBOX360Includes.h"
 #endif
 
 #pragma once
@@ -327,14 +327,14 @@ struct Lobby2Message
 
 	/// Just a number, uniquely identifying each allocation of Lobby2Message.
 	/// Use it if you need to lookup queries on the callback reply
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                    
-#else
-	uint64_t requestId;
-#endif
 
-#if defined(_XBOX) || defined(X360)
-                                 
+
+
+	uint64_t requestId;
+
+
+#if   defined(X360)
+	XOVERLAPPED        m_Overlapped;
 #endif
 
 private:

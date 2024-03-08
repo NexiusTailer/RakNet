@@ -6,6 +6,9 @@
 /// Usage of RakNet is subject to the appropriate license agreement.
 
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_UDPForwarder==1
+
 #ifndef __UDP_FORWARDER_H
 #define __UDP_FORWARDER_H
 
@@ -120,7 +123,7 @@ public:
 		short socketFamily;
 	};
 
-#ifdef UDP_FORWARDER_EXECUTE_THREADED
+
 	struct ThreadOperation
 	{
 		enum {
@@ -141,7 +144,7 @@ public:
 	SimpleMutex threadOperationIncomingMutex,threadOperationOutgoingMutex;
 	DataStructures::Queue<ThreadOperation> threadOperationIncomingQueue;
 	DataStructures::Queue<ThreadOperation> threadOperationOutgoingQueue;
-#endif
+
 #if RAKNET_SUPPORT_IPV6==1
 	void UpdateThreaded(void);
 #endif
@@ -158,8 +161,12 @@ public:
 
 	bool isRunning, threadRunning;
 
+
+
 };
 
 } // End namespace
 
 #endif
+
+#endif // #if _RAKNET_SUPPORT_UDPForwarder==1

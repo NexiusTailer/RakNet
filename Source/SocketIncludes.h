@@ -1,9 +1,14 @@
 // All this crap just to include type SOCKET
 
-#if defined(_XBOX) || defined(X360)
-                                                    
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                              
+#if   defined(X360)
+#include "XBOX360Includes.h"
+typedef int socklen_t;
+
+
+
+
+
+
 #elif defined(_WIN32)
 typedef int socklen_t;
 // IP_DONTFRAGMENT is different between winsock 1 and winsock 2.  Therefore, Winsock2.h must be linked againt Ws2_32.lib

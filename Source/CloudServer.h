@@ -35,6 +35,9 @@ class RakPeerInterface;
 class RAK_DLL_EXPORT CloudServerQueryFilter
 {
 public:
+	CloudServerQueryFilter() {}
+	virtual ~CloudServerQueryFilter() {}
+
 	/// Called when a local client wants to post data
 	/// \return true to allow, false to reject
 	virtual bool OnPostRequest(RakNetGUID clientGuid, SystemAddress clientAddress, CloudKey key, uint32_t dataLength, const char *data)=0;

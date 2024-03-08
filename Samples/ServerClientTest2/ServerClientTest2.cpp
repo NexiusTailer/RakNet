@@ -23,7 +23,7 @@ using namespace RakNet;
 #include "Getche.h"
 #endif
 
-static const int NUM_CLIENTS=50;
+static const int NUM_CLIENTS=100;
 #define SERVER_PORT 1234
 #define RANDOM_DATA_SIZE_1 50
 char randomData1[RANDOM_DATA_SIZE_1];

@@ -241,7 +241,7 @@ void MessageFilter::OnInvalidMessage(FilterSet *filterSet, AddressOrGUID systemA
 	{
 		if (rakPeerInterface)
 			rakPeerInterface->CloseConnection(systemAddress, true, 0);
-#if _RAKNET_SUPPORT_PacketizedTCP==1
+#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
 		else
 			packetizedTCP->CloseConnection(systemAddress.systemAddress);
 #endif
@@ -275,7 +275,7 @@ void MessageFilter::Update(void)
 				}
 				if (rakPeerInterface)
 					rakPeerInterface->CloseConnection(keyList[index], true, 0);
-#if _RAKNET_SUPPORT_PacketizedTCP==1
+#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
 				else
 					packetizedTCP->CloseConnection(keyList[index].systemAddress);
 #endif

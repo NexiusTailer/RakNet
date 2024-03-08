@@ -166,6 +166,10 @@ protected:
 	DataStructures::List<SOCKET> blockingSocketList;
 	SimpleMutex blockingSocketListMutex;
 
+
+
+
+
 	friend RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop);
 	friend RAK_THREAD_DECLARATION(ConnectionAttemptLoop);
 

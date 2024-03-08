@@ -841,11 +841,11 @@ protected:
 	// Constructor not called!
 	struct RecvFromStruct
 	{
-#if defined(_XBOX) || defined(_X360)
-                                
-#else
+
+
+
 		char data[MAXIMUM_MTU_SIZE];
-#endif
+
 		int bytesRead;
 		SystemAddress systemAddress;
 		RakNet::TimeUS timeRead;
@@ -960,7 +960,16 @@ protected:
 	cat::CookieJar *_cookie_jar;
 	bool InitializeClientSecurity(RequestedConnectionStruct *rcs, const char *public_key);
 #endif
-};
+
+
+
+
+
+} 
+// #if defined(SN_TARGET_PSP2)
+// __attribute__((aligned(8)))
+// #endif
+;
 
 } // namespace RakNet
 

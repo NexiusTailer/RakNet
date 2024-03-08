@@ -166,8 +166,8 @@ void Lobby2Callbacks::MessageResult(Notification_Console_Game_Ended *message) {E
 void Lobby2Callbacks::MessageResult(Notification_Console_Got_Room_Invite *message) {ExecuteDefaultResult(message);}
 
 Lobby2Message::Lobby2Message() {refCount=1; requestId=(unsigned int)-1; callbackId=(uint32_t)-1;
-#if defined(_XBOX) || defined(X360)
-                                                   
+#if   defined(X360)
+ZeroMemory( &m_Overlapped, sizeof( XOVERLAPPED ) );
 #endif
 }
 void Lobby2Message::SerializeBase(bool writeToBitstream, bool serializeOutput, BitStream *bitStream)

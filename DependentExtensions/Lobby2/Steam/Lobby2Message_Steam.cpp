@@ -72,9 +72,9 @@ Console_CreateRoom_Steam::~Console_CreateRoom_Steam()
 bool Console_CreateRoom_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 {
 	if (roomIsPublic)
-		requestId = SteamMatchmaking()->CreateLobby( k_ELobbyTypePublic, 10  );
+		requestId = SteamMatchmaking()->CreateLobby( k_ELobbyTypePublic, publicSlots  );
 	else
-		requestId = SteamMatchmaking()->CreateLobby( k_ELobbyTypeFriendsOnly, 10  );
+		requestId = SteamMatchmaking()->CreateLobby( k_ELobbyTypeFriendsOnly, publicSlots  );
 
 	// set the function to call when this completes
 	((CCallResult<Lobby2Client_Steam_Impl, LobbyCreated_t>*)m_SteamCallResultLobbyCreated)->Set( requestId, (RakNet::Lobby2Client_Steam_Impl*) client, &Lobby2Client_Steam_Impl::OnLobbyCreated );

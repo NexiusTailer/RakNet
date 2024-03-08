@@ -12,6 +12,8 @@
 #include "TCPInterface.h"
 #ifdef _WIN32
 typedef int socklen_t;
+
+
 #else
 #include <sys/time.h>
 #include <unistd.h>
@@ -89,12 +91,12 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 
 	if (threadPriority==-99999)
 	{
-#if defined(_XBOX) || defined(X360)
-                   
+#if   defined(X360)
+		threadPriority=0;
 #elif defined(_WIN32)
 		threadPriority=0;
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                      
+
+
 #else
 		threadPriority=1000;
 #endif
@@ -117,8 +119,11 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 			return false;
 
 		struct sockaddr_in serverAddress;
+		memset(&serverAddress,0,sizeof(sockaddr_in));
 		serverAddress.sin_family = AF_INET;
+
 		serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
+
 		serverAddress.sin_port = htons(port);
 
 		if (bind(listenSocket,(struct sockaddr *) &serverAddress,sizeof(serverAddress)) < 0)
@@ -169,7 +174,14 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 	
 
 	// Start the update thread
-	int errorCode = RakNet::RakThread::Create(UpdateTCPInterfaceLoop, this, threadPriority);
+	int errorCode;
+
+
+
+
+	errorCode = RakNet::RakThread::Create(UpdateTCPInterfaceLoop, this, threadPriority);
+
+
 	if (errorCode!=0)
 		return false;
 
@@ -195,6 +207,7 @@ void TCPInterface::Stop(void)
 	{
 #ifdef _WIN32
 		shutdown(listenSocket, SD_BOTH);
+
 #else		
 		shutdown(listenSocket, SHUT_RDWR);
 #endif
@@ -248,6 +261,11 @@ void TCPInterface::Stop(void)
 	startSSL.Clear(_FILE_AND_LINE_);
 	activeSSLConnections.Clear(false, _FILE_AND_LINE_);
 #endif
+
+
+
+
+
 }
 SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort, bool block, unsigned short socketFamily)
 {
@@ -310,7 +328,12 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 		s->socketFamily=socketFamily;
 
 		// Start the connection thread
-		int errorCode = RakNet::RakThread::Create(ConnectionAttemptLoop, s, threadPriority);
+		int errorCode;
+
+
+
+		errorCode = RakNet::RakThread::Create(ConnectionAttemptLoop, s, threadPriority);
+
 		if (errorCode!=0)
 		{
 			RakNet::OP_DELETE(s, _FILE_AND_LINE_);
@@ -670,12 +693,12 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, 
 #if RAKNET_SUPPORT_IPV6!=1
 	sockaddr_in serverAddress;
 
-#if !defined(_XBOX) && !defined(_X360)
+
 	struct hostent * server;
 	server = gethostbyname(host);
 	if (server == NULL)
 		return (SOCKET) -1;
-#endif
+
 
 	SOCKET sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd < 0) 
@@ -688,11 +711,13 @@ SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, 
 	int sock_opt=1024*256;
 	setsockopt(sockfd, SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 
-#if !defined(_XBOX) && !defined(_X360)
+
 	memcpy((char *)&serverAddress.sin_addr.s_addr, (char *)server->h_addr, server->h_length);
-#else
-	serverAddress.sin_addr.s_addr = inet_addr( host );
-#endif
+
+
+
+
+
 
 	blockingSocketListMutex.Lock();
 	blockingSocketList.Insert(sockfd, _FILE_AND_LINE_);
@@ -783,7 +808,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 	//char data[ BUFF_SIZE ];
 	char * data = (char*) rakMalloc_Ex(BUFF_SIZE,_FILE_AND_LINE_);
 	Packet *incomingMessage;
-	fd_set      readFD, exceptionFD, writeFD;
+	fd_set readFD, exceptionFD, writeFD;
 	sts->threadRunning=true;
 
 #if RAKNET_SUPPORT_IPV6!=1
@@ -794,9 +819,9 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 	socklen_t sockAddrSize = sizeof(sockAddr);
 #endif
 
-
 	int len;
 	SOCKET newSock;
+
 	timeval tv;
 	int selectResult;
 	tv.tv_sec=0;
@@ -876,11 +901,11 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 #ifdef _MSC_VER
 #pragma warning( disable : 4244 ) // warning C4127: conditional expression is constant
 #endif
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                        
-#else
+
+
+
 			selectResult=(int) select(largestDescriptor+1, &readFD, &writeFD, &exceptionFD, &tv);		
-#endif
+
 
 			if (selectResult<=0)
 				break;

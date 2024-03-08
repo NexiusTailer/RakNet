@@ -234,10 +234,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\bzip2.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\bzlib.c"
 				>
 			</File>

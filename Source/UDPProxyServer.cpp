@@ -1,5 +1,5 @@
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_UDPProxyServer==1
+#if _RAKNET_SUPPORT_UDPProxyServer==1 && _RAKNET_SUPPORT_UDPForwarder==1
 
 #include "UDPProxyServer.h"
 #include "BitStream.h"

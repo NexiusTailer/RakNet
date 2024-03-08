@@ -3,8 +3,8 @@
 
 #include "RakString.h"
 
-#if defined(_XBOX) || defined(X360)
-                            
+#if   defined(X360)
+#include "XBox360Includes.h"
 #endif
 
 namespace RakNet
@@ -55,8 +55,9 @@ namespace RakNet
 		/// Set by the user (you) or leave blank if desired.
 		RakString titleNameOrID;
 
-#if defined(_XBOX) || defined(X360)
-                                                                      
+#if   defined(X360)
+		// Identifies a session. Used by the XBOX only
+		XNKID sessionId;		
 #endif
 
 		/// Anything you want

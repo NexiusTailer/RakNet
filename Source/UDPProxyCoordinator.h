@@ -12,7 +12,7 @@
 /// Custom license users are subject to the terms therein.
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_UDPProxyCoordinator==1
+#if _RAKNET_SUPPORT_UDPProxyCoordinator==1 && _RAKNET_SUPPORT_UDPForwarder==1
 
 #ifndef __UDP_PROXY_COORDINATOR_H
 #define __UDP_PROXY_COORDINATOR_H

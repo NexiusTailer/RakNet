@@ -67,8 +67,9 @@
 #endif
 
 #ifndef RakAssert
-#if defined(_XBOX) || defined(X360)
-                                                              
+#if   defined(X360)
+#include "XBox360Includes.h"
+#define RakAssert(x) XMASSERT(x)
 #else
 #if defined(_DEBUG)
 #define RakAssert(x) assert(x);
@@ -119,12 +120,14 @@
 #define RAKNET_SUPPORT_IPV6 0
 #endif
 
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                   
-#endif
 
-#if defined(_XBOX) || defined(X360)
-                                                   
+
+
+
+
+#if   defined(X360)
+// Doesn't support IPV6
+#undef RAKNET_SUPPORT_IPV6
 #endif
 
 #ifndef RAKSTRING_TYPE

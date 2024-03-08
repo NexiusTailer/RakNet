@@ -80,8 +80,10 @@ int main()
 	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_RegisterAccount), _FILE_AND_LINE_ );
 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_System_SetEmailAddressValidated), _FILE_AND_LINE_ );
 	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_System_SetEmailAddressValidated), _FILE_AND_LINE_ );
-// 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_Login), _FILE_AND_LINE_ );
-// 	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_Login), _FILE_AND_LINE_ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Client_Login), _FILE_AND_LINE_ );
+	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Client_Login), _FILE_AND_LINE_ );
+	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Emails_Send), _FILE_AND_LINE_ );
+	executionPlan.Push(AutoExecutionPlanNode(1, RakNet::L2MID_Emails_Get), _FILE_AND_LINE_ );
 // 	/// Create 2 clans
 // 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Create), _FILE_AND_LINE_ );
 // 	executionPlan.Push(AutoExecutionPlanNode(0, RakNet::L2MID_Clans_Create), _FILE_AND_LINE_ );
@@ -643,6 +645,8 @@ void ExecuteCommand(RakNet::Lobby2MessageID command, RakNet::RakString userName,
 	case RakNet::L2MID_Emails_Get:
 		{
 			RakNet::Emails_Get *arg = (RakNet::Emails_Get *) m;
+			arg->unreadEmailsOnly=true;
+			arg->emailIdsOnly=true;
 		}
 		break;
 

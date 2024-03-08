@@ -3,9 +3,9 @@
 
 #include "LogCommandParser.h"
 #include "TransportInterface.h"
-#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
+
 #include <memory.h>
-#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>

@@ -25,11 +25,12 @@ FullyConnectedMesh2::FullyConnectedMesh2()
 	totalConnectionCount=0;
 	ourFCMGuid=0;
 	autoParticipateConnections=true;
-#if defined(_XBOX) || defined(_X360)
-                                                                                                      
-#else
+
+
+
+
 	connectOnNewRemoteConnections=true;
-#endif
+
 }
 FullyConnectedMesh2::~FullyConnectedMesh2()
 {

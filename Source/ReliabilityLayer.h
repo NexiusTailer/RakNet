@@ -209,9 +209,9 @@ public:
 	bool AckTimeout(RakNet::Time curTime);
 	CCTimeType GetNextSendTime(void) const;
 	CCTimeType GetTimeBetweenPackets(void) const;
-#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
-	CCTimeType GetAckPing(void) const;
-#endif
+
+
+
 	RakNet::TimeMS GetTimeLastDatagramArrived(void) const {return timeLastDatagramArrived;}
 
 	// If true, will update time between packets quickly based on ping calculations
@@ -440,9 +440,9 @@ private:
 
 	CCTimeType lastUpdateTime;
 	CCTimeType timeBetweenPackets, nextSendTime;
-#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
-	CCTimeType ackPing;
-#endif
+
+
+
 //	CCTimeType ackPingSamples[ACK_PING_SAMPLES_SIZE]; // Must be range of unsigned char to wrap ackPingIndex properly
 	CCTimeType ackPingSum;
 	unsigned char ackPingIndex;

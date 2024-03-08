@@ -16,11 +16,11 @@
 namespace RakNet
 {
 
-#if CC_TIME_TYPE_BYTES==8
+
 typedef uint64_t CCTimeType;
-#else
-typedef uint32_t CCTimeType;
-#endif
+
+
+
 
 typedef uint24_t DatagramSequenceNumberType;
 typedef double BytesPerMicrosecond;

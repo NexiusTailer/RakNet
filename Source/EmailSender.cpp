@@ -1,5 +1,5 @@
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_EmailSender==1
+#if _RAKNET_SUPPORT_EmailSender==1 && _RAKNET_SUPPORT_TCPInterface==1
 
 // Useful sites
 // http://www.faqs.org\rfcs\rfc2821.html
@@ -13,8 +13,8 @@
 #include "BitStream.h"
 #include <stdio.h>
 
-#if defined(_XBOX) || defined(X360)
-                            
+#if   defined(X360)
+#include "XBOX360Includes.h"
 #endif
 
 #include "RakSleep.h"

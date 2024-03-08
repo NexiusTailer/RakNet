@@ -22,11 +22,11 @@ using namespace RakNet;
 // Can't figure out which library has this function on the PS3
 double Ceil(double d) {if (((double)((int)d))==d) return d; return (int) (d+1.0);}
 
-#if defined(new)
-#pragma push_macro("new")
-#undef new
-#define RELIABILITY_LAYER_NEW_UNDEF_ALLOCATING_QUEUE
-#endif
+// #if defined(new)
+// #pragma push_macro("new")
+// #undef new
+// #define RELIABILITY_LAYER_NEW_UNDEF_ALLOCATING_QUEUE
+// #endif
 
 
 //#define _DEBUG_LOGGER
@@ -210,9 +210,9 @@ struct DatagramHeaderFormat
 	}
 };
 
-#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
+
 #pragma warning(disable:4702)   // unreachable code
-#endif
+
 
 #ifdef _WIN32
 //#define _DEBUG_LOGGER
@@ -2526,14 +2526,14 @@ void ReliabilityLayer::SplitPacket( InternalPacket *internalPacket )
 	// Optimization
 	// internalPacketArray = RakNet::OP_NEW<InternalPacket*>(internalPacket->splitPacketCount, _FILE_AND_LINE_ );
 	bool usedAlloca=false;
-#if !defined(_XBOX) && !defined(_X360)
+
 	if (sizeof( InternalPacket* ) * internalPacket->splitPacketCount < MAX_ALLOCA_STACK_ALLOCATION)
 	{
 		internalPacketArray = ( InternalPacket** ) alloca( sizeof( InternalPacket* ) * internalPacket->splitPacketCount );
 		usedAlloca=true;
 	}
 	else
-#endif
+
 		internalPacketArray = (InternalPacket**) rakMalloc_Ex( sizeof(InternalPacket*) * internalPacket->splitPacketCount, _FILE_AND_LINE_ );
 
 	for ( i = 0; i < ( int ) internalPacket->splitPacketCount; i++ )
@@ -3560,10 +3560,10 @@ reliabilityHeapWeightType ReliabilityLayer::GetNextWeight(int priorityLevel)
 }
 
 //-------------------------------------------------------------------------------------------------------
-#if defined(RELIABILITY_LAYER_NEW_UNDEF_ALLOCATING_QUEUE)
-#pragma pop_macro("new")
-#undef RELIABILITY_LAYER_NEW_UNDEF_ALLOCATING_QUEUE
-#endif
+// #if defined(RELIABILITY_LAYER_NEW_UNDEF_ALLOCATING_QUEUE)
+// #pragma pop_macro("new")
+// #undef RELIABILITY_LAYER_NEW_UNDEF_ALLOCATING_QUEUE
+// #endif
 
 
 #ifdef _MSC_VER

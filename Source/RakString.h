@@ -9,8 +9,8 @@
 
 
 #ifdef _WIN32
-#if defined(_XBOX) || defined(X360)
-                            
+#if   defined(X360)
+#include "XBox360Includes.h"
 #endif
 #include "WindowsIncludes.h"
 #endif

@@ -16,6 +16,11 @@
 #include "SocketIncludes.h"
 #include "WindowsIncludes.h"
 
+
+
+
+
+
 namespace RakNet {
 /// Forward declarations
 class RakPeerInterface;
@@ -32,7 +37,9 @@ enum StartupResult
 	SOCKET_PORT_ALREADY_IN_USE,
 	SOCKET_FAILED_TO_BIND,
 	SOCKET_FAILED_TEST_SEND,
+	PORT_CANNOT_BE_ZERO,
 	FAILED_TO_CREATE_NETWORK_THREAD,
+	STARTUP_OTHER_FAILURE,
 };
 
 
@@ -147,10 +154,15 @@ struct RAK_DLL_EXPORT SocketDescriptor
 	/// \pre RAKNET_SUPPORT_IPV6 must be set to 1 in RakNetDefines.h for AF_INET6
 	short socketFamily;
 
-	/// Only need to set for the PS3, when using signaling.
-	/// Call RakPeer::Connect with the port returned by signaling.
-	/// Set remotePortRakNetWasStartedOn_PS3 to whatever port RakNet was actually started on
-	unsigned short remotePortRakNetWasStartedOn_PS3;
+
+
+
+
+
+
+
+
+	unsigned short remotePortRakNetWasStartedOn_PS3_PSP2;
 
 	/// XBOX only: set IPPROTO_VDP if you want to use VDP. If enabled, this socket does not support broadcast to 255.255.255.255
 	unsigned int extraSocketOptions;
@@ -169,8 +181,11 @@ struct RAK_DLL_EXPORT SystemAddress
 	SystemAddress();
 	SystemAddress(const char *str);
 	SystemAddress(const char *str, unsigned short port);
-#if defined(_XBOX) || defined(X360)
-                                                                                                                                                                                                                                                                                                                                                                                  
+#if   defined(X360)
+	/// On the XBOX, never transmit SystemAddress. Instead, transmit XSESSION_INFO and use SetFromXSessionInfo() to get the address of a remote console
+	explicit SystemAddress(XSESSION_INFO *addr, unsigned short _port);
+	void SetFromXSessionInfo(XSESSION_INFO *addr, unsigned short _port);
+	void SetFromXNADDRAndXNKID(XNADDR *xnaddr, XNKID *xnkid, unsigned short _port);
 #endif
 
 	/// SystemAddress, with RAKNET_SUPPORT_IPV6 defined, holds both an sockaddr_in6 and a sockaddr_in
@@ -179,6 +194,7 @@ struct RAK_DLL_EXPORT SystemAddress
 #if RAKNET_SUPPORT_IPV6==1
 		struct sockaddr_in6 addr6;
 #endif
+
 		struct sockaddr_in addr4;
 	} address;
 

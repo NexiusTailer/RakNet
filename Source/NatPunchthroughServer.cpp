@@ -415,9 +415,10 @@ void NatPunchthroughServer::OnNATConfirmConnectionToServer(Packet *packet)
 	incomingBs.IgnoreBytes(sizeof(MessageID));
 	RakNetGUID recipientGuid;
 	incomingBs.Read(recipientGuid);
-	unsigned int i;
+//	unsigned int i;
 	bool objectExists;
-	i = users.GetIndexFromKey(recipientGuid, &objectExists);
+	//i =
+		users.GetIndexFromKey(recipientGuid, &objectExists);
 	outgoingBs.Write((MessageID)ID_NAT_CONFIRM_CONNECTION_TO_SERVER);
 	outgoingBs.Write(recipientGuid);
 	outgoingBs.Write(objectExists);

@@ -681,6 +681,12 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp__RAKNET_SUPPORT_Rackspace_get")]
   public static extern int _RAKNET_SUPPORT_Rackspace_get();
 
+  [DllImport("RakNet", EntryPoint="CSharp__RAKNET_SUPPORT_FileOperations_get")]
+  public static extern int _RAKNET_SUPPORT_FileOperations_get();
+
+  [DllImport("RakNet", EntryPoint="CSharp__RAKNET_SUPPORT_UDPForwarder_get")]
+  public static extern int _RAKNET_SUPPORT_UDPForwarder_get();
+
   [DllImport("RakNet", EntryPoint="CSharp_new_ReferenceCounter")]
   public static extern IntPtr new_ReferenceCounter();
 
@@ -774,11 +780,11 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_SocketDescriptor_socketFamily_get")]
   public static extern short SocketDescriptor_socketFamily_get(HandleRef jarg1);
 
-  [DllImport("RakNet", EntryPoint="CSharp_SocketDescriptor_remotePortRakNetWasStartedOn_PS3_set")]
-  public static extern void SocketDescriptor_remotePortRakNetWasStartedOn_PS3_set(HandleRef jarg1, ushort jarg2);
+  [DllImport("RakNet", EntryPoint="CSharp_SocketDescriptor_remotePortRakNetWasStartedOn_PS3_PSP2_set")]
+  public static extern void SocketDescriptor_remotePortRakNetWasStartedOn_PS3_PSP2_set(HandleRef jarg1, ushort jarg2);
 
-  [DllImport("RakNet", EntryPoint="CSharp_SocketDescriptor_remotePortRakNetWasStartedOn_PS3_get")]
-  public static extern ushort SocketDescriptor_remotePortRakNetWasStartedOn_PS3_get(HandleRef jarg1);
+  [DllImport("RakNet", EntryPoint="CSharp_SocketDescriptor_remotePortRakNetWasStartedOn_PS3_PSP2_get")]
+  public static extern ushort SocketDescriptor_remotePortRakNetWasStartedOn_PS3_PSP2_get(HandleRef jarg1);
 
   [DllImport("RakNet", EntryPoint="CSharp_SocketDescriptor_extraSocketOptions_set")]
   public static extern void SocketDescriptor_extraSocketOptions_set(HandleRef jarg1, uint jarg2);
@@ -2112,11 +2118,11 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_RakNetSocket_socketFamily_get")]
   public static extern ushort RakNetSocket_socketFamily_get(HandleRef jarg1);
 
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetSocket_remotePortRakNetWasStartedOn_PS3_set")]
-  public static extern void RakNetSocket_remotePortRakNetWasStartedOn_PS3_set(HandleRef jarg1, ushort jarg2);
+  [DllImport("RakNet", EntryPoint="CSharp_RakNetSocket_remotePortRakNetWasStartedOn_PS3_PSP2_set")]
+  public static extern void RakNetSocket_remotePortRakNetWasStartedOn_PS3_PSP2_set(HandleRef jarg1, ushort jarg2);
 
-  [DllImport("RakNet", EntryPoint="CSharp_RakNetSocket_remotePortRakNetWasStartedOn_PS3_get")]
-  public static extern ushort RakNetSocket_remotePortRakNetWasStartedOn_PS3_get(HandleRef jarg1);
+  [DllImport("RakNet", EntryPoint="CSharp_RakNetSocket_remotePortRakNetWasStartedOn_PS3_PSP2_get")]
+  public static extern ushort RakNetSocket_remotePortRakNetWasStartedOn_PS3_PSP2_get(HandleRef jarg1);
 
   [DllImport("RakNet", EntryPoint="CSharp_RakNetSocket_extraSocketOptions_set")]
   public static extern void RakNetSocket_extraSocketOptions_set(HandleRef jarg1, uint jarg2);

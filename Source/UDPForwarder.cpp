@@ -1,4 +1,7 @@
 #include "UDPForwarder.h"
+
+#if _RAKNET_SUPPORT_UDPForwarder==1
+
 #include "GetTime.h"
 #include "MTUSize.h"
 #include "SocketLayer.h"
@@ -43,6 +46,10 @@ UDPForwarder::UDPForwarder()
 	maxForwardEntries=DEFAULT_MAX_FORWARD_ENTRIES;
 	isRunning=false;
 	threadRunning=false;
+
+
+
+
 }
 UDPForwarder::~UDPForwarder()
 {
@@ -61,7 +68,17 @@ void UDPForwarder::Startup(void)
 	threadRunning=false;
 
 #ifdef UDP_FORWARDER_EXECUTE_THREADED
-	int errorCode = RakNet::RakThread::Create(UpdateUDPForwarder, this);
+
+
+
+
+
+	int errorCode;
+
+
+
+	errorCode = RakNet::RakThread::Create(UpdateUDPForwarder, this);
+
 	if ( errorCode != 0 )
 	{
 		RakAssert(0);
@@ -85,6 +102,12 @@ void UDPForwarder::Shutdown(void)
 #endif
 
 	forwardList.ClearPointers(true,_FILE_AND_LINE_);
+
+
+
+
+
+
 }
 void UDPForwarder::Update(void)
 {
@@ -141,11 +164,11 @@ void UDPForwarder::UpdateThreaded_Old(void)
 			largestDescriptor = forwardList[i]->socket;
 	}
 
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                    
-#else
+
+
+
 	selectResult=(int) select((int) largestDescriptor+1, &readFD, 0, 0, &tv);
-#endif
+
 
 	char data[ MAXIMUM_MTU_SIZE ];
 	sockaddr_in sa;
@@ -177,7 +200,7 @@ void UDPForwarder::UpdateThreaded_Old(void)
 
 			if (receivedDataLen<0)
 			{
-#if defined(_WIN32) && defined(_DEBUG) && !defined(_XBOX) && !defined(X360)
+#if defined(_WIN32) && defined(_DEBUG) &&  !defined(X360)
 				DWORD dwIOError = WSAGetLastError();
 
 				if (dwIOError!=WSAECONNRESET && dwIOError!=WSAEINTR && dwIOError!=WSAETIMEDOUT)
@@ -349,7 +372,7 @@ void UDPForwarder::UpdateThreaded(void)
 
 			if (receivedDataLen<0)
 			{
-#if defined(_WIN32) && defined(_DEBUG) && !defined(_XBOX) && !defined(X360)
+#if defined(_WIN32) && defined(_DEBUG) &&  !defined(X360)
 				DWORD dwIOError = WSAGetLastError();
 
 				if (dwIOError!=WSAECONNRESET && dwIOError!=WSAEINTR && dwIOError!=WSAETIMEDOUT)
@@ -728,3 +751,5 @@ RAK_THREAD_DECLARATION(UpdateUDPForwarder)
 	return 0;
 }
 #endif
+
+#endif // #if _RAKNET_SUPPORT_FileOperations==1

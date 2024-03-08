@@ -622,8 +622,9 @@ void NatPunchthroughClient::OnConnectAtTime(Packet *packet)
 	bs.IgnoreBytes(sizeof(MessageID));
 	bs.Read(sp.sessionId);
 	bs.Read(sp.targetAddress);
-	int j,k;
-	k=0;
+	int j;
+//	int k;
+//	k=0;
 	for (j=0; j < MAXIMUM_NUMBER_OF_INTERNAL_IDS; j++)
 		bs.Read(sp.internalIds[j]);
 

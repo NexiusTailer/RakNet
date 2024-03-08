@@ -6,7 +6,7 @@
 /// Usage of RakNet is subject to the appropriate license agreement.
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_Router2==1
+#if _RAKNET_SUPPORT_Router2==1 && _RAKNET_SUPPORT_UDPForwarder==1
 
 #ifndef __ROUTER_2_PLUGIN_H
 #define __ROUTER_2_PLUGIN_H
@@ -17,6 +17,8 @@
 #include "Export.h"
 #include "UDPForwarder.h"
 #include "MessageIdentifiers.h"
+#include "DS_List.h"
+#include "SimpleMutex.h"
 
 namespace RakNet
 {

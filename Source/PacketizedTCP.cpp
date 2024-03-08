@@ -1,5 +1,5 @@
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_PacketizedTCP==1
+#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
 
 #include "PacketizedTCP.h"
 #include "NativeTypes.h"

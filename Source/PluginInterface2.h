@@ -164,7 +164,7 @@ public:
 	/// \internal
 	void SetRakPeerInterface( RakPeerInterface *ptr );
 
-#if _RAKNET_SUPPORT_PacketizedTCP==1
+#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
 	/// \internal
 	void SetPacketizedTCP( PacketizedTCP *ptr );
 #endif
@@ -179,7 +179,7 @@ protected:
 
 	// Filled automatically in when attached
 	RakPeerInterface *rakPeerInterface;
-#if _RAKNET_SUPPORT_PacketizedTCP==1
+#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
 	PacketizedTCP *packetizedTCP;
 #endif
 };

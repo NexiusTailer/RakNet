@@ -1,5 +1,5 @@
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_Router2==1
+#if _RAKNET_SUPPORT_Router2==1 && _RAKNET_SUPPORT_UDPForwarder==1
 
 #include "Router2.h"
 #include "RakPeerInterface.h"
