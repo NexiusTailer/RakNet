@@ -498,6 +498,26 @@ void RakString::DeallocWideChar(WCHAR * w)
 {
 	RakNet::OP_DELETE_ARRAY(w,__FILE__,__LINE__);
 }
+void RakString::FromWideChar(const wchar_t *source)
+{
+	Clear();
+	int bufSize = wcslen(source)*4;
+	Allocate(bufSize);
+	WideCharToMultiByte ( CP_ACP,                // ANSI code page
+
+
+
+                          WC_COMPOSITECHECK,     // Check for accented characters
+
+                          source,         // Source Unicode string
+                          -1,                    // -1 means string is zero-terminated
+                          sharedString->c_str,          // Destination char string
+                          bufSize,  // Size of buffer
+                          NULL,                  // No default character
+                          NULL );                // Don't care about this flag
+
+
+}
 #endif
 
 size_t RakString::Find(const char *stringToFind,size_t pos)

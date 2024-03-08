@@ -26,7 +26,7 @@
 #include "PacketLogger.h"
 #include "RPC4Plugin.h"
 #include "Kbhit.h"
-#include "HttpConnection2.h"
+#include "HTTPConnection2.h"
 // See http://www.digip.org/jansson/doc/2.4/
 // This is used to make it easier to parse the JSON returned from the master server
 #include "jansson.h"

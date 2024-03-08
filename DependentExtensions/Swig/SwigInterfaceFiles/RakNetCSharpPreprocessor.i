@@ -14,6 +14,8 @@ typedef unsigned int uint32_t;
 typedef uint32_t DefaultIndexType;
 #ifdef SWIGWIN
 typedef unsigned int SOCKET;
+typedef unsigned int __UDPSOCKET__ ;
+typedef unsigned int __TCPSOCKET__;
 #endif
 typedef RakNet::RakString::SharedString SharedString;
 //Global Inserts

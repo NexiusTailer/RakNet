@@ -375,7 +375,7 @@ int main(void)
 	{
 		topology=P2P;
 		sd.port=SERVER_PORT;
-		while (SocketLayer::IsPortInUse(sd.port,sd.hostAddress,sd.socketFamily)==true)
+		while (IRNS2_Berkley::IsPortInUse(sd.port,sd.hostAddress,sd.socketFamily, SOCK_DGRAM)==true)
 			sd.port++;
 	}
 

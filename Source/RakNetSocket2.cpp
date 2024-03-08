@@ -35,6 +35,8 @@ using namespace RakNet;
 #include "RakNetSocket2_Vita.cpp"
 #include "RakNetSocket2_NativeClient.cpp"
 #include "RakNetSocket2_Berkley.cpp"
+#include "RakNetSocket2_Berkley_NativeClient.cpp"
+#include "RakNetSocket2_WindowsStore8.cpp"
 #undef RAKNET_SOCKET_2_INLINE_FUNCTIONS
 
 #endif
@@ -112,11 +114,31 @@ void RakNetSocket2::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_
 
 unsigned int RakNetSocket2::GetUserConnectionSocketIndex(void) const {return userConnectionSocketIndex;}
 void RakNetSocket2::SetUserConnectionSocketIndex(unsigned int i) {userConnectionSocketIndex=i;}
+RNS2EventHandler * RakNetSocket2::GetEventHandler(void) const {return eventHandler;}
 
+void RakNetSocket2::DomainNameToIP( const char *domainName, char ip[65] ) {
+#if defined(WINDOWS_STORE_RT)
+	return RNS2_WindowsStore8::DomainNameToIP( domainName, ip );
+#elif defined(__native_client__)
+	return DomainNameToIP_Berkley( domainName, ip );
+
+
+
+
+
+
+
+
+
+
+#elif defined(_WIN32)
+	return DomainNameToIP_Berkley( domainName, ip );
+#else
+	return DomainNameToIP_Berkley( domainName, ip );
+#endif
+}
 
 #if defined(WINDOWS_STORE_RT)
-RNS2BindResult RNS2_WindowsStore8::Bind( const char* localHostName, const char * localServiceName) {return BR_SUCCESS;}
-void GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] ) {RakAssert("GetMyIP Unsupported" && 0);}
 #elif defined(__native_client__)
 RNS2_NativeClient::RNS2_NativeClient() {bindState = BS_UNBOUND; sendInProgress=false;}
 RNS2_NativeClient::~RNS2_NativeClient()
@@ -259,25 +281,6 @@ bool IRNS2_Berkley::IsPortInUse(unsigned short port, const char *hostAddress, un
 	return bindResult==BR_FAILED_TO_BIND_SOCKET;
 }
 
-void IRNS2_Berkley::DomainNameToIP( const char *domainName, char ip[65] ) {
-#if defined(WINDOWS_STORE_RT)
-	return RNS2_WindowsStore8::DomainNameToIP( domainName, ip );
-
-
-
-
-
-
-
-
-
-
-#elif defined(_WIN32)
-	return DomainNameToIP_Berkley( domainName, ip );
-#else
-	return DomainNameToIP_Berkley( domainName, ip );
-#endif
-}
 RNS2BindResult RNS2_Berkley::BindShared( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line ) {
 	RNS2BindResult br;
 #if RAKNET_SUPPORT_IPV6==1
@@ -315,7 +318,7 @@ RAK_THREAD_DECLARATION(RNS2_Berkley::RecvFromLoop)
 unsigned RNS2_Berkley::RecvFromLoopInt(void)
 {
 	isRecvFromLoopThreadActive.Increment();
-
+	
 	while ( endThreads == false )
 	{
 		RNS2RecvStruct *recvFromStruct;
@@ -346,7 +349,7 @@ unsigned RNS2_Berkley::RecvFromLoopInt(void)
 }
 RNS2_Berkley::RNS2_Berkley()
 {
-	rns2Socket=INVALID_SOCKET;
+	rns2Socket=(RNS2Socket)INVALID_SOCKET;
 }
 RNS2_Berkley::~RNS2_Berkley()
 {

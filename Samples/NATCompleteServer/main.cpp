@@ -366,6 +366,7 @@ struct CloudServerFramework : public SampleFramework
 			rakPeer->AttachPlugin(cloudClient);
 			cloudServerHelperFilter = new CloudServerHelperFilter;
 			cloudServer->AddQueryFilter(cloudServerHelperFilter);
+			cloudServer->SetMaxUploadBytesPerClient(65535);
 			cloudServerHelper.OnConnectionCountChange(rakPeer, cloudClient);
 		}
 	}

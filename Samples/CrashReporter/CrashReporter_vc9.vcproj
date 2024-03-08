@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="CrashReporter"
 	ProjectGUID="{F1DC7171-0188-492F-9FC3-733B285836D2}"
+	RootNamespace="CrashReporter"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -62,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Dbghelp.lib ./../../lib/RakNetLibStaticDebug.lib ws2_32.lib"
+				AdditionalDependencies="Dbghelp.lib ./../../Lib/RakNet_LibStatic_Debug_Win32.lib ws2_32.lib"
 				OutputFile="$(OutDir)/CrashReporter.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -138,7 +139,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Dbghelp.lib ./../../lib/RakNetLibStatic.lib ws2_32.lib"
+				AdditionalDependencies="Dbghelp.lib ./../../Lib/RakNet_LibStatic_Release_Win32.lib ws2_32.lib"
 				OutputFile="$(OutDir)/CrashReporter.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"

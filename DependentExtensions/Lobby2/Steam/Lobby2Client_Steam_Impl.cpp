@@ -187,7 +187,7 @@ void Lobby2Client_Steam_Impl::OnLobbyCreated( LobbyCreated_t *pCallback, bool bI
 			RoomMember roomMember;
 			roomMember.steamIDRemote=SteamMatchmaking()->GetLobbyOwner(roomId).ConvertToUint64();
 			roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
-			roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
+			roomMember.systemAddress.SetPortHostOrder(STEAM_UNUSED_PORT);
 			roomMembersByAddr.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_);
 			roomMembersById.Insert(roomMember.steamIDRemote,roomMember,true,_FILE_AND_LINE_);
 
@@ -230,7 +230,7 @@ void Lobby2Client_Steam_Impl::OnLobbyJoined( LobbyEnter_t *pCallback, bool bIOFa
 				RoomMember roomMember;
 				roomMember.steamIDRemote=SteamUser()->GetSteamID().ConvertToUint64();
 				roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
-				roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
+				roomMember.systemAddress.SetPortHostOrder(STEAM_UNUSED_PORT);
 				roomMembersByAddr.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_);
 				roomMembersById.Insert(roomMember.steamIDRemote,roomMember,true,_FILE_AND_LINE_);
 
@@ -242,7 +242,7 @@ void Lobby2Client_Steam_Impl::OnLobbyJoined( LobbyEnter_t *pCallback, bool bIOFa
 				{
 					roomMember.steamIDRemote=SteamMatchmaking()->GetLobbyOwner(roomId).ConvertToUint64();
 					roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
-					roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
+					roomMember.systemAddress.SetPortHostOrder(STEAM_UNUSED_PORT);
 					roomMembersByAddr.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_);
 					roomMembersById.Insert(roomMember.steamIDRemote,roomMember,true,_FILE_AND_LINE_);
 				}
@@ -371,7 +371,7 @@ void Lobby2Client_Steam_Impl::CallRoomCallbacks()
 			RoomMember roomMember;
 			roomMember.steamIDRemote=currentMembers[currentMemberIndex];
 			roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
-			roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
+			roomMember.systemAddress.SetPortHostOrder(STEAM_UNUSED_PORT);
 			updatedRoomMembers.Insert(roomMember.steamIDRemote,roomMember,true,_FILE_AND_LINE_);
 
 			anyChanges=true;
@@ -411,7 +411,7 @@ void Lobby2Client_Steam_Impl::CallRoomCallbacks()
 		RoomMember roomMember;
 		roomMember.steamIDRemote=currentMembers[currentMemberIndex];
 		roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
-		roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
+		roomMember.systemAddress.SetPortHostOrder(STEAM_UNUSED_PORT);
 		updatedRoomMembers.Insert(roomMember.steamIDRemote,roomMember,true,_FILE_AND_LINE_);
 
 		anyChanges=true;

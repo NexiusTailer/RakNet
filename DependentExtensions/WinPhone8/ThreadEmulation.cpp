@@ -66,7 +66,11 @@ namespace ThreadEmulation
             {
                 lpStartAddress(lpParameter);
             }
-            catch (...) { }
+			catch (Exception ^e)
+			{
+				Platform::String ^exceptionString = e->ToString();
+				OutputDebugStringW(exceptionString->Data());
+			}
 
             // Clean up any TLS allocations made by this thread.
             TlsShutdown();

@@ -1,4 +1,4 @@
-RakNet 4.065
+RakNet 4.066
 Copyright 2002-2005 Kevin Jenkins (rakkar@jenkinssoftware.com).
 This API and the code herein created by and wholly and privately owned by Kevin Jenkins except where specifically indicated otherwise.
 Licensed under the "RakNet" brand by Jenkins Software and subject to the terms of the relevant licensing agreement available at http://www.jenkinssoftware.com
@@ -220,6 +220,41 @@ From within the CYWGIN enviroment, navigate to home/Kevin/android-ndk-r4b/sample
 Everything should build and you should end up with a .so file.
 
 You should then be able to create a project in eclipse, and import cygwin/home/Kevin/android-ndk-r4b/samples/RakNet
+
+-----------------------------------------
+Native client
+-----------------------------------------
+Solution: RakNet_NativeClient_VS2010. See Samples\nacl_sdk\RakNet_NativeClient_VS2010\HowToSetup.txt for detailed instructions on setup.
+
+-----------------------------------------
+Windows Phone 8
+-----------------------------------------
+Example solution: RakNet_WinPhone8_VS2012.
+Add to your project DependentExtensions\WinPhone8\ThreadEmulation.cpp
+Add DependentExtensions\WinPhone8\ to your include paths
+Define _CRT_SECURE_NO_WARNINGS and WINDOWS_PHONE_8
+
+-----------------------------------------
+Windows Store 8
+-----------------------------------------
+Example solution: RakNet_WindowsStore8_VS2012.sln
+Add to your project DependentExtensions\WinPhone8\ThreadEmulation.cpp
+Add DependentExtensions\WinPhone8\ and DependentExtensions\WinRT to your include paths 
+TCP is not supported, only UDP (RakPeer).
+IPV4 only (not hard to also add IPV6 upon request).
+Define:
+_CRT_SECURE_NO_WARNINGS
+WINDOWS_STORE_RT
+_RAKNET_SUPPORT_TCPInterface=0
+_RAKNET_SUPPORT_PacketizedTCP=0
+_RAKNET_SUPPORT_EmailSender=0
+_RAKNET_SUPPORT_HTTPConnection=0
+_RAKNET_SUPPORT_HTTPConnection2=0
+_RAKNET_SUPPORT_TelnetTransport=0
+_RAKNET_SUPPORT_NatTypeDetectionServer=0
+_RAKNET_SUPPORT_UDPProxyServer=0
+_RAKNET_SUPPORT_UDPProxyCoordinator=0
+_RAKNET_SUPPORT_UDPForwarder=0
 
 -----------------------------------------
 Consoles

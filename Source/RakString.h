@@ -72,6 +72,8 @@ public:
 	// Deallocate with DeallocWideChar
 	WCHAR * ToWideChar(void);
 	void DeallocWideChar(WCHAR * w);
+
+	void FromWideChar(const wchar_t *source);
 #endif
 	
 	/// String class find replacement

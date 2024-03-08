@@ -73,7 +73,7 @@ void ReadAllPackets(void)
 			SystemAddress intermediateAddress=packet->systemAddress;
 			unsigned short port;
 			bs.Read(port);
-			intermediateAddress.SetPort(port);
+			intermediateAddress.SetPortHostOrder(port);
 
 			char str2[32];
 			intermediateAddress.ToString(true, str2);

@@ -86,10 +86,8 @@ CSHARP_ARRAYS(char *,string)
 %apply unsigned char &INOUT {unsigned char &inOutCurrentValue};
 
 //UDPForwarder
-%apply unsigned short *OUTPUT {unsigned short *srcToDestPort}
-%apply unsigned short *OUTPUT {unsigned short *destToSourcePort}
-%apply SOCKET *OUTPUT {SOCKET *srcToDestSocket}
-%apply SOCKET *OUTPUT {SOCKET *destToSourceSocket}
+%apply unsigned short *OUTPUT {unsigned short *forwardingPort}
+%apply __UDPSOCKET__ *OUTPUT {__UDPSOCKET__ *forwardingSocket}
 
 //CommandParserInterface
 %apply char * INPUT[] {char **parameterList}

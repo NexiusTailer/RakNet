@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib ./../../DependentExtensions\Lobby\RankingServerDB_PostgreRepository\Debug\RankingServerDB_PostgreSQL.lib &quot;C:\Program Files\PostgreSQL\8.3\lib\libpq.lib&quot;"
+				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Debug_Win32.lib ws2_32.lib ./../../DependentExtensions\Lobby\RankingServerDB_PostgreRepository\Debug\RankingServerDB_PostgreSQL.lib &quot;C:\Program Files\PostgreSQL\8.3\lib\libpq.lib&quot;"
 				OutputFile="$(OutDir)/RankingServerDBTest.exe"
 				LinkIncremental="2"
 				IgnoreAllDefaultLibraries="false"
@@ -141,7 +141,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStatic.lib ws2_32.lib ./../../DependentExtensions\Lobby\RankingServerDB_PostgreRepository\Release\RankingServerDB_PostgreSQL.lib &quot;C:\Program Files\PostgreSQL\8.3\lib\libpq.lib&quot;"
+				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Release_Win32.lib ws2_32.lib ./../../DependentExtensions\Lobby\RankingServerDB_PostgreRepository\Release\RankingServerDB_PostgreSQL.lib &quot;C:\Program Files\PostgreSQL\8.3\lib\libpq.lib&quot;"
 				OutputFile="$(OutDir)/RankingServerDBTest.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="LIBCD.lib"

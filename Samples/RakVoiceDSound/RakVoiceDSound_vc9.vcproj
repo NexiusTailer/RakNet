@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib Winmm.lib ws2_32.lib Dsound.lib Dxguid.lib Dxerr.lib"
+				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Debug_Win32.lib Winmm.lib ws2_32.lib Dsound.lib Dxguid.lib Dxerr.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(DXSDK_DIR)lib\x86"
 				GenerateDebugInformation="true"
@@ -139,7 +139,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStatic.lib Winmm.lib ws2_32.lib Dsound.lib Dxguid.lib Dxerr.lib"
+				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Release_Win32.lib Winmm.lib ws2_32.lib Dsound.lib Dxguid.lib Dxerr.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(DXSDK_DIR)lib\x86"
 				GenerateDebugInformation="true"

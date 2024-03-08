@@ -67,7 +67,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib ./../../DependentExtensions\Autopatcher\AutopatcherMySQLRepository\Debug\AutopatcherMySQLRepository.lib &quot;C:\Program Files (x86)\MySQL\MySQL Server 5.1\lib\opt\libmysql.lib&quot;"
+				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Debug_Win32.lib ws2_32.lib ./../../DependentExtensions\Autopatcher\AutopatcherMySQLRepository\Debug\AutopatcherMySQLRepository.lib &quot;C:\Program Files (x86)\MySQL\MySQL Server 5.1\lib\opt\libmysql.lib&quot;"
 				OutputFile="$(OutDir)/AutopatcherServer.exe"
 				LinkIncremental="2"
 				IgnoreAllDefaultLibraries="false"
@@ -150,7 +150,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStatic.lib ws2_32.lib ./../../DependentExtensions\Autopatcher\AutopatcherMySQLRepository\Release\AutopatcherMySQLRepository.lib &quot;C:\Program Files (x86)\MySQL\MySQL Server 5.1\lib\opt\libmysql.lib&quot;"
+				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Release_Win32.lib ws2_32.lib ./../../DependentExtensions\Autopatcher\AutopatcherMySQLRepository\Release\AutopatcherMySQLRepository.lib &quot;C:\Program Files (x86)\MySQL\MySQL Server 5.1\lib\opt\libmysql.lib&quot;"
 				OutputFile="$(OutDir)/AutopatcherServer.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="LIBCD.lib"

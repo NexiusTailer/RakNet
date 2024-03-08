@@ -26,7 +26,6 @@ files
 	DS_Table.cpp
 	DynDNS.cpp
 	EmailSender.cpp
-	EncodeClassName.cpp
 	EpochTimeToString.cpp
 	FileList.cpp
 	FileListTransfer.cpp

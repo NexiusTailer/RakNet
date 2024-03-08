@@ -143,7 +143,7 @@ int main(void)
 		if (facilitatorIP[0]==0)
 			strcpy(facilitatorIP, "natpunch.jenkinssoftware.com");
 		facilitator.FromString(facilitatorIP);
-		facilitator.SetPort(NAT_PUNCHTHROUGH_FACILITATOR_PORT);
+		facilitator.SetPortHostOrder(NAT_PUNCHTHROUGH_FACILITATOR_PORT);
 		rakPeer->Connect(facilitatorIP, NAT_PUNCHTHROUGH_FACILITATOR_PORT, 0, 0);
 		printf("Connecting to facilitator...\n");
 	}

@@ -13,6 +13,10 @@
 #include "VitaIncludes.h"
 #include "errno.h"
 
+#ifndef INVALID_SOCKET
+#define INVALID_SOCKET -1
+#endif
+
 using namespace RakNet;
 static const unsigned short DEFAULT_MAX_FORWARD_ENTRIES=64;
 

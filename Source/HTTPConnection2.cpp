@@ -1,7 +1,7 @@
 #include "NativeFeatureIncludes.h"
 #if _RAKNET_SUPPORT_HTTPConnection2==1 && _RAKNET_SUPPORT_TCPInterface==1
 
-#include "HttpConnection2.h"
+#include "HTTPConnection2.h"
 #include "TCPInterface.h"
 
 using namespace RakNet;
@@ -30,7 +30,7 @@ bool HTTPConnection2::TransmitRequest(RakString stringToTransmit, RakString host
 		if (request.hostEstimatedAddress.FromString(host.C_String(), '|', ipVersion)==false)
 			return false;
 	}
-	request.hostEstimatedAddress.SetPort(port);
+	request.hostEstimatedAddress.SetPortHostOrder(port);
 	request.port=port;
 	request.stringToTransmit=stringToTransmit;
 	request.contentLength=-1;
@@ -133,6 +133,7 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
 				}
 				else
 				{
+					sentRequests[i].contentOffset=-1;
 					completedRequests.Push(sentRequests[i], _FILE_AND_LINE_);
 					sentRequests.RemoveAtIndexFast(i);
 

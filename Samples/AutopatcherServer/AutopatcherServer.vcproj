@@ -32,7 +32,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib ./../../DependentExtensions\AutopatcherPostgreRepository\Debug\AutopatcherPostgreRepository.lib &quot;C:\Program Files (x86)\PostgreSQL\9.1\lib\libpq.lib&quot;"
+				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Debug_Win32.lib ws2_32.lib ./../../DependentExtensions\AutopatcherPostgreRepository\Debug\AutopatcherPostgreRepository.lib &quot;C:\Program Files (x86)\PostgreSQL\9.1\lib\libpq.lib&quot;"
 				OutputFile="$(OutDir)/AutopatcherServer.exe"
 				LinkIncremental="2"
 				IgnoreAllDefaultLibraries="FALSE"
@@ -82,7 +82,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStatic.lib ws2_32.lib ./../../DependentExtensions\AutopatcherPostgreRepository\Release\AutopatcherPostgreRepository.lib &quot;C:\Program Files (x86)\PostgreSQL\9.1\lib\libpq.lib&quot;"
+				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Release_Win32.lib ws2_32.lib ./../../DependentExtensions\AutopatcherPostgreRepository\Release\AutopatcherPostgreRepository.lib &quot;C:\Program Files (x86)\PostgreSQL\9.1\lib\libpq.lib&quot;"
 				OutputFile="$(OutDir)/AutopatcherServer.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="LIBCD.lib"

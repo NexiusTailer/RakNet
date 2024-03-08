@@ -99,10 +99,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 unsigned short&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SystemAddress.html#a9fe44689bf3c863952d25d88c299b215">GetPort</a> (void) const </td></tr>
 <tr class="memdesc:a9fe44689bf3c863952d25d88c299b215"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the port in host order (this is what you normally use) <br/></td></tr>
 <tr class="separator:a9fe44689bf3c863952d25d88c299b215"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6d736cfb617b54ac62eea168e1f804a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa6d736cfb617b54ac62eea168e1f804a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SystemAddress.html#aa6d736cfb617b54ac62eea168e1f804a">SetPort</a> (unsigned short s)</td></tr>
-<tr class="memdesc:aa6d736cfb617b54ac62eea168e1f804a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the port. The port value should be in host order (this is what you normally use) <br/></td></tr>
-<tr class="separator:aa6d736cfb617b54ac62eea168e1f804a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a868e3a83532a57f88436b91bcef8ee7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SystemAddress.html#a868e3a83532a57f88436b91bcef8ee7b">SetPortHostOrder</a> (unsigned short s)</td></tr>
+<tr class="separator:a868e3a83532a57f88436b91bcef8ee7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6189cd50719060e996d0bcf362ba4f16"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6189cd50719060e996d0bcf362ba4f16"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRakNet_1_1SystemAddress.html#a6189cd50719060e996d0bcf362ba4f16">SetBinaryAddress</a> (const char *str, char portDelineator=':')</td></tr>
 <tr class="memdesc:a6189cd50719060e996d0bcf362ba4f16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Old version, for crap platforms that don't support newer socket functions. <br/></td></tr>
@@ -214,6 +212,23 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><a class="el" 
 
 </div>
 </div>
+<a class="anchor" id="a868e3a83532a57f88436b91bcef8ee7b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RakNet::SystemAddress::SetPortHostOrder </td>
+          <td>(</td>
+          <td class="paramtype">unsigned short&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Sets the port. The port value should be in host order (this is what you normally use) Renamed from SetPort because of winspool.h <a href="http://edn.embarcadero.com/article/21494">http://edn.embarcadero.com/article/21494</a> </p>
+
+</div>
+</div>
 <a class="anchor" id="a4afe777a3fed63583f5b3addb6f4d50d"></a>
 <div class="memitem">
 <div class="memproto">
@@ -243,7 +258,7 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><a class="el" 
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Dec 19 2012 08:50:03 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Jan 10 2013 22:18:32 for RakNet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

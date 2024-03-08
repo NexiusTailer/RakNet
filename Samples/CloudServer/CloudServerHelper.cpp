@@ -439,7 +439,7 @@ int CloudServerHelper::OnJoinCloudResult(
 		printf("Connected to self. DNS entry already points to this server.\n");
 
 		// dnsHost is always public, so if I can connect through it that's my public IP
-		strcpy( myPublicIP, ( char* ) SocketLayer::DomainNameToIP( rakPeerIpOrDomain ));
+		RakNetSocket2::DomainNameToIP( rakPeerIpOrDomain, myPublicIP );
 	}
 	else if (result==ID_CONNECTION_ATTEMPT_FAILED)
 	{

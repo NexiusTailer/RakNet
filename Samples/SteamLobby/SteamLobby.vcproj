@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib steam_api.lib"
+				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Debug_Win32.lib ws2_32.lib steam_api.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="C:\Steamworks\redistributable_bin"
 				GenerateDebugInformation="true"
@@ -138,7 +138,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStatic.lib ws2_32.lib steam_api.lib"
+				AdditionalDependencies="./../../Lib/RakNet_LibStatic_Release_Win32.lib ws2_32.lib steam_api.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="C:\Steamworks\redistributable_bin"
 				GenerateDebugInformation="true"

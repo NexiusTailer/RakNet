@@ -80,7 +80,7 @@ void InstantiateRakNetClasses(void)
 	// Using fixed port so we can use AdvertiseSystem and connect on the LAN if the server is not available.
 	RakNet::SocketDescriptor sd(1234,0);
 	sd.socketFamily=AF_INET; // Only IPV4 supports broadcast on 255.255.255.255
-	while (SocketLayer::IsPortInUse(sd.port, sd.hostAddress, sd.socketFamily)==true)
+	while (IRNS2_Berkley::IsPortInUse(sd.port, sd.hostAddress, sd.socketFamily)==true)
 		sd.port++;
 	// +1 is for the connection to the NAT punchthrough server
 	rakPeer->Startup(MAX_PLAYERS+1,&sd,1);

@@ -262,7 +262,7 @@ int main(void)
 	RakNet::SocketDescriptor sd;
 	sd.socketFamily=AF_INET; // Only IPV4 supports broadcast on 255.255.255.255
 	sd.port=60000;
-	while (SocketLayer::IsPortInUse(sd.port, sd.hostAddress, sd.socketFamily)==true)
+	while (IRNS2_Berkley::IsPortInUse(sd.port, sd.hostAddress, sd.socketFamily, SOCK_DGRAM)==true)
 		sd.port++;
 	StartupResult sr = rakPeer->Startup(8,&sd,1);
 	RakAssert(sr==RAKNET_STARTED);

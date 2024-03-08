@@ -93,7 +93,7 @@ void WinPhone8::OnWindowClosed(CoreWindow^ sender, CoreWindowEventArgs^ args)
 #include "RakPeerInterface.h"
 using namespace RakNet;
 #define DEFAULT_SERVER_PORT 61111
-#define DEFAULT_SERVER_ADDRESS "94.198.81.195"
+#define DEFAULT_SERVER_ADDRESS "natpunch.jenkinssoftware.com"
 
 void WinPhone8::OnPointerPressed(CoreWindow^ sender, PointerEventArgs^ args)
 {
