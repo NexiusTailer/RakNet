@@ -183,7 +183,7 @@ enum Lobby2MessageID
 	L2MID_Notification_Console_RoomOwnerChanged,
 	L2MID_Notification_Console_RoomChatMessage,
 	L2MID_Notification_Console_RoomMessage,
-	L2MID_Notification_Console_RoomMemberConnectivityUpdate,
+//	L2MID_Notification_Console_RoomMemberConnectivityUpdate,
 	L2MID_Notification_Console_ChatEvent,
 	L2MID_Notification_Console_MuteListChanged,
 	L2MID_Notification_Console_Local_Users_Changed,
@@ -494,7 +494,7 @@ struct Notification_Console_UpdateRoomParameters;
 struct Notification_Console_RoomOwnerChanged;
 struct Notification_Console_RoomChatMessage;
 struct Notification_Console_RoomMessage;
-struct Notification_Console_RoomMemberConnectivityUpdate;
+//struct Notification_Console_RoomMemberConnectivityUpdate;
 struct Notification_Console_ChatEvent;
 struct Notification_Console_MuteListChanged;
 struct Notification_Console_Local_Users_Changed;
@@ -661,7 +661,7 @@ struct Lobby2Callbacks
 	virtual void MessageResult(Notification_Console_RoomOwnerChanged *message);
 	virtual void MessageResult(Notification_Console_RoomChatMessage *message);
 	virtual void MessageResult(Notification_Console_RoomMessage *message);
-	virtual void MessageResult(Notification_Console_RoomMemberConnectivityUpdate *message);
+//	virtual void MessageResult(Notification_Console_RoomMemberConnectivityUpdate *message);
 	virtual void MessageResult(Notification_Console_ChatEvent *message);
 	virtual void MessageResult(Notification_Console_MuteListChanged *message);
 	virtual void MessageResult(Notification_Console_Local_Users_Changed *message);
@@ -696,6 +696,36 @@ struct BinaryDataBlock
 			rakFree_Ex(binaryData, _FILE_AND_LINE_ );
 	}
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
+};
+/// Used to unify different platforms for room search and search properties. Only applies if specifically used
+struct IndexedIntegerValue
+{
+	IndexedIntegerValue() {index=0; value=0; searchOperator=-1;}
+	IndexedIntegerValue(unsigned int idx, unsigned int val) : index(idx), value(val) {searchOperator=-1;}
+	/// Index of the value to set, required.
+	unsigned int index;
+	/// Value to set
+	unsigned int value;
+	/// Used for room searches only, -1 means use default equals
+	int searchOperator;
+};
+/// Used to unify different platforms for room search and search properties. Only applies if specifically used
+struct IndexedBinaryValue
+{
+	IndexedBinaryValue() {index=0; value=0; valueByteLength=0; searchOperator=-1; type=(unsigned char)-1;}
+	IndexedBinaryValue(unsigned int idx, char* val, unsigned short valLength) : index(idx), value(val), valueByteLength(valLength) {searchOperator=-1; type=(unsigned char)-1;}
+	~IndexedBinaryValue() {if (value) rakFree_Ex(value,_FILE_AND_LINE_);};
+
+	/// Index of the value to set, required.
+	unsigned int index;
+	/// Value is deallocated in the destructor, use rakMalloc_Ex to allocate!
+	char *value;
+	/// Length of value
+	unsigned short valueByteLength;
+	/// Used for room searches only, -1 means use default equals
+	int searchOperator;
+	/// Used on 360 only. -1 means use default BINARY
+	unsigned char type;
 };
 struct CreateAccountParameters
 {
@@ -2969,8 +2999,6 @@ struct Console_UpdateRoomParameters : public Lobby2Message
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return true;}
 	virtual bool RequiresLogin(void) const {return true;}
-
-
 };
 struct Console_JoinRoom : public Lobby2Message
 {
@@ -3550,6 +3578,8 @@ struct Notification_Console_RoomMessage : public Lobby2Message
 	RakNet::RakString sender;
 	RakNet::RakString message;
 };
+// Now merged into Notification_Console_MemberJoinedRoom
+/*
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_RoomMemberConnectivityUpdate : public Lobby2Message
 {
@@ -3563,6 +3593,7 @@ struct Notification_Console_RoomMemberConnectivityUpdate : public Lobby2Message
 	// Out
 	SystemAddress systemAddress;
 };
+*/
 /// \ingroup LOBBY_2_NOTIFICATIONS
 struct Notification_Console_ChatEvent : public Lobby2Message
 {
@@ -3802,7 +3833,7 @@ struct Lobby2MessageFactory
 			__L2_MSG_FACTORY_BASE(Notification_Console_RoomOwnerChanged);
 			__L2_MSG_FACTORY_BASE(Notification_Console_RoomChatMessage);
 			__L2_MSG_FACTORY_BASE(Notification_Console_RoomMessage);
-			__L2_MSG_FACTORY_BASE(Notification_Console_RoomMemberConnectivityUpdate);
+//			__L2_MSG_FACTORY_BASE(Notification_Console_RoomMemberConnectivityUpdate);
 			__L2_MSG_FACTORY_BASE(Notification_Console_ChatEvent);
 			__L2_MSG_FACTORY_BASE(Notification_Console_MuteListChanged);
 			__L2_MSG_FACTORY_BASE(Notification_Console_Local_Users_Changed);

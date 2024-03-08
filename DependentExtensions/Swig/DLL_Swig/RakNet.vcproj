@@ -803,6 +803,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Source\RakWString.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Source\RakWString.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Source\Rand.cpp"
 			>
 		</File>

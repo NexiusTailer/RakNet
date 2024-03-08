@@ -131,6 +131,7 @@
     <Compile Include="SwigFiles\RakString.cs" />
     <Compile Include="SwigFiles\ReadyEvent.cs" />
     <Compile Include="SwigFiles\ReadyEventSystemStatus.cs" />
+    <Compile Include="SwigFiles\ReferenceCounter.cs" />
     <Compile Include="SwigFiles\RemoteSystemIndex.cs" />
     <Compile Include="SwigFiles\RNSPerSecondMetrics.cs" />
     <Compile Include="SwigFiles\Router2.cs" />
@@ -141,14 +142,18 @@
     <Compile Include="SwigFiles\SortQuery.cs" />
     <Compile Include="SwigFiles\StartupResult.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_DataStructures__ListT_RakNetSmartPtrT_RakNet__RakNetSocket_t_t.cs" />
+    <Compile Include="SwigFiles\SWIGTYPE_p_DataStructures__OrderedListT_RakNet__RakNetGUID_RakNet__RakNetGUID_t.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_double.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_RakNet__FileListTransferCBInterface__DownloadCompleteStruct.cs" />
+    <Compile Include="SwigFiles\SWIGTYPE_p_RakNet__RakNetSmartPtrT_RakNet__RakNetSocket_t.cs" />
+    <Compile Include="SwigFiles\SWIGTYPE_p_RakNet__SystemAddress__In6OrIn4.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_RakNet__UDPForwarder__SrcAndDest.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_unsigned_char.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_unsigned_int.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_unsigned_long_long.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_unsigned_short.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_void.cs" />
+    <Compile Include="SwigFiles\SWIGTYPE_p_wchar_t.cs" />
     <Compile Include="SwigFiles\SystemAddress.cs" />
     <Compile Include="SwigFiles\Table.cs" />
     <Compile Include="SwigFiles\TeamBalancer.cs" />

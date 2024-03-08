@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;./../../DependentExtensions/openssl-0.9.8g/openssl&quot;;./../../Source"
+				AdditionalIncludeDirectories="&quot;./../../DependentExtensions/openssl-1.0.0d/include&quot;;./../../Source"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib ./../../DependentExtensions/openssl-0.9.8g/libeay32.lib ./../../DependentExtensions/openssl-0.9.8g/ssleay32.lib"
+				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib ws2_32.lib ./../../DependentExtensions/openssl-1.0.0d/lib/libeay32.lib ./../../DependentExtensions/openssl-1.0.0d/lib/ssleay32.lib"
 				OutputFile="$(OutDir)/SendEmail.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -92,7 +92,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy .\..\..\DependentExtensions\openssl-0.9.8g\*.dll .\"
+				CommandLine="copy .\..\..\DependentExtensions\openssl-1.0.0d\bin\*.dll .\"
 			/>
 		</Configuration>
 		<Configuration
@@ -120,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;./../../DependentExtensions/openssl-0.9.8g/openssl&quot;;./../../Source"
+				AdditionalIncludeDirectories="&quot;./../../DependentExtensions/openssl-1.0.0d/include&quot;;./../../Source"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
@@ -139,7 +139,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="./../../lib/RakNetLibStatic.lib ws2_32.lib ./../../DependentExtensions/openssl-0.9.8g/libeay32.lib ./../../DependentExtensions/openssl-0.9.8g/ssleay32.lib"
+				AdditionalDependencies="./../../lib/RakNetLibStatic.lib ws2_32.lib ./../../DependentExtensions/openssl-1.0.0d/lib/libeay32.lib ./../../DependentExtensions/openssl-1.0.0d/lib/ssleay32.lib"
 				OutputFile="$(OutDir)/SendEmail.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
@@ -171,7 +171,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy .\..\..\DependentExtensions\openssl-0.9.8g\*.dll .\"
+				CommandLine="copy .\..\..\DependentExtensions\openssl-1.0.0d\bin\*.dll .\"
 			/>
 		</Configuration>
 	</Configurations>

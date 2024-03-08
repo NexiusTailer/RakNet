@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 
 #ifndef _DEBUG
 	// Only use DEFAULT_SERVER_ADDRESS for debugging
-	if (argc<=2)
+	if (argc<2)
 	{
 		PrintHelp();
 		return false;

@@ -80,6 +80,8 @@ TCPInterface::~TCPInterface()
 }
 bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnections, unsigned short maxConnections, int _threadPriority, unsigned short socketFamily)
 {
+	(void) socketFamily;
+
 	if (isStarted)
 		return false;
 
@@ -322,7 +324,7 @@ void TCPInterface::StartSSLClient(SystemAddress systemAddress)
 	{
 		sharedSslMutex.Lock();
 		SSLeay_add_ssl_algorithms();
-		meth = SSLv2_client_method();
+		meth = (SSL_METHOD*) SSLv2_client_method();
 		SSL_load_error_strings();
 		ctx = SSL_CTX_new (meth);
 		RakAssert(ctx!=0);
@@ -657,6 +659,7 @@ unsigned int TCPInterface::GetOutgoingDataBufferSize(SystemAddress systemAddress
 SOCKET TCPInterface::SocketConnect(const char* host, unsigned short remotePort, unsigned short socketFamily)
 {
 	int connectResult;
+	(void) socketFamily;
 
 #if RAKNET_SUPPORT_IPV6!=1
 	sockaddr_in serverAddress;

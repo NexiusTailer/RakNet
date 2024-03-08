@@ -142,7 +142,9 @@ public:
 	DataStructures::Queue<ThreadOperation> threadOperationIncomingQueue;
 	DataStructures::Queue<ThreadOperation> threadOperationOutgoingQueue;
 #endif
+#if RAKNET_SUPPORT_IPV6==1
 	void UpdateThreaded(void);
+#endif
 	void UpdateThreaded_Old(void);
 	UDPForwarderResult StartForwardingThreaded(SystemAddress source, SystemAddress destination, RakNet::TimeMS timeoutOnNoDataMS, const char *forceHostAddress, unsigned short socketFamily,
 		unsigned short *forwardingPort, SOCKET *forwardingSocket);

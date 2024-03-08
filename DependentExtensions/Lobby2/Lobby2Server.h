@@ -32,7 +32,7 @@ struct Lobby2ServerCommand
 };
 
 /// \brief The base class for the lobby server, without database specific functionality
-/// \details This is a plugin which will take incoming messages via Lobby2Client_PC::SendMessage(), process them, and send back the same messages with output and a result code
+/// \details This is a plugin which will take incoming messages via Lobby2Client_PC::SendMsg(), process them, and send back the same messages with output and a result code
 /// Unlike the first implementation of the lobby server, this is a thin plugin that mostly just sends messages to threads and sends back the results.
 /// \ingroup LOBBY_2_SERVER
 class RAK_DLL_EXPORT Lobby2Server : public RakNet::Lobby2Plugin, public ThreadDataInterface
@@ -52,7 +52,7 @@ public:
 
 	/// \brief Lobby2Message encapsulates a user command, containing both input and output data
 	/// \details This will serialize and transmit that command
-	void SendMessage(Lobby2Message *msg, const DataStructures::List<SystemAddress> &recipients);
+	void SendMsg(Lobby2Message *msg, const DataStructures::List<SystemAddress> &recipients);
 
 	/// \brief Add a command, which contains a message and other data such as who send the message.
 	/// \details The command will be processed according to its implemented virtual functions. Most likely it will be processed in a thread to run database commands

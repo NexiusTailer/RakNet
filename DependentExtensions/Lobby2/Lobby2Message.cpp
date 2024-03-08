@@ -154,7 +154,7 @@ void Lobby2Callbacks::MessageResult(Notification_Console_UpdateRoomParameters *m
 void Lobby2Callbacks::MessageResult(Notification_Console_RoomOwnerChanged *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_RoomChatMessage *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_RoomMessage *message) {ExecuteDefaultResult(message);}
-void Lobby2Callbacks::MessageResult(Notification_Console_RoomMemberConnectivityUpdate *message) {ExecuteDefaultResult(message);}
+//void Lobby2Callbacks::MessageResult(Notification_Console_RoomMemberConnectivityUpdate *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_ChatEvent *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_MuteListChanged *message) {ExecuteDefaultResult(message);}
 void Lobby2Callbacks::MessageResult(Notification_Console_Local_Users_Changed *message) {ExecuteDefaultResult(message);}

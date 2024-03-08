@@ -120,11 +120,11 @@ This message is reliable and will arrive in the sequence you sent it. Out or ord
 <tr><td valign="top"><em><a class="anchor" name="e41fa01235e99dced384d137fa874a7e4a623962051043733acde3e595e1cce0"></a><!-- doxytag: member="UNRELIABLE_WITH_ACK_RECEIPT" ref="e41fa01235e99dced384d137fa874a7e4a623962051043733acde3e595e1cce0" args="" -->UNRELIABLE_WITH_ACK_RECEIPT</em>&nbsp;</td><td>
 Same as UNRELIABLE, however the user will get either ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS based on the result of sending this message when calling RakPeerInterface::Receive(). Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="e41fa01235e99dced384d137fa874a7ecd15d4c4a2cea8b4c4459f1d3c09d95f"></a><!-- doxytag: member="RELIABLE_WITH_ACK_RECEIPT" ref="e41fa01235e99dced384d137fa874a7ecd15d4c4a2cea8b4c4459f1d3c09d95f" args="" -->RELIABLE_WITH_ACK_RECEIPT</em>&nbsp;</td><td>
-Same as UNRELIABLE_SEQUENCED. The user will also get ID_SND_RECEIPT_ACKED after the message is delivered when calling RakPeerInterface::Receive(). Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. 
+Same as UNRELIABLE_SEQUENCED. The user will also get ID_SND_RECEIPT_ACKED after the message is delivered when calling RakPeerInterface::Receive(). Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. This does not return ID_SND_RECEIPT_LOSS. 
 <p>
 Same as UNRELIABLE_SEQUENCED, however the user will get either ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS based on the result of sending this message when calling RakPeerInterface::Receive(). Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. 05/04/10 You can't have sequenced and ack receipts, because you don't know if the other system discarded the message, meaning you don't know if the message was processed </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="e41fa01235e99dced384d137fa874a7ee94727e3abc9217e16c1c19f1e8f850a"></a><!-- doxytag: member="RELIABLE_ORDERED_WITH_ACK_RECEIPT" ref="e41fa01235e99dced384d137fa874a7ee94727e3abc9217e16c1c19f1e8f850a" args="" -->RELIABLE_ORDERED_WITH_ACK_RECEIPT</em>&nbsp;</td><td>
-Same as RELIABLE_ORDERED_ACK_RECEIPT. The user will also get ID_SND_RECEIPT_ACKED after the message is delivered when calling RakPeerInterface::Receive(). Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. </td></tr>
+Same as RELIABLE_ORDERED_ACK_RECEIPT. The user will also get ID_SND_RECEIPT_ACKED after the message is delivered when calling RakPeerInterface::Receive(). Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. This does not return ID_SND_RECEIPT_LOSS. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="e41fa01235e99dced384d137fa874a7ef49e4584ca35290efd854922f4cad6be"></a><!-- doxytag: member="NUMBER_OF_RELIABILITIES" ref="e41fa01235e99dced384d137fa874a7ef49e4584ca35290efd854922f4cad6be" args="" -->NUMBER_OF_RELIABILITIES</em>&nbsp;</td><td>
 Same as RELIABLE_SEQUENCED. The user will also get ID_SND_RECEIPT_ACKED after the message is delivered when calling RakPeerInterface::Receive(). Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost. 05/04/10 You can't have sequenced and ack receipts, because you don't know if the other system discarded the message, meaning you don't know if the message was processed </td></tr>
 </table>
@@ -133,7 +133,7 @@ Same as RELIABLE_SEQUENCED. The user will also get ID_SND_RECEIPT_ACKED after th
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 8 13:04:35 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Feb 21 14:39:47 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

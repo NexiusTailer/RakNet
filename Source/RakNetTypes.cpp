@@ -325,7 +325,7 @@ SystemAddress::SystemAddress(const char *str, unsigned short port)
 	systemIndex=(SystemIndex)-1;
 }
 #if defined(_XBOX) || defined(X360)
-                                                                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 #endif
 
 #ifdef _MSC_VER

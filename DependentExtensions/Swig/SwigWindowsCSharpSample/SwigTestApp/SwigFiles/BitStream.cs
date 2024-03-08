@@ -427,8 +427,16 @@ public class BitStream : IDisposable {
     RakNetPINVOKE.BitStream_Write__SWIG_3(swigCPtr, inStringVar);
   }
 
+  public void Write(SWIGTYPE_p_wchar_t inStringVar) {
+    RakNetPINVOKE.BitStream_Write__SWIG_4(swigCPtr, SWIGTYPE_p_wchar_t.getCPtr(inStringVar));
+  }
+
   public void WriteCompressed(string inStringVar) {
     RakNetPINVOKE.BitStream_WriteCompressed__SWIG_1(swigCPtr, inStringVar);
+  }
+
+  public void WriteCompressed(SWIGTYPE_p_wchar_t inStringVar) {
+    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_2(swigCPtr, SWIGTYPE_p_wchar_t.getCPtr(inStringVar));
   }
 
   public static bool DoEndianSwap() {
@@ -485,7 +493,7 @@ public class BitStream : IDisposable {
   }
 
   public void Write(byte[] inputByteArray, uint numberOfBytes) {
-    RakNetPINVOKE.BitStream_Write__SWIG_5(swigCPtr, inputByteArray, numberOfBytes);
+    RakNetPINVOKE.BitStream_Write__SWIG_6(swigCPtr, inputByteArray, numberOfBytes);
   }
 
   private uint CSharpCopyDataHelper(byte[] inOutByteArray) {
@@ -807,41 +815,41 @@ public class BitStream : IDisposable {
   }
 
   public void Write(bool inTemplateVar) {
-    RakNetPINVOKE.BitStream_Write__SWIG_7(swigCPtr, inTemplateVar);
-  }
-
-  public void Write(byte inTemplateVar) {
     RakNetPINVOKE.BitStream_Write__SWIG_8(swigCPtr, inTemplateVar);
   }
 
-  public void Write(char inTemplateVar) {
+  public void Write(byte inTemplateVar) {
     RakNetPINVOKE.BitStream_Write__SWIG_9(swigCPtr, inTemplateVar);
   }
 
-  public void Write(int inTemplateVar) {
+  public void Write(char inTemplateVar) {
     RakNetPINVOKE.BitStream_Write__SWIG_10(swigCPtr, inTemplateVar);
   }
 
-  public void Write(long inTemplateVar) {
+  public void Write(int inTemplateVar) {
     RakNetPINVOKE.BitStream_Write__SWIG_11(swigCPtr, inTemplateVar);
   }
 
-  public void Write(float inTemplateVar) {
+  public void Write(long inTemplateVar) {
     RakNetPINVOKE.BitStream_Write__SWIG_12(swigCPtr, inTemplateVar);
   }
 
+  public void Write(float inTemplateVar) {
+    RakNetPINVOKE.BitStream_Write__SWIG_13(swigCPtr, inTemplateVar);
+  }
+
   public void Write(RakString inTemplateVar) {
-    RakNetPINVOKE.BitStream_Write__SWIG_13(swigCPtr, RakString.getCPtr(inTemplateVar));
+    RakNetPINVOKE.BitStream_Write__SWIG_14(swigCPtr, RakString.getCPtr(inTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void Write(RakNetGUID inTemplateVar) {
-    RakNetPINVOKE.BitStream_Write__SWIG_14(swigCPtr, RakNetGUID.getCPtr(inTemplateVar));
+    RakNetPINVOKE.BitStream_Write__SWIG_15(swigCPtr, RakNetGUID.getCPtr(inTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void Write(uint24_t inTemplateVar) {
-    RakNetPINVOKE.BitStream_Write__SWIG_15(swigCPtr, uint24_t.getCPtr(inTemplateVar));
+    RakNetPINVOKE.BitStream_Write__SWIG_16(swigCPtr, uint24_t.getCPtr(inTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
@@ -932,41 +940,41 @@ public class BitStream : IDisposable {
   }
 
   public void WriteCompressed(bool inTemplateVar) {
-    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_4(swigCPtr, inTemplateVar);
-  }
-
-  public void WriteCompressed(byte inTemplateVar) {
     RakNetPINVOKE.BitStream_WriteCompressed__SWIG_5(swigCPtr, inTemplateVar);
   }
 
-  public void WriteCompressed(char inTemplateVar) {
+  public void WriteCompressed(byte inTemplateVar) {
     RakNetPINVOKE.BitStream_WriteCompressed__SWIG_6(swigCPtr, inTemplateVar);
   }
 
-  public void WriteCompressed(int inTemplateVar) {
+  public void WriteCompressed(char inTemplateVar) {
     RakNetPINVOKE.BitStream_WriteCompressed__SWIG_7(swigCPtr, inTemplateVar);
   }
 
-  public void WriteCompressed(long inTemplateVar) {
+  public void WriteCompressed(int inTemplateVar) {
     RakNetPINVOKE.BitStream_WriteCompressed__SWIG_8(swigCPtr, inTemplateVar);
   }
 
-  public void WriteCompressed(float inTemplateVar) {
+  public void WriteCompressed(long inTemplateVar) {
     RakNetPINVOKE.BitStream_WriteCompressed__SWIG_9(swigCPtr, inTemplateVar);
   }
 
+  public void WriteCompressed(float inTemplateVar) {
+    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_10(swigCPtr, inTemplateVar);
+  }
+
   public void WriteCompressed(RakString inTemplateVar) {
-    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_10(swigCPtr, RakString.getCPtr(inTemplateVar));
+    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_11(swigCPtr, RakString.getCPtr(inTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void WriteCompressed(RakNetGUID inTemplateVar) {
-    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_11(swigCPtr, RakNetGUID.getCPtr(inTemplateVar));
+    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_12(swigCPtr, RakNetGUID.getCPtr(inTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void WriteCompressed(uint24_t inTemplateVar) {
-    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_12(swigCPtr, uint24_t.getCPtr(inTemplateVar));
+    RakNetPINVOKE.BitStream_WriteCompressed__SWIG_13(swigCPtr, uint24_t.getCPtr(inTemplateVar));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 

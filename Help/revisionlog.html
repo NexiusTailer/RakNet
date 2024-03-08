@@ -393,7 +393,21 @@
   RakNetGUID::ToInteger() renamed to RakNetGUID::ToUint32().<BR>
   PS3: Fixed accessing deallocated memory when searching rooms
   PS3: Fix Console_SearchRooms and Console_GetRoomDetails not returning integer and binary properties
-  XBOX 360: Fixed RakVoice_360, was previously not working
+  XBOX 360: Fixed RakVoice_360, was previously not working.
+  4.013 (2/21/2011)
+  IPV6: Fix domain name lookup. Now defaults to IPV4 to save bandwidth.
+  RPC3: Fix not reading enough bytes on receive()
+  Lobby (All): Rename SendMessage() to SendMsg() for consistency among platforms.
+  Lobby (PS3): Console_JoinRoom_PS3 now returns only the room, for consistency
+  Lobby (PS3): Notification_Console_RoomMemberConnectivityUpdate removed. Use Notification_Console_MemberJoinedRoom, Lobby2Room_PS3::GetValidRoomMembers() instead.
+  Lobby (360,PS3): Console_SearchRooms and Console_SetRoomSearchProperties has optional new unified properties and contexts system
+  Lobby (360): Fix sending when not using VDP
+  Lobby (360): Now automatically transmits SystemAddress of other peers in room for P2P
+  Documentation: ID_SND_RECEIPT_LOSS only returned on UNRELIABLE_WITH_ACK_RECEIPT
+  Documentation: Update how to use static objects with ReplicaManager3
+  RakPeerInterface: Fix not returning ID_SND_RECEIPT_ACKED and ID_SND_RECEIPT_LOSS
+  RakWString: Added for Unicode support. Currently assumes UTF-16.
+  OpenSSL: Update inclued version to 1.0.0d<BR>  
   <br>
   <br>
   <BR>

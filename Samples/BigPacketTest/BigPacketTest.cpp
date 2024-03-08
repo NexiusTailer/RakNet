@@ -61,8 +61,8 @@ int main(void)
 
 	// Test IPV6
 	int socketFamily;
-	socketFamily=AF_INET6;
-//	socketFamily=AF_INET;
+//	socketFamily=AF_INET6;
+	socketFamily=AF_INET;
 
 	if (server)
 	{
@@ -133,7 +133,7 @@ int main(void)
 		{
 			for (packet = server->Receive(); packet; server->DeallocatePacket(packet), packet=server->Receive())
 			{
-				if (packet->data[0]==ID_NEW_INCOMING_CONNECTION)
+				if (packet->data[0]==ID_NEW_INCOMING_CONNECTION || packet->data[0]==253)
 				{
 					printf("Starting send\n");
 					start=RakNet::GetTimeMS();
@@ -218,7 +218,9 @@ int main(void)
 					if (quit==false)
 					{
 						printf("Test succeeded. %i bytes.\n", packet->length);
-						quit=true;
+						printf("Rerequesting send.\n");
+						unsigned char ch=(unsigned char) 253;
+						client->Send((const char*) &ch, 1, MEDIUM_PRIORITY, RELIABLE_ORDERED, 1, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 					}
 
 				}

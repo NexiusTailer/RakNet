@@ -78,8 +78,8 @@ int main(void)
 	Gets(ip, sizeof(ip));
 	client->AllowConnectionResponseIPMigration(false);
 	if (ip[0]==0)
-	//	strcpy(ip, "127.0.0.1");
-	strcpy(ip, "94.198.81.195");
+		strcpy(ip, "127.0.0.1");
+	// strcpy(ip, "94.198.81.195");
 	
 		
 	puts("Enter the port to connect to");
@@ -90,7 +90,7 @@ int main(void)
 	// Connecting the client is very simple.  0 means we don't care about
 	// a connectionValidationInteger, and false for low priority threads
 	RakNet::SocketDescriptor socketDescriptor(atoi(clientPort),0);
-	socketDescriptor.socketFamily=AF_INET6; // Test out IPV6
+	socketDescriptor.socketFamily=AF_INET;
 	client->Startup(8,&socketDescriptor, 1);
 	client->SetOccasionalPing(true);
 
@@ -112,7 +112,13 @@ int main(void)
 	RakAssert(car==RakNet::CONNECTION_ATTEMPT_STARTED);
 #endif
 
-	printf("My IP is %s\n", client->GetLocalIP(0));
+	printf("\nMy IP addresses:\n");
+	unsigned int i;
+	for (i=0; i < client->GetNumberOfAddresses(); i++)
+	{
+		printf("%i. %s\n", i+1, client->GetLocalIP(i));
+	}
+
 	printf("My GUID is %s\n", client->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
 	puts("'quit' to quit. 'stat' to show stats. 'ping' to ping.\n'disconnect' to disconnect. 'connect' to reconnnect. Type to talk.");
 	

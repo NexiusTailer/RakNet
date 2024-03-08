@@ -4,7 +4,6 @@
 #include "Lobby2Message.h"
 #include "DS_Multilist.h"
 #include "Lobby2Client_Steam.h"
-#include "steam_api.h"
 
 namespace RakNet
 {
@@ -258,6 +257,7 @@ namespace RakNet
 		}
 	};
 
+	/*
 	__L2_MSG_DB_HEADER(Notification_Console_RoomMemberConnectivityUpdate, Steam)
 	{
 		bool succeeded;
@@ -280,6 +280,7 @@ namespace RakNet
 			}
 		}
 	};
+	*/
 
 // --------------------------------------------- Database specific factory class for all messages --------------------------------------------
 
@@ -306,7 +307,7 @@ namespace RakNet
 				__L2_MSG_FACTORY_IMPL(Notification_Console_MemberJoinedRoom, Steam);
 				__L2_MSG_FACTORY_IMPL(Notification_Console_MemberLeftRoom, Steam);
 				__L2_MSG_FACTORY_IMPL(Notification_Console_RoomChatMessage, Steam);
-				__L2_MSG_FACTORY_IMPL(Notification_Console_RoomMemberConnectivityUpdate, Steam);
+				//__L2_MSG_FACTORY_IMPL(Notification_Console_RoomMemberConnectivityUpdate, Steam);
 
 				default:
 

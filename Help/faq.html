@@ -15,15 +15,18 @@
 </tr></table>
 <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
   <p><B>I'm having problems sending strings.</B><BR>
-    Use the StringCompressor or RakString class to send strings through Bitstreams.<BR>
-      <BR>
-      <B>My data that I write using bitstreams is messed up on the other side.</B><BR>
+    Use the StringCompressor or RakString class to send strings through Bitstreams.</p>
+  <p><B>How do I simulate lag?</B><BR> 
+    In a hurry, use RakPeer::ApplyNetworkSimulator. But I recommend 
+      <a href="http://www.netlimiter.com/" target="_blank">http://www.netlimiter.com/</a> instead.<BR>
+    <BR>
+    <B>My data that I write using bitstreams is messed up on the other side.</B><BR>
     Make sure if you write one of the ID_* enumerations you cast it to an (unsigned char).  Other than that, make sure your read and write calls match.<BR>
-      <BR>
-      <B>My data pointed to by a pointer isn't arriving.</B><BR>
+    <BR>
+    <B>My data pointed to by a pointer isn't arriving.</B><BR>
     This is the same problem as when trying to use a default copy constructor with allocated memory.  You can just send pointers if you want, but it will send the pointer variable rather than the data pointed to.  You will need to serialize the contents of pointers yourself.<BR>
-      <BR>
-      <B>How should I deal with firewalls?</B><BR>
+    <BR>
+    <B>How should I deal with firewalls?</B><BR>
     Be sure to specify that your end-users need to open the appropriate ports, or use a port that is probably already open (such as the http port).  One way to reduce tech support calls in this regard is to have your application try connecting a local client to a local server.  If you can't connect after a couple of tries then the user probably has a firewall blocking this. You can message the user in-game that they probably have a firewall that needs to be turned off on whichever port your game uses.<BR>
     <BR>
     <B>I get conflicting lib errors such as follows</B><BR>
@@ -125,7 +128,7 @@
   To fix this, either don't have the function that does the action also send the packet, or use a parameter specifying whether to send a packet or not and set that parameter to false if the function is called from the network code.  See Programming Tips  for help on how to handle this.<BR>
   <BR>
   <B>How do I create a master game browser?</B><BR>
-  Either use PHPDirectoryServer2, RoomsPlugin, SteamLobby, or SQLite3Plugin<BR>
+  Either use CloudServer, PHPDirectoryServer2, RoomsPlugin, SteamLobby, or SQLite3Plugin<BR>
   <BR>
   <B>Which version of the multithreaded library does RakNet use?</B><BR>
   Multithreaded (/MT)<BR>
@@ -158,8 +161,7 @@
   <BR>
   <BR>
   <B>Will RakNet work with my game written in C?</B><BR>
-  No.<BR>
-  </p>
+  No.  </p>
 <p><strong>On Windows 7 why can I not open more than one outgoing connection at a time, unless I run as administrator?</strong><br>
   This was a design flaw in Windows 7 when it shipped. However, once you run the updater, this design flaw was fixed. See <A HREF="http://www.jenkinssoftware.com/forum/index.php?topic=3721.0">http://www.jenkinssoftware.com/forum/index.php?topic=3721.0</A></p>
 <p><strong><br>

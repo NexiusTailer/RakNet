@@ -60,9 +60,9 @@ Inheritance diagram for RakNet::Lobby2Server:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#6a8918f9399834397ca99882846587b8">ConnectToDB</a> (const char *conninfo, int numWorkerThreads)=0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Connect to the database <em>numWorkerThreads</em> times using the connection string.  <a href="#6a8918f9399834397ca99882846587b8"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#8b3640fa28be5dafecfe591db7f83830">SendMessage</a> (<a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> *msg, const <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &gt; &amp;recipients)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#533aac181789e75173beb4a365ca1889">SendMsg</a> (<a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> *msg, const <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &gt; &amp;recipients)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><a class="el" href="structRakNet_1_1Lobby2Message.html" title="A Lobby2Message encapsulates a networked function call from the client.">Lobby2Message</a> encapsulates a user command, containing both input and output data.  <a href="#8b3640fa28be5dafecfe591db7f83830"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><a class="el" href="structRakNet_1_1Lobby2Message.html" title="A Lobby2Message encapsulates a networked function call from the client.">Lobby2Message</a> encapsulates a user command, containing both input and output data.  <a href="#533aac181789e75173beb4a365ca1889"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Lobby2Server.html#3db350e8d2e35e6a40f43ee4026bff20">ExecuteCommand</a> (<a class="el" href="structRakNet_1_1Lobby2ServerCommand.html">Lobby2ServerCommand</a> *command)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a command, which contains a message and other data such as who send the message.  <a href="#3db350e8d2e35e6a40f43ee4026bff20"></a><br></td></tr>
@@ -123,7 +123,7 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 The base class for the lobby server, without database specific functionality. 
 <p>
-This is a plugin which will take incoming messages via Lobby2Client_PC::SendMessage(), process them, and send back the same messages with output and a result code Unlike the first implementation of the lobby server, this is a thin plugin that mostly just sends messages to threads and sends back the results. <hr><h2>Member Function Documentation</h2>
+This is a plugin which will take incoming messages via Lobby2Client_PC::SendMsg(), process them, and send back the same messages with output and a result code Unlike the first implementation of the lobby server, this is a thin plugin that mostly just sends messages to threads and sends back the results. <hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="499cbfd420d6a6caecd62a8143a641da"></a><!-- doxytag: member="RakNet::Lobby2Server::AddAdminAddress" ref="499cbfd420d6a6caecd62a8143a641da" args="(SystemAddress addr)" -->
 <div class="memitem">
 <div class="memproto">
@@ -391,12 +391,12 @@ Removes an addressed added with <a class="el" href="classRakNet_1_1Lobby2Server.
 
 </div>
 </div><p>
-<a class="anchor" name="8b3640fa28be5dafecfe591db7f83830"></a><!-- doxytag: member="RakNet::Lobby2Server::SendMessage" ref="8b3640fa28be5dafecfe591db7f83830" args="(Lobby2Message *msg, const DataStructures::List&lt; SystemAddress &gt; &amp;recipients)" -->
+<a class="anchor" name="533aac181789e75173beb4a365ca1889"></a><!-- doxytag: member="RakNet::Lobby2Server::SendMsg" ref="533aac181789e75173beb4a365ca1889" args="(Lobby2Message *msg, const DataStructures::List&lt; SystemAddress &gt; &amp;recipients)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void RakNet::Lobby2Server::SendMessage           </td>
+          <td class="memname">void RakNet::Lobby2Server::SendMsg           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structRakNet_1_1Lobby2Message.html">Lobby2Message</a> *&nbsp;</td>
           <td class="paramname"> <em>msg</em>, </td>
@@ -505,7 +505,7 @@ This will set the system address of that system to send the login and logoff com
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet/DependentExtensions/Lobby2/Lobby2Server.h</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Feb 8 13:04:39 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Feb 21 14:39:52 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

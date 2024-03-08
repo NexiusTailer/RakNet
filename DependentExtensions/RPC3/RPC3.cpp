@@ -297,7 +297,7 @@ void RPC3::OnRPC3Call(const SystemAddress &systemAddress, unsigned char *data, u
 	if (bitsOnStack>0)
 	{
 		serializedParameters.AddBitsAndReallocate(bitsOnStack);
-		bs.ReadAlignedBytes(serializedParameters.GetData(), BITS_TO_BYTES(bitsOnStack));
+		bs.ReadAlignedBytes(serializedParameters.GetData(), bitsOnStack);
 		serializedParameters.SetWriteOffset(bitsOnStack);
 	}
 // 	if (hasFunctionIndex)

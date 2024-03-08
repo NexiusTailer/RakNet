@@ -144,14 +144,15 @@ struct RAK_DLL_EXPORT SocketDescriptor
 	/// Encoding takes 16 bytes instead of 4, so IPV6 is less efficient for bandwidth.
 	/// On the positive side, NAT Punchthrough is not needed and should not be used with IPV6 because there are enough addresses that routers do not need to create address mappings.
 	/// RakPeer::Startup() will fail if this IP version is not supported.
+	/// \pre RAKNET_SUPPORT_IPV6 must be set to 1 in RakNetDefines.h for AF_INET6
 	short socketFamily;
 
-	// Only need to set for the PS3, when using signaling.
-	// Call RakPeer::Connect with the port returned by signaling.
-	// Set remotePortRakNetWasStartedOn_PS3 to whatever port RakNet was actually started on
+	/// Only need to set for the PS3, when using signaling.
+	/// Call RakPeer::Connect with the port returned by signaling.
+	/// Set remotePortRakNetWasStartedOn_PS3 to whatever port RakNet was actually started on
 	unsigned short remotePortRakNetWasStartedOn_PS3;
 
-	// XBOX only: set IPPROTO_VDP if you want to use VDP. If enabled, this socket does not support broadcast to 255.255.255.255
+	/// XBOX only: set IPPROTO_VDP if you want to use VDP. If enabled, this socket does not support broadcast to 255.255.255.255
 	unsigned int extraSocketOptions;
 };
 
@@ -169,7 +170,7 @@ struct RAK_DLL_EXPORT SystemAddress
 	SystemAddress(const char *str);
 	SystemAddress(const char *str, unsigned short port);
 #if defined(_XBOX) || defined(X360)
-                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                  
 #endif
 
 	/// SystemAddress, with RAKNET_SUPPORT_IPV6 defined, holds both an sockaddr_in6 and a sockaddr_in

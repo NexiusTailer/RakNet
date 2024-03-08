@@ -113,10 +113,6 @@ public class UDPForwarder : IDisposable {
     } 
   }
 
-  public void UpdateThreaded() {
-    RakNetPINVOKE.UDPForwarder_UpdateThreaded(swigCPtr);
-  }
-
   public void UpdateThreaded_Old() {
     RakNetPINVOKE.UDPForwarder_UpdateThreaded_Old(swigCPtr);
   }

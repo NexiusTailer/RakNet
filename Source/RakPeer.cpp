@@ -383,13 +383,14 @@ StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor 
 
 		SocketLayer::GetSystemAddress( rns->s, &rns->boundAddress );
 
-#if defined(_XBOX) || defined(X360)
-                                                                                                                                                                       
-#endif
-
 		rns->remotePortRakNetWasStartedOn_PS3=socketDescriptors[i].remotePortRakNetWasStartedOn_PS3;
 		rns->extraSocketOptions=socketDescriptors[i].extraSocketOptions;
 		rns->userConnectionSocketIndex=i;
+
+#if RAKNET_SUPPORT_IPV6==0
+		if (addrToBind==0)
+			rns->boundAddress.SetToLoopback(4);
+#endif
 
 		int zero=0;
 		if (SocketLayer::SendTo((SOCKET)rns->s, (const char*) &zero,4,rns->boundAddress, rns->remotePortRakNetWasStartedOn_PS3, rns->extraSocketOptions, _FILE_AND_LINE_)!=0)
@@ -763,6 +764,8 @@ ConnectionAttemptResult RakPeer::Connect( const char* host, unsigned short remot
 	if ( host == 0 || endThreads || connectionSocketIndex>=socketList.Size() )
 		return INVALID_PARAMETER;
 
+	RakAssert(remotePort!=0);
+
 	connectionSocketIndex=GetRakNetSocketFromUserConnectionSocketIndex(connectionSocketIndex);
 
 	if (passwordDataLength>255)
@@ -776,14 +779,6 @@ ConnectionAttemptResult RakPeer::Connect( const char* host, unsigned short remot
 //	if (passwordDataLength>0)
 //		memcpy(outgoingPassword, passwordData, passwordDataLength);
 //	outgoingPasswordLength=(unsigned char) passwordDataLength;
-
-	if ( NonNumericHostString( host ) )
-	{
-		host = ( char* ) SocketLayer::DomainNameToIP( host );
-
-		if (host==0)
-			return CANNOT_RESOLVE_DOMAIN_NAME;
-	}
 
 	// 04/02/09 - Can't remember why I disabled connecting to self, but it seems to work
 	// Connecting to ourselves in the same instance of the program?
@@ -805,14 +800,6 @@ ConnectionAttemptResult RakPeer::ConnectWithSocket(const char* host, unsigned sh
 
 	if (passwordData==0)
 		passwordDataLength=0;
-
-		if ( NonNumericHostString( host ) )
-	{
-		host = ( char* ) SocketLayer::DomainNameToIP( host );
-
-		if (host==0)
-			return CANNOT_RESOLVE_DOMAIN_NAME;
-	}
 
 		return SendConnectionRequest( host, remotePort, passwordData, passwordDataLength, publicKey, 0, 0, sendConnectionAttemptCount, timeBetweenSendConnectionAttemptsMS, timeoutTime, socket );
 
@@ -956,6 +943,8 @@ void RakPeer::Shutdown( unsigned int blockDuration, unsigned char orderingChanne
 	RemoteSystemStruct * temp = remoteSystemList;
 	remoteSystemList = 0;
 	RakNet::OP_DELETE_ARRAY(temp, _FILE_AND_LINE_);
+	RakNet::OP_DELETE_ARRAY(activeSystemList, _FILE_AND_LINE_);
+	activeSystemList=0;
 
 	ClearRemoteSystemLookup();
 
@@ -1823,13 +1812,6 @@ bool RakPeer::Ping( const char* host, unsigned short remotePort, bool onlyReplyO
 //	if ( IsActive() == false )
 //		return;
 
-	if ( NonNumericHostString( host ) )
-	{
-		host = ( char* ) SocketLayer::DomainNameToIP( host );
-		if (host==0)
-			return false;
-	}
-
 	RakNet::BitStream bitStream( sizeof(unsigned char) + sizeof(RakNet::Time) );
 	if ( onlyReplyOnAcceptingConnections )
 		bitStream.Write((MessageID)ID_UNCONNECTED_PING_OPEN_CONNECTIONS);
@@ -2612,14 +2594,6 @@ bool RakPeer::SendOutOfBand(const char *host, unsigned short remotePort, const c
 
 	// This is a security measure.  Don't send data longer than this value
 	RakAssert(dataLength <= MAX_OFFLINE_DATA_LENGTH);
-
-	if ( NonNumericHostString( host ) )
-	{
-		host = ( char* ) SocketLayer::DomainNameToIP( host );
-
-		if (host==0)
-			return false;
-	}
 
 	if (host==0)
 		return false;
@@ -5616,7 +5590,7 @@ bool RakPeer::RunUpdateCycle( RakNet::TimeUS timeNS, RakNet::Time timeMS )
 						// What do I do if I get a message from a system, before I am fully connected?
 						// I can either ignore it or give it to the user
 						// It seems like giving it to the user is a better option
-						if (data[0]>=(MessageID)ID_TIMESTAMP &&
+						if ((data[0]>=(MessageID)ID_TIMESTAMP || data[0]==ID_SND_RECEIPT_ACKED || data[0]==ID_SND_RECEIPT_LOSS) &&
 							remoteSystem->isActive
 							)
 						{

@@ -16,7 +16,7 @@
 #include "RoomsPlugin.h"
 #endif
 
-#define _ALSO_ACT_AS_NAT_PUNCH_SERVER
+//#define _ALSO_ACT_AS_NAT_PUNCH_SERVER
 #include "NatPunchthroughServer.h"
 #include "UDPProxyCoordinator.h"
 #include "UDPProxyServer.h"
@@ -116,6 +116,7 @@ void main(void)
 	// Login proxy server to proxy coordinator
 	// Normally the proxy server is on a different computer. Here, we login to our own IP address since the plugin is on the same system
 
+	// This makes it take high CPU usage, comment out of not wanted
 	udpProxyServer.LoginToCoordinator(COORDINATOR_PASSWORD, rakPeer->GetMyBoundAddress());
 #endif
 

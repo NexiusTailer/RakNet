@@ -33,6 +33,23 @@
       </ul>
     <p>The solution to most of these problems is usually straightforward, yet still requires a significant amount of work and debugging, with several dozen lines of code per object.</p>
     <p>ReplicaManager3 is designed to be a generic, overridable plugin that handles as many of these details as possible automatically. ReplicaManager3 automatically creates and destroys objects, downloads the world to new players, manages players, and automatically serializes as needed. It also includes the advanced ability to automatically relay messages, and to automatically serialize your objects when the serialized member data changes.</p>
+    <p><strong>Static Objects:</strong></p>
+    <p>Sometimes you have an object that already exists in the world and is known to all systems. For example, a door on level load. In those situations you usually do not want the server to transmit the object creation message, since it would result in the same door twice. Yet you still want to reference and serialize the object, such as the door opening and closing, or the remaining health for the door.</p>
+    <p>For static objects, derive from Replica3 as usual. However, BEFORE calling replicaManager3->Reference(replica3Object):</p>
+    <OL>
+    <LI>Call replica3Object->SetNetworkIDManager(replicaManager3->GetNetworkIDManager());
+    <LI>Call replica3Object->SetNetworkID(unique64BitIDLoadedWithLevel);
+    </OL>
+    
+    <p>Normally a random NetworkID is assigned when you call replicaManager3->Reference(replica3Object): Then that ID is transmitted and SetNetworkID is called on the newly created door on the client. However, since static objects are not remotely created, this code assigns the ID in advance. The ID needs to be unique and the same on every system. Simply starting at 0 and incrementing by 1 for every static object is sufficient, as long as the ID is loaded with the level and the level is the same for every system.</p>
+    <p>To cause the door to not be created remotely</p>
+    <OL>
+      <LI>return RM3CS_ALREADY_EXISTS_REMOTELY from QueryConstruction();
+        <LI>Optional: Write to the BitStream in SerializeConstructionExisting() if you want to send initialization data.
+        SerializeConstruction() will not be called. 
+        <LI>Optional: Process initialization data in DeserializeConstructionExisting() if you did write to the BitStream in SerializeConstructionExisting()    
+      </OL>
+    RM3CS_ALREADY_EXISTS_REMOTELY causes ReplicaManager3 to consider the door to exist on the other system, so when Serialize() is called updates will still be sent to that system. But the SerializeConstruction() call and object creation is skpped.
     <p><strong>Methods of object serialization:</strong></p>
     <p><strong>Manual sends on dirty flags</strong><br>
       <em>Description</em>: When a variable changes, it's up to you to set some flag that the  variable has changed. The next Serialize() tick, you send all variables  with dirty flags set<br>

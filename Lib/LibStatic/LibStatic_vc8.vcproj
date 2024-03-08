@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./../../Source;&quot;./../../DependentExtensions/openssl-0.9.8g&quot;;./../../DependentExtensions/udt4/src"
+				AdditionalIncludeDirectories="./../../Source;&quot;./../../DependentExtensions/openssl-1.0.0d/include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_RAKNET_LIB;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -111,7 +111,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./../../Source;&quot;./../../DependentExtensions/openssl-0.9.8g&quot;;./../../DependentExtensions/udt4/src"
+				AdditionalIncludeDirectories="./../../Source;&quot;./../../DependentExtensions/openssl-1.0.0d/include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_RELEASE;_RAKNET_LIB;_CRT_NONSTDC_NO_DEPRECATE"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
@@ -400,6 +400,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\RakThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\RakWString.cpp"
 				>
 			</File>
 			<File
@@ -934,6 +938,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Source\RakThread.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\RakWString.h"
 				>
 			</File>
 			<File

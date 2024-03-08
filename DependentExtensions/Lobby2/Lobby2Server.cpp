@@ -30,7 +30,7 @@ Lobby2Server::~Lobby2Server()
 {
 	Clear();
 }
-void Lobby2Server::SendMessage(Lobby2Message *msg, const DataStructures::List<SystemAddress> &recipients)
+void Lobby2Server::SendMsg(Lobby2Message *msg, const DataStructures::List<SystemAddress> &recipients)
 {
 	RakNet::BitStream bs;
 	bs.Write((MessageID)ID_LOBBY2_SEND_MESSAGE);
@@ -334,7 +334,7 @@ void Lobby2Server::ExecuteCommand(Lobby2ServerCommand *command)
 	RakNet::BitStream out;
 	if (command->lobby2Message->PrevalidateInput()==false)
 	{
-		SendMessage(command->lobby2Message, command->callerSystemAddresses);
+		SendMsg(command->lobby2Message, command->callerSystemAddresses);
 		if (command->deallocMsgWhenDone)
 			msgFactory->Dealloc(command->lobby2Message);
 		return;
@@ -343,7 +343,7 @@ void Lobby2Server::ExecuteCommand(Lobby2ServerCommand *command)
 	if (command->lobby2Message->RequiresAdmin() && HasAdminAddress(command->callerSystemAddresses)==false)
 	{
 		command->lobby2Message->resultCode=L2RC_REQUIRES_ADMIN;
-		SendMessage(command->lobby2Message, command->callerSystemAddresses);
+		SendMsg(command->lobby2Message, command->callerSystemAddresses);
 		SendUnifiedToMultiple(&out,packetPriority, RELIABLE_ORDERED, orderingChannel, command->callerSystemAddresses);
 		if (command->deallocMsgWhenDone)
 			msgFactory->Dealloc(command->lobby2Message);
@@ -353,7 +353,7 @@ void Lobby2Server::ExecuteCommand(Lobby2ServerCommand *command)
 	if (command->lobby2Message->RequiresRankingPermission() && HasRankingAddress(command->callerSystemAddresses)==false)
 	{
 		command->lobby2Message->resultCode=L2RC_REQUIRES_ADMIN;
-		SendMessage(command->lobby2Message, command->callerSystemAddresses);
+		SendMsg(command->lobby2Message, command->callerSystemAddresses);
 		SendUnifiedToMultiple(&out,packetPriority, RELIABLE_ORDERED, orderingChannel, command->callerSystemAddresses);
 		if (command->deallocMsgWhenDone)
 			msgFactory->Dealloc(command->lobby2Message);
@@ -362,7 +362,7 @@ void Lobby2Server::ExecuteCommand(Lobby2ServerCommand *command)
 
 	if (command->lobby2Message->ServerPreDBMemoryImpl(this, command->callingUserName)==true)
 	{
-		SendMessage(command->lobby2Message, command->callerSystemAddresses);
+		SendMsg(command->lobby2Message, command->callerSystemAddresses);
 		if (command->deallocMsgWhenDone)
 			msgFactory->Dealloc(command->lobby2Message);
 		return;
@@ -411,7 +411,7 @@ void Lobby2Server::SendRemoteLoginNotification(RakNet::RakString handle, const D
 	Notification_Client_RemoteLogin notification;
 	notification.handle=handle;
 	notification.resultCode=L2RC_SUCCESS;
-	SendMessage(&notification, recipients);
+	SendMsg(&notification, recipients);
 }
 void Lobby2Server::OnLogin(Lobby2ServerCommand *command, bool calledFromThread)
 {

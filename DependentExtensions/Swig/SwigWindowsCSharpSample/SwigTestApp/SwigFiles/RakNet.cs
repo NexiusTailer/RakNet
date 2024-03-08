@@ -94,6 +94,7 @@ public class RakNet {
   public static readonly int USE_SLIDING_WINDOW_CONGESTION_CONTROL = RakNetPINVOKE.USE_SLIDING_WINDOW_CONGESTION_CONTROL_get();
   public static readonly int PREALLOCATE_LARGE_MESSAGES = RakNetPINVOKE.PREALLOCATE_LARGE_MESSAGES_get();
   public static readonly int RAKNET_SUPPORT_IPV6 = RakNetPINVOKE.RAKNET_SUPPORT_IPV6_get();
+  public static readonly int RAKSTRING_TYPE_IS_UNICODE = RakNetPINVOKE.RAKSTRING_TYPE_IS_UNICODE_get();
   public static readonly int LIBCAT_SECURITY = RakNetPINVOKE.LIBCAT_SECURITY_get();
   public static readonly int _RAKNET_SUPPORT_ConnectionGraph2 = RakNetPINVOKE._RAKNET_SUPPORT_ConnectionGraph2_get();
   public static readonly int _RAKNET_SUPPORT_DirectoryDeltaTransfer = RakNetPINVOKE._RAKNET_SUPPORT_DirectoryDeltaTransfer_get();

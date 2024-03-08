@@ -112,7 +112,7 @@
 #endif
 
 #ifndef RAKNET_SUPPORT_IPV6
-#define RAKNET_SUPPORT_IPV6 1
+#define RAKNET_SUPPORT_IPV6 0
 #endif
 
 #if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
@@ -121,6 +121,16 @@
 
 #if defined(_XBOX) || defined(X360)
                                                    
+#endif
+
+#ifndef RAKSTRING_TYPE
+#if defined(_UNICODE)
+#define RAKSTRING_TYPE RakWString
+#define RAKSTRING_TYPE_IS_UNICODE 1
+#else
+#define RAKSTRING_TYPE RakString
+#define RAKSTRING_TYPE_IS_UNICODE 0
+#endif
 #endif
 
 #endif // __RAKNET_DEFINES_H
