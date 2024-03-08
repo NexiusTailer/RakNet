@@ -1036,8 +1036,10 @@ int main(int argc, char **argv)
 				unsigned int rowIndex;
 				const bool wasCallToGetServers=cloudQueryResult.cloudQuery.keys[0].primaryKey=="CloudConnCount";
 				RakAssert(wasCallToGetServers);
+				/*
 				if (wasCallToGetServers)
 					printf("Downloaded server list. %i servers.\n", cloudQueryResult.rowsReturned.Size());
+					*/
 
 				unsigned short connectionsOnOurServer=65535;
 				unsigned short lowestConnectionsServer=65535;

@@ -1,3 +1,4 @@
+/*
 #include "RakPeerInterface.h"
 #include "RakSleep.h"
 #include "RelayPlugin.h"
@@ -148,4 +149,4 @@ int main(void)
 
 	return 1;
 }
-
+*/

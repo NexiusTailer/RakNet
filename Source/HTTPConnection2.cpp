@@ -83,6 +83,14 @@ bool HTTPConnection2::GetResponse( RakString &stringTransmitted, RakString &host
 	}
 	return false;
 }
+bool HTTPConnection2::IsBusy(void) const
+{
+	return pendingRequests.Size()>0 || sentRequests.Size()>0;
+}
+bool HTTPConnection2::HasResponse(void) const
+{
+	return completedRequests.Size()>0;
+}
 PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
 {
 	unsigned int i;

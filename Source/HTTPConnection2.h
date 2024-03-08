@@ -69,6 +69,12 @@ public:
 	/// \return true if there was a response. false if not.
 	bool GetResponse( RakString &stringTransmitted, RakString &hostTransmitted, RakString &responseReceived, SystemAddress &hostReceived, int &contentOffset );
 
+	/// \brief Return if any requests are pending
+	bool IsBusy(void) const;
+
+	/// \brief Return if any requests are waiting to be read by the user
+	bool HasResponse(void) const;
+
 	struct Request
 	{
 		RakString stringToTransmit;

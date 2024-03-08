@@ -1079,9 +1079,9 @@ RakString RakString::FormatForDELETE(const char* uri, const char* extraHeaders)
 			"Host: %s\r\n"
 			"Connection: close\r\n"
 			"\r\n",
+			remotePath.C_String(),
 			extraHeaders,
-			remotePath,
-			host);
+			host.C_String());
 	}
 	else
 	{
@@ -1090,8 +1090,8 @@ RakString RakString::FormatForDELETE(const char* uri, const char* extraHeaders)
 			"Host: %s\r\n"
 			"Connection: close\r\n"
 			"\r\n",
-			remotePath,
-			host);
+			remotePath.C_String(),
+			host.C_String());
 	}
 
 	return out;

@@ -670,6 +670,12 @@ int main(void)
 	printf("Demonstrates networking elements for a P2P game on the PC, self-released,\nwith player hosted game servers\n");
 	printf("Difficulty: Advanced\n\n");
 
+	/*
+	json_t *jsonObject = json_object();
+	json_object_set(jsonObject, "testKey", json_string("\"") );
+	char *ds = json_dumps(jsonObject,0);
+	*/
+
 	// ---------------------------------------------------------------------------------------------------------------------
 	// Allocate plugins. See declaration in this file for description of each
 	// ---------------------------------------------------------------------------------------------------------------------

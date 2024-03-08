@@ -405,13 +405,13 @@ enum DefaultMessageIDTypes
 	// LibVoice
 	ID_LIB_VOICE,
 
-	ID_RELAY_PLUGIN_TO_RELAY,
-	ID_RELAY_PLUGIN_FROM_RELAY,
+	ID_RELAY_PLUGIN,
+	ID_RESERVED_0,
 
 	// RelayPlugin::AddParticipantRequestFromClient()
-	ID_RELAY_PLUGIN_ADD_CLIENT,
+	ID_RESERVED_1,
 	// Result of RelayPlugin::AddParticipantRequestFromClient(). Use bitStream to read one byte, true for success, false for failure (name in use). Use bitStream with ReadCompressed on a RakString to read the original name specified
-	ID_RELAY_PLUGIN_ADD_CLIENT_RESPONSE,
+	ID_RESERVED_2,
 	ID_RESERVED_3,
 	ID_RESERVED_4,
 	ID_RESERVED_5,
