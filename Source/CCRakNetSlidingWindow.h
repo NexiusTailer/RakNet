@@ -172,9 +172,7 @@ class CCRakNetSlidingWindow
 	static bool LessThan(DatagramSequenceNumberType a, DatagramSequenceNumberType b);
 //	void SetTimeBetweenSendsLimit(unsigned int bitsPerSecond);
 	uint64_t GetBytesPerSecondLimitByCongestionControl(void) const;
-
-	void OnExternalPing(double pingMS);
-
+	  
 	protected:
 
 	// Maximum amount of bytes that the user can send, e.g. the size of one full datagram

@@ -46,24 +46,28 @@ The bitstream class is a helper class under the namespace RakNet that is used to
     bitStream.Write(myVector.y);<BR>
     bitStream.Write(myVector.z);<BR>
     <BR>
-    // You can also override operator left shift and right shift<BR>
-    RakNet::BitStream& operator &lt;&lt; (RakNet::BitStream& out, MyVector& in)<BR>
-    {<BR>
-    out.WriteNormVector(in.x,in.y,in.z);<BR>
-    return out;<BR>
-    }<BR>
-    RakNet::BitStream& operator &gt;&gt; (RakNet::BitStream& in, MyVector& out)<BR>
-    {<BR>
-    bool success = in.ReadNormVector(out.x,out.y,out.z);<BR>
-    assert(success);<BR>
-    return in;<BR>
-    }<BR>
-    <BR>
-    // Read from bitstream<BR>
-    myVector << bitStream;<BR>
-    // Write to bitstream<BR>
-    myVector >> bitStream;<BR>
-    </span>
+    // You can also override operator left shift and right shift</span><br>
+    <span class="RakNetCode">// Shift operators have to be in the namespace RakNet or they might use the default one in BitStream.h instead. Error occurs with std::string<br>
+  namespace RakNet<br>
+  {</span></p>
+<p><span class="RakNetCode">  RakNet::BitStream& operator &lt;&lt; (RakNet::BitStream& out, MyVector& in)<BR>
+  {<BR>
+  out.WriteNormVector(in.x,in.y,in.z);<BR>
+  return out;<BR>
+  }<BR>
+  RakNet::BitStream& operator &gt;&gt; (RakNet::BitStream& in, MyVector& out)<BR>
+  {<BR>
+  bool success = in.ReadNormVector(out.x,out.y,out.z);<BR>
+  assert(success);<BR>
+  return in;<BR>
+  }</span></p>
+<p><span class="RakNetCode">} // namespace RakNet<BR>
+  <BR>
+  // Read from bitstream<BR>
+  myVector << bitStream;<BR>
+  // Write to bitstream<BR>
+  myVector >> bitStream;<BR>
+  </span>
   <BR>
   Optional - One of the constructor versions takes a length in bytes as a parameter.  If you have an idea of the size of your data you can pass this number when creating the bitstream to avoid internal reallocations.<BR>
   <BR>

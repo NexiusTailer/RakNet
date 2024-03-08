@@ -3156,9 +3156,6 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_SetDebugInterface")]
   public static extern void NatPunchthroughClient_SetDebugInterface(HandleRef jarg1, HandleRef jarg2);
 
-  [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_GetGuidsForGroupPunchthroughRequest")]
-  public static extern void NatPunchthroughClient_GetGuidsForGroupPunchthroughRequest(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3);
-
   [DllImport("RakNet", EntryPoint="CSharp_NatPunchthroughClient_GetUPNPPortMappings")]
   public static extern void NatPunchthroughClient_GetUPNPPortMappings(HandleRef jarg1, string jarg2, string jarg3, HandleRef jarg4);
 

@@ -415,7 +415,26 @@ void RPC4::Signal(const char *sharedIdentifier, RakNet::BitStream *bitStream, Pa
 		functionIndex = localSlots.GetIndexOf(sharedIdentifier);
 		if (functionIndex.IsInvalid())
 			return;
-		rakPeerInterface->Send(&out,priority,reliability,orderingChannel,rakPeerInterface->GetMyGUID(),false);
+		
+		Packet p;
+		p.guid=rakPeerInterface->GetMyGUID();
+		p.systemAddress=rakPeerInterface->GetMyBoundAddress(0);
+		p.wasGeneratedLocally=true;
+		RakNet::BitStream *bsptr, bstemp;
+		if (bitStream)
+		{
+			bitStream->ResetReadPointer();
+			p.length=bitStream->GetNumberOfBytesUsed();
+			p.bitSize=bitStream->GetNumberOfBitsUsed();
+			bsptr=bitStream;
+		}
+		else
+		{
+			p.length=0;
+			p.bitSize=0;
+			bsptr=&bstemp;
+		}
+		InvokeSignal(functionIndex, bsptr, &p);
 	}
 }
 void RPC4::InvokeSignal(DataStructures::HashIndex functionIndex, RakNet::BitStream *serializedParameters, Packet *packet)

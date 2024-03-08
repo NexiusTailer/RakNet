@@ -20,6 +20,15 @@ int Lobby2Client_Steam_Impl::SystemAddressAndRoomMemberComp( const SystemAddress
 	return 1;
 }
 
+int Lobby2Client_Steam_Impl::SteamIDAndRoomMemberComp( const uint64_t &key, const Lobby2Client_Steam_Impl::RoomMember &data )
+{
+	if (key<data.steamIDRemote)
+		return -1;
+	if (key==data.steamIDRemote)
+		return 0;
+	return 1;
+}
+
 Lobby2Client_Steam_Impl::Lobby2Client_Steam_Impl() :
 m_CallbackLobbyDataUpdated( this, &Lobby2Client_Steam_Impl::OnLobbyDataUpdatedCallback ),
 m_CallbackPersonaStateChange( this, &Lobby2Client_Steam_Impl::OnPersonaStateChange ),
@@ -179,7 +188,8 @@ void Lobby2Client_Steam_Impl::OnLobbyCreated( LobbyCreated_t *pCallback, bool bI
 			roomMember.steamIDRemote=SteamMatchmaking()->GetLobbyOwner(roomId).ConvertToUint64();
 			roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
 			roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
-			roomMembers.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_); // GetLobbyMemberByIndex( roomId, 0 ).ConvertToUint64());
+			roomMembersByAddr.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_);
+			roomMembersById.Insert(roomMember.steamIDRemote,roomMember,true,_FILE_AND_LINE_);
 
 			callbackResult->extendedResultCode=pCallback->m_eResult;
 			if (pCallback->m_eResult==k_EResultOK)
@@ -221,32 +231,20 @@ void Lobby2Client_Steam_Impl::OnLobbyJoined( LobbyEnter_t *pCallback, bool bIOFa
 				roomMember.steamIDRemote=SteamUser()->GetSteamID().ConvertToUint64();
 				roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
 				roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
-				roomMembers.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_);
+				roomMembersByAddr.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_);
+				roomMembersById.Insert(roomMember.steamIDRemote,roomMember,true,_FILE_AND_LINE_);
 
 				CallRoomCallbacks();
 
 				// In case the asynch lobby update didn't get it fast enough
-				DataStructures::DefaultIndexType rmi;
 				uint64_t myId64=SteamUser()->GetSteamID().ConvertToUint64();
-				for (rmi=0; rmi < roomMembers.Size(); rmi++)
-				{
-					if (myId64==roomMembers[rmi].steamIDRemote)
-						break;
-				}
-
-				if (rmi==roomMembers.Size())
+				if (roomMembersById.HasData(myId64)==false)
 				{
 					roomMember.steamIDRemote=SteamMatchmaking()->GetLobbyOwner(roomId).ConvertToUint64();
 					roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
 					roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
-					roomMembers.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_);
-				}
-
-				DataStructures::DefaultIndexType j;
-				for (j=0; j < roomMembers.Size(); j++)
-				{
-					if (roomMembers[j].steamIDRemote==SteamUser()->GetSteamID().ConvertToUint64())
-						continue;
+					roomMembersByAddr.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_);
+					roomMembersById.Insert(roomMember.steamIDRemote,roomMember,true,_FILE_AND_LINE_);
 				}
 			}
 			else
@@ -355,49 +353,56 @@ bool Lobby2Client_Steam_Impl::IsRoomOwner(const uint64_t cSteamID)
 
 bool Lobby2Client_Steam_Impl::IsInRoom(void) const
 {
-	return roomMembers.Size() > 0;
+	return roomMembersById.Size() > 0;
 }
 
 void Lobby2Client_Steam_Impl::CallRoomCallbacks()
 {
 	DataStructures::OrderedList<uint64_t,uint64_t> currentMembers;
 	GetRoomMembers(currentMembers);
-	DataStructures::OrderedList<SystemAddress, RoomMember, SystemAddressAndRoomMemberComp> updatedRoomMembers;
+	DataStructures::OrderedList<uint64_t, RoomMember, SteamIDAndRoomMemberComp> updatedRoomMembers;
+	bool anyChanges=false;
 
 	DataStructures::DefaultIndexType currentMemberIndex=0, oldMemberIndex=0;
-	while (currentMemberIndex < currentMembers.Size() && oldMemberIndex < roomMembers.Size())
+	while (currentMemberIndex < currentMembers.Size() && oldMemberIndex < roomMembersById.Size())
 	{
-		if (currentMembers[currentMemberIndex]<roomMembers[oldMemberIndex].steamIDRemote)
+		if (currentMembers[currentMemberIndex]<roomMembersById[oldMemberIndex].steamIDRemote)
 		{
 			RoomMember roomMember;
 			roomMember.steamIDRemote=currentMembers[currentMemberIndex];
 			roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
 			roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
-			updatedRoomMembers.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_);
+			updatedRoomMembers.Insert(roomMember.steamIDRemote,roomMember,true,_FILE_AND_LINE_);
+
+			anyChanges=true;
 
 			// new member
 			NotifyNewMember(currentMembers[currentMemberIndex], roomMember.systemAddress);
 			currentMemberIndex++;
 		}
-		else if (currentMembers[currentMemberIndex]>roomMembers[oldMemberIndex].steamIDRemote)
+		else if (currentMembers[currentMemberIndex]>roomMembersById[oldMemberIndex].steamIDRemote)
 		{
+			anyChanges=true;
+
 			// dropped member
-			NotifyDroppedMember(roomMembers[oldMemberIndex].steamIDRemote, roomMembers[oldMemberIndex].systemAddress);
+			NotifyDroppedMember(roomMembersById[oldMemberIndex].steamIDRemote, roomMembersById[oldMemberIndex].systemAddress);
 			oldMemberIndex++;
 		}
 		else
 		{
-			updatedRoomMembers.Insert(roomMembers[oldMemberIndex].systemAddress,roomMembers[oldMemberIndex],true,_FILE_AND_LINE_);
+			updatedRoomMembers.Insert(roomMembersById[oldMemberIndex].steamIDRemote,roomMembersById[oldMemberIndex],true,_FILE_AND_LINE_);
 
 			currentMemberIndex++;
 			oldMemberIndex++;
 		}
 	}
 
-	while (oldMemberIndex < roomMembers.Size())
+	while (oldMemberIndex < roomMembersById.Size())
 	{
+		anyChanges=true;
+
 		// dropped member
-		NotifyDroppedMember(roomMembers[oldMemberIndex].steamIDRemote, roomMembers[oldMemberIndex].systemAddress);
+		NotifyDroppedMember(roomMembersById[oldMemberIndex].steamIDRemote, roomMembersById[oldMemberIndex].systemAddress);
 
 		oldMemberIndex++;
 	}
@@ -407,7 +412,9 @@ void Lobby2Client_Steam_Impl::CallRoomCallbacks()
 		roomMember.steamIDRemote=currentMembers[currentMemberIndex];
 		roomMember.systemAddress.address.addr4.sin_addr.s_addr=nextFreeSystemAddress++;
 		roomMember.systemAddress.SetPort(STEAM_UNUSED_PORT);
-		updatedRoomMembers.Insert(roomMember.systemAddress,roomMember,true,_FILE_AND_LINE_);
+		updatedRoomMembers.Insert(roomMember.steamIDRemote,roomMember,true,_FILE_AND_LINE_);
+
+		anyChanges=true;
 
 		// new member
 		NotifyNewMember(currentMembers[currentMemberIndex], roomMember.systemAddress);
@@ -415,7 +422,15 @@ void Lobby2Client_Steam_Impl::CallRoomCallbacks()
 		currentMemberIndex++;
 	}
 
-	roomMembers=updatedRoomMembers;
+	if (anyChanges)
+	{
+		roomMembersById=updatedRoomMembers;
+		roomMembersByAddr.Clear(true, _FILE_AND_LINE_);
+		for (currentMemberIndex=0; currentMemberIndex < roomMembersById.Size(); currentMemberIndex++)
+		{
+			roomMembersByAddr.Insert(roomMembersById[currentMemberIndex].systemAddress, roomMembersById[currentMemberIndex], true, _FILE_AND_LINE_);
+		}
+	}
 }
 void Lobby2Client_Steam_Impl::NotifyNewMember(uint64_t memberId, SystemAddress remoteSystem)
 {
@@ -442,15 +457,13 @@ void Lobby2Client_Steam_Impl::NotifyDroppedMember(uint64_t memberId, SystemAddre
 	CallCBWithResultCode(&notification, L2RC_SUCCESS);
 
 	DataStructures::DefaultIndexType i;
-	for (i=0; i < roomMembers.Size(); i++)
+	bool objectExists;
+	i = roomMembersById.GetIndexFromKey(memberId, &objectExists);
+	if (objectExists)
 	{
-		if (roomMembers[i].steamIDRemote==memberId)
-		{
-			rakPeerInterface->CloseConnection(roomMembers[i].systemAddress,false);
-			// Is this necessary?
-			SteamNetworking()->CloseP2PSessionWithUser( memberId );
-			break;
-		}
+		rakPeerInterface->CloseConnection(roomMembersById[i].systemAddress,false);
+		// Is this necessary?
+		SteamNetworking()->CloseP2PSessionWithUser( memberId );
 	}
 }
 void Lobby2Client_Steam_Impl::ClearRoom(void)
@@ -458,12 +471,13 @@ void Lobby2Client_Steam_Impl::ClearRoom(void)
 	roomId=0;
 	if (SteamNetworking())
 	{
-		for (DataStructures::DefaultIndexType i=0; i < roomMembers.Size(); i++)
+		for (DataStructures::DefaultIndexType i=0; i < roomMembersById.Size(); i++)
 		{
-			SteamNetworking()->CloseP2PSessionWithUser( roomMembers[i].steamIDRemote );
+			SteamNetworking()->CloseP2PSessionWithUser( roomMembersById[i].steamIDRemote );
 		}
 	}
-	roomMembers.Clear(true,_FILE_AND_LINE_);
+	roomMembersById.Clear(true,_FILE_AND_LINE_);
+	roomMembersByAddr.Clear(true,_FILE_AND_LINE_);
 }
 void Lobby2Client_Steam_Impl::OnP2PSessionRequest( P2PSessionRequest_t *pCallback )
 {
@@ -485,10 +499,10 @@ void Lobby2Client_Steam_Impl::NotifyLeaveRoom(void)
 int Lobby2Client_Steam_Impl::RakNetSendTo( SOCKET s, const char *data, int length, const SystemAddress &systemAddress )
 {
 	bool objectExists;
-	DataStructures::DefaultIndexType i = roomMembers.GetIndexFromKey(systemAddress, &objectExists);
+	DataStructures::DefaultIndexType i = roomMembersByAddr.GetIndexFromKey(systemAddress, &objectExists);
 	if (objectExists)
 	{
-		if (SteamNetworking()->SendP2PPacket(roomMembers[i].steamIDRemote, data, length, k_EP2PSendUnreliable))
+		if (SteamNetworking()->SendP2PPacket(roomMembersByAddr[i].steamIDRemote, data, length, k_EP2PSendUnreliable))
 			return length;
 		else
 			return 0;
@@ -514,13 +528,11 @@ int Lobby2Client_Steam_Impl::RakNetRecvFrom( const SOCKET sIn, RakPeer *rakPeerI
 		{
 			uint64_t steamIDRemote64=psteamIDRemote.ConvertToUint64();
 			DataStructures::DefaultIndexType i;
-			for (i=0; i < roomMembers.Size(); i++)
+			bool objectExists;
+			i = roomMembersById.GetIndexFromKey(steamIDRemote64, &objectExists);
+			if (objectExists)
 			{
-				if (roomMembers[i].steamIDRemote==steamIDRemote64)
-				{
-					*senderOut=roomMembers[i].systemAddress;
-					break;
-				}
+				*senderOut=roomMembersById[i].systemAddress;
 			}
 			return pcubMsgSize;
 		}
@@ -538,11 +550,17 @@ void Lobby2Client_Steam_Impl::OnClosedConnection(const SystemAddress &systemAddr
 	(void) rakNetGUID;
 
 	bool objectExists;
-	DataStructures::DefaultIndexType i = roomMembers.GetIndexFromKey(systemAddress, &objectExists);
+	DataStructures::DefaultIndexType i = roomMembersByAddr.GetIndexFromKey(systemAddress, &objectExists);
 	if (objectExists)
 	{
-		SteamNetworking()->CloseP2PSessionWithUser( roomMembers[i].steamIDRemote );
-		roomMembers.RemoveAtIndex(i);
+		uint64_t steamIDRemote = roomMembersByAddr[i].steamIDRemote;
+
+		SteamNetworking()->CloseP2PSessionWithUser( steamIDRemote );
+		roomMembersByAddr.RemoveAtIndex(i);
+
+		i = roomMembersById.GetIndexFromKey(steamIDRemote, &objectExists);
+		RakAssert(objectExists);
+		roomMembersById.RemoveAtIndex(i);
 	}
 }
 void Lobby2Client_Steam_Impl::OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason)
@@ -550,11 +568,17 @@ void Lobby2Client_Steam_Impl::OnFailedConnectionAttempt(Packet *packet, PI2_Fail
 	(void) failedConnectionAttemptReason;
 
 	bool objectExists;
-	DataStructures::DefaultIndexType i = roomMembers.GetIndexFromKey(packet->systemAddress, &objectExists);
+	DataStructures::DefaultIndexType i = roomMembersByAddr.GetIndexFromKey(packet->systemAddress, &objectExists);
 	if (objectExists)
 	{
-		SteamNetworking()->CloseP2PSessionWithUser( roomMembers[i].steamIDRemote );
-		roomMembers.RemoveAtIndex(i);
+		uint64_t steamIDRemote = roomMembersByAddr[i].steamIDRemote;
+
+		SteamNetworking()->CloseP2PSessionWithUser( steamIDRemote );
+		roomMembersByAddr.RemoveAtIndex(i);
+
+		i = roomMembersById.GetIndexFromKey(steamIDRemote, &objectExists);
+		RakAssert(objectExists);
+		roomMembersById.RemoveAtIndex(i);
 	}
 }
 void Lobby2Client_Steam_Impl::OnAttach(void)

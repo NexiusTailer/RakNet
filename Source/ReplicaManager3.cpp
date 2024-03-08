@@ -482,11 +482,6 @@ PluginReceiveResult ReplicaManager3::OnReceive(Packet *packet)
 		}
 		else
 			break;
-	case ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING:
-		if (incomingWorldId!=worldId)
-			return RR_CONTINUE_PROCESSING;
-		OnConstructionExisting(packet->data, packet->length, packet->guid, packetDataOffset);
-		break;
 	case ID_REPLICA_MANAGER_SCOPE_CHANGE:
 		{
 			if (incomingWorldId!=worldId)
@@ -531,7 +526,10 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3)
 			if (constructionState==RM3CS_ALREADY_EXISTS_REMOTELY || constructionState==RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT)
 			{
 				OnReplicaAlreadyExists(index, replicaManager3);
+				if (constructionState==RM3CS_ALREADY_EXISTS_REMOTELY)
+					constructedReplicasCulled.Push(lsr->replica,lsr->replica,_FILE_AND_LINE_);
 
+				/*
 				if (constructionState==RM3CS_ALREADY_EXISTS_REMOTELY)
 				{
 					// Serialize construction data to this connection
@@ -577,6 +575,7 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3)
 					if (SendSerialize(replica, allIndices, sp.outputBitstream, sp.messageTimestamp, sp.pro, replicaManager3->GetRakPeerInterface(), replicaManager3->GetWorldID())==SSICR_SENT_DATA)
 						lsr->replica->whenLastSerialized=RakNet::GetTimeMS();
 				}
+				*/
 			}
 			else if (constructionState==RM3CS_SEND_CONSTRUCTION)
 			{
@@ -653,8 +652,7 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3)
 		}
 	}
 
-	SendConstruction(constructedReplicasCulled,destroyedReplicasCulled,replicaManager3->defaultSendParameters,replicaManager3->rakPeerInterface,replicaManager3->worldId);
-
+	SendConstruction(constructedReplicasCulled,destroyedReplicasCulled,replicaManager3->defaultSendParameters,replicaManager3->rakPeerInterface,replicaManager3->worldId,replicaManager3);
 }
 void ReplicaManager3::Update(void)
 {
@@ -771,32 +769,6 @@ void ReplicaManager3::OnDetach(void)
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void ReplicaManager3::OnConstructionExisting(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset)
-{
-	Connection_RM3 *connection = GetConnectionByGUID(senderGuid);
-	if (connection==0)
-	{
-		// Almost certainly a bug
-		RakAssert("Got OnConstruction but no connection yet" && 0);
-		return;
-	}
-
-	RakNet::BitStream bsIn(packetData,packetDataLength,false);
-	bsIn.IgnoreBytes(packetDataOffset);
-
-	RakAssert(networkIDManager);
-
-	NetworkID networkId;
-	bsIn.Read(networkId);
-	Replica3* existingReplica = networkIDManager->GET_OBJECT_FROM_ID<Replica3*>(networkId);
-	if (existingReplica)
-	{
-		existingReplica->DeserializeConstructionExisting(&bsIn, connection);
-	}
-}
-
-// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset)
 {
 	Connection_RM3 *connection = GetConnectionByGUID(senderGuid);
@@ -814,12 +786,14 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 
 	RakNet::BitStream bsIn(packetData,packetDataLength,false);
 	bsIn.IgnoreBytes(packetDataOffset);
-	DataStructures::DefaultIndexType constructionObjectListSize, destructionObjectListSize, index, index2;
+	uint16_t constructionObjectListSize, destructionObjectListSize, index, index2;
 	BitSize_t streamEnd, writeAllocationIDEnd;
 	Replica3 *replica;
 	NetworkID networkId;
 	RakNetGUID creatingSystemGuid;
+	bool actuallyCreateObject;
 
+	DataStructures::Multilist<ML_STACK, bool> actuallyCreateObjectList;
 	DataStructures::Multilist<ML_STACK, Replica3*> constructionTickStack;
 
 	RakAssert(networkIDManager);
@@ -829,59 +803,85 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 	{
 		bsIn.Read(streamEnd);
 		bsIn.Read(networkId);
-		bsIn.Read(creatingSystemGuid);
-		bsIn.Read(writeAllocationIDEnd);
-
-		//printf("OnConstruction: %i\n",networkId.guid.g); // Removeme
 		Replica3* existingReplica = networkIDManager->GET_OBJECT_FROM_ID<Replica3*>(networkId);
-		if (existingReplica)
-		{
-			existingReplica->replicaManager=this;
-
-			// Network ID already in use
-			connection->OnDownloadExisting(existingReplica, this);
-
-			bsIn.SetReadOffset(streamEnd);
-			continue;
-		}
-
+		bsIn.Read(actuallyCreateObject);
+		actuallyCreateObjectList.Push(actuallyCreateObject, _FILE_AND_LINE_);
 		bsIn.AlignReadToByteBoundary();
-		replica = connection->AllocReplica(&bsIn, this);
-		if (replica==0)
+
+		if (actuallyCreateObject)
 		{
-			bsIn.SetReadOffset(streamEnd);
-			continue;
+			bsIn.Read(creatingSystemGuid);
+			bsIn.Read(writeAllocationIDEnd);
+
+			//printf("OnConstruction: %i\n",networkId.guid.g); // Removeme
+			if (existingReplica)
+			{
+				existingReplica->replicaManager=this;
+
+				// Network ID already in use
+				connection->OnDownloadExisting(existingReplica, this);
+
+                constructionTickStack.Push(0, _FILE_AND_LINE_);
+				bsIn.SetReadOffset(streamEnd);
+				continue;
+			}
+
+			bsIn.AlignReadToByteBoundary();
+			replica = connection->AllocReplica(&bsIn, this);
+			if (replica==0)
+			{
+                constructionTickStack.Push(0, _FILE_AND_LINE_);
+				bsIn.SetReadOffset(streamEnd);
+				continue;
+			}
+
+			// Go past the bitStream written to with WriteAllocationID(). Necessary in case the user didn't read out the bitStream the same way it was written
+			// bitOffset2 is already aligned
+			bsIn.SetReadOffset(writeAllocationIDEnd);
+
+			replica->SetNetworkIDManager(networkIDManager);
+			replica->SetNetworkID(networkId);
+
+			replica->replicaManager=this;
+			replica->creatingSystemGUID=creatingSystemGuid;
+
+			if (!replica->QueryRemoteConstruction(connection) ||
+				!replica->DeserializeConstruction(&bsIn, connection))
+			{
+				replica->replicaManager=0;
+				replica->DeallocReplica(connection);
+				bsIn.SetReadOffset(streamEnd);
+				constructionTickStack.Push(0, _FILE_AND_LINE_);
+				continue;
+			}
+
+			constructionTickStack.Push(replica, _FILE_AND_LINE_);
+
+			// Register the replica
+			ReferenceInternal(replica);
+		}
+		else
+		{
+			if (existingReplica)
+			{
+				existingReplica->DeserializeConstructionExisting(&bsIn, connection);
+				constructionTickStack.Push(existingReplica, _FILE_AND_LINE_);
+			}
+			else
+			{
+				constructionTickStack.Push(0, _FILE_AND_LINE_);
+			}
 		}
 
-		// Go past the bitStream written to with WriteAllocationID(). Necessary in case the user didn't read out the bitStream the same way it was written
-		// bitOffset2 is already aligned
-		bsIn.SetReadOffset(writeAllocationIDEnd);
-
-		replica->SetNetworkIDManager(networkIDManager);
-		replica->SetNetworkID(networkId);
-
-		replica->replicaManager=this;
-		replica->creatingSystemGUID=creatingSystemGuid;
-
-		if (!replica->QueryRemoteConstruction(connection) ||
-			!replica->DeserializeConstruction(&bsIn, connection))
-		{
-			replica->replicaManager=0;
-			replica->DeallocReplica(connection);
-			bsIn.SetReadOffset(streamEnd);
-			continue;
-		}
 
 		bsIn.SetReadOffset(streamEnd);
-
 		bsIn.AlignReadToByteBoundary();
-
-		// Register the replica
-		ReferenceInternal(replica);
-
-		constructionTickStack.Push(replica, _FILE_AND_LINE_);
 	}
 
+    RakAssert(constructionTickStack.GetSize()==constructionObjectListSize);
+	RakAssert(actuallyCreateObjectList.GetSize()==constructionObjectListSize);
+
+	RakNet::BitStream empty;
 	for (index=0; index < constructionObjectListSize; index++)
 	{
 		bool pdcWritten;
@@ -891,29 +891,37 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 			bsIn.AlignReadToByteBoundary();
 			bsIn.Read(streamEnd);
 			bsIn.Read(networkId);
-			Replica3* existingReplica = networkIDManager->GET_OBJECT_FROM_ID<Replica3*>(networkId);
-			if (existingReplica)
+			if (constructionTickStack[index]!=0)
 			{
 				bsIn.AlignReadToByteBoundary();
-				constructionTickStack[index]->PostDeserializeConstruction(&bsIn, connection);
+				if (actuallyCreateObjectList[index])
+					constructionTickStack[index]->PostDeserializeConstruction(&bsIn, connection);
+				else
+					constructionTickStack[index]->PostDeserializeConstructionExisting(&bsIn, connection);
 			}
 			bsIn.SetReadOffset(streamEnd);
 		}
 		else
 		{
-			constructionTickStack[index]->PostDeserializeConstruction(&bsIn, connection);
+			constructionTickStack[index]->PostDeserializeConstruction(&empty, connection);
 		}
 	}
 
-	for (index=0; index < constructionTickStack.GetSize(); index++)
+	for (index=0; index < constructionObjectListSize; index++)
 	{
-		// Tell the connection(s) that this object exists since they just sent it to us
-		connection->OnDownloadFromThisSystem(constructionTickStack[index], this);
-
-		for (index2=0; index2 < connectionList.GetSize(); index2++)
+		if (constructionTickStack[index]!=0)
 		{
-			if (connectionList[index2]!=connection)
-				connectionList[index2]->OnDownloadFromOtherSystem(constructionTickStack[index], this);
+			if (actuallyCreateObjectList[index])
+			{
+				// Tell the connection(s) that this object exists since they just sent it to us
+				connection->OnDownloadFromThisSystem(constructionTickStack[index], this);
+
+				for (index2=0; index2 < connectionList.GetSize(); index2++)
+				{
+					if (connectionList[index2]!=connection)
+						connectionList[index2]->OnDownloadFromOtherSystem(constructionTickStack[index], this);
+				}
+			}
 		}
 	}
 
@@ -1093,9 +1101,9 @@ void ReplicaManager3::BroadcastDestructionList(DataStructures::Multilist<ML_STAC
 		bsOut.Reset();
 		bsOut.Write((MessageID)ID_REPLICA_MANAGER_CONSTRUCTION);
 		bsOut.Write(worldId);
-		DataStructures::DefaultIndexType cnt=0;
+		uint16_t cnt=0;
 		bsOut.Write(cnt); // No construction
-		cnt=replicaList.GetSize();
+		cnt=(uint16_t) replicaList.GetSize();
 		bsOut.Write(cnt);
 
 		for (i=0; i < replicaList.GetSize(); i++)
@@ -1778,7 +1786,7 @@ void Connection_RM3::ValidateLists(ReplicaManager3 *replicaManager) const
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> &newObjects, DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> &deletedObjects, PRO sendParameters, RakNet::RakPeerInterface *rakPeer, unsigned char worldId)
+void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> &newObjects, DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> &deletedObjects, PRO sendParameters, RakNet::RakPeerInterface *rakPeer, unsigned char worldId, ReplicaManager3 *replicaManager3)
 {
 	if (newObjects.GetSize()==0 && deletedObjects.GetSize()==0)
 		return;
@@ -1798,12 +1806,13 @@ void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, Replic
 		rakPeer->Send(&bsOut,sendParameters.priority,RELIABLE_ORDERED,sendParameters.orderingChannel,systemAddress,false,sendParameters.sendReceipt);
 	}
 
-
 	//	LastSerializationResult* lsr;
 	bsOut.Reset();
 	bsOut.Write((MessageID)ID_REPLICA_MANAGER_CONSTRUCTION);
 	bsOut.Write(worldId);
-	bsOut.Write(newObjects.GetSize());
+	uint16_t objectSize = (uint16_t) newObjects.GetSize();
+	bsOut.Write(objectSize);
+
 	// Construction
 	for (newListIndex=0; newListIndex < newObjects.GetSize(); newListIndex++)
 	{
@@ -1811,17 +1820,32 @@ void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, Replic
 		bsOut.Write(offsetStart); // overwritten to point to the end of the stream
 		networkId=newObjects[newListIndex]->GetNetworkID();
 		bsOut.Write(networkId);
-		bsOut.Write(newObjects[newListIndex]->creatingSystemGUID);
-		offsetStart2=bsOut.GetWriteOffset();
-		bsOut.Write(offsetStart2); // overwritten to point to after the call to WriteAllocationID
-		bsOut.AlignWriteToByteBoundary(); // Give the user an aligned bitStream in case they use memcpy
-		newObjects[newListIndex]->WriteAllocationID(this, &bsOut);
-		bsOut.AlignWriteToByteBoundary();  // Give the user an aligned bitStream in case they use memcpy
-		offsetEnd=bsOut.GetWriteOffset();
-		bsOut.SetWriteOffset(offsetStart2);
-		bsOut.Write(offsetEnd);
-		bsOut.SetWriteOffset(offsetEnd);
-		newObjects[newListIndex]->SerializeConstruction(&bsOut, this);
+
+		RM3ConstructionState cs = newObjects[newListIndex]->QueryConstruction(this, replicaManager3);
+		bool actuallyCreateObject = cs==RM3CS_SEND_CONSTRUCTION;
+		bsOut.Write(actuallyCreateObject);
+		bsOut.AlignWriteToByteBoundary();
+
+		if (actuallyCreateObject)
+		{
+			// Actually create the object
+			bsOut.Write(newObjects[newListIndex]->creatingSystemGUID);
+			offsetStart2=bsOut.GetWriteOffset();
+			bsOut.Write(offsetStart2); // overwritten to point to after the call to WriteAllocationID
+			bsOut.AlignWriteToByteBoundary(); // Give the user an aligned bitStream in case they use memcpy
+			newObjects[newListIndex]->WriteAllocationID(this, &bsOut);
+			bsOut.AlignWriteToByteBoundary();  // Give the user an aligned bitStream in case they use memcpy
+			offsetEnd=bsOut.GetWriteOffset();
+			bsOut.SetWriteOffset(offsetStart2);
+			bsOut.Write(offsetEnd);
+			bsOut.SetWriteOffset(offsetEnd);
+			newObjects[newListIndex]->SerializeConstruction(&bsOut, this);
+		}
+		else
+		{
+			newObjects[newListIndex]->SerializeConstructionExisting(&bsOut, this);
+		}
+
 		bsOut.AlignWriteToByteBoundary();
 		offsetEnd=bsOut.GetWriteOffset();
 		bsOut.SetWriteOffset(offsetStart);
@@ -1833,7 +1857,16 @@ void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, Replic
 	for (newListIndex=0; newListIndex < newObjects.GetSize(); newListIndex++)
 	{
 		bsOut2.Reset();
-		newObjects[newListIndex]->PostSerializeConstruction(&bsOut2, this);
+		RM3ConstructionState cs = newObjects[newListIndex]->QueryConstruction(this, replicaManager3);
+		if (cs==RM3CS_SEND_CONSTRUCTION)
+		{
+			newObjects[newListIndex]->PostSerializeConstruction(&bsOut2, this);
+		}
+		else
+		{
+			RakAssert(cs==RM3CS_ALREADY_EXISTS_REMOTELY);
+			newObjects[newListIndex]->PostSerializeConstructionExisting(&bsOut2, this);
+		}
 		if (bsOut2.GetNumberOfBitsUsed()>0)
 		{
 			bsOut.Write(true);
@@ -1856,8 +1889,8 @@ void Connection_RM3::SendConstruction(DataStructures::Multilist<ML_STACK, Replic
 	bsOut.AlignWriteToByteBoundary();
 
 	// Destruction
-	DataStructures::DefaultIndexType listSize=deletedObjects.GetSize();
-	bsOut.Write(listSize);
+	objectSize = (uint16_t) deletedObjects.GetSize();
+	bsOut.Write(objectSize);
 	for (oldListIndex=0; oldListIndex < deletedObjects.GetSize(); oldListIndex++)
 	{
 		networkId=deletedObjects[oldListIndex]->GetNetworkID();

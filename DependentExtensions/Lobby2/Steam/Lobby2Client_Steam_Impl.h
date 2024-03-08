@@ -61,6 +61,7 @@ public:
 		uint64_t steamIDRemote;
 	};
 	static int SystemAddressAndRoomMemberComp( const SystemAddress &key, const RoomMember &data );
+	static int SteamIDAndRoomMemberComp( const uint64_t &key, const RoomMember &data );
 protected:
 	void CallCBWithResultCode(Lobby2Message *msg, Lobby2ResultCode rc);
 	void PushDeferredCallback(Lobby2Message *msg);
@@ -81,7 +82,8 @@ protected:
 	DataStructures::Multilist<ML_UNORDERED_LIST, Lobby2Message *, uint64_t > deferredCallbacks;
 
 	uint64_t roomId;
-	DataStructures::OrderedList<SystemAddress, RoomMember, SystemAddressAndRoomMemberComp> roomMembers;
+	DataStructures::OrderedList<SystemAddress, RoomMember, SystemAddressAndRoomMemberComp> roomMembersByAddr;
+	DataStructures::OrderedList<uint64_t, RoomMember, SteamIDAndRoomMemberComp> roomMembersById;
 	DataStructures::Multilist<ML_ORDERED_LIST, uint64_t> rooms;
 
 	void ClearRoom(void);

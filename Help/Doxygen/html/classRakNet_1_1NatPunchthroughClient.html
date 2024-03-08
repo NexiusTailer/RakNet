@@ -53,16 +53,12 @@ Inheritance diagram for RakNet::NatPunchthroughClient:</div>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#92dbda7c976d5973c5cd6a3e0aea95c0">OpenNAT</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> destination, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;facilitator)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#53bfa34adf5e537fba0321b1e8ae53db">OpenNATGroup</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> destination, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;facilitator)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#f67b698d5b7389ce475ca3f0d8fa0ad8">OpenNATGroup</a> (<a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &gt; destinationSystems, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;facilitator)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">PunchthroughConfiguration *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#6131cc61e5af13399db4358fbb7b0d15">GetPunchthroughConfiguration</a> (void)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#7bc339aacd4c7f355ebfbab17059c4a0">SetDebugInterface</a> (NatPunchthroughDebugInterface *i)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9c86f7935743abdbf29d9b34a043fb47"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::GetGuidsForGroupPunchthroughRequest" ref="9c86f7935743abdbf29d9b34a043fb47" args="(RakNetGUID excludeThisGuid, DataStructures::List&lt; RakNetGUID &gt; &amp;guids)" -->
-virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#9c86f7935743abdbf29d9b34a043fb47">GetGuidsForGroupPunchthroughRequest</a> (<a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> excludeThisGuid, <a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &gt; &amp;guids)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns all systems except sender by default, ovveride to change. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="621163bc6be3e7d6f6c6b4d9c8e5f938"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::GetUPNPPortMappings" ref="621163bc6be3e7d6f6c6b4d9c8e5f938" args="(char *externalPort, char *internalPort, const SystemAddress &amp;natPunchthroughServerAddress)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#621163bc6be3e7d6f6c6b4d9c8e5f938">GetUPNPPortMappings</a> (char *externalPort, char *internalPort, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;natPunchthroughServerAddress)</td></tr>
 
@@ -265,19 +261,19 @@ Punchthrough a NAT. Doesn't connect, just tries to setup the routing table <dl c
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>facilitator</em>&nbsp;</td><td>A system we are already connected to running the <a class="el" href="classRakNet_1_1NatPunchthroughServer.html" title="Server code for NATPunchthrough.">NatPunchthroughServer</a> plugin </td></tr>
   </table>
 </dl>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#53bfa34adf5e537fba0321b1e8ae53db">OpenNATGroup()</a> You will get <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3ffdbfc82c9c5d38c9c1f99d3244ed865">ID_NAT_PUNCHTHROUGH_SUCCEEDED</a> on success You will get <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3b4a8fb1b8f1cf8d84c1ca12bce33554e">ID_NAT_TARGET_NOT_CONNECTED</a>, <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3fada41cc29bd7576f36f4adab1d0bc05">ID_NAT_TARGET_UNRESPONSIVE</a>, <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd30a8781eb6bf0d36ced05ecba17c8d6ca">ID_NAT_CONNECTION_TO_TARGET_LOST</a>, <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3c5d56d718ed0c497a00d57fae678fe54">ID_NAT_ALREADY_IN_PROGRESS</a>, or <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3bcd2f6fe83d1ab366fe70163bbb141d7">ID_NAT_PUNCHTHROUGH_FAILED</a> on failures of various types However, if you lose connection to the facilitator, you may not necessarily get above </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="classRakNet_1_1NatPunchthroughClient.html#f67b698d5b7389ce475ca3f0d8fa0ad8">OpenNATGroup()</a> You will get <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3ffdbfc82c9c5d38c9c1f99d3244ed865">ID_NAT_PUNCHTHROUGH_SUCCEEDED</a> on success You will get <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3b4a8fb1b8f1cf8d84c1ca12bce33554e">ID_NAT_TARGET_NOT_CONNECTED</a>, <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3fada41cc29bd7576f36f4adab1d0bc05">ID_NAT_TARGET_UNRESPONSIVE</a>, <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd30a8781eb6bf0d36ced05ecba17c8d6ca">ID_NAT_CONNECTION_TO_TARGET_LOST</a>, <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3c5d56d718ed0c497a00d57fae678fe54">ID_NAT_ALREADY_IN_PROGRESS</a>, or <a class="el" href="MessageIdentifiers_8h.html#c1b471af280629f5ace02e586d5bcfd3bcd2f6fe83d1ab366fe70163bbb141d7">ID_NAT_PUNCHTHROUGH_FAILED</a> on failures of various types However, if you lose connection to the facilitator, you may not necessarily get above </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="53bfa34adf5e537fba0321b1e8ae53db"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::OpenNATGroup" ref="53bfa34adf5e537fba0321b1e8ae53db" args="(RakNetGUID destination, const SystemAddress &amp;facilitator)" -->
+<a class="anchor" name="f67b698d5b7389ce475ca3f0d8fa0ad8"></a><!-- doxytag: member="RakNet::NatPunchthroughClient::OpenNATGroup" ref="f67b698d5b7389ce475ca3f0d8fa0ad8" args="(DataStructures::List&lt; RakNetGUID &gt; destinationSystems, const SystemAddress &amp;facilitator)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool RakNet::NatPunchthroughClient::OpenNATGroup           </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;</td>
-          <td class="paramname"> <em>destination</em>, </td>
+          <td class="paramtype"><a class="el" href="classDataStructures_1_1List.html">DataStructures::List</a>&lt; <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> &gt;&nbsp;</td>
+          <td class="paramname"> <em>destinationSystems</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -295,7 +291,7 @@ Punchthrough a NAT. Doesn't connect, just tries to setup the routing table <dl c
 <div class="memdoc">
 
 <p>
-Punchthrough a NAT, and also every system the <em>destination</em> is connected to or has called <a class="el" href="classRakNet_1_1NatPunchthroughClient.html#53bfa34adf5e537fba0321b1e8ae53db">OpenNATGroup()</a> to <em>destination</em> This is useful for peer to peer games where you want to connect to every system in the remote session, not just one particular system If we cannot punch to any system in the group, then the punchthrough is considered a failure <dl class="note" compact><dt><b>Note:</b></dt><dd>For cloud computing, all systems in the group must be connected to the same facilitator since we're only specifying one You will get ID_NAT_GROUP_PUNCH_SUCCEEDED on success You will get ID_NAT_TARGET_NOT_CONNECTED, ID_NAT_ALREADY_IN_PROGRESS, or ID_NAT_GROUP_PUNCH_FAILED on failures of various types However, if you lose connection to the facilitator, you may not necessarily get above </dd></dl>
+Same as calling OpenNAT for a list of systems, but reply is delayed until all systems pass. This is useful for peer to peer games where you want to connect to every system in the remote session, not just one particular system <dl class="note" compact><dt><b>Note:</b></dt><dd>For cloud computing, all systems in the group must be connected to the same facilitator since we're only specifying one You will get ID_NAT_GROUP_PUNCH_SUCCEEDED on success You will get ID_NAT_TARGET_NOT_CONNECTED, ID_NAT_ALREADY_IN_PROGRESS, or ID_NAT_GROUP_PUNCH_FAILED on failures of various types However, if you lose connection to the facilitator, you may not necessarily get above </dd></dl>
 
 </div>
 </div><p>
@@ -327,7 +323,7 @@ Sets a callback to be called with debug messages <dl compact><dt><b>Parameters:<
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="NatPunchthroughClient_8h.html">NatPunchthroughClient.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jul 19 09:27:09 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Aug 18 09:48:19 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

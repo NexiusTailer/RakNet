@@ -45,7 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="DXUT\Core"
+				AdditionalIncludeDirectories="DXUT\Core;&quot;$(SolutionDir)DependentExtensions\SQLite3Plugin\Logger&quot;;&quot;$(SolutionDir)DependentExtensions\SQLite3Plugin\Logger\ClientOnly&quot;;&quot;$(SolutionDir)DependentExtensions\SQLite3Plugin&quot;;&quot;$(SolutionDir)Source&quot;;&quot;$(SolutionDir)DependentExtensions\SQLite3Plugin\Logger\ClientOnly\Optional&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;DEBUG;PROFILE;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="0"
@@ -67,7 +67,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/IGNORE:4089"
-				AdditionalDependencies="d3dxof.lib dxguid.lib d3dx9d.lib d3d9.lib winmm.lib"
+				AdditionalDependencies="d3dxof.lib dxguid.lib d3dx9d.lib d3d9.lib winmm.lib ws2_32.lib"
 				OutputFile="$(OutDir)/Matrices.exe"
 				LinkIncremental="2"
 				GenerateManifest="false"
@@ -212,7 +212,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="DXUT\Core"
+				AdditionalIncludeDirectories="DXUT\Core;&quot;$(SolutionDir)DependentExtensions\SQLite3Plugin\Logger&quot;;&quot;$(SolutionDir)DependentExtensions\SQLite3Plugin\Logger\ClientOnly&quot;;&quot;$(SolutionDir)DependentExtensions\SQLite3Plugin&quot;;&quot;$(SolutionDir)Source&quot;;&quot;$(SolutionDir)DependentExtensions\SQLite3Plugin\Logger\ClientOnly\Optional&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -235,7 +235,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/IGNORE:4089"
-				AdditionalDependencies="d3dxof.lib dxguid.lib d3dx9.lib d3d9.lib winmm.lib"
+				AdditionalDependencies="d3dxof.lib dxguid.lib d3dx9.lib d3d9.lib winmm.lib  ws2_32.lib"
 				OutputFile="$(OutDir)/Matrices.exe"
 				LinkIncremental="1"
 				GenerateManifest="false"
@@ -361,6 +361,58 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="ClientLogger"
+			>
+			<File
+				RelativePath="..\..\Optional\DX9_BackbufferGrabber.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Optional\DX9_BackbufferGrabber.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\sqlite3.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\sqlite3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\SQLite3ClientPlugin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\SQLite3ClientPlugin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\SQLite3PluginCommon.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\SQLite3PluginCommon.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\SQLiteClientLoggerPlugin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\SQLiteClientLoggerPlugin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\SQLiteLoggerCommon.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\SQLiteLoggerCommon.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="DXUT\Optional\directx.ico"
 			>

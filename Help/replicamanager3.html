@@ -46,9 +46,9 @@
 		<LI>Derive your object from Replica3
 		<LI>BEFORE calling replicaManager3->Reference() on the object, call replica3Object->SetNetworkIDManager(replicaManager3->GetNetworkIDManager());
 		<LI>BEFORE calling replicaManager3->Reference() on the object, call replica3Object->SetNetworkID(unique64BitIDLoadedWithLevel);
-		<LI>return RM3CS_ALREADY_EXISTS_REMOTELY from QueryConstruction() if the host/server that should also call SerializeConstructionExisting(). Otherwise return RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT.
-		<LI>Implement WriteAllocationID(), SerializeConstruction(), DeserializeConstruction(), QueryRemoteConstruction(), to do nothing, or return false if the function has a return value.
-		<LI>If the object should also never be destroyed over the network, Implement QueryActionOnPopConnection(), to return RM3AOPC_DO_NOTHING. Implement SerializeDestruction(), DeserializeDestruction(), DeallocReplica() to do nothing.
+		<LI>return RM3CS_ALREADY_EXISTS_REMOTELY from QueryConstruction() from the host/server. Otherwise return RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT.
+		<LI>WriteAllocationID(), SerializeConstruction(), DeserializeConstruction() are not used for static objects, and can have empty implementations.
+		<LI>If the object should also never be destroyed over the network, Implement QueryActionOnPopConnection(), to return RM3AOPC_DO_NOTHING. SerializeDestruction(), DeserializeDestruction(), DeallocReplica() can have empty implementations.
 		<LI>Implement QuerySerialization() to return RM3QSR_CALL_SERIALIZE from the system that serializes the object, typically the peer to peer host or the server. If a system is not currently but can later become a host, such as for peer to peer with host migration, return RM3QSR_DO_NOT_CALL_SERIALIZE. Otherwise return RM3QSR_NEVER_CALL_SERIALIZE.
         <LI>Write to the BitStream in SerializeConstructionExisting() your one-time initialization data, and read it in DeserializeConstructionExisting(). This function is called if and only if QueryConstruction returns RM3CS_ALREADY_EXISTS_REMOTELY.
 		<LI>Write per-tick serialization data in Serialize(), and read it in Deserialize().

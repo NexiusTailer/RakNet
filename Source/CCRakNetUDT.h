@@ -178,8 +178,6 @@ class CCRakNetUDT
 //	void SetTimeBetweenSendsLimit(unsigned int bitsPerSecond);
 	uint64_t GetBytesPerSecondLimitByCongestionControl(void) const;
 
-	void OnExternalPing(double pingMS) {(void) ping;}
-
 	protected:
 	// --------------------------- PROTECTED VARIABLES ---------------------------
 	/// time interval between bytes, in microseconds.

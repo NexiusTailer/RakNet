@@ -1060,9 +1060,11 @@ void CDemo::UpdateRakNet(void)
 				cloudClient->OnGetReponse(&cloudQueryResult, packet);
 				if (cloudQueryResult.rowsReturned.Size()>0)
 				{
-					// Connect to the first game instance
 					// Will return ID_NAT_GROUP_PUNCH_SUCCEEDED on success
-					natPunchthroughClient->OpenNATGroup(cloudQueryResult.rowsReturned[0]->clientGUID, facilitatorSystemAddress);
+					DataStructures::List<RakNet::RakNetGUID> destinationSystems;
+					for (unsigned long i=0; i < cloudQueryResult.rowsReturned.Size(); i++)
+						destinationSystems.Push(cloudQueryResult.rowsReturned[i]->clientGUID, _FILE_AND_LINE_);
+					natPunchthroughClient->OpenNATGroup(destinationSystems, facilitatorSystemAddress);
 				}
 				else
 				{

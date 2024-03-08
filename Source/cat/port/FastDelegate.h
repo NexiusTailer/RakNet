@@ -1994,7 +1994,7 @@ public:
 // So, I have to use a macro.
 
 
-#define FASTDLGT_RETTYPE detail::VoidToDefaultVoid<RetType>::type
+#define FASTDLGT_RETTYPE typename detail::VoidToDefaultVoid<RetType>::type
 
 
 

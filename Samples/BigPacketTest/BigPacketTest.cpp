@@ -77,7 +77,7 @@ int main(void)
 			printf("Server failed to start. Error=%i\n", sr);
 			return 1;
 		}
-	//	server->SetPerConnectionOutgoingBandwidthLimit(28800);
+		// server->SetPerConnectionOutgoingBandwidthLimit(40000);
 
 		printf("Started server on %s\n", server->GetMyBoundAddress().ToString(true));
 	}
@@ -241,6 +241,8 @@ int main(void)
 					start=RakNet::GetTimeMS();
 					printf("ID_CONNECTION_REQUEST_ACCEPTED from %s\n", packet->systemAddress.ToString());
 				}
+				else if (packet->data[0]==ID_CONNECTION_ATTEMPT_FAILED)
+					printf("ID_CONNECTION_ATTEMPT_FAILED from %s\n", packet->systemAddress.ToString());
 
 				client->DeallocatePacket(packet);
 				packet = client->Receive();

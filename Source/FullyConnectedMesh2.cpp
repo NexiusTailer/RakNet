@@ -41,6 +41,7 @@ FullyConnectedMesh2::FullyConnectedMesh2()
 
 	connectOnNewRemoteConnections=true;
 
+	hostRakNetGuid=UNASSIGNED_RAKNET_GUID;
 }
 FullyConnectedMesh2::~FullyConnectedMesh2()
 {
@@ -103,6 +104,7 @@ void FullyConnectedMesh2::SetAutoparticipateConnections(bool b)
 }
 void FullyConnectedMesh2::ResetHostCalculation(void)
 {
+	hostRakNetGuid=UNASSIGNED_RAKNET_GUID;
 	startupTime=RakNet::GetTimeUS();
 	totalConnectionCount=0;
 	ourFCMGuid=0;

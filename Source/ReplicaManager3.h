@@ -113,6 +113,7 @@ public:
 	/// \brief Adds a replicated object to the system.
 	/// \details Anytime you create a new object that derives from Replica3, and you want ReplicaManager3 to use it, pass it to Reference().<BR>
 	/// Remote systems already connected will potentially download this object the next time ReplicaManager3::Update() is called, which happens every time you call RakPeerInterface::Receive().<BR>
+	/// You can also call ReplicaManager3::Update() manually to send referenced objects right away
 	/// \param[in] replica3 The object to start tracking
 	void Reference(RakNet::Replica3 *replica3);
 
@@ -237,15 +238,15 @@ public:
 	/// \internal
 	PRO GetDefaultSendParameters(void) const;
 
+	/// Call interfaces, send data
+	virtual void Update(void);
 protected:
 	virtual PluginReceiveResult OnReceive(Packet *packet);
-	virtual void Update(void);
 	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	virtual void OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 	virtual void OnRakPeerShutdown(void);
 	virtual void OnDetach(void);
 
-	void OnConstructionExisting(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 	PluginReceiveResult OnConstruction(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 	PluginReceiveResult OnSerialize(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, RakNet::Time timestamp, unsigned char packetDataOffset);
 	PluginReceiveResult OnDownloadStarted(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
@@ -486,7 +487,8 @@ public:
 	/// \param[in] sendParameters Controlling parameters over the serialization
 	/// \param[in] rakPeer Instance of RakPeerInterface to send on
 	/// \param[in] worldId Which world, see ReplicaManager3::SetWorldID()
-	virtual void SendConstruction(DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> &newObjects, DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> &deletedObjects, PRO sendParameters, RakNet::RakPeerInterface *rakPeer, unsigned char worldId);
+	/// \param[in] replicaManager3 ReplicaManager3 instance
+	virtual void SendConstruction(DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> &newObjects, DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> &deletedObjects, PRO sendParameters, RakNet::RakPeerInterface *rakPeer, unsigned char worldId, ReplicaManager3 *replicaManager3);
 
 	/// \internal
 	/// Remove from \a newObjectsIn objects that already exist and save to \a newObjectsOut
@@ -857,6 +859,12 @@ public:
 	/// \param[in] sourceConnection System that sent us this network message.
 	virtual void PostDeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {(void) constructionBitstream; (void) sourceConnection;}
 
+	/// Same as PostSerializeConstruction(), but for objects that returned RM3CS_ALREADY_EXISTS_REMOTELY from QueryConstruction
+	virtual void PostSerializeConstructionExisting(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {(void) constructionBitstream; (void) destinationConnection;}
+
+	/// Same as PostDeserializeConstruction(), but for objects that returned RM3CS_ALREADY_EXISTS_REMOTELY from QueryConstruction
+	virtual void PostDeserializeConstructionExisting(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {(void) constructionBitstream; (void) sourceConnection;}
+
 	/// Called after DeserializeDestruction completes for the object successfully, but obviously before the object is deleted.<BR>
 	/// Override to trigger some sort of event when you know the object has completed destruction.
 	/// \param[in] sourceConnection System that sent us this network message.
@@ -973,6 +981,8 @@ public:
 	virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters) {r3CompositeOwner->Deserialize(deserializeParameters);}
 	virtual void PostSerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {r3CompositeOwner->PostSerializeConstruction(constructionBitstream, destinationConnection);}
 	virtual void PostDeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {r3CompositeOwner->PostDeserializeConstruction(constructionBitstream, sourceConnection);}
+	virtual void PostSerializeConstructionExisting(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {r3CompositeOwner->PostSerializeConstructionExisting(constructionBitstream, destinationConnection);}
+	virtual void PostDeserializeConstructionExisting(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {r3CompositeOwner->PostDeserializeConstructionExisting(constructionBitstream, sourceConnection);}
 	virtual void PreDestruction(RakNet::Connection_RM3 *sourceConnection) {r3CompositeOwner->PreDestruction(sourceConnection);}
 };
 

@@ -9,6 +9,7 @@
 #include <memory.h>
 #include "RakPeerInterface.h"
 #include "MessageIdentifiers.h"
+#include "Gets.h"
 
 #include "RakSleep.h"
 #include "RakVoice.h"
@@ -61,31 +62,12 @@ struct myStat{
 	unsigned int bitsSent;
 };
 
-// Keeps a record of the last 20 calls, to give a faster response to traffic change
 void LogStats(){
-	const int numStats = 20;
-	static myStat data[numStats];
-
-	for(int i=0; i<=numStats-2; i++){
-		data[i] = data[i+1];
-	}
-	
 	RakNet::RakNetStatistics *rss=rakPeer->GetStatistics(rakPeer->GetSystemAddressFromIndex(0));
-	unsigned int currTime = RakNet::GetTimeMS();
+	char buffer[1024];
+	StatisticsToString(rss,buffer,1);
+	printf(buffer);
 
-	data[numStats-1].time = currTime;
-	data[numStats-1].bitsSent = rss->totalBitsSent;
-	data[numStats-1].bitsRec = rss->bitsReceived;
-
-	float totalTime = (data[numStats-1].time - data[0].time) / 1000.f ;
-	unsigned int totalBitsSent = data[numStats-1].bitsSent - data[0].bitsSent;
-	unsigned int totalBitsRec = data[numStats-1].bitsRec - data[0].bitsRec;
-	float bpsSent = totalBitsSent/totalTime;
-	float bpsRec = totalBitsRec/totalTime;
-	float avgBpsSent = rss->totalBitsSent/((currTime-rss->connectionStartTime)/1000.0f);
-	float avgBpsRec = rss->bitsReceived/((currTime-rss->connectionStartTime)/1000.0f);
-
-	printf("avgKbpsSent=%02.1f avgKbpsRec=%02.1f kbpsSent=%02.1f kbpsRec=%02.1f   \r", avgBpsSent/1000, avgBpsRec/1000, bpsSent/1000 , bpsRec/1000);
 }
 
 // Prints the current encoder parameters
@@ -220,7 +202,7 @@ int main(void)
 			else if (ch=='m')
 			{
 				mute=!mute;
-				FMODVoiceAdapter::Instance()->SetMute(mute);
+				RakNet::FMODVoiceAdapter::Instance()->SetMute(mute);
 				if (mute)
 					printf("\nNow muted.\n");
 				else
@@ -233,7 +215,7 @@ int main(void)
 			else if (ch==' ')
 			{
 				char message[2048];
-				RakNetStatistics *rss=rakPeer->GetStatistics(rakPeer->GetSystemAddressFromIndex(0));
+				RakNet::RakNetStatistics *rss=rakPeer->GetStatistics(rakPeer->GetSystemAddressFromIndex(0));
 				StatisticsToString(rss, message, 2);
 				printf("%s", message);
 			}

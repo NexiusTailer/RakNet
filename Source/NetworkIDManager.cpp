@@ -59,15 +59,19 @@ void NetworkIDManager::TrackNetworkIDObject(NetworkIDObject *networkIdObject)
 		return;
 	}
 	NetworkIDObject *nio=networkIdHash[hashIndex];
+	// Duplicate insertion?
+	RakAssert(nio!=networkIdObject);
+	// Random GUID conflict?
+	RakAssert(nio->GetNetworkID()!=networkIdObject->GetNetworkID());
 
 	while (nio->nextInstanceForNetworkIDManager!=0)
-	{
+	{		
+		nio=nio->nextInstanceForNetworkIDManager;
+
 		// Duplicate insertion?
 		RakAssert(nio!=networkIdObject);
 		// Random GUID conflict?
 		RakAssert(nio->GetNetworkID()!=networkIdObject->GetNetworkID());
-		
-		nio=nio->nextInstanceForNetworkIDManager;
 	}
 
 	networkIdObject->nextInstanceForNetworkIDManager=0;

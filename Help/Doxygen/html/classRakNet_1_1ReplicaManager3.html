@@ -126,13 +126,13 @@ Inheritance diagram for RakNet::ReplicaManager3:</div>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns what was passed to <a class="el" href="classRakNet_1_1ReplicaManager3.html#d5b83d8fccbf9cd4ff4fec40272aa67d">SetNetworkIDManager()</a>, or the instance on <a class="el" href="classRakNet_1_1RakPeerInterface.html" title="The main interface for network communications.">RakPeerInterface</a> if unset. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#f179de85a2785b2632f1bd5c406fed0a">BroadcastDestructionList</a> (<a class="el" href="classDataStructures_1_1Multilist.html">DataStructures::Multilist</a>&lt; ML_STACK, <a class="el" href="classRakNet_1_1Replica3.html">Replica3</a> * &gt; &amp;replicaList, const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;exclusionAddress)</td></tr>
 
-<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g89998adaafb29e5d879113b992161085">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#0cdd79247e16ca120ed9d13c1fca60ed">OnReceive</a> (<a class="el" href="structRakNet_1_1Packet.html">Packet</a> *packet)</td></tr>
-
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8aa2fdb5b20aeeab74b037bc1632c9e9"></a><!-- doxytag: member="RakNet::ReplicaManager3::Update" ref="8aa2fdb5b20aeeab74b037bc1632c9e9" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9">Update</a> (void)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Update is called every time a packet is checked for . <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Call interfaces, send data. <br></td></tr>
+<tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g89998adaafb29e5d879113b992161085">PluginReceiveResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#0cdd79247e16ca120ed9d13c1fca60ed">OnReceive</a> (<a class="el" href="structRakNet_1_1Packet.html">Packet</a> *packet)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#bebbd0c277164e36dd342b1f83492427">OnClosedConnection</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g376cc546fd6892c2ead48cd51796c8b8">PI2_LostConnectionReason</a> lostConnectionReason)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1ReplicaManager3.html#c0c9ec75335ffe5f117a99ee24b55310">OnNewConnection</a> (const <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> &amp;systemAddress, <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a> rakNetGUID, bool isIncoming)</td></tr>
@@ -833,8 +833,8 @@ If <em>autoCreate</em> is false for <a class="el" href="classRakNet_1_1ReplicaMa
 Adds a replicated object to the system. 
 <p>
 Anytime you create a new object that derives from <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>, and you want <a class="el" href="classRakNet_1_1ReplicaManager3.html" title="System to help automate game object construction, destruction, and serialization...">ReplicaManager3</a> to use it, pass it to <a class="el" href="classRakNet_1_1ReplicaManager3.html#db56b06f09b0379483aeeecfed0805b6" title="Adds a replicated object to the system.">Reference()</a>.<br>
- Remote systems already connected will potentially download this object the next time <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Update is called every time a packet is checked for .">ReplicaManager3::Update()</a> is called, which happens every time you call <a class="el" href="classRakNet_1_1RakPeerInterface.html#1c50453d9dee600920aeabd62ad7c119">RakPeerInterface::Receive()</a>.<br>
- <dl compact><dt><b>Parameters:</b></dt><dd>
+ Remote systems already connected will potentially download this object the next time <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Call interfaces, send data.">ReplicaManager3::Update()</a> is called, which happens every time you call <a class="el" href="classRakNet_1_1RakPeerInterface.html#1c50453d9dee600920aeabd62ad7c119">RakPeerInterface::Receive()</a>.<br>
+ You can also call <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Call interfaces, send data.">ReplicaManager3::Update()</a> manually to send referenced objects right away <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>replica3</em>&nbsp;</td><td>The object to start tracking </td></tr>
   </table>
@@ -1042,7 +1042,7 @@ Defines the unique instance of <a class="el" href="classRakNet_1_1ReplicaManager
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jul 19 09:27:10 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Aug 18 09:48:20 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

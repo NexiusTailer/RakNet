@@ -49,8 +49,10 @@ struct InternalPacketFixedSizeTransmissionHeader
 {
 	/// A unique numerical identifier given to this user message. Used to identify reliable messages on the network
 	MessageNumberType reliableMessageNumber;
-	///The ID used as identification for ordering channels
+	///The ID used as identification for ordering messages. Also included in sequenced messages
 	OrderingIndexType orderingIndex;
+	// Used only with sequenced messages
+	OrderingIndexType sequencingIndex;
 	///What ordering channel this packet is on, if the reliability type uses ordering channels
 	unsigned char orderingChannel;
 	///The ID of the split packet, if we have split packets.  This is the maximum number of split messages we can send simultaneously per connection.

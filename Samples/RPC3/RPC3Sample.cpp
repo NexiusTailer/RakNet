@@ -24,18 +24,22 @@ public:
 	float x,y,z;
 };
 
-// Specialize the << and >> operator to serialize each element of NormalizedVector individually
-// This allows us to endian swap each parameter (which could not otherwise happen) and also send the data in a compressed form
-RakNet::BitStream& operator<<(RakNet::BitStream& out, NormalizedVector& in)
+// Shift operators have to be in the namespace RakNet or they might use the default one in BitStream.h instead. Error occurs with std::string
+namespace RakNet
 {
-	out.WriteNormVector(in.x,in.y,in.z);
-	return out;
-}
-RakNet::BitStream& operator>>(RakNet::BitStream& in, NormalizedVector& out)
-{
-	bool success = in.ReadNormVector(out.x,out.y,out.z);
-	assert(success);
-	return in;
+	// Specialize the << and >> operator to serialize each element of NormalizedVector individually
+	// This allows us to endian swap each parameter (which could not otherwise happen) and also send the data in a compressed form
+	RakNet::BitStream& operator<<(RakNet::BitStream& out, NormalizedVector& in)
+	{
+		out.WriteNormVector(in.x,in.y,in.z);
+		return out;
+	}
+	RakNet::BitStream& operator>>(RakNet::BitStream& in, NormalizedVector& out)
+	{
+		bool success = in.ReadNormVector(out.x,out.y,out.z);
+		assert(success);
+		return in;
+	}
 }
 
 class C;

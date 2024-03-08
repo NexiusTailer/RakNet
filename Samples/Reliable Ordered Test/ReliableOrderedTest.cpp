@@ -95,14 +95,13 @@ int main(int argc, char **argv)
 	if (str[0]=='s' || str[0]=='S')
 	{
 		sender = RakNet::RakPeerInterface::GetInstance();
-//		sender->ApplyNetworkSimulator(.1, 100, 50);
 
 		receiver = 0;
 
 		printf("Enter number of ms to pass between sends: ");
 		Gets(str, sizeof(str));
 		if (str[0]==0)
-			sendInterval=30;
+			sendInterval=33;
 		else
 			sendInterval=atoi(str);
 
@@ -110,7 +109,7 @@ int main(int argc, char **argv)
 		Gets(ip, sizeof(ip));
 		if (ip[0]==0)
 			strcpy(ip, "127.0.0.1");
-	//		strcpy(ip, "94.198.81.195");
+			// strcpy(ip, "94.198.81.195");
 		
 		printf("Enter remote port: ");
 		Gets(str, sizeof(str));
@@ -128,12 +127,13 @@ int main(int argc, char **argv)
 		printf("Connecting...\n");
 		RakNet::SocketDescriptor socketDescriptor(localPort,0);
 		sender->Startup(1, &socketDescriptor, 1);
+		sender->ApplyNetworkSimulator(.2, 0, 0);
 		sender->Connect(ip, remotePort, 0, 0);
 	}
 	else
 	{
 		receiver = RakNet::RakPeerInterface::GetInstance();
-	//	receiver->ApplyNetworkSimulator(.1, 100, 50);
+		receiver->ApplyNetworkSimulator(.2, 0, 0);
 		sender=0;
 
 		printf("Enter local port: ");
@@ -147,6 +147,8 @@ int main(int argc, char **argv)
 		receiver->Startup(1, &socketDescriptor, 1);
 		receiver->SetMaximumIncomingConnections(32);
 	}
+
+	seedMT(1);
 	
 	printf("How long to run this test for, in seconds?\n");
 	Gets(str, sizeof(str));
@@ -168,7 +170,7 @@ int main(int argc, char **argv)
 		{
 			char ch=getch();
 			if (ch=='q')
-				return 1;
+				break;
 			else if (ch==' ')
 			{
 				RakNetStatistics *rss;
@@ -227,26 +229,40 @@ int main(int argc, char **argv)
 				streamNumber=0;
 			//	streamNumber = randomMT() % 32;
 				// Do the send
-				bitStream.Reset();
-				bitStream.Write((unsigned char) (ID_TIMESTAMP));
-				bitStream.Write(RakNet::GetTime());
-				bitStream.Write((unsigned char) (ID_USER_PACKET_ENUM+1));
-				bitStream.Write(packetNumber[streamNumber]++);
-				bitStream.Write(streamNumber);
-				char *pad;
-				int padLength = (randomMT() % 5000) + 1;
-				//int padLength = (randomMT() % 128) + 1;
-				pad = new char [padLength];
-				bitStream.Write(pad, padLength);
-				delete [] pad;
-				// Send on a random priority with a random stream
-				// if (sender->Send(&bitStream, HIGH_PRIORITY, (PacketReliability) (RELIABLE + (randomMT() %2)) ,streamNumber, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true)==false)
-				if (sender->Send(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED ,streamNumber, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true)==0)
-					packetNumber[streamNumber]--; // Didn't finish connecting yet?
 
-// 				if (sender->Send(&bitStream, HIGH_PRIORITY, UNRELIABLE_WITH_ACK_RECEIPT ,streamNumber, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true)==0)
-// 					packetNumber[streamNumber]--; // Didn't finish connecting yet?
+                for (int i=0; i < 2; i++)
+                {
+                    bitStream.Reset();
+                    bitStream.Write((unsigned char) (ID_TIMESTAMP));
+                    bitStream.Write(RakNet::GetTime());
+                    bitStream.Write((unsigned char) (ID_USER_PACKET_ENUM+1));
+                    bitStream.Write(packetNumber[streamNumber]);
+                    packetNumber[streamNumber]++;
+                    bitStream.Write(streamNumber);
 
+                    char *type="UNDEFINED";
+                    PacketReliability reliability;
+                    if ((randomMT()%2)==0)
+                    {
+                        type="UNRELIABLE_SEQUENCED";
+                        reliability=UNRELIABLE_SEQUENCED;
+                    }
+                    else
+                    {
+                        type="RELIABLE_ORDERED";
+                        reliability=RELIABLE_ORDERED;
+                    }
+
+                    int padLength;
+                    padLength = (randomMT() % 2500) + 1;
+                    bitStream.Write(reliability);
+                    bitStream.PadWithZeroToByteLength(padLength);
+
+				    if (sender->Send(&bitStream, HIGH_PRIORITY, reliability ,streamNumber, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true)==0)
+				    {
+					    packetNumber[streamNumber]--;
+				    }
+                }
 				
 				if (sender)
 				{
@@ -254,7 +270,7 @@ int main(int argc, char **argv)
 					rssSender=sender->GetStatistics(sender->GetSystemAddressFromIndex(0));
 					//printf("Snd: %i. %i waiting on ack. KBPS=%.1f. Ploss=%.1f. Bandwidth=%f.\n", packetNumber[streamNumber], rssSender->messagesOnResendQueue,rssSender->bitsPerSecondSent/1000, 100.0f * ( float ) rssSender->messagesTotalBitsResent / ( float ) rssSender->totalBitsSent, rssSender->estimatedLinkCapacityMBPS);
 
-					printf("Snd: %i at time %"PRINTF_64_BIT_MODIFIER"u with length %i\n", packetNumber[streamNumber], currentTime, bitStream.GetNumberOfBytesUsed());
+				//	printf("Snd: %i, %s, time %"PRINTF_64_BIT_MODIFIER"u, length %i\n", packetNumber[streamNumber]-1, type, currentTime, bitStream.GetNumberOfBytesUsed());
 				}
 
 				nextSend+=sendInterval;
@@ -288,15 +304,24 @@ int main(int argc, char **argv)
 					bitStream.IgnoreBits(8); // Ignore ID_USER_ENUM+1
 					bitStream.Read(receivedPacketNumber);
 					bitStream.Read(streamNumber);
+					PacketReliability reliability;
+					bitStream.Read(reliability);
+					char *type="UNDEFINED";
+					if (reliability==UNRELIABLE_SEQUENCED)
+						type="UNRELIABLE_SEQUENCED";
+					else if (reliability==RELIABLE_ORDERED)
+						type="RELIABLE_ORDERED";
 
-					if (receivedPacketNumber!=packetNumber[streamNumber])
-						printf("ERROR! Expecting %i got %i (channel %i).",packetNumber[streamNumber], receivedPacketNumber, streamNumber);
+					if (receivedPacketNumber>packetNumber[streamNumber])
+                        printf("Skipped %i got %i %s (channel %i).\n",packetNumber[streamNumber], receivedPacketNumber, type, streamNumber);
+					else if (receivedPacketNumber<packetNumber[streamNumber])
+						printf("Out of order packet! Expecting %i got %i %s (channel %i).\n",packetNumber[streamNumber], receivedPacketNumber, type, streamNumber);
 					else
-						printf("Got %i.Channel %i.Len %i.", packetNumber[streamNumber], streamNumber, packet->length);
+						printf("Got %i.%s.CH:%i.Len:%i.\n", packetNumber[streamNumber], type, streamNumber, packet->length);
 
-					printf("Sent=%"PRINTF_64_BIT_MODIFIER"u Received=%"PRINTF_64_BIT_MODIFIER"u Diff=%i.\n", receivedTime, currentTime, (int)(currentTime - receivedTime));
+//					printf("Sent=%"PRINTF_64_BIT_MODIFIER"u Received=%"PRINTF_64_BIT_MODIFIER"u Diff=%i.\n", receivedTime, currentTime, (int)(currentTime - receivedTime));
 
-					packetNumber[streamNumber]++;
+					packetNumber[streamNumber]=receivedPacketNumber+1;
 					break;
 				}
 
@@ -315,9 +340,6 @@ int main(int argc, char **argv)
 #endif
 		currentTime=RakNet::GetTimeMS();
 	}
-
-	printf("Press any key to continue\n");
-	Gets(str, sizeof(str));
 
 	if (sender)
 		RakNet::RakPeerInterface::DestroyInstance(sender);

@@ -220,9 +220,6 @@ public:
 	// Encoded as numMessages[unsigned int], message1BitLength[unsigned int], message1Data (aligned), ...
 	//void GetUndeliveredMessages(RakNet::BitStream *messages, int MTUSize);
 
-	// Told of the system ping externally
-	void OnExternalPing(double pingMS);
-
 private:
 	/// Send the contents of a bitstream to the socket
 	/// \param[in] s The socket used for sending data
@@ -291,10 +288,10 @@ private:
 	InternalPacket * CreateInternalPacketCopy( InternalPacket *original, int dataByteOffset, int dataByteLength, CCTimeType time );
 
 	/// Get the specified ordering list
-	DataStructures::LinkedList<InternalPacket*> *GetOrderingListAtOrderingStream( unsigned char orderingChannel );
+	// DataStructures::LinkedList<InternalPacket*> *GetOrderingListAtOrderingStream( unsigned char orderingChannel );
 
 	/// Add the internal packet to the ordering list in order based on order index
-	void AddToOrderingList( InternalPacket * internalPacket );
+	// void AddToOrderingList( InternalPacket * internalPacket );
 
 	/// Inserts a packet into the resend list in order
 	void InsertPacketIntoResendList( InternalPacket *internalPacket, CCTimeType time, bool firstResend, bool modifyUnacknowledgedBytes );
@@ -331,7 +328,7 @@ private:
 
 	// Used ONLY for RELIABLE_ORDERED
 	// RELIABLE_SEQUENCED just returns the newest one
-	DataStructures::List<DataStructures::LinkedList<InternalPacket*>*> orderingList;
+	// DataStructures::List<DataStructures::LinkedList<InternalPacket*>*> orderingList;
 	DataStructures::Queue<InternalPacket*> outputQueue;
 	int splitMessageProgressInterval;
 	CCTimeType unreliableTimeout;
@@ -344,14 +341,12 @@ private:
 	struct DatagramHistoryNode
 	{
 		DatagramHistoryNode() {}
-		DatagramHistoryNode(MessageNumberNode *_head
-			//, bool r
+		DatagramHistoryNode(MessageNumberNode *_head, CCTimeType ts
 			) :
-		head(_head)
-		//	, isReliable(r)
+		head(_head), timeSent(ts)
 		{}
 		MessageNumberNode *head;
-	//	bool isReliable;
+		CCTimeType timeSent;
 	};
 	// Queue length is programmatically restricted to DATAGRAM_MESSAGE_ID_ARRAY_LENGTH
 	// This is essentially an O(1) lookup to get a DatagramHistoryNode given an index
@@ -361,9 +356,9 @@ private:
 
 
 	void RemoveFromDatagramHistory(DatagramSequenceNumberType index);
-	MessageNumberNode* GetMessageNumberNodeByDatagramIndex(DatagramSequenceNumberType index/*, bool *isReliable*/);
-	void AddFirstToDatagramHistory(DatagramSequenceNumberType datagramNumber);
-	MessageNumberNode* AddFirstToDatagramHistory(DatagramSequenceNumberType datagramNumber, DatagramSequenceNumberType messageNumber);
+	MessageNumberNode* GetMessageNumberNodeByDatagramIndex(DatagramSequenceNumberType index, CCTimeType *timeSent);
+	void AddFirstToDatagramHistory(DatagramSequenceNumberType datagramNumber, CCTimeType timeSent);
+	MessageNumberNode* AddFirstToDatagramHistory(DatagramSequenceNumberType datagramNumber, DatagramSequenceNumberType messageNumber, CCTimeType timeSent);
 	MessageNumberNode* AddSubsequentToDatagramHistory(MessageNumberNode *messageNumberNode, DatagramSequenceNumberType messageNumber);
 	DatagramSequenceNumberType datagramHistoryPopCount;
 	
@@ -408,18 +403,48 @@ private:
 	MessageNumberType internalOrderIndex;
 	//unsigned int windowSize;
 	RakNet::BitStream updateBitStream;
-	OrderingIndexType waitingForOrderedPacketWriteIndex[ NUMBER_OF_ORDERED_STREAMS ], waitingForSequencedPacketWriteIndex[ NUMBER_OF_ORDERED_STREAMS ];
-	
-	// STUFF TO NOT MUTEX HERE (called from non-conflicting threads, or value is not important)
-	OrderingIndexType waitingForOrderedPacketReadIndex[ NUMBER_OF_ORDERED_STREAMS ], waitingForSequencedPacketReadIndex[ NUMBER_OF_ORDERED_STREAMS ];
 	bool deadConnection, cheater;
-	// unsigned int lastPacketSendTime,retransmittedFrames, sentPackets, sentFrames, receivedPacketsCount, bytesSent, bytesReceived,lastPacketReceivedTime;
 	SplitPacketIdType splitPacketId;
 	RakNet::TimeMS timeoutTime; // How long to wait in MS before timing someone out
 	//int MAX_AVERAGE_PACKETS_PER_SECOND; // Name says it all
 //	int RECEIVED_PACKET_LOG_LENGTH, requestedReceivedPacketLogLength; // How big the receivedPackets array is
 //	unsigned int *receivedPackets;
 	RakNetStatistics statistics;
+
+	// Algorithm for blending ordered and sequenced on the same channel:
+	// 1. Each ordered message transmits OrderingIndexType orderedWriteIndex. There are NUMBER_OF_ORDERED_STREAMS independent values of these. The value
+	//    starts at 0. Every time an ordered message is sent, the value increments by 1
+	// 2. Each sequenced message contains the current value of orderedWriteIndex for that channel, and additionally OrderingIndexType sequencedWriteIndex. 
+	//    sequencedWriteIndex resets to 0 every time orderedWriteIndex increments. It increments by 1 every time a sequenced message is sent.
+	// 3. The receiver maintains the next expected value for the orderedWriteIndex, stored in orderedReadIndex.
+	// 4. As messages arrive:
+	//    If a message has the current ordering index, and is sequenced, and is < the current highest sequence value, discard
+	//    If a message has the current ordering index, and is sequenced, and is >= the current highest sequence value, return immediately
+	//    If a message has a greater ordering index, and is sequenced or ordered, buffer it
+	//    If a message has the current ordering index, and is ordered, buffer, then push off messages from buffer
+	// 5. Pushing off messages from buffer:
+	//    Messages in buffer are put in a minheap. The value of each node is calculated such that messages are returned:
+	//    A. (lowest ordering index, lowest sequence index)
+	//    B. (lowest ordering index, no sequence index)
+	//    Messages are pushed off until the heap is empty, or the next message to be returned does not preserve the ordered index
+	//    For an empty heap, the heap weight should start at the lowest value based on the next expected ordering index, to avoid variable overflow
+
+	// Sender increments this by 1 for every ordered message sent
+	OrderingIndexType orderedWriteIndex[NUMBER_OF_ORDERED_STREAMS];
+	// Sender increments by 1 for every sequenced message sent. Resets to 0 when an ordered message is sent
+	OrderingIndexType sequencedWriteIndex[NUMBER_OF_ORDERED_STREAMS];
+	// Next expected index for ordered messages.
+	OrderingIndexType orderedReadIndex[NUMBER_OF_ORDERED_STREAMS];
+	// Highest value received for sequencedWriteIndex for the current value of orderedReadIndex on the same channel.
+	OrderingIndexType highestSequencedReadIndex[NUMBER_OF_ORDERED_STREAMS];
+	DataStructures::Heap<reliabilityHeapWeightType, InternalPacket*, false> orderingHeaps[NUMBER_OF_ORDERED_STREAMS];
+	OrderingIndexType heapIndexOffsets[NUMBER_OF_ORDERED_STREAMS];
+
+	
+
+
+
+
 
 //	CCTimeType histogramStart;
 //	unsigned histogramBitsSent;

@@ -173,8 +173,6 @@ enum DefaultMessageIDTypes
 	ID_REPLICA_MANAGER_DOWNLOAD_STARTED,
  	/// ReplicaManager plugin - Finished downloading all serialized objects
 	ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE,
-	/// Serialize construction for an object that already exists on the remote system
-	ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING,
 
 	/// RakVoice plugin - Open a communication channel
 	ID_RAKVOICE_OPEN_CHANNEL_REQUEST,
@@ -216,8 +214,6 @@ enum DefaultMessageIDTypes
 	/// NATPunchthrough plugin: internal
 	ID_NAT_CLIENT_READY,
 	/// NATPunchthrough plugin: internal
-	ID_NAT_CONFIRM_CONNECTION_TO_SERVER,
-	/// NATPunchthrough plugin: internal
 	ID_NAT_GROUP_PUNCHTHROUGH_FAILURE_NOTIFICATION,
 
 	/// NATPunchthrough plugin: Destination system is not connected to the server. Bytes starting at offset 1 contains the
@@ -240,13 +236,18 @@ enum DefaultMessageIDTypes
 	///  0 if not. You can now use RakPeer::Connect() or other calls to communicate with this system.
 	ID_NAT_PUNCHTHROUGH_SUCCEEDED,
 	/// NATPunchthrough plugin: OpenNATGroup failed.
-	/// packet::guid contains the destination field of NatPunchthroughClient::OpenNAT()
-	/// Data format starts at byte 1: (unsigned short) passedSystemsCount, List<SystemAddress> passedSystems, (unsigned short) failedSystemsCount, List<RakNetGuid> failedSystems
+	/// packet::guid contains the facilitator field of NatPunchthroughClient::OpenNAT()
+	/// Data format starts at byte 1:<BR>
+	/// (char) passedSystemsCount,<BR>
+	/// (RakNetGuid, SystemAddress) (for passedSystemsCount),<BR>
+	/// (char) ignoredSystemsCount (caused by ID_NAT_TARGET_NOT_CONNECTED, ID_NAT_CONNECTION_TO_TARGET_LOST, ID_NAT_TARGET_UNRESPONSIVE),<BR>
+	/// RakNetGuid (for ignoredSystemsCount),<BR>
+	/// (char) failedSystemsCount,<BR>
+	/// RakNetGuid (for failedSystemsCount)<BR>
 	ID_NAT_GROUP_PUNCH_FAILED,
 	/// NATPunchthrough plugin: OpenNATGroup succeeded.
-	/// packet::guid contains the destination field of NatPunchthroughClient::OpenNATGroup()
-	/// You can now use RakPeer::Connect() or other calls to communicate with these systems
-	/// Data format starts at byte 1: (unsigned short) passedSystemsCount, List<SystemAddress> passedSystems
+	/// packet::guid contains the facilitator field of NatPunchthroughClient::OpenNAT()
+	/// See ID_NAT_GROUP_PUNCH_FAILED for data format
 	ID_NAT_GROUP_PUNCH_SUCCEEDED,
 
 	/// ReadyEvent plugin - Set the ready state for a particular system

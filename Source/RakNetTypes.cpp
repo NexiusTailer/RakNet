@@ -222,7 +222,7 @@ bool SystemAddress::IsLoopback(void) const
 {
 	if (GetIPVersion()==4)
 	{
-		unsigned long l = htonl(address.addr4.sin_addr.s_addr);
+		// unsigned long l = htonl(address.addr4.sin_addr.s_addr);
 		if (htonl(address.addr4.sin_addr.s_addr)==2130706433)
 			return true;
 	}
@@ -346,6 +346,7 @@ void SystemAddress::ToString(bool writePort, char *dest, char portDelineator) co
 }
 SystemAddress::SystemAddress()
 {
+	address.addr4.sin_family=AF_INET;
 	// used for operator ==
 	memset(&address,0,sizeof(address)); address.addr4.sin_family=AF_INET;
 	systemIndex=(SystemIndex)-1;
@@ -353,15 +354,18 @@ SystemAddress::SystemAddress()
 }
 SystemAddress::SystemAddress(const char *str)
 {
+	address.addr4.sin_family=AF_INET;
 	SetPort(0);
 	FromString(str);
 	systemIndex=(SystemIndex)-1;
 }
 SystemAddress::SystemAddress(const char *str, unsigned short port)
 {
+	address.addr4.sin_family=AF_INET;
 	FromStringExplicitPort(str,port);
 	systemIndex=(SystemIndex)-1;
 }
+
 
 
 
@@ -539,6 +543,7 @@ bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersi
 	}
 	else if (ipVersion==6 && strcmp(str, IPV4_LOOPBACK)==0)
 	{
+		address.addr4.sin_family=AF_INET6;
 		strcpy(ipPart,IPV6_LOOPBACK);
 	}
 	else if (NonNumericHostString(str)==false)
@@ -603,19 +608,23 @@ bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersi
 	{
 // 		if (ipVersion==6)
 // 		{
+			address.addr4.sin_family=AF_INET6;
 // 			memset(&address.addr6,0,sizeof(address.addr6));
 // 			memcpy(address.addr6.sin6_addr.s6_addr+12,&((struct sockaddr_in *)servinfo->ai_addr)->sin_addr.s_addr,sizeof(unsigned long));
 // 		}
 // 		else
 // 		{
+			address.addr4.sin_family=AF_INET4;
 			memcpy(&address.addr4, (struct sockaddr_in *)servinfo->ai_addr,sizeof(struct sockaddr_in));
 //		}
 	}
 	else
 	{
+		address.addr4.sin_family=AF_INET6;
 		memcpy(&address.addr6, (struct sockaddr_in6 *)servinfo->ai_addr,sizeof(struct sockaddr_in6));
 	}
 #else
+	address.addr4.sin_family=AF_INET4;
 	memcpy(&address.addr4, (struct sockaddr_in *)servinfo->ai_addr,sizeof(struct sockaddr_in));
 #endif
 

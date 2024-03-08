@@ -112,6 +112,14 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
  Writes to <a class="el" href="classRakNet_1_1Replica3Composite.html#c8258f928d6922f928c5d842c62c8094">PostDeserializeConstruction()</a>, which is called after all objects are created for a given Construction tick(). Override to send data to <a class="el" href="classRakNet_1_1Replica3Composite.html#c8258f928d6922f928c5d842c62c8094">PostDeserializeConstruction()</a>, such as the NetworkID of other objects to resolve pointers to. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3Composite.html#c8258f928d6922f928c5d842c62c8094">PostDeserializeConstruction</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *constructionBitstream, <a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *sourceConnection)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e2a7b59ce8d14197a3b82f2850308b43"></a><!-- doxytag: member="RakNet::Replica3Composite::PostSerializeConstructionExisting" ref="e2a7b59ce8d14197a3b82f2850308b43" args="(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3Composite.html#e2a7b59ce8d14197a3b82f2850308b43">PostSerializeConstructionExisting</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *constructionBitstream, <a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Same as <a class="el" href="classRakNet_1_1Replica3Composite.html#73424eca7c3bdd1140d82c2ee635fffe" title="Called after SerializeConstruction completes for all objects in a given update tick...">PostSerializeConstruction()</a>, but for objects that returned RM3CS_ALREADY_EXISTS_REMOTELY from QueryConstruction. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d1a000e80755b5fefb7cda84926a4ef5"></a><!-- doxytag: member="RakNet::Replica3Composite::PostDeserializeConstructionExisting" ref="d1a000e80755b5fefb7cda84926a4ef5" args="(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection)" -->
+virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3Composite.html#d1a000e80755b5fefb7cda84926a4ef5">PostDeserializeConstructionExisting</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *constructionBitstream, <a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *sourceConnection)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Same as <a class="el" href="classRakNet_1_1Replica3Composite.html#c8258f928d6922f928c5d842c62c8094">PostDeserializeConstruction()</a>, but for objects that returned RM3CS_ALREADY_EXISTS_REMOTELY from QueryConstruction. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3Composite.html#5756a6c31fde002484a031199c32f053">PreDestruction</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *sourceConnection)</td></tr>
 
 </table>
@@ -464,7 +472,7 @@ template&lt;class parent_type &gt; </div>
 <p>
 Ask if this object, which does not exist on <em>destinationConnection</em> should (now) be sent to that system. 
 <p>
-If ReplicaManager3::QueryConstructionMode() returns QUERY_CONNECTION_FOR_REPLICA_LIST or QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION (default), then QueyrConstruction() is called once per tick from <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Update is called every time a packet is checked for .">ReplicaManager3::Update()</a> to determine if an object should exist on a given system.<br>
+If ReplicaManager3::QueryConstructionMode() returns QUERY_CONNECTION_FOR_REPLICA_LIST or QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION (default), then QueyrConstruction() is called once per tick from <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Call interfaces, send data.">ReplicaManager3::Update()</a> to determine if an object should exist on a given system.<br>
  Based on the return value, a network message may be sent to the other system to create the object.<br>
  If QueryConstructionMode() is overriden to return QUERY_CONNECTION_FOR_REPLICA_LIST, this function is unused.<br>
  <dl class="note" compact><dt><b>Note:</b></dt><dd>Defaults are provided: <a class="el" href="classRakNet_1_1Replica3.html#b8f287ba6df69cae303519f74033bcdf" title="Default call for QueryConstruction().">QueryConstruction_PeerToPeer()</a>, <a class="el" href="classRakNet_1_1Replica3.html#111ebc1ea1f9f11202ea15abb39fc329" title="Default call for QueryConstruction().">QueryConstruction_ServerConstruction()</a>, <a class="el" href="classRakNet_1_1Replica3.html#98df31b4f30c6a6913963d6ecb8fea73" title="Default call for QueryConstruction().">QueryConstruction_ClientConstruction()</a>. Return one of these functions for a working default for the relevant topology. </dd></dl>
@@ -510,7 +518,7 @@ template&lt;class parent_type &gt; </div>
 <p>
 Ask if this object, which does exist on <em>destinationConnection</em> should be removed from the remote system. 
 <p>
-If ReplicaManager3::QueryConstructionMode() returns QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION (default), then <a class="el" href="classRakNet_1_1Replica3Composite.html#d26cb0f313bddf8245a76250411e2006" title="Ask if this object, which does exist on destinationConnection should be removed from...">QueryDestruction()</a> is called once per tick from <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Update is called every time a packet is checked for .">ReplicaManager3::Update()</a> to determine if an object that exists on a remote system should be destroyed for a given system.<br>
+If ReplicaManager3::QueryConstructionMode() returns QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION (default), then <a class="el" href="classRakNet_1_1Replica3Composite.html#d26cb0f313bddf8245a76250411e2006" title="Ask if this object, which does exist on destinationConnection should be removed from...">QueryDestruction()</a> is called once per tick from <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Call interfaces, send data.">ReplicaManager3::Update()</a> to determine if an object that exists on a remote system should be destroyed for a given system.<br>
  Based on the return value, a network message may be sent to the other system to destroy the object.<br>
  Note that you can also destroy objects with <a class="el" href="classRakNet_1_1Replica3.html#7c6a22d575326cddec3a70eb1c2568f2">BroadcastDestruction()</a>, so this function is not useful unless you plan to delete objects for only a particular connection.<br>
  If QueryConstructionMode() is overriden to return QUERY_CONNECTION_FOR_REPLICA_LIST, this function is unused.<br>
@@ -614,7 +622,7 @@ Serialize our class to a bitstream.
 User should implement this function to write the contents of this class to SerializationParamters::serializationBitstream.<br>
  If data only needs to be written once, you can write it to <a class="el" href="classRakNet_1_1Replica3Composite.html#75be39067450e1d717473408600a9c73" title="Write data to be sent only when the object is constructed on a remote system.">SerializeConstruction()</a> instead for efficiency.<br>
  Transmitted over the network if it changed from the last time we called <a class="el" href="classRakNet_1_1Replica3Composite.html#9cdd70fda45a5375a14d61e4c372463d" title="Serialize our class to a bitstream.">Serialize()</a>.<br>
- Called every time the time interval to <a class="el" href="classRakNet_1_1ReplicaManager3.html#06af43f52ae3148e763ad9223c308639">ReplicaManager3::SetAutoSerializeInterval()</a> elapses and <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Update is called every time a packet is checked for .">ReplicaManager3::Update</a> is subsequently called. <dl compact><dt><b>Parameters:</b></dt><dd>
+ Called every time the time interval to <a class="el" href="classRakNet_1_1ReplicaManager3.html#06af43f52ae3148e763ad9223c308639">ReplicaManager3::SetAutoSerializeInterval()</a> elapses and <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Call interfaces, send data.">ReplicaManager3::Update</a> is subsequently called. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>in/out]</em>&nbsp;</td><td>serializeParameters Parameters controlling the serialization, including destination bitstream to write to </td></tr>
   </table>
@@ -789,7 +797,7 @@ The value written to <em>allocationIdBitstream</em> will be passed to <a class="
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jul 19 09:27:10 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Aug 18 09:48:20 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

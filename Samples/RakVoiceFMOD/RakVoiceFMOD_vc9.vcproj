@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions;&quot;./../../DependentExtensions/speex-1.1.12/include&quot;;&quot;./../../DependentExtensions/speex-1.1.12/win32&quot;;C:\Program Files\FMOD SoundSystem\FMOD Programmers API Win32\api\inc"
+				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions;&quot;./../../DependentExtensions/speex-1.1.12/include&quot;;&quot;./../../DependentExtensions/speex-1.1.12/win32&quot;;&quot;C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Win32\api\inc&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE;HAVE_CONFIG_H"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -120,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions;&quot;./../../DependentExtensions/speex-1.1.12/include&quot;;&quot;./../../DependentExtensions/speex-1.1.12/win32&quot;;C:\Program Files\FMOD SoundSystem\FMOD Programmers API Win32\api\inc"
+				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions;&quot;./../../DependentExtensions/speex-1.1.12/include&quot;;&quot;./../../DependentExtensions/speex-1.1.12/win32&quot;;&quot;C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Win32\api\inc&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE;HAVE_CONFIG_H"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"

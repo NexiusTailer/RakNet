@@ -338,7 +338,7 @@ public:
 	virtual int GetLowestPing( const AddressOrGUID systemIdentifier ) const=0;
 
 	/// Ping the remote systems every so often, or not. Can be called anytime.
-	/// By default this is true if GET_TIME_SPIKE_LIMIT is non-zero from RakNetDefines, false otherwise
+	/// By default this is true. Recommended to leave on, because congestion control uses it to determine how often to resend lost packets.
 	/// It would be true by default to prevent timestamp drift, since in the event of a clock spike, the timestamp deltas would no longer be accurate
 	/// \param[in] doPing True to start occasional pings.  False to stop them.
 	virtual void SetOccasionalPing( bool doPing )=0;
@@ -403,6 +403,7 @@ public:
 
 	/// Set the time, in MS, to use before considering ourselves disconnected after not being able to deliver a reliable message.
 	/// Default time is 10,000 or 10 seconds in release and 30,000 or 30 seconds in debug.
+	/// Do not set different values for different computers that are connected to each other, or you won't be able to reconnect after ID_CONNECTION_LOST
 	/// \param[in] timeMS Time, in MS
 	/// \param[in] target Which system to do this for. Pass UNASSIGNED_SYSTEM_ADDRESS for all systems.
 	virtual void SetTimeoutTime( RakNet::TimeMS timeMS, const SystemAddress target )=0;

@@ -40,19 +40,19 @@ enum PacketReliability
 	/// Same as regular UDP, except that it will also discard duplicate datagrams.  RakNet adds (6 to 17) + 21 bits of overhead, 16 of which is used to detect duplicate packets and 6 to 17 of which is used for message length.
 	UNRELIABLE,
 
-	/// Regular UDP with a sequence counter.  Out of order messages will be discarded.  This adds an additional 13 bits on top what is used for UNRELIABLE.
-	/// \note Ordering channels and types are independent. Sequenced messages will be in order, and the ordered messages will be in order. However, that doesn't mean that all messages will be in order because they are independent sets. For example, you could send the sequenced messages first and the ordered messages second, yet get the ordered set first and the sequenced message set second, or with some intermixing of the two sets.
+	/// Regular UDP with a sequence counter.  Out of order messages will be discarded.
+	/// Sequenced and ordered messages sent on the same channel will arrive in the order sent.
 	UNRELIABLE_SEQUENCED,
 
 	/// The message is sent reliably, but not necessarily in any order.  Same overhead as UNRELIABLE.
 	RELIABLE,
 
 	/// This message is reliable and will arrive in the order you sent it.  Messages will be delayed while waiting for out of order messages.  Same overhead as UNRELIABLE_SEQUENCED.
-	/// \note Ordering channels and types are independent. Sequenced messages will be in order, and the ordered messages will be in order. However, that doesn't mean that all messages will be in order because they are independent sets. For example, you could send the sequenced messages first and the ordered messages second, yet get the ordered set first and the sequenced message set second, or with some intermixing of the two sets.
+	/// Sequenced and ordered messages sent on the same channel will arrive in the order sent.
 	RELIABLE_ORDERED,
 
 	/// This message is reliable and will arrive in the sequence you sent it.  Out or order messages will be dropped.  Same overhead as UNRELIABLE_SEQUENCED.
-	/// \note Ordering channels and types are independent. Sequenced messages will be in order, and the ordered messages will be in order. However, that doesn't mean that all messages will be in order because they are independent sets. For example, you could send the sequenced messages first and the ordered messages second, yet get the ordered set first and the sequenced message set second, or with some intermixing of the two sets.
+	/// Sequenced and ordered messages sent on the same channel will arrive in the order sent.
 	RELIABLE_SEQUENCED,
 
 	/// Same as UNRELIABLE, however the user will get either ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS based on the result of sending this message when calling RakPeerInterface::Receive(). Bytes 1-4 will contain the number returned from the Send() function. On disconnect or shutdown, all messages not previously acked should be considered lost.

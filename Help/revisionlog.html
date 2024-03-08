@@ -492,6 +492,20 @@ SteamLobby: Console_CreateRoom_Steam now returns L2RC_GENERAL_ERROR on failure.
 NetworkID: Add conflict avoidance
 RPC4: Fix missing 'else' for processing signals and slots.
 Manual: General revisions and improvements, particularly FullyConnectedMesh2, RPC4, ReplicaManager3
+4.03 (8/15/2011)
+RakPeer: Sequenced and ordered messages now share ordering channels, and will arrive in the order sent on the same channel. Ping times for retransmit are now continuously recalculated without additional overhead, in order to adapt to changing bandwidth conditions.
+XBOX: Added option to disable XNotifyCreateListener( XNOTIFY_LIVE ) through the createLiveListener parameter added to Client_Login_360. Fixed RakVoiceXBOX360 for TRC issues of transmitting to friends only.
+NatPunchthroughClient: OpenNATGroup rewritten to take an explicit list of systems to punch.
+ReplicaManager3: Added PostSerializeConstructionExisting, PostDeserializeConstructionExisting. Also, static objects are now processed in order of registration, the same as non-static objects. Previously, all static objects were sent first. Documentation for static objects clarified. The Update() function is now public.
+Steam Lobby: Fixed for more than 2 users at a time.
+RPC3: Document that left and right shift operator overloads for BitStream have to be in the namespace RakNet
+RPC4: Now invokes local function immediately from Signal() if invokeLocal is true, rather than the next time RakPeer::Receive is called().
+HTTPConnection: GET command fixed for some webservers.
+Misc project changes: Fix RakVoice FMOD sample. Link against PGSQL 9.0 by default. Fix SQLite3Plugin Matrices project.
+4.031 (8/18/2011)
+ReplicaManager3: Fix BroadcastDestructionList. Objects were not being deleted due to a change in 4.03.
+RakPeer: Fix memory leak with discarded sequenced messages that were split (larger than the MTU).
+SystemAddress: Fixed comparison between a value set from a string and an internal value with the same IP.
 </pre>
 <BR>
 </p></TD></TR></TABLE>

@@ -3980,27 +3980,16 @@ void RakPeer::OnConnectedPong(RakNet::Time sendPingTime, RakNet::Time sendPongTi
 
 	lastPing = remoteSystem->pingAndClockDifferential[ remoteSystem->pingAndClockDifferentialWriteIndex ].pingTime;
 
-	// Ignore super high spikes in the average
-	if ( lastPing <= 0 || ( ( ping < ( lastPing * 3 ) ) && ping < 1200 ) )
-	{
-		remoteSystem->pingAndClockDifferential[ remoteSystem->pingAndClockDifferentialWriteIndex ].pingTime = ( unsigned short ) ping;
-		// Thanks to Chris Taylor (cat02e@fsu.edu) for the improved timestamping algorithm
-		// Divide each integer by 2, rather than the sum by 2, to prevent overflow
-		remoteSystem->pingAndClockDifferential[ remoteSystem->pingAndClockDifferentialWriteIndex ].clockDifferential = sendPongTime - ( time/2 + sendPingTime/2 );
+	remoteSystem->pingAndClockDifferential[ remoteSystem->pingAndClockDifferentialWriteIndex ].pingTime = ( unsigned short ) ping;
+	// Thanks to Chris Taylor (cat02e@fsu.edu) for the improved timestamping algorithm
+	// Divide each integer by 2, rather than the sum by 2, to prevent overflow
+	remoteSystem->pingAndClockDifferential[ remoteSystem->pingAndClockDifferentialWriteIndex ].clockDifferential = sendPongTime - ( time/2 + sendPingTime/2 );
 
-		if ( remoteSystem->lowestPing == (unsigned short)-1 || remoteSystem->lowestPing > (int) ping )
-			remoteSystem->lowestPing = (unsigned short) ping;
+	if ( remoteSystem->lowestPing == (unsigned short)-1 || remoteSystem->lowestPing > (int) ping )
+		remoteSystem->lowestPing = (unsigned short) ping;
 
-		// Reliability layer calculates its own ping
-		// Most packets should arrive by the ping time.
-		//RakAssert(pingMS < 10000); // Sanity check - could hit due to negative pings causing the var to overflow
-		//remoteSystem->reliabilityLayer.SetPing( (unsigned short) pingMS );
-
-		if ( ++( remoteSystem->pingAndClockDifferentialWriteIndex ) == (RakNet::Time) PING_TIMES_ARRAY_SIZE )
-			remoteSystem->pingAndClockDifferentialWriteIndex = 0;
-
-		remoteSystem->reliabilityLayer.OnExternalPing((double) ping);
-	}
+	if ( ++( remoteSystem->pingAndClockDifferentialWriteIndex ) == (RakNet::Time) PING_TIMES_ARRAY_SIZE )
+		remoteSystem->pingAndClockDifferentialWriteIndex = 0;
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void RakPeer::ClearBufferedCommands(void)

@@ -826,7 +826,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 	timeval tv;
 	int selectResult;
 	tv.tv_sec=0;
-	tv.tv_usec=50000;
+	tv.tv_usec=30000;
 
 	while (sts->isStarted)
 	{
@@ -864,7 +864,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 
 		// Linux' select__() implementation changes the timeout
 		tv.tv_sec=0;
-		tv.tv_usec=500000;
+		tv.tv_usec=30000;
 
 		while (1)
 		{

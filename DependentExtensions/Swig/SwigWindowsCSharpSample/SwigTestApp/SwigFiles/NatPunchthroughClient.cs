@@ -59,8 +59,8 @@ public class NatPunchthroughClient : PluginInterface2 {
     return ret;
   }
 
-  public bool OpenNATGroup(RakNetGUID destination, SystemAddress facilitator) {
-    bool ret = RakNetPINVOKE.NatPunchthroughClient_OpenNATGroup(swigCPtr, RakNetGUID.getCPtr(destination), SystemAddress.getCPtr(facilitator));
+  public bool OpenNATGroup(RakNetListRakNetGUID destinationSystems, SystemAddress facilitator) {
+    bool ret = RakNetPINVOKE.NatPunchthroughClient_OpenNATGroup(swigCPtr, RakNetListRakNetGUID.getCPtr(destinationSystems), SystemAddress.getCPtr(facilitator));
     if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
@@ -73,11 +73,6 @@ public class NatPunchthroughClient : PluginInterface2 {
 
   public void SetDebugInterface(NatPunchthroughDebugInterface i) {
     RakNetPINVOKE.NatPunchthroughClient_SetDebugInterface(swigCPtr, NatPunchthroughDebugInterface.getCPtr(i));
-  }
-
-  public virtual void GetGuidsForGroupPunchthroughRequest(RakNetGUID excludeThisGuid, RakNetListRakNetGUID guids) {
-    RakNetPINVOKE.NatPunchthroughClient_GetGuidsForGroupPunchthroughRequest(swigCPtr, RakNetGUID.getCPtr(excludeThisGuid), RakNetListRakNetGUID.getCPtr(guids));
-    if (RakNetPINVOKE.SWIGPendingException.Pending) throw RakNetPINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void GetUPNPPortMappings(string externalPort, string internalPort, SystemAddress natPunchthroughServerAddress) {

@@ -2847,7 +2847,7 @@ Defaults to 0, meaning by default, nobody can connect to you <dl compact><dt><b>
 <div class="memdoc">
 
 <p>
-Ping the remote systems every so often, or not. Can be called anytime. By default this is true if GET_TIME_SPIKE_LIMIT is non-zero from RakNetDefines, false otherwise It would be true by default to prevent timestamp drift, since in the event of a clock spike, the timestamp deltas would no longer be accurate <dl compact><dt><b>Parameters:</b></dt><dd>
+Ping the remote systems every so often, or not. Can be called anytime. By default this is true. Recommended to leave on, because congestion control uses it to determine how often to resend lost packets. It would be true by default to prevent timestamp drift, since in the event of a clock spike, the timestamp deltas would no longer be accurate <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>doPing</em>&nbsp;</td><td>True to start occasional pings. False to stop them. </td></tr>
   </table>
@@ -2982,7 +2982,7 @@ ID_DOWNLOAD_PROGRESS is returned to indicate a new partial message chunk, roughl
 <p>
 Set the time, in MS, to use before considering ourselves disconnected after not being able to deliver a reliable message. 
 <p>
-Default time is 10,000 or 10 seconds in release and 30,000 or 30 seconds in debug. <dl compact><dt><b>Parameters:</b></dt><dd>
+Set the time, in MS, to use before considering ourselves disconnected after not being able to deliver a reliable message. Default time is 10,000 or 10 seconds in release and 30,000 or 30 seconds in debug. Do not set different values for different computers that are connected to each other, or you won't be able to reconnect after ID_CONNECTION_LOST <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>timeMS</em>&nbsp;</td><td>Time, in MS </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>target</em>&nbsp;</td><td><a class="el" href="structRakNet_1_1SystemAddress.html" title="Network address for a system.">SystemAddress</a> structure of the target system. Pass UNASSIGNED_SYSTEM_ADDRESS for all systems. </td></tr>
@@ -3317,7 +3317,7 @@ This is used to return a number to the user when they call Send identifying the 
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="RakPeer_8h.html">RakPeer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jul 19 09:27:10 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Aug 18 09:48:20 2011 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>
