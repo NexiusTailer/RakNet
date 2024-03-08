@@ -64,7 +64,7 @@ void DebugBoxSceneNode::render()
 }
 */
 
-DataStructures::Multilist<ML_UNORDERED_LIST, PlayerReplica*> PlayerReplica::playerList;
+DataStructures::List<PlayerReplica*> PlayerReplica::playerList;
 
 // Take this many milliseconds to move the visible position to the real position
 static const float INTERP_TIME_MS=100.0f;
@@ -167,7 +167,9 @@ PlayerReplica::PlayerReplica()
 }
 PlayerReplica::~PlayerReplica()
 {
-	playerList.RemoveAtKey(this,true,_FILE_AND_LINE_);
+	unsigned int index = playerList.GetIndexOf(this);
+	if (index != (unsigned int) -1)
+		playerList.RemoveAtIndexFast(index);
 }
 void PlayerReplica::WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const
 {
@@ -395,7 +397,7 @@ void BallReplica::PostDeserializeConstruction(RakNet::BitStream *constructionBit
 
 	// Find the owner of this ball, and make them play the attack animation
 	unsigned int idx;
-	for (idx=0; idx < PlayerReplica::playerList.GetSize(); idx++)
+	for (idx=0; idx < PlayerReplica::playerList.Size(); idx++)
 	{
 		if (PlayerReplica::playerList[idx]->creatingSystemGUID==creatingSystemGUID)
 		{

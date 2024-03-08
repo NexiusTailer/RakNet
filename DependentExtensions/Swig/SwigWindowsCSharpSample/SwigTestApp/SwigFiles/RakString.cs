@@ -318,6 +318,11 @@ public class RakString : IDisposable {
     return ret;
   }
 
+  public uint GetLengthUTF8() {
+    uint ret = RakNetPINVOKE.RakString_GetLengthUTF8(swigCPtr);
+    return ret;
+  }
+
   public void Replace(uint index, uint count, byte c) {
     RakNetPINVOKE.RakString_Replace(swigCPtr, index, count, c);
   }
@@ -333,6 +338,10 @@ public class RakString : IDisposable {
 
   public void Truncate(uint length) {
     RakNetPINVOKE.RakString_Truncate(swigCPtr, length);
+  }
+
+  public void TruncateUTF8(uint length) {
+    RakNetPINVOKE.RakString_TruncateUTF8(swigCPtr, length);
   }
 
   public RakString SubStr(uint index, uint count) {

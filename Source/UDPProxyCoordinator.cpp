@@ -170,11 +170,12 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 		sourceAddress=packet->systemAddress;
 	SystemAddress targetAddress;
 	RakNetGUID targetGuid;
-	bool usesAddress;
+	bool usesAddress=false;
 	incomingBs.Read(usesAddress);
 	if (usesAddress)
 	{
 		incomingBs.Read(targetAddress);
+		targetGuid=rakPeerInterface->GetGuidFromSystemAddress(targetAddress);
 	}
 	else
 	{
@@ -184,7 +185,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 	ForwardingRequest *fw = RakNet::OP_NEW<ForwardingRequest>(_FILE_AND_LINE_);
 	fw->timeoutAfterSuccess=0;
 	incomingBs.Read(fw->timeoutOnNoDataMS);
-	bool hasServerSelectionBitstream;
+	bool hasServerSelectionBitstream=false;
 	incomingBs.Read(hasServerSelectionBitstream);
 	if (hasServerSelectionBitstream)
 		incomingBs.Read(&(fw->serverSelectionBitstream));
@@ -193,9 +194,13 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 	SenderAndTargetAddress sata;
 	sata.senderClientAddress=sourceAddress;
 	sata.targetClientAddress=targetAddress;
+	sata.targetClientGuid=targetGuid;
+	sata.senderClientGuid=rakPeerInterface->GetGuidFromSystemAddress(sourceAddress);
 	SenderAndTargetAddress sataReversed;
 	sataReversed.senderClientAddress=targetAddress;
 	sataReversed.targetClientAddress=sourceAddress;
+	sataReversed.senderClientGuid=sata.targetClientGuid;
+	sataReversed.targetClientGuid=sata.senderClientGuid;
 
 	unsigned int insertionIndex;
 	bool objectExists1, objectExists2;
@@ -208,6 +213,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 		outgoingBs.Write((MessageID)ID_UDP_PROXY_IN_PROGRESS);
 		outgoingBs.Write(sata.senderClientAddress);
 		outgoingBs.Write(targetAddress);
+		outgoingBs.Write(targetGuid);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 		RakNet::OP_DELETE(fw, _FILE_AND_LINE_);
 		return;
@@ -219,6 +225,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 		outgoingBs.Write((MessageID)ID_UDP_PROXY_NO_SERVERS_ONLINE);
 		outgoingBs.Write(sata.senderClientAddress);
 		outgoingBs.Write(targetAddress);
+		outgoingBs.Write(targetGuid);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 		RakNet::OP_DELETE(fw, _FILE_AND_LINE_);
 		return;
@@ -245,6 +252,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 		outgoingBs.Write((MessageID)ID_UDP_PROXY_PING_SERVERS_FROM_COORDINATOR_TO_CLIENT);
 		outgoingBs.Write(sourceAddress);
 		outgoingBs.Write(targetAddress);
+		outgoingBs.Write(targetGuid);
 		unsigned short serverListSize = (unsigned short) serverList.Size();
 		outgoingBs.Write(serverListSize);
 		unsigned int idx;
@@ -335,6 +343,8 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 		return;
 	}
 	ForwardingRequest *fw = forwardingRequestList[index];
+	sata.senderClientGuid = fw->sata.senderClientGuid;
+	sata.targetClientGuid = fw->sata.targetClientGuid;
 
 	UDPForwarderResult success;
 	unsigned char c;
@@ -353,6 +363,7 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 		outgoingBs.Write((MessageID)ID_UDP_PROXY_FORWARDING_SUCCEEDED);
 		outgoingBs.Write(sata.senderClientAddress);
 		outgoingBs.Write(sata.targetClientAddress);
+		outgoingBs.Write(sata.targetClientGuid);
 		outgoingBs.Write(RakNet::RakString(serverIP));
 		outgoingBs.Write(forwardingPort);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, fw->requestingAddress, false);
@@ -362,6 +373,7 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 		outgoingBs.Write((MessageID)ID_UDP_PROXY_FORWARDING_NOTIFICATION);
 		outgoingBs.Write(sata.senderClientAddress);
 		outgoingBs.Write(sata.targetClientAddress);
+		outgoingBs.Write(sata.targetClientGuid);
 		outgoingBs.Write(RakNet::RakString(serverIP));
 		outgoingBs.Write(forwardingPort);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, sata.targetClientAddress, false);
@@ -387,6 +399,7 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 		outgoingBs.Write((MessageID)ID_UDP_PROXY_IN_PROGRESS);
 		outgoingBs.Write(sata.senderClientAddress);
 		outgoingBs.Write(sata.targetClientAddress);
+		outgoingBs.Write(sata.targetClientGuid);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, fw->requestingAddress, false);
 		forwardingRequestList.RemoveAtIndex(index);
 		RakNet::OP_DELETE(fw,_FILE_AND_LINE_);
@@ -468,7 +481,7 @@ void UDPProxyCoordinator::TryNextServer(SenderAndTargetAddress sata, ForwardingR
 
 	if (pickedGoodServer==false)
 	{
-		SendAllBusy(sata.senderClientAddress, sata.targetClientAddress, fw->requestingAddress);
+		SendAllBusy(sata.senderClientAddress, sata.targetClientAddress, sata.targetClientGuid, fw->requestingAddress);
 		forwardingRequestList.Remove(sata);
 		RakNet::OP_DELETE(fw,_FILE_AND_LINE_);
 		return;
@@ -476,13 +489,14 @@ void UDPProxyCoordinator::TryNextServer(SenderAndTargetAddress sata, ForwardingR
 
 	SendForwardingRequest(sata.senderClientAddress, sata.targetClientAddress, fw->currentlyAttemptedServerAddress, fw->timeoutOnNoDataMS);
 }
-void UDPProxyCoordinator::SendAllBusy(SystemAddress senderClientAddress, SystemAddress targetClientAddress, SystemAddress requestingAddress)
+void UDPProxyCoordinator::SendAllBusy(SystemAddress senderClientAddress, SystemAddress targetClientAddress, RakNetGUID targetClientGuid, SystemAddress requestingAddress)
 {
 	RakNet::BitStream outgoingBs;
 	outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
 	outgoingBs.Write((MessageID)ID_UDP_PROXY_ALL_SERVERS_BUSY);
 	outgoingBs.Write(senderClientAddress);
 	outgoingBs.Write(targetClientAddress);
+	outgoingBs.Write(targetClientGuid);
 	rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, requestingAddress, false);
 }
 void UDPProxyCoordinator::Clear(void)

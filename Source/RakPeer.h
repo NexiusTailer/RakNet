@@ -506,12 +506,14 @@ public:
 	void SendTTL( const char* host, unsigned short remotePort, int ttl, unsigned connectionSocketIndex=0 );
 
 	// -------------------------------------------------------------------------------------------- Plugin Functions--------------------------------------------------------------------------------------------
-	/// \brief Attatches a Plugin interface to an instance of the base class (RakPeer or PacketizedTCP) to run code automatically on message receipt in the Receive call.
+	/// \brief Attaches a Plugin interface to an instance of the base class (RakPeer or PacketizedTCP) to run code automatically on message receipt in the Receive call.
+	/// If the plugin returns false from PluginInterface::UsesReliabilityLayer(), which is the case for all plugins except PacketLogger, you can call AttachPlugin() and DetachPlugin() for this plugin while RakPeer is active.
 	/// \param[in] messageHandler Pointer to the plugin to attach.
 	void AttachPlugin( PluginInterface2 *plugin );
 
 	/// \brief Detaches a Plugin interface from the instance of the base class (RakPeer or PacketizedTCP) it is attached to.
 	///	\details This method disables the plugin code from running automatically on base class's updates or message receipt.
+	/// If the plugin returns false from PluginInterface::UsesReliabilityLayer(), which is the case for all plugins except PacketLogger, you can call AttachPlugin() and DetachPlugin() for this plugin while RakPeer is active.
 	/// \param[in] messageHandler Pointer to a plugin to detach.
 	void DetachPlugin( PluginInterface2 *messageHandler );
 
@@ -806,7 +808,8 @@ protected:
 
 	//DataStructures::List<DataStructures::List<MemoryBlock>* > automaticVariableSynchronizationList;
 	DataStructures::List<BanStruct*> banList;
-	DataStructures::List<PluginInterface2*> messageHandlerList;
+	// Threadsafe, and not thread safe
+	DataStructures::List<PluginInterface2*> pluginListTS, pluginListNTS;
 
 	DataStructures::Queue<RequestedConnectionStruct*> requestedConnectionQueue;
 	SimpleMutex requestedConnectionQueueMutex;
@@ -955,6 +958,7 @@ protected:
 	uint32_t sendReceiptSerial;
 	void ResetSendReceipt(void);
 	void OnConnectedPong(RakNet::Time sendPingTime, RakNet::Time sendPongTime, RemoteSystemStruct *remoteSystem);
+	void CallPluginCallbacks(DataStructures::List<PluginInterface2*> &pluginList, Packet *packet);
 
 #if LIBCAT_SECURITY==1
 	// Encryption and security

@@ -373,6 +373,39 @@ size_t RakString::GetLength(void) const
 {
 	return strlen(sharedString->c_str);
 }
+// http://porg.es/blog/counting-characters-in-utf-8-strings-is-faster
+int porges_strlen2(char *s)
+{
+	int i = 0;
+	int iBefore = 0;
+	int count = 0;
+
+	while (s[i] > 0)
+ascii:  i++;
+
+	count += i-iBefore;
+	while (s[i])
+	{
+		if (s[i] > 0)
+		{
+			iBefore = i;
+			goto ascii;
+		}
+		else
+			switch (0xF0 & s[i])
+		{
+			case 0xE0: i += 3; break;
+			case 0xF0: i += 4; break;
+			default:   i += 2; break;
+		}
+		++count;
+	}
+	return count;
+}
+size_t RakString::GetLengthUTF8(void) const
+{
+	return porges_strlen2(sharedString->c_str);
+}
 void RakString::Replace(unsigned index, unsigned count, unsigned char c)
 {
 	RakAssert(index+count < GetLength());
@@ -500,13 +533,44 @@ size_t RakString::Find(const char *stringToFind,size_t pos)
 	return (size_t) -1;
 }
 
-void RakString::Truncate(unsigned length)
+void RakString::TruncateUTF8(unsigned int length)
+{
+	int i = 0;
+	unsigned int count = 0;
+
+	while (sharedString->c_str[i]!=0)
+	{
+		if (count==length)
+		{
+			sharedString->c_str[i]=0;
+			return;
+		}
+		else if (sharedString->c_str[i]>0)
+		{
+			i++;
+		}
+		else
+		{
+			switch (0xF0 & sharedString->c_str[i])
+			{
+			case 0xE0: i += 3; break;
+			case 0xF0: i += 4; break;
+			default:   i += 2; break;
+			}
+		}
+
+		count++;
+	}
+}
+
+void RakString::Truncate(unsigned int length)
 {
 	if (length < GetLength())
 	{
 		SetChar(length, 0);
 	}
 }
+
 RakString RakString::SubStr(unsigned int index, unsigned int count) const
 {
 	size_t length = GetLength();

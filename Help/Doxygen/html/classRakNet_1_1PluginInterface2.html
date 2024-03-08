@@ -103,6 +103,8 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1PluginInterface2.html#9504489498df14b6efa5ca9bd39aede4">OnFailedConnectionAttempt</a> (<a class="el" href="structRakNet_1_1Packet.html">Packet</a> *packet, <a class="el" href="group__PLUGIN__INTERFACE__GROUP.html#g3e92f686bace869b78c10508c58e0825">PI2_FailedConnectionAttemptReason</a> failedConnectionAttemptReason)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1PluginInterface2.html#ccfca7d25262c48a87a30114383284aa">UsesReliabilityLayer</a> (void) const </td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1PluginInterface2.html#7a6f69c6fc3a121e3676298a63a9ef78">OnDirectSocketSend</a> (const char *data, const BitSize_t bitsUsed, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> remoteSystemAddress)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1PluginInterface2.html#9aac1101ad58e8443516588e96e066ec">OnDirectSocketReceive</a> (const char *data, const BitSize_t bitsUsed, <a class="el" href="structRakNet_1_1SystemAddress.html">SystemAddress</a> remoteSystemAddress)</td></tr>
@@ -150,7 +152,8 @@ RakNet's plugin system. Each plugin processes the following events: -Connection 
 <div class="memdoc">
 
 <p>
-Called when we get an ack for a message we reliabily sent <dl compact><dt><b>Parameters:</b></dt><dd>
+Called when we get an ack for a message we reliably sent <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>To be called, <a class="el" href="classRakNet_1_1PluginInterface2.html#ccfca7d25262c48a87a30114383284aa">UsesReliabilityLayer()</a> must return true </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>messageNumber</em>&nbsp;</td><td>The numerical identifier for which message this is </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>remoteSystemAddress</em>&nbsp;</td><td>The player we sent or got this packet from </td></tr>
@@ -238,7 +241,8 @@ Called when a connection is dropped because the user called <a class="el" href="
 <div class="memdoc">
 
 <p>
-Called on a receive from the socket, per datagram, that does not go through the reliability layer <dl compact><dt><b>Parameters:</b></dt><dd>
+Called on a receive from the socket, per datagram, that does not go through the reliability layer <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>To be called, <a class="el" href="classRakNet_1_1PluginInterface2.html#ccfca7d25262c48a87a30114383284aa">UsesReliabilityLayer()</a> must return true </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>data</em>&nbsp;</td><td>The data being sent </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>bitsUsed</em>&nbsp;</td><td>How many bits long <em>data</em> is </td></tr>
@@ -282,7 +286,8 @@ Called on a receive from the socket, per datagram, that does not go through the 
 <div class="memdoc">
 
 <p>
-Called on a send to the socket, per datagram, that does not go through the reliability layer <dl compact><dt><b>Parameters:</b></dt><dd>
+Called on a send to the socket, per datagram, that does not go through the reliability layer <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>To be called, <a class="el" href="classRakNet_1_1PluginInterface2.html#ccfca7d25262c48a87a30114383284aa">UsesReliabilityLayer()</a> must return true </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>data</em>&nbsp;</td><td>The data being sent </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>bitsUsed</em>&nbsp;</td><td>How many bits long <em>data</em> is </td></tr>
@@ -375,7 +380,8 @@ Called when a connection attempt fails <dl compact><dt><b>Parameters:</b></dt><d
 <div class="memdoc">
 
 <p>
-Called on a send or receive of a message within the reliability layer <dl compact><dt><b>Parameters:</b></dt><dd>
+Called on a send or receive of a message within the reliability layer <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>To be called, <a class="el" href="classRakNet_1_1PluginInterface2.html#ccfca7d25262c48a87a30114383284aa">UsesReliabilityLayer()</a> must return true </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>internalPacket</em>&nbsp;</td><td>The user message, along with all send data. </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>frameNumber</em>&nbsp;</td><td>The number of frames sent or received so far for this player depending on <em>isSend</em> . Indicates the frame of this user message. </td></tr>
@@ -537,7 +543,8 @@ OnReceive is called for every packet. <dl compact><dt><b>Parameters:</b></dt><dd
 <div class="memdoc">
 
 <p>
-Called when the reliability layer rejects a send or receive <dl compact><dt><b>Parameters:</b></dt><dd>
+Called when the reliability layer rejects a send or receive <dl class="pre" compact><dt><b>Precondition:</b></dt><dd>To be called, <a class="el" href="classRakNet_1_1PluginInterface2.html#ccfca7d25262c48a87a30114383284aa">UsesReliabilityLayer()</a> must return true </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>bitsUsed</em>&nbsp;</td><td>How many bits long <em>data</em> is </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>remoteSystemAddress</em>&nbsp;</td><td>Which system this message is being sent to </td></tr>
@@ -548,10 +555,32 @@ Called when the reliability layer rejects a send or receive <dl compact><dt><b>P
 
 </div>
 </div><p>
+<a class="anchor" name="ccfca7d25262c48a87a30114383284aa"></a><!-- doxytag: member="RakNet::PluginInterface2::UsesReliabilityLayer" ref="ccfca7d25262c48a87a30114383284aa" args="(void) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool RakNet::PluginInterface2::UsesReliabilityLayer           </td>
+          <td>(</td>
+          <td class="paramtype">void&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const<code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Queried when attached to <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> Return true to call <a class="el" href="classRakNet_1_1PluginInterface2.html#7a6f69c6fc3a121e3676298a63a9ef78">OnDirectSocketSend()</a>, <a class="el" href="classRakNet_1_1PluginInterface2.html#9aac1101ad58e8443516588e96e066ec">OnDirectSocketReceive()</a>, <a class="el" href="classRakNet_1_1PluginInterface2.html#1ba66b118f6eb4d4263b24aae13fb14d">OnReliabilityLayerPacketError()</a>, <a class="el" href="classRakNet_1_1PluginInterface2.html#399b8c93daa0236599961e754742e2f7">OnInternalPacket()</a>, and <a class="el" href="classRakNet_1_1PluginInterface2.html#e0b0cad31cfc209c48197c77d6b46345">OnAck()</a> If true, then you cannot call <a class="el" href="classRakNet_1_1RakPeer.html#4ceacd63ae51089a2e36287c54f07ffe" title="Attaches a Plugin interface to an instance of the base class (RakPeer or PacketizedTCP)...">RakPeer::AttachPlugin()</a> or <a class="el" href="classRakNet_1_1RakPeer.html#9f29151642a0ad0abdddc6d9a8f25239" title="Detaches a Plugin interface from the instance of the base class (RakPeer or PacketizedTCP)...">RakPeer::DetachPlugin()</a> for this plugin, while <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> is active 
+<p>Reimplemented in <a class="el" href="classRakNet_1_1PacketLogger.html#b486d35c408ffee7d1732678143d4a81">RakNet::PacketLogger</a>.</p>
+
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="PluginInterface2_8h.html">PluginInterface2.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 8 08:27:18 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 1 13:33:47 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

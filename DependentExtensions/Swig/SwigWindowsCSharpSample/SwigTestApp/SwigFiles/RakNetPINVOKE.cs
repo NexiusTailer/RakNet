@@ -1260,6 +1260,9 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_RakString_GetLength")]
   public static extern uint RakString_GetLength(HandleRef jarg1);
 
+  [DllImport("RakNet", EntryPoint="CSharp_RakString_GetLengthUTF8")]
+  public static extern uint RakString_GetLengthUTF8(HandleRef jarg1);
+
   [DllImport("RakNet", EntryPoint="CSharp_RakString_Replace")]
   public static extern void RakString_Replace(HandleRef jarg1, uint jarg2, uint jarg3, byte jarg4);
 
@@ -1271,6 +1274,9 @@ class RakNetPINVOKE {
 
   [DllImport("RakNet", EntryPoint="CSharp_RakString_Truncate")]
   public static extern void RakString_Truncate(HandleRef jarg1, uint jarg2);
+
+  [DllImport("RakNet", EntryPoint="CSharp_RakString_TruncateUTF8")]
+  public static extern void RakString_TruncateUTF8(HandleRef jarg1, uint jarg2);
 
   [DllImport("RakNet", EntryPoint="CSharp_RakString_SubStr")]
   public static extern IntPtr RakString_SubStr(HandleRef jarg1, uint jarg2, uint jarg3);
@@ -2301,6 +2307,9 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_delete_PluginInterface2")]
   public static extern void delete_PluginInterface2(HandleRef jarg1);
 
+  [DllImport("RakNet", EntryPoint="CSharp_PluginInterface2_UsesReliabilityLayer")]
+  public static extern bool PluginInterface2_UsesReliabilityLayer(HandleRef jarg1);
+
   [DllImport("RakNet", EntryPoint="CSharp_PluginInterface2_GetRakPeerInterface")]
   public static extern IntPtr PluginInterface2_GetRakPeerInterface(HandleRef jarg1);
 
@@ -3217,22 +3226,22 @@ class RakNetPINVOKE {
   public static extern void delete_UDPProxyClientResultHandler(HandleRef jarg1);
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPProxyClientResultHandler_OnForwardingSuccess")]
-  public static extern void UDPProxyClientResultHandler_OnForwardingSuccess(HandleRef jarg1, string jarg2, ushort jarg3, HandleRef jarg4, HandleRef jarg5, HandleRef jarg6, HandleRef jarg7);
+  public static extern void UDPProxyClientResultHandler_OnForwardingSuccess(HandleRef jarg1, string jarg2, ushort jarg3, HandleRef jarg4, HandleRef jarg5, HandleRef jarg6, HandleRef jarg7, HandleRef jarg8);
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPProxyClientResultHandler_OnForwardingNotification")]
-  public static extern void UDPProxyClientResultHandler_OnForwardingNotification(HandleRef jarg1, string jarg2, ushort jarg3, HandleRef jarg4, HandleRef jarg5, HandleRef jarg6, HandleRef jarg7);
+  public static extern void UDPProxyClientResultHandler_OnForwardingNotification(HandleRef jarg1, string jarg2, ushort jarg3, HandleRef jarg4, HandleRef jarg5, HandleRef jarg6, HandleRef jarg7, HandleRef jarg8);
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPProxyClientResultHandler_OnNoServersOnline")]
-  public static extern void UDPProxyClientResultHandler_OnNoServersOnline(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, HandleRef jarg4, HandleRef jarg5);
+  public static extern void UDPProxyClientResultHandler_OnNoServersOnline(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, HandleRef jarg4, HandleRef jarg5, HandleRef jarg6);
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPProxyClientResultHandler_OnRecipientNotConnected")]
   public static extern void UDPProxyClientResultHandler_OnRecipientNotConnected(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, HandleRef jarg4, HandleRef jarg5, HandleRef jarg6);
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPProxyClientResultHandler_OnAllServersBusy")]
-  public static extern void UDPProxyClientResultHandler_OnAllServersBusy(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, HandleRef jarg4, HandleRef jarg5);
+  public static extern void UDPProxyClientResultHandler_OnAllServersBusy(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, HandleRef jarg4, HandleRef jarg5, HandleRef jarg6);
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPProxyClientResultHandler_OnForwardingInProgress")]
-  public static extern void UDPProxyClientResultHandler_OnForwardingInProgress(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, HandleRef jarg4, HandleRef jarg5);
+  public static extern void UDPProxyClientResultHandler_OnForwardingInProgress(HandleRef jarg1, HandleRef jarg2, HandleRef jarg3, HandleRef jarg4, HandleRef jarg5, HandleRef jarg6);
 
   [DllImport("RakNet", EntryPoint="CSharp_UDPProxyClientResultHandler_director_connect")]
   public static extern void UDPProxyClientResultHandler_director_connect(HandleRef jarg1, UDPProxyClientResultHandler.SwigDelegateUDPProxyClientResultHandler_0 delegate0, UDPProxyClientResultHandler.SwigDelegateUDPProxyClientResultHandler_1 delegate1, UDPProxyClientResultHandler.SwigDelegateUDPProxyClientResultHandler_2 delegate2, UDPProxyClientResultHandler.SwigDelegateUDPProxyClientResultHandler_3 delegate3, UDPProxyClientResultHandler.SwigDelegateUDPProxyClientResultHandler_4 delegate4, UDPProxyClientResultHandler.SwigDelegateUDPProxyClientResultHandler_5 delegate5);

@@ -80,6 +80,8 @@ public:
 	/// Log the direct sends and receives or not. Default true
 	void SetLogDirectMessages(bool send);
 protected:
+
+	virtual bool UsesReliabilityLayer(void) const {return true;}
 	const char* IDTOString(unsigned char Id);
 	virtual void AddToLog(const char *str);
 	// Users should override this

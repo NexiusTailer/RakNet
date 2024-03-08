@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;./../../DependentExtensions/Autopatcher/AutopatcherMySQLRepository;./../../DependentExtensions/MySQLInterface"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.6&quot;;./../../DependentExtensions/Autopatcher/AutopatcherMySQLRepository;./../../DependentExtensions/MySQLInterface"
 				PreprocessorDefinitions="_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE;__WIN__"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -127,7 +127,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.3&quot;;./../../DependentExtensions/Autopatcher/AutopatcherMySQLRepository;./../../DependentExtensions/MySQLInterface"
+				AdditionalIncludeDirectories="./;./../../Source;./../../DependentExtensions/Autopatcher;&quot;./../../DependentExtensions/bzip2-1.0.6&quot;;./../../DependentExtensions/Autopatcher/AutopatcherMySQLRepository;./../../DependentExtensions/MySQLInterface"
 				PreprocessorDefinitions="_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE;__WIN__"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
@@ -229,39 +229,39 @@
 			Name="BZip"
 			>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\blocksort.c"
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\blocksort.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\bzlib.c"
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\bzlib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\bzlib.h"
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\bzlib.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\bzlib_private.h"
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\bzlib_private.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\compress.c"
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\compress.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\crctable.c"
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\crctable.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\decompress.c"
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\decompress.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\huffman.c"
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\huffman.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\DependentExtensions\bzip2-1.0.3\randtable.c"
+				RelativePath="..\..\DependentExtensions\bzip2-1.0.6\randtable.c"
 				>
 			</File>
 		</Filter>

@@ -909,15 +909,13 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 				{
 					if ( internalPacket->orderingChannel >= NUMBER_OF_ORDERED_STREAMS )
 					{
-
-						FreeInternalPacketData(internalPacket, _FILE_AND_LINE_ );
-						ReleaseToInternalPacketPool( internalPacket );
-
 						for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
 							messageHandlerList[messageHandlerIndex]->OnReliabilityLayerPacketError("internalPacket->orderingChannel >= NUMBER_OF_ORDERED_STREAMS", BYTES_TO_BITS(length), systemAddress);			
 
 						bpsMetrics[(int) USER_MESSAGE_BYTES_RECEIVED_IGNORED].Push1(timeRead,BITS_TO_BYTES(internalPacket->dataBitLength));
 
+						FreeInternalPacketData(internalPacket, _FILE_AND_LINE_ );
+						ReleaseToInternalPacketPool( internalPacket );
 						goto CONTINUE_SOCKET_DATA_PARSE_LOOP;
 					}
 				}
@@ -944,11 +942,11 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 					}
 					else if (holeCount > typeRange/(DatagramSequenceNumberType) 2)
 					{
+						bpsMetrics[(int) USER_MESSAGE_BYTES_RECEIVED_IGNORED].Push1(timeRead,BITS_TO_BYTES(internalPacket->dataBitLength));
+
 						// Duplicate packet
 						FreeInternalPacketData(internalPacket, _FILE_AND_LINE_ );
 						ReleaseToInternalPacketPool( internalPacket );
-
-						bpsMetrics[(int) USER_MESSAGE_BYTES_RECEIVED_IGNORED].Push1(timeRead,BITS_TO_BYTES(internalPacket->dataBitLength));
 
 						goto CONTINUE_SOCKET_DATA_PARSE_LOOP;
 					}
@@ -963,11 +961,11 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 						}
 						else
 						{
+							bpsMetrics[(int) USER_MESSAGE_BYTES_RECEIVED_IGNORED].Push1(timeRead,BITS_TO_BYTES(internalPacket->dataBitLength));
+
 							// Duplicate packet
 							FreeInternalPacketData(internalPacket, _FILE_AND_LINE_ );
 							ReleaseToInternalPacketPool( internalPacket );
-
-							bpsMetrics[(int) USER_MESSAGE_BYTES_RECEIVED_IGNORED].Push1(timeRead,BITS_TO_BYTES(internalPacket->dataBitLength));
 
 							goto CONTINUE_SOCKET_DATA_PARSE_LOOP;
 						}
@@ -981,11 +979,11 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 							for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
 								messageHandlerList[messageHandlerIndex]->OnReliabilityLayerPacketError("holeCount > 1000000", BYTES_TO_BITS(length), systemAddress);			
 
+							bpsMetrics[(int) USER_MESSAGE_BYTES_RECEIVED_IGNORED].Push1(timeRead,BITS_TO_BYTES(internalPacket->dataBitLength));
+
 							// Would crash due to out of memory!
 							FreeInternalPacketData(internalPacket, _FILE_AND_LINE_ );
 							ReleaseToInternalPacketPool( internalPacket );
-
-							bpsMetrics[(int) USER_MESSAGE_BYTES_RECEIVED_IGNORED].Push1(timeRead,BITS_TO_BYTES(internalPacket->dataBitLength));
 
 							goto CONTINUE_SOCKET_DATA_PARSE_LOOP;
 						}
@@ -2565,7 +2563,7 @@ InternalPacket* ReliabilityLayer::CreateInternalPacketFromBitStream( RakNet::Bit
 	bool bitStreamSucceeded;
 	InternalPacket* internalPacket;
 	unsigned char tempChar;
-	bool hasSplitPacket;
+	bool hasSplitPacket=false;
 	bool readSuccess;
 
 	if ( bitStream->GetNumberOfUnreadBits() < (int) sizeof( internalPacket->reliableMessageNumber ) * 8 )

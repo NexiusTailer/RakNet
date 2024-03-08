@@ -66,6 +66,10 @@ Inheritance diagram for RakNet::Replica3:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#79bd207fb79055d2b39943eb1c6b1f58">QueryRemoteConstruction</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *sourceConnection)=0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">We're about to call <a class="el" href="classRakNet_1_1Replica3.html#8e18c95612054b601ce0149f91a5a34d" title="Read data written by Replica3::SerializeConstruction().">DeserializeConstruction()</a> on this <a class="el" href="classRakNet_1_1Replica3.html" title="Base class for your replicated objects for the ReplicaManager3 system.">Replica3</a>. If <a class="el" href="classRakNet_1_1Replica3.html#79bd207fb79055d2b39943eb1c6b1f58" title="We&#39;re about to call DeserializeConstruction() on this Replica3. If QueryRemoteConstruction()...">QueryRemoteConstruction()</a> returns false, this object is deleted instead.  <a href="#79bd207fb79055d2b39943eb1c6b1f58"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2e6e18213d1c45012157149148994299"></a><!-- doxytag: member="RakNet::Replica3::QueryRelayDestruction" ref="2e6e18213d1c45012157149148994299" args="(Connection_RM3 *sourceConnection) const " -->
+virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#2e6e18213d1c45012157149148994299">QueryRelayDestruction</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">Connection_RM3</a> *sourceConnection) const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">We got a message from a connection to destroy this replica Return true to automatically relay the destruction message to all our other connections For a client in client/server, it does not matter what this funtion returns For a server in client/server, this should normally return true For a peer in peer to peer, you can normally return false since the original destroying peer would have told all other peers about the destruction If a system gets a destruction command for an object that was already destroyed, the destruction message is ignored. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#8297aa828aa9261d8ff6194f0023423a">SerializeConstruction</a> (<a class="el" href="classRakNet_1_1BitStream.html">RakNet::BitStream</a> *constructionBitstream, <a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection)=0</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write data to be sent only when the object is constructed on a remote system.  <a href="#8297aa828aa9261d8ff6194f0023423a"></a><br></td></tr>
@@ -96,7 +100,7 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <br class="typebreak">
 <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g9a29b413d7f2b9cb21c16457631d3aef">RakNet::RM3QuerySerializationResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#bc1b2daa5c1a908ddd2d6df44da7e9aa">QuerySerialization</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection)=0</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Implement with <a class="el" href="classRakNet_1_1Replica3.html#8af3a3d3cee9098378deea019710852c" title="Default call for QuerySerialization().">QuerySerialization_ClientSerializable()</a>, <a class="el" href="classRakNet_1_1Replica3.html#2a2c5faec10124231298d43e6f628234" title="Default call for QuerySerialization().">QuerySerialization_ServerSerializable()</a>, or <a class="el" href="classRakNet_1_1Replica3.html#eb9991d03deedec70fe5cc61de4739c6" title="Default call for QuerySerialization().">QuerySerialization_PeerToPeer()</a>.  <a href="#bc1b2daa5c1a908ddd2d6df44da7e9aa"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Implement with <a class="el" href="classRakNet_1_1Replica3.html#8af3a3d3cee9098378deea019710852c" title="Default call for QuerySerialization().">QuerySerialization_ClientSerializable()</a>, <a class="el" href="classRakNet_1_1Replica3.html#2a2c5faec10124231298d43e6f628234" title="Default call for QuerySerialization().">QuerySerialization_ServerSerializable()</a>, or <a class="el" href="classRakNet_1_1Replica3.html#212c9fff207005acf494fb9c4ae9e194" title="Default call for QuerySerialization().">QuerySerialization_PeerToPeer()</a>.  <a href="#bc1b2daa5c1a908ddd2d6df44da7e9aa"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1f633cb586ee48c3f3026f1af1053ba6"></a><!-- doxytag: member="RakNet::Replica3::OnUserReplicaPreSerializeTick" ref="1f633cb586ee48c3f3026f1af1053ba6" args="(void)" -->
 virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#1f633cb586ee48c3f3026f1af1053ba6">OnUserReplicaPreSerializeTick</a> (void)</td></tr>
 
@@ -138,9 +142,9 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#f5d3b25a95bbd91020d035ce9f6476a9">QueryRemoteConstruction_ServerConstruction</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *sourceConnection, bool isThisTheServer)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#79bd207fb79055d2b39943eb1c6b1f58" title="We&#39;re about to call DeserializeConstruction() on this Replica3. If QueryRemoteConstruction()...">QueryRemoteConstruction()</a>. Allow the server to create this object, but not the client.  <a href="#f5d3b25a95bbd91020d035ce9f6476a9"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g16aaecf3c23582f0de6652b348ccfa38">RM3ConstructionState</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#b8f287ba6df69cae303519f74033bcdf">QueryConstruction_PeerToPeer</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g16aaecf3c23582f0de6652b348ccfa38">RM3ConstructionState</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#bd7b33c48572729b624485e69e1f0fe2">QueryConstruction_PeerToPeer</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g91a588da9d58bc86b8fb7e4f27ddcf7e">Replica3P2PMode</a> p2pMode=R3P2PM_SINGLE_OWNER)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">QueryConstruction()</a>.  <a href="#b8f287ba6df69cae303519f74033bcdf"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">QueryConstruction()</a>.  <a href="#bd7b33c48572729b624485e69e1f0fe2"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#6f398550955711b0a2b8366ca6627835">QueryRemoteConstruction_PeerToPeer</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *sourceConnection)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#79bd207fb79055d2b39943eb1c6b1f58" title="We&#39;re about to call DeserializeConstruction() on this Replica3. If QueryRemoteConstruction()...">QueryRemoteConstruction()</a>.  <a href="#6f398550955711b0a2b8366ca6627835"></a><br></td></tr>
@@ -153,9 +157,9 @@ virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#bc1b2daa5c1a908ddd2d6df44da7e9aa" title="Implement with QuerySerialization_ClientSerializable(), QuerySerialization_ServerSerializable()...">QuerySerialization()</a>.  <a href="#2a2c5faec10124231298d43e6f628234"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <br class="typebreak">
-<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g9a29b413d7f2b9cb21c16457631d3aef">RakNet::RM3QuerySerializationResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#eb9991d03deedec70fe5cc61de4739c6">QuerySerialization_PeerToPeer</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection)</td></tr>
+<a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g9a29b413d7f2b9cb21c16457631d3aef">RakNet::RM3QuerySerializationResult</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#212c9fff207005acf494fb9c4ae9e194">QuerySerialization_PeerToPeer</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *destinationConnection, <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g91a588da9d58bc86b8fb7e4f27ddcf7e">Replica3P2PMode</a> p2pMode=R3P2PM_SINGLE_OWNER)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#bc1b2daa5c1a908ddd2d6df44da7e9aa" title="Implement with QuerySerialization_ClientSerializable(), QuerySerialization_ServerSerializable()...">QuerySerialization()</a>.  <a href="#eb9991d03deedec70fe5cc61de4739c6"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Default call for <a class="el" href="classRakNet_1_1Replica3.html#bc1b2daa5c1a908ddd2d6df44da7e9aa" title="Implement with QuerySerialization_ClientSerializable(), QuerySerialization_ServerSerializable()...">QuerySerialization()</a>.  <a href="#212c9fff207005acf494fb9c4ae9e194"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4e6de7837b8df78d6932691df18d2111"></a><!-- doxytag: member="RakNet::Replica3::QueryActionOnPopConnection_Client" ref="4e6de7837b8df78d6932691df18d2111" args="(RakNet::Connection_RM3 *droppedConnection) const " -->
 virtual RM3ActionOnPopConnection&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1Replica3.html#4e6de7837b8df78d6932691df18d2111">QueryActionOnPopConnection_Client</a> (<a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *droppedConnection) const </td></tr>
 
@@ -573,7 +577,7 @@ Ask if this object, which does not exist on <em>destinationConnection</em> shoul
 If ReplicaManager3::QueryConstructionMode() returns QUERY_CONNECTION_FOR_REPLICA_LIST or QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION (default), then QueyrConstruction() is called once per tick from <a class="el" href="classRakNet_1_1ReplicaManager3.html#8aa2fdb5b20aeeab74b037bc1632c9e9" title="Call interfaces, send data.">ReplicaManager3::Update()</a> to determine if an object should exist on a given system.<br>
  Based on the return value, a network message may be sent to the other system to create the object.<br>
  If QueryConstructionMode() is overriden to return QUERY_CONNECTION_FOR_REPLICA_LIST, this function is unused.<br>
- <dl class="note" compact><dt><b>Note:</b></dt><dd>Defaults are provided: <a class="el" href="classRakNet_1_1Replica3.html#b8f287ba6df69cae303519f74033bcdf" title="Default call for QueryConstruction().">QueryConstruction_PeerToPeer()</a>, <a class="el" href="classRakNet_1_1Replica3.html#111ebc1ea1f9f11202ea15abb39fc329" title="Default call for QueryConstruction().">QueryConstruction_ServerConstruction()</a>, <a class="el" href="classRakNet_1_1Replica3.html#98df31b4f30c6a6913963d6ecb8fea73" title="Default call for QueryConstruction().">QueryConstruction_ClientConstruction()</a>. Return one of these functions for a working default for the relevant topology. </dd></dl>
+ <dl class="note" compact><dt><b>Note:</b></dt><dd>Defaults are provided: <a class="el" href="classRakNet_1_1Replica3.html#bd7b33c48572729b624485e69e1f0fe2" title="Default call for QueryConstruction().">QueryConstruction_PeerToPeer()</a>, <a class="el" href="classRakNet_1_1Replica3.html#111ebc1ea1f9f11202ea15abb39fc329" title="Default call for QueryConstruction().">QueryConstruction_ServerConstruction()</a>, <a class="el" href="classRakNet_1_1Replica3.html#98df31b4f30c6a6913963d6ecb8fea73" title="Default call for QueryConstruction().">QueryConstruction_ClientConstruction()</a>. Return one of these functions for a working default for the relevant topology. </dd></dl>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>destinationConnection</em>&nbsp;</td><td>Which system we will send to </td></tr>
@@ -623,7 +627,7 @@ Both the client and the server is allowed to create this object. The network top
 
 </div>
 </div><p>
-<a class="anchor" name="b8f287ba6df69cae303519f74033bcdf"></a><!-- doxytag: member="RakNet::Replica3::QueryConstruction_PeerToPeer" ref="b8f287ba6df69cae303519f74033bcdf" args="(RakNet::Connection_RM3 *destinationConnection)" -->
+<a class="anchor" name="bd7b33c48572729b624485e69e1f0fe2"></a><!-- doxytag: member="RakNet::Replica3::QueryConstruction_PeerToPeer" ref="bd7b33c48572729b624485e69e1f0fe2" args="(RakNet::Connection_RM3 *destinationConnection, Replica3P2PMode p2pMode=R3P2PM_SINGLE_OWNER)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -631,9 +635,18 @@ Both the client and the server is allowed to create this object. The network top
           <td class="memname">virtual <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g16aaecf3c23582f0de6652b348ccfa38">RM3ConstructionState</a> RakNet::Replica3::QueryConstruction_PeerToPeer           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *&nbsp;</td>
-          <td class="paramname"> <em>destinationConnection</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
+          <td class="paramname"> <em>destinationConnection</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g91a588da9d58bc86b8fb7e4f27ddcf7e">Replica3P2PMode</a>&nbsp;</td>
+          <td class="paramname"> <em>p2pMode</em> = <code>R3P2PM_SINGLE_OWNER</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -645,6 +658,7 @@ Default call for <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db
 All clients are allowed to create all objects. The object is not relayed when remotely created <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>destinationConnection</em>&nbsp;</td><td>destinationConnection parameter passed to <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">QueryConstruction()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>p2pMode</em>&nbsp;</td><td>If controlled only by this system ever, pass R3P2PM_SINGLE_OWNER. Otherwise pass R3P2PM_MULTI_OWNER_CURRENTLY_AUTHORITATIVE or R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE </td></tr>
   </table>
 </dl>
 
@@ -880,7 +894,7 @@ Only the server is allowed to create this object. The network topology is client
 <div class="memdoc">
 
 <p>
-Implement with <a class="el" href="classRakNet_1_1Replica3.html#8af3a3d3cee9098378deea019710852c" title="Default call for QuerySerialization().">QuerySerialization_ClientSerializable()</a>, <a class="el" href="classRakNet_1_1Replica3.html#2a2c5faec10124231298d43e6f628234" title="Default call for QuerySerialization().">QuerySerialization_ServerSerializable()</a>, or <a class="el" href="classRakNet_1_1Replica3.html#eb9991d03deedec70fe5cc61de4739c6" title="Default call for QuerySerialization().">QuerySerialization_PeerToPeer()</a>. 
+Implement with <a class="el" href="classRakNet_1_1Replica3.html#8af3a3d3cee9098378deea019710852c" title="Default call for QuerySerialization().">QuerySerialization_ClientSerializable()</a>, <a class="el" href="classRakNet_1_1Replica3.html#2a2c5faec10124231298d43e6f628234" title="Default call for QuerySerialization().">QuerySerialization_ServerSerializable()</a>, or <a class="el" href="classRakNet_1_1Replica3.html#212c9fff207005acf494fb9c4ae9e194" title="Default call for QuerySerialization().">QuerySerialization_PeerToPeer()</a>. 
 <p>
 <a class="el" href="classRakNet_1_1Replica3.html#bc1b2daa5c1a908ddd2d6df44da7e9aa" title="Implement with QuerySerialization_ClientSerializable(), QuerySerialization_ServerSerializable()...">QuerySerialization()</a> is a first pass query to check if a given object should serializable to a given system. The intent is that the user implements with one of the defaults for client, server, or peer to peer.<br>
  Without this function, a careless implementation would serialize an object anytime it changed to all systems. This would give you feedback loops as the sender gets the same message back from the recipient it just sent to.<br>
@@ -927,7 +941,7 @@ Use if the values you are serializing are generated by the client that owns the 
 
 </div>
 </div><p>
-<a class="anchor" name="eb9991d03deedec70fe5cc61de4739c6"></a><!-- doxytag: member="RakNet::Replica3::QuerySerialization_PeerToPeer" ref="eb9991d03deedec70fe5cc61de4739c6" args="(RakNet::Connection_RM3 *destinationConnection)" -->
+<a class="anchor" name="212c9fff207005acf494fb9c4ae9e194"></a><!-- doxytag: member="RakNet::Replica3::QuerySerialization_PeerToPeer" ref="212c9fff207005acf494fb9c4ae9e194" args="(RakNet::Connection_RM3 *destinationConnection, Replica3P2PMode p2pMode=R3P2PM_SINGLE_OWNER)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -935,9 +949,18 @@ Use if the values you are serializing are generated by the client that owns the 
           <td class="memname">virtual <a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g9a29b413d7f2b9cb21c16457631d3aef">RakNet::RM3QuerySerializationResult</a> RakNet::Replica3::QuerySerialization_PeerToPeer           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classRakNet_1_1Connection__RM3.html">RakNet::Connection_RM3</a> *&nbsp;</td>
-          <td class="paramname"> <em>destinationConnection</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td><code> [virtual]</code></td>
+          <td class="paramname"> <em>destinationConnection</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__REPLICA__MANAGER__GROUP3.html#g91a588da9d58bc86b8fb7e4f27ddcf7e">Replica3P2PMode</a>&nbsp;</td>
+          <td class="paramname"> <em>p2pMode</em> = <code>R3P2PM_SINGLE_OWNER</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -949,6 +972,7 @@ Default call for <a class="el" href="classRakNet_1_1Replica3.html#bc1b2daa5c1a90
 Use if the values you are serializing are on a peer to peer network. The peer that owns the object will send to all. Remote peers will not send. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>destinationConnection</em>&nbsp;</td><td>destinationConnection parameter passed to <a class="el" href="classRakNet_1_1Replica3.html#d826e04ce6a0db4e32c3d990fd27e943" title="Ask if this object, which does not exist on destinationConnection should (now) be...">QueryConstruction()</a> </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>p2pMode</em>&nbsp;</td><td>If controlled only by this system ever, pass R3P2PM_SINGLE_OWNER. Otherwise pass R3P2PM_MULTI_OWNER_CURRENTLY_AUTHORITATIVE or R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE </td></tr>
   </table>
 </dl>
 
@@ -1217,7 +1241,7 @@ GUID of the system that first called Reference() on this object. Transmitted aut
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="ReplicaManager3_8h.html">ReplicaManager3.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 8 08:27:19 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 1 13:33:48 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

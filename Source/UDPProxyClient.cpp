@@ -78,7 +78,7 @@ bool UDPProxyClient::RequestForwarding(SystemAddress proxyCoordinator, SystemAdd
 	outgoingBs.Write((MessageID)ID_UDP_PROXY_FORWARDING_REQUEST_FROM_CLIENT_TO_COORDINATOR);
 	outgoingBs.Write(sourceAddress);
 	outgoingBs.Write(true);
-		outgoingBs.Write(targetAddressAsSeenFromCoordinator);
+	outgoingBs.Write(targetAddressAsSeenFromCoordinator);
 	outgoingBs.Write(timeoutOnNoDataMS);
 	if (serverSelectionBitstream && serverSelectionBitstream->GetNumberOfBitsUsed()>0)
 	{
@@ -169,11 +169,13 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet *packet)
 		case ID_UDP_PROXY_RECIPIENT_GUID_NOT_CONNECTED_TO_COORDINATOR:
 		case ID_UDP_PROXY_FORWARDING_NOTIFICATION:
 			{
+				RakNetGUID targetGuid;
 				SystemAddress senderAddress, targetAddress;
 				RakNet::BitStream incomingBs(packet->data, packet->length, false);
 				incomingBs.IgnoreBytes(sizeof(MessageID)*2);
 				incomingBs.Read(senderAddress);
 				incomingBs.Read(targetAddress);
+				incomingBs.Read(targetGuid);
 
 				switch (packet->data[1])
 				{
@@ -187,7 +189,7 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet *packet)
 						if (packet->data[1]==ID_UDP_PROXY_FORWARDING_SUCCEEDED)
 						{
 							if (resultHandler)
-								resultHandler->OnForwardingSuccess(serverIP.C_String(), forwardingPort, packet->systemAddress, senderAddress, targetAddress, this);
+								resultHandler->OnForwardingSuccess(serverIP.C_String(), forwardingPort, packet->systemAddress, senderAddress, targetAddress, targetGuid, this);
 						}
 						else
 						{
@@ -197,26 +199,24 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet *packet)
 							rakPeerInterface->Ping(serverIP.C_String(), forwardingPort, false);
 
 							if (resultHandler)
-								resultHandler->OnForwardingNotification(serverIP.C_String(), forwardingPort, packet->systemAddress, senderAddress, targetAddress, this);
+								resultHandler->OnForwardingNotification(serverIP.C_String(), forwardingPort, packet->systemAddress, senderAddress, targetAddress, targetGuid, this);
 						}
 					}
 					break;
 				case ID_UDP_PROXY_ALL_SERVERS_BUSY:
 					if (resultHandler)
-						resultHandler->OnAllServersBusy(packet->systemAddress, senderAddress, targetAddress, this);
+						resultHandler->OnAllServersBusy(packet->systemAddress, senderAddress, targetAddress, targetGuid, this);
 					break;
 				case ID_UDP_PROXY_IN_PROGRESS:
 					if (resultHandler)
-						resultHandler->OnForwardingInProgress(packet->systemAddress, senderAddress, targetAddress, this);
+						resultHandler->OnForwardingInProgress(packet->systemAddress, senderAddress, targetAddress, targetGuid, this);
 					break;
 				case ID_UDP_PROXY_NO_SERVERS_ONLINE:
 					if (resultHandler)
-						resultHandler->OnNoServersOnline(packet->systemAddress, senderAddress, targetAddress, this);
+						resultHandler->OnNoServersOnline(packet->systemAddress, senderAddress, targetAddress, targetGuid, this);
 					break;
 				case ID_UDP_PROXY_RECIPIENT_GUID_NOT_CONNECTED_TO_COORDINATOR:
 					{
-						RakNetGUID targetGuid;
-						incomingBs.Read(targetGuid);
 						if (resultHandler)
 							resultHandler->OnRecipientNotConnected(packet->systemAddress, senderAddress, targetAddress, targetGuid, this);
 						break;

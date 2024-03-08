@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions;&quot;./../../DependentExtensions/speex-1.1.12/include&quot;;&quot;./../../DependentExtensions/speex-1.1.12/win32&quot;;&quot;C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Win32\api\inc&quot;"
+				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions;&quot;./../../DependentExtensions/speex-1.1.12/include&quot;;&quot;./../../DependentExtensions/speex-1.1.12/win32&quot;;&quot;C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Windows\api\inc&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE;HAVE_CONFIG_H"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -65,7 +65,7 @@
 				AdditionalDependencies="./../../lib/RakNetLibStaticDebug.lib Winmm.lib ws2_32.lib fmodex_vc.lib"
 				OutputFile="$(OutDir)/RakVoice.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\FMOD SoundSystem\FMOD Programmers API Win32\api\lib&quot;"
+				AdditionalLibraryDirectories="C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Windows\api\lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/RakVoice.pdb"
 				SubSystem="1"
@@ -120,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions;&quot;./../../DependentExtensions/speex-1.1.12/include&quot;;&quot;./../../DependentExtensions/speex-1.1.12/win32&quot;;&quot;C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Win32\api\inc&quot;"
+				AdditionalIncludeDirectories="./../../Source;./../../DependentExtensions;&quot;./../../DependentExtensions/speex-1.1.12/include&quot;;&quot;./../../DependentExtensions/speex-1.1.12/win32&quot;;&quot;C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Windows\api\inc&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE;HAVE_CONFIG_H"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -142,7 +142,7 @@
 				AdditionalDependencies="./../../lib/RakNetLibStatic.lib Winmm.lib ws2_32.lib fmodex_vc.lib"
 				OutputFile="$(OutDir)/RakVoice.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\FMOD SoundSystem\FMOD Programmers API Win32\api\lib&quot;"
+				AdditionalLibraryDirectories="C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Windows\api\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"

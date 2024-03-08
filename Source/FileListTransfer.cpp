@@ -406,7 +406,7 @@ bool FileListTransfer::DecodeFile(Packet *packet, bool isTheFileAndIsNotDownload
 
 		FileListTransferCBInterface::FileProgressStruct fps;
 		fps.onFileStruct=&onFileStruct;
-		fps.partCount=0;
+		fps.partCount=1;
 		fps.partTotal=1;
 		fps.dataChunkLength=onFileStruct.byteLengthOfThisFile;
 		fps.firstDataChunk=onFileStruct.fileData;
@@ -624,7 +624,7 @@ void FileListTransfer::AddCallback(FileListProgress *cb)
 	if (cb==0)
 		return;
 
-	if (fileListProgressCallbacks.GetIndexOf(cb)==-1)
+	if (fileListProgressCallbacks.GetIndexOf(cb)==(unsigned int) -1)
 		fileListProgressCallbacks.Push(cb, _FILE_AND_LINE_);
 }
 void FileListTransfer::RemoveCallback(FileListProgress *cb)
@@ -730,7 +730,7 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFileAndIsNotDow
 	inBitStream.ReadCompressed(offset);
 	inBitStream.ReadCompressed(chunkLength);
 
-	bool lastChunk;
+	bool lastChunk=false;
 	inBitStream.Read(lastChunk);
 	bool finished = lastChunk && isTheFileAndIsNotDownloadProgress;
 

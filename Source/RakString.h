@@ -121,6 +121,7 @@ public:
 
 	/// Returns the length of the string
 	size_t GetLength(void) const;
+	size_t GetLengthUTF8(void) const;
 
 	/// Replace character(s) in starting at index, for count, with c
 	void Replace(unsigned index, unsigned count, unsigned char c);
@@ -132,7 +133,8 @@ public:
 	void SetChar( unsigned index, RakNet::RakString s );
 
 	/// Make sure string is no longer than \a length
-	void Truncate(unsigned length);
+	void Truncate(unsigned int length);
+	void TruncateUTF8(unsigned int length);
 
 	// Gets the substring starting at index for count characters
 	RakString SubStr(unsigned int index, unsigned int count) const;

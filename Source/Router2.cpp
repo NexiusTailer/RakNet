@@ -819,7 +819,7 @@ void Router2::OnQueryForwardingReply(Packet *packet)
 	RakNetGUID endpointGuid;
 	bs.Read(endpointGuid);
 	// Find endpointGuid among stored requests
-	bool canForward;
+	bool canForward=false;
 	bs.Read(canForward);
 
 

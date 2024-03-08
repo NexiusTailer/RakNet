@@ -1,4 +1,4 @@
-RakNet 4.035
+RakNet 4.036
 Copyright 2002-2005 Kevin Jenkins (rakkar@jenkinssoftware.com).
 This API and the code herein created by and wholly and privately owned by Kevin Jenkins except where specifically indicated otherwise.
 Licensed under the "RakNet" brand by Jenkins Software and subject to the terms of the relevant licensing agreement available at http://www.jenkinssoftware.com
@@ -62,6 +62,12 @@ You might have to copy *.dll from cygwin\bin as well.
 Linux users
 -----------------------------------------
 Use cmake, or "g++ -lpthread -g *.cpp" in the /Source directory.
+
+64 bit use -m64 command line
+Sometimes you need -pthread instead of -lpthread
+
+Command to build 64 bit chat example server:
+g++ -m64 -g -lpthread -I./ "../Samples/Chat Example/Chat Example Server.cpp" *.cpp
 
 Command to build autopatcher server from /Source directory
 g++ -lpthread -lpq -lssl -lbz2 -lssl -lcrypto -L/opt/PostgreSQL/9.0/lib -L../DependentExtensions/bzip2-1.0.6 -I/opt/PostgreSQL/9.0/include -I../DependentExtensions/bzip2-1.0.6 -I./ -I../DependentExtensions/Autopatcher -I../DependentExtensions/Autopatcher/AutopatcherPostgreRepository -I../DependentExtensions/PostgreSQLInterface -g *.cpp ../DependentExtensions/Autopatcher/AutopatcherServer.cpp ../DependentExtensions/Autopatcher/CreatePatch.cpp ../DependentExtensions/Autopatcher/MemoryCompressor.cpp ../DependentExtensions/Autopatcher/AutopatcherPostgreRepository/AutopatcherPostgreRepository.cpp ../DependentExtensions/PostgreSQLInterface/PostgreSQLInterface.cpp ../Samples/AutopatcherServer/AutopatcherServerTest.cpp

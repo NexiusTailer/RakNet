@@ -44,6 +44,11 @@ public class PluginInterface2 : IDisposable {
   public PluginInterface2() : this(RakNetPINVOKE.new_PluginInterface2(), true) {
   }
 
+  public virtual bool UsesReliabilityLayer() {
+    bool ret = RakNetPINVOKE.PluginInterface2_UsesReliabilityLayer(swigCPtr);
+    return ret;
+  }
+
   public RakPeerInterface GetRakPeerInterface() {
     IntPtr cPtr = RakNetPINVOKE.PluginInterface2_GetRakPeerInterface(swigCPtr);
     RakPeerInterface ret = (cPtr == IntPtr.Zero) ? null : new RakPeerInterface(cPtr, false);

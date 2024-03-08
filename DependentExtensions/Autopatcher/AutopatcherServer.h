@@ -196,6 +196,7 @@ public:
 		unsigned short setId;
 	};
 
+	/// \deprecated
 	struct ResultTypeAndBitstream
 	{
 		ResultTypeAndBitstream() {patchList=0; deletedFiles=0; addedFiles=0;}
@@ -240,9 +241,12 @@ protected:
 	DataStructures::Queue<AutopatcherRepositoryInterface *> connectionPool;
 
 	// How many users are currently patching
-	unsigned int patchingUserCount;
-	void IncrementPatchingUserCount(void);
-	void DecrementPatchingUserCount(void);
+	// unsigned int patchingUserCount;
+
+	SimpleMutex patchingUsersMutex;
+	DataStructures::List<SystemAddress> patchingUsers;
+	bool IncrementPatchingUserCount(SystemAddress sa);
+	bool DecrementPatchingUserCount(SystemAddress sa);
 	bool PatchingUserLimitReached(void) const;
     virtual void OnFilePushesComplete( SystemAddress systemAddress, unsigned short setID );
 	virtual void OnSendAborted( SystemAddress systemAddress );

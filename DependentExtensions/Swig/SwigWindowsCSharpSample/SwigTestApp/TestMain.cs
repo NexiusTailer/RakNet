@@ -103,6 +103,7 @@ namespace SwigTestApp
                 testServer.DeallocatePacket(testPacket);
                 loopNumber++;
                 System.Threading.Thread.Sleep(50);
+                SystemAddress sa = RakNet.RakNet.UNASSIGNED_SYSTEM_ADDRESS;
                 testClient.Send(stringTestSendBitStream, PacketPriority.LOW_PRIORITY, PacketReliability.RELIABLE_ORDERED, (char)0, new AddressOrGUID(new SystemAddress("127.0.0.1", 60001)), false);
             }
             //If RakString is not freed before program exit it will crash

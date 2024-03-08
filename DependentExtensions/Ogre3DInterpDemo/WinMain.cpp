@@ -554,7 +554,8 @@ public:
 		enableInterpolation=true;
 
 
-		// Bug: Since updating to ogre OgreSDK_vc8_v1-7-1 from Ogre 3D 1.6.2, this message doesn't show up anymore
+		// Bug: Since updating to ogre OgreSDK_vc8_v1-7-1 from Ogre 3D 1.6.2, the first call to ShowMessage doesn't show up anymore
+		ShowMessage("'S'erver. 'C'lient. Hold ' ' to disable interp.");
 		ShowMessage("'S'erver. 'C'lient. Hold ' ' to disable interp.");
 	}
 

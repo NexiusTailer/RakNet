@@ -192,7 +192,12 @@ int main(void)
 
 			if (strcmp(message, "connect")==0)
 			{
-				printf("Enter server port: ");
+				printf("Enter server ip: ");
+				Gets(ip, sizeof(ip));
+				if (ip[0]==0)
+					strcpy(ip, "127.0.0.1");
+
+				printf("Enter server port: ");				
 				Gets(serverPort,sizeof(serverPort));
 				if (serverPort[0]==0)
 					strcpy(serverPort, "1234");
@@ -252,7 +257,7 @@ int main(void)
 				break;
 			case ID_ALREADY_CONNECTED:
 				// Connection lost normally
-				printf("ID_ALREADY_CONNECTED\n");
+				printf("ID_ALREADY_CONNECTED with guid %"PRINTF_64_BIT_MODIFIER"u\n", p->guid);
 				break;
 			case ID_INCOMPATIBLE_PROTOCOL_VERSION:
 				printf("ID_INCOMPATIBLE_PROTOCOL_VERSION\n");
@@ -292,6 +297,10 @@ int main(void)
 				// This tells the client they have connected
 				printf("ID_CONNECTION_REQUEST_ACCEPTED to %s with GUID %s\n", p->systemAddress.ToString(true), p->guid.ToString());
 				printf("My external address is %s\n", client->GetExternalID(p->systemAddress).ToString(true));
+				break;
+			case ID_CONNECTED_PING:
+			case ID_UNCONNECTED_PING:
+				printf("Ping from %s\n", p->systemAddress.ToString(true));
 				break;
 			default:
 				// It's a client, so just show the message

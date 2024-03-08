@@ -196,8 +196,10 @@ virtual unsigned&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#2cfd224842b6f1d5e2881901c9f71531">AttachPlugin</a> (<a class="el" href="classRakNet_1_1PluginInterface2.html">PluginInterface2</a> *plugin)=0</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Attaches a Plugin interface to an instance of the base class (<a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> or PacketizedTCP) to run code automatically on message receipt in the Receive call. If the plugin returns false from PluginInterface::UsesReliabilityLayer(), which is the case for all plugins except <a class="el" href="classRakNet_1_1PacketLogger.html" title="Writes incoming and outgoing messages to the screen. This will write all incoming...">PacketLogger</a>, you can call <a class="el" href="classRakNet_1_1RakPeerInterface.html#2cfd224842b6f1d5e2881901c9f71531" title="Attaches a Plugin interface to an instance of the base class (RakPeer or PacketizedTCP)...">AttachPlugin()</a> and <a class="el" href="classRakNet_1_1RakPeerInterface.html#4960f6a8d37d70e7e98f1f6fe54e323d" title="Detaches a Plugin interface from the instance of the base class (RakPeer or PacketizedTCP)...">DetachPlugin()</a> for this plugin while <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> is active.  <a href="#2cfd224842b6f1d5e2881901c9f71531"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#4960f6a8d37d70e7e98f1f6fe54e323d">DetachPlugin</a> (<a class="el" href="classRakNet_1_1PluginInterface2.html">PluginInterface2</a> *messageHandler)=0</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Detaches a Plugin interface from the instance of the base class (<a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> or PacketizedTCP) it is attached to.  <a href="#4960f6a8d37d70e7e98f1f6fe54e323d"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#29c5527b07a3ddc32083d8ec1e24318b">PushBackPacket</a> (<a class="el" href="structRakNet_1_1Packet.html">Packet</a> *packet, bool pushAtHead)=0</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual <a class="el" href="structRakNet_1_1Packet.html">Packet</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeerInterface.html#3e38bdd227138f640a942102813ce779">AllocatePacket</a> (unsigned dataSize)=0</td></tr>
@@ -474,10 +476,11 @@ Adds simulated ping and packet loss to the outgoing data flow. To simulate bi-di
 <div class="memdoc">
 
 <p>
-Attatches a Plugin interface to run code automatically on message receipt in the Receive call <dl class="note" compact><dt><b>Note:</b></dt><dd>If plugins have dependencies on each other then the order does matter - for example the router plugin should go first because it might route messages for other plugins </dd></dl>
+Attaches a Plugin interface to an instance of the base class (<a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> or PacketizedTCP) to run code automatically on message receipt in the Receive call. If the plugin returns false from PluginInterface::UsesReliabilityLayer(), which is the case for all plugins except <a class="el" href="classRakNet_1_1PacketLogger.html" title="Writes incoming and outgoing messages to the screen. This will write all incoming...">PacketLogger</a>, you can call <a class="el" href="classRakNet_1_1RakPeerInterface.html#2cfd224842b6f1d5e2881901c9f71531" title="Attaches a Plugin interface to an instance of the base class (RakPeer or PacketizedTCP)...">AttachPlugin()</a> and <a class="el" href="classRakNet_1_1RakPeerInterface.html#4960f6a8d37d70e7e98f1f6fe54e323d" title="Detaches a Plugin interface from the instance of the base class (RakPeer or PacketizedTCP)...">DetachPlugin()</a> for this plugin while <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> is active. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>messageHandler</em>&nbsp;</td><td>Pointer to a plugin to attach </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>messageHandler</em>&nbsp;</td><td>Pointer to the plugin to attach. </td></tr>
   </table>
 </dl>
 
@@ -788,9 +791,11 @@ Call this to deallocate a message returned by <a class="el" href="classRakNet_1_
 <div class="memdoc">
 
 <p>
-Detaches a Plugin interface to run code automatically on message receipt <dl compact><dt><b>Parameters:</b></dt><dd>
+Detaches a Plugin interface from the instance of the base class (<a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> or PacketizedTCP) it is attached to. 
+<p>
+This method disables the plugin code from running automatically on base class's updates or message receipt. If the plugin returns false from PluginInterface::UsesReliabilityLayer(), which is the case for all plugins except <a class="el" href="classRakNet_1_1PacketLogger.html" title="Writes incoming and outgoing messages to the screen. This will write all incoming...">PacketLogger</a>, you can call <a class="el" href="classRakNet_1_1RakPeerInterface.html#2cfd224842b6f1d5e2881901c9f71531" title="Attaches a Plugin interface to an instance of the base class (RakPeer or PacketizedTCP)...">AttachPlugin()</a> and <a class="el" href="classRakNet_1_1RakPeerInterface.html#4960f6a8d37d70e7e98f1f6fe54e323d" title="Detaches a Plugin interface from the instance of the base class (RakPeer or PacketizedTCP)...">DetachPlugin()</a> for this plugin while <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> is active. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>messageHandler</em>&nbsp;</td><td>Pointer to a plugin to detach </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>messageHandler</em>&nbsp;</td><td>Pointer to a plugin to detach. </td></tr>
   </table>
 </dl>
 
@@ -2730,7 +2735,7 @@ On Android, add the necessary permission to your application's androidmanifest.x
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="RakPeerInterface_8h.html">RakPeerInterface.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 8 08:27:19 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 1 13:33:48 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

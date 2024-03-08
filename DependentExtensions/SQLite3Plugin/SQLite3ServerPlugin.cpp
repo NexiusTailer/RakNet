@@ -14,7 +14,7 @@ int PerRowCallback(void *userArgument, int argc, char **argv, char **azColName)
 {
 	SQLite3Table *outputTable = (SQLite3Table*)userArgument;
 	unsigned int idx;
-	if (outputTable->columnNames.GetSize()==0)
+	if (outputTable->columnNames.Size()==0)
 	{
 		for (idx=0; idx < (unsigned int) argc; idx++)
 			outputTable->columnNames.Push(azColName[idx], _FILE_AND_LINE_ );

@@ -529,6 +529,17 @@ XCode: Fix compilation for newest version by removing DS_Multilist.h.  Added com
 XBOX 360: Fix bug that occured if two systems were to join a room at the same time.
 PS3: Clear event buffer on callbacks
 Postgresql: Updated to 9.1
+4.036 (2/1/2012)
+RakPeer: Fixed assert in SendOutOfBand(). Fix duplicate datagram crash in ReliabilityLayer where holeCount > typeRange/(DatagramSequenceNumberType) 2. Added PluginInterface::UsesReliabilityLayer(). All plugins except packetLogger are now safe to add and remove while RakPeer is active.
+ReplicaManager3: Fix crash with existing object construction for an object that cannot be found. Updated QueryConstruction_PeerToPeer() and QuerySerialization_PeerToPeer() parameter lists. BroadcastDestructionList now automatically ignores replicas currently being deallocated by ReplicaManager3 itself. Added QueryRelayDestruction(). User can override QueryRelayDestruction() to return false to reduce unnecessary event broadcasting for a peer to peer game.
+XBOX 360: Fixed crash on cable disconnect.
+PS3: Fixed sending to multiple recipients for Console_SendGUIInvitationToRoom_PS3. Also used RakString::TruncateUTF8() instead of RakString::Truncate().
+Vita: Added missing library termination call in RakPeer destructor.
+AutopatcherServer: Fixed problem where a user disconnecting while a thread was working on that user would result in that thread being unavailable for use from then on
+FileListTransfer: Fixed showing 0% for OnFileProgress for the last part of a file
+UDPProxy: Added targetGuid to the callbacks that didn't already have it in UDPProxyClientResultHandler
+RakString: Added GetLengthUTF8 and TruncateUTF8
+Irrlicht demo: Updated to Irrlicht 1.7.2
 </pre>
 <BR>
 </p></TD></TR></TABLE>

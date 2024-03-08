@@ -123,7 +123,7 @@ int main(void)
 	}
 
 	printf("\nMy GUID is %s\n", server->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
-	puts("'quit' to quit. 'stat' to show stats. 'ping' to ping.\n'ban' to ban an IP from connecting.\n'kick to kick the first connected player.\nType to talk.");
+	puts("'quit' to quit. 'stat' to show stats. 'ping' to ping.\n'pingip' to ping an ip address\n'ban' to ban an IP from connecting.\n'kick to kick the first connected player.\nType to talk.");
 	char message[2048];
 
 	// Loop for input
@@ -159,6 +159,19 @@ int main(void)
 		if (strcmp(message, "ping")==0)
 		{
 			server->Ping(clientID);
+
+			continue;
+		}
+
+		if (strcmp(message, "pingip")==0)
+		{
+			printf("Enter IP: ");
+			Gets(message,sizeof(message));
+			printf("Enter port: ");
+			Gets(portstring,sizeof(portstring));
+			if (portstring[0]==0)
+				strcpy(portstring, "1234");
+			server->Ping(message, atoi(portstring), false);
 
 			continue;
 		}
@@ -238,6 +251,10 @@ int main(void)
 				printf("ID_INCOMPATIBLE_PROTOCOL_VERSION\n");
 				break;
 
+			case ID_CONNECTED_PING:
+			case ID_UNCONNECTED_PING:
+				printf("Ping from %s\n", p->systemAddress.ToString(true));
+				break;
 
 			case ID_CONNECTION_LOST:
 				// Couldn't deliver a reliable packet - i.e. the other system was abnormally

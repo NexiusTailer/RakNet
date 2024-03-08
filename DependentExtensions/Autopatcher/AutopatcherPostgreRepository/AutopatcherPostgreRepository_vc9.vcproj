@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./../;&quot;./../../bzip2-1.0.6&quot;;./../../../Source;./../../PostgreSQLInterface;&quot;C:\Program Files\PostgreSQL\9.1\include&quot;"
+				AdditionalIncludeDirectories="./../;&quot;./../../bzip2-1.0.6&quot;;./../../../Source;./../../PostgreSQLInterface;&quot;C:\Program Files (x86)\PostgreSQL\9.1\include&quot;"
 				PreprocessorDefinitions="_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -106,7 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./../;&quot;./../../bzip2-1.0.6&quot;;./../../../Source;./../../PostgreSQLInterface;&quot;C:\Program Files\PostgreSQL\9.1\include&quot;"
+				AdditionalIncludeDirectories="./../;&quot;./../../bzip2-1.0.6&quot;;./../../../Source;./../../PostgreSQLInterface;&quot;C:\Program Files (x86)\PostgreSQL\9.1\include&quot;"
 				PreprocessorDefinitions="_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"

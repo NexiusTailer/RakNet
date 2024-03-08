@@ -112,7 +112,7 @@ public:
 	bool isDead;
 
 	// List of all players, including our own
-	static DataStructures::Multilist<ML_UNORDERED_LIST, PlayerReplica*> playerList;
+	static DataStructures::List<PlayerReplica*> playerList;
 };
 class BallReplica : public BaseIrrlichtReplica
 {

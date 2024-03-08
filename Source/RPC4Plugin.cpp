@@ -470,7 +470,7 @@ void RPC4::OnAttach(void)
 	{
 		if (globalRegistrationBuffer[i].registerFunctionPointer)
 		{
-			if (globalRegistrationBuffer[i].callPriority==0xFFFFFFFF)
+			if (globalRegistrationBuffer[i].callPriority==(int)0xFFFFFFFF)
 				RegisterFunction(globalRegistrationBuffer[i].functionName, globalRegistrationBuffer[i].registerFunctionPointer);
 			else
 				RegisterSlot(globalRegistrationBuffer[i].functionName, globalRegistrationBuffer[i].registerFunctionPointer, globalRegistrationBuffer[i].callPriority);
@@ -492,7 +492,7 @@ PluginReceiveResult RPC4::OnReceive(Packet *packet)
 		{
 			RakNet::RakString functionName;
 			bsIn.ReadCompressed(functionName);
-			bool isBlocking;
+			bool isBlocking=false;
 			bsIn.Read(isBlocking);
 			if (isBlocking==false)
 			{

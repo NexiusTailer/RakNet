@@ -586,7 +586,7 @@ struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientRe
 	}
 
 	virtual void OnForwardingSuccess(const char *proxyIPAddress, unsigned short proxyPort,
-		SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
+		SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)
 	{
 		printf("Datagrams forwarded by proxy %s:%i to target %s.\n", proxyIPAddress, proxyPort, targetAddress.ToString(false));
 		printf("Connecting to proxy, which will be received by target.\n");
@@ -595,13 +595,13 @@ struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientRe
 		sampleResult=SUCCEEDED;
 	}
 	virtual void OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort,
-		SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
+		SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)
 	{
 		printf("Source %s has setup forwarding to us through proxy %s:%i.\n", sourceAddress.ToString(false), proxyIPAddress, proxyPort);
 
 		sampleResult=SUCCEEDED;
 	}
-	virtual void OnNoServersOnline(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
+	virtual void OnNoServersOnline(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)
 	{
 		printf("Failure: No servers logged into coordinator.\n");
 		sampleResult=FAILED;
@@ -611,12 +611,12 @@ struct UDPProxyClientFramework : public SampleFramework, public UDPProxyClientRe
 		printf("Failure: Recipient not connected to coordinator.\n");
 		sampleResult=FAILED;
 	}
-	virtual void OnAllServersBusy(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
+	virtual void OnAllServersBusy(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)
 	{
 		printf("Failure: No servers have available forwarding ports.\n");
 		sampleResult=FAILED;
 	}
-	virtual void OnForwardingInProgress(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)
+	virtual void OnForwardingInProgress(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNetGUID targetGuid, RakNet::UDPProxyClient *proxyClientPlugin)
 	{
 		printf("Notification: Forwarding already in progress.\n");
 	}

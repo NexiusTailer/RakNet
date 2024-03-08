@@ -224,7 +224,7 @@ public:
 	/// The objects are unaffected locally
 	/// \param[in] replicaList List of Replica3 objects to tell other systems to destroy.
 	/// \param[in] exclusionAddress Which system to not send to. UNASSIGNED_SYSTEM_ADDRESS to send to all.
-	void BroadcastDestructionList(DataStructures::List<Replica3*> &replicaList, const SystemAddress &exclusionAddress);
+	void BroadcastDestructionList(DataStructures::List<Replica3*> &replicaListSource, const SystemAddress &exclusionAddress);
 
 	/// \internal
 	/// \details Tell other systems that have this replica to destroy this replica.<BR>
@@ -253,6 +253,7 @@ protected:
 	PluginReceiveResult OnDownloadStarted(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 	PluginReceiveResult OnDownloadComplete(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 
+	void DeallocReplicaNoBroadcastDestruction(RakNet::Connection_RM3 *connection, RakNet::Replica3 *replica3);
 	RakNet::Connection_RM3 * PopConnection(unsigned int index);
 	Replica3* GetReplicaByNetworkID(NetworkID networkId);
 	unsigned int ReferenceInternal(RakNet::Replica3 *replica3);
@@ -266,6 +267,7 @@ protected:
 	unsigned char worldId;
 	NetworkIDManager *networkIDManager;
 	bool autoCreateConnections, autoDestroyConnections;
+	Replica3 *currentlyDeallocatingReplica;
 
 	friend class Connection_RM3;
 };
@@ -625,13 +627,14 @@ enum RM3ConstructionState
 	/// The other system already has the object, and the object will never be deleted.
 	/// This is true of objects that are loaded with the level, for example.
 	/// Treat it as if it existed, without sending a construction message.
-	/// Will call SerializeConstructionExisting() to the object on the remote system
+	/// Will call Serialize() and SerializeConstructionExisting() to the object on the remote system
 	RM3CS_ALREADY_EXISTS_REMOTELY,
 
 	/// Same as RM3CS_ALREADY_EXISTS_REMOTELY but does not call SerializeConstructionExisting()
 	RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT,
 
-	/// This object will never be sent to this system
+	/// This object will never be sent to the target system
+	/// This object will never be serialized from this system to the target system
 	RM3CS_NEVER_CONSTRUCT,
 	
 	/// Don't do anything this tick. Will query again next tick
@@ -724,6 +727,23 @@ enum RM3ActionOnPopConnection
 	RM3AOPC_MAX,
 };
 
+/// \ingroup REPLICA_MANAGER_GROUP3
+/// Used for Replica3::QueryConstruction_PeerToPeer() and Replica3::QuerySerialization_PeerToPeer() to describe how the object replicates between hosts
+enum Replica3P2PMode
+{
+	/// The Replica3 instance is constructed and serialized by one system only.
+	/// Example: Your avatar. No other player serializes or can create your avatar.
+	R3P2PM_SINGLE_OWNER,
+	/// The Replica3 instance is constructed and/or serialized by different systems
+	/// This system is currently in charge of construction and/or serialization
+	/// Example: A pickup. When an avatar holds it, that avatar controls it. When it is on the ground, the host controls it.
+	R3P2PM_MULTI_OWNER_CURRENTLY_AUTHORITATIVE,
+	/// The Replica3 instance is constructed and/or serialized by different systems
+	/// Another system is in charge of construction and/or serialization, but this system may be in charge at a later time
+	/// Example: A pickup held by another player. That player sends creation of that object to new connections, and serializes it until it is dropped.
+	R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE,
+};
+
 /// \brief Base class for your replicated objects for the ReplicaManager3 system.
 /// \details To use, derive your class, or a member of your class, from Replica3.<BR>
 /// \ingroup REPLICA_MANAGER_GROUP3
@@ -773,6 +793,14 @@ public:
 	/// \param[in] sourceConnection Which system sent us the object creation request message.
 	/// \return True to allow the object to pass onto DeserializeConstruction() (where it may also be rejected), false to immediately reject the remote construction request
 	virtual bool QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection)=0;
+
+	/// \brief We got a message from a connection to destroy this replica
+	/// Return true to automatically relay the destruction message to all our other connections
+	/// For a client in client/server, it does not matter what this funtion returns
+	/// For a server in client/server, this should normally return true
+	/// For a peer in peer to peer, you can normally return false since the original destroying peer would have told all other peers about the destruction
+	/// If a system gets a destruction command for an object that was already destroyed, the destruction message is ignored
+	virtual bool QueryRelayDestruction(Connection_RM3 *sourceConnection) const {(void) sourceConnection; return true;}
 
 	/// \brief Write data to be sent only when the object is constructed on a remote system.
 	/// \details SerializeConstruction is used to write out data that you need to create this object in the context of your game, such as health, score, name. Use it for data you only need to send when the object is created.<BR>
@@ -910,7 +938,8 @@ public:
 	/// \brief Default call for QueryConstruction().
 	/// \details All clients are allowed to create all objects. The object is not relayed when remotely created
 	/// \param[in] destinationConnection destinationConnection parameter passed to QueryConstruction()
-	virtual RM3ConstructionState QueryConstruction_PeerToPeer(RakNet::Connection_RM3 *destinationConnection);
+	/// \param[in] p2pMode If controlled only by this system ever, pass R3P2PM_SINGLE_OWNER. Otherwise pass R3P2PM_MULTI_OWNER_CURRENTLY_AUTHORITATIVE or R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE
+	virtual RM3ConstructionState QueryConstruction_PeerToPeer(RakNet::Connection_RM3 *destinationConnection, Replica3P2PMode p2pMode=R3P2PM_SINGLE_OWNER);
 	/// \brief Default call for QueryRemoteConstruction().
 	/// \details All clients are allowed to create all objects. The object is not relayed when remotely created
 	/// \param[in] sourceConnection destinationConnection parameter passed to QueryConstruction()
@@ -929,8 +958,9 @@ public:
 	/// \brief Default call for QuerySerialization().
 	/// \details Use if the values you are serializing are on a peer to peer network. The peer that owns the object will send to all. Remote peers will not send.
 	/// \param[in] destinationConnection destinationConnection parameter passed to QueryConstruction()
-	virtual RakNet::RM3QuerySerializationResult QuerySerialization_PeerToPeer(RakNet::Connection_RM3 *destinationConnection);
-
+	/// \param[in] p2pMode If controlled only by this system ever, pass R3P2PM_SINGLE_OWNER. Otherwise pass R3P2PM_MULTI_OWNER_CURRENTLY_AUTHORITATIVE or R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE
+	virtual RakNet::RM3QuerySerializationResult QuerySerialization_PeerToPeer(RakNet::Connection_RM3 *destinationConnection, Replica3P2PMode p2pMode=R3P2PM_SINGLE_OWNER);
+	
 	/// Default: If we are a client, and the connection is lost, delete the server's objects
 	virtual RM3ActionOnPopConnection QueryActionOnPopConnection_Client(RakNet::Connection_RM3 *droppedConnection) const;
 	/// Default: If we are a client, and the connection is lost, delete the client's objects and broadcast the destruction
@@ -980,6 +1010,7 @@ public:
 	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {return r3CompositeOwner->QueryConstruction(destinationConnection, replicaManager3);}
 	virtual RM3DestructionState QueryDestruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {return r3CompositeOwner->QueryDestruction(destinationConnection, replicaManager3);}
 	virtual bool QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection) {return r3CompositeOwner->QueryRemoteConstruction(sourceConnection);}
+	virtual bool QueryRelayDestruction(Connection_RM3 *sourceConnection) const {return r3CompositeOwner->QueryRelayDestruction(sourceConnection);}
 	virtual void SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {r3CompositeOwner->SerializeConstruction(constructionBitstream, destinationConnection);}
 	virtual bool DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {return r3CompositeOwner->DeserializeConstruction(constructionBitstream, sourceConnection);}
 	virtual void SerializeConstructionExisting(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {r3CompositeOwner->SerializeConstructionExisting(constructionBitstream, destinationConnection);}

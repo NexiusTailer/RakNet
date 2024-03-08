@@ -54,7 +54,9 @@ namespace RakNet
 		struct SenderAndTargetAddress
 		{
 			SystemAddress senderClientAddress;
+			RakNetGUID senderClientGuid;
 			SystemAddress targetClientAddress;
+			RakNetGUID targetClientGuid;
 		};
 
 		struct ServerWithPing
@@ -89,7 +91,7 @@ namespace RakNet
 		void OnForwardingReplyFromServerToCoordinator(Packet *packet);
 		void OnPingServersReplyFromClientToCoordinator(Packet *packet);
 		void TryNextServer(SenderAndTargetAddress sata, ForwardingRequest *fw);
-		void SendAllBusy(SystemAddress senderClientAddress, SystemAddress targetClientAddress, SystemAddress requestingAddress);
+		void SendAllBusy(SystemAddress senderClientAddress, SystemAddress targetClientAddress, RakNetGUID targetClientGuid, SystemAddress requestingAddress);
 		void Clear(void);
 
 		void SendForwardingRequest(SystemAddress sourceAddress, SystemAddress targetAddress, SystemAddress serverAddress, RakNet::TimeMS timeoutOnNoDataMS);

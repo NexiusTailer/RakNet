@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;./../../Source;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\boost_1_42\;$(OGRE_HOME)\include\OIS"
+				AdditionalIncludeDirectories="./;./../../Source;&quot;$(OGRE_HOME)\include\OGRE&quot;;&quot;$(OGRE_HOME)\boost_1_48\&quot;;&quot;$(OGRE_HOME)\include\OIS&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -65,7 +65,7 @@
 				AdditionalDependencies="./../../lib/RakNetDLLDebug.lib ws2_32.lib OgreMain_d.lib OIS_d.lib"
 				OutputFile="$(ProjectDir)\$(ProjectName).exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\$(ConfigurationName)&quot;;&quot;$(OGRE_HOME)\boost_1_42\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\$(ConfigurationName)&quot;;&quot;$(OGRE_HOME)\boost_1_48\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -120,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;./../../Source;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\boost_1_42\;$(OGRE_HOME)\include\OIS"
+				AdditionalIncludeDirectories="./;./../../Source;&quot;$(OGRE_HOME)\include\OGRE&quot;;&quot;$(OGRE_HOME)\boost_1_48\&quot;;&quot;$(OGRE_HOME)\include\OIS&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -142,7 +142,7 @@
 				AdditionalDependencies="./../../lib/RakNetDLL.lib ws2_32.lib OgreMain.lib OIS.lib"
 				OutputFile="$(ProjectDir)\$(ProjectName).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\$(ConfigurationName)&quot;;&quot;$(OGRE_HOME)\boost_1_42\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(OGRE_HOME)\lib\$(ConfigurationName)&quot;;&quot;$(OGRE_HOME)\boost_1_48\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"

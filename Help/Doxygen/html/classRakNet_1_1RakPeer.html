@@ -244,7 +244,7 @@ const <a class="el" href="structRakNet_1_1RakNetGUID.html">RakNetGUID</a>&nbsp;<
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Send a message to a host, with the IP socket option TTL set to 3.  <a href="#86b8b2a8d2e4edc2c1d89f6bde8b9f28"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#4ceacd63ae51089a2e36287c54f07ffe">AttachPlugin</a> (<a class="el" href="classRakNet_1_1PluginInterface2.html">PluginInterface2</a> *plugin)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Attatches a Plugin interface to an instance of the base class (<a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> or PacketizedTCP) to run code automatically on message receipt in the Receive call.  <a href="#4ceacd63ae51089a2e36287c54f07ffe"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Attaches a Plugin interface to an instance of the base class (<a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> or PacketizedTCP) to run code automatically on message receipt in the Receive call. If the plugin returns false from PluginInterface::UsesReliabilityLayer(), which is the case for all plugins except <a class="el" href="classRakNet_1_1PacketLogger.html" title="Writes incoming and outgoing messages to the screen. This will write all incoming...">PacketLogger</a>, you can call <a class="el" href="classRakNet_1_1RakPeer.html#4ceacd63ae51089a2e36287c54f07ffe" title="Attaches a Plugin interface to an instance of the base class (RakPeer or PacketizedTCP)...">AttachPlugin()</a> and <a class="el" href="classRakNet_1_1RakPeer.html#9f29151642a0ad0abdddc6d9a8f25239" title="Detaches a Plugin interface from the instance of the base class (RakPeer or PacketizedTCP)...">DetachPlugin()</a> for this plugin while <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> is active.  <a href="#4ceacd63ae51089a2e36287c54f07ffe"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRakNet_1_1RakPeer.html#9f29151642a0ad0abdddc6d9a8f25239">DetachPlugin</a> (<a class="el" href="classRakNet_1_1PluginInterface2.html">PluginInterface2</a> *messageHandler)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Detaches a Plugin interface from the instance of the base class (<a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> or PacketizedTCP) it is attached to.  <a href="#9f29151642a0ad0abdddc6d9a8f25239"></a><br></td></tr>
@@ -675,7 +675,7 @@ Get a free remote system from the list and assign our systemAddress to it.
 <div class="memdoc">
 
 <p>
-Attatches a Plugin interface to an instance of the base class (<a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> or PacketizedTCP) to run code automatically on message receipt in the Receive call. 
+Attaches a Plugin interface to an instance of the base class (<a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> or PacketizedTCP) to run code automatically on message receipt in the Receive call. If the plugin returns false from PluginInterface::UsesReliabilityLayer(), which is the case for all plugins except <a class="el" href="classRakNet_1_1PacketLogger.html" title="Writes incoming and outgoing messages to the screen. This will write all incoming...">PacketLogger</a>, you can call <a class="el" href="classRakNet_1_1RakPeer.html#4ceacd63ae51089a2e36287c54f07ffe" title="Attaches a Plugin interface to an instance of the base class (RakPeer or PacketizedTCP)...">AttachPlugin()</a> and <a class="el" href="classRakNet_1_1RakPeer.html#9f29151642a0ad0abdddc6d9a8f25239" title="Detaches a Plugin interface from the instance of the base class (RakPeer or PacketizedTCP)...">DetachPlugin()</a> for this plugin while <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> is active. 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -1000,7 +1000,7 @@ Call this to deallocate a message returned by <a class="el" href="classRakNet_1_
 <p>
 Detaches a Plugin interface from the instance of the base class (<a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> or PacketizedTCP) it is attached to. 
 <p>
-This method disables the plugin code from running automatically on base class's updates or message receipt. <dl compact><dt><b>Parameters:</b></dt><dd>
+This method disables the plugin code from running automatically on base class's updates or message receipt. If the plugin returns false from PluginInterface::UsesReliabilityLayer(), which is the case for all plugins except <a class="el" href="classRakNet_1_1PacketLogger.html" title="Writes incoming and outgoing messages to the screen. This will write all incoming...">PacketLogger</a>, you can call <a class="el" href="classRakNet_1_1RakPeer.html#4ceacd63ae51089a2e36287c54f07ffe" title="Attaches a Plugin interface to an instance of the base class (RakPeer or PacketizedTCP)...">AttachPlugin()</a> and <a class="el" href="classRakNet_1_1RakPeer.html#9f29151642a0ad0abdddc6d9a8f25239" title="Detaches a Plugin interface from the instance of the base class (RakPeer or PacketizedTCP)...">DetachPlugin()</a> for this plugin while <a class="el" href="classRakNet_1_1RakPeer.html" title="Main interface for network communications.">RakPeer</a> is active. <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>messageHandler</em>&nbsp;</td><td>Pointer to a plugin to detach. </td></tr>
   </table>
@@ -3317,7 +3317,7 @@ This is used to return a number to the user when they call Send identifying the 
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>d:/temp/RakNet_PC/Source/<a class="el" href="RakPeer_8h.html">RakPeer.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 8 08:27:18 2011 for RakNet by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 1 13:33:47 2012 for RakNet by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.7.1 </small></address>
 </body>

@@ -67,6 +67,7 @@ ReplicaManager3::ReplicaManager3()
 	autoCreateConnections=true;
 	autoDestroyConnections=true;
 	networkIDManager=0;
+	currentlyDeallocatingReplica=0;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -116,6 +117,14 @@ bool ReplicaManager3::PushConnection(RakNet::Connection_RM3 *newConnection)
 	return true;
 }
 
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void ReplicaManager3::DeallocReplicaNoBroadcastDestruction(RakNet::Connection_RM3 *connection, RakNet::Replica3 *replica3)
+{
+	currentlyDeallocatingReplica=replica3;
+	replica3->DeallocReplica(connection);
+	currentlyDeallocatingReplica=0;
+}
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -796,7 +805,7 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 	Replica3 *replica;
 	NetworkID networkId;
 	RakNetGUID creatingSystemGuid;
-	bool actuallyCreateObject;
+	bool actuallyCreateObject=false;
 
 	DataStructures::List<bool> actuallyCreateObjectList;
 	DataStructures::List<Replica3*> constructionTickStack;
@@ -853,8 +862,7 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 			if (!replica->QueryRemoteConstruction(connection) ||
 				!replica->DeserializeConstruction(&bsIn, connection))
 			{
-				replica->replicaManager=0;
-				replica->DeallocReplica(connection);
+				DeallocReplicaNoBroadcastDestruction(connection, replica);
 				bsIn.SetReadOffset(streamEnd);
 				constructionTickStack.Push(0, _FILE_AND_LINE_);
 				continue;
@@ -889,7 +897,7 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 	RakNet::BitStream empty;
 	for (index=0; index < constructionObjectListSize; index++)
 	{
-		bool pdcWritten;
+		bool pdcWritten=false;
 		bsIn.Read(pdcWritten);
 		if (pdcWritten)
 		{
@@ -955,10 +963,10 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 				replica->PreDestruction(connection);
 
 				// Forward deletion by remote system
-				BroadcastDestruction(replica,connection->GetSystemAddress());
+				if (replica->QueryRelayDestruction(connection))
+					BroadcastDestruction(replica,connection->GetSystemAddress());
 				Dereference(replica);
-				replica->replicaManager=0; // Prevent BroadcastDestruction from being called again
-				replica->DeallocReplica(connection);
+				DeallocReplicaNoBroadcastDestruction(connection, replica);
 			}
 		}
 		else
@@ -1087,14 +1095,25 @@ Replica3* ReplicaManager3::GetReplicaByNetworkID(NetworkID networkId)
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-void ReplicaManager3::BroadcastDestructionList(DataStructures::List<Replica3*> &replicaList, const SystemAddress &exclusionAddress)
+void ReplicaManager3::BroadcastDestructionList(DataStructures::List<Replica3*> &replicaListSource, const SystemAddress &exclusionAddress)
 {
 	RakNet::BitStream bsOut;
 	unsigned int i,j;
 
+	DataStructures::List<Replica3*> replicaList;
+
+	for (i=0; i < replicaListSource.Size(); i++)
+	{
+		if (replicaListSource[i]==currentlyDeallocatingReplica)
+			continue;
+		replicaList.Push(replicaListSource[i], __FILE__, __LINE__);
+	}
+
+	if (replicaList.Size()==0)
+		return;
+
 	for (i=0; i < replicaList.Size(); i++)
 	{
-
 		if (replicaList[i]->deletingSystemGUID==UNASSIGNED_RAKNET_GUID)
 			replicaList[i]->deletingSystemGUID=GetRakPeerInterface()->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 	}
@@ -1110,12 +1129,15 @@ void ReplicaManager3::BroadcastDestructionList(DataStructures::List<Replica3*> &
 		uint16_t cnt=0;
 		bsOut.Write(cnt); // No construction
 		cnt=(uint16_t) replicaList.Size();
-		bsOut.Write(cnt);
+		BitSize_t cntOffset=bsOut.GetWriteOffset();;
+		bsOut.Write(cnt); // Overwritten at send call
+		cnt=0;
 
 		for (i=0; i < replicaList.Size(); i++)
 		{
 			if (connectionList[j]->HasReplicaConstructed(replicaList[i])==false)
 				continue;
+			cnt++;
 
 			NetworkID networkId;
 			networkId=replicaList[i]->GetNetworkID();
@@ -1132,7 +1154,14 @@ void ReplicaManager3::BroadcastDestructionList(DataStructures::List<Replica3*> &
 			bsOut.SetWriteOffset(offsetEnd);
 		}
 
-		rakPeerInterface->Send(&bsOut,defaultSendParameters.priority,defaultSendParameters.reliability,defaultSendParameters.orderingChannel,connectionList[j]->GetSystemAddress(),false, defaultSendParameters.sendReceipt);
+		if (cnt>0)
+		{
+			BitSize_t curOffset=bsOut.GetWriteOffset();
+			bsOut.SetWriteOffset(cntOffset);
+			bsOut.Write(cnt);
+			bsOut.SetWriteOffset(curOffset);
+			rakPeerInterface->Send(&bsOut,defaultSendParameters.priority,defaultSendParameters.reliability,defaultSendParameters.orderingChannel,connectionList[j]->GetSystemAddress(),false, defaultSendParameters.sendReceipt);
+		}
 	}
 }
 
@@ -2047,8 +2076,7 @@ Replica3::~Replica3()
 
 void Replica3::BroadcastDestruction(void)
 {
-	if (replicaManager) // If 0, then this replica is not referenced by ReplicaManager3. BroadcastDestruction() may have been called already for this Replica. You can debug it on the sender by putting a breakpoint in Replica3::SerializeDestruction(). That should not be called for the replica that should not be getting deleted. On the recipient, you will get Replica3::PreDestruction().
-		replicaManager->BroadcastDestruction(this,UNASSIGNED_SYSTEM_ADDRESS);
+	replicaManager->BroadcastDestruction(this,UNASSIGNED_SYSTEM_ADDRESS);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2105,14 +2133,30 @@ bool Replica3::QueryRemoteConstruction_ServerConstruction(RakNet::Connection_RM3
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RM3ConstructionState Replica3::QueryConstruction_PeerToPeer(RakNet::Connection_RM3 *destinationConnection)
+RM3ConstructionState Replica3::QueryConstruction_PeerToPeer(RakNet::Connection_RM3 *destinationConnection, Replica3P2PMode p2pMode)
 {
 	(void) destinationConnection;
 
-	// We send to all, others do nothing
-	if (creatingSystemGUID==replicaManager->GetRakPeerInterface()->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
+	if (p2pMode==R3P2PM_SINGLE_OWNER)
+	{
+		// We send to all, others do nothing
+		if (creatingSystemGUID==replicaManager->GetRakPeerInterface()->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
+			return RM3CS_SEND_CONSTRUCTION;
+
+		// RM3CS_NEVER_CONSTRUCT will not send the object, and will not Serialize() it
+		return RM3CS_NEVER_CONSTRUCT;
+	}
+	else if (p2pMode==R3P2PM_MULTI_OWNER_CURRENTLY_AUTHORITATIVE)
+	{
 		return RM3CS_SEND_CONSTRUCTION;
-	return RM3CS_NEVER_CONSTRUCT;
+	}
+	else
+	{
+		RakAssert(p2pMode==R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE);
+
+		// RM3CS_ALREADY_EXISTS_REMOTELY will not send the object, but WILL call QuerySerialization() and Serialize() on it.
+		return RM3CS_ALREADY_EXISTS_REMOTELY;
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2153,16 +2197,28 @@ RM3QuerySerializationResult Replica3::QuerySerialization_ServerSerializable(RakN
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RM3QuerySerializationResult Replica3::QuerySerialization_PeerToPeer(RakNet::Connection_RM3 *destinationConnection)
+RM3QuerySerializationResult Replica3::QuerySerialization_PeerToPeer(RakNet::Connection_RM3 *destinationConnection, Replica3P2PMode p2pMode)
 {
 	(void) destinationConnection;
 
-	// Owner peer sends to all
-	if (creatingSystemGUID==replicaManager->GetRakPeerInterface()->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
-		return RM3QSR_CALL_SERIALIZE;
+	if (p2pMode==R3P2PM_SINGLE_OWNER)
+	{
+		// Owner peer sends to all
+		if (creatingSystemGUID==replicaManager->GetRakPeerInterface()->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
+			return RM3QSR_CALL_SERIALIZE;
 
-	// Remote peers do not send
-	return RM3QSR_NEVER_CALL_SERIALIZE;
+		// Remote peers do not send
+		return RM3QSR_NEVER_CALL_SERIALIZE;
+	}
+	else if (p2pMode==R3P2PM_MULTI_OWNER_CURRENTLY_AUTHORITATIVE)
+	{
+		return RM3QSR_CALL_SERIALIZE;
+	}
+	else
+	{
+		RakAssert(p2pMode==R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE);
+		return RM3QSR_DO_NOT_CALL_SERIALIZE;
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

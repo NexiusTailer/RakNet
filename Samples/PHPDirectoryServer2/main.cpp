@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include "Gets.h"
+#include "Getche.h"
 
 using namespace RakNet;
 
@@ -402,8 +403,7 @@ void TestPHPDirectoryServer(int argc, char **argv)
 
 //	RakNet::TimeMS lastTouched = 0;
 
-	// Start the TCP thread. This is used for general TCP communication, whether it is for webpages, sending emails, or telnet
-    tcp->Start(0, 64);
+
 
 	char website[256];
 	char pathToPHP[256];
@@ -422,7 +422,7 @@ void TestPHPDirectoryServer(int argc, char **argv)
 		printf("Enter path to DirectoryServer.php, e.g. raknet/DirectoryServer.php:\n");
 		Gets(pathToPHP,sizeof(pathToPHP));
 		if (pathToPHP[0]==0)
-			strcpy(pathToPHP, "raknet/DirectoryServer.php");
+			strcpy(pathToPHP, "/raknet/DirectoryServer.php");
 	}
 
 	if (website[strlen(website)-1]!='/' && pathToPHP[0]!='/')
@@ -459,6 +459,8 @@ void TestPHPDirectoryServer(int argc, char **argv)
 void TestGet(void)
 {
 	printf("This is NOT a reliable way to download from a website. Use libcurl instead.\n");
+	httpConnection->Init(tcp, "jenkinssoftware.com");
+	httpConnection->Get("/trivia/ranking.php?t=single&places=50&score=30000");
 	httpConnection->Init(tcp, "www.google.com");
 	httpConnection->Get("index.html");
 	while (1)
@@ -466,6 +468,7 @@ void TestGet(void)
 		Packet *packet = tcp->Receive();
 		if(packet)
 		{
+			//printf((char*) packet->data);
 			httpConnection->ProcessTCPPacket(packet);
 			tcp->DeallocatePacket(packet);
 		}
@@ -475,6 +478,7 @@ void TestGet(void)
 		{
 			RakString fileContents = httpConnection->Read();
 			printf(fileContents.C_String());
+			getche();
 			return;
 		}
 		// Prevent 100% cpu usage
@@ -495,14 +499,14 @@ int main(int argc, char **argv)
 
 
 
-//	RakNetTime lastTouched = 0;
+	//    RakNetTime lastTouched = 0;
 
 	// Start the TCP thread. This is used for general TCP communication, whether it is for webpages, sending emails, or telnet
-    tcp->Start(0, 64);
+	tcp->Start(0, 64);
 
 	TestPHPDirectoryServer(argc,argv);
 
-	// TestGet();
+	//TestGet();
 
-    return 0;
+	return 0;
 }

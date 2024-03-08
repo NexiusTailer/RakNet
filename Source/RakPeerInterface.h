@@ -470,13 +470,15 @@ public:
 	virtual void SendTTL( const char* host, unsigned short remotePort, int ttl, unsigned connectionSocketIndex=0 )=0;
 
 	// -------------------------------------------------------------------------------------------- Plugin Functions--------------------------------------------------------------------------------------------
-	/// Attatches a Plugin interface to run code automatically on message receipt in the Receive call
-	/// \note If plugins have dependencies on each other then the order does matter - for example the router plugin should go first because it might route messages for other plugins
-	/// \param[in] messageHandler Pointer to a plugin to attach
+	/// \brief Attaches a Plugin interface to an instance of the base class (RakPeer or PacketizedTCP) to run code automatically on message receipt in the Receive call.
+	/// If the plugin returns false from PluginInterface::UsesReliabilityLayer(), which is the case for all plugins except PacketLogger, you can call AttachPlugin() and DetachPlugin() for this plugin while RakPeer is active.
+	/// \param[in] messageHandler Pointer to the plugin to attach.
 	virtual void AttachPlugin( PluginInterface2 *plugin )=0;
 
-	/// Detaches a Plugin interface to run code automatically on message receipt
-	/// \param[in] messageHandler Pointer to a plugin to detach
+	/// \brief Detaches a Plugin interface from the instance of the base class (RakPeer or PacketizedTCP) it is attached to.
+	///	\details This method disables the plugin code from running automatically on base class's updates or message receipt.
+	/// If the plugin returns false from PluginInterface::UsesReliabilityLayer(), which is the case for all plugins except PacketLogger, you can call AttachPlugin() and DetachPlugin() for this plugin while RakPeer is active.
+	/// \param[in] messageHandler Pointer to a plugin to detach.
 	virtual void DetachPlugin( PluginInterface2 *messageHandler )=0;
 
 	// --------------------------------------------------------------------------------------------Miscellaneous Functions--------------------------------------------------------------------------------------------

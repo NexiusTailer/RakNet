@@ -7,7 +7,7 @@ For help and support with the demo, email rakkar@jenkinssoftware.com
 For information about RakNet, go to http://www.jenkinssoftware.com
 
 For information about Irrlicht, go to http://irrlicht.sourceforge.net/ .
-The sample assumes Irrlicht is unzipped to C:\irrlicht-1.7.1\include
+The sample assumes Irrlicht is unzipped to C:\irrlicht-1.7.2\include
 
 Sound uses IrrKlang, which the author was nice enough to let us distribute. IrrKlang is located at http://www.ambiera.com/irrklang/
 
@@ -17,8 +17,8 @@ Project: IrrlichtDemo
 
 Description: Demonstrates Irrlicht modified with RakNet for peer to peer multiplayer, written in two days. See RakNetStuff.cpp for most of the networking code
 
-Dependencies: For windows Irrlicht version 1.7.1 is assumed to be installed at C:\irrlicht-1.7.1 . If you don't have it installed here, change the project paths. IrrKlang included by default with permission of the author. The website for Irrlicht is http://irrlicht.sourceforge.net/
-For linux version 1.7.1 or higher may be used, irrKlang headers and .so file is also required for the linux version.
+Dependencies: For windows Irrlicht version 1.7.2 is assumed to be installed at C:\irrlicht-1.7.2 . If you don't have it installed here, change the project paths. IrrKlang included by default with permission of the author. The website for Irrlicht is http://irrlicht.sourceforge.net/
+For linux version 1.7.2 or higher may be used, irrKlang headers and .so file is also required for the linux version.
 
 Related projects: NatPunchthroughServer, DependentExtensions\miniupnpc-1.5
 

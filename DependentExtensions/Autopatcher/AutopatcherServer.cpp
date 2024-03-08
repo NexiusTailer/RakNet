@@ -96,7 +96,6 @@ AutopatcherServer::AutopatcherServer()
 	priority=HIGH_PRIORITY;
 	orderingChannel=0;
 //	repository=0;
-	patchingUserCount=0;
 	maxConcurrentUsers=0;
 	loadNotifier=0;
 	cache_minTime=0;
@@ -204,8 +203,8 @@ void AutopatcherServer::Clear(void)
 	threadPool.StopThreads();
 	for (i=0; i < threadPool.InputSize(); i++)
 	{
-		DecrementPatchingUserCount();
-		CallPatchCompleteCallback(threadPool.GetInputAtIndex(i).systemAddress, AutopatcherServerLoadNotifier::PR_ABORTED_FROM_INPUT_THREAD);
+		if (DecrementPatchingUserCount(threadPool.GetInputAtIndex(i).systemAddress))
+			CallPatchCompleteCallback(threadPool.GetInputAtIndex(i).systemAddress, AutopatcherServerLoadNotifier::PR_ABORTED_FROM_INPUT_THREAD);
 		RakNet::OP_DELETE(threadPool.GetInputAtIndex(i).clientList, _FILE_AND_LINE_);
 	}
 	threadPool.ClearInput();
@@ -219,6 +218,8 @@ void AutopatcherServer::Clear(void)
 
 	while (userRequestWaitingQueue.Size())
 		DeallocPacketUnified(AbortOffWaitingQueue());
+
+	patchingUsers.Clear(true, _FILE_AND_LINE_);
 }
 #ifdef _MSC_VER
 #pragma warning( disable : 4100 ) // warning C4100: <variable name> : unreferenced formal parameter
@@ -233,6 +234,17 @@ void AutopatcherServer::OnClosedConnection(const SystemAddress &systemAddress, R
 {
 	RemoveFromThreadPool(systemAddress);
 
+	unsigned int i=0;
+	patchingUsersMutex.Lock();
+	while (i < patchingUsers.Size())
+	{
+		if (patchingUsers[i]==systemAddress)
+			patchingUsers.RemoveAtIndexFast(i);
+		else
+			i++;
+	}
+	patchingUsersMutex.Unlock();
+
 	while (userRequestWaitingQueue.Size())
 		DeallocPacketUnified(AbortOffWaitingQueue());
 }
@@ -245,8 +257,8 @@ void AutopatcherServer::RemoveFromThreadPool(SystemAddress systemAddress)
 	{
 		if (threadPool.GetInputAtIndex(i).systemAddress==systemAddress)
 		{
-			DecrementPatchingUserCount();
-			CallPatchCompleteCallback(threadPool.GetInputAtIndex(i).systemAddress, AutopatcherServerLoadNotifier::PR_ABORTED_FROM_INPUT_THREAD);
+			if (DecrementPatchingUserCount(systemAddress))
+				CallPatchCompleteCallback(threadPool.GetInputAtIndex(i).systemAddress, AutopatcherServerLoadNotifier::PR_ABORTED_FROM_INPUT_THREAD);
 			RakNet::OP_DELETE(threadPool.GetInputAtIndex(i).clientList, _FILE_AND_LINE_);
 			threadPool.RemoveInputAtIndex(i);
 		}
@@ -338,33 +350,35 @@ AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherS
 
 	*returnOutput=false;
 
-	if (rtab.bitStream1.GetNumberOfBitsUsed()>0)
-		server->SendUnified(&(rtab.bitStream1), server->priority, RELIABLE_ORDERED, server->orderingChannel, rtab.systemAddress, false);
-	if (rtab.bitStream2.GetNumberOfBitsUsed()>0)
-		server->SendUnified(&(rtab.bitStream2), server->priority, RELIABLE_ORDERED, server->orderingChannel, rtab.systemAddress, false);
-
-	server->DecrementPatchingUserCount();
-
-	if (server->loadNotifier)
+	if (server->DecrementPatchingUserCount(rtab.systemAddress))
 	{
-		AutopatcherServerLoadNotifier::AutopatcherState autopatcherState;
-		autopatcherState.requestsQueued=server->userRequestWaitingQueue.Size();
-		autopatcherState.requestsWorking=server->patchingUserCount;
+		if (rtab.bitStream1.GetNumberOfBitsUsed()>0)
+			server->SendUnified(&(rtab.bitStream1), server->priority, RELIABLE_ORDERED, server->orderingChannel, rtab.systemAddress, false);
+		if (rtab.bitStream2.GetNumberOfBitsUsed()>0)
+			server->SendUnified(&(rtab.bitStream2), server->priority, RELIABLE_ORDERED, server->orderingChannel, rtab.systemAddress, false);
 
-		AutopatcherServerLoadNotifier::GetChangelistResult getChangelistResult;
-		if (rtab.fatalError==true)
-			getChangelistResult=AutopatcherServerLoadNotifier::GCR_REPOSITORY_ERROR;
-		else if (rtab.deletedFiles->fileList.Size()==0 && rtab.addedFiles->fileList.Size()==0)
-			getChangelistResult=AutopatcherServerLoadNotifier::GCR_NOTHING_TO_DO;
-		else if (rtab.deletedFiles->fileList.Size()==0)
-			getChangelistResult=AutopatcherServerLoadNotifier::GCR_ADD_FILES;
-		else if (rtab.addedFiles->fileList.Size()==0)
-			getChangelistResult=AutopatcherServerLoadNotifier::GCR_DELETE_FILES;
-		else
-			getChangelistResult=AutopatcherServerLoadNotifier::GCR_ADD_AND_DELETE_FILES;
+		if (server->loadNotifier)
+		{
+			AutopatcherServerLoadNotifier::AutopatcherState autopatcherState;
+			autopatcherState.requestsQueued=server->userRequestWaitingQueue.Size();
+			autopatcherState.requestsWorking=server->patchingUsers.Size();
 
-		server->loadNotifier->OnGetChangelistCompleted(rtab.systemAddress, getChangelistResult, &autopatcherState);
+			AutopatcherServerLoadNotifier::GetChangelistResult getChangelistResult;
+			if (rtab.fatalError==true)
+				getChangelistResult=AutopatcherServerLoadNotifier::GCR_REPOSITORY_ERROR;
+			else if (rtab.deletedFiles->fileList.Size()==0 && rtab.addedFiles->fileList.Size()==0)
+				getChangelistResult=AutopatcherServerLoadNotifier::GCR_NOTHING_TO_DO;
+			else if (rtab.deletedFiles->fileList.Size()==0)
+				getChangelistResult=AutopatcherServerLoadNotifier::GCR_ADD_FILES;
+			else if (rtab.addedFiles->fileList.Size()==0)
+				getChangelistResult=AutopatcherServerLoadNotifier::GCR_DELETE_FILES;
+			else
+				getChangelistResult=AutopatcherServerLoadNotifier::GCR_ADD_AND_DELETE_FILES;
+
+			server->loadNotifier->OnGetChangelistCompleted(rtab.systemAddress, getChangelistResult, &autopatcherState);
+		}
 	}
+
 
 	return 0;
 }
@@ -434,12 +448,14 @@ void AutopatcherServer::OnGetChangelistSinceDateInt(Packet *packet)
 	inBitStream.ReadCompressed(threadData.applicationName);
 	inBitStream.Read(threadData.lastUpdateDate);
 
-	IncrementPatchingUserCount();
-	CallPacketCallback(packet, AutopatcherServerLoadNotifier::QO_POPPED_ONTO_TO_PROCESSING_THREAD);
+	if (IncrementPatchingUserCount(packet->systemAddress))
+	{
+		CallPacketCallback(packet, AutopatcherServerLoadNotifier::QO_POPPED_ONTO_TO_PROCESSING_THREAD);
 
-	threadData.server=this;
-	threadData.systemAddress=packet->systemAddress;
-	threadPool.AddInput(GetChangelistSinceDateCB, threadData);
+		threadData.server=this;
+		threadData.systemAddress=packet->systemAddress;
+		threadPool.AddInput(GetChangelistSinceDateCB, threadData);
+	}
 }
 namespace RakNet {
 AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadData threadData, bool *returnOutput, void* perThreadData)
@@ -475,8 +491,9 @@ AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadD
 		}
 		else
 		{
-			server->DecrementPatchingUserCount(); // No files needed to send
-			server->CallPatchCompleteCallback(rtab.systemAddress, AutopatcherServerLoadNotifier::PR_NO_FILES_NEEDED_PATCHING);
+			// No files needed to send
+			if (server->DecrementPatchingUserCount(rtab.systemAddress))
+				server->CallPatchCompleteCallback(rtab.systemAddress, AutopatcherServerLoadNotifier::PR_NO_FILES_NEEDED_PATCHING);
 		}
 
 		rtab.bitStream1.Write((unsigned char) ID_AUTOPATCHER_FINISHED_INTERNAL);
@@ -488,8 +505,15 @@ AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadD
 	//	StringCompressor::Instance()->EncodeString(server->repository->GetLastError(), 256, &rtab.bitStream1);
 		StringCompressor::Instance()->EncodeString(repository->GetLastError(), 256, &rtab.bitStream1);
 
-		server->DecrementPatchingUserCount(); // Repository error
-		server->CallPatchCompleteCallback(rtab.systemAddress, AutopatcherServerLoadNotifier::PR_REPOSITORY_ERROR);
+		if (server->DecrementPatchingUserCount(rtab.systemAddress))
+		{
+			server->CallPatchCompleteCallback(rtab.systemAddress, AutopatcherServerLoadNotifier::PR_REPOSITORY_ERROR);
+		}
+		else
+		{
+			*returnOutput=false;
+			return 0;
+		}
 	}
 
 	*returnOutput=false;
@@ -610,17 +634,18 @@ PluginReceiveResult AutopatcherServer::OnGetPatch(Packet *packet)
 
 		if (patchList.fileList.Size()>0)
 		{
-			IncrementPatchingUserCount();
+			if (IncrementPatchingUserCount(packet->systemAddress))
+			{
+				fileListTransfer->Send(&patchList, 0, packet->systemAddress, threadData.setId, priority, orderingChannel, this, 262144*4*4);
+				RakNet::BitStream bitStream1;
+				bitStream1.Write((unsigned char) ID_AUTOPATCHER_FINISHED_INTERNAL);
+				double t =(double) time(NULL);
+				bitStream1.Write(t);
+				SendUnified(&bitStream1, priority, RELIABLE_ORDERED, orderingChannel, packet->systemAddress, false);
 
-			fileListTransfer->Send(&patchList, 0, packet->systemAddress, threadData.setId, priority, orderingChannel, this, 262144*4*4);
-			RakNet::BitStream bitStream1;
-			bitStream1.Write((unsigned char) ID_AUTOPATCHER_FINISHED_INTERNAL);
-			double t =(double) time(NULL);
-			bitStream1.Write(t);
-			SendUnified(&bitStream1, priority, RELIABLE_ORDERED, orderingChannel, packet->systemAddress, false);
-
-			RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
-			return RR_STOP_PROCESSING_AND_DEALLOCATE;
+				RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
+				return RR_STOP_PROCESSING_AND_DEALLOCATE;
+			}
 		}
 	}
 
@@ -661,8 +686,8 @@ void AutopatcherServer::OnGetPatchInt(Packet *packet)
 		return;
 	}
 
-	IncrementPatchingUserCount();
-	CallPacketCallback(packet, AutopatcherServerLoadNotifier::QO_POPPED_ONTO_TO_PROCESSING_THREAD);
+	if (IncrementPatchingUserCount(packet->systemAddress))
+		CallPacketCallback(packet, AutopatcherServerLoadNotifier::QO_POPPED_ONTO_TO_PROCESSING_THREAD);
 
 	threadPool.AddInput(GetPatchCB, threadData);
 }
@@ -683,28 +708,44 @@ void AutopatcherServer::PerThreadDestructor(void* factoryResult, void *context)
 }
 void AutopatcherServer::OnFilePushesComplete( SystemAddress systemAddress, unsigned short setID )
 {
-	DecrementPatchingUserCount();
-	CallPatchCompleteCallback(systemAddress, AutopatcherServerLoadNotifier::PR_PATCHES_WERE_SENT);
+	if (DecrementPatchingUserCount(systemAddress))
+		CallPatchCompleteCallback(systemAddress, AutopatcherServerLoadNotifier::PR_PATCHES_WERE_SENT);
 }
 void AutopatcherServer::OnSendAborted( SystemAddress systemAddress )
 {
-	DecrementPatchingUserCount();
-	CallPatchCompleteCallback(systemAddress, AutopatcherServerLoadNotifier::PR_ABORTED_FROM_DOWNLOAD_THREAD);
+	if (DecrementPatchingUserCount(systemAddress))
+		CallPatchCompleteCallback(systemAddress, AutopatcherServerLoadNotifier::PR_ABORTED_FROM_DOWNLOAD_THREAD);
 }
-void AutopatcherServer::IncrementPatchingUserCount(void)
+bool AutopatcherServer::IncrementPatchingUserCount(SystemAddress sa)
 {
-	++patchingUserCount;
+	// A system address may exist more than once in patchingUsers
+	patchingUsersMutex.Lock();
+	patchingUsers.Insert(sa, _FILE_AND_LINE_);
+	patchingUsersMutex.Unlock();
+	return true;
 }
-void AutopatcherServer::DecrementPatchingUserCount(void)
+bool AutopatcherServer::DecrementPatchingUserCount(SystemAddress sa)
 {
-	--patchingUserCount;
+	unsigned int i;
+	patchingUsersMutex.Lock();
+	for (i=0; i < patchingUsers.Size(); i++)
+	{
+		if (patchingUsers[i]==sa)
+		{
+			patchingUsers.RemoveAtIndexFast(i);
+			patchingUsersMutex.Unlock();
+			return true;
+		}
+	}
+	patchingUsersMutex.Unlock();
+	return false;
 }
 bool AutopatcherServer::PatchingUserLimitReached(void) const
 {
 	if (maxConcurrentUsers==0)
 		return false;
 
-	return patchingUserCount>=maxConcurrentUsers;
+	return patchingUsers.Size()>=maxConcurrentUsers;
 }
 void AutopatcherServer::SetMaxConurrentUsers(unsigned int _maxConcurrentUsers)
 {
@@ -716,7 +757,7 @@ void AutopatcherServer::CallPacketCallback(Packet *packet, AutopatcherServerLoad
 	{
 		AutopatcherServerLoadNotifier::AutopatcherState autopatcherState;
 		autopatcherState.requestsQueued=userRequestWaitingQueue.Size();
-		autopatcherState.requestsWorking=patchingUserCount;
+		autopatcherState.requestsWorking=patchingUsers.Size();
 
 		AutopatcherServerLoadNotifier::RequestType requestType;
 		if (packet->data[0]==ID_AUTOPATCHER_GET_CHANGELIST_SINCE_DATE)
@@ -733,7 +774,7 @@ void AutopatcherServer::CallPatchCompleteCallback(const SystemAddress &systemAdd
 	{
 		AutopatcherServerLoadNotifier::AutopatcherState autopatcherState;
 		autopatcherState.requestsQueued=userRequestWaitingQueue.Size();
-		autopatcherState.requestsWorking=patchingUserCount;
+		autopatcherState.requestsWorking=patchingUsers.Size();
 
 		loadNotifier->OnGetPatchCompleted(systemAddress, patchResult, &autopatcherState);
 	}
